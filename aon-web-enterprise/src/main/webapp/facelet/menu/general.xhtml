@@ -7,20 +7,22 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<h:panelGrid styleClass="aon-width-all"
-		headerClass="aon-direct-access-panel aon-icon-general">
-		<f:facet name="header">
-			<aon:outputText value="#{appBundle.menu_general}" />
-		</f:facet>
-		<aon:div styleClass="aon-direct-access-list">
-			<c:if test="#{aonRole.productOperator}">
+	<c:if test="#{aonRole.productOperator or aonRole.config}">
+		<aon:panelGrid id="group_general_#{category}"
+			styleClass="aon-width-all" columnClasses="aon-padding"
+			headerClass="aon-direct-access-panel aon-icon-general">
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.menu_general}" />
+			</f:facet>
+			<aon:div styleClass="aon-direct-access-list">
+				<c:if test="#{aonRole.productOperator}">
 				<aon:div styleClass="aon-direct-access-list-element">
 					<aon:commandLink id="item-#{category}" 
 						action="item_search" actionListener="#{item.onEditSearch}"
 						value="#{productBundle.product_module}" />
 				</aon:div>
-			</c:if>
-			<c:if test="#{aonRole.config}">
+				</c:if>
+				<c:if test="#{aonRole.config}">
 				<aon:div styleClass="aon-direct-access-list-element">
 					<aon:commandLink id="productCategory-#{category}" 
 						action="productCategory"
@@ -41,8 +43,9 @@
 						action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
 						value="#{geozoneBundle.geozone_module}" />
 				</aon:div>
-			</c:if>
-		</aon:div>
-	</h:panelGrid>
+				</c:if>
+			</aon:div>
+		</aon:panelGrid>
+	</c:if>
 
 </ui:composition>

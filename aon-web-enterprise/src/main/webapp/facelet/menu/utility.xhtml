@@ -7,30 +7,33 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<h:panelGrid styleClass="aon-width-all"
-		headerClass="aon-icon-utilities aon-direct-access-panel">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_utilities}" />
-		</f:facet>
-		<aon:div styleClass="aon-direct-access-list">
-			<c:if test="#{company.EInvoice and (certificate.certificateCount>0) and aonRole.ESignature}">
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="invoiceSigner-#{category}"
-						value="#{financeBundle.finance_invoice_signing_module}"
-						actionListener="#{invoiceSigner.onEditSearch}"
-						action="invoiceSigner_search" />
-				</aon:div>
-			</c:if>
-			<c:if test="#{aonRole.accountingOperator}">
+	<c:if test="#{(company.EInvoice and certificate.certificateCount > 0 and aonRole.ESignature) or aonRole.accountingOperator}">
+		<aon:panelGrid id="group_utility_#{category}"
+			styleClass="aon-width-all" columnClasses="aon-padding"
+			headerClass="aon-icon-utilities aon-direct-access-panel">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_utilities}" />
+			</f:facet>
+			<aon:div styleClass="aon-direct-access-list">
+				<c:if test="#{company.EInvoice and (certificate.certificateCount>0) and aonRole.ESignature}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="invoiceSigner-#{category}"
+							value="#{financeBundle.finance_invoice_signing_module}"
+							actionListener="#{invoiceSigner.onEditSearch}"
+							action="invoiceSigner_search" />
+					</aon:div>
+				</c:if>
+				<c:if test="#{aonRole.accountingOperator}">
 				<aon:div styleClass="aon-direct-access-list-element">
 					<aon:commandLink id="invoiceRecorder-#{category}"
 						value="#{financeBundle.finance_invoice_recording_module}"
 						actionListener="#{invoiceRecorder.onEditSearch}"
 						action="invoiceRecorder_search" />
 				</aon:div>
-			</c:if>
-			<ui:insert name="afterContent"/>
-		</aon:div>
-	</h:panelGrid>
+				</c:if>
+				<ui:insert name="afterContent"/>
+			</aon:div>
+		</aon:panelGrid>
+	</c:if>
 
 </ui:composition>
