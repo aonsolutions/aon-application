@@ -5,27 +5,29 @@
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
-		<aon:commandLink id="sales"
-			value="#{appBundle.menu_sales}"
-			action="menu_sales" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-sales" />
-		<aon:commandLink id="purchase"
-			value="#{appBundle.menu_purchase}"
-			action="menu_purchase" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-purchase" />
-		<aon:commandLink id="expenses"
-			value="#{appBundle.menu_expenses}"
-			action="menu_expenses" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-expenses" />
-		<aon:commandLink id="config"
-			value="#{bundle.aon_configuration}"
-			action="menu_config" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-config" />
-		<c:if test="#{aonRole.accountingOperator}">
+		<c:if test="#{aonRole.financeOperator}">
+			<aon:commandLink id="sales"
+				value="#{appBundle.menu_sales}"
+				action="menu_sales" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-sales" />
+			<aon:commandLink id="purchase"
+				value="#{appBundle.menu_purchase}"
+				action="menu_purchase" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-purchase" />
+			<aon:commandLink id="expenses"
+				value="#{appBundle.menu_expenses}"
+				action="menu_expenses" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-expenses" />
 			<aon:commandLink id="utilities"
 				value="#{appBundle.menu_utilities}"
 				action="menu_utilities" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-utilities" />
+		</c:if>
+		<c:if test="#{aonRole.config}">
+			<aon:commandLink id="config"
+				value="#{bundle.aon_configuration}"
+				action="menu_config" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-config" />
 		</c:if>
 	</ui:define>
  </ui:composition>
