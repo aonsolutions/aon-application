@@ -8,14 +8,20 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.account.bridge.AccountEntryInvoice;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -29,7 +35,10 @@ public class AccountEntryController extends BasicController {
 	
 	private SpecialEntryControllerManager controllerManager;
 	private String backAction;
-
+	
+	private boolean updatable;
+	private boolean aonInvoice;
+	
 	private Double totalDebit;
 	private Double totalCredit;
 	
@@ -55,15 +64,69 @@ public class AccountEntryController extends BasicController {
 			controllerManager.register(AccountEntryType.LOAN, "loanEntry");
 			// Wizard de Cuotas de préstamos.			
 			controllerManager.register(AccountEntryType.LOAN_FEE, "loanFeeEntry");
-			// Wizard de Creación de leasing.
-			controllerManager.register(AccountEntryType.LEASING, "leasingEntry");
-			// Wizard de Cuotas de leasing.			
-			controllerManager.register(AccountEntryType.LEASING_FEE, "leasingFeeEntry");
 		}
 		return controllerManager;
 	}
 	
-    public boolean isManual() {
+	public boolean isUpdatable() {
+		return updatable;
+	}
+	public void setUpdatable(boolean updatable) {
+		this.updatable = updatable;
+	}
+	public boolean isAonInvoice() {
+		return aonInvoice;
+	}
+	public void setAonInvoice(boolean aonInvoice) {
+		this.aonInvoice = aonInvoice;
+	}
+	
+	public void calculateUpdatableFlag() {
+		setAonInvoice(false);
+		boolean flag = false;
+		try {
+			AccountEntry entry = (AccountEntry) this.getTo();
+			flag = (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL));
+			if (!flag) {
+				if (entry.getType() == AccountEntryType.SALES_INVOICE
+					|| entry.getType() == AccountEntryType.PURCHASE_INVOICE
+					|| entry.getType() == AccountEntryType.EXPENSE_INVOICE
+					|| entry.getType() == AccountEntryType.INVESTMENT_INVOICE) {
+					flag = !isAccountInvoice(entry);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al identificar la posibilidad de modificar el apunte";
+            LOGGER.error(msg);
+            AonUtil.addErrorMessage(msg);
+            flag = false;
+		}
+		setUpdatable(flag);
+	}
+	private boolean isAccountInvoice(AccountEntry entry) throws ManagerBeanException {
+		IManagerBean aeiBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(aeiBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID),entry.getId());
+		List<ITransferObject> list = aeiBean.getList(criteria);
+		if (list.size() > 0  ) {
+			AccountEntryInvoice aei = (AccountEntryInvoice) list.get(0);
+			IManagerBean idBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(idBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), aei.getInvoice().getId());
+			List<ITransferObject> details = idBean.getList(criteria);
+			for (ITransferObject to: details) {
+				InvoiceDetail id = (InvoiceDetail) to;
+				if (id.getSource() == InvoiceSource.ACCOUNT) {
+					return true;					
+				}
+			}
+			setAonInvoice( true );
+			return false;
+		}
+		return true;
+	}
+
+	public boolean isManual() {
     	AccountEntry entry = (AccountEntry) this.getTo();
         return (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL));
     }
@@ -151,15 +214,6 @@ public class AccountEntryController extends BasicController {
 		ISpecialAccountEntry c = getControllerManager().getSpecialEntryController(entry.getType());
 		return c.getNavigationKey();
 	}
-/*	
-	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null ){
-			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-			String field = event.getComponent().getId();
-			getCriteria().addEqualExpression(accountEntryBean.getFieldName(field), event.getNewValue());
-		}
-	}
-*/
 
     @SuppressWarnings("unchecked")
     public void refreshTotals() {

@@ -115,5 +115,6 @@ public class AccountEntryControllerListener extends ControllerAdapter {
     public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
     	AccountEntryController c = (AccountEntryController) event.getController();
     	c.refreshTotals();
+    	c.calculateUpdatableFlag();
     }
 }
