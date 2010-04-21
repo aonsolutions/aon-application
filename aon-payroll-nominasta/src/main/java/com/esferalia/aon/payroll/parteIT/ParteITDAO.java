@@ -21,6 +21,8 @@ import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.ParteITPK;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.RemesaINSS;
+import com.esferalia.aon.payroll.RemesaParteIT;
 import com.esferalia.aon.payroll.core.IBonificacion;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
@@ -34,6 +36,8 @@ import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.it.ParteITParams;
+import com.esferalia.aon.payroll.core.remesa.IRemesaINSS;
+import com.esferalia.aon.payroll.core.remesa.IRemesaParteIT;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
 import com.esferalia.aon.payroll.cotizacion.BonificacionPK;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
@@ -318,6 +322,19 @@ public class ParteITDAO implements IParteITDAO {
 		return confirmacionParteIT;
 	}
 	
+	@Override
+	public IRemesaINSS initializeRemesa() throws PayrollException {
+		RemesaINSS remesa = new RemesaINSS();
+		remesa.setFecha(Calendar.getInstance().getTime());
+		remesa.setHora(Calendar.getInstance().getTime());
+		return remesa;
+	}
+	
+	@Override
+	public IRemesaParteIT initializePartesRemesa() throws PayrollException {
+		return new RemesaParteIT();
+	}
+	
 
 	@Override
 	public void accept(IParteIT parteIT) throws PayrollException {
@@ -336,6 +353,30 @@ public class ParteITDAO implements IParteITDAO {
 			IManagerBean bean = BeanManager.getManagerBean(ParteConfirmacionIT.class);
 			ParteConfirmacionIT c = (ParteConfirmacionIT) parteConfirmacionIT;
 			bean.insertOrUpdate(c);
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	// metodo para grabar la remesa de partes de it
+	@Override
+	public void accept(IRemesaINSS remesaINSS) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RemesaINSS.class);
+			RemesaINSS r = (RemesaINSS) remesaINSS;
+			bean.insertOrUpdate(r);
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	//	metodo para grabar los parteIT de una remesa 
+	@Override
+	public void accept(IRemesaParteIT remesaParteIT) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RemesaParteIT.class);
+			RemesaParteIT r = (RemesaParteIT) remesaParteIT;
+			bean.insertOrUpdate(r);
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
