@@ -19,6 +19,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.registry.RegistryBank;
@@ -45,6 +46,7 @@ public class Loan implements ITransferObject {
 	private Double  feeAmount;
 	private Integer recurrence;
 	private Integer payDay;
+	private LoanStatus status;
 
 	@Id
 	@Column(nullable=false)
@@ -157,6 +159,14 @@ public class Loan implements ITransferObject {
 		this.payDay = payDay;
 	}
 
+	@Column(name="status")
+	public LoanStatus getStatus() {
+		return status;
+	}
+	public void setStatus(LoanStatus status) {
+		this.status = status;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -174,6 +184,7 @@ public class Loan implements ITransferObject {
 			.append(this.expenses, o.expenses )
 			.append(this.registryBank, o.registryBank )
 			.append(this.securityLevel, o.securityLevel )
+			.append(this.status, o.status )
 			.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());
@@ -189,6 +200,7 @@ public class Loan implements ITransferObject {
 			.append(this.review)
 			.append(this.amount)
 			.append(this.expenses)
+			.append(this.status)
 			.toHashCode();
 	}
 	

@@ -19,6 +19,7 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.accounting.enumeration.BalanceType;
+import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -40,7 +41,8 @@ public class AccountingCollectionsController {
 	private LinkedList<SelectItem> accountEntryTypes;
 	private LinkedList<SelectItem> amortizationPeriods;
 	private LinkedList<SelectItem> periodStatuses;
-
+	private LinkedList<SelectItem> loanStatuses;
+	
 	private List<SelectItem> autoConcepts;
 	private List<String> concepts;
 
@@ -161,6 +163,21 @@ public class AccountingCollectionsController {
 		return periodStatuses;
 	}
 
+	public List<SelectItem> getLoanStatuses() {
+		if (loanStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			loanStatuses = new LinkedList<SelectItem>();
+			LoanStatus[] aeTypes = LoanStatus.values();
+			for (int i = 0; i < aeTypes.length; i++) {
+				LoanStatus status = aeTypes[i];
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				loanStatuses.add(item);
+			}
+		}
+		return loanStatuses;
+	}
+
 	public void setAutoConcepts(List<SelectItem> autoConcepts ) {
 		this.autoConcepts = autoConcepts;
 	}
@@ -241,6 +258,20 @@ public class AccountingCollectionsController {
 		List<SelectItem> loans = new LinkedList<SelectItem>();
 		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
 		Iterator<?> iter = loanBean.getList(null).iterator();
+		while (iter.hasNext()) {
+			Loan loan = (Loan) iter.next();
+			SelectItem item = new SelectItem(loan, loan.getDescription());
+			loans.add(item);
+		}
+		return loans;
+	}
+
+	public List<SelectItem> getActiveLoans() throws ManagerBeanException {
+		List<SelectItem> loans = new LinkedList<SelectItem>();
+		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(loanBean.getFieldName(IAccountingAlias.LOAN_STATUS) , LoanStatus.ACTIVE);
+		Iterator<?> iter = loanBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			Loan loan = (Loan) iter.next();
 			SelectItem item = new SelectItem(loan, loan.getDescription());

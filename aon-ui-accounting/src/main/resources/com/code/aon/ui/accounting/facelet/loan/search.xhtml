@@ -72,6 +72,14 @@
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
 					
+					<aon:outputLabel for="Loan_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Loan_status"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{loan.addEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{accountingCollections.loanStatuses}" />
+					</aon:selectOneMenu>
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
