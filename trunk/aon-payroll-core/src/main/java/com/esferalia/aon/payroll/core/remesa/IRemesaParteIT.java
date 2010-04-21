@@ -40,8 +40,8 @@ public interface IRemesaParteIT extends Serializable {
 	boolean isBajaProcesada();
 	void setBajaProcesada(boolean bajaProcesada);
 
-	String getAltaProcesada();
-	void setAltaProcesada(String altaProcesada);
+	boolean getAltaProcesada();
+	void setAltaProcesada(boolean altaProcesada);
 	
 	TipoContingencia getTipoContingencia();
 	void setTipoContingencia(TipoContingencia tipoContingencia);
