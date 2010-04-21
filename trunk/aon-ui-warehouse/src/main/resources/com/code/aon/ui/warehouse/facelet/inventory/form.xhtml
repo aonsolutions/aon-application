@@ -18,30 +18,32 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="beforeSpinToolbarContent">
-					<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
+					<aon:htmlCommandLink id="inventory_close-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="inventory_close" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>								
-					<h:commandLink value="#{warehouseBundle.warehouse_inventory_report_title}" target="_blank"
-						action="#{report.onExecute}"
+					</aon:htmlCommandLink>								
+					<aon:htmlCommandLink id="inventory_close-report"
+						value="#{warehouseBundle.warehouse_inventory_report_title}"
+						action="#{report.onExecute}" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="inventory_close" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 
-					<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
+					<aon:htmlCommandLink id="inventory_valued-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="inventory_valued" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>				
-					<h:commandLink value="#{warehouseBundle.warehouse_inventory_valued_title}" target="_blank"
-						action="#{report.onExecute}"
+					</aon:htmlCommandLink>				
+					<aon:htmlCommandLink id="inventory_valued-report"
+						value="#{warehouseBundle.warehouse_inventory_valued_title}"
+						action="#{report.onExecute}"  target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="inventory_valued" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>				
 				
 			</ui:decorate>

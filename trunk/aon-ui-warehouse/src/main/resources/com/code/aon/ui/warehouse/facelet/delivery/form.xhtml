@@ -47,7 +47,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
 						</aon:commandButton>															
-						<h:commandLink id="delivery" value="#{warehouseBundle.warehouse_delivery}"
+						<aon:htmlCommandLink id="delivery-report" value="#{warehouseBundle.warehouse_delivery}"
 							target="_new" rendered="#{!delivery.new and deliveryDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
 							disabled="#{deliveryDetail.to != null}"
@@ -55,7 +55,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="delivery" />
 							<f:param name="outputFormat" value="PDF" />
-						</h:commandLink>
+						</aon:htmlCommandLink>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
