@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,6 +25,7 @@ public class RemesaINSS implements IRemesaINSS,ITransferObject  {
 	private Date hora;
 
 	@Id     
+	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
     @Column(name="id", unique=true, nullable=false, length=10)
 	@Override
 	public Integer getId() {
