@@ -15,6 +15,8 @@ import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.Persona;
+import com.esferalia.aon.payroll.RemesaINSS;
+import com.esferalia.aon.payroll.RemesaParteIT;
 import com.esferalia.aon.payroll.Usuario;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
 import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
@@ -22,7 +24,7 @@ import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
 public class PayrollAliasWriter {
 
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-payroll-nominasta/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+		File file = new File("/AON-TRUNK/aon-payroll-nominasta/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] {
 				Actividad.class.getName(),
 				ActividadCCC.class.getName(),
@@ -34,6 +36,8 @@ public class PayrollAliasWriter {
 				ParteConfirmacionIT.class.getName(),
 				ParteIT.class.getName(),
 				Persona.class.getName(),
+				RemesaINSS.class.getName(),
+				RemesaParteIT.class.getName(),
 				TipoBonificacion.class.getName(),
 				Usuario.class.getName()
 		        };
