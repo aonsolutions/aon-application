@@ -41,7 +41,7 @@
 									value="#{true}" />
 							</aon:commandButton>
 						</c:if>
-						<h:commandLink id="income" value="#{warehouseBundle.warehouse_income}"
+						<aon:htmlCommandLink id="incomeForm-report" value="#{warehouseBundle.warehouse_income}"
 							target="_new" rendered="#{!income.new and incomeDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
 							disabled="#{incomeDetail.to != null}"
@@ -49,7 +49,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="incomeForm" />
 							<f:param name="outputFormat" value="PDF" />
-						</h:commandLink>
+						</aon:htmlCommandLink>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
