@@ -10,10 +10,13 @@ import javax.mail.Folder;
 import javax.mail.MessagingException;
 import javax.mail.Flags.Flag;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.DropEvent;
+import org.richfaces.event.UploadEvent;
 import org.richfaces.model.ModifiableModel;
 import org.richfaces.model.Ordering;
+import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -500,5 +503,24 @@ public class FolderController implements IMessageContainer, WebMailConstants {
 	public void setCurrentIndex(int currentIndex) {
 		this.currentIndex = currentIndex;
 	}
+
+
+	public void messageUploaded(UploadEvent event) {
+		UploadItem item = event.getUploadItem();
+		try {
+			byte[] data = null;
+			if (item.isTempFile()) {
+				data = FileUtils.readFileToByteArray(item.getFile());
+			} else {
+				data = item.getData();
+			}
+			folder.getServer().importMessage(data, folder);
+			folder.refresh();
+		} catch (Throwable th) {
+			LOGGER.error("message upload " + item, th);
+			AonUtil.addErrorMessage(th.getMessage());
+			throw new AbortProcessingException(th.getMessage(), th);
+		}
+	}	
 	
 }

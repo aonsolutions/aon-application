@@ -579,6 +579,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		messageContent = null;
 		messageBody = null;
 		loadContacts = true;
+		setErrorMessage(null);
 	}
 	//********************************************************************************************
 

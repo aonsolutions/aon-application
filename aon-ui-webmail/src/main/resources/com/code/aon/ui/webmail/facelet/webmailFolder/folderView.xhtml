@@ -116,6 +116,16 @@
 								value="#{webmailBundle.webmail_mark}"
 								styleClass="aon-finding-toolbar-item aon-icon-mailInbox">
 							</aon:commandButton> 				
+							
+							<c:if test="#{aonRole.admin}">
+								<aon:commandButton id="uploadMessage" reRender="aonStatus"
+									title="#{bundle.aon_fileUpload_upload}"
+									value="#{bundle.aon_fileUpload_upload}"
+									styleClass="aon-finding-toolbar-item aon-icon-file-upload">
+									<rich:componentControl for="messageUploadModalPanel" operation="show"
+										event="onclick" />
+								</aon:commandButton>
+							</c:if>							
 						</aon:div>
 					</aon:panelGrid>
 					<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessages.xhtml" />
@@ -140,6 +150,10 @@
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailFolder/renameFolder.xhtml" />
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+			
+			<c:if test="#{aonRole.admin}">
+				<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageUpload.xhtml" />
+			</c:if>
 		</c:if>
 
 	</ui:define>
