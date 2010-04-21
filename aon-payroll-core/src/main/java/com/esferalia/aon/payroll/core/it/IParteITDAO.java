@@ -8,6 +8,8 @@ import com.esferalia.aon.payroll.core.IBonificacion;
 import com.esferalia.aon.payroll.core.IContrato;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
+import com.esferalia.aon.payroll.core.remesa.IRemesaINSS;
+import com.esferalia.aon.payroll.core.remesa.IRemesaParteIT;
 
 public interface IParteITDAO {
 	
@@ -35,6 +37,12 @@ public interface IParteITDAO {
 	void accept(IParteConfirmacionIT confirmacionParteIT) throws PayrollException;;
 
 	IBonificacion initializeBonificacion(IParteIT parteIT, ITipoBonificacion tipoBonificacion);
+
+	// Remesa de partes de IT
+	void accept(IRemesaINSS remesaINSS) throws PayrollException;
+	void accept(IRemesaParteIT remesaParteIT) throws PayrollException;
+	IRemesaINSS initializeRemesa() throws PayrollException;
+	IRemesaParteIT initializePartesRemesa() throws PayrollException;
 
 
 }
