@@ -146,13 +146,7 @@
 												createContent="#{company.createCurrentLogoContent}">
 											</a4j:mediaOutput>
 											<aon:fileUpload id="attach_file"
-												addControlLabel="#{bundle.aon_fileUpload_add}"
-												stopControlLabel="#{bundle.aon_fileUpload_stop}"
-												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-												fileUploadListener="#{company.fileUploaded}"
-												immediateUpload="true" autoclear="true" listWidth="0px"
-												listHeight="0px">
+												fileUploadListener="#{company.fileUploaded}" >
 												<f:facet name="label">
 													<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 												</f:facet>
