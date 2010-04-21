@@ -19,6 +19,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.util.AonUtil;
@@ -29,6 +31,8 @@ import com.esferalia.aon.payroll.core.it.IParteIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.it.ParteITParams;
+import com.esferalia.aon.payroll.core.remesa.IRemesaINSS;
+import com.esferalia.aon.payroll.core.remesa.IRemesaParteIT;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
 public class RemesaITWizard implements Serializable {
@@ -218,6 +222,7 @@ public class RemesaITWizard implements Serializable {
 			onValidate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
+//			save();
 			onDiskGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {
@@ -280,7 +285,7 @@ public class RemesaITWizard implements Serializable {
 		List<RemesableIT> list = (List<RemesableIT>) getSelectedModel().getWrappedData();
 		list.remove(r);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public void onDiskGenerate(ActionEvent event) {
 		try {
@@ -296,6 +301,97 @@ public class RemesaITWizard implements Serializable {
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			// No se lanza excepción, que vaya a la última página.
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void save() {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// BEGIN operaciones de la transaccion
+				List<RemesableIT> list = (List<RemesableIT>) getSelectedModel().getWrappedData();
+				IRemesaINSS remesaINSS = getParteITDAO().initializeRemesa();	
+				IRemesaParteIT remesaParteIT = getParteITDAO().initializePartesRemesa();
+				getParteITDAO().accept(remesaINSS);
+				for (RemesableIT r: list){
+					IParteIT p = r.getParteIT(); 
+					IParteConfirmacionIT c = r.getConfirmacionIT(); 
+					remesaParteIT.setRemesaINSS(remesaINSS);
+					remesaParteIT.setEmpleado(p.getEmpleado());
+					remesaParteIT.setFechaBaja(p.getFechaBaja());
+					remesaParteIT.setTipoOperacionIT(r.getOperacion());
+					if(r.getOperacion() == TipoOperacionIT.CONFIRMACION){
+						remesaParteIT.setFechaParte(c.getFecha());
+						remesaParteIT.setNumeroColegiado(c.getNumeroColegiado());
+						remesaParteIT.setCias(c.getCias());
+						remesaParteIT.setNumero(c.getNumero());
+						remesaParteIT.setBajaProcesada(c.getParteIT().isBajaProcesada());
+						remesaParteIT.setAltaProcesada(c.getParteIT().isAltaProcesada());
+						remesaParteIT.setTipoContingencia(c.getParteIT().getTipoContingencia());
+						remesaParteIT.setRecaida(c.getParteIT().isRecaida());
+						remesaParteIT.setProrrateoCotizacion(c.getParteIT().getProrrateoCotizacion());
+//						remesaParteIT.setProcesado();
+//						remesaParteIT.setRiesgoEmbarazo();
+						remesaParteIT.setBaseRetribucionPeriodoAnterior(c.getParteIT().getBaseRetribucionPeriodoAnterior());
+						remesaParteIT.setDiasPeriodoAnterior(c.getParteIT().getDiasPeriodoAnterior());
+						remesaParteIT.setBaseReguladoraDiaria(c.getParteIT().getBaseReguladoraDiaria());
+						remesaParteIT.setBaseDiariaContingenciasComunes(c.getParteIT().getBaseDiariaContingenciasComunes());
+						remesaParteIT.setBaseDiariaAccidentesTrabajo(c.getParteIT().getBaseDiariaAccidentesTrabajo());
+						remesaParteIT.setPrestacionDiaria60(c.getParteIT().getPrestacionDiaria60());
+						remesaParteIT.setPrestacionDiaria75(c.getParteIT().getPrestacionDiaria75());
+					}else{ 
+						if(r.getOperacion() == TipoOperacionIT.ALTA){
+							remesaParteIT.setFechaParte(p.getFechaAlta());
+							remesaParteIT.setNumeroColegiado(p.getNumeroColegiadoAlta());
+							remesaParteIT.setCias(p.getCiasAlta());
+						}else if(r.getOperacion() == TipoOperacionIT.BAJA){
+							remesaParteIT.setFechaParte(p.getFechaBaja());
+							remesaParteIT.setNumeroColegiado(p.getNumeroColegiadoBaja());
+							remesaParteIT.setCias(p.getCiasBaja());
+						}
+						remesaParteIT.setBajaProcesada(p.isBajaProcesada());
+						remesaParteIT.setAltaProcesada(p.isAltaProcesada());
+						remesaParteIT.setTipoContingencia(p.getTipoContingencia());
+						remesaParteIT.setRecaida(p.isRecaida());
+						remesaParteIT.setProrrateoCotizacion(p.getProrrateoCotizacion());
+//						remesaParteIT.setProcesado();
+//						remesaParteIT.setRiesgoEmbarazo();
+											
+						
+						remesaParteIT.setBaseRetribucionPeriodoAnterior(p.getBaseRetribucionPeriodoAnterior());
+						remesaParteIT.setDiasPeriodoAnterior(p.getDiasPeriodoAnterior());
+						remesaParteIT.setBaseReguladoraDiaria(p.getBaseReguladoraDiaria());
+						remesaParteIT.setBaseDiariaContingenciasComunes(p.getBaseDiariaContingenciasComunes());
+						remesaParteIT.setBaseDiariaAccidentesTrabajo(p.getBaseDiariaAccidentesTrabajo());
+						remesaParteIT.setPrestacionDiaria60(p.getPrestacionDiaria60());
+						remesaParteIT.setPrestacionDiaria75(p.getPrestacionDiaria75());
+					}
+					getParteITDAO().accept(remesaParteIT);	
+				}
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				String msg = e.getMessage();
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					msg = "Unable to rollback transaction! (" + msg + ")";
+				}
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(e);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 	}
 
