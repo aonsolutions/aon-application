@@ -90,7 +90,7 @@
 			</h:panelGrid>			
 			<aon:commandButton reRender="mailAccountDiv" ajaxSingle="true"
 				rendered="#{(mailAccount.model.rowCount &gt; 1) and (!mailAccount.showMailAccountList)}"
-				title="#{webmailBundle.webmail_mailAccount_select}"
+				title="#{webmailBundle.webmail_mailAccount_select}" value="&#160;"
 				styleClass="aon-icon-commandButton aon-icon-dropDown">
 				<f:setPropertyActionListener target="#{mailAccount.showMailAccountList}" value="#{true}" />
 			</aon:commandButton>			
