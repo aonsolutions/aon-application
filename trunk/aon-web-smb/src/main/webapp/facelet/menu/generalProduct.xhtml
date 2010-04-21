@@ -7,14 +7,18 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<ui:decorate template="/facelet/menu/general.xhtml" >
-		<ui:define name="beforeContent">
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="item-#{category}" 
-					action="item_search" actionListener="#{item.onEditSearch}"
-					value="#{productBundle.product_module}" />
-			</aon:div>		
-		</ui:define>
-	</ui:decorate>
+	<c:if test="#{aonRole.productOperator or aonRole.config}">
+		<ui:decorate template="/facelet/menu/general.xhtml" >
+			<ui:define name="beforeContent">
+				<c:if test="#{aonRole.productOperator}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="item-#{category}" 
+							action="item_search" actionListener="#{item.onEditSearch}"
+							value="#{productBundle.product_module}" />
+					</aon:div>
+				</c:if>		
+			</ui:define>
+		</ui:decorate>
+	</c:if>
 
 </ui:composition>

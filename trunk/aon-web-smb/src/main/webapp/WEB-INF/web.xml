@@ -246,7 +246,7 @@
 	<!-- Listener, that enables Audit Sessions per User. -->
 	<listener>
 		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
-	</listener>    
+	</listener>
 
   	<!-- Listener, that enables Concurrent Sessions per User. -->
 	<listener>
@@ -259,7 +259,7 @@
            com.code.aon.ui.common.listener.BeanRegisterContextListener
        </listener-class>
     </listener>
-    
+
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
 		<listener-class>
@@ -277,7 +277,7 @@
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
- 		<web-resource-collection>
+		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
@@ -301,12 +301,15 @@
 	<security-role><role-name>User</role-name></security-role>
 	<security-role><role-name>Guest</role-name></security-role>
 	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Config</role-name></security-role>
 	<security-role><role-name>Auditor</role-name></security-role>
-	<security-role><role-name>Accounting</role-name></security-role>
-	<security-role><role-name>Invoicing</role-name></security-role>
 	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>Product</role-name></security-role>
+	<security-role><role-name>Commercial</role-name></security-role>
+	<security-role><role-name>Finance</role-name></security-role>
+	<security-role><role-name>Accounting</role-name></security-role>
 	<security-role><role-name>Statistics</role-name></security-role>
-	<security-role><role-name>InvoiceSigner</role-name></security-role>
+	<security-role><role-name>eSignature</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonSMB</resource-env-ref-name>

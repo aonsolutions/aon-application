@@ -15,21 +15,23 @@
 		</f:facet>
 		<aon:div styleClass="aon-direct-access-list">
 			<ui:insert name="beforeContent"/>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="productCategory-#{category}" 
-					action="productCategory"
-					value="#{productBundle.product_category_module}" />
-			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="segment-#{category}" 
-					action="segment_form" 
-					value="#{registryBundle.registry_segment_module}" />
-			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="geotreeParent-#{category}" 
-					action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
-					value="#{geozoneBundle.geozone_module}" />
-			</aon:div>
+			<c:if test="#{aonRole.config}">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="productCategory-#{category}" 
+						action="productCategory"
+						value="#{productBundle.product_category_module}" />
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="segment-#{category}" 
+						action="segment_form" 
+						value="#{registryBundle.registry_segment_module}" />
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="geotreeParent-#{category}" 
+						action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
+						value="#{geozoneBundle.geozone_module}" />
+				</aon:div>
+			</c:if>
 		</aon:div>
 	</aon:panelGrid>
 
