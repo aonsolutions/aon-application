@@ -155,7 +155,7 @@
 	<!-- **************** LOAN ************************* -->
 	<managed-bean>
 		<managed-bean-name>loan</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.LoanController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>

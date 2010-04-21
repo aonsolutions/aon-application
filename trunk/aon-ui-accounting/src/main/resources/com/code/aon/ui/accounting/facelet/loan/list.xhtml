@@ -23,6 +23,9 @@
 						columnClasses="aon-editDataTable-numberColumn
 							,aon-editDataTable-textColumn
 							,aon-editDataTable-textColumn
+							,aon-editDataTable-textColumn
+							,aon-editDataTable-numberColumn
+							,aon-editDataTable-numberColumn
 							,aon-editDataTable-textColumn">
 
 						<aon:rowSelector action="loan_form"
@@ -61,7 +64,32 @@
 							</f:facet>
 							<aon:outputText value="#{to.registryBank.fullName}" />
 						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{accountingBundle.accounting_pay_day}" />
+							</f:facet>
+							<aon:outputText value="#{to.payDay}" />
+						</aon:column>
 						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{accountingBundle.accounting_fee_amount}" />
+							</f:facet>
+							<aon:outputText value="#{to.feeAmount}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
 					</aon:dataTable>
 				</aon:div>
 				<aon:dataScroller2 for="loanList" showNote="true" />

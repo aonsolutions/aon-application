@@ -21,6 +21,7 @@ import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -113,6 +114,7 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		loan.setLoanDate(new Date());
 		loan.setSecurityLevel(SecurityLevel.OFFICIAL);
 		loan.setFeeAmount(0.0);
+		loan.setStatus(LoanStatus.ACTIVE);
 		return loan;
 	}
 

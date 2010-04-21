@@ -678,10 +678,16 @@ public interface IAccountingAlias {
 	String  LOAN_SECURITY_LEVEL = LOAN_ENTRY.getAliasNames()[11];
 
 	/** 
+	* Alias value: Loan_status
+	* Hibernate value: Loan.status
+	*/
+	String  LOAN_STATUS = LOAN_ENTRY.getAliasNames()[12];
+
+	/** 
 	* Alias value: Loan_term
 	* Hibernate value: Loan.term
 	*/
-	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[12];
+	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[13];
 
 
 
