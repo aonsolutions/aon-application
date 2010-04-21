@@ -24,12 +24,12 @@
 					</aon:div>
 				</c:if>
 				<c:if test="#{aonRole.accountingOperator}">
-				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="invoiceRecorder-#{category}"
-						value="#{financeBundle.finance_invoice_recording_module}"
-						actionListener="#{invoiceRecorder.onEditSearch}"
-						action="invoiceRecorder_search" />
-				</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="invoiceRecorder-#{category}"
+							value="#{financeBundle.finance_invoice_recording_module}"
+							actionListener="#{invoiceRecorder.onEditSearch}"
+							action="invoiceRecorder_search" />
+					</aon:div>
 				</c:if>
 				<ui:insert name="afterContent"/>
 			</aon:div>
