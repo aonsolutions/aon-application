@@ -39,45 +39,45 @@
 							</aon:div>
 						</aon:panelGrid>
 						
-						<aon:panelGrid id="group_config_general"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-general">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.menu_general}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="series" 
-										action="series" 
-										value="#{configBundle.config_series_module}" />
-								</aon:div>								
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="tax" 
-										action="tax" 
-										value="#{configBundle.config_tax_module}" />
-								</aon:div>								
-							</aon:div>
-						</aon:panelGrid>							
+						<c:if test="#{aonRole.admin}">
+							<aon:panelGrid id="group_config_security"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-security aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_security}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="actionDenied" action="actionDenied"
+											actionListener="#{actionDenied.onInit}"
+											value="#{auditBundle.audit_option_denied_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
 
 					</aon:panelGroup>
-						
-					<c:if test="#{aonRole.admin}">
-						<aon:panelGrid id="group_config_security"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-security aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_security}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="actionDenied" action="actionDenied"
-										actionListener="#{actionDenied.onInit}"
-										value="#{auditBundle.audit_option_denied_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-					</c:if>
-					
+
+					<aon:panelGrid id="group_config_general"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-direct-access-panel aon-icon-general">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.menu_general}" />
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="series" 
+									action="series" 
+									value="#{configBundle.config_series_module}" />
+							</aon:div>								
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="tax" 
+									action="tax" 
+									value="#{configBundle.config_tax_module}" />
+							</aon:div>								
+						</aon:div>
+					</aon:panelGrid>							
+
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>
