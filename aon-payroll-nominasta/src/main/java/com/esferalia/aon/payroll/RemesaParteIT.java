@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,7 +38,7 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	private TipoOperacionIT tipoOperacionIT;
 	private Integer numero;
 	private boolean bajaProcesada;
-	private String altaProcesada;
+	private boolean altaProcesada;
 	private TipoContingencia tipoContingencia;
 	private boolean recaida;
 	private Periodicidad prorrateoCotizacion;
@@ -52,6 +53,7 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	private Double prestacionDiaria75;
 
 	@Id     
+	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
     @Column(name="id", unique=true, nullable=false, length=10)
 	@Override
 	public Integer getId() {
@@ -148,11 +150,11 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	}
 	@Column(name = "alta_procesada", nullable = false, length = 1)
 	@Override
-	public String getAltaProcesada() {
+	public boolean getAltaProcesada() {
 		return altaProcesada;
 	}
 	@Override
-	public void setAltaProcesada(String altaProcesada) {
+	public void setAltaProcesada(boolean altaProcesada) {
 		this.altaProcesada = altaProcesada;
 	}
 	@Column(name = "tipo_it", nullable = false, length = 1)
