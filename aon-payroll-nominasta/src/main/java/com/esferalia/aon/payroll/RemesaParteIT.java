@@ -64,7 +64,7 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 		this.id = id;
 	}
 	@ManyToOne(targetEntity = RemesaINSS.class,fetch = FetchType.EAGER)
-	@JoinColumn(name = "id", insertable = false, updatable = false)
+	@JoinColumn(name = "remesa_inss")
 	@Override
 	public IRemesaINSS getRemesaINSS() {
 		return remesaINSS;
@@ -74,7 +74,7 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 		this.remesaINSS = remesaINSS;
 	}
 	@ManyToOne(targetEntity = Empleado.class,fetch = FetchType.EAGER)
-	@JoinColumn(name = "cdg", insertable = false, updatable = false)
+	@JoinColumn(name = "empleado")
 	@Override
 	public IEmpleado getEmpleado() {
 		return empleado;
@@ -130,7 +130,7 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	public void setTipoOperacionIT(TipoOperacionIT tipoOperacionIT) {
 		this.tipoOperacionIT = tipoOperacionIT;
 	}
-	@Column(name = "numero", nullable = false, length = 2)
+	@Column(name = "numero", length = 2)
 	@Override
 	public Integer getNumero() {
 		return numero;
