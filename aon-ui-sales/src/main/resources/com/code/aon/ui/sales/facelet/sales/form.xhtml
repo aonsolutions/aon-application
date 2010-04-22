@@ -49,7 +49,7 @@
 							rendered="#{!sales.new and salesDetail.model.rowCount > 0 and salesDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>									
-						<h:commandLink id="sales" value="#{salesBundle.sales_sales}"
+						<aon:htmlCommandLink id="sales-report" value="#{salesBundle.sales_sales}"
 							target="_new" rendered="#{!sales.new and salesDetail.model.rowCount > 0}"
 							action="#{report.onExecute}"
 							disabled="#{salesDetail.to != null}"
@@ -57,7 +57,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="sales" />
 							<f:param name="outputFormat" value="PDF" />
-						</h:commandLink>
+						</aon:htmlCommandLink>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			

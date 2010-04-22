@@ -26,39 +26,27 @@
 					<h:commandButton value="#{bundle.aon_back}"
 						action="#{stat.getInvoiceBackAction}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel">
-						<a4j:htmlCommandLink id="export2pdf" value="PDF"
+						<aon:htmlCommandLink id="invoiceList-report" value="PDF"
 							title="Listado Pdf"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf"
 							action="#{report.onExecute}" target="_blank">
 							<f:param name="reportKey" value="invoiceList" />
-						</a4j:htmlCommandLink>
-						<a4j:htmlCommandLink id="export2excel" value="XLS"
+						</aon:htmlCommandLink>
+						<aon:htmlCommandLink id="invoiceList-excel-report" value="XLS"
 							title="Listado Xls"
 							styleClass="aon-finding-toolbar-item aon-icon-excel"
 							action="#{report.onExecute}" target="_blank">
 							<f:param name="reportKey" value="invoiceList" />
 							<f:param name="outputFormat" value="MS Excel" />
-						</a4j:htmlCommandLink>
-						<a4j:htmlCommandLink id="export2csv" value="CSV" title="CSV"
+						</aon:htmlCommandLink>
+						<aon:htmlCommandLink id="invoiceList-cvs-report" value="CSV" title="CSV"
 							styleClass="aon-finding-toolbar-item aon-icon-csv"
 							action="#{report.onExecute}" target="_blank">
 							<f:param name="reportKey" value="invoiceList" />
 							<f:param name="outputFormat" value="CSV" />
-						</a4j:htmlCommandLink>
+						</aon:htmlCommandLink>
 
 					</h:commandButton>
-					<!--<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
-						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-						<f:param name="reportKey" value="saleInvoiceList" />
-						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>
-					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
-						action="#{report.onExecute}" rendered="#{!fbatch.new}"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="saleInvoiceList" />
-					</h:commandLink> -->
 				</ui:define>
 
 			</ui:decorate>
