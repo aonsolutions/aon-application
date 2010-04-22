@@ -1,0 +1,444 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	<body>
+
+		<ui:composition
+			template="/facelet/templates/aon.ui.content.xhtml">
+
+			<ui:define name="content">
+
+				<aon:form id="clientesSearch" >
+
+					<ui:include
+						src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+						<ui:param name="toolbarTitle"
+							value="#{appBundle.aon_payroll_principales_empresa}" />
+						<ui:param name="controller" value="#{empresa}" />
+						<ui:param name="skipResetButton" value="true" />
+
+					</ui:include>
+
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+						<ui:define name="searchContent">
+							<aon:methodParam name="searchActionListener"
+								value="#{empresa.onSearch}" type="actionListener" />
+							<aon:methodParam name="searchAction" value="empresa_list" />
+
+					<aon:div id="empresaSearch" styleClass="aon-scroll-area-principales">
+							<aon:div id="datos1" styleClass="aon-scroll-area">
+								<aon:panelGrid columns="4" dir="true" width="100%"
+									columnClasess=",none,,none">
+
+									<aon:outputLabel for="Empresa_cdg"
+										value="#{appBundle.aon_payroll_principales_empresa_cdg_descripcion}" />
+									<aon:div>
+										<aon:inputText id="Empresa_cdg" size="4" maxlength="4" 
+											valueChangeListener="#{empresa.addExpression}" />
+										<rich:spacer />
+										<aon:inputText id="Empresa_descripcion" size="60" maxlength="40" 
+											valueChangeListener="#{empresa.addExpression}" />
+									</aon:div>
+
+									<aon:outputLabel for="Empresa_alias"
+										value="#{appBundle.aon_payroll_principales_empresa_alias}" />
+									<aon:inputText id="Empresa_alias" size="40" maxlength="60" 
+										valueChangeListener="#{empresa.addExpression}" />
+
+									<aon:outputLabel for="Cliente_cdg"
+										value="#{appBundle.aon_payroll_principales_empresa_cliente}" />
+									<aon:div
+										styleClass="aon-lookup">
+										<aon:lookupInputText
+											id="Cliente_cdg" rendered="#{true}"
+											lookup="#{empresarioLookup}" reRender="Cliente_descripcion"
+											value="#{empresa.cliente.cdg}" size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton
+											id="Cliente_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_clientes_empre}"
+											selectReRender="Cliente_cdg,Cliente_descripcion"
+											lookup="#{clienteLookup}" minHeight="440"
+											property="#{empresa.cliente}">
+										</aon:lookupButton>
+										<aon:inputText
+											id="Cliente_descripcion"
+											value="#{(empresa.cliente.descripcion!=null)?(empresa.cliente.descripcion):('')}"
+											size="45" disabled="true" />
+									</aon:div>
+
+									<aon:outputLabel
+										value="#{appBundle.aon_payroll_principales_empresa_feccon}" />
+									<aon:selectInputDate
+										value="#{empresa.feccon}" renderAsPopup="true"
+										enableManualInput="true"
+										popupDateFormat="#{bundle.aon_date_pattern}">
+									</aon:selectInputDate>
+								</aon:panelGrid>
+							</aon:div>
+
+							<rich:spacer />
+
+							<aon:div id="datos2" styleClass="aon-scroll-area">
+
+								<aon:panelGrid columns="4" dir="true" width="100%">
+
+									<aon:outputLabel for="Documento_cdg"
+										value="#{appBundle.aon_payroll_principales_empresa_tipdoc}" />
+									<aon:div styleClass="aon-lookup">
+										<aon:lookupInputText
+											id="Documento_cdg" lookup="#{documentoLookup}"
+											reRender="Documento_description"
+											value="#{empresa.tipdoc.cdg}" size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton
+											id="Documento_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_empresa_tipdoc}"
+											selectReRender="Documento_cdg,Documento_description"
+											lookup="#{documentoLookup}" minHeight="440"
+											property="#{empresa.tipdoc}">
+										</aon:lookupButton>
+										<aon:inputText
+											id="Documento_description"
+											value="#{(empresa.tipdoc.description!=null)?(empresa.tipdoc.description):('')}"
+											size="40" disabled="true" />
+									</aon:div>
+
+									<aon:outputLabel for="Empresa_numdoc"
+										value="#{appBundle.aon_payroll_principales_empresa_numdoc}" />
+									<aon:inputText id="Empresa_numdoc" size="10" maxlength="10" 
+										valueChangeListener="#{empresa.addExpression}" />
+
+									<aon:outputLabel for="Divi_cdg"
+										value="#{appBundle.aon_payroll_principales_divisa}" />
+									<aon:div styleClass="aon-lookup">
+										<aon:lookupInputText
+											id="Divi_cdg" lookup="#{divisaLookup}"
+											reRender="Div_description" value="#{empresa.divisa.cdg}"
+											size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton
+											id="Divi_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_divisa}"
+											selectReRender="Divi_cdg,Divi_description"
+											lookup="#{divisaLookup}" minHeight="440"
+											property="#{empresa.divisa}">
+										</aon:lookupButton>
+										<aon:inputText
+											id="Divi_description"
+											value="#{(empresa.divisa.description!=null)?(empresa.divisa.description):('')}"
+											size="40" disabled="true" />
+									</aon:div>
+
+									<aon:outputLabel for="Pais_cdg"
+										value="#{appBundle.aon_payroll_principales_pais}" />
+									<aon:div styleClass="aon-lookup">
+										<aon:lookupInputText
+											id="Pais_cdg" lookup="#{paisLookup}"
+											reRender="Pais_description" value="#{empresa.pais.cdg}"
+											size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton
+											id="Pais_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_pais}"
+											selectReRender="Pais_cdg,Pais_description"
+											lookup="#{paisLookup}" minHeight="440"
+											property="#{empresa.pais}">
+										</aon:lookupButton>
+										<aon:inputText
+											id="Pais_description"
+											value="#{(empresa.pais.descripcion!=null)?(empresa.pais.descripcion):('')}"
+											size="40" disabled="true" />
+									</aon:div>
+
+								</aon:panelGrid>
+							</aon:div>
+							
+							<rich:spacer />
+
+							<aon:div id="datos3" styleClass="aon-scroll-area">
+								<aon:panelGrid columns="4" dir="true" width="100%" style="margin-bottom=2px;">
+
+									<aon:outputLabel for="Empresa_representante"
+										value="#{appBundle.aon_payroll_principales_empresa_representante}" />
+									<aon:inputText id="Empresa_representante" size="40" maxlength="60" 
+										valueChangeListener="#{empresa.addExpression}" />
+
+									<aon:outputLabel for="Empresa_cargo"
+										value="#{appBundle.aon_payroll_principales_empresa_cargo}" />
+									<aon:inputText id="Empresa_cargo" size="40" maxlength="60" 
+										valueChangeListener="#{empresa.addExpression}" />
+
+									<aon:outputLabel
+										value="#{appBundle.aon_payroll_principales_empresa_fecnac}" />
+									<aon:selectInputDate
+										value="#{empresa.fecnac}" renderAsPopup="true"
+										enableManualInput="true"
+										popupDateFormat="#{bundle.aon_date_pattern}">
+									</aon:selectInputDate>
+
+									<aon:outputLabel for="Empresa_edad"
+										value="#{appBundle.aon_payroll_principales_empresa_edad}" />
+									<aon:outputText id="Empresa_edad" size="5" 
+										valueChangeListener="#{empresa.addExpression}" />
+
+									<aon:outputLabel
+										for="Documento1_cdg"
+										value="#{appBundle.aon_payroll_principales_empresa_tipdoc}" />
+									<aon:div styleClass="aon-lookup">
+										<aon:lookupInputText
+											id="Documento1_cdg" lookup="#{documentoLookup}"
+											reRender="Documento1_description"
+											value="#{empresa.tipdoc1.cdg}" size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton
+											id="Documento1_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_empresa_tipdoc}"
+											selectReRender="Documento1_cdg,Documento1_description"
+											lookup="#{documentoLookup}" minHeight="440"
+											property="#{empresa.tipdoc1}">
+										</aon:lookupButton>
+										<aon:inputText
+											id="Documento1_description"
+											value="#{(empresa.tipdoc1.description!=null)?(empresa.tipdoc1.description):('')}"
+											size="60" disabled="true" />
+									</aon:div>
+
+									<aon:outputLabel for="Empresa_nrodocrep"
+										value="#{appBundle.aon_payroll_principales_empresa_numdoc}" />
+									<aon:inputText id="Empresa_nrodocrep" size="10" maxlength="10"
+										valueChangeListener="#{empresa.addExpression}" />
+
+									<aon:outputLabel for="Pais1_cdg"
+										value="#{appBundle.aon_payroll_principales_pais}" />
+									<aon:div styleClass="aon-lookup">
+										<aon:lookupInputText
+											id="Pais1_cdg" lookup="#{paisLookup}"
+											reRender="Pais1_description" value="#{empresa.pais1.cdg}"
+											size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton
+											id="Pais1_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_pais}"
+											selectReRender="Pais1_cdg,Pais1_description"
+											lookup="#{paisLookup}" minHeight="440"
+											property="#{empresa.pais1}">
+										</aon:lookupButton>
+										<aon:inputText
+											id="Pais1_description"
+											value="#{(empresa.pais1.descripcion!=null)?(empresa.pais1.descripcion):('')}"
+											size="60" disabled="true" />
+									</aon:div>
+
+								</aon:panelGrid>
+
+							</aon:div>
+							
+							<rich:spacer />
+
+							<aon:div id="datos4" styleClass="aon-scroll-area">
+								<aon:panelGrid columns="4" dir="true" width="100%" style="margin-bottom=2px;">
+
+									<aon:outputLabel for="Admon_cdg"
+										value="#{appBundle.aon_payroll_principales_empresa_admon}" />
+									<aon:div styleClass="aon-lookup">
+										<aon:lookupInputText
+											id="Admon_cdg" lookup="#{admonLookup}"
+											reRender="Admon_description" value="#{empresa.admon.cdg}"
+											size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton
+											id="Admon_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_empresa_admon}"
+											selectReRender="Admon_cdg,Admon_description"
+											lookup="#{admonLookup}" minHeight="440"
+											property="#{empresa.admon}">
+										</aon:lookupButton>
+										<aon:inputText
+											id="Admon_description"
+											value="#{(empresa.admon.description!=null)?(empresa.admon.description):('')}"
+											size="60" disabled="true" />
+									</aon:div>
+
+									<aon:outputLabel for="Tipempr_cdg"
+										value="#{appBundle.aon_payroll_principales_empresa_tipempr}" />
+									<aon:div styleClass="aon-lookup">
+										<aon:lookupInputText
+											id="Tipempr_cdg" lookup="#{empresarioLookup}"
+											reRender="Tipempr_description"
+											value="#{empresa.tipempr.cdg}" size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton
+											id="Tipempr_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_empresa_tipempr}"
+											selectReRender="Tipempr_cdg,Tipempr_description"
+											lookup="#{empresarioLookup}" minHeight="440"
+											property="#{empresa.tipempr}">
+										</aon:lookupButton>
+										<aon:inputText
+											id="Tipempr_description"
+											value="#{(empresa.tipempr.description!=null)?(empresa.tipempr.description):('')}"
+											size="60" disabled="true" />
+									</aon:div>
+
+									<aon:outputLabel for="Empresa_datreg"
+										value="#{appBundle.aon_payroll_principales_empresa_datreg}" />
+									<aon:inputText id="Empresa_datreg" size="40" maxlength="50" 
+										valueChangeListener="#{empresa.addExpression}"/>
+
+									<aon:outputLabel for="Empresa_sexo"
+										value="#{appBundle.aon_payroll_principales_empresa_genero}" />
+									<aon:selectOneRadio id="Empresa_sexo"
+										valueChangeListener="#{empresa.addExpression}" >
+										<aon:enumConverter enum="com.code.aon.payroll.enumeration.Sexo" />
+										<f:selectItems
+											value="#{empresa.listaSexo}" />
+									</aon:selectOneRadio>
+
+
+									<aon:outputLabel
+										value="#{appBundle.aon_payroll_principales_empresa_ini_rel}" />
+									<aon:selectInputDate value="#{empresa.fecini}"
+										renderAsPopup="true" enableManualInput="true"
+										popupDateFormat="#{bundle.aon_date_pattern}">
+									</aon:selectInputDate>
+									
+									<aon:outputLabel
+										value="#{appBundle.aon_payroll_principales_empresa_con_cliente}" />
+									<aon:selectInputDate value="#{empresa.cliente.fecini}" 
+										disabled="true"
+										popupDateFormat="#{bundle.aon_date_pattern}">
+									</aon:selectInputDate>
+									
+									<aon:outputLabel
+										value="#{appBundle.aon_payroll_principales_empresa_fin_rel}" />
+									<aon:selectInputDate value="#{empresa.fecfin}"
+										renderAsPopup="true" enableManualInput="true" 
+										popupDateFormat="#{bundle.aon_date_pattern}">
+									</aon:selectInputDate>
+									
+									<aon:outputLabel
+										value="#{appBundle.aon_payroll_principales_empresa_con_cliente}" />
+									<aon:selectInputDate value="#{empresa.cliente.fecfin}" 
+										disabled="true"
+										popupDateFormat="#{bundle.aon_date_pattern}">
+									</aon:selectInputDate>	
+<!--  
+									<aon:outputLabel for="Empresa_obsnif"
+										value="#{appBundle.aon_payroll_principales_empresa_obsnif}" />
+									<aon:inputTextarea id="Empresa_obsnif" cols="60" rows="5" size="1" 
+										valueChangeListener="#{empresa.addExpression}" />
+-->
+								</aon:panelGrid>
+							</aon:div>
+							
+							<rich:spacer />
+
+<!-- 
+-->
+							<aon:div id="datos5" styleClass="aon-scroll-area" style="text-align:left;">
+								<aon:panelGrid columns="5" dir="true" width="100%" 
+									style="margin-bottom=2px;text-align: top;"
+									columnClasses="none,none,none,none,none">
+
+									<aon:panel style="height: 100%">
+										<f:facet name="header">
+											<aon:outputText
+												value="#{appBundle.aon_payroll_principales_empresa_servicios}" />
+										</f:facet>
+										<aon:selectBooleanCheckbox id="Empresa_indcal"
+											valueChangeListener="#{empresa.addDirectExpression}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_principales_empresa_indcal}" />
+										<br />
+										<aon:selectBooleanCheckbox id="Empresa_indnom"
+											valueChangeListener="#{empresa.addDirectExpression}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_principales_empresa_indnom}" />
+										<br />
+										<aon:selectBooleanCheckbox id="Empresa_indcoste"
+											valueChangeListener="#{empresa.addDirectExpression}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_principales_empresa_indcoste}" />
+									</aon:panel>
+
+									<aon:panel>
+										<f:facet name="header">
+											<aon:outputLabel for="Empresa_indirpf"
+												value="#{appBundle.aon_payroll_principales_empresa_indirpf}" />
+										</f:facet>
+										<aon:selectOneRadio id="Empresa_indirpf"
+											layout="pageDirection" valueChangeListener="#{empresa.addExpression}">
+											<aon:enumConverter enum="com.code.aon.payroll.enumeration.IndicadorIrpf" />
+											<f:selectItems
+												value="#{empresa.listaIndicadoresIrpf}" />
+										</aon:selectOneRadio>
+									</aon:panel>
+
+
+									<aon:panel>
+										<f:facet name="header">
+											<aon:outputLabel for="Empresa_cecon"
+												value="#{appBundle.aon_payroll_principales_empresa_concierto}" />
+										</f:facet>
+										<aon:selectOneRadio id="Empresa_cecon"
+											layout="pageDirection" valueChangeListener="#{empresa.addExpression}">
+											<aon:enumConverter enum="com.code.aon.payroll.enumeration.ConciertoEconomico" />
+											<f:selectItems
+												value="#{empresa.listaConciertos}" />
+										</aon:selectOneRadio>
+									</aon:panel>
+
+									<aon:panel>
+										<f:facet name="header">
+											<aon:outputLabel for="Empresa_envioss"
+												value="#{appBundle.aon_payroll_principales_clientes_envioss}" />
+										</f:facet>
+										<aon:selectOneRadio id="Empresa_envioss"
+											layout="pageDirection" valueChangeListener="#{empresa.addExpression}">
+											<aon:enumConverter enum="com.code.aon.payroll.enumeration.EnvioSS" />
+											<f:selectItems
+												value="#{empresa.listaEnvioss}" />
+										</aon:selectOneRadio>
+									</aon:panel>
+
+									<aon:panel>
+										<f:facet name="header">
+											<aon:outputLabel for="Empresa_modimpuesto"
+												value="#{appBundle.aon_payroll_principales_empresa_impuestos}" />
+										</f:facet>
+										<aon:selectOneRadio id="Empresa_modimpuesto"
+											layout="pageDirection" valueChangeListener="#{empresa.addExpression}">
+											<aon:enumConverter enum="com.code.aon.payroll.enumeration.PagoImpuestos" />
+											<f:selectItems
+												value="#{empresa.listaPagoImpuestos}" />
+										</aon:selectOneRadio>
+									</aon:panel>
+
+								</aon:panelGrid>
+							</aon:div>
+						</aon:div>
+
+						</ui:define>
+					</ui:decorate>
+				</aon:form>
+
+				<aon:lookupButtonPopup lookup="#{clienteLookup}" />
+				<aon:lookupButtonPopup lookup="#{documentoLookup}" />
+				<aon:lookupButtonPopup lookup="#{divisaLookup}" />
+				<aon:lookupButtonPopup lookup="#{paisLookup}" />
+				<aon:lookupButtonPopup lookup="#{admonLookup}" />
+				<aon:lookupButtonPopup lookup="#{empresarioLookup}" />
+				
+
+			</ui:define>
+		</ui:composition>
+
+	</body>
+</html>

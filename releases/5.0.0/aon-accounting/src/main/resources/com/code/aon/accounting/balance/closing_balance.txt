@@ -1,0 +1,131 @@
+A0|ACTIVO||0|true|false|true|false|false
+A|A) ACTIVO NO CORRIENTE|A.I,A.II,A.III,A.IV,A.V,A.VI|1|true|false|true|false|false
+A.I|I. Inmovilizado intangible.|A.I.1,A.I.2,A.I.3,A.I.4,A.I.5,A.I.6|2|true|true|true|false|false
+A.I.1|1. Desarrollo.|201,(2801),(2901)|3|false|false|true|false|false
+A.I.2|2. Concesiones.|202,(2802),(2902)|4|false|false|true|false|false
+A.I.3|3. Patentes, licencias, marcas y similares.|203,(2803),(2903)|5|false|false|true|false|false
+A.I.4|4. Fondo de comercio.|204|6|false|false|true|false|false
+A.I.5|5. Aplicaciones informáticas.|206,(2806),(2906)|7|false|false|true|false|false
+A.I.6|6. Otro inmovilizado intangible.|205,209,(2805),(2905)|8|false|false|true|false|false
+A.II|II. Inmovilizado material.|A.II.1,A.II.2,A.II.3|9|true|true|true|false|false
+A.II.1|1. Terrenos y construcciones.|210,211,(2811),(2910),(2911)|10|false|false|true|false|false
+A.II.2|2. Instalaciones técnicas, y otro inmovilizado material.|212,213,214,215,216,217,218,219,(2812),(2813),(2814),(2815),(2816),(2817),(2818),(2819),(2912),(2913),(2914),(2915),(2916),(2917),(2918),(2919)|11|false|false|true|false|false
+A.II.3|3. Inmovilizado en curso y anticipos.|23|12|false|false|true|false|false
+A.III|III. Inversiones inmobiliarias.|A.III.1,A.III.2|13|true|true|true|false|false
+A.III.1|1. Terrenos.|220,(2920)|14|false|false|true|false|false
+A.III.2|2. Construcciones.|221,(282),(2921)|15|false|false|true|false|false
+A.IV|IV. Inversiones en empresas del grupo y asociadas a largo plazo.|A.IV.1,A.IV.2,A.IV.3,A.IV.4,A.IV.5|16|true|true|true|false|false
+A.IV.1|1. Instrumentos de patrimonio.|2403,2404,(2493),(2494),(293)|17|false|false|true|false|false
+A.IV.2|2. Créditos a empresas.|2423,2424,(2953),(2954)|18|false|false|true|false|false
+A.IV.3|3. Valores representativos de deuda.|2413,2414,(2943),(2944)|19|false|false|true|false|false
+A.IV.4|4. Derivados.||20|false|false|true|false|false
+A.IV.5|5. Otros activos financieros.||21|false|false|true|false|false
+A.V|V. Inversiones financieras a largo plazo.|A.V.1,A.V.2,A.V.3,A.V.4,A.V.5|22|true|true|true|false|false
+A.V.1|1. Instrumentos de patrimonio.|2405,(2495),250,(259)|23|false|false|true|false|false
+A.V.2|2. Créditos a terceros|2425,252,253,254,(2955),(298)|24|false|false|true|false|false
+A.V.3|3. Valores representativos de deuda|2415,251,(2945),(297)|25|false|false|true|false|false
+A.V.4|4. Derivados.|255|26|false|false|true|false|false
+A.V.5|5. Otros activos financieros.|258,26|27|false|false|true|false|false
+A.VI|VI. Activos por impuesto diferido.|474|28|false|false|true|false|false
+|||29|false|false|true|false|false
+B|B) ACTIVO CORRIENTE|B.I,B.II,B.III,B.IV,B.V,B.VI,B.VII|30|true|true|true|false|false
+B.I|I. Activos no corrientes mantenidos para la venta.|580,581,582,583,584,(599)|31|false|false|true|false|false
+B.II|II. Existencias.|B.II.1,B.II.2,B.II.3,B.II.4,B.II.5,B.II.6|32|true|true|true|false|false
+B.II.1|1. Comerciales.|30,(390)|33|false|false|true|false|false
+B.II.2|2. Materias primas y otros aprovisionamientos.|31,32,(391),(392)|34|false|false|true|false|false
+B.II.3|3. Productos en curso.|33,34,(393),(394)|35|false|false|true|false|false
+B.II.4|4. Productos terminados.|35,(395)|36|false|false|true|false|false
+B.II.5|5. Subproductos, residuos y materiales recuperados.|36,(396)|37|false|false|true|false|false
+B.II.6|6. Anticipos a proveedores|407|38|false|false|true|false|false
+B.III|III. Deudores comerciales y otras cuentas a cobrar.|B.III.1,B.III.2,B.III.3,B.III.4,B.III.5,B.III.6,B.III.7|39|true|true|true|false|false
+B.III.1|1. Clientes por ventas y prestaciones de servicios.|430,431,432,435,436,(437),(490),(4935)|40|false|false|true|false|false
+B.III.2|2. Clientes, empresas del grupo y asociadas.|433,434,(4933),(4934)|41|false|false|true|false|false
+B.III.3|3. Deudores varios.|44,5531,5533|42|false|false|true|false|false
+B.III.4|4. Personal.|460,544|43|false|false|true|false|false
+B.III.5|5. Activos por impuesto corriente.|4709,4703|44|false|false|true|false|false
+B.III.6|6. Otros créditos con las Administraciones Públicas.|4700,4708,471,472,473|45|false|false|true|false|false
+B.III.7|7. Accionistas (socios) por desembolsos exigidos|5580|46|false|false|true|false|false
+B.IV|IV. Inversiones en empresas del grupo y asociadas a corto plazo.|B.IV.1,B.IV.2,B.IV.3,B.IV.4,B.IV.5|47|true|true|true|false|false
+B.IV.1|1. Instrumentos de patrimonio.|5303,5304,(5393),(5394),(593)|48|false|false|true|false|false
+B.IV.2|2. Créditos a empresas.|5323,5324,5343,5344,(5953),(5954)|49|false|false|true|false|false
+B.IV.3|3. Valores representativos de deuda.|5313,5314,5333,5334,(5943),(5944)|50|false|false|true|false|false
+B.IV.4|4. Derivados.||51|false|false|true|false|false
+B.IV.5|5. Otros activos financieros.|5353,5354,5523,5524|52|false|false|true|false|false
+B.V|V. Inversiones financieras a corto plazo.|B.V.1,B.V.2,B.V.3,B.V.4,B.V.5|53|true|true|true|false|false
+B.V.1|1. Instrumentos de patrimonio.|5305,540,(5395),(549)|54|false|false|true|false|false
+B.V.2|2. Créditos a empresas|5325,5345,542,543,547,(5955),(598)|55|false|false|true|false|false
+B.V.3|3. Valores representativos de deuda.|5315,5335,541,546,(5945),(597)|56|false|false|true|false|false
+B.V.4|4. Derivados.|5590,5593|57|false|false|true|false|false
+B.V.5|5. Otros activos financieros.|5355,545,548,?551,5525,565,566|58|false|false|true|false|false
+B.VI|VI. Periodificaciones a corto plazo.|480,567|59|true|false|true|false|false
+B.VII|VII. Efectivo y otros activos líquidos equivalentes.|B.VII.1,B.VII.2|60|true|true|true|false|false
+B.VII.1|1. Tesorería.|570,571,572,573,574,575|61|false|false|true|false|false
+B.VII.2|2. Otros activos líquidos equivalentes.|576|62|false|false|true|false|false
+|||63|false|false|true|false|false
+AB|TOTAL ACTIVO (A + B)|A,B|64|true|true|true|false|false
+|||65|false|false|true|false|false
+|||66|false|false|true|false|false
+A0|PATRIMONIO NETO Y PASIVO||67|true|false|true|false|false
+|||68|false|false|true|false|true
+PA|A) PATRIMONIO NETO|PA.A-1,PA.A-2,PA.A-3|69|true|true|true|false|true
+PA.A-1|A-1) Fondos propios.|PA.A-1.I,PA.A-1.II,PA.A-1.III,PA.A-1.IV,PA.A-1.V,PA.A-1.VI,PA.A-1.VII,PA.A-1.VIII,PA.A-1.IX|70|true|true|true|false|true
+PA.A-1.I|I. Capital.|PA.A-1.I.1,PA.A-1.I.2|71|true|true|true|false|true
+PA.A-1.I.1|1. Capital escriturado.|100,101,102|72|false|false|true|false|true
+PA.A-1.I.2|2. (Capital no exigido).|(1030),(1040)|73|false|false|true|false|true
+PA.A-1.II|II. Prima de emisión.|110|74|true|false|true|false|true
+PA.A-1.III|III. Reservas.|PA.A-1.III.1,PA.A-1.III.2|75|true|true|true|false|true
+PA.A-1.III.1|1. Legal y estatutarias.|112,1141|76|false|false|true|false|true
+PA.A-1.III.2|2. Otras reservas.|113,1140,1142,1143,1144,115,119|77|false|false|true|false|true
+PA.A-1.IV|IV. (Acciones y participaciones en patrimonio propias).|(108),(109)|78|true|false|true|false|true
+PA.A-1.V|V. Resultados de ejercicios anteriores.|PA.A-1.V.1,PA.A-1.V.2|79|true|true|true|false|true
+PA.A-1.V.1|1. Remanente.|120|80|false|false|true|false|true
+PA.A-1.V.2|2. (Resultados negativos de ejercicios anteriores).|(121)|81|false|false|true|false|true
+PA.A-1.VI|VI. Otras aportaciones de socios.|118|82|true|false|true|false|true
+PA.A-1.VII|VII. Resultado del ejercicio.|129,6,7|83|true|false|true|false|true
+PA.A-1.VIII|VIII. (Dividendo a cuenta).|(557)|84|true|false|true|false|true
+PA.A-1.IX|IX. Otros instrumentos de patrimonio neto.|111|85|true|false|true|false|true
+PA.A-2|A-2) Ajustes por cambios de valor.|PA.A-2.I,PA.A-2.II,PA.A-2.III|86|true|true|true|false|true
+PA.A-2.I|I. Activos financieros disponibles para la venta.|133|87|false|false|true|false|true
+PA.A-2.II|II. Operaciones de cobertura.|1340|88|false|false|true|false|true
+PA.A-2.III|III. Otros.|137,139|89|false|false|true|false|true
+PA.A-3|A-3) Subvenciones, donaciones y legados recibidos.|130,131,132|90|true|false|true|false|true
+|||91|false|false|true|false|true
+PB|B) PASIVO NO CORRIENTE|PB.I,PB.II,PB.III,PB.IV,PB.V|92|true|true|true|false|true
+PB.I|I. Provisiones a largo plazo.|PB.I.1,PB.I.2,PB.I.3,PB.I.4|93|true|true|true|false|true
+PB.I.1|1. Obligaciones por prestaciones a largo plazo al personal.|140|94|false|false|true|false|true
+PB.I.2|2. Actuaciones medioambientales.|145|95|false|false|true|false|true
+PB.I.3|3. Provisiones por reestructuración.|146|96|false|false|true|false|true
+PB.I.4|4. Otras provisiones.|141,142,143,147|97|false|false|true|false|true
+PB.II|II Deudas a largo plazo.|PB.II.1,PB.II.2,PB.II.3,PB.II.4,PB.II.5|98|true|true|true|false|true
+PB.II.1|1. Obligaciones y otros valores negociables.|177,178,179|99|false|false|true|false|true
+PB.II.2|2. Deudas con entidades de crédito.|1605,170|100|false|false|true|false|true
+PB.II.3|3. Acreedores por arrendamiento financiero.|1625,174|101|false|false|true|false|true
+PB.II.4|4. Derivados.|176|102|false|false|true|false|true
+PB.II.5|5. Otros pasivos financieros.|1615,1635,171,172,173,175,180,185,189|103|false|false|true|false|true
+PB.III|III. Deudas con empresas del grupo y asociadas a largo plazo.|1603,1604,1613,1614,1623,1624,1633,1634|104|true|false|true|false|true
+PB.IV|IV. Pasivos por impuesto diferido.|479|105|true|false|true|false|true
+PB.V|V. Periodificaciones a largo plazo.|181|106|true|false|true|false|true
+|||107|false|false|true|false|true
+PC|C) PASIVO CORRIENTE|PC.I,PC.II,PC.III,PC.IV,PC.V,PC.VI|108|true|true|true|false|true
+PC.I|I. Pasivos vinculados con activos no corrientes mantenidos para la venta.|585,586,587,588,589|109|true|false|true|false|true
+PC.II|II. Provisiones a corto plazo.|499,529|110|true|false|true|false|true
+PC.III|III. Deudas a corto plazo.|PC.III.1,PC.III.2,PC.III.3,PC.III.4,PC.III.5|111|true|true|true|false|true
+PC.III.1|1. Obligaciones y otros valores negociables.|500,501,505,506|112|false|false|true|false|true
+PC.III.2|2. Deudas con entidades de crédito.|5105,520,527|113|false|false|true|false|true
+PC.III.3|3. Acreedores por arrendamiento financiero.|5125,524|114|false|false|true|false|true
+PC.III.4|4. Derivados.|5595,5598|115|false|false|true|false|true
+PC.III.5|5. Otros pasivos financieros.|(1034),(1044),(190),(192),194,509,5115,5135,5145,521,522,523,525,526,528,?551,5525,5530,5532,555,5565,5566,560,561,569|116|false|false|true|false|true
+PC.IV|IV. Deudas con empresas del grupo y asociadas a corto plazo.|5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5523,5524,5563,5564|117|true|false|true|false|true
+PC.V|V. Acreedores comerciales y otras cuentas a pagar.|PC.V.1,PC.V.2,PC.V.3,PC.V.4,PC.V.5,PC.V.6,PC.V.7|118|true|true|true|false|true
+PC.V.1|1. Proveedores|400,401,405,(406)|119|false|false|true|false|true
+PC.V.2|2. Proveedores, empresas del grupo y asociadas.|403,404|120|false|false|true|false|true
+PC.V.3|3. Acreedores varios.|41|121|false|false|true|false|true
+PC.V.4|4. Personal (remuneraciones pendientes de pago).|465,466|122|false|false|true|false|true
+PC.V.5|5. Pasivos por impuesto corriente.|4752|123|false|false|true|false|true
+PC.V.6|6. Otras deudas con las Administraciones Públicas.|4750,4751,4758,476,477|124|false|false|true|false|true
+PC.V.7|7. Anticipos de clientes.|438|125|false|false|true|false|true
+PC.VI|VI. Periodificaciones a corto plazo.|485,568|126|true|false|true|false|true
+|||127|false|false|true|false|true
+PABC|TOTAL PATRIMONIO NETO Y PASIVO (A + B + C)|PA,PB,PC|128|true|true|true|false|true
+|||129|false|false|true|false|true
+DIF|DIFERENCIA (ACTIVO-PATRIMONIO NETO Y PASIVO)|AB,(PABC)|130|true|true|true|true|false

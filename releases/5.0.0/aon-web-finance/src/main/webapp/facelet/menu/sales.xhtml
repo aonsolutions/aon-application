@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="salesMenu">
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+					<aon:panelGrid id="group_sales_sales"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-sales aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.menu_sales}" />
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<c:if test="#{aonRole.productOperator}">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="salesItem" 
+										action="item_search-Sales" actionListener="#{item.onEditSearch}"
+										value="#{productBundle.product_module}" />
+								</aon:div>
+							</c:if>
+							<c:if test="#{aonRole.financeOperator}">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="customer"
+										action="customer_search" actionListener="#{customer.onEditSearch}"
+										value="#{customerBundle.customer_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="saleInvoiceManagement"
+										action="saleInvoice_search" actionListener="#{saleInvoice.onEditSearch}"
+										value="#{financeBundle.finance_sale_invoice_management_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_finance_charge" 
+										action="finance_search-Charge" actionListener="#{finance.onEditSearchCharge}"
+										value="#{financeBundle.finance_charge_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_fbatch" action="fbatch_search"
+										actionListener="#{fbatch.onEditSearch}"
+										value="#{financeBundle.finance_fbatch_module}" />
+								</aon:div>
+							</c:if>
+						</aon:div>
+					</aon:panelGrid>
+
+					<ui:include src="/facelet/menu/general.xhtml" >
+						<ui:param name="category" value="sales" />
+					</ui:include>
+
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

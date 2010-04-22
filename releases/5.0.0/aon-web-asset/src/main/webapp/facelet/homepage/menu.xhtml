@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:form>
+		<aon:menuBar id="mainMenu">
+			<aon:commandLink value="#{assetBundle.asset_reservation_main}"
+				styleClass="aon-top-menu-item aon-icon-query" immediate="true" 
+				action="activityReservation_form" >
+				<aon:actionListener method="#{assetCalendar.onInitialize}" />
+				<aon:actionListener method="#{activityDialog.onInitializeRequest}" />
+			</aon:commandLink>
+			<aon:div styleClass="aon-sidebarIcons-icon " renderedOnUserRole="Administrador">
+				<h:commandLink value="#{assetBundle.asset_asset_main}"
+					styleClass="aon-top-menu-item aon-icon-asset" immediate="true" 
+					action="asset_list"
+					renderedOnUserRole="DocumentsVisible" />
+			</aon:div>
+			<aon:div styleClass="aon-sidebarIcons-icon">
+				<h:commandLink value="#{assetBundle.asset_activity_main}"
+					styleClass="aon-top-menu-item aon-icon-reservation" immediate="true" 
+					action="activityDialog_grid" 
+					renderedOnUserRole="DocumentsVisible" >
+					<aon:actionListener method="#{activityDialog.onInitialize}" />
+					<aon:actionListener method="#{activityBasic.initializePendingList}" />
+				</h:commandLink>
+			</aon:div>
+			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
+				<h:commandLink value="#{assetBundle.asset_statistic_main}"
+					styleClass="aon-top-menu-item aon-icon-statistics" immediate="true" 
+					actionListener="#{assetCollections.onInitialize}"
+					action="stat_form" />
+			</aon:div>
+	
+		</aon:menuBar>
+	</aon:form>
+</ui:composition>

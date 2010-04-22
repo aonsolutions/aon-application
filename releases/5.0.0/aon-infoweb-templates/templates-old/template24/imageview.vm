@@ -1,0 +1,38 @@
+<div id="content">
+
+<!-- imagen de un album -->
+<!--<h1 class="cabecera4">$image.getDescription()</h1>-->
+
+<p align="center"><a href="$return" class="bold">&laquo; VOLVER</a></p>
+	
+<div class="album-block">
+	<div class="column2">
+		<div style="text-align:center">
+			<img style="width:281px; height:210px;" src="images/$image.getName()" class="img-gallery" alt="$image.getDescription()" border="0" />		 
+		</div>
+	</div>
+		
+	<div class="column1">
+		<div class="box-margin">
+			<p>$image.getDescription()</p>
+		</div>
+	</div>
+</div>
+
+<div class="gallery-navigation">	
+<table width="50%" border="0" align="center">
+  <tr>
+    <td>
+		#if ($previous)
+			<div class="float-left"><a href="$previous">&laquo; ANTERIOR</a></div>
+		#end
+	</td>
+    <td>
+		#if ($next)
+			<div class="float-right"><a href="$next">SIGUIENTE &raquo;</a></div>
+		#end
+	</td>
+  </tr>
+</table>
+</div>
+</div>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<digester-rules>
+
+	<object-create-rule pattern="*/balances"
+		classname="com.code.aon.ui.accounting.controller.BalanceImporterManager" />
+
+	<pattern value="*/balances/balance">
+		<object-create-rule classname="com.code.aon.accounting.Balance" />
+		<call-method-rule pattern="id" methodname="setId" paramcount="0" paramtypes="java.lang.Integer"/>
+		<call-method-rule pattern="name" methodname="setName" paramcount="0" />
+		<call-method-rule pattern="removable" methodname="setRemovable" paramcount="0" paramtypes="java.lang.Boolean"/>
+		<call-method-rule pattern="type" methodname="setStringType" paramcount="0" />
+		
+		<set-next-rule methodname="addBalance" />
+	</pattern>
+	
+	<pattern value="*/balance/details/detail">
+		<object-create-rule classname="com.code.aon.accounting.BalanceDetail" />
+		<call-method-rule pattern="id" methodname="setId" paramcount="0" paramtypes="java.lang.Integer"/>
+		<call-method-rule pattern="code" methodname="setCode" paramcount="0" />
+		<call-method-rule pattern="description" methodname="setDescription" paramcount="0" />
+		<call-method-rule pattern="accounts" methodname="setAccounts" paramcount="0" />
+		<call-method-rule pattern="sortKey" methodname="setSortKey" paramcount="0" paramtypes="java.lang.Integer"/>
+		<call-method-rule pattern="title" methodname="setTitle" paramcount="0" paramtypes="java.lang.Boolean"/>
+		<call-method-rule pattern="internalCalculation" methodname="setInternalCalculation" paramcount="0" paramtypes="java.lang.Boolean"/>
+		<call-method-rule pattern="visible" methodname="setVisible" paramcount="0" paramtypes="java.lang.Boolean"/>
+		<call-method-rule pattern="zeroFlag" methodname="setZeroFlag" paramcount="0" paramtypes="java.lang.Boolean"/>
+		<call-method-rule pattern="creditNature" methodname="setCreditNature" paramcount="0" paramtypes="java.lang.Boolean"/>
+
+		<set-next-rule methodname="addBalanceDetail" />
+	</pattern>
+</digester-rules>
+

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+	
+	<aon:form id="avisoSearch">
+	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_act_ccos}" />
+				<ui:param name="controller" value="#{emprccos}"/>
+				<ui:param name="skipResetButton" value="true" />
+				
+			</ui:include>	
+      
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{emprccos.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="emprccos_list" />	
+			
+			
+			   <aon:div id="datos2" styleClass="aon-scroll-area">		
+				<aon:div>
+							<aon:panelGrid columns="2" dir="true" width="100%"
+								style="margin-bottom=2px;">
+
+
+
+
+								<aon:outputLabel for="Emprccos_cdg"
+									value="#{appBundle.aon_payroll_cdg}" />
+
+								<aon:inputText id="Emprccos_cdg" disabled="true"
+									valueChangeListener="#{emprccos.addExpression}" size="50" />
+
+								<aon:outputLabel for="Actividad_cdg"
+									value="#{appBundle.aon_payroll_description}" />
+
+								<aon:inputText id="Emprccos_descripcion"
+									valueChangeListener="#{emprccos.addExpression}" size="50" />
+
+							</aon:panelGrid>
+						</aon:div> 
+	          </aon:div> 
+	         
+		 </ui:define>
+			</ui:decorate>
+		
+		</aon:form>
+       <aon:lookupButtonPopup lookup="#{clienteLookup}" />	
+		
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

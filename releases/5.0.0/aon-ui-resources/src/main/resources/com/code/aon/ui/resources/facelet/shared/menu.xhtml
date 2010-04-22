@@ -1,0 +1,44 @@
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+		<aon:form>
+			<aon:menuBar id="mainMenu">
+				<ui:insert name="beforeMenuContent"/>
+				<aon:componentGroup
+					family="javax.faces.Command"
+					method="#{selectedMenu.updateCommands}">	
+					<ui:insert name="menuContent"/>
+				</aon:componentGroup>		
+				<ui:insert name="afterMenuContent"/>		
+				<rich:toolBarGroup style="padding-right: 6px;padding-left: 6px"
+					location="right" itemSeparator="line">
+					<ui:insert name="beforeRightMenuContent"/>
+					<h:outputLink target="_top"
+						title="#{bundle.aon_home}"
+						styleClass="aon-icon-home"
+						value="${facesContext.externalContext.requestContextPath}">
+						<h:outputText value="&#160;" />
+					</h:outputLink>			
+					<aon:dropDownMenu>
+		                <f:facet name="label"> 
+	                        <aon:graphicImage title="#{bundle.aon_help}"
+	                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
+		                </f:facet>			
+		                <ui:insert name="beforeHelpMenuContent"/>			
+						<aon:menuItem id="about" reRender="aboutWindowPanel"
+							value="#{bundle.aon_about}" >
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />
+						</aon:menuItem>
+					</aon:dropDownMenu>						
+				</rich:toolBarGroup>	 		
+	 		</aon:menuBar>
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/about.xhtml" />
+	</c:if>
+ </ui:composition>

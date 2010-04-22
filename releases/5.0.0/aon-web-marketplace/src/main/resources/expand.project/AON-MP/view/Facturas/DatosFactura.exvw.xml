@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Datos de una Factura" label="Datos de una Factura" sqlSentence="SELECT CONCAT(series,&quot;/&quot;,number),  issue_date, &#xd;&#xa;CASE status&#xd;&#xa;&#x9;WHEN 0 THEN 'Pendiente'&#xd;&#xa;&#x9;WHEN 1 THEN 'Contabilizada'&#xd;&#xa;END&#xd;&#xa;FROM invoice&#xd;&#xa;WHERE id = ?&#xd;&#xa;">
+    <parameters>
+        <parameter columnReference="data/invoice.exdm.xml/id" label=""
+            name="id" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="serie_numero"
+            columnId="CONCAT(series,&quot;/&quot;,number)"
+            label="SERIE/NUMERO" type="STRING"/>
+        <result accessName="issue_date" columnId="issue_date"
+            columnReference="data/invoice.exdm.xml/issue_date"
+            label="FECHA" tableId="invoice" type="DATE"/>
+        <result accessName="estado"
+            columnId="CASE status&#xd;&#xa;&#x9;WHEN 0 THEN 'Pendiente'&#xd;&#xa;&#x9;WHEN 1 THEN 'Contabilizada'&#xd;&#xa;END"
+            label="ESTADO" type="STRING"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/invoice.exdm.xml"/>
+    </dataModelReferences>
+</view>

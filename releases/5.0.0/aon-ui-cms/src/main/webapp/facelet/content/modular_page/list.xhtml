@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="modular_pageList">
+			
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.modular_page}" />					
+				</aon:div>		
+			
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="modular_page_form" actionListener="#{modular_page.onReset}"
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_new}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!modular_page.checklistEmpty}" inmediate="true"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{modular_page.onRemoveSelected}" confirmAction="modular_page_list"
+							styleClass="aon-content-toolbar-item aon-icon-delete"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_remove}"/>
+					</aon:div>
+				</aon:div>
+			<!-- end toolbar navigation -->
+			</aon:panelGrid> 
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">	
+				
+					<aon:div styleClass="aon-content-subTitle">
+						<aon:div styleClass="aon-content-subTitle-internal">
+							<aon:outputText value="Listado registros" />
+						</aon:div>
+					</aon:div>
+
+					<aon:dataTable id="modular_pageDataList" columnWidths="120,30,*,100" 
+						value="#{modular_page.model}" var="to" rows="20"
+						styleClass="aon-dataTable"
+						rowClasses="aon-dataTable-odd, aon-dataTable-even"
+						columnClasses="aon-table-body aon-table-body-icon,
+						 	aon-table-body aon-table-body-number,
+						 	aon-table-body aon-table-body-string,
+						 	aon-table-body aon-table-body-icon">
+
+						<aon:column>
+							<aon:rowSelector selectionListener="#{modular_page.onSelect}" toggleOnClick="true"/>
+							<f:facet name="header">
+								<aon:div>
+									<aon:outputText value="#{bundle.aon_check}" />
+									<aon:div>
+										<aon:commandLink id="all" value="#{bundle.aon_check_all}" 
+										styleClass="aon-table-header-link-secundary"
+										onclick="selectAll();return false;" />
+										<aon:commandLink id="none" value="#{bundle.aon_uncheck_all}"
+										styleClass="aon-table-header-link-secundary"
+										onclick="unSelectAll();return false;" />
+										<aon:commandLink id="inverse" value="#{bundle.aon_inverse_all}"
+										styleClass="aon-table-header-link-secundary"
+										onclick="inverseAll();return false;" />
+									</aon:div>										
+								</aon:div>	
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
+									value="#{modular_page.rowChecked}" partialSubmit="true" 
+									rendered="#{!to.homepage}"
+									valueChangeListener="#{modular_page.onChecked}"/>
+							<aon:graphicImage id="Modular_page_selected_blocked" rendered="#{to.homepage}"
+								url="/images/cms/blocked.gif" alt="#{appBundle.modular_page_homepage_blocked}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Modular_page_alias" value="#{appBundle.modular_page_alias}" />
+							</f:facet>
+							<aon:outputText id="Modular_page_alias" value="#{to.alias}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Modular_page_homepage" value="#{appBundle.modular_page_homepage}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Modular_page_homepage" forceId="#{true}"
+									value="#{to.homepage}" partialSubmit="true"
+									rendered="#{!to.homepage}"
+									valueChangeListener="#{modular_page.defaultHomepageChanged}"/>
+							<aon:graphicImage id="Menu_default_blocked" rendered="#{to.homepage}"
+								url="/images/cms/selected.gif" alt="#{appBundle.modular_page_homepage_blocked}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.modular_page_active}" />
+							</f:facet>
+							<aon:div rendered="#{!to.homepage}">
+								<aon:commandLink title="#{appBundle.modular_page_activate}" 
+									actionListener="#{modular_page.onActivate}" 
+									rendered="#{!to.active}">
+									<aon:graphicImage id="modular_page_active" 
+										alt="#{appBundle.modular_page_activate}"
+										url="/images/cms/inactive.png" />
+								</aon:commandLink>
+								<aon:commandLink title="#{appBundle.modular_page_deactivate}" 
+									actionListener="#{modular_page.onDeactivate}" 
+									rendered="#{to.active}">
+									<aon:graphicImage id="modular_page_deactive" 
+										alt="#{appBundle.modular_page_deactivate}"
+										url="/images/cms/active.png" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div rendered="#{to.homepage}">
+								<aon:graphicImage rendered="#{to.homepage}"
+									url="/images/cms/selected.gif" 
+									alt="#{appBundle.modular_page_homepage_blocked}"/>
+							</aon:div>
+						</aon:column>
+							
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Modular_page_options" value="#{appBundle.modular_page_option}" />
+							</f:facet>
+								<aon:commandLink title="#{appBundle.modular_page_option}" action="modular_page_option_list"
+									actionListener="#{modular_page.onSelectOptions}">
+									<aon:graphicImage id="Modular_pageOption_options" alt="#{appBundle.modular_page_option}"
+										url="/images/cms/content.gif" />
+								</aon:commandLink>
+						</aon:column>
+
+					</aon:dataTable>
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

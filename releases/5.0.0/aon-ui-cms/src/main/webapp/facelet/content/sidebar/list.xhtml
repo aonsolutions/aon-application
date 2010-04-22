@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="sidebarList">
+			
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.sidebar}" />					
+				</aon:div>		
+			
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="sidebar_form" actionListener="#{sidebar.onReset}"
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_new}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!sidebar.checklistEmpty}" inmediate="true"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{sidebar.onRemoveSelected}" confirmAction="sidebar_list"
+							styleClass="aon-content-toolbar-item aon-icon-delete"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_remove}"/>
+					</aon:div>
+				</aon:div>
+			<!-- end toolbar navigation -->
+			</aon:panelGrid> 
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">	
+				
+					<aon:div styleClass="aon-content-subTitle">
+						<aon:div styleClass="aon-content-subTitle-internal">
+							<aon:outputText value="Listado registros" />
+						</aon:div>
+					</aon:div>
+
+					<aon:dataTable id="sidebarDataList" columnWidths="120,30,*,100" 
+						value="#{sidebar.model}" var="to" rows="0"
+						styleClass="aon-dataTable"
+						rowClasses="aon-dataTable-odd, aon-dataTable-even"
+						columnClasses="aon-table-body aon-table-body-icon,
+						 	aon-table-body aon-table-body-number,
+						 	aon-table-body aon-table-body-string,
+						 	aon-table-body aon-table-body-icon">
+
+						<aon:column>
+							<aon:rowSelector selectionListener="#{sidebar.onSelect}" toggleOnClick="true"/>
+							<f:facet name="header">
+								<aon:div>
+									<aon:outputText value="#{bundle.aon_check}" />
+									<aon:div>
+										<aon:commandLink id="all" value="#{bundle.aon_check_all}" 
+										styleClass="aon-table-header-link-secundary"
+										onclick="selectAll();return false;" />
+										<aon:commandLink id="none" value="#{bundle.aon_uncheck_all}"
+										styleClass="aon-table-header-link-secundary"
+										onclick="unSelectAll();return false;" />
+										<aon:commandLink id="inverse" value="#{bundle.aon_inverse_all}"
+										styleClass="aon-table-header-link-secundary"
+										onclick="inverseAll();return false;" />
+									</aon:div>										
+								</aon:div>	
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
+								value="#{sidebar.rowChecked}" partialSubmit="true" 
+								rendered="#{!to.default_}"
+								valueChangeListener="#{sidebar.onChecked}"/>
+							<aon:graphicImage id="selected_blocked" 
+								rendered="#{to.default_}"
+								url="/images/cms/blocked.gif" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Sidebar_id" value="#{appBundle.sidebar_id}" />
+							</f:facet>
+							<aon:outputText id="Sidebar_id" value="#{to.id}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Sidebar_alias" value="#{appBundle.sidebar_alias}" />
+							</f:facet>
+							<aon:outputText id="Sidebar_alias" value="#{to.alias}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_defaultMenu}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox forceId="#{true}"
+									value="#{to.default_}" partialSubmit="true"
+									rendered="#{!to.default_}"
+									valueChangeListener="#{sidebar.defaultChanged}"/>
+							<aon:graphicImage  
+								rendered="#{to.default_}"
+								url="/images/cms/selected.gif" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText for="Sidebar_options" value="#{appBundle.sidebar_option}" />
+							</f:facet>
+								<aon:commandLink title="#{appBundle.sidebar_option}" action="sidebar_option_list"
+									actionListener="#{sidebar.onSelectOptions}">
+									<aon:graphicImage id="SidebarOption_options" alt="#{appBundle.sidebar_option}"
+										url="/images/cms/content.gif" />
+								</aon:commandLink>
+						</aon:column>
+
+					</aon:dataTable>
+
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="sidebarDataList" />
+							<ui:param name="model" value="#{sidebar.model}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+						
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

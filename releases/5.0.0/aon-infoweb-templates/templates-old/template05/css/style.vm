@@ -1,0 +1,134 @@
+body{
+    font-family:${font_fuente};
+    font-size:${size_tamano_de_fuente};
+    background-color:${bgcolor_color_de_fondo};
+    color:${color_color_de_texto};
+    text-align:center;
+    margin:0 auto;
+	width:750px;
+}
+td{vertical-align:top;}
+.canvas{
+    width:740px;
+    text-align:left;
+}
+a, img, a:hover, a:visited{
+	text-decoration:none;
+	border:none;
+	color:${color_color_de_texto_contenido};
+	}
+
+.header{
+    padding:1em 3em 0 3em;
+	text-align:right;
+}
+.menu{
+    margin-top:-75px;
+	color:#000000;
+}
+.menu ul li {
+    padding-right:10px;
+    font-weight:bold;
+}
+.menu ul li a{
+    color:${color_color_de_texto};
+    text-decoration:none;
+    font-size:${size_tamano_de_fuente_menu};
+	
+font-weight:bold;
+
+
+padding-right:10px;
+}
+.content{
+    
+    color:${color_color_de_texto_contenido};
+    background:${bgcolor_color_de_fondo} url(images/border-top.gif) left top repeat-x;
+    padding-top:6px;
+    background:${bgcolor_color_de_fondo} url(images/border-bottom.gif) left top repeat-x;
+    padding-bottom:6px;
+    border-left:${color_color_borde} ${border_tamano_bordes} solid;
+    border-right:${color_color_borde} ${border_tamano_bordes} solid;
+}
+.content-internal{
+    padding:15px;
+    border:${bgcolor_color_de_fondo} 15px solid;
+    background-color:#000;
+}
+
+.titular{
+    font-size:16px;
+    font-weight:bold;
+}
+.img-border{
+    border:#fff 1px solid;
+}
+
+.foot{
+   
+    
+    color:${color_color_de_texto_pie};
+	
+	
+}
+.box{
+	
+	
+	float:left;
+	margin-left:35px;
+	padding-top:25px;
+	text-align:center;
+	}
+.texto{
+	text-align:right;
+	font-size:11px;
+	background-color:${bgcolor_color_de_fondo_pie};
+	background-color:#E55302;
+
+height:20px;
+
+width:740px;
+	}
+.infoHelp{
+	background-color:#DDDDDD;
+font-size:9px;
+margin-left:354px;
+margin-top:10px;
+padding:15px;
+text-align:justify;
+width:293px;
+	}
+.gallery-navigation{
+	text-align:center;}
+.album-block{ 
+	text-align:center;}
+.formulario{
+	margin-left:45px;
+	float: left;
+	margin-top:27px;
+	}
+.album_box{
+	text-align:center; 
+	padding-top:10px;
+	}
+	.content-img {
+
+}
+.copiesferalia {
+	font-family: ${font_fuente} ;
+	font-size:9px;
+	color:${color_texto};
+	text-decoration:none;
+	}
+.copiesferalia a{
+	font-family: ${font_fuente} ;
+	font-size:9px;
+	color:${color_texto};
+	text-decoration:none;
+	}
+.copiesferalia a:hover{
+	font-family: ${font_fuente} ;
+	font-size: 9px;
+	color:${color_texto};
+	text-decoration:underline;
+	}

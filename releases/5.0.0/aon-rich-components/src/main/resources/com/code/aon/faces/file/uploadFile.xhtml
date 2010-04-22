@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition>
+
+		<rich:modalPanel id="uploadFileModalPanel" height="180" width="450">
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="#{richBundle.aon_file_upload}" />
+				</aon:div>
+			</f:facet>
+			<f:facet name="controls">
+				<aon:form>
+					<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+						immediate="true" reRender="aonStatus">
+						<rich:componentControl for="uploadFileModalPanel" operation="hide"
+							event="onclick" />
+					</aon:commandButton>
+				</aon:form>
+			</f:facet>
+
+			<aon:form id="uploadFileForm">
+				<aon:fileUpload id="file_upload"
+					listHeight="140px"
+					fileUploadListener="#{fileManager.fileUploaded}">							
+					<f:facet name="label">
+						<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+					</f:facet>
+					<a4j:support event="onuploadcomplete" reRender="file_upload,fileManagerList"
+						oncomplete="Richfaces.hideModalPanel('uploadFileModalPanel');" />
+				</aon:fileUpload>
+			</aon:form>	
+		</rich:modalPanel>
+
+</ui:composition>
+
+</body>
+</html>

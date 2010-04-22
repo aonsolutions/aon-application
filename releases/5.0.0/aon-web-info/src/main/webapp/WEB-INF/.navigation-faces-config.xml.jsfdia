@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS ENTITY="JSFProcess">
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:" SHAPE="32,17,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::0" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="company::#facelet#company#form.jsf" NAME="output"
+    PATH="/facelet/company/form.jsf"
+    TARGET="rules:#facelet#company#form.jsf" TITLE="company"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup"
+  NAME="rules:#facelet#company#form.jsf"
+  PATH="/facelet/company/form.jsf" SHAPE="240,33,0,0"/>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules::1" SHAPE="32,129,0,0">
+  <PROCESS-ITEM ENTITY="JSFProcessItem" ID="rules::1" NAME="item">
+   <PROCESS-ITEM-OUTPUT ENTITY="JSFProcessItemOutput"
+    ID="logout::#home.jsf" NAME="output" PATH="/home.jsf"
+    TARGET="rules:#home.jsf" TITLE="logout"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM ENTITY="JSFProcessGroup" NAME="rules:#home.jsf"
+  PATH="/home.jsf" SHAPE="240,145,0,0"/>
+</PROCESS>

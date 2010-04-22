@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="processForm">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_process}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{process.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>
+
+					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="save" value="#{bundle.aon_save}"
+							actionListener="#{process.accept}"
+							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							disabled="#{processDetail.to != null}"
+							accesskey="#{bundle.aon_key_save}" />
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							immediate="true" action="process_list"
+							actionListener="#{process.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="true" action="process_search"
+							actionListener="#{process.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							disabled="#{processDetail.to != null}"
+							accesskey="#{bundle.aon_key_search}" />
+						<h:commandButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!process.new}" immediate="true" action="process_list"
+							actionListener="#{process.onRemove}"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							disabled="#{processDetail.to != null}"
+							accesskey="#{bundle.aon_key_remove}" />
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							rendered="#{!process.new}" action="process_form"
+							actionListener="#{process.onReset}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							disabled="#{processDetail.to != null}"
+							accesskey="#{bundle.aon_key_new}" />
+						<h:commandButton id="launch"
+							value="#{campaignBundle.process_wizard}" immediate="true"
+							rendered="#{!process.new}" action="#{processWizard.start}"
+							styleClass="aon-finding-toolbar-item aon-icon-launch-process" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div id="fieldContainer" styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true" style="width: 90%;">
+					<aon:outputLabel for="Process_description"
+						value="#{campaignBundle.aon_description}" />
+					<aon:inputText id="Process_description"
+						value="#{process.to.description}" size="70" maxlength="64">
+						<f:validateLength maximum="64" />
+					</aon:inputText>
+				</aon:panelGrid>
+				<aon:div styleClass="aon-form-group" rendered="#{!process.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:outputLabel for="ProcessDetailDataList"
+							value="#{campaignBundle.process_actions}" />
+					</aon:div>
+
+					<aon:div id="detailContainer" styleClass="aon-form-group-body">
+						<aon:editDataTable id="detailDataList" var="to"
+							value="#{processDetail.model}" rows="20">
+
+							<aon:column styleClass="aon-editDataTable-iconColumn">
+								<f:facet name="header">
+									<h:outputText value="&#160;" />
+								</f:facet>
+								<aon:commandButton focus="desc_edit" immediate="true"
+									styleClass="aon-icon-commandButton aon-icon-rowSelector"
+									actionListener="#{processDetailTransition.onCancel}">
+									<aon:actionListener method="#{processDetail.onSelect}" />
+								</aon:commandButton>
+								<f:facet name="footer">
+									<aon:div>
+										<aon:commandButton value="" focus="desc_new"
+											styleClass="aon-editDataTable-button aon-icon-new"
+											actionListener="#{processDetail.onReset}"
+											rendered="#{!processDetail.new}"
+											accesskey="#{bundle.aon_key_new_line}">
+											<aon:actionListener
+												method="#{processDetailTransition.onCancel}" />
+										</aon:commandButton>
+										<h:outputText rendered="#{processDetail.new}" value="&#160;" />
+									</aon:div>
+								</f:facet>
+							</aon:column>
+							<aon:column styleClass="aon-editDataTable-iconColumn">
+								<f:facet name="header">
+									<h:outputText value="&#160;" />
+								</f:facet>
+								<aon:div styleClass="aon-nowrap">
+									<aon:graphicImage url="/css/images/icons/aon-arrow-up.gif"
+										style="cursor:pointer" rendered="#{to.position != 0}">
+										<a4j:support event="onclick"
+											actionListener="#{processDetail.onMoveUp}"
+											reRender="detailDataList" />
+									</aon:graphicImage>
+
+									<aon:graphicImage url="/css/images/icons/aon-arrow-down.gif"
+										style="cursor:pointer"
+										rendered="#{to.position &lt; (processDetail.model.rowCount-1)}">
+										<a4j:support event="onclick"
+											actionListener="#{processDetail.onMoveDown}"
+											reRender="detailDataList" />
+									</aon:graphicImage>
+								</aon:div>
+								<f:facet name="footer">
+									<h:outputText value="&#160;" />
+								</f:facet>
+							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{campaignBundle.aon_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.description}"
+									rendered="#{to!=processDetail.to}" />
+								<aon:inputText id="desc_edit"
+									value="#{processDetail.to.description}"
+									styleClass="aon-form-input-text"
+									rendered="#{to==processDetail.to}" required="true"
+									maxlength="64" size="30" />
+								<f:facet name="footer">
+									<aon:div>
+										<aon:inputText id="desc_new"
+											value="#{processDetail.to.description}"
+											styleClass="aon-form-input-text"
+											rendered="#{processDetail.new}" required="true"
+											maxlength="64" size="30" />
+									</aon:div>
+								</f:facet>
+							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<h:outputText value="#{campaignBundle.process_reference}" />
+								</f:facet>
+								<aon:outputText value="#{to.dateReference}"
+									rendered="#{to!=processDetail.to}" />
+								<h:selectOneMenu value="#{processDetail.to.dateReference}"
+									styleClass="aon-form-selectOneMenu-field"
+									rendered="#{to==processDetail.to}">
+									<f:selectItems value="#{campaignCollections.dateReferences}" />
+								</h:selectOneMenu>
+								<f:facet name="footer">
+									<aon:div>
+										<h:selectOneMenu value="#{processDetail.to.dateReference}"
+											styleClass="aon-form-selectOneMenu-field"
+											rendered="#{processDetail.new}">
+											<f:selectItems value="#{campaignCollections.dateReferences}" />
+										</h:selectOneMenu>
+									</aon:div>
+								</f:facet>
+							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{campaignBundle.process_days}" />
+								</f:facet>
+								<aon:outputText value="#{to.days}"
+									rendered="#{to!=processDetail.to}" />
+								<aon:inputText value="#{processDetail.to.days}"
+									styleClass="aon-form-input-text"
+									rendered="#{to==processDetail.to}" required="true"
+									maxlength="5" size="8" />
+								<f:facet name="footer">
+									<aon:div>
+										<aon:inputText value="#{processDetail.to.days}"
+											styleClass="aon-form-input-text"
+											rendered="#{processDetail.new}" required="true" maxlength="5"
+											size="8" />
+									</aon:div>
+								</f:facet>
+							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText
+										value="#{campaignBundle.process_alert_beforehand}" />
+								</f:facet>
+								<aon:outputText value="#{to.alertDays}"
+									rendered="#{to!=processDetail.to}" />
+								<aon:inputText value="#{processDetail.to.alertDays}"
+									styleClass="aon-form-input-text"
+									rendered="#{to==processDetail.to}" required="true"
+									maxlength="5" size="8" />
+								<f:facet name="footer">
+									<aon:div>
+										<aon:inputText value="#{processDetail.to.alertDays}"
+											styleClass="aon-form-input-text"
+											rendered="#{processDetail.new}" required="true" maxlength="5"
+											size="8" />
+									</aon:div>
+								</f:facet>
+							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<h:outputText value="#{campaignBundle.aon_work_group}" />
+								</f:facet>
+								<aon:outputText value="#{to.workgroup.description}"
+									rendered="#{to!=processDetail.to}" />
+								<h:selectOneMenu value="#{processDetail.to.workgroup.id}"
+									styleClass="aon-form-selectOneMenu-field"
+									valueChangeListener="#{processDetail.onWorkGroupChanged}"
+									rendered="#{to==processDetail.to}">
+									<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+									<f:selectItems value="#{configCollections.workgroups}" />
+								</h:selectOneMenu>
+								<f:facet name="footer">
+									<aon:div>
+										<h:selectOneMenu value="#{processDetail.to.workgroup.id}"
+											styleClass="aon-form-selectOneMenu-field"
+											valueChangeListener="#{processDetail.onWorkGroupChanged}"
+											rendered="#{processDetail.new}">
+											<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+											<f:selectItems value="#{configCollections.workgroups}" />
+										</h:selectOneMenu>
+									</aon:div>
+								</f:facet>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<h:outputText value="&#160;" />
+								</f:facet>
+								<aon:div>
+									<aon:commandButton title="#{bundle.aon_save}"
+										rendered="#{to==processDetail.to}"
+										actionListener="#{processDetail.onAccept}"
+										onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
+										styleClass="aon-editDataTable-button aon-icon-accept" value=""
+										accesskey="#{bundle.aon_key_save_line}">
+										<aon:actionListener
+											method="#{processDetailTransition.onCancel}" />
+									</aon:commandButton>
+									<aon:commandButton title="#{bundle.aon_cancel}"
+										rendered="#{to==processDetail.to}"
+										actionListener="#{processDetail.onCancel}" immediate="true"
+										onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+										styleClass="aon-editDataTable-button aon-icon-cancel" value=""
+										accesskey="#{bundle.aon_key_cancel_line}">
+										<aon:actionListener
+											method="#{processDetailTransition.onCancel}" />
+									</aon:commandButton>
+									<aon:commandButton title="#{bundle.aon_remove}"
+										rendered="#{to==processDetail.to}"
+										actionListener="#{processDetail.onRemove}" immediate="true"
+										onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+										styleClass="aon-editDataTable-button aon-icon-delete" value=""
+										accesskey="#{bundle.aon_key_remove_line}">
+										<aon:actionListener
+											method="#{processDetailTransition.onCancel}" />
+									</aon:commandButton>
+									<aon:commandButton value=""
+										styleClass="aon-editDataTable-button aon-icon-new"
+										actionListener="#{processDetailTransition.onReset}"
+										rendered="#{!processDetailTransition.new}"
+										focus="type_new"
+										accesskey="#{bundle.aon_key_new_line}">
+										<aon:actionListener method="#{processDetail.onSelect}" />
+									</aon:commandButton>
+								</aon:div>
+								<f:facet name="footer">
+									<aon:div>
+										<aon:div rendered="#{processDetail.new}">
+											<aon:commandButton title="#{bundle.aon_save}"
+												actionListener="#{processDetail.onAccept}"
+												onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
+												styleClass="aon-editDataTable-button aon-icon-accept"
+												value="" accesskey="#{bundle.aon_key_save_line}" />
+											<aon:commandButton title="#{bundle.aon_cancel}"
+												actionListener="#{processDetail.onCancel}" immediate="true"
+												onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+												styleClass="aon-editDataTable-button aon-icon-cancel"
+												value="" accesskey="#{bundle.aon_key_cancel_line}" />
+										</aon:div>
+										<h:outputText rendered="#{!processDetail.new}" value="&#160;" />
+									</aon:div>
+								</f:facet>
+							</aon:column>
+
+							<ui:include src="form_transition.xhtml" />
+
+						</aon:editDataTable>
+
+						<aon:dataScroller for="detailDataList"
+							rowCount="#{processDetail.model.rowCount}" />
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

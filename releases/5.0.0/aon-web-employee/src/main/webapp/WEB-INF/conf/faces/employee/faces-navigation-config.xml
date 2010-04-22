@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+  <!-- =================== Navigation Rules ================= -->
+ 
+  <!-- ************ EMPLOYEE ************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>employee_form</from-outcome>
+			<to-view-id>/facelet/employee/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_list</from-outcome>
+			<to-view-id>/facelet/employee/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_search</from-outcome>
+			<to-view-id>/facelet/employee/search.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_calendar</from-outcome>
+			<to-view-id>/facelet/employee/schedule/calendar.faces</to-view-id>
+		</navigation-case>
+	    <navigation-case>
+	      <from-outcome>employee_event</from-outcome>
+	      <to-view-id>/facelet/employee/schedule/event.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      	<from-outcome>employee_incidence</from-outcome>
+		    <to-view-id>/facelet/employee/schedule/incidence.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_record</from-outcome>
+			<to-view-id>/facelet/employee/record/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_curriculum</from-outcome>
+			<to-view-id>/facelet/employee/cv/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_tracking</from-outcome>
+			<to-view-id>/facelet/employee/tracking/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	      	<from-outcome>employee_expenditures_list</from-outcome>
+		    <to-view-id>/facelet/employee/expenditures/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	      	<from-outcome>employee_expenditures_form</from-outcome>
+		    <to-view-id>/facelet/employee/expenditures/form.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- ************ EMPLOYEE SW ************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>employee_sw</from-outcome>
+			<to-view-id>/facelet/sw/employee.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_sw_search</from-outcome>
+			<to-view-id>/facelet/sw/employeeSearch.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+  <!-- ************ CURRICULUM ************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>curriculum_form</from-outcome>
+			<to-view-id>/facelet/cv/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>curriculum_list</from-outcome>
+			<to-view-id>/facelet/cv/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>curriculum_search</from-outcome>
+			<to-view-id>/facelet/cv/search.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+
+  <!-- ************ CALCULATOR ************* -->
+	<navigation-rule>
+		<navigation-case>
+	      	<from-outcome>calculate_company_expenses_from_gross_salary</from-outcome>
+		    <to-view-id>/facelet/calculator/expensesGross/result.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+	      	<from-outcome>calculate_company_expenses_from_net_salary</from-outcome>
+		    <to-view-id>/facelet/calculator/expensesNet/result.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+	      	<from-outcome>calculate_company_expenses_from_dismissal</from-outcome>
+		    <to-view-id>/facelet/calculator/expensesDismissal/result.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- ************** CALENDAR MANAGEMENT ****************** -->
+	<navigation-rule>
+		<navigation-case>
+	      	<from-outcome>calendars_updatable_workplace</from-outcome>
+		    <to-view-id>/facelet/calendars/updatable_workplace_node.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	      	<from-outcome>calendars_updatable_workactivity</from-outcome>
+		    <to-view-id>/facelet/calendars/updatable_workactivity_node.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	      	<from-outcome>calendars_calendar</from-outcome>
+		    <to-view-id>/facelet/calendars/schedule/calendar.faces</to-view-id>
+		</navigation-case>
+	    <navigation-case>
+	      <from-outcome>calendars_event</from-outcome>
+	      <to-view-id>/facelet/calendars/schedule/event.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>calendars_incidence</from-outcome>
+	      <to-view-id>/facelet/calendars/schedule/incidence.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>find_events</from-outcome>
+	      <to-view-id>/facelet/calendars/schedule/search.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>found_events_list</from-outcome>
+	      <to-view-id>/facelet/calendars/schedule/list.faces</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+</faces-config>

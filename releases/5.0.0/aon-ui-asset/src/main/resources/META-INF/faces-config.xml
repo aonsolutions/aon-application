@@ -1,0 +1,359 @@
+<faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.asset.i18n.messages</base-name>
+			<var>assetBundle</var>
+		</resource-bundle>
+	</application>
+
+
+	<!-- ********** ASSET ********** -->
+	<managed-bean>
+		<managed-bean-name>asset</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.asset.Asset</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>asset</value>
+		</managed-property>
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<value>#{assetListeners}</value> 
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>assetListeners</managed-bean-name>
+		<managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<value>#{assetControllerListener}</value>
+			<value>#{assetActivityLinesListener}</value>
+		</list-entries>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>assetControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.asset.event.AssetControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>assetActivityLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>activityLines</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AssetActivity_asset_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ********** ASSET ACTIVITY DIALOG ********** -->
+	<managed-bean>
+		<managed-bean-name>activityDialog</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.asset.controller.ActivityDialogController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	
+	<!-- ********** ASSET ACTIVITY BASIC ********** -->
+	<managed-bean>
+		<managed-bean-name>activityBasic</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.asset.controller.ActivityBasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.asset.AssetActivity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>activityBasic</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AssetActivity_date, AssetActivity_fromTime</value>
+		</managed-property>
+		<!--  
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<value>#{activityBasicControllerListeners}</value> 
+		</managed-property>
+		-->
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{activityBasicControllerListener}</value>
+				<value>#{activityBasicSearchListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<!--  
+		<managed-bean>
+			<managed-bean-name>activityBasicControllerListeners</managed-bean-name>
+			<managed-bean-class>java.util.LinkedList</managed-bean-class>
+			<managed-bean-scope>none</managed-bean-scope>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{activityBasicControllerListener}</value>
+			</list-entries>
+		</managed-bean>
+	-->
+		
+		<managed-bean>
+			<managed-bean-name>activityBasicControllerListener</managed-bean-name>
+			<managed-bean-class>com.code.aon.ui.asset.event.ActivityBasicControllerListener</managed-bean-class>
+			<managed-bean-scope>session</managed-bean-scope>
+		</managed-bean>
+		<managed-bean>
+			<managed-bean-name>activityBasicSearchListener</managed-bean-name>
+			<managed-bean-class>com.code.aon.ui.asset.event.ActivityBasicSearchListener</managed-bean-class>
+			<managed-bean-scope>session</managed-bean-scope>
+		</managed-bean>
+	
+	<!-- ********** ASSET ACTIVITY LINES ********** -->
+	<managed-bean>
+		<managed-bean-name>activityLines</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.asset.controller.ActivityLinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.asset.AssetActivity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>15</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>activityLines</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AssetActivity_date, AssetActivity_fromTime</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>asset</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>asset.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property> 
+				<property-name>listenerClasses</property-name>
+				<value>#{activityLinesControllerListeners}</value> 
+			</managed-property>
+		</managed-bean>
+		
+		<managed-bean>
+			<managed-bean-name>activityLinesControllerListeners</managed-bean-name>
+			<managed-bean-class>java.util.LinkedList</managed-bean-class>
+			<managed-bean-scope>none</managed-bean-scope>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{activityLinesControllerListener}</value>
+			</list-entries>
+		</managed-bean>
+		
+		<managed-bean>
+			<managed-bean-name>activityLinesControllerListener</managed-bean-name>
+			<managed-bean-class>com.code.aon.ui.asset.event.ActivityLinesControllerListener</managed-bean-class>
+			<managed-bean-scope>none</managed-bean-scope>
+		</managed-bean>
+		
+		<!-- ********** ASSET ACTIVITY CALENDAR ********** -->
+		<managed-bean>
+			<managed-bean-name>assetCalendar</managed-bean-name>
+			<managed-bean-class>com.code.aon.ui.asset.controller.AssetCalendarController</managed-bean-class>
+			<managed-bean-scope>session</managed-bean-scope>
+			<managed-property>
+				<property-name>queryOnStartUP</property-name>
+				<value>true</value>
+			</managed-property>
+			<managed-property>
+				<property-name>pojo</property-name>
+				<value>com.code.aon.asset.AssetActivity</value>
+			</managed-property>
+			<managed-property>
+				<property-name>pageLimit</property-name>
+				<value>10</value>
+			</managed-property>
+			<managed-property>
+				<property-name>beanName</property-name>
+				<value>assetCalendar</value>
+			</managed-property>
+			<managed-property>
+				<property-name>defaultOrder</property-name>
+				<value>AssetActivity_date</value>
+			</managed-property>
+		</managed-bean>
+		
+		<!-- ********** ASSET ACTIVITY COLLECTIONS ********** -->
+		<managed-bean>
+			<managed-bean-name>assetCollections</managed-bean-name>
+			<managed-bean-class>com.code.aon.ui.asset.controller.AssetCollectionsController</managed-bean-class>
+			<managed-bean-scope>session</managed-bean-scope>
+			<managed-property>
+				<property-name>beanName</property-name>
+				<value>assetCollections</value>
+			</managed-property>
+		</managed-bean>
+	
+	<!-- ****************************************** -->
+	<!-- ***************** LOOK UP **************** -->
+	<!-- ****************************************** -->
+	
+	<!-- ************ asset LOOKUP ************** -->
+        <managed-bean>
+		<managed-bean-name>assetLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>assetLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.asset.Asset</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/asset/facelet/lookup/asset/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ****************************************** -->
+	<!-- ******** NAVIGATION RULES **************** -->
+	<!-- ****************************************** -->
+
+	<!-- ****************** ASSET **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>asset_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/asset/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>asset_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/asset/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ****************** ASSET ACTIVITY Dialog **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>activityDialog_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/activityDialog/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>activityDialog_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/activityDialog/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>activityDialog_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/activityDialog/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>activityDialog_grid</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/activityDialog/grid_pending.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ****************** ASSET ACTIVITY Reservations **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>activityReservation_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/reservation/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>activityReservation_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/reservation/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ****************** ASSET ACTIVITY Reservations **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>stat_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/stat/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>month_stat_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/stat/month/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>day_stat_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/stat/day/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ****************** ADMINISTRATION **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>admin_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/admin/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ************ OFFER SIGNER ************** -->
+	<managed-bean>
+		<managed-bean-name>offerSigner</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.sign.controller.SignerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>signatureController</property-name>
+			<value>#{cartOffer}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>reportKey</property-name>
+			<value>offer</value>
+		</managed-property>
+	</managed-bean>	
+	
+</faces-config>

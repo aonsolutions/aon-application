@@ -1,0 +1,14 @@
+<!-- Listado de thumbnails de un gallery-->
+<div class="content">
+		<div class="content-internal">
+	<div class="content-img">
+	#foreach($image in $gallery)
+		<div class="album_box img-gallery-thumbnail-block">
+			<a href="$image.getLink()" class="module-banner">
+				<img src="images/tn_$image.getName()" class="img-border" alt="$image.getDescription()" border="0" />		 
+			</a>
+			<br><a href="$image.getLink()">$image.getDescription()</a></br>
+		</div>
+	#end
+	</div>
+</div></div>

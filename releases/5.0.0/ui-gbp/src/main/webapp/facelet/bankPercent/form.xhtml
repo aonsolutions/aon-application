@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="bankPercentForm">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="gridToolbar" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.gbp_bank_percent}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bundle.aon_editing}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="save" value="#{bundle.aon_save}"
+							rendered="#{bankPercent.to!=null or bankPercent.new}"
+							reRender="gridToolbar"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{bankPercent.accept}"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							rendered="#{bankPercent.to!=null or bankPercent.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="#{true}" action="bank_percent_list"
+							actionListener="#{bankPercent.onCancel}"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!bankPercent.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							immediate="true" confirmTitle="Confirmation Dialog"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{bankPercent.onRemove}"
+							confirmAction="bank_percent_list"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="reset" 
+							reRender="gridToolbar,bankPercentGrid" value="#{bundle.aon_reset}"
+							actionListener="#{bankPercent.onReset}" rendered="#{!bankPercent.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="bankPercentGrid" columns="2" dir="true">
+
+					<aon:outputLabel for="BankPercent_bank"
+						value="#{appBundle.gbp_bank_percent_bank}" />
+					<aon:selectOneMenu id="BankPercent_bank"
+						value="#{bankPercent.to.bank.id}">
+						<f:selectItems value="#{GBPCollections.banks}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="BankPercent_distributionPercent"
+						value="#{appBundle.gbp_bank_percent_distributionPercent}" />
+					<aon:inputText id="BankPercent_distributionPercent" size="12"
+						maxlength="8" value="#{bankPercent.to.distributionPercent}" />
+
+				</aon:panelGrid>
+
+			</aon:div>	
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

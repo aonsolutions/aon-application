@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"	
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="imageGalleryForm" >
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.image_gallery}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_home}"
+						action="home" 
+						immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>				
+				</ui:define>
+			</ui:decorate>		
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid styleClass="aon-width-all" columnClasses="aon-panel-head">
+					<aon:div>
+						<aon:outputText value="#{appBundle.aon_cms_current_path}: " styleClass="aon-panel-title"/>
+						<aon:outputText value="#{gallery.currentRelativePath}" styleClass="aon-panel-title"/>
+						<aon:confirmButton id="removeFolder"
+							value="#{appBundle.aon_cms_remove_folder}"
+							immediate="true" style="margin-left:2em;"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{gallery.deleteFolder}"
+							accesskey="#{bundle.aon_key_remove}" />								  						
+					</aon:div>
+				</aon:panelGrid>
+
+				<aon:panelGrid columns="2" style="width:100%" columnClasses="aon-border, aon-border"> 
+					<aon:div styleClass="aon-padding">
+						<aon:outputText value="#{appBundle.aon_cms_folder}: "/>
+						<aon:inputText size="15" maxlength="32"
+							value="#{gallery.folderName}">
+							<f:validator validatorId="AliasValidator" />
+						</aon:inputText>
+						<aon:commandButton value="#{appBundle.aon_cms_create_folder}"
+							action="gallery_list"
+							actionListener="#{gallery.createFolder}"/>
+					</aon:div>
+					<aon:div id="GalleryFileUpload" style="width:400px" styleClass="aon-padding">
+						<aon:outputText value="#{appBundle.aon_cms_gallery_image}: " styleClass="aon-float-left"/>
+						<a4j:region>																					
+							<ui:include src="/facelet/content/utils/fileInput.xhtml" >
+								<ui:param name="fileInputId" value="attach_file" />
+								<ui:param name="controller" value="#{gallery}" />
+								<ui:param name="onCompleteReRender" value="GalleryFileUpload,GalleryList,GalleryFolderTree" />
+							</ui:include>
+						</a4j:region>
+					</aon:div>
+				</aon:panelGrid>
+				<aon:panelGrid id="GalleryFolderTree" columns="2" style="width:100%" columnClasses="aon-width-200 aon-vertical-align-top aon-border, aon-width-auto aon-vertical-align-top" > 
+				    <rich:tree switchType="ajax" stateAdvisor="#{treeStateAdvisor}">
+				        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
+				        	var="item" nodes="#{item.nodes}">
+							<rich:treeNode icon="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}"
+										iconLeaf="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}">
+				                <aon:commandLink action="#{item.onSelectFolder}" 
+				                	value="#{item}" immediate="true" />
+							</rich:treeNode>
+				        </rich:recursiveTreeNodesAdaptor>
+				    </rich:tree>
+		            <aon:div id="GalleryList" styleClass="aon-padding">
+						<rich:dataGrid var="item" value="#{gallery.model}" columns="6">
+							<aon:div style="width:125px;text-align:center">
+			            		<aon:div style="width:114px;height:114px;overflow:hidden;" styleClass="aon-border">
+									<aon:outputLink value="#{gallery.previewCurrentUrl}/#{item.name}" target="_blank">
+					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-padding"/>
+					            	</aon:outputLink>
+			            		</aon:div>
+			            		<aon:div style="width:112px;overflow:hidden;">
+			            			<aon:outputText value="#{item.name}"/>
+			            		</aon:div>
+			            		<aon:div styleClass="aon-padding aon-text-center">
+									<aon:commandButton styleClass="aon-noborder aon-padding"
+										image="#{aonResource.resolveLocal['/images/cms/icons/settings.png']}"
+					                	action="resizer_form" value="#{appBundle.aon_cms_resize}"
+					                    actionListener="#{resizer.onResizeFile}">
+									</aon:commandButton> 
+									<aon:commandButton styleClass="aon-noborder aon-padding"
+										image="#{aonResource.resolveLocal['/images/cms/icons/delete.png']}"
+					                	action="gallery_list" value="#{bundle.aon_remove}"
+					                    actionListener="#{gallery.onDeleteFile}"> 
+									</aon:commandButton> 
+			            		</aon:div>
+							</aon:div>
+						</rich:dataGrid>
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

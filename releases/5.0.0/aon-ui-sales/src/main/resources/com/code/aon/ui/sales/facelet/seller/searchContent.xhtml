@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputText value="" />
+	<aon:div style="width:510px;">
+		<aon:panelCollapsible expanded="true" label="#{commercialBundle.commercial_search_general}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+				<ui:include src="/com/code/aon/ui/sales/facelet/seller/searchBasicContent.xhtml" />
+			</aon:panelGrid>
+		</aon:panelCollapsible>					
+					
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
+					<ui:param name="searchController" value="#{sellerSearch}" />
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
+		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_media_module}" >
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
+					<ui:param name="searchController" value="#{sellerSearch}" />
+				</ui:include>
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
+	</aon:div>
+
+</ui:composition>

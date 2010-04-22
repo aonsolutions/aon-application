@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showFinanceReturnWindow">
+		<c:if test="#{finance.showFinanceReturnWindow}">
+			<rich:modalPanel id="financeReturnModalPanel" minHeight="240"
+				minWidth="520" rendered="#{finance.showFinanceReturnWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{financeBundle.finance_return}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showFinanceReturnWindow" immediate="true">
+							<f:setPropertyActionListener
+								target="#{finance.showFinanceReturnWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="financeReturnForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="financeReturn-return"
+										value="#{financeBundle.finance_to_return}"
+										reRender="showFinanceReturnWindow,financeForm"
+										actionListener="#{finance.onFinanceReturn}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<f:setPropertyActionListener
+											target="#{finance.showFinanceReturnWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="financeReturn-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showFinanceReturnWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{finance.showFinanceReturnWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
+
+										<aon:outputLabel for="Finance_returnDate"
+											value="#{financeBundle.finance_return_date}" />
+										<aon:selectInputDate id="Finance_returnDate" 
+											value="#{finance.returnDate}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="top-right"
+											verticalOffset="-110" />
+
+										<aon:outputLabel for="Finance_returnExpenses"
+											value="#{financeBundle.finance_expenses}" />
+										<aon:inputText id="Finance_returnExpenses"
+											value="#{finance.returnExpenses}"
+											required="true" size="10" />
+
+										<aon:outputLabel for="Finance_returnDeposit"
+											value="#{financeBundle.finance_deposit}" />
+										<aon:selectOneRadio id="Finance_returnDeposit"
+											style="display:inline;" ajaxSingle="true"
+											value="#{finance.returnDeposit}"
+											reRender="menuGrid">
+											<f:selectItem itemLabel="#{configBundle.config_bank}" itemValue="0" />
+											<f:selectItem itemLabel="#{financeBundle.finance_cash}" itemValue="1" />
+										</aon:selectOneRadio>
+
+										<aon:outputLabel for="Finance_returnRegistryBank"
+											value="#{configBundle.config_bank}"
+											rendered="#{finance.returnDeposit == 0}" />
+										<aon:selectOneMenu id="Finance_returnRegistryBank"
+											value="#{finance.returnRegistryBank}"
+											rendered="#{finance.returnDeposit == 0}">
+											<f:selectItems value="#{companyCollections.companyBanks}" />
+										</aon:selectOneMenu>
+										<aon:outputLabel for="Finance_returnCashAccount"
+											value="#{financeBundle.finance_cash}"
+											rendered="#{finance.returnDeposit == 1 and finance.cashAccountsSize > 1}" />
+										<aon:selectOneMenu id="Finance_returnCashAccount"
+											value="#{finance.returnCashAccount}"
+											rendered="#{finance.returnDeposit == 1 and finance.cashAccountsSize > 1}">
+											<f:selectItems value="#{finance.cashAccounts}" />
+										</aon:selectOneMenu>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

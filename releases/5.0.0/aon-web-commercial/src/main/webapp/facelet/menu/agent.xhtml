@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="agentMenu">
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+					<aon:panelGroup>
+						<aon:panelGrid id="group_agent_seller"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-sales aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{salesBundle.sales_seller_module}" />
+							</f:facet>							
+							<aon:div styleClass="aon-direct-access-list">			
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="seller" 
+										action="seller_search" actionListener="#{seller.onEditSearch}"
+										value="#{salesBundle.sales_seller_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geotreeParent" 
+										action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
+										value="#{geozoneBundle.geozone_module}" />
+								</aon:div>								
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_agent_product"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-expenses aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{productBundle.product_expense_module}" />
+							</f:facet>							
+							<aon:div styleClass="aon-direct-access-list">			
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="expense_form"
+										action="expenseAccount_search" actionListener="#{expenseAccount.onEditSearch}"
+										value="#{commercialBundle.commercial_expense_control_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="commercialExpense" 
+										value="#{commercialBundle.commercial_expense_module}"
+										action="commercialExpense" actionListener="#{expense.onSearch}" />
+								</aon:div>								
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<aon:panelGrid id="group_agent_comisiones"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-warehouse aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="comisiones" />
+						</f:facet>							
+						<aon:div styleClass="aon-direct-access-list">			
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink value="Calculo y Control" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="commission-type" 
+									action="commissionType_list" actionListener="#{commissionType.onSearch}"
+									value="#{commercialBundle.commercial_commission_type_module}" />
+							</aon:div>									
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="commission" 
+									action="commission_search" actionListener="#{commission.onEditSearch}"
+									value="#{commercialBundle.commercial_commission_module}" />
+							</aon:div>								
+						</aon:div>
+					</aon:panelGrid>
+
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

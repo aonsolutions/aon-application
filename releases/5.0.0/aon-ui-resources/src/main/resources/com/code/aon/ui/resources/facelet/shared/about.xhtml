@@ -1,0 +1,71 @@
+	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGroup id="aboutWindowPanel" styleClass="aon-popupWindow">
+		<c:if test="#{aonConfiguration.properties.showAbout}">
+			<aon:form>
+				<rich:modalPanel 
+					id="aboutWindow"
+					rendered="#{aonConfiguration.properties.showAbout}" showWhenRendered="true"
+					minWidth="400" height="240">
+	
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="#{bundle.aon_about}"/>
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:commandButton requestDelay="100"
+							reRender="aboutWindowPanel" immediate="true" ajaxSingle="true"
+							type="button" styleClass="aon-popupWindow-close" >
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{false}" />						
+							<rich:componentControl for="aboutWindow" event="onclick"
+								disableDefault="true" operation="hide"/>								
+						</aon:commandButton>	
+					</f:facet>
+	
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="margin-top: 20px;">
+								<aon:outputText value=" / #{appBundle.aon_application_title}"
+									style="margin-left: 0px;" styleClass="aon-header-title" />							
+							</aon:div>
+							<h:panelGrid styleClass="aon-margin-top" columnClasses="aon-version-label">
+								<c:if test="#{aonConfiguration.properties.applicationVersion != null}" >						
+									<aon:outputFormat style="color: #000;" value="#{bundle.aon_about_version}" >
+										<f:param value="#{aonConfiguration.properties.applicationVersion}" />
+									</aon:outputFormat>
+									<aon:outputFormat style="color: #000;" value="#{bundle.aon_about_date}" >
+										<f:param value="#{aonConfiguration.properties.buildDate}" />
+									</aon:outputFormat>
+									<aon:outputFormat style="color: #000;" value="#{bundle.aon_build}" >
+										<f:param value="#{aonConfiguration.properties.buildNumber}" />
+									</aon:outputFormat>
+									<aon:outputFormat style="color: #000;" value="#{bundle.aon_revision}" >
+										<f:param value="#{aonConfiguration.properties.buildRevision}" />
+									</aon:outputFormat>
+								</c:if>
+								<aon:outputFormat style="color: #000;" value="#{bundle.aon_db_version}"
+									rendered="#{aonConfiguration.properties.databaseVersion != null}" >
+									<f:param value="#{aonConfiguration.properties.databaseVersion}" />
+								</aon:outputFormat>
+							</h:panelGrid>	
+							<aon:div styleClass="aon-footer-box">
+								<aon:outputText value="#{bundle.aon_trademark}" />
+								<aon:outputText styleClass="aon-footer-company-label"
+									value="#{bundle.aon_esferalia} #{bundle.aon_networks}" />
+							</aon:div>		
+						</aon:div>		
+					</aon:div>		
+				</rich:modalPanel>
+			</aon:form>	
+		</c:if>
+	</aon:panelGroup>
+
+ </ui:composition>

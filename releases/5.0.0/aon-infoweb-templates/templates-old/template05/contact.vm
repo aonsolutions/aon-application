@@ -1,0 +1,37 @@
+<div class="content">
+<div align="right"><h1>$pagename</h1></div>
+<p></p>
+
+<div class="formulario">
+        <form method="post" action="./mail.php" name="contacto" class="form">
+        
+		<div><label for="contact" class="form-label" size="25">Persona de contacto:</label></div>
+		<div><input id="contact" size="25" name="mail_Persona de contacto" type="text" class="form-input"/></div>
+
+		<div><label for="enterprise" class="form-label" size="25">Empresa:</label></div>
+		<div><input id="enterprise" size="25" name="mail_Empresa" type="text" class="form-input"/></div>
+
+		<div><label for="telephone" class="form-label" size="25">Tel&eacute;fono de contacto:</label></div>
+		<div><input id="telephone" size="25" name="mail_Telefono" type="text" class="form-input"/></div>
+
+		<div><label for="from" class="form-label" size="25">Correo electrónico:</label></div>
+		<div><input id="from" size="25" name="from" type="text" class="form-input"/></div>
+
+		<div><label for="question" class="form-label">Consulta:</label></div>
+		<div><textarea id="question" cols="19" rows="6" name="mail_Consulta" class="form-input"></textarea></div>
+
+		<div class="buttoms" style="margin-top:5px;margin-botom:1em;"><input type="submit" name="bt_enviar" value="Enviar" class="form-button"/> <input type="reset" name="bt_cancel" value="Borrar campos" class="form-button"/></div>
+			<input id="subject" type="hidden" name="subject" value="Formulario enviado desde la pagina web" />
+		</div>
+	</form>
+</div>
+
+<div class="infoHelp">
+	<br>De conformidad con lo establecido en el art&iacute;culo 5 de la Ley Org&aacute;nica 15/1999 de 13 de diciembre, de Protecci&oacute;n de Datos de Car&aacute;cter Personal, se informa a las personas que cumplimenten este formulario, que los datos en &eacute;l introducidos ser&aacute;n incorporados en un fichero inform&aacute;tico, previamente comunicado a la Agencia de Protecci&oacute;n de Datos a los efectos de env&iacute;o de pedidos y circulares de nuestro departamento comercial. Mediante el env&iacute;o de este formulario, el usuario da su consentimiento al tratamiento automatizado de los datos incluidos en el mismo. </br>
+	<br>Los datos facilitados no ser&aacute;n objeto de cesi&oacute;n a terceros. Los datos solicitados son los estrictamente necesarios para enviar los pedidos y las circulares de nuestro departamento comercial, por lo que su cumplimentaci&oacute;
+n es obligatoria. Asimismo podr&aacute;n utilizarse con el objetivo de mejorar la calidad de los servicios que <strong>$!company.getName()</strong>. ofrece.</br>
+	<br>El usuario, o la persona f&iacute;sica que lo represente, tiene derecho a acceder al fichero, rectificar sus datos, o cancelarlos. Para ejercitar este derecho puede enviar un mensaje a $email. El fichero se encuentra en el sistema inform&aacute;tico sito en la calle <strong>$!address.getAddress() $!address.getAddress2() $!address.getAddress3() $!address.getZip() $!address.getCity() ($!address.getGeozone().getName())</strong>. El responsable del fichero es <strong>$!company.getName()</strong> con NIF <strong>$!company.getDocument()</strong></br>
+</div>
+
+
+		</div>

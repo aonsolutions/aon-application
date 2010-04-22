@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
+
+	<ui:define name="menuContent">
+		<aon:commandLink id="agent"
+			value="#{appBundle.menu_agents}"
+			action="menu_agent" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-sales" />
+		<aon:commandLink id="commercial"
+			value="#{commercialBundle.commercial_module_group}"
+			action="menu_commercial" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-commercial" />
+		<aon:commandLink id="marketing"
+			value="#{marketingBundle.marketing_marketing}"
+			action="menu_marketing" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-marketing" />
+		<aon:commandLink id="statistics"
+			value="#{appBundle.menu_statistics}"
+			action="menu_statistics" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-statistics" />
+		<aon:commandLink id="config"
+			value="#{bundle.aon_configuration}"
+			action="menu_config" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-config" />
+	</ui:define>
+
+</ui:composition>

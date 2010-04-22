@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+    <a4j:region>
+        <h:form>
+            <a4j:poll id="poll" interval="2000" enabled="#{generator_status.activePoll}" reRender="poll,grid"/>
+        </h:form>
+    </a4j:region>
+	<aon:form>
+        <rich:modalPanel id="showGeneratorLogModalPanel"
+			minHeight="550" height="550" minWidth="1000" width="1000">
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="#{menuBundle.cms_generate_pages}" />
+				</aon:div>
+			</f:facet>
+	        <f:facet name="controls">
+				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+					actionListener="#{generator_status.onReset}"
+					immediate="true" reRender="aonStatus">
+					<rich:componentControl for="showGeneratorLogModalPanel"
+						operation="hide" event="onclick" />
+				</aon:commandButton>
+	        </f:facet>
+			<rich:panel id="grid">
+				<aon:panelGrid columns="1" width="100%" columnClasses="aon-panel-head">
+					<aon:div>
+						<aon:outputLabel value="Logs" styleClass="aon-panel-title"/>
+					</aon:div>
+				</aon:panelGrid>
+				<rich:panel bodyClass="generator-log-panel">
+			        <rich:dataList id="dataList_Log" var="msg" value="#{generator_status.status}">
+						<aon:outputText value="#{msg}"/>
+					</rich:dataList>
+				</rich:panel>
+         		<aon:div styleClass="aon-margin-top">
+					<aon:panelGrid columns="1" width="100%" columnClasses="aon-panel-head">
+						<aon:div>
+							<aon:outputLabel value="Errores" styleClass="aon-panel-title"/>
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>
+				<rich:panel bodyClass="generator-log-panel">
+			        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}">
+						<aon:outputText style="color:red;" escape="false" value="#{msg}"/>
+					</rich:dataList>
+				</rich:panel>
+			</rich:panel>
+        </rich:modalPanel>
+	</aon:form>
+</ui:composition>

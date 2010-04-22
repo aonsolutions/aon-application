@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="columnClasses"
+			value="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-width-200 aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-width-100 aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-width-100 aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-width-100 aon-nowrap" />
+		<ui:define name="columns">
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryMedia_mediaType" value="#{registryBundle.registry_media_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.mediaType}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="RegistryMedia_mediaType"
+					value="#{controller.to.mediaType}" rendered="#{formEdit}">
+					<f:selectItems value="#{registryCollections.mediaTypes}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="RegistryMedia_mediaType-New"
+						value="#{controller.to.mediaType}" rendered="#{formNew}">
+						<f:selectItems value="#{registryCollections.mediaTypes}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryMedia_value" value="#{bundle.aon_value}" />
+				</f:facet>
+				<aon:outputText value="#{to.value}"
+					rendered="#{formList}" />
+				<aon:inputText id="RegistryMedia_value" value="#{to.value}"
+					rendered="#{formEdit}" required="true" size="40"
+					onblur="toLowerCase(this);" />
+				<f:facet name="footer">
+					<aon:inputText id="RegistryMedia_value-New" value="#{controller.to.value}"
+						rendered="#{formNew}" required="true" size="40"
+						onblur="toLowerCase(this);" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryMedia_comment" value="#{bundle.aon_comment}" />
+				</f:facet>
+				<aon:outputText value="#{to.comment}"
+					rendered="#{formList}" />
+				<aon:inputText id="RegistryMedia_comment"
+					value="#{to.comment}" rendered="#{formEdit}" size="40" />
+				<f:facet name="footer">
+					<aon:inputText id="RegistryMedia_comment-New"
+						value="#{controller.to.comment}" rendered="#{formNew}" size="40" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryMedia_administrative" value="#{registryBundle.registry_administrative}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.administrative?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="RegistryMedia_administrative" styleClass="aon-margin-left"
+					value="#{to.administrative}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="RegistryMedia_administrative-New" styleClass="aon-margin-left"
+						value="#{controller.to.administrative}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryMedia_commercial" value="#{registryBundle.registry_commercial}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.commercial?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="RegistryMedia_commercial" styleClass="aon-margin-left"
+					value="#{to.commercial}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="RegistryMedia_commercial-New" styleClass="aon-margin-left"
+						value="#{controller.to.commercial}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryMedia_technical" value="#{registryBundle.registry_technical}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.technical?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="RegistryMedia_technical" styleClass="aon-margin-left"
+					value="#{to.technical}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="RegistryMedia_technical-New" styleClass="aon-margin-left"
+						value="#{controller.to.technical}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+		
+		<ui:define name="endFormListContent">
+			<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">			
+				<aon:div onmouseover="disableRowSelector();"
+					onmouseout="enableRowSelector();" >										
+					<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
+						ajaxSingle="true" reRender="showNewMessageWindow"
+						actionListener="#{controller.masterController.onSendEmail}" value="&#160;"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+						rendered="#{to.mediaType == 'EMAIL'}" >
+						<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
+						<f:param name="email" value="#{to.value}" />
+					</aon:commandLink>
+				</aon:div>
+			</c:if>
+		</ui:define>
+		
+	</ui:decorate>
+</ui:composition>

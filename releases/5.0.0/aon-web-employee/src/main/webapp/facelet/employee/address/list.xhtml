@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+	<t:div>
+
+		<t:dataTable id="addressDataList"
+			value="#{employeeAddress.model}" var="to"
+			rowOnMouseOver="selectRow( this )"
+			rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+			styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+			footerClass="aon-edit-table-footer" rows="20" rowIndexVar="rowIndex"
+			rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+			columnClasses="aon-edit-table-body aon-edit-table-body-icon,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-buttons">
+
+			<h:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<f:verbatim>&#160;</f:verbatim>
+				<t:commandLink immediate="#{true}"
+					rendered="#{to!=employeeAddress.to}"
+					styleClass="aon-table-row-selected"
+					actionListener="#{employeeAddress.onSelect}">
+				</t:commandLink>
+				<f:facet name="footer">
+					<t:div>
+						<t:commandButton id="reset"
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+							value="" immediate="#{true}"
+							rendered="#{!employeeAddress.new}" title="#{bundle.aon_reset}"
+							actionListener="#{employeeAddress.onReset}"
+							accesskey="#{bundle.aon_key_new_line}">
+						</t:commandButton>
+					</t:div>
+				</f:facet>
+			</h:column>
+
+			<t:column width="80">
+				<f:facet name="header">
+					<h:outputText value="#{rBundle.aon_type}" />
+				</f:facet>
+				<t:outputText value="#{to.addressType}"
+					rendered="#{to!=employeeAddress.to}" />
+				<h:selectOneMenu value="#{employeeAddress.to.addressType}"
+					styleClass="aon-form-selectOneMenu-field"
+					rendered="#{to==employeeAddress.to}">
+					<f:selectItems value="#{registryCollections.addressTypes}" />
+				</h:selectOneMenu>
+				<f:facet name="footer">
+					<t:div>
+						<h:selectOneMenu value="#{employeeAddress.to.addressType}"
+							styleClass="aon-form-selectOneMenu-field"
+							rendered="#{employeeAddress.new}">
+							<f:selectItems value="#{registryCollections.addressTypes}" />
+						</h:selectOneMenu>
+					</t:div>
+				</f:facet>
+			</t:column>
+
+			<t:column width="300">
+				<f:facet name="header">
+					<t:outputText value="#{rBundle.aon_address}" />
+				</f:facet>
+				<t:outputText value="#{to.address} #{to.address2} #{to.address3}"
+					rendered="#{to!=employeeAddress.to}" />
+				<t:inputText value="#{employeeAddress.to.address}"
+					styleClass="aon-form-input-text"
+					rendered="#{to==employeeAddress.to}" required="#{true}" size="40" />
+				<t:inputText value="#{employeeAddress.to.address2}"
+					styleClass="aon-form-input-text"
+					rendered="#{to==employeeAddress.to}" size="40" />
+				<t:inputText value="#{employeeAddress.to.address3}"
+					styleClass="aon-form-input-text"
+					rendered="#{to==employeeAddress.to}" size="40" />
+				<f:facet name="footer">
+					<t:div>
+						<t:inputText id="Direccion_Empleado" value="#{employeeAddress.to.address}"
+							styleClass="aon-form-input-text" rendered="#{employeeAddress.new}"
+							required="#{true}" size="40" />
+						<t:inputText value="#{employeeAddress.to.address2}"
+							styleClass="aon-form-input-text" rendered="#{employeeAddress.new}"
+							size="40" />
+						<t:inputText value="#{employeeAddress.to.address3}"
+							styleClass="aon-form-input-text" rendered="#{employeeAddress.new}"
+							size="40" />
+					</t:div>
+				</f:facet>
+			</t:column>
+
+			<t:column width="50">
+				<f:facet name="header">
+					<t:outputText value="#{rBundle.aon_zip}" />
+				</f:facet>
+				<t:outputText value="#{to.zip}" rendered="#{to!=employeeAddress.to}" />
+				<t:inputText value="#{employeeAddress.to.zip}"
+					styleClass="aon-form-input-text"
+					rendered="#{to==employeeAddress.to}" required="#{true}" size="8" />
+				<f:facet name="footer">
+					<t:div>
+						<t:inputText id="Codigo_Postal_Empleado" value="#{employeeAddress.to.zip}"
+							styleClass="aon-form-input-text" rendered="#{employeeAddress.new}"
+							required="#{true}" size="8" />
+					</t:div>
+				</f:facet>
+			</t:column>
+
+			<t:column width="150">
+				<f:facet name="header">
+					<t:outputText value="#{rBundle.aon_city}" />
+				</f:facet>
+				<t:outputText value="#{to.city}" rendered="#{to!=employeeAddress.to}" />
+				<t:inputText value="#{employeeAddress.to.city}"
+					styleClass="aon-form-input-text"
+					rendered="#{to==employeeAddress.to}" required="#{true}" size="20" />
+				<f:facet name="footer">
+					<t:div>
+						<t:inputText id="Ciudad_Empleado" value="#{employeeAddress.to.city}"
+							styleClass="aon-form-input-text" rendered="#{employeeAddress.new}"
+							required="#{true}" size="20" />
+					</t:div>
+				</f:facet>
+			</t:column>
+
+			<t:column width="130">
+				<f:facet name="header">
+					<t:outputText value="#{rBundle.aon_geozone}" />
+				</f:facet>
+				<t:outputText value="#{to.geozone.name}"
+					rendered="#{to!=employeeAddress.to}" />
+				<h:selectOneMenu value="#{employeeAddress.to.geozone.id}"
+					styleClass="aon-form-selectOneMenu-field"
+					rendered="#{to==employeeAddress.to}"
+					valueChangeListener="#{employee.onChangeGeoZone}">
+					<f:selectItems value="#{geozoneCollections.geoZones}" />
+				</h:selectOneMenu>
+				<f:facet name="footer">
+					<t:div>
+						<h:selectOneMenu value="#{employeeAddress.to.geozone.id}"
+							styleClass="aon-form-selectOneMenu-field"
+							rendered="#{employeeAddress.new}">
+							<f:selectItems value="#{geozoneCollections.geoZones}" />
+						</h:selectOneMenu>
+					</t:div>
+				</f:facet>
+			</t:column>
+
+			<h:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<t:div>
+					<f:verbatim rendered="#{to!=employeeAddress.to}">&#160;</f:verbatim>
+
+					<t:commandButton title="#{bundle.aon_save}"
+						actionListener="#{employeeAddress.onAccept}"
+						rendered="#{to==employeeAddress.to}" value=""
+						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<t:commandButton title="#{bundle.aon_cancel}"
+						actionListener="#{employeeAddress.onCancel}" immediate="#{true}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+						value="" rendered="#{to==employeeAddress.to}"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<t:commandButton title="#{bundle.aon_remove}"
+						actionListener="#{employeeAddress.onRemove}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+						rendered="#{to==employeeAddress.to}"
+						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+						value="" accesskey="#{bundle.aon_key_remove_line}" />
+				</t:div>
+				<f:facet name="footer">
+					<t:div>
+						<f:verbatim rendered="#{!employeeAddress.new}">&#160;</f:verbatim>
+						<t:commandButton title="#{bundle.aon_save}"
+							actionListener="#{employeeAddress.onAccept}"
+							rendered="#{employeeAddress.new}" value=""
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<t:commandButton title="#{bundle.aon_cancel}"
+							actionListener="#{employeeAddress.onCancel}" immediate="#{true}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+							rendered="#{employeeAddress.new}"
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+							value="" accesskey="#{bundle.aon_key_cancel_line}" />
+					</t:div>
+				</f:facet>
+			</h:column>
+		</t:dataTable>
+	</t:div>
+
+	<t:div styleClass="aon-datascroller"
+		rendered="#{employeeAddress.model.rowCount>0}">
+		<h:panelGrid columns="2"
+			columnClasses="aon-datascroller-text,aon-datascroller-buttons">
+			<t:dataScroller id="scroll_1" for="addressDataList"
+				rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex"
+				lastRowIndexVar="lastRowIndex"
+				rendered="#{employeeAddress.model.rowCount>0}">
+				<h:outputFormat value="#{appBundle.aon_scroll}">
+					<f:param value="#{firstRowIndex}" />
+					<f:param value="#{lastRowIndex}" />
+					<f:param value="#{rowsCount}" />
+				</h:outputFormat>
+			</t:dataScroller>
+
+			<t:dataScroller id="scroll_0" for="addressDataList" fastStep="5"
+				paginator="#{true}" paginatorMaxPages="5"
+				paginatorActiveColumnClass="aon-datascroller-currentpage"
+				paginatorColumnClass="aon-datascroller-page"
+				rendered="#{employeeAddress.model.rowCount>20}">
+
+				<f:facet name="first">
+					<h:graphicImage
+						styleClass="aon-datascroller-button-first" />
+				</f:facet>
+				<f:facet name="last">
+					<h:graphicImage
+						styleClass="aon-datascroller-button-last" />
+				</f:facet>
+				<f:facet name="previous">
+					<h:graphicImage
+						styleClass="aon-datascroller-button-previous" />
+				</f:facet>
+				<f:facet name="next">
+					<h:graphicImage
+						styleClass="aon-datascroller-button-next" />
+				</f:facet>
+				<f:facet name="fastforward">
+					<h:graphicImage
+						styleClass="aon-datascroller-button-fastforward" />
+				</f:facet>
+				<f:facet name="fastrewind">
+					<h:graphicImage
+						styleClass="aon-datascroller-button-fastrewind" />
+				</f:facet>
+			</t:dataScroller>
+		</h:panelGrid>
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>

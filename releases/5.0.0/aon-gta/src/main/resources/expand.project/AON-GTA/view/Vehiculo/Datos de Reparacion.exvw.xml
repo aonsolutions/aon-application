@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Datos de Reparacion" label="Datos de Reparacion" sqlSentence="SELECT CONCAT(support_order.series,&quot;/&quot;,support_order.number), support_order.start_date, registry.name, support_order.description&#xd;&#xa;  FROM support_order &#xd;&#xa;  LEFT JOIN employee ON support_order.employee = employee.registry &#xd;&#xa; LEFT JOIN registry ON employee.registry = registry.id&#xd;&#xa; WHERE support_order.id = ?">
+    <parameters>
+        <parameter columnReference="data/support_order.exdm.xml/id"
+            label="Support order ID" name="id" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="serie_numero"
+            columnId="CONCAT(support_order.series,&quot;/&quot;,support_order.number)"
+            label="SERIE/NUMERO" type="STRING"/>
+        <result accessName="SUPPORT_ORDER_DATE" columnId="start_date"
+            columnReference="data/support_order.exdm.xml/start_date"
+            label="FECHA" tableId="support_order" type="DATE"/>
+        <result accessName="name" columnId="name"
+            label="NOMBRE MECANICO" tableId="registry" type="STRING"/>
+        <result accessName="description" columnId="description"
+            columnReference="data/support_order.exdm.xml/description"
+            label="DESCRIPCION" tableId="support_order" type="STRING"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/support_order.exdm.xml"/>
+    </dataModelReferences>
+</view>

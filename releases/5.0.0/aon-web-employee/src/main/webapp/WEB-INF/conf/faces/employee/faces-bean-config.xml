@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!-- ************** EMPLOYEE ****************** -->
+	<managed-bean>
+		<managed-bean-name>employee</managed-bean-name>
+		<managed-bean-class>com.code.aon.web.employee.controller.EmployeeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.resources.Employee</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{employeeAddressListener}</value>
+				<value>#{employeeMediaListener}</value>
+				<value>#{resourceChangedListener}</value>
+				<value>#{employeeUserListener}</value>
+				<value>#{employeeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** WORKPLACE **** -->
+	<managed-bean>
+		<managed-bean-name>workplace</managed-bean-name>
+		<managed-bean-class>com.code.aon.web.employee.controller.WorkPlaceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.WorkPlace</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** WORKACTIVITY **** -->
+	<managed-bean>
+		<managed-bean-name>workactivity</managed-bean-name>
+		<managed-bean-class>com.code.aon.web.employee.controller.WorkActivityController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.WorkActivity</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** TRACKING ****************** -->
+	<managed-bean>
+		<managed-bean-name>tracking</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.GridController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryNote</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{trackingControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>trackingControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.event.TrackingControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- ************** EXPENDITURES ****************** -->
+	<managed-bean>
+		<managed-bean-name>expenditures</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.ExpendituresController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.Expenditures</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{ExpendituresControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>ExpendituresControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.event.ExpendituresControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>expendituresItems</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.ExpendituresItems</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--*************** TREE CONTROLLER ***************--> 
+	<managed-bean>
+		<managed-bean-name>treedept</managed-bean-name>
+		<managed-bean-class>com.code.aon.common.tree.jsf.TreeDepartment</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>bundleBaseName</property-name>
+			<value>com.code.aon.ui.employee.i18n.messages</value>
+		</managed-property>		
+    </managed-bean> 
+	<managed-bean>
+		<managed-bean-name>treecalendar</managed-bean-name>
+		<managed-bean-class>com.code.aon.common.tree.jsf.TreeCalendar</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>bundleBaseName</property-name>
+			<value>com.code.aon.ui.employee.i18n.messages</value>
+		</managed-property>		
+    </managed-bean> 
+    
+	<!-- ************** CALENDAR MANAGEMENT ****************** -->
+	<managed-bean>
+		<managed-bean-name>calendars</managed-bean-name>
+		<managed-bean-class>com.code.aon.web.employee.controller.CalendarsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>eventFinder</managed-bean-name>
+        <managed-bean-class>com.code.aon.web.employee.controller.EventFinderController</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+	<!-- ************ REPORTS ************ -->
+	<managed-bean>
+		<managed-bean-name>incidencesReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.web.employee.report.controller.Incidences</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>expendituresReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.report.controller.Expenditures</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>resourcesReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.web.employee.report.controller.Resources</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>seniorityReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.report.controller.Seniority</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>hourssummary</managed-bean-name>
+		<managed-bean-class>com.code.aon.web.employee.report.controller.WorkingHoursSummary</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ CALCULATOR ************ -->
+	<managed-bean>
+		<managed-bean-name>calculator</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.calculator.controller.CalculatorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ SELECT WINDOW ************ -->
+	<managed-bean>
+		<managed-bean-name>employeeSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.SelectWindowController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.resources.Employee</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pagePath</property-name>
+			<value>/facelet/sw/employeeSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ********** COLLECTIONS CONTROLLER ************* -->
+	<managed-bean>
+		<managed-bean-name>employeeCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.EmployeeCollectionsController</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>CVitaeCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.controller.CVitaeCollectionsController</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>recordCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.record.controller.RecordCollectionsController</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>calculatorCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.calculator.controller.CalculatorCollectionsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+</faces-config>

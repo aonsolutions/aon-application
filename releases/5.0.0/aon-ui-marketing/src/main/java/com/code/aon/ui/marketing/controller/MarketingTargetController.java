@@ -1,0 +1,187 @@
+package com.code.aon.ui.marketing.controller;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.code.aon.commercial.Target;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.ReplicationMode;
+import com.code.aon.marketing.MarketingTarget;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.code.aon.ui.commercial.controller.TargetController;
+
+/**
+ * Controller used in the offer maintenance.
+ */
+public class MarketingTargetController extends TargetController {
+	
+	private IManagerBean mtBean;
+	
+	private String updateAlias( String alias ) {
+		if ( alias.startsWith("Target_") ) {
+			return alias.replace("Target_", "MarketingTarget_target_");
+		}			
+		return alias;
+	}
+	
+	@Override
+	public String resolveAlias( String alias ) {
+		return super.resolveAlias( updateAlias(alias) );
+	}
+
+	public MarketingTarget getMT() {
+		return (MarketingTarget) super.getTo();
+	}
+	
+	@Override
+	public ITransferObject getTo() {
+		MarketingTarget mt = getMT();
+		return mt != null ? mt.getTarget() : null;
+	}
+	
+	@Override
+	public IManagerBean getManagerBean() throws ManagerBeanException {
+		if ( this.mtBean == null ) {
+			IManagerBean targetBean = BeanManager.getManagerBean(Target.class);	
+			this.mtBean = new MarketingTargetManagedBean( super.getManagerBean(), targetBean );
+		}
+		return this.mtBean;
+	}
+
+	public class MarketingTargetManagedBean implements IManagerBean {
+		
+		private IManagerBean bean;
+		
+		private IManagerBean targetBean;
+		
+		public MarketingTargetManagedBean(IManagerBean bean, IManagerBean targetBean) throws ManagerBeanException {
+			this.bean = bean;
+			this.targetBean = targetBean;
+		}
+
+		@Override
+		public ITransferObject get(Serializable pk) throws ManagerBeanException {
+			return bean.get(pk);
+		}
+
+		@Override
+		public int getCount(Criteria criteria) throws ManagerBeanException {
+			return bean.getCount(criteria);
+		}
+
+		@Override
+		public String getFieldName(String alias) throws ManagerBeanException {
+			return bean.getFieldName( updateAlias(alias) );
+		}
+
+		@Override
+		public Serializable getId(ITransferObject to)
+				throws ManagerBeanException {
+			return getBean(to).getId(to);
+		}
+
+		@Override
+		public List<ITransferObject> getList(Criteria criteria, int offset,
+				int count) throws ManagerBeanException {
+			return bean.getList(criteria, offset, count);
+		}
+
+		@Override
+		public List<ITransferObject> getList(Criteria criteria)
+				throws ManagerBeanException {
+			return bean.getList(criteria);
+		}
+
+		@Override
+		public List getList(ProjectionList projectionList, Criteria criteria)
+				throws ManagerBeanException {
+			return bean.getList(projectionList, criteria);
+		}
+
+		@Override
+		public Class getPOJOClass() {
+			return bean.getPOJOClass();
+		}
+
+		private IManagerBean getBean( ITransferObject to ) {
+			return ( to instanceof Target ) ? targetBean : bean;
+		}
+		
+		@Override
+		public Object getUniqueResult(Projection projection, Criteria criteria)
+				throws ManagerBeanException {
+			return bean.getUniqueResult(projection, criteria);
+		}
+
+		@Override
+		public void setId(ITransferObject to, Serializable id)
+				throws ManagerBeanException {
+			getBean(to).setId(to, id);
+		}
+
+		@Override
+		public void setProperty(ITransferObject to, String propertyName,
+				Object value) throws ManagerBeanException {
+			getBean(to).setProperty(to, propertyName, value);
+		}
+
+		@Override
+		public ITransferObject createNewTo() throws ManagerBeanException {
+			return bean.createNewTo();
+		}
+
+		@Override
+		public void initializePOJO(ITransferObject to)
+				throws ManagerBeanException {
+			bean.initializePOJO(to);
+		}
+
+		private ITransferObject getMarketingTarget( ITransferObject to ) {
+			MarketingTarget mt = getMT();
+			mt.setTarget( (Target) to );
+			return mt;
+		}
+		
+		@Override
+		public ITransferObject insert(ITransferObject to)
+				throws ManagerBeanException {
+			return getMarketingTarget(targetBean.insert(to));
+		}
+
+		@Override
+		public ITransferObject insertOrUpdate(ITransferObject to)
+				throws ManagerBeanException {
+			return getMarketingTarget(targetBean.insertOrUpdate(to));
+		}
+
+		@Override
+		public boolean remove(ITransferObject to) throws ManagerBeanException {
+			return targetBean.remove(to);
+		}
+
+		@Override
+		public ITransferObject update(ITransferObject to)
+				throws ManagerBeanException {
+			return getMarketingTarget(targetBean.update(to));
+		}
+
+		@Override
+		public ITransferObject replicate(ITransferObject to,
+				ReplicationMode mode) throws ManagerBeanException {
+			return bean.replicate(to, mode);
+		}
+
+		@Override
+		public void restoreNullSubPOJOs(ITransferObject to)
+				throws ManagerBeanException {
+			bean.restoreNullSubPOJOs(to);
+		}
+		
+	}
+		
+}

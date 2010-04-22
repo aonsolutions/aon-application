@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="supplierForm" enctype="multipart/form-data">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="gridToolbar" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.gbp_supplier}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{supplier.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="save" value="#{bundle.aon_save}"
+							rendered="#{supplier.to!=null or supplier.new}"
+							reRender="gridToolbar,supplierTab"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{supplier.accept}"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							rendered="#{supplier.to!=null or supplier.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="#{true}" action="supplier_list"
+							actionListener="#{supplier.onCancel}"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!supplier.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							immediate="true" confirmTitle="Confirmation Dialog"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{supplier.onRemove}"
+							confirmAction="supplier_list"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="true" action="supplier_search"
+							actionListener="#{supplier.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="reset" 
+							reRender="gridToolbar,supplierGrid,supplierTab" value="#{bundle.aon_reset}"
+							actionListener="#{supplier.onReset}" rendered="#{!supplier.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<t:commandButton id="supplier_to" value="#{appBundle.gbp_print}"
+							immediate="true" forceId="true" 
+							onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.jsf');return false;"
+							styleClass="aon-finding-toolbar-item aon-icon-printer"
+							accesskey="#{bundle.aon_key_print}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="supplierGrid" columns="2" dir="true">
+
+					<aon:outputLabel for="Supplier_document"
+						value="#{appBundle.gbp_supplier_document}" />
+					<aon:inputText id="Supplier_document" required="true" size="16"
+						maxlength="16" value="#{supplier.to.document}" />
+
+					<aon:outputLabel for="Supplier_name"
+						value="#{appBundle.gbp_supplier_name}" />
+					<aon:inputText id="Supplier_name" required="true" size="64"
+						maxlength="64" value="#{supplier.to.name}" />
+
+					<aon:outputLabel for="Supplier_supplierType_id"
+						value="#{appBundle.gbp_supplier_supplierType}" />
+					<aon:selectOneMenu id="Supplier_supplierType_id"
+						value="#{supplier.to.supplierType.id}">
+						<f:selectItems value="#{GBPCollections.supplierTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Supplier_employeeNumber"
+						value="#{appBundle.gbp_supplier_employee_number}" />
+					<aon:inputText id="Supplier_employeeNumber" size="6" maxlength="6"
+						value="#{supplier.to.employeeNumber}" />
+
+					<aon:outputLabel for="Supplier_address"
+						value="#{appBundle.gbp_supplier_address}" />
+					<aon:inputText id="Supplier_address" size="128" maxlength="128"
+						value="#{supplier.to.address}" />
+
+					<aon:outputLabel for="Supplier_city"
+						value="#{appBundle.gbp_supplier_city}" />
+					<aon:inputText id="Supplier_city" size="64" maxlength="64"
+						value="#{supplier.to.city}" />
+
+					<aon:outputLabel for="Supplier_zip"
+						value="#{appBundle.gbp_supplier_zip}" />
+					<aon:inputText id="Supplier_zip" size="16" maxlength="16"
+						value="#{supplier.to.zip}" />
+
+					<aon:outputLabel for="Supplier_geozone_id"
+						value="#{appBundle.gbp_supplier_geozone}" />
+					<aon:selectOneMenu id="Supplier_geozone_id"
+						value="#{supplier.to.geozone.id}">
+						<f:selectItems value="#{GBPCollections.geozones}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="Supplier_bankAccount"
+						value="#{appBundle.gbp_supplier_bank_account}" />
+					<aon:panelGrid columns="4">
+						<aon:inputText id="Supplier_account_entity" size="4" maxlength="4"
+							value="#{supplier.entity}" />
+						<aon:inputText id="Supplier_account_office" size="4" maxlength="4"
+							value="#{supplier.office}" />
+						<aon:inputText id="Supplier_account_control" size="2" maxlength="2"
+							value="#{supplier.control}" />
+						<aon:inputText id="Supplier_account_account" size="10" maxlength="10"
+							value="#{supplier.account}" />
+					</aon:panelGrid>		
+
+					<aon:outputLabel for="Supplier_passWord"
+						value="#{appBundle.gbp_supplier_password}" />
+					<aon:inputText id="Supplier_passWord" 
+						size="16" maxlength="16" required="true"
+						value="#{supplier.to.passWord}" />
+
+					<aon:outputLabel for="Supplier_status"
+						value="#{appBundle.gbp_supplier_status}" />
+					<aon:selectOneMenu id="Supplier_status"
+						value="#{supplier.to.status}">
+						<f:selectItems value="#{GBPCollections.supplierStatus}" />
+					</aon:selectOneMenu>
+
+				</aon:panelGrid>
+
+				<aon:div id="supplierTab">
+					<aon:panelTabSet rendered="#{!supplier.new}">
+
+						<aon:panelTab id="contacts" label="#{appBundle.gbp_supplier_contacts}">
+							<ui:include src="/facelet/supplier/contacts/list.xhtml"/>
+						</aon:panelTab>
+
+						<aon:panelTab id="addInfo" label="#{appBundle.gbp_supplier_add_info}">
+							<ui:include src="/facelet/supplier/add_info/list.xhtml"/>
+						</aon:panelTab>
+
+						<aon:panelTab id="campaigns" label="#{appBundle.gbp_supplier_campaigns}">
+							<ui:include src="/facelet/supplier/campaign/list.xhtml"/>
+						</aon:panelTab>
+
+						<aon:panelTab id="economicData" label="#{appBundle.gbp_supplier_economic_data}">
+							<ui:include src="/facelet/supplier/economic_data/list.xhtml"/>
+						</aon:panelTab>
+
+						<aon:panelTab id="observation" label="#{appBundle.gbp_supplier_observation_observations}">
+							<ui:include src="/facelet/supplier/observation/list.xhtml"/>
+						</aon:panelTab>
+
+						<aon:panelTab id="contact_person" label="#{appBundle.gbp_supplier_contact_persons}">
+							<ui:include src="/facelet/supplier/contact_person/list.xhtml"/>
+						</aon:panelTab>
+
+					</aon:panelTabSet>
+				</aon:div>
+			
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

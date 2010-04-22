@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/process/launcher/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{campaignBundle.process_wizard_step0}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+		<aon:panelGrid columns="2" dir="true" style="width: 90%;">
+			<aon:outputLabel for="wzd_process"
+				value="#{campaignBundle.process_process}" />
+			<h:selectOneMenu id="wzd_process" value="#{processWizard.process}"
+				required="#{true}"
+				valueChangeListener="#{processWizard.processChanged}">
+				<f:selectItem value="#{nullSelectItem.value}"
+					itemLabel="Seleccione ...." />
+				<f:selectItems value="#{campaignCollections.processEntities}" />
+			</h:selectOneMenu>
+		</aon:panelGrid>
+	</ui:define>
+</ui:composition>

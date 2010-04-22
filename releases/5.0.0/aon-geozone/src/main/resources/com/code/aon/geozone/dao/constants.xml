@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.geozone.GeoTree" sqlName="geotree">
+		<alias names="id,parent,parent_id,parent_name,child,child_id,child_name" />
+		<hibernate names="id,parent,parent.id,parent.name,child,child.id,child.name" />
+	</bean>
+</dao>

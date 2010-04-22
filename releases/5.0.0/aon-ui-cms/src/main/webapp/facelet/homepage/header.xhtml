@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition>
+
+	<aon:div id="aon-header" styleClass="aon-desktop-header">
+		<aon:div styleClass="aon-connection-status"><aon:outputConnectionStatus styleClass="aon-connection-control"/></aon:div>
+		<aon:panelGrid columns="3" cellpadding="0" cellspacing="0" width="100%" dir="true">
+			
+			<aon:panelGroup>
+				<aon:div styleClass="aon-logo">
+					<aon:graphicImage url="#{aonConfiguration.applicationLogoContextRelativePath}"/>
+				</aon:div>
+				<aon:div styleClass="aon-applicationName">
+					<aon:outputText value="#{appBundle.aon_application_title}" />
+					<aon:outputText value=" - " />
+					<aon:outputText value="#{config.currentConfig.domain}" />
+				</aon:div>
+			</aon:panelGroup>
+
+			<aon:panelGroup>
+				<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" width="100%">
+					<aon:panelGroup rendered="#{aonConfiguration.properties.middleHeader == null}">
+						<aon:div styleClass="aon-header-userAdOnLeft">
+							<aon:outputText value="&#160;"/>
+						</aon:div>
+					</aon:panelGroup>
+
+					<aon:panelGroup
+						rendered="#{aonConfiguration.properties.middleHeader != null}">
+						<aon:div styleClass="aon-header-userAdOnLeft">
+							<aon:outputText escape="false" value="#{aonConfiguration.properties.middleHeader}" />
+						</aon:div>
+					</aon:panelGroup>
+				</aon:panelGrid>
+			</aon:panelGroup>
+			
+			<aon:panelGroup columns="2">
+				<aon:div style="text-align:right;">
+					<aon:div styleClass="aon-desktop-header-tab">
+				
+						<aon:div styleClass="aon-header-menu" style="width:100%;">
+							<aon:panelGrid columns="2" cellpadding="2" cellspacing="0" >
+										<aon:div styleClass="aon-header-menu-item">
+											<h:outputLink 
+												target="_top"
+												value="${facesContext.externalContext.requestContextPath}/">
+												<aon:outputText value="#{bundle.aon_home}" />
+											</h:outputLink>
+										</aon:div>
+										
+										<aon:div >
+											<aon:form>
+											<aon:dataTable id="languageSelection" cellpadding="0" cellspacing="0"
+													styleClass="table-query" headerClass="table-header-query"
+													>
+													<ice:columns value="#{i18n.languageList}" var="column">
+														<f:facet name="header">
+															<aon:div>
+																<aon:commandButton id="changeLanguage" 
+																	actionListener="#{i18n.onChangeLanguage}" rendered="#{i18n.currentLanguage.id != column.id}"
+																	image="/images/flags/#{column.language.locale.language}_off.gif"> 
+																</aon:commandButton> 
+																<aon:graphicImage id="changeLanguage_on" 
+																	rendered="#{i18n.currentLanguage.id == column.id}"
+																	url="/images/flags/#{column.language.locale.language}_on.gif">
+																</aon:graphicImage> 
+															</aon:div>
+														</f:facet>											
+													</ice:columns>
+												</aon:dataTable>
+											</aon:form>
+										</aon:div>
+									</aon:panelGrid>
+							</aon:div>
+	
+							
+						
+					</aon:div>
+				</aon:div>
+			</aon:panelGroup>
+		</aon:panelGrid>
+
+	</aon:div>
+
+</ui:composition>
+
+</body>
+</html>

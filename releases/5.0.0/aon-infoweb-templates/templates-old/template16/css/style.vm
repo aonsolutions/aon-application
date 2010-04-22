@@ -1,0 +1,156 @@
+.inicio a{
+	font-family: ${font_fuente} ;
+	font-size: ${size_tamano_de_fuente};
+	color:${color_color_de_texto};
+	text-decoration:none;
+	}
+body {
+	margin: 0 auto;
+	width: 750px;
+}
+#logo{
+	float:left; 
+	width:274px; 
+	height:213px;
+}
+#header{
+	float:right; 
+	width:750px; 
+	height:97px; 
+	background-color:${bgcolor_color_de_fondo_cabecera};
+	position:relative
+}
+#toplinks{
+	position:absolute; 
+	right:10px; 
+	top:10px;
+}
+#menu{
+	float:right; 
+	margin-right:10px;
+	height:20px;
+	width:600px; 
+	background-image: url(images/bg_menu.gif);
+	background-repeat:repeat-x;
+	color:${color_color_de_texto_menu};
+	font-size:12px;
+	text-transform:uppercase;
+	font-weight:bold;
+}
+#menu a{
+	text-decoration:none;
+	float:right;
+	color:${color_color_de_texto_menu};
+	font-size:12px;
+	text-transform:uppercase;
+	font-weight:bold;
+	padding:5px;
+	height:24px;
+}
+#menu a:hover{
+	text-decoration:none;
+	background-image: url(images/bg_submenu.gif);
+	color:${color_color_de_texto_menu_hover};
+	font-size:12px;
+	text-transform:uppercase;
+	padding:5px;
+	font-weight:bold;
+}
+#contenttext{
+	float:right; 
+	width:650px;
+}
+#footer{
+	float:left; 
+	width:750px; 
+	background-color: ${bgcolor_color_de_fondo_pie};
+	padding:10px;
+	font-size:9px;
+}
+.graypanel{
+	border:solid 1px #666666; 
+	background-color:#F7F7F7; 
+	padding-top:125px; 
+	padding-right:25px;
+	padding-left:25px;
+	padding-bottom:25px;
+	margin:10px;
+}
+.bodytext {
+	font: ${size_tamano_de_fuente} ${font_fuente};
+	color: ${color_color_de_texto};
+}
+
+.box{
+	text-align:center; 
+	padding-top:10px;
+}
+.texto{
+	text-align:right;
+}
+.infoHelp{
+	width:335px; 
+	padding:5px;
+	background-color:#dddddd;
+	margin-left:325px;
+	text-align:justify;
+	font-size:9px;
+}
+.gallery-navigation{
+	text-align:center;
+	color:&{color_color_de_texto_contenido};
+}
+.gallery-navigation a{
+	color:&{color_color_de_texto_contenido};
+	text-decoration:none;
+	text-align:center;
+}
+.album-block{ 
+	text-align:center;
+}
+.formulario{
+	float: left;
+	line-height:15px;
+}
+.copiesferalia {
+	font-family: ${font_fuente} ;
+	font-size:9px;
+	color:${color_texto};
+	text-decoration:none;
+	}
+.copiesferalia a{
+	font-family: ${font_fuente} ;
+	font-size:9px;
+	color:${color_texto};
+	text-decoration:none;
+	}
+.copiesferalia a:hover{
+	font-family: ${font_fuente} ;
+	font-size: 9px;
+	color:${color_texto};
+	text-decoration:underline;
+	}
+.album {
+	height:400px;
+	text-align:center;
+}
+.album a{
+	text-decoration:none;
+	color:&{color_color_de_texto_contenido};
+}
+.objeto {
+	float:left;
+	padding:10px;
+}
+.objeto a{
+	text-decoration:none;
+	color:&{color_color_de_texto_contenido};
+}
+.bold {
+	float:left;
+	padding:10px;
+}
+.bold a{
+	text-decoration:none;
+	color:&{color_color_de_texto_contenido};
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Cliente" sqlSentence="SELECT registry.id, document, name, alias, SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;&#xa;  FROM registry, invoice, invoice_detail&#xd;&#xa; WHERE invoice.registry = registry.id &#xd;&#xa;   AND invoice_detail.invoice = invoice.id&#xd;&#xa;   AND invoice.type = ?&#xd;&#xa;   AND invoice.issue_date BETWEEN ? AND ?&#xd;&#xa; GROUP BY 1,2,3,4&#xd;&#xa; ORDER BY 5 DESC">
+    <parameters>
+        <parameter name="type" type="INTEGER"/>
+        <parameter name="initDate" type="DATE"/>
+        <parameter name="endDate" type="DATE"/>
+    </parameters>
+    <results>
+        <result accessName="CUSTOMER_ID" columnId="id" export="true"
+            label="Codigo" tableId="registry" type="INTEGER"/>
+        <result accessName="document" columnId="document" label="NIF"
+            tableId="registry" type="STRING"/>
+        <result accessName="CUSTOMER_NAME" columnId="name" export="true"
+            label="Cliente" tableId="registry" type="STRING"/>
+        <result accessName="alias" columnId="alias" label="Alias"
+            tableId="registry" type="STRING"/>
+        <result
+            accessName="SUM(TRUNCATE(invoice_detail.taxable_base,2))"
+            columnId="SUM(TRUNCATE(invoice_detail.taxable_base,2))"
+            label="Total" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	
+	<bean class="com.code.aon.payroll.auxiliares.organismosyentidades.Mutua" sqlName="mutua">
+		<alias names="cdg,description,mutuas_fecfin,mutuas_id_cdg,mutuas_id_fecini" />
+		<hibernate names="cdg,description,mutuas.fecfin,mutuas.id.cdg,mutuas.id.fecini" />
+	</bean>
+		
+</dao>
+
+ 
+
+
+

@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="areaForm">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="gridToolbar" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.gbp_area}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bundle.aon_editing}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="save" value="#{bundle.aon_save}"
+							rendered="#{area.to!=null or area.new}"
+							action="area_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{area.accept}"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							rendered="#{area.to!=null or area.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="#{true}" action="area_list"
+							actionListener="#{area.onCancel}"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!area.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							immediate="true" confirmTitle="Confirmation Dialog"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{area.onRemove}"
+							confirmAction="area_list"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="true" action="area_search"
+							actionListener="#{area.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="reset" 
+							action="area_form" value="#{bundle.aon_reset}"
+							actionListener="#{area.onReset}" rendered="#{!area.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="areaGrid" columns="2" dir="true">
+
+					<aon:outputLabel for="Area_description"
+						value="#{appBundle.gbp_area_description}" />
+					<aon:inputText id="Area_description" size="64"
+						maxlength="50" value="#{area.to.description}" />
+
+					<aon:outputLabel for="Area_status"
+						value="#{appBundle.gbp_area_status}" />
+					<aon:selectOneMenu id="Area_status"
+						value="#{area.to.status}">
+						<f:selectItems value="#{GBPCollections.areaStatus}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="Area_areaGroup_id"
+						value="#{appBundle.gbp_area_area_group}" />
+					<aon:selectOneMenu id="Area_areaGroup_id"
+						value="#{area.to.areaGroup.id}">
+						<f:selectItems value="#{GBPCollections.areaGroups}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Area_budget"
+						value="#{appBundle.gbp_area_budget}" />
+					<aon:inputText id="Area_budget" 
+						size="16" maxlength="18"
+						value="#{area.to.budget}" />
+
+					<aon:outputLabel for="Area_estimate"
+						value="#{appBundle.gbp_area_estimate}" />
+					<aon:inputText id="Area_estimate" 
+						size="16" maxlength="18"
+						value="#{area.to.estimate}" />
+
+				</aon:panelGrid>
+
+			</aon:div>	
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+		
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

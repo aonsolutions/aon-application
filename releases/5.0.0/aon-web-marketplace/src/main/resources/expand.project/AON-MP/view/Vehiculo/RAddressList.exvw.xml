@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Direcciones de un Registry"
+    label="Direcciones de un Registry" sqlSentence="SELECT raddress.address, raddress.zip, raddress.city, geozone.name&#xd;&#xa;  FROM raddress&#xd;&#xa;  LEFT OUTER JOIN geozone ON raddress.geozone = geozone.id&#xd;&#xa;  WHERE raddress.registry = ?&#xd;&#xa;">
+    <parameters>
+        <parameter columnReference="data/raddress.exdm.xml/registry"
+            label="Código de registry" name="registry" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="address" columnId="address"
+            columnReference="data/raddress.exdm.xml/address"
+            label="DIRECCION" tableId="raddress" type="STRING"/>
+        <result accessName="zip" columnId="zip"
+            columnReference="data/raddress.exdm.xml/zip" label="C.P."
+            tableId="raddress" type="STRING"/>
+        <result accessName="city" columnId="city"
+            columnReference="data/raddress.exdm.xml/city" label="CIUDAD"
+            tableId="raddress" type="STRING"/>
+        <result accessName="name" columnId="name" label="PROVINCIA"
+            tableId="geozone" type="STRING"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/raddress.exdm.xml"/>
+    </dataModelReferences>
+</view>

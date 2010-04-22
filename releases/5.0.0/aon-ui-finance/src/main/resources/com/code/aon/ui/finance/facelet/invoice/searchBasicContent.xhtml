@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{searchController.sales}">
+		<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+	</c:if>
+
+	<aon:outputLabel for="Invoice_referenceCode"
+		value="#{financeBundle.finance_invoice_number}"
+		rendered="#{!searchController.sales}" />
+	<aon:inputText id="Invoice_referenceCode"
+		valueChangeListener="#{controller.addExpression}"
+		rendered="#{!searchController.sales}"
+		size="25" maxlength="25" />
+
+	<aon:outputLabel for="Customer_id"
+		value="#{customerBundle.customer_customer}"
+		rendered="#{searchController.sales}" />
+	<aon:div styleClass="aon-lookup" rendered="#{searchController.sales}">
+		<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
+			reRender="Customer_full_name" lookupProperty="registry"
+			value="#{searchController.registry.id}" size="5" />
+		<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
+			selectReRender="Customer_id,Customer_full_name" actionType="search"
+			lookup="#{customerLookup}" minHeight="460" minWidth="650"
+			property="#{searchController.registry}" lookupProperty="registry">
+		</aon:lookupButton>
+		<aon:inputText id="Customer_full_name"
+			value="#{(searchController.registry.name!=null)?(searchController.registry.fullName):('')}"
+			size="50" disabled="true" />
+	</aon:div>
+
+	<aon:outputLabel for="Supplier_id"
+		value="#{supplierBundle.supplier_supplier}"
+		rendered="#{searchController.purchase}" />
+	<aon:div styleClass="aon-lookup" rendered="#{searchController.purchase}">
+		<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
+			reRender="Supplier_full_name" lookupProperty="registry"
+			value="#{searchController.registry.id}" size="5" />
+		<aon:lookupButton windowTitle="#{supplierBundle.supplier_selection}"
+			selectReRender="Supplier_id,Supplier_full_name" actionType="search"
+			lookup="#{supplierLookup}" minHeight="460" minWidth="650"
+			property="#{searchController.registry}" lookupProperty="registry">
+		</aon:lookupButton>
+		<aon:inputText id="Supplier_full_name"
+			value="#{(searchController.registry.name!=null)?(searchController.registry.fullName):('')}"
+			size="50" disabled="true" />
+	</aon:div>
+
+	<aon:outputLabel for="Creditor_id"
+		value="#{financeBundle.finance_creditor}"
+		rendered="#{searchController.expenses}" />
+	<aon:div styleClass="aon-lookup" rendered="#{searchController.expenses}">
+		<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
+			reRender="Creditor_full_name" lookupProperty="registry"
+			value="#{searchController.registry.id}" size="5" />
+		<aon:lookupButton windowTitle="#{financeBundle.finance_creditor_selection}"
+			selectReRender="Creditor_id,Creditor_full_name" actionType="search"
+			lookup="#{creditorLookup}" minHeight="460" minWidth="650"
+			property="#{searchController.registry}" lookupProperty="registry">
+		</aon:lookupButton>
+		<aon:inputText id="Creditor_full_name"
+			value="#{(searchController.registry.name!=null)?(searchController.registry.fullName):('')}"
+			size="50" disabled="true" />
+	</aon:div>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Invoice_issueDate-From"
+			styleClass="aon-form-date-label" value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Invoice_issueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="Invoice_issueDate-To"
+			styleClass="aon-form-date-label" value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Invoice_issueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>
+
+	<c:if test="#{!searchController.sales}">
+		<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+		<aon:div>
+			<aon:outputLabel for="Invoice_series" rendered="#{!searchController.undeductible}"
+				styleClass="aon-form-date-label aon-margin-right" value="R-" />
+			<aon:outputLabel for="Invoice_series" rendered="#{searchController.undeductible}"
+				styleClass="aon-form-date-label aon-margin-right" value="G-" />
+			<aon:inputText id="Invoice_series"
+				onblur="toUpperCase(this);"
+				valueChangeListener="#{controller.addExpression}"
+				size="5" maxlength="5" />
+			<aon:outputLabel for="Invoice_number"
+				styleClass="aon-form-date-label aon-margin-right" value="-" />
+			<aon:inputText id="Invoice_number"
+				valueChangeListener="#{controller.addExpression}"
+				size="6" />
+		</aon:div>
+	</c:if>
+
+	<c:if test="#{aonRole.confidentiality}">
+		<aon:outputLabel for="Invoice_securityLevel"
+			value="#{bundle.aon_confidential}" />
+		<aon:selectOneRadio id="Invoice_securityLevel"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
+	</c:if>
+
+	<c:if test="#{company.EInvoice}">
+		<aon:outputLabel for="Invoice_signed" value="#{financeBundle.finance_signed}" />
+		<aon:selectOneRadio id="Invoice_signed"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneRadio>				
+	</c:if>
+
+	<c:if test="#{aonRole.accountingOperator and searchController.defaultStatus == null}">
+		<aon:outputLabel for="Invoice_status" value="#{financeBundle.finance_recorded}" />
+		<aon:selectOneRadio id="Invoice_status"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
+	</c:if>
+
+</ui:composition>

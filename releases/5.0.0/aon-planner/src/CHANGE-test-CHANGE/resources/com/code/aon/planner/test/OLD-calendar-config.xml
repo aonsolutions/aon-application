@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<calendar-config>
+
+	<calendar
+		id="default"
+		year="2005"
+		description="Default 2005 calendar"
+		path="com/code/aon/planner/test/Alava2005.ics"
+	/>
+
+</calendar-config>
+

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="12+1" sqlSentence="SELECT CAST(CONCAT(YEAR(invoice.issue_date), &quot;/&quot;, LPAD(MONTH(invoice.issue_date),2,&quot;0&quot;)) AS CHAR), &#xd;&#xa;&#x9;SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;&#xa;  FROM invoice, invoice_detail&#xd;&#xa; WHERE invoice.id = invoice_detail.invoice&#xd;&#xa;   AND invoice.issue_date&#xd;&#xa;      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,&quot;-&quot;,?,&quot;-&quot;,1), &quot;%Y-%m-%d&quot;), INTERVAL 12 MONTH)&#xd;&#xa;          AND DATE_SUB(STR_TO_DATE(CONCAT(?,&quot;-&quot;,? + 1,&quot;-&quot;,1), &quot;%Y-%m-%d&quot;), INTERVAL 1 DAY)&#xd;&#xa;  AND invoice.type = ?&#xd;&#xa; GROUP BY 1&#xd;&#xa; ORDER BY 1&#xd;&#xa;">
+    <parameters>
+        <parameter name="year1" type="INTEGER"/>
+        <parameter name="month1" type="INTEGER"/>
+        <parameter name="year2" type="INTEGER"/>
+        <parameter name="month2" type="INTEGER"/>
+        <parameter name="type" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result
+            accessName="CAST(CONCAT(YEAR(invoice.issue_date), &quot;/&quot;, LPAD(MONTH(invoice.issue_date),2,&quot;0&quot;)) AS CHAR)"
+            columnId="CAST(CONCAT(YEAR(invoice.issue_date), &quot;/&quot;, LPAD(MONTH(invoice.issue_date),2,&quot;0&quot;)) AS CHAR)"
+            label="Mes" type="STRING"/>
+        <result
+            accessName="SUM(TRUNCATE(invoice_detail.taxable_base, 2))"
+            columnId="SUM(TRUNCATE(invoice_detail.taxable_base, 2))"
+            label="Total" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

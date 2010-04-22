@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
+				
+	<ui:define name="afterMenuContent">				
+		<aon:commandLink id="mail"
+			title="#{webmailBundle.webmail_main}" action="folder"
+			value="#{webmailBundle.webmail_main}"
+			styleClass="aon-top-menu-item aon-icon-webmail2">
+		</aon:commandLink>
+					
+		<aon:commandLink id="contacts"
+			title="#{webmailBundle.webmail_email}" action="contact_list"
+			value="#{webmailBundle.webmail_email}"
+			styleClass="aon-top-menu-item aon-icon-agenda">
+		</aon:commandLink>
+
+		<aon:commandLink id="signature"
+			title="#{webmailBundle.webmail_signature}" action="signature_list"
+			value="#{webmailBundle.webmail_signature}" actionListener="#{signature.onSearch}"
+			styleClass="aon-top-menu-item aon-icon-signature">
+		</aon:commandLink>
+
+		<aon:commandLink id="mailAccountCahnge"
+			title="#{webmailBundle.webmail_mailAccount}" actionListener="#{mailAccount.onSearch}"
+			action="mailAccount_list" value="#{webmailBundle.webmail_mailAccount}"
+			styleClass="aon-top-menu-item aon-icon-mailAccountChange">
+		</aon:commandLink>
+
+		<aon:commandLink id="spam"
+			rendered="#{spam.spamEnabled}"
+			title="#{webmailBundle.webmail_spam}" action="spam"
+			actionListener="#{spam.onLoad}"
+			value="#{webmailBundle.webmail_spam}"
+			styleClass="aon-top-menu-item aon-icon-mail-spam">
+		</aon:commandLink>
+	</ui:define>
+	
+</ui:composition>

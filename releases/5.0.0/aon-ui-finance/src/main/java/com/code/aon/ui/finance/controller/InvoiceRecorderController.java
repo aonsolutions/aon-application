@@ -1,0 +1,177 @@
+package com.code.aon.ui.finance.controller;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.util.CommonUtil;
+import com.code.aon.finance.Finance;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
+
+public class InvoiceRecorderController extends BasicController{
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceRecorderController.class.getName());
+	
+	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
+
+	private ArrayList<Invoice> checks = new ArrayList<Invoice>();
+
+	private IPriceStrategy priceStrategy;
+
+	public AccountEntryInvoiceWriter getAccountEntryInvoiceWriter() {
+		if(accountEntryInvoiceWriter == null){
+			accountEntryInvoiceWriter = new AccountEntryInvoiceWriter();
+		}
+		return accountEntryInvoiceWriter;
+	}
+
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = new InvoicePriceStrategy();
+		}
+		return priceStrategy;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void checkAll(ActionEvent event) throws ManagerBeanException{
+		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
+		while(iter.hasNext()){
+			Invoice invoice = (Invoice)iter.next();
+			if(isRecordable(invoice)) {
+				if (!checks.contains( invoice )) {
+					checks.add( invoice );
+				}
+			}
+		}
+	}
+
+	public void checkNone(ActionEvent event) {
+		clearCheckedInvoices();
+	}
+
+	public boolean getRowChecked() {
+		Invoice to = (Invoice) model.getRowData();
+		return checks.contains(to);
+	}
+
+	public void setRowChecked(boolean rowChecked) {
+		if (rowChecked) {
+			Invoice to = (Invoice) model.getRowData();
+			if (!checks.contains(to)) {
+				checks.add(to);
+			}
+		} else {
+			Invoice to = (Invoice) model.getRowData();
+			if (checks.contains(to)) {
+				checks.remove(to);
+			}
+		}
+	}
+
+	public ArrayList<Invoice> getCheckedInvoices() {
+		return checks;
+	}
+
+	public void clearCheckedInvoices() {
+		checks = new ArrayList<Invoice>();
+	}
+
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		super.onEditSearch(event);
+		clearCheckedInvoices();
+	}
+	
+	public boolean isModelToRecordable() throws ManagerBeanException{
+		if (getModel().isRowAvailable()) {
+			Invoice invoice = (Invoice)this.getModel().getRowData();
+			return isRecordable(invoice);
+		}
+		return false;
+	}
+	
+	private boolean isRecordable(Invoice invoice) throws ManagerBeanException {
+		double invoiceTotal = getInvoiceTotal(invoice);
+		double financeTotal = getFinanceTotal(invoice);
+		return InvoiceStatus.PENDING.equals(invoice.getStatus()) && (financeTotal == 0 || invoiceTotal == financeTotal);
+	}
+
+	private double getInvoiceTotal(Invoice invoice) {
+		return getPriceStrategy().getTotalPrice(invoice,invoice);
+	}
+
+	private double getFinanceTotal(Invoice invoice) throws ManagerBeanException {
+		double financeTotal = 0;
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+		Iterator<?> iterator = financeBean.getList(criteria).iterator();
+		while(iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
+			financeTotal += finance.getAmount();
+		}
+		return CommonUtil.round(financeTotal);
+	}
+
+	public void onRecordSelected(ActionEvent event){
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		try {
+			HibernateUtil.setBeginTransaction( false );
+			HibernateUtil.setCloseSession( false );
+
+			Iterator<Invoice> iter = getCheckedInvoices().iterator();
+			while(iter.hasNext()){
+				Invoice invoice = iter.next();
+				if (invoice.getStatus() == InvoiceStatus.PENDING) {
+					try {
+						HibernateUtil.beginTransaction(sessionName);
+						getAccountEntryInvoiceWriter().recordInvoice(invoice);
+						invoice.setStatus(InvoiceStatus.SCORED);
+						HibernateUtil.getSession(sessionName).merge(invoice);
+						HibernateUtil.getSession(sessionName).flush();
+						HibernateUtil.commitTransaction(sessionName);
+					} catch (Exception e) {
+						try {
+							HibernateUtil.rollbackTransaction(sessionName);
+						} catch (DAOException daoe) {
+							String msg =  "Unable to rollback transaction!";
+							LOGGER.error(msg, e);
+						}
+						String msg =  "Error recording invoice:  " + invoice.getReferenceCode();
+						LOGGER.error(msg, e);
+						AonUtil.addErrorMessage(msg);
+						throw new AbortProcessingException(msg);
+					} finally {
+						HibernateUtil.closeSession(sessionName);
+					}
+				}
+			}
+			clearCheckedInvoices();
+			this.onSearch(null);
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+
+}

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root id="aon_app" key="AON_APP" descriptionKey="aon_application_menu_title" ref="firstContent">
+	<menu ref="content" key="aon_tables" descriptionKey="aon_tables_desc">
+		<menu ref="content" key="aon_product_tables" descriptionKey="aon_product_tables_desc">
+			<option key="aon_item" descriptionKey="aon_item_desc" 
+				ref="item">
+				<actionListener action="#{item.onReset}"/>
+			</option>
+			<option ref="prices" key="aon_item_prices" descriptionKey="aon_item_prices_desc">
+				<actionListener action="#{itemPrices.onStart}"/>
+			</option>
+		</menu>
+		<option key="aon_customer" descriptionKey="aon_customer_desc" 
+			ref="customer">
+			<actionListener action="#{customer.onReset}"/>
+		</option>
+		<option key="aon_supplier" descriptionKey="aon_supplier_desc"
+			ref="supplier">
+			<actionListener action="#{supplier.onReset}"/>
+		</option>
+	</menu>
+	<menu id="aon_product_making" ref="content" key="aon_product_making">
+		<option id="aon_composition" key="aon_composition" descriptionKey="aon_composition_desc" 
+			ref="composition">
+			<actionListener action="#{composition.setQuarteringMode}"/>
+			<actionListener action="#{composition.onReset}"/>
+		</option>
+		<menu id="aon_elaboration" ref="content" key="aon_elaboration">
+			<option id="aon_preparation" key="aon_preparation" descriptionKey="aon_preparation_desc"
+				ref="elaboration">
+				<actionListener action="#{composition.setManufactureMode}"/>
+				<actionListener action="#{composition.onReset}"/>
+			</option>
+			<option id="aon_production" key="aon_production" descriptionKey="aon_production_desc"
+				ref="production">
+				<actionListener action="#{production.onReset}"/>
+			</option>
+		</menu>
+	</menu>
+	<menu id="sales" ref="content" key="aon_sales" descriptionKey="aon_sales_desc">
+		<option id="delivery" key="aon_sales_delivery" descriptionKey="aon_sales_delivery_desc" 
+			ref="delivery">
+			<actionListener action="#{incomeDetail.onCancel}"/>
+			<actionListener action="#{deliveryDetail.onCancel}"/>
+			<actionListener action="#{delivery.onReset}"/>
+		</option>
+		<option id="salesInvoicing" key="aon_sales_invoicing" descriptionKey="aon_sales_invoicing_desc" 
+			ref="sales_invoicing">
+			<actionListener action="#{salesInvoicingDetail.onCancel}" />
+			<actionListener action="#{salesInvoicing.onReset}" />
+		</option>
+		<option key="aon_sales_finance_checking" descriptionKey="aon_sales_finance_checking_desc"
+			ref="finance_checking">
+			<actionListener action="#{financeChecking.setSalesMode}"/>
+		</option>
+		<menu ref="content" key="aon_menu_reports">
+			<option key="Ventas_Anuales.xml" 
+	    		ref="/hyperview.faces?fileName=Ventas_Anuales.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />
+		    <option key="Ventas.xml" 
+	    		ref="/hyperview.faces?fileName=Ventas.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />
+		    <option key="Ventas_Comparativa_Periodos.xml" 
+	    		ref="/hyperview.faces?fileName=Ventas_Comparativa_Periodos.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />
+	    	<option key="Ventas_12_1.xml" 
+	    		ref="/hyperview.faces?fileName=Ventas_12_1.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />	
+	    	<option key="ABC_Ventas.xml" 
+	    		ref="/hyperview.faces?fileName=ABC_Ventas.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />
+	    	<option key="Ventas_evolucion.xml" 
+	    		ref="/hyperview.faces?fileName=Ventas_evolucion.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />	
+		</menu>
+	</menu>
+	<menu id="purchase" ref="content" key="aon_purchase" descriptionKey="aon_purchase_desc">
+		<option id="income" key="aon_purchase_purchase" descriptionKey="aon_purchase_purchase_desc" 
+			ref="purchase">
+			<actionListener action="#{incomeDetail.onCancel}"/>
+			<actionListener action="#{income.onReset}"/>
+		</option>
+		<option id="invoicing" key="aon_purchase_invoicing" descriptionKey="aon_purchase_invoicing_desc" 
+			ref="purchase_invoicing">
+			<actionListener action="#{invoicingDetail.onCancel}" />
+			<actionListener action="#{invoicing.onReset}" />
+		</option>
+		<option key="aon_purchase_finance_checking" descriptionKey="aon_purchase_finance_checking_desc"
+			ref="finance_checking">
+			<actionListener action="#{financeChecking.setPurchaseMode}"/>
+		</option>
+		<menu ref="content" key="aon_menu_reports">
+			<option key="Compras_Anuales.xml" 
+	    		ref="/hyperview.faces?fileName=Compras_Anuales.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />
+			<option key="Compras.xml" 
+	    		ref="/hyperview.faces?fileName=Compras.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />
+		    <option key="Compras_Comparativa_Periodos.xml" 
+	    		ref="/hyperview.faces?fileName=Compras_Comparativa_Periodos.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />
+	    	<option key="Compras_12_1.xml" 
+	    		ref="/hyperview.faces?fileName=Compras_12_1.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />	
+	    	<option key="ABC_Compras.xml" 
+	    		ref="/hyperview.faces?fileName=ABC_Compras.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />	
+	    	<option key="Compras_evolucion.xml" 
+	    		ref="/hyperview.faces?fileName=Compras_evolucion.xml" 
+	    		target="_blank" 
+		    	contextRelative="true"
+	    		external="true" />	
+		</menu>
+	</menu>
+	<menu ref="content" key="aon_inventory" descriptionKey="aon_inventory_desc">
+		<option ref="inventory" key="aon_inventory_remake" descriptionKey="aon_inventory_remake_desc">
+			<actionListener action="#{inventoryDetail.onReset}"/>
+			<actionListener action="#{inventory.onReset}"/>
+		</option>
+	</menu>
+	<menu ref="content" key="aon_results" descriptionKey="aon_results_desc">
+		<option ref="select_inventory" key="Comparativa_Beneficios.xml" />
+		<option ref="select_inventory_2" key="Comparativa_Beneficios_2.xml" />
+	</menu>
+	<menu ref="content" key="aon_ticket">
+		<option key="aon_ticket_trace" descriptionKey="aon_ticket_trace_desc"
+			ref="trace"> 
+			<actionListener action="#{trace.onReset}" />
+		</option> 
+		<option ref="ticket" key="aon_ticket_price" descriptionKey="aon_ticket_price_desc"/>
+		<option ref="packingticket" key="aon_packingticket_price" descriptionKey="aon_packingticket_price_desc"/>
+	</menu>
+	<menu ref="content" key="aon_config"  descriptionKey="aon_config_desc">
+		<option key="aon_company" descriptionKey="aon_company_desc"
+			ref="company">
+			<actionListener action="#{company.onLoad}" />
+		</option> 
+		<option key="aon_product_category" descriptionKey="aon_product_category_desc" 
+			ref="productCategoryGroup"/>
+		<option ref="tax" key="aon_product_tax" descriptionKey="aon_product_tax_desc" />
+		<option ref="warehouse" key="aon_warehouse" descriptionKey="aon_warehouse" />
+		<option ref="pos" key="aon_pos" descriptionKey="aon_pos" />
+	</menu>
+	<menu ref="content" key="aon_utilities"  descriptionKey="aon_utilities_desc">
+		<option ref="dump" key="aon_dump" descriptionKey="aon_dump_desc" >
+			<actionListener action="#{dumper.dbDump}" />
+		</option>
+		<option ref="recover" key="aon_recover" descriptionKey="aon_recover_desc" />
+		<option ref="itemdump" key="aon_itemDump" descriptionKey="aon_itemDump_desc" />
+		<option ref="scale" key="aon_scale" descriptionKey="aon_scale">
+			<actionListener action="#{scale.onLoad}" />
+		</option> 
+		<option ref="appParams" key="aon_appParams" descriptionKey="aon_appParams_desc" />
+	</menu>
+</root>

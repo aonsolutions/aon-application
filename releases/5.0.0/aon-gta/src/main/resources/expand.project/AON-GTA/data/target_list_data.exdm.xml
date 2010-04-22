@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="target_list_data">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="targetlist_id" sqlType="integer" type="integer"/>
+        <column label="" length="1" name="finished" sqlType="bit" type="string"/>
+        <column label="" length="50" name="description"
+            sqlType="varchar" type="string"/>
+        <column label="" length="5" name="duration" sqlType="varchar" type="string"/>
+        <column label="" length="19" name="time" sqlType="timestamp" type="string"/>
+        <column label="" name="reason" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="target_list_data_ibfk_1" foreignPath="data/target_list.exdm.xml">
+            <sourceColumns>
+                <column name="targetlist_id"/>
+            </sourceColumns>
+        </join>
+        <join description="target_list_data_ibfk_2" foreignPath="data/reason.exdm.xml">
+            <sourceColumns>
+                <column name="reason"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

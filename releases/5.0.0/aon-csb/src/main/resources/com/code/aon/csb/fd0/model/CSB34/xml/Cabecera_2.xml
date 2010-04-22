@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Registro Cabecera Segundo -->
+<register name="Cabecera_2">
+
+ <field name="inicial" value="0356" format="AlphaNumeric" pattern="X(4)" />
+ <field name="nif" value="bean" bean="MASTER_PERSON" property="code" format="Nif" pattern="X(10)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(12)" />
+ <field name="numero_dato" value="002" format="Alphabetic" pattern="X(3)" />
+ <field name="rsocial" value="bean" bean="MASTER_PERSON" property="name" format="AlphaNumeric" pattern="X(36)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(7)" />
+
+</register>

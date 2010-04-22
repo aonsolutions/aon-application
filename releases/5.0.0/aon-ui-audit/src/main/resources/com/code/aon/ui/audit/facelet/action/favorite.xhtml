@@ -1,0 +1,66 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="actionFavorite">
+		
+			<aon:componentGroup
+				family="javax.faces.Command"
+				rendered="#{aonRole.guest}"
+				method="#{aonRole.doNothing}">
+		
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{auditBundle.audit_favorite_module}" />
+					<ui:param name="toolbarDescription" value="&#160;" />
+					<ui:define name="toolbarContent">	
+						<aon:commandButton id="store"
+							title="#{bundle.aon_key_save_accelerator}"
+							value="#{bundle.aon_save}"
+							actionListener="#{actionFavorite.accept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}" />
+					</ui:define>
+				</ui:decorate>
+	
+				<aon:div styleClass="aon-scroll-area">
+					<rich:listShuttle 
+						sourceValue="#{actionFavorite.options}" targetValue="#{actionFavorite.favorites}"
+						converter="applicationOptionConverter" var="to"
+						listsHeight="300" sourceListWidth="350" targetListWidth="350"
+						sourceCaptionLabel="#{auditBundle.audit_available_options}"
+						targetCaptionLabel="#{auditBundle.audit_favorite_module}"
+						copyAllControlLabel="#{auditBundle.aon_copyAll}"
+						copyControlLabel="#{auditBundle.aon_copy}"
+						removeControlLabel="#{bundle.aon_remove}"
+						removeAllControlLabel="#{auditBundle.aon_removeAll}"
+						topControlLabel="#{auditBundle.aon_top}"
+						upControlLabel="#{auditBundle.aon_up}"
+						downControlLabel="#{auditBundle.aon_down}"
+						bottomControlLabel="#{auditBundle.aon_bottom}">
+						<rich:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>					
+							<aon:outputText value="#{to.description}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<aon:outputText value="#{auditBundle.audit_group}" />
+							</f:facet>					
+							<aon:outputText value="#{to.group.category.name}" />
+						</rich:column>
+	        		</rich:listShuttle>
+				</aon:div>
+			</aon:componentGroup>
+		</aon:form>
+	</ui:define>
+</ui:composition>

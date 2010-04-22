@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_amortization_exporter_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
+
+				<ui:define name="toolbarContent">
+					<h:commandLink id="execute" 
+						value="#{accountingBundle.accounting_amortization_export}"
+						target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{amortizationTypeExporter.onExport}"
+						/>
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

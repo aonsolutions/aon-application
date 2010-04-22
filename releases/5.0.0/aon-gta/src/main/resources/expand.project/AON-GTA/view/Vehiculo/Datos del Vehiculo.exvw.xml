@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Datos del Vehiculo" label="Datos del Vehiculo" sqlSentence="SELECT tas_item.id, tas_item.publicCode, make.name, model.name, tas_item.description&#xd;&#xa;FROM tas_item, model, make&#xd;&#xa;WHERE model.make = make.id and tas_item.model = model.id and tas_item.publicCode = ?">
+    <parameters>
+        <parameter columnReference="data/tas_item.exdm.xml/publicCode"
+            label="" name="publicCode" type="STRING"/>
+    </parameters>
+    <results>
+        <result accessName="TAS_ITEM" columnId="id" export="true"
+            label="CODIGO" tableId="tas_item" type="INTEGER"/>
+        <result accessName="publicCode" columnId="publicCode"
+            label="MATRICULA" tableId="tas_item" type="STRING"/>
+        <result accessName="make_name" columnId="name" label="MARCA"
+            tableId="make" type="STRING"/>
+        <result accessName="model_name" columnId="name" label="MODELO"
+            tableId="model" type="STRING"/>
+        <result accessName="description" columnId="description"
+            label="DESCRIPCION" tableId="tas_item" type="STRING"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/tas_item.exdm.xml"/>
+    </dataModelReferences>
+</view>
