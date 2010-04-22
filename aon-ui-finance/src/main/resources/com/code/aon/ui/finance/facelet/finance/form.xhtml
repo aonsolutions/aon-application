@@ -213,11 +213,9 @@
 					<aon:div styleClass="aon-scroll-area">
 					
 						<aon:dataTable id="financeTrackingData" value="#{financeTracking.model}"
-							var="to" rows="20" rendered="#{financeTracking.model.rowCount > 0}"
-							columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-								aon-editDataTable-numberColumn, aon-editDataTable-iconColumn aon-vertical-align-top">
+							var="to" rows="20" rendered="#{financeTracking.model.rowCount > 0}">
 
-								<aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_date}" />
 									</f:facet>
@@ -227,21 +225,23 @@
 									</aon:outputText>	
 								</aon:column>
 						
-								<aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{financeBundle.finance_tracking_action}" />
 									</f:facet>
 									<aon:outputText value="#{to.type}" />
 								</aon:column>
 						
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_description}" />
-									</f:facet>
-									<aon:outputText value="#{to.description}" />
-								</aon:column>
-						
-								<aon:column width="100">
+								<c:if test="#{aonRole.accountingOperator}">
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_description}" />
+										</f:facet>
+										<aon:outputText value="#{to.description}" />
+									</aon:column>
+								</c:if>
+
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-200">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_amount}" />
 									</f:facet>
@@ -250,7 +250,7 @@
 									</aon:outputText>	
 								</aon:column>
 								
-								<aon:column>
+								<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
 									</f:facet>
