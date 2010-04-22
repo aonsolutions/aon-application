@@ -1,7 +1,5 @@
 package com.code.aon.ui.accounting.controller;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -43,11 +41,12 @@ public class BalanceExporter {
 	private static final String NAME = "name";
 	private static final String REMOVABLE = "removable";
 	private static final String TYPE = "type";
-	private static final String LINES = "lines";
+	private static final String DETAILS = "details";
 	
 	//DETAIL
+	private static final String DETAIL = "detail";
 	private static final String LINE_ID = "id";	
-	private static final String LINE_BALAMCE = "balance";
+	private static final String LINE_BALANCE = "balance";
 	private static final String LINE_CODE = "code";
 	private static final String LINE_DESCRIPTION = "description";
 	private static final String LINE_ACCOUNTS = "accounts";
@@ -104,8 +103,8 @@ public class BalanceExporter {
 		Document xmldoc = builder.newDocument();
 		Element root = xmldoc.createElement(ROOT);
 		xmldoc.appendChild(root);
-		for (ITransferObject to : list) {
-			Balance b = (Balance)to;
+		for (ITransferObject bal : list) {
+			Balance b = (Balance)bal;
 			
 			Element balance = xmldoc.createElement(BALANCE);
 			
@@ -129,111 +128,63 @@ public class BalanceExporter {
 			}
 			balance.appendChild(type);
 
-			Element lines = xmldoc.createElement(LINES);
+			Element details = xmldoc.createElement(DETAILS);
 			
 			criteriaDetail = new Criteria();
 			criteriaDetail.addOrder(beanDetail.getFieldName(IAccountingAlias.BALANCE_DETAIL_ID));
 			criteriaDetail.addEqualExpression(beanDetail.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID), b.getId());
 			listDetail = beanDetail.getList(criteriaDetail);
-			for (ITransferObject detail : listDetail) {
-				BalanceDetail d = (BalanceDetail)detail;
+			for (ITransferObject det : listDetail) {
+				BalanceDetail d = (BalanceDetail) det;
 				
-				if (b.getLines() != null) {
-					Element lineId = xmldoc.createElement(LINE_ID);
-					lineId.appendChild(xmldoc.createTextNode(d.getId().toString()));
-					lines.appendChild(lineId);
-					
-					Element lineBalance = xmldoc.createElement(LINE_BALAMCE);
-					lineBalance.appendChild(xmldoc.createTextNode(d.getBalance().getId().toString()));
-					lines.appendChild(lineBalance);
-					
-					Element lineCode = xmldoc.createElement(LINE_CODE);
-					lineCode.appendChild(xmldoc.createCDATASection(d.getCode()));
-					lines.appendChild(lineCode);
-					
-					Element lineDescription = xmldoc.createElement(LINE_DESCRIPTION);
-					lineDescription.appendChild(xmldoc.createCDATASection(d.getDescription()));
-					lines.appendChild(lineDescription);
-					
-					Element lineAccounts = xmldoc.createElement(LINE_ACCOUNTS);
-					lineAccounts.appendChild(xmldoc.createCDATASection(d.getAccounts()));
-					lines.appendChild(lineAccounts);
-					
-					Element lineSortKey = xmldoc.createElement(LINE_SORT_KEY);
-					lineSortKey.appendChild(xmldoc.createTextNode(d.getSortKey().toString()));
-					lines.appendChild(lineSortKey);
-					
-					Element lineTitle = xmldoc.createElement(LINE_TITLE);
-					lineTitle.appendChild(xmldoc.createTextNode(String.valueOf(d.isTitle())));
-					lines.appendChild(lineTitle);
-					
-					Element lineInternalCalculation = xmldoc.createElement(LINE_INTERNAL_CALCULATION);
-					lineInternalCalculation.appendChild(xmldoc.createTextNode(String.valueOf(d.isInternalCalculation())));
-					lines.appendChild(lineInternalCalculation);
-					
-					Element lineVisible = xmldoc.createElement(LINE_VISIBLE);
-					lineVisible.appendChild(xmldoc.createTextNode(String.valueOf(d.isVisible())));
-					lines.appendChild(lineVisible);
-					
-					Element lineZeroFlag = xmldoc.createElement(LINE_ZERO_FLAG);
-					lineZeroFlag.appendChild(xmldoc.createTextNode(String.valueOf(d.isZeroFlag())));
-					lines.appendChild(lineZeroFlag);
-					
-					Element lineCreditNature = xmldoc.createElement(LINE_CREDIT_NATURE);
-					lineCreditNature.appendChild(xmldoc.createTextNode(String.valueOf(d.isCreditNature())));
-					lines.appendChild(lineCreditNature);
-				}
-			}
-			balance.appendChild(lines);
+				Element detail = xmldoc.createElement(DETAIL);
+				details.appendChild(detail);
 
-//			Element fixedAssetAccount = xmldoc.createElement(FIXED_ASSET_ACCOUNT);
-//			if (a.getFixedAssetAccount() != null) {
-//				id = xmldoc.createElement(ID);
-//				id.appendChild(xmldoc.createTextNode(a.getFixedAssetAccount().getId()));
-//				fixedAssetAccount.appendChild(id);
-//				description = xmldoc.createElement(DESCRIPTION);
-//				description.appendChild(xmldoc.createCDATASection(a.getFixedAssetAccount().getDescription()));
-//				fixedAssetAccount.appendChild(description);
-//				Element level = xmldoc.createElement(LEVEL);
-//				level.appendChild(xmldoc.createTextNode(String.valueOf(a.getFixedAssetAccount().getLevel())));
-//				fixedAssetAccount.appendChild(level);
-//			}
-//			amortizationType.appendChild(fixedAssetAccount);
-//
-//			Element accumulatedAccount = xmldoc.createElement(ACUMULATED_ACCOUNT);
-//			if (a.getAccumulatedAccount() != null) {
-//				id = xmldoc.createElement(ID);
-//				id.appendChild(xmldoc.createTextNode(a.getAccumulatedAccount().getId()));
-//				accumulatedAccount.appendChild(id);
-//				description = xmldoc.createElement(DESCRIPTION);
-//				description.appendChild(xmldoc.createCDATASection(a.getAccumulatedAccount().getDescription()));
-//				accumulatedAccount.appendChild(description);
-//				Element level = xmldoc.createElement(LEVEL);
-//				level.appendChild(xmldoc.createTextNode(String.valueOf(a.getAccumulatedAccount().getLevel())));
-//				accumulatedAccount.appendChild(level);
-//			}
-//			amortizationType.appendChild(accumulatedAccount);
-//			
-//			Element allocationAccount = xmldoc.createElement(ALLOCATION_ACCOUNT);
-//			if (a.getAllocationAccount() != null) {
-//				id = xmldoc.createElement(ID);
-//				id.appendChild(xmldoc.createTextNode(a.getAllocationAccount().getId()));
-//				allocationAccount.appendChild(id);
-//				description = xmldoc.createElement(DESCRIPTION);
-//				description.appendChild(xmldoc.createCDATASection(a.getAllocationAccount().getDescription()));
-//				allocationAccount.appendChild(description);
-//				Element level = xmldoc.createElement(LEVEL);
-//				level.appendChild(xmldoc.createTextNode(String.valueOf(a.getAllocationAccount().getLevel())));
-//				allocationAccount.appendChild(level);
-//			}
-//			amortizationType.appendChild(allocationAccount);
-//			
-//			Element percentage = xmldoc.createElement(PERCENTAGE);
-//			if ((new Double(a.getPercentage())) != null) {
-//				percentage.appendChild(xmldoc.createTextNode(String.valueOf(a.getPercentage())));
-//			}
-//			amortizationType.appendChild(percentage);
-			
+				Element lineId = xmldoc.createElement(LINE_ID);
+				lineId.appendChild(xmldoc.createTextNode(d.getId().toString()));
+				detail.appendChild(lineId);
+				
+				Element lineBalance = xmldoc.createElement(LINE_BALANCE);
+				lineBalance.appendChild(xmldoc.createTextNode(d.getBalance().getId().toString()));
+				detail.appendChild(lineBalance);
+				
+				Element lineCode = xmldoc.createElement(LINE_CODE);
+				lineCode.appendChild(xmldoc.createCDATASection(d.getCode()));
+				detail.appendChild(lineCode);
+				
+				Element lineDescription = xmldoc.createElement(LINE_DESCRIPTION);
+				lineDescription.appendChild(xmldoc.createCDATASection(d.getDescription()));
+				detail.appendChild(lineDescription);
+				
+				Element lineAccounts = xmldoc.createElement(LINE_ACCOUNTS);
+				lineAccounts.appendChild(xmldoc.createCDATASection(d.getAccounts()));
+				detail.appendChild(lineAccounts);
+				
+				Element lineSortKey = xmldoc.createElement(LINE_SORT_KEY);
+				lineSortKey.appendChild(xmldoc.createTextNode(d.getSortKey().toString()));
+				detail.appendChild(lineSortKey);
+				
+				Element lineTitle = xmldoc.createElement(LINE_TITLE);
+				lineTitle.appendChild(xmldoc.createTextNode(String.valueOf(d.isTitle())));
+				detail.appendChild(lineTitle);
+				
+				Element lineInternalCalculation = xmldoc.createElement(LINE_INTERNAL_CALCULATION);
+				lineInternalCalculation.appendChild(xmldoc.createTextNode(String.valueOf(d.isInternalCalculation())));
+				detail.appendChild(lineInternalCalculation);
+				
+				Element lineVisible = xmldoc.createElement(LINE_VISIBLE);
+				lineVisible.appendChild(xmldoc.createTextNode(String.valueOf(d.isVisible())));
+				detail.appendChild(lineVisible);
+				
+				Element lineZeroFlag = xmldoc.createElement(LINE_ZERO_FLAG);
+				lineZeroFlag.appendChild(xmldoc.createTextNode(String.valueOf(d.isZeroFlag())));
+				detail.appendChild(lineZeroFlag);
+				
+				Element lineCreditNature = xmldoc.createElement(LINE_CREDIT_NATURE);
+				lineCreditNature.appendChild(xmldoc.createTextNode(String.valueOf(d.isCreditNature())));
+				detail.appendChild(lineCreditNature);
+			}
+			balance.appendChild(details);
 			root.appendChild(balance);
 		}
 
@@ -244,11 +195,5 @@ public class BalanceExporter {
 		serializer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
 		serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 		serializer.transform(domSource, streamResult);
-	}
-
-	public static void main(String[] args) throws FileNotFoundException, ManagerBeanException, TransformerException, ParserConfigurationException {
-		BalanceExporter exp = new BalanceExporter();
-		FileOutputStream fos = new FileOutputStream("/tmp/balance.xml");
-		exp.export(fos);
 	}
 }
