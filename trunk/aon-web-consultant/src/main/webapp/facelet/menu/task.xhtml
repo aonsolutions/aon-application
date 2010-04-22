@@ -17,86 +17,97 @@
 				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
-					<aon:panelGrid id="group_task_management"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-task aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{projectBundle.aon_task_management_module}" />
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="task"
-									value="#{projectBundle.aon_task_inbox_module}" action="task_list" />
+					<aon:panelGroup>
+						<aon:panelGrid id="group_task_management"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-task aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{projectBundle.aon_task_management_module}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="task"
+										value="#{projectBundle.aon_task_inbox_module}" action="task_list" />
+								</aon:div>
+								<c:if test="#{aonRole.taskMonitor}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="process_wizard"
+											value="#{campaignBundle.aon_process_wizard_module}"
+											action="#{processWizard.start}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="process_monitor" 
+											value="#{campaignBundle.aon_process_monitor_module}"
+											actionListener="#{campaign.onEditSearch}"
+											action="campaign_search" />
+									</aon:div>
+								</c:if>
 							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="process_wizard"
-									value="#{campaignBundle.aon_process_wizard_module}"
-									action="#{processWizard.start}" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="process_monitor" 
-									value="#{campaignBundle.aon_process_monitor_module}"
-									actionListener="#{campaign.onEditSearch}"
-									action="campaign_search" />
-							</aon:div>
-						</aon:div>
-					</aon:panelGrid>
+						</aon:panelGrid>
 
-					<aon:panelGrid id="group_task_time_management"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-time aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{projectBundle.aon_time_management_module}" />
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="daily_tracking"
-									value="#{projectBundle.aon_daily_tracking_module}"
-									action="dailyTracking_form"
-									actionListener="#{dailyTracking.onLaunch}" />
+						<aon:panelGrid id="group_task_time_management"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-time aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{projectBundle.aon_time_management_module}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="daily_tracking"
+										value="#{projectBundle.aon_daily_tracking_module}"
+										action="dailyTracking_form"
+										actionListener="#{dailyTracking.onLaunch}" />
+								</aon:div>
+								<c:if test="#{aonRole.taskMonitor}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="daily_tracking_report"
+											value="#{bundle.aon_reports}"
+											actionListener="#{dailyTrackingReport.onResetReportSearch}"
+											action="daily_tracking_report" />
+									</aon:div>
+								</c:if>
 							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="daily_tracking_report"
-									value="#{bundle.aon_reports}"
-									actionListener="#{dailyTrackingReport.onResetReportSearch}"
-									action="daily_tracking_report" rendered="#{aonRole.taskMonitor}" />
-							</aon:div>
-						</aon:div>
-					</aon:panelGrid>
+						</aon:panelGrid>
+					</aon:panelGroup>
 
-					<aon:panelGrid id="group_task_configuration"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-config aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_configuration}"/>
-						</f:facet>					
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="dossier_type"
-									value="#{projectBundle.aon_dossier_type_module}"
-									action="dossierType_list" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="activity_type"
-									value="#{projectBundle.aon_activity_type_module}"
-									action="activity_type_standalone" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="job_type"
-									value="#{projectBundle.aon_job_type_module}" action="job_type" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="process_module" 
-									value="#{campaignBundle.aon_process_module}"
-									action="process_list" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="process_transition_type" 
-									value="#{campaignBundle.aon_process_transition_type_module}"
-									action="process_transition_type" />
-							</aon:div>
-						</aon:div>
-					</aon:panelGrid>
+					<aon:panelGroup>
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_task_configuration"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-config aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_configuration}"/>
+								</f:facet>					
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="dossier_type"
+											value="#{projectBundle.aon_dossier_type_module}"
+											action="dossierType_list" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="activity_type"
+											value="#{projectBundle.aon_activity_type_module}"
+											action="activity_type_standalone" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="job_type"
+											value="#{projectBundle.aon_job_type_module}" action="job_type" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="process_module" 
+											value="#{campaignBundle.aon_process_module}"
+											action="process_list" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="process_transition_type" 
+											value="#{campaignBundle.aon_process_transition_type_module}"
+											action="process_transition_type" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+					</aon:panelGroup>
+
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>
