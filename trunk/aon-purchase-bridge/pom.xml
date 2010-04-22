@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.1.0-SNAPSHOT</version>
+		<version>5.1.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.purchase.bridge</artifactId>
-	<version>5.1.0-SNAPSHOT</version>
+	<version>5.1.0</version>
 	<description>AON PURCHASE BRIDGE</description>
 	<name>AON PURCHASE BRIDGE</name>
 	<dependencies>
