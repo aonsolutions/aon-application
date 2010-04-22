@@ -4,6 +4,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Clase que controla los roles habituales de las aplicaciones AON.
  * 
@@ -11,6 +13,8 @@ import javax.faces.context.FacesContext;
  * 
  */
 public class RoleManager {
+	
+	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll","search", "back"};
 
 	/**
 	 * @param role
@@ -143,9 +147,22 @@ public class RoleManager {
 	public void renderedCommand( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
 			String id = component.getId();
-			if ( !id.contains("search") && !id.contains("back") && !id.contains("Spin") ) {
-				component.setRendered(false);
+			for( String allowedId : ALLOWED_IDS ) {
+				if ( id.contains(allowedId) ) {
+					return;
+				}
 			}
+			component.setRendered(false);
 		}
 	}	
+
+	/**
+	 * Do nothing.
+	 * 
+	 * @param component the component
+	 * @param parent the parent
+	 */
+	public void doNothing( UIComponent component, UIComponent parent ) {
+	}
+
 }
