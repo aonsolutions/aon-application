@@ -29,7 +29,7 @@
 			<c:if test="#{model.showControls}">
 				<aon:div>
 	
-					<aon:commandButton id="#{dataTable}First" ajaxSingle="true" process="#{dataTable}"
+					<aon:commandButton id="#{dataTable}FirstScroll" ajaxSingle="true" process="#{dataTable}"
 						disabled="#{!model.previousNeeded}" actionListener="#{model.first}"
 						oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
@@ -39,7 +39,7 @@
 						</c:if>
 					</aon:commandButton>
 	
-					<aon:commandButton id="#{dataTable}Previous" ajaxSingle="true" process="#{dataTable}"
+					<aon:commandButton id="#{dataTable}PreviousScroll" ajaxSingle="true" process="#{dataTable}"
 						disabled="#{!model.previousNeeded}" actionListener="#{model.previous}"
 						oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
@@ -50,7 +50,8 @@
 					</aon:commandButton>
 					
 					<a4j:repeat value="#{model.pages}" var="page">
-						<aon:commandLink rendered="#{(model.currentPage+1) != page}"
+						<aon:commandLink id="#{dataTable}PageScroll"
+							rendered="#{(model.currentPage+1) != page}"
 							ajaxSingle="true" process="#{dataTable}" eventsQueue="aon_ds" 
 							actionListener="#{model.moveToPage}" oncomplete="#{oncomplete}"
 							reRender="#{dataTable},#{dataTable}MessageDataScroller"
@@ -63,7 +64,7 @@
 							value="#{page}"/>
 					</a4j:repeat>
 					
-					<aon:commandButton id="#{dataTable}Next" ajaxSingle="true" process="#{dataTable}"
+					<aon:commandButton id="#{dataTable}NextScroll" ajaxSingle="true" process="#{dataTable}"
 						disabled="#{!model.nextNeeded}" actionListener="#{model.next}"
 						oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
@@ -73,7 +74,7 @@
 						</c:if>						
 					</aon:commandButton>
 	
-					<aon:commandButton id="#{dataTable}Last" ajaxSingle="true" process="#{dataTable}"
+					<aon:commandButton id="#{dataTable}LastScroll" ajaxSingle="true" process="#{dataTable}"
 						disabled="#{!model.nextNeeded}" actionListener="#{model.last}"
 						oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
