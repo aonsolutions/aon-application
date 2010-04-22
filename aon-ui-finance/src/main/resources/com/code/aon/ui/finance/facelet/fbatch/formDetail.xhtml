@@ -26,7 +26,7 @@
 			actionListener="#{fbatch.onRemoveSelected}" reRender="financeBatchForm,fbatchPanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-		<h:commandLink target="_blank"
+		<aon:htmlCommandLink target="_blank"
 			title="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 			value="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 			actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.csbOutput!=null}"

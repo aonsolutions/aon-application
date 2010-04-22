@@ -213,19 +213,13 @@ color:#000;
  	font-weight:bold;
 	cursor:pointer;
  	display:block;
- 	padding:2px 5px 1px 18px;
- 	margin-left: 7px; 	
+ 	padding:4px 5px 4px 28px;
+ 	background-position:8px !important; 	
  	border:transparent 1px solid;
 	}
-/* para el estado hover de los commanLink que no tienen desplegables*/
-.aon-top-menu-item:hover{
-    border:transparent 1px solid;
-  	background-color:#fff;
-  	padding:2px 5px 1px 18px;
- 	display:block;
- 	margin-left: 7px;
+.aon-top-menu-item-select{
+	background-color:#e2f1f5 !important;
 }
-
 .aon-top-menu-item-icon{
  	color:#000;
  	text-transform:uppercase; 	
@@ -485,6 +479,9 @@ color:#000;
  .aon-icon-unsettle{
 	background:transparent url(images/aon-icon/aon-icon-unsettle.png) scroll left center no-repeat;	
  }
+ .aon-icon-confidential{
+	background:transparent url(images/aon-icon/aon-icon-confidential.png) scroll left center no-repeat;	
+ }
 
 /* otros */
 .aon-icon-agenda{
@@ -540,17 +537,35 @@ color:#000;
 	background:transparent url(images/aon-icon/aon-icon-unsigned.png) scroll left center no-repeat;
  }
 .aon-icon-expand{
-	float: right;
-	width: 18px;
-	height: 18px;
+	padding-left: 14px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 	background:transparent url(images/aon-icon/aon-icon-expand.png) scroll left center no-repeat;	
  }
 .aon-icon-edit{
-	float: right;
-	width: 18px;	
-	height: 18px;
+	padding-left: 14px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 	background:transparent url(images/aon-icon/aon-icon-edit.png) scroll left center no-repeat;	
  }
+.aon-icon-edit-add{
+	background:transparent url(images/aon-icon/aon-icon-edit-add.png) scroll left center no-repeat;
+	border: 0;
+	padding-left: 5px;
+	padding-top: 7px;
+	margin-left: 5px;
+	vertical-align:top;	
+	cursor: pointer;
+}
+.aon-icon-edit-end{
+	background:transparent url(images/aon-icon/aon-icon-edit-end.png) scroll left center no-repeat;
+	border: 0;
+	padding-left: 5px;
+	padding-top: 7px;
+	margin-left: 5px;
+	vertical-align:top;	
+	cursor: pointer;
+}
  
  /*folder icons*/
 .aon-icon-folder{
@@ -747,6 +762,13 @@ color:#000;
 	}
 .aon-icon-tree-root{
 	background:transparent url(images/aon-icon/aon-icon-tree-root.png) scroll left center no-repeat;
+	}
+
+.aon-icon-next{
+	background:transparent url(images/aon-icon/aon-icon-next.gif) scroll left center no-repeat;
+	}
+.aon-icon-previous{
+	background:transparent url(images/aon-icon/aon-icon-previous.gif) scroll left center no-repeat;
 	}
 
 /*  report icon  */
@@ -1352,10 +1374,10 @@ color:#000;
 	-moz-background-clip:border;
 	-moz-background-inline-policy:continuous;
 	-moz-background-origin:padding;
-	height:40px;
+	height:37px;
 	left:25px;
 	position:absolute;
-	top:-1px;
+	top:5px;
 	width:114px;
 	background:#0069b4 url(images/aon-header/aon-outputConnectionStatus-start.gif) no-repeat scroll left top;
 }
@@ -1363,10 +1385,10 @@ color:#000;
 	-moz-background-clip:border;
 	-moz-background-inline-policy:continuous;
 	-moz-background-origin:padding;
-	height:40px;
+	height:37px;
 	left:25px;
 	position:absolute;
-	top:-1px;
+	top:5px;
 	width:114px;
 	background:#0069b4 url(images/aon-header/aon-outputConnectionStatus-stop.png) no-repeat scroll left top;
 }
@@ -1374,10 +1396,10 @@ color:#000;
 	-moz-background-clip:border;
 	-moz-background-inline-policy:continuous;
 	-moz-background-origin:padding;
-	height:40px;
+	height:37px;
 	left:25px;
 	position:absolute;
-	top:-1px;
+	top:5px;
 	width:114px;
 	background:#0069b4 url(images/aon-header/aon-outputConnectionStatus-failed.png) no-repeat scroll left top;
 }
@@ -1455,8 +1477,7 @@ color:#000;
 .aon-header-additionalInfo a, .aon-header-additionalInfo a:visited, .aon-header-additionalInfo a:hover{
 	color:#fff;
 	cursor:pointer;
-	padding:0 0.5em;
-	border-right:#fff 1px solid;
+	padding-left: 14px;
 }
 
 .aon-header-title{
@@ -1477,6 +1498,10 @@ color:#000;
 	text-align:center;
 }
 
+.aon-logout{
+	background:transparent url(images/aon-header/aon-logout.png) no-repeat scroll center left;
+}
+
 /********************************/
 /*****   MENU DESPLEGABLE  ******/
 /********************************/
@@ -1488,9 +1513,12 @@ color:#000;
 	font-size:11px;
 	}
 .aon-menuBar-content{
-	padding-left: 2px;
-	padding-right: 2px;
-	}
+	padding:0;
+}
+.aon-menuBar-content:hover{
+  	background-color:#fff;
+ 	display:block;
+}		
 /* cada uno de los links de la barra de menus que lanzan el desplegable*/
 .aon-dropDownMenu{
 	font-family:arial,verdana, "sans-serif";
@@ -1501,7 +1529,9 @@ color:#000;
  	font-weight:bold;
  	display:block;
 	height: 16px;
-	}
+	border:0;
+	padding: 2px 2px 0 2px;
+}
 /* cada una de los opciones del desplegable, siempre que de ellas no dependa otro desplegable*/
 .aon-dropDownMenu-item{
 	cursor:pointer;
@@ -1510,6 +1540,7 @@ color:#000;
   }
  .aon-menuItem-styleClass{
  	font-size:1em;
+ 	padding-right: 8px;
  }
  /* estado hover de cada una de los opciones del desplegable, siempre que de ellas si dependa otro desplegable */
 .aon-dropDownMenu-selectItem{	
@@ -2095,7 +2126,6 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 
 .aon-footer-company-label{
 	font-family:arial narrow, arial, sans;
-	text-transform:uppercase;
 }
 
 .aon-footer-box{
@@ -2112,6 +2142,11 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 
 .aon-logo-left{
 	border-right:1px solid #ccc;
+	height:350px;	
+	vertical-align:middle;	
+}
+
+.aon-logo-only{
 	height:350px;	
 	vertical-align:middle;	
 }
@@ -2173,6 +2208,13 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  	border-bottom:#f4f3f3 1px solid;
 }
 
+.aon-icon-home{
+	padding-left: 8px;
+	cursor:pointer;
+ 	display:block;
+ 	padding:2px 6px 1px 10px;
+	background:transparent url(images/aon-main-menu/aon-icon-home.png) no-repeat scroll center left;
+}
 .aon-icon-favorites{
 	background:transparent url(images/aon-main-menu/aon-icon-favorites.png) no-repeat scroll center left;
 }
@@ -2271,4 +2313,16 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 }
 .aon-icon-account-reports{
 	background:transparent url(images/aon-main-menu/aon-icon-account-reports.png) no-repeat scroll center left;
+}
+.aon-icon-query{
+	background:transparent url(images/aon-main-menu/aon-icon-query.png) no-repeat scroll center left;
+}
+.aon-icon-reservation{
+	background:transparent url(images/aon-main-menu/aon-icon-reservation.png) no-repeat scroll center left;
+}
+.aon-icon-asset{
+	background:transparent url(images/aon-main-menu/aon-icon-asset.png) no-repeat scroll center left;
+}
+.aon-icon-security{
+	background:transparent url(images/aon-main-menu/aon-icon-security.png) no-repeat scroll center left;
 }

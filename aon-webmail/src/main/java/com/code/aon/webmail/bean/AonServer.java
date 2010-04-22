@@ -1,5 +1,6 @@
 package com.code.aon.webmail.bean;
 
+import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
@@ -301,5 +302,15 @@ public class AonServer {
 	public String getSpamFolderName() {
 		return StringUtils.defaultIfEmpty(account.getSpamFolder(), AonFolder.SPAM_FOLDER_NAME);
 	}
+	
+    public void importMessage( byte[] data, AonFolder destinationFolder ) throws MessagingException {
+    	ByteArrayInputStream source = new ByteArrayInputStream(data);
+    	MimeMessage message = new MimeMessage(session, source);
+        
+    	destinationFolder.open(Folder.READ_WRITE);
+    	Folder folder = destinationFolder.getFolder();
+    	folder.appendMessages(new Message[]{message});
+    	destinationFolder.close(true);    	
+    }    
 	
 }

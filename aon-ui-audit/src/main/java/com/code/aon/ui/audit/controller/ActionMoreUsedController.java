@@ -73,12 +73,13 @@ public class ActionMoreUsedController implements IAuditConstants {
 	        	.add( Restrictions.eq("aeSession.application.id", appId) )
 	        	.add( Restrictions.eq("aeAction.menu", Boolean.TRUE) )
 	        	.setProjection( Projections.projectionList()
-	        		.add( Projections.count("id").as("aeRowCount") )
+	        		.add( Projections.countDistinct("id").as("aeRowCount") )
 	        		.add( Projections.groupProperty("aeAction.name") ) )
 	        		.addOrder( Order.desc("aeRowCount") );
 	        if ( maxResults > 0 ) {
 	        	criteria.setMaxResults(maxResults);
 	        }
+	        LOGGER.info( "Criteria: " + criteria );
 	        List<?> actions = criteria.list();
 	        if (! actions.isEmpty() ) {
 	        	Map<String,ApplicationOption> options = getOptionController().getOptionMap();

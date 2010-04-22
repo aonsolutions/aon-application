@@ -19,9 +19,11 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
+import com.code.aon.commercial.TargetThirdParty;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -303,6 +305,35 @@ public class OfferController extends BasicController implements ISignatureContro
 		return 0;
 	}
 
+	public boolean isThirdPartyType() {
+		return OfferType.THIRD_PARTY == getOffer().getType();
+	}
+
+	public void thirdPartyData(LookupChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Offer offer = getOffer();
+			offer.setThirdParty((Target)event.getNewValue());
+
+			IManagerBean bean = BeanManager.getManagerBean(TargetThirdParty.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_THIRD_PARTY_TARGET_ID), offer.getTarget().getId());
+			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_THIRD_PARTY_THIRD_PARTY_ID), offer.getThirdParty().getId());
+			Iterator<?> iterator = bean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				TargetThirdParty targetThirdParty = (TargetThirdParty)iterator.next();
+				offer.setTariff(targetThirdParty.getTariff());
+				offer.setPayMethod(targetThirdParty.getPayMethod());
+				offer.setNumberOfPayments(targetThirdParty.getNumberOfPayments());
+				offer.setDaysToFirstPayment(targetThirdParty.getDaysToFirstPayment());
+				offer.setDaysBetweenPayments(targetThirdParty.getDaysBetweenPayments());
+				offer.setPaymentDays(targetThirdParty.getPaymentDays());
+				offer.setBank(targetThirdParty.getBank());
+				offer.setBankAccount(targetThirdParty.getBankAccount());
+				setDefaultPayMethod(false);
+			}
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {

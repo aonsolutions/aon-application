@@ -2,30 +2,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
-                <groupId>com.code.aon</groupId>
-                <artifactId>aon.parent</artifactId>
-                <version>5.0.0</version>
+              <groupId>com.code.aon</groupId>
+              <artifactId>aon.parent</artifactId>
+               <version>5.1.0</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon.application</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
   <packaging>pom</packaging>
   <description>POM de aon Solutions (para sacar versions...)</description>
   <name>aon Solutions</name>
 
   <modules>
-	<module>aon-ql</module>
-	<module>aon-common</module>
+
+	<module>aon-parent</module>
+	<module>aon-web-parent</module>
+
+	<module>aon-account</module>
 	<module>aon-account-bridge</module>
 	<module>aon-accounting</module>
-	<module>aon-account</module>
 	<module>aon-asset</module>
 	<module>aon-audit</module>
 	<module>aon-campaign</module>
 	<module>aon-cms</module>
 	<module>aon-commercial</module>
+	<module>aon-common</module>
 	<module>aon-common-ldap</module>
 	<module>aon-company</module>
 	<module>aon-config</module>
@@ -38,12 +41,14 @@
 	<module>aon-facturae</module>
 	<module>aon-file-bank</module>
 	<module>aon-file-format</module>
+	<module>aon-file-payroll</module>
 	<module>aon-file-tax</module>
-	<module>aon-finance-bridge</module>
 	<module>aon-finance</module>
+	<module>aon-finance-bridge</module>
 	<module>aon-geozone</module>
 	<module>aon-groupware</module>
 	<module>aon-infoweb</module>
+	<module>aon-infoweb-templates</module>
 	<module>aon-ldap</module>
 	<module>aon-marketing</module>
 	<module>aon-messaging</module>
@@ -51,20 +56,24 @@
 	<module>aon-payroll-nominasta</module>
 	<module>aon-product</module>
 	<module>aon-project</module>
-	<module>aon-purchase-bridge</module>
 	<module>aon-purchase</module>
+	<module>aon-purchase-bridge</module>
+	<module>aon-ql</module>
 	<module>aon-registry</module>
 	<module>aon-report</module>
 	<module>aon-rich-components</module>
-	<module>aon-sales-bridge</module>
 	<module>aon-sales</module>
+	<module>aon-sales-bridge</module>
 	<module>aon-security-bridge</module>
 	<module>aon-seller</module>
 	<module>aon-stat</module>
 	<module>aon-supplier</module>
+	<module>aon-warehouse</module>
+	<module>aon-warehouse-bridge</module>
+
+	<module>aon-ui-account</module>
 	<module>aon-ui-account-bridge</module>
 	<module>aon-ui-accounting</module>
-	<module>aon-ui-account</module>
 	<module>aon-ui-asset</module>
 	<module>aon-ui-audit</module>
 	<module>aon-ui-campaign</module>
@@ -84,6 +93,7 @@
 	<module>aon-ui-mailing</module>
 	<module>aon-ui-marketing</module>
 	<module>aon-ui-messaging</module>
+	<module>aon-ui-payroll</module>
 	<module>aon-ui-product</module>
 	<module>aon-ui-project</module>
 	<module>aon-ui-purchase</module>
@@ -96,8 +106,7 @@
 	<module>aon-ui-supplier</module>
 	<module>aon-ui-warehouse</module>
 	<module>aon-ui-webmail</module>
-	<module>aon-warehouse-bridge</module>
-	<module>aon-warehouse</module>
+
 	<module>aon-web-account</module>
 	<module>aon-web-asset</module>
 	<module>aon-web-cms</module>
@@ -110,6 +119,7 @@
 	<module>aon-web-finance</module>
 	<module>aon-web-infoweb</module>
 	<module>aon-webmail</module>
+	<module>aon-web-payroll</module>
 	<module>aon-web-smb</module>
 	<module>aon-web-task</module>
 	<module>aon-web-webmail</module>

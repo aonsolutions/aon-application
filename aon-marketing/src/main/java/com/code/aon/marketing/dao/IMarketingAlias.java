@@ -13,6 +13,7 @@ import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.TargetProfile;
+import com.code.aon.marketing.MarketingTarget;
 
 /** 
 * Interface for holding entity properties constants.
@@ -461,6 +462,43 @@ public interface IMarketingAlias {
 	* Hibernate value: TargetProfile.text
 	*/
 	String  TARGET_PROFILE_TEXT = TARGET_PROFILE_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for MarketingTarget entity.
+	*/ 
+	DAOConstantsEntry MARKETING_TARGET_ENTRY = DAOConstants.getDAOConstant(MarketingTarget.class);
+
+	/** 
+	* Alias value: MarketingTarget_customer
+	* Hibernate value: MarketingTarget.customer
+	*/
+	String  MARKETING_TARGET_CUSTOMER = MARKETING_TARGET_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: MarketingTarget_id
+	* Hibernate value: MarketingTarget.id
+	*/
+	String  MARKETING_TARGET_ID = MARKETING_TARGET_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: MarketingTarget_registry_id
+	* Hibernate value: MarketingTarget.registry.id
+	*/
+	String  MARKETING_TARGET_REGISTRY_ID = MARKETING_TARGET_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: MarketingTarget_target_id
+	* Hibernate value: MarketingTarget.target.id
+	*/
+	String  MARKETING_TARGET_TARGET_ID = MARKETING_TARGET_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: MarketingTarget_registry_document
+	* Hibernate value: MarketingTarget.registry.document
+	*/
+	String  MARKETING_TARGET_REGISTRY_DOCUMENT = MARKETING_TARGET_ENTRY.getAliasNames()[4];
 
 
 }

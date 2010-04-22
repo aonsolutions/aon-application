@@ -12,7 +12,7 @@ public enum Prorrateo implements IResourceable, IStringEnum {
 	PRODIARIO("D");
 	
 
-	private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";
+	private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_prorrateo_";
     private String value;
     

@@ -3,50 +3,41 @@ package com.code.aon.seller;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.CommissionType;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.seller.enumeration.SellerStatus;
 
-// TODO: Auto-generated Javadoc
-/**
- * Transfer Object that represents a seller.
- * 
- * @author Consulting & Development. Inigo Gayarre - 12-sep-2005
- * @version 1.0
- */
 @Entity
 @Table(name="seller")
 public class Seller implements ITransferObject, IRegistry {
 
 	private static final long serialVersionUID = -5570727365136434306L;
 
-	/** The id. */
 	private Integer id;
-	
-	/** The registry. */
 	private Registry registry;
-	
-	/** The description. */
-	private String description;
-
-	/** The status. */
+	private CommissionType commissionType;
 	private SellerStatus status;
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
 	@Id
 	@Column(name="registry")
 	@GeneratedValue(generator="registry_id")
@@ -56,20 +47,10 @@ public class Seller implements ITransferObject, IRegistry {
 		return id;
 	}
 
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the id
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}	
 	
-	/**
-	 * Gets the registry.
-	 * 
-	 * @return the registry
-	 */
 	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@PrimaryKeyJoinColumn 	
@@ -77,50 +58,57 @@ public class Seller implements ITransferObject, IRegistry {
 		return registry;
 	}
 
-	/**
-	 * Sets the registry.
-	 * 
-	 * @param registry the registry
-	 */
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
 
-	/**
-	 * Gets the description.
-	 * 
-	 * @return the description
-	 */
-	@Column(length=64)
-	public String getDescription() {
-		return description;
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="commission_type")
+    @ForeignKey(name = "FK_SELLER_COMMISSION_TYPE")
+    @Index(name = "IDX_SELLER_COMMISSION_TYPE")
+	public CommissionType getCommissionType() {
+		return commissionType;
 	}
 
-	/**
-	 * Sets the description.
-	 * 
-	 * @param description the description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
+	public void setCommissionType(CommissionType commissionType) {
+		this.commissionType = commissionType;
 	}
 
-	/**
-	 * Gets the status.
-	 * 
-	 * @return the status
-	 */
 	public SellerStatus getStatus() {
 		return status;
 	}
 
-	/**
-	 * Sets the status.
-	 * 
-	 * @param status the status
-	 */
 	public void setStatus(SellerStatus status) {
 		this.status = status;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Seller o = (Seller) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.registry, o.registry)								
+				.append(this.status, o.status)								
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()		
+			.append(id)
+			.append(registry)						
+			.append(status)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}
 
 }

@@ -818,7 +818,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 			Invoice invoice = insertOrUpdateInvoice(sessionName);
 			insertInvoiceDetails(invoice);
-			insertFinances(invoice);
+			insertFinances(invoice,sessionName);
 			deleteRemovedFinances();
 			entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
 			entry = getWriter().insertOrUpdateAccountEntry(entry);
@@ -853,7 +853,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			
 			Invoice invoice = insertOrUpdateInvoice(sessionName);
 			insertInvoiceDetails(invoice);
-			insertFinances(invoice);
+			insertFinances(invoice,sessionName);
 			entry = getWriter().insertOrUpdateAccountEntry(entry);
 			setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 			String concept = getHeader().getConcept();
@@ -1077,14 +1077,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private String obtainReferenceCode(String series, int number) {
-		StringBuilder sb = new StringBuilder();
+    	String referenceCode = StringUtils.leftPad(Integer.toString(number), 6, "0");
 		if (!StringUtils.isEmpty(series)) {
-			sb.append(series);
-			sb.append("/");
+			referenceCode = series + "/" + referenceCode;
 		}
-		sb.append(number);
-
-		return sb.toString();
+		return referenceCode;
 	}
 
 	private int calculateNextNumber(String series, InvoiceType invoiceType)
@@ -1184,7 +1181,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void insertFinances(Invoice invoice) throws ManagerBeanException {
+	private void insertFinances(Invoice invoice, String sessionName) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Iterator<Finance> iter = ((List<Finance>) finances.getWrappedData()).iterator();
 		while (iter.hasNext()) {
@@ -1194,6 +1191,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			if (finance.getId() == null) {
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}
+			finance = (Finance) HibernateUtil.getSession(sessionName).merge(finance);
 			financeBean.insertOrUpdate(finance);
 		}
 	}

@@ -107,7 +107,7 @@
 	<!--  *********  Listado Detallado Factura de Ventas  ********* -->
 
 	<report id="deliveryList2" description="Listado de delivery">
-		<template path="/com/code/aon/ui/warehouse/report/deliveryList2.jasper" />
+		<template path="/com/code/aon/ui/warehouse/report/deliveryList.jasper" />
 		<bean key="com.code.aon.warehouse.Delivery" />
 		<criteria provider="#{delivery}"/>
 		<params>

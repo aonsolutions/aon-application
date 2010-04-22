@@ -37,4 +37,19 @@
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
 		</aon:selectOneRadio>
 	</c:if>
+	
+	<c:if test="#{aonConfiguration.bean.customer.showTariff}">
+		<aon:outputLabel for="Customer_tariff_id"
+			value="#{productBundle.product_tariff}" />
+		<aon:selectOneMenu id="Customer_tariff_id"
+			value="#{controller.to.tariff}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{configCollections.tariffs}" />
+		</aon:selectOneMenu>
+
+		<aon:outputText value="&#160;" />
+		<aon:outputText value="&#160;" />
+		
+	</c:if>
+	
 </ui:composition>

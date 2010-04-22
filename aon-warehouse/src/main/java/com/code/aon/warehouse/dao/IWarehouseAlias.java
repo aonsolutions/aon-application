@@ -26,40 +26,40 @@ public interface IWarehouseAlias {
 	DAOConstantsEntry DELIVERY_ENTRY = DAOConstants.getDAOConstant(Delivery.class);
 
 	/** 
-	* Alias value: Delivery_bankAccount
-	* Hibernate value: Delivery.bankAccount
+	* Alias value: Delivery_id
+	* Hibernate value: Delivery.id
 	*/
-	String  DELIVERY_BANK_ACCOUNT = DELIVERY_ENTRY.getAliasNames()[0];
+	String  DELIVERY_ID = DELIVERY_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Delivery_bank_id
-	* Hibernate value: Delivery.bank.id
+	* Alias value: Delivery_series
+	* Hibernate value: Delivery.series
 	*/
-	String  DELIVERY_BANK_ID = DELIVERY_ENTRY.getAliasNames()[1];
+	String  DELIVERY_SERIES = DELIVERY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Delivery_number
+	* Hibernate value: Delivery.number
+	*/
+	String  DELIVERY_NUMBER = DELIVERY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Delivery_customer_id
 	* Hibernate value: Delivery.customer.id
 	*/
-	String  DELIVERY_CUSTOMER_ID = DELIVERY_ENTRY.getAliasNames()[2];
+	String  DELIVERY_CUSTOMER_ID = DELIVERY_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Delivery_daysBetweenPayments
-	* Hibernate value: Delivery.daysBetweenPayments
+	* Alias value: Delivery_registryAddress
+	* Hibernate value: Delivery.registryAddress
 	*/
-	String  DELIVERY_DAYS_BETWEEN_PAYMENTS = DELIVERY_ENTRY.getAliasNames()[3];
+	String  DELIVERY_REGISTRY_ADDRESS = DELIVERY_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: Delivery_daysToFirstPayment
-	* Hibernate value: Delivery.daysToFirstPayment
+	* Alias value: Delivery_registryAddress_id
+	* Hibernate value: Delivery.registryAddress.id
 	*/
-	String  DELIVERY_DAYS_TO_FIRST_PAYMENT = DELIVERY_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: Delivery_id
-	* Hibernate value: Delivery.id
-	*/
-	String  DELIVERY_ID = DELIVERY_ENTRY.getAliasNames()[5];
+	String  DELIVERY_REGISTRY_ADDRESS_ID = DELIVERY_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Delivery_issueTime
@@ -68,34 +68,34 @@ public interface IWarehouseAlias {
 	String  DELIVERY_ISSUE_TIME = DELIVERY_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Delivery_number
-	* Hibernate value: Delivery.number
+	* Alias value: Delivery_payMethod
+	* Hibernate value: Delivery.payMethod
 	*/
-	String  DELIVERY_NUMBER = DELIVERY_ENTRY.getAliasNames()[7];
-
-	/** 
-	* Alias value: Delivery_numberOfPayments
-	* Hibernate value: Delivery.numberOfPayments
-	*/
-	String  DELIVERY_NUMBER_OF_PAYMENTS = DELIVERY_ENTRY.getAliasNames()[8];
+	String  DELIVERY_PAY_METHOD = DELIVERY_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Delivery_payMethod_id
 	* Hibernate value: Delivery.payMethod.id
 	*/
-	String  DELIVERY_PAY_METHOD_ID = DELIVERY_ENTRY.getAliasNames()[9];
+	String  DELIVERY_PAY_METHOD_ID = DELIVERY_ENTRY.getAliasNames()[8];
 
 	/** 
-	* Alias value: Delivery_paymentDays
-	* Hibernate value: Delivery.paymentDays
+	* Alias value: Delivery_securityLevel
+	* Hibernate value: Delivery.securityLevel
 	*/
-	String  DELIVERY_PAYMENT_DAYS = DELIVERY_ENTRY.getAliasNames()[10];
+	String  DELIVERY_SECURITY_LEVEL = DELIVERY_ENTRY.getAliasNames()[9];
 
 	/** 
-	* Alias value: Delivery_registryAddress_id
-	* Hibernate value: Delivery.registryAddress.id
+	* Alias value: Delivery_status
+	* Hibernate value: Delivery.status
 	*/
-	String  DELIVERY_REGISTRY_ADDRESS_ID = DELIVERY_ENTRY.getAliasNames()[11];
+	String  DELIVERY_STATUS = DELIVERY_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Delivery_workPlace_id
+	* Hibernate value: Delivery.workPlace.id
+	*/
+	String  DELIVERY_WORK_PLACE_ID = DELIVERY_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Delivery_scope_id
@@ -104,28 +104,46 @@ public interface IWarehouseAlias {
 	String  DELIVERY_SCOPE_ID = DELIVERY_ENTRY.getAliasNames()[12];
 
 	/** 
-	* Alias value: Delivery_securityLevel
-	* Hibernate value: Delivery.securityLevel
+	* Alias value: Delivery_numberOfPayments
+	* Hibernate value: Delivery.numberOfPayments
 	*/
-	String  DELIVERY_SECURITY_LEVEL = DELIVERY_ENTRY.getAliasNames()[13];
+	String  DELIVERY_NUMBER_OF_PAYMENTS = DELIVERY_ENTRY.getAliasNames()[13];
 
 	/** 
-	* Alias value: Delivery_series
-	* Hibernate value: Delivery.series
+	* Alias value: Delivery_daysToFirstPayment
+	* Hibernate value: Delivery.daysToFirstPayment
 	*/
-	String  DELIVERY_SERIES = DELIVERY_ENTRY.getAliasNames()[14];
+	String  DELIVERY_DAYS_TO_FIRST_PAYMENT = DELIVERY_ENTRY.getAliasNames()[14];
 
 	/** 
-	* Alias value: Delivery_status
-	* Hibernate value: Delivery.status
+	* Alias value: Delivery_daysBetweenPayments
+	* Hibernate value: Delivery.daysBetweenPayments
 	*/
-	String  DELIVERY_STATUS = DELIVERY_ENTRY.getAliasNames()[15];
+	String  DELIVERY_DAYS_BETWEEN_PAYMENTS = DELIVERY_ENTRY.getAliasNames()[15];
 
 	/** 
-	* Alias value: Delivery_workPlace_id
-	* Hibernate value: Delivery.workPlace.id
+	* Alias value: Delivery_paymentDays
+	* Hibernate value: Delivery.paymentDays
 	*/
-	String  DELIVERY_WORK_PLACE_ID = DELIVERY_ENTRY.getAliasNames()[16];
+	String  DELIVERY_PAYMENT_DAYS = DELIVERY_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Delivery_bank
+	* Hibernate value: Delivery.bank
+	*/
+	String  DELIVERY_BANK = DELIVERY_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Delivery_bank_id
+	* Hibernate value: Delivery.bank.id
+	*/
+	String  DELIVERY_BANK_ID = DELIVERY_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Delivery_bankAccount
+	* Hibernate value: Delivery.bankAccount
+	*/
+	String  DELIVERY_BANK_ACCOUNT = DELIVERY_ENTRY.getAliasNames()[19];
 
 
 

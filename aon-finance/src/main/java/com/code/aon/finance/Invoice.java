@@ -34,6 +34,7 @@ import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Scope;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
@@ -60,7 +61,7 @@ import com.code.aon.registry.RegistryAddress;
 @org.hibernate.annotations.Table( appliesTo = "invoice", indexes =
 	{ @Index(name="IDX_SERIES", columnNames={"series","number","type"}),
 		@Index(name="IDX_SERIES_NUMBER", columnNames={"series","number"})})
-public class Invoice implements ITransferObject, IHeaderObject, ICalculableContainer, ITaxInfo {
+public class Invoice implements ITransferObject, IHeaderObject, ICalculableContainer, ITaxInfo, IConfidentialable {
 	
 	private static final long serialVersionUID = 5692053383866684819L;
 
@@ -677,6 +678,10 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 
 	@Transient
 	public String getDocumentNumber() {
+		// ******************************************************************
+		// Si se cambia el contenido de este método, cambiarlo también en 
+		// com.code.aon.finance.vat.Vat.getDocumentNumber()
+		// ******************************************************************
 		String documentNumber = ((InvoiceType.SALES == getType()) ? "E" : (InvoiceType.UNDEDUCTIBLE == getType()) ? "G" : "R") + "-";
 		if (!StringUtils.isEmpty(getSeries())) {
 			documentNumber += getSeries() + "/";
@@ -692,6 +697,16 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 
 	public void setDefaultTaxInfo(boolean defaultTaxInfo) {
 		this.defaultTaxInfo = defaultTaxInfo;
+	}
+
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
 	@Override

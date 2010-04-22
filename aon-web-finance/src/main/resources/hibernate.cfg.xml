@@ -41,7 +41,6 @@
 		<mapping class="com.code.aon.accounting.Balance"/>
 		<mapping class="com.code.aon.accounting.BalanceDetail"/>
 		<mapping class="com.code.aon.accounting.Loan"/>
-		<mapping class="com.code.aon.accounting.Leasing"/>
 		<mapping class="com.code.aon.accounting.Period"/>
 
 		<!-- AON-ACCOUNT-BRIDGE Mapping files -->
@@ -52,7 +51,6 @@
 		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
-		<mapping class="com.code.aon.account.bridge.LeasingAccount"/>
 		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
 		<mapping class="com.code.aon.account.bridge.ProductAccount"/>
 		<mapping class="com.code.aon.account.bridge.RegistryBankAccount"/>
@@ -63,6 +61,10 @@
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialTerm"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
+		<mapping class="com.code.aon.commercial.Commission"/>
+		<mapping class="com.code.aon.commercial.CommissionCategory"/>
+		<mapping class="com.code.aon.commercial.CommissionItem"/>
+		<mapping class="com.code.aon.commercial.CommissionTypeCommission"/>
 		<mapping class="com.code.aon.commercial.Expense"/>
 		<mapping class="com.code.aon.commercial.ExpenseAccount"/>
 		<mapping class="com.code.aon.commercial.ExpenseAccountDetail"/>
@@ -73,6 +75,7 @@
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
+		<mapping class="com.code.aon.commercial.TargetThirdParty"/>
 		
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
@@ -84,6 +87,7 @@
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>

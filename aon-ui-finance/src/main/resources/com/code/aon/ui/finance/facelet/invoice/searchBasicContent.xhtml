@@ -105,32 +105,32 @@
 		</aon:div>
 	</c:if>
 
-	<aon:outputLabel for="Invoice_securityLevel"
-		value="#{bundle.aon_security_level}" />
-	<aon:selectOneMenu id="Invoice_securityLevel"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{commonCollections.securityLevels}" />
-	</aon:selectOneMenu>
-
-	<c:if test="#{searchController.defaultStatus == null}">
-		<aon:outputLabel for="Invoice_status" value="#{bundle.aon_status}" />
-		<aon:selectOneMenu id="Invoice_status" converter="aon.EnumConverter"
+	<c:if test="#{aonRole.confidentiality}">
+		<aon:outputLabel for="Invoice_securityLevel"
+			value="#{bundle.aon_confidential}" />
+		<aon:selectOneRadio id="Invoice_securityLevel"
 			valueChangeListener="#{controller.addExpression}">
-			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{financeCollections.invoiceStatuses}" />
-		</aon:selectOneMenu>
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
 	</c:if>
 
 	<c:if test="#{company.EInvoice}">
 		<aon:outputLabel for="Invoice_signed" value="#{financeBundle.finance_signed}" />
-		<aon:selectOneMenu id="Invoice_signed"
+		<aon:selectOneRadio id="Invoice_signed"
 			valueChangeListener="#{controller.addExpression}">
-			<f:selectItem itemLabel="-"	itemValue="#{null}" />
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-		</aon:selectOneMenu>				
+		</aon:selectOneRadio>				
+	</c:if>
+
+	<c:if test="#{aonRole.accountingOperator and searchController.defaultStatus == null}">
+		<aon:outputLabel for="Invoice_status" value="#{financeBundle.finance_recorded}" />
+		<aon:selectOneRadio id="Invoice_status"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
 	</c:if>
 
 </ui:composition>

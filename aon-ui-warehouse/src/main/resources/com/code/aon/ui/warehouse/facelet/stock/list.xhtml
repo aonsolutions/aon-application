@@ -17,29 +17,31 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
+					<aon:htmlCommandLink id="stockWarehouseList-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="stockWarehouseList" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>												
-					<h:commandLink value="#{warehouseBundle.warehouse_print_by_warehouse}" target="_blank"
-						action="#{report.onExecute}"
+					</aon:htmlCommandLink>												
+					<aon:htmlCommandLink id="stockWarehouseList-report"
+						value="#{warehouseBundle.warehouse_print_by_warehouse}"
+						action="#{report.onExecute}" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="stockWarehouseList" />
-					</h:commandLink>
-					<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="stockItemList-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="stockItemList" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>													
-					<h:commandLink value="#{warehouseBundle.warehouse_print_by_item}" target="_blank"
-						action="#{report.onExecute}"
+					</aon:htmlCommandLink>													
+					<aon:htmlCommandLink id="stockItemList-report"
+						value="#{warehouseBundle.warehouse_print_by_item}"
+						action="#{report.onExecute}" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="stockItemList" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>				
 				
 			</ui:decorate>

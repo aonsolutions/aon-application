@@ -21,6 +21,7 @@ public class Vat {
 	String series;
 	int number;
 	String reference;
+	String documentNumber;
 	String document;
 	String name;
 	Date date;
@@ -123,10 +124,7 @@ public class Vat {
 	}
 
 	public String getSeriesNumber() {
-		if ( StringUtils.isBlank(series) ) {
-			return Integer.toString(number);
-		} 
-		return series + "/" + number;
+		return getDocumentNumber();
 	}
 
 	public String getReference() {
@@ -136,6 +134,16 @@ public class Vat {
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
+
+	public String getDocumentNumber() {
+		String documentNumber = ((InvoiceType.SALES == getInvoiceType()) ? "E" : (InvoiceType.UNDEDUCTIBLE == getInvoiceType()) ? "G" : "R") + "-";
+		if (!StringUtils.isEmpty(getSeries())) {
+			documentNumber += getSeries() + "/";
+		}
+		documentNumber += StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+		return documentNumber;
+	}
+
 
 	public String getDocument() {
 		return document;

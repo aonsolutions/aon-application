@@ -267,7 +267,8 @@
 								rendered="#{(salesInvoicing.new or salesInvoicingAddress.to.id == null) and salesInvoicing.addressCount > 0}"
 								styleClass="aon-form-selectOneMenu-field"
 								disabled="#{!salesInvoicing.editable}"
-								value="#{salesInvoicing.to.registryAddress.id}">
+								value="#{salesInvoicing.to.registryAddress.id}"
+								valueChangeListener="#{salesInvoicing.addressData}">
 								<f:selectItems value="#{salesInvoicing.addresses}" />
 							</h:selectOneMenu>	
 							<h:outputLabel value="#{financeBundle.invoice_no_available_address}"

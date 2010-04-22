@@ -341,4 +341,19 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- ************ OFFER SIGNER ************** -->
+	<managed-bean>
+		<managed-bean-name>offerSigner</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.sign.controller.SignerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>signatureController</property-name>
+			<value>#{cartOffer}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>reportKey</property-name>
+			<value>offer</value>
+		</managed-property>
+	</managed-bean>	
+	
 </faces-config>

@@ -127,7 +127,7 @@
 			to be able to edit pages in a running application.
 		</description>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
-		<param-value>0</param-value>
+		<param-value>-1</param-value>
 	</context-param>
 
 	<context-param>
@@ -213,10 +213,6 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
-	<!-- Listener, that enables Audit Sessions per User. -->
-	<listener>
-		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
-	</listener>
 
 	<!-- Sessions Filter -->
 	<filter>

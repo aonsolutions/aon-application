@@ -25,6 +25,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -36,6 +38,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -48,6 +51,18 @@ import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
 public class ConfigurationController implements Serializable, ICommonConstants, JAXPConstants {
 	
 	private static final long serialVersionUID = -1159615075844874762L;
+
+	private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
+
+	private static final String APPLICATION_VERSION = "applicationVersion";
+	
+	private static final String DATA_BASE_VERSION = "databaseVersion";
+	
+	private static final String BUILD_NUMBER = "buildNumber";
+	
+	private static final String BUILD_DATE = "buildDate";
+	
+	private static final String BUILD_REVISION = "buildRevision";
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
 	
@@ -65,10 +80,6 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	
 	private Map<String,Map<String,Object>> bean;	
 	
-	private boolean versionChecked;
-	
-	private String version;
-	
 	/**
 	 * The Constructor.
 	 */
@@ -79,6 +90,8 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		if ( document != null ) {
 			bean = loadBeanConfiguration( document );
 		}		
+		initApplicationVersion();
+		initDataBaseVersion();
 	}
 
 	/**
@@ -142,33 +155,48 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	/**
 	 * Calculate application version.
 	 * 
-	 * @return the application version number
 	 */
-	public String getApplicationVersion() {
-		if (! versionChecked ) {
-			this.versionChecked = true;
-			try {
-				ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-				InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
-				Manifest m = new Manifest(in);
-				Attributes attrs = m.getMainAttributes();
-				String value = attrs.getValue("Implementation-Version");
-				if (! StringUtils.isEmpty(value)) {
-					this.version = StringUtils.trim(value);
-					String buildNumber = attrs.getValue("buildNumber");
-					if (! StringUtils.isEmpty(buildNumber)) {
-						this.version += " [" + StringUtils.trim(buildNumber) + "]";	
-					}
-					LOGGER.info(version);
-				} else {
-					LOGGER.warn("Imposible determinar la versión");
-				}
-			} catch (Throwable e) {
+	private void initApplicationVersion() {
+		try {
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
+			Manifest m = new Manifest(in);
+			Attributes attrs = m.getMainAttributes();
+			String applicationVersion = attrs.getValue(IMPLEMENTATION_VERSION);
+			if (! StringUtils.isEmpty(applicationVersion)) {
+				getProperties().put(APPLICATION_VERSION, StringUtils.trim(applicationVersion) );
+				String buildNumber = StringUtils.trim( attrs.getValue(BUILD_NUMBER) );
+				getProperties().put(BUILD_NUMBER, buildNumber );
+				String buildDate = StringUtils.trim( attrs.getValue(BUILD_DATE) );
+				getProperties().put(BUILD_DATE, buildDate );
+				String buildRevision = StringUtils.trim( attrs.getValue(BUILD_REVISION) );
+				getProperties().put(BUILD_REVISION, buildRevision );
+			} else {
 				LOGGER.warn("Imposible determinar la versión");
 			}
+		} catch (Throwable e) {
+			LOGGER.warn("Imposible determinar la versión");
 		}
-		return version;
 	}
+	
+	/**
+	 * Calculate database version.
+	 * 
+	 */
+	private void initDataBaseVersion() {
+		try {
+	    	String name = HibernateUtil.getSessionFactoryName();
+	        Session session = HibernateUtil.getSession(name);
+	        SQLQuery query = session.createSQLQuery("SELECT version_number FROM db_version");
+	        List<?> list = query.list();
+	        if (! list.isEmpty() ) {
+	        	String dbVersion = (String) list.get(0);
+	        	getProperties().put(DATA_BASE_VERSION, dbVersion );
+	        }
+		} catch (Throwable e) {
+			LOGGER.warn("Imposible determinar la versión");
+		}
+	}	
 	
     /**
      * Gets the current date.

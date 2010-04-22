@@ -34,6 +34,7 @@ public class FTPUtil implements IInfoWebConstants {
 		ftp.login(user, password);
 		ftp.enterLocalPassiveMode();
 		ftp.changeWorkingDirectory(destination);
+		ftp.setListHiddenFiles(true);
 		return ftp;
 	}
 	

@@ -1,155 +1,50 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j">
-<body>
-
-<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
 		<aon:form id="procesosMenu">
-		
-			<aon:div styleClass="aon-scroll-area-menu">		
-		
-				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
-					columnClasses="aon-portlets-column,aon-portlets-column">
-	
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{menuBundle.procesos_recibos_salarios}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_recibos_salarios__lanzRecibos}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_recibos_salarios__lanzInfReci}" disabled="true" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
 
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{menuBundle.procesos_seguros_sociales}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_seguros_sociales__lanzSeguros}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_seguros_sociales__lanzInfSegu}" disabled="true" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
+			<aon:div styleClass="aon-scroll-area">
+			
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
-					<aon:panel>
+					<aon:panelGrid id="group_procesos_procesos"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-master aon-direct-access-panel">
 						<f:facet name="header">
-							<aon:outputText value="#{menuBundle.procesos_sistema_red}"/>
+							<aon:outputText value="#{appBundle.menu_procesos}" />
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_sistema_red__lanzred}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_sistema_red__lanzinfred}" disabled="true" />
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="parteITWizard" 
+									action="parteITWizard_step0"
+									actionListener="#{parteITWizard.onStart}"
+									value="#{payrollBundle.parteIT_module}" />
 							</aon:div>
 						</aon:div>
-					</aon:panel>
-
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{menuBundle.procesos_atrasos}"/>
-						</f:facet>
+						
 						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_atrasos__lanzAtrasos}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_atrasos__lanzInfAtra}" disabled="true" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
-
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{menuBundle.procesos_irpf}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_irpf__lanzIRPF}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_irpf__lanzDetIrpf}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_irpf__lanzInfIrpf}" disabled="true" />
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="remesaITWizard" 
+									action="remesaITWizard_step0"
+									actionListener="#{remesaITWizard.onStart}"
+									value="#{payrollBundle.remesaIT_module}" />
 							</aon:div>
 						</aon:div>
-					</aon:panel>
-
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{menuBundle.procesos_informes}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_informes__infoEmpr}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_informes__infoTrab}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_informes__registrodoc}" disabled="true" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
-
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{menuBundle.procesos_varios}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_varios__lanzapercep}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_varios__lanzetiqem}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_varios__campox}" disabled="true" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_varios__lanztraspaso}" disabled="true" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
-
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{menuBundle.procesos_automaticos_claves}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink value="#{menuBundle.procesos_automaticos_claves__automat}" disabled="true" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
+						
+					</aon:panelGrid>
+				</h:panelGrid>
 					
-				</aon:panelGrid>
-				
 			</aon:div>
-		
 		</aon:form>
-
 	</ui:define>
-
 </ui:composition>
-
-</body>
-</html>

@@ -30,6 +30,13 @@
 			com.code.aon.ui.stat.controller.ProductStatEngineController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>commercialStat</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.stat.controller.CommercialStatEngineController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- *************Invoice Accumulate Stats***************** -->
 	<navigation-rule>
@@ -246,6 +253,51 @@
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/productStat/productStat.xhtml</to-view-id>
 		</navigation-case>
+
+	</navigation-rule>
+	
+			<!-- *************Commercial Stats***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>commercial_category_stat_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialCategory/search.xhtml</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-outcome>commercial_category_stats_year</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialCategory/yearStats.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>commercial_product_stats</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialCategory/productStats.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>commercial_geozone_stat_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialGeozone/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercial_geozone_stats_year</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialGeozone/yearStats.xhtml</to-view-id>
+		</navigation-case>
+			
+		<navigation-case>
+			<from-outcome>commercial_seller_stat_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialSeller/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercial_seller_stats_year</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialSeller/yearStats.xhtml</to-view-id>
+		</navigation-case>
+		
+
 
 	</navigation-rule>
 

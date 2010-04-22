@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,38 +14,39 @@
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
-				<aon:componentGroup
-					family="javax.faces.Command"
-					method="#{actionDenied.renderedCommand}">
-		
-					<aon:panelGrid columns="1" styleClass="aon-width-all"
-						columnClasses="aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300">
 
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-treasury aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_menu_group}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="finance_charge" 
-										action="finance_search-charge" actionListener="#{finance.onEditSearchCharge}"
-										value="#{financeBundle.finance_charge_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="finance_payment" 
-										action="finance_search" actionListener="#{finance.onEditSearchPayment}"
-										value="#{financeBundle.finance_payment_module}"/>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="financialStatement" 
-										action="financialStatement_search" actionListener="#{financialStatement.onReset}"
-										value="#{accountingBundle.accounting_financial_statements}" />
-								</aon:div>
+					<aon:panelGrid id="group_finance"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-treasury aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{financeBundle.finance_menu_group}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="finance_charge" 
+									action="finance_search-charge" actionListener="#{finance.onEditSearchCharge}"
+									value="#{financeBundle.finance_charge_module}" />
 							</aon:div>
-						</h:panelGrid>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="finance_payment" 
+									action="finance_search" actionListener="#{finance.onEditSearchPayment}"
+									value="#{financeBundle.finance_payment_module}"/>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="aon_fbatch" action="fbatch_search"
+									actionListener="#{fbatch.onEditSearch}"
+									value="#{financeBundle.finance_fbatch_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="financialStatement" 
+									action="financialStatement_search" actionListener="#{financialStatement.onReset}"
+									value="#{accountingBundle.accounting_financial_statements}" />
+							</aon:div>
+						</aon:div>
 					</aon:panelGrid>
-				</aon:componentGroup>
+				</h:panelGrid>
 			</aon:div>
 		</aon:form>
 	</ui:define>

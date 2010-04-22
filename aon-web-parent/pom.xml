@@ -4,12 +4,12 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>5.0.0</version>
+    <version>5.1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon.web.parent</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
   <packaging>pom</packaging>
   <description>POM padre de los proyectos WEB de AON</description>
   <name>AON WEB ENTITY PARENT</name>
@@ -56,7 +56,9 @@
 	     </manifest>
 	    <manifestEntries>
               <dbVersion>${dbVersion}</dbVersion>
-              <buildNumber>${maven.build.timestamp}</buildNumber>	   
+              <buildNumber>${env.BUILD_NUMBER}</buildNumber>	   
+              <buildDate>${maven.build.timestamp}</buildDate>	   
+              <buildRevision>${buildNumber}</buildRevision>	   
             </manifestEntries>
           </archive>
         </configuration>
@@ -138,10 +140,10 @@
     <profile>
       <id>rpm-release</id>
      <activation>
-	<property>
-		<name>rpm.release</name>
-		<value>true</value>
-	</property>
+        <property>
+          <name>rpm.release</name>
+          <value>true</value>
+        </property>
       </activation>
 
 <repositories>                            
@@ -245,6 +247,77 @@
 
                         </plugin>
 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        
+	<configuration>
+          <executable>ssh</executable>
+          <arguments>
+            <argument>root@dev.esferalia.com</argument>
+            <argument>rpm -Uvh --force --root /mnt/alice ${env.JOB_URL}/ws/${env.JOB_NAME}/target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.1.0-${buildNumber}.noarch.rpm</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>selenium-maven-plugin</artifactId>
+                <version>1.0.1</version>                      
+                <executions>                                  
+                    <execution>                            
+                        <id>xvfb</id>                         
+                        <phase>pre-integration-test</phase>   
+                        <goals>                               
+                                <goal>xvfb</goal>             
+                        </goals>                              
+                    </execution>                            
+
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>                            
+                            <goal>start-server</goal>      
+                        </goals>                           
+                        <configuration>
+                            <background>true</background>  
+                        </configuration>                   
+                    </execution>                           
+
+                    <!--execution>
+                        <id>html-test</id>
+                        <phase>integration-test</phase>
+                        <goals>                        
+                            <goal>selenese</goal>      
+                        </goals>                       
+                        <configuration>                
+                                <browser>*firefox /usr/lib64/firefox-3.0.18/firefox</browser>
+                                <startURL>http://dev.esferalia.com</startURL>                
+                                <suite>src/main/html/DesktopTestSuite.html</suite>           
+                        </configuration>                                                     
+                    </execution-->                                                           
+
+
+                    <execution>
+                        <phase>post-integration-test</phase>
+                        <id>stop-server</id>                
+                        <goals>                             
+                            <goal>stop-server</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -253,6 +326,20 @@
                     <!-- Skip the normal tests, we'll run them in the integration-test phase -->
                     <skip>true</skip>
                 </configuration>
+
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+
+                        <configuration>
+                            <skip>false</skip>
+                        </configuration>
+                    </execution>
+                </executions>
 
             </plugin>
 

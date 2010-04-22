@@ -825,16 +825,22 @@ public interface ICMSAlias {
 	String  LINK_CATEGORY_ID = LINK_CATEGORY_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: LinkCategory_itemsPerPage
+	* Hibernate value: LinkCategory.itemsPerPage
+	*/
+	String  LINK_CATEGORY_ITEMS_PER_PAGE = LINK_CATEGORY_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: LinkCategory_position
 	* Hibernate value: LinkCategory.position
 	*/
-	String  LINK_CATEGORY_POSITION = LINK_CATEGORY_ENTRY.getAliasNames()[3];
+	String  LINK_CATEGORY_POSITION = LINK_CATEGORY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: LinkCategory_section_id
 	* Hibernate value: LinkCategory.section.id
 	*/
-	String  LINK_CATEGORY_SECTION_ID = LINK_CATEGORY_ENTRY.getAliasNames()[4];
+	String  LINK_CATEGORY_SECTION_ID = LINK_CATEGORY_ENTRY.getAliasNames()[5];
 
 
 
@@ -967,16 +973,22 @@ public interface ICMSAlias {
 	String  FAQ_CATEGORY_ID = FAQ_CATEGORY_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: FaqCategory_itemsPerPage
+	* Hibernate value: FaqCategory.itemsPerPage
+	*/
+	String  FAQ_CATEGORY_ITEMS_PER_PAGE = FAQ_CATEGORY_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: FaqCategory_position
 	* Hibernate value: FaqCategory.position
 	*/
-	String  FAQ_CATEGORY_POSITION = FAQ_CATEGORY_ENTRY.getAliasNames()[3];
+	String  FAQ_CATEGORY_POSITION = FAQ_CATEGORY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: FaqCategory_section_id
 	* Hibernate value: FaqCategory.section.id
 	*/
-	String  FAQ_CATEGORY_SECTION_ID = FAQ_CATEGORY_ENTRY.getAliasNames()[4];
+	String  FAQ_CATEGORY_SECTION_ID = FAQ_CATEGORY_ENTRY.getAliasNames()[5];
 
 
 
@@ -1397,16 +1409,22 @@ public interface ICMSAlias {
 	String  ARTICLE_CATEGORY_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: ArticleCategory_itemsPerPage
+	* Hibernate value: ArticleCategory.itemsPerPage
+	*/
+	String  ARTICLE_CATEGORY_ITEMS_PER_PAGE = ARTICLE_CATEGORY_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: ArticleCategory_position
 	* Hibernate value: ArticleCategory.position
 	*/
-	String  ARTICLE_CATEGORY_POSITION = ARTICLE_CATEGORY_ENTRY.getAliasNames()[4];
+	String  ARTICLE_CATEGORY_POSITION = ARTICLE_CATEGORY_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: ArticleCategory_section_id
 	* Hibernate value: ArticleCategory.section.id
 	*/
-	String  ARTICLE_CATEGORY_SECTION_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[5];
+	String  ARTICLE_CATEGORY_SECTION_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[6];
 
 
 
@@ -1893,6 +1911,12 @@ public interface ICMSAlias {
 	* Hibernate value: Album.publishDate
 	*/
 	String  ALBUM_PUBLISH_DATE = ALBUM_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Album_thumbnailWidth
+	* Hibernate value: Album.thumbnailWidth
+	*/
+	String  ALBUM_THUMBNAIL_WIDTH = ALBUM_ENTRY.getAliasNames()[8];
 
 
 
@@ -2777,64 +2801,70 @@ public interface ICMSAlias {
 	String  COMPANY_ADDRESS = COMPANY_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Company_coordinates
+	* Hibernate value: Company.coordinates
+	*/
+	String  COMPANY_COORDINATES = COMPANY_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Company_email
 	* Hibernate value: Company.email
 	*/
-	String  COMPANY_EMAIL = COMPANY_ENTRY.getAliasNames()[1];
+	String  COMPANY_EMAIL = COMPANY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Company_fax
 	* Hibernate value: Company.fax
 	*/
-	String  COMPANY_FAX = COMPANY_ENTRY.getAliasNames()[2];
+	String  COMPANY_FAX = COMPANY_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Company_id
 	* Hibernate value: Company.id
 	*/
-	String  COMPANY_ID = COMPANY_ENTRY.getAliasNames()[3];
+	String  COMPANY_ID = COMPANY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Company_locality
 	* Hibernate value: Company.locality
 	*/
-	String  COMPANY_LOCALITY = COMPANY_ENTRY.getAliasNames()[4];
+	String  COMPANY_LOCALITY = COMPANY_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Company_logo
 	* Hibernate value: Company.logo
 	*/
-	String  COMPANY_LOGO = COMPANY_ENTRY.getAliasNames()[5];
+	String  COMPANY_LOGO = COMPANY_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Company_name
 	* Hibernate value: Company.name
 	*/
-	String  COMPANY_NAME = COMPANY_ENTRY.getAliasNames()[6];
+	String  COMPANY_NAME = COMPANY_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Company_postal_code
 	* Hibernate value: Company.postal_code
 	*/
-	String  COMPANY_POSTAL_CODE = COMPANY_ENTRY.getAliasNames()[7];
+	String  COMPANY_POSTAL_CODE = COMPANY_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Company_province
 	* Hibernate value: Company.province
 	*/
-	String  COMPANY_PROVINCE = COMPANY_ENTRY.getAliasNames()[8];
+	String  COMPANY_PROVINCE = COMPANY_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Company_telephone
 	* Hibernate value: Company.telephone
 	*/
-	String  COMPANY_TELEPHONE = COMPANY_ENTRY.getAliasNames()[9];
+	String  COMPANY_TELEPHONE = COMPANY_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Company_web
 	* Hibernate value: Company.web
 	*/
-	String  COMPANY_WEB = COMPANY_ENTRY.getAliasNames()[10];
+	String  COMPANY_WEB = COMPANY_ENTRY.getAliasNames()[11];
 
 
 
@@ -2862,16 +2892,22 @@ public interface ICMSAlias {
 	String  ACTIVITY_SECTION_ID = ACTIVITY_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: Activity_itemsPerPage
+	* Hibernate value: Activity.itemsPerPage
+	*/
+	String  ACTIVITY_ITEMS_PER_PAGE = ACTIVITY_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: Activity_details_description
 	* Hibernate value: Activity.details.description
 	*/
-	String  ACTIVITY_DETAILS_DESCRIPTION = ACTIVITY_ENTRY.getAliasNames()[3];
+	String  ACTIVITY_DETAILS_DESCRIPTION = ACTIVITY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Activity_details_language_id
 	* Hibernate value: Activity.details.language.id
 	*/
-	String  ACTIVITY_DETAILS_LANGUAGE_ID = ACTIVITY_ENTRY.getAliasNames()[4];
+	String  ACTIVITY_DETAILS_LANGUAGE_ID = ACTIVITY_ENTRY.getAliasNames()[5];
 
 
 
@@ -3042,22 +3078,28 @@ public interface ICMSAlias {
 	DAOConstantsEntry BULLETIN_EMAIL_ENTRY = DAOConstants.getDAOConstant(BulletinEmail.class);
 
 	/** 
+	* Alias value: BulletinEmail_active
+	* Hibernate value: BulletinEmail.active
+	*/
+	String  BULLETIN_EMAIL_ACTIVE = BULLETIN_EMAIL_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: BulletinEmail_email
 	* Hibernate value: BulletinEmail.email
 	*/
-	String  BULLETIN_EMAIL_EMAIL = BULLETIN_EMAIL_ENTRY.getAliasNames()[0];
+	String  BULLETIN_EMAIL_EMAIL = BULLETIN_EMAIL_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: BulletinEmail_id
 	* Hibernate value: BulletinEmail.id
 	*/
-	String  BULLETIN_EMAIL_ID = BULLETIN_EMAIL_ENTRY.getAliasNames()[1];
+	String  BULLETIN_EMAIL_ID = BULLETIN_EMAIL_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: BulletinEmail_language_id
 	* Hibernate value: BulletinEmail.language.id
 	*/
-	String  BULLETIN_EMAIL_LANGUAGE_ID = BULLETIN_EMAIL_ENTRY.getAliasNames()[2];
+	String  BULLETIN_EMAIL_LANGUAGE_ID = BULLETIN_EMAIL_ENTRY.getAliasNames()[3];
 
 
 

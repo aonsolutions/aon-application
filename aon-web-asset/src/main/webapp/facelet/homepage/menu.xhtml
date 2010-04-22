@@ -9,78 +9,33 @@
 	<aon:form>
 		<aon:menuBar id="mainMenu">
 			<aon:commandLink value="#{assetBundle.asset_reservation_main}"
-				styleClass="aon-top-menu-item" immediate="true" 
+				styleClass="aon-top-menu-item aon-icon-query" immediate="true" 
 				action="activityReservation_form" >
 				<aon:actionListener method="#{assetCalendar.onInitialize}" />
 				<aon:actionListener method="#{activityDialog.onInitializeRequest}" />
 			</aon:commandLink>
-			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
+			<aon:div styleClass="aon-sidebarIcons-icon " renderedOnUserRole="Administrador">
 				<h:commandLink value="#{assetBundle.asset_asset_main}"
-					styleClass="aon-top-menu-item" immediate="true" 
+					styleClass="aon-top-menu-item aon-icon-asset" immediate="true" 
 					action="asset_list"
 					renderedOnUserRole="DocumentsVisible" />
 			</aon:div>
 			<aon:div styleClass="aon-sidebarIcons-icon">
 				<h:commandLink value="#{assetBundle.asset_activity_main}"
-					styleClass="aon-top-menu-item" immediate="true" 
+					styleClass="aon-top-menu-item aon-icon-reservation" immediate="true" 
 					action="activityDialog_grid" 
 					renderedOnUserRole="DocumentsVisible" >
-<!--  
--->
 					<aon:actionListener method="#{activityDialog.onInitialize}" />
 					<aon:actionListener method="#{activityBasic.initializePendingList}" />
 				</h:commandLink>
 			</aon:div>
-			<!--  
-			<h:commandLink value="#{assetBundle.asset_request_main}"
-				styleClass="aon-top-menu-item" immediate="true" 
-				action="activityDialog_form" actionListener="#{activityDialog.onInitializeRequest}" />
-			-->
 			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
 				<h:commandLink value="#{assetBundle.asset_statistic_main}"
-					styleClass="aon-top-menu-item" immediate="true" 
+					styleClass="aon-top-menu-item aon-icon-statistics" immediate="true" 
 					actionListener="#{assetCollections.onInitialize}"
 					action="stat_form" />
 			</aon:div>
-			
-<!--  
-			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
-				<h:commandLink value="#{assetBundle.asset_admin_main}"
-					styleClass="aon-top-menu-item" immediate="true" 
-					action="admin_form" />
-			</aon:div>
--->			
-			
-<!--
-			<aon:dropDownMenu value="#{assetBundle.asset_asset_main}"
-				action="asset_list">
-				 
-				<aon:menuItem value="#{assetBundle.asset_asset_module}"
-					action="asset_list" />
-				
-				<aon:menuSeparator />
-				<aon:menuItem actionListener="#{assetActivity.onEditSearch}"
-					action="assetActivity_search"
-					value="#{appBundle.asset_activity_module}" />
-				
-			</aon:dropDownMenu>
- 
-			<aon:dropDownMenu value="#{assetBundle.asset_activity_main}">
-				<aon:menuItem value="#{assetBundle.asset_activity_module}"
-					action="activityDialog_form" actionListener="#{activityDialog.onInitialize}" />
-					
-			</aon:dropDownMenu>
-			
-			<aon:dropDownMenu value="#{assetBundle.asset_request_main}">
-				<aon:menuItem value="#{assetBundle.asset_request_module}"
-					action="asset_search" />
-			</aon:dropDownMenu>
-			
-			<aon:dropDownMenu value="#{assetBundle.asset_reservation_main}">
-				<aon:menuItem value="#{assetBundle.asset_reservation_module}"
-					action="asset_search" />
-			</aon:dropDownMenu>
--->
+	
 		</aon:menuBar>
 	</aon:form>
 </ui:composition>

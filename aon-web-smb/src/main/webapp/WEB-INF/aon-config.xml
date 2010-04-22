@@ -28,7 +28,7 @@
 			showFinanceFeeData="true" 
 			showTaxInfoData="true"
 			showAccount="true"
-			showTariff="true" 
+			showTariff="false" 
 			showSegment="true"
 			showNote="false"
 			showRelationship="false"
@@ -69,7 +69,7 @@
 		<product:product
 			showBarcode="false"
 			showType="true"
-			showBrand="true"
+			showBrand="false"
 			showStock="false"
 			showSuppliers="false"
 			showAccount="true"
@@ -96,6 +96,7 @@
 			showProduct="true"
 			showSeller="true"
 			showAddInfo="true"
+			showThirdParty="false"
 		/>
 	</commercial:config>
 

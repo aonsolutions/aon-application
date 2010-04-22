@@ -12,6 +12,7 @@ import com.code.aon.audit.ActionEntry;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -34,6 +35,7 @@ public class ActionLastExecutedController extends BasicController implements IAu
 	private List<ActionEntry> getLastExecutedActions( int count ) {
 		try {
 			IManagerBean bean = getManagerBean();
+			LOGGER.info( "Criteria: " + getCriteria() );
 			return (List) bean.getList(getCriteria(), 0, count);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading last executed actions", e);
@@ -88,9 +90,9 @@ public class ActionLastExecutedController extends BasicController implements IAu
 		return (option != null) ? option.getDescription() : getCurrentActionEntry().getAction().getName();
 	}
 
-	public String getCategory() throws ManagerBeanException {
+	public ApplicationCategory getCategory() throws ManagerBeanException {
 		ApplicationOption option = getOption();
-		return (option != null) ? option.getCategory() : null; 
+		return (option != null) ? option.getGroup().getCategory() : null; 
 	}
 
 }

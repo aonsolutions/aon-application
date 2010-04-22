@@ -6,13 +6,11 @@ import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.account.bridge.CustomerAccount;
-import com.code.aon.account.bridge.LeasingAccount;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.util.AccountUtil;
-import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.Loan;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -110,7 +108,7 @@ public class AccountBridgeUtil {
 		IAccount customerAccount = obtainCustomerIAccount(registry);
 		return customerAccount==null?null:customerAccount.getAccount();
 	}
-	public CustomerAccount obtainCustomerIAccount(Registry registry) throws ManagerBeanException {
+	private CustomerAccount obtainCustomerIAccount(Registry registry) throws ManagerBeanException {
 		try {
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 			Customer customer = (Customer) customerBean.get(registry.getId());
@@ -231,34 +229,7 @@ public class AccountBridgeUtil {
 			throw new ManagerBeanException(e.getMessage(),e );
 		}
 	}
-	
-	public Account obtainLeasingAccount(Leasing leasing) throws ManagerBeanException {
-		try {
-			IManagerBean leasingAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(leasingAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_LEASING_ID), leasing.getId());
-			Iterator<ITransferObject> iter = leasingAccountBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				LeasingAccount leasingAccount = (LeasingAccount)iter.next();
-				return leasingAccount.getAccount();
-			}
-			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			Account account = new Account();
-			account.setId(getAccountUtil().obtainNextAccountId(AccountConstants.LEASING_ACCOUNT_PREFIX));
-			account.setDescription(leasing.getDescription());
-			account.setEntryEnabled(true);
-			account.setAlias(account.getId());
-			account = (Account) accountBean.insert(account);
-			LeasingAccount leasingAccount = new LeasingAccount();
-			leasingAccount.setAccount(account);
-			leasingAccount.setLeasing(leasing);
-			leasingAccountBean.insert(leasingAccount);
-			return account;
-		} catch (ExpressionException e) {
-			throw new ManagerBeanException(e.getMessage(),e );
-		}
-	}
-	
+
 	public Account obtainLoanAccount(Loan loan) throws ManagerBeanException {
 		try {
 			IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
@@ -271,14 +242,6 @@ public class AccountBridgeUtil {
 			}
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
-			
-//			int term = 0; 
-//			try {
-//				term = Integer.parseInt(loan.getTerm());
-//			} catch (NumberFormatException e) {
-//				 
-//			}
-//			String prefix = (term>12)?AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX:AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX; 
 			String prefix = AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX;
 			account.setId(getAccountUtil().obtainNextAccountId(prefix));
 			account.setDescription(loan.getDescription());

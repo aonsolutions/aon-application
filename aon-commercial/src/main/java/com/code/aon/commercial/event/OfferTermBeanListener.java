@@ -23,20 +23,21 @@ public class OfferTermBeanListener extends ManagerBeanListenerAdapter {
 
 	@Override
 	public void beanInserted(ManagerBeanEvent event) throws ManagerBeanException {
-		OfferTerm offerTerm = (OfferTerm)event.getTo();
+		OfferTerm term = (OfferTerm)event.getTo();
 		IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), offerTerm.getOffer().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), offerTerm.getId()));
-		criteria.addGreaterThanOrEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE), offerTerm.getLine());
+		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), term.getOffer().getId());
+		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), term.isGeneral());
+		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), term.getId()));
+		criteria.addGreaterThanOrEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE), term.getLine());
 		criteria.addOrder(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE));
 		List<ITransferObject> list = offerTermBean.getList(criteria);
-		int index = offerTerm.getLine();
+		int index = term.getLine();
 		for (ITransferObject to : list) {
-			OfferTerm term = (OfferTerm)to;
-			if (index == term.getLine()) {
-				term.setLine(index + 1);
-				offerTermBean.update(term);
+			OfferTerm offerTerm = (OfferTerm)to;
+			if (index == offerTerm.getLine()) {
+				offerTerm.setLine(index + 1);
+				offerTermBean.update(offerTerm);
 				++index;
 			}
 		}
@@ -47,26 +48,28 @@ public class OfferTermBeanListener extends ManagerBeanListenerAdapter {
 		if (!updating) {
 			updating = true;
 
-			OfferTerm offerTerm = (OfferTerm)event.getTo();
+			OfferTerm term = (OfferTerm)event.getTo();
 			IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), offerTerm.getOffer().getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), offerTerm.getId()));
-			criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE), offerTerm.getLine());
+			criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), term.getOffer().getId());
+			criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), term.isGeneral());
+			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), term.getId()));
+			criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE), term.getLine());
 			if (offerTermBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
-				criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), offerTerm.getOffer().getId());
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), offerTerm.getId()));
+				criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), term.getOffer().getId());
+				criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), term.isGeneral());
+				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), term.getId()));
 				criteria.addOrder(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE));
 				List<ITransferObject> list = offerTermBean.getList(criteria);
 				int index = 1;
 				for (ITransferObject to : list) {
-					OfferTerm term = (OfferTerm)to;
+					OfferTerm offerTerm = (OfferTerm)to;
 					if (index == term.getLine()) {
 						++index;
 					}
-					term.setLine(index);
-					offerTermBean.update(term);
+					offerTerm.setLine(index);
+					offerTermBean.update(offerTerm);
 					++index;
 				}
 			}
@@ -77,19 +80,20 @@ public class OfferTermBeanListener extends ManagerBeanListenerAdapter {
 
 	@Override
 	public void beanRemoved(ManagerBeanEvent event) throws ManagerBeanException {
-		OfferTerm offerTerm = (OfferTerm)event.getTo();
+		OfferTerm term = (OfferTerm)event.getTo();
 		IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), offerTerm.getOffer().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), offerTerm.getId()));
-		criteria.addGreaterThanOrEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE), offerTerm.getLine());
+		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), term.getOffer().getId());
+		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), term.isGeneral());
+		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_ID), term.getId()));
+		criteria.addGreaterThanOrEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE), term.getLine());
 		criteria.addOrder(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE));
 		List<ITransferObject> list = offerTermBean.getList(criteria);
-		int index = offerTerm.getLine() + 1;
+		int index = term.getLine() + 1;
 		for (ITransferObject to : list) {
-			OfferTerm term = (OfferTerm)to;
-			if (index == term.getLine()) {
-				term.setLine(index - 1);
+			OfferTerm offerTerm = (OfferTerm)to;
+			if (index == offerTerm.getLine()) {
+				offerTerm.setLine(index - 1);
 				offerTermBean.update(offerTerm);
 				++ index;
 			}

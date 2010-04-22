@@ -21,7 +21,7 @@
 					<ui:param name="skipSaveButton" value="#{offer.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{offer.readOnly}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<c:if test="#{aonConfiguration.bean.offer.showSalesOrder}">
+						<c:if test="#{aonConfiguration.bean.offer.showSalesOrder and aonRole.saleOperator}">
 							<aon:commandButton id="sales"
 								value="#{commercialBundle.commercial_offer_to_sales}"
 								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending}"
@@ -32,7 +32,7 @@
 									value="#{true}" />
 							</aon:commandButton>
 						</c:if>
-						<c:if test="#{aonConfiguration.bean.offer.showInvoicing}">
+						<c:if test="#{aonConfiguration.bean.offer.showInvoicing and aonRole.financeOperator}">
 							<aon:commandButton id="invoice"
 								value="#{commercialBundle.commercial_offer_to_invoice}"
 								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offerDetail.model.rowCount > 0}"
@@ -49,28 +49,28 @@
 							rendered="#{!offer.new and offerDetail.model.rowCount > 0 and offerDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>			
-						<h:commandLink id="offerExcel" value="&#160;"
+						<aon:htmlCommandLink id="offer-excel-report" value="&#160;"
 							target="_blank" action="#{report.onExecute}"
-							rendered="#{!offer.new}" disabled="#{offerDetail.to != null}"
+							rendered="#{!offer.new and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 							<f:param name="reportKey" value="offer" />
 							<f:param name="outputFormat" value="MS Excel" />
-						</h:commandLink>											
-						<h:commandLink id="offerWord" value="&#160;"
+						</aon:htmlCommandLink>											
+						<aon:htmlCommandLink id="offer-word-report" value="&#160;"
 							target="_blank" action="#{report.onExecute}"
-							rendered="#{!offer.new}" disabled="#{offerDetail.to != null}"
+							rendered="#{!offer.new and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border">
 							<f:param name="reportKey" value="offer" />
 							<f:param name="outputFormat" value="DOCX" />
-						</h:commandLink>
-						<h:commandLink id="offerPDF" value="#{commercialBundle.commercial_offer}"
+						</aon:htmlCommandLink>
+						<aon:htmlCommandLink id="offer-report" value="#{commercialBundle.commercial_offer}"
 							target="_blank" action="#{offerSigner.onReport}"
-							rendered="#{!offer.new}" disabled="#{offerDetail.to != null}"
+							rendered="#{!offer.new and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="offer" />
 							<f:param name="outputFormat" value="PDF" />
-						</h:commandLink>
+						</aon:htmlCommandLink>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{offerSigner}" />
 							<ui:param name="skipSignButton" value="#{offer.new or offer.to.signed or (!certificate.signable)}" />
@@ -88,76 +88,85 @@
 						aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-200">
 
-					<aon:outputLabel for="Offer_series-New"
+					<aon:outputLabel for="Offer_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div id="headerData">
-						<aon:selectOneMenu id="Offer_series-New" 
-							value="#{offer.to.series}" rendered="#{offer.new}"
-							valueChangeListener="#{offer.onSeriesChanged}" 
-							reRender="Offer_number,Offer_securityLevel">
-							<f:selectItem itemLabel=" " itemValue="#{null}" />
-							<f:selectItems value="#{configCollections.seriesIds}" />
-						</aon:selectOneMenu>
-						<aon:inputText id="Offer_series-Edit" 
-							value="#{offer.to.series}" rendered="#{!offer.new}"
-							disabled="true" size="4" />
-						<aon:inputText id="Offer_number" styleClass="aon-margin-left"
-							value="#{offer.to.number}" disabled="#{!offer.new}"
-							required="true" size="7" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:selectOneMenu id="Offer_series" 
+									value="#{offer.to.series}" rendered="#{offer.new}"
+									valueChangeListener="#{offer.onSeriesChanged}" 
+									reRender="Offer_number,Offer_securityLevel">
+									<f:selectItem itemLabel=" " itemValue="#{null}" />
+									<f:selectItems value="#{configCollections.seriesIds}" />
+								</aon:selectOneMenu>
+								<aon:inputText id="Offer_number" styleClass="aon-margin-left"
+									value="#{offer.to.number}" rendered="#{offer.new}"
+									required="true" size="7" />
+								<aon:outputText styleClass="aon-bold aon-margin-right"
+									value="#{offer.to.referenceCode}"
+									rendered="#{!offer.new}" />
+							</aon:div>
+							<aon:div>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Offer_securityLevel"
+										value="#{offer.to.confidential}"
+										rendered="#{!offer.readOnly}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{!offer.readOnly}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{offer.readOnly and offer.to.confidential}" />
+								</c:if>
 
-						<aon:selectOneMenu id="Offer_securityLevel" styleClass="aon-margin-left aon-margin-right" 
-							value="#{offer.to.securityLevel}" disabled="#{offer.readOnly}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
+								<c:if test="#{company.EInvoice}">
+									<aon:outputText value="&#160;"
+										rendered="#{!offer.new and offer.to.signed}"
+										title="#{signBundle.sign_signed}"
+										styleClass="aon-icon aon-icon-signed" />
+								</c:if>
 
-						<c:if test="#{company.EInvoice}">
-							<aon:outputText value="&#160;"
-								rendered="#{!offer.new and offer.to.signed}"
-								title="#{signBundle.sign_signed}"
-								styleClass="aon-icon aon-icon-signed" />
-							<aon:outputText value="&#160;"
-								rendered="#{!offer.new and !offer.to.signed}"
-								title="#{signBundle.sign_sign_pending}"
-								styleClass="aon-icon aon-icon-unsigned" />
-						</c:if>
-
-						<aon:outputText value="#{offer.to.status}" />
-						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(#{financeBundle.finance_invoice}:"
-							rendered="#{offer.invoiced}" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{offer.invoiceCode}"
-							rendered="#{offer.invoiced}" />
-						<aon:outputText styleClass="aon-italic" value=")"
-							rendered="#{offer.invoiced}" />
+								<aon:outputText styleClass="aon-margin-right"
+									value="#{offer.to.status}" />
+								<aon:outputText styleClass="aon-italic"
+									value="(#{financeBundle.finance_invoice}: "
+									rendered="#{offer.invoiced}" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{offer.invoiceCode}"
+									rendered="#{offer.invoiced}" />
+								<aon:outputText styleClass="aon-italic" value=")"
+									rendered="#{offer.invoiced}" />
 							
-						<aon:commandButton id="toPending" value="&#160;"
-							actionListener="#{offer.onPending}" 
-							title="#{commercialBundle.commercial_offer_to_pending}"
-							immediate="true" rendered="#{offer.refused or (offer.approved and !offer.linesSold)}"
-							styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
-						<aon:commandButton id="approve" value="&#160;"
-							actionListener="#{offer.onApprove}" 
-							title="#{commercialBundle.commercial_offer_to_approve}"
-							immediate="true" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
-							styleClass="aon-icon-commandButton aon-icon-settle aon-margin-left" />
-						<aon:commandButton id="refuse" value="&#160;"
-							actionListener="#{offer.onRefuse}"
-							title="#{commercialBundle.commercial_offer_to_refuse}"
-							immediate="true" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
-							styleClass="aon-icon-commandButton aon-icon-unsettle" />							
-						<aon:commandButton id="block" value="&#160;"
-							actionListener="#{offer.onBlock}"
-							title="#{commercialBundle.commercial_offer_to_block}"
-							immediate="true" rendered="#{!offer.new and !(offer.blocked or offer.invoiced)}"
-							styleClass="aon-icon-commandButton aon-icon-lock">
-						</aon:commandButton>										
-						<aon:commandButton id="unblock" value="&#160;"
-							actionListener="#{offer.onUnblock}"
-							title="#{commercialBundle.commercial_offer_to_unblock}"
-							immediate="true" rendered="#{offer.blocked}"
-							styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
-						</aon:commandButton>										
+								<aon:commandButton id="toPending" value="&#160;"
+									actionListener="#{offer.onPending}" 
+									title="#{commercialBundle.commercial_offer_to_pending}"
+									immediate="true" rendered="#{offer.refused or (offer.approved and !offer.linesSold)}"
+									styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
+								<aon:commandButton id="approve" value="&#160;"
+									actionListener="#{offer.onApprove}" 
+									title="#{commercialBundle.commercial_offer_to_approve}"
+									immediate="true" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
+									styleClass="aon-icon-commandButton aon-icon-settle aon-margin-left" />
+								<aon:commandButton id="refuse" value="&#160;"
+									actionListener="#{offer.onRefuse}"
+									title="#{commercialBundle.commercial_offer_to_refuse}"
+									immediate="true" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
+									styleClass="aon-icon-commandButton aon-icon-unsettle" />							
+								<aon:commandButton id="block" value="&#160;"
+									actionListener="#{offer.onBlock}"
+									title="#{commercialBundle.commercial_offer_to_block}"
+									immediate="true" rendered="#{!offer.new and !(offer.blocked or offer.invoiced)}"
+									styleClass="aon-icon-commandButton aon-icon-lock">
+								</aon:commandButton>										
+								<aon:commandButton id="unblock" value="&#160;"
+									actionListener="#{offer.onUnblock}"
+									title="#{commercialBundle.commercial_offer_to_unblock}"
+									immediate="true" rendered="#{offer.blocked}"
+									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
+								</aon:commandButton>										
+							</aon:div>
+						</h:panelGrid>
  					</aon:div>
 
 					<aon:outputLabel for="Offer_issueDate" 
@@ -220,13 +229,56 @@
 							styleClass="aon-italic" />
 					</aon:div>
 
-					<aon:outputLabel for="Offer_scope" 
-						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Offer_scope" 
-						value="#{offer.to.scope}"
-						disabled="#{offer.readOnly}">
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					<aon:outputLabel for="Offer_type" 
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Offer_type" 
+						value="#{offer.to.type}"
+						disabled="#{offer.readOnly}"
+						reRender="offerForm">
+						<f:selectItems value="#{commercialCollections.offerTypes}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ThirdParty_id" 
+						value="#{commercialBundle.commercial_offer_distributor}"
+						rendered="#{offer.thirdPartyType}" />
+					<aon:div styleClass="aon-lookup" rendered="#{offer.thirdPartyType}">
+						<a4j:region>
+							<aon:lookupInputText id="ThirdParty_id" 
+								value="#{offer.to.thirdParty.registry.id}"
+								disabled="#{offer.readOnly}" size="5" 
+								lookupProperty="registry" lookup="#{targetLookup}"
+								lookupChangeListener="#{offer.thirdPartyData}" 
+								reRender="ThirdParty_full_name,ThirdParty_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv"
+								ajaxSingle="true" />
+							<aon:lookupButton
+								windowTitle="#{commercialBundle.commercial_target_selection}"
+								disabled="#{offer.readOnly}" minHeight="470" minWidth="650"
+								property="#{offer.to.thirdParty.registry}" lookupProperty="registry" lookup="#{targetLookup}"
+								lookupChangeListener="#{offer.thirdPartyData}"
+								selectReRender="ThirdParty_id,ThirdParty_full_name,ThirdParty_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv"
+								actionType="search">
+							</aon:lookupButton>
+							<aon:lookupButton 
+								windowTitle="#{commercialBundle.commercial_target_new}"
+								disabled="#{offer.readOnly}" minWidth="650" minHeight="600"
+								property="#{offer.to.thirdParty.registry}" lookupProperty="registry" lookup="#{targetLookup}"
+								lookupChangeListener="#{offer.thirdPartyData}"
+								selectReRender="ThirdParty_id,ThirdParty_full_name,ThirdParty_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv"		 
+								actionType="new">
+							</aon:lookupButton>							
+							<aon:inputText id="ThirdParty_full_name" 
+								value="#{(offer.to.thirdParty.registry.fullName!=null)?(offer.to.thirdParty.registry.fullName):('')}"
+								disabled="true" size="60" />
+						</a4j:region>
+					</aon:div>
+
+					<aon:outputLabel for="ThirdParty_registry_document" 
+						value="#{bundle.aon_company_document}"
+						rendered="#{offer.thirdPartyType}" />
+					<aon:inputText id="ThirdParty_registry_document" 
+						value="#{offer.to.thirdParty.registry.document}"
+						rendered="#{offer.thirdPartyType}"
+						disabled="true" size="10" />
 
 					<aon:outputLabel for="Seller_id" 
 						value="#{salesBundle.sales_seller}" />
@@ -278,12 +330,12 @@
 						<f:selectItems value="#{configCollections.tariffs}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Offer_type" 
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Offer_type" 
-						value="#{offer.to.type}"
+					<aon:outputLabel for="Offer_scope" 
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Offer_scope" 
+						value="#{offer.to.scope}"
 						disabled="#{offer.readOnly}">
-						<f:selectItems value="#{commercialCollections.offerTypes}" />
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_defaultPayMethod" 
@@ -292,8 +344,8 @@
 						value="#{offer.defaultPayMethod}"
 						disabled="#{offer.readOnly}"
 						reRender="payMethodDiv">
-						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_customer_pay_method}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_define_another_one}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_habitual}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{commercialBundle.commercial_offer_to_specify}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Offer_total" 

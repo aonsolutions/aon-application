@@ -132,6 +132,7 @@
 
 						<aon:div>
 							<aon:outputText value="#{accountEntry.to.type}" />
+							<aon:outputText value=" [#{accountEntry.documentNumber}]" rendered="#{accountEntry.invoice}"/>
 						</aon:div>
 
 						<aon:div>

@@ -23,14 +23,14 @@
 		<managed-bean-class>
 			com.code.aon.ui.resources.bean.ResourceResolver
 		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>		
+		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
 			<value>aon-desktop</value>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/5.0.0</value>
+			<value>/aonResource/5.1.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -57,7 +57,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>logout</from-outcome>
-			<to-view-id>/home.jsf</to-view-id>
+			<to-view-id>/</to-view-id>
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
@@ -74,6 +74,10 @@
 			<to-view-id>/facelet/menu/purchase.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>menu_expenses</from-outcome>
+			<to-view-id>/facelet/menu/expenses.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>menu_treasury</from-outcome>
 			<to-view-id>/facelet/menu/treasury.xhtml</to-view-id> 
 		</navigation-case>
@@ -84,10 +88,6 @@
 		<navigation-case>
 			<from-outcome>menu_task</from-outcome>
 			<to-view-id>/facelet/menu/task.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>aon_home</from-outcome>
-			<to-view-id>/facelet/menu/homepage.xhtml</to-view-id> 
 		</navigation-case>
 	</navigation-rule>
 	

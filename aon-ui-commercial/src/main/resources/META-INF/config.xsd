@@ -27,6 +27,7 @@
 			<xs:attribute name="showProduct" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSeller" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
+			<xs:attribute name="showThirdParty" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,24 +14,24 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:componentGroup
-					family="javax.faces.Command"
-					method="#{actionDenied.renderedCommand}">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
-					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
-	
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-sales aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.menu_expenses}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
+					<aon:panelGrid id="group_expenses_expenses"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-sales aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.menu_expenses}" />
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<c:if test="#{aonRole.config}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="expenseItem" 
 										action="expenseItem" 
 										value="#{productBundle.product_expense_module}" />
 								</aon:div>
+							</c:if>
+							<c:if test="#{aonRole.financeOperator}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="creditor" 
 										action="creditor_search" actionListener="#{creditor.onEditSearch}"
@@ -48,17 +48,19 @@
 										value="#{financeBundle.finance_undeductible_invoice_management_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_finance_payment"
+									<aon:commandLink id="financePayment-expenses"
 										action="finance_search"	actionListener="#{finance.onEditSearchPayment}"
 										value="#{financeBundle.finance_payment_module}" />
 								</aon:div>
-							</aon:div>
-						</h:panelGrid>
-	
-						<ui:include src="/facelet/menu/general.xhtml" />
-	
-					</h:panelGrid>
-				</aon:componentGroup>
+							</c:if>
+						</aon:div>
+					</aon:panelGrid>
+
+					<ui:include src="/facelet/menu/general.xhtml" >
+						<ui:param name="category" value="expenses" />
+					</ui:include>
+
+				</h:panelGrid>
 			</aon:div>
 		</aon:form>
 	</ui:define>

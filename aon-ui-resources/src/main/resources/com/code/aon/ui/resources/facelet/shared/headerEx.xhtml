@@ -19,7 +19,7 @@
 					styleClass="aon-header-title" />
 			</aon:div>
 
-			<aon:div styleClass="aon-nowrap" rendered="#{loggedUser.logged}"
+			<aon:div styleClass="aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
 				style="border-left:1px solid #ccc;color:#999;">
 				<ui:insert name="userInfoContent" /> 
 			</aon:div>
@@ -30,11 +30,7 @@
 				<aon:div styleClass="aon-float-right">
 					<aon:div styleClass="aon-header-menu-item">
 						<aon:form>					
-							<h:outputLink target="_top"
-								value="${facesContext.externalContext.requestContextPath}">
-								<h:outputText value="#{bundle.aon_home}" />
-							</h:outputLink>
-							<aon:commandLink style="border-right:0;" action="logout"
+							<aon:commandLink styleClass="aon-logout" action="logout"
 								actionListener="#{aonConfiguration.logout}">
 								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 							</aon:commandLink>
@@ -44,8 +40,8 @@
 			</c:if>
 			<aon:outputFormat value="#{bundle.aon_version}"
 				styleClass="aon-version-label"
-				rendered="#{aonConfiguration.applicationVersion != null}" >
-				<f:param value="#{aonConfiguration.applicationVersion}" />
+				rendered="#{aonConfiguration.properties.applicationVersion != null}" >
+				<f:param value="#{aonConfiguration.properties.applicationVersion}" />
 			</aon:outputFormat>
 			<ui:insert name="afterVersionContent" />
 		</aon:div>

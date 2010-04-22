@@ -1,516 +1,59 @@
 package com.esferalia.aon.payroll;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.core.IDocument;
 import com.esferalia.aon.core.IRegistry;
 import com.esferalia.aon.payroll.core.IEmpresa;
 
 @Entity
 @Table(name = "emprnif")
-public class Empresa<R extends IRegistry<IDocument>> implements ITransferObject, IEmpresa<R> {
+public class Empresa implements ITransferObject, IEmpresa {
 
 	private static final long serialVersionUID = -3266513951564213596L;
 	
-	private Integer cdg;
-//	private Date fecini;
-//	private Date fecfin;
-//	private String descripcion;
-//	private String alias;
-//	private String numdoc;
-//	private String representante;
-//	private String cargo;
-//	private Date fecnac;
-//	private String nrodocrep;
-//	private Sexo sexo;
-//	private Date feccon;
-//	private String obsnif;
-//	private String datreg;
-//	private Date fecnew;
-//	private Date hornew;
-//	private Date fecmod;
-//	private Date hormod;
-//	private IndicadorIrpf indirpf;
-//	private Boolean indcal;
-//	private Boolean indnom;
-//	private Boolean indcoste;
-//	private EnvioSS envioss;
-//	private ConciertoEconomico cecon;
-//	private PagoImpuestos modimpuesto;
-//	private Admon admon;
-//	private Cliente cliente;
-//	private Divisa divisa;
-//	private Documento tipdoc;
-//	private Documento tipdoc1;
-//	private Empresario tipempr;
-//	private Pais pais;
-//	private Pais pais1;
+	private Integer id;
+    private Registry registry;
+	private String name;
+	
 
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 4)
-	public Integer getCdg() {
-		return this.cdg;
+	public Integer getId() {
+		return this.id;
 	}
-	public void setCdg(Integer cdg) {
-		this.cdg = cdg;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	@Override
+	@Column(name = "descripcion", nullable = false, length = 60)
 	public String getName() {
-		return null;
+		return name;
 	}
 	@Override
 	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
-	public R getRegistry() {
-		return null;
+    @Embedded
+	public Registry getRegistry() {
+		return registry;
 	}
 	@Override
-	public void setRegistry(R registry) {
-		// TODO Auto-generated method stub
-		
+	public void setRegistry(IRegistry registry) {
+		this.registry = (Registry) registry;
 	}
 	
 	@Override
+	@Transient
 	public boolean isActive() {
-		return false;
+		return true;
 	}
-//
-//	/**
-//	 * Devuelve la Fecha Inicio Relacion
-//	 * 
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "fecini")
-//	public Date getFecini() {
-//		return this.fecini;
-//	}
-//
-//	public void setFecini(Date fecini) {
-//		this.fecini = fecini;
-//	}
-//
-//	/**
-//	 * Devuelve la Fecha Fin Relacion
-//	 * 
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "fecfin")
-//	public Date getFecfin() {
-//		return this.fecfin;
-//	}
-//
-//	public void setFecfin(Date fecfin) {
-//		this.fecfin = fecfin;
-//	}
-//
-//	/**
-//	 * Devuelve Descripcion de Empresa
-//	 * 
-//	 * @return
-//	 */
-//	@Column(name = "descripcion", nullable = false, length = 60)
-//	public String getDescripcion() {
-//		return this.descripcion;
-//	}
-//
-//	public void setDescripcion(String descripcion) {
-//		this.descripcion = descripcion;
-//	}
-//
-//	/**
-//	 * Devuelve el Alias Breve Empresa
-//	 * 
-//	 * @return
-//	 */
-//	@Column(name = "alias", length = 25)
-//	public String getAlias() {
-//		return this.alias;
-//	}
-//
-//	public void setAlias(String alias) {
-//		this.alias = alias;
-//	}
-//
-//	/**
-//	 * Devuelve el Numero Documento
-//	 * 
-//	 * @return
-//	 */
-//	@Column(name = "numdoc", nullable = false, length = 10)
-//	public String getNumdoc() {
-//		return this.numdoc;
-//	}
-//
-//	public void setNumdoc(String numdoc) {
-//		this.numdoc = numdoc;
-//	}
-//
-//	/**
-//	 * Devuelve el Representante
-//	 * 
-//	 * @return
-//	 */
-//	@Column(name = "representante", length = 60)
-//	public String getRepresentante() {
-//		return this.representante;
-//	}
-//
-//	public void setRepresentante(String representante) {
-//		this.representante = representante;
-//	}
-//
-//	/**
-//	 * Devuelve el Cargo Representante
-//	 * 
-//	 * @return
-//	 */
-//	@Column(name = "cargo", length = 60)
-//	public String getCargo() {
-//		return this.cargo;
-//	}
-//
-//	public void setCargo(String cargo) {
-//		this.cargo = cargo;
-//	}
-//
-//	/**
-//	 * Devuelve el Fecha Nacimiento Representante
-//	 * 
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "fecnac")
-//	public Date getFecnac() {
-//		return this.fecnac;
-//	}
-//
-//	public void setFecnac(Date fecnac) {
-//		this.fecnac = fecnac;
-//	}
-//
-//	/**
-//	 * Devuelve el Numero Documento Representante
-//	 * 
-//	 * @return
-//	 */
-//	@Column(name = "nrodocrep", length = 10)
-//	public String getNrodocrep() {
-//		return this.nrodocrep;
-//	}
-//
-//	public void setNrodocrep(String nrodocrep) {
-//		this.nrodocrep = nrodocrep;
-//	}
-//
-//	/**
-//	 * Devuelve el sexo
-//	 * 
-//	 * @return
-//	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.Sexo") })
-//	@Column(name = "sexo", length = 1)
-//	public Sexo getSexo() {
-//		return this.sexo;
-//	}
-//
-//	public void setSexo(Sexo sexo) {
-//		this.sexo = sexo;
-//	}
-//
-//	/**
-//	 * Devuelve el Fecha Constitucion / Nacimiento
-//	 * 
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "feccon")
-//	public Date getFeccon() {
-//		return this.feccon;
-//	}
-//
-//	public void setFeccon(Date feccon) {
-//		this.feccon = feccon;
-//	}
-//
-//	/**
-//	 * Devuelve el Observaciones
-//	 * 
-//	 * @return
-//	 */
-//	@Column(name = "obsnif", length = 100)
-//	public String getObsnif() {
-//		return this.obsnif;
-//	}
-//
-//	public void setObsnif(String obsnif) {
-//		this.obsnif = obsnif;
-//	}
-//
-//	/**
-//	 * Devuelve el Datos de Inscripcion en el Registro
-//	 * 
-//	 * @return
-//	 */
-//	@Column(name = "datreg", length = 50)
-//	public String getDatreg() {
-//		return this.datreg;
-//	}
-//
-//	public void setDatreg(String datreg) {
-//		this.datreg = datreg;
-//	}
-//
-//	/**
-//	 * Devuelve el Fecha Creacion Fila
-//	 * 
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "fecnew")
-//	public Date getFecnew() {
-//		return this.fecnew;
-//	}
-//
-//	public void setFecnew(Date fecnew) {
-//		this.fecnew = fecnew;
-//	}
-//
-//	/**
-//	 * Devuelve el Hora Creacion Fila
-//	 * 
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.TIME)
-//	@Column(name = "hornew")
-//	public Date getHornew() {
-//		return this.hornew;
-//	}
-//
-//	public void setHornew(Date hornew) {
-//		this.hornew = hornew;
-//	}
-//
-//	/**
-//	 * Devuelve el Fecha Modificacion Fila
-//	 * 
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "fecmod")
-//	public Date getFecmod() {
-//		return this.fecmod;
-//	}
-//
-//	public void setFecmod(Date fecmod) {
-//		this.fecmod = fecmod;
-//	}
-//
-//	/**
-//	 * Devuelve el Hora Modificacion Fila
-//	 * 
-//	 * @return
-//	 */
-//	@Temporal(TemporalType.TIME)
-//	@Column(name = "hormod")
-//	public Date getHormod() {
-//		return this.hormod;
-//	}
-//
-//	public void setHormod(Date hormod) {
-//		this.hormod = hormod;
-//	}
-//
-//	/**
-//	 * Devuelve el Indicador IRPF
-//	 * 
-//	 * @return
-//	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.IndicadorIrpf") })
-//	@Column(name = "indirpf", length = 1)
-//	public IndicadorIrpf getIndirpf() {
-//		return this.indirpf;
-//	}
-//
-//	public void setIndirpf(IndicadorIrpf indirpf) {
-//		this.indirpf = indirpf;
-//	}
-//
-//	/**
-//	 * Devuelve el Calendario Laboral
-//	 * 
-//	 * @return
-//	 */
-//	@Type(type = "siNoType")
-//	@Column(name = "indcal", length = 1)
-//	public Boolean getIndcal() {
-//		return this.indcal;
-//	}
-//
-//	public void setIndcal(Boolean indcal) {
-//		this.indcal = indcal;
-//	}
-//
-//	/**
-//	 * Devuelve el Nomina de Empresa
-//	 * 
-//	 * @return
-//	 */
-//	@Type(type = "siNoType")
-//	@Column(name = "indnom", length = 1)
-//	public Boolean getIndnom() {
-//		return this.indnom;
-//	}
-//
-//	public void setIndnom(Boolean indnom) {
-//		this.indnom = indnom;
-//	}
-//
-//	/**
-//	 * Devuelve el Estudio Costes
-//	 * 
-//	 * @return
-//	 */
-//	@Type(type = "siNoType")
-//	@Column(name = "indcoste", length = 1)
-//	public Boolean getIndcoste() {
-//		return this.indcoste;
-//	}
-//
-//	public void setIndcoste(Boolean indcoste) {
-//		this.indcoste = indcoste;
-//	}
-//
-//	/**
-//	 * Devuelve el Envio de Seguros Sociales
-//	 * 
-//	 * @return
-//	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.EnvioSS") })
-//	@Column(name = "envioss", length = 1)
-//	public EnvioSS getEnvioss() {
-//		return this.envioss;
-//	}
-//
-//	public void setEnvioss(EnvioSS envioss) {
-//		this.envioss = envioss;
-//	}
-//
-//	/**
-//	 * Devuelve el Concierto Economico
-//	 * 
-//	 * @return
-//	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.ConciertoEconomico") })
-//	@Column(name = "cecon", nullable = false, length = 1)
-//	public ConciertoEconomico getCecon() {
-//		return this.cecon;
-//	}
-//
-//	public void setCecon(ConciertoEconomico cecon) {
-//		this.cecon = cecon;
-//	}
-//
-//	/**
-//	 * Devuelve la Modalidad declaraciones de impuestos
-//	 * 
-//	 * @return
-//	 */
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.PagoImpuestos") })
-//	@Column(name = "modimpuesto", length = 1)
-//	public PagoImpuestos getModimpuesto() {
-//		return this.modimpuesto;
-//	}
-//
-//	public void setModimpuesto(PagoImpuestos modimpuesto) {
-//		this.modimpuesto = modimpuesto;
-//	}
-//
-//	@ManyToOne(fetch = FetchType.EAGER)
-//	@JoinColumn(name = "codadm")
-//	public Admon getAdmon() {
-//		return this.admon;
-//	}
-//
-//	public void setAdmon(Admon admon) {
-//		this.admon = admon;
-//	}
-//
-//	@ManyToOne(fetch = FetchType.EAGER)
-//	@JoinColumn(name = "codcli", nullable = false)
-//	public Cliente getCliente() {
-//		return this.cliente;
-//	}
-//
-//	public void setCliente(Cliente cliente) {
-//		this.cliente = cliente;
-//	}
-//
-//	@ManyToOne(fetch = FetchType.LAZY)
-//	@JoinColumn(name = "divisa")
-//	public Divisa getDivisa() {
-//		return this.divisa;
-//	}
-//
-//	public void setDivisa(Divisa divisa) {
-//		this.divisa = divisa;
-//	}
-//
-//	@ManyToOne(fetch = FetchType.EAGER)
-//	@JoinColumn(name = "inddoc")
-//	public Documento getTipdoc() {
-//		return this.tipdoc;
-//	}
-//
-//	public void setTipdoc(Documento tipdoc) {
-//		this.tipdoc = tipdoc;
-//	}
-//
-//	@ManyToOne(fetch = FetchType.EAGER)
-//	@JoinColumn(name = "tipdocrep", nullable = true)
-//	public Documento getTipdoc1() {
-//		return this.tipdoc1;
-//	}
-//
-//	public void setTipdoc1(Documento tipdoc1) {
-//		this.tipdoc1 = tipdoc1;
-//	}
-//
-//	@ManyToOne(fetch = FetchType.EAGER)
-//	@JoinColumn(name = "tipempr")
-//	public Empresario getTipempr() {
-//		return this.tipempr;
-//	}
-//
-//	public void setTipempr(Empresario tipempr) {
-//		this.tipempr = tipempr;
-//	}
-//
-//	@ManyToOne(fetch = FetchType.EAGER)
-//	@JoinColumn(name = "paiemi")
-//	public Pais getPais() {
-//		return this.pais;
-//	}
-//
-//	public void setPais(Pais pais) {
-//		this.pais = pais;
-//	}
-//
-//	@ManyToOne(fetch = FetchType.EAGER)
-//	@JoinColumn(name = "paidocrep")
-//	public Pais getPais1() {
-//		return this.pais1;
-//	}
-//
-//	public void setPais1(Pais pais1) {
-//		this.pais1 = pais1;
-//	}
 
 }

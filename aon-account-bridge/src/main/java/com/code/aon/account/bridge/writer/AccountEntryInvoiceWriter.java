@@ -73,15 +73,15 @@ public class AccountEntryInvoiceWriter {
 		return accountingUtil;
 	}
 
-	public void unrecordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
+	public Invoice unrecordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		if (invoice.getRegistryAddress() != null && invoice.getRegistryAddress().getId() == null) {
 			invoice.setRegistryAddress(null);
 		}
-		invoiceBean.update(invoice);
-
+		invoice = (Invoice) invoiceBean.update(invoice);
 		unrecordInvoice(invoice);
+		return invoice;
 	}
 
 	public void unrecordInvoice(Invoice invoice) throws ManagerBeanException {
@@ -93,15 +93,15 @@ public class AccountEntryInvoiceWriter {
 		}
 	}
 
-	public void recordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
+	public Invoice recordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.SCORED);
 		if (invoice.getRegistryAddress() != null && invoice.getRegistryAddress().getId() == null) {
 			invoice.setRegistryAddress(null);
 		}
-		invoiceBean.update(invoice);
-
-		recordInvoice(invoice);	
+		invoice = (Invoice) invoiceBean.update(invoice);
+		recordInvoice(invoice);
+		return invoice;
 	}
 	
 	public void recordInvoice(Invoice invoice) throws ManagerBeanException {

@@ -6,7 +6,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
@@ -32,6 +35,8 @@ public class DomainManager implements Serializable {
 
 	/** Default context name. */
 	public static final String SECURITY_CONTEXT_NAME = "/aon-security"; 
+	
+	private static String ROLES_FILE = "com.code.aon.bridge.i18n.roles";
 
     transient IConsoleAdmin console;
     /** Requested application identifier. */
@@ -261,12 +266,20 @@ public class DomainManager implements Serializable {
     public List<SelectItem> getAvailableRoles() {
         List<SelectItem> list = new ArrayList<SelectItem>();
     	Collection<IRole> c = this.application.roles();
-        Iterator<IRole> iter = c.iterator();
-        while (iter.hasNext()) {
-            IRole r = iter.next();
-            SelectItem item = new SelectItem( r.getId(), r.getId() );
-            list.add(item);
-        }
+    	if (! c.isEmpty() ) {
+    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+   	        ResourceBundle rb = ResourceBundle.getBundle( ROLES_FILE, locale );
+	        Iterator<IRole> iter = c.iterator();
+	        while (iter.hasNext()) {
+	            IRole r = iter.next();
+	            String label = r.getId();
+	            if ( rb.containsKey(label) ) {
+	            	label = rb.getString(label);
+	            }
+	            SelectItem item = new SelectItem( r.getId(), label );
+	            list.add(item);
+	        }
+    	}
         return list;
     }
 

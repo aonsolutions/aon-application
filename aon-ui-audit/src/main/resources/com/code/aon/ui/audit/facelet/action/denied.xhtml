@@ -15,8 +15,9 @@
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{auditBundle.audit_option_denied_module}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">	
-					<aon:commandButton id="save"
+					<aon:commandButton id="store"
 						title="#{bundle.aon_key_save_accelerator}"
 						value="#{bundle.aon_save}"
 						actionListener="#{actionDenied.accept}"
@@ -70,7 +71,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{auditBundle.audit_group}" />
 						</f:facet>					
-						<aon:outputText value="#{to.category}" />
+						<aon:outputText value="#{to.group.category.name}" />
 					</rich:column>
         		</rich:listShuttle>
 			</aon:div>

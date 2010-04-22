@@ -1,25 +1,34 @@
 package com.esferalia.aon.payroll;
 
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.Transient;
+
 import com.esferalia.aon.core.IDocument;
 import com.esferalia.aon.core.IRegistry;
 
-public class Registry<D extends IDocument> implements IRegistry<D> {
+@Embeddable
+public class Registry implements IRegistry {
 
-	private D document;
+	private static final long serialVersionUID = -3882685468345124531L;
+	
+	private Document document;
 	private String fullName;
 	
 	
 	@Override
-	public D getDocument() {
+	@Embedded
+	public Document getDocument() {
 		return document;
 	}
 	
 	@Override
-	public void setDocument(D document) {
-		this.document = document;
+	public void setDocument(IDocument document) {
+		this.document = (Document) document;
 	}
 
 	@Override
+	@Transient
 	public String getFullName() {
 		return fullName;
 	}

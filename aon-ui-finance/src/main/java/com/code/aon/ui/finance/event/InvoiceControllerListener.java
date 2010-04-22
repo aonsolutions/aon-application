@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -13,6 +14,9 @@ public class InvoiceControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try {
 			InvoiceController invoiceController = (InvoiceController)this.getController(); 
+			Invoice invoice = (Invoice) invoiceController.getTo();
+			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
+
 			invoiceController.loadAddresses(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -24,6 +28,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 		try {
 			InvoiceController invoiceController = (InvoiceController)this.getController(); 
 			Invoice invoice = (Invoice) invoiceController.getTo();
+
 			invoiceController.loadAddresses(invoice.getRegistry().getId());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());

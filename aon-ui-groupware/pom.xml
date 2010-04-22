@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.0.0</version>
+		<version>5.1.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.groupware</artifactId>
-	<version>5.0.0</version>
+	<version>5.1.0</version>
 	<description>AON UI GROUPWARE</description>
 	<name>AON UI GROUPWARE</name>
 	<dependencies>

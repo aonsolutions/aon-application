@@ -12,7 +12,7 @@
  implied. See the License for the specific language governing
  permissions and limitations under the License.
  
- $Id$
+ $Id: facelet-taglib_1_0.dtd 6329 2009-01-23 10:24:09Z girazu $
 -->
 
 <!ELEMENT facelet-taglib (library-class|(namespace,(tag|function)+))>

@@ -7,6 +7,9 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.ui.audit.controller.MenuParser;
+import com.code.aon.ui.util.AonUtil;
+
 /**
  * The Class ApplicationOption.
  */
@@ -15,8 +18,6 @@ public class ApplicationOption {
 	public static final String ID_PATTERN = "(id)";
 	
 	public static final String VALUE_PATTERN = "(value)";
-	
-	public static final String AON_COMMAND_LINK = "aon:commandLink";
 	
 	public static final String AON_MENU_ITEM = "aon:menuItem";
 
@@ -33,8 +34,11 @@ public class ApplicationOption {
 	/** The description. */
 	private String description;
 	
-	/** The category. */
-	private String category;
+	/** The rendered. */
+	private String rendered;
+	
+	/** The group. */
+	private OptionGroup group;
 	
 	private String xml;	
 	
@@ -91,25 +95,59 @@ public class ApplicationOption {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	/**
-	 * Gets the category.
-	 * 
-	 * @return the category
-	 */
-	public String getCategory() {
-		return category;
-	}
-
-	/**
-	 * Sets the category.
-	 * 
-	 * @param category the new category
-	 */
-	public void setCategory(String category) {
-		this.category = category;
-	}
 	
+	/**
+	 * Gets the rendered.
+	 * 
+	 * @return the rendered
+	 */
+	public String getRendered() {
+		return rendered;
+	}
+
+	/**
+	 * Sets the rendered.
+	 * 
+	 * @param rendered the new rendered
+	 */
+	public void setRendered(String rendered) {
+		this.rendered = rendered;
+	}
+
+	/**
+	 * Gets the value of the expression.
+	 * 
+	 * @param expression
+	 *            the expression
+	 * 
+	 * @return the expression value
+	 */
+	public boolean isRendered() {
+		if ( this.rendered != null ) {
+			return (Boolean) AonUtil.getValue(this.rendered);			
+		}
+		return true;
+	}	
+	
+	
+	/**
+	 * Gets the group.
+	 * 
+	 * @return the group
+	 */
+	public OptionGroup getGroup() {
+		return group;
+	}
+
+	/**
+	 * Sets the group.
+	 * 
+	 * @param group the new group
+	 */
+	public void setGroup(OptionGroup group) {
+		this.group = group;
+	}
+
 	public String getXml( String prefix ) {
 		String newId = prefix + this.id;
 		String newXml = StringUtils.replace(this.xml, VALUE_PATTERN, this.description);
@@ -117,7 +155,7 @@ public class ApplicationOption {
 	}
 
 	public String getMenuItemXml( String prefix ) {
-		return StringUtils.replace(getXml(prefix), AON_COMMAND_LINK, AON_MENU_ITEM);
+		return StringUtils.replace(getXml(prefix), MenuParser.AON_COMMAND_LINK, AON_MENU_ITEM);
 	}
 	
 	public String getRecentXml( Date date ) {

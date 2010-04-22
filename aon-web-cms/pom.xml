@@ -3,20 +3,20 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>5.0.0</version>
+		<version>5.1.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-cms</artifactId>
 	<packaging>war</packaging>
-	<version>5.0.0</version>
+	<version>5.1.0</version>
 	<description>WEB CMS</description>
 	<name>WEB CMS</name>
 	<build>
 		<finalName>aon-web-cms</finalName>
 	</build>
 	<properties>
-		<dbVersion>2.0.5</dbVersion>
+		<dbVersion>2.1.0</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>jtidy</groupId>
 			<artifactId>jtidy</artifactId>
-			<version>r938</version>
+			<version>r938.mod</version>
     		<scope>compile</scope>
 		</dependency>
 	</dependencies>

@@ -31,12 +31,12 @@
 						<a4j:support event="onchange" reRender="geoZoneDiv"/>
 					</aon:selectOneMenu>
 					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
-						actionListener="#{searchController.onRemoveGeoZone}" reRender="geoZoneDiv"
+						actionListener="#{searchController.onRemoveGeoZone}" reRender="geoZoneDiv" value="&#160;"
 						rendered="#{geoZone.id != null}">
 						<f:param name="index" value="#{index}" />
 					</aon:commandButton>
 					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" ajaxSingle="true"
-						actionListener="#{searchController.onAddGeoZone}" reRender="geoZoneDiv"
+						actionListener="#{searchController.onAddGeoZone}" reRender="geoZoneDiv" value="&#160;"
 						rendered="#{(geoZone.id != null) and (index == (searchController.geoZonesSize-1))}"/>					
 				</aon:div>						
 			</a4j:repeat>

@@ -30,7 +30,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/5.0.0</value>
+			<value>/aonResource/5.1.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -57,7 +57,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>logout</from-outcome>
-			<to-view-id>/home.jsf</to-view-id>
+			<to-view-id>/</to-view-id>
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
@@ -65,10 +65,6 @@
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 
 	<navigation-rule>
-		<navigation-case>
-			<from-outcome>menu_product</from-outcome>
-			<to-view-id>/facelet/menu/product.xhtml</to-view-id> 
-		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_commercial</from-outcome>
 			<to-view-id>/facelet/menu/commercial.xhtml</to-view-id> 
@@ -82,16 +78,16 @@
 			<to-view-id>/facelet/menu/purchase.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>menu_expenses</from-outcome>
+			<to-view-id>/facelet/menu/expenses.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>menu_warehouse</from-outcome>
 			<to-view-id>/facelet/menu/warehouse.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_treasury</from-outcome>
 			<to-view-id>/facelet/menu/treasury.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_accounting</from-outcome>
-			<to-view-id>/facelet/menu/accounting.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_config</from-outcome>
@@ -251,6 +247,17 @@
 			<!--  aon.ui.finance -->
 			<value>#{invoiceDetailDirectExpenseListener}</value>
 		</list-entries>
+	</managed-bean>
+
+	<!-- ************ TARGET LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>targetOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<value>#{targetThirdPartyListener}</value>
+		</list-entries>		
 	</managed-bean>
 
 </faces-config>

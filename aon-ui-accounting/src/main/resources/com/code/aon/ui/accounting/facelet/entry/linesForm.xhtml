@@ -14,7 +14,7 @@
 			<aon:editDataTable id="entryDetailTable" var="to" footerClass="aon-dataTable-footerClass"
 				value="#{accountEntryDetail.model}" rows="100">
 
-				<c:if test="#{accountEntry.manual}">
+				<c:if test="#{accountEntry.updatable}">
 					<aon:column id="entryDetailTable-selectColumn"
 						styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 						<f:facet name="header">
@@ -31,7 +31,8 @@
 							<aon:div>
 								<aon:commandButton id="entryDetailTable-reset"
 									title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new_line})" 
-									actionListener="#{accountEntryDetail.onReset}" rendered="#{!accountEntryDetail.new}"
+									actionListener="#{accountEntryDetail.onReset}" 
+									rendered="#{!accountEntryDetail.new}"
 									styleClass="aon-editDataTable-button aon-icon-reset"
 									accesskey="#{bundle.aon_key_new_line}"
 									focus="accountId-NEW" />
@@ -44,7 +45,7 @@
 				<f:facet name="footer">
 					<rich:columnGroup
 						 rendered="#{accountEntryDetail.new}">
-						<aon:column colspan="#{accountEntry.manual?'3':'2'}">
+						<aon:column colspan="#{accountEntry.updatable?'3':'2'}">
 							<aon:outputText value="&#160;" />
 						</aon:column>
 						<aon:column>
@@ -76,7 +77,7 @@
 					</f:facet>
 
 					<aon:div style="width: 90%;"
-						rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap">
+						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}" styleClass="aon-nowrap">
 
 						<h:commandLink immediate="#{true}"
 							styleClass="aon-dataTable-link"
@@ -101,7 +102,7 @@
 						<ui:param name="id" value="accountId" />
 						<ui:param name="required" value="#{true}" />
 						<ui:param name="renderDescription" value="#{true}" />
-						<ui:param name="renderedAttr" value="#{to==accountEntryDetail.to}" />
+						<ui:param name="renderedAttr" value="#{to==accountEntryDetail.to and accountEntryDetail.updatable}" />
 						<ui:param name="disabled" value="#{false}" />
 						<ui:param name="reRenderAttr" value="none" />
 						<ui:param name="entity" value="#{accountEntryDetail.to.account}" />
@@ -131,23 +132,25 @@
 						<aon:outputText value="#{bundle.aon_concept}" />
 					</f:facet>
 					<aon:outputText value="#{to.concept}" styleClass="aon-nowrap"
-						rendered="#{to!=accountEntryDetail.to}" />
+						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}" />
 					<aon:inputText id="AccountEntryDetail_concept-Edit"
 						value="#{accountEntryDetail.to.concept}"
-						rendered="#{to==accountEntryDetail.to}" required="true" size="30" maxlength="32"/>
+						rendered="#{to==accountEntryDetail.to and accountEntryDetail.updatable}" 
+						required="true" size="30" maxlength="32"/>
 					<f:facet name="footer">
-					<aon:div>
-						<rich:comboBox suggestionValues="#{accountingCollections.conceptsDescriptions}"
-							value="#{accountEntryDetail.to.concept}"
-							maxlength="32" width="200"	
-							directInputSuggestions="true"
-							inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;
-										font-size:1em;"
-							buttonDisabledStyle="display:none;"
-							buttonInactiveStyle="display:none;"
-							buttonStyle="display:none;"	
-							rendered="#{accountEntryDetail.new}" required="true"/>
-					</aon:div>
+						<aon:div>
+							<rich:comboBox suggestionValues="#{accountingCollections.conceptsDescriptions}"
+								value="#{accountEntryDetail.to.concept}"
+								maxlength="32" width="200"
+								directInputSuggestions="true"
+								inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;
+											font-size:1em;"
+								buttonDisabledStyle="display:none;"
+								buttonInactiveStyle="display:none;"
+								buttonStyle="display:none;"	
+								rendered="#{accountEntryDetail.new}" 
+								required="true"/>
+						</aon:div>
 					</f:facet>
 				</aon:column>
 
@@ -156,11 +159,12 @@
 						<aon:outputText value="#{accountingBundle.accounting_debit}" />
 					</f:facet>
 					<aon:outputText value="#{to.debit}"
-						rendered="#{to!=accountEntryDetail.to}">
+						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>
 					<aon:inputText id="debit1" value="#{accountEntryDetail.to.debit}"
-						rendered="#{to==accountEntryDetail.to}" required="true" size="10">
+						rendered="#{to==accountEntryDetail.to and accountEntryDetail.updatable}" 
+						required="true" size="10">
 						<f:validateDoubleRange />
 						<a4j:support event="onkeyup"
 							onsubmit="if(event.keyCode != 120) return false;"
@@ -198,11 +202,12 @@
 						<aon:outputText value="#{accountingBundle.accounting_credit}" />
 					</f:facet>
 					<aon:outputText value="#{to.credit}"
-						rendered="#{to!=accountEntryDetail.to}">
+						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>
 					<aon:inputText id="credit1" value="#{accountEntryDetail.to.credit}"
-						rendered="#{to==accountEntryDetail.to}" required="true" size="10">
+						rendered="#{to==accountEntryDetail.to and accountEntryDetail.updatable}"
+						required="true" size="10">
 						<f:validateDoubleRange />
 						<a4j:support event="onkeyup"
 							onsubmit="if(event.keyCode != 120) return false;"
@@ -281,58 +286,57 @@
 					</f:facet>
 				</aon:column>
 
-				<c:if test="#{accountEntry.manual}">
-					<aon:column
-						styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<aon:div>
+				<aon:column
+					styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:div>
 							<aon:outputText value="&#160;" />
 							<aon:commandButton id="entryDetailTable-save"
-								title="#{bundle.aon_accept} (ALT+#{bundle.aon_key_save_line})" 
-								actionListener="#{accountEntryDetail.onAccept}" 
+								title="#{bundle.aon_accept} (ALT+#{bundle.aon_key_save_line})"
+								actionListener="#{accountEntryDetail.onAccept}"
 								rendered="#{to==accountEntryDetail.to}"
 								reRender="entryDetailTableDataScroller"
 								styleClass="aon-editDataTable-button aon-icon-accept"
-								focus="accountId"
-								accesskey="#{bundle.aon_key_save_line}" />
+								focus="accountId" accesskey="#{bundle.aon_key_save_line}" />
 							<aon:commandButton id="entryDetailTable-cancel"
-								title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel_line})" 
+								title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel_line})"
 								actionListener="#{accountEntryDetail.onCancel}" immediate="true"
-								rendered="#{to==accountEntryDetail.to}" 
+								rendered="#{to==accountEntryDetail.to}"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
 								accesskey="#{bundle.aon_key_cancel_line}" />
 							<aon:commandButton id="entryDetailTable-remove"
-								title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove_line})" 
-								immediate="true" rendered="#{to==accountEntryDetail.to}"
+								title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove_line})"
+								immediate="true" 
+								rendered="#{to==accountEntryDetail.to and accountEntryDetail.updatable}"
 								reRender="entryDetailTableDataScroller"
 								onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
 								actionListener="#{accountEntryDetail.onRemove}"
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								accesskey="#{bundle.aon_key_remove_line}" />
+					</aon:div>
+					<f:facet name="footer">
+						<aon:div>
+							<aon:outputText value="&#160;" />
+							<aon:commandButton id="entryDetailTable-new-save"
+								title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save_line})"
+								actionListener="#{accountEntryDetail.onAccept}"
+								rendered="#{accountEntryDetail.new}"
+								reRender="entryDetailTableDataScroller"
+								styleClass="aon-editDataTable-button aon-icon-accept"
+								accesskey="#{bundle.aon_key_save_line}" />
+							<aon:commandButton id="entryDetailTable-new-cancel"
+								title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel_line})"
+								rendered="#{accountEntryDetail.new}" immediate="true"
+								confirmTitle="#{bundle.aon_confirm_title}"
+								onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+								actionListener="#{accountEntryDetail.onCancel}"
+								styleClass="aon-editDataTable-button aon-icon-cancel"
+								accesskey="#{bundle.aon_key_cancel_line}" />
 						</aon:div>
-						<f:facet name="footer">
-							<aon:div>
-								<aon:outputText value="&#160;" />
-								<aon:commandButton id="entryDetailTable-new-save"
-									title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save_line})" 
-									actionListener="#{accountEntryDetail.onAccept}" rendered="#{accountEntryDetail.new}"
-									reRender="entryDetailTableDataScroller"
-									styleClass="aon-editDataTable-button aon-icon-accept"
-									accesskey="#{bundle.aon_key_save_line}" />
-								<aon:commandButton id="entryDetailTable-new-cancel"
-									title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel_line})" 
-									rendered="#{accountEntryDetail.new}" immediate="true"
-									confirmTitle="#{bundle.aon_confirm_title}"
-									onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
-									actionListener="#{accountEntryDetail.onCancel}"
-									styleClass="aon-editDataTable-button aon-icon-cancel"
-									accesskey="#{bundle.aon_key_cancel_line}" />
-							</aon:div>
-						</f:facet>
-					</aon:column>
-				</c:if>
+					</f:facet>
+				</aon:column>
 			</aon:editDataTable>
 
 			<aon:dataScroller2 for="entryDetailTable" showNote="true" />

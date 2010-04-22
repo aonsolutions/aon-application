@@ -1,7 +1,10 @@
 package com.code.aon.ui.common.role;
 
+import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Clase que controla los roles habituales de las aplicaciones AON.
@@ -10,6 +13,8 @@ import javax.faces.context.FacesContext;
  * 
  */
 public class RoleManager {
+	
+	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll","search", "back"};
 
 	/**
 	 * @param role
@@ -17,8 +22,7 @@ public class RoleManager {
 	 * @return TRUE if user has role, false otherwise.
 	 */
 	public boolean isUserInRole(String role) {
-		ExternalContext ec = FacesContext.getCurrentInstance()
-				.getExternalContext();
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		return ec.isUserInRole(role);
 	}
 
@@ -44,6 +48,13 @@ public class RoleManager {
 	}
 
 	/**
+	 * @return TRUE if user has IAonRole.CONFIG role, false otherwise.
+	 */
+	public boolean isConfig() {
+		return isUserInRole(IAonRole.CONFIG) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
 	 * @return TRUE if user has IAonRole.AUDITOR role, false otherwise.
 	 */
 	public boolean isAuditor() {
@@ -54,8 +65,21 @@ public class RoleManager {
 	 * @return TRUE if user has IAonRole.CONFIDENTIALITY role, false otherwise.
 	 */
 	public boolean isConfidentiality() {
-		return isUserInRole(IAonRole.CONFIDENTIALITY)
-				|| isUserInRole(IAonRole.ADMIN);
+		return isUserInRole(IAonRole.CONFIDENTIALITY) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.PRODUCT role, false otherwise.
+	 */
+	public boolean isProductOperator() {
+		return isUserInRole(IAonRole.PRODUCT) || isUserInRole(IAonRole.ADMIN);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.COMMERCIAL role, false otherwise.
+	 */
+	public boolean isCommercialOperator() {
+		return isUserInRole(IAonRole.COMMERCIAL) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
@@ -80,41 +104,65 @@ public class RoleManager {
 	}
 
 	/**
-	 * @return TRUE if user has IAonRole.INVOICING role, false otherwise.
+	 * @return TRUE if user has IAonRole.FINANCE role, false otherwise.
 	 */
-	public boolean isInvoicingOperator() {
-		return isUserInRole(IAonRole.INVOICING) || isUserInRole(IAonRole.ADMIN);
+	public boolean isFinanceOperator() {
+		return isUserInRole(IAonRole.FINANCE) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.ACCOUNTING role, false otherwise.
 	 */
 	public boolean isAccountingOperator() {
-		return isUserInRole(IAonRole.ACCOUNTING)
-				|| isUserInRole(IAonRole.ADMIN);
+		return isUserInRole(IAonRole.ACCOUNTING) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.STATISTICS role, false otherwise.
 	 */
 	public boolean isStatisticsOperator() {
-		return isUserInRole(IAonRole.STATISTICS)
-				|| isUserInRole(IAonRole.ADMIN);
+		return isUserInRole(IAonRole.STATISTICS) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.TASK_MOPNITORING role, false otherwise.
 	 */
 	public boolean isTaskMonitor() {
-		return isUserInRole(IAonRole.TASK_MONITORING)
-				|| isUserInRole(IAonRole.ADMIN);
+		return isUserInRole(IAonRole.TASK_MONITORING) || isUserInRole(IAonRole.ADMIN);
 	}
 
 	/**
-	 * @return TRUE if user has IAonRole.INVOICE_SIGNER role, false otherwise.
+	 * @return TRUE if user has IAonRole.E_SIGNATURE role, false otherwise.
 	 */
-	public boolean isInvoiceSigner() {
-		return isUserInRole(IAonRole.INVOICE_SIGNER)
-				|| isUserInRole(IAonRole.ADMIN);
+	public boolean isESignature() {
+		return isUserInRole(IAonRole.E_SIGNATURE) || isUserInRole(IAonRole.ADMIN);
 	}
+	
+	/**
+	 * Rendered command.
+	 * 
+	 * @param component the component
+	 * @param parent the parent
+	 */
+	public void renderedCommand( UIComponent component, UIComponent parent ) {
+		if ( component.isRendered() ) {
+			String id = component.getId();
+			for( String allowedId : ALLOWED_IDS ) {
+				if ( id.contains(allowedId) ) {
+					return;
+				}
+			}
+			component.setRendered(false);
+		}
+	}	
+
+	/**
+	 * Do nothing.
+	 * 
+	 * @param component the component
+	 * @param parent the parent
+	 */
+	public void doNothing( UIComponent component, UIComponent parent ) {
+	}
+
 }

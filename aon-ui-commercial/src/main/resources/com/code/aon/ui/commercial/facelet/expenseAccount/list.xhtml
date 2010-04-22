@@ -16,27 +16,27 @@
 					value="#{commercialBundle.commercial_expense_control_module}" />
 				<ui:param name="controller" value="#{expenseAccount}" />
 				<ui:define name="additionalToolbarContent">
-					<h:commandLink id="expenseAccountExcel" value="&#160;"
+					<aon:htmlCommandLink id="expenseAccountList-excel-report" value="&#160;"
 						target="_blank" action="#{report.onExecute}"
 						rendered="#{!expenseAccount.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="expenseAccountList" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>
-					<h:commandLink id="expenseAccountWord" value="&#160;"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="expenseAccountList-word-report" value="&#160;"
 						target="_blank" action="#{report.onExecute}"
 						rendered="#{!expenseAccount.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="expenseAccountList" />
 						<f:param name="outputFormat" value="DOCX" />
-					</h:commandLink>
-					<h:commandLink id="expenseAccountPDF" target="_blank"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="expenseAccountList-report" target="_blank"
 						action="#{report.onExecute}" rendered="#{!expenseAccount.new}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="expenseAccountList" />
 						<f:param name="outputFormat" value="PDF" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>
 
 			</ui:decorate>

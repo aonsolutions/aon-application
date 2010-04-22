@@ -3,14 +3,11 @@ package com.esferalia.aon.payroll;
 
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,11 +18,8 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.core.IDocument;
-import com.esferalia.aon.core.IRegistry;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.IEmpresa;
-import com.esferalia.aon.payroll.core.IPersona;
+import com.esferalia.aon.payroll.core.enumeration.CausaAlta;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.it.IParteIT;
@@ -34,23 +28,21 @@ import com.esferalia.aon.payroll.enumeration.TipoIT;
 
 @Entity
 @Table(name = "parteit")
-public class ParteIT<E extends IEmpleado<IEmpresa<IRegistry<IDocument>>, IPersona<IRegistry<IDocument>>>,
-P extends IParteIT<E, P>> 
-implements ITransferObject, 
-	IParteIT<E,P> {
+public class ParteIT implements IParteIT,ITransferObject  {
 
 	private static final long serialVersionUID = -2204224372352983127L;
 	
 	private ParteITPK id;
 	private String numeroColegiadoBaja;
 	private String ciasBaja;
-	private Boolean bajaProcesada;
+	private String bajaProcesadaBD;
 	private Date fechaAlta;
 	private String numeroColegiadoAlta;
 	private String ciasAlta;
-	private Boolean altaProcesada;
+	private String altaProcesadaBD;
 	private TipoIT tipoIT;
-	private Boolean recaida;
+	private String recaidaBD;
+	private IParteIT parteITRecaida;
 	private Prorrateo prorrateo;
 	private Double baseRetribucionPeriodoAnterior;
 	private Integer diasPeriodoAnterior;
@@ -59,18 +51,16 @@ implements ITransferObject,
 	private Double baseDiariaAccidentes;
 	private Double prestacionDiaria60;
 	private Double prestacionDiaria75;
-	private Boolean procesada;
+	private String procesadaBD;
 	private Boolean riesgo;
-	private E empleado;
-
+	private IEmpleado empleado;
+	private CausaAlta causaAlta;
+	
 	@EmbeddedId
-	@AttributeOverrides( {
-			@AttributeOverride(name = "cdg", column = @Column(name = "cdg", nullable = false, length = 4)),
-			@AttributeOverride(name = "fecini", column = @Column(name = "fecini", nullable = false, length = 10)) })
+	@Override
 	public ParteITPK getId() {
 		return this.id;
 	}
-
 	public void setId(ParteITPK id) {
 		this.id = id;
 	}
@@ -110,14 +100,22 @@ implements ITransferObject,
 		this.ciasBaja = ciasBaja;
 	}
 
-	@Type(type = "siNoType")
 	@Column(name = "bajproc", nullable = false, length = 1)
-	public boolean isBajaProcesada() {
-		return this.bajaProcesada;
+	public String getBajaProcesadaBD() {
+		return this.bajaProcesadaBD;
+	}
+	public void setBajaProcesadaBD(String bajaProcesadaBD) {
+		this.bajaProcesadaBD = bajaProcesadaBD;
 	}
 
+	@Override
+	@Transient
+	public boolean isBajaProcesada() {
+		return ("S".equals(getBajaProcesadaBD()));
+	}
+	@Override
 	public void setBajaProcesada(boolean bajaProcesada) {
-		this.bajaProcesada = bajaProcesada;
+		setBajaProcesadaBD((bajaProcesada)?"S":"N");
 	}
 
 	@Temporal(TemporalType.DATE)
@@ -150,18 +148,25 @@ implements ITransferObject,
 		this.ciasAlta = ciasAlta;
 	}
 
-	@Type(type = "siNoType")
 	@Column(name = "altproc", nullable = false, length = 1)
+	public String getAltaProcesadaBD() {
+		return this.altaProcesadaBD;
+	}
+	public void setAltaProcesadaBD(String altaProcesadaBD) {
+		this.altaProcesadaBD = altaProcesadaBD;
+	}
+
 	@Override
+	@Transient
 	public boolean isAltaProcesada() {
-		return this.altaProcesada;
+		return ("S".equals(getAltaProcesadaBD()));
 	}
 	@Override
 	public void setAltaProcesada(boolean altaProcesada) {
-		this.altaProcesada = altaProcesada;
+		setAltaProcesadaBD((altaProcesada)?"S":"N");
 	}
 
-	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.Tipoit") })
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.TipoIT") })
 	@Column(name = "tipoit", nullable = false, length = 1)
 	public TipoIT getTipoIT() {
 		return this.tipoIT;
@@ -172,6 +177,7 @@ implements ITransferObject,
 	}
 	
 	@Override
+	@Transient
 	public TipoContingencia getTipoContingencia() {
 		if (getTipoIT() == TipoIT.ACCIDENTE) {
 			return TipoContingencia.ACCIDENTE_LABORAL;
@@ -213,31 +219,42 @@ implements ITransferObject,
 	}
 	
 
-	@Type(type = "siNoType")
 	@Column(name = "recaida", length = 1)
+	public String getRecaidaBD() {
+		return recaidaBD;
+	}
+	public void setRecaidaBD(String recaidaBD) {
+		this.recaidaBD = recaidaBD;
+	}
+	
 	@Override
+	@Transient
 	public boolean isRecaida() {
-		return this.recaida;
+		return ("S".equals(getRecaidaBD()));
 	}
 	@Override
 	public void setRecaida(boolean recaida) {
-		this.recaida = recaida;
+		setRecaidaBD((recaida)?"S":"N");
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumns( {
-			@JoinColumn(name = "cdg", referencedColumnName = "cdg", nullable = false),
-			@JoinColumn(name = "fecini", referencedColumnName = "feciniori", nullable = false) })
+	//@ManyToOne(targetEntity = ParteIT.class,fetch = FetchType.EAGER)
+	//@JoinColumns( {
+	//		@JoinColumn(name = "cdg", referencedColumnName = "cdg", nullable = false, insertable=false, updatable=false),
+	//		@JoinColumn(name = "feciniori", referencedColumnName = "fecini", nullable = false, insertable=false, updatable=false) })
+	// 	@TODO la columna esta marcada como insertable False, lo cual es un error
+	// Es necesario decir aHibernate que cdg no es modificable pero la fecha si.
 	@Override
-	public P getParteITRecaida() {
-		return null;
-	}
-	@Override
-	public void setParteITRecaida(P ParteITRecaida) {
-		
+	@Transient
+	public IParteIT getParteITRecaida() {
+		return parteITRecaida;
 	}
 
-	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.Prorrateo") })
+	@Override
+	public void setParteITRecaida(IParteIT parteITRecaida) {
+		this.parteITRecaida = parteITRecaida;
+	}
+
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.Prorrateo") })
 	@Column(name = "proret", nullable = false, length = 1)
 	public Prorrateo getProrrateo() {
 		return this.prorrateo;
@@ -342,15 +359,21 @@ implements ITransferObject,
 		
 	}
 
-	@Type(type = "siNoType")
 	@Column(name = "procesado", length = 1)
+	public String getProcesadaBD() {
+		return this.procesadaBD;
+	}
+	public void setProcesadaBD(String procesadaBD) {
+		this.procesadaBD = procesadaBD;
+	}
 	@Override
+	@Transient
 	public boolean isProcesada() {
-		return this.procesada;
+		return ("S".equals(getProcesadaBD()));
 	}
 	@Override
 	public void setProcesada(boolean procesada) {
-		this.procesada = procesada;
+		setProcesadaBD((procesada)?"S":"N");
 	}
 
 	@Type(type = "siNoType")
@@ -363,16 +386,32 @@ implements ITransferObject,
 		this.riesgo = riesgo;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = Empleado.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "cdg", insertable = false, updatable = false)
 	@Override
-	public E getEmpleado() {
+	public IEmpleado getEmpleado() {
 		return this.empleado;
 	}
 
 	@Override
-	public void setEmpleado(E empleado) {
+	public void setEmpleado(IEmpleado empleado) {
 		this.empleado = empleado;
+		if(empleado!=null && empleado.getId()!=null){
+			if(getId()==null){
+				setId(new ParteITPK());
+			}
+			getId().setCdg(empleado.getId());
+		}
+	}
+	
+	@Column(name = "causa_alta", nullable = false, length = 1)
+	@Override
+	public CausaAlta getCausaAlta() {
+		return causaAlta;
+	}
+	@Override
+	public void setCausaAlta(CausaAlta causaAlta) {
+		this.causaAlta = causaAlta;
 	}
 
 }

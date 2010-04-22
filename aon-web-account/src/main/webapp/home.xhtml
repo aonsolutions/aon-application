@@ -11,7 +11,6 @@
 			<a4j:include id="aonContent" viewId="/homepage.xhtml" ajaxRendered="false"/>
 		</c:if>
 		<c:if test="#{company.model.rowCount == 0}" > 
-			<aon:outputText value="#{company.onNew}" style="display: none;" />
 			<a4j:include id="aonContent" ajaxRendered="false"
 				viewId="/com/code/aon/ui/company/facelet/company/form.xhtml" />
 		</c:if>			

@@ -7,33 +7,36 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<h:panelGrid styleClass="aon-width-all"
-		headerClass="aon-direct-access-panel aon-icon-general">
-		<f:facet name="header">
-			<aon:outputText value="#{appBundle.menu_general}" />
-		</f:facet>
-		<aon:div styleClass="aon-direct-access-list">
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="productCategory" 
-					action="productCategory"
-					value="#{productBundle.product_category_module}" />
+	<c:if test="#{aonRole.config}">
+		<aon:panelGrid id="group_general_#{category}"
+			styleClass="aon-width-all" columnClasses="aon-padding"
+			headerClass="aon-direct-access-panel aon-icon-general">
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.menu_general}" />
+			</f:facet>
+			<aon:div styleClass="aon-direct-access-list">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="productCategory-#{category}" 
+						action="productCategory"
+						value="#{productBundle.product_category_module}" />
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="geotreeParent-#{category}" 
+						action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
+						value="#{geozoneBundle.geozone_module}" />
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="payMethod-#{category}" 
+						action="payMethod"
+						value="#{configBundle.config_paymethod_module}" />
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="bank-#{category}" 
+						action="bank"
+						value="#{configBundle.config_bank_module}" />
+				</aon:div>
 			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="geotreeParent" 
-					action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
-					value="#{geozoneBundle.geozone_module}" />
-			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="payMethod" 
-					action="payMethod"
-					value="#{configBundle.config_paymethod_module}" />
-			</aon:div>
-			<aon:div styleClass="aon-direct-access-list-element">
-				<aon:commandLink id="bank" 
-					action="bank"
-					value="#{configBundle.config_bank_module}" />
-			</aon:div>
-		</aon:div>
-	</h:panelGrid>
+		</aon:panelGrid>
+	</c:if>
 
 </ui:composition>

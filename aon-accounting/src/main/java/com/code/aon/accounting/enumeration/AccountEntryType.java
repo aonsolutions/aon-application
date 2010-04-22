@@ -22,6 +22,7 @@ public enum AccountEntryType implements IResourceable {
 	SALARY,
 	TAX,
 	LOAN,
+	@Deprecated
 	LEASING,
 	PAYMENT,
 	COLLECTION,
@@ -29,6 +30,7 @@ public enum AccountEntryType implements IResourceable {
 	AMORTIZATION,
 	SOCIAL_INSURANCE,
 	LOAN_FEE,
+	@Deprecated
 	LEASING_FEE,
 	RETURNED_PAYMENT,
 	RETURNED_COLLECTION,

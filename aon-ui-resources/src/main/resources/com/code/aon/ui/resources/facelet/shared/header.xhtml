@@ -7,7 +7,7 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/headerEx.xhtml" >
 		<ui:define name="userInfoContent">
-			<aon:outputText value="#{loggedUser.companyName}" styleClass="aon-margin-left" />
+			<aon:outputText value="#{loggedUser.companyName}" />
 			<aon:outputText value=" / " />
 			<aon:outputText value="#{loggedUser.loggedUserName}" styleClass="aon-bold" />		
 		</ui:define>

@@ -33,7 +33,7 @@
 					<aon:outputText value="#{bundle.aon_fileupload_element}" />
 				</f:facet>
 				<aon:div id="#{controller.beanName}_attachFile">													
-					<h:commandLink id="download" target="_blank"
+					<aon:htmlCommandLink id="download" target="_blank"
 						onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
 						rendered="#{formList and (to.data != null)}"
 						actionListener="#{controller.downloadAttachment}"
@@ -42,7 +42,7 @@
 						title="#{bundle.aon_fileupload_download}">
 						<f:param name="index" value="#{to.id}" />
 						<aon:outputText value="&#160;" />
-					</h:commandLink>					
+					</aon:htmlCommandLink>					
 					<a4j:region>
 						<aon:fileUpload rendered="#{formEdit}"
 							addControlLabel="#{bundle.aon_fileUpload_add}"

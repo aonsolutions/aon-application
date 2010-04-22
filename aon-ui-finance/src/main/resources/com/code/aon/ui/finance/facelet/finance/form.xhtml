@@ -2,9 +2,11 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -47,11 +49,12 @@
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
 						styleClass="aon-finding-toolbar-item aon-icon-fraction"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
-					<h:commandLink value="#{financeBundle.finance_show_invoice}"
-						target="_blank" action="#{report.onExecute}" actionListener="#{finance.onShowInvoice}"
+					<aon:htmlCommandLink id="invoicePrint-report"
+						value="#{financeBundle.finance_show_invoice}" target="_blank"
+						action="#{report.onExecute}" actionListener="#{finance.onShowInvoice}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="invoicePrint" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>				
 			</ui:decorate>
 
@@ -65,28 +68,32 @@
 					<aon:outputLabel for="Finance_invoice_referenceCode"
 						value="#{financeBundle.finance_invoice}" />
 					<aon:div> 
-						<aon:inputText id="Finance_invoice_referenceCode"
-							value="#{finance.to.invoice.referenceCode}"
-							disabled="true" size="20" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:outputText styleClass="aon-bold"
+									value="#{finance.to.invoice.referenceCode}" />
+							</aon:div>
+							<aon:div>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{finance.to.confidential}" />
+								</c:if>
 
-						<aon:selectOneMenu id="Finance_securityLevel"
-							styleClass="aon-margin-left" disabled="true"
-							value="#{finance.to.securityLevel}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
-
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{finance.to.financeStatus}" />
+								<aon:outputText styleClass="aon-margin-left"
+									value="#{finance.to.financeStatus}" />
+							</aon:div>
+						</h:panelGrid>
 					</aon:div>
 
 					<aon:outputLabel for="Finance_invoice_issueDate"
 						value="#{financeBundle.finance_invoice_date}" />
-					<aon:inputText id="Finance_invoice_issueDate"
-						value="#{finance.to.invoice.issueDate}"
-						disabled="true" size="10">
+					<aon:outputText id="Finance_invoice_issueDate"
+						styleClass="aon-bold"
+						value="#{finance.to.invoice.issueDate}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:inputText>
+					</aon:outputText>
 
 					<aon:outputLabel for="Finance_registry_id"
 						value="#{finance.to.payment ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
@@ -140,8 +147,7 @@
 							disabled="#{!finance.pending and !finance.returned}" size="3" maxlength="4"
 							property="#{finance.to.bank}" lookup="#{bankLookup}"
 							lookupChangeListener="#{finance.onBankChanged}"
-							reRender="Finance_bankAccount"
-							>
+							reRender="Finance_bankAccount">
 							<aon:joinProperty alias="Bank_code"
 								value="#{finance.to.bank.code}" />
 						</aon:lookupInputText>
@@ -208,11 +214,9 @@
 					<aon:div styleClass="aon-scroll-area">
 					
 						<aon:dataTable id="financeTrackingData" value="#{financeTracking.model}"
-							var="to" rows="20" rendered="#{financeTracking.model.rowCount > 0}"
-							columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-								aon-editDataTable-numberColumn, aon-editDataTable-iconColumn aon-vertical-align-top">
+							var="to" rows="20" rendered="#{financeTracking.model.rowCount > 0}">
 
-								<aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_date}" />
 									</f:facet>
@@ -222,21 +226,23 @@
 									</aon:outputText>	
 								</aon:column>
 						
-								<aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{financeBundle.finance_tracking_action}" />
 									</f:facet>
 									<aon:outputText value="#{to.type}" />
 								</aon:column>
 						
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_description}" />
-									</f:facet>
-									<aon:outputText value="#{to.description}" />
-								</aon:column>
-						
-								<aon:column width="100">
+								<c:if test="#{aonRole.accountingOperator}">
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_description}" />
+										</f:facet>
+										<aon:outputText value="#{to.description}" />
+									</aon:column>
+								</c:if>
+
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-200">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_amount}" />
 									</f:facet>
@@ -245,7 +251,7 @@
 									</aon:outputText>	
 								</aon:column>
 								
-								<aon:column>
+								<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
 									</f:facet>

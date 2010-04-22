@@ -18,7 +18,8 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2">
+				<aon:panelGrid columns="2" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 				
 					<aon:outputLabel for="Loan_id"
 						value="#{bundle.aon_id}" />
@@ -105,6 +106,32 @@
 						value="#{loan.to.securityLevel}">
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneRadio>
+					
+					<aon:outputLabel for="Loan_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneRadio id="Loan_status"
+						value="#{loan.to.status}">
+						<f:selectItems value="#{accountingCollections.loanStatuses}" />
+					</aon:selectOneRadio>
+				</aon:panelGrid>
+									
+				<aon:panelGrid columns="2" style="margin-top: 10px; width: 100%;" 
+					rendered="#{!loan.new and loan.relatedAccount != null}"
+					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+				
+					<aon:outputText value="#{accountBundle.account_account}" />
+					<h:commandLink immediate="#{true}" 
+						styleClass="aon-dataTable-link"
+						actionListener="#{loan.onAccountStatement}"
+						title="#{accountingBundle.accounting_statement_module}"
+						action="account_statement_list">
+							<aon:outputText value="#{loan.relatedAccount.fullDescription}" />
+					</h:commandLink>
+
+					<aon:outputText value="#{accountingBundle.accounting_outstanding_balance}" />
+					<aon:outputText value="#{loan.outstandingBalance}">
+						<f:convertNumber pattern="#,##0.00" />
+					</aon:outputText>
 					
 				</aon:panelGrid>
 			</aon:div>

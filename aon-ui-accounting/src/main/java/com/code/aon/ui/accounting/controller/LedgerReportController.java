@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -140,7 +142,7 @@ public class LedgerReportController extends BasicController {
 				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL),
 						getSecurityLevel());
 			}
-			if (getAccount() != null) {
+			if (!StringUtils.isBlank(getAccount())) {
 				criteria.addExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), getAccount());
 			}
 			getCriteria().addOrder(
@@ -163,6 +165,10 @@ public class LedgerReportController extends BasicController {
 		}
 	}
 
+	public boolean isJournalOrdered() {
+		return ("3".equals(getOrder()) );
+	}
+	
 	public boolean isOdd() {
 		return odd;
 	}

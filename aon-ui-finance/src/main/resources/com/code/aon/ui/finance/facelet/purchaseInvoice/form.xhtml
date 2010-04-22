@@ -63,13 +63,14 @@
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 							reRender="showNewMessageWindow">
 						</aon:commandButton>						
-						<h:commandLink id="purchaseInvoice" value="#{financeBundle.finance_invoice}" target="_new" 
+						<aon:htmlCommandLink id="purchaseInvoice-report"
+							value="#{financeBundle.finance_invoice}" target="_new" 
 							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null and !purchaseInvoice.accountSource}"
 							action="#{purchaseInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="purchaseInvoice" />
-						</h:commandLink>
+						</aon:htmlCommandLink>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{purchaseInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or purchaseInvoice.to.signed or (!certificate.signable)}" />
@@ -90,43 +91,52 @@
 					<aon:outputLabel for="Invoice_series-New"
 						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
-						<aon:inputText id="Invoice_referenceCode" 
-							value="#{purchaseInvoice.to.referenceCode}"
-							rendered="#{!purchaseInvoice.readOnly}" size="15" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{purchaseInvoice.to.referenceCode}"
-							rendered="#{purchaseInvoice.readOnly}" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:inputText id="Invoice_referenceCode" 
+									value="#{purchaseInvoice.to.referenceCode}"
+									rendered="#{!purchaseInvoice.readOnly}" size="15" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{purchaseInvoice.to.referenceCode}"
+									rendered="#{purchaseInvoice.readOnly}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Invoice_investment"
+									value="#{purchaseInvoice.to.investment}" 
+									rendered="#{!purchaseInvoice.readOnly}" />
+								<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
+									value="#{financeBundle.finance_invoice_investment}"
+									rendered="#{!purchaseInvoice.readOnly or purchaseInvoice.to.investment}" />
 
-						<aon:selectOneMenu id="Invoice_securityLevel" styleClass="aon-margin-left"
-							value="#{purchaseInvoice.to.securityLevel}" disabled="#{purchaseInvoice.readOnly}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
+										value="#{purchaseInvoice.to.confidential}"
+										rendered="#{!purchaseInvoice.readOnly}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{!purchaseInvoice.readOnly}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.confidential}" />
+								</c:if>
 
-						<aon:selectBooleanCheckbox id="Invoice_investment" styleClass="aon-margin-left"
-							value="#{purchaseInvoice.to.investment}" disabled="#{purchaseInvoice.readOnly}" />
-						<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
-							value="#{financeBundle.finance_invoice_investment}" />
+								<c:if test="#{company.EInvoice}">
+									<aon:outputText value="&#160;"
+										rendered="#{!purchaseInvoice.new and purchaseInvoice.to.signed}"
+										title="#{signBundle.sign_signed}"
+										styleClass="aon-icon aon-icon-signed" />
+								</c:if>						
 
-						<c:if test="#{company.EInvoice}">
-							<aon:outputText value="&#160;"
-								rendered="#{!purchaseInvoice.new and purchaseInvoice.to.signed}"
-								title="#{signBundle.sign_signed}"
-								styleClass="aon-icon aon-icon-signed" />
-							<aon:outputText value="&#160;"
-								rendered="#{!purchaseInvoice.new and !purchaseInvoice.to.signed}"
-								title="#{signBundle.sign_sign_pending}"
-								styleClass="aon-icon aon-icon-unsigned" />
-						</c:if>						
-
-						<aon:outputText value="#{purchaseInvoice.to.status}" />
-						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(#{financeBundle.finance_account_entry}:"
-							rendered="#{purchaseInvoice.recorded}" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{purchaseInvoice.accountEntryId}"
-							rendered="#{purchaseInvoice.recorded}" />
-						<aon:outputText styleClass="aon-italic" value=")"
-							rendered="#{purchaseInvoice.recorded}" />
+								<aon:outputText value="#{purchaseInvoice.to.status}" />
+								<c:if test="#{aonRole.accountingOperator and purchaseInvoice.recorded}">
+									<aon:outputText styleClass="aon-italic aon-margin-left"
+										value="(#{financeBundle.finance_account_entry}: " />
+									<aon:outputText styleClass="aon-bold"
+										value="#{purchaseInvoice.accountEntryId}" />
+									<aon:outputText styleClass="aon-italic" value=")" />
+								</c:if>
+							</aon:div>
+						</h:panelGrid>
 					</aon:div>
 
 					<aon:outputLabel for="Invoice_issueDate"
@@ -245,7 +255,7 @@
 					<aon:div id="Invoice_fileDiv" rendered="#{!purchaseInvoice.new and !purchaseInvoice.to.signed}">
 						<a4j:region>
 							<h:panelGrid columns="#{purchaseInvoiceAttachment.uploaded?3:1}">
-								<h:commandLink id="download" value="&#160;" target="_blank"
+								<aon:htmlCommandLink id="download" value="&#160;" target="_blank"
 									immediate="true" rendered="#{purchaseInvoiceAttachment.uploaded}"
 									title="#{financeBundle.finance_download_disk}"
 									actionListener="#{purchaseInvoiceAttachment.downloadAttachment}"

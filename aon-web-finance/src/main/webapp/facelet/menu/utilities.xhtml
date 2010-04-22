@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
 	<ui:define name="content">
 
@@ -14,19 +14,34 @@
 		
 			<aon:div styleClass="aon-scroll-area">
 			
-				<aon:componentGroup
-					family="javax.faces.Command"
-					method="#{actionDenied.renderedCommand}">					
-		
-					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
-	
-						<h:panelGrid styleClass="aon-width-all"
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+					<aon:panelGroup>
+						<aon:panelGrid id="group_utilities_general"
+							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-sales aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.menu_utilities}"/>
+								<aon:outputText value="#{appBundle.menu_general}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="checks" action="util_checking"
+										value="#{financeBundle.finance_checking_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<aon:panelGroup>
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:panelGrid id="group_utilities_utilities"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-sales aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.menu_utilities}"/>
+								</f:facet>					
+								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoiceRecorder"
 											value="#{financeBundle.finance_sale_invoice_recording_module}"
@@ -53,23 +68,12 @@
 											<aon:outputText value="#{financeBundle.finance_payment_recording_module}"/>
 										</aon:outputLink>
 									</aon:div>
-							</aon:div>
-						</h:panelGrid>
-	
-						<h:panelGrid styleClass="aon-width-all"
-							headerClass="aon-icon-sales aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.menu_general}"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="checks" action="util_checking"
-											value="#{financeBundle.finance_checking_module}" />
-									</aon:div>
-							</aon:div>
-						</h:panelGrid>
-					</h:panelGrid>
-				</aon:componentGroup>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+					</aon:panelGroup>
+
+				</h:panelGrid>
 			</aon:div>
 		</aon:form>
 	</ui:define>

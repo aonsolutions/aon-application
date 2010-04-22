@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div id="flow-toolbar" styleClass="flow-toolbar">
+<!--  
+			actionListener="#{parteconf.onAccept}"
+-->
+<!--  
+		<aon:outputLabel 
+			value="1.- Busqueda" />
+-->			
+		<aon:commandButton  
+			value="#{appBundle.aon_payroll_newpayroll_it_wizard_1}" 
+			action="mntoit_search"
+			styleClass="flow-button"
+			inmediate="#{true}"
+			accesskey="#{bundle.aon_key_save}" />
+	
+		<aon:outputText value=" >> " />
+		
+		<aon:outputLabel 
+			value="#{appBundle.aon_payroll_newpayroll_it_wizard_2}"
+			rendered="#{itWizard.model.rowCount==0}" />
+		<aon:commandButton 
+			value="#{appBundle.aon_payroll_newpayroll_it_wizard_2}"
+			action="mntoit_list" 
+			rendered="#{itWizard.model.rowCount!=0}"
+			styleClass="flow-button"
+			inmediate="#{true}"
+			accesskey="#{bundle.aon_key_save}" />
+		
+		<aon:outputText value=" >> " />
+		
+		<aon:outputLabel 
+			value="#{appBundle.aon_payroll_newpayroll_it_wizard_3}"
+			rendered="#{itWizard.parteRen==null}" />
+		<aon:commandButton 
+			value="#{appBundle.aon_payroll_newpayroll_it_wizard_3}"
+			action="mntoit_form" 
+			rendered="#{itWizard.parteRen!=null}"
+			actionListener="#{itWizard.onUnFinalize}"
+			styleClass="flow-button"
+			inmediate="#{true}"
+			accesskey="#{bundle.aon_key_save}" />
+		
+		<aon:outputText value=" >> " />
+		
+		<aon:outputLabel 
+			value="#{appBundle.aon_payroll_newpayroll_it_wizard_4}"
+			rendered="#{!itWizard.finished}" />
+		<aon:commandButton 
+			value="#{appBundle.aon_payroll_newpayroll_it_wizard_4}"
+			rendered="#{itWizard.finished}"
+			styleClass="flow-button"
+			inmediate="#{true}"
+			accesskey="#{bundle.aon_key_save}" />
+	</aon:div>
+
+</ui:composition>

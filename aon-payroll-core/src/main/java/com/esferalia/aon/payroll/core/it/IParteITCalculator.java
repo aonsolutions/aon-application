@@ -1,25 +1,26 @@
 package com.esferalia.aon.payroll.core.it;
 
-import com.esferalia.aon.payroll.core.calc.CalculatorException;
+import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IContrato;
 
 
 
 public interface IParteITCalculator {
 
-	boolean accept(IParteIT it);
+	boolean accept(IParteIT it,IContrato contrato);
 	
-	Double calculateBaseRetribucionPeriodoAnterior(IParteIT it) throws CalculatorException;
+	Double getBaseRetribucionPeriodoAnterior(IParteIT it) throws PayrollException;
 
-	Integer getDiasPeriodoAnterior(IParteIT it) throws CalculatorException;
+	Integer getDiasPeriodoAnterior(IParteIT it) throws PayrollException;
 
-	Double getBaseReguladoraDiaria(IParteIT it) throws CalculatorException;
+	Double getBaseReguladoraDiaria(IParteIT it) throws PayrollException;
 
-	Double getBaseDiariaContingenciasComunes(IParteIT it) throws CalculatorException;
+	Double getBaseDiariaContingenciasComunes(IParteIT it) throws PayrollException;
 
-	Double getBaseDiariaAccidentesTrabajo(IParteIT it) throws CalculatorException;
+	Double getBaseDiariaAccidentesTrabajo(IParteIT it) throws PayrollException;
 
-	Double getPrestacionDiaria60(IParteIT it) throws CalculatorException;
+	Double getPrestacionDiaria60(IParteIT it) throws PayrollException;
 
-	Double getPrestacionDiaria75(IParteIT it) throws CalculatorException;
-
+	Double getPrestacionDiaria75(IParteIT it) throws PayrollException;
+	
 }

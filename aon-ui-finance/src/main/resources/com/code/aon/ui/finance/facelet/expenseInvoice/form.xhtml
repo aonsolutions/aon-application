@@ -66,43 +66,52 @@
 					<aon:outputLabel for="Invoice_referenceCode"
 						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
-						<aon:inputText id="Invoice_referenceCode" 
-							value="#{expenseInvoice.to.referenceCode}"
-							rendered="#{!expenseInvoice.readOnly}" size="15" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{expenseInvoice.to.referenceCode}"
-							rendered="#{expenseInvoice.readOnly}" />
+						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div>
+								<aon:inputText id="Invoice_referenceCode" 
+									value="#{expenseInvoice.to.referenceCode}"
+									rendered="#{!expenseInvoice.readOnly}" size="15" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{expenseInvoice.to.referenceCode}"
+									rendered="#{expenseInvoice.readOnly}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Invoice_investment"
+									value="#{expenseInvoice.to.investment}" 
+									rendered="#{!expenseInvoice.readOnly}" />
+								<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
+									value="#{financeBundle.finance_invoice_investment}"
+									rendered="#{!expenseInvoice.readOnly or expenseInvoice.to.investment}" />
 
-						<aon:selectOneMenu id="Invoice_securityLevel" styleClass="aon-margin-left"
-							value="#{expenseInvoice.to.securityLevel}" disabled="#{expenseInvoice.readOnly}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneMenu>
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
+										value="#{expenseInvoice.to.confidential}"
+										rendered="#{!expenseInvoice.readOnly}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{!expenseInvoice.readOnly}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{expenseInvoice.readOnly and expenseInvoice.to.confidential}" />
+								</c:if>
 
-						<aon:selectBooleanCheckbox id="Invoice_investment" styleClass="aon-margin-left"
-							value="#{expenseInvoice.to.investment}" disabled="#{expenseInvoice.readOnly}" />
-						<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
-							value="#{financeBundle.finance_invoice_investment}" />
+								<c:if test="#{company.EInvoice}">
+									<aon:outputText value="&#160;"
+										rendered="#{!expenseInvoice.new and expenseInvoice.to.signed}"
+										title="#{signBundle.sign_signed}"
+										styleClass="aon-icon aon-icon-signed" />
+								</c:if>						
 
-						<c:if test="#{company.EInvoice}">
-							<aon:outputText value="&#160;"
-								rendered="#{!expenseInvoice.new and expenseInvoice.to.signed}"
-								title="#{signBundle.sign_signed}"
-								styleClass="aon-icon aon-icon-signed" />
-							<aon:outputText value="&#160;"
-								rendered="#{!expenseInvoice.new and !expenseInvoice.to.signed}"
-								title="#{signBundle.sign_sign_pending}"
-								styleClass="aon-icon aon-icon-unsigned" />
-						</c:if>						
-
-						<aon:outputText value="#{expenseInvoice.to.status}" />
-						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(#{financeBundle.finance_account_entry}:"
-							rendered="#{expenseInvoice.recorded}" />
-						<aon:outputText styleClass="aon-bold"
-							value="#{expenseInvoice.accountEntryId}"
-							rendered="#{expenseInvoice.recorded}" />
-						<aon:outputText styleClass="aon-italic" value=")"
-							rendered="#{expenseInvoice.recorded}" />
+								<aon:outputText value="#{expenseInvoice.to.status}" />
+								<c:if test="#{aonRole.accountingOperator and expenseInvoice.recorded}">
+									<aon:outputText styleClass="aon-italic aon-margin-left"
+										value="(#{financeBundle.finance_account_entry}: " />
+									<aon:outputText styleClass="aon-bold"
+										value="#{expenseInvoice.accountEntryId}" />
+									<aon:outputText styleClass="aon-italic" value=")" />
+								</c:if>
+							</aon:div>
+						</h:panelGrid>
 					</aon:div>
 
 					<aon:outputLabel for="Invoice_issueDate"
@@ -221,7 +230,7 @@
 					<aon:div id="Invoice_fileDiv" rendered="#{!expenseInvoice.new and !expenseInvoice.to.signed}">
 						<a4j:region>
 							<h:panelGrid columns="#{expenseInvoiceAttachment.uploaded?3:1}">
-								<h:commandLink id="download" value="&#160;" target="_blank"
+								<aon:htmlCommandLink id="download" value="&#160;" target="_blank"
 									immediate="true" rendered="#{expenseInvoiceAttachment.uploaded}"
 									title="#{financeBundle.finance_download_disk}"
 									actionListener="#{expenseInvoiceAttachment.downloadAttachment}"

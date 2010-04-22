@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:div id="datosITContainer" layout="none">
+		<aon:panel id="datosITPanel">
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_datos_parteIT}" />
+			</f:facet>
+			<aon:panelGrid columns="2"
+				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto" 
+				style="width: 100%;">
+			
+				<aon:outputLabel for="operaciones"
+					value="#{payrollBundle.payroll_tipo_parte}" />
+				<aon:div>
+					<aon:outputText
+						styleClass="aon-bold" style="font-size: 1.2em;" 
+						rendered="#{parteITWizard.baja}"
+						value="#{parteITWizard.operacion}"/>
+					<aon:selectOneMenu id="operaciones"
+						styleClass="aon-bold" style="font-size: 1.2em;" 
+						rendered="#{!parteITWizard.baja}"
+						value="#{parteITWizard.operacion}">
+						<f:selectItems value="#{parteITWizard.tiposOperacion}" />
+						<a4j:support event="onchange" reRender="datosITContainer"
+							ajaxSingle="true"
+							actionListener="#{parteITWizard.onChangeTipoOperacion}" />
+					</aon:selectOneMenu>
+				</aon:div>
+
+				<aon:outputLabel for="numParteRenovacion"
+					rendered="#{parteITWizard.confirmacion}"
+					value="#{payrollBundle.payroll_numero_renovacion}" />
+				<aon:inputText id="numParteRenovacion" size="1" maxlength="2"
+					rendered="#{parteITWizard.confirmacion}"
+					value="#{parteITWizard.numParteRenovacion}" >
+					<a4j:support event="onchange"
+						actionListener="#{parteITWizard.onChangeNumeroRenovacion}"
+						reRender="fecha" />
+				</aon:inputText>
+
+				<aon:outputLabel for="fecha" value="#{payrollBundle.payroll_fecha}" />
+				<aon:selectInputDate id="fecha" value="#{parteITWizard.fecha}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange"
+						actionListener="#{parteITWizard.onChangeFechaInicio}"
+						reRender="prorrateo" />
+					<a4j:support event="onchanged"
+						actionListener="#{parteITWizard.onChangeFechaInicio}"
+						reRender="prorrateo" />
+				</aon:selectInputDate>
+
+				<aon:outputLabel for="colegiado"
+					value="#{payrollBundle.payroll_colegiado}" />
+				<aon:inputText id="colegiado"
+					value="#{parteITWizard.numeroColegiado}" />
+
+				<aon:outputLabel for="cias" value="#{payrollBundle.payroll_cias}" />
+				<aon:inputText id="cias" value="#{parteITWizard.cias}" />
+
+				<aon:outputLabel for="causaAlta"
+					rendered="#{parteITWizard.alta}"
+					value="#{payrollBundle.payroll_causa_alta}" />
+				<aon:selectOneMenu id="causaAlta"
+					rendered="#{parteITWizard.alta}"
+					value="#{parteITWizard.parteIT.causaAlta}">
+					<f:selectItems value="#{payrollCollections.causasAlta}" />
+				</aon:selectOneMenu>
+				
+				<aon:outputLabel for="tipoit"
+					value="#{payrollBundle.payroll_tipo_it}" />
+				<aon:selectOneMenu id="tipoit"
+					disabled="#{!parteITWizard.baja}"
+					value="#{parteITWizard.parteIT.tipoContingencia}">
+					<f:selectItems value="#{payrollCollections.tiposContingencia}" />
+					<a4j:support event="onchange"
+						actionListener="#{parteITWizard.onChangeTipoContingencia}"
+						reRender="datosITContainer" />
+				</aon:selectOneMenu>
+
+				<aon:outputLabel for="prorrateo"
+					value="#{payrollBundle.payroll_periodicidad}" />
+				<aon:selectOneRadio id="prorrateo"
+					value="#{parteITWizard.parteIT.prorrateoCotizacion}">
+					<f:selectItems value="#{payrollCollections.periodicidades}" />
+				</aon:selectOneRadio>
+
+				<aon:outputLabel for="recaida"
+					rendered="#{parteITWizard.recaidaAnterior and parteITWizard.baja}"
+					value="#{payrollBundle.payroll_recaida}" />
+				<aon:selectBooleanCheckbox id="recaida"
+					rendered="#{parteITWizard.recaidaAnterior and parteITWizard.baja}"
+					value="#{parteITWizard.parteIT.recaida}" >
+					<a4j:support event="onclick"
+						actionListener="#{parteITWizard.onChangeRecaida}" />
+				</aon:selectBooleanCheckbox>
+			</aon:panelGrid>
+		</aon:panel>
+
+		<aon:panel id="bonificaPanel"
+			rendered="#{parteITWizard.altaMaternidad}">
+			<f:facet name="header">
+				<aon:div layout="none">
+					<aon:selectBooleanCheckbox id="bonificacion"
+						value="#{parteITWizard.bonificacionMaternidad}">
+						<a4j:support event="onclick" ajaxSingle="true"
+							limitToList="true" reRender="bonificaPanel"
+							actionListener="#{parteITWizard.onChangeBonificacionMaternidad}" />
+					</aon:selectBooleanCheckbox>
+					<aon:outputLabel for="bonificacion"
+						value="#{payrollBundle.parteIT_bonificacion_maternidad}" />
+				</aon:div>
+			</f:facet>
+			
+			<a4j:region>
+				<aon:inputText id="tipoBonificacion" value="#{parteITWizard.tipoBonificacion.descripcion}" 
+					disabled="#{!parteITWizard.bonificacionMaternidad}"
+					size="40">
+					<a4j:support event="onkeyup"
+						onsubmit="if(event.keyCode != 113) return false;"
+						ignoreDupResponses="true"
+						requestDelay="100" 
+						immediate="true" reRender="bonificaPanel">
+					</a4j:support>
+				</aon:inputText>
+			</a4j:region>
+			
+			<a4j:region>
+				<rich:suggestionbox for="tipoBonificacion" 
+					suggestionAction="#{parteITWizard.autocompleteId}" var="result"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{result.id}" />
+					</aon:column>
+					<aon:column>
+						<aon:outputText value="#{result.descripcion}" />
+					</aon:column>
+					<a4j:support event="onselect" limitToList="true" reRender="bonificaPanel" >
+						<f:setPropertyActionListener target="#{parteITWizard.tipoBonificacion}" value="#{result}" />
+					</a4j:support>
+				</rich:suggestionbox>
+			</a4j:region>
+		
+		</aon:panel>
+	</aon:div>
+	
+</ui:composition>

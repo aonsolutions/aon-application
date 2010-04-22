@@ -4,6 +4,7 @@ import com.code.aon.accounting.Balance;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 public class BalanceImporterManager {
 	
@@ -18,18 +19,19 @@ public class BalanceImporterManager {
 	
 	public void addBalance(Balance balance) throws ManagerBeanException {
 		if (balance != null) {
-			Balance b = (Balance) getManagerBean().get(balance.getId());
-			if (b == null) {
-				bean.insert(balance);
-			} else {
-				b.setName(balance.getName());
-				b.setRemovable(balance.isRemovable());
-				b.setType(balance.getType());
-				b.setLines(balance.getLines());
-				
-				bean.update(b);
-			}
+			balance = (Balance) HibernateUtil.getSession( HibernateUtil.getSessionFactoryName()).merge(balance);  
+			getManagerBean().insertOrUpdate(balance);
+//			Balance b = (Balance) getManagerBean().get(balance.getId());
+//			if (b == null) {
+//				bean.insert(balance);
+//			} else {
+//				b.setName(balance.getName());
+//				b.setRemovable(balance.isRemovable());
+//				b.setType(balance.getType());
+//				b.setLines(balance.getLines());
+//				
+//				bean.update(b);
+//			}
 		}
 	}
-	
 }

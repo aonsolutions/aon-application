@@ -213,7 +213,7 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
-        <!-- Sessions Filter -->
+	<!-- Sessions Filter -->
 	<filter>
 		<description>Enables and Registers session for concurrent sessions</description>
 	   <filter-name>SessionFilter</filter-name>
@@ -234,18 +234,6 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
-  	<!-- Listener, that enables Concurrent Sessions per User. -->
-	<listener>
-		<listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
-	</listener>
- 
-	<!-- Bean Loader Listener -->
-    <listener>
-       <listener-class>
-           com.code.aon.ui.common.listener.BeanRegisterContextListener
-       </listener-class>
-    </listener>
-    
 	<!-- Audit Filter -->
 	<filter>
 		<filter-name>AuditFilter</filter-name>
@@ -258,7 +246,19 @@
 	<!-- Listener, that enables Audit Sessions per User. -->
 	<listener>
 		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>
-	</listener>    
+	</listener>
+
+  	<!-- Listener, that enables Concurrent Sessions per User. -->
+	<listener>
+		<listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
+	</listener>
+ 
+	<!-- Bean Loader Listener -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.common.listener.BeanRegisterContextListener
+       </listener-class>
+    </listener>
 
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
@@ -278,14 +278,6 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>account</web-resource-name>
-			<url-pattern>/_account/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>finance</web-resource-name>
-			<url-pattern>/finance/*</url-pattern>
-		</web-resource-collection>
- 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
@@ -294,7 +286,7 @@
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Invitado</role-name>
+			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -306,7 +298,18 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role><role-name>Invitado</role-name></security-role>
+	<security-role><role-name>User</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Config</role-name></security-role>
+	<security-role><role-name>Auditor</role-name></security-role>
+	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>Product</role-name></security-role>
+	<security-role><role-name>Commercial</role-name></security-role>
+	<security-role><role-name>Finance</role-name></security-role>
+	<security-role><role-name>Accounting</role-name></security-role>
+	<security-role><role-name>Statistics</role-name></security-role>
+	<security-role><role-name>eSignature</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonSMB</resource-env-ref-name>

@@ -15,30 +15,32 @@
 				<ui:param name="controller" value="#{saleInvoice}" />
 
 				<ui:define name="additionalToolbarContent">
-					<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
+					<aon:htmlCommandLink id="saleInvoiceList-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="saleInvoiceList" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>							
-					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
+					</aon:htmlCommandLink>							
+					<aon:htmlCommandLink id="saleInvoiceList-report"
+						value="#{bundle.aon_listing}" target="_blank"
 						action="#{report.onExecute}" 
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="saleInvoiceList" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 
-					<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
+					<aon:htmlCommandLink id="saleInvoiceDetailledList-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="saleInvoiceDetailledList" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>							
-					<h:commandLink value="#{bundle.aon_detailed_listing}" 
-						target="_blank" action="#{report.onExecute}" 
+					</aon:htmlCommandLink>							
+					<aon:htmlCommandLink id="saleInvoiceDetailledList-report"
+						value="#{bundle.aon_detailed_listing}" target="_blank"
+						action="#{report.onExecute}" 
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="saleInvoiceDetailledList" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>
 
 			</ui:decorate>
@@ -47,18 +49,17 @@
 			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{saleInvoice}" />
-					<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn" />
 					<ui:define name="columns">
-						<aon:column alias="Invoice.referenceCode">
+						<aon:column alias="Invoice.referenceCode" 
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
 							</f:facet>
 							<aon:outputText value="#{to.referenceCode}" />
 						</aon:column>
 	
-						<aon:column alias="Invoice.issueDate">
+						<aon:column alias="Invoice.issueDate" 
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
@@ -68,7 +69,8 @@
 							</aon:outputText>
 						</aon:column>
 	
-						<aon:column alias="Invoice.registryName">
+						<aon:column alias="Invoice.registryName" 
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<h:outputText value="#{customerBundle.customer_customer}" />
 							</f:facet>
@@ -77,21 +79,23 @@
 							</aon:outputText>
 						</aon:column>
 	
-						<aon:column alias="Invoice.registryDocument">
+						<aon:column alias="Invoice.registryDocument" 
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_company_document}" />
 							</f:facet>
 							<aon:outputText value="#{to.registryDocument}" />
 						</aon:column>
-	
-						<aon:column alias="Invoice.status">
+
+						<aon:column alias="Invoice.status" 
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
 							<aon:outputText value="#{to.status}" />
 						</aon:column>
-	
-						<aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{configBundle.config_pay_method}" />
 							</f:facet>
@@ -100,14 +104,14 @@
 							</aon:outputText>
 						</aon:column>
 	
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
 							</f:facet>
 							<aon:outputText value="#{controller.financeStatus}" />
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
@@ -117,7 +121,7 @@
 						</aon:column>
 
 						<c:if test="#{company.EInvoice}">
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
 									<aon:outputText value="#{signBundle.sign_signature}" />
 								</f:facet>

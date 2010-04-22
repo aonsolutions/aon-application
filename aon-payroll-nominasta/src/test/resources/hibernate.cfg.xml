@@ -1,0 +1,37 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="connection.url">jdbc:ctsql://192.168.2.40:1101/empre055;DBPATH=/home/DATABASES;RTRIMCHAR=true</property>		
+		<property name="dialect">com.transtools.ctsql.hibernate.dialect.CtsqlDialect</property>
+		<property name="connection.driver_class">com.transtools.jdbc.CtsqlJdbcDriver</property>		
+		<property name="connection.username">ctl</property>		
+		<property name="connection.password">ctl</property>	
+		<property name="show_sql">true</property>		
+
+		<mapping package="com.esferalia.aon.payroll.type"/>
+
+		<mapping class="com.esferalia.aon.payroll.Actividad"/>
+		<mapping class="com.esferalia.aon.payroll.ActividadCCC"/>
+		<mapping class="com.esferalia.aon.payroll.Contrato"/>
+		<mapping class="com.esferalia.aon.payroll.Empleado"/>			
+		<mapping class="com.esferalia.aon.payroll.Empresa"/>
+		<mapping class="com.esferalia.aon.payroll.Nomina"/>
+		<mapping class="com.esferalia.aon.payroll.ParteConfirmacionIT"/>		
+		<mapping class="com.esferalia.aon.payroll.ParteIT"/>		
+		<mapping class="com.esferalia.aon.payroll.Persona"/>
+		<mapping class="com.esferalia.aon.payroll.RemesaINSS"/>
+		<mapping class="com.esferalia.aon.payroll.RemesaParteIT"/>
+		<mapping class="com.esferalia.aon.payroll.Usuario"/>
+		
+		<mapping class="com.esferalia.aon.payroll.cotizacion.Bonificacion"/>
+		<mapping class="com.esferalia.aon.payroll.cotizacion.TipoBonificacion"/>
+		
+		
+	</session-factory>
+
+</hibernate-configuration>

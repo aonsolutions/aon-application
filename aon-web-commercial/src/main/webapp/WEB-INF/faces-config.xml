@@ -31,7 +31,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/5.0.0</value>
+			<value>/aonResource/5.1.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -68,7 +68,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>logout</from-outcome>
-			<to-view-id>/home.jsf</to-view-id> 
+			<to-view-id>/</to-view-id> 
 			<redirect/>
 		</navigation-case>
 	</navigation-rule>
@@ -77,12 +77,12 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>menu_auxiliary</from-outcome>
-			<to-view-id>/facelet/menu/auxiliary.xhtml</to-view-id> 
+			<from-outcome>menu_statistics</from-outcome>
+			<to-view-id>/facelet/menu/statistics.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>menu_master</from-outcome>
-			<to-view-id>/facelet/menu/master.xhtml</to-view-id> 
+			<from-outcome>menu_agent</from-outcome>
+			<to-view-id>/facelet/menu/agent.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_commercial</from-outcome>

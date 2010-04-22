@@ -11,7 +11,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -32,19 +31,14 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.WeekDay;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
-import com.code.aon.webmail.bean.AonMessage;
-import com.code.aon.webmail.bean.AonServer;
 
-public class ActivityDialogController {
+public class ActivityDialogController extends EmailParentController{
 
 	private static final String ASSET_BUNDLE = "assetBundle";
 	private Asset asset;
@@ -272,30 +266,6 @@ public class ActivityDialogController {
 		return user.getShortName();
 	}
 	
-//	private List<SelectItem> weekDaysList;
-//	public List<SelectItem> getWeekDaysList() {
-//		if (weekDaysList == null) {
-//			weekDaysList = new LinkedList<SelectItem>();
-//			SelectItem item;
-//			WeekDay day;
-////			day.
-////			for (int i = 0; i < getWeekDays().size(); i++) {
-////				item = new SelectItem(true, WeekDay.MONDAY.name());
-////				weekDaysList.add(item);
-////			}
-//			Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
-//			for(WeekDay d:WeekDay.values()){
-//				item = new SelectItem(true, d.getName(locale));
-//				weekDaysList.add(item);
-//			}
-//		}
-//		return weekDaysList;
-//	}
-//	
-//	public void setWeekDaysList(List<SelectItem> weekDaysList) {
-//		this.weekDaysList = weekDaysList;
-//	}
-	
 	public void onInitialize(ActionEvent event) {
 		setAsset(new Asset());
 		setFromDate(Calendar.getInstance().getTime());
@@ -319,17 +289,8 @@ public class ActivityDialogController {
 	public void onInitializeRequest(ActionEvent event) {
 		onInitialize(event);
 		setRequest(true);
-		//if(isRequest())
 		String user = ((LoggedUser)AonUtil.getRegisteredBean("loggedUser")).getLoggedUserName();
-//		try {
-//			BeanManager.getManagerBean(LoggedUser.class).getList(null).get(0);
-//		} catch (ManagerBeanException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//			setWho(UserUtils.getInstance().getLoggedUser().getName());
-			setWho(user);
-			
+		setWho(user);
 	}
 
 	public void onAccept(ActionEvent event) {
@@ -367,8 +328,6 @@ public class ActivityDialogController {
 		buildToTime();
 		buildWeekDaysList();
 		if (isValidDate() && isValidTime()) {
-//			if(isSelectedDay(cal)){
-//			}
 			try{
 				email();
 			} catch (Exception e) {
@@ -380,33 +339,34 @@ public class ActivityDialogController {
 	
 	private void email(){
 		setNew(false);
-//		LoggedUser logged = (LoggedUser)AonUtil.getRegisteredBean("loggedUser");
+		
+//		from field
 		AuthPrincipal user = Utils.getAuthPrincipal();
-		//AuthPrincipal user = UserUtils.getInstance().getPrincipal();
 		String domain = user.getDomain();
 		String login = user.getShortName();
-//		String login = logged.getLoggedUserName();
-		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean("loggedUser");
-		String username = loggedUser.getLoggedUserName();
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean("company");
+		MailAccount mailAccount;
+		try {
+			mailAccount = WebmailUtil.getDefaultAccount(domain,login);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage( "El usuario " + login + " no tiene definida ninguna cuenta de correo" );
+			throw new AbortProcessingException( e.getMessage(), e);
+		}
+		String from = mailAccount.getEmail();
+			
+//		to field
 		RegistryMedia companyEmail = null;
-//		companyEmail = companyController.getEmail();
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean("company");
 		companyEmail = companyController.obtainEmail();
-//		try {
-//			companyEmail = companyController.obtainCompany().getEmail();
-//		} catch (ManagerBeanException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
 		if ( companyEmail == null ) {
 			AonUtil.addErrorMessage( "En los Datos de la Empresa no esta indicado el email" );
 			return;
 		}
-//		RegistryMedia companyEmail = companyController.getEmail();
-		Calendar cal = new GregorianCalendar();
-		Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
 		String to = companyEmail.getValue();
+		
+//		subject & content field
 		String subject = "SOLICITUD DE RESERVA";
+		Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
+		Calendar cal = new GregorianCalendar();
 		StringBuffer content = new StringBuffer();
 		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_asset") ).append( ": ");
 		content.append( getAsset().getName() ).append(SystemUtils.LINE_SEPARATOR);
@@ -430,33 +390,9 @@ public class ActivityDialogController {
 		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_activity_who") ).append( ": ");
 		content.append( getWho() ).append(SystemUtils.LINE_SEPARATOR);
 		content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_activity_why") ).append( ": ");
-		content.append( getWhy() ).append(SystemUtils.LINE_SEPARATOR);				
+		content.append( getWhy() ).append(SystemUtils.LINE_SEPARATOR);	
 		
-		MailAccount mailAccount;
-		try {
-			mailAccount = WebmailUtil.getDefaultAccount(domain,login);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage( "El usuario " + login + " no tiene definida ninguna cuenta de correo" );
-			throw new AbortProcessingException( e.getMessage(), e);
-		}
-		
-		try {
-			AonServer server = new AonServer(mailAccount);
-			server.connect();
-			String from = mailAccount.getEmail();
-			AonMessage aonMessage = server.createAonMessage(from, username);
-			InternetAddress iafrom = new InternetAddress(from, username);
-			aonMessage.setSender(iafrom);
-			aonMessage.setRecipientsTo(to.concat(", ").concat(from));
-			aonMessage.setSubject(subject);
-			aonMessage.setContent(content.toString());
-			server.sendMessage(aonMessage);
-			server.disconnect();
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage( e.getMessage() );
-			throw new AbortProcessingException( e.getMessage(), e);
-		}
+		super.email(subject, from, to, content.toString());
 	}
 
 	public void onCancel(ActionEvent event) {
@@ -465,8 +401,6 @@ public class ActivityDialogController {
 
 	private boolean isValidDate() {
 		if (fromDate.after(toDate)) {
-			//ResourceBundle bundle = AonUtil.getResourceBundle("assetBundle");
-			//AonUtil.addErrorMessage(bundle.getString("assetBundle","asset_error_date_range"));
 			AonUtil.addErrorMessageFromBundle(ASSET_BUNDLE,"asset_error_date_range");
 			return false;
 		}
@@ -475,8 +409,6 @@ public class ActivityDialogController {
 
 	private boolean isValidTime() {
 		if (fromTime.after(toTime) || fromTime.equals(toTime)) {
-			//ResourceBundle bundle = AonUtil.getResourceBundle("assetBundle");
-			//AonUtil.addErrorMessage(bundle.getString("asset_error_time_range"));
 			AonUtil.addErrorMessageFromBundle(ASSET_BUNDLE,"asset_error_time_range");
 			return false;
 		}
@@ -520,7 +452,11 @@ public class ActivityDialogController {
 						to.setWho(getWho());
 						to.setWhy(getWhy());
 						to.setAsset(getAsset());
-						to.setStatus(ActivityStatus.PENDING);
+						if(isRequest()){
+							to.setStatus(ActivityStatus.PENDING);
+						} else {
+							to.setStatus(ActivityStatus.ACCEPTED);
+						}
 						bean.insert(to);
 					}
 					cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -552,24 +488,20 @@ public class ActivityDialogController {
 			return getWeekDays().get(6);
 		}
 		return getWeekDays().get(cal.get(Calendar.DAY_OF_WEEK)-cal.getFirstDayOfWeek());
-
-//		if(getWeekDays().get(cal.get(Calendar.DAY_OF_WEEK)-1)){
-//			
-//		}
-//		return false;
 	}
 
 
 	private void onSearchInserted(ActionEvent event) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
 		IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
-		criteria.addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
-		criteria.addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromDate(),getToDate());
-		criteria.addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
-		criteria.addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_FROM_TIME));
-		BasicController controller = (BasicController) FormUtil.getController(IAssetConstants.ACTIVITY_BASIC_CONTROLLER_NAME);
-		controller.setCriteria(criteria);
+		ActivityBasicController controller = (ActivityBasicController) FormUtil.getController(IAssetConstants.ACTIVITY_BASIC_CONTROLLER_NAME);
+		controller.setWho(getWho());
+		controller.clearCriteria();
+		controller.getCriteria().addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
+		controller.getCriteria().addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromTime(),getToTime());
+		controller.getCriteria().addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
+		controller.getCriteria().addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_FROM_TIME));
 		controller.onSearch(null);
+		controller.setWho(null);
 		setNew(false);
 	}
 
@@ -589,7 +521,6 @@ public class ActivityDialogController {
 		if (minsList == null) {
 			minsList = new LinkedList<SelectItem>();
 			SelectItem item;
-			
 			for (int i = 0; i < 60; i=i+IAssetConstants.FRACTION_TIME) {
 				item = new SelectItem(String.valueOf(i), String.valueOf(i));
 				minsList.add(item);
@@ -597,9 +528,5 @@ public class ActivityDialogController {
 		}
 		return minsList;
 	}
-
-	
-
-
 
 }

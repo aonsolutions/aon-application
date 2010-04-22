@@ -12,7 +12,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.accounting.AmortizationType;
 import com.code.aon.accounting.AutoConcept;
 import com.code.aon.accounting.Balance;
-import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -20,6 +19,7 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.accounting.enumeration.BalanceType;
+import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,7 +41,8 @@ public class AccountingCollectionsController {
 	private LinkedList<SelectItem> accountEntryTypes;
 	private LinkedList<SelectItem> amortizationPeriods;
 	private LinkedList<SelectItem> periodStatuses;
-
+	private LinkedList<SelectItem> loanStatuses;
+	
 	private List<SelectItem> autoConcepts;
 	private List<String> concepts;
 
@@ -162,6 +163,21 @@ public class AccountingCollectionsController {
 		return periodStatuses;
 	}
 
+	public List<SelectItem> getLoanStatuses() {
+		if (loanStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			loanStatuses = new LinkedList<SelectItem>();
+			LoanStatus[] aeTypes = LoanStatus.values();
+			for (int i = 0; i < aeTypes.length; i++) {
+				LoanStatus status = aeTypes[i];
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				loanStatuses.add(item);
+			}
+		}
+		return loanStatuses;
+	}
+
 	public void setAutoConcepts(List<SelectItem> autoConcepts ) {
 		this.autoConcepts = autoConcepts;
 	}
@@ -216,9 +232,11 @@ public class AccountingCollectionsController {
 			AccountEntryType[] aeTypes = AccountEntryType.values();
 			for (int i = 0; i < aeTypes.length; i++) {
 				AccountEntryType type = aeTypes[i];
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				accountEntryTypes.add(item);
+				if (type != AccountEntryType.LEASING_FEE && type != AccountEntryType.LEASING) {
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					accountEntryTypes.add(item);	
+				}
 			}
 		}
 		return accountEntryTypes;
@@ -248,13 +266,15 @@ public class AccountingCollectionsController {
 		return loans;
 	}
 
-	public List<SelectItem> getLeasings() throws ManagerBeanException {
+	public List<SelectItem> getActiveLoans() throws ManagerBeanException {
 		List<SelectItem> loans = new LinkedList<SelectItem>();
-		IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
-		Iterator<?> iter = leasingBean.getList(null).iterator();
+		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(loanBean.getFieldName(IAccountingAlias.LOAN_STATUS) , LoanStatus.ACTIVE);
+		Iterator<?> iter = loanBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
-			Leasing leasing = (Leasing) iter.next();
-			SelectItem item = new SelectItem(leasing, leasing.getDescription());
+			Loan loan = (Loan) iter.next();
+			SelectItem item = new SelectItem(loan, loan.getDescription());
 			loans.add(item);
 		}
 		return loans;

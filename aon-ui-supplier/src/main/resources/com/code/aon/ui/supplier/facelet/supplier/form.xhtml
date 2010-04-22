@@ -83,7 +83,7 @@
 							</ui:include>
 						</aon:panelTab>
  
- 						<c:if test="#{aonConfiguration.bean.supplier.showFinanceData}">
+ 						<c:if test="#{aonConfiguration.bean.supplier.showFinanceData and aonRole.financeOperator}">
 							<aon:panelTab id="finance"
 								label="#{registryBundle.registry_finance_data_module}">
 								<aon:panel>

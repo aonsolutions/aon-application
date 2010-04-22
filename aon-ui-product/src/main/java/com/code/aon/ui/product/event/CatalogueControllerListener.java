@@ -17,6 +17,7 @@ public class CatalogueControllerListener extends ControllerAdapter implements II
 		if (endDate != null) {
 			Date startDate = ((Catalogue) this.getController().getTo()).getStartDate();
 			if (endDate.before(startDate)) {
+				((Catalogue)this.getController().getTo()).setEndDate(null);
 				throw new ControllerListenerException(AonUtil.getMessage("productBundle", "product_catalogue_dates_error"));
 			}
 		}
@@ -28,6 +29,7 @@ public class CatalogueControllerListener extends ControllerAdapter implements II
 		if (endDate != null) {
 			Date startDate = ((Catalogue) this.getController().getTo()).getStartDate();
 			if (endDate.before(startDate)) {
+				((Catalogue)this.getController().getTo()).setEndDate(null);
 				throw new ControllerListenerException(AonUtil.getMessage("productBundle", "product_catalogue_dates_error"));
 			}
 		}

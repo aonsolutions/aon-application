@@ -25,6 +25,11 @@ public interface IAonRole {
 	String ADMIN = "Admin";
 
 	/**
+	 * Role de Configuración
+	 */
+	String CONFIG = "Config";
+	
+	/**
 	 * Role de Auditor
 	 */
 	String AUDITOR = "Auditor";
@@ -34,6 +39,15 @@ public interface IAonRole {
 	 */
 	String CONFIDENTIALITY = "Confidentiality";
 
+	/**
+	 * Role de Acceso a Productos
+	 */
+	String PRODUCT = "Product";
+	
+	/**
+	 * Role de Acceso a Comercial
+	 */
+	String COMMERCIAL = "Commercial";
 
 	/**
 	 * Role de Acceso a Ventas
@@ -56,9 +70,9 @@ public interface IAonRole {
 	String ACCOUNTING = "Accounting";
 
 	/**
-	 * Role de Acceso a Facturación
+	 * Role de Acceso a Facturación y Tesoreria
 	 */
-	String INVOICING = "Invoicing";
+	String FINANCE = "Finance";
 
 	/**
 	 * Role de Acceso a Estadísticas
@@ -71,7 +85,8 @@ public interface IAonRole {
 	String TASK_MONITORING = "TaskMonitoring";
 
 	/**
-	 * Role para dar capacidad de firmar facturas electrónicas.
+	 * Role para dar capacidad de firmar documentos electrónicos.
 	 */
-	String INVOICE_SIGNER = "InvoiceSigner";
+	String E_SIGNATURE = "eSignature";
+
 }

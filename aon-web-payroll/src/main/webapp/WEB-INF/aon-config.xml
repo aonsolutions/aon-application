@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.esferalia.com/config">
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
+	xmlns="http://www.esferalia.com/config" >
 
-	<payroll:config version="1.0"
-		xmlns:payroll="http://www.esferalia.com/payroll">
-		<payroll:payroll show="false" />
+	<payroll:config version="1.0" xmlns:payroll="http://www.esferalia.com/payroll">
+	
+		<payroll:payroll enable="true" />
+		
 	</payroll:config>
-
-
 </config>
+

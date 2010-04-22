@@ -27,7 +27,7 @@ public class WarehouseAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-warehouse/src/main/java/com/code/aon/warehouse/dao/IWarehouseAlias.java");
+		File file = new File("/AON-TRUNK/aon-warehouse/src/main/java/com/code/aon/warehouse/dao/IWarehouseAlias.java");
 		String[] classes = new String[] { 
 			Delivery.class.getName(),
 			DeliveryDetail.class.getName(),

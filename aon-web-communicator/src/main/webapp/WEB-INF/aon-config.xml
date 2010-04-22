@@ -18,6 +18,7 @@
 			showCompanyOtherData="true"
 			showPanelTabSet="true" 
 			showDigitalCertificate="true"
+			showEInvoice="false"
 		/>
 	</company:config>
 

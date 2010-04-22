@@ -8,6 +8,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import com.code.aon.accounting.Period;
 import com.code.aon.ui.accounting.check.AccountEntryEnabledCheck;
 import com.code.aon.ui.accounting.check.AccountingCheckException;
 import com.code.aon.ui.accounting.check.AccountingCheckParams;
@@ -112,5 +113,15 @@ public class AccountCheckController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+	
+	public void checkEmptyAccountEntry(Period p) throws AccountingCheckException{
+		setParams(new AccountingCheckParams());
+		getParams().setPeriod(p);
+		List<IAccountCheck> list = getAccountChecks();
+		for (IAccountCheck accountCheck: list) {
+			accountCheck.setEnabled(accountCheck instanceof EmptyAccountEntryCheck);
+		}
+		executeCheck();
 	}
 }

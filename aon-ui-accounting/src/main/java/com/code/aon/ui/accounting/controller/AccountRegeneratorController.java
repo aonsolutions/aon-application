@@ -7,9 +7,11 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.util.AccountHelperManager;
 import com.code.aon.accounting.util.AccountJournalManager;
 import com.code.aon.accounting.util.AccountSummaryManager;
+import com.code.aon.accounting.util.VatManager;
 import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.ui.accounting.check.AccountingCheckException;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountRegeneratorController implements IProgression {
@@ -21,12 +23,10 @@ public class AccountRegeneratorController implements IProgression {
 	private boolean progressionEnabled;
 	private Long progressionValue;
 	private boolean progressStart;
-	private boolean recording;
-	private boolean redirect;
-	
 	private boolean summary;
 	private boolean helper;
 	private boolean journal;
+	private boolean vat;
 
 	public Period getPeriod() {
 		return period;
@@ -58,6 +58,12 @@ public class AccountRegeneratorController implements IProgression {
 	public void setJournal(boolean journal) {
 		this.journal = journal;
 	}
+	public boolean isVat() {
+		return vat;
+	}
+	public void setVat(boolean vat) {
+		this.vat = vat;
+	}
 
 	public boolean isProgressionPanelVisible() {
 		return progressionPanelVisible;
@@ -82,12 +88,27 @@ public class AccountRegeneratorController implements IProgression {
 				regenerateAccountHelper();	
 			}
 			if (isJournal() ) {
-				regenerateJournalCounter();
+				AccountCheckController acc=(AccountCheckController)AonUtil.getRegisteredBean("accountCheck");
+				acc.checkEmptyAccountEntry(this.getPeriod());
+				if(acc.getCheckEntryList()==null || acc.getCheckEntryList().size()==0){
+					regenerateJournalCounter();
+				}else{
+					String msg = "-Existen apuntes sin lineas. Verifique la integridad de la Contabilidad.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
 			}
 			if (isSummary()) {
 				regenerateAccountSummary();
 			}
+			if (isVat()) {
+				regenerateVat();
+			}
 			onClosePanel(event);
+		} catch (AccountingCheckException e) {
+			String msg = "- Se produjeron errores al regenerar el número de diario.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
 		} finally {
 			setProgressionCurrentValue(-1L);
 		}
@@ -121,6 +142,18 @@ public class AccountRegeneratorController implements IProgression {
 			AonUtil.addInfoMessage("- El número de diario se han regenerado correctamente.");
 		} catch (ManagerBeanException e) {
 			String msg = "- Se produjeron errores al regenerar el número de diario.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	
+	private void regenerateVat() {
+		try {
+			VatManager vm = new VatManager();
+			vm.regenerateVAT(getPeriod(),getSecurityLevel(),this);
+			AonUtil.addInfoMessage("- Los número en Facturas de IVA Soportado se han regenerado correctamente.");
+		} catch (ManagerBeanException e) {
+			String msg = "- Se produjeron errores al regenerar el número en Facturas de IVA Soportado.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}

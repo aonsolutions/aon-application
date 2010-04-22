@@ -44,14 +44,13 @@ public class AuditSessionFilter implements Filter {
 	}	
 	
 	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request ) {
-		AuditManager manager = AuditManager.getInstance();
 		try {
-			if (! manager.isAuditConfigured() ) {
-				manager.configureAudit();
-			}			
 			AuthPrincipal principal = getPrincipal(request);
-			Application application = manager.getApplication(principal);
-			User user = manager.getUser( principal.getShortName() );
+			LOGGER.info( "Principal {}", principal );
+			Application application = AuditManager.getApplication(principal);
+			LOGGER.info( "Application {}", application );
+			User user = AuditManager.getUser( principal.getShortName() );
+			LOGGER.info( "User {}", user );
 			if ( application.getAuditLevel() != AuditLevel.NONE ) {
 				Session session = new Session();
 				session.setApplication( application );
@@ -60,7 +59,7 @@ public class AuditSessionFilter implements Filter {
 				session.setStartDate( new Date(httpSession.getCreationTime()) );
 				session.setRemoteAddress( request.getRemoteAddr() );
 				session.setRemoteHost( request.getRemoteHost() );
-				manager.insertSession( session );
+				AuditManager.insertSession( session );
 				httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, session );				
 			}
 		} catch ( Throwable th ) {
@@ -75,10 +74,15 @@ public class AuditSessionFilter implements Filter {
 
 		if ( (servletRequest != null) && (servletRequest instanceof HttpServletRequest) ) {
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
-			HttpSession session = request.getSession(false);
+			HttpSession httpSession = request.getSession(false);
 
-			if ( (session != null) && (session.getAttribute(AuditManager.AUDIT_SESSION_PROPERTY) == null) ) {
-				insertLoginAudit(session, request );
+			if ( httpSession != null) {
+				Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+				if ( session == null ) {
+					insertLoginAudit(httpSession, request );
+				} else {
+					LOGGER.info( "Session already exists {}", session );
+				}
 			}
 		}
 		filterChain.doFilter(servletRequest, servletResponse);

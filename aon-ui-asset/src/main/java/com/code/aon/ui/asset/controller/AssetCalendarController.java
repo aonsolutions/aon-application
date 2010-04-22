@@ -52,21 +52,16 @@ public class AssetCalendarController extends BasicController{
 	}
 
 	public void onDaySelected(ActionEvent event) {
-		
 		setCalendarDay(Calendar.getInstance().getTime());
-		
 		try {
 			restoreCriteria();
-			
 			this.onSearch(null);
 			initializeAssetFractionList();
-			
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			// controlar la excepcion, igual tb abortProcessException, ....
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
-		
 	}
 	
 	public void onInitialize(ActionEvent event) {
@@ -81,17 +76,14 @@ public class AssetCalendarController extends BasicController{
 		ActivityDialogController adc = (ActivityDialogController)AonUtil.getRegisteredBean(IAssetConstants.ACTIVITY_DIALOG_CONTROLLER_NAME);
 		adc.setFromDate((Date)event.getNewValue());
 		adc.setToDate((Date)event.getNewValue());
-		
 		try {
 			restoreCriteria();
-			
 			this.onSearch(null);
 			initializeAssetFractionList();
-			
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			// controlar la excepcion, igual tb abortProcessException, ....
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
 	}
 	
@@ -104,7 +96,6 @@ public class AssetCalendarController extends BasicController{
 	
 	public List<Integer> getTimeFractionList() {
 		timeFractionList = new ArrayList<Integer>();
-		
 		int blank=60/IAssetConstants.FRACTION_TIME;
 		int inc=0;
 		for(int i=0; i<numFraction; i++){
@@ -124,7 +115,6 @@ public class AssetCalendarController extends BasicController{
 
 	public List<Integer> getHoursList() {
 		hoursList = new ArrayList<Integer>();
-		
 		for(int i=8; i<IAssetConstants.END_TIME; i++){
 			hoursList.add(i);
 		}
@@ -160,19 +150,14 @@ public class AssetCalendarController extends BasicController{
 	}	
 
 	public void initializeAssetFractionList() throws ManagerBeanException{
-		
 		List<ITransferObject> activityList = BeanManager.getManagerBean(AssetActivity.class).getList(criteria);
-		
 		initializeAssetList();
-		
 		for(ITransferObject to:activityList){
 			AssetActivity aa = (AssetActivity)to;
-			
 			boolean exist=false;
 			Iterator<DayAssetList> it = dayAssetList.iterator();
 			int numIterations;
 			int position;
-			
 			while(!exist && it.hasNext()){
 				DayAssetList dait = it.next();
 				
@@ -196,7 +181,6 @@ public class AssetCalendarController extends BasicController{
 		dayAssetList = new ArrayList<DayAssetList>();
 		DayAssetList dal;
 		List<Fraction> fractions;
-		
 		for(ITransferObject to:assetList){
 			Asset aa = (Asset)to;
 			fractions = new ArrayList<Fraction>();
@@ -229,11 +213,9 @@ public class AssetCalendarController extends BasicController{
 	
 	private int fractionIterations(Date fromTime, Date toTime){
 		Long hours, minutes, result;
-		
 		hours=fromTime.getTime();
 		minutes=toTime.getTime();
 		result=(minutes-hours)/(1000*60);
-		
 		return result.intValue()/IAssetConstants.FRACTION_TIME;
 	}
 	
@@ -264,7 +246,6 @@ public class AssetCalendarController extends BasicController{
 
 	public class Fraction {
 		private AssetActivity activity;
-		
 		private boolean reserved;
 		private boolean first;
 
@@ -296,7 +277,6 @@ public class AssetCalendarController extends BasicController{
 			this.activity = activity;
 		}
 	}
-
 
 	
 }

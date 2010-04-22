@@ -5,6 +5,7 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -13,6 +14,10 @@ import com.code.aon.ui.form.event.ControllerSearchListener;
 public class OfferSearchListener extends ControllerSearchListener {
 
 	private Target target;
+
+	private OfferType offerType;
+
+	private Target thirdParty;
 
 	private OfferStatus[] offerStatuses;
 
@@ -24,6 +29,22 @@ public class OfferSearchListener extends ControllerSearchListener {
 		this.target = target;
 	}
 
+	public OfferType getOfferType() {
+		return offerType;
+	}
+
+	public void setOfferType(OfferType offerType) {
+		this.offerType = offerType;
+	}
+
+	public Target getThirdParty() {
+		return thirdParty;
+	}
+
+	public void setThirdParty(Target thirdParty) {
+		this.thirdParty = thirdParty;
+	}
+
 	public OfferStatus[] getOfferStatuses() {
 		return offerStatuses;
 	}
@@ -31,10 +52,16 @@ public class OfferSearchListener extends ControllerSearchListener {
 	public void setOfferStatuses(OfferStatus[] offerStatuses) {
 		this.offerStatuses = offerStatuses;
 	}
-	
+
+	public boolean isThirdPartyType() {
+		return OfferType.THIRD_PARTY == offerType;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		setTarget(new Target());
+		setOfferType(null);
+		setThirdParty(new Target());
 		OfferStatus[] defaultOfferStatus = {OfferStatus.PENDING};
 		setOfferStatuses(defaultOfferStatus);
 	}
@@ -44,6 +71,12 @@ public class OfferSearchListener extends ControllerSearchListener {
 		Criteria criteria = getController().getCriteria();
 		if (getTarget() != null && getTarget().getId() != null) {
 			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_TARGET_ID), getTarget().getId());			
+		}
+		if (getOfferType() != null) {
+			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_TYPE), getOfferType());			
+		}
+		if (getThirdParty() != null && getThirdParty().getId() != null) {
+			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_THIRD_PARTY_ID), getThirdParty().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getOfferStatuses())) {
 			String status = getController().resolveAlias(ICommercialAlias.OFFER_STATUS);

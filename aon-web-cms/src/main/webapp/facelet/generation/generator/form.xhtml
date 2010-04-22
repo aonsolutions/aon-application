@@ -39,24 +39,25 @@
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>
+						<h:outputLink id="preview" value="#{generator_status.previewURL}" target="_blank"
+							styleClass="aon-finding-toolbar-item aon-icon-file-entrance" > 
+							<aon:outputText value="#{appBundle.cms_preview}"/>
+						</h:outputLink>							
 						<aon:commandButton id="publish_ok"
 							value="#{appBundle.aon_publish}" immediate="true"
 							reRender="generatorForm"
 							actionListener="#{generator_status.onPublish}" 
-							styleClass="aon-finding-toolbar-item aon-icon-accept">
+							styleClass="aon-finding-toolbar-item aon-icon-file-upload">
 							<a4j:support 
 								event="onclick" reRender="poll,grid" ajaxSingle="true"
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>
-						<h:outputLink 
-							id="web_url"
-							rendered="#{generator_status.published}"
-							value="#{generator_status.webURL}" 
-							target="_blank"
-							style="line-height:18px;">
-							<aon:outputText value="WEB" />
-						</h:outputLink>
+						<h:outputLink id="web_url" value="#{generator_status.webURL}" target="_blank"
+							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+							rendered="#{generator_status.published}">
+							<aon:outputText value="#{appBundle.cms_view}"/>
+						</h:outputLink>						
 						<aon:commandButton id="home"
 							value="#{bundle.aon_home}"
 							action="home" 

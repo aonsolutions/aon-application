@@ -20,6 +20,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
@@ -35,7 +36,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name = "finance")
-public class Finance implements ITransferObject, IBankAccountContainer{
+public class Finance implements ITransferObject, IBankAccountContainer, IConfidentialable {
 	
 	private static final long serialVersionUID = 8289553641190577845L;
 
@@ -350,6 +351,16 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 		this.securityLevel = securityLevel;
 	}
 	
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}
+
 	/**
 	 * Gets the total amount.
 	 * 

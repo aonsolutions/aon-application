@@ -15,7 +15,6 @@ import com.code.aon.accounting.AutoConcept;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.Loan;
-import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.Period;
 
 /** 
@@ -679,101 +678,16 @@ public interface IAccountingAlias {
 	String  LOAN_SECURITY_LEVEL = LOAN_ENTRY.getAliasNames()[11];
 
 	/** 
+	* Alias value: Loan_status
+	* Hibernate value: Loan.status
+	*/
+	String  LOAN_STATUS = LOAN_ENTRY.getAliasNames()[12];
+
+	/** 
 	* Alias value: Loan_term
 	* Hibernate value: Loan.term
 	*/
-	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[12];
-
-
-
-	/** 
-	* DAOConstantsEntry for Leasing entity.
-	*/ 
-	DAOConstantsEntry LEASING_ENTRY = DAOConstants.getDAOConstant(Leasing.class);
-
-	/** 
-	* Alias value: Leasing_id
-	* Hibernate value: Leasing.id
-	*/
-	String  LEASING_ID = LEASING_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Leasing_leasingDate
-	* Hibernate value: Leasing.leasingDate
-	*/
-	String  LEASING_LEASING_DATE = LEASING_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Leasing_supplierName
-	* Hibernate value: Leasing.supplierName
-	*/
-	String  LEASING_SUPPLIER_NAME = LEASING_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Leasing_supplierDocument
-	* Hibernate value: Leasing.supplierDocument
-	*/
-	String  LEASING_SUPPLIER_DOCUMENT = LEASING_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Leasing_description
-	* Hibernate value: Leasing.description
-	*/
-	String  LEASING_DESCRIPTION = LEASING_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: Leasing_term
-	* Hibernate value: Leasing.term
-	*/
-	String  LEASING_TERM = LEASING_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: Leasing_interestPercent
-	* Hibernate value: Leasing.interestPercent
-	*/
-	String  LEASING_INTEREST_PERCENT = LEASING_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: Leasing_review
-	* Hibernate value: Leasing.review
-	*/
-	String  LEASING_REVIEW = LEASING_ENTRY.getAliasNames()[7];
-
-	/** 
-	* Alias value: Leasing_amount
-	* Hibernate value: Leasing.amount
-	*/
-	String  LEASING_AMOUNT = LEASING_ENTRY.getAliasNames()[8];
-
-	/** 
-	* Alias value: Leasing_registryBank_id
-	* Hibernate value: Leasing.registryBank.id
-	*/
-	String  LEASING_REGISTRY_BANK_ID = LEASING_ENTRY.getAliasNames()[9];
-
-	/** 
-	* Alias value: Leasing_fixedAssetAccount_id
-	* Hibernate value: Leasing.fixedAssetAccount.id
-	*/
-	String  LEASING_FIXED_ASSET_ACCOUNT_ID = LEASING_ENTRY.getAliasNames()[10];
-
-	/** 
-	* Alias value: Leasing_vat_id
-	* Hibernate value: Leasing.vat.id
-	*/
-	String  LEASING_VAT_ID = LEASING_ENTRY.getAliasNames()[11];
-
-	/** 
-	* Alias value: Leasing_vat_percentage
-	* Hibernate value: Leasing.vat.percentage
-	*/
-	String  LEASING_VAT_PERCENTAGE = LEASING_ENTRY.getAliasNames()[12];
-
-	/** 
-	* Alias value: Leasing_securityLevel
-	* Hibernate value: Leasing.securityLevel
-	*/
-	String  LEASING_SECURITY_LEVEL = LEASING_ENTRY.getAliasNames()[13];
+	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[13];
 
 
 

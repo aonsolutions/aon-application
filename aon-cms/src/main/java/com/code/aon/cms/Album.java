@@ -31,9 +31,9 @@ public class Album implements IActivableObject, IPositionObject {
 	
 	private String alias;
 	
-	private boolean active = true;
+	private boolean active;
 	
-	private Integer position = new Integer(0);
+	private Integer position;
 	
 	private AlbumCategory albumCategory;
 	
@@ -41,9 +41,18 @@ public class Album implements IActivableObject, IPositionObject {
 	
 	private String image;
 	
-	private int itemsPerPage;
+	private Integer thumbnailWidth;
+	
+	private Integer itemsPerPage;
 	
 	private Set<AlbumDetail> details;
+	
+	public Album() {
+		this.active = true;
+		this.position = 0;
+		this.itemsPerPage = 20;
+		this.thumbnailWidth = 100;
+	}
 
 	@Id
 	@GeneratedValue
@@ -112,12 +121,21 @@ public class Album implements IActivableObject, IPositionObject {
 	}
 
 	@Column(name="items_per_page")
-	public int getItemsPerPage() {
+	public Integer getItemsPerPage() {
 		return itemsPerPage;
 	}
 
-	public void setItemsPerPage(int itemsPerPage) {
+	public void setItemsPerPage(Integer itemsPerPage) {
 		this.itemsPerPage = itemsPerPage;
+	}
+
+	@Column(name="thumb_width")
+	public Integer getThumbnailWidth() {
+		return thumbnailWidth;
+	}
+
+	public void setThumbnailWidth(Integer thumbnailWidth) {
+		this.thumbnailWidth = thumbnailWidth;
 	}
 
 	@OneToMany(mappedBy = "album", cascade={CascadeType.REMOVE})
@@ -144,6 +162,7 @@ public class Album implements IActivableObject, IPositionObject {
 				.append(this.itemsPerPage, o.itemsPerPage)
 				.append(this.position, o.position)
 				.append(this.publishDate, o.publishDate)				
+				.append(this.thumbnailWidth, o.thumbnailWidth)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -160,6 +179,7 @@ public class Album implements IActivableObject, IPositionObject {
 			.append(itemsPerPage)			
 			.append(position)
 			.append(publishDate)
+			.append(thumbnailWidth)
 			.toHashCode();
 	}
 

@@ -11,12 +11,21 @@
 
 		<aon:form id="accountEntryForm" styleClass="aon-form">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
 				<ui:param name="controller" value="#{accountEntry}" />
 				<aon:methodParam name="backActionListener" value="#{accountEntry.onSelectFirst}" type="actionListener" />
 				<aon:methodParam name="backAction" value="accountEntry_form" />				
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton 
+						value="#{accountingBundle.accounting_new_invoice_entry}"
+						accesskey="X" title="Alt+X"
+						actionListener="#{invoiceEntry.onReset}"
+						action="account_invoice_entry"
+						rendered="#{!accountEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset" />
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">

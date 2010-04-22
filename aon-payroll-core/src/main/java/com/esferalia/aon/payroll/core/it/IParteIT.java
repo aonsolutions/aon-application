@@ -3,20 +3,17 @@ package com.esferalia.aon.payroll.core.it;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.core.IDocument;
-import com.esferalia.aon.core.IRegistry;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.IEmpresa;
-import com.esferalia.aon.payroll.core.IPersona;
-import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
+import com.esferalia.aon.payroll.core.enumeration.CausaAlta;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
+import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 
-public interface IParteIT
-	<E extends IEmpleado<IEmpresa<IRegistry<IDocument>>,IPersona<IRegistry<IDocument>>>,
-	P extends IParteIT<E,P>> extends Serializable{
+public interface IParteIT extends Serializable{
 
-	E getEmpleado();
-	void setEmpleado(E empleado);
+	Serializable getId();
+	
+	IEmpleado getEmpleado();
+	void setEmpleado(IEmpleado empleado);
 	
 	Date getFechaBaja();
 	void setFechaBaja(Date fechaBaja);
@@ -51,8 +48,8 @@ public interface IParteIT
 	boolean isRecaida();
 	void setRecaida(boolean recaida);
 	
-	P getParteITRecaida();
-	void setParteITRecaida(P ParteITRecaida);
+	IParteIT getParteITRecaida();
+	void setParteITRecaida(IParteIT parteITRecaida);
 
 	Periodicidad getProrrateoCotizacion();
 	void setProrrateoCotizacion(Periodicidad period);
@@ -77,5 +74,8 @@ public interface IParteIT
 	
 	Double getPrestacionDiaria75();
 	void setPrestacionDiaria75(Double prestacionDiaria75);
+	
+	CausaAlta getCausaAlta();
+	void setCausaAlta(CausaAlta causaAlta);
 	
 }

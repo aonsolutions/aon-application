@@ -3,17 +3,17 @@
 	<parent>
 		<artifactId>aon.web.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>5.0.0</version>
+		<version>5.1.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-communicator</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMUNICATOR</name>
-	<version>5.0.0</version>
+	<version>5.1.0</version>
 	<description>AON WEB COMMUNICATOR</description>
 	<properties>
-		<dbVersion>4.8.0</dbVersion>
+		<dbVersion>5.0.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-communicator</finalName>

@@ -108,6 +108,20 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>htmlCommandLink</tag-name>
+		<component>
+			<component-type>
+				javax.faces.HtmlCommandLink
+			</component-type>
+			<renderer-type>
+				org.ajax4jsf.HtmlCommandLinkRenderer
+			</renderer-type>
+			<handler-class>
+				com.code.aon.faces.component.AonComponentHandler
+			</handler-class>			
+		</component>
+	</tag>
+	<tag>
 		<tag-name>outputLink</tag-name>
 		<component>
 			<component-type>
@@ -598,6 +612,12 @@
 		<tag-name>componentGroup</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.componentGroup.ComponentGroupHandler
+		</handler-class>
+	</tag>
+	<tag>
+		<tag-name>componentGroupMethod</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.componentGroup.ComponentGroupMethodHandler
 		</handler-class>
 	</tag>
 	<tag>

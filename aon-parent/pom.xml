@@ -4,13 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon.parent</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0</version>
   <packaging>pom</packaging>
   <description>POM padre de los proyectos AON</description>
   <name>AON PARENT</name>
-  <properties>
-    <aon-version>5.0.0-SNAPSHOT</aon-version>
-  </properties>
   <scm>
     <connection>
     scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.0.0/aon-application/trunk</connection>
@@ -106,11 +103,11 @@
                 <version>2.0</version>
                 <configuration>
                         <preparationGoals>clean</preparationGoals>
-                        <releaseVersion>5.0.0</releaseVersion>
-                        <developmentVersion>5.1.0-SNAPSHOT</developmentVersion>
+                        <releaseVersion>5.1.0</releaseVersion>
+                        <developmentVersion>5.2.0-SNAPSHOT</developmentVersion>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
 
-                        <tag>5.0.0</tag>
+                        <tag>5.1.x</tag>
                         <tagBase>http://dev.esferalia.com/repos/aon-application/releases</tagBase>
                 </configuration>
         </plugin>

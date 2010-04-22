@@ -155,7 +155,7 @@
 	<!-- **************** LOAN ************************* -->
 	<managed-bean>
 		<managed-bean-name>loan</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.LoanController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -671,23 +671,6 @@
 			com.code.aon.ui.accounting.controller.LoanFeeEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-
-	<!-- ********** ACCOUNT LEASING CONTROLLER ********* -->
-	<managed-bean>
-		<managed-bean-name>leasingEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.LeasingEntryController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ********** ACCOUNT LEASING FEE CONTROLLER ********* -->
-	<managed-bean>
-		<managed-bean-name>leasingFeeEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.LeasingFeeEntryController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 
 	<!-- ********** MBASE IMPORT CONTROLLER ********* -->
 	<managed-bean>
@@ -1265,19 +1248,6 @@
 			<from-outcome>account_loan_entry</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/accounting/facelet/entry/loan/open/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<!-- **************** LEASING ********************* -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>account_leasing_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/leasing/open/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>account_leasing_fee_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/leasing/fee/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

@@ -89,11 +89,17 @@
 						</aon:div>
 						<aon:outputLabel for="entryDate-To" value="#{bundle.aon_date_to}" />
 						<aon:div>
-							<aon:inputText id="To_Series" value="#{vatReport.fromSeries}" size="4"/>
+							<aon:inputText id="To_Series" value="#{vatReport.toSeries}" size="4"/>
 							<aon:inputText id="To_Number" value="#{vatReport.toNumber}" size="10"
 								style="margin-left: 0.5em;"/>
 						</aon:div>
 					</aon:panelGrid>
+
+					<aon:outputLabel for="AccountEntry_securityLevel" value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu id="AccountEntry_securityLevel" value="#{vatReport.securityLevel}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Vat_type"
 						value="#{financeBundle.finance_invoice_order_by}" />

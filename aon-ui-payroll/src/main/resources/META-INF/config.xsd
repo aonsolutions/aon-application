@@ -12,8 +12,7 @@
 	</xs:element>
 	<xs:element name="payroll">
 		<xs:complexType>
-			<xs:attribute name="show" type="xs:boolean" use="required"/>
-		
+			<xs:attribute name="enable" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

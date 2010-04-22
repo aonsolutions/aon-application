@@ -193,12 +193,12 @@
 		<param-name>org.richfaces.LoadScriptStrategy</param-name>
 		<param-value>ALL</param-value>
     </context-param>
-<!-- 
+
 	<context-param>
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.3.2.SR1/</param-value>
 	</context-param>
--->
+
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -301,12 +301,12 @@
 	<security-role><role-name>User</role-name></security-role>
 	<security-role><role-name>Guest</role-name></security-role>
 	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Config</role-name></security-role>
 	<security-role><role-name>Auditor</role-name></security-role>
 	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>Product</role-name></security-role>
+	<security-role><role-name>Finance</role-name></security-role>
 	<security-role><role-name>Accounting</role-name></security-role>
-	<security-role><role-name>Invoicing</role-name></security-role>
-	<security-role><role-name>Statistics</role-name></security-role>
-	<security-role><role-name>TaskMonitoring</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonFinance</resource-env-ref-name>

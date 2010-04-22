@@ -85,7 +85,7 @@
 						reRender="loanContainer" ajaxSingle="true"
 						value="#{loanFeeEntry.header.loan}">
 						<f:selectItem itemValue="" itemLabel="-" />
-						<f:selectItems value="#{accountingCollections.loans}" />
+						<f:selectItems value="#{accountingCollections.activeLoans}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_description"

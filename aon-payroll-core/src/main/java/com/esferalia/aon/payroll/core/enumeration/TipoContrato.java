@@ -7,8 +7,11 @@ public enum TipoContrato {
 
 	// Tiempo Parcial Horas
 	TEMPORAL_HORAS,
-	
+
 	// Tiempo Parcial Dias
 	TEMPORAL_DIAS;
-	
+
+	public String getValue() {
+		return Integer.toString(this.ordinal());
+	}
 }

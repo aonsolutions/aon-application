@@ -30,46 +30,8 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditManager.class);
 	
 	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.session";	
-
-	private static final AuditManager SINGLETON = new AuditManager();
 	
-	private boolean auditConfigured;
-	
-	private IManagerBean applicationBean;
-	
-	private IManagerBean sessionBean;
-	
-	private IManagerBean actionBean;
-	
-	private IManagerBean actionEntryBean;
-	
-	private AuditManager() {
-	}
-	
-	
-	public static AuditManager getInstance() {
-		return SINGLETON;
-	}
-	
-	public void configureAudit() {
-		if (! this.auditConfigured ) {
-			try {
-				applicationBean = BeanManager.getManagerBean(Application.class);
-				sessionBean = BeanManager.getManagerBean(Session.class);
-				actionBean = BeanManager.getManagerBean(Action.class);
-				actionEntryBean = BeanManager.getManagerBean(ActionEntry.class);
-				this.auditConfigured = true;
-			} catch (ManagerBeanException e) {
-				LOGGER.error( "Error initalizing Audit Manager Beans", e );
-			}
-		}
-	}
-	
-	public boolean isAuditConfigured() {
-		return auditConfigured;
-	}
-	
-	public String getApplicationName( String context ) {
+	public static String getApplicationName( String context ) {
 		String application = context;
 		if ( application.startsWith("/") ) {
 			application = application.substring(1);
@@ -81,8 +43,9 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 		return application;
 	}		
 
-	public Application getApplication( String name ) throws ManagerBeanException {
+	public static Application getApplication( String name ) throws ManagerBeanException {
 		Application application = null;
+		IManagerBean applicationBean = BeanManager.getManagerBean(Application.class);
 		String field = applicationBean.getFieldName(APPLICATION_NAME);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression( field, name );
@@ -98,12 +61,12 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 		return application;
 	}
 
-	public Application getApplication( AuthPrincipal principal ) throws ManagerBeanException {
+	public static Application getApplication( AuthPrincipal principal ) throws ManagerBeanException {
 		String applicationName = getApplicationName(principal.getContext() );
 		return getApplication(applicationName);
 	}
 	
-	public User getUser( String shortName ) {
+	public static User getUser( String shortName ) {
 		try {
             IManagerBean bean = BeanManager.getManagerBean(User.class);
             Criteria criteria = new Criteria();
@@ -119,22 +82,27 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 	}
 	
 	
-	public void insertSession( Session session ) throws ManagerBeanException {
+	public static void insertSession( Session session ) throws ManagerBeanException {
+		IManagerBean sessionBean = BeanManager.getManagerBean(Session.class);
 		sessionBean.insert( session );
+		LOGGER.info( "Session inserted {}", session );
 	}
 
-	public void closeLoginAudit( Session session ) throws ManagerBeanException {
+	public static void closeLoginAudit( Session session ) throws ManagerBeanException {
+		IManagerBean sessionBean = BeanManager.getManagerBean(Session.class);
 		session.setEndDate( new Date() );
 		sessionBean.update( session );
+		LOGGER.info( "Session finished {}", session );
 	}
 	
-	private boolean isMenuAction( String name ) {
+	private static boolean isMenuAction( String name ) {
 		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 		return aoc.getOptionMap().containsKey(name);
 	}
 
-	public Action getAction( String name, Application application ) throws ManagerBeanException {
+	public  static Action getAction( String name, Application application ) throws ManagerBeanException {
 		Action action = null;
+		IManagerBean actionBean = BeanManager.getManagerBean(Action.class);
 		Criteria criteria = new Criteria();
 		String nameField = actionBean.getFieldName(ACTION_NAME);		
 		criteria.addEqualExpression( nameField, name );
@@ -153,12 +121,14 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 		return action;
 	}	
 	
-	public void createActionEntry( Session session, Action action ) throws ManagerBeanException {
+	public static void createActionEntry( Session session, Action action ) throws ManagerBeanException {
 		ActionEntry ae = new ActionEntry();
 		ae.setSession( session );
 		ae.setAction(action);
 		ae.setExecutionDate( new Date() );
+		IManagerBean actionEntryBean = BeanManager.getManagerBean(ActionEntry.class);
 		actionEntryBean.insert( ae );
+		LOGGER.debug( "ActionEntry inserted {}", ae );
 	}
 
 }

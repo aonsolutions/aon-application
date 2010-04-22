@@ -233,8 +233,7 @@
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Manager</role-name>
-			<role-name>Invitado</role-name>
+			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<login-config>
@@ -244,12 +243,14 @@
 			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
-	<security-role>
-		<role-name>Manager</role-name>
-	</security-role>
-	<security-role>
-		<role-name>Invitado</role-name>
-	</security-role>
+	
+	<security-role><role-name>User</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Auditor</role-name></security-role>
+	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>Statistics</role-name></security-role>
+	
 	<resource-env-ref>
 		<resource-env-ref-name>jdbc/AonCommercial</resource-env-ref-name>
 		<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>

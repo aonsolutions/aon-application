@@ -43,10 +43,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
       <property-name>beanName</property-name>
       <value>account</value>
     </managed-property>
-	<managed-property>
-		<property-name>defaultOrder</property-name>
-		<value>Account_id</value>
-	</managed-property>				    
     <managed-property>
       <property-name>listenerClasses</property-name>
       <list-entries>
