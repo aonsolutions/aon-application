@@ -17,8 +17,6 @@
 
   <modules>
 
-	<module>aon-parent</module>
-
 	<module>aon-account</module>
 	<module>aon-account-bridge</module>
 	<module>aon-accounting</module>
@@ -51,6 +49,7 @@
 	<module>aon-ldap</module>
 	<module>aon-marketing</module>
 	<module>aon-messaging</module>
+	<module>aon-parent</module>
 	<module>aon-payroll-core</module>
 	<module>aon-payroll-nominasta</module>
 	<module>aon-product</module>
