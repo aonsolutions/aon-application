@@ -42,7 +42,7 @@
 		<aon:outputLabel for="Customer_tariff_id"
 			value="#{productBundle.product_tariff}" />
 		<aon:selectOneMenu id="Customer_tariff_id"
-			value="#{customer.to.tariff}">
+			value="#{controller.to.tariff}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{configCollections.tariffs}" />
 		</aon:selectOneMenu>
