@@ -19,18 +19,20 @@
 				<ui:param name="skipRemoveButton" value="#{fbatch.recorded}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
-					<h:commandLink value="&#160;" target="_blank"
+					<aon:htmlCommandLink id="fBatch-excel-report"
+						value="&#160;" target="_blank"
 						action="#{report.onExecute}" rendered="#{!fbatch.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="fBatch" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>							
-					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
+					</aon:htmlCommandLink>							
+					<aon:htmlCommandLink id="fBatch-report"
+						value="#{bundle.aon_listing}" target="_blank"
 						action="#{report.onExecute}" rendered="#{!fbatch.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="fBatch" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 					<aon:commandButton id="csb" value="#{financeBundle.finance_create_disk}"
 						rendered="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
