@@ -17,12 +17,13 @@
 				<ui:param name="controller" value="#{periodAmortization}" />
 
 				<ui:define name="additionalToolbarContent">
-					<h:commandLink target="_blank"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf" value="#{bundle.aon_report}"
+					<aon:htmlCommandLink id="amortizationPeriod-report"
+						value="#{bundle.aon_report}" target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="amortizationPeriod" />
 						<f:param name="outputFormat" value="PDF" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 					<aon:commandButton actionListener="#{periodAmortization.onRecord}"
 						title="#{accountingBundle.accounting_record}"
 						value="#{accountingBundle.accounting_record}"

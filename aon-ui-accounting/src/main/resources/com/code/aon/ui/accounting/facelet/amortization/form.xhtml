@@ -19,13 +19,13 @@
 				<ui:param name="skipRemoveButton" value="#{!amortization.updatable}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
-					<h:commandLink target="_blank"
+					<aon:htmlCommandLink id="amortizationForm-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						value="#{bundle.aon_report}"
+						value="#{bundle.aon_report}" target="_blank"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="amortizationForm" />
 						<f:param name="outputFormat" value="PDF" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>
 				
 			</ui:decorate>
