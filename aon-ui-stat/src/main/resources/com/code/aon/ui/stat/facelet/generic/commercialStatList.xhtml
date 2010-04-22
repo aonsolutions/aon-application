@@ -83,11 +83,11 @@
 					</f:facet>
 
 					<c:if test="#{clickable}">
-						<h:commandLink styleClass="aon-dataTable-link-noicon"
+						<aon:htmlCommandLink styleClass="aon-dataTable-link-noicon"
 							value="#{to.name}" action="#{goAction}"
 							actionListener="#{goMethod}">
 							<f:param name="#{paramName}" value="#{to.key}" />
-						</h:commandLink>
+						</aon:htmlCommandLink>
 					</c:if>
 
 					<c:if test="#{!clickable}">
@@ -151,12 +151,12 @@
 					<f:facet name="header">
 						<aon:outputText value="#{lastColumnName}" />
 					</f:facet>
-					<h:commandLink styleClass="aon-dataTable-link-noicon"
+					<aon:htmlCommandLink styleClass="aon-dataTable-link-noicon"
 						actionListener="#{lastColumnAction}" action="#{customerFacelet}"
 						value="#{lastColumnName}">
 						<f:param name="#{paramName}" value="#{to.key}" />
 						<!-- <f:param name="yearmonth" value="#{to.extra}" /> -->
-					</h:commandLink>
+					</aon:htmlCommandLink>
 
 
 				</aon:column>

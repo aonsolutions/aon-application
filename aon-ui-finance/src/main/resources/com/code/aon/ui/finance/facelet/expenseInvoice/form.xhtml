@@ -230,7 +230,7 @@
 					<aon:div id="Invoice_fileDiv" rendered="#{!expenseInvoice.new and !expenseInvoice.to.signed}">
 						<a4j:region>
 							<h:panelGrid columns="#{expenseInvoiceAttachment.uploaded?3:1}">
-								<h:commandLink id="download" value="&#160;" target="_blank"
+								<aon:htmlCommandLink id="download" value="&#160;" target="_blank"
 									immediate="true" rendered="#{expenseInvoiceAttachment.uploaded}"
 									title="#{financeBundle.finance_download_disk}"
 									actionListener="#{expenseInvoiceAttachment.downloadAttachment}"

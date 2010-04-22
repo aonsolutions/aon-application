@@ -69,7 +69,7 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 						<aon:div>
-							<h:commandLink target="_blank"
+							<aon:htmlCommandLink target="_blank"
 								title="#{model347Report.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 								value="#{model347Report.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 								style="border-width: 0px 0px 0px 0px;"
