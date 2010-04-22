@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.enumeration.CausaAlta;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 
@@ -73,5 +74,8 @@ public interface IParteIT extends Serializable{
 	
 	Double getPrestacionDiaria75();
 	void setPrestacionDiaria75(Double prestacionDiaria75);
+	
+	CausaAlta getCausaAlta();
+	void setCausaAlta(CausaAlta causaAlta);
 	
 }
