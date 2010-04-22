@@ -15,31 +15,33 @@
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_checking_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
-					<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
+					<aon:htmlCommandLink id="customeFeeChecking-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="customeFeeChecking" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>
-					<h:commandLink value="#{customerBundle.customer_module}" target="_blank"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="customeFeeChecking-report"
+						value="#{customerBundle.customer_module}" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="customeFeeChecking" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 
-					<h:commandLink value="&#160;" target="_blank"
-						action="#{report.onExecute}"
+					<aon:htmlCommandLink id="financeChecking-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="financeChecking" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>
-					<h:commandLink value="#{financeBundle.finance_finances}" target="_blank"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="financeChecking-report"
+						value="#{financeBundle.finance_finances}" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="financeChecking" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 			

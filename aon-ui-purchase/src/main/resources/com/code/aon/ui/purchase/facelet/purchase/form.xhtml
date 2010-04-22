@@ -49,7 +49,7 @@
 							rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0 and purchaseDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>									
-						<h:commandLink id="purchase" value="#{purchaseBundle.purchase_purchase}"
+						<aon:htmlCommandLink id="purchaseForm-report" value="#{purchaseBundle.purchase_purchase}"
 							target="_new" rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0}"
 							action="#{report.onExecute}"
 							disabled="#{purchaseDetail.to != null}"
@@ -57,7 +57,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="purchaseForm" />
 							<f:param name="outputFormat" value="PDF" />
-						</h:commandLink>
+						</aon:htmlCommandLink>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			

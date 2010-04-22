@@ -15,22 +15,22 @@
 				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:define name="additionalToolbarContent">					
-					<h:commandLink id="customerReportXls" value="#{bundle.aon_listing}"
-						target="_new" 
-						action="#{report.onExecute}"
+					<aon:htmlCommandLink id="noFeeCustomersReport-excel-report"
+						value="#{bundle.aon_listing}"
+						target="_new" action="#{report.onExecute}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel">
 						<f:param name="reportKey" value="noFeeCustomersReport" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>					
-					<h:commandLink id="customerReportPdf" value="#{bundle.aon_listing}"
-						target="_new" 
-						action="#{report.onExecute}"
+					</aon:htmlCommandLink>					
+					<aon:htmlCommandLink id="noFeeCustomersReport-report"
+						value="#{bundle.aon_listing}"
+						target="_new" action="#{report.onExecute}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="noFeeCustomersReport" />
 						<f:param name="outputFormat" value="PDF" />
-					</h:commandLink>					
+					</aon:htmlCommandLink>					
 				</ui:define>
 			</ui:decorate> 
 			<aon:div styleClass="aon-scroll-area">

@@ -63,13 +63,14 @@
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 							reRender="showNewMessageWindow">
 						</aon:commandButton>						
-						<h:commandLink id="saleInvoice" value="#{financeBundle.finance_invoice}" target="_new" 
+						<aon:htmlCommandLink id="saleInvoice-report"
+							value="#{financeBundle.finance_invoice}" target="_new" 
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and !saleInvoice.accountSource}"
 							action="#{saleInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="saleInvoice" />
-						</h:commandLink>
+						</aon:htmlCommandLink>
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
 							<ui:param name="signController" value="#{saleInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{saleInvoice.new or saleInvoice.to.signed or (!certificate.signable)}" />

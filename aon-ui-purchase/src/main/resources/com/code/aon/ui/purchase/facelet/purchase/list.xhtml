@@ -14,7 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_module}" />
 				<ui:param name="controller" value="#{purchase}" />
 				<ui:define name="additionalToolbarContent">
-					<h:commandLink id="purchase_excel" value="&#160;" 
+					<aon:htmlCommandLink id="purchaseList-excel-report" value="&#160;" 
 						target="_new" rendered="#{!delivery.new}"
 						action="#{report.onExecute}" 
 						disabled="#{deliveryDetail.to != null}"
@@ -22,8 +22,8 @@
 						styleClass="aon-finding-toolbar-item aon-icon-excel">
 						<f:param name="reportKey" value="purchaseList" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>
-					<h:commandLink id="purchase" value="#{bundle.aon_listing}"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="purchaseList-report" value="#{bundle.aon_listing}"
 						target="_new" rendered="#{!purchase.new}"
 						action="#{report.onExecute}" 
 						disabled="#{purchaseDetail.to != null}"
@@ -31,8 +31,8 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="purchaseList" />
 						<f:param name="outputFormat" value="PDF" />
-					</h:commandLink>
-					<h:commandLink id="purchaseDetail_excel" value="&#160;"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="purchaseDetailledList-excel-report" value="&#160;"
 						target="_new" rendered="#{!delivery.new}"
 						action="#{report.onExecute}" 
 						disabled="#{deliveryDetail.to != null}"
@@ -40,8 +40,8 @@
 						styleClass="aon-finding-toolbar-item aon-icon-excel">
 						<f:param name="reportKey" value="purchaseDetailledList" />
 						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>
-					<h:commandLink id="purchaseDetail" value="#{bundle.aon_detailed_listing}"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="purchaseDetailledList-report" value="#{bundle.aon_detailed_listing}"
 						target="_new" rendered="#{!purchase.new}"
 						action="#{report.onExecute}" 
 						disabled="#{purchaseDetail.to != null}"
@@ -49,7 +49,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="purchaseDetailledList" />
 						<f:param name="outputFormat" value="PDF" />
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 
