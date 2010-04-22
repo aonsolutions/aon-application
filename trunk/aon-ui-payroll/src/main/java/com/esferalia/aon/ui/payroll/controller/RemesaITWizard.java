@@ -222,7 +222,7 @@ public class RemesaITWizard implements Serializable {
 			onValidate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
-//			save();
+			save();
 			onDiskGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {
@@ -309,69 +309,18 @@ public class RemesaITWizard implements Serializable {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
+		List<RemesableIT> list = (List<RemesableIT>) getSelectedModel().getWrappedData();
 		try {
 			try {
 				HibernateUtil.setBeginTransaction(false);
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
-				List<RemesableIT> list = (List<RemesableIT>) getSelectedModel().getWrappedData();
 				IRemesaINSS remesaINSS = getParteITDAO().initializeRemesa();	
-				IRemesaParteIT remesaParteIT = getParteITDAO().initializePartesRemesa();
-				getParteITDAO().accept(remesaINSS);
+				remesaINSS = getParteITDAO().accept(remesaINSS);
 				for (RemesableIT r: list){
-					IParteIT p = r.getParteIT(); 
-					IParteConfirmacionIT c = r.getConfirmacionIT(); 
+					IRemesaParteIT remesaParteIT = r.getNewRemesaParteIT();
 					remesaParteIT.setRemesaINSS(remesaINSS);
-					remesaParteIT.setEmpleado(p.getEmpleado());
-					remesaParteIT.setFechaBaja(p.getFechaBaja());
-					remesaParteIT.setTipoOperacionIT(r.getOperacion());
-					if(r.getOperacion() == TipoOperacionIT.CONFIRMACION){
-						remesaParteIT.setFechaParte(c.getFecha());
-						remesaParteIT.setNumeroColegiado(c.getNumeroColegiado());
-						remesaParteIT.setCias(c.getCias());
-						remesaParteIT.setNumero(c.getNumero());
-						remesaParteIT.setBajaProcesada(c.getParteIT().isBajaProcesada());
-						remesaParteIT.setAltaProcesada(c.getParteIT().isAltaProcesada());
-						remesaParteIT.setTipoContingencia(c.getParteIT().getTipoContingencia());
-						remesaParteIT.setRecaida(c.getParteIT().isRecaida());
-						remesaParteIT.setProrrateoCotizacion(c.getParteIT().getProrrateoCotizacion());
-//						remesaParteIT.setProcesado();
-//						remesaParteIT.setRiesgoEmbarazo();
-						remesaParteIT.setBaseRetribucionPeriodoAnterior(c.getParteIT().getBaseRetribucionPeriodoAnterior());
-						remesaParteIT.setDiasPeriodoAnterior(c.getParteIT().getDiasPeriodoAnterior());
-						remesaParteIT.setBaseReguladoraDiaria(c.getParteIT().getBaseReguladoraDiaria());
-						remesaParteIT.setBaseDiariaContingenciasComunes(c.getParteIT().getBaseDiariaContingenciasComunes());
-						remesaParteIT.setBaseDiariaAccidentesTrabajo(c.getParteIT().getBaseDiariaAccidentesTrabajo());
-						remesaParteIT.setPrestacionDiaria60(c.getParteIT().getPrestacionDiaria60());
-						remesaParteIT.setPrestacionDiaria75(c.getParteIT().getPrestacionDiaria75());
-					}else{ 
-						if(r.getOperacion() == TipoOperacionIT.ALTA){
-							remesaParteIT.setFechaParte(p.getFechaAlta());
-							remesaParteIT.setNumeroColegiado(p.getNumeroColegiadoAlta());
-							remesaParteIT.setCias(p.getCiasAlta());
-						}else if(r.getOperacion() == TipoOperacionIT.BAJA){
-							remesaParteIT.setFechaParte(p.getFechaBaja());
-							remesaParteIT.setNumeroColegiado(p.getNumeroColegiadoBaja());
-							remesaParteIT.setCias(p.getCiasBaja());
-						}
-						remesaParteIT.setBajaProcesada(p.isBajaProcesada());
-						remesaParteIT.setAltaProcesada(p.isAltaProcesada());
-						remesaParteIT.setTipoContingencia(p.getTipoContingencia());
-						remesaParteIT.setRecaida(p.isRecaida());
-						remesaParteIT.setProrrateoCotizacion(p.getProrrateoCotizacion());
-//						remesaParteIT.setProcesado();
-//						remesaParteIT.setRiesgoEmbarazo();
-											
-						
-						remesaParteIT.setBaseRetribucionPeriodoAnterior(p.getBaseRetribucionPeriodoAnterior());
-						remesaParteIT.setDiasPeriodoAnterior(p.getDiasPeriodoAnterior());
-						remesaParteIT.setBaseReguladoraDiaria(p.getBaseReguladoraDiaria());
-						remesaParteIT.setBaseDiariaContingenciasComunes(p.getBaseDiariaContingenciasComunes());
-						remesaParteIT.setBaseDiariaAccidentesTrabajo(p.getBaseDiariaAccidentesTrabajo());
-						remesaParteIT.setPrestacionDiaria60(p.getPrestacionDiaria60());
-						remesaParteIT.setPrestacionDiaria75(p.getPrestacionDiaria75());
-					}
 					getParteITDAO().accept(remesaParteIT);	
 				}
 				// FIN operaciones de la transaccion
@@ -392,6 +341,14 @@ public class RemesaITWizard implements Serializable {
 		} finally {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+		try {
+			for (RemesableIT r: list){
+				r.setParteProcesado();
+			}
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
 	}
 
