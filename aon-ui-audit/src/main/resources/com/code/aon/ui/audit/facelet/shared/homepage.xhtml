@@ -18,64 +18,69 @@
 				<ui:param name="skipConnectedLabel" value="#{true}" />
 			</ui:include>
 		</c:if>
-		<aon:form>	
-			<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-				columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto">
-
-				<h:panelGrid styleClass="aon-width-all"
-					headerClass="aon-direct-access-panel aon-icon-optionFavorite">
-					<f:facet name="header">
-						<h:panelGrid style="height: 20px;" columns="3"
-							columnClasses="aon-nowrap,aon-width-all," >
-							<aon:outputText value="#{auditBundle.audit_favorite_module}" />
-							<aon:outputText value="&#160;" />
-							<aon:commandLink id="favorite" immediate="true"
-								value="&#160;" title="#{bundle.aon_editing}"
-								action="actionFavorite" actionListener="#{actionFavorite.onInit}"
-								styleClass="aon-icon-edit" />
-						</h:panelGrid>						
-					</f:facet>
-					<aon:div styleClass="aon-direct-access-list">
-						<aon:dynamicInclude value="#{actionFavorite.template}" />
+		<aon:form>
+			<aon:componentGroup
+				family="javax.faces.Command"
+				rendered="#{aonRole.guest}"
+				method="#{aonRole.doNothing}">
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-auto">
+	
+					<h:panelGrid styleClass="aon-width-all"
+						headerClass="aon-direct-access-panel aon-icon-optionFavorite">
+						<f:facet name="header">
+							<h:panelGrid style="height: 20px;" columns="3"
+								columnClasses="aon-nowrap,aon-width-all," >
+								<aon:outputText value="#{auditBundle.audit_favorite_module}" />
+								<aon:outputText value="&#160;" />
+								<aon:commandLink id="favorite" immediate="true"
+									value="&#160;" title="#{bundle.aon_editing}"
+									action="actionFavorite" actionListener="#{actionFavorite.onInit}"
+									styleClass="aon-icon-edit" />
+							</h:panelGrid>						
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:dynamicInclude value="#{actionFavorite.template}" />
+						</aon:div>
+					</h:panelGrid>
+					<aon:div>
+						<h:panelGrid styleClass="aon-width-all"
+							headerClass="aon-direct-access-panel aon-icon-lastExecuted">
+							<f:facet name="header">
+								<h:panelGrid style="height: 20px;" columns="3"
+									columnClasses="aon-nowrap,aon-width-all," >
+									<aon:outputText value="#{auditBundle.audit_last_executed_module}" />
+									<aon:outputText value="&#160;" />
+									<aon:commandLink id="lastExecuted" immediate="true"
+										value="&#160;" title="#{bundle.aon_listing}"
+										action="actionLastExecuted" actionListener="#{actionLastExecuted.onSearch}"
+										styleClass="aon-icon-expand" />
+								</h:panelGrid>						
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:dynamicInclude value="#{actionLastExecuted.template}" />
+							</aon:div>
+						</h:panelGrid>
+						<h:panelGrid styleClass="aon-width-all aon-margin-top"
+							headerClass="aon-direct-access-panel aon-icon-moreUsed">
+							<f:facet name="header">
+								<h:panelGrid style="height: 20px;" columns="3"
+									columnClasses="aon-nowrap,aon-width-all," >
+									<aon:outputText value="#{auditBundle.audit_more_used_module}" />
+									<aon:outputText value="&#160;" />
+									<aon:commandLink id="actionMoreUsed" immediate="true" 
+										value="&#160;" title="#{bundle.aon_listing}" 
+										action="actionMoreUsed" actionListener="#{actionMoreUsed.onSearch}"
+										styleClass="aon-icon-expand" />
+								</h:panelGrid>						
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:dynamicInclude value="#{actionMoreUsed.template}" />
+							</aon:div>
+						</h:panelGrid>
 					</aon:div>
 				</h:panelGrid>
-				<aon:div>
-					<h:panelGrid styleClass="aon-width-all"
-						headerClass="aon-direct-access-panel aon-icon-lastExecuted">
-						<f:facet name="header">
-							<h:panelGrid style="height: 20px;" columns="3"
-								columnClasses="aon-nowrap,aon-width-all," >
-								<aon:outputText value="#{auditBundle.audit_last_executed_module}" />
-								<aon:outputText value="&#160;" />
-								<aon:commandLink id="lastExecuted" immediate="true"
-									value="&#160;" title="#{bundle.aon_listing}"
-									action="actionLastExecuted" actionListener="#{actionLastExecuted.onSearch}"
-									styleClass="aon-icon-expand" />
-							</h:panelGrid>						
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:dynamicInclude value="#{actionLastExecuted.template}" />
-						</aon:div>
-					</h:panelGrid>
-					<h:panelGrid styleClass="aon-width-all aon-margin-top"
-						headerClass="aon-direct-access-panel aon-icon-moreUsed">
-						<f:facet name="header">
-							<h:panelGrid style="height: 20px;" columns="3"
-								columnClasses="aon-nowrap,aon-width-all," >
-								<aon:outputText value="#{auditBundle.audit_more_used_module}" />
-								<aon:outputText value="&#160;" />
-								<aon:commandLink id="actionMoreUsed" immediate="true" 
-									value="&#160;" title="#{bundle.aon_listing}" 
-									action="actionMoreUsed" actionListener="#{actionMoreUsed.onSearch}"
-									styleClass="aon-icon-expand" />
-							</h:panelGrid>						
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:dynamicInclude value="#{actionMoreUsed.template}" />
-						</aon:div>
-					</h:panelGrid>
-				</aon:div>
-			</h:panelGrid>		
+			</aon:componentGroup>		
 		</aon:form>			
 	</h:panelGrid>
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/footer.xhtml" />
