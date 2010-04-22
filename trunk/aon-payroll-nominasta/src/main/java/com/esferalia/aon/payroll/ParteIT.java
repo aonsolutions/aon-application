@@ -404,14 +404,12 @@ public class ParteIT implements IParteIT,ITransferObject  {
 		}
 	}
 	
-	
-	/*
-	 * Se debe crear el campo en la tabla
-	 */
-	@Transient
+	@Column(name = "causa_alta", nullable = false, length = 1)
+	@Override
 	public CausaAlta getCausaAlta() {
 		return causaAlta;
 	}
+	@Override
 	public void setCausaAlta(CausaAlta causaAlta) {
 		this.causaAlta = causaAlta;
 	}
