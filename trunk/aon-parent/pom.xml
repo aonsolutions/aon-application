@@ -103,11 +103,11 @@
                 <version>2.0</version>
                 <configuration>
                         <preparationGoals>clean</preparationGoals>
-                        <releaseVersion>5.0.0</releaseVersion>
-                        <developmentVersion>5.1.0-SNAPSHOT</developmentVersion>
+                        <releaseVersion>5.1.0</releaseVersion>
+                        <developmentVersion>5.2.0-SNAPSHOT</developmentVersion>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
 
-                        <tag>5.0.0</tag>
+                        <tag>5.1.x</tag>
                         <tagBase>http://dev.esferalia.com/repos/aon-application/releases</tagBase>
                 </configuration>
         </plugin>
