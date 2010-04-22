@@ -17,9 +17,6 @@
 
   <modules>
 
-	<module>aon-parent</module>
-	<module>aon-web-parent</module>
-
 	<module>aon-account</module>
 	<module>aon-account-bridge</module>
 	<module>aon-accounting</module>
