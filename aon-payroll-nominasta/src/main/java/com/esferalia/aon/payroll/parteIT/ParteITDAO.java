@@ -325,8 +325,8 @@ public class ParteITDAO implements IParteITDAO {
 	@Override
 	public IRemesaINSS initializeRemesa() throws PayrollException {
 		RemesaINSS remesa = new RemesaINSS();
-		remesa.setFecha(Calendar.getInstance().getTime());
-		remesa.setHora(Calendar.getInstance().getTime());
+		remesa.setFecha(new Date() );
+		remesa.setHora(new Date());
 		return remesa;
 	}
 	
@@ -360,11 +360,11 @@ public class ParteITDAO implements IParteITDAO {
 	
 	// metodo para grabar la remesa de partes de it
 	@Override
-	public void accept(IRemesaINSS remesaINSS) throws PayrollException {
+	public IRemesaINSS accept(IRemesaINSS remesaINSS) throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RemesaINSS.class);
 			RemesaINSS r = (RemesaINSS) remesaINSS;
-			bean.insertOrUpdate(r);
+			return (IRemesaINSS) bean.insertOrUpdate(r);
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
@@ -372,11 +372,11 @@ public class ParteITDAO implements IParteITDAO {
 	
 	//	metodo para grabar los parteIT de una remesa 
 	@Override
-	public void accept(IRemesaParteIT remesaParteIT) throws PayrollException {
+	public IRemesaParteIT accept(IRemesaParteIT remesaParteIT) throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RemesaParteIT.class);
 			RemesaParteIT r = (RemesaParteIT) remesaParteIT;
-			bean.insertOrUpdate(r);
+			return (IRemesaParteIT) bean.insertOrUpdate(r);
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
