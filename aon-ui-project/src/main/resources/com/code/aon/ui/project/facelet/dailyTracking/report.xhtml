@@ -22,16 +22,16 @@
 					</aon:div>
 					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
 
-						<h:commandLink actionListener="#{dailyTrackingReport.onResetReportSearch}"
+						<aon:htmlCommandLink actionListener="#{dailyTrackingReport.onResetReportSearch}"
 							value="#{bundle.aon_clear}" 
 							onclick="return confirm('#{bundle.aon_clear}&#160;#{bundle.aon_search_header}?');"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber">
-						</h:commandLink>
+						</aon:htmlCommandLink>
 
-						<h:commandLink action="#{dailyTrackingReport.onReport}"
+						<aon:htmlCommandLink action="#{dailyTrackingReport.onReport}"
 							value="#{bundle.aon_report}" target="_blank"
 							styleClass="aon-finding-toolbar-item aon-icon-printer">
-						</h:commandLink>
+						</aon:htmlCommandLink>
 
 					</aon:div>
 				</aon:panelGrid>
