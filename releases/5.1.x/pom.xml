@@ -17,6 +17,8 @@
 
   <modules>
 
+	<module>aon-common</module>
+
 	<module>aon-account</module>
 	<module>aon-account-bridge</module>
 	<module>aon-accounting</module>
@@ -25,7 +27,6 @@
 	<module>aon-campaign</module>
 	<module>aon-cms</module>
 	<module>aon-commercial</module>
-	<module>aon-common</module>
 	<module>aon-common-ldap</module>
 	<module>aon-company</module>
 	<module>aon-config</module>
