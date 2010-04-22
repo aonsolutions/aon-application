@@ -1,5 +1,6 @@
 package com.code.aon.accounting;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -69,7 +71,7 @@ public class Balance implements ITransferObject {
 		this.type = type;
 	}
 
-	@OneToMany(mappedBy = "balance", cascade={CascadeType.REMOVE})
+	@OneToMany(mappedBy = "balance", cascade={CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
 	@OrderBy()
 	public Set<BalanceDetail> getLines() {
 		return this.lines;
@@ -78,7 +80,29 @@ public class Balance implements ITransferObject {
 	public void setLines( Set<BalanceDetail> lines ) {
 		this.lines = lines;
 	}
-
+	
+	@Transient
+	public void addBalanceDetail(BalanceDetail detail) {
+		if (getLines() == null) {
+			setLines( new HashSet<BalanceDetail>());
+		}
+		detail.setBalance(this);
+		getLines().add(detail);
+	}
+	
+	/**
+	 * Método utilizado en la importación de balances, se utiliza en el fichero de 
+	 * definición de reglas de disgester.
+	 */
+	@Transient
+	public String getStringType() {
+		return null;
+	}
+	public void setStringType(String stringType) {
+		BalanceType bt = BalanceType.valueOf(stringType);
+		setType(bt);
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

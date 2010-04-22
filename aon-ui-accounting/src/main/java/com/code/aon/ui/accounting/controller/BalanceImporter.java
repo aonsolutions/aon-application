@@ -17,6 +17,8 @@ import org.richfaces.model.UploadItem;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.util.AonUtil;
@@ -64,15 +66,36 @@ public class BalanceImporter {
 	}
 
 	public void onImport(ActionEvent event) {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+			// BEGIN Transaction
 			ByteArrayInputStream in = new ByteArrayInputStream(getAonFile().getData());
 			parse(in);
 			AonUtil.addInfoMessage("Proceso finalizado correctamente");
+			// END Transaction
+			
+			//HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
-			String message = "Imposible realizar la importación de los balances";
-			AonUtil.addErrorMessage(message);
-			throw new AbortProcessingException(message, e);
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+
+			}
+			String msg = "Imposible realizar la importación de los balances";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+			
 	}
 
 	private void parse(InputStream in) throws ManagerBeanException {
