@@ -39,8 +39,8 @@ public interface IParteITDAO {
 	IBonificacion initializeBonificacion(IParteIT parteIT, ITipoBonificacion tipoBonificacion);
 
 	// Remesa de partes de IT
-	void accept(IRemesaINSS remesaINSS) throws PayrollException;
-	void accept(IRemesaParteIT remesaParteIT) throws PayrollException;
+	IRemesaINSS accept(IRemesaINSS remesaINSS) throws PayrollException;
+	IRemesaParteIT accept(IRemesaParteIT remesaParteIT) throws PayrollException;
 	IRemesaINSS initializeRemesa() throws PayrollException;
 	IRemesaParteIT initializePartesRemesa() throws PayrollException;
 
