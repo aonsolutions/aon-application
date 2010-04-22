@@ -47,12 +47,13 @@
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							actionListener="#{campaign.onEditSearch}"
 							action="campaign_search" accesskey="#{bundle.aon_key_search}" />
-						<h:commandLink target="_blank" value="#{bundle.aon_report}"
+						<aon:htmlCommandLink id="campaignMonitorReport-report"
+							target="_blank" value="#{bundle.aon_report}"
 							styleClass="aon-finding-toolbar-item aon-icon-printer"
 							action="#{report.onExecute}">
 							<f:param name="reportKey" value="campaignMonitorReport" />
 							<f:param name="outputFormat" value="PDF" />
-						</h:commandLink>
+						</aon:htmlCommandLink>
 						<aon:commandButton
 							title="#{campaignBundle.campaign_exclude_dossier}"
 							styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
