@@ -28,7 +28,7 @@
 			showFinanceFeeData="true" 
 			showTaxInfoData="true"
 			showAccount="true"
-			showTariff="true" 
+			showTariff="false" 
 			showSegment="true"
 			showNote="true" 
 			showRelationship="true" 
@@ -54,8 +54,8 @@
 			showFinanceData="true" 
 			showTaxInfoData="true"
 			showAccount="true"
-			showSegment="false"
-			showAddInfo="false"
+			showSegment="true"
+			showAddInfo="true"
 		/>
 		<finance:invoice
 			showWarehouseData="false" 
