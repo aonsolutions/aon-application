@@ -269,11 +269,11 @@
         </configuration>
       </plugin>
       
-      <!--plugin>
+      <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>selenium-maven-plugin</artifactId>
                 <version>1.0.1</version>                      
-                <executions>                                  
+                <!--executions>                                  
                     <execution>                            
                         <id>xvfb</id>                         
                         <phase>pre-integration-test</phase>   
@@ -302,10 +302,10 @@
                         </goals>
                     </execution>
 
-                </executions>
-            </plugin-->
+                </executions-->
+            </plugin>
 
-            <!--plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.5</version>
@@ -313,7 +313,7 @@
                     <skip>true</skip>
                 </configuration>
 
-                <executions>
+                <!--executions>
                     <execution>
                         <id>test</id>
                         <phase>integration-test</phase>
@@ -325,9 +325,9 @@
                             <skip>false</skip>
                         </configuration>
                     </execution>
-                </executions>
+                </executions-->
 
-            </plugin-->
+            </plugin>
 
 
     </plugins>
