@@ -33,9 +33,6 @@ public class Seller implements ITransferObject, IRegistry {
 	/** The registry. */
 	private Registry registry;
 	
-	/** The description. */
-	private String description;
-
 	/**
 	 * Gets the id.
 	 * 
@@ -59,25 +56,6 @@ public class Seller implements ITransferObject, IRegistry {
 		this.id = id;
 	}	
 	
-	/**
-	 * Gets the description.
-	 * 
-	 * @return the description
-	 */
-	@Column(length=20)
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Sets the description.
-	 * 
-	 * @param description the description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	/**
 	 * Gets the registry.
 	 * 

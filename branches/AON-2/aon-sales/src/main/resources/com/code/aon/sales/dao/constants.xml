@@ -5,7 +5,7 @@
 		<hibernate names="id,customer.id,customer.registry.name,customer.registry.surname,customer.status,customer.scope.id,item.id,description,quantity,price,discountExpression,initialDate,finalDate,billingDate,period,securityLevel,workPlace.id"/>
 	</bean>
 	<bean class="com.code.aon.sales.Seller" sqlName="seller">
-		<alias names="description,id,registry_id,registry_name,registry_surname,registry_alias,registry_document"/>
-		<hibernate names="description,id,registry.id,registry.name,registry.surname,registry.alias,registry.document"/>
+		<alias names="id,registry_id,registry_name,registry_surname,registry_alias,registry_document"/>
+		<hibernate names="id,registry.id,registry.name,registry.surname,registry.alias,registry.document"/>
 	</bean>	
 </dao>
