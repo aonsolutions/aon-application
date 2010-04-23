@@ -45,7 +45,7 @@
       </plugin>
 
 
-      <plugin>
+     <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
@@ -269,7 +269,7 @@
         </configuration>
       </plugin>
       
-      <plugin>
+      <!--plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>selenium-maven-plugin</artifactId>
                 <version>1.0.1</version>                      
@@ -293,19 +293,6 @@
                         </configuration>                   
                     </execution>                           
 
-                    <!--execution>
-                        <id>html-test</id>
-                        <phase>integration-test</phase>
-                        <goals>                        
-                            <goal>selenese</goal>      
-                        </goals>                       
-                        <configuration>                
-                                <browser>*firefox /usr/lib64/firefox-3.0.18/firefox</browser>
-                                <startURL>http://dev.esferalia.com</startURL>                
-                                <suite>src/main/html/DesktopTestSuite.html</suite>           
-                        </configuration>                                                     
-                    </execution-->                                                           
-
 
                     <execution>
                         <phase>post-integration-test</phase>
@@ -316,14 +303,13 @@
                     </execution>
 
                 </executions>
-            </plugin>
+            </plugin-->
 
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <!-- Skip the normal tests, we'll run them in the integration-test phase -->
                     <skip>true</skip>
                 </configuration>
 
@@ -341,7 +327,7 @@
                     </execution>
                 </executions>
 
-            </plugin>
+            </plugin-->
 
 
     </plugins>
