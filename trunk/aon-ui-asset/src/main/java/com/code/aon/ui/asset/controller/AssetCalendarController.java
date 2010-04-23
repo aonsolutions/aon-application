@@ -34,7 +34,6 @@ public class AssetCalendarController extends BasicController{
 	private List<Integer> timeFractionList = new ArrayList<Integer>();
 	private List<Integer> hoursList = new ArrayList<Integer>();
 	
-	
 	public boolean isFractionCell() {
 		return fractionCell;
 	}
@@ -134,6 +133,11 @@ public class AssetCalendarController extends BasicController{
 	private List<DayAssetList> dayAssetList;
 	
 	public DataModel getDayAssetModel() throws ManagerBeanException {
+		if(dayAssetModel==null){
+			onInitialize(null);
+			ActivityDialogController adc = (ActivityDialogController)AonUtil.getRegisteredBean("activityDialog");
+			adc.onInitializeRequest(null);
+		}
 		dayAssetModel = new ListDataModel(getDayAssetList());
 		return dayAssetModel;
 	}
@@ -164,8 +168,9 @@ public class AssetCalendarController extends BasicController{
 				if(dait.getAsset().getName().equals(aa.getAsset().getName())){
 					position = fractionPosition(aa.getFromTime());
 					numIterations = fractionIterations(aa.getFromTime(), aa.getToTime());
-					for(int i=0; i<numIterations;i++)
+					for(int i=0; i<numIterations;i++){
 						dait.getFractions().set(position+i,new Fraction(true));
+					}
 					dait.getFractions().get(position).setFirst(true);
 					dait.getFractions().get(position).setActivity(aa);
 					exist = true;
@@ -200,8 +205,8 @@ public class AssetCalendarController extends BasicController{
 		c.setTime(time);
 		hours = c.get(Calendar.HOUR_OF_DAY);
 		minutes = c.get(Calendar.MINUTE);
-		int hourFractions = hoursList.indexOf(hours) * 60
-				/ IAssetConstants.FRACTION_TIME;
+		int hourFractions = getHoursList().indexOf(hours) * 60
+		/ IAssetConstants.FRACTION_TIME;
 		int minuteFractions = minutes / IAssetConstants.FRACTION_TIME;
 		if ((hourFractions + minuteFractions) >= 0) {
 			return hourFractions + minuteFractions;
