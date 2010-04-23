@@ -57,6 +57,7 @@
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>
@@ -66,7 +67,7 @@
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.UserWorkGroup"/>
-		<mapping class="com.code.aon.config.WorkGroup"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>	
 
 		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>
