@@ -624,9 +624,11 @@ public class CompanyParentController extends BasicController implements ICompany
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		cc.getProperties().put( ICommonConstants.HIDE_HEADER_LINKS, value );
 		cc.getProperties().put( ICommonConstants.HIDE_MENU_BAR, value );
-		Map<String,Object> map = cc.getBean().get(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		if ( map != null ) {
-			map.put(ICompanyConstants.SHOW_PANEL_TAB_SET, !value);	
+		if ( cc.getBean() != null ) {
+			Map<String,Object> map = cc.getBean().get(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			if ( map != null ) {
+				map.put(ICompanyConstants.SHOW_PANEL_TAB_SET, !value);	
+			}			
 		}
 	}
 
