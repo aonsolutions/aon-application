@@ -37,13 +37,9 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	private String cias;
 	private TipoOperacionIT tipoOperacionIT;
 	private Integer numero;
-	private boolean bajaProcesada;
-	private boolean altaProcesada;
 	private TipoContingencia tipoContingencia;
 	private boolean recaida;
 	private Periodicidad prorrateoCotizacion;
-	private boolean procesado;
-	private boolean riesgoEmbarazo;
 	private Double baseRetribucionPeriodoAnterior;
 	private Integer diasPeriodoAnterior;
 	private Double baseReguladoraDiaria;
@@ -139,24 +135,6 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	public void setNumero(Integer numero) {
 		this.numero = numero;
 	}
-	@Column(name = "baja_procesada", nullable = false, length = 1)
-	@Override
-	public boolean isBajaProcesada() {
-		return bajaProcesada;
-	}
-	@Override
-	public void setBajaProcesada(boolean bajaProcesada) {
-		this.bajaProcesada = bajaProcesada;
-	}
-	@Column(name = "alta_procesada", nullable = false, length = 1)
-	@Override
-	public boolean getAltaProcesada() {
-		return altaProcesada;
-	}
-	@Override
-	public void setAltaProcesada(boolean altaProcesada) {
-		this.altaProcesada = altaProcesada;
-	}
 	@Column(name = "tipo_it", nullable = false, length = 1)
 	@Override
 	public TipoContingencia getTipoContingencia() {
@@ -183,24 +161,6 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	@Override
 	public void setProrrateoCotizacion(Periodicidad prorrateoCotizacion) {
 		this.prorrateoCotizacion = prorrateoCotizacion;
-	}
-	@Column(name = "procesado", length = 1)
-	@Override
-	public boolean isProcesado() {
-		return procesado;
-	}
-	@Override
-	public void setProcesado(boolean procesado) {
-		this.procesado = procesado;
-	}
-	@Column(name = "riesgo", length = 1)
-	@Override
-	public boolean isRiesgoEmbarazo() {
-		return riesgoEmbarazo;
-	}
-	@Override
-	public void setRiesgoEmbarazo(boolean riesgoEmbarazo) {
-		this.riesgoEmbarazo = riesgoEmbarazo;
 	}
 	@Column(name = "baseant", scale = 2, precision = 11)
 	@Override
@@ -231,7 +191,6 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	public void setBaseReguladoraDiaria(Double baseReguladoraDiaria) {
 		this.baseReguladoraDiaria = baseReguladoraDiaria;
 	}
-
 
 	@Column(name = "basediacg", scale = 2, precision = 11)
 	@Override
@@ -264,7 +223,6 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 		this.prestacionDiaria60 = prestacionDiaria60;
 	}
 
-
 	@Column(name = "prest75", scale = 2, precision = 11)
 	@Override
 	public Double getPrestacionDiaria75() {
@@ -273,7 +231,5 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	@Override
 	public void setPrestacionDiaria75(Double prestacionDiaria75) {
 		this.prestacionDiaria75 = prestacionDiaria75;
-		
 	}
-	
-	}
+}
