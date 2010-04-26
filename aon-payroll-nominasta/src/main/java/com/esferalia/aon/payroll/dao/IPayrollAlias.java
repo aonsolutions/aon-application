@@ -857,142 +857,118 @@ public interface IPayrollAlias {
 	DAOConstantsEntry REMESA_PARTE_IT_ENTRY = DAOConstants.getDAOConstant(RemesaParteIT.class);
 
 	/** 
-	* Alias value: RemesaParteIT_altaProcesada
-	* Hibernate value: RemesaParteIT.altaProcesada
-	*/
-	String  REMESA_PARTE_IT_ALTA_PROCESADA = REMESA_PARTE_IT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: RemesaParteIT_bajaProcesada
-	* Hibernate value: RemesaParteIT.bajaProcesada
-	*/
-	String  REMESA_PARTE_IT_BAJA_PROCESADA = REMESA_PARTE_IT_ENTRY.getAliasNames()[1];
-
-	/** 
 	* Alias value: RemesaParteIT_baseDiariaAccidentesTrabajo
 	* Hibernate value: RemesaParteIT.baseDiariaAccidentesTrabajo
 	*/
-	String  REMESA_PARTE_IT_BASE_DIARIA_ACCIDENTES_TRABAJO = REMESA_PARTE_IT_ENTRY.getAliasNames()[2];
+	String  REMESA_PARTE_IT_BASE_DIARIA_ACCIDENTES_TRABAJO = REMESA_PARTE_IT_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: RemesaParteIT_baseDiariaContingenciasComunes
 	* Hibernate value: RemesaParteIT.baseDiariaContingenciasComunes
 	*/
-	String  REMESA_PARTE_IT_BASE_DIARIA_CONTINGENCIAS_COMUNES = REMESA_PARTE_IT_ENTRY.getAliasNames()[3];
+	String  REMESA_PARTE_IT_BASE_DIARIA_CONTINGENCIAS_COMUNES = REMESA_PARTE_IT_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: RemesaParteIT_baseReguladoraDiaria
 	* Hibernate value: RemesaParteIT.baseReguladoraDiaria
 	*/
-	String  REMESA_PARTE_IT_BASE_REGULADORA_DIARIA = REMESA_PARTE_IT_ENTRY.getAliasNames()[4];
+	String  REMESA_PARTE_IT_BASE_REGULADORA_DIARIA = REMESA_PARTE_IT_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RemesaParteIT_baseRetribucionPeriodoAnterior
 	* Hibernate value: RemesaParteIT.baseRetribucionPeriodoAnterior
 	*/
-	String  REMESA_PARTE_IT_BASE_RETRIBUCION_PERIODO_ANTERIOR = REMESA_PARTE_IT_ENTRY.getAliasNames()[5];
+	String  REMESA_PARTE_IT_BASE_RETRIBUCION_PERIODO_ANTERIOR = REMESA_PARTE_IT_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: RemesaParteIT_cias
 	* Hibernate value: RemesaParteIT.cias
 	*/
-	String  REMESA_PARTE_IT_CIAS = REMESA_PARTE_IT_ENTRY.getAliasNames()[6];
+	String  REMESA_PARTE_IT_CIAS = REMESA_PARTE_IT_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: RemesaParteIT_diasPeriodoAnterior
 	* Hibernate value: RemesaParteIT.diasPeriodoAnterior
 	*/
-	String  REMESA_PARTE_IT_DIAS_PERIODO_ANTERIOR = REMESA_PARTE_IT_ENTRY.getAliasNames()[7];
+	String  REMESA_PARTE_IT_DIAS_PERIODO_ANTERIOR = REMESA_PARTE_IT_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: RemesaParteIT_empleado_id
 	* Hibernate value: RemesaParteIT.empleado.id
 	*/
-	String  REMESA_PARTE_IT_EMPLEADO_ID = REMESA_PARTE_IT_ENTRY.getAliasNames()[8];
+	String  REMESA_PARTE_IT_EMPLEADO_ID = REMESA_PARTE_IT_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: RemesaParteIT_fechaBaja
 	* Hibernate value: RemesaParteIT.fechaBaja
 	*/
-	String  REMESA_PARTE_IT_FECHA_BAJA = REMESA_PARTE_IT_ENTRY.getAliasNames()[9];
+	String  REMESA_PARTE_IT_FECHA_BAJA = REMESA_PARTE_IT_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: RemesaParteIT_fechaParte
 	* Hibernate value: RemesaParteIT.fechaParte
 	*/
-	String  REMESA_PARTE_IT_FECHA_PARTE = REMESA_PARTE_IT_ENTRY.getAliasNames()[10];
+	String  REMESA_PARTE_IT_FECHA_PARTE = REMESA_PARTE_IT_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: RemesaParteIT_id
 	* Hibernate value: RemesaParteIT.id
 	*/
-	String  REMESA_PARTE_IT_ID = REMESA_PARTE_IT_ENTRY.getAliasNames()[11];
+	String  REMESA_PARTE_IT_ID = REMESA_PARTE_IT_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: RemesaParteIT_numero
 	* Hibernate value: RemesaParteIT.numero
 	*/
-	String  REMESA_PARTE_IT_NUMERO = REMESA_PARTE_IT_ENTRY.getAliasNames()[12];
+	String  REMESA_PARTE_IT_NUMERO = REMESA_PARTE_IT_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: RemesaParteIT_numeroColegiado
 	* Hibernate value: RemesaParteIT.numeroColegiado
 	*/
-	String  REMESA_PARTE_IT_NUMERO_COLEGIADO = REMESA_PARTE_IT_ENTRY.getAliasNames()[13];
+	String  REMESA_PARTE_IT_NUMERO_COLEGIADO = REMESA_PARTE_IT_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: RemesaParteIT_prestacionDiaria60
 	* Hibernate value: RemesaParteIT.prestacionDiaria60
 	*/
-	String  REMESA_PARTE_IT_PRESTACION_DIARIA60 = REMESA_PARTE_IT_ENTRY.getAliasNames()[14];
+	String  REMESA_PARTE_IT_PRESTACION_DIARIA60 = REMESA_PARTE_IT_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: RemesaParteIT_prestacionDiaria75
 	* Hibernate value: RemesaParteIT.prestacionDiaria75
 	*/
-	String  REMESA_PARTE_IT_PRESTACION_DIARIA75 = REMESA_PARTE_IT_ENTRY.getAliasNames()[15];
-
-	/** 
-	* Alias value: RemesaParteIT_procesado
-	* Hibernate value: RemesaParteIT.procesado
-	*/
-	String  REMESA_PARTE_IT_PROCESADO = REMESA_PARTE_IT_ENTRY.getAliasNames()[16];
+	String  REMESA_PARTE_IT_PRESTACION_DIARIA75 = REMESA_PARTE_IT_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: RemesaParteIT_prorrateoCotizacion
 	* Hibernate value: RemesaParteIT.prorrateoCotizacion
 	*/
-	String  REMESA_PARTE_IT_PRORRATEO_COTIZACION = REMESA_PARTE_IT_ENTRY.getAliasNames()[17];
+	String  REMESA_PARTE_IT_PRORRATEO_COTIZACION = REMESA_PARTE_IT_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: RemesaParteIT_recaida
 	* Hibernate value: RemesaParteIT.recaida
 	*/
-	String  REMESA_PARTE_IT_RECAIDA = REMESA_PARTE_IT_ENTRY.getAliasNames()[18];
+	String  REMESA_PARTE_IT_RECAIDA = REMESA_PARTE_IT_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: RemesaParteIT_remesaINSS_id
 	* Hibernate value: RemesaParteIT.remesaINSS.id
 	*/
-	String  REMESA_PARTE_IT_REMESA_INSS_ID = REMESA_PARTE_IT_ENTRY.getAliasNames()[19];
-
-	/** 
-	* Alias value: RemesaParteIT_riesgoEmbarazo
-	* Hibernate value: RemesaParteIT.riesgoEmbarazo
-	*/
-	String  REMESA_PARTE_IT_RIESGO_EMBARAZO = REMESA_PARTE_IT_ENTRY.getAliasNames()[20];
+	String  REMESA_PARTE_IT_REMESA_INSS_ID = REMESA_PARTE_IT_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: RemesaParteIT_tipoContingencia
 	* Hibernate value: RemesaParteIT.tipoContingencia
 	*/
-	String  REMESA_PARTE_IT_TIPO_CONTINGENCIA = REMESA_PARTE_IT_ENTRY.getAliasNames()[21];
+	String  REMESA_PARTE_IT_TIPO_CONTINGENCIA = REMESA_PARTE_IT_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: RemesaParteIT_tipoOperacionIT
 	* Hibernate value: RemesaParteIT.tipoOperacionIT
 	*/
-	String  REMESA_PARTE_IT_TIPO_OPERACION_IT = REMESA_PARTE_IT_ENTRY.getAliasNames()[22];
+	String  REMESA_PARTE_IT_TIPO_OPERACION_IT = REMESA_PARTE_IT_ENTRY.getAliasNames()[18];
 
 
 
