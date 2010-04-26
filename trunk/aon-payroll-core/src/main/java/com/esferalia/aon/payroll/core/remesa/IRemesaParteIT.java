@@ -37,12 +37,6 @@ public interface IRemesaParteIT extends Serializable {
 	Integer getNumero();
 	void setNumero(Integer numero);
 	
-	boolean isBajaProcesada();
-	void setBajaProcesada(boolean bajaProcesada);
-
-	boolean getAltaProcesada();
-	void setAltaProcesada(boolean altaProcesada);
-	
 	TipoContingencia getTipoContingencia();
 	void setTipoContingencia(TipoContingencia tipoContingencia);
 	
@@ -51,12 +45,6 @@ public interface IRemesaParteIT extends Serializable {
 	
 	Periodicidad getProrrateoCotizacion();
 	void setProrrateoCotizacion(Periodicidad period);
-	
-	boolean isProcesado();
-	void setProcesado(boolean procesado);
-	
-	boolean isRiesgoEmbarazo();
-	void setRiesgoEmbarazo(boolean riesgoEmbarazo);
 	
 	Double getBaseRetribucionPeriodoAnterior();
 	void setBaseRetribucionPeriodoAnterior(Double baseRetribucionPeriodoAnterior);
