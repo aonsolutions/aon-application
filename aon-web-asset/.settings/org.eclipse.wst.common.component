@@ -4,6 +4,12 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-asset/aon-asset">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-asset/aon-ui-asset">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="aon-web-asset"/>
         <property name="java-output-path" value="build/classes"/>
     </wb-module>
