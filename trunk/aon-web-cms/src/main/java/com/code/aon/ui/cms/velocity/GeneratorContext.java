@@ -30,6 +30,7 @@ import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.SidebarSide;
+import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -196,7 +197,7 @@ public class GeneratorContext implements IVelocityConstants {
 			Iterator<ITransferObject> sidebarOption_iter = sidebarOption_lst.iterator();
 			while (sidebarOption_iter.hasNext()) {
 				SidebarOption sidebarOption = (SidebarOption)sidebarOption_iter.next(); 
-				if ( sidebarOption.getIdent() == null ) {
+				if ( (sidebarOption.getIdent() == null) && (sidebarOption.getType() != SidebarType.DIARY_CALENDAR) ) {
 					getLogger().error("OPCION " + sidebarOption.getAlias() + " DE BARRA LATERAL "+ s.getAlias() + " NO REFERENCIA A NINGUN ELEMENTO");
 					continue;
 				}
