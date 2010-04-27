@@ -4,9 +4,9 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"	
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"	
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -76,23 +76,25 @@
 				        </rich:recursiveTreeNodesAdaptor>
 				    </rich:tree>
 		            <aon:div id="GalleryList" styleClass="aon-padding">
-						<rich:dataGrid var="item" value="#{document.model}" columns="6" columnClasses="aon-vertical-align-top">
-							<aon:div style="width:125px;text-align:center">
-								<aon:outputLink value="#{document.previewCurrentUrl}/#{item.name}" target="_blank">
-				            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-border aon-padding"/>
-				            		<aon:div style="width:112px;overflow:hidden;">
-				            			<aon:outputText value="#{item.name}"/>
-				            		</aon:div>
-				            	</aon:outputLink>
-			            		<aon:div>
+						<rich:dataGrid var="item" value="#{document.model}" columns="6"
+							columnClasses="aon-text-center aon-vertical-align-top">
+							<h:panelGrid width="125">
+								<f:facet name="header">
+									<aon:outputLink value="#{document.previewCurrentUrl}/#{item.name}" target="_blank">
+					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-padding aon-border"/>
+					            	</aon:outputLink>
+								</f:facet>
+								<aon:div style="width: 110px;overflow: hidden;">
+		            				<aon:outputText value="#{item.name}" />
+		            			</aon:div>
+			            		<f:facet name="footer">
 									<aon:commandButton styleClass="aon-noborder aon-padding" 
 										action="document_list" value="#{bundle.aon_remove}"
 					                    actionListener="#{document.onDeleteFile}"
 										image="#{aonResource.resolveLocal['/images/cms/icons/delete.png']}">
 									</aon:commandButton> 
-			            		</aon:div>
-							</aon:div>
-							
+								</f:facet> 
+							</h:panelGrid>
 						</rich:dataGrid>
 					</aon:div>
 				</aon:panelGrid>
