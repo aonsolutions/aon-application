@@ -2,6 +2,9 @@ package com.code.aon.ui.cms.event;
 
 import java.io.File;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
@@ -36,11 +39,10 @@ public class AlbumImageControllerListener extends ControllerAdapter {
 	}
 
 	private void generateThumbnail(AlbumImage ai){
-		if (ai.getThumbnail()==null ||
-				ai.getThumbnail().trim().isEmpty()){
-			if (ai.getImage()!=null && !ai.getImage().trim().isEmpty()){
+		if ( StringUtils.isBlank(ai.getThumbnail()) ) {
+			if (! StringUtils.isBlank(ai.getImage()) ) {
 				File file = ControllerUtil.getImagePath(ai.getImage());
-				File thumb = ImageUtil.resize(file,ImageUtil.DEF_MAX_SIZE);
+				File thumb = ImageUtil.resize(file, Album.DEFAULT_THUMBNAIL_WIDTH);
 				String path = ControllerUtil.getRelativePath(ControllerUtil.getImagesPath(), thumb);
 				ai.setThumbnail( path );
 			}

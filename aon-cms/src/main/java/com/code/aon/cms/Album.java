@@ -26,6 +26,8 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 public class Album implements IActivableObject, IPositionObject {
 
 	private static final long serialVersionUID = -3501150445896926462L;
+	
+	public static int DEFAULT_THUMBNAIL_WIDTH = 100;
 
 	private Integer id;
 	
@@ -51,7 +53,7 @@ public class Album implements IActivableObject, IPositionObject {
 		this.active = true;
 		this.position = 0;
 		this.itemsPerPage = 20;
-		this.thumbnailWidth = 100;
+		this.thumbnailWidth = DEFAULT_THUMBNAIL_WIDTH;
 	}
 
 	@Id

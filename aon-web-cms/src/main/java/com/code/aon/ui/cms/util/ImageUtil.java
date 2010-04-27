@@ -22,8 +22,6 @@ public class ImageUtil {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
 
-	public static int DEF_MAX_SIZE = 100;
-
 	private static String DEF_DIR = "thumb";
 
 	private static String DEF_NAME = "thumb_";
