@@ -150,6 +150,7 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 				bean = BeanManager.getManagerBean(BulletinEmail.class); 
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BULLETIN_EMAIL_LANGUAGE_ID), bulletinDetail.getLanguage().getId());
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BULLETIN_EMAIL_ACTIVE), Boolean.TRUE);
 				listBulletinEmail = (List<ITransferObject>)bean.getList(criteria);
 				emails = new Address[listBulletinEmail.size()];
 				int i = 0;

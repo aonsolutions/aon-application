@@ -11,9 +11,7 @@ import javax.faces.event.ValueChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.cms.util.IActivableObject;
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -22,12 +20,10 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.event.I18NControllerListener;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class BasicI18nController extends BasicController implements I18NControllerListener, IController, ICollectionProvider {
+public class BasicI18nController extends BasicActivableController implements I18NControllerListener {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BasicI18nController.class);
 
@@ -42,15 +38,12 @@ public class BasicI18nController extends BasicController implements I18NControll
     private String language_alias = "";
 
     private String join_alias = "";
-    
-	private boolean richTextEnabled;
 
     /**
      * Constructor.
      * 
      */
 	public BasicI18nController(){
-        super();
         ControllerUtil.getI18NController().addListener(this);
 	}
 	
@@ -340,29 +333,5 @@ public class BasicI18nController extends BasicController implements I18NControll
 		}
 		return null;
 	}
-
-
-	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		activate(true);
-	}
-
-	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		activate(false);
-	}
-	
-	private void activate(boolean active) throws ManagerBeanException {
-		IActivableObject activableObject = (IActivableObject) this.model.getRowData();
-		activableObject.setActive(active);
-		getManagerBean().update(activableObject);
-	}
-	
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-    
 	
 }
