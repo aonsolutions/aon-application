@@ -14,23 +14,69 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		<aon:div styleClass="aon-text-center">
-			<aon:div styleClass="aon-text-center" style="font-size: 1.5em;margin-top: 20px; ">
-				<aon:outputText rendered="#{remesaITWizard.diskOk}"
-					value="#{payrollBundle.payroll_remesa_disk_ok}" />
-				<aon:outputText rendered="#{!remesaITWizard.diskOk}"
-					value="#{payrollBundle.payroll_remesa_disk_ko}" />
-			</aon:div>
-			
-			<rich:separator lineType="solid" style="margin-top: 20px; margin-bottom: 20px;"/>
-			
-			<h:commandLink target="_blank"
-				title="#{remesaITWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				value="#{remesaITWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				style="border-width: 0px 0px 0px 0px;"
-				actionListener="#{remesaITWizard.onDownloadDisk}"
-				rendered="#{remesaITWizard.fileOutput!=null}"
-				styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_remesa}" />
+			</f:facet>
+			<aon:panelGrid columns="2"
+				columnClasses="aon-panelGrid-odd aon-width-100, 
+				aon-panelGrid-even aon-width-auto">
+				
+					<aon:outputText value="#{bundle.aon_id}" />
+					<aon:outputText value="#{remesaITWizard.remesaINSS.id}" />
+
+					<aon:outputText value="#{payrollBundle.payroll_fecha}" />
+					<aon:outputText value="#{remesaITWizard.remesaINSS.fecha}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputText value="#{payrollBundle.payroll_hora}" />
+					<aon:outputText value="#{remesaITWizard.remesaINSS.hora}" >
+						<f:convertDateTime pattern="#{bundle.aon_time_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+			</aon:panelGrid>
+		
+		</aon:panel>
+		
+		<aon:div id="remesaITListContainer" layout="none">
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_remesa_parte_it}" />
+			</f:facet>
+			<aon:dataTable id="remesaITList" var="to" rows="20" width="auto"
+				value="#{remesaITWizard.selectedModel}"
+				columnClasses="
+						aon-editDataTable-iconColumn, 
+						aon-editDataTable-textColumn aon-width-50,
+						aon-editDataTable-textColumn aon-width-auto,
+						aon-editDataTable-textColumn aon-width-100,
+						aon-editDataTable-textColumn aon-width-auto,
+						aon-editDataTable-textColumn aon-width-80, 
+						aon-editDataTable-textColumn aon-width-80, 
+						aon-editDataTable-textColumn aon-width-50,
+						aon-editDataTable-textColumn aon-width-80,
+						aon-editDataTable-textColumn aon-width-150, 
+						aon-editDataTable-iconColumn">
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:commandButton id="deselectButton"
+						actionListener="#{remesaITWizard.onRemoveSelected}"
+						reRender="remesaITListContainer"
+						styleClass="aon-editDataTable-button aon-icon-delete" />
+				</aon:column>
+
+				<ui:include
+					src="/com/esferalia/aon/ui/payroll/facelet/remesaIT/columns.xhtml" />
+
+			</aon:dataTable>
+
+			<aon:dataScroller2 for="remesaITList" showNote="true" />
+		</aon:panel>
 		</aon:div>
 	</ui:define>
 
