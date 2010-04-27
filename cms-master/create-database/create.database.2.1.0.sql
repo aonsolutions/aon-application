@@ -1742,7 +1742,7 @@ COMMENT='Temporada de deportes.';
 #
 
 INSERT INTO `db_version` (`version_number`) VALUES 
-  ('2.0.5');
+  ('2.1.0');
 
 COMMIT;
 
