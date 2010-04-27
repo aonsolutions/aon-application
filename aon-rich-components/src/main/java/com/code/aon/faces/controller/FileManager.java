@@ -1,13 +1,20 @@
 package com.code.aon.faces.controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -16,6 +23,7 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -58,6 +66,8 @@ public class FileManager {
 	private String fileValue;
 	
 	private String folderName;
+	
+	private String zipName;
 	
 	private File currentFile;
 	
@@ -126,6 +136,14 @@ public class FileManager {
 
 	public void setFolderName(String folderName) {
 		this.folderName = folderName;
+	}
+	
+	public String getZipName() {
+		return zipName;
+	}
+
+	public void setZipName(String zipName) {
+		this.zipName = zipName;
 	}
 
 	private File getDefaultDirectory() {
@@ -384,6 +402,72 @@ public class FileManager {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}	
+	
+	private String getRelativePath( File path, File file ) {
+		String fullPath = FilenameUtils.normalizeNoEndSeparator(file.getAbsolutePath());
+		String basePath = FilenameUtils.normalizeNoEndSeparator(path.getAbsolutePath());
+		return StringUtils.substring(fullPath, basePath.length());
+	}	
+	
+	private void addDirectory( ZipOutputStream out, File zipFile, File directory ) throws IOException {
+		for( File file : directory.listFiles() ) {
+			if ( file.canRead() ) {
+				if ( file.isDirectory() ) {
+					addDirectory(out, zipFile, file);
+				} else if ( file.isFile() && (!zipFile.equals(file)) ) {
+					InputStream in = new BufferedInputStream(new FileInputStream(file));
+					String name = getRelativePath(zipFile.getParentFile(), file);
+					out.putNextEntry(new ZipEntry(name));
+					IOUtils.copy(in, out);
+					out.closeEntry();
+					IOUtils.closeQuietly(in);
+				}
+			}
+		}
+	}
+	
+	public void onShowZipWindow( ActionEvent event ) {
+		this.zipName = null;
+		String extension = "." + MimeType.MIME_ZIP.getExtension();
+		String base = getCurrentDirectory().getName();
+		File file = new File( getCurrentDirectory(), base + extension );
+		if ( file.exists() ) {
+			try {
+				File tempFile = File.createTempFile( base, extension, getCurrentDirectory() );
+				this.zipName = tempFile.getName();
+				FileUtils.deleteQuietly(tempFile);
+			} catch (IOException e) {
+				LOGGER.error( "Error calculating zip file name", e);
+			}
+		} else {
+			this.zipName = file.getName();
+		}
+	}
+	
+	public void onCreateZip( ActionEvent event ) {
+		String extension = FilenameUtils.getExtension(this.zipName);
+		if ( StringUtils.isEmpty(extension) ) {
+			this.zipName = this.zipName + "." + MimeType.MIME_ZIP.getExtension();
+		}
+		File zipFile = new File( getCurrentDirectory(), this.zipName );
+		if ( zipFile.exists() ) {
+			AonUtil.addErrorMessage( "File already exists: " + zipFile );
+		}
+		try {
+			OutputStream os = new BufferedOutputStream(new FileOutputStream(zipFile));
+			ZipOutputStream out = new ZipOutputStream(os);
+			if ( getCurrentDirectory().canRead() ) {
+				addDirectory(out, zipFile, getCurrentDirectory());	
+			}
+		    IOUtils.closeQuietly(out);
+		} catch (IOException e) {
+			LOGGER.error("createZip " + zipFile, e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		loadModel( getCurrentDirectory() );
+		reset();
 	}	
 	
 }
