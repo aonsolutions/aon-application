@@ -11,6 +11,7 @@ import com.code.aon.cms.ModularPageDetail;
 import com.code.aon.cms.ModularPageOption;
 import com.code.aon.cms.ModularPageOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -66,7 +67,8 @@ public class ModularPageGenerator extends Generator {
 					List<ModularPageOptionHandler> modularPageOptionHandlerList = new ArrayList<ModularPageOptionHandler>();
 					for (int j = 0; j < modularPageOptionList.size(); j++) {
 						ModularPageOption mpo = (ModularPageOption) modularPageOptionList.get(j);
-						if ( mpo.getIdent() == null ) {
+						if ( (mpo.getIdent() == null) && (mpo.getType() != ModularPageOptionType.NEXT_ARTICLES)
+							&& (mpo.getType() != ModularPageOptionType.BULLETIN_SUSCRIBE) ) {
 							getLogger().error("LA OPCION " + mpo.getAlias() + " DE LA PAGINA MODULAR " + mp.getAlias() + " NO REFERENCIA A NINGUN ELEMENTO");
 							continue;
 						}						
