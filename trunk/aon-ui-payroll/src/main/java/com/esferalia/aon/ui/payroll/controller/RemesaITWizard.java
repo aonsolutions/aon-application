@@ -41,12 +41,20 @@ public class RemesaITWizard implements Serializable {
 
 	private IParteITDAO parteITDAO;
 	private int currentStep;
-	private static final String[] STEPS = { "remesaITWizard_step0", "remesaITWizard_step1", "remesaITWizard_step2", "remesaITWizard_step3" };
+	private static final String[] STEPS = { "remesaITWizard_step0", "remesaITWizard_step1", "remesaITWizard_step2", "remesaITWizard_step3", "remesaITWizard_step4" };
 	private ParteITParams params;
 	private DataModel model;
 	private DataModel selectedModel;
 	private FileOutput fileOutput;
 	private FDIWriter fdiWriter;
+	IRemesaINSS remesaINSS;
+	
+	public void setRemesaINSS(IRemesaINSS remesaINSS) {
+		this.remesaINSS = remesaINSS;
+	}
+	public IRemesaINSS getRemesaINSS(){
+		return remesaINSS;
+	}
 
 	public ParteITParams getParams() {
 		if (params == null) {
@@ -223,9 +231,11 @@ public class RemesaITWizard implements Serializable {
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
 			save();
-			onDiskGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {
+			onDiskGenerate(event);
+			setCurrentStep(getCurrentStep() + 1);
+		} else if (getCurrentStep() == 4) {
 			onFinish(event);
 		}
 	}
@@ -247,7 +257,7 @@ public class RemesaITWizard implements Serializable {
 	}
 
 	public boolean isNextAvailable() {
-		return (getCurrentStep() < 3);
+		return (getCurrentStep() < 4);
 	}
 
 	// ***************************************************
@@ -316,11 +326,11 @@ public class RemesaITWizard implements Serializable {
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
-				IRemesaINSS remesaINSS = getParteITDAO().initializeRemesa();	
-				remesaINSS = getParteITDAO().accept(remesaINSS);
+				IRemesaINSS remesa = getParteITDAO().initializeRemesa();	
+				setRemesaINSS(getParteITDAO().accept(remesa));
 				for (RemesableIT r: list){
 					IRemesaParteIT remesaParteIT = r.getNewRemesaParteIT();
-					remesaParteIT.setRemesaINSS(remesaINSS);
+					remesaParteIT.setRemesaINSS(remesa);
 					getParteITDAO().accept(remesaParteIT);	
 				}
 				// FIN operaciones de la transaccion
@@ -410,6 +420,18 @@ public class RemesaITWizard implements Serializable {
 			parteITDAO = ParteITDAOFactory.getInstance().getParteITDAO();
 		}
 		return parteITDAO;
+	}
+	
+	public List<IRemesaINSS> getRemesaINSSList(){
+		try {
+//			RemesaINSSParams params = new RemesaINSSParams();
+//			params.setId(null);
+//			return getParteITDAO().getRemesaINSS(params);
+			return getParteITDAO().getRemesaINSS(null);
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
 	}
 
 }
