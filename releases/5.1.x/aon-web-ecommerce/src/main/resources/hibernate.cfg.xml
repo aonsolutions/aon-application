@@ -23,20 +23,25 @@
 				
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 		
-		<!-- Mapping files -->
-		<mapping class="com.code.aon.commercial.Offer"/>
-		<mapping class="com.code.aon.commercial.OfferDetail"/>
-		<mapping class="com.code.aon.commercial.OfferAttachment"/>
-		<mapping class="com.code.aon.commercial.OfferTerm"/>
-		<mapping class="com.code.aon.commercial.Target"/>
+		<!-- AON-COMMERCIAL Mapping files -->	
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
-		<mapping class="com.code.aon.commercial.CommercialTracking"/>
 		<mapping class="com.code.aon.commercial.CommercialTerm"/>
-		<mapping class="com.code.aon.commercial.TargetItem"/>
-		<mapping class="com.code.aon.commercial.TargetSeller"/>
+		<mapping class="com.code.aon.commercial.CommercialTracking"/>
+		<mapping class="com.code.aon.commercial.Commission"/>
+		<mapping class="com.code.aon.commercial.CommissionCategory"/>
+		<mapping class="com.code.aon.commercial.CommissionItem"/>
+		<mapping class="com.code.aon.commercial.CommissionTypeCommission"/>
 		<mapping class="com.code.aon.commercial.Expense"/>
 		<mapping class="com.code.aon.commercial.ExpenseAccount"/>
 		<mapping class="com.code.aon.commercial.ExpenseAccountDetail"/>
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferAttachment"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.OfferTerm"/>
+		<mapping class="com.code.aon.commercial.Target"/>
+		<mapping class="com.code.aon.commercial.TargetItem"/>
+		<mapping class="com.code.aon.commercial.TargetSeller"/>
+		<mapping class="com.code.aon.commercial.TargetThirdParty"/>
 		
 		
 		
@@ -53,6 +58,7 @@
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>

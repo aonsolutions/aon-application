@@ -1191,6 +1191,12 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			if (finance.getId() == null) {
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}
+			if (finance.getBank() != null && finance.getBank().getId() == null) {
+				finance.setBank(null);
+			}
+			if (finance.getPayMethod() != null && finance.getPayMethod().getId() == null) {
+				finance.setPayMethod(null);
+			}
 			finance = (Finance) HibernateUtil.getSession(sessionName).merge(finance);
 			financeBean.insertOrUpdate(finance);
 		}
