@@ -4,13 +4,13 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon-infoweb-templates</artifactId>
-  <version>5.1.0</version>
+  <version>5.1.1</version>
   <packaging>pom</packaging>
   <description>Plantillas (Velocity) del InfoWeb.</description>
   <name>AON INFOWEB TEMPLATES</name>
