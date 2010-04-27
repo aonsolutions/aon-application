@@ -24,8 +24,12 @@
 	<ui:define name="afterMenuContent">
 		<aon:dropDownMenu rendered="#{cms.roleDesigner}">
 			<f:facet name="label">
-				<aon:outputText value="#{menuBundle.cms_configuration}"
-					styleClass="aon-dropDownMenu-label aon-icon-config" />
+				<aon:panelGroup>
+					<aon:graphicImage
+						url="#{aonResource.resolve['/images/aon-main-menu/aon-icon-config.png']}" />
+					<aon:outputText value="#{menuBundle.cms_configuration}"
+						styleClass="aon-dropDownMenu-label" />
+				</aon:panelGroup>						
 			</f:facet>		
 			<aon:menuItem value="#{menuBundle.cms_language}" 
 				rendered="#{cms.roleDesigner}"
@@ -37,8 +41,12 @@
 		<aon:dropDownMenu id="structure"
 			rendered="#{domainUtils.structureMenu and (cms.roleDesigner or cms.roleEditor)}">
 			<f:facet name="label">
-				<aon:outputText value="#{menuBundle.cms_structure}"
-					styleClass="aon-dropDownMenu-label aon-icon-master" />
+				<aon:panelGroup>
+					<aon:graphicImage
+						url="#{aonResource.resolve['/images/aon-main-menu/aon-icon-master.png']}" />
+					<aon:outputText value="#{menuBundle.cms_structure}"
+						styleClass="aon-dropDownMenu-label" />
+				</aon:panelGroup>					
 			</f:facet>																							
 			<aon:menuItem id="menu" value="#{menuBundle.cms_menu}"
 				rendered="#{cms.roleDesigner or cms.roleEditor}"
@@ -63,8 +71,12 @@
 		</aon:dropDownMenu>
 		<aon:dropDownMenu id="galleries" rendered="#{cms.roleEditor}">
 			<f:facet name="label">
-				<aon:outputText value="#{menuBundle.cms_galleries}"
-					styleClass="aon-dropDownMenu-label aon-icon-marketing" />
+				<aon:panelGroup>
+					<aon:graphicImage
+						url="#{aonResource.resolve['/images/aon-main-menu/aon-icon-marketing.png']}" />
+					<aon:outputText value="#{menuBundle.cms_galleries}"
+						styleClass="aon-dropDownMenu-label" />
+				</aon:panelGroup>										
 			</f:facet>					
 			<aon:menuItem id="image_gallery" 
 				rendered="#{cms.roleEditor}"
@@ -86,8 +98,12 @@
 		<aon:dropDownMenu id="content"
 			rendered="#{cms.roleEditor or cms.roleRevisor}" >
 			<f:facet name="label">
-				<aon:outputText value="#{menuBundle.cms_content}"
-					styleClass="aon-dropDownMenu-label aon-icon-campaign" />
+				<aon:panelGroup>
+					<aon:graphicImage
+						url="#{aonResource.resolve['/images/aon-main-menu/aon-icon-campaign.png']}" />
+					<aon:outputText value="#{menuBundle.cms_content}"
+						styleClass="aon-dropDownMenu-label" />
+				</aon:panelGroup>										
 			</f:facet>																				
 			<aon:menuItem id="direct_access" 
 				value="#{menuBundle.cms_direct_access}"
@@ -156,8 +172,12 @@
 		<aon:dropDownMenu id="hiru"
 			rendered="#{domainUtils.hiruMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}">
 			<f:facet name="label">
-				<aon:outputText value="#{menuBundle.cms_hiru}"
-					styleClass="aon-dropDownMenu-label aon-icon-accounting" />
+				<aon:panelGroup>
+					<aon:graphicImage
+						url="#{aonResource.resolve['/images/aon-main-menu/aon-icon-accounting.png']}" />
+					<aon:outputText value="#{menuBundle.cms_hiru}"
+						styleClass="aon-dropDownMenu-label" />
+				</aon:panelGroup>										
 			</f:facet>																	
 			<aon:menuItem id="hiru_organizer_centre" value="#{menuBundle.cms_hiru_organizer_centre}"
 				rendered="#{cms.roleEditor or cms.roleRevisor}"
@@ -175,8 +195,12 @@
 		<aon:dropDownMenu id="bulletins"
 			rendered="#{domainUtils.bulletinMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}">
 			<f:facet name="label">
-				<aon:outputText value="#{menuBundle.cms_bulletins}"
-					styleClass="aon-dropDownMenu-label aon-icon-reservation" />
+				<aon:panelGroup>
+					<aon:graphicImage
+						url="#{aonResource.resolve['/images/aon-main-menu/aon-icon-reservation.png']}" />
+					<aon:outputText value="#{menuBundle.cms_bulletins}"
+						styleClass="aon-dropDownMenu-label" />
+				</aon:panelGroup>															
 			</f:facet>														
 			<aon:menuItem id="bulletin" 
 				rendered="#{cms.roleEditor or cms.roleRevisor}"
@@ -197,8 +221,12 @@
 		<aon:dropDownMenu id="sport"
 			rendered="#{domainUtils.sportMenu and ( cms.roleEditor or cms.roleRevisor )}" >
 			<f:facet name="label">
-				<aon:outputText value="#{menuBundle.cms_sport}"
-					styleClass="aon-dropDownMenu-label aon-icon-target" />
+				<aon:panelGroup>
+					<aon:graphicImage
+						url="#{aonResource.resolve['/images/aon-main-menu/aon-icon-target.png']}" />
+					<aon:outputText value="#{menuBundle.cms_sport}"
+						styleClass="aon-dropDownMenu-label" />
+				</aon:panelGroup>															
 			</f:facet>											
 			<aon:menuItem id="sport_category" value="#{menuBundle.cms_sport_category}"
 				action="sport_category_list"
@@ -225,8 +253,12 @@
 		<aon:dropDownMenu id="production"
 			rendered="#{cms.roleEditor or cms.rolePublisher or cms.roleDesigner}">
 			<f:facet name="label">
-				<aon:outputText value="#{menuBundle.cms_production}"
-					styleClass="aon-dropDownMenu-label aon-icon-utilities" />
+				<aon:panelGroup>
+					<aon:graphicImage
+						url="#{aonResource.resolve['/images/aon-main-menu/aon-icon-utilities.png']}" />
+					<aon:outputText value="#{menuBundle.cms_production}"
+						styleClass="aon-dropDownMenu-label" />
+				</aon:panelGroup>															
 			</f:facet>								
 			<aon:menuItem id="template" value="#{menuBundle.cms_template}"
 				rendered="#{cms.roleDesigner}"

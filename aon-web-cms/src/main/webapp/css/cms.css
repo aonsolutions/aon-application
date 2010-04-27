@@ -11,6 +11,11 @@
     overflow:auto;
 }
 .aon-dropDownMenu-label{
-	padding: 2px 4px 2px 22px;
-	background-position:4px !important;
+	vertical-align: top;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.aon-menuBar-content{
+	padding: 0 0 2px 0;
 }
