@@ -3,8 +3,8 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"	
 	template="/facelet/templates/aon.ui.content.xhtml">
@@ -75,29 +75,32 @@
 				        </rich:recursiveTreeNodesAdaptor>
 				    </rich:tree>
 		            <aon:div id="GalleryList" styleClass="aon-padding">
-						<rich:dataGrid var="item" value="#{gallery.model}" columns="6">
-							<aon:div style="width:125px;text-align:center">
-			            		<aon:div style="width:114px;height:114px;overflow:hidden;" styleClass="aon-border">
+						<rich:dataGrid var="item" value="#{gallery.model}" columns="6"
+							columnClasses="aon-text-center aon-vertical-align-top">
+							<h:panelGrid width="125">
+								<f:facet name="header">
 									<aon:outputLink value="#{gallery.previewCurrentUrl}/#{item.name}" target="_blank">
-					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-padding"/>
+					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-padding aon-border"/>
 					            	</aon:outputLink>
-			            		</aon:div>
-			            		<aon:div style="width:112px;overflow:hidden;">
-			            			<aon:outputText value="#{item.name}"/>
-			            		</aon:div>
-			            		<aon:div styleClass="aon-padding aon-text-center">
-									<aon:commandButton styleClass="aon-noborder aon-padding"
-										image="#{aonResource.resolveLocal['/images/cms/icons/settings.png']}"
-					                	action="resizer_form" value="#{appBundle.aon_cms_resize}"
-					                    actionListener="#{resizer.onResizeFile}">
-									</aon:commandButton> 
-									<aon:commandButton styleClass="aon-noborder aon-padding"
-										image="#{aonResource.resolveLocal['/images/cms/icons/delete.png']}"
-					                	action="gallery_list" value="#{bundle.aon_remove}"
-					                    actionListener="#{gallery.onDeleteFile}"> 
-									</aon:commandButton> 
-			            		</aon:div>
-							</aon:div>
+								</f:facet>
+								<aon:div style="width: 110px;overflow: hidden;">
+		            				<aon:outputText value="#{item.name}" />
+		            			</aon:div>
+		            			<f:facet name="footer">
+			            			<aon:panelGroup styleClass="aon-padding aon-text-center" >
+										<aon:commandButton styleClass="aon-noborder aon-padding"
+											image="#{aonResource.resolveLocal['/images/cms/icons/settings.png']}"
+						                	action="resizer_form" value="#{appBundle.aon_cms_resize}"
+						                    actionListener="#{resizer.onResizeFile}">
+										</aon:commandButton> 
+										<aon:commandButton styleClass="aon-noborder aon-padding"
+											image="#{aonResource.resolveLocal['/images/cms/icons/delete.png']}"
+						                	action="gallery_list" value="#{bundle.aon_remove}"
+						                    actionListener="#{gallery.onDeleteFile}"> 
+										</aon:commandButton>
+									</aon:panelGroup>
+								</f:facet> 
+							</h:panelGrid>
 						</rich:dataGrid>
 					</aon:div>
 				</aon:panelGrid>

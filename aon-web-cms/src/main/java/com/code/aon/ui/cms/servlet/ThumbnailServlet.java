@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.cms.Album;
 import com.code.aon.cms.Config;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ImageUtil;
@@ -61,16 +64,15 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 		}
 	}
 	
-	private String getFile( HttpServletRequest req ) {
-		String servlet = req.getServletPath();
+	private String getFile( HttpServletRequest req ) throws UnsupportedEncodingException {
+		String encoding = StringUtils.defaultIfEmpty(req.getCharacterEncoding(), "UTF-8");
+		String relativePath = URLDecoder.decode( req.getServletPath(), encoding );
 		String basePath = getImagesPath(req.getSession());
-		String path = basePath + servlet;
-		String file = path.replaceAll(".thumbnail", "");
-		return file;
+		return StringUtils.replace( basePath + relativePath, ".thumbnail", "");
 	}
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		int maxDim = 100;
+		int maxDim = Album.DEFAULT_THUMBNAIL_WIDTH;
 		if (req.getParameter(WIDTH) != null) {
 			maxDim = Integer.parseInt(req.getParameter(WIDTH).toString());
 		}

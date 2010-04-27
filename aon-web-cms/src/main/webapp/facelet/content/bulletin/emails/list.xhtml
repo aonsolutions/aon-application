@@ -29,9 +29,8 @@
 						<ui:param name="controller" value="#{bulletin_email}" />
 						<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
 						<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />									
-						<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn aon-width-100" />
 						<ui:define name="columns">
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
 									<aon:outputLabel form="BulletinEmail_email" 
 										value="#{appBundle.bulletin_email}" />
@@ -47,7 +46,7 @@
 								</f:facet>
 							</aon:column>
 	
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 								<f:facet name="header">
 									<aon:outputLabel for="BulletinEmail_language"
 										value="#{appBundle.language_language}" />
@@ -67,6 +66,28 @@
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
+							
+							<aon:column styleClass="aon-editDataTable-iconColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.cms_active}" />
+								</f:facet>
+								<aon:div onmouseover="disableRowSelector();"
+									onmouseout="enableRowSelector();" >																									
+									<aon:commandLink title="#{appBundle.generic_page_activate}" 
+										actionListener="#{bulletin_email.onActivate}" 
+										rendered="#{!to.active}">
+										<aon:graphicImage id="GenericPage_active" alt="#{appBundle.cms_activate}"
+											url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+									</aon:commandLink>
+									<aon:commandLink title="#{appBundle.generic_page_deactivate}" 
+										actionListener="#{bulletin_email.onDeactivate}" 
+										rendered="#{to.active}">
+										<aon:graphicImage id="GenericPage_deactive" alt="#{appBundle.cms_deactivate}"
+											url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:column>
+							
 						</ui:define>
 					</ui:decorate>
 
