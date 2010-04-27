@@ -737,6 +737,10 @@
 			<value>AlbumDetail_language_id</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Album_alias</value>
+		</managed-property>				
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -1412,7 +1416,7 @@
 	<!-- ************** BULLETIN EMAIL ************** -->
 	<managed-bean>
 		<managed-bean-name>bulletin_email</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.cms.controller.BasicActivableController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1427,18 +1431,9 @@
 			<value>bulletin_email</value>
 		</managed-property>				
 		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{bulletinEmailControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>bulletinEmailControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.event.BulletinEmailControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
+			<property-name>defaultOrder</property-name>
+			<value>BulletinEmail_email</value>
+		</managed-property>												
 	</managed-bean>
 
 	<!-- ************** BULLETIN ARTICLE ************** -->
