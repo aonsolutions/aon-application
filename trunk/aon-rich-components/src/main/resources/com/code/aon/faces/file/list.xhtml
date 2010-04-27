@@ -27,6 +27,13 @@
 						styleClass="aon-finding-toolbar-item aon-icon-file-upload">		
 						<rich:componentControl for="uploadFileModalPanel" operation="show" event="onclick"/>
 					</aon:commandButton>
+					<aon:commandButton id="zipDirectory"
+						value="#{richBundle.aon_create_zip}"
+						reRender="zipName,createSubFolderGrid"
+						actionListener="#{fileManager.onShowZipWindow}"
+						styleClass="aon-finding-toolbar-item aon-icon-zip">		
+						<rich:componentControl for="createZipModalPanel" operation="show" event="onclick"/>
+					</aon:commandButton>
 					<aon:commandButton id="refresh"
 						value="#{richBundle.aon_refresh}"
 						actionListener="#{fileManager.onRefresh}"
@@ -127,6 +134,7 @@
 		</aon:form>
 		
 		<ui:include src="/com/code/aon/faces/file/createFolder.xhtml" />
+		<ui:include src="/com/code/aon/faces/file/createZip.xhtml" />
 		<ui:include src="/com/code/aon/faces/file/uploadFile.xhtml" />
 
 	</ui:define>
