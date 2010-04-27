@@ -36,6 +36,7 @@ import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITCalculatorFactory;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.it.ParteITParams;
+import com.esferalia.aon.payroll.core.it.RemesaINSSParams;
 import com.esferalia.aon.payroll.core.remesa.IRemesaINSS;
 import com.esferalia.aon.payroll.core.remesa.IRemesaParteIT;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
@@ -55,6 +56,7 @@ public class ParteITDAO implements IParteITDAO {
 	private static String CONF_FEC_ALIAS;
 	private static String CONF_EMPRESA_CDG_ALIAS;
 	private static String CONF_PERSONA_CDG_ALIAS;
+	private static String REMESA_INSS_CDG_ALIAS;
 
 	static {
 		ParteITDAOFactory.register(new ParteITDAO());
@@ -73,8 +75,10 @@ public class ParteITDAO implements IParteITDAO {
 			IManagerBean parteConfITBean = BeanManager.getManagerBean(ParteConfirmacionIT.class);
 			CONF_PROC_ALIAS = parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_PROCESADO_BD);
 			CONF_FEC_ALIAS = parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_FECHA);
-			CONF_EMPRESA_CDG_ALIAS= parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ACTIVIDAD_EMPRESA_ID);
-			CONF_PERSONA_CDG_ALIAS= parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_ID);
+			CONF_EMPRESA_CDG_ALIAS = parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_ACTIVIDAD_EMPRESA_ID);
+			CONF_PERSONA_CDG_ALIAS = parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_ID);
+			IManagerBean remesaINSSBean = BeanManager.getManagerBean(RemesaINSS.class);
+			REMESA_INSS_CDG_ALIAS = remesaINSSBean.getFieldName(IPayrollAlias.REMESA_INSS_ID);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -460,6 +464,30 @@ public class ParteITDAO implements IParteITDAO {
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IRemesaINSS> getRemesaINSS(RemesaINSSParams params) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RemesaINSS.class);
+			List<?> list = bean.getList( getRemesaINSSCriteria(params) ); 
+			return (List<IRemesaINSS>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	@Override
+	public Criteria getRemesaINSSCriteria(RemesaINSSParams params) throws PayrollException {
+		Criteria c = new Criteria();
+		if (params!=null && params.getId()!=null) {
+			c.addEqualExpression(REMESA_INSS_CDG_ALIAS, params.getId());
+		}
+//		c.addOrder(CONF_EMPRESA_CDG_ALIAS);
+//		c.addOrder(CONF_PERSONA_CDG_ALIAS);
+//		c.addOrder(CONF_FEC_ALIAS);
+		return c;
 	}
 }
 
