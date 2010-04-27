@@ -43,6 +43,8 @@ public interface IParteITDAO {
 	IRemesaParteIT accept(IRemesaParteIT remesaParteIT) throws PayrollException;
 	IRemesaINSS initializeRemesa() throws PayrollException;
 	IRemesaParteIT initializePartesRemesa() throws PayrollException;
+	List<IRemesaINSS> getRemesaINSS(RemesaINSSParams params) throws PayrollException;
+	Criteria getRemesaINSSCriteria(RemesaINSSParams params) throws PayrollException;
 
 
 }
