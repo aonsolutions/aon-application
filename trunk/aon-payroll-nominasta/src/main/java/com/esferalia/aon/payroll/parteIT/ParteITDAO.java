@@ -57,6 +57,8 @@ public class ParteITDAO implements IParteITDAO {
 	private static String CONF_EMPRESA_CDG_ALIAS;
 	private static String CONF_PERSONA_CDG_ALIAS;
 	private static String REMESA_INSS_CDG_ALIAS;
+	private static String REMESA_INSS_FECHA_ALIAS;
+	private static String REMESA_INSS_HORA_ALIAS;
 
 	static {
 		ParteITDAOFactory.register(new ParteITDAO());
@@ -79,6 +81,8 @@ public class ParteITDAO implements IParteITDAO {
 			CONF_PERSONA_CDG_ALIAS = parteConfITBean.getFieldName(IPayrollAlias.PARTE_CONFIRMACION_IT_PARTE_IT_EMPLEADO_PERSONA_ID);
 			IManagerBean remesaINSSBean = BeanManager.getManagerBean(RemesaINSS.class);
 			REMESA_INSS_CDG_ALIAS = remesaINSSBean.getFieldName(IPayrollAlias.REMESA_INSS_ID);
+			REMESA_INSS_FECHA_ALIAS = remesaINSSBean.getFieldName(IPayrollAlias.REMESA_INSS_FECHA);
+			REMESA_INSS_HORA_ALIAS = remesaINSSBean.getFieldName(IPayrollAlias.REMESA_INSS_HORA);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -484,9 +488,14 @@ public class ParteITDAO implements IParteITDAO {
 		if (params!=null && params.getId()!=null) {
 			c.addEqualExpression(REMESA_INSS_CDG_ALIAS, params.getId());
 		}
-//		c.addOrder(CONF_EMPRESA_CDG_ALIAS);
-//		c.addOrder(CONF_PERSONA_CDG_ALIAS);
-//		c.addOrder(CONF_FEC_ALIAS);
+		if (params!=null && params.getFecha()!=null) {
+			c.addEqualExpression(REMESA_INSS_FECHA_ALIAS, params.getFecha());
+		}
+		if (params!=null && params.getHora()!=null) {
+			c.addEqualExpression(REMESA_INSS_HORA_ALIAS, params.getHora());
+		}
+		c.addOrder(REMESA_INSS_FECHA_ALIAS);
+		c.addOrder(REMESA_INSS_HORA_ALIAS);
 		return c;
 	}
 }
