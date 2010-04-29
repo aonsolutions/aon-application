@@ -296,12 +296,11 @@ public class RemesaITWizard implements Serializable {
 		list.remove(r);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onDiskGenerate(ActionEvent event) {
 		try {
 			String loggedUser = AonUtil.getRemoteUser();
 			loggedUser = StringUtils.substringBefore(loggedUser, "@");
-			List<RemesableIT> list = (List<RemesableIT>) getSelectedModel().getWrappedData();
+			List<IRemesaParteIT> list = getParteITDAO().getRemesaParteITList(getRemesaINSS());
 			setFileOutput(getFDIWriter().createFDI(list, loggedUser));
 			if (getFileOutput() != null) {
 				if (getFileOutput().getErrors().size() > 0) {
@@ -311,6 +310,8 @@ public class RemesaITWizard implements Serializable {
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			// No se lanza excepción, que vaya a la última página.
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
 	
