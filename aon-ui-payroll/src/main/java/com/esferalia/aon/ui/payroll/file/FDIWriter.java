@@ -32,11 +32,10 @@ import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.enumeration.Regimen;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 import com.esferalia.aon.payroll.core.enumeration.TipoContrato;
-import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
-import com.esferalia.aon.payroll.core.it.IParteIT;
+import com.esferalia.aon.payroll.core.enumeration.TipoOperacionIT;
 import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
-import com.esferalia.aon.ui.payroll.controller.RemesableIT;
+import com.esferalia.aon.payroll.core.remesa.IRemesaParteIT;
 
 public class FDIWriter {
 	
@@ -67,7 +66,7 @@ public class FDIWriter {
 		return parteITDAO;
 	}
 
-	public FileOutput createFDI(List<RemesableIT> partes, String loggedUser ) throws ManagerBeanException {
+	public FileOutput createFDI(List<IRemesaParteIT> partes, String loggedUser ) throws ManagerBeanException {
 		try {
 			ETI eti = createETIRecord( partes, loggedUser );
 			File file = File.createTempFile("XXXXXXXX", ".FDI");
@@ -83,11 +82,11 @@ public class FDIWriter {
 		}
 	}
 
-	private ETI createETIRecord( List<RemesableIT> partes, String loggedUser ) throws PayrollException {
+	private ETI createETIRecord( List<IRemesaParteIT> partes, String loggedUser ) throws PayrollException {
 		ETI eti = new ETI();
 		IUsuario usuario = getCommonsPayrollDAO().getUsuarioActivo(loggedUser);
 		eti.setClave(Integer.parseInt(usuario.getAutorizacion()));
-		for (RemesableIT parte: partes) {
+		for (IRemesaParteIT parte: partes) {
 			EMP emp = createEMPrecord(parte);
 			eti.getEmpresas().add(emp);
 		}
@@ -95,9 +94,9 @@ public class FDIWriter {
 		return getEti();
 	}
 	
-	private EMP createEMPrecord(RemesableIT remesable) throws PayrollException {
-		IParteIT parte = remesable.getParteIT();
-		IEmpleado empleado = parte.getEmpleado();
+	private EMP createEMPrecord(IRemesaParteIT remesable) throws PayrollException {
+//		IParteIT parte = remesable.getParteIT();
+		IEmpleado empleado = remesable.getEmpleado();
 		IActividad actividad = empleado.getActividad();
 		IEmpresa empresa = actividad.getEmpresa();
 		EMP emp = new EMP();
@@ -141,9 +140,9 @@ public class FDIWriter {
 		return emp;
 	}
 	
-	private TRA createTRARecord(RemesableIT remesable) throws PayrollException {
-		IParteIT parte = remesable.getParteIT();
-		IEmpleado empleado = parte.getEmpleado();
+	private TRA createTRARecord(IRemesaParteIT remesable) throws PayrollException {
+//		IParteIT parte = remesable.getParteIT();
+		IEmpleado empleado = remesable.getEmpleado();
 		TRA tra = new TRA();
 		tra.setNumeroAfiliacion( empleado.getPersona().getNumSS() );
 		String tipo = empleado.getPersona().getRegistry().getDocument().getTipo(); 
@@ -160,28 +159,31 @@ public class FDIWriter {
 		return tra;
 	}
 
-	private DIT createDITRecord(RemesableIT remesable) throws PayrollException {
-		IParteIT parte = remesable.getParteIT();
+	private DIT createDITRecord(IRemesaParteIT remesable) throws PayrollException {
+//		IParteIT parte = remesable.getParteIT();
 		DIT dit = new DIT();
-		if (remesable.getConfirmacionIT() != null) {
+		// si es parte de confirmacion 
+		if (remesable.getTipoOperacionIT() == TipoOperacionIT.CONFIRMACION) {
 			dit.setAccion("PC ");
-			IParteConfirmacionIT conf =  remesable.getConfirmacionIT();
-			dit.setNumeroColegiado(conf.getNumeroColegiado());
-			dit.setCias(conf.getCias());
-			ODP odp = createODPRecord(conf);
+//			IParteConfirmacionIT conf =  remesable.getConfirmacionIT();
+			dit.setNumeroColegiado(remesable.getNumeroColegiado());
+			dit.setCias(remesable.getCias());
+			ODP odp = createODPRecord(remesable);
 			dit.setOdp(odp);
 		} else {
-			if (parte.getFechaAlta() == null) {
+			// si es parte de baja
+			if (remesable.getTipoOperacionIT() == TipoOperacionIT.BAJA) {
 				dit.setAccion("PB ");
-				dit.setNumeroColegiado(parte.getNumeroColegiadoBaja());
-				dit.setCias(parte.getCiasBaja());
-				DEC dec = createDECRecord(parte);
+				dit.setNumeroColegiado(remesable.getNumeroColegiado());
+				dit.setCias(remesable.getCias());
+				DEC dec = createDECRecord(remesable);
 				dit.setDec(dec);
 			}
-			if (parte.getFechaAlta() != null) {
+			// si es parte de alta
+			if (remesable.getTipoOperacionIT() == TipoOperacionIT.ALTA) {
 				dit.setAccion("PA ");
-				dit.setNumeroColegiado(parte.getNumeroColegiadoAlta());
-				dit.setCias(parte.getCiasAlta());
+				dit.setNumeroColegiado(remesable.getNumeroColegiado());
+				dit.setCias(remesable.getCias());
 				// *************************************
 				// TODO Dar soporte a la causa del alta. 
 				// *************************************
@@ -192,34 +194,34 @@ public class FDIWriter {
 			dit.setNumeroColegiado(prov + dit.getNumeroColegiado());
 		}
 		
-		dit.setRecaida( parte.isRecaida()?"S":"N");
+		dit.setRecaida( remesable.isRecaida()?"S":"N");
 			
-		if (parte.getTipoContingencia() == TipoContingencia.ENFERMEDAD_COMUN) {
+		if (remesable.getTipoContingencia() == TipoContingencia.ENFERMEDAD_COMUN) {
 			dit.setContingencia("1");
-		} else if (parte.getTipoContingencia() == TipoContingencia.ACCIDENTE_NO_LABORAL) {
+		} else if (remesable.getTipoContingencia() == TipoContingencia.ACCIDENTE_NO_LABORAL) {
 			dit.setContingencia("2");
-		} else if (parte.getTipoContingencia() == TipoContingencia.ACCIDENTE_LABORAL) { 
+		} else if (remesable.getTipoContingencia() == TipoContingencia.ACCIDENTE_LABORAL) { 
 			dit.setContingencia("3");
-			dit.setFechaATEP( Integer.parseInt( dateFormatter.format( parte.getFechaBaja() )) );
+			dit.setFechaATEP( Integer.parseInt( dateFormatter.format( remesable.getFechaBaja() )) );
 		}
 		
-		dit.setFechaBaja(  Integer.parseInt( dateFormatter.format( parte.getFechaBaja() )) );
-		if (parte.getFechaAlta() != null) {
-			dit.setFechaAlta(  Integer.parseInt( dateFormatter.format( parte.getFechaAlta() )) );
+		dit.setFechaBaja(  Integer.parseInt( dateFormatter.format( remesable.getFechaBaja() )) );
+		if (remesable.getTipoOperacionIT() == TipoOperacionIT.ALTA) {
+			dit.setFechaAlta(  Integer.parseInt( dateFormatter.format( remesable.getFechaParte() )) );
 		}
 		return dit;
 	}
 
-	private ODP createODPRecord(IParteConfirmacionIT confirmacionIT) {
+	private ODP createODPRecord(IRemesaParteIT confirmacionIT) {
 		ODP odp = new ODP();
-		odp.setFecha(Integer.parseInt( dateFormatter.format(confirmacionIT.getFecha())));
+		odp.setFecha(Integer.parseInt( dateFormatter.format(confirmacionIT.getFechaParte())));
 		odp.setNumero(confirmacionIT.getNumero());
 		odp.setEntidadAseguradora(0);
 		odp.setFechaCambioEntidad(0);
 		return odp;
 	}
 
-	private DEC createDECRecord(IParteIT parte) throws PayrollException {
+	private DEC createDECRecord(IRemesaParteIT parte) throws PayrollException {
 		DEC dec = new DEC();
 		IContrato contrato = getParteITDAO().getContrato(parte);
 		if (contrato.getTipoContrato() == TipoContrato.TIEMPO_COMPLETO) {
