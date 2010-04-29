@@ -18,26 +18,19 @@
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_remesa}" />
 			</f:facet>
-			<aon:panelGrid columns="2"
-				columnClasses="aon-panelGrid-odd aon-width-100, 
-				aon-panelGrid-even aon-width-auto">
-				
-					<aon:outputText value="#{bundle.aon_id}" />
-					<aon:outputText value="#{remesaITWizard.remesaINSS.id}" />
-
-					<aon:outputText value="#{payrollBundle.payroll_fecha}" />
-					<aon:outputText value="#{remesaITWizard.remesaINSS.fecha}" >
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
-
-					<aon:outputText value="#{payrollBundle.payroll_hora}" />
-					<aon:outputText value="#{remesaITWizard.remesaINSS.hora}" >
+				<aon:div styleClass="aon-nowrap">
+					<aon:outputText value="Remesa generada a las" />
+					<aon:outputText value="#{remesaITWizard.remesaINSS.hora}" style="margin-left: 5px;font-weight:bold;">
 						<f:convertDateTime pattern="#{bundle.aon_time_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-			</aon:panelGrid>
-		
+
+					<aon:outputText value="del dia" style="margin-left: 5px;"/>
+					<aon:outputText value="#{remesaITWizard.remesaINSS.fecha}" style="margin-left: 5px;font-weight:bold;">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:div>
 		</aon:panel>
 		
 		<aon:div id="remesaITListContainer" layout="none">
@@ -48,7 +41,6 @@
 			<aon:dataTable id="remesaITList" var="to" rows="20" width="auto"
 				value="#{remesaITWizard.selectedModel}"
 				columnClasses="
-						aon-editDataTable-iconColumn, 
 						aon-editDataTable-textColumn aon-width-50,
 						aon-editDataTable-textColumn aon-width-auto,
 						aon-editDataTable-textColumn aon-width-100,
@@ -60,21 +52,9 @@
 						aon-editDataTable-textColumn aon-width-150, 
 						aon-editDataTable-iconColumn">
 
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="&#160;" />
-					</f:facet>
-					<aon:commandButton id="deselectButton"
-						actionListener="#{remesaITWizard.onRemoveSelected}"
-						reRender="remesaITListContainer"
-						styleClass="aon-editDataTable-button aon-icon-delete" />
-				</aon:column>
-
 				<ui:include
 					src="/com/esferalia/aon/ui/payroll/facelet/remesaIT/columns.xhtml" />
-
 			</aon:dataTable>
-
 			<aon:dataScroller2 for="remesaITList" showNote="true" />
 		</aon:panel>
 		</aon:div>
