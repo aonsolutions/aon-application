@@ -29,6 +29,7 @@ public interface IParteITDAO {
 	
 	List<IParteIT> getPartesEmpleado( IEmpleado empleado) throws PayrollException;
 	IContrato getContrato(IParteIT parteIT) throws PayrollException;
+	IContrato getContrato(IRemesaParteIT parteIT) throws PayrollException;
 
 	// Partes de Confimacion
 	List<IParteConfirmacionIT> getPartesConfirmacion(ParteITParams params) throws PayrollException;
@@ -45,6 +46,6 @@ public interface IParteITDAO {
 	IRemesaParteIT initializePartesRemesa() throws PayrollException;
 	List<IRemesaINSS> getRemesaINSS(RemesaINSSParams params) throws PayrollException;
 	Criteria getRemesaINSSCriteria(RemesaINSSParams params) throws PayrollException;
-
+	List<IRemesaParteIT> getRemesaParteITList(IRemesaINSS remesa) throws PayrollException;
 
 }
