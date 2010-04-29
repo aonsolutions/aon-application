@@ -279,6 +279,30 @@ public class ParteITDAO implements IParteITDAO {
 			throw new PayrollException(e);
 		}
 	}
+	
+	@Override
+	public IContrato getContrato(IRemesaParteIT parteIT) throws PayrollException {
+		try {
+			IManagerBean trabajoBean = BeanManager.getManagerBean(Contrato.class);
+			String eAlias = trabajoBean.getFieldName(IPayrollAlias.CONTRATO_ID_CDG);
+			String iAlias = trabajoBean.getFieldName(IPayrollAlias.CONTRATO_ID_FECINI);
+			String fAlias = trabajoBean.getFieldName(IPayrollAlias.CONTRATO_FECHA_FIN);
+			Criteria tCriteria = new Criteria();
+			tCriteria.addEqualExpression(eAlias, parteIT.getEmpleado().getId());
+			tCriteria.addLessThanOrEqualExpression(iAlias, parteIT.getFechaBaja());
+			Expression or1 = ExpressionUtilities.getGreaterThanOrEqualExpression(fAlias, parteIT.getFechaBaja());  
+			Expression or2 = ExpressionUtilities.getNullExpression(fAlias);
+			tCriteria.addExpression(ExpressionUtilities.getOrExpression(or1, or2));
+			List<ITransferObject> trabajos = trabajoBean.getList(tCriteria);
+			if (trabajos.size() == 0) {
+				throw new PayrollException("No hay datos en CONTRATO");
+			}
+			Contrato trabajo = (Contrato) trabajos.get(0);
+			return trabajo;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
 
 	@Override
 	public IParteIT initialize(IEmpleado  empleado) throws PayrollException {
@@ -497,6 +521,20 @@ public class ParteITDAO implements IParteITDAO {
 		c.addOrder(REMESA_INSS_FECHA_ALIAS);
 		c.addOrder(REMESA_INSS_HORA_ALIAS);
 		return c;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IRemesaParteIT> getRemesaParteITList(IRemesaINSS remesa) throws PayrollException {
+		try {
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(RemesaParteIT.class);
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.REMESA_PARTE_IT_REMESA_INSS_ID), remesa.getId());
+			List<?> list = bean.getList( criteria ); 
+			return (List<IRemesaParteIT>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
 	}
 }
 
