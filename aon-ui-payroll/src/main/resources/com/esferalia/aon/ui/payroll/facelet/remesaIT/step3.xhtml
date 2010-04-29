@@ -19,13 +19,13 @@
 				<aon:outputText value="#{payrollBundle.payroll_remesa}" />
 			</f:facet>
 				<aon:div styleClass="aon-nowrap">
-					<aon:outputText value="Remesa generada a las" />
+					<aon:outputText value="#{payrollBundle.payroll_remesa_generation_hour}" />
 					<aon:outputText value="#{remesaITWizard.remesaINSS.hora}" style="margin-left: 5px;font-weight:bold;">
 						<f:convertDateTime pattern="#{bundle.aon_time_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
 
-					<aon:outputText value="del dia" style="margin-left: 5px;"/>
+					<aon:outputText value="#{payrollBundle.payroll_remesa_generation_day}" style="margin-left: 5px;"/>
 					<aon:outputText value="#{remesaITWizard.remesaINSS.fecha}" style="margin-left: 5px;font-weight:bold;">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
