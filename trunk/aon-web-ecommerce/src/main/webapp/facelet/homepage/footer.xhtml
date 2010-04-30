@@ -84,10 +84,10 @@
 				</aon:outputLink>
 				
 				<aon:div id="version-tag" style="text-align:right;" >
-					<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
+					<aon:outputText value="[#{aonConfiguration.properties.applicationVersion}]"
 						styleClass="aon-finding-toolbar-item aon-icon-footer-note" 
 						style="font-size:0.9em;margin-top:0.3em;color:#fff;"
-						rendered="#{aonConfiguration.applicationVersion != null}" />
+						rendered="#{aonConfiguration.properties.applicationVersion != null}" />
 				</aon:div>
 			</aon:div>
 		</aon:form>

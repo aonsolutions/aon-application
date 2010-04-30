@@ -10,6 +10,7 @@
 			showCompanyOtherData="true"
 			showPanelTabSet="true" 
 			showDigitalCertificate="true"
+			showEInvoice="false"
 		/>
 	</company:config>
 	<ecommerce:config version="1.0" xmlns:ecommerce="http://www.esferalia.com/ecommerce">
