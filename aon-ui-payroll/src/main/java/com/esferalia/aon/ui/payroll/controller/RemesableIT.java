@@ -50,15 +50,12 @@ public class RemesableIT implements Serializable {
 	}
 	
 	public boolean isBaja() {
-//		return (getParteIT().getFechaAlta() == null);
 		return getOperacion() == TipoOperacionIT.BAJA;
 	}
 	public boolean isAlta() {
-//		return (getParteIT().getFechaAlta() != null && getConfirmacionIT() == null);
 		return getOperacion() == TipoOperacionIT.ALTA;
 	}
 	public boolean isConfirmacion() {
-//		return (getParteIT().getFechaAlta() != null && getConfirmacionIT() != null);
 		return getOperacion() == TipoOperacionIT.CONFIRMACION;
 	}
 	
