@@ -47,7 +47,7 @@ public class RemesaITWizard implements Serializable {
 	private DataModel selectedModel;
 	private FileOutput fileOutput;
 	private FDIWriter fdiWriter;
-	IRemesaINSS remesaINSS;
+	private IRemesaINSS remesaINSS;
 	
 	public void setRemesaINSS(IRemesaINSS remesaINSS) {
 		this.remesaINSS = remesaINSS;
@@ -421,18 +421,6 @@ public class RemesaITWizard implements Serializable {
 			parteITDAO = ParteITDAOFactory.getInstance().getParteITDAO();
 		}
 		return parteITDAO;
-	}
-	
-	public List<IRemesaINSS> getRemesaINSSList(){
-		try {
-//			RemesaINSSParams params = new RemesaINSSParams();
-//			params.setId(null);
-//			return getParteITDAO().getRemesaINSS(params);
-			return getParteITDAO().getRemesaINSS(null);
-		} catch (PayrollException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
 	}
 
 }
