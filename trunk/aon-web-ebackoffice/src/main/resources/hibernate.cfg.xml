@@ -27,14 +27,6 @@
 
 		<!-- Mapping files -->
 
-		<!-- EBACKOFFICE -->
-		<mapping class="com.code.aon.ebackoffice.Ectarget" />
-		<mapping class="com.code.aon.ebackoffice.Ecconfig" />
-		<mapping class="com.code.aon.ebackoffice.Eccatalogue" />
-		<mapping class="com.code.aon.ebackoffice.EcOfferPayment"/>			
-		<mapping class="com.code.aon.ebackoffice.EcPaymethod"/>			
-		
-	
 		<!-- AON-COMMERCIAL Mapping files -->	
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialTerm"/>
