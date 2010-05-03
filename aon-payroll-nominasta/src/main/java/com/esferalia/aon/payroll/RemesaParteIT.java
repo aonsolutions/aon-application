@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IEmpleado;
@@ -231,5 +232,18 @@ public class RemesaParteIT implements IRemesaParteIT,ITransferObject  {
 	@Override
 	public void setPrestacionDiaria75(Double prestacionDiaria75) {
 		this.prestacionDiaria75 = prestacionDiaria75;
+	}
+	
+	@Transient
+	public boolean isBaja() {
+		return getTipoOperacionIT() == TipoOperacionIT.BAJA;
+	}
+	@Transient
+	public boolean isAlta() {
+		return getTipoOperacionIT() == TipoOperacionIT.ALTA;
+	}
+	@Transient
+	public boolean isConfirmacion() {
+		return getTipoOperacionIT() == TipoOperacionIT.CONFIRMACION;
 	}
 }
