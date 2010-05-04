@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
 import com.code.aon.ui.infoweb.controller.IInfoWebConstants;
 import com.code.aon.ui.util.AonUtil;
 
@@ -38,31 +40,34 @@ public class FTPUtil implements IInfoWebConstants {
 		return ftp;
 	}
 	
-	public static void uploadFTP(File source, String destination, Properties properties) throws IOException {
-		FTPClient ftp = getFTPClient( destination, properties );
-		LOGGER.debug("Connected.");
-		LOGGER.debug("Reply String: {}", ftp.getReplyString());
-		LOGGER.debug("System Name: {}", ftp.getSystemName());
-		LOGGER.debug("Working Directory: {}", ftp.printWorkingDirectory());
-		LOGGER.debug("File Type: {}", ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
-		FTPFile files[] = ftp.listFiles();
-		if (! ArrayUtils.isEmpty(files)) {
-			if (! hasWritePermission(files[0]) ) {
-				LOGGER.error("Write permission denied for {}", files[0]);
-				AonUtil.addErrorMessage("FTP ERROR: Error intentando escribir en el servidor.");
+	public static void uploadFTP(File source, String destination, Properties properties) throws AonException {
+		FTPClient ftp = null;
+		try {
+			ftp = getFTPClient( destination, properties );
+			LOGGER.debug("Connected.");
+			LOGGER.debug("Reply String: {}", ftp.getReplyString());
+			LOGGER.debug("System Name: {}", ftp.getSystemName());
+			LOGGER.debug("Working Directory: {}", ftp.printWorkingDirectory());
+			LOGGER.debug("File Type: {}", ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
+
+			ftpDelete(ftp, destination);
+			ftpDir(source, ftp, destination);
+		} catch (IOException e) {
+			LOGGER.error("Error uploading to " + destination, e);
+			throw new AonException( e.getMessage(), e);
+		} finally {
+			if ( ftp != null ) {
+				try {
+					ftp.logout();
+					if ( ftp.isConnected() ) {
+						ftp.disconnect();
+					}
+				} catch (IOException e) {
+					LOGGER.error("Error closing ftp connection", e);
+					throw new AonException( e.getMessage(), e);
+				}
 			}
 		}
-		ftpDelete(ftp, destination);
-		ftpDir(source, ftp, destination);
-
-		ftp.logout();
-		ftp.disconnect();
-	}
-	
-	private static boolean hasWritePermission( FTPFile file ) {
-		return file.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ||
-			file.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION) ||
-			file.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION);
 	}
 	
 	private static void deleteFile(FTPClient ftp, String pathname) {
@@ -91,12 +96,15 @@ public class FTPUtil implements IInfoWebConstants {
 			if (! ArrayUtils.isEmpty(files)) {
 				for( FTPFile file : files ) {
 					if ( file != null ) {
-						String name = destination + PATH_SEPARATOR + file.getName();
-						if ( file.isFile() ) {
-							deleteFile(ftp, name);
-						} else if ( file.isDirectory() ) {
-							ftpDelete(ftp, name);
-							deleteDirectory(ftp, name);	
+						String name = file.getName();
+						if (! (StringUtils.equals(name, ".") || StringUtils.equals(name, "..")) ) {
+							name = destination + PATH_SEPARATOR + name;
+							if ( file.isFile() ) {
+								deleteFile(ftp, name);
+							} else if ( file.isDirectory() ) {
+								ftpDelete(ftp, name);
+								deleteDirectory(ftp, name);	
+							}							
 						}
 					}
 				}
