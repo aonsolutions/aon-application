@@ -1282,20 +1282,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************** TREE ************** -->
-	<managed-bean>
-		<managed-bean-name>treeStateAdvisor</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.tree.TreeCmsStateAdvisor</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>fileSystemBean</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.tree.FileSystemBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<!-- ************** END TREE ************** -->
-
 	<!-- ************** ACTIVITY ************** -->
 	<managed-bean>
 		<managed-bean-name>activity</managed-bean-name>
