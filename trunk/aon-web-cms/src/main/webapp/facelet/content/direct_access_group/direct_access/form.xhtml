@@ -119,9 +119,7 @@
 		                    actionListener="#{direct_access.onDelImage}">
 							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 		        		</aon:commandLink>
-						<ui:include src="/facelet/content/utils/image_modal.xhtml">
-							<ui:param name="modalPanelName" value="mp2" />
-							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+						<ui:include src="/facelet/content/utils/image_modal_button.xhtml">
 							<ui:param name="listenerBean" value="#{direct_access}" />
 							<ui:param name="reRender" value="thumbnail_preview" />
 							<ui:param name="thumbnail" value="#{false}" />
@@ -143,6 +141,7 @@
 			</aon:div>
 		
 		</aon:form>
+		<ui:include src="/facelet/content/utils/image_modal.xhtml" />
 	</ui:define>
 
 </ui:composition>

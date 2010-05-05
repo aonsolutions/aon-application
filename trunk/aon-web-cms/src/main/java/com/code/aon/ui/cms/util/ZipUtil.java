@@ -75,9 +75,10 @@ public class ZipUtil {
 		return false;
 	}
 
-	public static boolean uncompressZipData(byte[] source_zip_data, String destination_folder) {
-		File df = new File(destination_folder);
-		if (!df.exists()) df.mkdirs();
+	public static boolean uncompressZipData(byte[] source_zip_data, File destinationFolder) {
+		if (!destinationFolder.exists()) {
+			destinationFolder.mkdirs();
+		}
 		try {
 			InputStream is = new ByteArrayInputStream(source_zip_data);
 			BufferedOutputStream dest = null;
@@ -89,7 +90,7 @@ public class ZipUtil {
 					byte data[] = new byte[BUFFER];
 					String filename = entry.getName();
 					filename = filename.replaceAll("[^A-Za-z0-9./_-]+", "");
-					File newfile = new File(df.getAbsolutePath() + "/" +  filename);
+					File newfile = new File(destinationFolder, filename);
 					if (!newfile.getParentFile().exists()) newfile.getParentFile().mkdirs();
 					FileOutputStream fos = new FileOutputStream(newfile.getAbsolutePath());
 					dest = new BufferedOutputStream(fos, BUFFER);

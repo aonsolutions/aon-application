@@ -19,3 +19,20 @@
 .aon-menuBar-content{
 	padding: 0 0 2px 0;
 }
+
+.aon-tree-node-active{
+	background-color:#fffadc;
+	border:#d3c061 1px solid;
+	font-weight:bold;
+}
+
+.aon-tree-node-active:hover{
+	text-decoration:none;
+	color:#000000;
+}
+
+.aon-tree-node-highlighted{
+	background-color:#e2f1f5;
+	color:#000000;
+	text-decoration:none;
+}

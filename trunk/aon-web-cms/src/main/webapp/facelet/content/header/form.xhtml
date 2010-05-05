@@ -83,9 +83,7 @@
 									<aon:graphicImage styleClass="aon-padding aon-border"
 										url="#{cmsHeader.toI18n.image}.thumbnail" 
 										alt="#{cmsHeader.toI18n.image}"/>										
-									<ui:include src="/facelet/content/utils/image_modal.xhtml">
-										<ui:param name="modalPanelName" value="mp" />
-										<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+									<ui:include src="/facelet/content/utils/image_modal_button.xhtml">
 										<ui:param name="listenerBean" value="#{cmsHeader}" />
 										<ui:param name="reRender" value="thumbnail_preview" />
 										<ui:param name="thumbnail" value="#{false}" />
@@ -135,7 +133,7 @@
 
 			</aon:div>
 		</aon:form>
-
+		<ui:include src="/facelet/content/utils/image_modal.xhtml" />
 	</ui:define>
 </ui:composition>
 
