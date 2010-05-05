@@ -43,7 +43,7 @@
 		<template path="/com/code/aon/ui/sales/report/salesVatBreakDown.jasper"/>
 	</report>
 
-	<report id="salesList2" description="Listado de sales">
+	<report id="salesList" description="Listado de sales">
 		<template path="/com/code/aon/ui/sales/report/salesList.jasper" />
 		<bean key="com.code.aon.sales.Sales" />
 		<criteria provider="#{sales}"/>
@@ -58,9 +58,7 @@
 			<param id="web" value="#{company.obtainWeb}" />
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
-			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{salesDetail.getPriceStrategy}" />
-			<param id="TotalPrice" value="#{sales.getTotalPrice}" />
 			<param id="defaultPayMethod" value="#{sales.getDefaultPayMethod}" />
 		</params>
 	</report>
@@ -82,7 +80,6 @@
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{salesDetail.getPriceStrategy}" />
-			<param id="TotalPrice" value="#{sales.getTotalPrice}" />
 			<param id="defaultPayMethod" value="#{sales.getDefaultPayMethod}" />
 		</params>
 		<nested-report report="salesListDetail"/>
@@ -94,4 +91,20 @@
 	</report>
 	<report id="salesListTaxBreakDown" description="taxBreakDown">
 		<template path="/com/code/aon/ui/sales/report/salesListTaxBreakDown.jasper"/>
-	</report></report-config>
+	</report>
+	
+	<report id="salesDetailledListNew" description="Listado Detallado de sales">
+		<template path="/com/code/aon/ui/sales/report/salesDetailledListNew.jasper" />
+		<!--<collection provider="#{salesDetail}" forceRefresh="true"/> -->
+		 <bean key="com.code.aon.sales.SalesDetail" />
+		<criteria provider="#{salesDetail}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.sales.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="PriceStrategy" value="#{salesDetail.getPriceStrategy}" />
+			</params>
+	</report>
+	</report-config>
