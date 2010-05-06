@@ -16,7 +16,7 @@
 		<finalName>aon-ebackoffice</finalName>
 	</build>
 	<properties>
-		<dbVersion>5.0.0</dbVersion>
+		<dbVersion>5.1.1</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
