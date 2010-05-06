@@ -484,7 +484,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 							getParteITDAO().accept(getParteConfirmacionIT());
 						} else {
 							getParteITDAO().accept(getParteIT());
-							if (isAltaMaternidad()) {
+							if (isAltaMaternidad() && isBonificacionMaternidad()) {
 								getNominaDAO().accept(getBonificacion());
 							}
 						}
