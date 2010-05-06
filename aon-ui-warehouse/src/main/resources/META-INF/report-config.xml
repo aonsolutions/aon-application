@@ -36,7 +36,6 @@
 		<collection provider="#{inventoryDetail}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />			
 		</params>
 	</report>
