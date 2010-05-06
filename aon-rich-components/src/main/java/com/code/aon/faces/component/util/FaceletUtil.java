@@ -155,10 +155,9 @@ public class FaceletUtil {
 			String current = tag.getValue(ctx);
 			if (! StringUtils.isBlank(current) ) {
 				String[] ids = StringUtils.split(current, " ,");
+				result = StringUtils.join(ids, ',');
 				if (! ArrayUtils.contains(ids, value) ) {
-					result = current + ", " + value;
-				} else {
-					result = current;
+					result += ',' + value;
 				}
 			}
 		}

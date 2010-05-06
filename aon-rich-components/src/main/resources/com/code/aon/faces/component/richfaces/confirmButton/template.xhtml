@@ -51,7 +51,7 @@
 							</aon:commandButton>
 							<aon:commandButton id="#{aon_cb_id}-no" value="#{bundle.aon_no}"
 								action="#{aon_cb_cancelAction}" immediate="true" ajaxSingle="true"
-								reRender="#{aon_cb_id}ReRender,#{aon_cb_cancelReRender}"
+								reRender="#{aon_cb_id}ReRender#{(aon_cb_cancelReRender != null)?',':''}#{aon_cb_cancelReRender}"
 								styleClass="aon-commandButton" >
 								<c:if test="#{aon_cb_cancelActionListener != null}">									
 									<aon:actionListener method="#{aon_cb_cancelActionListener}" />
