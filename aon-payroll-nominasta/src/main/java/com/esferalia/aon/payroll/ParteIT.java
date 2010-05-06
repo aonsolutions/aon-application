@@ -403,8 +403,9 @@ public class ParteIT implements IParteIT,ITransferObject  {
 			getId().setCdg(empleado.getId());
 		}
 	}
-	
-	@Column(name = "causa_alta", nullable = false, length = 1)
+
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.core.enumeration.CausaAlta") })
+	@Column(name = "causa_alta", nullable = false, length = 2)
 	@Override
 	public CausaAlta getCausaAlta() {
 		return causaAlta;
