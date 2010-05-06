@@ -444,7 +444,9 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 				AonUtil.addErrorMessage(errorMsg);
 				throw new AbortProcessingException(errorMsg);
 			}
-			getParteITDAO().calculate(getParteIT());
+			if(isBaja()){
+				getParteITDAO().calculate(getParteIT());
+			}
 			if (isBonificacionMaternidad()) {
 				setBonificacion(getParteITDAO().initializeBonificacion(getParteIT(), getTipoBonificacion()));
 			}
