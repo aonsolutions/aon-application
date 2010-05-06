@@ -360,6 +360,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 		params = null;
 		setCurrentStep(0);
 		setEmpleadoModel(null);
+		setBonificacionMaternidad(false);
 	}
 
 	public void onSearch(ActionEvent event) {
