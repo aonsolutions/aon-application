@@ -5,6 +5,7 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.esferalia.aon.payroll.Actividad;
 import com.esferalia.aon.payroll.ActividadCCC;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
+import com.esferalia.aon.payroll.Cliente;
 import com.esferalia.aon.payroll.Contrato;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
@@ -156,6 +157,25 @@ public interface IPayrollAlias {
 	* Hibernate value: Bonificacion.tipoBonificacion.id
 	*/
 	String  BONIFICACION_TIPO_BONIFICACION_ID = BONIFICACION_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for Cliente entity.
+	*/ 
+	DAOConstantsEntry CLIENTE_ENTRY = DAOConstants.getDAOConstant(Cliente.class);
+
+	/** 
+	* Alias value: Cliente_id
+	* Hibernate value: Cliente.id
+	*/
+	String  CLIENTE_ID = CLIENTE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Cliente_inactivoBD
+	* Hibernate value: Cliente.inactivoBD
+	*/
+	String  CLIENTE_INACTIVO_BD = CLIENTE_ENTRY.getAliasNames()[1];
 
 
 

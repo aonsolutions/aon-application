@@ -3,12 +3,16 @@ package com.esferalia.aon.payroll;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.core.IRegistry;
+import com.esferalia.aon.payroll.core.ICliente;
 import com.esferalia.aon.payroll.core.IEmpresa;
 
 @Entity
@@ -20,6 +24,7 @@ public class Empresa implements ITransferObject, IEmpresa {
 	private Integer id;
     private Registry registry;
 	private String name;
+	private ICliente cliente;
 	
 
 	@Id
@@ -50,10 +55,22 @@ public class Empresa implements ITransferObject, IEmpresa {
 		this.registry = (Registry) registry;
 	}
 	
+	@ManyToOne(targetEntity = Cliente.class, fetch = FetchType.EAGER)
+	@JoinColumn(name = "codcli", nullable = false)
+	@Override
+	public ICliente getCliente() {
+		return this.cliente;
+	}
+	
+	@Override
+	public void setCliente(ICliente cliente) {
+		this.cliente = cliente;
+	}
+	
 	@Override
 	@Transient
 	public boolean isActive() {
-		return true;
+		return !(getCliente().isInactivo());
 	}
 
 }
