@@ -301,7 +301,7 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
 		delivery.getCustomer().getRegistry().setName(invoice.getRegistry().getName());
 		delivery.getCustomer().getRegistry().setSurname(invoice.getRegistry().getSurname());
 		delivery.setIssueTime(invoice.getIssueDate());
-		delivery.setRaddress(invoice.getRegistryAddress());
+		delivery.setRaddress((invoice.getRegistryAddress()!=null&&invoice.getRegistryAddress().getId()!=null)?invoice.getRegistryAddress():null);
 		delivery.setSeries(invoice.getSeries());
 		delivery.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Delivery"));
 		delivery.setSecurityLevel(invoice.getSecurityLevel());
