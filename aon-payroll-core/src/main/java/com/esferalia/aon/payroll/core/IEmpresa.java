@@ -15,7 +15,8 @@ public interface IEmpresa extends Serializable{
 	String getName();
 	void setName(String name);
 	
-	
+	ICliente getCliente();
+	void setCliente(ICliente cliente);
 	
 	boolean isActive();
 	
