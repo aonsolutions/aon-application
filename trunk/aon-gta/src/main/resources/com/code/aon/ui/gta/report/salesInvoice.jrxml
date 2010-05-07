@@ -254,7 +254,7 @@
 					<reportElement
 						x="5"
 						y="66"
-						width="246"
+						width="250"
 						height="15"
 						key="textField-62">
 							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
@@ -267,9 +267,9 @@
 				</textField>
 				<subreport  isUsingCache="true">
 					<reportElement
-						x="5"
+						x="0"
 						y="121"
-						width="544"
+						width="555"
 						height="100"
 						key="subreport-1"
 						positionType="Float"/>
@@ -301,7 +301,7 @@
 					<reportElement
 						x="5"
 						y="264"
-						width="544"
+						width="545"
 						height="29"
 						key="subreport-5"
 						positionType="Float"/>
@@ -313,7 +313,7 @@
 					<reportElement
 						x="5"
 						y="0"
-						width="246"
+						width="250"
 						height="16"
 						key="textField-73">
 							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
@@ -328,7 +328,7 @@
 					<reportElement
 						x="5"
 						y="51"
-						width="246"
+						width="250"
 						height="15"
 						key="textField-74">
 							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
@@ -343,7 +343,7 @@
 					<reportElement
 						x="5"
 						y="36"
-						width="246"
+						width="250"
 						height="15"
 						key="textField-75">
 							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
@@ -358,7 +358,7 @@
 					<reportElement
 						x="5"
 						y="21"
-						width="246"
+						width="250"
 						height="15"
 						key="textField-76">
 							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
@@ -373,7 +373,7 @@
 					<reportElement
 						x="284"
 						y="0"
-						width="246"
+						width="265"
 						height="16"
 						key="textField-77"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -386,7 +386,7 @@
 					<reportElement
 						x="284"
 						y="21"
-						width="246"
+						width="265"
 						height="15"
 						key="textField-78"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -399,7 +399,7 @@
 					<reportElement
 						x="284"
 						y="36"
-						width="246"
+						width="265"
 						height="15"
 						key="textField-79"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -412,7 +412,7 @@
 					<reportElement
 						x="284"
 						y="51"
-						width="246"
+						width="265"
 						height="15"
 						key="textField-80"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -439,7 +439,7 @@
 				</textField>
 				<subreport  isUsingCache="true">
 					<reportElement
-						x="5"
+						x="0"
 						y="225"
 						width="434"
 						height="14"
@@ -454,7 +454,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="452"
+						x="458"
 						y="225"
 						width="97"
 						height="14"
@@ -470,7 +470,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="452"
+						x="458"
 						y="239"
 						width="97"
 						height="14"
