@@ -25,6 +25,7 @@
 
 		<mapping class="com.esferalia.aon.payroll.Actividad"/>
 		<mapping class="com.esferalia.aon.payroll.ActividadCCC"/>
+		<mapping class="com.esferalia.aon.payroll.Cliente"/>
 		<mapping class="com.esferalia.aon.payroll.Contrato"/>
 		<mapping class="com.esferalia.aon.payroll.Empleado"/>			
 		<mapping class="com.esferalia.aon.payroll.Empresa"/>
