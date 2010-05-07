@@ -8,6 +8,7 @@ import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.esferalia.aon.payroll.Actividad;
 import com.esferalia.aon.payroll.ActividadCCC;
+import com.esferalia.aon.payroll.Cliente;
 import com.esferalia.aon.payroll.Contrato;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
@@ -29,6 +30,7 @@ public class PayrollAliasWriter {
 				Actividad.class.getName(),
 				ActividadCCC.class.getName(),
 				Bonificacion.class.getName(),
+				Cliente.class.getName(),
 				Contrato.class.getName(),
 				Empleado.class.getName(),			
 				Empresa.class.getName(),
