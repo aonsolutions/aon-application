@@ -11,85 +11,79 @@
 
 <ui:composition>
 
+
 	<aon:panelGroup id="showAlbumWindow">
 		<c:if test="#{album.showAlbumWindow}">
 		    <rich:modalPanel id="showAlbumModalPanel"
 		    	rendered="#{album.showAlbumWindow}" showWhenRendered="true"
-		    	height="690" width="640">
+		    	height="690" width="660">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{appBundle.aon_create_album}" />
 					</aon:div>
 				</f:facet>
 		        <f:facet name="controls">
-					<aon:commandButton id="close"
-						actionListener="#{album.onInitGenerateFromGallery}"
-						reRender="showAlbumWindow,#{reRender}"
-						immediate="true" styleClass="aon-popupWindow-close">
-						<f:setPropertyActionListener target="#{album.showAlbumWindow}"
-							value="#{false}" />						
-						<rich:componentControl for="showAlbumModalPanel"
-							operation="hide" event="onclick" />
-					</aon:commandButton>	
+	        		<aon:form>
+						<aon:commandButton id="close"
+							actionListener="#{album.onInitGenerateFromGallery}"
+							reRender="showAlbumWindow,#{reRender}"
+							immediate="true" styleClass="aon-popupWindow-close">
+							<f:setPropertyActionListener target="#{album.showAlbumWindow}"
+								value="#{false}" />						
+							<rich:componentControl for="showAlbumModalPanel"
+								operation="hide" event="onclick" />
+						</aon:commandButton>	
+	        		</aon:form>
 		        </f:facet>
 		        
-		        <aon:div id="tree_">
-					<aon:div styleClass="aon-toolbar" rendered="#{!album.activeLog}">        
-						<aon:commandButton id="generate"
-							value="#{appBundle.aon_generate}" 
-							reRender="tree_,log_"
-							styleClass="aon-finding-toolbar-item aon-icon-accept">
-							<aon:actionListener method="#{album.onGenerateFromGallery}" />
-							<aon:actionListener method="#{album.onSearch}" />
-						</aon:commandButton>
-					</aon:div>		        
-					<h:panelGrid id="#{modalPanelName}_treeGrid" columns="2" rendered="#{!album.activeLog}"
-						columnClasses="aon-width-300 aon-border aon-vertical-align-top, aon-width-auto aon-vertical-align-top">
-						<aon:div styleClass="aon-scroll">
-						    <rich:tree 
-						    	switchType="server" 
-						    	stateAdvisor="#{treeStateAdvisor}">
-						        <rich:recursiveTreeNodesAdaptor roots="#{roots}" 
-						        	var="item" 
-						        	nodes="#{item.nodes}">
-									<rich:treeNode>
-						                <aon:commandLink
-						                	action="#{item.onSelectFolder}" 
-						                	value="#{item}"
-						                	immediate="#{true}"
-						                	reRender="#{modalPanelName}_treeGrid" />
-									</rich:treeNode>
-						        </rich:recursiveTreeNodesAdaptor>
-						    </rich:tree>
-						</aon:div>
-						<aon:div> 
-							<aon:panelGrid styleClass="aon-width-all" columnClasses="aon-panel-head">
-								<aon:outputLabel value="#{gallery.currentRelativePath}" styleClass="aon-panel-title"/>
-							</aon:panelGrid>
-							<aon:div style="height:582;overflow:auto;">
-								<rich:dataGrid var="item" value="#{gallery.model}" columns="3">
-									<aon:div style="with:125px;text-align:center">
-					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-border aon-padding"/>
-					            		<aon:div style="width:112px;overflow:hidden;">
-					            			<aon:outputText value="#{item.name}"/>
-					            		</aon:div>
-									</aon:div>
-								</rich:dataGrid>
+	        	<aon:form>
+			        <aon:div id="tree_">
+						<aon:div styleClass="aon-toolbar" rendered="#{!album.activeLog}">        
+							<aon:commandButton id="generate"
+								value="#{appBundle.aon_generate}" 
+								reRender="tree_,log_"
+								styleClass="aon-finding-toolbar-item aon-icon-accept">
+								<aon:actionListener method="#{album.onGenerateFromGallery}" />
+								<aon:actionListener method="#{album.onSearch}" />
+							</aon:commandButton>
+						</aon:div>		        
+						<h:panelGrid id="#{modalPanelName}_treeGrid" columns="2" rendered="#{!album.activeLog}"
+							columnClasses="aon-width-300 aon-border aon-vertical-align-top, aon-width-400 aon-vertical-align-top">
+							<aon:div styleClass="aon-scroll">
+								<ui:include src="/facelet/content/utils/galleryTree.xhtml" >
+									<ui:param name="controller" value="#{gallery}" />
+									<ui:param name="treeReRender" value="GalleryList" />
+								</ui:include>				 
 							</aon:div>
-						</aon:div>
-					</h:panelGrid>		        
-				</aon:div>
-		        <aon:div id="log_">
-					<rich:panel bodyClass="inpanelBody" id="gridLog" rendered="#{album.activeLog}">
-				       	<f:facet name="header">
-				       		<aon:outputText value="Console Log" />
-			           </f:facet>
-				        <rich:dataList id="dataListLog" var="msg" value="#{album.status}" rows="15">
-							<h:outputText value="#{msg}"/>
-						</rich:dataList>
-						<rich:datascroller align="left"  for="dataListLog" maxPages="20" />
-					</rich:panel>
-				</aon:div>
+							<aon:div id="GalleryList" styleClass="aon-scroll">
+								<aon:panelGrid styleClass="aon-width-all" columnClasses="aon-panel-head">
+									<aon:outputLabel value="#{gallery.currentRelativePath}" styleClass="aon-panel-title"/>
+								</aon:panelGrid>
+								<aon:div style="height:582">
+									<rich:dataGrid var="item" value="#{gallery.model}" columns="3">
+										<aon:div style="with:125px;text-align:center">
+						            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-border aon-padding"/>
+						            		<aon:div style="width:112px;overflow:hidden;">
+						            			<aon:outputText value="#{item.name}"/>
+						            		</aon:div>
+										</aon:div>
+									</rich:dataGrid>
+								</aon:div>
+							</aon:div>
+						</h:panelGrid>		        
+					</aon:div>
+			        <aon:div id="log_">
+						<rich:panel bodyClass="inpanelBody" id="gridLog" rendered="#{album.activeLog}">
+					       	<f:facet name="header">
+					       		<aon:outputText value="Console Log" />
+				           </f:facet>
+					        <rich:dataList id="dataListLog" var="msg" value="#{album.status}" rows="15">
+								<h:outputText value="#{msg}"/>
+							</rich:dataList>
+							<rich:datascroller align="left"  for="dataListLog" maxPages="20" />
+						</rich:panel>
+					</aon:div>
+				</aon:form>
 			</rich:modalPanel>
 		</c:if>													
 	</aon:panelGroup>

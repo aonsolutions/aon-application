@@ -1,0 +1,28 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"	>
+
+	<rich:tree switchType="ajax" ajaxSubmitSelection="true" ajaxSingle="true"
+		reRender="#{treeReRender}"
+		selectedClass="aon-tree-node-active"
+		highlightedClass="aon-tree-node-highlighted"
+		nodeSelectListener="#{controller.nodeSelected}"
+		adviseNodeOpened="#{controller.adviseNodeOpened}"
+		adviseNodeSelected="#{controller.adviseNodeSelected}">
+		<rich:recursiveTreeNodesAdaptor roots="#{controller.roots}" 
+			var="item" nodes="#{item.nodes}">
+			<rich:treeNode
+				icon="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}"
+				iconLeaf="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}">
+				<aon:outputText value="#{item}" />				                	
+			</rich:treeNode>
+		</rich:recursiveTreeNodesAdaptor>
+	 </rich:tree>
+
+</ui:composition>

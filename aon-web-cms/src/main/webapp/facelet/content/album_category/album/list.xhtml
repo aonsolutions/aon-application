@@ -117,12 +117,11 @@
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
-			<ui:include src="/facelet/content/utils/album_modal.xhtml">
-				<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
-				<ui:param name="reRender" value="dataTableDiv" />
-			</ui:include>			
 		</aon:form>
 
+		<ui:include src="/facelet/content/utils/album_modal.xhtml" >
+			<ui:param name="reRender" value="dataTableDiv" />
+		</ui:include>			
 		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
 		
 	</ui:define>

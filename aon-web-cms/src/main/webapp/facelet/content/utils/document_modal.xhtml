@@ -12,58 +12,51 @@
 		<c:if test="#{download.showWindow}">
 			<rich:modalPanel id="showDocumentModalPanel"
 				rendered="#{download.showWindow}" showWhenRendered="true"
-				height="660" width="710">
+				height="660" width="720">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{appBundle.document_modal_title}" />
 					</aon:div>
 				</f:facet>
 		        <f:facet name="controls">
-					<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-						immediate="true" reRender="showDocumentPanelGroup,thumbnail_preview_detail">
-						<f:setPropertyActionListener target="#{download.showWindow}" value="#{false}" />
-						<rich:componentControl for="showDocumentModalPanel"
-							operation="hide" event="onclick" />
-					</aon:commandButton>
+		        	<aon:form>
+						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+							immediate="true" reRender="showDocumentPanelGroup,thumbnail_preview_detail">
+							<f:setPropertyActionListener target="#{download.showWindow}" value="#{false}" />
+							<rich:componentControl for="showDocumentModalPanel"
+								operation="hide" event="onclick" />
+						</aon:commandButton>
+					</aon:form>
 		        </f:facet>
-				<h:panelGrid id="showDocument_treeGrid" columns="2"
-					columnClasses="aon-width-300 aon-border aon-vertical-align-top, aon-width-auto aon-vertical-align-top">
-					<aon:div styleClass="aon-scroll">
-					    <rich:tree 
-					    	switchType="server" 
-					    	stateAdvisor="#{treeStateAdvisor}">
-					        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.documentRoots}" 
-					        	var="item" 
-					        	nodes="#{item.nodes}">
-								<rich:treeNode>
-					                <aon:commandLink
-					                	action="#{item.onSelectFolder}" 
-					                	value="#{item}"
-					                	immediate="#{true}"
-					                	reRender="showDocument_treeGrid" />
-								</rich:treeNode>
-					        </rich:recursiveTreeNodesAdaptor>
-					    </rich:tree>
-					</aon:div>
-					<aon:div>
-						<aon:panelGrid styleClass="aon-width-all" columnClasses="aon-panel-head"> 
-							<aon:outputLabel value="#{document.currentRelativePath}" styleClass="aon-panel-title"/>
-						</aon:panelGrid>
-						<aon:div style="height:582;overflow:auto;">
-							<rich:dataGrid var="item" value="#{document.model}" columns="1">
-								<aon:div>
-					                <aon:commandLink immediate="true" value="#{item.name}"
-					                	reRender="showDocumentPanelGroup,thumbnail_preview_detail"
-					                    actionListener="#{download.onSelectImage}">
-					                    <f:setPropertyActionListener target="#{download.showWindow}" value="#{false}" />
-										<rich:componentControl for="showDocumentModalPanel"
-											operation="hide" event="onclick" />
-					        		</aon:commandLink>
-								</aon:div>
-							</rich:dataGrid>
+		        <aon:form>
+					<h:panelGrid columns="2"
+						columnClasses="aon-width-300 aon-border aon-vertical-align-top, aon-width-400 aon-vertical-align-top">
+						<aon:div styleClass="aon-scroll">
+							<ui:include src="/facelet/content/utils/galleryTree.xhtml" >
+								<ui:param name="controller" value="#{document}" />
+								<ui:param name="treeReRender" value="GalleryList" />
+							</ui:include>				 
 						</aon:div>
-					</aon:div>
-				</h:panelGrid>
+						<aon:div id="GalleryList" styleClass="aon-scroll">
+							<aon:panelGrid styleClass="aon-width-all" columnClasses="aon-panel-head"> 
+								<aon:outputLabel value="#{document.currentRelativePath}" styleClass="aon-panel-title"/>
+							</aon:panelGrid>
+							<aon:div style="height:582;">
+								<rich:dataGrid var="item" value="#{document.model}" columns="1">
+									<aon:div>
+						                <aon:commandLink immediate="true" value="#{item.name}"
+						                	reRender="showDocumentPanelGroup,thumbnail_preview_detail"
+						                    actionListener="#{download.onSelectImage}">
+						                    <f:setPropertyActionListener target="#{download.showWindow}" value="#{false}" />
+											<rich:componentControl for="showDocumentModalPanel"
+												operation="hide" event="onclick" />
+						        		</aon:commandLink>
+									</aon:div>
+								</rich:dataGrid>
+							</aon:div>
+						</aon:div>
+					</h:panelGrid>
+				</aon:form>
 			</rich:modalPanel>
 		</c:if>
 	</aon:panelGroup>													

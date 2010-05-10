@@ -1,20 +1,25 @@
 package com.code.aon.ui.cms.controller;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.richfaces.component.UITree;
+import org.richfaces.component.html.HtmlTree;
+import org.richfaces.event.NodeSelectedEvent;
 import org.richfaces.event.UploadEvent;
+import org.richfaces.model.ListRowKey;
 import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,18 +27,22 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.IGalleryController;
+import com.code.aon.ui.cms.tree.FileSystemNode;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.ImageComparator;
 import com.code.aon.ui.cms.util.ZipUtil;
 import com.code.aon.ui.form.BasicController;
 
 public abstract class GalleryController extends BasicController implements IGalleryController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(GalleryController.class);
-
-	private boolean showImageWindow;
 	
-	private boolean showThumbnailImageWindow;
+    private static Comparator<Image> COMPARATOR = new Comparator<Image>() {
+    	
+    	public int compare(Image img1, Image img2) {
+    		return img1.getName().compareToIgnoreCase(img2.getName());
+    	}    	
+    	
+	};	
 	
 	private File currentPath = recoverFilesPath();
 
@@ -60,7 +69,7 @@ public abstract class GalleryController extends BasicController implements IGall
 				list.add(img);
 			}
 		}
-		Collections.sort(list, new ImageComparator());
+		Collections.sort(list, COMPARATOR);
 		model = new ListDataModel(list);
 		list = null;
 	}
@@ -77,11 +86,18 @@ public abstract class GalleryController extends BasicController implements IGall
 		this.currentPath = currentPath;
 	}
 
-	public DataModel getModel() throws ManagerBeanException {
+	public DataModel getModel() {
 		if (model == null) {
 			chargeImageList();
 		}
 		return model;
+	}
+	
+	public int getColumns() {
+		if ( getModel() != null ) {
+			return (getModel().getRowCount() > 6) ? 6 : getModel().getRowCount();
+		}
+		return 0;
 	}
 
 	public void onDeleteFile(ActionEvent event) throws ManagerBeanException {
@@ -99,22 +115,17 @@ public abstract class GalleryController extends BasicController implements IGall
 		upload_name = upload_name.replaceAll("[^A-Za-z0-9._-]+", "");
 		String fileName = File.separator+upload_name;
 		//Miramos si es un fichero zip, en ese caso creamos un directorio y descomprimimos ahi los archivos...
-		String ext = fileName.substring(fileName.indexOf(".") + 1);
-		if (ext != null && ext.trim().toLowerCase().equals("zip")) {
-			ZipUtil.uncompressZipData(item.getData(), currentPath+File.separator+fileName.substring(0, fileName.indexOf(".")));
-		}
-		else {
-			File file = new File( currentPath+File.separator+fileName);
-			FileOutputStream outputStream = null; 
-			try{
-				byte[] data = item.getData();
-		        outputStream = new FileOutputStream(file);
-		        outputStream.write(data);
+		String ext = FilenameUtils.getExtension(fileName);
+		if ( StringUtils.equalsIgnoreCase(ext, "zip") ) {
+			File folder = new File( currentPath, FilenameUtils.getBaseName(fileName));
+			ZipUtil.uncompressZipData(item.getData(), folder);
+		} else {
+			File file = new File( currentPath, fileName );
+			try {
+				FileUtils.writeByteArrayToFile(file, item.getData());
 				chargeImageList();
 			} catch (Throwable th) {
 				LOGGER.error(th.getMessage(), th);
-			} finally {
-		        IOUtils.closeQuietly(outputStream);
 			}
 		}
 	}
@@ -163,20 +174,38 @@ public abstract class GalleryController extends BasicController implements IGall
 		LOGGER.info(fileName);
 	}
 
-	public boolean isShowImageWindow() {
-		return showImageWindow;
-	}
-
-	public void setShowImageWindow(boolean showImageWindow) {
-		this.showImageWindow = showImageWindow;
-	}
-
-	public boolean isShowThumbnailImageWindow() {
-		return showThumbnailImageWindow;
-	}
-
-	public void setShowThumbnailImageWindow(boolean showThumbnailImageWindow) {
-		this.showThumbnailImageWindow = showThumbnailImageWindow;
+	public void nodeSelected(NodeSelectedEvent event) {
+		HtmlTree tree = (HtmlTree) event.getComponent();
+		if ( tree.isRowAvailable() ) {
+			FileSystemNode fsn = (FileSystemNode) tree.getRowData();
+			setCurrentPath( fsn.getPath() );
+			chargeImageList();
+		}
 	}
 	
+    public FileSystemNode[] getRoots() {
+    	FileSystemNode[] srcRoots = new FileSystemNode[1];
+    	srcRoots[0] = new FileSystemNode( recoverFilesPath() );
+        return srcRoots;
+    }
+	
+	public Boolean adviseNodeOpened(UITree tree) {
+        Object key = tree.getRowKey();
+        ListRowKey<FileSystemNode> treeRowKey = (ListRowKey<FileSystemNode>) key;
+        if (treeRowKey == null || treeRowKey.depth() <= 1) {
+            return Boolean.TRUE;
+        }		
+		return null;
+	}	
+
+	public Boolean adviseNodeSelected(UITree tree) {
+        Object key = tree.getRowKey();
+        ListRowKey<FileSystemNode> treeRowKey = (ListRowKey<FileSystemNode>) key;
+        if ( tree.isRowAvailable() ) {
+        	FileSystemNode node = (FileSystemNode) tree.getRowData();
+        	return ObjectUtils.equals(currentPath, node.getPath());
+		}
+		return null;
+	}	
+
 }

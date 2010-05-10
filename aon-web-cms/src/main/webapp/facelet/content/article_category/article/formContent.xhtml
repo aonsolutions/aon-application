@@ -114,9 +114,7 @@
 	                   actionListener="#{article.onDelImage}">
 					<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 	       		</aon:commandLink>
-				<ui:include src="/facelet/content/utils/image_modal.xhtml">
-					<ui:param name="modalPanelName" value="mp" />
-					<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+				<ui:include src="/facelet/content/utils/image_modal_button.xhtml">
 					<ui:param name="listenerBean" value="#{article}" />
 					<ui:param name="reRender" value="thumbnail_preview" />
 					<ui:param name="thumbnail" value="#{false}" />
@@ -136,9 +134,7 @@
 	                   actionListener="#{article.onDelThumbnail}">
 					<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 	       		</aon:commandLink>
-				<ui:include src="/facelet/content/utils/image_modal.xhtml">
-					<ui:param name="modalPanelName" value="mp_thumbnail" />
-					<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+				<ui:include src="/facelet/content/utils/image_modal_button.xhtml">
 					<ui:param name="listenerBean" value="#{article}" />
 					<ui:param name="reRender" value="thumbnail_preview" />
 					<ui:param name="thumbnail" value="#{true}" />
