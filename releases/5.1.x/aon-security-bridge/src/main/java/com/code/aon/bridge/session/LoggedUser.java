@@ -27,10 +27,12 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	
 	private String companyName;
 	
+	private AuthPrincipal principal;
+	
 	private static final FakeMap USER_IN_ROLE = new FakeMap();
 	
 	public LoggedUser() {
-		AuthPrincipal principal = Utils.getAuthPrincipal();
+		this.principal = Utils.getAuthPrincipal();
 		if ( (principal != null) && (!IConstants.UNAUTHENTICATED_IDENTITY.equals(principal.getName())) ) {
 			this.logged = true;
 			initVariables(principal);
@@ -85,7 +87,11 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	public FakeMap getUserInRole() {
 		return USER_IN_ROLE;
 	}
-    
+
+	public AuthPrincipal getPrincipal() {
+		return principal;
+	}
+
 	@SuppressWarnings("unchecked")
 	private static class FakeMap extends AbstractMap<String,Boolean> {
 		
