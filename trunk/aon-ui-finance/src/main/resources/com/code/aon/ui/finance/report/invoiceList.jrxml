@@ -197,7 +197,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_number}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{invoice_number}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="181" y="0" width="177" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
