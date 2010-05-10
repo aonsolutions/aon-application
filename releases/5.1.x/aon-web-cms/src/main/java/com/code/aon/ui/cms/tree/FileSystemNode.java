@@ -2,18 +2,28 @@ package com.code.aon.ui.cms.tree;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class FileSystemNode {
 
     private static final FileSystemNode[] CHILDREN_ABSENT = new FileSystemNode[0];
+    
+    private static Comparator<FileSystemNode> COMPARATOR = new Comparator<FileSystemNode>() {
+    	
+    	public int compare(FileSystemNode fsn1, FileSystemNode fsn2) {
+    		String name1 = fsn1.getPath().getName();
+    		String name2 = fsn2.getPath().getName();
+    		return name1.compareToIgnoreCase(name2);
+    	}    	
+    	
+	};
 	
     private File path;
     private FileSystemNode[] children;
-    private FileSystemBean bean_;
 
-    public FileSystemNode(File path, FileSystemBean bean_) {
+    public FileSystemNode( File path ) {
     	this.path = path;
-        this.bean_ = bean_;
     }
 
     public synchronized FileSystemNode[] getNodes() {
@@ -24,8 +34,9 @@ public class FileSystemNode {
 	            });
                 children = new FileSystemNode[nodes.length];
                 for (int i = 0; i < nodes.length; i++) {
-                    children[i] = new FileSystemNode(nodes[i], this.bean_);
+                    children[i] = new FileSystemNode( nodes[i] );
                 }
+                Arrays.sort(children, COMPARATOR);
             } else {
                 children = CHILDREN_ABSENT;
             }
@@ -36,10 +47,6 @@ public class FileSystemNode {
     public File getPath() {
 		return path;
 	}
-
-	public void onSelectFolder(){
-		bean_.setSelected( getPath() );
-    }
 
 	@Override
 	public String toString() {
