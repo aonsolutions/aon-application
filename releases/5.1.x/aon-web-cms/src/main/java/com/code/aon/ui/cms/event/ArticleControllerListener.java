@@ -2,6 +2,9 @@ package com.code.aon.ui.cms.event;
 
 import java.io.File;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.cms.Album;
 import com.code.aon.cms.Article;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
@@ -55,12 +58,11 @@ public class ArticleControllerListener extends ControllerAdapter {
 		}
 	}
 	
-	private void generateThumbnail(Article a){
-		if (a.getThumbnail()==null ||
-				a.getThumbnail().trim().isEmpty()){
-			if (a.getImage()!=null && !a.getImage().trim().isEmpty()){
+	private void generateThumbnail(Article a) {
+		if ( StringUtils.isBlank(a.getThumbnail()) ) {
+			if (! StringUtils.isBlank(a.getImage()) ) {
 				File file = ControllerUtil.getImagePath(a.getImage());
-				File thumb = ImageUtil.resize(file,ImageUtil.DEF_MAX_SIZE);
+				File thumb = ImageUtil.resize(file, Album.DEFAULT_THUMBNAIL_WIDTH);
 				String path = ControllerUtil.getRelativePath(ControllerUtil.getImagesPath(), thumb);
 				a.setThumbnail( path );
 			}

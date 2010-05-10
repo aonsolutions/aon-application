@@ -30,7 +30,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class AlbumController extends BasicI18nController implements ICMSConstants, Constants {
-
+	
 	private boolean showAlbumWindow;
 	
 	public String getI18nTitle() throws ManagerBeanException {
@@ -187,7 +187,7 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 			albumImage.setImage(image.getRelativePath());
 			albumImage.setPosition(i);
 			File file = ControllerUtil.getImagePath(image.getRelativePath());
-			File thumb = ImageUtil.resize(file,ImageUtil.DEF_MAX_SIZE);
+			File thumb = ImageUtil.resize(file, Album.DEFAULT_THUMBNAIL_WIDTH);
 			String path = ControllerUtil.getRelativePath(ControllerUtil.getImagesPath(), thumb);
 			albumImage.setThumbnail(path);
 			albumImage = (AlbumImage) albumImageBean.insert(albumImage);

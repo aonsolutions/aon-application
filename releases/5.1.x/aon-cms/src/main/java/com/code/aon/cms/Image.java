@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 public class Image implements Serializable {
 
 	private static final long serialVersionUID = 1286073893332097082L;
@@ -57,7 +55,7 @@ public class Image implements Serializable {
 	}
 
 	public void setRelativePath(String relativePath) {
-		this.relativePath = StringEscapeUtils.escapeHtml(relativePath);
+		this.relativePath = relativePath;
 	}
 
 }
