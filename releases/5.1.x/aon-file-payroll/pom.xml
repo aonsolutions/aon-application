@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.1.1</version>
+		<version>5.1.2</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.file.payroll</artifactId>
-	<version>5.1.1</version>
+	<version>5.1.2</version>
 	<description>AON FILE PAYROLL</description>
 	<name>AON FILE PAYROLL</name>
 	<dependencies>

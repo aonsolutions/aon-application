@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.1.1</version>
+		<version>5.1.2</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.rich.components</artifactId>
-	<version>5.1.1</version>
+	<version>5.1.2</version>
 	<description>AON RICH COMPONENTS</description>
 	<name>AON RICH COMPONENTS</name>
 	<dependencies>
