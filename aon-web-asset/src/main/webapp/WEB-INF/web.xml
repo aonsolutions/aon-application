@@ -97,8 +97,6 @@
 	</context-param>
 
 	<!-- JSF-FACELETS CONFIGURATION -->
-
- <!-- 
 	<context-param>
 		<description>
 			When a page is requested, what interval in seconds should 
@@ -110,7 +108,6 @@
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
- -->
 
 	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
@@ -178,7 +175,7 @@
    <!-- 
 	<context-param>
       <param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
-      <param-value>../aon-desktop/richFaces3.2.1/</param-value>
+      <param-value>../aon-desktop/richFaces3.3.3.Final/</param-value>
    </context-param>
     -->
 
