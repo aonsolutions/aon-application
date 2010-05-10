@@ -46,6 +46,7 @@
 			showProduct="false"
 			showSeller="false"
 			showAddInfo="true"			
+			showThirdParty="false"
 		/>
 	</commercial:config>
 		
