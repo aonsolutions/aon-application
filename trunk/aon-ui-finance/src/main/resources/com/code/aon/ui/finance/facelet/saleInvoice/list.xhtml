@@ -32,7 +32,7 @@
 					<aon:htmlCommandLink id="saleInvoiceDetailledList-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-						<f:param name="reportKey" value="saleInvoiceDetailledList" />
+						<f:param name="reportKey" value="saleInvoiceExcelDetailledList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>							
 					<aon:htmlCommandLink id="saleInvoiceDetailledList-report"
@@ -50,25 +50,34 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:define name="columns">
-						<aon:column alias="Invoice.referenceCode" 
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.referenceCode}" />
-						</aon:column>
-	
-						<aon:column alias="Invoice.issueDate" 
+
+						<aon:column alias="Invoice.issueDate"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
-							<aon:outputText value="#{to.issueDate}">
+							<h:outputText value="#{to.issueDate}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
+							</h:outputText>
 						</aon:column>
-	
+
+						<aon:column alias="Invoice.referenceCode"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_invoice_number}" />
+							</f:facet>
+							<h:outputText value="#{to.referenceCode}" />
+						</aon:column>
+
+						<aon:column alias="Invoice.documentNumber"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_invoice_order}" />
+							</f:facet>
+							<h:outputText value="#{to.documentNumber}" />
+						</aon:column>
+
 						<aon:column alias="Invoice.registryName" 
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
