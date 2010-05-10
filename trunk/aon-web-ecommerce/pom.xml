@@ -13,7 +13,7 @@
 	<description>AON WEB ECOMMERCE</description>
 	<name>AON WEB ECOMMERCE</name>
 	<properties>
-		<dbVersion>4.8.1</dbVersion>
+		<dbVersion>5.1.1</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-ecommerce</finalName>

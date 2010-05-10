@@ -13,7 +13,7 @@
 	<version>5.2.0-SNAPSHOT</version>
 	<description>AON WEB COMMUNICATOR</description>
 	<properties>
-		<dbVersion>5.0.0</dbVersion>
+		<dbVersion>5.1.1</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-communicator</finalName>
