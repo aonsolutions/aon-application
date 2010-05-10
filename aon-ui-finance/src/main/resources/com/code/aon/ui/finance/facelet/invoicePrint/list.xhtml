@@ -59,14 +59,7 @@
 
 				<aon:dataTable id="invoicePrintData" value="#{invoicePrint.model}" sortMode="multi"
 					var="to" rows="20" rendered="#{invoicePrint.model.rowCount > 0}">
-					
-					<aon:column alias="Invoice.referenceCode"
-						styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-						</f:facet>
-						<h:outputText value="#{to.referenceCode}" />
-					</aon:column>
+
 
 					<aon:column alias="Invoice.issueDate"
 						styleClass="aon-editDataTable-textColumn">
@@ -77,6 +70,22 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</h:outputText>
+					</aon:column>
+
+					<aon:column alias="Invoice.referenceCode"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{financeBundle.finance_invoice_number}" />
+						</f:facet>
+						<h:outputText value="#{to.referenceCode}" />
+					</aon:column>
+
+					<aon:column alias="Invoice.documentNumber"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{financeBundle.finance_invoice_order}" />
+						</f:facet>
+						<h:outputText value="#{to.documentNumber}" />
 					</aon:column>
 
 					<aon:column alias="Invoice.registryName"
