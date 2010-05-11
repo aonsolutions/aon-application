@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{accountManagerCreditor}" />
+		<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
+		<ui:define name="columns">
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="Creditor_id"
+						value="#{financeBundle.finance_creditor}" />
+				</f:facet>
+				<aon:outputText rendered="#{formList}"
+					value="#{to.accountDescription}" />
+				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+					<a4j:region>
+						<aon:lookupInputText id="Creditor_id"
+							value="#{accountManagerCreditor.to.creditor.registry.id}" size="5"
+							lookupProperty="registry" lookup="#{creditorLookup}"
+							lookupChangeListener="#{accountManagerCreditor.creditorChanged}"
+							reRender="Creditor_full_name" ajaxSingle="true" required="true" />
+						<aon:lookupButton
+							windowTitle="#{financeBundle.finance_selection}"
+							minHeight="460" minWidth="650"
+							property="#{accountManagerCreditor.to.creditor.registry}"
+							lookupProperty="registry" lookup="#{creditorLookup}"
+							lookupChangeListener="#{accountManagerCreditor.creditorChanged}"
+							selectReRender="Creditor_id,Creditor_full_name"
+							actionType="search">
+						</aon:lookupButton>
+						<aon:lookupButton windowTitle="#{financeBundle.finance_new}"
+							minWidth="650" minHeight="600"
+							property="#{accountManagerCreditor.to.creditor.registry}"
+							lookupProperty="registry" lookup="#{creditorLookup}"
+							selectReRender="Creditor_id,Creditor_full_name" actionType="new">
+						</aon:lookupButton>
+						<aon:inputText id="Creditor_full_name"
+							value="#{accountManagerCreditor.to.accountDescription}" disabled="true"
+							size="60" />
+					</a4j:region>
+				</aon:div>
+				<f:facet name="footer">
+				<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+					<a4j:region>
+						<aon:lookupInputText id="Creditor_id-New"
+							value="#{accountManagerCreditor.to.creditor.registry.id}" size="5"
+							lookupProperty="registry" lookup="#{creditorLookup}"
+							lookupChangeListener="#{accountManagerCreditor.creditorChanged}"
+							reRender="Creditor_full_name-New" ajaxSingle="true" required="true" />
+						<aon:lookupButton
+							windowTitle="#{creditorBundle.creditor_selection}"
+							minHeight="460" minWidth="650"
+							property="#{accountManagerCreditor.to.creditor.registry}"
+							lookupProperty="registry" lookup="#{creditorLookup}"
+							lookupChangeListener="#{accountManagerCreditor.creditorChanged}"							
+							selectReRender="Creditor_id-New,Creditor_full_name-New"
+							actionType="search">
+						</aon:lookupButton>
+						<aon:lookupButton windowTitle="#{creditorBundle.creditor_new}"
+							minWidth="650" minHeight="600"
+							property="#{accountManagerCreditor.to.creditor.registry}"
+							lookupProperty="registry" lookup="#{creditorLookup}"
+							selectReRender="Creditor_id-New,Creditor_full_name-New"
+							actionType="new">
+						</aon:lookupButton>
+						<aon:inputText id="Creditor_full_name-New"
+							value="#{accountManagerCreditor.to.accountDescription}" disabled="true"
+							size="60" />
+					</a4j:region>
+				</aon:div>
+				</f:facet>
+			</aon:column>
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

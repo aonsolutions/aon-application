@@ -34,4 +34,52 @@
 		</listeners>
 	</bean>
 
+	<bean description="Control de enlace entre Customer y Account">
+		<pojo>com.code.aon.account.bridge.CustomerAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.CustomerAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Creditor y Account">
+		<pojo>com.code.aon.account.bridge.CreditorAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.CreditorAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Supplier y Account">
+		<pojo>com.code.aon.account.bridge.SupplierAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.SupplierAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre RegistryBank y Account">
+		<pojo>com.code.aon.account.bridge.RegistryBankAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.RegistryBankAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Tax y Account">
+		<pojo>com.code.aon.account.bridge.TaxAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.TaxAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Loan y Account">
+		<pojo>com.code.aon.account.bridge.LoanAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.LoanAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Product y Account">
+		<pojo>com.code.aon.account.bridge.ProductAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.ProductAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
 </bean-config>

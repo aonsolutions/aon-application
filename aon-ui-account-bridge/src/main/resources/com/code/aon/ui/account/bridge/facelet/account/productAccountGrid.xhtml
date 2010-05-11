@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{accountManagerProduct}" />
+		<ui:param name="columnClasses"
+			value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+		<ui:param name="newCancelButtonReRender" value="accountManagerProductDiv" />
+		<ui:define name="columns">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputLabel for="ProductAccount_product_code" value="#{productBundle.product_item}" />
+				</f:facet>
+				<aon:outputText value="#{to.accountDescription}" rendered="#{formList}">
+					<aon:abbreviateConverter maxWidth="64" />
+				</aon:outputText>
+				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+					<a4j:region>
+						<aon:lookupInputText id="ProductAccount_product_code"
+							value="#{accountManagerProduct.to.product.code}"
+							lookup="#{itemLookup}" lookupProperty="product"
+							lookupChangeListener="#{accountManagerProduct.itemChanged}"
+							reRender="ProductAccount_product_name"
+							ajaxSingle="false" required="true" size="10"
+							onblur="toUpperCase(this);">
+							<aon:joinProperty alias="Item_product_code" value="#{accountManagerProduct.to.product.code}" />
+						</aon:lookupInputText>
+						<aon:lookupButton
+							windowTitle="#{productBundle.product_item_selection}"
+							minHeight="460" minWidth="650" property="#{accountManagerProduct.to.product}"
+							lookup="#{itemLookup}" lookupProperty="product"
+							lookupChangeListener="#{accountManagerProduct.itemChanged}"
+							selectReRender="ProductAccount_product_code,ProductAccount_product_name"
+							actionType="search">
+						</aon:lookupButton>
+						<aon:lookupButton windowTitle="#{productBundle.product_item_new}"
+							minHeight="360" minWidth="975" property="#{accountManagerProduct.to.item}"
+							lookup="#{itemLookup}" lookupProperty="product"
+							lookupChangeListener="#{accountManagerProduct.itemChanged}"
+							selectReRender="ProductAccount_product_code,ProductAccount_product_name"
+							actionType="new">
+						</aon:lookupButton>
+					</a4j:region>
+					<aon:inputText id="ProductAccount_product_name"
+						value="#{accountManagerProduct.to.accountDescription}" disabled="true" size="60" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+						<a4j:region>
+							<aon:lookupInputText id="ProductAccount_product_code-New"
+								value="#{accountManagerProduct.to.product.code}"
+								lookup="#{itemLookup}" lookupProperty="product"
+								lookupChangeListener="#{accountManagerProduct.itemChanged}"
+								reRender="ProductAccount_product_name-New"
+								ajaxSingle="false" required="true" size="10"
+								onblur="toUpperCase(this);">
+								<aon:joinProperty alias="Item_product_code" value="#{accountManagerProduct.to.product.code}" />
+							</aon:lookupInputText>
+							<aon:lookupButton
+								windowTitle="#{productBundle.product_item_selection}"
+								minHeight="460" minWidth="650" property="#{accountManagerProduct.to.product}"
+								lookup="#{itemLookup}" lookupProperty="product"
+								lookupChangeListener="#{accountManagerProduct.itemChanged}"
+								selectReRender="ProductAccount_product_code-New,ProductAccount_product_name-New"
+								actionType="search">
+							</aon:lookupButton>
+							<aon:lookupButton windowTitle="#{productBundle.product_item_new}"
+								minHeight="360" minWidth="975" property="#{accountManagerProduct.to.product}"
+								lookup="#{itemLookup}" lookupProperty="product"
+								lookupChangeListener="#{accountManagerProduct.itemChanged}"
+								selectReRender="ProductAccount_product_code-New,ProductAccount_product_name-New"
+								actionType="new">
+							</aon:lookupButton>
+						</a4j:region>
+						<aon:inputText id="ProductAccount_product_name-New"
+							value="#{accountManagerProduct.to.accountDescription}" disabled="true" size="60" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="Product_type" value="#{bundle.aon_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.type}" rendered="#{formList}" />
+				<aon:selectOneMenu id="Product_type" rendered="#{formEdit}"
+					required="true" value="#{accountManagerProduct.to.type}">
+					<f:selectItems value="#{accountBridgeCollections.productAccountTypes}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="Product_type-New" rendered="#{formNew}"
+						required="true" value="#{accountManagerProduct.to.type}">
+						<f:selectItems value="#{accountBridgeCollections.productAccountTypes}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>
