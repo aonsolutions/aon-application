@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{commercialStat.onSellerControlStats}"
+						type="actionListener" />
+					<aon:methodParam name="searchAction" value="commercial_seller_stat" />
+
+					<aon:outputLabel for="Target_trackings_seller_id"
+						value="#{salesBundle.sales_seller}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Target_trackings_seller_id"
+							lookup="#{sellerLookup}" reRender="Target_trackings_seller_name"
+							value="#{commercialStat.seller.id}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Target_trackings_seller_lookup"
+							windowTitle="#{appBundle.aon_lookup_seller}"
+							selectReRender="Target_trackings_seller_id,Target_trackings_seller_name"
+							lookup="#{sellerLookup}" minHeight="440"
+							property="#{commercialStat.seller}">
+						</aon:lookupButton>
+						<aon:inputText id="Target_trackings_seller_name"
+							value="#{(commercialStat.seller.registry.name!=null)?(commercialStat.seller.registry.fullName):('')}"
+							size="44" disabled="true" />
+					</aon:div>
+
+					<aon:outputLabel for="entryDate-From"
+						value="#{bundle.aon_date_from}" />
+					<aon:panelGrid columns="3">
+						<aon:selectInputDate id="entryDate-From"
+							value="#{commercialStat.params.fromDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+
+						<aon:outputLabel for="entryDate-To" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="entryDate-To"
+							value="#{commercialStat.params.toDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:panelGrid>
+
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+	</ui:define>
+</ui:composition>
