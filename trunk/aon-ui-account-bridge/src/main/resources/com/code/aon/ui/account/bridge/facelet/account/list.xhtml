@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="accountList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{accountBridgeBundle.account_relationships_module}" />
+				<ui:param name="controller" value="#{accountManager}" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:htmlCommandLink id="accountModule-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="accountModule" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="accountModule-word-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						title="#{bundle.aon_listing} MS Word 2007"
+						styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="accountModule" />
+						<f:param name="outputFormat" value="DOCX" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="accountModule-report"
+						value="#{bundle.aon_listing}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="accountModule" />
+					</aon:htmlCommandLink>
+				</ui:define>
+					
+			</ui:decorate>			
+ 
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{accountManager}" />
+					<ui:define name="columns">
+ 
+						<aon:column alias="Account.id"
+							styleClass="aon-editDataTable-textColumn aon-width-200">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}"
+								style="margin-left: #{(to.level-1)/2}em;"/>
+						</aon:column>
+	
+						<aon:column alias="Account.description"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+	
+						<aon:column alias="Account.alias"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.alias}" />
+						</aon:column>
+	
+						<aon:column alias="Account.entryEnabled"
+							styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{accountBundle.account_entryEnabled}" />
+							</f:facet>
+							<aon:div styleClass="#{to.entryEnabled?'aon-icon-checked':'aon-icon-check'}">
+								<aon:outputText value="&#160;" />
+							</aon:div>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

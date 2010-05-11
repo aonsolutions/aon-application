@@ -108,7 +108,7 @@ public class AccountBridgeUtil {
 		IAccount customerAccount = obtainCustomerIAccount(registry);
 		return customerAccount==null?null:customerAccount.getAccount();
 	}
-	private CustomerAccount obtainCustomerIAccount(Registry registry) throws ManagerBeanException {
+	public CustomerAccount obtainCustomerIAccount(Registry registry) throws ManagerBeanException {
 		try {
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 			Customer customer = (Customer) customerBean.get(registry.getId());

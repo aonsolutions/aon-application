@@ -1,9 +1,22 @@
-<?xml version="1.0"?>
-<!DOCTYPE faces-config PUBLIC
-  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
-  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-<faces-config>
+  <application>
+    <resource-bundle>
+      <base-name>com.code.aon.ui.account.bridge.i18n.messages</base-name>
+      <var>accountBridgeBundle</var>
+    </resource-bundle>
+  </application>
+
+	<managed-bean>
+		<managed-bean-name>accountBridgeCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.bridge.controller.AccountBridgeCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>productAccountListener</managed-bean-name>
@@ -38,7 +51,7 @@
 		<managed-property>
 			<property-name>alias</property-name>
 			<value>CustomerAccount_customer_id</value>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
@@ -52,7 +65,7 @@
 		<managed-property>
 			<property-name>alias</property-name>
 			<value>SupplierAccount_supplier_id</value>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
@@ -66,9 +79,9 @@
 		<managed-property>
 			<property-name>alias</property-name>
 			<value>CreditorAccount_creditor_id</value>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>taxAccountListener</managed-bean-name>
 		<managed-bean-class>
@@ -77,4 +90,488 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************************************** -->
+	<!-- ********** MANTO. CUENTAS ************ -->
+	<!-- ************************************** -->
+
+	<!-- **************** ACCOUNT ************************** -->
+	<managed-bean>
+		<managed-bean-name>accountManager</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.bridge.controller.AccountManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.Account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountManager</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{accountControllerListener}</value>
+				<value>#{accountAppParamsControllerListener}</value>
+				<value>#{accountManagerControllerListener}</value>
+				<value>#{accountManagerCustomerListener}</value>
+				<value>#{accountManagerCreditorListener}</value>
+				<value>#{accountManagerSupplierListener}</value>
+				<value>#{accountManagerRegistryBankListener}</value>
+				<value>#{accountManagerTaxListener}</value>
+				<value>#{accountManagerLoanListener}</value>
+				<value>#{accountManagerProductListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountManagerControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.bridge.event.AccountManagerControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountManagerCustomerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountManagerCustomer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CustomerAccount_account_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountManagerCustomer</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.bridge.controller.CustomerAccountManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.bridge.CustomerAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountManagerCustomer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>accountManager</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>account.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountManagerCreditorListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountManagerCreditor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CreditorAccount_account_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountManagerCreditor</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.bridge.controller.CreditorAccountManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.bridge.CreditorAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountManagerCreditor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>accountManager</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>account.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountManagerSupplierListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountManagerSupplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>SupplierAccount_account_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountManagerSupplier</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.bridge.controller.SupplierAccountManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.bridge.SupplierAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountManagerSupplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>accountManager</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>account.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountManagerRegistryBankListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountManagerRegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryBankAccount_account_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountManagerRegistryBank</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.bridge.RegistryBankAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountManagerRegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>accountManager</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>account.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountManagerTaxListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountManagerTax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>TaxAccount_account_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountManagerTax</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.bridge.TaxAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountManagerTax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>accountManager</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>account.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountManagerLoanListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountManagerLoan</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>LoanAccount_account_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountManagerLoan</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.bridge.LoanAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountManagerLoan</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>accountManager</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>account.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountManagerProductListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountManagerProduct</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ProductAccount_account_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>accountManagerProduct</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.bridge.controller.ProductAccountManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.bridge.ProductAccount</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountManagerProduct</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>accountManager</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>account.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+	<!-- ********** CUSTOMER ACCOUNT CHECKER ************ -->
+	<managed-bean>
+		<managed-bean-name>customerAccountChecker</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.bridge.controller.CustomerAccountChecker</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerAccountChecker</value>
+		</managed-property>
+ 	</managed-bean>	
+	<!-- ********** SUPPLIER ACCOUNT CHECKER ************ -->
+	<managed-bean>
+		<managed-bean-name>supplierAccountChecker</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.bridge.controller.SupplierAccountChecker</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>supplierAccountChecker</value>
+		</managed-property>
+ 	</managed-bean>	
+	<!-- ********** CREDITOR ACCOUNT CHECKER ************ -->
+	<managed-bean>
+		<managed-bean-name>creditorAccountChecker</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.bridge.controller.CreditorAccountChecker</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>creditorAccountChecker</value>
+		</managed-property>
+ 	</managed-bean>	
+	
+	<!-- ********** MANTO. CUENTAS ************ -->
+	<!-- ************* ACCOUNT **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>accountManager_form</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/account/bridge/facelet/account/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountManager_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/account/bridge/facelet/account/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountManager_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/account/bridge/facelet/account/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- ********** CUSTOMER ACCOUNT CHECKER ************ -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>customerAccountChecker_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/account/bridge/facelet/checker/customerAccount/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customerAccountChecker_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/account/bridge/facelet/checker/customerAccount/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- ********** SUPPLIER ACCOUNT CHECKER ************ -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>supplierAccountChecker_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/account/bridge/facelet/checker/supplierAccount/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplierAccountChecker_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/account/bridge/facelet/checker/supplierAccount/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- ********** CREDITOR ACCOUNT CHECKER ************ -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>creditorAccountChecker_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/account/bridge/facelet/checker/creditorAccount/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>creditorAccountChecker_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/account/bridge/facelet/checker/creditorAccount/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 </faces-config>
