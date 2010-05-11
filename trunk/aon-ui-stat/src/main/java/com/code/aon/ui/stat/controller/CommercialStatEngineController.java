@@ -13,13 +13,18 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import com.code.aon.commercial.enumeration.OfferStatus;
+import org.hibernate.Query;
+import org.hibernate.Session;
+
+import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.seller.Seller;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.util.AonUtil;
-
 
 public class CommercialStatEngineController {
 
@@ -34,10 +39,103 @@ public class CommercialStatEngineController {
 	private Double totalAmount;
 	private Integer numInvoices;
 	private Double promAmount;
-	
+	private Seller seller;	
 	private Integer category;
+	private DataModel doneOffersModel;
+	private DataModel closedOffersModel;
+	private DataModel lostOffersModel;
+	private DataModel visitsModel;
+	private List<OfferDetail> doneOffersList;
+	private List<OfferDetail> closedOffersList;
+	private List<OfferDetail> lostOffersList;
+	private List<Offer> visitsList;
 	
 	
+	
+	public DataModel getDoneOffersModel() {
+		if (doneOffersModel == null) {
+			doneOffersModel = new ListDataModel(getDoneOffersList());
+		}
+		return doneOffersModel;
+	}
+
+	public void setDoneOffersModel(DataModel doneOffersModel) {
+		this.doneOffersModel = doneOffersModel;
+	}
+
+	public DataModel getClosedOffersModel() {
+		if (closedOffersModel == null) {
+			closedOffersModel = new ListDataModel(getClosedOffersList());
+		}
+		return closedOffersModel;
+	}
+
+	public void setClosedOffersModel(DataModel closedOffersModel) {
+		this.closedOffersModel = closedOffersModel;
+	}
+
+	public DataModel getLostOffersModel() {
+		if (lostOffersModel == null) {
+			lostOffersModel = new ListDataModel(getLostOffersList());
+		}
+		return lostOffersModel;
+	}
+
+	public void setLostOffersModel(DataModel lostOffersModel) {
+		this.lostOffersModel = lostOffersModel;
+	}
+
+	public DataModel getVisitsModel() {
+		if (visitsModel == null) {
+			visitsModel = new ListDataModel(getVisitsList());
+		}
+		return visitsModel;
+	}
+
+	public void setVisitsModel(DataModel visitsModel) {
+		this.visitsModel = visitsModel;
+	}
+
+	public List<OfferDetail> getDoneOffersList() {
+		return doneOffersList;
+	}
+
+	public void setDoneOffersList(List<OfferDetail> doneOffersList) {
+		this.doneOffersList = doneOffersList;
+	}
+
+	public List<OfferDetail> getClosedOffersList() {
+		return closedOffersList;
+	}
+
+	public void setClosedOffersList(List<OfferDetail> closedOffersList) {
+		this.closedOffersList = closedOffersList;
+	}
+
+	public List<OfferDetail> getLostOffersList() {
+		return lostOffersList;
+	}
+
+	public void setLostOffersList(List<OfferDetail> lostOffersList) {
+		this.lostOffersList = lostOffersList;
+	}
+
+	public List<Offer> getVisitsList() {
+		return visitsList;
+	}
+
+	public void setVisitsList(List<Offer> visitsList) {
+		this.visitsList = visitsList;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
 	public DataModel getProductStatModel() {
 		if (productStatModel == null) {
 			productStatModel = new ListDataModel(getProductStats());
@@ -137,18 +235,76 @@ public class CommercialStatEngineController {
 		params.setLocale(FacesContext.getCurrentInstance().getViewRoot()
 				.getLocale());
 		params.setOfferStatuses(null);
+		setSeller(null);
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
-		//setSummaryMonth(c.get(Calendar.MONTH) + 1);
 		c.set(Calendar.MONTH, 0);
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		params.setFromDate(c.getTime());
 		c.set(Calendar.MONTH, 11);
 		c.set(Calendar.DAY_OF_MONTH, 31);
 		params.setToDate(c.getTime());
-		//setCurrentYear(c.get(Calendar.YEAR));
+		
 	}
 	
+	public void onSellerControlStats(ActionEvent e){
+		try {
+			setClosedOffersModel(null);
+			setDoneOffersModel(null);
+			setLostOffersModel(null);
+			setVisitsModel(null);
+			
+			//getClosedOffers();
+			getDoneOffers();
+			//getLostOffers();
+			//getDoneVisitsModel();
+				
+		} catch (ManagerBeanException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	private void getDoneVisitsModel()throws ManagerBeanException {
+		String select = "select OfferDetail "
+			+ "from OfferDetail as OfferDetail "
+			+ "where  OfferDetail.offer.seller.id = " +seller.getId()
+			+ "order by OfferDetail.offer.issueDate desc";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		visitsList = query.list();
+	}
+
+	private void getLostOffers() throws ManagerBeanException {
+		String select = "select InvoiceDetail "
+			+ "from InvoiceDetail as InvoiceDetail "
+			+ "where InvoiceDetail.invoice.type = 0 AND InvoiceDetail.item.id = " +seller.getId()
+			+ "order by InvoiceDetail.invoice.issueDate desc";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		lostOffersList = query.list();
+	}
+
+	private void getDoneOffers() throws ManagerBeanException {
+		String select = "select OfferDetail "
+			+ "from OfferDetail as OfferDetail "
+			+ "where  OfferDetail.offer.seller.id = " +seller.getId()
+			+ "order by OfferDetail.offer.issueDate desc";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		doneOffersList= query.list();
+	}
+
+	private void getClosedOffers() throws ManagerBeanException {
+		String select = "select InvoiceDetail "
+			+ "from InvoiceDetail as InvoiceDetail "
+			+ "where InvoiceDetail.invoice.type = 0 AND InvoiceDetail.item.id = " +seller.getId()
+			+ "order by InvoiceDetail.invoice.issueDate desc";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		closedOffersList = query.list();
+	}
+
 	public void onCategoryStats(ActionEvent event) {
 		try {
 			StatEngine se = new StatEngine();
@@ -243,6 +399,8 @@ public class CommercialStatEngineController {
 			i++;
 		}
 	}
+	
+	
 	
 	
 }
