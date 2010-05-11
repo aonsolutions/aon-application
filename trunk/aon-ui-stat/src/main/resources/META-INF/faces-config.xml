@@ -23,14 +23,14 @@
 			com.code.aon.ui.stat.controller.RegistryStatEngineController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>productStat</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.stat.controller.ProductStatEngineController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>commercialStat</managed-bean-name>
 		<managed-bean-class>
@@ -230,8 +230,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>registry_search_stat</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/stat/facelet/registryStat/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/stat/facelet/registryStat/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>registry_stats</from-outcome>
@@ -240,13 +239,12 @@
 		</navigation-case>
 
 	</navigation-rule>
-	
-		<!-- *************Product Stats***************** -->
+
+	<!-- *************Product Stats***************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>product_search_stat</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/stat/facelet/productStat/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/stat/facelet/productStat/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>product_stats</from-outcome>
@@ -255,26 +253,26 @@
 		</navigation-case>
 
 	</navigation-rule>
-	
-			<!-- *************Commercial Stats***************** -->
+
+	<!-- *************Commercial Stats***************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>commercial_category_stat_search</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/commercialCategory/search.xhtml</to-view-id>
-		</navigation-case>		
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>commercial_category_stats_year</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/commercialCategory/yearStats.xhtml</to-view-id>
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>commercial_product_stats</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/commercialCategory/productStats.xhtml</to-view-id>
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>commercial_geozone_stat_search</from-outcome>
 			<to-view-id>
@@ -285,7 +283,7 @@
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/commercialGeozone/yearStats.xhtml</to-view-id>
 		</navigation-case>
-			
+
 		<navigation-case>
 			<from-outcome>commercial_seller_stat_search</from-outcome>
 			<to-view-id>
@@ -296,8 +294,18 @@
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/commercialSeller/yearStats.xhtml</to-view-id>
 		</navigation-case>
-		
 
+		<navigation-case>
+			<from-outcome>commercial_seller_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialSellerControl/search.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>commercial_seller_stat</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialSellerControl/sellerStat.xhtml</to-view-id>
+		</navigation-case>
 
 	</navigation-rule>
 
