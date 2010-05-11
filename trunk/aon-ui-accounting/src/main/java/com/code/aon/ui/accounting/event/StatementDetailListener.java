@@ -36,7 +36,7 @@ public class StatementDetailListener extends ControllerAdapter {
 			if (params.getToDate() != null) {
 				criteria.addLessThanOrEqualExpression(alias,params.getToDate()); 
 			}
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPENING));	
+//			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPENING));	
 			if (params.isExcludeClosingEntry()) {
 				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING));	
 			}

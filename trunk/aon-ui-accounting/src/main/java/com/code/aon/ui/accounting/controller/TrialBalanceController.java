@@ -5,10 +5,10 @@ import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -239,17 +239,29 @@ public class TrialBalanceController implements ICollectionProvider {
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
-	
+
+	public void onPeriodChanged(ValueChangeEvent event) {
+		try {
+			Period period = (Period) event.getNewValue();
+			if (period == null && getParameters().getFromDate() == null) {
+				Date first = getAccountingUtil().getFirstPeriodInitialionDate();
+				getParameters().setFromDate(first);
+			}
+		} catch (ManagerBeanException e) {
+			// Nothing.
+		}
+	}
+
 	public boolean isDateValid() {
 		if (getParameters().getPeriod() != null) {
 			return true;
 		}
 		Date from = getParameters().getFromDate();
 		Date to = getParameters().getToDate();
-		if ( from == null || to == null) {
+		if ( from == null) {
 			return false;
 		}
-		if (to.compareTo(from) < 0 ) {
+		if (to != null && to.compareTo(from) < 0 ) {
 			return false;
 		}
 		return true;

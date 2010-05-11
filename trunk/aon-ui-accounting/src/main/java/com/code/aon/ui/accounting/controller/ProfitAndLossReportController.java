@@ -8,10 +8,12 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.summary.Summary;
 import com.code.aon.accounting.summary.SummaryCollection;
@@ -358,16 +360,28 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		this.grossMarginList = grossMarginList;
 	}
 	
+	public void onPeriodChanged(ValueChangeEvent event) {
+		try {
+			Period period = (Period) event.getNewValue();
+			if (period == null && getParameters().getFromDate() == null) {
+				Date first = getAccountingUtil().getFirstPeriodInitialionDate();
+				getParameters().setFromDate(first);
+			}
+		} catch (ManagerBeanException e) {
+			// Nothing.
+		}
+	}
+
 	public boolean isDateValid() {
 		if (getParameters().getPeriod() != null) {
 			return true;
 		}
 		Date from = getParameters().getFromDate();
 		Date to = getParameters().getToDate();
-		if ( from == null || to == null) {
+		if ( from == null) {
 			return false;
 		}
-		if (to.compareTo(from) < 0 ) {
+		if (to != null && to.compareTo(from) < 0 ) {
 			return false;
 		}
 		return true;
