@@ -32,6 +32,7 @@
 	</title>
 	<pageHeader>
 		<band height="50" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean(($P{printHeaders}).booleanValue())]]></printWhenExpression>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField" positionType="Float" mode="Opaque" x="731" y="26" width="69" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box topPadding="3" rightPadding="5">
@@ -83,6 +84,7 @@
 	</pageHeader>
 	<columnHeader>
 		<band height="16" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean(($P{printHeaders}).booleanValue() || $V{PAGE_NUMBER}.intValue() == 1)]]></printWhenExpression>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="0" y="0" width="72" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
@@ -364,6 +366,7 @@
 	</columnFooter>
 	<pageFooter>
 		<band height="20" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean(($P{printHeaders}).booleanValue())]]></printWhenExpression>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-15" x="787" y="0" width="15" height="20"/>
 				<box leftPadding="2">
