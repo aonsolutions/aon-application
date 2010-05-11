@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:div id="#{controller.beanName}-PayMethodDiv" styleClass="aon-margin-top"> 
+	<aon:div id="Registry-PayMethodDiv" styleClass="aon-margin-top"> 
 		<aon:panelGrid columns="2" 
 			columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
 	
@@ -14,7 +14,7 @@
 				value="#{configBundle.config_pay_method}" />
 			<aon:selectOneMenu id="RegistryPayMethod_payment"
 				valueChangeListener="#{controllerLookupListener.onPayMethodChanged}"
-				reRender="#{controller.beanName}-PayMethodDiv,#{controller.beanName}-PayMethodDiv2"
+				reRender="Registry-PayMethodDiv,Registry-PayMethodDiv2"
 				focus="RegistryPayMethod_bank"
 				value="#{controllerLookupListener.registryPayMethod.payment}">
 				<f:selectItem value="#{null}" />
@@ -70,7 +70,7 @@
 		</aon:panelGrid>					
 	</aon:div>
 				
-	<aon:div id="#{controller.beanName}-PayMethodDiv2"  styleClass="aon-margin-top">
+	<aon:div id="Registry-PayMethodDiv2"  styleClass="aon-margin-top">
 		<aon:panelGrid columns="4" 
 			columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-100,
 				aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-100" >

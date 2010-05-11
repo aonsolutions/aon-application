@@ -143,7 +143,7 @@
 							</aon:lookupButton>
 							<aon:lookupButton 
 								windowTitle="#{financeBundle.finance_creditor_new}"
-								disabled="#{expenseInvoice.readOnly or !expenseInvoiceFinance.allPending}" minWidth="650" minHeight="600"
+								disabled="#{expenseInvoice.readOnly or !expenseInvoiceFinance.allPending}" minWidth="650" minHeight="650"
 								property="#{expenseInvoice.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{expenseInvoice.creditorData}"
 								selectReRender="Creditor_id,Creditor_full_name,Creditor_registry_document,InvoiceAddress"
