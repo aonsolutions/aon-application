@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml"
+	xmlns:a4j="http://richfaces.org/a4j">
+	<ui:define name="content">
+		<aon:form id="records">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{statBundle.seller_stat_control}" /> 
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="commercial_seller_search"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2">
+					<aon:outputLabel value="#{statBundle.registry_stat_code}" />
+					<aon:inputText value="#{commercialStat.seller.id}" size="30"
+						disabled="true" />
+
+					<aon:outputLabel value="#{salesBundle.sales_seller}" />
+					<aon:inputText value="#{commercialStat.seller.registry.fullName}" size="70"
+						disabled="true" />
+				</aon:panelGrid>
+
+				<aon:panelTabSet switchType="client">
+					<aon:panelTab id="tab1"
+						label="#{statBundle.seller_stat_control_visit}">
+					
+					</aon:panelTab>
+					<aon:panelTab id="tab2"
+						label="#{statBundle.seller_stat_control_offers}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/doneOffersList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab3"
+						label="#{statBundle.seller_stat_control_closed_offers}">
+						
+					</aon:panelTab>
+					<aon:panelTab id="tab4"
+						label="#{statBundle.seller_stat_control_lost_offers}">
+						
+					</aon:panelTab>
+					<aon:panelTab id="tab5" label="#{statBundle.seller_stat_control_ratio}">
+						
+					</aon:panelTab>
+				</aon:panelTabSet> 
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

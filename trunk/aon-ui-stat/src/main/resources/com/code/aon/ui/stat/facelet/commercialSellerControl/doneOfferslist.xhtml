@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<aon:dataTable id="offersDone"
+		value="#{commercialStat.doneOffersModel}" rows="20"
+		columnClasses="aon-editDataTable-textColumn, aon-editDataTable-dateColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
+		var="to">
+
+
+		<aon:column >
+			<f:facet name="header">
+				<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+			</f:facet>
+			<aon:outputText value="#{to.referenceCode}" />
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.issueDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<h:outputText value="#{commercialBundle.commercial_target}" />
+			</f:facet>
+			<aon:outputText value="#{to.target.registry.fullName}">
+				<aon:abbreviateConverter maxWidth="50" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column alias="Offer.target.registry.document"
+			styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<h:outputText value="#{bundle.aon_company_document}" />
+			</f:facet>
+			<aon:outputText value="#{to.target.registry.document}" />
+		</aon:column>
+
+		<aon:column >
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_status}" />
+			</f:facet>
+			<aon:outputText value="#{to.status}" />
+		</aon:column>
+
+		<!--	<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:outputText value="#{offer.offerTotalPrice}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						
+						 <c:if test="#{company.EInvoice}">
+							<aon:column alias="Offer.signed"
+								styleClass="aon-text-center">
+								<f:facet name="header">
+									<aon:outputText value="#{signBundle.sign_signature}" />
+								</f:facet>
+								<aon:outputText value="&#160;" rendered="#{to.signed}"
+									title="#{signBundle.sign_signed}"
+									styleClass="aon-icon aon-icon-signed" />
+								<aon:outputText value="&#160;" rendered="#{!to.signed}"
+									title="#{signBundle.sign_sign_pending}"
+									styleClass="aon-icon aon-icon-unsigned" />
+							</aon:column>
+						</c:if>		 -->
+
+		</aon:editDataTable>
+		<aon:dataScroller2 for="offersDone" showNote="true" />
+</ui:composition>
