@@ -33,7 +33,8 @@
 						for="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu 
-						reRender="SearchButton,SearchWarning" ajaxSingle="true"
+						reRender="AccountEntryDetail_accountEntry_entryDate-From,SearchButton,SearchWarning" ajaxSingle="true"
+						valueChangeListener="#{trialBalance.onPeriodChanged}"
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{trialBalance.parameters.period}">
 						<f:selectItem itemLabel="-" itemValue="" />

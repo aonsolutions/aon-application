@@ -14,6 +14,7 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
@@ -126,30 +127,36 @@ public class StatementController extends BasicController {
 		for (int i = 0; i < model.getRowCount(); i++) {
 			model.setRowIndex(i);
 			AccountEntryDetail d = (AccountEntryDetail) model.getRowData();
-			Balance balance = new Balance();
-			balance.setAccountEntry(d.getAccountEntry().getId());
-			balance.setAccount(d.getAccount().getId());
-			balance.setDescription(d.getAccount().getDescription());
-			balance.setFromDate(d.getAccountEntry().getEntryDate());
-			balance.setDebit(d.getDebit());
-			balance.setCredit(d.getCredit());
-			balance.setConcept(d.getConcept());
-			balance.setBalancingAccount(d.getBalancingAccount() == null ? null : d
-					.getBalancingAccount().getId());
-			balance.setBalancingAccountDescription(d.getBalancingAccount() == null ? null : d
-					.getBalancingAccount().getDescription());			
-			if (previous != null) {
-				balance.addBalance(previous);
-			} else {
-				double b = CommonUtil.round(d.getDebit() - d.getCredit());
-				if (b > 0) {
-					balance.setUnpaidBalance(b);
+			boolean ignore = false;
+			// En el caso de que entre las fechas seleccionadas haya asientos se apertura,
+			// se debe excluir el que se haya tomado en cuenta en el saldo incial,
+			// es decir, cuando la fecha de getOpeningEntry coincida con la fecha del apunte.
+			ignore = d.getAccountEntry().getType() == AccountEntryType.OPENING && getOpeningEntry() != null
+					&& DateUtils.isSameDay(getOpeningEntry().getFromDate(), d.getAccountEntry().getEntryDate());
+			if (!ignore) {
+				Balance balance = new Balance();
+				balance.setAccountEntry(d.getAccountEntry().getId());
+				balance.setAccount(d.getAccount().getId());
+				balance.setDescription(d.getAccount().getDescription());
+				balance.setFromDate(d.getAccountEntry().getEntryDate());
+				balance.setDebit(d.getDebit());
+				balance.setCredit(d.getCredit());
+				balance.setConcept(d.getConcept());
+				balance.setBalancingAccount(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getId());
+				balance.setBalancingAccountDescription(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getDescription());
+				if (previous != null) {
+					balance.addBalance(previous);
 				} else {
-					balance.setCreditBalance(CommonUtil.round(b * (-1)));
+					double b = CommonUtil.round(d.getDebit() - d.getCredit());
+					if (b > 0) {
+						balance.setUnpaidBalance(b);
+					} else {
+						balance.setCreditBalance(CommonUtil.round(b * (-1)));
+					}
 				}
+				detail.add(balance);
+				previous = balance;
 			}
-			detail.add(balance);
-			previous = balance;
 		}
 		setDetailModel(new ListDataModel(getDetail()));
 	}
@@ -161,7 +168,7 @@ public class StatementController extends BasicController {
 	 2.- Acumulados desde el asiento de apertura hasta la fecha de inicio del listado. 
 	 3.- Acumulados desde la fecha de inicio hasta la fecha fin del listado.
 	 
-	Lo que sigue a continuación es un detalle del puno 3 (una lista de AccountEntryDetail).
+	Lo que sigue a continuación es un detalle del punto 3 (una lista de AccountEntryDetail).
 	
 	Uno de los parámetros params.getPeriod ó params.getFromDate, debe tener valor 
 	valor para buscar el asiento de apertura inmediatamente inferior en fecha.

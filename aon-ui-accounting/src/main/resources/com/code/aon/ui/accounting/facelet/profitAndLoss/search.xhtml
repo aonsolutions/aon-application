@@ -32,8 +32,9 @@
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu
-						reRender="SearchButton,SearchWarning" ajaxSingle="true"
+					<aon:selectOneMenu ajaxSingle="true"
+						reRender="AccountEntryDetail_accountEntry_entryDate-From,SearchButton,SearchWarning" 
+						valueChangeListener="#{profitAndLossReport.onPeriodChanged}"
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{profitAndLossReport.parameters.period}">
 						<f:selectItem itemLabel="-" itemValue="" />
