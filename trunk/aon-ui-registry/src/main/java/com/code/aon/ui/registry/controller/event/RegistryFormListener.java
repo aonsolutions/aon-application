@@ -85,23 +85,27 @@ public class RegistryFormListener extends ControllerAdapter {
 		return StringUtils.isEmpty(media.getValue());
 	}
 	
-	private void updateRegistryMedia( Registry registry, RegistryMedia media ) throws ManagerBeanException {
+	private void updateRegistryMedia(Registry registry, RegistryMedia media) throws ManagerBeanException {
 		IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
-		if (! isEmpty(media) ) {
-			media.setRegistry( registry );
-			registryMediaBean.insertOrUpdate( media );
-		} else if ( media.getId() != null ) {
-			registryMediaBean.remove(media);
-		}		
+		if (media != null) {
+			if (!isEmpty(media)) {
+				media.setRegistry(registry);
+				registryMediaBean.insertOrUpdate(media);
+			} else if (media.getId() != null) {
+				registryMediaBean.remove(media);
+			}
+		}
 	}
 	
 	private void updateRegistryAddress( Registry registry, RegistryAddress address ) throws ManagerBeanException {
 		IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-		if (! isEmpty(address) ) {
-			address.setRegistry(registry);
-			registryAddressBean.insertOrUpdate(address);
-		} else if ( address.getId() != null ) {
-			registryAddressBean.remove(address);
+		if (address != null) {
+			if (!isEmpty(address) ) {
+				address.setRegistry(registry);
+				registryAddressBean.insertOrUpdate(address);
+			} else if ( address.getId() != null ) {
+				registryAddressBean.remove(address);
+			}
 		}
 	}	
 	
