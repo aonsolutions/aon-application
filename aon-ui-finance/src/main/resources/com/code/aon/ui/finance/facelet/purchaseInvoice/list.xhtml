@@ -50,6 +50,14 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{purchaseInvoice}" />
 					<ui:define name="columns">
+						<aon:column alias="Invoice.series,Invoice.number"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_invoice_order}" />
+							</f:facet>
+							<h:outputText value="#{to.documentNumber}" />
+						</aon:column>
+					
 						<aon:column alias="Invoice.referenceCode"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
