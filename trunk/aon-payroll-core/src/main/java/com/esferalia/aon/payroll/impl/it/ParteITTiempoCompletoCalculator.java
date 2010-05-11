@@ -55,7 +55,7 @@ public class ParteITTiempoCompletoCalculator extends ParteITCalculator implement
 	@Override
 	public Double getBaseDiariaAccidentesTrabajo(IParteIT it) throws PayrollException {
 		INomina nomina = getNominaAnterior(it);
-		return nomina.getBaseAccidentesTrabajo() / it.getDiasPeriodoAnterior();
+		return nomina.getBaseAccidentesTrabajoSinHorasExtras() / it.getDiasPeriodoAnterior();
 	}
 
 }
