@@ -68,19 +68,23 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	
 	private void updateRegistryPayMethod( Registry registry ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryPayMethod.class);
-		if (! isEmpty(registryPayMethod) ) {
-			registryPayMethod.setRegistry(registry);
-			bean.insertOrUpdate(registryPayMethod);
-		} else if ( registryPayMethod.getId() != null ) {
-			bean.remove(registryPayMethod);
+		if (registryPayMethod != null) {
+			if (! isEmpty(registryPayMethod) ) {
+				registryPayMethod.setRegistry(registry);
+				bean.insertOrUpdate(registryPayMethod);
+			} else if ( registryPayMethod.getId() != null ) {
+				bean.remove(registryPayMethod);
+			}
 		}
 	}
 
 	private void updateRegistryBank( Registry registry ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
-		if ( (! isEmpty(registryPayMethod)) && (! isShowCompanyBanks())  ) {
-			getRegistryBank().setRegistry(registry);
-			bean.insertOrUpdate(getRegistryBank());
+		if (registryPayMethod != null) {
+			if ( (! isEmpty(registryPayMethod)) && (! isShowCompanyBanks())  ) {
+				getRegistryBank().setRegistry(registry);
+				bean.insertOrUpdate(getRegistryBank());
+			}
 		}
 	}
 	
