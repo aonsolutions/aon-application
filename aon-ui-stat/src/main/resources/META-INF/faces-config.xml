@@ -134,7 +134,7 @@
 		</navigation-case>
 
 		<navigation-case>
-			<from-outcome>product_stats</from-outcome>
+			<from-outcome>category_product_stats</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/invoiceAbcCategory/productStats.xhtml</to-view-id>
 		</navigation-case>
