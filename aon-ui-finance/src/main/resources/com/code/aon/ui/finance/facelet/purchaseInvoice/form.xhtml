@@ -168,7 +168,7 @@
 							</aon:lookupButton>
 							<aon:lookupButton 
 								windowTitle="#{supplierBundle.supplier_new}"
-								disabled="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" minWidth="650" minHeight="600"
+								disabled="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" minWidth="650" minHeight="650"
 								property="#{purchaseInvoice.to.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
 								lookupChangeListener="#{purchaseInvoice.supplierData}"
 								selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document,InvoiceAddress"
