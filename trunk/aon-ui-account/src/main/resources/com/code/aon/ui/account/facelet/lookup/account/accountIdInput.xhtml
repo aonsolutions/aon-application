@@ -54,7 +54,7 @@
 				<aon:column>
 					<aon:outputText value="#{result.description}" />
 				</aon:column>
-				<a4j:support event="onselect" limitToList="true" reRender="#{id}Container" oncomplete="searchFieldForFocus('#{id}')">
+				<a4j:support event="onselect" limitToList="true" reRender="#{id}Container,#{reRenderAttr}" oncomplete="searchFieldForFocus('#{id}')">
 					<f:setPropertyActionListener target="#{entity}" value="#{result}" />
 				</a4j:support>
 			</rich:suggestionbox>

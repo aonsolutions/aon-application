@@ -45,27 +45,29 @@
 									<ui:param name="id" value="Supplier_account" />
 									<ui:param name="entity" value="#{supplierAccount.account}" />
 									<ui:param name="ELExpression" value="supplierAccount.account" />
+									<ui:param name="reRenderAttr" value="accountLookupButtons" />
 								</ui:include>
-	
-								<aon:commandButton
-									value="#{accountBundle.account_synchronize}"
-									title="#{accountBundle.account_synchronize}"
-									style="border: #808080 1px solid;"
-									styleClass="aon-finding-toolbar-item aon-icon-refresh"
-									rendered="#{supplierAccount.accountSynchronizable}"
-									reRender="accountContainer"
-									actionListener="#{supplierAccount.onAccountSynchronize}">
-								</aon:commandButton>
-	
-								<aon:commandButton
-									value="#{accountBundle.account_new_account}" 
-									title="#{accountBundle.account_new_account}"
-									style="border: #808080 1px solid;"
-									styleClass="aon-finding-toolbar-item aon-icon-reset"
-									rendered="#{supplierAccount.account == null}"
-									reRender="accountContainer"
-									actionListener="#{supplierAccount.onNewAccount}">
-								</aon:commandButton>
+								<aon:div id="accountLookupButtons">
+									<aon:commandButton
+										value="#{accountBundle.account_synchronize}"
+										title="#{accountBundle.account_synchronize}"
+										style="border: #808080 1px solid;"
+										styleClass="aon-finding-toolbar-item aon-icon-refresh"
+										rendered="#{supplierAccount.accountSynchronizable}"
+										reRender="accountContainer"
+										actionListener="#{supplierAccount.onAccountSynchronize}">
+									</aon:commandButton>
+		
+									<aon:commandButton
+										value="#{accountBundle.account_new_account}" 
+										title="#{accountBundle.account_new_account}"
+										style="border: #808080 1px solid;"
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										rendered="#{supplierAccount.account == null}"
+										reRender="accountContainer"
+										actionListener="#{supplierAccount.onNewAccount}">
+									</aon:commandButton>
+								</aon:div>
 							</h:panelGrid>
 						</aon:panelGrid>
 					</c:if>
