@@ -58,7 +58,7 @@
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$V{vTotalInvoices}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField-62" x="405" y="0" width="150" height="14"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.5"/>
