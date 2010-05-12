@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,10 +8,15 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.hibernate.Session;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.CriteriaUtilities;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
@@ -19,6 +25,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -47,6 +54,15 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	private RegistryValidationManager vm;
 	private DeliveryTransferManager deliveryTransferManager;
 	private boolean showDeliveryTransferWindow;
+	private List<InvoiceTax> invoiceTaxes;
+	
+	public List<InvoiceTax> getInvoiceTaxes() {
+		return invoiceTaxes;
+	}
+
+	public void setInvoiceTaxes(List<InvoiceTax> invoiceTaxes) {
+		this.invoiceTaxes = invoiceTaxes;
+	}
 
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -238,6 +254,41 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 				invoiceDetailBean.remove(invoiceDetail);
 			}
 		}
+	}
+	
+	public static void main(String[] args) throws ManagerBeanException, DAOException {
+		String sessionFactoryName= HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(sessionFactoryName);
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria c= new Criteria();
+		c.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE),InvoiceType.SALES);
+		c.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID),28);
+		c.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE),new Date());
+		org.hibernate.Criteria hc = CriteriaUtilities.toHibernateCriteria(c, session, IFinanceAlias.INVOICE_ENTRY);
+		System.out.println( hc );
+	}
+	
+	public void onDetailledExcelReport(ActionEvent e) throws Exception {
+		Criteria c = new Criteria();
+		c=this.getCriteria();;
+		String s = this.getCriteria().getExpression().toString();
+		System.out.println(s);
+		String s1= "Invoice";
+		String s2= "InvoiceTax.invoiceDetail.invoice";
+		s=s.replaceAll(s1,s2);
+		System.out.println(s);
+	
+		String sessionFactoryName= HibernateUtil.getSessionFactoryName();
+		//Session session = HibernateUtil.getSession(sessionFactoryName);
+		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+		List<ITransferObject> list;
+		list = invoiceTaxBean.getList(c);
+		for (ITransferObject to : list) {
+			InvoiceTax inv = (InvoiceTax) to;
+			invoiceTaxes.add(inv);
+		}
+		System.out.println(s);
+		
 	}
 
 }
