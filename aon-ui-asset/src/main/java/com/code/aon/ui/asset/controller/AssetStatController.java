@@ -259,11 +259,13 @@ public class AssetStatController {
 		} else if(getDateRange().equals("MONTH")){
 			if(getStatType().equals("ASSET")){
 				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_NAME);
+				criteria.addEqualExpression(identifier, getAssetName());
 			}
 			if(getStatType().equals("USER")){
 				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO);
+				criteria.addEqualExpression(identifier, getUserName());
 			}
-			criteria.addEqualExpression(identifier, getName());
+//			criteria.addEqualExpression(identifier, getName());
 			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
 			criteria.addOrder(identifier);
 		} else if(getDateRange().equals("DAY")){
