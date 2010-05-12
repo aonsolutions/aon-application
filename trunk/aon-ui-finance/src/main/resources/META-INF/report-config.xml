@@ -40,7 +40,20 @@
 	<report id="invoiceListTaxBreakDown" description="Invoice TaxBreakDown">
 		<template path="/com/code/aon/ui/finance/report/invoiceListTaxBreakDown.jasper"/>
 	</report>
-
+	
+		<!--  *********  Listado Detallado Facturas de Ventas  ********* -->
+	<report id="saleInvoiceExcelDetailledList" description="Listado Detallado de Facturas Generico">
+		<template path="/com/code/aon/ui/finance/report/invoiceExcelDetailledList.jasper"/>
+		<bean key="com.code.aon.finance.InvoiceTax" />
+		<criteria provider="#{invoiceTax}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+		</params>
+	</report>
+	
 	<!--  *********  Formulario de Factura de Venta desde el Mantenimiento ********* -->
 	<report id="saleInvoice" description="Fee Invoice's Report">
 		<template path="/com/code/aon/ui/finance/report/saleInvoice.jasper"/>
@@ -241,6 +254,18 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="payment" value="#{finance.isPayment}" />
+		</params>
+	</report>
+	
+	<!--  *********  MovementFinanceList  ********* -->
+	<report id="movementFinanceList" description="Finance List">
+		<template path="/com/code/aon/ui/finance/report/movementFinanceList.jasper" />
+		<bean key="com.code.aon.finance.Finance" />
+		<criteria provider="#{financeMovement}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="payment" value="#{finance.isPayment}" />
 		</params>
