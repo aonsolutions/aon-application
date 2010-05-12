@@ -175,7 +175,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
-			<!--  <param id="promedio" value="#{stat.getPromAmount}" />-->
+			<param id="promedio" value="#{commercialStat.getPromAmount}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 	</report>
@@ -188,7 +188,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
-			<!-- <param id="promedio" value="#{stat.getPromAmount}" /> -->
+			<param id="promedio" value="#{commercialStat.getPromAmount}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 
 		</params>
@@ -202,7 +202,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
-			<!--  <param id="promedio" value="#{stat.getPromAmount}" />-->
+			<param id="promedio" value="#{commercialStat.getPromAmount}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 	</report>
@@ -215,7 +215,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
-			<!-- <param id="promedio" value="#{stat.getPromAmount}" /> -->
+			<param id="promedio" value="#{commercialStat.getPromAmount}" /> 
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 
 		</params>
