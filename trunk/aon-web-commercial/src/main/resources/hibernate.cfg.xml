@@ -57,6 +57,7 @@
 		<mapping class="com.code.aon.commercial.Offer"/>
 		<mapping class="com.code.aon.commercial.OfferAttachment"/>
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>

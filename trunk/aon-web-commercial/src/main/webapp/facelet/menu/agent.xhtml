@@ -66,9 +66,15 @@
 							<aon:outputText value="comisiones" />
 						</f:facet>							
 						<aon:div styleClass="aon-direct-access-list">			
+
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink value="Calculo y Control" />
+								<aon:commandLink value="#{commercialBundle.commercial_commission_calculation_module}" />
 							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="offer-detail-commision" 
+									action="offerDetailCommission_search" actionListener="#{offerDetailCommission.onEditSearch}"
+									value="#{commercialBundle.commercial_commission_control_module}" />
+							</aon:div>									
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="commission-type" 
 									action="commissionType_list" actionListener="#{commissionType.onSearch}"
