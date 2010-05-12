@@ -7,7 +7,7 @@
 
 			<aon:div id="assetData" styleClass="aon-scroll-area">
  
-				<aon:editDataTable id="yearsStats" value="#{assetCollections.stats}" width="300px"
+				<aon:editDataTable id="yearsStats" value="#{assetStat.stats}" width="300px"
 					var="to">
 					
 					<aon:column>
@@ -15,11 +15,11 @@
 							<aon:outputText value="#{assetBundle.asset_stat_month}" />
 						</f:facet>
 						<h:commandLink styleClass="aon-dataTable-link-noicon" value="#{to.name}"  
-							action="day_stat_form" actionListener="#{assetCollections.refreshStats}" >
+							action="day_stat_form" actionListener="#{assetStat.refreshStats}" >
 							<!--  
 							<f:param name="name" value="#{to.name}" />
 							-->
-							<f:param name="year" value="#{assetCollections.year}" />
+							<f:param name="year" value="#{assetStat.year}" />
 							<f:param name="month" value="#{to.key}" />
 							<f:param name="type" value="DAY" />
 						</h:commandLink>
@@ -29,21 +29,21 @@
 						<f:facet name="header">
 							<aon:outputText value="#{assetBundle.asset_stat_hours}" />
 						</f:facet>
-						<aon:outputText value="#{to.hours}" />
+						<aon:outputText value="#{to.hours}" style="#{to.hours==0.0?('color:#999999;'):('none')}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{assetBundle.asset_stat_request}" />
 						</f:facet>
-						<aon:outputText value="#{to.request}" />
+						<aon:outputText value="#{to.request}" style="#{to.hours==0.0?('color:#999999;'):('none')}"/>
 					</aon:column>
 					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{assetBundle.asset_stat_request_hours}" />
 						</f:facet>
-						<aon:outputText value="#{to.average}" >
+						<aon:outputText value="#{to.average}" style="#{to.hours==0.0?('color:#999999;'):('none')}">
 							<f:convertNumber maxFractionDigits="2" />
 						</aon:outputText>
 					</aon:column>

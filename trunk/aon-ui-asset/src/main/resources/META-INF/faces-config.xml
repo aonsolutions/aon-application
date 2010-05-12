@@ -237,12 +237,12 @@
 		
 		<!-- ********** ASSET ACTIVITY COLLECTIONS ********** -->
 		<managed-bean>
-			<managed-bean-name>assetCollections</managed-bean-name>
-			<managed-bean-class>com.code.aon.ui.asset.controller.AssetCollectionsController</managed-bean-class>
+			<managed-bean-name>assetStat</managed-bean-name>
+			<managed-bean-class>com.code.aon.ui.asset.controller.AssetStatController</managed-bean-class>
 			<managed-bean-scope>session</managed-bean-scope>
 			<managed-property>
 				<property-name>beanName</property-name>
-				<value>assetCollections</value>
+				<value>assetStat</value>
 			</managed-property>
 		</managed-bean>
 	
