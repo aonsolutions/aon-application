@@ -398,6 +398,7 @@ public class CommercialStatEngineController {
 
 			i++;
 		}
+		promAmount += totalAmount / numInvoices;
 	}
 	
 	
