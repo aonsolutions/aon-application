@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+
+	<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_target_id"
+		value="#{commercialBundle.commercial_target}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="OfferDetailCommission_OfferDetail_Offer_target_id" 
+			value="#{offerDetailCommissionSearch.target.id}"
+			lookup="#{targetLookup}"
+ 			reRender="Offer_target_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{commercialBundle.commercial_target_selection}" 
+			minHeight="460" minWidth="650"
+			property="#{offerDetailCommissionSearch.target}" lookup="#{targetLookup}" 
+			selectReRender="Offer_target_id,Offer_target_full_name" 
+			actionType="search">
+		</aon:lookupButton>
+		<aon:inputText id="Offer_target_full_name"
+			value="#{(offerDetailCommissionSearch.target.registry.fullName!=null)?(offerDetailCommissionSearch.target.registry.fullName):('')}"
+			disabled="true" size="50" />							
+	</aon:div>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_issueDate-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="OfferDetailCommission_OfferDetail_Offer_issueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_issueDate-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="OfferDetailCommission_OfferDetail_Offer_issueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+							
+	<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_type"
+		value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="OfferDetailCommission_OfferDetail_Offer_type"
+		value="#{offerDetailCommissionSearch.offerType}"
+		converter="aon.EnumConverter"
+		reRender="offerDetailCommission">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{commercialCollections.offerTypes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_thirdParty_id"
+		value="#{commercialBundle.commercial_offer_distributor}"
+		rendered="#{offerDetailCommissionSearch.thirdPartyType}" />
+	<aon:div styleClass="aon-lookup" rendered="#{offerDetailCommissionSearch.thirdPartyType}">
+		<aon:lookupInputText id="OfferDetailCommission_OfferDetail_Offer_thirdParty_id" 
+			value="#{offerDetailCommissionSearch.thirdParty.id}"
+			lookup="#{targetLookup}"
+ 			reRender="Offer_thirdParty_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{commercialBundle.commercial_target_selection}" 
+			minHeight="460" minWidth="650"
+			property="#{offerDetailCommissionSearch.thirdParty}" lookup="#{targetLookup}" 
+			selectReRender="Offer_thirdParty_id,Offer_thirdParty_full_name" 
+			actionType="search">
+		</aon:lookupButton>
+		<aon:inputText id="OfferDetailCommission_OfferDetail_Offer_thirdParty_full_name"
+			value="#{(offerDetailCommissionSearch.thirdParty.registry.fullName!=null)?(offerDetailCommissionSearch.thirdParty.registry.fullName):('')}"
+			disabled="true" size="50" />							
+	</aon:div>
+
+	<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_workPlace_id"
+		value="#{companyBundle.company_workplace}" />
+	<aon:selectOneMenu id="OfferDetailCommission_OfferDetail_Offer_workPlace_id"
+		value="#{companyCollections.workPlace}"
+		valueChangeListener="#{controller.addIdEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{companyCollections.workPlaces}" />
+	</aon:selectOneMenu>					
+
+	<c:if test="#{aonRole.confidentiality}">
+		<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_securityLevel"
+			value="#{bundle.aon_confidential}" />
+		<aon:selectOneRadio id="OfferDetailCommission_OfferDetail_Offer_securityLevel"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+		</aon:selectOneRadio>				
+	</c:if>
+
+	<c:if test="#{company.EInvoice}">
+		<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_signed" value="#{commercialBundle.commercial_offer_signed}" />
+		<aon:selectOneRadio id="OfferDetailCommission_OfferDetail_Offer_signed"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneRadio>				
+	</c:if>
+
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{offerDetailCommissionSearch.offerStatuses}">
+		<f:selectItems value="#{commercialCollections.offerStatuses}"/>
+	</aon:selectManyCheckbox>							
+	
+</ui:composition>
