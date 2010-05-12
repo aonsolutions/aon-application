@@ -510,11 +510,11 @@ public class StatEngineController {
 			calculateTotals(list);
 			if (invoiceType == 1) {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
 			} else {
 				setReportName(AonUtil
 						.getMessage(bundle, "stat_menu_acumulado2"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
 			}
 			monthStatModel = null;
 		}
@@ -555,11 +555,11 @@ public class StatEngineController {
 			calculateTotals(list);
 			if (invoiceType == 1) {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
 			} else {
 				setReportName(AonUtil
 						.getMessage(bundle, "stat_menu_acumulado2"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
 			}
 			monthStatModel = null;
 		}
@@ -600,11 +600,11 @@ public class StatEngineController {
 			calculateTotals(list);
 			if (invoiceType == 1) {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_day"));
 			} else {
 				setReportName(AonUtil
 						.getMessage(bundle, "stat_menu_acumulado2"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_day"));
 			}
 			dayStatModel = null;
 			setDaysYear(currentYear);
