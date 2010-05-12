@@ -1,5 +1,6 @@
 package com.code.aon.ui.asset.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -33,6 +34,8 @@ public class AssetCollectionsController {
 	private Integer year;
 	private Integer month;
 	private String name;
+	private String assetName;
+	private String userName;
 	private Date fromDate;
 	private Date toDate;
 	private String statType;
@@ -114,6 +117,18 @@ public class AssetCollectionsController {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getAssetName() {
+		return assetName;
+	}
+	public void setAssetName(String assetName) {
+		this.assetName = assetName;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 	/**
 	 * Devuelve el tipo de filtro de la estadistica (por activo o por usuario)
 	 * @return
@@ -167,7 +182,6 @@ public class AssetCollectionsController {
 		setMonth(null);
 		setName(null);
 		
-		
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		Map<String, String> params = ec.getRequestParameterMap();			
 		if (params.get("year")!=null){
@@ -189,18 +203,26 @@ public class AssetCollectionsController {
 			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			toDate = cal.getTime();
 		}
-		if (params.get("name")!=null)
-			name = params.get("name");
-		if (params.get("type")!=null)
+		if (params.get("name")!=null){
+			setName(new String(params.get("name")));
+			if(getStatType().equals("ASSET")){
+				setAssetName(new String(params.get("name")));
+			}
+			if(getStatType().equals("USER")){
+				setUserName(new String(params.get("name")));
+			}
+		}
+		if (params.get("type")!=null){
 			setDateRange(params.get("type"));
-		
+		}
 		try {
-			if(getDateRange().equals("YEAR"))
+			if(getDateRange().equals("YEAR")){
 				buildStatsByYear();
-			else if(getDateRange().equals("MONTH"))
+			} else if(getDateRange().equals("MONTH")){
 				buildStatsByMonth();
-			else if(getDateRange().equals("DAY"))
+			} else if(getDateRange().equals("DAY")){
 				buildStatsByDay();
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e );
 		}
@@ -223,38 +245,36 @@ public class AssetCollectionsController {
 		criteria = new Criteria();
 		String identifier;
 		
+		identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
+		criteria.addBetweenExpression(identifier, fromDate, toDate);
 		if(getDateRange().equals("YEAR")){
-			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
-			criteria.addBetweenExpression(identifier, fromDate, toDate);
 			if(getStatType().equals("ASSET")){
-			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID);
-			criteria.addOrder(identifier);
-			
-				
+				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID);
+				criteria.addOrder(identifier);
 			}
 			if(getStatType().equals("USER")){
 				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO);
 				criteria.addOrder(identifier);
-				
 			}
 		} else if(getDateRange().equals("MONTH")){
-			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
-			criteria.addBetweenExpression(identifier, fromDate, toDate);
-			if(getStatType().equals("ASSET"))
+			if(getStatType().equals("ASSET")){
 				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_NAME);
-			if(getStatType().equals("USER"))
+			}
+			if(getStatType().equals("USER")){
 				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO);
-			criteria.addEqualExpression(identifier, name);
+			}
+			criteria.addEqualExpression(identifier, getName());
 			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
 			criteria.addOrder(identifier);
 		} else if(getDateRange().equals("DAY")){
-			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
-			criteria.addBetweenExpression(identifier, fromDate, toDate);
-			if(getStatType().equals("ASSET"))
+			if(getStatType().equals("ASSET")){
 				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_NAME);
-			if(getStatType().equals("USER"))
+				criteria.addEqualExpression(identifier, getAssetName());
+			}
+			if(getStatType().equals("USER")){
 				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO);
-			criteria.addEqualExpression(identifier, name);
+				criteria.addEqualExpression(identifier, getUserName());
+			}
 			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
 			criteria.addOrder(identifier);
 		} 
@@ -327,7 +347,7 @@ public class AssetCollectionsController {
 	 * @throws ManagerBeanException
 	 */
 	public void buildStatsByMonth() throws ManagerBeanException {
-		stats = new LinkedList<AssetStat>();
+		stats = new ArrayList<AssetStat>();
 		Calendar cal = new GregorianCalendar();
 		for(int i=0;i<12;i++){
 			stats.add(i, new AssetStat());
@@ -357,7 +377,6 @@ public class AssetCollectionsController {
 			stat.setRequest(stat.getRequest()+1);
 			stat.setAverage(stat.getHours()/stat.getRequest());
 			stat.setUser(activity.getWho());
-			stats.set(cal.get(Calendar.MONTH), stat);
 		}
 	}
 	
@@ -366,7 +385,7 @@ public class AssetCollectionsController {
 	 * @throws ManagerBeanException
 	 */
 	public void buildStatsByDay() throws ManagerBeanException {
-		stats = new LinkedList<AssetStat>();
+		stats = new ArrayList<AssetStat>();
 		Calendar cal = new GregorianCalendar();
 		cal.set(year, month, 1);
 		int days = cal.getActualMaximum(Calendar.DATE);
@@ -400,5 +419,5 @@ public class AssetCollectionsController {
 			stats.set(cal.get(Calendar.DAY_OF_MONTH)-1, stat);
 		}
 	}
-		
+	
 }
