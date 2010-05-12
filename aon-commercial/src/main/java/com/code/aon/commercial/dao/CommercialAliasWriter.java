@@ -16,6 +16,7 @@ import com.code.aon.commercial.ExpenseAccountDetail;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
+import com.code.aon.commercial.OfferDetailCommission;
 import com.code.aon.commercial.OfferTerm;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
@@ -50,11 +51,12 @@ public class CommercialAliasWriter {
 				Offer.class.getName(),
 				OfferAttachment.class.getName(),
 				OfferDetail.class.getName(),
+				OfferDetailCommission.class.getName(),
 				OfferTerm.class.getName(),
 				Target.class.getName(),
 				TargetItem.class.getName(),
 				TargetSeller.class.getName(),
-				TargetThirdParty.class.getName(),};
+				TargetThirdParty.class.getName()};
 		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.commercial.dao");
 		writer.write(classes, file);
