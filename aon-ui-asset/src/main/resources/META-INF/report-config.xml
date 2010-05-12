@@ -13,14 +13,14 @@
 			<bean key="com.code.aon.finance.Invoice" /> 
 			<fetch-mode	paginated="true" page-count="500" virtualizer-max-size="50"/>
 		-->
-		<collection provider="#{assetCollections.stats}" />
+		<collection provider="#{assetStat.stats}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.asset.i18n.report" />
-			<param id="year" value="#{assetCollections.getYear}" />
-			<param id="monthName" value="#{assetCollections.getMonthName}" />
-			<param id="name" value="#{assetCollections.getName}" />
-			<param id="dateRange" value="#{assetCollections.getDateRange}" />
-			<param id="statType" value="#{assetCollections.getStatType}" /> 
+			<param id="year" value="#{assetStat.getYear}" />
+			<param id="monthName" value="#{assetStat.getMonthName}" />
+			<param id="name" value="#{assetStat.getName}" />
+			<param id="dateRange" value="#{assetStat.getDateRange}" />
+			<param id="statType" value="#{assetStat.getStatType}" /> 
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<!--

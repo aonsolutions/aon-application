@@ -24,7 +24,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						action="stat_form"
 						accesskey="#{bundle.aon_key_cancel}" 
-						actionListener="#{assetCollections.refreshStats}" >
+						actionListener="#{assetStat.refreshStats}" >
 						<f:param name="type" value="YEAR" />
 					</aon:commandButton>
 					  
@@ -51,19 +51,19 @@
 
 				<aon:panelGrid id="assetTable" columns="2" width="30%">
 					<aon:outputLabel value="#{assetBundle.asset_stat_statType_filterBy}" />
-					<aon:selectOneRadio value="#{assetCollections.statType}" disabled="true">
+					<aon:selectOneRadio value="#{assetStat.statType}" disabled="true">
 						<f:selectItem itemLabel="#{assetBundle.asset_stat_statType_asset}" itemValue="ASSET" />
 						<f:selectItem itemLabel="#{assetBundle.asset_stat_statType_user}" itemValue="USER" />
 						<a4j:support event="onclick" ajaxSingle="true" reRender="statsForm">
-							<aon:actionListener method="#{assetCollections.refreshStats}" />
+							<aon:actionListener method="#{assetStat.refreshStats}" />
 						</a4j:support>
 					</aon:selectOneRadio>
 					
 					<aon:outputLabel value="#{assetBundle.asset_stat_year}" />
-					<rich:inputNumberSpinner inputSize="4" value="#{assetCollections.year}"
+					<rich:inputNumberSpinner inputSize="4" value="#{assetStat.year}"
 						maxValue="9999" required="true" enableManualInput="false" disabled="true">
 						<a4j:support event="onchange" ajaxSingle="true" reRender="statsForm">
-							<aon:actionListener method="#{assetCollections.refreshStats}" />
+							<aon:actionListener method="#{assetStat.refreshStats}" />
 						</a4j:support>
 					</rich:inputNumberSpinner>
 			
@@ -71,7 +71,7 @@
 
 				<aon:panel id="assetRequestData" rendered="#{!asset.new}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{assetBundle.asset_stat_financial_year} #{assetCollections.year} - #{assetCollections.name}" />
+						<aon:outputLabel value="#{assetBundle.asset_stat_financial_year} #{assetStat.year} - #{assetStat.name}" />
 					</f:facet>
 					
 					<ui:include src="list.xhtml" />

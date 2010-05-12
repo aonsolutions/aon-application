@@ -28,7 +28,7 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 
-public class AssetCollectionsController {
+public class AssetStatController {
 
 	private Date date;
 	private Integer year;
@@ -45,7 +45,7 @@ public class AssetCollectionsController {
 	private IManagerBean assetActivityBean;
 	Criteria criteria;
 	Locale locale = AonUtil.getCurrentLocale();
-	private static final Logger LOGGER = LoggerFactory.getLogger(AssetCollectionsController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AssetStatController.class.getName());
 	
 	/**
 	 * Devuelve la fecha
@@ -158,6 +158,14 @@ public class AssetCollectionsController {
 	}
 	
 	/**
+	 * Devuelve la lista de estadisticas
+	 * @return
+	 */
+	public List<AssetStat> getStats(){
+		return stats;
+	}
+	
+	/**
 	 * Inicializa la lista de estadisticas
 	 * @param event
 	 */
@@ -226,14 +234,6 @@ public class AssetCollectionsController {
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e );
 		}
-	}
-	
-	/**
-	 * Devuelve la lista de estadisticas
-	 * @return
-	 */
-	public List<AssetStat> getStats(){
-		return stats;
 	}
 	
 	/**
