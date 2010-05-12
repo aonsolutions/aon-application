@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="target_list::#com#code#aon#ui#commercial#facelet#target#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/commercial/facelet/target/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#target#list.xhtml"
+    TITLE="target_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="target_form::#com#code#aon#ui#commercial#facelet#target#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/commercial/facelet/target/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#target#form.xhtml"
+    TITLE="target_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="target_search::#com#code#aon#ui#commercial#facelet#target#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/commercial/facelet/target/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#target#search.xhtml"
+    TITLE="target_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercialTracking_list::#com#code#aon#ui#commercial#facelet#commercialTracking#list.xhtml"
+    NAME="output3"
+    PATH="/com/code/aon/ui/commercial/facelet/commercialTracking/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commercialTracking#list.xhtml"
+    TITLE="commercialTracking_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercialTracking_form::#com#code#aon#ui#commercial#facelet#commercialTracking#form.xhtml"
+    NAME="output4"
+    PATH="/com/code/aon/ui/commercial/facelet/commercialTracking/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commercialTracking#form.xhtml"
+    TITLE="commercialTracking_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercialTracking_search::#com#code#aon#ui#commercial#facelet#commercialTracking#search.xhtml"
+    NAME="output5"
+    PATH="/com/code/aon/ui/commercial/facelet/commercialTracking/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commercialTracking#search.xhtml"
+    TITLE="commercialTracking_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercialActivity::#com#code#aon#ui#commercial#facelet#commercialActivity#grid.xhtml"
+    NAME="output6"
+    PATH="/com/code/aon/ui/commercial/facelet/commercialActivity/grid.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commercialActivity#grid.xhtml"
+    TITLE="commercialActivity" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercialTerm::#com#code#aon#ui#commercial#facelet#commercialTerm#grid.xhtml"
+    NAME="output7"
+    PATH="/com/code/aon/ui/commercial/facelet/commercialTerm/grid.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commercialTerm#grid.xhtml"
+    TITLE="commercialTerm" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="offer_list::#com#code#aon#ui#commercial#facelet#offer#list.xhtml"
+    NAME="output8"
+    PATH="/com/code/aon/ui/commercial/facelet/offer/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#offer#list.xhtml"
+    TITLE="offer_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="offer_form::#com#code#aon#ui#commercial#facelet#offer#form.xhtml"
+    NAME="output9"
+    PATH="/com/code/aon/ui/commercial/facelet/offer/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#offer#form.xhtml"
+    TITLE="offer_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="offer_search::#com#code#aon#ui#commercial#facelet#offer#search.xhtml"
+    NAME="output10"
+    PATH="/com/code/aon/ui/commercial/facelet/offer/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#offer#search.xhtml"
+    TITLE="offer_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercialExpense::#com#code#aon#ui#commercial#facelet#expense#grid.xhtml"
+    NAME="output11"
+    PATH="/com/code/aon/ui/commercial/facelet/expense/grid.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#expense#grid.xhtml"
+    TITLE="commercialExpense" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="expenseAccount_list::#com#code#aon#ui#commercial#facelet#expenseAccount#list.xhtml"
+    NAME="output12"
+    PATH="/com/code/aon/ui/commercial/facelet/expenseAccount/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#expenseAccount#list.xhtml"
+    TITLE="expenseAccount_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="expenseAccount_form::#com#code#aon#ui#commercial#facelet#expenseAccount#form.xhtml"
+    NAME="output13"
+    PATH="/com/code/aon/ui/commercial/facelet/expenseAccount/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#expenseAccount#form.xhtml"
+    TITLE="expenseAccount_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="expenseAccount_search::#com#code#aon#ui#commercial#facelet#expenseAccount#search.xhtml"
+    NAME="output14"
+    PATH="/com/code/aon/ui/commercial/facelet/expenseAccount/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#expenseAccount#search.xhtml"
+    TITLE="expenseAccount_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commission_form::#com#code#aon#ui#commercial#facelet#commission#form.xhtml"
+    NAME="output15"
+    PATH="/com/code/aon/ui/commercial/facelet/commission/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commission#form.xhtml"
+    TITLE="commission_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commission_list::#com#code#aon#ui#commercial#facelet#commission#list.xhtml"
+    NAME="output16"
+    PATH="/com/code/aon/ui/commercial/facelet/commission/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commission#list.xhtml"
+    TITLE="commission_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commission_search::#com#code#aon#ui#commercial#facelet#commission#search.xhtml"
+    NAME="output17"
+    PATH="/com/code/aon/ui/commercial/facelet/commission/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commission#search.xhtml"
+    TITLE="commission_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commissionType_form::#com#code#aon#ui#commercial#facelet#commissionType#form.xhtml"
+    NAME="output18"
+    PATH="/com/code/aon/ui/commercial/facelet/commissionType/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commissionType#form.xhtml"
+    TITLE="commissionType_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commissionType_list::#com#code#aon#ui#commercial#facelet#commissionType#list.xhtml"
+    NAME="output19"
+    PATH="/com/code/aon/ui/commercial/facelet/commissionType/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#commissionType#list.xhtml"
+    TITLE="commissionType_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="offerDetailCommission_search::#com#code#aon#ui#commercial#facelet#offerDetailCommission#search.xhtml"
+    NAME="output20"
+    PATH="/com/code/aon/ui/commercial/facelet/offerDetailCommission/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#offerDetailCommission#search.xhtml"
+    TITLE="offerDetailCommission_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="offerDetailCommission_list::#com#code#aon#ui#commercial#facelet#offerDetailCommission#grid.xhtml"
+    NAME="output21"
+    PATH="/com/code/aon/ui/commercial/facelet/offerDetailCommission/grid.xhtml"
+    TARGET="rules:#com#code#aon#ui#commercial#facelet#offerDetailCommission#grid.xhtml"
+    TITLE="offerDetailCommission_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#target#list.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/target/list.xhtml"
+  SHAPE="304,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commercialTerm#grid.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commercialTerm/grid.xhtml"
+  SHAPE="304,1425,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commission#form.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commission/form.xhtml"
+  SHAPE="304,2321,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#target#form.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/target/form.xhtml"
+  SHAPE="304,753,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#offer#list.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/offer/list.xhtml"
+  SHAPE="304,1537,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commission#list.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commission/list.xhtml"
+  SHAPE="304,2433,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#expenseAccount#list.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/expenseAccount/list.xhtml"
+  SHAPE="304,1985,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commercialTracking#form.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commercialTracking/form.xhtml"
+  SHAPE="304,1089,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commissionType#form.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commissionType/form.xhtml"
+  SHAPE="304,2657,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commercialTracking#list.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commercialTracking/list.xhtml"
+  SHAPE="304,977,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commissionType#list.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commissionType/list.xhtml"
+  SHAPE="304,2769,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#offer#form.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/offer/form.xhtml"
+  SHAPE="304,1649,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#expense#grid.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/expense/grid.xhtml"
+  SHAPE="304,1873,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commission#search.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commission/search.xhtml"
+  SHAPE="304,2545,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commercialActivity#grid.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commercialActivity/grid.xhtml"
+  SHAPE="304,1313,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#target#search.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/target/search.xhtml"
+  SHAPE="304,865,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#expenseAccount#form.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/expenseAccount/form.xhtml"
+  SHAPE="304,2097,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#commercialTracking#search.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/commercialTracking/search.xhtml"
+  SHAPE="304,1201,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#offer#search.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/offer/search.xhtml"
+  SHAPE="304,1761,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#expenseAccount#search.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/expenseAccount/search.xhtml"
+  SHAPE="304,2209,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#offerDetailCommission#search.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/offerDetailCommission/search.xhtml"
+  SHAPE="304,817,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#commercial#facelet#offerDetailCommission#grid.xhtml"
+  PATH="/com/code/aon/ui/commercial/facelet/offerDetailCommission/grid.xhtml"
+  SHAPE="304,929,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>
