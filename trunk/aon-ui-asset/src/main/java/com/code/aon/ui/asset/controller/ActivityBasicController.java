@@ -176,6 +176,7 @@ public class ActivityBasicController extends BasicController{
 		return statusList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<SelectItem> getWhoList() {
 		List<SelectItem> whoList = new LinkedList<SelectItem>();
 		try {

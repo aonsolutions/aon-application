@@ -62,7 +62,7 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 	public void setWho(String who) {
 		this.who = who;
 	}
-	
+		
 	@Override
 	protected void init() throws ManagerBeanException {
 		Criteria criteria = getController().getCriteria();
@@ -97,9 +97,6 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 			setToDate(null);
 		}
 		
-		if(getWho()==null){
-			
-		}
 	}
 
 }
