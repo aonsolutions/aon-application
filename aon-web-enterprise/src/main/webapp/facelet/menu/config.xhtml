@@ -74,7 +74,19 @@
 								<aon:commandLink id="tax" 
 									action="tax" 
 									value="#{configBundle.config_tax_module}" />
-							</aon:div>								
+							</aon:div>	
+							<c:if test="#{aonRole.accountingOperator}">							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accPeriod" action="accPeriod"
+										actionListener="#{accPeriod.onSearch}"
+										value="#{accountingBundle.accounting_period_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="defaultParams" action="defaultParams"
+										actionListener="#{accAppParams.onLoad}"
+										value="#{accountingBundle.accounting_default_params_module}" />
+								</aon:div>
+							</c:if>
 						</aon:div>
 					</aon:panelGrid>							
 
