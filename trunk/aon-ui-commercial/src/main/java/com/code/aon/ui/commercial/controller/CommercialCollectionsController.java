@@ -15,6 +15,7 @@ import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.ExpenseHolderType;
 import com.code.aon.commercial.enumeration.ExpenseStatus;
+import com.code.aon.commercial.enumeration.OfferDetailCommissionStatus;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
@@ -55,6 +56,8 @@ public class CommercialCollectionsController {
 	private List<SelectItem> expenseAccountStatuses;
 	
 	private List<SelectItem> expenseHolderTypes;
+	
+	private List<SelectItem> offerDetailCommissionStatuses;
 
 	
 	/**
@@ -235,6 +238,20 @@ public class CommercialCollectionsController {
 			}			
 		}
 		return targetStatuses;
+	}
+	
+	
+	public List<SelectItem> getOfferDetailCommissionStatuses() {
+		if ( offerDetailCommissionStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			offerDetailCommissionStatuses = new LinkedList<SelectItem>();
+			for( OfferDetailCommissionStatus status : OfferDetailCommissionStatus.values() ) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				offerDetailCommissionStatuses.add(item);
+			}			
+		}
+		return offerDetailCommissionStatuses;
 	}
 
 	public CommercialActivity getActivity() {

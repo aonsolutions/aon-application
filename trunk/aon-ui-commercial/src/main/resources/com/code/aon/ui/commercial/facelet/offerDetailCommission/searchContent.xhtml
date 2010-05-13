@@ -8,10 +8,10 @@
 
 	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
-	<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_target_id"
+	<aon:outputLabel for="Offer_target_id"
 		value="#{commercialBundle.commercial_target}" />
 	<aon:div styleClass="aon-lookup">
-		<aon:lookupInputText id="OfferDetailCommission_OfferDetail_Offer_target_id" 
+		<aon:lookupInputText id="Offer_target_id" 
 			value="#{offerDetailCommissionSearch.target.id}"
 			lookup="#{targetLookup}"
  			reRender="Offer_target_full_name"
@@ -25,6 +25,26 @@
 		</aon:lookupButton>
 		<aon:inputText id="Offer_target_full_name"
 			value="#{(offerDetailCommissionSearch.target.registry.fullName!=null)?(offerDetailCommissionSearch.target.registry.fullName):('')}"
+			disabled="true" size="50" />							
+	</aon:div>
+
+	<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_seller_id"
+		value="#{salesBundle.sales_seller}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Offer_seller_id" 
+			value="#{offerDetailCommissionSearch.seller.id}"
+			lookup="#{sellerLookup}"
+ 			reRender="Offer_seller_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{salesBundle.sales_seller_selection}" 
+			minHeight="460" minWidth="650"
+			property="#{offerDetailCommissionSearch.seller}" lookup="#{sellerLookup}" 
+			selectReRender="Offer_seller_id,Offer_seller_full_name" 
+			actionType="search">
+		</aon:lookupButton>
+		<aon:inputText id="Offer_seller_full_name"
+			value="#{(offerDetailCommissionSearch.seller.registry.fullName!=null)?(offerDetailCommissionSearch.seller.registry.fullName):('')}"
 			disabled="true" size="50" />							
 	</aon:div>
 
@@ -55,11 +75,11 @@
 		<f:selectItems value="#{commercialCollections.offerTypes}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_thirdParty_id"
+	<aon:outputLabel for="Offer_thirdParty_id"
 		value="#{commercialBundle.commercial_offer_distributor}"
 		rendered="#{offerDetailCommissionSearch.thirdPartyType}" />
 	<aon:div styleClass="aon-lookup" rendered="#{offerDetailCommissionSearch.thirdPartyType}">
-		<aon:lookupInputText id="OfferDetailCommission_OfferDetail_Offer_thirdParty_id" 
+		<aon:lookupInputText id="Offer_thirdParty_id" 
 			value="#{offerDetailCommissionSearch.thirdParty.id}"
 			lookup="#{targetLookup}"
  			reRender="Offer_thirdParty_full_name"

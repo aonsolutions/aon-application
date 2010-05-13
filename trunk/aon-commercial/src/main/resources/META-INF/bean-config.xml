@@ -28,6 +28,13 @@
 	</bean>
 	
 	<bean description="">
+		<pojo>com.code.aon.commercial.OfferDetailCommission</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.commercial.event.OfferDetailCommissionBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
 		<pojo>com.code.aon.commercial.OfferTerm</pojo>
 		<listeners>
 	        <listener>com.code.aon.commercial.event.OfferTermBeanListener</listener>

@@ -153,6 +153,12 @@
 		<filter-name>AuditFilter</filter-name>
 		<url-pattern>/index.jsp</url-pattern>
 	</filter-mapping>
+	<!-- Bean Loader Listener -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.common.listener.BeanRegisterContextListener
+       </listener-class>
+    </listener>
 	<!-- Listener, that enables Audit Sessions per User. -->
 	<listener>
 		<listener-class>com.code.aon.ui.audit.session.AuditSessionListener</listener-class>

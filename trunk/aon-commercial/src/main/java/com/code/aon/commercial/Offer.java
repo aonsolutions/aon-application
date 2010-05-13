@@ -393,6 +393,11 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	@Transient
+	public boolean isThirdPartyType() {
+		return (OfferType.THIRD_PARTY == getType());
+	}
+
+	@Transient
 	public void setConfidential(boolean confidential) {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}

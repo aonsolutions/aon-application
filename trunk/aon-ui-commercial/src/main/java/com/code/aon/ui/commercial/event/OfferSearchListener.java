@@ -9,6 +9,7 @@ import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class OfferSearchListener extends ControllerSearchListener {
@@ -19,6 +20,8 @@ public class OfferSearchListener extends ControllerSearchListener {
 
 	private Target thirdParty;
 
+	private Seller seller;
+	
 	private OfferStatus[] offerStatuses;
 
 	public Target getTarget() {
@@ -45,6 +48,14 @@ public class OfferSearchListener extends ControllerSearchListener {
 		this.thirdParty = thirdParty;
 	}
 
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
 	public OfferStatus[] getOfferStatuses() {
 		return offerStatuses;
 	}
@@ -60,6 +71,7 @@ public class OfferSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		setTarget(new Target());
+		setSeller(new Seller());
 		setOfferType(null);
 		setThirdParty(new Target());
 		OfferStatus[] defaultOfferStatus = {OfferStatus.PENDING};
@@ -71,6 +83,9 @@ public class OfferSearchListener extends ControllerSearchListener {
 		Criteria criteria = getController().getCriteria();
 		if (getTarget() != null && getTarget().getId() != null) {
 			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_TARGET_ID), getTarget().getId());			
+		}
+		if (getSeller() != null && getSeller().getId() != null) {
+			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_SELLER_ID), getSeller().getId());			
 		}
 		if (getOfferType() != null) {
 			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_TYPE), getOfferType());			

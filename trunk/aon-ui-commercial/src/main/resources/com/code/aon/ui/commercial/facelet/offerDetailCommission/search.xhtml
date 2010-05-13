@@ -12,6 +12,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_commission_control_module}" />
 				<ui:param name="controller" value="#{offerDetailCommission}" />
+				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
  
 			<ui:decorate
@@ -24,5 +25,6 @@
 
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 	</ui:define>
 </ui:composition>
