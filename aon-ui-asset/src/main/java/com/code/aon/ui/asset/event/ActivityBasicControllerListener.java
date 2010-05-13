@@ -41,11 +41,10 @@ public class ActivityBasicControllerListener extends ControllerAdapter{
 				criteria = this.getController().getCriteria();
 				LoggedUser logged = (LoggedUser)AonUtil.getRegisteredBean("loggedUser");
 				String name = logged.getLoggedUserName();
-				criteria.addEqualExpression(getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO), ((ActivityBasicController)getController()).getWho());
+				criteria.addEqualExpression(getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO), name);
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// nada
 		}
 		((ActivityBasicController)getController()).setAsset(new Asset());
 	}

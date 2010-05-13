@@ -34,10 +34,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{activityBasic}" />
-<!--  
-				<aon:methodParam name="searchActionListener" value="#{activityBasic.onSearch}" type="actionListener" />
-				<aon:methodParam name="skipSearchButton" value="#{true}" />				
--->				
+
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchAction" value="activityDialog_grid" />	
 				
@@ -71,15 +68,6 @@
 					<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
 						<aon:outputLabel for="AssetActivity_who" value="#{assetBundle.asset_activity_who}" />
 					</aon:div>
-<!--  
-						<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Invitado">
-							<aon:outputText id="User_ActivityDialog_who" value="#{activityDialog.who}"
-								size="20" 
-								valueChangeListener="#{activityBasic.addExpression}">
-								<f:validateLength maximum="20" />
-							</aon:outputText>
-						</aon:div>
--->						
 						<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
 							<aon:selectOneMenu id="AssetActivity_who"
 								value="#{activityBasic.who}">
@@ -97,7 +85,8 @@
 					</aon:selectOneMenu>
 	-->
 					<aon:selectManyCheckbox id="AssetActivity_status" 
-						value="#{activityBasicSearchListener.activityStatuses}">
+						value="#{activityBasicSearchListener.activityStatuses}"
+						required="true">
 						<f:selectItems value="#{activityBasic.statusList}" />
 					</aon:selectManyCheckbox>	
 				

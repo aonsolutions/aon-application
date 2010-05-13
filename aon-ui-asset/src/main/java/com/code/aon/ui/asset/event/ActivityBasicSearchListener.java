@@ -32,7 +32,15 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 	}
 
 	public ActivityStatus[] getActivityStatuses() {
+		if(activityStatuses==null){
+			activityStatuses = getdefaultActivityStatus();
+		}
 		return activityStatuses;
+	}
+
+	private ActivityStatus[] getdefaultActivityStatus() {
+		ActivityStatus[] defaultActivityStatus = {ActivityStatus.PENDING};
+		return defaultActivityStatus;
 	}
 
 	public void setActivityStatuses(ActivityStatus[] activityStatuses) {
