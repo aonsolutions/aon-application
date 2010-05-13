@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -85,7 +86,12 @@ public class OfferDetailCommission implements ITransferObject {
 	public void setPayDate(Date payDate) {
 		this.payDate = payDate;
 	}
-
+	
+	@Transient
+	public Offer getOffer() {
+		return (getOfferDetail()!=null?getOfferDetail().getOffer():null);
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
