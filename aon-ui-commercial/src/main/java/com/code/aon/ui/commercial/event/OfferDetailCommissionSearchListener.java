@@ -9,6 +9,7 @@ import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class OfferDetailCommissionSearchListener extends ControllerSearchListener {
@@ -18,6 +19,8 @@ public class OfferDetailCommissionSearchListener extends ControllerSearchListene
 	private OfferType offerType;
 
 	private Target thirdParty;
+	
+	private Seller seller;
 
 	private OfferStatus[] offerStatuses;
 
@@ -49,6 +52,14 @@ public class OfferDetailCommissionSearchListener extends ControllerSearchListene
 		return offerStatuses;
 	}
 
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
 	public void setOfferStatuses(OfferStatus[] offerStatuses) {
 		this.offerStatuses = offerStatuses;
 	}
@@ -60,6 +71,7 @@ public class OfferDetailCommissionSearchListener extends ControllerSearchListene
 	@Override
 	protected void init() throws ManagerBeanException {
 		setTarget(new Target());
+		setSeller(new Seller());
 		setOfferType(null);
 		setThirdParty(new Target());
 		OfferStatus[] defaultOfferStatus = {OfferStatus.PENDING};
@@ -71,6 +83,9 @@ public class OfferDetailCommissionSearchListener extends ControllerSearchListene
 		Criteria criteria = getController().getCriteria();
 		if (getTarget() != null && getTarget().getId() != null) {
 			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_TARGET_ID), getTarget().getId());			
+		}
+		if (getSeller() != null && getSeller().getId() != null) {
+			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SELLER_ID), getSeller().getId());			
 		}
 		if (getOfferType() != null) {
 			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_TYPE), getOfferType());			
