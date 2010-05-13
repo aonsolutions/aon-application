@@ -56,14 +56,6 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	private boolean showDeliveryTransferWindow;
 	private List<InvoiceTax> invoiceTaxes;
 	
-	public List<InvoiceTax> getInvoiceTaxes() {
-		return invoiceTaxes;
-	}
-
-	public void setInvoiceTaxes(List<InvoiceTax> invoiceTaxes) {
-		this.invoiceTaxes = invoiceTaxes;
-	}
-
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
 		setInvoiceDetailControllerName(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
@@ -77,6 +69,14 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		return vm;
 	}
 	
+	public List<InvoiceTax> getInvoiceTaxes() {
+		return invoiceTaxes;
+	}
+
+	public void setInvoiceTaxes(List<InvoiceTax> invoiceTaxes) {
+		this.invoiceTaxes = invoiceTaxes;
+	}
+
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
 		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
