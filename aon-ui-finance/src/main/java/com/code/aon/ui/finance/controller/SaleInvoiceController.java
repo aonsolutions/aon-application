@@ -54,7 +54,6 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	private RegistryValidationManager vm;
 	private DeliveryTransferManager deliveryTransferManager;
 	private boolean showDeliveryTransferWindow;
-	private List<InvoiceTax> invoiceTaxes;
 	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -69,14 +68,6 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		return vm;
 	}
 	
-	public List<InvoiceTax> getInvoiceTaxes() {
-		return invoiceTaxes;
-	}
-
-	public void setInvoiceTaxes(List<InvoiceTax> invoiceTaxes) {
-		this.invoiceTaxes = invoiceTaxes;
-	}
-
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
 		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
@@ -254,41 +245,6 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 				invoiceDetailBean.remove(invoiceDetail);
 			}
 		}
-	}
-	
-	public static void main(String[] args) throws ManagerBeanException, DAOException {
-		String sessionFactoryName= HibernateUtil.getSessionFactoryName();
-		Session session = HibernateUtil.getSession(sessionFactoryName);
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		Criteria c= new Criteria();
-		c.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE),InvoiceType.SALES);
-		c.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID),28);
-		c.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE),new Date());
-		org.hibernate.Criteria hc = CriteriaUtilities.toHibernateCriteria(c, session, IFinanceAlias.INVOICE_ENTRY);
-		System.out.println( hc );
-	}
-	
-	public void onDetailledExcelReport(ActionEvent e) throws Exception {
-		Criteria c = new Criteria();
-		c=this.getCriteria();;
-		String s = this.getCriteria().getExpression().toString();
-		System.out.println(s);
-		String s1= "Invoice";
-		String s2= "InvoiceTax.invoiceDetail.invoice";
-		s=s.replaceAll(s1,s2);
-		System.out.println(s);
-	
-		String sessionFactoryName= HibernateUtil.getSessionFactoryName();
-		//Session session = HibernateUtil.getSession(sessionFactoryName);
-		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-		List<ITransferObject> list;
-		list = invoiceTaxBean.getList(c);
-		for (ITransferObject to : list) {
-			InvoiceTax inv = (InvoiceTax) to;
-			invoiceTaxes.add(inv);
-		}
-		System.out.println(s);
-		
 	}
 
 }

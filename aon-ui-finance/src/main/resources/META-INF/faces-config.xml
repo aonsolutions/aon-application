@@ -1280,6 +1280,16 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+	<!-- ************ SALE INVOICE EXCEL DETAILED REPORT ************* -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceExcelDetailledReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.InvoiceExcelDetailledReport</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>sourceControllerName</property-name>
+			<value>saleInvoice</value>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ************ SALE INVOICE ADDRESS ************* -->
 	<managed-bean>
@@ -1634,6 +1644,17 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
+	<!-- ************ PURCHASE INVOICE EXCEL DETAILED REPORT ************* -->
+	<managed-bean>
+		<managed-bean-name>purchaseInvoiceExcelDetailledReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.InvoiceExcelDetailledReport</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>sourceControllerName</property-name>
+			<value>purchaseInvoice</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ PURCHASE INVOICE ADDRESS ************* -->
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceAddress</managed-bean-name>
@@ -1976,6 +1997,17 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
+
+	<!-- ************ EXPENSE INVOICE EXCEL DETAILED REPORT ************* -->
+	<managed-bean>
+		<managed-bean-name>expenseInvoiceExcelDetailledReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.InvoiceExcelDetailledReport</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>sourceControllerName</property-name>
+			<value>expenseInvoice</value>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ************ EXPENSE INVOICE ADDRESS ************* -->
 	<managed-bean>
@@ -2320,6 +2352,17 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
+	<!-- ************ UNDEDUCTIBLE INVOICE EXCEL DETAILED REPORT ************* -->
+	<managed-bean>
+		<managed-bean-name>undeductibleInvoiceExcelDetailledReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.InvoiceExcelDetailledReport</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>sourceControllerName</property-name>
+			<value>undeductibleInvoice</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ UNDEDUCTIBLE INVOICE ADDRESS ************* -->
 	<managed-bean>
 		<managed-bean-name>undeductibleInvoiceAddress</managed-bean-name>
@@ -2535,6 +2578,7 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
 
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->

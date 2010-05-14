@@ -44,8 +44,7 @@
 		<!--  *********  Listado Detallado Facturas de Ventas  ********* -->
 	<report id="saleInvoiceExcelDetailledList" description="Listado Detallado de Facturas Generico">
 		<template path="/com/code/aon/ui/finance/report/invoiceExcelDetailledList.jasper"/>
-		<bean key="com.code.aon.finance.InvoiceTax" />
-		<criteria provider="#{invoiceTax}"/>
+		<collection provider="#{saleInvoiceExcelDetailledReport}"/>
 		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
@@ -113,6 +112,18 @@
 		<nested-report report="invoiceListTaxBreakDown"/>
 	</report>
 
+	<!--  *********  Listado Detallado Facturas de Compras  ********* -->
+	<report id="purchaseInvoiceExcelDetailledList" description="Listado Detallado de Facturas Generico">
+		<template path="/com/code/aon/ui/finance/report/invoiceExcelDetailledList.jasper"/>
+		<collection provider="#{purchaseInvoiceExcelDetailledReport}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+		</params>
+	</report>
+
 	<!--  *********  Formulario de Facturas de Compras  ********* -->
 	<report id="purchaseInvoice" description="Purchase Invoice's Report">
 		<template path="/com/code/aon/ui/finance/report/purchaseInvoice.jasper"/>
@@ -164,6 +175,18 @@
 		<nested-report report="invoiceListTaxBreakDown"/>
 	</report>
 
+	<!--  *********  Listado Detallado Facturas de Compras  ********* -->
+	<report id="expenseInvoiceExcelDetailledList" description="Listado Detallado de Facturas Generico">
+		<template path="/com/code/aon/ui/finance/report/invoiceExcelDetailledList.jasper"/>
+		<collection provider="#{expenseInvoiceExcelDetailledReport}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+		</params>
+	</report>
+
 	<!--  *********  Listado de Facturas de Compras  ********* -->
 	<report id="undeductibleInvoiceList" description="Undeductible Expense's List">
 		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
@@ -191,6 +214,18 @@
 		</params>
 		<nested-report report="invoiceListDetail"/>
 		<nested-report report="invoiceListTaxBreakDown"/>
+	</report>
+
+	<!--  *********  Listado Detallado Facturas de Compras  ********* -->
+	<report id="undeductibleInvoiceExcelDetailledList" description="Listado Detallado de Facturas Generico">
+		<template path="/com/code/aon/ui/finance/report/invoiceExcelDetailledList.jasper"/>
+		<collection provider="#{undeductibleInvoiceExcelDetailledReport}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+		</params>
 	</report>
 
 	<!--  *****  Formulario de Facturas de Ventas desde la impresión de facturas ****** -->
