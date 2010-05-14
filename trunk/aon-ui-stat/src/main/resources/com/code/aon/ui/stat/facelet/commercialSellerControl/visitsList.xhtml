@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:editDataTable id="visits"
+		value="#{commercialStat.visitsModel}" rows="20"
+		columnClasses="aon-editDataTable-dateColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-numberColumn,
+		 aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn"
+		var="to">
+
+		<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.date}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>	
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{salesBundle.sales_seller}" />
+						</f:facet>
+						<aon:outputText value="#{to.seller.registry.fullName}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{commercialBundle.commercial_target}" />
+						</f:facet>
+						<aon:outputText value="#{to.target.registry.fullName}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{commercialBundle.commercial_tracking_activity}" />
+						</f:facet>
+						<aon:outputText value="#{to.activity.name}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}"/>
+					</aon:column>
+ 
+	</aon:editDataTable>
+	<aon:dataScroller2 for="visits" showNote="true" />
+</ui:composition>
