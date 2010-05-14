@@ -61,45 +61,30 @@ public class EmailParentController {
 //			throw new AbortProcessingException( e.getMessage(), e);
 //		}
 		
-		
-		
 		EmailSender es;
 		try {
 			es = getEmailSender(from);
 			es.connect();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// nada
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// nada
 		}
 		sendEmail(from, to, subject, content);
-		
-		
-		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	private EmailSender sender;
 	private final String BUNDLE_KEY = "ecommerceBundle";
 	private final String ECOMMERCE_SEND_EMAIL_ERROR = "ecommerce_send_email_error";
 //	private final String ECOMMERCE_WITHOUT_EMAIL = "ecommerce_without_email";
-	private final String ECOMMERCE_EMAIL_BODY_HEADER = "ecommerce_email_body_header";
-	private final String ECOMMERCE_EMAIL_BODY = "ecommerce_email_body";
-	private final String ECOMMERCE_EMAIL_BODY_FOOTER = "ecommerce_email_body_footer";
+//	private final String ECOMMERCE_EMAIL_BODY_HEADER = "ecommerce_email_body_header";
+//	private final String ECOMMERCE_EMAIL_BODY = "ecommerce_email_body";
+//	private final String ECOMMERCE_EMAIL_BODY_FOOTER = "ecommerce_email_body_footer";
 	
 	
 	public EmailSender getEmailSender(String username) throws UnsupportedEncodingException {
 		if ( this.sender == null ) {
-			String domain = "localhost";
+//			String domain = "localhost";
 			String login = "admin";
 			MailAccount mailAccount = getDefaultMailAccount();
 			
@@ -154,15 +139,19 @@ public class EmailParentController {
 //				String subject = getEmailSubject(invoice);
 				String bodyContent = getEmailBody(content);
 //				AonFile file = getInvoiceFile(invoice);
-				AonFile file = null;
+//				AonFile file = null;
 //				AonFile xml = getInvoiceXml(invoice);
-				AonFile xml = null;
+//				AonFile xml = null;
 //				if ( si != null ) {
 				SignerController sc = (SignerController) AonUtil.getRegisteredBean(IECommerceConstants.OFFER_SIGNER_CONTROLLER); 
 				CartOfferController coc = (CartOfferController) AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER); 
-				IAttachment attach = sc.getReport(coc.getOffer());
-				
+				if(coc.getOffer()!=null){
+					IAttachment attach = sc.getReport(coc.getOffer());
 					getEmailSender(username).sendMessage(recipients, subject, bodyContent, MimeType.MIME_HTML, getOfferFile(attach));
+				} else {
+					getEmailSender(username).sendMessage(recipients, subject, bodyContent, MimeType.MIME_HTML);
+				}
+				
 //					getEmailSender(username).sendMessage(recipients, subject, content, MimeType.MIME_HTML, si, file, xml );
 //				} else {
 //					getEmailSender(username).sendMessage(recipients, subject, content, MimeType.MIME_HTML );
