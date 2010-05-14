@@ -16,7 +16,7 @@ import javax.faces.model.ListDataModel;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -45,12 +45,25 @@ public class CommercialStatEngineController {
 	private DataModel closedOffersModel;
 	private DataModel lostOffersModel;
 	private DataModel visitsModel;
+	private DataModel pendingVisitsModel;
 	private List<OfferDetail> doneOffersList;
 	private List<OfferDetail> closedOffersList;
 	private List<OfferDetail> lostOffersList;
-	private List<Offer> visitsList;
+	private List<CommercialTracking> visitsList;
+	private List<CommercialTracking> pendingVisitsList;
 	
 	
+	public DataModel getPendingVisitsModel() {
+		if (pendingVisitsModel == null) {
+			pendingVisitsModel = new ListDataModel(getPendingVisitsList());
+		}
+		return pendingVisitsModel;
+	}
+
+	public void setPendingVisitsModel(DataModel pendingVisitsModel) {
+		this.pendingVisitsModel = pendingVisitsModel;
+	}
+
 	
 	public DataModel getDoneOffersModel() {
 		if (doneOffersModel == null) {
@@ -120,12 +133,21 @@ public class CommercialStatEngineController {
 		this.lostOffersList = lostOffersList;
 	}
 
-	public List<Offer> getVisitsList() {
+	public List<CommercialTracking> getVisitsList() {
 		return visitsList;
 	}
 
-	public void setVisitsList(List<Offer> visitsList) {
+	public void setVisitsList(List<CommercialTracking> visitsList) {
 		this.visitsList = visitsList;
+	}
+
+	
+	public List<CommercialTracking> getPendingVisitsList() {
+		return pendingVisitsList;
+	}
+
+	public void setPendingVisitsList(List<CommercialTracking> pendingVisitsList) {
+		this.pendingVisitsList = pendingVisitsList;
 	}
 
 	public Seller getSeller() {
@@ -253,11 +275,13 @@ public class CommercialStatEngineController {
 			setDoneOffersModel(null);
 			setLostOffersModel(null);
 			setVisitsModel(null);
+			setPendingVisitsModel(null);
 			
 			//getClosedOffers();
 			getDoneOffers();
 			//getLostOffers();
-			//getDoneVisitsModel();
+			getDoneVisitsModel();
+			getPendingVisitModel();
 				
 		} catch (ManagerBeanException e1) {
 			// TODO Auto-generated catch block
@@ -266,23 +290,33 @@ public class CommercialStatEngineController {
 	}
 	
 	private void getDoneVisitsModel()throws ManagerBeanException {
-		String select = "select OfferDetail "
-			+ "from OfferDetail as OfferDetail "
-			+ "where  OfferDetail.offer.seller.id = " +seller.getId()
-			+ "order by OfferDetail.offer.issueDate desc";
+		String select = "select CommercialTracking "
+			+ "from CommercialTracking as CommercialTracking "
+			+ "where  CommercialTracking.status = 1 AND  CommercialTracking.seller.id = " +seller.getId()
+			+ "order by CommercialTracking.date desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		visitsList = query.list();
 	}
-
-	private void getLostOffers() throws ManagerBeanException {
-		String select = "select InvoiceDetail "
-			+ "from InvoiceDetail as InvoiceDetail "
-			+ "where InvoiceDetail.invoice.type = 0 AND InvoiceDetail.item.id = " +seller.getId()
-			+ "order by InvoiceDetail.invoice.issueDate desc";
+	
+	private void getPendingVisitModel()throws ManagerBeanException {
+		String select = "select CommercialTracking "
+			+ "from CommercialTracking as CommercialTracking "
+			+ "where  CommercialTracking.status = 0 AND  CommercialTracking.seller.id = " +seller.getId()
+			+ "order by CommercialTracking.date desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		lostOffersList = query.list();
+		pendingVisitsList = query.list();
+	}
+
+	private void getLostOffers() throws ManagerBeanException {
+		String select = "select OfferDetail "
+			+ "from OfferDetail as OfferDetail "
+			+ "where  OfferDetail.Offer.status = 2 AND  OfferDetail.offer.seller.id = " +seller.getId()
+			+ "order by OfferDetail.offer.issueDate desc";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		lostOffersList= query.list();
 	}
 
 	private void getDoneOffers() throws ManagerBeanException {
@@ -296,13 +330,13 @@ public class CommercialStatEngineController {
 	}
 
 	private void getClosedOffers() throws ManagerBeanException {
-		String select = "select InvoiceDetail "
-			+ "from InvoiceDetail as InvoiceDetail "
-			+ "where InvoiceDetail.invoice.type = 0 AND InvoiceDetail.item.id = " +seller.getId()
-			+ "order by InvoiceDetail.invoice.issueDate desc";
+		String select = "select OfferDetail "
+			+ "from OfferDetail as OfferDetail "
+			+ "where  OfferDetail.Offer.status = 1 AND OfferDetail.offer.seller.id = " +seller.getId()
+			+ "order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		closedOffersList = query.list();
+		closedOffersList= query.list();
 	}
 
 	public void onCategoryStats(ActionEvent event) {
