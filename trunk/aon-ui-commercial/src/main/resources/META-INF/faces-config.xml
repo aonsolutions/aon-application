@@ -1564,6 +1564,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ COMMISSION CALCULATION ************* -->
+	<managed-bean>
+		<managed-bean-name>commissionCalculation</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.CommissionCalculationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 		<navigation-case>
@@ -1653,6 +1662,10 @@
 	    <navigation-case>
 	      <from-outcome>offerDetailCommission_list</from-outcome>
 	      <to-view-id>/com/code/aon/ui/commercial/facelet/offerDetailCommission/grid.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>commissionCalculation</from-outcome>
+	      <to-view-id>/com/code/aon/ui/commercial/facelet/commissionCalculation/search.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>		
 
