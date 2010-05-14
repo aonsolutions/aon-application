@@ -31,6 +31,9 @@
 	<variable name="vTotalAverage" class="java.lang.Double" calculation="Average">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
+	<variable name="promAmount" class="java.lang.Double" calculation="Average">
+		<variableExpression><![CDATA[$F{averageAmount}]]></variableExpression>
+	</variable>
 	<group name="reportGroup">
 		<groupExpression><![CDATA["never"]]></groupExpression>
 		<groupHeader>
