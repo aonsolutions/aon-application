@@ -14,7 +14,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class RoleManager {
 	
-	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll","search", "back"};
+	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll", "search", "back"};
 
 	/**
 	 * @param role
