@@ -64,11 +64,13 @@
 						headerClass="aon-icon-warehouse aon-direct-access-panel">
 						<f:facet name="header">
 							<aon:outputText value="comisiones" />
-						</f:facet>							
+						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">			
 
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink value="#{commercialBundle.commercial_commission_calculation_module}" />
+								<aon:commandLink id="commercial-commision-calculation"
+									action="commissionCalculation" actionListener="#{commissionCalculation.onInitialize}" 
+									value="#{commercialBundle.commercial_commission_calculation_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="offer-detail-commision" 
