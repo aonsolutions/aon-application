@@ -25,7 +25,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 @Entity
 @Table(name="offer_detail_commission")
 public class OfferDetailCommission implements ITransferObject {
-	
+
 	private static final long serialVersionUID = -6691654954195445777L;
 
 	private Integer id;
@@ -92,15 +92,6 @@ public class OfferDetailCommission implements ITransferObject {
 		return (getOfferDetail()!=null?getOfferDetail().getOffer():null);
 	}
 	
-	@Transient
-	public double getTaxableBase() {
-		double tb = 0.0;
-		if (getOfferDetail() != null) {
-			
-		}
-		return tb;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -135,5 +126,4 @@ public class OfferDetailCommission implements ITransferObject {
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
 	}
-
 }

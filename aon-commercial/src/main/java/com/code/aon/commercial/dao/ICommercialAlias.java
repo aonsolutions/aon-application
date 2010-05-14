@@ -274,6 +274,18 @@ public interface ICommercialAlias {
 	*/
 	String  COMMISSION_TYPE_COMMISSION_COMMISSION_NAME = COMMISSION_TYPE_COMMISSION_ENTRY.getAliasNames()[3];
 
+	/** 
+	* Alias value: CommissionTypeCommission_commission_startDate
+	* Hibernate value: CommissionTypeCommission.commission.startDate
+	*/
+	String  COMMISSION_TYPE_COMMISSION_COMMISSION_START_DATE = COMMISSION_TYPE_COMMISSION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: CommissionTypeCommission_commission_endDate
+	* Hibernate value: CommissionTypeCommission.commission.endDate
+	*/
+	String  COMMISSION_TYPE_COMMISSION_COMMISSION_END_DATE = COMMISSION_TYPE_COMMISSION_ENTRY.getAliasNames()[5];
+
 
 
 	/** 
@@ -605,52 +617,94 @@ public interface ICommercialAlias {
 	String  OFFER_DETAIL_OFFER_ID = OFFER_DETAIL_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: OfferDetail_offer_target_id
+	* Hibernate value: OfferDetail.offer.target.id
+	*/
+	String  OFFER_DETAIL_OFFER_TARGET_ID = OFFER_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: OfferDetail_offer_issueDate
+	* Hibernate value: OfferDetail.offer.issueDate
+	*/
+	String  OFFER_DETAIL_OFFER_ISSUE_DATE = OFFER_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: OfferDetail_offer_series
+	* Hibernate value: OfferDetail.offer.series
+	*/
+	String  OFFER_DETAIL_OFFER_SERIES = OFFER_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: OfferDetail_offer_number
+	* Hibernate value: OfferDetail.offer.number
+	*/
+	String  OFFER_DETAIL_OFFER_NUMBER = OFFER_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: OfferDetail_offer_seller_id
+	* Hibernate value: OfferDetail.offer.seller.id
+	*/
+	String  OFFER_DETAIL_OFFER_SELLER_ID = OFFER_DETAIL_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: OfferDetail_offer_securityLevel
+	* Hibernate value: OfferDetail.offer.securityLevel
+	*/
+	String  OFFER_DETAIL_OFFER_SECURITY_LEVEL = OFFER_DETAIL_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: OfferDetail_offer_workPlace_id
+	* Hibernate value: OfferDetail.offer.workPlace.id
+	*/
+	String  OFFER_DETAIL_OFFER_WORK_PLACE_ID = OFFER_DETAIL_ENTRY.getAliasNames()[8];
+
+	/** 
 	* Alias value: OfferDetail_line
 	* Hibernate value: OfferDetail.line
 	*/
-	String  OFFER_DETAIL_LINE = OFFER_DETAIL_ENTRY.getAliasNames()[2];
+	String  OFFER_DETAIL_LINE = OFFER_DETAIL_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: OfferDetail_item_id
 	* Hibernate value: OfferDetail.item.id
 	*/
-	String  OFFER_DETAIL_ITEM_ID = OFFER_DETAIL_ENTRY.getAliasNames()[3];
+	String  OFFER_DETAIL_ITEM_ID = OFFER_DETAIL_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: OfferDetail_item_product_type
 	* Hibernate value: OfferDetail.item.product.type
 	*/
-	String  OFFER_DETAIL_ITEM_PRODUCT_TYPE = OFFER_DETAIL_ENTRY.getAliasNames()[4];
+	String  OFFER_DETAIL_ITEM_PRODUCT_TYPE = OFFER_DETAIL_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: OfferDetail_description
 	* Hibernate value: OfferDetail.description
 	*/
-	String  OFFER_DETAIL_DESCRIPTION = OFFER_DETAIL_ENTRY.getAliasNames()[5];
+	String  OFFER_DETAIL_DESCRIPTION = OFFER_DETAIL_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: OfferDetail_quantity
 	* Hibernate value: OfferDetail.quantity
 	*/
-	String  OFFER_DETAIL_QUANTITY = OFFER_DETAIL_ENTRY.getAliasNames()[6];
+	String  OFFER_DETAIL_QUANTITY = OFFER_DETAIL_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: OfferDetail_price
 	* Hibernate value: OfferDetail.price
 	*/
-	String  OFFER_DETAIL_PRICE = OFFER_DETAIL_ENTRY.getAliasNames()[7];
+	String  OFFER_DETAIL_PRICE = OFFER_DETAIL_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: OfferDetail_discountExpression
 	* Hibernate value: OfferDetail.discountExpression
 	*/
-	String  OFFER_DETAIL_DISCOUNT_EXPRESSION = OFFER_DETAIL_ENTRY.getAliasNames()[8];
+	String  OFFER_DETAIL_DISCOUNT_EXPRESSION = OFFER_DETAIL_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: OfferDetail_status
 	* Hibernate value: OfferDetail.status
 	*/
-	String  OFFER_DETAIL_STATUS = OFFER_DETAIL_ENTRY.getAliasNames()[9];
+	String  OFFER_DETAIL_STATUS = OFFER_DETAIL_ENTRY.getAliasNames()[16];
 
 
 
@@ -780,10 +834,10 @@ public interface ICommercialAlias {
 	String  OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SIGNED = OFFER_DETAIL_COMMISSION_ENTRY.getAliasNames()[19];
 
 	/** 
-	* Alias value: OfferDetailCommission_offerDetail_offer_workplace_id
-	* Hibernate value: OfferDetailCommission.offerDetail.offer.workplace.id
+	* Alias value: OfferDetailCommission_offerDetail_offer_workPlace_id
+	* Hibernate value: OfferDetailCommission.offerDetail.offer.workPlace.id
 	*/
-	String  OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_WORKPLACE_ID = OFFER_DETAIL_COMMISSION_ENTRY.getAliasNames()[20];
+	String  OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_WORK_PLACE_ID = OFFER_DETAIL_COMMISSION_ENTRY.getAliasNames()[20];
 
 	/** 
 	* Alias value: OfferDetailCommission_payDate
