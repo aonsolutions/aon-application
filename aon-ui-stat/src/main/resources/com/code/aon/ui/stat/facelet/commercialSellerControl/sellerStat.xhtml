@@ -33,24 +33,32 @@
 				<aon:panelTabSet switchType="client">
 					<aon:panelTab id="tab1"
 						label="#{statBundle.seller_stat_control_visit}">
-					
+						 <ui:include
+							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/visitsList.xhtml" /> 
 					</aon:panelTab>
 					<aon:panelTab id="tab2"
-						label="#{statBundle.seller_stat_control_offers}">
-						<ui:include
-							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/doneOffersList.xhtml" />
+						label="Visitas Pendientes">
+						 <ui:include
+							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/pendingVisitsList.xhtml" /> 
 					</aon:panelTab>
 					<aon:panelTab id="tab3"
-						label="#{statBundle.seller_stat_control_closed_offers}">
-						
+						label="#{statBundle.seller_stat_control_offers}">
+						 <ui:include
+							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/doneOfferslist.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab id="tab4"
+						label="#{statBundle.seller_stat_control_closed_offers}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/closedOfferslist.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab5"
 						label="#{statBundle.seller_stat_control_lost_offers}">
-						
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/lostOfferslist.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="tab5" label="#{statBundle.seller_stat_control_ratio}">
+					<!-- <aon:panelTab id="tab5" label="#{statBundle.seller_stat_control_ratio}">
 						
-					</aon:panelTab>
+					</aon:panelTab> -->
 				</aon:panelTabSet> 
 			</aon:div>
 		</aon:form>

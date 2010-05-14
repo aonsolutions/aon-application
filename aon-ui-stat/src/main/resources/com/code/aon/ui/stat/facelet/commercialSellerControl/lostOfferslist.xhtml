@@ -6,8 +6,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	>
 
-	<aon:editDataTable id="offersDone"
-		value="#{commercialStat.doneOffersModel}" rows="20"
+	<aon:editDataTable id="offersLost"
+		value="#{commercialStat.lostOffersModel}" rows="20"
 		columnClasses="aon-editDataTable-textColumn, aon-editDataTable-dateColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
 		var="to">
 
@@ -67,5 +67,5 @@
 						</aon:column> -->
 
 		</aon:editDataTable>
-		<aon:dataScroller2 for="offersDone" showNote="true" />
+		<aon:dataScroller2 for="offersLost" showNote="true" />
 </ui:composition>
