@@ -58,7 +58,7 @@
 					<a4j:region>
 						<aon:lookupInputText id="OfferDetail_item_product_code" 
 							value="#{offerDetail.to.item.product.code}"
-							lookup="#{itemLookup}"   
+							lookup="#{itemLookup}" style="vertical-align: top;"
 							lookupChangeListener="#{offerDetail.onItemChanged}"
 							reRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
 							ajaxSingle="false" size="10" 
@@ -100,7 +100,7 @@
 						<a4j:region>
 							<aon:lookupInputText id="OfferDetail_item_product_code-New" 
 								value="#{offerDetail.to.item.product.code}"
-								lookup="#{itemLookup}"   
+								lookup="#{itemLookup}" style="vertical-align: top;"
 								lookupChangeListener="#{offerDetail.onItemChanged}"
 								reRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
 								ajaxSingle="false" size="10" 
