@@ -353,7 +353,7 @@
 										<a4j:region>
 											<aon:lookupInputText id="IncomeDetail_item_product_code" 
 												value="#{incomeDetail.to.item.product.code}"
-												lookup="#{itemLookup}" 
+												lookup="#{itemLookup}" style="vertical-align: top;" 
 												lookupChangeListener="#{incomeDetail.onItemChanged}" 
 												reRender="incomeDetailItemEdit,IncomeDetail_quantity,IncomeDetail_price,
 													IncomeDetail_amount"  
@@ -398,7 +398,7 @@
 											<a4j:region>
 												<aon:lookupInputText id="IncomeDetail_item_product_code-New" 
 													value="#{incomeDetail.to.item.product.code}"
-													lookup="#{itemLookup}" 
+													lookup="#{itemLookup}" style="vertical-align: top;"
 													lookupChangeListener="#{incomeDetail.onItemChanged}" 
 													reRender="incomeDetailItemNew,IncomeDetail_quantity-New,IncomeDetail_price-New,
 														IncomeDetail_amount-New"  

@@ -63,7 +63,7 @@
 								<a4j:region>
 									<aon:lookupInputText id="InvoiceDetail_item_product_code"
 										value="#{controller.to.item.product.code}"
-										lookup="#{itemLookup}"
+										lookup="#{itemLookup}" style="vertical-align: top"
 										lookupChangeListener="#{controller.onItemChanged}"
 										reRender="invoiceDetailItemEdit,InvoiceDetail_quantity,InvoiceDetail_price,
 											InvoiceDetail_discount,InvoiceDetail_amount"
@@ -108,10 +108,10 @@
 									<a4j:region>
 										<aon:lookupInputText id="InvoiceDetail_item_product_code-New"
 											value="#{controller.to.item.product.code}"
-											lookup="#{itemLookup}"
+											lookup="#{itemLookup}" style="vertical-align: top"
 											lookupChangeListener="#{controller.onItemChanged}"
 											reRender="invoiceDetailItemNew,InvoiceDetail_quantity-New,InvoiceDetail_price-New,
-												InvoiceDetail_discount-New,InvoiceDetail_amount-New"
+												InvoiceDetail_discount-New,InvoiceDetail_amount_data"
 											ajaxSingle="false" required="true" size="10"
 											onblur="toUpperCase(this);" focus="InvoiceDetail_item_product_name-New">
 											<aon:joinProperty alias="Item_product_code" value="#{controller.to.item.product.code}" />
@@ -122,7 +122,7 @@
 											property="#{controller.to.item}" lookup="#{itemLookup}" 
 											lookupChangeListener="#{controller.onItemChanged}"
 											selectReRender="invoiceDetailItemNew,InvoiceDetail_quantity-New,InvoiceDetail_price-New,
-												InvoiceDetail_discount-New,InvoiceDetail_amount-New"
+												InvoiceDetail_discount-New,InvoiceDetail_amount_data"
 											actionType="search">
 										</aon:lookupButton>
 										<aon:lookupButton
@@ -131,7 +131,7 @@
 											property="#{controller.to.item}" lookup="#{itemLookup}"
 											lookupChangeListener="#{controller.onItemChanged}" 
 											selectReRender="invoiceDetailItemNew,InvoiceDetail_quantity-New,InvoiceDetail_price-New,
-												InvoiceDetail_discount-New,InvoiceDetail_amount-New"
+												InvoiceDetail_discount-New,InvoiceDetail_amount_data"
 											actionType="new">
 										</aon:lookupButton>
 									</a4j:region>
@@ -227,10 +227,27 @@
 							</aon:outputText>
 							<f:facet name="footer">
 								<aon:div style="text-align:right;">
-									<aon:outputText id="InvoiceDetail_amount-New"
-										value="#{controller.taxableBase}" rendered="#{formNew}">
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-									</aon:outputText>
+									<aon:div id="InvoiceDetail_amount_data" rendered="#{formNew}">
+										<aon:div>
+											<aon:outputText id="InvoiceDetail_amount-New"
+												value="#{controller.taxableBase}">
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											</aon:outputText>
+										</aon:div>
+										<aon:div styleClass="aon-nowrap" rendered="#{!invoiceController.to.taxFree}">
+											<aon:outputText style="font-size: 0.8em; font-style: italic;" 
+												value="I.V.A. #{controller.to.item.product.vat.percentage}%" />
+										</aon:div>
+										<aon:div styleClass="aon-nowrap" rendered="#{invoiceController.to.surcharge}">
+											<aon:outputText style="font-size: 0.8em; font-style: italic;" styleClass="aon-nowrap"
+												value="R.E. #{controller.to.item.product.vat.surcharge}%" />
+										</aon:div>
+										<aon:div styleClass="aon-nowrap" rendered="#{invoiceController.to.withholding}">
+											<aon:outputText style="font-size: 0.8em; font-style: italic;" styleClass="aon-nowrap"
+												value="I.R.P.F. #{controller.to.item.product.retention.percentage}%" />
+										</aon:div>
+									</aon:div>
+									
 									<aon:outputText id="Invoice_taxableBase" 
 										value="#{invoiceController.taxableBase}" rendered="#{!formNew}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
