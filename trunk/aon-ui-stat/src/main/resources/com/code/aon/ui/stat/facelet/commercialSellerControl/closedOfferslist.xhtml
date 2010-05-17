@@ -3,8 +3,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:c="http://java.sun.com/jstl/core"
-	>
+	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:editDataTable id="offersClosed"
 		value="#{commercialStat.closedOffersModel}" rows="20"
@@ -12,52 +11,48 @@
 		var="to">
 
 
-			<aon:column alias="Offer.series,Offer.number"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.offer.referenceCode}" />
-						</aon:column>
-	
-						<aon:column alias="Offer.issueDate"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.offer.issueDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column alias="Offer.target.registry.surname,Offer.target.registry.name"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{commercialBundle.commercial_target}" />
-							</f:facet>
-							<aon:outputText value="#{to.offer.target.registry.fullName}">
-								<aon:abbreviateConverter maxWidth="50" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column alias="Offer.target.registry.document"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_company_document}" />
-							</f:facet>
-							<aon:outputText value="#{to.offer.target.registry.document}" />
-						</aon:column>
-		
-						<aon:column alias="Offer.status"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.offer.status}" />
-						</aon:column>
-	
-					<!-- 	<aon:column styleClass="aon-editDataTable-numberColumn">
+		<aon:column
+			styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+			</f:facet>
+			<aon:outputText value="#{to.offer.referenceCode}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.offer.issueDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<h:outputText value="#{commercialBundle.commercial_target}" />
+			</f:facet>
+			<aon:outputText value="#{to.offer.target.registry.fullName}">
+				<aon:abbreviateConverter maxWidth="50" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<h:outputText value="#{bundle.aon_company_document}" />
+			</f:facet>
+			<aon:outputText value="#{to.offer.target.registry.document}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_status}" />
+			</f:facet>
+			<aon:outputText value="#{to.offer.status}" />
+		</aon:column>
+
+		<!-- 	<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
@@ -66,6 +61,6 @@
 							</aon:outputText>
 						</aon:column> -->
 
-		</aon:editDataTable>
-		<aon:dataScroller2 for="offersClosed" showNote="true" />
+	</aon:editDataTable>
+	<aon:dataScroller2 for="offersClosed" showNote="true" />
 </ui:composition>
