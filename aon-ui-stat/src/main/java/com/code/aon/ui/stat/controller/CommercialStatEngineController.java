@@ -1,5 +1,6 @@
 package com.code.aon.ui.stat.controller;
 
+import java.sql.PreparedStatement;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -58,6 +59,7 @@ public class CommercialStatEngineController {
 	private List<CommercialTracking> visitsList;
 	private List<CommercialTracking> pendingVisitsList;
 	private List<SellerSummary> summary;
+	private List<Integer> summaryGraph;
 	private Integer numVisits;
 	private Integer numPendingVisits;
 	private Integer numOffers;
@@ -69,6 +71,15 @@ public class CommercialStatEngineController {
 	private Integer numAprovedOffersTot;
 	private Integer numLostOffersTot;
 	private Integer count;
+
+	
+	public List<Integer> getSummaryGraph() {
+		return summaryGraph;
+	}
+
+	public void setSummaryGraph(List<Integer> summaryGraph) {
+		this.summaryGraph = summaryGraph;
+	}
 
 	public Integer getCount() {
 		return count;
@@ -461,15 +472,17 @@ public class CommercialStatEngineController {
 	}
 
 	private void getDoneVisitsModel() throws ManagerBeanException {
+		PreparedStatement ps = null;
+		
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
 				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.seller.id = "
 				+ seller.getId() 
-				/*+ " AND   CommercialTracking.date >= '"
-				+ this.params.getFromDate()
+				+ " AND   CommercialTracking.date >= '"
+				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
-				+ this.params.getToDate()*/
-				+ " order by CommercialTracking.date desc";
+				+ new java.sql.Date(this.params.getToDate().getTime())
+				+ "' order by CommercialTracking.date desc";
 
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
@@ -483,11 +496,11 @@ public class CommercialStatEngineController {
 				+ "from CommercialTracking as CommercialTracking "
 				+ "where  CommercialTracking.status = 0 AND  CommercialTracking.seller.id = "
 				+ seller.getId() 
-				/*+ " AND   CommercialTracking.date >= '"
-				+ this.params.getFromDate()
+				+ " AND   CommercialTracking.date >= '"
+				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
-				+ this.params.getToDate()*/
-				+ " order by CommercialTracking.date desc";
+				+ new java.sql.Date(this.params.getToDate().getTime())
+				+ "' order by CommercialTracking.date desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -500,11 +513,11 @@ public class CommercialStatEngineController {
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.status = 2 AND  OfferDetail.offer.seller.id = "
 				+ seller.getId() 
-				/*+ " AND   OfferDetail.offer.issueDate >= '"
-				+ this.params.getFromDate()
+				+ " AND   OfferDetail.offer.issueDate >= '"
+				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ this.params.getToDate()*/
-				+ " order by OfferDetail.offer.issueDate desc";
+				+ new java.sql.Date(this.params.getToDate().getTime())
+				+ "' order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -516,11 +529,11 @@ public class CommercialStatEngineController {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.seller.id = " + seller.getId()
-				/*+ " AND   OfferDetail.offer.issueDate >= '"
-				+ this.params.getFromDate().getTime()
+				+ " AND   OfferDetail.offer.issueDate >= '"
+				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ this.params.getToDate().getTime()*/
-				+ " order by OfferDetail.offer.issueDate desc";
+				+ new java.sql.Date(this.params.getToDate().getTime())
+				+ "' order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -533,11 +546,11 @@ public class CommercialStatEngineController {
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.status = 1 AND OfferDetail.offer.seller.id = "
 				+ seller.getId() 
-				/*+ " AND   OfferDetail.offer.issueDate >= '"
-				+ this.params.getFromDate()
+				+ " AND   OfferDetail.offer.issueDate >= '"
+				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ this.params.getToDate()*/
-				+ " order by OfferDetail.offer.issueDate desc";
+				+ new java.sql.Date(this.params.getToDate().getTime())
+				+ "' order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -570,6 +583,12 @@ public class CommercialStatEngineController {
 			numLostOffersTot += numLostOffers;
 			summary.add(s);
 		}
+		summaryGraph = new LinkedList<Integer>();
+		summaryGraph.add(numVisitsTot);
+		summaryGraph.add(numOffersTot);
+		summaryGraph.add(numPendingVisitsTot);
+		summaryGraph.add(numAprovedOffersTot);
+		summaryGraph.add(numLostOffersTot);
 		count = 0;
 
 	}
