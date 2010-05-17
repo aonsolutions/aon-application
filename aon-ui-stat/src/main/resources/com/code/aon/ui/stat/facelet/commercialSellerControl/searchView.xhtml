@@ -14,7 +14,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{statBundle.stat_show_seller}" />
+					value="#{statBundle.seller_stat_control}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
@@ -23,11 +23,11 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener"
-						value="#{commercialStat.onSellerControlStats}"
+						value="#{commercialStat.onSummary}"
 						type="actionListener" />
-					<aon:methodParam name="searchAction" value="commercial_seller_stat" />
+					<aon:methodParam name="searchAction" value="commercial_seller_view" />
 
-					<aon:outputLabel for="Target_trackings_seller_id"
+				<!-- 	<aon:outputLabel for="Target_trackings_seller_id"
 						value="#{salesBundle.sales_seller}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Target_trackings_seller_id" required="true"
@@ -43,7 +43,7 @@
 						<aon:inputText id="Target_trackings_seller_name" required="true"
 							value="#{(commercialStat.seller.registry.name!=null)?(commercialStat.seller.registry.fullName):('')}"
 							size="44" disabled="true" />
-					</aon:div>
+					</aon:div> -->
 
 					<aon:outputLabel for="entryDate-From"
 						value="#{bundle.aon_date_from}" />

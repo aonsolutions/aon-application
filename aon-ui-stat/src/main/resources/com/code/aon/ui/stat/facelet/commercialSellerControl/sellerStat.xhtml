@@ -11,39 +11,65 @@
 		<aon:form id="records">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{statBundle.seller_stat_control}" /> 
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.stat_show_seller}" />
 				<ui:define name="beforeToolbarContent">
 					<aon:commandButton value="#{bundle.aon_back}"
 						action="commercial_seller_search"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_cancel}" />
+					<aon:commandButton value="#{statBundle.seller_stat_control}"
+						action="commercial_seller_view"
+						styleClass="aon-finding-toolbar-item aon-icon-visit"
+						/>
 				</ui:define>
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2">
-					<aon:outputLabel value="#{statBundle.registry_stat_code}" />
-					<aon:inputText value="#{commercialStat.seller.id}" size="30"
-						disabled="true" />
+				<h:panelGrid columns="2">
+					<aon:div>
+						<aon:panelGrid columns="2">
+							<aon:outputLabel value="#{statBundle.registry_stat_code}" />
+							<aon:inputText value="#{commercialStat.seller.id}" size="30"
+								disabled="true" />
 
-					<aon:outputLabel value="#{salesBundle.sales_seller}" />
-					<aon:inputText value="#{commercialStat.seller.registry.fullName}" size="70"
-						disabled="true" />
-				</aon:panelGrid>
+							<aon:outputLabel value="#{salesBundle.sales_seller}" />
+							<aon:inputText value="#{commercialStat.seller.registry.fullName}"
+								size="70" disabled="true" />
+						</aon:panelGrid>
+					</aon:div>
+					<aon:div>
+						
+						<aon:outputLabel value="#{statBundle.seller_stat_control_visit}" />
+						<aon:outputText value="#{commercialStat.numVisits}" size="30" style="align:right"
+							disabled="true" /> <br/>
+						<aon:outputLabel value="#{statBundle.seller_stat_control_offers}" />
+						<aon:outputText value="#{commercialStat.numOffers}" size="30"
+							disabled="true" /><br/>
+
+						<aon:outputLabel value="#{statBundle.seller_stat_control_closed_offers}"/>
+						<aon:outputText value="#{commercialStat.numAprovedOffers}"
+							size="30" disabled="true" /><br/>
+
+						<aon:outputLabel value="#{statBundle.seller_stat_control_lost_offers}"/>
+						<aon:outputText value="#{commercialStat.numLostOffers}" size="30"
+							disabled="true" />
+						
+					</aon:div>
+				</h:panelGrid>
 
 				<aon:panelTabSet switchType="client">
 					<aon:panelTab id="tab1"
 						label="#{statBundle.seller_stat_control_visit}">
-						 <ui:include
-							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/visitsList.xhtml" /> 
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/visitsList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="tab2"
-						label="Visitas Pendientes">
-						 <ui:include
-							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/pendingVisitsList.xhtml" /> 
+					<aon:panelTab id="tab2" label="Visitas Pendientes">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/pendingVisitsList.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab id="tab3"
 						label="#{statBundle.seller_stat_control_offers}">
-						 <ui:include
+						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/doneOfferslist.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab id="tab4"
@@ -59,7 +85,7 @@
 					<!-- <aon:panelTab id="tab5" label="#{statBundle.seller_stat_control_ratio}">
 						
 					</aon:panelTab> -->
-				</aon:panelTabSet> 
+				</aon:panelTabSet>
 			</aon:div>
 		</aon:form>
 	</ui:define>
