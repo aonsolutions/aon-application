@@ -28,8 +28,10 @@
 									value="#{to.id}" style="width:17px; height: 17px;"
 									rendered="#{to.catalogueIcon!=null}"
 									createContent="#{catalogueGadget.paintIcon}" />
+<!--  
 								<aon:outputText value="#{to.capitalLetter}"
 									rendered="#{to.catalogueIcon==null}" />
+-->
 								<aon:outputText value="#{to.catalogue.name}"
 									styleClass="aon-commandLink" />
 								<a4j:support event="onclick" reRender="itemContent">
