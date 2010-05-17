@@ -306,6 +306,18 @@
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/commercialSellerControl/sellerStat.xhtml</to-view-id>
 		</navigation-case>
+		
+			<navigation-case>
+			<from-outcome>commercial_search_view</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialSellerControl/searchView.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>commercial_seller_view</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialSellerControl/sellersView.xhtml</to-view-id>
+		</navigation-case>
 
 	</navigation-rule>
 
