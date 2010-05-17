@@ -18,7 +18,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_cancel}" />
 					<aon:commandButton value="#{statBundle.seller_stat_control}"
-						action="commercial_seller_view"
+						action="commercial_seller_view" actionListener="#{commercialStat.onSummary}"
 						styleClass="aon-finding-toolbar-item aon-icon-visit" />
 					
 				</ui:define>
