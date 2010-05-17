@@ -180,6 +180,23 @@
 		</params>
 	</report>
 	
+	<report id="sellersList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/sellerStats.jasper" />
+		<collection provider="#{commercialStat.summary}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{commercialStat.getReportName}" />
+			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
+			<param id="numVisitsTot" value="#{commercialStat.getNumVisitsTot}" />
+			<param id="numOffersTot" value="#{commercialStat.getNumOffersTot}" />
+			<param id="numPendingVisitsTot" value="#{commercialStat.getNumPendingVisitsTot}" />
+			<param id="numAprovedOffersTot" value="#{commercialStat.getNumAprovedOffersTot}" />
+			<param id="numLostOffersTot" value="#{commercialStat.getNumLostOffersTot}" />
+			
+		</params>
+	</report>
+	
 	<report id="commercialStatsGraph" description="Statistics Report">
 		<template path="/com/code/aon/ui/stat/report/commercialGraphTemplate.jasper" />
 		<collection provider="#{commercialStat.yearStats}" />

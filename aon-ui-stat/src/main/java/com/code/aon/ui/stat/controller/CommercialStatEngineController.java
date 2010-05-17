@@ -59,18 +59,71 @@ public class CommercialStatEngineController {
 	private List<CommercialTracking> pendingVisitsList;
 	private List<SellerSummary> summary;
 	private Integer numVisits;
+	private Integer numPendingVisits;
 	private Integer numOffers;
 	private Integer numAprovedOffers;
 	private Integer numLostOffers;
-	
-	
+	private Integer numVisitsTot;
+	private Integer numPendingVisitsTot;
+	private Integer numOffersTot;
+	private Integer numAprovedOffersTot;
+	private Integer numLostOffersTot;
+	private Integer count;
+
+	public Integer getCount() {
+		return count;
+	}
+
+	public void setCount(Integer count) {
+		this.count = count;
+	}
+
+	public Integer getNumVisitsTot() {
+		return numVisitsTot;
+	}
+
+	public void setNumVisitsTot(Integer numVisitsTot) {
+		this.numVisitsTot = numVisitsTot;
+	}
+
+	public Integer getNumPendingVisitsTot() {
+		return numPendingVisitsTot;
+	}
+
+	public void setNumPendingVisitsTot(Integer numPendingVisitsTot) {
+		this.numPendingVisitsTot = numPendingVisitsTot;
+	}
+
+	public Integer getNumOffersTot() {
+		return numOffersTot;
+	}
+
+	public void setNumOffersTot(Integer numOffersTot) {
+		this.numOffersTot = numOffersTot;
+	}
+
+	public Integer getNumAprovedOffersTot() {
+		return numAprovedOffersTot;
+	}
+
+	public void setNumAprovedOffersTot(Integer numAprovedOffersTot) {
+		this.numAprovedOffersTot = numAprovedOffersTot;
+	}
+
+	public Integer getNumLostOffersTot() {
+		return numLostOffersTot;
+	}
+
+	public void setNumLostOffersTot(Integer numLostOffersTot) {
+		this.numLostOffersTot = numLostOffersTot;
+	}
 
 	public DataModel getSummaryModel() {
 		if (summaryModel == null) {
 			summaryModel = new ListDataModel(getSummary());
 		}
 		return summaryModel;
-		
+
 	}
 
 	public void setSummaryModel(DataModel summaryModel) {
@@ -91,6 +144,14 @@ public class CommercialStatEngineController {
 
 	public void setNumVisits(Integer numVisits) {
 		this.numVisits = numVisits;
+	}
+
+	public Integer getNumPendingVisits() {
+		return numPendingVisits;
+	}
+
+	public void setNumPendingVisits(Integer numPendingVisits) {
+		this.numPendingVisits = numPendingVisits;
 	}
 
 	public Integer getNumOffers() {
@@ -328,6 +389,7 @@ public class CommercialStatEngineController {
 		c.set(Calendar.MONTH, 11);
 		c.set(Calendar.DAY_OF_MONTH, 31);
 		params.setToDate(c.getTime());
+		count = 0;
 
 	}
 
@@ -337,7 +399,13 @@ public class CommercialStatEngineController {
 			setNumLostOffers(0);
 			setNumVisits(0);
 			setNumOffers(0);
-
+			if (count < 1) {
+				numAprovedOffersTot = 0;
+				numLostOffersTot = 0;
+				numVisitsTot = 0;
+				numPendingVisitsTot = 0;
+				numOffersTot = 0;
+			}
 			setClosedOffersModel(null);
 			setDoneOffersModel(null);
 			setLostOffersModel(null);
@@ -361,7 +429,17 @@ public class CommercialStatEngineController {
 			setNumAprovedOffers(0);
 			setNumLostOffers(0);
 			setNumVisits(0);
+			setNumPendingVisits(0);
 			setNumOffers(0);
+
+			if (count < 1) {
+				setNumVisitsTot(0);
+				numAprovedOffersTot = 0;
+				numLostOffersTot = 0;
+
+				numPendingVisitsTot = 0;
+				numOffersTot = 0;
+			}
 
 			setClosedOffersModel(null);
 			setDoneOffersModel(null);
@@ -386,10 +464,13 @@ public class CommercialStatEngineController {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
 				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.seller.id = "
-				+ seller.getId() +" AND   CommercialTracking.date >= '" + this.params.getFromDate()
-				+ "' AND CommercialTracking.date <= '" + this.params.getToDate() 
-				+ "' order by CommercialTracking.date desc";
-			
+				+ seller.getId() 
+				/*+ " AND   CommercialTracking.date >= '"
+				+ this.params.getFromDate()
+				+ "' AND CommercialTracking.date <= '"
+				+ this.params.getToDate()*/
+				+ " order by CommercialTracking.date desc";
+
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -401,22 +482,29 @@ public class CommercialStatEngineController {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
 				+ "where  CommercialTracking.status = 0 AND  CommercialTracking.seller.id = "
-				+ seller.getId() +" AND   CommercialTracking.date >= '" + this.params.getFromDate()
-				+ "' AND CommercialTracking.date <= '" + this.params.getToDate() 
-				+ "' order by CommercialTracking.date desc";
+				+ seller.getId() 
+				/*+ " AND   CommercialTracking.date >= '"
+				+ this.params.getFromDate()
+				+ "' AND CommercialTracking.date <= '"
+				+ this.params.getToDate()*/
+				+ " order by CommercialTracking.date desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		pendingVisitsList = query.list();
+		setNumPendingVisits(pendingVisitsList.size());
 	}
 
 	private void getLostOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.status = 2 AND  OfferDetail.offer.seller.id = "
-				+ seller.getId() +" AND   OfferDetail.offer.issueDate >= '" + this.params.getFromDate()
-				+ "' AND OfferDetail.offer.issueDate <= '" + this.params.getToDate() 
-				+ "' order by OfferDetail.offer.issueDate desc";
+				+ seller.getId() 
+				/*+ " AND   OfferDetail.offer.issueDate >= '"
+				+ this.params.getFromDate()
+				+ "' AND OfferDetail.offer.issueDate <= '"
+				+ this.params.getToDate()*/
+				+ " order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -428,9 +516,11 @@ public class CommercialStatEngineController {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.seller.id = " + seller.getId()
-				+ seller.getId() +" AND   OfferDetail.offer.issueDate >= '" + this.params.getFromDate()
-				+ "' AND OfferDetail.offer.issueDate <= '" + this.params.getToDate() 
-				+ "' order by OfferDetail.offer.issueDate desc";
+				/*+ " AND   OfferDetail.offer.issueDate >= '"
+				+ this.params.getFromDate().getTime()
+				+ "' AND OfferDetail.offer.issueDate <= '"
+				+ this.params.getToDate().getTime()*/
+				+ " order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -442,9 +532,12 @@ public class CommercialStatEngineController {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.status = 1 AND OfferDetail.offer.seller.id = "
-				+ seller.getId() +" AND   OfferDetail.offer.issueDate >= '" + this.params.getFromDate()
-				+ "' AND OfferDetail.offer.issueDate <= '" + this.params.getToDate() 
-				+ "' order by OfferDetail.offer.issueDate desc";
+				+ seller.getId() 
+				/*+ " AND   OfferDetail.offer.issueDate >= '"
+				+ this.params.getFromDate()
+				+ "' AND OfferDetail.offer.issueDate <= '"
+				+ this.params.getToDate()*/
+				+ " order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -452,7 +545,7 @@ public class CommercialStatEngineController {
 		setNumAprovedOffers(closedOffersList.size());
 	}
 
-	public void onSummary(ActionEvent e ) throws ManagerBeanException {
+	public void onSummary(ActionEvent e) throws ManagerBeanException {
 		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
 		List<ITransferObject> list;
 		list = sellerBean.getList(null);
@@ -462,42 +555,49 @@ public class CommercialStatEngineController {
 			SellerSummary s = new SellerSummary();
 			this.setSeller(inv);
 			getSellerControlStats();
+			count++;
 			s.setId(inv.getId());
-			s.setName(inv.getId()+" "+inv.getRegistry().getFullName());
+			s.setName(inv.getId() + " " + inv.getRegistry().getFullName());
 			s.setNumVisits(numVisits);
 			s.setNumOffers(numOffers);
+			s.setNumPendingVisits(numPendingVisits);
 			s.setNumAprovedOffers(numAprovedOffers);
 			s.setNumLostOffers(numLostOffers);
+			numVisitsTot += numVisits;
+			numOffersTot += numOffers;
+			numPendingVisitsTot += numPendingVisits;
+			numAprovedOffersTot += numAprovedOffers;
+			numLostOffersTot += numLostOffers;
 			summary.add(s);
 		}
-		
-	}
-	
-	public void onSellerDetail(ActionEvent e ) throws ManagerBeanException {
-				
-		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(sellerBean	.getFieldName(ISellerAlias.SELLER_ID),((SellerSummary)getSummaryModel().getRowData()).getId());
-		List<ITransferObject> list;
-		list = sellerBean.getList(criteria);
-		this.setSeller((Seller)list.get(0));
-		getSellerControlStats();
-		
-				
+		count = 0;
+
 	}
 
+	public void onSellerDetail(ActionEvent e) throws ManagerBeanException {
+
+		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(sellerBean
+				.getFieldName(ISellerAlias.SELLER_ID),
+				((SellerSummary) getSummaryModel().getRowData()).getId());
+		List<ITransferObject> list;
+		list = sellerBean.getList(criteria);
+		this.setSeller((Seller) list.get(0));
+		getSellerControlStats();
+
+	}
 
 	public class SellerSummary {
 
 		private Integer id;
 		private String name;
 		private Integer numVisits;
+		private Integer numPendingVisits;
 		private Integer numOffers;
 		private Integer numAprovedOffers;
 		private Integer numLostOffers;
 
-		
-		
 		public Integer getId() {
 			return id;
 		}
@@ -520,6 +620,14 @@ public class CommercialStatEngineController {
 
 		public void setNumVisits(Integer numVisits) {
 			this.numVisits = numVisits;
+		}
+
+		public Integer getNumPendingVisits() {
+			return numPendingVisits;
+		}
+
+		public void setNumPendingVisits(Integer numPendingVisits) {
+			this.numPendingVisits = numPendingVisits;
 		}
 
 		public Integer getNumOffers() {
