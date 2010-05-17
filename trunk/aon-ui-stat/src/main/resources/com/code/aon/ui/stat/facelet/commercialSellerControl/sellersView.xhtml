@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="sellerViewList">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control}" />
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="commercial_search_view"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+		<aon:div styleClass="aon-scroll-area">
+			<aon:editDataTable id="sellerView"
+				value="#{commercialStat.summaryModel}" rows="20"
+				columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn"
+				var="to">
+				<aon:column >
+					<f:facet name="header">
+						<aon:outputText value="#{statBundle.stat_seller}" />
+					</f:facet>
+					<aon:outputText value="#{to.name}" />
+				</aon:column>
+				<aon:column	>
+					<f:facet name="header">
+						<aon:outputText value="#{statBundle.seller_stat_control_visit}" />
+					</f:facet>
+					<aon:outputText value="#{to.numVisits}" />
+				</aon:column>
+				<aon:column	>
+					<f:facet name="header">
+						<aon:outputText value="#{statBundle.seller_stat_control_offers}" />
+					</f:facet>
+					<aon:outputText value="#{to.numOffers}" />
+				</aon:column>
+				<aon:column	>
+					<f:facet name="header">
+						<aon:outputText value="#{statBundle.seller_stat_control_closed_offers}" />
+					</f:facet>
+					<aon:outputText value="#{to.numAprovedOffers}" />
+				</aon:column>
+				<aon:column >
+					<f:facet name="header">
+						<aon:outputText value="#{statBundle.seller_stat_control_lost_offers}" />
+					</f:facet>
+					<aon:outputText value="#{to.numLostOffers}" />
+				</aon:column>
+				<aon:column >
+					<f:facet name="header">
+						
+					</f:facet>
+					<aon:htmlCommandLink styleClass="aon-dataTable-link-noicon"
+					actionListener="#{commercialStat.onSellerDetail}"
+					 action="commercial_seller_stat" 
+						value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
+				</aon:column>
+			</aon:editDataTable>
+			<aon:dataScroller2 for="sellerView" showNote="true" />
+		</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
