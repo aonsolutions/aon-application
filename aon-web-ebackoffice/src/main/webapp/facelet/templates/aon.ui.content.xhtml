@@ -8,6 +8,11 @@
 	
 	<ui:include src="/facelet/homepage/menu.xhtml" />		
 	
-	<ui:insert name="content" />
+	<aon:componentGroup
+		family="javax.faces.Command"
+		rendered="#{aonRole.guest}"
+		method="#{aonRole.renderedCommand}">
+		<ui:insert name="content" />
+	</aon:componentGroup>
 
 </ui:composition>
