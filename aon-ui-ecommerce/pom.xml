@@ -63,13 +63,7 @@
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_09</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-impl</artifactId>
-			<version>1.2_12</version>
+			<version>1.2_14</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -79,11 +73,18 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Necesario papra las clases de paypal -->
+		<!-- Necesario para las clases de paypal -->
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-codec</artifactId>
+					<groupId>commons-codec</groupId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 	</dependencies>
 </project>

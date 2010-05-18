@@ -37,12 +37,5 @@
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-		<!--  Necesario para imprimir barcodes con jasper -->
-		<dependency>
-			<groupId>iReport</groupId>
-			<artifactId>iReport-utils</artifactId>
-			<version>2.0.1</version>
-			<scope>compile</scope>
-		</dependency>
 	</dependencies>
 </project>
