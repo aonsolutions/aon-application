@@ -2,6 +2,7 @@ package com.code.aon.ui.ecommerce.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.faces.component.UIComponent;
 import javax.faces.event.AbortProcessingException;
@@ -65,28 +66,26 @@ public class CategoryGadget {
 	public void onCategorySelect(ActionEvent event) {
 		UIComponent c = event.getComponent();
 		HtmlPanelMenuItem item = (HtmlPanelMenuItem) c;
-		
-//		CategoryGroup cg = (CategoryGroup)categoryGroupModel.getRowData();
 		ProductCategory pc = (ProductCategory)item.getValue();
 		try {
-//			ProductCategory cat = (ProductCategory) categoryModel.getRowData();
-//			cg.categoryModel.getRowData();
-			
-//			ProductCategory cat = (ProductCategory)cg.categoryModel.getRowData();
 			Criteria criteria = new Criteria();
 			String identifier = BeanManager.getManagerBean(Item.class)
 					.getFieldName(IECommerceConstants.CATEGORY_ALIAS);
 			criteria.addEqualExpression(identifier, pc.getId());
 			/*
 			 * AINADIR AL CRITERIA EL internetVisible DE ITEM A true
-			 * 
 			 */
 			ShopItemsController shop = ECommerceUtil.getShopItems();
 			shop.resetCriteria(criteria);
 			shop.onSearch(null);
 			
 			// Establece como titulo la cagegoria seleccionada
-			shop.setSelectionTitle(" >> "+pc.getGroup().getName()+" >> "+pc.getName());
+			if(pc.getGroup()==null){
+				ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.ecommerce.i18n.messages");
+				shop.setSelectionTitle(" >> "+bundle.getString("aon_ecommerce_category_others")+" >> "+pc.getName());
+			} else {
+				shop.setSelectionTitle(" >> "+pc.getGroup().getName()+" >> "+pc.getName());
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "La búsqueda falló";
 			AonUtil.addErrorMessage(msg);
@@ -118,8 +117,6 @@ public class CategoryGadget {
 		List<ITransferObject> categoryList = getCategoryList();
 		List<ITransferObject> groupList = new LinkedList<ITransferObject>();
 		List<ITransferObject> otherGroupList = new LinkedList<ITransferObject>();
-//		List<CategoryGroup> cgList = new LinkedList<CategoryGroup>();
-		
 		for(ITransferObject to:categoryList){
 			ProductCategory pc = (ProductCategory)to;
 			ProductCategoryGroup pcg = pc.getGroup();
@@ -131,18 +128,8 @@ public class CategoryGadget {
 					otherGroupList.add(pcg);
 				}
 			}
-			
 		}
 		groupList.addAll(otherGroupList);
-		
-//		for(ITransferObject to:groupList){
-//			ProductCategoryGroup pcg = (ProductCategoryGroup)to;
-//			categoryModel = new ListDataModel(getCategoryList(pcg));
-//			CategoryGroup cg = new CategoryGroup();
-//			cg.setPcg(pcg);
-//			cg.setCategoryModel(categoryModel);
-//			cgList.add(cg);
-//		}
 		return groupList;
 	}
 	
