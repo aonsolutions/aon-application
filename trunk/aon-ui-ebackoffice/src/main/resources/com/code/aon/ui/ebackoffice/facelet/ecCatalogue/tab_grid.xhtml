@@ -9,51 +9,24 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 
-	<div align="right"><aon:outputLink value="#" id="legal-note3"
+	<!-- ><div align="right"><aon:outputLink value="#" id="legal-note3"
 		styleClass="aon-finding-toolbar-item aon-icon-favorite">
 		<aon:outputText
 			value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_icons}" />
 		<rich:componentControl for="IconsProcess" attachTo="legal-note3"
 			operation="show" event="onclick" />
-	</aon:outputLink></div>
+	</aon:outputLink></div> 
 	<rich:spacer height="10">
 	</rich:spacer>
-
+-->
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="controller" value="#{eccatalogue}" />
-
+		<!--	<ui:param name="skipResetButton" value="#{(eccatalogue.getRowCount)"/>  -->
+		<ui:param name="showDataScroller" value="#{false}" />
 		<ui:param name="columnClasses"
-			value="aon-editDataTable-iconColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn," />
+			value="aon-editDataTable-iconColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn" />
 		<ui:define name="columns">
-			<!--  
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputLabel for="Eccatalogue_catalogue_id"
-										value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_catalogue}" />
-								</f:facet>
-								<aon:outputText value="#{to.catalogue.name}"
-									rendered="#{formList}" />
-
-								<aon:selectOneMenu id="Eccatalogue_catalogue_id"
-									value="#{eccatalogue.to.catalogue}" rendered="#{formEdit}"
-									required="true">
-									<f:selectItem itemValue="#{null}" itemLabel=" " />
-									<f:selectItems value="#{eccatalogue.catalogues}" />
-								</aon:selectOneMenu>
-
-								<f:facet name="footer">
-
-									<aon:selectOneMenu id="Eccatalogue_catalogue_id-New"
-										value="#{eccatalogue.to.catalogue}" rendered="#{formNew}"
-										required="true">
-										<f:selectItem itemValue="#{null}" itemLabel=" " />
-										<f:selectItems value="#{eccatalogue.catalogues}" />
-									</aon:selectOneMenu>
-
-								</f:facet>
-							</aon:column>
-							-->
 
 			<aon:column>
 				<f:facet name="header">
@@ -72,89 +45,6 @@
 				</f:facet>
 			</aon:column>
 
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel for="Eccatalogue_type"
-						value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_type}" />
-				</f:facet>
-				<aon:outputText value="#{to.type}" rendered="#{formList}" />
-
-				<aon:selectOneMenu id="Eccatalogue_type"
-					value="#{eccatalogue.to.type}" rendered="#{to==eccatalogue.to}">
-					<f:selectItem itemValue="#{null}" itemLabel=" " />
-					<f:selectItems value="#{eccatalogue.catalogueTypes}" />
-				</aon:selectOneMenu>
-
-				<f:facet name="footer">
-					<aon:selectOneMenu id="Eccatalogue_type-New"
-						value="#{eccatalogue.to.type}" rendered="#{formNew}">
-						<f:selectItem itemValue="#{null}" itemLabel=" " />
-						<f:selectItems value="#{eccatalogue.catalogueTypes}" />
-					</aon:selectOneMenu>
-
-				</f:facet>
-			</aon:column>
-			<!-- 	<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel for="Eccatalogue_catalogueImg"
-						value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_img}" />
-				</f:facet>
-				<aon:div id="image">
-					<a4j:mediaOutput element="img" rendered="#{formList}"
-						cacheable="false" value="#{to.id}"
-						style="width:60px;align:center;"
-						createContent="#{eccatalogue.paintImage}" />
-
-					<h:panelGrid columns="3">
-
-						<a4j:mediaOutput element="img" rendered="#{formEdit}"
-							cacheable="false" value="#{eccatalogue.image.key}"
-							style="width:60px" createContent="#{eccatalogue.paintImagee}" />
-
-						<rich:fileUpload id="Eccatalogue_catalogueImg"
-							rendered="#{formEdit}" addControlLabel="Cambiar"
-							stopControlLabel="#{bundle.aon_fileUpload_stop}"
-							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-							fileUploadListener="#{eccatalogue.uploadImage}" listHeight="0px"
-							listWidth="0px" immediateUpload="true" autoclear="true">
-							<a4j:support event="onuploadcomplete" reRender="image" />
-
-						</rich:fileUpload>
-						<aon:commandButton value="borrar" rendered="#{formEdit}"
-							id="deleteImag" actionListener="#{eccatalogue.deleteImage}"
-							reRender="image" />
-					</h:panelGrid>
-				</aon:div>
-
-				<f:facet name="footer">
-					<aon:div id="footImage" rendered="#{formNew}">
-						<h:panelGrid columns="3">
-							<a4j:mediaOutput element="img" rendered="#{formNew}"
-								cacheable="false" value="#{eccatalogue.image.key}"
-								style="width:60px" createContent="#{eccatalogue.paintImagee}" />
-
-							<aon:fileUpload id="Eccatalogue_catalogueImg-New"
-								addControlLabel="#{bundle.aon_fileUpload_add}"
-								stopControlLabel="#{bundle.aon_fileUpload_stop}"
-								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-								fileUploadListener="#{eccatalogue.uploadImage}" listWidth="0px"
-								listHeight="0px" immediateUpload="true" autoclear="true">
-
-							</aon:fileUpload>
-
-							<aon:commandButton value="borrar" styleClass=" aon-icon-remove"
-								id="deleteImagNew" actionListener="#{eccatalogue.deleteImage}"
-								reRender="footImage" />
-						</h:panelGrid>
-
-					</aon:div>
-
-				</f:facet>
-			</aon:column> -->
-
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputLabel for="Eccatalogue_catalogueIcon"
@@ -165,40 +55,37 @@
 
 					<aon:div rendered="#{formList}">
 
-
 						<a4j:mediaOutput element="img" cacheable="false" value="#{to.id}"
 							style="background-color:#787878; align:center;width:20px"
 							createContent="#{eccatalogue.paintIcon}" />
-
 					</aon:div>
-
-					<h:panelGrid style="width:600px" columns="3">
+					<aon:div>
 
 						<a4j:mediaOutput element="img" cacheable="false"
-							style="background-color:#787878; align:center;width:20px"
-							rendered="#{formEdit}" value="#{eccatalogue.icon.key}"
+							style="background-color:#787878;" rendered="#{formEdit}"
+							value="#{eccatalogue.icon.key}"
 							createContent="#{eccatalogue.paintIconn}" />
 
+						<h:panelGrid columns="2" rendered="#{formEdit}">
+							<aon:fileUpload id="Eccatalogue_catalogueIcon"
+								style="float:right" addControlLabel="Cambiar"
+								stopControlLabel="#{bundle.aon_fileUpload_stop}"
+								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+								fileUploadListener="#{eccatalogue.uploadIcon}" listHeight="0px"
+								listWidth="150px" immediateUpload="true" autoclear="true">
+								<a4j:support event="onuploadcomplete" reRender="icon" />
+							</aon:fileUpload>
 
-						<aon:fileUpload id="Eccatalogue_catalogueIcon"
-							rendered="#{formEdit}" addControlLabel="Cambiar"
-							stopControlLabel="#{bundle.aon_fileUpload_stop}"
-							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-							fileUploadListener="#{eccatalogue.uploadIcon}" listHeight="0px"
-							listWidth="0px" immediateUpload="true" autoclear="true">
-							<a4j:support event="onuploadcomplete" reRender="icon" />
-						</aon:fileUpload>
+							<aon:commandButton value="borrar" style="width:60px"
+								id="deleteIco" actionListener="#{eccatalogue.deleteIcon}"
+								reRender="icon" />
+						</h:panelGrid>
+					</aon:div>
 
-						<aon:commandButton value="borrar" rendered="#{formEdit}"
-							id="deleteIco" actionListener="#{eccatalogue.deleteIcon}"
-							reRender="icon" />
-
-					</h:panelGrid>
 				</aon:div>
 
 				<f:facet name="footer">
-
 
 					<aon:div id="footIcon" rendered="#{formNew}">
 						<h:panelGrid columns="3">
@@ -212,7 +99,7 @@
 								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
 								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
 								fileUploadListener="#{eccatalogue.uploadIcon}" listHeight="0px"
-								listWidth="0px" immediateUpload="true" autoclear="true">
+								listWidth="150px" immediateUpload="true" autoclear="true">
 								<a4j:support event="onuploadcomplete" reRender="footIcon" />
 							</aon:fileUpload>
 
@@ -224,11 +111,7 @@
 
 				</f:facet>
 			</aon:column>
-
-
 		</ui:define>
-
-
 	</ui:decorate>
 
 	<rich:modalPanel id="IconsProcess" height="490" width="570"
