@@ -174,6 +174,7 @@ public class EmailParentController {
 			body.append("<a href=\"").append(web.getValue()).append("\">")
 					.append(web.getValue()).append("</a>");
 		}
+		body.append("</body></html>");
 		return body.toString();
 	}
 
