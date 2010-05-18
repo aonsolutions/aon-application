@@ -34,15 +34,15 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>bouncycastle</groupId>
+			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcmail-jdk14</artifactId>
-			<version>136</version>
+			<version>1.38</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>bouncycastle</groupId>
+			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk14</artifactId>
-			<version>136</version>
+			<version>1.38</version>
 			<scope>compile</scope>			
 		</dependency>		
 		<dependency>
