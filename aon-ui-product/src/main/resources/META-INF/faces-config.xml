@@ -460,6 +460,16 @@
 				<value>#{catalogueCategoryChildListener}</value>
 				</list-entries>
 		</managed-property>
+			<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{catalogueOptionalListeners}</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>catalogueOptionalListeners</managed-bean-name>
+		<managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
