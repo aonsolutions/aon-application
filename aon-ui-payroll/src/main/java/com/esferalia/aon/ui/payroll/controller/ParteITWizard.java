@@ -704,7 +704,13 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 
 	private Integer getMaxParteconfCode(IEmpleado e) throws PayrollException {
 		List<IParteConfirmacionIT> list = getParteITDAO().getPartesConfirmacion(getParteIT());
-		return list.size();
+		Integer max=0;
+		for(IParteConfirmacionIT c:list){
+			if(max.compareTo(c.getNumero())<0){
+				max = c.getNumero();
+			}
+		}
+		return max;
 	}
 
 	public List<SelectItem> getTiposOperacion() {
