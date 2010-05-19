@@ -273,7 +273,7 @@
 					<reportElement
 						x="131"
 						y="25"
-						width="118"
+						width="191"
 						height="13"
 						key="textField-40"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -286,7 +286,7 @@
 					<reportElement
 						x="131"
 						y="38"
-						width="118"
+						width="191"
 						height="13"
 						key="textField-41"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -299,7 +299,7 @@
 					<reportElement
 						x="131"
 						y="51"
-						width="118"
+						width="191"
 						height="13"
 						key="textField-42"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -351,7 +351,7 @@
 					<reportElement
 						x="368"
 						y="77"
-						width="110"
+						width="163"
 						height="13"
 						key="textField-46"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -499,7 +499,7 @@
 					<reportElement
 						x="131"
 						y="77"
-						width="118"
+						width="191"
 						height="13"
 						key="textField-62"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
