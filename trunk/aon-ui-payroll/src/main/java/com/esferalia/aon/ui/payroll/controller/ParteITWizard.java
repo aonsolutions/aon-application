@@ -204,7 +204,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 	}
 
 	public String getCias() {
-		return getOperacion() == TipoOperacionIT.BAJA ? getParteIT().getCiasBaja() : getParteIT().getCiasAlta();
+		if(getOperacion() == TipoOperacionIT.BAJA){
+			return getParteIT().getCiasBaja();
+		} else if(getOperacion() == TipoOperacionIT.ALTA){
+			return getParteIT().getCiasAlta();
+		} else if(getOperacion() == TipoOperacionIT.CONFIRMACION){
+			return getParteConfirmacionIT().getCias();
+		}
+		return null;
 	}
 
 	public void setCias(String cias) {
@@ -221,7 +228,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 	}
 
 	public String getNumeroColegiado() {
-		return getOperacion() == TipoOperacionIT.BAJA ? getParteIT().getNumeroColegiadoBaja() : getParteIT().getNumeroColegiadoAlta();
+		if(getOperacion() == TipoOperacionIT.BAJA){
+			return getParteIT().getNumeroColegiadoBaja();
+		} else if(getOperacion() == TipoOperacionIT.ALTA){
+			return getParteIT().getNumeroColegiadoAlta();
+		} else if(getOperacion() == TipoOperacionIT.CONFIRMACION){
+			return getParteConfirmacionIT().getNumeroColegiado();
+		}
+		return null;
 	}
 
 	public void setNumeroColegiado(String numeroColegiado) {
@@ -361,6 +375,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 		setCurrentStep(0);
 		setEmpleadoModel(null);
 		setBonificacionMaternidad(false);
+		operations=null;
 	}
 
 	public void onSearch(ActionEvent event) {
@@ -409,6 +424,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 			if (isConfirmacion()) {
 				setParteConfirmacionIT(getParteITDAO().initialize(getParteIT()));
 				getNextNumeroRenovaciones(getParteITEmpleado());
+				getParteConfirmacionIT().setNumeroColegiado(getParteIT().getNumeroColegiadoBaja());
+				getParteConfirmacionIT().setCias(getParteIT().getCiasBaja());
 				getParteConfirmacionIT().setNumero(getNumParteRenovacion());
 				completeComfirmationDate();
 			}
