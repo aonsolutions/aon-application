@@ -71,7 +71,6 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 	private boolean bonificacionMaternidad;
 	private ITipoBonificacion tipoBonificacion;
 	private IBonificacion bonificacion;
-	private Integer numParteRenovacion;
 	private List<SelectItem> operations;
 
 	private int currentStep;
@@ -86,11 +85,11 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 	}
 
 	public Integer getNumParteRenovacion() {
-		return numParteRenovacion;
+		return getParteConfirmacionIT().getNumero();
 	}
 
 	public void setNumParteRenovacion(Integer numParteRenovacion) {
-		this.numParteRenovacion = numParteRenovacion;
+		getParteConfirmacionIT().setNumero(numParteRenovacion);
 	}
 
 	public boolean isRecaidaAnterior() {
