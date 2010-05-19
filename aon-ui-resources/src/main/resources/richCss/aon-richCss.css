@@ -784,6 +784,12 @@ color:#000;
 .aon-icon-csv{
 	background:transparent url(images/aon-icon/aon-icon-csv-file.png) scroll left center no-repeat;	
 }
+
+.aon-icon-comment{
+	background:transparent url(images/aon-icon/aon-comment.gif) scroll left center no-repeat;	
+}
+
+
 /******* GROUP  **********/
 #aon-content  .aon-form-group{
 	margin:1em 0;
