@@ -34,7 +34,19 @@ import com.code.aon.ui.tas.controller.SupportOrderController;
  */
 public class SupportOrderControllerListener extends ControllerAdapter {
 	
-	
+	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		Criteria criteria;
+		try {
+			criteria = getController().getCriteria();
+			criteria.addOrder(event.getController().getFieldName(ITASAlias.SUPPORT_ORDER_START_DATE));
+			criteria.addOrder(event.getController().getFieldName(ITASAlias.SUPPORT_ORDER_SERIES));
+			criteria.addOrder(event.getController().getFieldName(ITASAlias.SUPPORT_ORDER_NUMBER));
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e.getCause());
+		}
+	}
+
 	/**
 	 * Launched after bean created.
 	 * Initialized the controller and the TO
