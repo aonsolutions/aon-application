@@ -69,6 +69,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 	private TipoOperacionIT operacion;
 	private boolean recaidaAnterior;
 	private boolean bonificacionMaternidad;
+	private boolean accidenteTrabajo;
 	private ITipoBonificacion tipoBonificacion;
 	private IBonificacion bonificacion;
 	private List<SelectItem> operations;
@@ -105,6 +106,14 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 
 	public void setBonificacionMaternidad(boolean bonificacionMaternidad) {
 		this.bonificacionMaternidad = bonificacionMaternidad;
+	}
+
+	public boolean getAccidenteTrabajo() {
+		return accidenteTrabajo;
+	}
+
+	public void setAccidenteTrabajo(boolean accidenteTrabajo) {
+		this.accidenteTrabajo = accidenteTrabajo;
 	}
 
 	public ITipoBonificacion getTipoBonificacion() {
@@ -638,6 +647,11 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 
 	public void onChangeTipoContingencia(ActionEvent event) {
 		searchRecaidaAnterior();
+		if(getParteIT().getTipoContingencia() == TipoContingencia.ACCIDENTE_LABORAL){
+			setAccidenteTrabajo(true);
+		} else {
+			setAccidenteTrabajo(false);
+		}
 	}
 
 	private void searchRecaidaAnterior() {
