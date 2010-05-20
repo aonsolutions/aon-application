@@ -55,6 +55,7 @@ public class ParteIT implements IParteIT,ITransferObject  {
 	private Boolean riesgo;
 	private IEmpleado empleado;
 	private CausaAlta causaAlta;
+	private Date fechaAT;
 	
 	@EmbeddedId
 	@Override
@@ -413,6 +414,17 @@ public class ParteIT implements IParteIT,ITransferObject  {
 	@Override
 	public void setCausaAlta(CausaAlta causaAlta) {
 		this.causaAlta = causaAlta;
+	}
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "fecha_at")
+	@Override
+	public Date getFechaAT() {
+		return this.fechaAT;
+	}
+	@Override
+	public void setFechaAT(Date fechaAT) {
+		this.fechaAT = fechaAT;
 	}
 
 }
