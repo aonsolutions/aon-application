@@ -30,10 +30,6 @@
 			com.code.aon.ui.resources.bean.ResourceResolver
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/5.2.0</value>
-		</managed-property>		
 	</managed-bean>
 
 	<!--  **** AON CONFIGURATION **** -->
