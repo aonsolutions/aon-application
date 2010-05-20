@@ -17,10 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicMatch;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,8 @@ public class ResourceServlet extends HttpServlet {
 	/** The Constant PATTERN_INIT_PARAMETER. */
 	private static final String PATTERN_INIT_PARAMETER = "pattern";
 
-	private static final String DEFAULT_PATTERN = "/aonResource";
+	/** The Constant DEFAULT_PATTERN. */
+	public static final String DEFAULT_PATTERN = "/aonResource";
 
 	/** The Constant BASE_PATH_INIT_PARAMETER. */
 	private static final String BASE_PATH_INIT_PARAMETER = "basePath";
@@ -113,51 +113,12 @@ public class ResourceServlet extends HttpServlet {
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return sdf.format(date);
 	}	
-	
-	private boolean isVersionString( String value ) {
-		String[] numbers = StringUtils.split( value, '.');
-		if (! ArrayUtils.isEmpty(numbers) ) {
-			for( String number : numbers ) {
-				if (! NumberUtils.isNumber(number) ) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	private String getResource(HttpServletRequest req, boolean includeBasePath) {
-		String uri = req.getRequestURI();
-		String context = req.getContextPath();
-		if (uri.startsWith(context)) {
-			uri = uri.substring(context.length());
-		}
-		if (uri.startsWith(pattern)) {
-			uri = uri.substring(pattern.length());
-		}
-		int start = 0;
-		int pos = uri.indexOf('/', start );
-		if ( pos == 0 ) {
-			pos = uri.indexOf('/', ++start );
-		}
-		if ( pos != -1 ) {
-			String version = uri.substring(start, pos);
-			if ( isVersionString(version) ) {
-				uri = uri.substring( pos );
-			}
-		}
-		if (includeBasePath && (basePath != null)) {
-			uri = basePath + uri;
-		}
-		return uri;
-	}
 
 	private String getMimeType(String resource, byte[] data)
 			throws ServletException {
 		String result = null;
-		int pos = resource.lastIndexOf('.');
-		if (pos != -1) {
-			String extension = resource.substring(pos + 1);
+		String extension = FilenameUtils.getExtension(resource);
+		if (! StringUtils.isEmpty(extension)) {
 			MimeType mimeType = MimeType.getByExtension(extension);
 			if ( mimeType != null ) {
 				result = mimeType.getName();	
@@ -181,13 +142,13 @@ public class ResourceServlet extends HttpServlet {
 	 * resource indefinitely.
 	 * @throws ServletException 
 	 */
-	private void setHeaders(HttpServletResponse response, String resource,
+	private void setHeaders(HttpServletResponse response, ResourceURI resource,
 			byte[] data) throws ServletException {
-		response.setContentType(getMimeType(resource, data));
+		response.setContentType(getMimeType(resource.getPath(), data));
 		response.setContentLength(data.length);
 
 		// If we're not in debug mode, set cache headers
-		if (!debug) {
+		if ( (!debug) && resource.isCacheable() ) {
 			// We set two headers: Cache-Control and Expires.
 			// This combination lets browsers know that it is
 			// okay to cache the resource indefinitely.
@@ -220,23 +181,18 @@ public class ResourceServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 		try {
-			String resource = getResource(req, true);
-			LOGGER.debug("Request for resource (in jar): {}", resource);
-			InputStream in = getClass().getResourceAsStream(resource);
+			ResourceURI resource = new ResourceURI(req.getRequestURI(), req.getContextPath(), DEFAULT_PATTERN);
+			InputStream in = resource.getInputStream(basePath);
 			if (in == null) {
-				resource = getResource(req, false);
-				LOGGER.debug("Request for resource (in war):{}", resource);
-				in = getClass().getResourceAsStream(resource);
-				if (in == null) {
-					res.sendError(HttpServletResponse.SC_NOT_FOUND);
-					return;
-				}
+				res.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
 			}
 			byte[] data = IOUtils.toByteArray(in);
 			setHeaders(res, resource, data);
 			res.getOutputStream().write(data);
 			res.flushBuffer();
 		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
 			throw new ServletException(th.getMessage(), th);
 		}
 	}
