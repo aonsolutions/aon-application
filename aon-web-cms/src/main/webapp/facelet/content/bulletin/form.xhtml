@@ -106,107 +106,85 @@
 						<aon:panelTab id="articlesTab" label="#{appBundle.bulletin_articles}"
 							rendered="#{!bulletin.new}" >
 
-							<aon:outputLabel for="BulletinArticle_publishDate"
-								value="#{appBundle.article_publishDate}" />
-							<aon:selectInputDate id="BulletinArticle_publishDate" 
-								value="#{bulletin.publishDate}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>								
-							
-							<aon:outputLabel for="BulletinArticle_expireDate"
-								value="#{appBundle.article_expireDate}" />
-							<aon:selectInputDate id="BulletinArticle_expireDate" 
-								value="#{bulletin.expireDate}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
-
-							<aon:commandButton id="reset_articles" 
-								value="#{appBundle.bulletin_refresh_articles}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								reRender="gridToolbar,bulletin_articleData" />
-
-							<aon:div styleClass="aon-form-group">
-								<aon:div styleClass="aon-form-group-title">
-									<aon:div styleClass="aon-form-group-title-internal">
-										<aon:outputLabel for="bulletin_articleData" value="#{appBundle.aon_listing}" />
-									</aon:div>
-								</aon:div>
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+								<ui:param name="controller" value="#{bulletin_article}" />
+								<ui:define name="columns">
 						
-								<aon:div>
-									<aon:div id="gridToolbar" styleClass="aon-toolbar">
-										<aon:div styleClass="aon-finding-toolbar-item-group">							
-											<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
-												styleClass="aon-finding-toolbar-item aon-icon-reset"
-												accesskey="#{bundle.aon_key_new}"
-												reRender="detail_list_panel">
-												<aon:actionListener method="#{bulletin_article.onReset}" />
-											</aon:commandButton>
-									    </aon:div>
-									</aon:div>
-							
-									<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-										<ui:param name="controller" value="#{bulletin_article}" />
-										<ui:define name="columns">
-								
-											<aon:column styleClass="aon-editDataTable-textColumn">
-												<f:facet name="header">
-													<aon:outputText value="#{appBundle.bulletin_article_article}"/>
-												</f:facet>
-												<aon:outputText value="#{to.article.alias}"
-													rendered="#{to!=bulletin_article.to}" >
-												</aon:outputText>	
-												<aon:selectOneMenu
-													required="#{true}"   
-													rendered="#{to==bulletin_article.to}"
-													value="#{to.article.id}">
-													<f:selectItem itemLabel="-" itemValue="-1" />
-													<f:selectItems value="#{bulletin.articleList}" />
-												</aon:selectOneMenu>
-												<f:facet name="footer">
-													<aon:div>
-														<aon:selectOneMenu
-															required="#{true}"   
-															rendered="#{bulletin_article.new}"
-															value="#{bulletin_article.to.article.id}">
-															<f:selectItem itemLabel="-" itemValue="-1" />
-															<f:selectItems value="#{bulletin.articleList}" />
-														</aon:selectOneMenu>
-													</aon:div>
-												</f:facet>
-											</aon:column>
-																	
-											<aon:column styleClass="aon-width-100 aon-editDataTable-numberColumn">
-												<f:facet name="header">
-													<aon:outputText for="position" value="#{appBundle.bulletin_article_position}" />
-												</f:facet>
-												<aon:outputText value="#{to.position}"
-													rendered="#{to!=bulletin_article.to}">
-												</aon:outputText>	
-												<aon:inputText value="#{bulletin_article.to.position}"
-													id="#{to.id}_position"
-													rendered="#{to==bulletin_article.to}"
-													required="#{true}" size="70" maxlength="64" />
-												<f:facet name="footer">
-													<aon:div>
-														<aon:inputText value="#{bulletin_article.to.position}"
-															id="new_position"
-															rendered="#{bulletin_article.new}"
-															required="#{true}" size="70" maxlength="64" />
-													</aon:div>
-												</f:facet>
-											</aon:column>
-	
-										</ui:define>
-									</ui:decorate>
-								</aon:div>						
-							</aon:div>
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputLabel for="BulletinArticle_article_alias"
+												value="#{appBundle.bulletin_article_article}"/>
+										</f:facet>
+										<aon:outputText value="#{to.article.alias}"
+											rendered="#{to!=bulletin_article.to}" >
+										</aon:outputText>	
+										<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+											<aon:lookupInputText id="BulletinArticle_article_alias"
+												value="#{controller.to.article.alias}"
+												validator="#{article.articleAliasCheck}"
+												lookup="#{articleLookup}"
+												required="true" size="40" >
+												<aon:joinProperty alias="Article_alias"
+													value="#{controller.to.article.alias}" />
+											</aon:lookupInputText>
+											<aon:lookupButton
+												windowTitle="#{appBundle.cms_article_selection}"
+												minHeight="460" minWidth="700"
+												property="#{controller.to.article}" lookup="#{articleLookup}"
+												selectReRender="BulletinArticle_article_alias"
+												actionType="search">
+											</aon:lookupButton>
+										</aon:div>											
+										<f:facet name="footer">
+											<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+												<aon:lookupInputText id="BulletinArticle_article_alias-New" 
+													value="#{controller.to.article.alias}"
+													lookup="#{articleLookup}"
+													required="true" size="40" >
+													<aon:joinProperty alias="Article_alias"
+														value="#{controller.to.article.alias}" />
+												</aon:lookupInputText>
+												<aon:lookupButton
+													windowTitle="#{appBundle.cms_article_selection}"
+													minHeight="460" minWidth="700"
+													property="#{controller.to.article}" lookup="#{articleLookup}"
+													selectReRender="BulletinArticle_article_alias-New"
+													actionType="search">
+												</aon:lookupButton>
+											</aon:div>											
+										</f:facet>
+									</aon:column>
+															
+									<aon:column styleClass="aon-width-200 aon-editDataTable-numberColumn">
+										<f:facet name="header">
+											<aon:outputLabel for="BulletinArticle_position"
+												value="#{appBundle.bulletin_article_position}" />
+										</f:facet>
+										<aon:outputText value="#{to.position}"
+											rendered="#{formList}">
+										</aon:outputText>	
+										<aon:inputText id="BulletinArticle_position"
+											value="#{bulletin_article.to.position}"
+											rendered="#{formEdit}" required="true"
+											size="10" maxlength="8" />
+										<f:facet name="footer">
+											<aon:inputText id="BulletinArticle_position-New"
+												value="#{bulletin_article.to.position}"
+												rendered="#{formNew}" required="true"
+												size="10" maxlength="8" />
+										</f:facet>
+									</aon:column>
+
+								</ui:define>
+							</ui:decorate>					
+
 						</aon:panelTab>
 					</aon:panelTabSet>
 				</aon:div>
 
 			</aon:div>
 		</aon:form>
-
+		<aon:lookupButtonPopup lookup="#{articleLookup}" />
 	</ui:define>
 </ui:composition>
 
