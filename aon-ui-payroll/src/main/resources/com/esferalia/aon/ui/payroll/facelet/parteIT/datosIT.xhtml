@@ -86,6 +86,15 @@
 						actionListener="#{parteITWizard.onChangeTipoContingencia}"
 						reRender="datosITContainer" />
 				</aon:selectOneMenu>
+				
+				<aon:outputLabel for="fechaAT" 
+					rendered="#{parteITWizard.accidenteTrabajo}"
+					value="#{payrollBundle.payroll_fecha_accidente}" />
+				<aon:selectInputDate id="fechaAT" value="#{parteITWizard.parteIT.fechaAT}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					rendered="#{parteITWizard.accidenteTrabajo}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 				<aon:outputLabel for="prorrateo"
 					value="#{payrollBundle.payroll_periodicidad}" />
