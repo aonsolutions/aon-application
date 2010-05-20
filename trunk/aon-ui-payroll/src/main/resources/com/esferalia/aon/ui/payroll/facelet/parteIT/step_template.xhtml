@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -36,15 +37,22 @@
 							actionListener="#{parteITWizard.onNext}"
 							rendered="#{parteITWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-next" />
-
-						<aon:commandButton id="end"
-							value="#{payrollBundle.payroll_finalice}"
+						<aon:commandButton id="end1"
+							value="#{payrollBundle.payroll_finalice_and_datosIT}"
+							action="#{parteITWizard.next}"
+							actionListener="#{parteITWizard.onContinue}"
+							onclick="if (!confirm('#{payrollBundle.payroll_finalice}?')) { return false;}"
+							rendered="#{!parteITWizard.nextAvailable}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" >
+						</aon:commandButton>
+						<aon:commandButton id="end2"
+							value="#{payrollBundle.payroll_finalice_and_search}"
 							action="#{parteITWizard.next}"
 							actionListener="#{parteITWizard.onNext}"
 							onclick="if (!confirm('#{payrollBundle.payroll_finalice}?')) { return false;}"
 							rendered="#{!parteITWizard.nextAvailable}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept" />
-
+							styleClass="aon-finding-toolbar-item aon-icon-accept" >
+						</aon:commandButton>
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>

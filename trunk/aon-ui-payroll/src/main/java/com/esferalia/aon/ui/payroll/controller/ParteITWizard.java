@@ -72,7 +72,6 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 	private ITipoBonificacion tipoBonificacion;
 	private IBonificacion bonificacion;
 	private List<SelectItem> operations;
-
 	private int currentStep;
 	private static final String[] STEPS = { "parteITWizard_step0", "parteITWizard_step1", "parteITWizard_step2", "parteITWizard_step3" };
 
@@ -377,6 +376,18 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 		operations=null;
 	}
 
+	public void onContinue(ActionEvent event) {
+		onFinish(event);
+		setParteITEmpleado(null);
+		setParteIT(null);
+		setParteConfirmacionIT(null);
+		empleosModel=null;
+		partesConfirmacionModel = null;
+		setBonificacionMaternidad(false);
+		operations=null;
+		setCurrentStep(2);
+	}
+
 	public void onSearch(ActionEvent event) {
 		try {
 			initializeEmpleadoModel();
@@ -421,17 +432,21 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 	public void onChangeTipoOperacion(ActionEvent event) {
 		try {
 			if (isConfirmacion()) {
-				setParteConfirmacionIT(getParteITDAO().initialize(getParteIT()));
-				getNextNumeroRenovaciones(getParteITEmpleado());
-				getParteConfirmacionIT().setNumeroColegiado(getParteIT().getNumeroColegiadoBaja());
-				getParteConfirmacionIT().setCias(getParteIT().getCiasBaja());
-				getParteConfirmacionIT().setNumero(getNumParteRenovacion());
-				completeComfirmationDate();
+				initializeParteConfirmacionIT();
 			}
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
+	}
+	
+	private void initializeParteConfirmacionIT() throws PayrollException{
+		setParteConfirmacionIT(getParteITDAO().initialize(getParteIT()));
+		getNextNumeroRenovaciones(getParteITEmpleado());
+		getParteConfirmacionIT().setNumeroColegiado(getParteIT().getNumeroColegiadoBaja());
+		getParteConfirmacionIT().setCias(getParteIT().getCiasBaja());
+		getParteConfirmacionIT().setNumero(getNumParteRenovacion());
+		completeComfirmationDate();
 	}
 
 	public void onChangeNumeroRenovacion(ActionEvent event) {
@@ -512,7 +527,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
-				onStart(event);
+//				onStart(event);
 			} catch (Exception e) {
 				String msg = e.getMessage();
 				try {
@@ -587,6 +602,7 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {
 			onFinish(event);
+			onStart(event);
 		}
 	}
 
@@ -765,5 +781,5 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 			return null;
 		}
 	}
-
+	
 }
