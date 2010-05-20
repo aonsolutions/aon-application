@@ -78,4 +78,7 @@ public interface IParteIT extends Serializable{
 	CausaAlta getCausaAlta();
 	void setCausaAlta(CausaAlta causaAlta);
 	
+	Date getFechaAT();
+	void setFechaAT(Date fechaAT);
+	
 }
