@@ -724,70 +724,76 @@ public interface IPayrollAlias {
 	String  PARTE_IT_FECHA_ALTA = PARTE_IT_ENTRY.getAliasNames()[22];
 
 	/** 
+	* Alias value: ParteIT_fechaAT
+	* Hibernate value: ParteIT.fechaAT
+	*/
+	String  PARTE_IT_FECHA_AT = PARTE_IT_ENTRY.getAliasNames()[23];
+
+	/** 
 	* Alias value: ParteIT_id_cdg
 	* Hibernate value: ParteIT.id.cdg
 	*/
-	String  PARTE_IT_ID_CDG = PARTE_IT_ENTRY.getAliasNames()[23];
+	String  PARTE_IT_ID_CDG = PARTE_IT_ENTRY.getAliasNames()[24];
 
 	/** 
 	* Alias value: ParteIT_id_fechaBaja
 	* Hibernate value: ParteIT.id.fechaBaja
 	*/
-	String  PARTE_IT_ID_FECHA_BAJA = PARTE_IT_ENTRY.getAliasNames()[24];
+	String  PARTE_IT_ID_FECHA_BAJA = PARTE_IT_ENTRY.getAliasNames()[25];
 
 	/** 
 	* Alias value: ParteIT_numeroColegiadoAlta
 	* Hibernate value: ParteIT.numeroColegiadoAlta
 	*/
-	String  PARTE_IT_NUMERO_COLEGIADO_ALTA = PARTE_IT_ENTRY.getAliasNames()[25];
+	String  PARTE_IT_NUMERO_COLEGIADO_ALTA = PARTE_IT_ENTRY.getAliasNames()[26];
 
 	/** 
 	* Alias value: ParteIT_numeroColegiadoBaja
 	* Hibernate value: ParteIT.numeroColegiadoBaja
 	*/
-	String  PARTE_IT_NUMERO_COLEGIADO_BAJA = PARTE_IT_ENTRY.getAliasNames()[26];
+	String  PARTE_IT_NUMERO_COLEGIADO_BAJA = PARTE_IT_ENTRY.getAliasNames()[27];
 
 	/** 
 	* Alias value: ParteIT_prestacionDiaria60
 	* Hibernate value: ParteIT.prestacionDiaria60
 	*/
-	String  PARTE_IT_PRESTACION_DIARIA60 = PARTE_IT_ENTRY.getAliasNames()[27];
+	String  PARTE_IT_PRESTACION_DIARIA60 = PARTE_IT_ENTRY.getAliasNames()[28];
 
 	/** 
 	* Alias value: ParteIT_prestacionDiaria75
 	* Hibernate value: ParteIT.prestacionDiaria75
 	*/
-	String  PARTE_IT_PRESTACION_DIARIA75 = PARTE_IT_ENTRY.getAliasNames()[28];
+	String  PARTE_IT_PRESTACION_DIARIA75 = PARTE_IT_ENTRY.getAliasNames()[29];
 
 	/** 
 	* Alias value: ParteIT_procesadaBD
 	* Hibernate value: ParteIT.procesadaBD
 	*/
-	String  PARTE_IT_PROCESADA_BD = PARTE_IT_ENTRY.getAliasNames()[29];
+	String  PARTE_IT_PROCESADA_BD = PARTE_IT_ENTRY.getAliasNames()[30];
 
 	/** 
 	* Alias value: ParteIT_prorrateo
 	* Hibernate value: ParteIT.prorrateo
 	*/
-	String  PARTE_IT_PRORRATEO = PARTE_IT_ENTRY.getAliasNames()[30];
+	String  PARTE_IT_PRORRATEO = PARTE_IT_ENTRY.getAliasNames()[31];
 
 	/** 
 	* Alias value: ParteIT_recaidaBD
 	* Hibernate value: ParteIT.recaidaBD
 	*/
-	String  PARTE_IT_RECAIDA_BD = PARTE_IT_ENTRY.getAliasNames()[31];
+	String  PARTE_IT_RECAIDA_BD = PARTE_IT_ENTRY.getAliasNames()[32];
 
 	/** 
 	* Alias value: ParteIT_riesgo
 	* Hibernate value: ParteIT.riesgo
 	*/
-	String  PARTE_IT_RIESGO = PARTE_IT_ENTRY.getAliasNames()[32];
+	String  PARTE_IT_RIESGO = PARTE_IT_ENTRY.getAliasNames()[33];
 
 	/** 
 	* Alias value: ParteIT_tipoIT
 	* Hibernate value: ParteIT.tipoIT
 	*/
-	String  PARTE_IT_TIPO_IT = PARTE_IT_ENTRY.getAliasNames()[33];
+	String  PARTE_IT_TIPO_IT = PARTE_IT_ENTRY.getAliasNames()[34];
 
 
 
