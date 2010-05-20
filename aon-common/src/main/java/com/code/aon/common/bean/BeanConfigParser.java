@@ -84,6 +84,7 @@ public class BeanConfigParser {
 			DIGESTER.setValidating(true);
 			// TODO Cambiar la DTD a un XML-Schema cuando cambiemos a la JDK-5
 			// (JAXP-1.3 -xerces-).
+			DIGESTER.setUseContextClassLoader(true);
 		}
 		return DIGESTER;
 	}
