@@ -21,12 +21,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.rich.components</artifactId>
-			<version>${pom.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
 			<version>1.9.0</version>
 			<scope>provided</scope>
@@ -45,33 +39,9 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.cms</artifactId>
+			<artifactId>aon.ui.cms</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sun</groupId>
-			<artifactId>jimi</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-net</groupId>
-			<artifactId>commons-net</artifactId>
-			<version>2.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>jtidy</groupId>
-			<artifactId>jtidy</artifactId>
-			<version>r938.mod</version>
-    		<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
