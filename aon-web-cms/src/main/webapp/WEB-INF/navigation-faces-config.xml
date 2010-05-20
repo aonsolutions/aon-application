@@ -179,34 +179,6 @@
     </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= ARTICLE CATEGORY -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>article_category_list</from-outcome>
-      <to-view-id>/facelet/content/article_category/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>article_category_form</from-outcome>
-      <to-view-id>/facelet/content/article_category/form.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>article_category_search</from-outcome>
-      <to-view-id>/facelet/content/article_category/search.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>article_list</from-outcome>
-      <to-view-id>/facelet/content/article_category/article/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>article_form</from-outcome>
-      <to-view-id>/facelet/content/article_category/article/form.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>article_search</from-outcome>
-      <to-view-id>/facelet/content/article_category/article/search.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-  
   <!-- ================================================= BANNER CATEGORY -->
   <navigation-rule>
     <navigation-case>
