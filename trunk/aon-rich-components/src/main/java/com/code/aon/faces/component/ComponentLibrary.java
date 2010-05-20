@@ -53,6 +53,7 @@ public class ComponentLibrary {
 	private Digester getDigester() {
 		Digester digester = new Digester();
 		digester.setValidating(false);
+		digester.setUseContextClassLoader(true);
 
 		digester.push(this);
 		
