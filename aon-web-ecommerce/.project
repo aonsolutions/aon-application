@@ -2,6 +2,15 @@
 <projectDescription>
 	<name>aon-web-ecommerce</name>
 	<comment></comment>
+	<projects>
+		<project>aon-ui-report</project>
+		<project>aon-ui-sign</project>
+		<project>aon-ui-resources</project>
+		<project>aon-webmail</project>
+		<project>aon-ebackoffice</project>
+		<project>aon-report</project>
+		<project>aon-ui-ecommerce</project>
+	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
