@@ -18,6 +18,12 @@
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.jsf.bridge</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		<!-- RichFaces libraries -->		
 		<dependency>
 			<groupId>org.richfaces.ui</groupId>
