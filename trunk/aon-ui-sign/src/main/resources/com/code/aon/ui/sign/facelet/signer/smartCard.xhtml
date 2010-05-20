@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<a4j:loadScript src="#{aonResource.resolve['/com/code/aon/ui/sign/idazki/signPdf.js']}"/>
+	<a4j:loadScript src="#{aonResource.resolveLocal['/com/code/aon/ui/sign/idazki/signPdf.js']}"/>
 
 	<aon:div styleClass="aon-note" >
 		<aon:div styleClass="aon-note-internal">
@@ -21,7 +21,7 @@
 	<aon:div styleClass="aon-text-center" >
 		<applet id="izenpeApplet" name="izenpeApplet" 
 			code="izenpe.app.applet.AppletApplication.class"
-			archive="#{aonResource.resolve['/com/code/aon/ui/sign/idazki/izenpesigner-applet.jar']}" >
+			archive="#{aonResource.resolveCommon['/aon-ui-sign/izenpesigner-applet.jar']}" >
 			<param name="boxmessage" value="Mensaje de Prueba" />
 		</applet>									
 	</aon:div>
