@@ -39,24 +39,9 @@
 				<printWhenExpression><![CDATA[new Boolean($F{delivery}!=null)]]></printWhenExpression>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="48"
-						y="3"
-						width="77"
-						height="16"
-						key="textField-24">
-							<printWhenExpression><![CDATA[new Boolean($F{delivery}!=null)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[(($F{delivery}.getSeries()!=null && !$F{delivery}.getSeries().equals("")?$F{delivery}.getSeries()+"/":"") + $F{delivery}.getNumber()) + "     de "]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
 						x="0"
 						y="3"
-						width="48"
+						width="120"
 						height="16"
 						key="textField-27">
 							<printWhenExpression><![CDATA[new Boolean($F{delivery}!=null)]]></printWhenExpression>
@@ -65,11 +50,11 @@
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_delivery}+": "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_delivery}+": "+(($F{delivery}.getSeries()!=null &&!$F{delivery}.getSeries().equals("")?$F{delivery}.getSeries()+"/":"")+$F{delivery}.getNumber())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="194"
+						x="195"
 						y="3"
 						width="50"
 						height="16"
@@ -84,9 +69,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="244"
+						x="245"
 						y="3"
-						width="120"
+						width="115"
 						height="16"
 						key="textField-29">
 							<printWhenExpression><![CDATA[new Boolean($F{delivery}!=null)]]></printWhenExpression>
@@ -99,9 +84,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="364"
+						x="360"
 						y="3"
-						width="50"
+						width="54"
 						height="16"
 						key="textField-30">
 							<printWhenExpression><![CDATA[new Boolean($F{delivery}!=null)]]></printWhenExpression>
@@ -159,9 +144,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="125"
+						x="120"
 						y="3"
-						width="69"
+						width="75"
 						height="16"
 						key="textField-40">
 							<printWhenExpression><![CDATA[new Boolean($F{delivery}!=null)]]></printWhenExpression>
