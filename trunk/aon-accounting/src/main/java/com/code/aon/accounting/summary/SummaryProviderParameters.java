@@ -34,6 +34,8 @@ public class SummaryProviderParameters implements Cloneable{
 	 */
 	private int accountLevel = 4;
 	
+	private int fromAccountLevel = 1;
+
 	/**
 	 * Desde fecha.
 	 */
@@ -77,6 +79,7 @@ public class SummaryProviderParameters implements Cloneable{
 		setLowerLevelVisible(false);
 		setNoTouchedAccountVisible(false);
 		setAccountLevel(4);
+		setFromAccountLevel(5);
 		setFromDate(null);
 		setToDate(null);
 		setDate( new Date() );
@@ -137,6 +140,14 @@ public class SummaryProviderParameters implements Cloneable{
 
 	public void setAccountLevel(int accountLevel) {
 		this.accountLevel = accountLevel;
+	}
+
+	public int getFromAccountLevel() {
+		return fromAccountLevel;
+	}
+
+	public void setFromAccountLevel(int fromAccountLevel) {
+		this.fromAccountLevel = fromAccountLevel;
 	}
 
 	public Date getFromDate() {
