@@ -70,6 +70,11 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 
+					<aon:outputLabel for="AccountEntry_journal"
+						value="#{accountingBundle.accounting_journal}" />
+					<aon:inputText id="AccountEntry_journal" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
 					<aon:selectOneMenu id="AccountEntry_securityLevel"
