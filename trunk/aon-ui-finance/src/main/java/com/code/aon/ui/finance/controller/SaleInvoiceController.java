@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,15 +7,10 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import org.hibernate.Session;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.CriteriaUtilities;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
@@ -25,7 +19,6 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
