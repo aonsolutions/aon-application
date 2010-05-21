@@ -145,6 +145,9 @@ public class SummaryProvider {
 				if (add && params.isExcludeBalancedAccounts() && CommonUtil.round(debit - credit) == 0) {
 					add = false;
 				}
+				if (add && params.isLowerLevelVisible() && account.getLevel() < params.getFromAccountLevel()) {
+					add = false;
+				}
 				if (add) {
 					s.setId(account.getId());
 					s.setDescription(account.getDescription());
