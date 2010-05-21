@@ -32,10 +32,12 @@ public class AccountEntryDetailController extends LinesController {
 		if (c.getTo() != null && c.isUpdatable()) {
 			if (c.isAonInvoice()) {
 				try {
-					AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
-					String account = detail.getAccount().getId();
-					if (detail != null) {
-						return (!StringUtils.startsWith(account, "4"));
+					if (getModel().isRowAvailable()) {
+						AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
+						String account = detail.getAccount().getId();
+						if (detail != null) {
+							return (!StringUtils.startsWith(account, "4"));
+						}
 					}
 				} catch (ManagerBeanException e) {
 					AonUtil.addErrorMessage(e.getMessage());
