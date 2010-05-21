@@ -2,6 +2,9 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+
+import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -19,6 +22,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -182,6 +186,10 @@ public class InvoiceRecorder implements ITransferObject {
 			}
 			if ( getInvoice().isSurcharge()) {
 				addMessage("Factura con Recargo de Equivalencia.");
+			}
+			if ( getInvoice().getTransaction() != InvoiceTransactionType.NATIONAL) {
+				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+				addMessage("Factura de tipo " + getInvoice().getTransaction().getName(locale));
 			}
 			if ( type != InvoiceType.SALES && getInvoice().isInvestment()) {
 				addMessage("Factura marcada como inversión.");
