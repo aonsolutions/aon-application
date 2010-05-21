@@ -61,10 +61,10 @@ public class ParteITCalculator {
 	}
 
 	public Double getBaseReguladoraDiaria(IParteIT it) {
-		return (it.getBaseRetribucionPeriodoAnterior() / it
-				.getDiasPeriodoAnterior());
+	   return CommonUtil.round(it.getBaseRetribucionPeriodoAnterior()
+	                           / it.getDiasPeriodoAnterior());
 	}
-
+	
 	public Double getPrestacionDiaria60(IParteIT it) {
 		return CommonUtil.round((it.getBaseReguladoraDiaria() * 60) / 100);
 	}
