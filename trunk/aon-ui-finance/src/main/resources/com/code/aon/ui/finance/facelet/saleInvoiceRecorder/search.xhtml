@@ -5,10 +5,10 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:include src="/com/code/aon/ui/finance/facelet/invoice/searchInvoice.xhtml" >
-		<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_recording_module}" />
-		<ui:param name="controller" value="#{invoiceRecorder}" />
-		<ui:param name="searchController" value="#{invoiceRecorderSearch}" />
+	<ui:include src="/com/code/aon/ui/finance/facelet/invoiceRecorder/searchContent.xhtml" >
+		<ui:param name="toolbarTitle" value="#{financeBundle.finance_sale_invoice_recording_module}" />
+		<ui:param name="controller" value="#{saleInvoiceRecorder}" />
+		<ui:param name="searchController" value="#{saleInvoiceRecorderSearch}" />
 	</ui:include>
 
 </ui:composition>

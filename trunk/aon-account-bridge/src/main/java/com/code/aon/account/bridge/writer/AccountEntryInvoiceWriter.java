@@ -2,6 +2,7 @@ package com.code.aon.account.bridge.writer;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -105,6 +106,10 @@ public class AccountEntryInvoiceWriter {
 	}
 	
 	public void recordInvoice(Invoice invoice) throws ManagerBeanException {
+		recordInvoice(invoice,true);
+	}
+	
+	public List<AccountEntryDetail> recordInvoice(Invoice invoice, boolean save) throws ManagerBeanException {
 		AccountEntry entry = new AccountEntry();
 		entry.setAccountPeriod(getAccountingUtil().obtainPeriod(invoice.getIssueDate()).getId());
 		entry.setEntryDate(invoice.getIssueDate());
@@ -126,17 +131,26 @@ public class AccountEntryInvoiceWriter {
 		}
 		entry.setType(accountEntryType);
 		entry.setSecurityLevel(invoice.getSecurityLevel());
-		entry = insertOrUpdateAccountEntry(entry);
+		if (save) {
+			entry = insertOrUpdateAccountEntry(entry);
+		}
 
 		double total = getPriceStrategy().getTotalPrice(invoice, invoice);
 		List<TaxBreakDown> taxBreakDownList = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
 		Map<Account, Double> retentionQuotas = obtainRetentionQuotasPerAccount(taxBreakDownList, invoice);
 		Map<Account, Double> taxQuotas = obtainTaxQuotasPerAccount(taxBreakDownList, invoice);
 		Map<Account, Double> bases = obtainBasesPerAccount(invoice);
-		insertEntryDetails(entry, account, obtainConcept(invoice, total), total, retentionQuotas, taxQuotas, bases);
-		insertAccountEntryInvoice(entry, invoice);
+		List<AccountEntryDetail> details = insertEntryDetails(entry, account, obtainConcept(invoice, total), total, retentionQuotas, taxQuotas, bases, save);
+		if (save) {
+			insertAccountEntryInvoice(entry, invoice);	
+		}
+		return details;
 	}
-
+	
+	public List<AccountEntryDetail> preRecordInvoice(Invoice invoice) throws ManagerBeanException {
+		return recordInvoice(invoice, false);
+	}
+	
 	private Map<Account, Double> obtainRetentionQuotasPerAccount(List<TaxBreakDown> taxBreakDownList, Invoice invoice) throws ManagerBeanException {
 		TaxRecordingTo recordingTo = new TaxRecordingTo();
 		Iterator<TaxBreakDown> iterator = taxBreakDownList.iterator();
@@ -316,9 +330,10 @@ public class AccountEntryInvoiceWriter {
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
 	 */
-	public void insertEntryDetails(AccountEntry entry, Account account, String concept,	double invoiceTotal,
+	public List<AccountEntryDetail> insertEntryDetails(AccountEntry entry, Account account, String concept,	double invoiceTotal,
 			Map<Account, Double> retentionQuotasPerAccount, Map<Account, Double> taxQuotasPerAccount, 
-			Map<Account, Double> basesPerAccount) throws ManagerBeanException {
+			Map<Account, Double> basesPerAccount,boolean save) throws ManagerBeanException {
+		List<AccountEntryDetail> details = new LinkedList<AccountEntryDetail>();
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte (Cliente o Proveedor)
 		AccountEntryDetail entryDetail = new AccountEntryDetail();
@@ -333,7 +348,10 @@ public class AccountEntryInvoiceWriter {
 			entryDetail.setCredit(invoiceTotal);
 		}
 		entryDetail.setConcept(concept);
-		entryDetailBean.insert(entryDetail);
+		if (save) {
+			entryDetail = (AccountEntryDetail) entryDetailBean.insert(entryDetail);	
+		}
+		details.add(entryDetail);
 		// Segundo Apunte (Retenciones)
 		if (retentionQuotasPerAccount != null) {
 			Iterator<Account> iterator = retentionQuotasPerAccount.keySet().iterator();
@@ -351,7 +369,10 @@ public class AccountEntryInvoiceWriter {
 					} else {
 						entryDetail.setCredit(retentionQuota);
 					}
-					entryDetailBean.insert(entryDetail);
+					if (save) {
+						entryDetail = (AccountEntryDetail) entryDetailBean.insert(entryDetail);	
+					}
+					details.add(entryDetail);
 				}
 			}
 		}
@@ -372,7 +393,10 @@ public class AccountEntryInvoiceWriter {
 					} else {
 						entryDetail.setDebit(taxQuota);
 					}
-					entryDetailBean.insert(entryDetail);
+					if (save) {
+						entryDetail = (AccountEntryDetail) entryDetailBean.insert(entryDetail);	
+					}
+					details.add(entryDetail);
 				}
 			}
 		}
@@ -393,10 +417,14 @@ public class AccountEntryInvoiceWriter {
 					} else {
 						entryDetail.setDebit(base);
 					}
-					entryDetailBean.insert(entryDetail);
+					if (save) {
+						entryDetail = (AccountEntryDetail) entryDetailBean.insert(entryDetail);	
+					}
+					details.add(entryDetail);
 				}
 			}
 		}
+		return details;
 	}
 
 	/**

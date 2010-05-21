@@ -11,7 +11,8 @@
 
 	<ui:define name="content">
 		<aon:form id="saleInvoiceForm">
-			<aon:div id="menuExt"> 
+			<aon:div id="menuExt">
+				<aon:methodParam name="backAction" value="#{saleInvoice.backAction}" resolve="false" />
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
