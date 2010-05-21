@@ -3,11 +3,17 @@ package com.code.aon.ui.finance.controller;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.bridge.ProductAccount;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.AccountHelper;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -15,10 +21,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
@@ -166,16 +175,20 @@ public class InvoiceRecorder implements ITransferObject {
 		try {
 			setMessages(null);
 			checkFinanceInaccuracyPresent();
-			if ( invoice.isWithholding()) {
+			InvoiceType type = getInvoice().getType();
+
+			if ( getInvoice().isWithholding()) {
 				addMessage("Factura con retenciones I.R.P.F.");
 			}
-			if ( invoice.isSurcharge()) {
+			if ( getInvoice().isSurcharge()) {
 				addMessage("Factura con Recargo de Equivalencia.");
+			}
+			if ( type != InvoiceType.SALES && getInvoice().isInvestment()) {
+				addMessage("Factura marcada como inversión.");
 			}
 			if (!isDateEquals()) {
 				addMessage("Fecha de IVA diferente a fecha de factura.");
 			}
-			InvoiceType type = getInvoice().getType();
 			
 			if (type == InvoiceType.SALES) {
 				setAccount( getAccountBridgeUtil().getCustomerAccount(getInvoice().getRegistry()));	
@@ -184,11 +197,57 @@ public class InvoiceRecorder implements ITransferObject {
 			} else if (type == InvoiceType.EXPENSES) {
 				setAccount( getAccountBridgeUtil().getCreditorAccount(getInvoice().getRegistry()));	
 			}
-			
+			if (invoice.getType() == InvoiceType.EXPENSES || invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
+				checkExpenseAccount();
+			}
 		} catch (ManagerBeanException ex) {
 			addMessage("Error en el chequeo. " +  ex.getMessage());
 		}
 		setRefresh(false);
+	}
+
+	private void checkExpenseAccount() throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
+		IManagerBean accountHelperBean = BeanManager.getManagerBean(AccountHelper.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+		List<ITransferObject> list = invoiceDetailBean.getList(criteria);
+		boolean wrong = false;
+		for (ITransferObject to: list) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail) to;
+			if (invoiceDetail.getItem() != null) {
+				Item item = invoiceDetail.getItem();
+				if (item.getProduct().getType() == ProductType.EXPENSE) {
+					Integer productId = item.getProduct().getId();
+					criteria = new Criteria();
+					criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
+					criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
+					List<ITransferObject> accounts = productAccountBean.getList(criteria);
+					if (accounts == null || accounts.size() == 0) {
+						wrong = true;
+						addMessage("El gasto: \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");			
+					} else {
+						ProductAccount acc = (ProductAccount) accounts.get(0);
+						Criteria c = new Criteria();
+						c.addEqualExpression(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID), acc.getAccount().getId());
+						c.addOrder(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER), false);
+						List<ITransferObject> ahs = accountHelperBean.getList(c);
+						if (ahs != null && ahs.size() > 0) {
+							AccountHelper ah = (AccountHelper) ahs.get(0);
+							Account balancingAccount = ah.getBalancingAccount();
+							if (!getAccount().equals(balancingAccount) ) {
+								addMessage("La contrapartida más usada para el gasto: \"" + invoiceDetail.getDescription() + "\" es \"" + balancingAccount.getFullDescription() +"\".");		
+							}
+						}
+					}
+					
+				}
+			}
+		}
+		if (wrong) {
+			setRecordable(false);
+		}
 	}
 
 	private void checkFinanceInaccuracyPresent() throws ManagerBeanException {
@@ -233,6 +292,9 @@ public class InvoiceRecorder implements ITransferObject {
 
 	public boolean isWarned() {
 		return isRecordable() && isMessagesPresent();
+	}
+	public boolean isCommentPresent() {
+		return !StringUtils.isBlank( getInvoice().getComments());
 	}
 	
 }
