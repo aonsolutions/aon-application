@@ -441,7 +441,12 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 	
 	public String backAction() {
-		return backAction;
+		String b = backAction;
+		if (b == null) {
+			b =  getBeanName() + "_list";
+		}
+		setBackAction(null); 
+		return b;
 	}
 	
 	public void onSelectTo(ActionEvent event) throws ManagerBeanException {

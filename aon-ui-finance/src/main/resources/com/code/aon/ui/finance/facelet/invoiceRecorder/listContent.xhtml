@@ -1,0 +1,456 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:form id="invoiceRecorderList">
+
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+			<ui:param name="toolbarTitle" value="#{toolbarTitle}" />
+			<ui:param name="controller" value="#{controller}" />
+			<ui:param name="skipResetButton" value="true" />
+
+			<ui:define name="additionalToolbarContent">
+				<aon:commandButton id="record_selected"
+					value="#{financeBundle.finance_record_selected}"
+					rendered="#{controller.model.rowCount > 0}"
+					reRender="invoiceRecorderDataDiv"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
+					actionListener="#{controller.onRecordSelected}"
+					onclick="Richfaces.showModalPanel('waitProccess')"
+					oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+			</ui:define>
+
+		</ui:decorate>
+
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
+
+			<aon:div rendered="#{controller.model.rowCount > 0}"
+				style="background-color:#f6f5e3; padding: 5px; margin-bottom: 5px;">
+				<aon:div>
+					<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold" />
+					<aon:commandLink value="#{financeBundle.finance_all}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onCheckAll}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_none}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onCheckNone}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_right}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onCheckRight}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_warned}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onCheckWarned}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_brokendown}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onCheckBrokendown}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_unbrokendown}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onCheckUnbrokendown}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_entry_visible}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onCheckEntryVisible}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_entry_invisible}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onCheckEntryInvisible}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+				</aon:div>
+
+				<aon:div>
+					<aon:outputText value="#{financeBundle.finance_tobreakdown}:"
+						styleClass="aon-bold" />
+					<aon:commandLink value="#{financeBundle.finance_all}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowAllTaxBreakDowns}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_none}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onHideAllTaxBreakDowns}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_checked}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowCheckedTaxBreakDowns}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_unchecked}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowUncheckedTaxBreakDowns}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_right}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowCorrectTaxBreakDowns}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_incorrect}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowIncorrectTaxBreakDowns}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_warned}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowWarnedTaxBreakDowns}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+				</aon:div>
+
+				<aon:div>
+					<aon:outputText value="#{financeBundle.finance_view_entry}:"
+						styleClass="aon-bold" />
+					<aon:commandLink value="#{financeBundle.finance_all}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowAllAccountEntry}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_none}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onHideAllAccountEntry}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_checked}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowCheckedAccountEntry}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_unchecked}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowUncheckedAccountEntry}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_right}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowCorrectAccountEntry}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_incorrect}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowIncorrectAccountEntry}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandLink value="#{financeBundle.finance_warned}"
+						style="margin-left: 5px; text-decoration: underline;"
+						actionListener="#{controller.onShowWarnedAccountEntry}"
+						reRender="invoiceRecorderDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+				</aon:div>
+			</aon:div>
+
+			<aon:div id="invoiceRecorderDataDiv">
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{controller}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="rows" value="0" />
+
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<aon:commandLink id="selectButton"
+								styleClass="aon-table-row-link" value="&#160;"
+								requestDelay="100" action="#{controller.invoiceView}"
+								actionListener="#{controller.onLoadInvoice}"
+								onkeyup="#{dataTableId}KeyUp(this)"
+								onfocus="#{dataTableId}SelectRow(this)"
+								onblur="#{dataTableId}DeselectRow(this)"
+								focus="#{(focusOnSelect != null)?(focusOnSelect):''}"
+								reRender="#{rowSelectorReRender}">
+							</aon:commandLink>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Included_Row_checked"
+								value="#{to.checked}" rendered="#{to.recordable}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div style="display:inline;cursor:pointer;"
+								rendered="#{to.messagesPresent}">
+								<aon:outputText value="&#160;" styleClass="aon-icon-comment"
+									style="padding-left:20px"
+									rendered="#{to.invoice.comments != null}" />
+								<rich:toolTip value="#{to.invoice.comments}">
+								</rich:toolTip>
+							</aon:div>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="C" />
+							</f:facet>
+							<aon:div style="display:inline;cursor:pointer;"
+								rendered="#{to.messagesPresent}">
+								<aon:outputText value="&#160;" styleClass="aon-icon-exception"
+									style="padding-left:20px" rendered="#{!to.recordable}" />
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon-errorwarning" style="padding-left:20px"
+									rendered="#{to.recordable}" />
+								<rich:toolTip>
+									<rich:dataList value="#{to.messages}" var="msg"
+										style="margin-left: 15px;">
+										<aon:outputText value="#{msg}" />
+									</rich:dataList>
+								</rich:toolTip>
+							</aon:div>
+						</aon:column>
+
+						<aon:column alias="Invoice.referenceCode"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText
+									value="#{bundle.aon_series}/#{bundle.aon_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoice.documentNumber}" />
+						</aon:column>
+
+						<aon:column
+							styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{accountBundle.account_account}" />
+							</f:facet>
+							<aon:outputText value="#{to.account.id}" />
+						</aon:column>
+
+						<aon:column alias="Invoice.registryName"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{customerBundle.customer_customer}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoice.registryName}" />
+						</aon:column>
+
+						<aon:column alias="Invoice.issueDate"
+							styleClass="aon-editDataTable-textColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoice.issueDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="Invoice.taxDate"
+							styleClass="aon-editDataTable-textColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_tax_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoice.taxDate}"
+								style="#{!to.dateEquals?'color:red':''}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="Invoice.status"
+							styleClass="aon-editDataTable-textColumn aon-width-80 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoice.status}" />
+						</aon:column>
+
+						<aon:column
+							styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoiceTotal}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div id="showAccountEntry">
+								<aon:commandLink value="Apunte"
+									reRender="#{dataTableId},showAccountEntry"
+									rendered="#{!to.showAccountEntry}"
+									actionListener="#{controller.onShowAccountEntry}" />
+								<aon:commandLink value="#{financeBundle.finance_hide}"
+									reRender="#{dataTableId},showAccountEntry"
+									rendered="#{to.showAccountEntry}"
+									actionListener="#{controller.onHideAccountEntry}" />
+							</aon:div>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div id="showTaxBreakDowns">
+								<aon:commandLink value="#{financeBundle.finance_breakdown}"
+									reRender="#{dataTableId},showTaxBreakDowns"
+									rendered="#{!to.showTaxBreakDowns}"
+									actionListener="#{controller.onShowTaxBreakDowns}" />
+								<aon:commandLink value="#{financeBundle.finance_hide}"
+									reRender="#{dataTableId},showTaxBreakDowns"
+									rendered="#{to.showTaxBreakDowns}"
+									actionListener="#{controller.onHideTaxBreakDowns}" />
+							</aon:div>
+						</aon:column>
+
+							<rich:subTable id="TaxBreakDownsSubTable"  value="#{to.taxBreakDowns}" rendered="#{to.showTaxBreakDowns}" var="taxBreakDown">
+								<aon:column colspan="12"
+									style="padding: 0px; border: none;background-color: #FBEDB6;">
+									<h:panelGrid columns="5" style="font-size: 0.9em; width: 100%;"
+										cellpadding="0" cellspacing="0" border="0"
+										columnClasses="aon-width-auto
+										 				,aon-width-40 aon-editDataTable-textColumn aon-form-date-label aon-noborder
+										 				,aon-width-70 aon-editDataTable-numberColumn aon-noborder
+										 				,aon-width-70 aon-editDataTable-numberColumn aon-noborder
+										 				,aon-width-70 aon-editDataTable-numberColumn aon-noborder">
+
+										<aon:outputText value="&#160;" />
+
+										<aon:outputText value="#{taxBreakDown.taxType}" />
+
+										<aon:outputText value="#{taxBreakDown.base}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>
+
+										<aon:div>
+											<aon:outputText value="#{taxBreakDown.taxPercent}">
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											</aon:outputText>
+											<aon:outputText value="%" />
+										</aon:div>
+
+										<aon:outputText value="#{taxBreakDown.taxQuota}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>
+
+										<aon:outputText value="&#160;"
+											rendered="#{to.invoice.surcharge}" />
+
+										<aon:outputText value="#{bundle.aon_surcharge}"
+											rendered="#{to.invoice.surcharge}" />
+
+										<aon:outputText value="#{taxBreakDown.base}"
+											rendered="#{to.invoice.surcharge}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>
+
+										<aon:div rendered="#{to.invoice.surcharge}">
+											<aon:outputText value="#{taxBreakDown.surchargePercent}">
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											</aon:outputText>
+											<aon:outputText value="%" />
+										</aon:div>
+
+										<aon:div rendered="#{to.invoice.surcharge}">
+											<aon:outputText value="#{taxBreakDown.surchargeQuota}">
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											</aon:outputText>
+										</aon:div>
+									</h:panelGrid>
+								</aon:column>
+								<aon:column
+									style="padding: 0px; border: none;background-color: #FBEDB6;">
+									<aon:outputText value="&#160;" />
+								</aon:column>
+							</rich:subTable>
+							<rich:subTable id="AccountEntryTable"  value="#{to.details}" var="preAccountEntry" rendered="#{to.showAccountEntry}">
+
+								<aon:column colspan="5"
+									style="padding: 0px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
+								</aon:column>
+
+								<aon:column styleClass="aon-editDataTable-textColumn"
+									style="padding: 0px; border: none;background-color: #F2FDEC; font-size: 0.9em;">
+									<aon:outputText value="#{preAccountEntry.account.id}" />
+								</aon:column>
+
+								<aon:column styleClass="aon-editDataTable-textColumn"
+									style="padding: 0px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
+									<aon:outputText value="#{preAccountEntry.account.description}" />
+								</aon:column>
+
+								<aon:column colspan="2"
+									styleClass="aon-editDataTable-textColumn"
+									style="padding: 0px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
+									<aon:outputText value="#{preAccountEntry.concept}" />
+								</aon:column>
+
+								<aon:column styleClass="aon-editDataTable-numberColumn"
+									style="padding: 0px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
+									<aon:outputText value="#{preAccountEntry.debit}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:column>
+
+								<aon:column styleClass="aon-editDataTable-numberColumn"
+									style="padding: 0px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
+									<aon:outputText value="#{preAccountEntry.credit}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
+								</aon:column>
+
+								<aon:column colspan="2"
+									styleClass="aon-editDataTable-textColumn"
+									style="padding-left: 10px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
+									<aon:outputText value="#{preAccountEntry.balancingAccount.id}" />
+								</aon:column>
+							</rich:subTable>
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+		</aon:div>
+	</aon:form>
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+</ui:composition>

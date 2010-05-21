@@ -89,6 +89,16 @@ public class AccountBridgeUtil {
 		throw new ManagerBeanException("No se puede obtener la cuenta de un " + iRegistry); 
 	}
 
+	public IAccount getIRegistryAccount(IRegistry iRegistry) throws ManagerBeanException {
+		if (iRegistry instanceof Customer) {
+			return getCustomerIAccount(iRegistry.getRegistry());
+		} else if (iRegistry instanceof Supplier) {
+			return getSupplierIAccount(iRegistry.getRegistry());
+		} else if (iRegistry instanceof Creditor) {
+			return getCreditorIAccount(iRegistry.getRegistry());
+		}
+		throw new ManagerBeanException("No se puede obtener la cuenta de un " + iRegistry); 
+	}
 	public Account getCustomerAccount(Registry registry) throws ManagerBeanException {
 		IAccount customerAccount = getCustomerIAccount(registry);
 		return customerAccount==null?null:customerAccount.getAccount();
