@@ -36,7 +36,9 @@ public class AccountEntryDetailController extends LinesController {
 						AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
 						String account = detail.getAccount().getId();
 						if (detail != null) {
-							return (!StringUtils.startsWith(account, "4"));
+							int row = getModel().getRowIndex();
+							return (!(StringUtils.startsWith(account, "4") && row == 0)) &&
+								   !(StringUtils.startsWith(account, "47"));
 						}
 					}
 				} catch (ManagerBeanException e) {
