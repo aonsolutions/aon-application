@@ -162,10 +162,10 @@ public class SalaryModificationWizard implements Serializable, IDataModelDataPro
 	}
 	
 	private void onValidate(ActionEvent event) {
-//		if (getRemesaINSS()==null) {
-//			String msg = "Realice alguna selección";
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg);
+//		if(!isAnyEmpleadoSelected()){
+//			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+//			String errorMsg = AonPayroll.getMessage(locale, "aon_payroll_error_no_contract_selected");
+//			throw new PayrollException(errorMsg);
 //		}
 	}
 
