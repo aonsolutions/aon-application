@@ -42,7 +42,8 @@ public class SalaryModificationWizard implements Serializable, IDataModelDataPro
 	public EmpleadoParams getParams() {
 		if (params == null) {
 			params = new EmpleadoParams();
-			params.setFinalizados(false);
+			params.setFinalizados(true);
+			params.setClienteActivo(true);
 		}
 		return params;
 	}
