@@ -19,7 +19,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 
-
 public class StatEngine {
 
 	public Collection<Stat> getYearStats(StatParams params)
@@ -1205,7 +1204,8 @@ public class StatEngine {
 		ResultSet rs = null;
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
+			stmt
+					.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN seller s ON (o.seller = s.registry)");
@@ -1287,7 +1287,8 @@ public class StatEngine {
 		ResultSet rs = null;
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt.append(" SELECT g.id,g.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
+			stmt
+					.append(" SELECT g.id,g.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN raddress s ON (o.address = s.id)");
@@ -1324,7 +1325,9 @@ public class StatEngine {
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
+				ps
+						.setDate(1, new java.sql.Date(params.getFromDate()
+								.getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -1368,7 +1371,8 @@ public class StatEngine {
 		ResultSet rs = null;
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
+			stmt
+					.append("SELECT p.id,p.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od ");
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN item ON (item.id = od.item)");
@@ -1452,6 +1456,88 @@ public class StatEngine {
 			}
 		}
 
+	}
+
+	public Collection<Stat> getCommercialTargetStats(StatParams params)
+			throws ManagerBeanException {
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			StringWriter stmt = new StringWriter();
+			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
+			stmt.append(" FROM offer_detail od  ");
+			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
+			stmt.append(" INNER JOIN target t ON (o.target = t.registry)");
+			stmt.append(" INNER JOIN registry r ON (t.registry = r.id)");
+			if (params.getFromDate() != null) {
+				stmt.append(" AND o.issue_date >= ?");
+			}
+			if (params.getToDate() != null) {
+				stmt.append(" AND o.issue_date <= ?");
+			}
+			OfferStatus[] os = params.getOfferStatuses();
+			String s = "";
+			for (int i = 0; i < os.length; i++) {
+				if (os[i] != null) {
+					if (i == 0) {
+						s = " AND (";
+						s = s + "o.status=" + os[i].ordinal() + " ";
+					}
+					if (i > 0) {
+						s = s + "OR ";
+						s = s + "o.status=" + os[i].ordinal() + " ";
+					}
+				}
+			}
+			if (os.length != 0) {
+				s = s + ")";
+			}
+			stmt.append(s);
+			stmt.append(" GROUP BY r.id");
+			stmt.append(" ORDER BY SUM(od.price*od.quantity) DESC");
+
+			ps = HibernateUtil.getSQLConnection().prepareStatement(
+					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
+					ResultSet.CONCUR_READ_ONLY);
+			if (params.getFromDate() != null) {
+				ps
+						.setDate(1, new java.sql.Date(params.getFromDate()
+								.getTime()));
+			}
+			if (params.getToDate() != null) {
+				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
+			}
+			rs = ps.executeQuery();
+			List<Stat> stats = new LinkedList<Stat>();
+			while (rs.next()) {
+				Stat stat = new Stat();
+				stat.setKey(rs.getInt(1));
+				stat.setName(rs.getString(2));
+				int count = rs.getInt(3);
+				double amount = rs.getInt(4);
+				stat.setNumInvoice(count);
+				stat.setAmount(amount);
+				stat.setAverageAmount(CommonUtil.round(amount / count));
+				stats.add(stat);
+			}
+			return stats;
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
 	}
 
 }
