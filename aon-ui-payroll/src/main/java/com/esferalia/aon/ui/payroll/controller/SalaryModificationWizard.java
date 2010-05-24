@@ -29,6 +29,7 @@ public class SalaryModificationWizard implements Serializable, IDataModelDataPro
 	private EmpleadoParams params;
 	private IEmpleadoDAO empleadoDAO;
 	private DataModel empleadoModel;
+	private IPersona persona;
 	
 
 	public int getCurrentStep() {
@@ -75,6 +76,14 @@ public class SalaryModificationWizard implements Serializable, IDataModelDataPro
 			empleadoModel = new ExtendedPageDataModel(this, this);
 		}
 		((ExtendedPageDataModel) empleadoModel).update(0, getPageLimit());
+	}
+	
+	public IPersona getPersona() {
+		return persona;
+	}
+
+	public void setPersona(IPersona persona) {
+		this.persona = persona;
 	}
 	
 	@Override
@@ -175,7 +184,7 @@ public class SalaryModificationWizard implements Serializable, IDataModelDataPro
 
 	public void onSelect(ActionEvent event) {
 		IPersona persona = (IPersona) getEmpleadoModel().getRowData();
-//		setPersona(persona);
+		setPersona(persona);
 //		empleosModel = null;
 //		setParteITEmpleado(null);
 //		setParteIT(null);
