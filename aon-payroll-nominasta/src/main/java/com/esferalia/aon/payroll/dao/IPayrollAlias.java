@@ -282,52 +282,58 @@ public interface IPayrollAlias {
 	String  EMPLEADO_ACTIVIDAD_EMPRESA_NAME = EMPLEADO_ENTRY.getAliasNames()[8];
 
 	/** 
+	* Alias value: Empleado_actividad_empresa_cliente_inactivoBD
+	* Hibernate value: Empleado.actividad.empresa.cliente.inactivoBD
+	*/
+	String  EMPLEADO_ACTIVIDAD_EMPRESA_CLIENTE_INACTIVO_BD = EMPLEADO_ENTRY.getAliasNames()[9];
+
+	/** 
 	* Alias value: Empleado_persona_id
 	* Hibernate value: Empleado.persona.id
 	*/
-	String  EMPLEADO_PERSONA_ID = EMPLEADO_ENTRY.getAliasNames()[9];
+	String  EMPLEADO_PERSONA_ID = EMPLEADO_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Empleado_persona_lastName
 	* Hibernate value: Empleado.persona.lastName
 	*/
-	String  EMPLEADO_PERSONA_LAST_NAME = EMPLEADO_ENTRY.getAliasNames()[10];
+	String  EMPLEADO_PERSONA_LAST_NAME = EMPLEADO_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Empleado_persona_name
 	* Hibernate value: Empleado.persona.name
 	*/
-	String  EMPLEADO_PERSONA_NAME = EMPLEADO_ENTRY.getAliasNames()[11];
+	String  EMPLEADO_PERSONA_NAME = EMPLEADO_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Empleado_persona_numSS
 	* Hibernate value: Empleado.persona.numSS
 	*/
-	String  EMPLEADO_PERSONA_NUM_SS = EMPLEADO_ENTRY.getAliasNames()[12];
+	String  EMPLEADO_PERSONA_NUM_SS = EMPLEADO_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Empleado_persona_registry_document_tipo
 	* Hibernate value: Empleado.persona.registry.document.tipo
 	*/
-	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT_TIPO = EMPLEADO_ENTRY.getAliasNames()[13];
+	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT_TIPO = EMPLEADO_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Empleado_persona_registry_document_pais
 	* Hibernate value: Empleado.persona.registry.document.pais
 	*/
-	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT_PAIS = EMPLEADO_ENTRY.getAliasNames()[14];
+	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT_PAIS = EMPLEADO_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Empleado_persona_registry_document_value
 	* Hibernate value: Empleado.persona.registry.document.value
 	*/
-	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE = EMPLEADO_ENTRY.getAliasNames()[15];
+	String  EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE = EMPLEADO_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Empleado_persona_surname
 	* Hibernate value: Empleado.persona.surname
 	*/
-	String  EMPLEADO_PERSONA_SURNAME = EMPLEADO_ENTRY.getAliasNames()[16];
+	String  EMPLEADO_PERSONA_SURNAME = EMPLEADO_ENTRY.getAliasNames()[17];
 
 
 
