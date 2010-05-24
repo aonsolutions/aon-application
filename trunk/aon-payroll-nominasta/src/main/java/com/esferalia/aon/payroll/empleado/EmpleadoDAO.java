@@ -35,7 +35,8 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 	private static String APEL_ALIAS = null;
 	private static String APEL2_ALIAS = null;
 	private static String EMPR_ALIAS = null;
-	private static String ACT_ALIAS = null; 
+	private static String ACTIV_ALIAS = null; 
+	private static String CLIENTE_INACTIVO_ALIAS = null; 
 	private static String FEC_INI_ALIAS = null; 
 	private static String FEC_FIN_ALIAS = null; 
 
@@ -54,7 +55,8 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 			APEL_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME);
 			APEL2_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME);
 			EMPR_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_NAME);
-			ACT_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_NAME);
+			ACTIV_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_NAME);
+			CLIENTE_INACTIVO_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_CLIENTE_INACTIVO_BD);
 			FEC_INI_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_INICIO);
 			FEC_FIN_ALIAS = bean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN);
 		} catch (ManagerBeanException e) {
@@ -103,7 +105,10 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 				c.addExpression(EMPR_ALIAS, params.getEmpresa());
 			}
 			if (!StringUtils.isBlank(params.getActividad())) {
-				c.addExpression(ACT_ALIAS, params.getActividad());
+				c.addExpression(ACTIV_ALIAS, params.getActividad());
+			}
+			if (params.isClienteActivo()) {
+				c.addExpression(CLIENTE_INACTIVO_ALIAS, "N");
 			}
 			if (params.isFinalizados()) {
 				c.addNullExpression(FEC_FIN_ALIAS);

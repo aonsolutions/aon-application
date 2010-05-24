@@ -2,8 +2,8 @@
 <dao>
  
 	<bean class="com.esferalia.aon.payroll.Empleado" sqlName="empreper">
-		<alias names="id,codccc,fechaFin,fechaInicio,mayor65,actividad_id,actividad_name,actividad_empresa_id,actividad_empresa_name,persona_id,persona_lastName,persona_name,persona_numSS,persona_registry_document_tipo,persona_registry_document_pais,persona_registry_document_value,persona_surname" />
-		<hibernate names="id,codccc,fechaFin,fechaInicio,mayor65,actividad.id,actividad.name,actividad.empresa.id,actividad.empresa.name,persona.id,persona.lastName,persona.name,persona.numSS,persona.registry.document.tipo,persona.registry.document.pais,persona.registry.document.value,persona.surname" />
+		<alias names="id,codccc,fechaFin,fechaInicio,mayor65,actividad_id,actividad_name,actividad_empresa_id,actividad_empresa_name,actividad_empresa_cliente_inactivoBD,persona_id,persona_lastName,persona_name,persona_numSS,persona_registry_document_tipo,persona_registry_document_pais,persona_registry_document_value,persona_surname" />
+		<hibernate names="id,codccc,fechaFin,fechaInicio,mayor65,actividad.id,actividad.name,actividad.empresa.id,actividad.empresa.name,actividad.empresa.cliente.inactivoBD,persona.id,persona.lastName,persona.name,persona.numSS,persona.registry.document.tipo,persona.registry.document.pais,persona.registry.document.value,persona.surname" />
 	</bean>
 	<bean class="com.esferalia.aon.payroll.Empresa" sqlName="emprnif">
 		<alias names="id,registry_document_tipo,registry_document_pais,registry_document_value,descripcion" />
