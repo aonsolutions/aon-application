@@ -30,7 +30,6 @@ import com.esferalia.aon.payroll.enumeration.Prorrateo;
  * Mantenimiento de Trabajo
  */
 @Entity
-// @Lines(joinProperty="emprper")
 @Table(name = "trabajo")
 public class Contrato implements ITransferObject, IContrato {
 
@@ -47,7 +46,7 @@ public class Contrato implements ITransferObject, IContrato {
 //	private String codcat;
 //	private String nivel;
 //	private String descat;
-//	private BigDecimal irpf;
+	private Double irpf;
 //	private String cno;
 //	private Prorateo procot;
 //	private Prorateo proret;
@@ -92,13 +91,13 @@ public class Contrato implements ITransferObject, IContrato {
 //	private Epigrafe epigrafe;
 //	private PorcentajeMaestro porcoti;
 //	private Sucursal sucursal;
-//	private ContratosTc2 tipcotc2;
-//	private Trabajador emprper;
+//	private ContratosTc2 contratoTC2;
 
 	@EmbeddedId
 	@AttributeOverrides( {
 			@AttributeOverride(name = "cdg", column = @Column(name = "cdg", nullable = false, length = 4)),
 			@AttributeOverride(name = "fecini", column = @Column(name = "fecini", nullable = false, length = 10)) })
+	@Override
 	public ContratoPK getId() {
 		return this.id;
 	}
@@ -108,28 +107,33 @@ public class Contrato implements ITransferObject, IContrato {
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fecfin")
+	@Override
 	public Date getFechaFin() {
 		return this.fechaFin;
 	}
+	@Override
 	public void setFechaFin(Date fechaFin) {
 		this.fechaFin = fechaFin;
 	}
 
 	@ManyToOne(targetEntity=Empleado.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "cdg", insertable = false, updatable = false)
+	@Override
 	public IEmpleado getEmpleado() {
 		return this.empleado;
 	}
-
+	@Override
 	public void setEmpleado(IEmpleado empleado) {
 		this.empleado = empleado;
 	}
 	
 
 	@Column(name = "indtp", length = 1)
+	@Override
 	public String getIndtp() {
 		return indtp;
 	}
+	@Override
 	public void setIndtp(String indtp) {
 		this.indtp = indtp;
 	}
@@ -164,10 +168,10 @@ public class Contrato implements ITransferObject, IContrato {
 	public Prorrateo getProrrateo() {
 		return this.prorrateo;
 	}
-
 	public void setProrrateo(Prorrateo prorrateo) {
 		this.prorrateo = prorrateo;
 	}
+	
 	@Transient
 	@Override
 	public Periodicidad getProrrateoCotizacion() {
@@ -188,6 +192,17 @@ public class Contrato implements ITransferObject, IContrato {
 			setProrrateo(null);
 		}
 	}
+	
+	@Column(name = "irpf", nullable = false, scale=2, precision=4)
+	@Override
+	public Double getIrpf() {
+		return this.irpf;
+	}
+	@Override
+	public void setIrpf(Double irpf) {
+		this.irpf = irpf;
+	}
+	
 	/*
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fecant", nullable = false, length = 10)
@@ -244,14 +259,7 @@ public class Contrato implements ITransferObject, IContrato {
 		this.descat = descat;
 	}
 
-	@Column(name = "irpf", nullable = false, scale=2, precision=4)
-	public BigDecimal getIrpf() {
-		return this.irpf;
-	}
-
-	public void setIrpf(BigDecimal irpf) {
-		this.irpf = irpf;
-	}
+	
 
 	// @DataDefinition(label="Codigo Nacional Ocupaciones")
 	@Column(name = "cno", length = 4)
@@ -711,16 +719,18 @@ public class Contrato implements ITransferObject, IContrato {
 	public void setSucursal(Sucursal sucursal) {
 		this.sucursal = sucursal;
 	}
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codtc2")
-	public ContratosTc2 getTipcotc2() {
-		return this.tipcotc2;
-	}
-
-	public void setTipcotc2(ContratosTc2 tipcotc2) {
-		this.tipcotc2 = tipcotc2;
-	}
 */
+
+//	@ManyToOne(targetEntity=Empleado.class,fetch = FetchType.EAGER)
+//	@JoinColumn(name = "cdg", insertable = false, updatable = false)
+//	@ManyToOne(fetch = FetchType.EAGER)
+//	@JoinColumn(name = "codtc2")
+//	public ContratosTc2 getContratoTC2() {
+//		return this.contratoTC2;
+//	}
+//
+//	public void setContratoTC2(ContratosTc2 contratoTC2) {
+//		this.contratoTC2 = contratoTC2;
+//	}
 	
 }
