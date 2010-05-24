@@ -266,6 +266,12 @@
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/commercialCategory/yearStats.xhtml</to-view-id>
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>commercial_product_stat_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialCategory/searchProduct.xhtml</to-view-id>
+		</navigation-case>
 
 		<navigation-case>
 			<from-outcome>commercial_product_stats</from-outcome>
@@ -294,6 +300,17 @@
 			<to-view-id>
 				/com/code/aon/ui/stat/facelet/commercialSeller/yearStats.xhtml</to-view-id>
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>commercial_target_stat_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialTarget/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercial_target_stats_year</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialTarget/yearStats.xhtml</to-view-id>
+		</navigation-case>
 
 		<navigation-case>
 			<from-outcome>commercial_seller_search</from-outcome>
@@ -316,9 +333,9 @@
 		<navigation-case>
 			<from-outcome>commercial_seller_view</from-outcome>
 			<to-view-id>
-				/com/code/aon/ui/stat/facelet/commercialSellerControl/sellersView.xhtml</to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialSellerControl/controlView.xhtml</to-view-id>
 		</navigation-case>
-
+		
 	</navigation-rule>
 
 
