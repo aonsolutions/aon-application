@@ -13,6 +13,7 @@ public class EmpleadoParams implements Serializable {
 	private String apellido;
 	private String apellido2;
 	private String empresa;
+	private String actividad;
 	private boolean finalizados;
 	
 	public String getPersonaId() {
@@ -57,6 +58,12 @@ public class EmpleadoParams implements Serializable {
 	}
 	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
+	}
+	public String getActividad() {
+		return actividad;
+	}
+	public void setActividad(String actividad) {
+		this.actividad = actividad;
 	}
 	public boolean isFinalizados() {
 		return finalizados;
