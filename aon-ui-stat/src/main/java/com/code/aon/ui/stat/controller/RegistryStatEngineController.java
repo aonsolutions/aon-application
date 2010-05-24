@@ -228,7 +228,7 @@ public class RegistryStatEngineController {
 	public void getScoredInvoices() throws ManagerBeanException {
 		String select = "select Invoice "
 			+ "from Invoice as Invoice "
-			+ "where Invoice.type=1 AND Invoice.status =1 AND Invoice.registry.id = " +registry.getId()
+			+ "where Invoice.type=1 AND Invoice.status = 1 AND Invoice.registry.id = " +registry.getId()
 			+ "order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
