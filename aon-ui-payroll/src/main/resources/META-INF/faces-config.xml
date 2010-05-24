@@ -45,6 +45,15 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************ Salary Modification Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>salaryModificationWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.SalaryModificationWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- =================== Undeductible Invoice Management========================== -->
 	<navigation-rule id="parteITWizard">
@@ -101,6 +110,25 @@
 	    <navigation-case>
     	  	<from-outcome>FDIRegenerationWizard_step2</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaITregeneration/step2.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<navigation-rule id="salaryModificationWizard">
+	    <navigation-case>
+    	  	<from-outcome>salaryModificationWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryModification/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>salaryModificationWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryModification/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>salaryModificationWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryModification/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>salaryModificationWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryModification/step3.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 
