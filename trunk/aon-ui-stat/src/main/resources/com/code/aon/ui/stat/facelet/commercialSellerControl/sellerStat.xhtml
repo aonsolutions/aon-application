@@ -17,17 +17,56 @@
 						action="commercial_seller_search"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_cancel}" />
-					<aon:commandButton value="#{statBundle.seller_stat_control}"
-						action="commercial_seller_view" actionListener="#{commercialStat.onSummary}"
-						styleClass="aon-finding-toolbar-item aon-icon-visit" />
-					
+
+					<c:if test="#{commercialStat.controlType==0}">
+						<aon:commandButton value="#{statBundle.seller_stat_control}"
+							action="commercial_seller_view"
+							actionListener="#{commercialStat.onSummary}"
+							styleClass="aon-finding-toolbar-item aon-icon-visit" />
+					</c:if>
+					<c:if test="#{commercialStat.controlType==1}">
+						<aon:commandButton value="#{statBundle.seller_stat_control}"
+							action="commercial_seller_view"
+							actionListener="#{commercialStat.onTargetSummary}"
+							styleClass="aon-finding-toolbar-item aon-icon-visit" />
+					</c:if>
+					<c:if test="#{commercialStat.controlType==2}">
+						<aon:commandButton value="#{statBundle.seller_stat_control}"
+							action="commercial_seller_view"
+							actionListener="#{commercialStat.onProductSummary}"
+							styleClass="aon-finding-toolbar-item aon-icon-visit" />
+					</c:if>
+
+
 				</ui:define>
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:div>
-					<aon:div style="text-align:center;font-weight:bold ">
 
+				<aon:panelGrid columns="2">
+
+					<c:if test="#{commercialStat.controlType==0}">
+						<aon:outputLabel for="Target_trackings_seller_id"
+							value="#{salesBundle.sales_seller}" />
+						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
+
+					</c:if>
+					<c:if test="#{commercialStat.controlType==1}">
+						<aon:outputLabel for="Target_trackings_seller_id"
+							value="#{salesBundle.sales_seller}" />
+						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
+
+					</c:if>
+					<c:if test="#{commercialStat.controlType==2}">
+						<aon:outputLabel for="Target_trackings_seller_id"
+							value="#{salesBundle.sales_seller}" />
+						<aon:outputText value="#{commercialStat.product.name}"></aon:outputText>
+
+					</c:if>
+
+					<aon:outputLabel for="Target_trackings_seller_id"
+						value="#{salesBundle.sales_seller}" />
+					<aon:div style="text-align:center;font-weight:bold ">
 						<aon:outputText value="#{commercialStat.params.fromDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
@@ -37,42 +76,50 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-
 					</aon:div>
+				</aon:panelGrid>
 
-					<aon:panel height="60" style="width: 20%;"
-						header="#{commercialStat.seller.registry.fullName}">
-						<aon:panelGrid columns="2">
-							<aon:outputLabel value="#{statBundle.seller_stat_control_visit}" />
-							<aon:outputText value="#{commercialStat.numVisits}" size="30"
-								disabled="true" />
+				<aon:div>
+					<h:panelGrid columns="2">
 
-							<aon:outputLabel
-								value="#{statBundle.seller_stat_control_pending_visit}" />
-							<aon:outputText value="#{commercialStat.numPendingVisits}"
-								size="30" disabled="true" />
+						<aon:div>
+							<aon:panel style="height:100px;width:200;px"
+								header="#{statBundle.seller_stat_control_vis}">
+								<aon:panelGrid columns="2">
+									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
+									<aon:outputText value="#{commercialStat.numVisits}" size="30"
+										disabled="true" />
+									<aon:outputLabel
+										value="#{statBundle.seller_stat_control_pending}" />
+									<aon:outputText value="#{commercialStat.numPendingVisits}"
+										size="30" disabled="true" />
+								</aon:panelGrid>
+							</aon:panel>
+						</aon:div>
+						<aon:div>
+							<aon:panel style="height:100px;width:200;px"
+								header="#{statBundle.seller_stat_control_pre}">
+								<aon:panelGrid columns="2">
+									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
+									<aon:outputText value="#{commercialStat.numOffers}" size="30"
+										disabled="true" />
+									<aon:outputLabel
+										value="#{statBundle.seller_stat_control_pending}" />
+									<aon:outputText value="#{commercialStat.numPendingOffers}"
+										size="30" disabled="true" />
+									<aon:outputLabel
+										value="#{statBundle.seller_stat_control_closed}" />
+									<aon:outputText value="#{commercialStat.numAprovedOffers}"
+										size="30" disabled="true" />
+									<aon:outputLabel value="#{statBundle.seller_stat_control_lost}" />
+									<aon:outputText value="#{commercialStat.numLostOffers}"
+										size="30" disabled="true" />
 
-							<aon:outputLabel value="#{statBundle.seller_stat_control_offers}" />
-							<aon:outputText value="#{commercialStat.numOffers}" size="30"
-								disabled="true" />
-
-
-							<aon:outputLabel
-								value="#{statBundle.seller_stat_control_closed_offers}" />
-							<aon:outputText value="#{commercialStat.numAprovedOffers}"
-								size="30" disabled="true" />
-
-
-							<aon:outputLabel
-								value="#{statBundle.seller_stat_control_lost_offers}" />
-							<aon:outputText value="#{commercialStat.numLostOffers}" size="30"
-								disabled="true" />
-						</aon:panelGrid>
-					</aon:panel>
-
-
+								</aon:panelGrid>
+							</aon:panel>
+						</aon:div>
+					</h:panelGrid>
 				</aon:div>
-
 
 				<aon:panelTabSet switchType="client">
 					<aon:panelTab id="tab1"
@@ -90,11 +137,16 @@
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/doneOfferslist.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab id="tab4"
+						label="#{statBundle.seller_stat_control_pending_offers}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/pendingOfferslist.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab5"
 						label="#{statBundle.seller_stat_control_closed_offers}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/closedOfferslist.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="tab5"
+					<aon:panelTab id="tab6"
 						label="#{statBundle.seller_stat_control_lost_offers}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/lostOfferslist.xhtml" />
@@ -104,6 +156,7 @@
 					</aon:panelTab> -->
 				</aon:panelTabSet>
 			</aon:div>
+
 		</aon:form>
 	</ui:define>
 </ui:composition>

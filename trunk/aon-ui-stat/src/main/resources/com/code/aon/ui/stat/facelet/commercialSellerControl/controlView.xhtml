@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="sellerViewList">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control}" />
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="commercial_search_view"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+					<aon:htmlCommandLink id="export2excel" value="XLS"
+						title="Listado Xls"
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						action="#{report.onExecute}" target="_blank">
+						<f:param name="reportKey" value="sellersList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="export2csv" value="CSV" title="CSV"
+						styleClass="aon-finding-toolbar-item aon-icon-csv"
+						action="#{report.onExecute}" target="_blank">
+						<f:param name="reportKey" value="sellersList" />
+						<f:param name="outputFormat" value="CSV" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="graph" value="PDF" title="Listado Pdf"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						action="#{report.onExecute}" target="_blank">
+						<f:param name="reportKey" value="sellersList" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+				<!-- 	<aon:htmlCommandLink id="graph2" value="PDF" title="Listado Pdf"
+						styleClass="aon-finding-toolbar-item aon-icon-statistics "
+						action="#{report.onExecute}" target="_blank">
+						<f:param name="reportKey" value="sellerGraph" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink> -->
+				</ui:define>
+			</ui:decorate>
+			<br />
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:editDataTable id="sellerView"
+					value="#{commercialStat.summaryModel}" rows="20"
+					columnClasses="aon-editDataTable-textColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,  aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-textColumn"
+					var="to">
+					<f:facet name="header">
+
+						<rich:columnGroup>
+
+							<rich:column colspan="8">
+								<h:panelGrid columns="3" style="border:0px">
+									<aon:div>
+										<aon:outputText value="#{statBundle.seller_stat_control}" />
+									</aon:div>
+									<aon:div>
+										<aon:outputText value="(" />
+										<aon:outputText value="#{commercialStat.params.fromDate}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>
+										<aon:outputText value="-" />
+										<aon:outputText value="#{commercialStat.params.toDate}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>
+										<aon:outputText value=")" />
+									</aon:div>
+									<ui:insert name="extendedHeader" />
+								</h:panelGrid>
+
+
+							</rich:column>
+
+
+							<rich:column breakBefore="true" colspan="1">
+								<rich:spacer />
+							</rich:column>
+
+							<rich:column colspan="2">
+								<aon:outputText value="#{statBundle.seller_stat_control_vis}" />
+							</rich:column>
+							<rich:column colspan="4">
+								<aon:outputText value="#{statBundle.seller_stat_control_pre}" />
+							</rich:column>
+
+							<rich:column colspan="1">
+
+							</rich:column>
+
+
+						</rich:columnGroup>
+					</f:facet>
+					<aon:column>
+						<f:facet name="header">
+							<c:if test="#{commercialStat.controlType==0}">
+								<aon:outputText value="#{statBundle.stat_seller}" />
+							</c:if>
+							<c:if test="#{commercialStat.controlType==1}">
+								<aon:outputText value="#{statBundle.stat_target}" />
+							</c:if>
+							<c:if test="#{commercialStat.controlType==2}">
+								<aon:outputText value="#{statBundle.stat_product}" />
+							</c:if>
+						</f:facet>
+						<aon:outputText value="#{to.name}" />
+					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{statBundle.seller_stat_control_done}" />
+						</f:facet>
+						<aon:outputText value="#{to.numVisits}" />
+						<f:facet name="footer">
+							<aon:outputText value="#{commercialStat.numVisitsTot}"
+								style="float:right" />
+						</f:facet>
+					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{statBundle.seller_stat_control_pending}" />
+						</f:facet>
+						<aon:outputText value="#{to.numPendingVisits}" />
+						<f:facet name="footer">
+							<aon:outputText value="#{commercialStat.numPendingVisitsTot}"
+								style="float:right" />
+						</f:facet>
+					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{statBundle.seller_stat_control_done}" />
+						</f:facet>
+						<aon:outputText value="#{to.numOffers}" />
+						<f:facet name="footer">
+							<aon:outputText value="#{commercialStat.numOffersTot}"
+								style="float:right" />
+						</f:facet>
+					</aon:column>
+					<aon:column>
+					<f:facet name="header">
+							<aon:outputText value="#{statBundle.seller_stat_control_pending}" />
+						</f:facet>
+						<aon:outputText value="#{to.numPendingOffers}" />
+						<f:facet name="footer">
+							<aon:outputText value="#{commercialStat.numPendingOffersTot}"
+								style="float:right" />
+						</f:facet>
+					</aon:column> 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{statBundle.seller_stat_control_closed}" />
+						</f:facet>
+						<aon:outputText value="#{to.numAprovedOffers}" />
+						<f:facet name="footer">
+							<aon:outputText value="#{commercialStat.numAprovedOffersTot}"
+								style="float:right" />
+						</f:facet>
+					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{statBundle.seller_stat_control_lost}" />
+						</f:facet>
+						<aon:outputText value="#{to.numLostOffers}" />
+						<f:facet name="footer">
+							<aon:outputText value="#{commercialStat.numLostOffersTot}"
+								style="float:right" />
+						</f:facet>
+					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+
+						</f:facet>
+
+						<c:if test="#{commercialStat.controlType==0}">
+							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onSellerDetail}"
+								action="commercial_seller_stat"
+								value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
+						</c:if>
+						<c:if test="#{commercialStat.controlType==1}">
+							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onTargetDetail}"
+								action="commercial_seller_stat"
+								value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
+						</c:if>
+						<c:if test="#{commercialStat.controlType==2}">
+							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onProductDetail}"
+								action="commercial_seller_stat"
+								value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
+						</c:if>
+					</aon:column>
+				</aon:editDataTable>
+				<aon:dataScroller2 for="sellerView" showNote="true" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

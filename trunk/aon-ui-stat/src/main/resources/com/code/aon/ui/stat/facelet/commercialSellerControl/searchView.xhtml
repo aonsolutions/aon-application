@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
@@ -22,33 +23,25 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener"
-						value="#{commercialStat.onSummary}"
-						type="actionListener" />
-					<aon:methodParam name="searchAction" value="commercial_seller_view" />
+					<c:if test="#{commercialStat.controlType==0}">
+						<aon:methodParam name="searchActionListener"
+							value="#{commercialStat.onSummary}" type="actionListener" />
+					</c:if>
+					<c:if test="#{commercialStat.controlType==1}">
+						<aon:methodParam name="searchActionListener"
+							value="#{commercialStat.onTargetSummary}" type="actionListener" />
+					</c:if>
+					<c:if test="#{commercialStat.controlType==2}">
+						<aon:methodParam name="searchActionListener"
+							value="#{commercialStat.onProductSummary}" type="actionListener" />
+					</c:if>
 
-				<!-- 	<aon:outputLabel for="Target_trackings_seller_id"
-						value="#{salesBundle.sales_seller}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Target_trackings_seller_id" required="true"
-							lookup="#{sellerLookup}" reRender="Target_trackings_seller_name"
-							value="#{commercialStat.seller.id}" size="5">
-						</aon:lookupInputText>
-						<aon:lookupButton id="Target_trackings_seller_lookup"
-							windowTitle="#{appBundle.aon_lookup_seller}"
-							selectReRender="Target_trackings_seller_id,Target_trackings_seller_name"
-							lookup="#{sellerLookup}" minHeight="440"
-							property="#{commercialStat.seller}">
-						</aon:lookupButton>
-						<aon:inputText id="Target_trackings_seller_name" required="true"
-							value="#{(commercialStat.seller.registry.name!=null)?(commercialStat.seller.registry.fullName):('')}"
-							size="44" disabled="true" />
-					</aon:div> -->
+					<aon:methodParam name="searchAction" value="commercial_seller_view" />
 
 					<aon:outputLabel for="entryDate-From"
 						value="#{bundle.aon_date_from}" />
 					<aon:panelGrid columns="3">
-						<aon:selectInputDate id="entryDate-From" 
+						<aon:selectInputDate id="entryDate-From"
 							value="#{commercialStat.params.fromDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -59,7 +52,6 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:panelGrid>
-
 
 				</ui:define>
 			</ui:decorate>
