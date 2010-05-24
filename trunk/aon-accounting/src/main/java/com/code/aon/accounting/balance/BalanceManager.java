@@ -141,7 +141,6 @@ public class BalanceManager {
 			if (StringUtils.isNotBlank(token)) {
 				String t = token;
 				boolean negative = false;
-				boolean greatherThanZero = false;
 				if (token.startsWith(OPEN_BRACKET) && token.endsWith(CLOSE_BRACKET)) {
 					t = token.replace(OPEN_BRACKET, EMPTY).replace(CLOSE_BRACKET, EMPTY);
 					negative = true;
