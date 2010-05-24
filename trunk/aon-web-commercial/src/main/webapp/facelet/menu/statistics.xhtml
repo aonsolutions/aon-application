@@ -26,95 +26,81 @@
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="statCategory"
-									value="#{statBundle.stat_menu_commercial_category}"
+									value="#{statBundle.stat_report_commercial_category}"
 									action="commercial_category_stat_search"
 									actionListener="#{commercialStat.onReset}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="statZone"
-									value="#{statBundle.stat_menu_commercial_geozone}"
+									value="#{statBundle.stat_report_commercial_geozone}"
 									action="commercial_geozone_stat_search"
 									actionListener="#{commercialStat.onReset}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="statSeller"
-									value="#{statBundle.stat_menu_commercial_seller}"
+									value="#{statBundle.stat_report_commercial_seller}"
 									action="commercial_seller_stat_search"
+									actionListener="#{commercialStat.onReset}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="statTarget"
+									value="#{statBundle.stat_report_commercial_target}"
+									action="commercial_target_stat_search"
+									actionListener="#{commercialStat.onReset}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="statProduct"
+									value="#{statBundle.stat_report_commercial_product}"
+									action="commercial_product_stat_search"
 									actionListener="#{commercialStat.onReset}" />
 							</aon:div>
 						</aon:div>
 					</aon:panelGrid>
 
-					<!--  	<h:panelGrid styleClass="aon-width-all"
+					<aon:panelGrid id="group_statistics_mando"
+						styleClass="aon-width-all" columnClasses="aon-padding"
 						headerClass="aon-icon-task aon-direct-access-panel">
 						<f:facet name="header">
 							<aon:outputText value="cuadro de mando" />
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="sellerControl"
-									value="#{statBundle.seller_stat_control}"
-									action="commercial_seller_search"
-									actionListener="#{commercialStat.onReset}" />
-							</aon:div>
-						<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink value="Presupuestos Realizados (Cantidad e Importes)" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink value="Presupuestos Cerrados (Cantidad e Importes)" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink value="Presupuestos Perdidos (Cantidad e Importes)" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink value="Ratios" />
-								</aon:div>-->
 
-							<aon:panelGrid id="group_statistics_mando"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-task aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="cuadro de mando" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-								
-								<aon:div styleClass="aon-direct-access-list-element">
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="sellerControl"
 									value="#{statBundle.stat_show_seller}"
 									action="commercial_seller_search"
 									actionListener="#{commercialStat.onReset}" />
-							 </aon:div>
-							 
-							 <aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="sellerControl2"
-									value="#{statBundle.seller_stat_control}"
-									action="commercial_search_view"
-									actionListener="#{commercialStat.onReset}" 
-									 />
-							 </aon:div><!--
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink
-											value="Visitas Realizadas (Dia, Semana, Mes, Rango Fechas)" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink
-											value="Presupuestos Realizados (Cantidad e Importes)" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink
-											value="Presupuestos Cerrados (Cantidad e Importes)" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink
-											value="Presupuestos Perdidos (Cantidad e Importes)" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink value="Ratios" />
-									</aon:div>-->
+							</aon:div>
 
-								</aon:div> 
-							</aon:panelGrid>
-					</h:panelGrid>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="sellerControl2"
+									value="#{statBundle.seller_stat_control_seller}"
+									action="commercial_search_view">
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onSellerType}" />
+								</aon:commandLink>
+							</aon:div>
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="sellerControl3"
+									value="#{statBundle.seller_stat_control_target}"
+									action="commercial_search_view">
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onTargetType}" />
+								</aon:commandLink>
+							</aon:div>
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="sellerControl4"
+									value="#{statBundle.seller_stat_control_product}"
+									action="commercial_search_view">
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onProductType}" />
+								</aon:commandLink>
+							</aon:div>
+						</aon:div>
+					</aon:panelGrid>
+				</h:panelGrid>
 			</aon:div>
 		</aon:form>
 	</ui:define>
