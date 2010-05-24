@@ -19,11 +19,16 @@ import org.hibernate.Session;
 
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.OfferDetail;
+import com.code.aon.commercial.Target;
+import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.product.Product;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.seller.Seller;
 import com.code.aon.seller.dao.ISellerAlias;
@@ -50,12 +55,14 @@ public class CommercialStatEngineController {
 	private DataModel doneOffersModel;
 	private DataModel closedOffersModel;
 	private DataModel lostOffersModel;
+	private DataModel pendingOffersModel;
 	private DataModel visitsModel;
 	private DataModel pendingVisitsModel;
 	private DataModel summaryModel;
 	private List<OfferDetail> doneOffersList;
 	private List<OfferDetail> closedOffersList;
 	private List<OfferDetail> lostOffersList;
+	private List<OfferDetail> pendingOffersList;
 	private List<CommercialTracking> visitsList;
 	private List<CommercialTracking> pendingVisitsList;
 	private List<SellerSummary> summary;
@@ -64,15 +71,51 @@ public class CommercialStatEngineController {
 	private Integer numPendingVisits;
 	private Integer numOffers;
 	private Integer numAprovedOffers;
+	private Integer numPendingOffers;
 	private Integer numLostOffers;
 	private Integer numVisitsTot;
 	private Integer numPendingVisitsTot;
 	private Integer numOffersTot;
 	private Integer numAprovedOffersTot;
 	private Integer numLostOffersTot;
+	private Integer numPendingOffersTot;
 	private Integer count;
-
+	private Target target;
+	private Product product;
+	private Integer controlType;
 	
+	public Integer getNumPendingOffersTot() {
+		return numPendingOffersTot;
+	}
+
+	public void setNumPendingOffersTot(Integer numPendingOffersTot) {
+		this.numPendingOffersTot = numPendingOffersTot;
+	}
+
+	public Integer getControlType() {
+		return controlType;
+	}
+
+	public void setControlType(Integer controlType) {
+		this.controlType = controlType;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public Target getTarget() {
+		return target;
+	}
+
+	public void setTarget(Target target) {
+		this.target = target;
+	}
+
 	public List<Integer> getSummaryGraph() {
 		return summaryGraph;
 	}
@@ -189,6 +232,14 @@ public class CommercialStatEngineController {
 		this.numLostOffers = numLostOffers;
 	}
 
+	public Integer getNumPendingOffers() {
+		return numPendingOffers;
+	}
+
+	public void setNumPendingOffers(Integer numPendingOffers) {
+		this.numPendingOffers = numPendingOffers;
+	}
+
 	public DataModel getPendingVisitsModel() {
 		if (pendingVisitsModel == null) {
 			pendingVisitsModel = new ListDataModel(getPendingVisitsList());
@@ -242,6 +293,25 @@ public class CommercialStatEngineController {
 
 	public void setVisitsModel(DataModel visitsModel) {
 		this.visitsModel = visitsModel;
+	}
+	
+	public DataModel getPendingOffersModel() {
+		if (pendingOffersModel == null) {
+			pendingOffersModel = new ListDataModel(getPendingOffersList());
+		}
+		return pendingOffersModel;
+	}
+
+	public void setPendingOffersModel(DataModel pendingOffersModel) {
+		this.pendingOffersModel = pendingOffersModel;
+	}
+
+	public List<OfferDetail> getPendingOffersList() {
+		return pendingOffersList;
+	}
+
+	public void setPendingOffersList(List<OfferDetail> pendingOffersList) {
+		this.pendingOffersList = pendingOffersList;
 	}
 
 	public List<OfferDetail> getDoneOffersList() {
@@ -385,12 +455,25 @@ public class CommercialStatEngineController {
 	public void setParams(StatParams params) {
 		this.params = params;
 	}
+	
+	public void onSellerType(ActionEvent event) {
+		setControlType(0);
+	}
+	
+	public void onTargetType(ActionEvent event) {
+		setControlType(1);
+	}
+	
+	public void onProductType(ActionEvent event) {
+		setControlType(2);
+	}
 
 	public void onReset(ActionEvent event) {
 		params = new StatParams();
 		params.setLocale(FacesContext.getCurrentInstance().getViewRoot()
 				.getLocale());
-		params.setOfferStatuses(null);
+		OfferStatus[] defaultOfferStatus = {OfferStatus.APPROVED};
+		params.setOfferStatuses(defaultOfferStatus);		
 		setSeller(null);
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
@@ -411,21 +494,21 @@ public class CommercialStatEngineController {
 			setNumVisits(0);
 			setNumOffers(0);
 			if (count < 1) {
-				numAprovedOffersTot = 0;
-				numLostOffersTot = 0;
-				numVisitsTot = 0;
-				numPendingVisitsTot = 0;
-				numOffersTot = 0;
+				setNumVisitsTot(0);
+				setNumAprovedOffersTot(0);
+				setNumLostOffersTot(0);
+				setNumPendingVisitsTot(0);
+				setNumOffersTot(0);
+				setNumPendingOffersTot(0);
 			}
 			setClosedOffersModel(null);
 			setDoneOffersModel(null);
 			setLostOffersModel(null);
+			setPendingOffersModel(null);
 			setVisitsModel(null);
 			setPendingVisitsModel(null);
 
-			getClosedOffers();
 			getDoneOffers();
-			getLostOffers();
 			getDoneVisitsModel();
 			getPendingVisitModel();
 
@@ -441,15 +524,16 @@ public class CommercialStatEngineController {
 			setNumLostOffers(0);
 			setNumVisits(0);
 			setNumPendingVisits(0);
+			setNumPendingOffers(0);
 			setNumOffers(0);
 
 			if (count < 1) {
 				setNumVisitsTot(0);
-				numAprovedOffersTot = 0;
-				numLostOffersTot = 0;
-
-				numPendingVisitsTot = 0;
-				numOffersTot = 0;
+				setNumAprovedOffersTot(0);
+				setNumLostOffersTot(0);
+				setNumPendingVisitsTot(0);
+				setNumOffersTot(0);
+				setNumPendingOffersTot(0);
 			}
 
 			setClosedOffersModel(null);
@@ -457,13 +541,83 @@ public class CommercialStatEngineController {
 			setLostOffersModel(null);
 			setVisitsModel(null);
 			setPendingVisitsModel(null);
+			setPendingOffersModel(null);
 			setSummaryModel(null);
 
-			getClosedOffers();
 			getDoneOffers();
-			getLostOffers();
 			getDoneVisitsModel();
 			getPendingVisitModel();
+
+		} catch (ManagerBeanException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	public void getTargetControlStats(){
+		try {
+			setNumAprovedOffers(0);
+			setNumLostOffers(0);
+			setNumVisits(0);
+			setNumPendingVisits(0);
+			setNumPendingOffers(0);
+			setNumOffers(0);
+
+			if (count < 1) {
+				setNumVisitsTot(0);
+				setNumAprovedOffersTot(0);
+				setNumLostOffersTot(0);
+				setNumPendingVisitsTot(0);
+				setNumOffersTot(0);
+				setNumPendingOffersTot(0);
+			}
+
+			setClosedOffersModel(null);
+			setDoneOffersModel(null);
+			setLostOffersModel(null);
+			setVisitsModel(null);
+			setPendingVisitsModel(null);
+			setPendingOffersModel(null);
+			setSummaryModel(null);
+			
+			getTargetDoneOffers();
+			getTargetDoneVisitsModel();
+			getTargetPendingVisitModel();
+
+		} catch (ManagerBeanException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	public void getProductControlStats(){
+		try {
+			setNumAprovedOffers(0);
+			setNumLostOffers(0);
+			setNumVisits(0);
+			setNumPendingVisits(0);
+			setNumPendingOffers(0);
+			setNumOffers(0);
+
+			if (count < 1) {
+				setNumVisitsTot(0);
+				setNumAprovedOffersTot(0);
+				setNumLostOffersTot(0);
+				setNumPendingVisitsTot(0);
+				setNumOffersTot(0);
+				setNumPendingOffersTot(0);
+			}
+
+			setClosedOffersModel(null);
+			setDoneOffersModel(null);
+			setLostOffersModel(null);
+			setPendingOffersModel(null);
+			setVisitsModel(null);
+			setPendingVisitsModel(null);
+			setSummaryModel(null);
+
+			getProductDoneOffers();
+		
 
 		} catch (ManagerBeanException e1) {
 			// TODO Auto-generated catch block
@@ -508,23 +662,6 @@ public class CommercialStatEngineController {
 		setNumPendingVisits(pendingVisitsList.size());
 	}
 
-	private void getLostOffers() throws ManagerBeanException {
-		String select = "select OfferDetail "
-				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.status = 2 AND  OfferDetail.offer.seller.id = "
-				+ seller.getId() 
-				+ " AND   OfferDetail.offer.issueDate >= '"
-				+ new java.sql.Date(this.params.getFromDate().getTime())
-				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' order by OfferDetail.offer.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		lostOffersList = query.list();
-		setNumLostOffers(lostOffersList.size());
-	}
-
 	private void getDoneOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
@@ -538,24 +675,25 @@ public class CommercialStatEngineController {
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		doneOffersList = query.list();
-		setNumOffers(doneOffersList.size());
-	}
-
-	private void getClosedOffers() throws ManagerBeanException {
-		String select = "select OfferDetail "
-				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.status = 1 AND OfferDetail.offer.seller.id = "
-				+ seller.getId() 
-				+ " AND   OfferDetail.offer.issueDate >= '"
-				+ new java.sql.Date(this.params.getFromDate().getTime())
-				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' order by OfferDetail.offer.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		closedOffersList = query.list();
-		setNumAprovedOffers(closedOffersList.size());
+		closedOffersList = new LinkedList<OfferDetail>();
+		lostOffersList = new LinkedList<OfferDetail>();
+		pendingOffersList = new LinkedList<OfferDetail>();
+	
+		for (int i = 0; i < doneOffersList.size(); i++) {
+			numOffers++;
+			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.APPROVED){
+				numAprovedOffers++;
+				closedOffersList.add(doneOffersList.get(i));
+			}
+			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.REFUSED){
+				numLostOffers++;
+				lostOffersList.add(doneOffersList.get(i));
+			}
+			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.PENDING){
+				numPendingOffers++;
+				pendingOffersList.add(doneOffersList.get(i));
+			}
+		}
 	}
 
 	public void onSummary(ActionEvent e) throws ManagerBeanException {
@@ -576,19 +714,77 @@ public class CommercialStatEngineController {
 			s.setNumPendingVisits(numPendingVisits);
 			s.setNumAprovedOffers(numAprovedOffers);
 			s.setNumLostOffers(numLostOffers);
+			s.setNumPendingOffers(numPendingOffers);
 			numVisitsTot += numVisits;
 			numOffersTot += numOffers;
 			numPendingVisitsTot += numPendingVisits;
 			numAprovedOffersTot += numAprovedOffers;
 			numLostOffersTot += numLostOffers;
+			numPendingOffersTot += numPendingOffers;
 			summary.add(s);
 		}
-		summaryGraph = new LinkedList<Integer>();
-		summaryGraph.add(numVisitsTot);
-		summaryGraph.add(numOffersTot);
-		summaryGraph.add(numPendingVisitsTot);
-		summaryGraph.add(numAprovedOffersTot);
-		summaryGraph.add(numLostOffersTot);
+		count = 0;
+
+	}
+	
+	public void onTargetSummary(ActionEvent e) throws ManagerBeanException {
+		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+		List<ITransferObject> list;
+		list = targetBean.getList(null);
+		summary = new LinkedList<SellerSummary>();
+		for (ITransferObject to : list) {
+			Target tg = (Target) to;
+			SellerSummary s = new SellerSummary();
+			this.setTarget(tg);
+			getTargetControlStats();
+			count++;
+			s.setId(tg.getId());
+			s.setName(tg.getId() + " " + tg.getRegistry().getFullName());
+			s.setNumVisits(numVisits);
+			s.setNumOffers(numOffers);
+			s.setNumPendingVisits(numPendingVisits);
+			s.setNumAprovedOffers(numAprovedOffers);
+			s.setNumLostOffers(numLostOffers);
+			s.setNumPendingOffers(numPendingOffers);
+			numVisitsTot += numVisits;
+			numOffersTot += numOffers;
+			numPendingVisitsTot += numPendingVisits;
+			numAprovedOffersTot += numAprovedOffers;
+			numLostOffersTot += numLostOffers;
+			numPendingOffersTot += numPendingOffers;
+			summary.add(s);
+		}
+		count = 0;
+
+	}
+	
+	public void onProductSummary(ActionEvent e) throws ManagerBeanException {
+		IManagerBean productBean = BeanManager.getManagerBean(Product.class);
+		List<ITransferObject> list;
+		list = productBean.getList(null);
+		summary = new LinkedList<SellerSummary>();
+		for (ITransferObject to : list) {
+			Product pro = (Product) to;
+			SellerSummary s = new SellerSummary();
+			this.setProduct(pro);
+			getProductControlStats();
+			count++;
+			s.setId(pro.getId());
+			s.setName(pro.getId() + " " + pro.getName());
+			s.setNumVisits(numVisits);
+			s.setNumOffers(numOffers);
+			s.setNumPendingVisits(numPendingVisits);
+			s.setNumAprovedOffers(numAprovedOffers);
+			s.setNumLostOffers(numLostOffers);
+			s.setNumPendingOffers(numPendingOffers);
+			numVisitsTot += numVisits;
+			numOffersTot += numOffers;
+			numPendingVisitsTot += numPendingVisits;
+			numAprovedOffersTot += numAprovedOffers;
+			numLostOffersTot += numLostOffers;
+			numPendingOffersTot += numPendingOffers;
+			summary.add(s);
+		}
 		count = 0;
 
 	}
@@ -606,6 +802,33 @@ public class CommercialStatEngineController {
 		getSellerControlStats();
 
 	}
+	
+	public void onTargetDetail(ActionEvent e) throws ManagerBeanException {
+
+		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(targetBean.getFieldName(ICommercialAlias.TARGET_REGISTRY_ID),
+				((SellerSummary) getSummaryModel().getRowData()).getId());
+		List<ITransferObject> list;
+		list = targetBean.getList(criteria);
+		this.setTarget((Target) list.get(0));
+		getTargetControlStats();
+
+	}
+	
+	public void onProductDetail(ActionEvent e) throws ManagerBeanException {
+
+		IManagerBean productBean = BeanManager.getManagerBean(Product.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(productBean
+				.getFieldName(IProductAlias.PRODUCT_ID),
+				((SellerSummary) getSummaryModel().getRowData()).getId());
+		List<ITransferObject> list;
+		list = productBean.getList(criteria);
+		this.setProduct((Product) list.get(0));
+		getProductControlStats();
+
+	}
 
 	public class SellerSummary {
 
@@ -616,6 +839,7 @@ public class CommercialStatEngineController {
 		private Integer numOffers;
 		private Integer numAprovedOffers;
 		private Integer numLostOffers;
+		private Integer numPendingOffers;
 
 		public Integer getId() {
 			return id;
@@ -673,6 +897,14 @@ public class CommercialStatEngineController {
 			this.numLostOffers = numLostOffers;
 		}
 
+		public Integer getNumPendingOffers() {
+			return numPendingOffers;
+		}
+
+		public void setNumPendingOffers(Integer numPendingOffers) {
+			this.numPendingOffers = numPendingOffers;
+		}
+		
 	}
 
 	public void onCategoryStats(ActionEvent event) {
@@ -722,6 +954,26 @@ public class CommercialStatEngineController {
 		setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
 		productStatModel = null;
 	}
+	
+	public void onProductStats(ActionEvent event) {
+		try {
+			StatEngine se = new StatEngine();
+			//params.setCategory(category);
+			List<Stat> list = new LinkedList<Stat>();
+			list.addAll(se.getCommercialCategoryProductsStats(params));
+			setProductStats(list);
+			calculateTotals(list);
+			setReportName(AonUtil.getMessage(bundle,
+					"stat_report_commercial_product"));
+			setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+			productStatModel = null;
+
+		} catch (ManagerBeanException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
 
 	public void onSellerStats(ActionEvent event) {
 		try {
@@ -733,6 +985,24 @@ public class CommercialStatEngineController {
 			setReportName(AonUtil.getMessage(bundle,
 					"stat_report_commercial_seller"));
 			setItemTitle(AonUtil.getMessage(bundle, "stat_seller"));
+			yearStatModel = null;
+
+		} catch (ManagerBeanException e) {
+			String msg = "Error al obtener los datos. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	public void onTargetStats(ActionEvent event) {
+		try {
+			StatEngine se = new StatEngine();
+			List<Stat> list = new LinkedList<Stat>();
+			list.addAll(se.getCommercialTargetStats(params));
+			setYearStats(list);
+			calculateTotals(list);
+			setReportName(AonUtil.getMessage(bundle,"stat_report_commercial_target"));
+			setItemTitle(AonUtil.getMessage(bundle, "stat_target"));
 			yearStatModel = null;
 
 		} catch (ManagerBeanException e) {
@@ -776,5 +1046,113 @@ public class CommercialStatEngineController {
 		}
 		promAmount += totalAmount / numInvoices;
 	}
+	
+	private void getTargetDoneVisitsModel() throws ManagerBeanException {
+		PreparedStatement ps = null;
+		
+		String select = "select CommercialTracking "
+				+ "from CommercialTracking as CommercialTracking "
+				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.target.id = "
+				+ target.getId() 
+				+ " AND   CommercialTracking.date >= '"
+				+ new java.sql.Date(this.params.getFromDate().getTime())
+				+ "' AND CommercialTracking.date <= '"
+				+ new java.sql.Date(this.params.getToDate().getTime())
+				+ "' order by CommercialTracking.date desc";
+
+		Session session = HibernateUtil.getSession(HibernateUtil
+				.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		visitsList = query.list();
+		setNumVisits(visitsList.size());
+	}
+
+	private void getTargetPendingVisitModel() throws ManagerBeanException {
+		String select = "select CommercialTracking "
+				+ "from CommercialTracking as CommercialTracking "
+				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.target.id = "
+				+ target.getId() 
+				+ " AND   CommercialTracking.date >= '"
+				+ new java.sql.Date(this.params.getFromDate().getTime())
+				+ "' AND CommercialTracking.date <= '"
+				+ new java.sql.Date(this.params.getToDate().getTime())
+				+ "' order by CommercialTracking.date desc";
+		Session session = HibernateUtil.getSession(HibernateUtil
+				.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		pendingVisitsList = query.list();
+		setNumPendingVisits(pendingVisitsList.size());
+	}
+
+	private void getTargetDoneOffers() throws ManagerBeanException {
+		String select = "select OfferDetail "
+				+ "from OfferDetail as OfferDetail "
+				+ "where  OfferDetail.offer.target.id = " + target.getId()
+				+ " AND   OfferDetail.offer.issueDate >= '"
+				+ new java.sql.Date(this.params.getFromDate().getTime())
+				+ "' AND OfferDetail.offer.issueDate <= '"
+				+ new java.sql.Date(this.params.getToDate().getTime())
+				+ "' order by OfferDetail.offer.issueDate desc";
+		Session session = HibernateUtil.getSession(HibernateUtil
+				.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		doneOffersList = query.list();
+		closedOffersList = new LinkedList<OfferDetail>();
+		lostOffersList = new LinkedList<OfferDetail>();
+		pendingOffersList = new LinkedList<OfferDetail>();
+	
+		for (int i = 0; i < doneOffersList.size(); i++) {
+			numOffers++;
+			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.APPROVED){
+				numAprovedOffers++;
+				closedOffersList.add(doneOffersList.get(i));
+			}
+			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.REFUSED){
+				numLostOffers++;
+				lostOffersList.add(doneOffersList.get(i));
+			}
+			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.PENDING){
+				numPendingOffers++;
+				pendingOffersList.add(doneOffersList.get(i));
+			}
+		}
+	}
+
+	private void getProductDoneOffers() throws ManagerBeanException {
+		String select = "select OfferDetail "
+				+ "from OfferDetail as OfferDetail "
+				+ "where  OfferDetail.item.product = " + product.getId()
+				+ " AND   OfferDetail.offer.issueDate >= '"
+				+ new java.sql.Date(this.params.getFromDate().getTime())
+				+ "' AND OfferDetail.offer.issueDate <= '"
+				+ new java.sql.Date(this.params.getToDate().getTime())
+				+ "' order by OfferDetail.offer.issueDate desc";
+		Session session = HibernateUtil.getSession(HibernateUtil
+				.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		doneOffersList = query.list();
+		closedOffersList = new LinkedList<OfferDetail>();
+		lostOffersList = new LinkedList<OfferDetail>();
+		pendingOffersList = new LinkedList<OfferDetail>();
+	
+		for (int i = 0; i < doneOffersList.size(); i++) {
+			numOffers++;
+			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.APPROVED){
+				numAprovedOffers++;
+				closedOffersList.add(doneOffersList.get(i));
+			}
+			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.REFUSED){
+				numLostOffers++;
+				lostOffersList.add(doneOffersList.get(i));
+			}
+			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.PENDING){
+				numPendingOffers++;
+				pendingOffersList.add(doneOffersList.get(i));
+			}
+		}
+	}
+
+
+
 
 }
