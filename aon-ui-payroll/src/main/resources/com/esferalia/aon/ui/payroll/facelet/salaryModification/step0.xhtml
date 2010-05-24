@@ -14,7 +14,57 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:param name="skipSearchButton" value="true" />
+
+			<ui:define name="searchContent">
+				<aon:outputLabel for="documento"
+					value="#{payrollBundle.payroll_documento}" />
+				<aon:inputText id="documento" size="10" maxlength="10"
+					value="#{salaryModificationWizard.params.documento}">
+				</aon:inputText>
+
+				<aon:outputLabel for="numss" value="#{payrollBundle.payroll_numss}" />
+				<aon:inputText id="numss" size="15" maxlength="12"
+					value="#{salaryModificationWizard.params.numSS}" />
+
+				<aon:outputLabel for="nombre"
+					value="#{payrollBundle.payroll_nombre}" />
+				<aon:inputText id="nombre" size="20" maxlength="25"
+					value="#{salaryModificationWizard.params.nombre}" />
+
+				<aon:outputLabel for="apellido"
+					value="#{payrollBundle.payroll_apellido}" />
+				<aon:inputText id="apellido" size="20" maxlength="35"
+					value="#{salaryModificationWizard.params.apellido}" />
+
+				<aon:outputLabel for="apellido2"
+					value="#{payrollBundle.payroll_apellido2}" />
+				<aon:inputText id="apellido2" size="20" maxlength="25"
+					value="#{salaryModificationWizard.params.apellido2}" />
+
+				<aon:outputLabel for="empresa"
+					value="#{payrollBundle.payroll_empresa}" />
+				<aon:inputText id="empresa" size="20" maxlength="25"
+					value="#{salaryModificationWizard.params.empresa}" />
+				
+				<aon:outputLabel for="actividad"
+					value="#{payrollBundle.payroll_actividad}" />
+				<aon:inputText id="actividad" size="20" maxlength="25"
+					value="#{salaryModificationWizard.params.actividad}" />
+				
+<!--  
+				<aon:outputText value="&#160;" />
+				<aon:div>
+					<aon:selectBooleanCheckbox id="finalizados" 
+						value="#{salaryModificationWizard.params.finalizados}" />
+					<aon:outputLabel for="empresa"
+						value="#{payrollBundle.payroll_contratos_fin}" />
+				</aon:div>
+-->				
+			</ui:define>
+		</ui:decorate>
 		
 	</ui:define>
 
