@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="salaryModificationForm">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{payrollBundle.salaryModification_module}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<ui:insert name="step_name" />
+					</aon:div>
+
+					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="prev" immediate="true"
+							value="#{payrollBundle.payroll_back}"
+							action="#{salaryModificationWizard.previous}"
+							actionListener="#{salaryModificationWizard.onPrevious}"
+							styleClass="aon-finding-toolbar-item aon-icon-previous"
+							rendered="#{salaryModificationWizard.previousAvailable}" />
+						<aon:commandButton id="next"
+							value="#{payrollBundle.payroll_forward}"
+							action="#{salaryModificationWizard.next}"
+							actionListener="#{salaryModificationWizard.onNext}"
+							rendered="#{salaryModificationWizard.nextAvailable}"
+							styleClass="aon-finding-toolbar-item aon-icon-next" />
+
+						<aon:commandButton id="end"
+							value="#{payrollBundle.payroll_finalice}"
+							action="#{salaryModificationWizard.next}"
+							actionListener="#{salaryModificationWizard.onNext}"
+							onclick="if (!confirm('#{payrollBundle.payroll_finalice}?')) { return false;}"
+							rendered="#{!salaryModificationWizard.nextAvailable}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />
+
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="width: 100%;margin-bottom: 10px;">
+					<h:panelGrid columns="6" styleClass="aon-text-left" >
+						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{salaryModificationWizard.currentStep==0?'color:#1160c6;':'border-color:#666;color:#666;'}">
+							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{salaryModificationWizard.currentStep==0?'background-color:#1160c6;color:white;':'border-color:#666;'}"
+								value="01" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.salaryModification_step0}" />
+						</aon:div>
+						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{salaryModificationWizard.currentStep==1?'color:#1160c6;':'border-color:#666;color:#666;'}">
+							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{salaryModificationWizard.currentStep==1?'background-color:#1160c6;color:white;':'border-color:#666;'}"
+								value="02" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.salaryModification_step1}" />
+						</aon:div>
+						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{salaryModificationWizard.currentStep==2?'color:#1160c6;':'border-color:#666;color:#666;'}">
+							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{salaryModificationWizard.currentStep==2?'background-color:#1160c6;color:white;':'border-color:#666;'}"
+								value="03" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.salaryModification_step2}" />
+						</aon:div>
+						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{salaryModificationWizard.currentStep==3?'color:#1160c6;':'border-color:#666;color:#666;'}">
+							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{salaryModificationWizard.currentStep==3?'background-color:#1160c6;color:white;':'border-color:#666;'}"
+								value="03" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.salaryModification_step3}" />
+						</aon:div>
+					</h:panelGrid>
+				</aon:div>
+
+				<ui:insert name="step_content" />
+			</aon:div>
+		</aon:form>
+		<ui:insert name="after_form" />
+	</ui:define>
+</ui:composition>
