@@ -35,7 +35,7 @@ public class DefaultSessionFactoryNameProvider implements ISessionFactoryNamePro
         InitialContext ic;
         try {
             ic = new InitialContext();
-            Subject subject = (Subject)ic.lookup(DBCPConnectionProvider.SECURITY_SUBJECT);
+            Subject subject = (Subject)ic.lookup(C3P0ConnectionProvider.SECURITY_SUBJECT);
             if (subject != null && subject.getPrincipals() != null) {
                 Principal principal = subject.getPrincipals().iterator().next();
                 String name = principal.getName();
