@@ -19,7 +19,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.Percepcion;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.IPercepcion;
 import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
@@ -189,4 +191,20 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 		}
 		return list;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IPercepcion> getPercepciones(IPersona persona) throws PayrollException{
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Percepcion.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.PERCEPCION_ID_NUMERO), persona.getId());
+			List<?> list = bean.getList(c);
+			return (List<IPercepcion>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	
 }
