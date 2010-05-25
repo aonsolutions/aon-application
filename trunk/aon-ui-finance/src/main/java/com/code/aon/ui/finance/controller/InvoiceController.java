@@ -24,6 +24,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
@@ -293,14 +294,38 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException{
-		double invoiceTotal = getToInvoiceTotalPrice();
-		double financeTotal = getToInvoiceFinanceTotal();
-		if (financeTotal != 0 && invoiceTotal != financeTotal) {
-			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
-			throw new AbortProcessingException(message);
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			double invoiceTotal = getToInvoiceTotalPrice();
+			double financeTotal = getToInvoiceFinanceTotal();
+			if (financeTotal != 0 && invoiceTotal != financeTotal) {
+				String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
+				throw new AbortProcessingException(message);
+			}
+			Invoice invoice = getInvoice();
+			invoice = (Invoice) HibernateUtil.getSession(sessionName).merge(invoice);
+			getAccountWriter().recordAndUpdateInvoice(invoice);
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-
-		getAccountWriter().recordAndUpdateInvoice(getInvoice());
+		
 	}
 	
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException{

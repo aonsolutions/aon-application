@@ -7,7 +7,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.registry.RegistryBank;
 
-public class SalaryEntryHeader implements ITransferObject {
+public class SalaryEntry implements ITransferObject {
 	
 	private static final long serialVersionUID = -3872966060253678894L;
 
@@ -24,7 +24,6 @@ public class SalaryEntryHeader implements ITransferObject {
 	private double employeeSocialInsurance2;
 	private double employeeSocialInsurance3;
 	private double employeeSocialInsurance4;
-
 	private double companySocialInsurance;
 	
 	public Period getPeriod() {

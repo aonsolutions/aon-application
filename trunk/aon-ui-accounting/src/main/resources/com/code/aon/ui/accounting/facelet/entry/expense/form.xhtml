@@ -14,7 +14,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
 				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_expense_entry_module}" />
-				<ui:param name="toolbarDescription" value="#{expenseEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" 
@@ -25,36 +25,12 @@
 						action="#{expenseEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						accesskey="#{bundle.aon_key_new}"
-						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})" 
-						rendered="#{!expenseEntry.new}"
-						actionListener="#{expenseEntry.onReset}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"/>
-					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
-						accesskey="#{bundle.aon_key_remove}" 
-						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
-						action="accountEntry_search"
-						actionListener="#{expenseEntry.onRemove}"
-						rendered="#{!expenseEntry.new}" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-delete"
-						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
 					<aon:commandButton value="#{bundle.aon_back}"
-						accesskey="#{bundle.aon_key_cancel}"
-						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})" 
-						action="accountEntry_form"
-						rendered="#{!expenseEntry.new}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						immediate="true"
-						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"/>
-					<aon:commandButton value="#{bundle.aon_back}"
-						accesskey="#{bundle.aon_key_cancel}"
+						accesskey="#{bundle.aon_key_cancel}" immediate="true"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
-						action="accountEntry_search" rendered="#{expenseEntry.new}"
+						action="accountEntry_search" 
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
-
 				</ui:define>
 			</ui:decorate>
 
@@ -86,10 +62,6 @@
 
 					<aon:outputLabel for="AccountEntry_concept"
 						value="#{bundle.aon_concept}" />
-<!-- 					
-					<aon:inputText id="AccountEntry_concept" required="true"
-						value="#{expenseEntry.header.concept}" size="50" maxlength="32" />
--->
 					<rich:comboBox id="AccountEntry_concept"
 						suggestionValues="#{accountingCollections.conceptsDescriptions}"
 						value="#{expenseEntry.header.concept}" required="true"

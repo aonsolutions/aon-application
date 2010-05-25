@@ -19,7 +19,7 @@
 				<ui:param name="toolbarTitle"
 					value="#{accountingBundle.accounting_loan_fee_entry_module}" />
 				<ui:param name="toolbarDescription"
-					value="#{loanFeeEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					value="#{bundle.aon_reset}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save"
@@ -29,32 +29,10 @@
 						actionListener="#{loanFeeEntry.onAccept}" action="#{loanFeeEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false" />
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						accesskey="#{bundle.aon_key_new}"
-						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})"
-						actionListener="#{loanFeeEntry.onReset}"
-						rendered="#{!loanFeeEntry.new}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset" />
-					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
-						accesskey="#{bundle.aon_key_remove}"
-						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
-						action="accountEntry_search"
-						actionListener="#{loanFeeEntry.onRemove}"
-						rendered="#{!loanFeeEntry.new}"
-						styleClass="aon-finding-toolbar-item aon-icon-delete"
-						immediate="true"
-						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false" />
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
-						action="accountEntry_form" rendered="#{!loanFeeEntry.new}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						immediate="true"
-						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
-					<aon:commandButton value="#{bundle.aon_back}"
-						accesskey="#{bundle.aon_key_cancel}"
-						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
-						action="accountEntry_search" rendered="#{loanFeeEntry.new}"
+						action="accountEntry_search" 
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
@@ -68,14 +46,14 @@
 					<aon:outputLabel for="AccountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="AccountEntry_accountPeriod"
-						value="#{loanFeeEntry.header.feePeriod}">
+						value="#{loanFeeEntry.entry.feePeriod}">
 						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_date" value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="Account_date" required="true"
-						value="#{loanFeeEntry.header.feeDate}"
+						value="#{loanFeeEntry.entry.feeDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 
@@ -83,20 +61,16 @@
 						value="#{accountingBundle.accounting_loan}" />
 					<aon:selectOneMenu id="Loan_Lookup_id" required="true"
 						reRender="loanContainer" ajaxSingle="true"
-						value="#{loanFeeEntry.header.loan}">
+						value="#{loanFeeEntry.entry.loan}">
 						<f:selectItem itemValue="" itemLabel="-" />
 						<f:selectItems value="#{accountingCollections.activeLoans}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_description"
 						value="#{bundle.aon_concept}" />
-<!-- 
-					<aon:inputText id="Account_description" required="true"
-						value="#{loanFeeEntry.header.description}" size="60" />
- -->
 					<rich:comboBox id="Account_concept"
 						suggestionValues="#{accountingCollections.conceptsDescriptions}"
-						value="#{loanFeeEntry.header.description}" required="true"
+						value="#{loanFeeEntry.entry.description}" required="true"
 						maxlength="32" width="200" 
 						directInputSuggestions="true"
 						inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
@@ -108,16 +82,16 @@
 						value="#{accountingBundle.accounting_amortization}" />
 					<aon:inputText id="Account_amortization" required="true"
 						focus="Account_interest" reRender="Account_fee,loanFeeAmount"
-						value="#{loanFeeEntry.header.amortization}" size="10" />
+						value="#{loanFeeEntry.entry.amortization}" size="10" />
 
 					<aon:outputLabel for="Account_interest"
 						value="#{accountingBundle.accounting_interest}" />
 					<aon:div>
 					<aon:inputText id="Account_interest" required="true"
 						focus="Account_expenses" reRender="Account_fee,loanFeeAmount"
-						value="#{loanFeeEntry.header.interest}" size="10" />
+						value="#{loanFeeEntry.entry.interest}" size="10" />
 						<aon:selectOneMenu id="Account_interest_account" 
-							value="#{loanFeeEntry.header.interestAccount}"
+							value="#{loanFeeEntry.entry.interestAccount}"
 							style="width: 380px; margin-left: 10px;">
 							<f:selectItems value="#{accountCollections.debtInterestAccounts}" />
 						</aon:selectOneMenu>
@@ -128,16 +102,16 @@
 					<aon:div>
 						<aon:inputText id="Account_expenses" required="true"
 							focus="save" reRender="Account_fee,loanFeeAmount"
-							value="#{loanFeeEntry.header.expenses}" size="10" />
+							value="#{loanFeeEntry.entry.expenses}" size="10" />
 						<aon:selectOneMenu id="Account_expenses_account" 
-							value="#{loanFeeEntry.header.expensesAccount}"
+							value="#{loanFeeEntry.entry.expensesAccount}"
 							style="width: 380px; margin-left: 10px;">
 							<f:selectItems value="#{accountCollections.expensesAccounts}" />
 						</aon:selectOneMenu>
 					</aon:div>
 
 					<aon:outputLabel for="Account_fee" value="#{bundle.aon_fee}" />
-					<aon:inputText id="Account_fee" value="#{loanFeeEntry.header.fee}"
+					<aon:inputText id="Account_fee" value="#{loanFeeEntry.entry.fee}"
 						disabled="true" size="10">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:inputText>
@@ -145,18 +119,18 @@
 
 				<aon:div id="loanContainer" style="margin-top: 10px;width: 70%;">
 					<aon:panelCollapsible label="#{accountingBundle.accounting_loan_data}" 
-						rendered="#{loanFeeEntry.header.loan != null and loanFeeEntry.header.loan.id != null}">
+						rendered="#{loanFeeEntry.entry.loan != null and loanFeeEntry.entry.loan.id != null}">
 						<aon:panelGrid columns="2" style="width: 100%; text-align: left;"
 							columnClasses="aon-panelGrid-odd aon-width-150
 								,aon-panelGrid-even aon-width-auto">
 							<aon:outputText value="#{bundle.aon_date}" />
-							<aon:outputText value="#{loanFeeEntry.header.loan.loanDate}">
+							<aon:outputText value="#{loanFeeEntry.entry.loan.loanDate}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 
 							<aon:outputText value="#{bundle.aon_description}" />
-							<aon:outputText value="#{loanFeeEntry.header.loan.description}" />
+							<aon:outputText value="#{loanFeeEntry.entry.loan.description}" />
 
 							<aon:outputText value="#{accountBundle.account_account}" />
 							<h:commandLink immediate="#{true}"
@@ -169,32 +143,32 @@
 
 							<aon:outputText value="#{accountingBundle.accounting_term}" />
 							<aon:outputText
-								value="#{loanFeeEntry.header.loan.term} #{accountingBundle.accounting_term_months}" />
+								value="#{loanFeeEntry.entry.loan.term} #{accountingBundle.accounting_term_months}" />
 
 							<aon:outputText value="#{accountingBundle.accounting_interest}" />
-							<aon:outputText value="#{loanFeeEntry.header.loan.interest}" />
+							<aon:outputText value="#{loanFeeEntry.entry.loan.interest}" />
 
 							<aon:outputText value="#{accountingBundle.accounting_review}" />
-							<aon:outputText value="#{loanFeeEntry.header.loan.review}" />
+							<aon:outputText value="#{loanFeeEntry.entry.loan.review}" />
 
 							<aon:outputText value="#{configBundle.config_bank}" />
 							<aon:outputText
-								value="#{loanFeeEntry.header.loan.registryBank.fullName}" />
+								value="#{loanFeeEntry.entry.loan.registryBank.fullName}" />
 
 							<aon:outputText value="#{bundle.aon_amount}" />
 							<aon:outputText
-								value="#{loanFeeEntry.header.loan.amount}">
+								value="#{loanFeeEntry.entry.loan.amount}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 
 							<aon:outputText value="#{accountingBundle.accounting_expenses}" />
-							<aon:outputText value="#{loanFeeEntry.header.loan.expenses}">
+							<aon:outputText value="#{loanFeeEntry.entry.loan.expenses}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 
 							<aon:outputText value="#{accountingBundle.accounting_fee_amount}" />
-							<aon:outputText id="loanFeeAmount" value="#{loanFeeEntry.header.loan.feeAmount}"
-								style="color:#{loanFeeEntry.header.sameAmount?'black;':'red;'}">
+							<aon:outputText id="loanFeeAmount" value="#{loanFeeEntry.entry.loan.feeAmount}"
+								style="color:#{loanFeeEntry.entry.sameAmount?'black;':'red;'}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 
@@ -204,7 +178,7 @@
 							</aon:outputText>
 
 							<aon:outputText value="#{bundle.aon_security_level}" />
-							<aon:outputText value="#{loanFeeEntry.header.loan.securityLevel}" />
+							<aon:outputText value="#{loanFeeEntry.entry.loan.securityLevel}" />
 
 						</aon:panelGrid>
 					</aon:panelCollapsible>

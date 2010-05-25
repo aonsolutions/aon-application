@@ -35,6 +35,7 @@ import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
@@ -196,6 +197,9 @@ public class AccountEntryInvoiceWriter {
 				Iterator<?> iter = productAccountBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					account = ((ProductAccount) iter.next()).getAccount();
+				}
+				if (account == null && invoiceDetail.getItem().getProduct().getType() == ProductType.EXPENSE) {
+					throw new ManagerBeanException("El gasto \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");
 				}
 			}
 			if (account == null) {

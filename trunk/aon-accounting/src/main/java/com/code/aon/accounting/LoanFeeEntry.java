@@ -6,7 +6,7 @@ import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 
-public class LoanFeeEntryHeader implements ITransferObject {
+public class LoanFeeEntry implements ITransferObject {
 
 	private static final long serialVersionUID = -8273893100974866857L;
 
