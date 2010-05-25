@@ -15,6 +15,7 @@ import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
+import com.esferalia.aon.payroll.Percepcion;
 import com.esferalia.aon.payroll.Persona;
 import com.esferalia.aon.payroll.RemesaINSS;
 import com.esferalia.aon.payroll.RemesaParteIT;
@@ -37,6 +38,7 @@ public class PayrollAliasWriter {
 				Nomina.class.getName(),
 				ParteConfirmacionIT.class.getName(),
 				ParteIT.class.getName(),
+				Percepcion.class.getName(),
 				Persona.class.getName(),
 				RemesaINSS.class.getName(),
 				RemesaParteIT.class.getName(),
