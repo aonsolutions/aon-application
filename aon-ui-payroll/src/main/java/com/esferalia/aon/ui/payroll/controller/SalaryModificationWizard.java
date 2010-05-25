@@ -1,11 +1,13 @@
 package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.ICriteriaProvider;
 import com.code.aon.common.ITransferObject;
@@ -15,6 +17,7 @@ import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.IDataModelDataProvider;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IPercepcion;
 import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
@@ -29,6 +32,7 @@ public class SalaryModificationWizard implements Serializable, IDataModelDataPro
 	private EmpleadoParams params;
 	private IEmpleadoDAO empleadoDAO;
 	private DataModel empleadoModel;
+	private DataModel percepcionesModel;
 	private IPersona persona;
 	
 
@@ -118,6 +122,35 @@ public class SalaryModificationWizard implements Serializable, IDataModelDataPro
 		}
 	}
 	
+	public DataModel getPercepcionesModel() {
+		try {
+			if (percepcionesModel == null) {
+				List<IPercepcion> list = getEmpleadoDAO().getPercepciones(persona);
+				percepcionesModel = new ListDataModel(transformPercepcionesModel(list));
+			}
+			return percepcionesModel;
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+	public void setPercepcionesModel(DataModel percepcionesModel) {
+		this.percepcionesModel = percepcionesModel;
+	}
+	
+	private List<PercepcionEmpleado> transformPercepcionesModel(List<IPercepcion> list) throws PayrollException {
+		List<PercepcionEmpleado> extendedList = new ArrayList<PercepcionEmpleado>();
+		if (list.size() > 0) {
+			for (IPercepcion p : list) {
+				PercepcionEmpleado pe = new PercepcionEmpleado();
+				pe.setPercepcion(p);
+				extendedList.add(pe);				
+			}
+		}
+		return extendedList;
+	}
+
+	
 //	Action Listeners
 	public void onNext(ActionEvent event) {
 		if (getCurrentStep() == 0) {
@@ -159,6 +192,7 @@ public class SalaryModificationWizard implements Serializable, IDataModelDataPro
 		params = null;
 		setCurrentStep(0);
 		setEmpleadoModel(null);
+		setPercepcionesModel(null);
 	}
 	
 	private void onValidate(ActionEvent event) {
