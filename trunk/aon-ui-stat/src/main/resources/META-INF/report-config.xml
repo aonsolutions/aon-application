@@ -193,6 +193,7 @@
 			<param id="numPendingVisitsTot" value="#{commercialStat.getNumPendingVisitsTot}" />
 			<param id="numAprovedOffersTot" value="#{commercialStat.getNumAprovedOffersTot}" />
 			<param id="numLostOffersTot" value="#{commercialStat.getNumLostOffersTot}" />
+			<param id="numPendingOffersTot" value="#{commercialStat.getNumPendingOffersTot}" />
 			
 		</params>
 	</report>
@@ -211,6 +212,8 @@
 			<param id="numAprovedOffersTot" value="#{commercialStat.getNumAprovedOffersTot}" />
 			<param id="numLostOffersTot" value="#{commercialStat.getNumLostOffersTot}" />
 			<param id="numPendingOffersTot" value="#{commercialStat.getNumPendingOffersTot}" />
+			<param id="reportName" value="#{commercialStat.getReportName}" />
+			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
 		</params>
 	</report>
 	
