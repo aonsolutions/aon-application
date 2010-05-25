@@ -32,6 +32,7 @@
 		<mapping class="com.esferalia.aon.payroll.Nomina"/>
 		<mapping class="com.esferalia.aon.payroll.ParteConfirmacionIT"/>		
 		<mapping class="com.esferalia.aon.payroll.ParteIT"/>		
+		<mapping class="com.esferalia.aon.payroll.Percepcion"/>
 		<mapping class="com.esferalia.aon.payroll.Persona"/>
 		<mapping class="com.esferalia.aon.payroll.RemesaINSS"/>
 		<mapping class="com.esferalia.aon.payroll.RemesaParteIT"/>
