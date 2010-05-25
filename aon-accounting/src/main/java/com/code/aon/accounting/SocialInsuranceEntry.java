@@ -9,7 +9,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.registry.RegistryBank;
 
-public class SocialInsuranceEntryHeader implements ITransferObject{
+public class SocialInsuranceEntry implements ITransferObject{
 
 	private static final long serialVersionUID = 9083596439112054168L;
 

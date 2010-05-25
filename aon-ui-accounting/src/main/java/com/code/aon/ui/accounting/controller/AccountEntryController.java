@@ -53,16 +53,6 @@ public class AccountEntryController extends BasicController {
 			// Wizard de cobros y pagos.
 			controllerManager.register(AccountEntryType.PAYMENT, "financeEntry");
 			controllerManager.register(AccountEntryType.COLLECTION, "financeEntry");
-			// Wizard de gastos sin IVA
-			controllerManager.register(AccountEntryType.EXPENSES, "expenseEntry");
-			// Wizard de nóminas
-			controllerManager.register(AccountEntryType.SALARY, "salaryEntry");
-			// Wizard de Gastos Seguridad Social.
-			controllerManager.register(AccountEntryType.SOCIAL_INSURANCE, "socialInsuranceEntry");
-			// Wizard de Ajustes Seguridad Social.
-			controllerManager.register(AccountEntryType.SOCIAL_INSURANCE_ADJUST, "socialInsuranceEntry");
-			// Wizard de Creación de préstamos.
-			controllerManager.register(AccountEntryType.LOAN, "loanEntry");
 			// Wizard de Cuotas de préstamos.			
 			controllerManager.register(AccountEntryType.LOAN_FEE, "loanFeeEntry");
 		}
@@ -94,7 +84,7 @@ public class AccountEntryController extends BasicController {
 		boolean flag = false;
 		try {
 			AccountEntry entry = (AccountEntry) this.getTo();
-			flag = (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL));
+			flag = isManual();
 			if (!flag && isInvoice()) {
 				flag = !isAccountInvoice(entry);
 			}
@@ -141,7 +131,17 @@ public class AccountEntryController extends BasicController {
 
 	public boolean isManual() {
     	AccountEntry entry = (AccountEntry) this.getTo();
-        return (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL));
+        return (this.getTo() != null && 
+        		(
+        		(entry.getType() == AccountEntryType.MANUAL)
+        		|| (entry.getType() == AccountEntryType.EXPENSES)
+        		|| (entry.getType() == AccountEntryType.SALARY)
+        		|| (entry.getType() == AccountEntryType.SOCIAL_INSURANCE)
+        		|| (entry.getType() == AccountEntryType.SOCIAL_INSURANCE_ADJUST)
+        		|| (entry.getType() == AccountEntryType.LOAN)
+        		|| (entry.getType() == AccountEntryType.LOAN_FEE)
+        		)
+        		);
     }
 
     public boolean isRemovable() {
