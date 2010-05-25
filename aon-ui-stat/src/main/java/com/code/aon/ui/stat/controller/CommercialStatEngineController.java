@@ -724,7 +724,8 @@ public class CommercialStatEngineController {
 			summary.add(s);
 		}
 		count = 0;
-
+		setReportName(AonUtil.getMessage(bundle,"seller_stat_control_seller"));
+		setItemTitle(AonUtil.getMessage(bundle, "stat_seller"));
 	}
 	
 	public void onTargetSummary(ActionEvent e) throws ManagerBeanException {
@@ -755,6 +756,8 @@ public class CommercialStatEngineController {
 			summary.add(s);
 		}
 		count = 0;
+		setReportName(AonUtil.getMessage(bundle,"seller_stat_control_target"));
+		setItemTitle(AonUtil.getMessage(bundle, "stat_target"));
 
 	}
 	
@@ -786,7 +789,8 @@ public class CommercialStatEngineController {
 			summary.add(s);
 		}
 		count = 0;
-
+		setReportName(AonUtil.getMessage(bundle,"seller_stat_control_product"));
+		setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
 	}
 
 	public void onSellerDetail(ActionEvent e) throws ManagerBeanException {
@@ -963,8 +967,7 @@ public class CommercialStatEngineController {
 			list.addAll(se.getCommercialCategoryProductsStats(params));
 			setProductStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle,
-					"stat_report_commercial_product"));
+			setReportName(AonUtil.getMessage(bundle,"stat_report_commercial_product"));
 			setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
 			productStatModel = null;
 
