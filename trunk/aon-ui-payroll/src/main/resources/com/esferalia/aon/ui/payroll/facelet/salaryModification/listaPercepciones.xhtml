@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:dataTable id="percepcionesList" var="to" rows="0" width="auto"
+		value="#{salaryModificationWizard.percepcionesModel}"
+		columnClasses="
+				aon-editDataTable-numberColumn,
+				aon-editDataTable-textColumn aon-width-200, 
+				aon-editDataTable-numberColumn,
+				aon-editDataTable-numberColumn, 
+				aon-editDataTable-numberColumn,
+				aon-editDataTable-numberColumn,
+				aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn,
+				aon-editDataTable-numberColumn">
+	
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_cdg}" />
+			</f:facet>
+			<aon:outputText value="#{to.percepcion.id.cdg}" />
+		</aon:column>
+		
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_descripcion_complemento}" />
+			</f:facet>
+			<aon:outputText value="#{to.percepcion.descripcionAbreviada}" />
+		</aon:column>
+		
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_mes_aplicar}" />
+			</f:facet>
+			<aon:outputText value="#{to.percepcion.mes}" />
+		</aon:column>
+		
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_forma_calculo}" />
+			</f:facet>
+			<aon:outputText value="#{to.percepcion.formaCalculo}" />
+		</aon:column>
+		
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_tipo_cotizacion}" />
+			</f:facet>
+			<aon:outputText value="#{to.percepcion.tipoCotizacion}" />
+		</aon:column>
+		
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_importe}" />
+			</f:facet>
+			<aon:outputText value="#{to.percepcion.importe}" />
+		</aon:column>
+		
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_importe_nuevo}" />
+			</f:facet>
+			<aon:inputText value="#{to.importeNuevo}" size="10" maxlength="11"/>
+		</aon:column>
+		
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_formula}" />
+			</f:facet>
+			<aon:inputText value="#{to.formula}" size="10"/>
+		</aon:column>
+		
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_diferencia}" />
+			</f:facet>
+			<aon:outputText value="#{to.diferencia}" />
+		</aon:column>
+
+	</aon:dataTable>
+	
+</ui:composition>
