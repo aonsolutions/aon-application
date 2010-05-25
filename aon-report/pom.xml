@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>3.7.1</version>
+			<version>3.7.2</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -111,7 +111,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.5-FINAL</version>
+			<version>3.6</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -133,7 +133,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jcl</artifactId>
-			<version>1.5.8</version>
+			<version>1.5.11</version>
 			<scope>test</scope>
 		</dependency>		
 	</dependencies>
