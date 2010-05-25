@@ -43,23 +43,23 @@
 			<aon:div styleClass="aon-scroll-area">
 
 
-				<aon:panelGrid columns="2">
+				<aon:panelGrid columns="4">
 
 					<c:if test="#{commercialStat.controlType==0}">
 						<aon:outputLabel for="Target_trackings_seller_id"
-							value="#{salesBundle.sales_seller}" />
+							value="#{statBundle.stat_seller}" />
 						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
 
 					</c:if>
-					<c:if test="#{commercialStat.controlType==1}">
+					<c:if test="#{statBundle.stat_seller}">
 						<aon:outputLabel for="Target_trackings_seller_id"
-							value="#{salesBundle.sales_seller}" />
+							value="#{statBundle.stat_target}" />
 						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==2}">
 						<aon:outputLabel for="Target_trackings_seller_id"
-							value="#{salesBundle.sales_seller}" />
+							value="#{statBundle.stat_product}" />
 						<aon:outputText value="#{commercialStat.product.name}"></aon:outputText>
 
 					</c:if>
@@ -83,7 +83,7 @@
 					<h:panelGrid columns="2">
 
 						<aon:div>
-							<aon:panel style="height:100px;width:200;px"
+							<aon:panel style="height:100px;width:500px;"
 								header="#{statBundle.seller_stat_control_vis}">
 								<aon:panelGrid columns="2">
 									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
@@ -97,7 +97,7 @@
 							</aon:panel>
 						</aon:div>
 						<aon:div>
-							<aon:panel style="height:100px;width:200;px"
+							<aon:panel style="height:100px;width:500px;"
 								header="#{statBundle.seller_stat_control_pre}">
 								<aon:panelGrid columns="2">
 									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
@@ -123,11 +123,11 @@
 
 				<aon:panelTabSet switchType="client">
 					<aon:panelTab id="tab1"
-						label="#{statBundle.seller_stat_control_visit}">
+						label="#{statBundle.seller_stat_control_vis} #{statBundle.seller_stat_control_donef}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/visitsList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="tab2" label="Visitas Pendientes">
+					<aon:panelTab id="tab2" label="#{statBundle.seller_stat_control_vis}  #{statBundle.seller_stat_control_pending}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/pendingVisitsList.xhtml" />
 					</aon:panelTab>

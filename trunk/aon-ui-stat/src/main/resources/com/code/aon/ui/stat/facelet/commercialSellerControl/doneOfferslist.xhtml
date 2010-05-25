@@ -50,14 +50,14 @@
 			</f:facet>
 			<aon:outputText value="#{to.offer.status}" />
 		</aon:column>
-		<!-- 	<aon:column styleClass="aon-editDataTable-numberColumn">
+		<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
-							<aon:outputText value="#{offer.offer.offerTotalPrice}">
+							<aon:outputText value="#{commercialStat.offerTotalPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-						</aon:column> -->
+						</aon:column> 
 
 	</aon:editDataTable>
 	<aon:dataScroller2 for="offersDone" showNote="true" />
