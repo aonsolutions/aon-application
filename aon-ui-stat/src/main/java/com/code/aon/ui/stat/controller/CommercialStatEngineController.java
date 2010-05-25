@@ -636,7 +636,7 @@ public class CommercialStatEngineController {
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' order by CommercialTracking.date desc";
+				+ "' order by  CommercialTracking.activity.id,CommercialTracking.date desc";
 
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
@@ -654,7 +654,7 @@ public class CommercialStatEngineController {
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' order by CommercialTracking.date desc";
+				+ "' order by CommercialTracking.activity.id,CommercialTracking.date desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -1061,7 +1061,7 @@ public class CommercialStatEngineController {
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' order by CommercialTracking.date desc";
+				+ "' order by CommercialTracking.activity.id,CommercialTracking.date desc";
 
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
@@ -1079,7 +1079,7 @@ public class CommercialStatEngineController {
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' order by CommercialTracking.date desc";
+				+ "' order by CommercialTracking.activity.id,CommercialTracking.date desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
