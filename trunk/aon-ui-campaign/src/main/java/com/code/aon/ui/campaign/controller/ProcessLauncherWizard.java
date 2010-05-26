@@ -540,13 +540,15 @@ public class ProcessLauncherWizard implements Serializable {
 				}
 				AonUtil.addInfoMessage("Proceso lanzado correctamente. " + i
 						+ " tareas creadas");
+				setCurrentStep(0);
+				return start();
 			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
-
 		return null;
+		
 	}
 
 }
