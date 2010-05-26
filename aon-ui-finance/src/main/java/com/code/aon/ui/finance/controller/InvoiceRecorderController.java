@@ -30,12 +30,15 @@ public class InvoiceRecorderController extends BasicController {
 	private static final String SALE_INVOICE_CONTROLLER = "saleInvoice";
 	private static final String PURCHASE_INVOICE_CONTROLLER = "purchaseInvoice";
 	private static final String EXPENSE_INVOICE_CONTROLLER = "expenseInvoice";
+	private static final String UNDEDUCTIBLE_INVOICE_CONTROLLER = "undeductibleInvoice";
 	private static final String SALE_INVOICE_VIEW = "saleInvoice_form";
 	private static final String PURCHASE_INVOICE_VIEW = "purchaseInvoice_form";
 	private static final String EXPENSE_INVOICE_VIEW = "expenseInvoice_form";
+	private static final String UNDEDUCTIBLE_INVOICE_VIEW = "undeductibleInvoice_form";
 	private static final String SALE_VIEW_NAME = "saleInvoiceRecorder_list";
 	private static final String PURCHASE_VIEW_NAME = "purchaseInvoiceRecorder_list";
 	private static final String EXPENSE_VIEW_NAME = "expenseInvoiceRecorder_list";
+	private static final String UNDEDUCTIBLE_VIEW_NAME = "undeductibleInvoiceRecorder_list";
 	private String invoiceViewer;
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 
@@ -430,6 +433,10 @@ public class InvoiceRecorderController extends BasicController {
 				invoiceControllerName = EXPENSE_INVOICE_CONTROLLER;
 				setInvoiceViewer(EXPENSE_INVOICE_VIEW);
 				currentViewName = EXPENSE_VIEW_NAME;
+			} else if (type == InvoiceType.UNDEDUCTIBLE) {
+				invoiceControllerName = UNDEDUCTIBLE_INVOICE_CONTROLLER;
+				setInvoiceViewer(UNDEDUCTIBLE_INVOICE_VIEW);
+				currentViewName = UNDEDUCTIBLE_VIEW_NAME;
 			} else {
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 				String msg = "No existe visor para el tipo de factura " + type.getName(locale);
