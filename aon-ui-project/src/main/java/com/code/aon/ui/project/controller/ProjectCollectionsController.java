@@ -25,6 +25,12 @@ import com.code.aon.ql.Criteria;
 
 public class ProjectCollectionsController {
 
+	public ActivityType getActivityType() {
+		return null;
+	}
+	public void setActivityType( ActivityType activityType) {
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getDossierTypes() throws ManagerBeanException {
 		List<SelectItem> dossierTypeList = new LinkedList<SelectItem>();
