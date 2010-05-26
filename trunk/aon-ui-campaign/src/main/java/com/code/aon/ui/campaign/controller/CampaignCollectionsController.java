@@ -18,6 +18,7 @@ import com.code.aon.campaign.enumeration.ProcessDetailStatus;
 import com.code.aon.campaign.enumeration.ProcessStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 
@@ -29,6 +30,12 @@ public class CampaignCollectionsController {
 	private LinkedList<SelectItem> processStatusesList;
 	private LinkedList<SelectItem> processDetailStatusesList;
 	
+	public Process getProcess() {
+		return null;
+	}
+	public void setProcess( Process process ) {
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getProcesses() throws ManagerBeanException {
 		List<SelectItem> processList = new LinkedList<SelectItem>();

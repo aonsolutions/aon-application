@@ -34,6 +34,7 @@
 					<aon:outputLabel for="Campaign_process_id"
 						value="#{campaignBundle.process_process}" />
 					<aon:selectOneMenu id="Campaign_process_id"
+						value="#{campaignCollections.process}"
 						valueChangeListener="#{controller.addIdEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{campaignCollections.processes}" />
@@ -42,6 +43,7 @@
 					<aon:outputLabel for="Campaign_activityType_id"
 						value="#{projectBundle.activity_activity_type}" />
 					<aon:selectOneMenu id="Campaign_activityType_id"
+						value="#{projectCollections.activityType}"
 						valueChangeListener="#{controller.addIdEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{projectCollections.activityTypes}" />
