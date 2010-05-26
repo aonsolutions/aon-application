@@ -5,8 +5,8 @@ import com.esferalia.aon.payroll.core.IPercepcion;
 public class PercepcionEmpleado {
 	
 	private IPercepcion percepcion;
-	private Integer importeNuevo;
-	private Integer diferencia;
+	private Double importeNuevo;
+//	private Double diferencia;
 	private String formula;
 
 	public IPercepcion getPercepcion() {
@@ -15,18 +15,19 @@ public class PercepcionEmpleado {
 	public void setPercepcion(IPercepcion percepcion) {
 		this.percepcion = percepcion;
 	}
-	public Integer getImporteNuevo() {
+	public Double getImporteNuevo() {
 		return importeNuevo;
 	}
-	public void setImporteNuevo(Integer importeNuevo) {
+	public void setImporteNuevo(Double importeNuevo) {
 		this.importeNuevo = importeNuevo;
 	}
-	public Integer getDiferencia() {
-		return diferencia;
+	public Double getDiferencia() {
+		return getImporteNuevo()-getPercepcion().getImporte();
+//		return diferencia;
 	}
-	public void setDiferencia(Integer diferencia) {
-		this.diferencia = diferencia;
-	}
+//	public void setDiferencia(Double diferencia) {
+//		this.diferencia = diferencia;
+//	}
 	public String getFormula() {
 		return formula;
 	}
