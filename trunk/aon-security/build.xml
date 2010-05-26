@@ -12,10 +12,10 @@
 	<property name="build.dir" value="${java.io.tmpdir}/classes/security" />
 	<property name="ldap.dir" value="${java.io.tmpdir}/ldap" />
 	<property name="mgr.dist.dir" value="dist" />
-	<property name="client.dist.dir" value="/JAVA/aon-security-${version}" />
+	<property name="client.dist.dir" value="dist/aon-security-${version}" />
 	<property name="templates.dir" value="templates" />
 
-    <property name="tomcat.home" value="/SERVER/apache-tomcat-5.5.17"/>
+    <property name="tomcat.home" value="/var/lib/tomcat5"/>
     <property name="tomcat.6.home" value="/SERVER/apache-tomcat-6.0.13"/>
 	<property name="jboss.home" value="/SERVER/jboss-4.2.3.GA" />
 
@@ -95,8 +95,12 @@
 
     <!-- Tomcat 5.5.x Container -->
     <path id="tomcat.5.container.classpath">
+	        <pathelement path="${aon.ldap.home}/aon.ldap-1.1.0.jar"/>		
+    		<pathelement path="${org.slf4j.api.home}/${org.slf4j.api.jar}"/>
+	
 		<pathelement path="${tomcat.home}/common/lib/jsp-api.jar"/>
 		<pathelement path="${tomcat.home}/common/lib/servlet-api.jar"/>
+		<pathelement path="${tomcat.home}/common/lib/[servlet].jar"/>
 		<pathelement path="${tomcat.home}/common/lib/ojdbc14.jar"/>
 		<pathelement path="${tomcat.home}/server/lib/catalina.jar"/>
 		<pathelement path="${tomcat.home}/server/lib/catalina-optional.jar"/>
@@ -127,7 +131,7 @@
     <!-- XDoclet -->
     <path id="xdoclet.task.classpath">
       <path refid="javac.classpath"/>
-      <fileset dir="/java.old/xdoclet-1.2.3">
+      <fileset dir="/usr/share/java/xdoclet">
         <include name="**/*.jar"/>
       </fileset>
     </path>
