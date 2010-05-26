@@ -46,19 +46,25 @@
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/registryStat/boughtProductsList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="tab4"
-						label="#{statBundle.registry_stat_delivery}">
-						<ui:include
-							src="/com/code/aon/ui/stat/facelet/registryStat/pendingDeliveriesList.xhtml" />
-					</aon:panelTab>
-					<aon:panelTab id="tab5" label="#{statBundle.registry_stat_purhase}">
-						<ui:include
-							src="/com/code/aon/ui/stat/facelet/registryStat/pendingSalesList.xhtml" />
-					</aon:panelTab>
-					<aon:panelTab id="tab6" label="#{statBundle.registry_stat_offer}">
-						<ui:include
-							src="/com/code/aon/ui/stat/facelet/registryStat/pendingOfferList.xhtml" />
-					</aon:panelTab>
+
+					<c:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
+
+						<aon:panelTab id="tab4"
+							label="#{statBundle.registry_stat_delivery}">
+							<ui:include
+								src="/com/code/aon/ui/stat/facelet/registryStat/pendingDeliveriesList.xhtml" />
+						</aon:panelTab>
+					
+						<aon:panelTab id="tab5" label="#{statBundle.registry_stat_purhase}">
+							<ui:include
+								src="/com/code/aon/ui/stat/facelet/registryStat/pendingSalesList.xhtml" />
+						</aon:panelTab>
+						
+						<aon:panelTab id="tab6" label="#{statBundle.registry_stat_offer}">
+							<ui:include
+								src="/com/code/aon/ui/stat/facelet/registryStat/pendingOfferList.xhtml" />
+						</aon:panelTab>
+					</c:if>
 				</aon:panelTabSet>
 			</aon:div>
 		</aon:form>

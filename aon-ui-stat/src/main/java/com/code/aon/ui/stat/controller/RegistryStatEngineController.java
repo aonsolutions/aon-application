@@ -2,6 +2,7 @@ package com.code.aon.ui.stat.controller;
 
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -19,11 +20,12 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.Sales;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 
 public class RegistryStatEngineController {
 
-	private Registry  registry;
+	private Registry registry;
 	private DataModel pendingInvoiceModel;
 	private DataModel scoredInvoiceModel;
 	private DataModel boughtProductModel;
@@ -38,144 +40,223 @@ public class RegistryStatEngineController {
 	private List<Offer> pendingOfferList;
 	private IPriceStrategy priceStrategy;
 	private IPriceStrategy priceStrategy2;
-	
+
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
 		}
 		return priceStrategy;
 	}
-	
-	public IPriceStrategy getPriceStrategy2(){
-		if(priceStrategy2 == null){
+
+	public IPriceStrategy getPriceStrategy2() {
+		if (priceStrategy2 == null) {
 			priceStrategy2 = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy2;
 	}
 
-	public double getPendingInvoicesTotalPrice() throws ManagerBeanException{
-		Invoice invoice = (Invoice)this.pendingInvoiceModel.getRowData();
+	public double getPendingInvoicesTotalPrice() throws ManagerBeanException {
+		Invoice invoice = (Invoice) this.pendingInvoiceModel.getRowData();
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
-	
-	public double getScoredInvoicesTotalPrice() throws ManagerBeanException{
-		Invoice invoice = (Invoice)this.scoredInvoiceModel.getRowData();
+
+	public double getScoredInvoicesTotalPrice() throws ManagerBeanException {
+		Invoice invoice = (Invoice) this.scoredInvoiceModel.getRowData();
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
-	
+
 	public double getSalesTotalPrice() throws ManagerBeanException {
-		Sales sales = (Sales)this.pendingSalesModel.getRowData();
+		Sales sales = (Sales) this.pendingSalesModel.getRowData();
 		return getPriceStrategy2().getTotalPrice(sales, sales.getCustomer());
 	}
-	
+
 	public double getOfferTotalPrice() throws ManagerBeanException {
-		Offer offer = (Offer)this.getPendingOfferModel().getRowData();
+		Offer offer = (Offer) this.getPendingOfferModel().getRowData();
 		return getPriceStrategy2().getTotalPrice(offer, offer.getTarget());
 	}
-	
+
 	public double getDeliveryTotalPrice() throws ManagerBeanException {
-		Delivery delivery = (Delivery)this.pendingDeliveryModel.getRowData();
+		Delivery delivery = (Delivery) this.pendingDeliveryModel.getRowData();
 		return getPriceStrategy2().getTotalPrice(delivery, delivery.getCustomer());
 	}
-	
+
 	public DataModel getPendingInvoiceModel() {
 		if (pendingInvoiceModel == null) {
 			pendingInvoiceModel = new ListDataModel(getPendingInvoiceList());
 		}
 		return pendingInvoiceModel;
 	}
+
 	public void setPendingInvoiceModel(DataModel pendingInvoiceModel) {
 		this.pendingInvoiceModel = pendingInvoiceModel;
 	}
+
 	public DataModel getScoredInvoiceModel() {
 		if (scoredInvoiceModel == null) {
 			scoredInvoiceModel = new ListDataModel(getScoredInvoiceList());
 		}
 		return scoredInvoiceModel;
 	}
+
 	public void setScoredInvoiceModel(DataModel scoredInvoiceModel) {
 		this.scoredInvoiceModel = scoredInvoiceModel;
 	}
+
 	public DataModel getBoughtProductModel() {
 		if (boughtProductModel == null) {
 			boughtProductModel = new ListDataModel(getBoughtProductList());
 		}
 		return boughtProductModel;
 	}
+
 	public void setBoughtProductModel(DataModel boughtProductModel) {
 		this.boughtProductModel = boughtProductModel;
 	}
+
 	public DataModel getPendingDeliveryModel() {
 		if (pendingDeliveryModel == null) {
 			pendingDeliveryModel = new ListDataModel(getPendingDeliveryList());
 		}
 		return pendingDeliveryModel;
 	}
+
 	public void setPendingDeliveryModel(DataModel pendingDeliveryModel) {
 		this.pendingDeliveryModel = pendingDeliveryModel;
-	}	
+	}
+
 	public DataModel getPendingSalesModel() {
 		if (pendingSalesModel == null) {
 			pendingSalesModel = new ListDataModel(getPendingSalesList());
 		}
 		return pendingSalesModel;
 	}
+
 	public void setPendingSalesModel(DataModel pendingSalesModel) {
 		this.pendingSalesModel = pendingSalesModel;
 	}
+
 	public DataModel getPendingOfferModel() {
 		if (pendingOfferModel == null) {
 			pendingOfferModel = new ListDataModel(getPendingOfferList());
 		}
 		return pendingOfferModel;
 	}
+
 	public void setPendingOfferModel(DataModel pendingOfferModel) {
 		this.pendingOfferModel = pendingOfferModel;
 	}
+
 	public Registry getRegistry() {
 		return registry;
 	}
+
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
+
 	public List<Invoice> getPendingInvoiceList() {
-		return pendingInvoiceList;
+		try {
+			if (pendingInvoiceList == null) {
+				getPendingInvoices();
+			}
+			return pendingInvoiceList;
+		} catch (ManagerBeanException e) {
+			String msg = "Unable to load data.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
+
 	public void setPendingInvoiceList(List<Invoice> pendingInvoiceList) {
 		this.pendingInvoiceList = pendingInvoiceList;
 	}
+
 	public List<Invoice> getScoredInvoiceList() {
-		return scoredInvoiceList;
+		try {
+			if (scoredInvoiceList == null) {
+				getScoredInvoices();
+			}
+			return scoredInvoiceList;
+		} catch (ManagerBeanException e) {
+			String msg = "Unable to load data.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
+
 	public void setScoredInvoiceList(List<Invoice> scoredInvoiceList) {
 		this.scoredInvoiceList = scoredInvoiceList;
 	}
+
 	public List<InvoiceDetail> getBoughtProductList() {
-		return boughtProductList;
+		try {
+			if (boughtProductList == null) {
+				getBoughtProducts();
+			}
+			return boughtProductList;
+		} catch (ManagerBeanException e) {
+			String msg = "Unable to load data.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
+
 	public void setBoughtProductList(List<InvoiceDetail> boughtProductList) {
 		this.boughtProductList = boughtProductList;
 	}
+
 	public List<Delivery> getPendingDeliveryList() {
-		return pendingDeliveryList;
+		try {
+			if (pendingDeliveryList == null) {
+				getPendingDeliveries();
+			}
+			return pendingDeliveryList;
+		} catch (ManagerBeanException e) {
+			String msg = "Unable to load data.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
+
 	public void setPendingDeliveryList(List<Delivery> pendingDeliveryList) {
 		this.pendingDeliveryList = pendingDeliveryList;
 	}
+
 	public List<Sales> getPendingSalesList() {
-		return pendingSalesList;
+		try {
+			if (pendingSalesList == null) {
+				getPendingSales();
+			}
+			return pendingSalesList;
+		} catch (ManagerBeanException e) {
+			String msg = "Unable to load data.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
+
 	public void setPendingSalesList(List<Sales> pendingSalesList) {
 		this.pendingSalesList = pendingSalesList;
 	}
+
 	public List<Offer> getPendingOfferList() {
-		return pendingOfferList;
+		try {
+			if (pendingOfferList == null) {
+				getPendingOffers();
+			}
+			return pendingOfferList;
+		} catch (ManagerBeanException e) {
+			String msg = "Unable to load data.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
+
 	public void setPendingOfferList(List<Offer> pendingOfferList) {
 		this.pendingOfferList = pendingOfferList;
 	}
-	
-	public void onRegistryStats(ActionEvent e){
+
+	public void onRegistryStats(ActionEvent event) {
 		try {
 			setPendingInvoiceModel(null);
 			setScoredInvoiceModel(null);
@@ -189,96 +270,80 @@ public class RegistryStatEngineController {
 			getPendingDeliveries();
 			getPendingSales();
 			getPendingOffers();
-		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (ManagerBeanException e) {
+			String msg = "Unable to load data.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		}
 	}
-	
-	public void getRegistryData(){
-		try {
-			setPendingInvoiceModel(null);
-			setScoredInvoiceModel(null);
-			setBoughtProductModel(null);
-			setPendingDeliveryModel(null);
-			setPendingSalesModel(null);
-			setPendingOfferModel(null);
-			getPendingInvoices();
-			getScoredInvoices();
-			getBoughtProducts();
-			getPendingDeliveries();
-			getPendingSales();
-			getPendingOffers();
-		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+
+	public void getRegistryData() {
+		setPendingInvoiceModel(null);
+		setScoredInvoiceModel(null);
+		setBoughtProductModel(null);
+		setPendingDeliveryModel(null);
+		setPendingSalesModel(null);
+		setPendingOfferModel(null);
 	}
-			
+
+	@SuppressWarnings("unchecked")
 	public void getPendingInvoices() throws ManagerBeanException {
-		String select = "select Invoice "
-			+ "from Invoice as Invoice "
-			+ "where Invoice.type=1 AND Invoice.status =0 AND Invoice.registry.id = " + registry.getId() 
-			+ "order by Invoice.issueDate desc";
+		String select = "select Invoice " + "from Invoice as Invoice " + "where Invoice.type=1 AND Invoice.status =0 AND Invoice.registry.id = "
+				+ registry.getId() + "order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		pendingInvoiceList = query.list();
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public void getScoredInvoices() throws ManagerBeanException {
-		String select = "select Invoice "
-			+ "from Invoice as Invoice "
-			+ "where Invoice.type=1 AND Invoice.status = 1 AND Invoice.registry.id = " +registry.getId()
-			+ "order by Invoice.issueDate desc";
+		String select = "select Invoice " + "from Invoice as Invoice " + "where Invoice.type=1 AND Invoice.status = 1 AND Invoice.registry.id = "
+				+ registry.getId() + "order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		scoredInvoiceList = query.list();
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public void getBoughtProducts() throws ManagerBeanException {
-		String select = "select distinct(InvoiceDetail) "
-			+ "from InvoiceDetail as InvoiceDetail "
-			+ "where InvoiceDetail.invoice.type = 1 AND InvoiceDetail.invoice.registry.id = " +registry.getId()
-			+ "order by InvoiceDetail.invoice.issueDate desc";
+		String select = "select distinct(InvoiceDetail) " + "from InvoiceDetail as InvoiceDetail "
+				+ "where InvoiceDetail.invoice.type = 1 AND InvoiceDetail.invoice.registry.id = " + registry.getId()
+				+ "order by InvoiceDetail.invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		boughtProductList = query.list();
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public void getPendingDeliveries() throws ManagerBeanException {
-		String select = "select Delivery "
-			+ "from Delivery as Delivery "
-			+ "where Delivery.status = 0 AND Delivery.customer.registry.id = " +registry.getId()
-			+ "order by Delivery.issueTime desc";
+		String select = "select Delivery " + "from Delivery as Delivery " + "where Delivery.status = 0 AND Delivery.customer.registry.id = "
+				+ registry.getId() + "order by Delivery.issueTime desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		pendingDeliveryList = query.list();
-		
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public void getPendingSales() throws ManagerBeanException {
-		String select = "select Sales "
-			+ "from Sales as Sales "
-			+ "where Sales.status = 0 AND Sales.customer.registry.id = " +registry.getId()
-			+ "order by Sales.issueDate desc";
+		String select = "select Sales " + "from Sales as Sales " + "where Sales.status = 0 AND Sales.customer.registry.id = " + registry.getId()
+				+ "order by Sales.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		pendingSalesList= query.list();
+		pendingSalesList = query.list();
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public void getPendingOffers() throws ManagerBeanException {
 
-		String select = "select Offer "
-			+ "from Offer as Offer "
-			+ "where Offer.status = 0 AND Offer.target.registry.id = " +registry.getId()
-			+ "order by Offer.issueDate desc";			
+		String select = "select Offer " + "from Offer as Offer " + "where Offer.status = 0 AND Offer.target.registry.id = " + registry.getId()
+				+ "order by Offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		pendingOfferList= query.list();
+		pendingOfferList = query.list();
 	}
-	
-	public String getRowId(){
-		Invoice invoice = (Invoice)this.pendingInvoiceModel.getRowData();
+
+	public String getRowId() {
+		Invoice invoice = (Invoice) this.pendingInvoiceModel.getRowData();
 		return invoice.getReferenceCode();
 	}
 }
