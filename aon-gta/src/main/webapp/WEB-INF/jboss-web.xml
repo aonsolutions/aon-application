@@ -7,13 +7,10 @@
 -->
 <jboss-web>
 
-	<!-- Isolate nh classes from other deployments
-	<class-loading>
-		<loader-repository>
-			transtools.com:loader=aon-gta.war
-		</loader-repository>
-	</class-loading>
-	-->
+	<!-- Isolate nh classes from other deployments -->
+	<loader-repository>
+		esferalia.com:archive=aon-gta.war
+	</loader-repository>
 
 	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-ldap</security-domain>
 
