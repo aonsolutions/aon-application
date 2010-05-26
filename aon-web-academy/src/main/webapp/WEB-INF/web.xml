@@ -59,6 +59,11 @@
     </context-param>
 
 	<context-param>
+		<param-name>org.apache.myfaces.ONLY_DEPLOY_FACES_CONFIG</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
