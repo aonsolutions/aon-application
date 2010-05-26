@@ -6,7 +6,6 @@ public class PercepcionEmpleado {
 	
 	private IPercepcion percepcion;
 	private Double importeNuevo;
-//	private Double diferencia;
 	private String formula;
 
 	public IPercepcion getPercepcion() {
@@ -22,12 +21,11 @@ public class PercepcionEmpleado {
 		this.importeNuevo = importeNuevo;
 	}
 	public Double getDiferencia() {
-		return getImporteNuevo()-getPercepcion().getImporte();
-//		return diferencia;
+		if(getImporteNuevo()!=null){
+			return getImporteNuevo()-getPercepcion().getImporte();
+		}
+		return null;
 	}
-//	public void setDiferencia(Double diferencia) {
-//		this.diferencia = diferencia;
-//	}
 	public String getFormula() {
 		return formula;
 	}
