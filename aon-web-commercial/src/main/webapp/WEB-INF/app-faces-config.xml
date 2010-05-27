@@ -13,7 +13,7 @@
 			<value>#{targetTrackingListener}</value>
 			<value>#{targetSellerListener}</value>
 			<value>#{targetProfileListener}</value>
-			<value>#{targetThirdPartyListener}</value>
+			<value>#{targetSupplierListener}</value>
 		</list-entries>		
 	</managed-bean>
 
