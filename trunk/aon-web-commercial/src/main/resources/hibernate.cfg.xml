@@ -62,7 +62,7 @@
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>		
-		<mapping class="com.code.aon.commercial.TargetThirdParty"/>
+		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
 		<!-- AON-MARKETING Mapping files -->
 		<mapping class="com.code.aon.marketing.MarketingAction"/>
@@ -95,6 +95,10 @@
 		<!-- AON-CUSTOMER Mapping files -->		
 		<mapping class="com.code.aon.customer.Customer"/>
 		
+		<!-- AON-SUPPLIER Mapping files -->	
+		<mapping class="com.code.aon.supplier.ItemSupplier"/>
+		<mapping class="com.code.aon.supplier.Supplier"/>
+
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
