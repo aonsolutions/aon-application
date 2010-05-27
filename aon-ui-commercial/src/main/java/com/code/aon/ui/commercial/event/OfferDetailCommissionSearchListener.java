@@ -10,27 +10,20 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class OfferDetailCommissionSearchListener extends ControllerSearchListener {
 
-	private Target target;
-
 	private OfferType offerType;
 
-	private Target thirdParty;
+	private Target target;
+
+	private Supplier supplier;
 	
 	private Seller seller;
 
 	private OfferStatus[] offerStatuses;
-
-	public Target getTarget() {
-		return target;
-	}
-
-	public void setTarget(Target target) {
-		this.target = target;
-	}
 
 	public OfferType getOfferType() {
 		return offerType;
@@ -40,16 +33,20 @@ public class OfferDetailCommissionSearchListener extends ControllerSearchListene
 		this.offerType = offerType;
 	}
 
-	public Target getThirdParty() {
-		return thirdParty;
+	public Target getTarget() {
+		return target;
 	}
 
-	public void setThirdParty(Target thirdParty) {
-		this.thirdParty = thirdParty;
+	public void setTarget(Target target) {
+		this.target = target;
 	}
 
-	public OfferStatus[] getOfferStatuses() {
-		return offerStatuses;
+	public Supplier getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
 	}
 
 	public Seller getSeller() {
@@ -60,20 +57,24 @@ public class OfferDetailCommissionSearchListener extends ControllerSearchListene
 		this.seller = seller;
 	}
 
+	public OfferStatus[] getOfferStatuses() {
+		return offerStatuses;
+	}
+
 	public void setOfferStatuses(OfferStatus[] offerStatuses) {
 		this.offerStatuses = offerStatuses;
 	}
 
-	public boolean isThirdPartyType() {
-		return OfferType.THIRD_PARTY == offerType;
+	public boolean isDealership() {
+		return OfferType.DEALERSHIP == offerType;
 	}
 
 	@Override
 	protected void init() throws ManagerBeanException {
-		setTarget(new Target());
-		setSeller(new Seller());
 		setOfferType(null);
-		setThirdParty(new Target());
+		setTarget(new Target());
+		setSupplier(new Supplier());
+		setSeller(new Seller());
 		OfferStatus[] defaultOfferStatus = {OfferStatus.PENDING};
 		setOfferStatuses(defaultOfferStatus);
 	}
@@ -81,17 +82,17 @@ public class OfferDetailCommissionSearchListener extends ControllerSearchListene
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = getController().getCriteria();
-		if (getTarget() != null && getTarget().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_TARGET_ID), getTarget().getId());			
-		}
-		if (getSeller() != null && getSeller().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SELLER_ID), getSeller().getId());			
-		}
 		if (getOfferType() != null) {
 			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_TYPE), getOfferType());			
 		}
-		if (getThirdParty() != null && getThirdParty().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_THIRD_PARTY_ID), getThirdParty().getId());			
+		if (getTarget() != null && getTarget().getId() != null) {
+			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_TARGET_ID), getTarget().getId());			
+		}
+		if (getSupplier() != null && getSupplier().getId() != null) {
+			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SUPPLIER_ID), getSupplier().getId());			
+		}
+		if (getSeller() != null && getSeller().getId() != null) {
+			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SELLER_ID), getSeller().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getOfferStatuses())) {
 			String status = getController().resolveAlias(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_STATUS);
