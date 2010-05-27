@@ -27,10 +27,11 @@ import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
+import com.code.aon.supplier.Supplier;
 
 @Entity
-@Table(name="target_third_party")
-public class TargetThirdParty implements ITransferObject, IBankAccountContainer, IPayMethod {
+@Table(name="target_supplier")
+public class TargetSupplier implements ITransferObject, IBankAccountContainer, IPayMethod {
 
 	private static final long serialVersionUID = -9181775363113298274L;
 
@@ -38,7 +39,7 @@ public class TargetThirdParty implements ITransferObject, IBankAccountContainer,
 
     private Integer id;
 	private Target target;
-	private Target thirdParty;
+	private Supplier supplier;
 	private String targetExternalCode;
     private Tariff tariff;
     private PayMethod payMethod;
@@ -63,8 +64,8 @@ public class TargetThirdParty implements ITransferObject, IBankAccountContainer,
 
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="target", nullable=false, updatable=false)
-	@ForeignKey(name = "FK_TARGET_THIRD_PARTY_TARGET")
-	@Index(name = "IDX_TARGET_THIRD_PARTY_TARGET")
+	@ForeignKey(name = "FK_TARGET_SUPPLIER_TARGET")
+	@Index(name = "IDX_TARGET_SUPPLIER_TARGET")
 	public Target getTarget() {
 		return target;
 	}
@@ -74,15 +75,15 @@ public class TargetThirdParty implements ITransferObject, IBankAccountContainer,
 	}
 
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="third_party", nullable=false)
-	@ForeignKey(name = "FK_TARGET_THIRD_PARTY_THIRD_PARTY")
-	@Index(name = "IDX_TARGET_THIRD_PARTY_THIRD_PARTY")
-	public Target getThirdParty() {
-		return thirdParty;
+	@JoinColumn(name="supplier", nullable=false)
+	@ForeignKey(name = "FK_TARGET_SUPPLIER_SUPPLIER")
+	@Index(name = "IDX_TARGET_SUPPLIER_SUPPLIER")
+	public Supplier getSupplier() {
+		return supplier;
 	}
 
-	public void setThirdParty(Target thirdParty) {
-		this.thirdParty = thirdParty;
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
 	}
 
 	@Column(name="target_external_code",length=15)
@@ -96,8 +97,8 @@ public class TargetThirdParty implements ITransferObject, IBankAccountContainer,
 
 	@ManyToOne
 	@JoinColumn(name="tariff")
-	@ForeignKey(name = "FK_TARGET_THIRD_PARTY_TARIFF")
-	@Index(name = "IDX_TARGET_THIRD_PARTY_TARIFF")
+	@ForeignKey(name = "FK_TARGET_SUPPLIER_TARIFF")
+	@Index(name = "IDX_TARGET_SUPPLIER_TARIFF")
 	public Tariff getTariff() {
 		return tariff;
 	}
@@ -108,8 +109,8 @@ public class TargetThirdParty implements ITransferObject, IBankAccountContainer,
 
 	@ManyToOne
 	@JoinColumn(name="pay_method")
-	@ForeignKey(name = "FK_TARGET_THIRD_PARTY_PAY_METHOD")
-	@Index(name = "IDX_TARGET_THIRD_PARTY_PAY_METHOD")
+	@ForeignKey(name = "FK_TARGET_SUPPLIER_PAY_METHOD")
+	@Index(name = "IDX_TARGET_SUPPLIER_PAY_METHOD")
 	public PayMethod getPayMethod() {
 		return payMethod;
 	}
@@ -167,8 +168,8 @@ public class TargetThirdParty implements ITransferObject, IBankAccountContainer,
 
 	@ManyToOne
     @JoinColumn(name="bank")
-	@ForeignKey(name = "FK_TARGET_THIRD_PARTY_BANK")
-	@Index(name = "IDX_TARGET_THIRD_PARTY_BANK")
+	@ForeignKey(name = "FK_TARGET_SUPPLIER_BANK")
+	@Index(name = "IDX_TARGET_SUPPLIER_BANK")
 	public Bank getBank() {
 		return bank;
 	}
@@ -197,7 +198,7 @@ public class TargetThirdParty implements ITransferObject, IBankAccountContainer,
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final TargetThirdParty o = (TargetThirdParty) obj;
+		final TargetSupplier o = (TargetSupplier) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()			
 				.append(this.bank, o.bank)
@@ -207,7 +208,7 @@ public class TargetThirdParty implements ITransferObject, IBankAccountContainer,
 				.append(this.numberOfPayments, o.numberOfPayments)				
 				.append(this.paymentDays, o.paymentDays)
 				.append(this.payMethod, o.payMethod)				
-				.append(this.thirdParty, o.thirdParty)				
+				.append(this.supplier, o.supplier)				
 				.append(this.targetExternalCode, o.targetExternalCode)				
 				.append(this.target, o.target)				
 				.append(this.tariff, o.tariff)
@@ -227,7 +228,7 @@ public class TargetThirdParty implements ITransferObject, IBankAccountContainer,
 			.append(paymentDays)
 			.append(payMethod)
 			.append(id)			
-			.append(thirdParty)
+			.append(supplier)
 			.append(targetExternalCode)
 			.append(target)
 			.append(tariff)

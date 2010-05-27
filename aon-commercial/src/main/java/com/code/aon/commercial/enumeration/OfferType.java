@@ -23,8 +23,8 @@ public enum OfferType implements IResourceable {
     /** PROFORMA. */
     PROFORMA,
 
-    /** THIRD PARTY. */ 
-    THIRD_PARTY;
+    /** DEALERSHIP. */ 
+    DEALERSHIP;
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.commercial.i18n.messages";

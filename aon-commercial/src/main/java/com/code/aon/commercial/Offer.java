@@ -51,6 +51,7 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.seller.Seller;
+import com.code.aon.supplier.Supplier;
 
 @Entity
 @Table(name="offer")
@@ -73,10 +74,12 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
     private Integer id;
     private String series;
     private int number;
+    private int version;
     private Target target;
     private RegistryAddress address;
     private Tariff tariff;
     private Seller seller;
+    private Supplier supplier;
     private DiscountExpression discountExpression;
     private Date issueDate;
     private PayMethod payMethod;
@@ -94,7 +97,6 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	private BankAccount bankAccount;
     private boolean signed;    
 	private String comments;
-    private Target third_party;
 	private Set<OfferDetail> lines = new HashSet<OfferDetail>();
 	private Set<OfferAttachment> attachments = new HashSet<OfferAttachment>();	
 	private Set<OfferTerm> terms = new HashSet<OfferTerm>();	
@@ -128,9 +130,19 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 		this.number = number;
 	}
 
+	@Column(nullable = false)
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
     @Transient
     public String getReferenceCode() {
     	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+    	referenceCode += "/" + version;
 		if (!StringUtils.isEmpty(getSeries())) {
 			referenceCode = getSeries() + "/" + referenceCode;
 		}
@@ -175,6 +187,16 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 
 	public void setSeller(Seller seller) {
 		this.seller = seller;
+	}
+
+	@ManyToOne
+	@JoinColumn(name="supplier")
+	public Supplier getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
 	}
 
 	@Column(name="discount_expr")
@@ -338,16 +360,6 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 		this.comments = comments;
 	}
 	
-	@ManyToOne
-	@JoinColumn(name="third_party")
-	public Target getThirdParty() {
-		return third_party;
-	}
-
-	public void setThirdParty(Target third_party) {
-		this.third_party = third_party;
-	}
-
 	@OneToMany(mappedBy = "offer", cascade={CascadeType.REMOVE})
 	@OrderBy("line")
 	public Set<OfferDetail> getLines() {
@@ -393,8 +405,8 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	@Transient
-	public boolean isThirdPartyType() {
-		return (OfferType.THIRD_PARTY == getType());
+	public boolean isDealership() {
+		return (OfferType.DEALERSHIP == getType());
 	}
 
 	@Transient
@@ -427,13 +439,14 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 				.append(this.address, o.address)				
 				.append(this.bank, o.bank)
 				.append(this.bankAccount, o.bankAccount)				
-				.append(this.third_party, o.third_party)
+				.append(this.supplier, o.supplier)
 				.append(this.comments, o.comments)
 				.append(this.daysBetweenPayments, o.daysBetweenPayments)				
 				.append(this.daysToFirstPayment, o.daysToFirstPayment)
 				.append(this.discountExpression, o.discountExpression)				
 				.append(this.issueDate, o.issueDate)				
 				.append(this.number, o.number)
+				.append(this.version, o.version)
 				.append(this.numberOfPayments, o.numberOfPayments)				
 				.append(this.paymentDays, o.paymentDays)
 				.append(this.payMethod, o.payMethod)				
@@ -458,7 +471,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 			.append(address)
 			.append(bank)
 			.append(bankAccount)
-			.append(third_party)	
+			.append(supplier)	
 			.append(comments)	
 			.append(daysBetweenPayments)
 			.append(daysToFirstPayment)
@@ -466,6 +479,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 			.append(id)			
 			.append(issueDate)
 			.append(number)
+			.append(version)
 			.append(numberOfPayments)
 			.append(paymentDays)
 			.append(payMethod)
