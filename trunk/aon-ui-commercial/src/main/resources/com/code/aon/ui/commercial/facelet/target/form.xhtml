@@ -91,10 +91,10 @@
 							</aon:panelTab>
 						</c:if>
 						
-						<c:if test="#{aonConfiguration.bean.target.showThirdParty}">
-							<aon:panelTab id="targetThirdParty" label="#{commercialBundle.commercial_target_distributor_info}">
-								<ui:include src="/com/code/aon/ui/commercial/facelet/targetThirdParty/tab_include.xhtml">
-									<ui:param name="controller" value="#{targetThirdParty}" />
+						<c:if test="#{aonConfiguration.bean.target.showSupplier}">
+							<aon:panelTab id="targetSupplier" label="#{commercialBundle.commercial_target_supplier_info}">
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetSupplier/tab_include.xhtml">
+									<ui:param name="controller" value="#{targetSupplier}" />
 								</ui:include>
  							</aon:panelTab>
 						</c:if>
@@ -115,8 +115,8 @@
 			<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 				<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 			</c:if>					
-			<c:if test="#{aonConfiguration.bean.target.showThirdParty}">
-				<aon:lookupButtonPopup lookup="#{targetLookup}" />
+			<c:if test="#{aonConfiguration.bean.target.showSupplier}">
+				<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 				<aon:lookupButtonPopup lookup="#{bankLookup}" />
 			</c:if>					
 		</c:if>	

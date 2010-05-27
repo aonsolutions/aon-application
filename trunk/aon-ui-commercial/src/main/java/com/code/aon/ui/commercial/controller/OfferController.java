@@ -19,7 +19,7 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.TargetThirdParty;
+import com.code.aon.commercial.TargetSupplier;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
@@ -55,7 +55,9 @@ import com.code.aon.sales.Sales;
 import com.code.aon.sales.bridge.SalesManager;
 import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.seller.Seller;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
+import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -81,6 +83,11 @@ public class OfferController extends BasicController implements ISignatureContro
 	private List<SelectItem> addresses;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
+	private boolean showOfferCopyWindow;
+	private String offerSeries;
+	private int offerNumber;
+	private Target offerTarget;
+	private Date offerDate;
 	private boolean showSalesWindow;
 	private String salesSeries;
 	private int salesNumber;
@@ -127,6 +134,46 @@ public class OfferController extends BasicController implements ISignatureContro
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public boolean isShowOfferCopyWindow() {
+		return showOfferCopyWindow;
+	}
+
+	public void setShowOfferCopyWindow(boolean value) {
+		this.showOfferCopyWindow = value;
+	}
+	
+	public String getOfferSeries() {
+		return offerSeries;
+	}
+
+	public void setOfferSeries(String offerSeries) {
+		this.offerSeries = offerSeries;
+	}
+
+	public int getOfferNumber() {
+		return offerNumber;
+	}
+
+	public void setOfferNumber(int offerNumber) {
+		this.offerNumber = offerNumber;
+	}
+
+	public Target getOfferTarget() {
+		return offerTarget;
+	}
+
+	public void setOfferTarget(Target offerTarget) {
+		this.offerTarget = offerTarget;
+	}
+
+	public Date getOfferDate() {
+		return offerDate;
+	}
+
+	public void setOfferDate(Date offerDate) {
+		this.offerDate = offerDate;
 	}
 
 	public boolean isShowSalesWindow() {
@@ -305,30 +352,30 @@ public class OfferController extends BasicController implements ISignatureContro
 		return 0;
 	}
 
-	public boolean isThirdPartyType() {
-		return OfferType.THIRD_PARTY == getOffer().getType();
+	public boolean isDealership() {
+		return OfferType.DEALERSHIP == getOffer().getType();
 	}
 
-	public void thirdPartyData(LookupChangeEvent event) throws ManagerBeanException {
+	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Offer offer = getOffer();
-			offer.setThirdParty((Target)event.getNewValue());
+			offer.setSupplier((Supplier)event.getNewValue());
 
-			IManagerBean bean = BeanManager.getManagerBean(TargetThirdParty.class);
+			IManagerBean bean = BeanManager.getManagerBean(TargetSupplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_THIRD_PARTY_TARGET_ID), offer.getTarget().getId());
-			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_THIRD_PARTY_THIRD_PARTY_ID), offer.getThirdParty().getId());
+			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_SUPPLIER_TARGET_ID), offer.getTarget().getId());
+			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_SUPPLIER_SUPPLIER_ID), offer.getSupplier().getId());
 			Iterator<?> iterator = bean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
-				TargetThirdParty targetThirdParty = (TargetThirdParty)iterator.next();
-				offer.setTariff(targetThirdParty.getTariff());
-				offer.setPayMethod(targetThirdParty.getPayMethod());
-				offer.setNumberOfPayments(targetThirdParty.getNumberOfPayments());
-				offer.setDaysToFirstPayment(targetThirdParty.getDaysToFirstPayment());
-				offer.setDaysBetweenPayments(targetThirdParty.getDaysBetweenPayments());
-				offer.setPaymentDays(targetThirdParty.getPaymentDays());
-				offer.setBank(targetThirdParty.getBank());
-				offer.setBankAccount(targetThirdParty.getBankAccount());
+				TargetSupplier targetSupplier = (TargetSupplier)iterator.next();
+				offer.setTariff(targetSupplier.getTariff());
+				offer.setPayMethod(targetSupplier.getPayMethod());
+				offer.setNumberOfPayments(targetSupplier.getNumberOfPayments());
+				offer.setDaysToFirstPayment(targetSupplier.getDaysToFirstPayment());
+				offer.setDaysBetweenPayments(targetSupplier.getDaysBetweenPayments());
+				offer.setPaymentDays(targetSupplier.getPaymentDays());
+				offer.setBank(targetSupplier.getBank());
+				offer.setBankAccount(targetSupplier.getBankAccount());
 				setDefaultPayMethod(false);
 			}
 		}
@@ -385,6 +432,24 @@ public class OfferController extends BasicController implements ISignatureContro
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
 	}
 
+	public void onVersion(ActionEvent event) throws ManagerBeanException {
+		Offer to = ((Offer)this.getTo());
+		this.getManagerBean().restoreNullSubPOJOs(to);
+		if (isPending()) {
+			to.setStatus(OfferStatus.REFUSED);
+			this.getManagerBean().update(to);
+		}
+
+		OfferImportManager manager = new OfferImportManager();
+		Offer offer = manager.createOfferVersion(to);
+		
+		this.clearCriteria();
+		this.getCriteria().addEqualExpression(this.getFieldName(ICommercialAlias.OFFER_ID), offer.getId());
+		this.onSearch(null);
+		this.getModel().setRowIndex(0);
+		this.onSelect(null);
+	}
+
 	public void onPending(ActionEvent event) {
 		getOffer().setStatus(OfferStatus.PENDING);
 		accept(event);
@@ -408,6 +473,40 @@ public class OfferController extends BasicController implements ISignatureContro
 	public void onUnblock(ActionEvent event) throws ManagerBeanException {
 		getOffer().setStatus(isLinesSold() ? OfferStatus.APPROVED : OfferStatus.PENDING);
 		accept(event);
+	}
+
+	public void onOfferCopyShow(ActionEvent event) throws ManagerBeanException {
+		Offer to = getOffer();
+		setOfferSeries(to.getSeries());
+		setOfferNumber(obtainMaxNumber(to.getSeries()));
+		setOfferTarget(to.getTarget());
+		setOfferDate(new Date());
+	}
+
+	public void onOfferCopySeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		setOfferNumber(obtainMaxNumber((String)event.getNewValue()));
+	}
+
+	public void offerCopyTargetData(LookupChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Target target = (Target)event.getNewValue();
+			setOfferTarget(target);
+		}
+	}
+	
+	public void onCopy(ActionEvent event) throws ManagerBeanException {
+		setShowOfferCopyWindow(false);
+
+		Offer to = getOffer();
+		this.getManagerBean().restoreNullSubPOJOs(to);
+		OfferImportManager manager = new OfferImportManager();
+		Offer offer = manager.copyOffer(to, getOfferSeries(), getOfferNumber(), getOfferTarget(), getOfferDate());
+
+		this.clearCriteria();
+		this.getCriteria().addEqualExpression(this.getFieldName(ICommercialAlias.OFFER_ID), offer.getId());
+		this.onSearch(null);
+		this.getModel().setRowIndex(0);
+		this.onSelect(null);
 	}
 
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
