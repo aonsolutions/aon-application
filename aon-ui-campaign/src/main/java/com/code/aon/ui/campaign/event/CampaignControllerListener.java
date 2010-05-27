@@ -18,7 +18,6 @@ import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.campaign.controller.CampaignController;
 import com.code.aon.ui.campaign.controller.CampaignDossierController;
 import com.code.aon.ui.config.util.UserUtils;
@@ -35,21 +34,19 @@ public class CampaignControllerListener extends ControllerAdapter {
     public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
         CampaignController controller = (CampaignController)event.getController();
         try {
-        	Expression empWorkGroupsExpr = obtainEmployeeWorkGroupsExpr(UserUtils.getInstance().getLoggedUser());
+        	IManagerBean campaignBean = BeanManager.getManagerBean(Campaign.class);
+        	User user = UserUtils.getInstance().getLoggedUser();
+        	String alias = campaignBean.getFieldName(ICampaignAlias.CAMPAIGN_WORK_GROUP_ID);
+        	Expression empWorkGroupsExpr = UserUtils.obtainUserWorkGroupsExpr(user, alias);
         	if(empWorkGroupsExpr != null){
                 controller.getCriteria().addExpression(empWorkGroupsExpr);
         	}else{
-        		controller.getCriteria().addExpression(ExpressionUtilities.getNullExpression(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_WORK_GROUP_ID)));
+        		controller.getCriteria().addNullExpression(alias);
         	}
             controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DESCRIPTION));
         } catch (ManagerBeanException e) {
             LOGGER.error("Error initializing Campaign Model", e);
         }
-    }
-
-    private Expression obtainEmployeeWorkGroupsExpr(User user) throws ManagerBeanException {
-        IManagerBean campaignBean = BeanManager.getManagerBean(Campaign.class);
-        return UserUtils.obtainUserWorkGroupsExpr(user, campaignBean.getFieldName(ICampaignAlias.CAMPAIGN_WORK_GROUP_ID));
     }
 
     @Override
