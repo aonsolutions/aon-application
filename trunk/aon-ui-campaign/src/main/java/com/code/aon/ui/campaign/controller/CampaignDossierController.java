@@ -2,6 +2,8 @@ package com.code.aon.ui.campaign.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -178,6 +180,7 @@ public class CampaignDossierController extends LinesController {
 				cde = mergeCampaignDossier(cde,cd);
 				newList.add(cde);
 			}
+			Collections.sort(newList,new PercenteComparator());
 			setExtendedModel(new ListDataModel(newList));
 		}
 		return extendedModel;
@@ -205,6 +208,11 @@ public class CampaignDossierController extends LinesController {
 		cde.setColor(null);
 		cde.setPercentImage(null);
 		return cde;
+	}
+	
+	public Campaign getCampaign() {
+		Campaign c = (Campaign) getMasterController().getTo();
+		return c;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -269,5 +277,21 @@ public class CampaignDossierController extends LinesController {
         } catch (ManagerBeanException e) {
             LOGGER.error("Error changing process detail. ",e);
         }
+    }
+ 
+    private class PercenteComparator<C> implements Comparator<CampaignDossierExtended> {
+		@Override
+		public int compare(CampaignDossierExtended o1, CampaignDossierExtended o2) {
+			if (o1 == null && o2 == null) {
+				return 0;
+			}
+			if (o1 == null) {
+				return -1;
+			}
+			if (o2 == null) {
+				return 1;
+			}
+			return o1.getProcessDetailPercent().compareTo(o2.getProcessDetailPercent());
+		}
     }
 }
