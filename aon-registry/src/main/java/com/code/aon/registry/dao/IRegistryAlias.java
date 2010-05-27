@@ -549,6 +549,12 @@ public interface IRegistryAlias {
 	*/
 	String  REGISTRY_NOTE_REGISTRY_ID = REGISTRY_NOTE_ENTRY.getAliasNames()[5];
 
+	/** 
+	* Alias value: RegistryNote_securityLevel
+	* Hibernate value: RegistryNote.securityLevel
+	*/
+	String  REGISTRY_NOTE_SECURITY_LEVEL = REGISTRY_NOTE_ENTRY.getAliasNames()[6];
+
 
 
 	/** 

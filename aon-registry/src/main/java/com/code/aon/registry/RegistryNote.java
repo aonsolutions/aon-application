@@ -24,13 +24,16 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.IConfidentialable;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.registry.enumeration.NoteType;
 
 @Entity
 @Table(name="rnote")
-public class RegistryNote implements ITransferObject {
+public class RegistryNote implements ITransferObject,IConfidentialable {
 	
 	private static final long serialVersionUID = 1710105082036901638L;
+    private int SHORT_DESC_LENGTH = 45; 
 
 	private Integer id;
 	
@@ -43,6 +46,8 @@ public class RegistryNote implements ITransferObject {
 	private String comments;
 	
 	private NoteType notetype;
+
+	private SecurityLevel securityLevel;
 
 	@Id
 	@GeneratedValue
@@ -96,22 +101,21 @@ public class RegistryNote implements ITransferObject {
 		this.comments = comments;
 	}
 
-	/**
-	 * @return the notetype
-	 */
     @Column(name="note_type")
 	public NoteType getNotetype() {
 		return notetype;
 	}
-
-	/**
-	 * @param notetype the notetype to set
-	 */
 	public void setNotetype(NoteType notetype) {
 		this.notetype = notetype;
 	}
 	
-	private int SHORT_DESC_LENGTH = 45; 
+    @Column(name = "security_level")
+    public SecurityLevel getSecurityLevel() {
+        return securityLevel;
+    }
+    public void setSecurityLevel(SecurityLevel securityLevel) {
+        this.securityLevel = securityLevel;
+    }
 
 	@Transient
 	public String getShortComments() {
@@ -133,6 +137,7 @@ public class RegistryNote implements ITransferObject {
 				.append(this.noteDate, o.noteDate)
 				.append(this.notetype, o.notetype)
 				.append(this.registry, o.registry)
+				.append(this.securityLevel, o.securityLevel)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -147,6 +152,7 @@ public class RegistryNote implements ITransferObject {
 			.append(noteDate)
 			.append(notetype)	
 			.append(registry)
+			.append(securityLevel)
 			.toHashCode();
 	}
 
@@ -159,7 +165,20 @@ public class RegistryNote implements ITransferObject {
 			append("noteDate", noteDate).
 			append("notetype", notetype).
 			append("registry", registry.getId()).
+			append("securityLevel", securityLevel).
 			toString();
+	}
+
+	@Override
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+
+	@Override
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
 }

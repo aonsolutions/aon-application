@@ -32,7 +32,7 @@ public class RegistryAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-registry/src/main/java/com/code/aon/registry/dao/IRegistryAlias.java");
+		File file = new File("/AON-TRUNK/aon-registry/src/main/java/com/code/aon/registry/dao/IRegistryAlias.java");
 		String[] classes = new String[] { 
 			Category.class.getName(),
 			RecordData.class.getName(),
