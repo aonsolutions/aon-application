@@ -25,10 +25,28 @@
 				</c:if>
 				<c:if test="#{aonRole.accountingOperator}">
 					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="invoiceRecorder-#{category}"
-							value="#{financeBundle.finance_invoice_recording_module}"
-							actionListener="#{invoiceRecorder.onEditSearch}"
-							action="invoiceRecorder_search" />
+						<aon:commandLink id="saleInvoiceRecorder-#{category}"
+							value="#{financeBundle.finance_sale_invoice_recording_module}"
+							actionListener="#{saleInvoiceRecorder.onEditSearch}"
+							action="saleInvoiceRecorder_search" />
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="purchaseInvoiceRecorder-#{category}"
+							value="#{financeBundle.finance_purchase_invoice_recording_module}"
+							actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
+							action="purchaseInvoiceRecorder_search" />
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="expenseInvoiceRecorder-#{category}"
+							value="#{financeBundle.finance_expense_invoice_recording_module}"
+							actionListener="#{expenseInvoiceRecorder.onEditSearch}"
+							action="expenseInvoiceRecorder_search" />
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="undeductibleInvoiceRecorder-#{category}"
+							value="#{financeBundle.finance_undeductible_invoice_recording_module}"
+							actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
+							action="undeductibleInvoiceRecorder_search" />
 					</aon:div>
 				</c:if>
 				<ui:insert name="afterContent"/>
