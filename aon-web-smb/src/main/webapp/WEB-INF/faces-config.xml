@@ -244,7 +244,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<list-entries>
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<value>#{targetThirdPartyListener}</value>
+			<value>#{targetSupplierListener}</value>
 		</list-entries>		
 	</managed-bean>
 
