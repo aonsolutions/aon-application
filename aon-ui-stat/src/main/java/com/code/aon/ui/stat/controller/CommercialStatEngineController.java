@@ -524,6 +524,14 @@ public class CommercialStatEngineController {
 		} else
 			return false;
 	}
+	
+	public Boolean getRegistryType(){
+		if (controlType == 0 ) {
+			return true;
+		} else
+			return false;
+		
+	}
 
 	public void setShowCommercialActivities(Boolean showCommercialActivities) {
 		this.showCommercialActivities = showCommercialActivities;
