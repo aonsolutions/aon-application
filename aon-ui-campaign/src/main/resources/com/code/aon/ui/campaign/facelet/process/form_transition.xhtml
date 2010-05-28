@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<rich:subTable var="tran" style="background:color: yellow;"
-		rendered="#{(processDetail.to==null or processDetail.to==to) and (processDetailTransition.model.rowCount > 0 or processDetailTransition.new)}"
+		rendered="#{processDetail.to==to and (processDetailTransition.model.rowCount > 0 or processDetailTransition.new)}"
 		value="#{processDetailTransition.model}">
 		<aon:column>
 			<h:outputText value="&#160;" />
@@ -24,22 +24,12 @@
 		<aon:column styleClass="aon-editDataTable-textColumn">
 			<aon:outputText value="#{tran.processTransitionType.description}"
 				rendered="#{processDetailTransition.to != tran}" />
-			<aon:selectOneMenu id="type_upd" 
+			<aon:selectOneMenu id="ProcessDetailTransition_processTransitionType" 
 				value="#{processDetailTransition.to.processTransitionType}"
 				rendered="#{processDetailTransition.to == tran}" required="true">
-					<f:selectItem itemValue="-" value="#{null}" />
+				<f:selectItem itemValue="-" value="#{null}" />
 				<f:selectItems value="#{campaignCollections.processTransitionTypes}" />
 			</aon:selectOneMenu>
-
-			<f:facet name="footer">
-				<aon:selectOneMenu id="type_new"
-					value="#{processDetailTransition.to.processTransitionType}"
-					rendered="#{processDetailTransition.new}" required="true">
-					<f:selectItem itemValue="-" value="#{null}" />
-					<f:selectItems
-						value="#{campaignCollections.processTransitionTypes}" />
-				</aon:selectOneMenu>
-			</f:facet>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-textColumn" colspan="3">
@@ -47,19 +37,9 @@
 				rendered="#{processDetailTransition.to != tran}" />
 			<aon:selectOneMenu id="next_upd" value="#{processDetailTransition.to.nextProcessDetail}"
 				rendered="#{processDetailTransition.to == tran}" required="true">
-					<f:selectItem itemValue="-" value="#{null}" />
-				<f:selectItems
-					value="#{processDetailTransition.availableProcessDetails}" />
+				<f:selectItem itemValue="-" value="#{null}" />
+				<f:selectItems value="#{processDetailTransition.availableProcessDetails}" />
 			</aon:selectOneMenu>
-			<f:facet name="footer">
-				<aon:selectOneMenu id="next_new"
-					value="#{processDetailTransition.to.nextProcessDetail}"
-					rendered="#{processDetailTransition.new}" required="true">
-					<f:selectItem itemValue="-" value="#{null}" />
-					<f:selectItems
-						value="#{processDetailTransition.availableProcessDetails}" />
-				</aon:selectOneMenu>
-			</f:facet>
 		</aon:column>
 
 		<aon:column>
@@ -68,13 +48,14 @@
 					rendered="#{tran==processDetailTransition.to}"
 					actionListener="#{processDetailTransition.onAccept}"
 					onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
+					ajaxSingle="true"
 					styleClass="aon-editDataTable-button aon-icon-accept" value=""
 					accesskey="#{bundle.aon_key_save_line}">
 				</aon:commandButton>
 				<aon:commandButton title="#{bundle.aon_cancel}"
 					rendered="#{tran==processDetailTransition.to}"
 					actionListener="#{processDetailTransition.onCancel}"
-					immediate="true"
+					immediate="true" ajaxSingle="true"
 					onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
 					styleClass="aon-editDataTable-button aon-icon-cancel" value=""
 					accesskey="#{bundle.aon_key_cancel_line}">
@@ -82,33 +63,15 @@
 				<aon:commandButton title="#{bundle.aon_remove}"
 					rendered="#{tran==processDetailTransition.to}"
 					actionListener="#{processDetailTransition.onRemove}"
-					immediate="true"
+					immediate="true" ajaxSingle="true"
 					onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
 					styleClass="aon-editDataTable-button aon-icon-delete" value=""
 					accesskey="#{bundle.aon_key_remove_line}">
 				</aon:commandButton>
 			</aon:div>
-			<f:facet name="footer">
-				<aon:div>
-					<aon:div rendered="#{processDetailTransition.new}">
-						<aon:commandButton title="#{bundle.aon_save}"
-							actionListener="#{processDetailTransition.onAccept}"
-							onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
-							styleClass="aon-editDataTable-button aon-icon-accept" value=""
-							accesskey="#{bundle.aon_key_save_line}" />
-						<aon:commandButton title="#{bundle.aon_cancel}"
-							actionListener="#{processDetailTransition.onCancel}"
-							immediate="true"
-							onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
-							styleClass="aon-editDataTable-button aon-icon-cancel" value=""
-							accesskey="#{bundle.aon_key_cancel_line}" />
-					</aon:div>
-				</aon:div>
-			</f:facet>
 		</aon:column>
 		<aon:column>
 			<aon:outputText value="&#160;" />
 		</aon:column>
 	</rich:subTable>
-
 </ui:composition>
