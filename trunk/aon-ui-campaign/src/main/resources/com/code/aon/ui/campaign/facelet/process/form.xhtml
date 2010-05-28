@@ -5,7 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -37,13 +37,13 @@
 						value="#{process.to.description}" size="70" maxlength="64">
 						<f:validateLength maximum="64" />
 					</aon:inputText>
-					
-					<aon:outputText value="#{bundle.aon_status}"/>
+
+					<aon:outputText value="#{bundle.aon_status}" />
 					<aon:selectOneMenu value="#{process.to.status}">
 						<f:selectItems value="#{campaignCollections.processStatus}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
-				
+
 				<aon:div styleClass="aon-form-group" rendered="#{!process.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:outputLabel for="ProcessDetailDataList"
@@ -70,8 +70,7 @@
 											actionListener="#{processDetailTransition.onCancel}"
 											rendered="#{!processDetail.new}"
 											accesskey="#{bundle.aon_key_new_line}">
-											<aon:actionListener
-												method="#{processDetail.onReset}" />
+											<aon:actionListener method="#{processDetail.onReset}" />
 										</aon:commandButton>
 										<aon:outputText rendered="#{processDetail.new}" value="&#160;" />
 									</aon:div>
@@ -189,14 +188,14 @@
 									rendered="#{to!=processDetail.to}" />
 								<aon:selectOneMenu value="#{processDetail.to.workgroup}"
 									rendered="#{to==processDetail.to}">
-									<f:selectItem itemLabel="-" value="#{null}"/>
+									<f:selectItem itemLabel="-" value="#{null}" />
 									<f:selectItems value="#{configCollections.workgroups}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:div>
 										<aon:selectOneMenu value="#{processDetail.to.workgroup}"
 											rendered="#{processDetail.new}">
-											<f:selectItem itemLabel="-" value="#{null}"/>
+											<f:selectItem itemLabel="-" value="#{null}" />
 											<f:selectItems value="#{configCollections.workgroups}" />
 										</aon:selectOneMenu>
 									</aon:div>
@@ -207,14 +206,15 @@
 								<f:facet name="header">
 									<aon:outputText value="#{projectBundle.task_priority}" />
 								</f:facet>
-								<aon:outputText value="#{to.priority}" rendered="#{to!=processDetail.to}" />
+								<aon:outputText value="#{to.priority}"
+									rendered="#{to!=processDetail.to}" />
 								<aon:selectOneMenu value="#{processDetail.to.priority}"
-										rendered="#{to==processDetail.to}">
+									rendered="#{to==processDetail.to}">
 									<f:selectItems value="#{projectCollections.taskPriorities}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu value="#{processDetail.to.priority}"
-											rendered="#{processDetail.new}">
+										rendered="#{processDetail.new}">
 										<f:selectItems value="#{projectCollections.taskPriorities}" />
 									</aon:selectOneMenu>
 								</f:facet>
@@ -222,18 +222,22 @@
 
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_status}"/>
+									<aon:outputText value="#{bundle.aon_status}" />
 								</f:facet>
-								<aon:outputText value="#{to.status}" rendered="#{to!=processDetail.to}" />
+								<aon:outputText value="#{to.status}"
+									rendered="#{to!=processDetail.to}" />
 								<aon:selectOneMenu value="#{processDetail.to.status}"
 									rendered="#{to==processDetail.to}">
-									<f:selectItems value="#{campaignCollections.processDetailStatus}" />
+									<f:selectItems
+										value="#{campaignCollections.processDetailStatus}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu value="#{processDetail.to.status}"
 										rendered="#{processDetail.new}">
-										<f:selectItems value="#{campaignCollections.processDetailStatus}" /> 
-										<f:selectItems value="#{campaignCollections.processDetailStatus}" />
+										<f:selectItems
+											value="#{campaignCollections.processDetailStatus}" />
+										<f:selectItems
+											value="#{campaignCollections.processDetailStatus}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
@@ -249,32 +253,32 @@
 										onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
 										styleClass="aon-editDataTable-button aon-icon-accept" value=""
 										accesskey="#{bundle.aon_key_save_line}">
-										<aon:actionListener
-											method="#{processDetail.onAccept}" />
+										<aon:actionListener method="#{processDetail.onAccept}" />
 									</aon:commandButton>
 									<aon:commandButton title="#{bundle.aon_cancel}"
 										rendered="#{to==processDetail.to}"
-										actionListener="#{processDetailTransition.onCancel}" immediate="true"
+										actionListener="#{processDetailTransition.onCancel}"
+										immediate="true"
 										onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
 										styleClass="aon-editDataTable-button aon-icon-cancel" value=""
 										accesskey="#{bundle.aon_key_cancel_line}">
-										<aon:actionListener
-											method="#{processDetail.onCancel}" />
+										<aon:actionListener method="#{processDetail.onCancel}" />
 									</aon:commandButton>
 									<aon:commandButton title="#{bundle.aon_remove}"
 										rendered="#{to==processDetail.to}"
-										actionListener="#{processDetailTransition.onCancel}" immediate="true"
+										actionListener="#{processDetailTransition.onCancel}"
+										immediate="true"
 										onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
 										styleClass="aon-editDataTable-button aon-icon-delete" value=""
 										accesskey="#{bundle.aon_key_remove_line}">
-										<aon:actionListener
-											method="#{processDetail.onRemove}" />
+										<aon:actionListener method="#{processDetail.onRemove}" />
 									</aon:commandButton>
-									<aon:commandButton value="" title="#{campaignBundle.process_transition_new}"
+									<aon:commandButton value=""
+										title="#{campaignBundle.process_transition_new}"
 										styleClass="aon-editDataTable-button aon-icon-new"
 										actionListener="#{processDetailTransition.onReset}"
 										rendered="#{to==processDetail.to and !processDetailTransition.new}"
-										focus="type_new"
+										reRender="newTransition"
 										accesskey="#{bundle.aon_key_new_line}">
 									</aon:commandButton>
 								</aon:div>
@@ -292,19 +296,76 @@
 												styleClass="aon-editDataTable-button aon-icon-cancel"
 												value="" accesskey="#{bundle.aon_key_cancel_line}" />
 										</aon:div>
-										<aon:outputText rendered="#{!processDetail.new}" value="&#160;" />
+										<aon:outputText rendered="#{!processDetail.new}"
+											value="&#160;" />
 									</aon:div>
 								</f:facet>
 							</aon:column>
 
-							<ui:include src="/com/code/aon/ui/campaign/facelet/process/form_transition.xhtml" />
+							<ui:include
+								src="/com/code/aon/ui/campaign/facelet/process/form_transition.xhtml" />
 
 						</aon:editDataTable>
 
-						<aon:dataScroller2 for="detailDataList" showNote="true"/>
+						<aon:dataScroller2 for="detailDataList" showNote="true" />
+
+
 					</aon:div>
 				</aon:div>
 			</aon:div>
 		</aon:form>
+
+
+		<aon:form id="newTransitionForm">
+			<aon:div id="newTransition">
+				<c:if test="#{processDetailTransition.newPanelVisible}">
+					<aon:div styleClass="aon-scroll-area" style="width: 90%;">
+						<aon:div styleClass="aon-finding-title-toolbar">
+							<aon:panelGrid columns="1" dir="true"
+								columnClasses="aon-finding-toolbar">
+								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton title="#{bundle.aon_save}"
+										reRender="newTransition,fieldContainer"
+										actionListener="#{processDetailTransition.onAccept}"
+										onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
+										styleClass="aon-finding-toolbar-item  aon-icon-accept"
+										value="#{bundle.aon_accept}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:commandButton title="#{bundle.aon_cancel}"
+										actionListener="#{processDetailTransition.onCancel}"
+										immediate="true"
+										onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+										styleClass="aon-finding-toolbar-item  aon-icon-cancel"
+										value="#{bundle.aon_cancel}"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+
+								</aon:div>
+							</aon:panelGrid>
+						</aon:div>
+
+						<aon:panelGrid columns="2" styleClass="aon-margin-top">
+							<aon:outputLabel
+								value="#{campaignBundle.process_transition_type}"
+								for="processDetailTransition_processTransitionType" />
+							<aon:selectOneMenu required="true"
+								id="processDetailTransition_processTransitionType"
+								value="#{processDetailTransition.to.processTransitionType}">
+								<f:selectItems
+									value="#{campaignCollections.processTransitionTypes}" />
+							</aon:selectOneMenu>
+							<aon:outputLabel
+								value="#{campaignBundle.process_transition_next}"
+								for="process_transition_next" />
+							<aon:selectOneMenu id="process_transition_next" required="true"
+								value="#{processDetailTransition.to.nextProcessDetail}">
+								<f:selectItems
+									value="#{processDetailTransition.availableProcessDetails}" />
+							</aon:selectOneMenu>
+						</aon:panelGrid>
+					</aon:div>
+				</c:if>
+			</aon:div>
+		</aon:form>
+
 	</ui:define>
 </ui:composition>

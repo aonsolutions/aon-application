@@ -11,9 +11,9 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name="process_detail_transition")
@@ -96,6 +96,6 @@ public class ProcessDetailTransition implements ITransferObject {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return PojoToStringBuilder.reflectionToString(this);
 	}
 }

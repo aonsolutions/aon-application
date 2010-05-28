@@ -11,11 +11,11 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.campaign.enumeration.DateReference;
 import com.code.aon.campaign.enumeration.ProcessDetailStatus;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.enumeration.Priority;
 
@@ -165,6 +165,6 @@ public class ProcessDetail implements ITransferObject {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return PojoToStringBuilder.reflectionToString(this);
 	}
 }
