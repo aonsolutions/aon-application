@@ -38,7 +38,7 @@
 						<f:param name="reportKey" value="sellersList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-				<!-- 	<aon:htmlCommandLink id="graph2" value="PDF" title="Listado Pdf"
+					<!-- 	<aon:htmlCommandLink id="graph2" value="PDF" title="Listado Pdf"
 						styleClass="aon-finding-toolbar-item aon-icon-statistics "
 						action="#{report.onExecute}" target="_blank">
 						<f:param name="reportKey" value="sellerGraph" />
@@ -58,7 +58,7 @@
 						<rich:columnGroup>
 
 							<rich:column colspan="8">
-								<h:panelGrid columns="3" style="border:0px">
+								<h:panelGrid columns="3">
 									<aon:div>
 										<aon:outputText value="#{statBundle.seller_stat_control}" />
 									</aon:div>
@@ -86,7 +86,9 @@
 								<rich:spacer />
 							</rich:column>
 
-							<rich:column colspan="2">
+							<rich:column
+								rendered="#{commercialStat.showCommercialActivities}"
+								colspan="2">
 								<aon:outputText value="#{statBundle.seller_stat_control_vis}" />
 							</rich:column>
 							<rich:column colspan="4">
@@ -114,25 +116,46 @@
 						</f:facet>
 						<aon:outputText value="#{to.name}" />
 						<f:facet name="footer">
-						<aon:outputText value="#{statBundle.report_totals}">
-						</aon:outputText>
-					</f:facet>
+							<aon:outputText value="#{statBundle.report_totals}">
+							</aon:outputText>
+						</f:facet>
 					</aon:column>
-					<aon:column>
+					<aon:column rendered="#{commercialStat.showCommercialActivities}">
 						<f:facet name="header">
 							<aon:outputText value="#{statBundle.seller_stat_control_donef}" />
 						</f:facet>
-						<aon:outputText value="#{to.numVisits}" />
+
+						<c:if test="#{commercialStat.controlType==0}">
+							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onSellerActivities}"
+								action="commercial_activity_view" value="#{to.numVisits}" />
+						</c:if>
+						<c:if test="#{commercialStat.controlType==1}">
+							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onTargetActivities}"
+								action="commercial_activity_view" value="#{to.numVisits}" />
+						</c:if>
+
 						<f:facet name="footer">
 							<aon:outputText value="#{commercialStat.numVisitsTot}"
 								style="float:right" />
 						</f:facet>
 					</aon:column>
-					<aon:column>
+					<aon:column rendered="#{commercialStat.showCommercialActivities}">
 						<f:facet name="header">
 							<aon:outputText value="#{statBundle.seller_stat_control_pending}" />
 						</f:facet>
-						<aon:outputText value="#{to.numPendingVisits}" />
+							<c:if test="#{commercialStat.controlType==0}">
+							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onPendingSellerActivities}"
+								action="commercial_activity_view" value="#{to.numPendingVisits}" />
+						</c:if>
+						<c:if test="#{commercialStat.controlType==1}">
+							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onPendingTargetActivities}"
+								action="commercial_activity_view" value="#{to.numPendingVisits}" />
+						</c:if>
+					
 						<f:facet name="footer">
 							<aon:outputText value="#{commercialStat.numPendingVisitsTot}"
 								style="float:right" />
@@ -149,7 +172,7 @@
 						</f:facet>
 					</aon:column>
 					<aon:column>
-					<f:facet name="header">
+						<f:facet name="header">
 							<aon:outputText value="#{statBundle.seller_stat_control_pending}" />
 						</f:facet>
 						<aon:outputText value="#{to.numPendingOffers}" />
@@ -157,7 +180,7 @@
 							<aon:outputText value="#{commercialStat.numPendingOffersTot}"
 								style="float:right" />
 						</f:facet>
-					</aon:column> 
+					</aon:column>
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{statBundle.seller_stat_control_closed}" />
