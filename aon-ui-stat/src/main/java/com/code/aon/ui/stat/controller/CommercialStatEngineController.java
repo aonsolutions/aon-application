@@ -17,10 +17,12 @@ import javax.faces.model.ListDataModel;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -59,13 +61,15 @@ public class CommercialStatEngineController {
 	private DataModel visitsModel;
 	private DataModel pendingVisitsModel;
 	private DataModel summaryModel;
+	private DataModel activityModel;
 	private List<OfferDetail> doneOffersList;
 	private List<OfferDetail> closedOffersList;
 	private List<OfferDetail> lostOffersList;
 	private List<OfferDetail> pendingOffersList;
 	private List<CommercialTracking> visitsList;
 	private List<CommercialTracking> pendingVisitsList;
-	private List<SellerSummary> summary;
+	private List<ControlSummary> summary;
+	private List<ControlSummary> activitySummary;
 	private List<Integer> summaryGraph;
 	private Integer numVisits;
 	private Integer numPendingVisits;
@@ -83,7 +87,34 @@ public class CommercialStatEngineController {
 	private Target target;
 	private Product product;
 	private Integer controlType;
-	
+	private Boolean commercialActivityStatus;
+	private Boolean showCommercialActivities;
+	private List<CommercialTracking> activitiesList;
+
+	public List<CommercialTracking> getActivitiesList() {
+		return activitiesList;
+	}
+
+	public void setActivitiesList(List<CommercialTracking> activitiesList) {
+		this.activitiesList = activitiesList;
+	}
+
+	public Boolean getCommercialActivityStatus() {
+		return commercialActivityStatus;
+	}
+
+	public void setCommercialActivityStatus(Boolean commercialActivityStatus) {
+		this.commercialActivityStatus = commercialActivityStatus;
+	}
+
+	public List<ControlSummary> getActivitySummary() {
+		return activitySummary;
+	}
+
+	public void setActivitySummary(List<ControlSummary> activitySummary) {
+		this.activitySummary = activitySummary;
+	}
+
 	public Integer getNumPendingOffersTot() {
 		return numPendingOffersTot;
 	}
@@ -184,11 +215,22 @@ public class CommercialStatEngineController {
 		this.summaryModel = summaryModel;
 	}
 
-	public List<SellerSummary> getSummary() {
+	public DataModel getActivityModel() {
+		if (activityModel == null) {
+			activityModel = new ListDataModel(getActivitySummary());
+		}
+		return activityModel;
+	}
+
+	public void setActivityModel(DataModel activityModel) {
+		this.activityModel = activityModel;
+	}
+
+	public List<ControlSummary> getSummary() {
 		return summary;
 	}
 
-	public void setSummary(List<SellerSummary> summary) {
+	public void setSummary(List<ControlSummary> summary) {
 		this.summary = summary;
 	}
 
@@ -294,7 +336,7 @@ public class CommercialStatEngineController {
 	public void setVisitsModel(DataModel visitsModel) {
 		this.visitsModel = visitsModel;
 	}
-	
+
 	public DataModel getPendingOffersModel() {
 		if (pendingOffersModel == null) {
 			pendingOffersModel = new ListDataModel(getPendingOffersList());
@@ -455,25 +497,44 @@ public class CommercialStatEngineController {
 	public void setParams(StatParams params) {
 		this.params = params;
 	}
-	
+
 	public void onSellerType(ActionEvent event) {
 		setControlType(0);
 	}
-	
+
 	public void onTargetType(ActionEvent event) {
 		setControlType(1);
 	}
-	
+
 	public void onProductType(ActionEvent event) {
 		setControlType(2);
+	}
+
+	public Date getFromDate() {
+		return this.params.getFromDate();
+	}
+
+	public Date getToDate() {
+		return this.params.getToDate();
+	}
+
+	public Boolean getShowCommercialActivities() {
+		if (controlType == 0 || controlType == 1) {
+			return true;
+		} else
+			return false;
+	}
+
+	public void setShowCommercialActivities(Boolean showCommercialActivities) {
+		this.showCommercialActivities = showCommercialActivities;
 	}
 
 	public void onReset(ActionEvent event) {
 		params = new StatParams();
 		params.setLocale(FacesContext.getCurrentInstance().getViewRoot()
 				.getLocale());
-		OfferStatus[] defaultOfferStatus = {OfferStatus.APPROVED};
-		params.setOfferStatuses(defaultOfferStatus);		
+		OfferStatus[] defaultOfferStatus = { OfferStatus.APPROVED };
+		params.setOfferStatuses(defaultOfferStatus);
 		setSeller(null);
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
@@ -553,8 +614,8 @@ public class CommercialStatEngineController {
 			e1.printStackTrace();
 		}
 	}
-	
-	public void getTargetControlStats(){
+
+	public void getTargetControlStats() {
 		try {
 			setNumAprovedOffers(0);
 			setNumLostOffers(0);
@@ -579,7 +640,7 @@ public class CommercialStatEngineController {
 			setPendingVisitsModel(null);
 			setPendingOffersModel(null);
 			setSummaryModel(null);
-			
+
 			getTargetDoneOffers();
 			getTargetDoneVisitsModel();
 			getTargetPendingVisitModel();
@@ -589,8 +650,8 @@ public class CommercialStatEngineController {
 			e1.printStackTrace();
 		}
 	}
-	
-	public void getProductControlStats(){
+
+	public void getProductControlStats() {
 		try {
 			setNumAprovedOffers(0);
 			setNumLostOffers(0);
@@ -617,7 +678,6 @@ public class CommercialStatEngineController {
 			setSummaryModel(null);
 
 			getProductDoneOffers();
-		
 
 		} catch (ManagerBeanException e1) {
 			// TODO Auto-generated catch block
@@ -627,11 +687,11 @@ public class CommercialStatEngineController {
 
 	private void getDoneVisitsModel() throws ManagerBeanException {
 		PreparedStatement ps = null;
-		
+
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
 				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.seller.id = "
-				+ seller.getId() 
+				+ seller.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
@@ -649,7 +709,7 @@ public class CommercialStatEngineController {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
 				+ "where  CommercialTracking.status = 0 AND  CommercialTracking.seller.id = "
-				+ seller.getId() 
+				+ seller.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
@@ -678,18 +738,18 @@ public class CommercialStatEngineController {
 		closedOffersList = new LinkedList<OfferDetail>();
 		lostOffersList = new LinkedList<OfferDetail>();
 		pendingOffersList = new LinkedList<OfferDetail>();
-	
+
 		for (int i = 0; i < doneOffersList.size(); i++) {
 			numOffers++;
-			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.APPROVED){
+			if (doneOffersList.get(i).getOffer().getStatus() == OfferStatus.APPROVED) {
 				numAprovedOffers++;
 				closedOffersList.add(doneOffersList.get(i));
 			}
-			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.REFUSED){
+			if (doneOffersList.get(i).getOffer().getStatus() == OfferStatus.REFUSED) {
 				numLostOffers++;
 				lostOffersList.add(doneOffersList.get(i));
 			}
-			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.PENDING){
+			if (doneOffersList.get(i).getOffer().getStatus() == OfferStatus.PENDING) {
 				numPendingOffers++;
 				pendingOffersList.add(doneOffersList.get(i));
 			}
@@ -700,10 +760,10 @@ public class CommercialStatEngineController {
 		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
 		List<ITransferObject> list;
 		list = sellerBean.getList(null);
-		summary = new LinkedList<SellerSummary>();
+		summary = new LinkedList<ControlSummary>();
 		for (ITransferObject to : list) {
 			Seller inv = (Seller) to;
-			SellerSummary s = new SellerSummary();
+			ControlSummary s = new ControlSummary();
 			this.setSeller(inv);
 			getSellerControlStats();
 			count++;
@@ -724,18 +784,18 @@ public class CommercialStatEngineController {
 			summary.add(s);
 		}
 		count = 0;
-		setReportName(AonUtil.getMessage(bundle,"seller_stat_control_seller"));
+		setReportName(AonUtil.getMessage(bundle, "seller_stat_control_seller"));
 		setItemTitle(AonUtil.getMessage(bundle, "stat_seller"));
 	}
-	
+
 	public void onTargetSummary(ActionEvent e) throws ManagerBeanException {
 		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
 		List<ITransferObject> list;
 		list = targetBean.getList(null);
-		summary = new LinkedList<SellerSummary>();
+		summary = new LinkedList<ControlSummary>();
 		for (ITransferObject to : list) {
 			Target tg = (Target) to;
-			SellerSummary s = new SellerSummary();
+			ControlSummary s = new ControlSummary();
 			this.setTarget(tg);
 			getTargetControlStats();
 			count++;
@@ -756,19 +816,19 @@ public class CommercialStatEngineController {
 			summary.add(s);
 		}
 		count = 0;
-		setReportName(AonUtil.getMessage(bundle,"seller_stat_control_target"));
+		setReportName(AonUtil.getMessage(bundle, "seller_stat_control_target"));
 		setItemTitle(AonUtil.getMessage(bundle, "stat_target"));
 
 	}
-	
+
 	public void onProductSummary(ActionEvent e) throws ManagerBeanException {
 		IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 		List<ITransferObject> list;
 		list = productBean.getList(null);
-		summary = new LinkedList<SellerSummary>();
+		summary = new LinkedList<ControlSummary>();
 		for (ITransferObject to : list) {
 			Product pro = (Product) to;
-			SellerSummary s = new SellerSummary();
+			ControlSummary s = new ControlSummary();
 			this.setProduct(pro);
 			getProductControlStats();
 			count++;
@@ -789,7 +849,7 @@ public class CommercialStatEngineController {
 			summary.add(s);
 		}
 		count = 0;
-		setReportName(AonUtil.getMessage(bundle,"seller_stat_control_product"));
+		setReportName(AonUtil.getMessage(bundle, "seller_stat_control_product"));
 		setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
 	}
 
@@ -799,34 +859,35 @@ public class CommercialStatEngineController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(sellerBean
 				.getFieldName(ISellerAlias.SELLER_ID),
-				((SellerSummary) getSummaryModel().getRowData()).getId());
+				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list;
 		list = sellerBean.getList(criteria);
 		this.setSeller((Seller) list.get(0));
 		getSellerControlStats();
 
 	}
-	
+
 	public void onTargetDetail(ActionEvent e) throws ManagerBeanException {
 
 		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(targetBean.getFieldName(ICommercialAlias.TARGET_REGISTRY_ID),
-				((SellerSummary) getSummaryModel().getRowData()).getId());
+		criteria.addEqualExpression(targetBean
+				.getFieldName(ICommercialAlias.TARGET_REGISTRY_ID),
+				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list;
 		list = targetBean.getList(criteria);
 		this.setTarget((Target) list.get(0));
 		getTargetControlStats();
 
 	}
-	
+
 	public void onProductDetail(ActionEvent e) throws ManagerBeanException {
 
 		IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(productBean
 				.getFieldName(IProductAlias.PRODUCT_ID),
-				((SellerSummary) getSummaryModel().getRowData()).getId());
+				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list;
 		list = productBean.getList(criteria);
 		this.setProduct((Product) list.get(0));
@@ -834,7 +895,312 @@ public class CommercialStatEngineController {
 
 	}
 
-	public class SellerSummary {
+	public void onSellerActivities(ActionEvent e) throws ManagerBeanException {
+
+		setCommercialActivityStatus(true);
+		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
+		Criteria cri = new Criteria();
+		cri.addEqualExpression(sellerBean.getFieldName(ISellerAlias.SELLER_ID),
+				((ControlSummary) getSummaryModel().getRowData()).getId());
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		list = sellerBean.getList(cri);
+		this.setSeller((Seller) list.get(0));
+
+		setActivityModel(null);
+		IManagerBean commercialActivityBean = BeanManager
+				.getManagerBean(CommercialActivity.class);
+		List<ITransferObject> list1 = new LinkedList<ITransferObject>();
+		list1 = commercialActivityBean.getList(null);
+		IManagerBean commercialTrackingBean = BeanManager
+				.getManagerBean(CommercialTracking.class);
+		List<ITransferObject> list2 = new LinkedList<ITransferObject>();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID),
+				((ControlSummary) getSummaryModel().getRowData()).getId());
+		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getFromDate());
+		;
+		criteria.addLessThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getToDate());
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS),
+				CommercialTrackingStatus.CLOSED);
+		list2 = commercialTrackingBean.getList(criteria);
+
+		activitySummary = new LinkedList<ControlSummary>();
+		for (ITransferObject to : list1) {
+			CommercialActivity act = (CommercialActivity) to;
+			ControlSummary s = new ControlSummary();
+			s.setId(act.getId());
+			s.setName(act.getName());
+			int count = 0;
+			for (ITransferObject to2 : list2) {
+				CommercialTracking ct = (CommercialTracking) to2;
+				if (act.getId().equals(ct.getActivity().getId())) {
+					count++;
+				}
+			}
+			s.setNumVisits(count);
+			activitySummary.add(s);
+		}
+		setReportName(AonUtil.getMessage(bundle, "report_activities_view"));
+		setItemTitle(AonUtil.getMessage(bundle, "report_activity"));
+
+	}
+
+	public void onActivityList(ActionEvent e) throws ManagerBeanException {
+		IManagerBean commercialTrackingBean = BeanManager
+				.getManagerBean(CommercialTracking.class);
+		Criteria criteria = new Criteria();
+		criteria
+				.addEqualExpression(
+						commercialTrackingBean
+								.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_ACTIVITY_ID),
+						((ControlSummary) getActivityModel().getRowData())
+								.getId());
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID),
+				this.getSeller().getId());
+		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getFromDate());
+		;
+		criteria.addLessThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getToDate());
+		CommercialTrackingStatus c;
+		if (commercialActivityStatus) {
+			c = CommercialTrackingStatus.CLOSED;
+		} else
+			c = CommercialTrackingStatus.PENDING;
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS), c);
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		list = commercialTrackingBean.getList(criteria);
+		
+		activitiesList = new LinkedList<CommercialTracking>();
+		for (ITransferObject to : list) {
+			CommercialTracking cmt = (CommercialTracking) to;
+			activitiesList.add(cmt);
+		}
+		setVisitsModel(new ListDataModel(getActivitiesList()));
+
+		setReportName(AonUtil.getMessage(bundle, "report_activities_view"));
+	}
+
+	public void onPendingSellerActivities(ActionEvent e)
+			throws ManagerBeanException {
+		setCommercialActivityStatus(false);
+		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
+		Criteria cri = new Criteria();
+		cri.addEqualExpression(sellerBean.getFieldName(ISellerAlias.SELLER_ID),
+				((ControlSummary) getSummaryModel().getRowData()).getId());
+		List<ITransferObject> list;
+		list = sellerBean.getList(cri);
+		this.setSeller((Seller) list.get(0));
+
+		setActivityModel(null);
+		IManagerBean commercialActivityBean = BeanManager
+				.getManagerBean(CommercialActivity.class);
+		List<ITransferObject> list1;
+		list1 = commercialActivityBean.getList(null);
+		IManagerBean commercialTrackingBean = BeanManager
+				.getManagerBean(CommercialTracking.class);
+		List<ITransferObject> list2;
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID),
+				((ControlSummary) getSummaryModel().getRowData()).getId());
+		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getFromDate());
+		;
+		criteria.addLessThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getToDate());
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS),
+				CommercialTrackingStatus.PENDING);
+		list2 = commercialTrackingBean.getList(criteria);
+
+		activitySummary = new LinkedList<ControlSummary>();
+		for (ITransferObject to : list1) {
+			CommercialActivity act = (CommercialActivity) to;
+			ControlSummary s = new ControlSummary();
+			s.setId(act.getId());
+			s.setName(act.getName());
+			int count = 0;
+			for (ITransferObject to2 : list2) {
+				CommercialTracking ct = (CommercialTracking) to2;
+				if (act.getId().equals(ct.getActivity().getId())) {
+					count++;
+				}
+			}
+			s.setNumVisits(count);
+			activitySummary.add(s);
+		}
+
+		setReportName(AonUtil.getMessage(bundle, "report_activities_view"));
+		setItemTitle(AonUtil.getMessage(bundle, "report_activity"));
+	}
+
+	public void onTargetActivities(ActionEvent e) throws ManagerBeanException {
+		setCommercialActivityStatus(true);
+		IManagerBean TargetBean = BeanManager.getManagerBean(Target.class);
+		Criteria cri = new Criteria();
+		cri.addEqualExpression(TargetBean.getFieldName(ICommercialAlias.TARGET_ID),
+				((ControlSummary) getSummaryModel().getRowData()).getId());
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		list = TargetBean.getList(cri);
+		this.setTarget((Target) list.get(0));
+
+		setActivityModel(null);
+		IManagerBean commercialActivityBean = BeanManager
+				.getManagerBean(CommercialActivity.class);
+		List<ITransferObject> list1 = new LinkedList<ITransferObject>();
+		list1 = commercialActivityBean.getList(null);
+		IManagerBean commercialTrackingBean = BeanManager
+				.getManagerBean(CommercialTracking.class);
+		List<ITransferObject> list2 = new LinkedList<ITransferObject>();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID),
+				((ControlSummary) getSummaryModel().getRowData()).getId());
+		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getFromDate());
+		;
+		criteria.addLessThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getToDate());
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS),
+				CommercialTrackingStatus.CLOSED);
+		list2 = commercialTrackingBean.getList(criteria);
+
+		activitySummary = new LinkedList<ControlSummary>();
+		for (ITransferObject to : list1) {
+			CommercialActivity act = (CommercialActivity) to;
+			ControlSummary s = new ControlSummary();
+			s.setId(act.getId());
+			s.setName(act.getName());
+			int count = 0;
+			for (ITransferObject to2 : list2) {
+				CommercialTracking ct = (CommercialTracking) to2;
+				if (act.getId().equals(ct.getActivity().getId())) {
+					count++;
+				}
+			}
+			s.setNumVisits(count);
+			activitySummary.add(s);
+		}
+		setReportName(AonUtil.getMessage(bundle, "report_activities_view"));
+		setItemTitle(AonUtil.getMessage(bundle, "report_activity"));
+
+
+	}
+	
+	public void onPendingTargetActivities(ActionEvent e) throws ManagerBeanException {
+		setCommercialActivityStatus(false);
+		IManagerBean TargetBean = BeanManager.getManagerBean(Target.class);
+		Criteria cri = new Criteria();
+		cri.addEqualExpression(TargetBean.getFieldName(ICommercialAlias.TARGET_ID),
+				((ControlSummary) getSummaryModel().getRowData()).getId());
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		list = TargetBean.getList(cri);
+		this.setTarget((Target) list.get(0));
+
+		setActivityModel(null);
+		IManagerBean commercialActivityBean = BeanManager
+				.getManagerBean(CommercialActivity.class);
+		List<ITransferObject> list1 = new LinkedList<ITransferObject>();
+		list1 = commercialActivityBean.getList(null);
+		IManagerBean commercialTrackingBean = BeanManager
+				.getManagerBean(CommercialTracking.class);
+		List<ITransferObject> list2 = new LinkedList<ITransferObject>();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID),
+				((ControlSummary) getSummaryModel().getRowData()).getId());
+		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getFromDate());
+		;
+		criteria.addLessThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getToDate());
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS),
+				CommercialTrackingStatus.PENDING);
+		list2 = commercialTrackingBean.getList(criteria);
+
+		activitySummary = new LinkedList<ControlSummary>();
+		for (ITransferObject to : list1) {
+			CommercialActivity act = (CommercialActivity) to;
+			ControlSummary s = new ControlSummary();
+			s.setId(act.getId());
+			s.setName(act.getName());
+			int count = 0;
+			for (ITransferObject to2 : list2) {
+				CommercialTracking ct = (CommercialTracking) to2;
+				if (act.getId().equals(ct.getActivity().getId())) {
+					count++;
+				}
+			}
+			s.setNumVisits(count);
+			activitySummary.add(s);
+		}
+		setReportName(AonUtil.getMessage(bundle, "report_activities_view"));
+		setItemTitle(AonUtil.getMessage(bundle, "report_activity"));
+
+
+	}
+	
+	public void onTargetActivityList(ActionEvent e) throws ManagerBeanException {
+		IManagerBean commercialTrackingBean = BeanManager
+				.getManagerBean(CommercialTracking.class);
+		Criteria criteria = new Criteria();
+		criteria
+				.addEqualExpression(
+						commercialTrackingBean
+								.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_ACTIVITY_ID),
+						((ControlSummary) getActivityModel().getRowData())
+								.getId());
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID),
+				this.getTarget().getId());
+		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getFromDate());
+		;
+		criteria.addLessThanOrEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				this.params.getToDate());
+		CommercialTrackingStatus c;
+		if (commercialActivityStatus) {
+			c = CommercialTrackingStatus.CLOSED;
+		} else
+			c = CommercialTrackingStatus.PENDING;
+		criteria.addEqualExpression(commercialTrackingBean
+				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS), c);
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		list = commercialTrackingBean.getList(criteria);
+		activitiesList = new LinkedList<CommercialTracking>();
+		for (ITransferObject to : list) {
+			CommercialTracking cmt = (CommercialTracking) to;
+			activitiesList.add(cmt);
+		}
+		setVisitsModel(new ListDataModel(getActivitiesList()));
+
+		setReportName(AonUtil.getMessage(bundle, "report_activities_view"));
+	}
+
+
+
+	public class ControlSummary {
 
 		private Integer id;
 		private String name;
@@ -908,7 +1274,7 @@ public class CommercialStatEngineController {
 		public void setNumPendingOffers(Integer numPendingOffers) {
 			this.numPendingOffers = numPendingOffers;
 		}
-		
+
 	}
 
 	public void onCategoryStats(ActionEvent event) {
@@ -958,16 +1324,17 @@ public class CommercialStatEngineController {
 		setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
 		productStatModel = null;
 	}
-	
+
 	public void onProductStats(ActionEvent event) {
 		try {
 			StatEngine se = new StatEngine();
-			//params.setCategory(category);
+			// params.setCategory(category);
 			List<Stat> list = new LinkedList<Stat>();
 			list.addAll(se.getCommercialCategoryProductsStats(params));
 			setProductStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle,"stat_report_commercial_product"));
+			setReportName(AonUtil.getMessage(bundle,
+					"stat_report_commercial_product"));
 			setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
 			productStatModel = null;
 
@@ -996,7 +1363,7 @@ public class CommercialStatEngineController {
 			throw new AbortProcessingException(msg);
 		}
 	}
-	
+
 	public void onTargetStats(ActionEvent event) {
 		try {
 			StatEngine se = new StatEngine();
@@ -1004,7 +1371,8 @@ public class CommercialStatEngineController {
 			list.addAll(se.getCommercialTargetStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle,"stat_report_commercial_target"));
+			setReportName(AonUtil.getMessage(bundle,
+					"stat_report_commercial_target"));
 			setItemTitle(AonUtil.getMessage(bundle, "stat_target"));
 			yearStatModel = null;
 
@@ -1049,14 +1417,14 @@ public class CommercialStatEngineController {
 		}
 		promAmount += totalAmount / numInvoices;
 	}
-	
+
 	private void getTargetDoneVisitsModel() throws ManagerBeanException {
 		PreparedStatement ps = null;
-		
+
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
 				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.target.id = "
-				+ target.getId() 
+				+ target.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
@@ -1074,7 +1442,7 @@ public class CommercialStatEngineController {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
 				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.target.id = "
-				+ target.getId() 
+				+ target.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND CommercialTracking.date <= '"
@@ -1103,18 +1471,18 @@ public class CommercialStatEngineController {
 		closedOffersList = new LinkedList<OfferDetail>();
 		lostOffersList = new LinkedList<OfferDetail>();
 		pendingOffersList = new LinkedList<OfferDetail>();
-	
+
 		for (int i = 0; i < doneOffersList.size(); i++) {
 			numOffers++;
-			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.APPROVED){
+			if (doneOffersList.get(i).getOffer().getStatus() == OfferStatus.APPROVED) {
 				numAprovedOffers++;
 				closedOffersList.add(doneOffersList.get(i));
 			}
-			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.REFUSED){
+			if (doneOffersList.get(i).getOffer().getStatus() == OfferStatus.REFUSED) {
 				numLostOffers++;
 				lostOffersList.add(doneOffersList.get(i));
 			}
-			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.PENDING){
+			if (doneOffersList.get(i).getOffer().getStatus() == OfferStatus.PENDING) {
 				numPendingOffers++;
 				pendingOffersList.add(doneOffersList.get(i));
 			}
@@ -1137,25 +1505,22 @@ public class CommercialStatEngineController {
 		closedOffersList = new LinkedList<OfferDetail>();
 		lostOffersList = new LinkedList<OfferDetail>();
 		pendingOffersList = new LinkedList<OfferDetail>();
-	
+
 		for (int i = 0; i < doneOffersList.size(); i++) {
 			numOffers++;
-			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.APPROVED){
+			if (doneOffersList.get(i).getOffer().getStatus() == OfferStatus.APPROVED) {
 				numAprovedOffers++;
 				closedOffersList.add(doneOffersList.get(i));
 			}
-			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.REFUSED){
+			if (doneOffersList.get(i).getOffer().getStatus() == OfferStatus.REFUSED) {
 				numLostOffers++;
 				lostOffersList.add(doneOffersList.get(i));
 			}
-			if(doneOffersList.get(i).getOffer().getStatus()==OfferStatus.PENDING){
+			if (doneOffersList.get(i).getOffer().getStatus() == OfferStatus.PENDING) {
 				numPendingOffers++;
 				pendingOffersList.add(doneOffersList.get(i));
 			}
 		}
 	}
-
-
-
 
 }
