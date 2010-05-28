@@ -336,6 +336,19 @@
 				/com/code/aon/ui/stat/facelet/commercialSellerControl/controlView.xhtml</to-view-id>
 		</navigation-case>
 		
+		<navigation-case>
+			<from-outcome>commercial_activity_view</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialSellerControl/activityView.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>commercial_activity_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/commercialSellerControl/activityList.xhtml</to-view-id>
+		</navigation-case>
+		
+		
 	</navigation-rule>
 
 

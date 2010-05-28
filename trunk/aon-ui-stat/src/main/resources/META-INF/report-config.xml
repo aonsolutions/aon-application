@@ -258,4 +258,34 @@
 		</params>
 	</report>
 	
+	<report id="activityView" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/activityView.jasper" />
+		<collection provider="#{commercialStat.activitySummary}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{commercialStat.getReportName}" />
+			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
+			<param id="seller" value="#{commercialStat.getSeller}" />
+			<param id="fromDate" value="#{commercialStat.getFromDate}" />
+			<param id="toDate" value="#{commercialStat.getToDate}" />
+			<param id="type" value="#{commercialStat.getCommercialActivityStatus}" />
+			
+		</params>
+	</report>
+	
+	<report id="activityList" description="Statistics Report">
+		<template path="/com/code/aon/ui/stat/report/activityList.jasper" />
+		<collection provider="#{commercialStat.activitiesList}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.stat.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="reportName" value="#{commercialStat.getReportName}" />
+			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
+			<param id="seller" value="#{commercialStat.getSeller}" />
+			<param id="fromDate" value="#{commercialStat.getFromDate}" />
+			<param id="toDate" value="#{commercialStat.getToDate}" />
+		</params>
+	</report>
+	
 </report-config>
