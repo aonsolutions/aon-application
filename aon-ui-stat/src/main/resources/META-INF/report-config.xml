@@ -267,10 +267,11 @@
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
 			<param id="seller" value="#{commercialStat.getSeller}" />
+			<param id="target" value="#{commercialStat.getTarget}" />
 			<param id="fromDate" value="#{commercialStat.getFromDate}" />
 			<param id="toDate" value="#{commercialStat.getToDate}" />
 			<param id="type" value="#{commercialStat.getCommercialActivityStatus}" />
-			
+			<param id="registryType" value="#{commercialStat.getRegistryType}" />
 		</params>
 	</report>
 	
@@ -283,8 +284,10 @@
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
 			<param id="seller" value="#{commercialStat.getSeller}" />
+			<param id="target" value="#{commercialStat.getTarget}" />
 			<param id="fromDate" value="#{commercialStat.getFromDate}" />
 			<param id="toDate" value="#{commercialStat.getToDate}" />
+			<param id="registryType" value="#{commercialStat.getRegistryType}" />
 		</params>
 	</report>
 	
