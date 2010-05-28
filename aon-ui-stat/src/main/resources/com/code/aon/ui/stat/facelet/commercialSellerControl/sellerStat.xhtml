@@ -51,10 +51,10 @@
 						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
 
 					</c:if>
-					<c:if test="#{statBundle.stat_seller}">
+					<c:if test="#{commercialStat.controlType==1}">
 						<aon:outputLabel for="Target_trackings_seller_id"
 							value="#{statBundle.stat_target}" />
-						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
+						<aon:outputText value="#{commercialStat.target.registry.fullName}"></aon:outputText>
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==2}">
