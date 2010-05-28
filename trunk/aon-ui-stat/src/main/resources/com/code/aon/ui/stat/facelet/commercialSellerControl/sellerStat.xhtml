@@ -83,7 +83,7 @@
 					<h:panelGrid columns="2">
 
 						<aon:div>
-							<aon:panel rendered="#{commercialStat.showCommercialActivities}" style="height:100px;width:500px;"
+							<aon:panel rendered="#{commercialStat.showCommercialActivities}" style="height:100px;width:250px;"
 								header="#{statBundle.seller_stat_control_vis}">
 								<aon:panelGrid columns="2">
 									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
@@ -97,7 +97,7 @@
 							</aon:panel>
 						</aon:div>
 						<aon:div>
-							<aon:panel style="height:100px;width:500px;"
+							<aon:panel style="height:100px;width:250px;"
 								header="#{statBundle.seller_stat_control_pre}">
 								<aon:panelGrid columns="2">
 									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
@@ -122,12 +122,12 @@
 				</aon:div>
 
 				<aon:panelTabSet switchType="client">
-					<aon:panelTab id="tab1"
+					<aon:panelTab id="tab1" rendered="#{commercialStat.showCommercialActivities}"
 						label="#{statBundle.seller_stat_control_vis} #{statBundle.seller_stat_control_donef}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/visitsList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="tab2" label="#{statBundle.seller_stat_control_vis}  #{statBundle.seller_stat_control_pending}">
+					<aon:panelTab id="tab2" rendered="#{commercialStat.showCommercialActivities}" label="#{statBundle.seller_stat_control_vis}  #{statBundle.seller_stat_control_pending}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/pendingVisitsList.xhtml" />
 					</aon:panelTab>
