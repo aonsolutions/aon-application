@@ -10,7 +10,6 @@ import javax.servlet.http.HttpSessionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.audit.Session;
 import com.code.aon.ui.audit.AuditManager;
 
 public class AuditSessionListener implements HttpSessionListener {
@@ -31,10 +30,7 @@ public class AuditSessionListener implements HttpSessionListener {
 
 	private void closeLoginAudit( HttpSession httpSession ) {
 		try {
-			Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
-			if ( session != null ) {
-				AuditManager.closeLoginAudit(session);	
-			}
+			AuditManager.closeLoginAudit( httpSession );	
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error closing login audit", th );
 		}

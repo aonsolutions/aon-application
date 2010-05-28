@@ -3,6 +3,8 @@ package com.code.aon.ui.audit;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,8 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditManager.class);
 	
 	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.session";	
+	
+	public static final String AUDIT_SESSION_MANAGER_BEAN = "com.code.aon.audit.session.managerBean";
 	
 	public static String getApplicationName( String context ) {
 		String application = context;
@@ -82,17 +86,24 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 	}
 	
 	
-	public static void insertSession( Session session ) throws ManagerBeanException {
+	public static void insertSession( HttpSession httpSession, Session session ) throws ManagerBeanException {
 		IManagerBean sessionBean = BeanManager.getManagerBean(Session.class);
 		sessionBean.insert( session );
 		LOGGER.info( "Session inserted {}", session );
+		httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, session );
+		httpSession.setAttribute( AuditManager.AUDIT_SESSION_MANAGER_BEAN, sessionBean );
 	}
 
-	public static void closeLoginAudit( Session session ) throws ManagerBeanException {
-		IManagerBean sessionBean = BeanManager.getManagerBean(Session.class);
-		session.setEndDate( new Date() );
-		sessionBean.update( session );
-		LOGGER.info( "Session finished {}", session );
+	public static void closeLoginAudit( HttpSession httpSession ) throws ManagerBeanException {
+		Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+		if ( session != null ) {
+			IManagerBean sessionBean = (IManagerBean) httpSession.getAttribute( AuditManager.AUDIT_SESSION_MANAGER_BEAN );
+			session.setEndDate( new Date() );
+			sessionBean.update( session );
+			LOGGER.info( "Session finished {}", session.getId() );
+			httpSession.removeAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+			httpSession.removeAttribute( AuditManager.AUDIT_SESSION_MANAGER_BEAN );
+		}
 	}
 	
 	private static boolean isMenuAction( String name ) {

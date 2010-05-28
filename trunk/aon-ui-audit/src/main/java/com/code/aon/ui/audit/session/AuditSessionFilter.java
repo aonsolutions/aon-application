@@ -59,8 +59,7 @@ public class AuditSessionFilter implements Filter {
 				session.setStartDate( new Date(httpSession.getCreationTime()) );
 				session.setRemoteAddress( request.getRemoteAddr() );
 				session.setRemoteHost( request.getRemoteHost() );
-				AuditManager.insertSession( session );
-				httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, session );				
+				AuditManager.insertSession( httpSession, session );				
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error login audit", th );
