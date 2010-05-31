@@ -1449,7 +1449,7 @@ public class CommercialStatEngineController {
 	private void getTargetPendingVisitModel() throws ManagerBeanException {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
-				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.target.id = "
+				+ "where  CommercialTracking.status = 0 AND  CommercialTracking.target.id = "
 				+ target.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
