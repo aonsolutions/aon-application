@@ -126,16 +126,15 @@ public class Registry implements ITransferObject {
 	public void setAddresses( Set<RegistryAddress> addresses ) {
 		this.addresses = addresses;
 	}
-
 	public void addAddress(RegistryAddress address) {
 		address.setRegistry( this );
 		this.addresses.add( address );
 	}
+
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
 	public Set<RegistryMedia> getMedias() {
 		return this.medias;
 	}
-
 	public void setMedias( Set<RegistryMedia> medias ) {
 		this.medias = medias;
 	}
