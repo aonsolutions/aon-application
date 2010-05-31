@@ -9,9 +9,20 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 	<ui:define name="content">
 		<aon:form id="records">
+			<c:if test="#{commercialStat.controlType==0}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control_seller}" />
+			</c:if>
+			<c:if test="#{commercialStat.controlType==1}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control_target}" />
+			</c:if>
+			<c:if test="#{commercialStat.controlType==2}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control_product}" />
+			</c:if>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{statBundle.stat_show_seller}" />
 				<ui:define name="beforeToolbarContent">
 					<aon:commandButton value="#{bundle.aon_back}"
 						action="commercial_seller_search"

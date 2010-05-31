@@ -10,10 +10,22 @@
 
 	<ui:define name="content">
 		<aon:form id="sellerViewList">
+
+			<c:if test="#{commercialStat.controlType==0}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control_seller}" />
+			</c:if>
+			<c:if test="#{commercialStat.controlType==1}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control_target}" />
+			</c:if>
+			<c:if test="#{commercialStat.controlType==2}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control_product}" />
+			</c:if>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{statBundle.seller_stat_control}" />
+
 				<ui:define name="beforeToolbarContent">
 					<aon:commandButton value="#{bundle.aon_back}"
 						action="commercial_search_view"
@@ -60,7 +72,18 @@
 							<rich:column colspan="8">
 								<h:panelGrid columns="3">
 									<aon:div>
-										<aon:outputText value="#{statBundle.seller_stat_control}" />
+										<c:if test="#{commercialStat.controlType==0}">
+											<aon:outputText
+												value="#{statBundle.seller_stat_control_seller}" />
+										</c:if>
+										<c:if test="#{commercialStat.controlType==1}">
+											<aon:outputText
+												value="#{statBundle.seller_stat_control_target}" />
+										</c:if>
+										<c:if test="#{commercialStat.controlType==2}">
+											<aon:outputText
+												value="#{statBundle.seller_stat_control_product}" />
+										</c:if>
 									</aon:div>
 									<aon:div>
 										<aon:outputText value="(" />
@@ -145,7 +168,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{statBundle.seller_stat_control_pending}" />
 						</f:facet>
-							<c:if test="#{commercialStat.controlType==0}">
+						<c:if test="#{commercialStat.controlType==0}">
 							<aon:htmlCommandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onPendingSellerActivities}"
 								action="commercial_activity_view" value="#{to.numPendingVisits}" />
@@ -155,7 +178,7 @@
 								actionListener="#{commercialStat.onPendingTargetActivities}"
 								action="commercial_activity_view" value="#{to.numPendingVisits}" />
 						</c:if>
-					
+
 						<f:facet name="footer">
 							<aon:outputText value="#{commercialStat.numPendingVisitsTot}"
 								style="float:right" />
