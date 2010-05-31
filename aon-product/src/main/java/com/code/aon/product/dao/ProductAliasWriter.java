@@ -13,6 +13,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.ItemAlternative;
 import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.ItemPos;
+import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
@@ -30,21 +31,23 @@ public class ProductAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-product/src/main/java/com/code/aon/product/dao/IProductAlias.java");
-		String[] classes = new String[13]; 
-		classes[0] = Brand.class.getName();
-		classes[1] = Catalogue.class.getName();
-		classes[2] = CatalogueCategory.class.getName();
-		classes[3] = CatalogueItem.class.getName();
-		classes[4] = Item.class.getName();
-		classes[5] = ItemAlternative.class.getName();
-		classes[6] = ItemAttachment.class.getName();
-		classes[7] = ItemPos.class.getName();
-		classes[8] = Product.class.getName();
-		classes[9] = ProductCategory.class.getName();
-		classes[10] = ProductCategoryGroup.class.getName();
-		classes[11] = ProductCategoryTree.class.getName();
-		classes[12] = TariffCatalogue.class.getName();
+		File file = new File("/AON-TRUNK/aon-product/src/main/java/com/code/aon/product/dao/IProductAlias.java");
+		String[] classes = new String[] {
+			Brand.class.getName(),
+			Catalogue.class.getName(),
+			CatalogueCategory.class.getName(),
+			CatalogueItem.class.getName(),
+			Item.class.getName(),
+			ItemAlternative.class.getName(),
+			ItemAttachment.class.getName(),
+			ItemPos.class.getName(),
+			ItemSupplier.class.getName(),
+			Product.class.getName(),
+			ProductCategory.class.getName(),
+			ProductCategoryGroup.class.getName(),
+			ProductCategoryTree.class.getName(),
+			TariffCatalogue.class.getName(),
+		};
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.product.dao");
 		writer.write(classes, file);

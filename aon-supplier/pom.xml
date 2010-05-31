@@ -24,11 +24,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.product</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
 			<version>${pom.version}</version>
 		</dependency>

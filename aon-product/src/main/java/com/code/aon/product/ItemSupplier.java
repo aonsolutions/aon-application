@@ -1,4 +1,4 @@
-package com.code.aon.supplier;
+package com.code.aon.product;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +16,6 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.product.Item;
 import com.code.aon.supplier.Supplier;
 
 @Entity
