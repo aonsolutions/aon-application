@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.empleado;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,15 +12,19 @@ import org.hibernate.criterion.Projections;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.Percepcion;
+import com.esferalia.aon.payroll.PercepcionPK;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPercepcion;
 import com.esferalia.aon.payroll.core.IPersona;
@@ -194,13 +199,58 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IPercepcion> getPercepciones(IPersona persona) throws PayrollException{
+	public List<IPercepcion> getPercepciones(IEmpleado empleado) throws PayrollException{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Percepcion.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IPayrollAlias.PERCEPCION_ID_NUMERO), persona.getId());
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.PERCEPCION_ID_NUMERO), empleado.getId());
+			String fAlias = bean.getFieldName(IPayrollAlias.PERCEPCION_FECHA_FIN);
+			Expression or1 = ExpressionUtilities.getGreaterThanExpression(fAlias, Calendar.getInstance().getTime());  
+			Expression or2 = ExpressionUtilities.getNullExpression(fAlias);
+			c.addExpression(ExpressionUtilities.getOrExpression(or1, or2));
 			List<?> list = bean.getList(c);
 			return (List<IPercepcion>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	@Override
+	public IPercepcion initializePercepcion(IEmpleado empleado) throws PayrollException{
+		PercepcionPK id = new PercepcionPK();
+		id.setNumero(empleado.getId());
+		id.setCdg(getMaxPercepcionesCdg(empleado));
+		Percepcion percepcion = new Percepcion();
+		percepcion.setId(id);
+		return percepcion;
+	}
+	
+	//	metodo para grabar las percepciones de un empleado 
+	@Override
+	public IPercepcion accept(IPercepcion percepcion) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Percepcion.class);
+			Percepcion p = (Percepcion) percepcion;
+			return (IPercepcion) bean.insertOrUpdate(p);
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	private Integer getMaxPercepcionesCdg(IEmpleado empleado) throws PayrollException{
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Percepcion.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.PERCEPCION_ID_NUMERO), empleado.getId());
+			List<ITransferObject> list = bean.getList(c);
+			Integer max=0;
+			for(ITransferObject to: list){
+				Percepcion p = (Percepcion)to;
+				if(p.getId().getCdg().compareTo((max))>0){
+					max = p.getId().getCdg();
+				}
+			}
+			return max;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}

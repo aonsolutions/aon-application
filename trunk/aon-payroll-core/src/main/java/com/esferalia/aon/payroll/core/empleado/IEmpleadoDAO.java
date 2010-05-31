@@ -18,5 +18,7 @@ public interface IEmpleadoDAO {
 	int getCount(EmpleadoParams params) throws PayrollException;
 	Criteria getCriteria(EmpleadoParams params) throws PayrollException;
 
-	List<IPercepcion> getPercepciones(IPersona persona) throws PayrollException;
+	List<IPercepcion> getPercepciones(IEmpleado empleado) throws PayrollException;
+	IPercepcion initializePercepcion(IEmpleado empleado) throws PayrollException;
+	IPercepcion accept(IPercepcion percepcion) throws PayrollException;
 }

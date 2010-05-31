@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.core.IPercepcion;
 
 public class PercepcionEmpleado {
@@ -22,7 +23,7 @@ public class PercepcionEmpleado {
 	}
 	public Double getDiferencia() {
 		if(getImporteNuevo()!=null){
-			return getImporteNuevo()-getPercepcion().getImporte();
+			return CommonUtil.round(getImporteNuevo()-getPercepcion().getImporte());
 		}
 		return null;
 	}
