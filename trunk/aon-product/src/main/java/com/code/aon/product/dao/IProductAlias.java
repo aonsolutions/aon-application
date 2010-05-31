@@ -10,6 +10,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.ItemAlternative;
 import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.ItemPos;
+import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
@@ -406,6 +407,43 @@ public interface IProductAlias {
 	* Hibernate value: ItemPos.shortDescription
 	*/
 	String  ITEM_POS_SHORT_DESCRIPTION = ITEM_POS_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for ItemSupplier entity.
+	*/ 
+	DAOConstantsEntry ITEM_SUPPLIER_ENTRY = DAOConstants.getDAOConstant(ItemSupplier.class);
+
+	/** 
+	* Alias value: ItemSupplier_code
+	* Hibernate value: ItemSupplier.code
+	*/
+	String  ITEM_SUPPLIER_CODE = ITEM_SUPPLIER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ItemSupplier_id
+	* Hibernate value: ItemSupplier.id
+	*/
+	String  ITEM_SUPPLIER_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ItemSupplier_item_id
+	* Hibernate value: ItemSupplier.item.id
+	*/
+	String  ITEM_SUPPLIER_ITEM_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ItemSupplier_priority
+	* Hibernate value: ItemSupplier.priority
+	*/
+	String  ITEM_SUPPLIER_PRIORITY = ITEM_SUPPLIER_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ItemSupplier_supplier_id
+	* Hibernate value: ItemSupplier.supplier.id
+	*/
+	String  ITEM_SUPPLIER_SUPPLIER_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[4];
 
 
 

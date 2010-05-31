@@ -1,5 +1,9 @@
 package com.code.aon.product;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -41,6 +46,7 @@ public class Item implements ITransferObject {
     private double profitPercent;
     private double purchasePrice;
     private boolean internet;
+	private Set<ItemSupplier> suppliers = new HashSet<ItemSupplier>();
 
     @Id
     @GeneratedValue
@@ -156,6 +162,14 @@ public class Item implements ITransferObject {
 		this.internet = internet;
 	}
 	
+	@OneToMany(mappedBy = "item", cascade={CascadeType.REMOVE})
+	public Set<ItemSupplier> getSuppliers() {
+		return this.suppliers;
+	}
+	public void setSuppliers( Set<ItemSupplier> suppliers ) {
+		this.suppliers = suppliers;
+	}
+
 	@Transient
 	public double getSalesPrice() {
 		double price = this.getPrice();
