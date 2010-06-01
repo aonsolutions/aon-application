@@ -12,6 +12,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IComplemento;
 import com.esferalia.aon.payroll.core.IEmpleado;
@@ -196,7 +199,7 @@ public class Percepcion implements IPercepcion, ITransferObject {
 		this.redondeoPagaExtra = redondeoPagaExtra;
 	}
 
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.FijoVariable") })
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.core.enumeration.FijoVariable") })
 	@Column(name = "fijovar", nullable = false, length = 1)
 	@Override
 	public FijoVariable getFijoVariable() {
@@ -251,7 +254,7 @@ public class Percepcion implements IPercepcion, ITransferObject {
 		this.horaModificacion = horaModificacion;
 	}
 
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.IndiceComplemento") })
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.core.enumeration.IndiceComplemento") })
 	@Column(name = "indcom", length = 1)
 	@Override
 	public IndiceComplemento getIndiceComplemento() {
@@ -262,7 +265,7 @@ public class Percepcion implements IPercepcion, ITransferObject {
 		this.indiceComplemento = indiceComplemento;
 	}
 
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.TipoComplemento") })
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.core.enumeration.TipoComplemento") })
 	@Column(name = "tipcom", length = 1)
 	@Override
 	public TipoComplemento getTipoComplemento() {
@@ -273,7 +276,7 @@ public class Percepcion implements IPercepcion, ITransferObject {
 		this.tipoComplemento = tipoComplemento;
 	}
 
-//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.Retribuciones") })
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.core.enumeration.Retribucion") })
 	@Column(name = "dinesp", nullable = false, length = 1)
 	@Override
 	public Retribucion getRetribucion() {
