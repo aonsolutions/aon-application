@@ -246,6 +246,12 @@ public class SalaryModificationWizard implements Serializable, IDataModelDataPro
 				newPercepcion.setFechaModificacion(null);
 				newPercepcion.setHoraModificacion(null);
 				newPercepcion.setEmpleado(oldPercepcion.getEmpleado());
+				newPercepcion.setComplemento(oldPercepcion.getComplemento());
+				newPercepcion.setComplementoAplicar(oldPercepcion.getComplementoAplicar());
+				newPercepcion.setFijoVariable(oldPercepcion.getFijoVariable());
+				newPercepcion.setIndiceComplemento(oldPercepcion.getIndiceComplemento());
+				newPercepcion.setTipoComplemento(oldPercepcion.getTipoComplemento());
+				newPercepcion.setRetribucion(oldPercepcion.getRetribucion());
 				getNewPercepcionesList().add(newPercepcion);
 //				oldPercepcion.setFechaFin(currentDate);
 			}
