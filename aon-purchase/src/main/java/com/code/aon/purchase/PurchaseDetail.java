@@ -25,12 +25,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.Item;
+import com.code.aon.product.ItemSupplier;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.supplier.ItemSupplier;
-import com.code.aon.supplier.dao.ISupplierAlias;
 
 @Entity
 @Table(name="purchase_detail")
@@ -153,8 +153,8 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
     	try {
 			IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_ITEM_ID),getItem().getId());
-			criteria.addEqualExpression(itemSupplierBean.getFieldName(ISupplierAlias.ITEM_SUPPLIER_SUPPLIER_ID),getPurchase().getSupplier().getId());
+			criteria.addEqualExpression(itemSupplierBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ITEM_ID),getItem().getId());
+			criteria.addEqualExpression(itemSupplierBean.getFieldName(IProductAlias.ITEM_SUPPLIER_SUPPLIER_ID),getPurchase().getSupplier().getId());
 			Iterator<?> iterator = itemSupplierBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				ItemSupplier itemSupplier = (ItemSupplier)iterator.next();
