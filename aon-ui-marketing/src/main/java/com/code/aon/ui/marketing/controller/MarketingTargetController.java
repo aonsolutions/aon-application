@@ -22,6 +22,11 @@ public class MarketingTargetController extends TargetController {
 	
 	private IManagerBean mtBean;
 	
+	@Override
+	public String getAliasPreffix() {
+		return getPojoShortName() + ".target";
+	}
+	
 	private String updateAlias( String alias ) {
 		if ( alias.startsWith("Target_") ) {
 			return alias.replace("Target_", "MarketingTarget_target_");
