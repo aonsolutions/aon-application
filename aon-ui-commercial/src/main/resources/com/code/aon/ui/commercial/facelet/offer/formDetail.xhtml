@@ -72,6 +72,8 @@
 							lookupChangeListener="#{offerDetail.onItemChanged}" 
 							selectReRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
 							actionType="search">
+							<f:setPropertyActionListener target="#{itemSearch.supplierParam}"
+								value="#{offer.to.supplier}" />
 						</aon:lookupButton>
 						<aon:lookupButton
 							windowTitle="#{productBundle.product_item_new}"
@@ -114,6 +116,8 @@
 								lookupChangeListener="#{offerDetail.onItemChanged}" 
 								selectReRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
 								actionType="search">
+								<f:setPropertyActionListener target="#{itemSearch.supplierParam}"
+									value="#{offer.to.supplier}" />
 							</aon:lookupButton>
 							<aon:lookupButton
 								windowTitle="#{productBundle.product_item_new}"
