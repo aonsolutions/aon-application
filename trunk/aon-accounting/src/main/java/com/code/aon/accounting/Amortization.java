@@ -57,6 +57,9 @@ public class Amortization implements ITransferObject {
     private double percentage;
 	
 	private List<AmortizationDetail> details;
+	
+	@Transient
+	private boolean detailsInitialized;
 
 	@Id
     @GeneratedValue	
@@ -211,11 +214,51 @@ public class Amortization implements ITransferObject {
 
 	@OneToMany(mappedBy = "amortization", cascade={CascadeType.REMOVE})
 	public List<AmortizationDetail> getDetails() {
+		if (!isDetailsInitialized()) {
+			calculateTotals(details);
+			setDetailsInitialized(true);
+		}
 		return details;
 	}
 
 	public void setDetails(List<AmortizationDetail> details) {
 		this.details = details;
+	}
+
+	
+	@Transient
+	public boolean isDetailsInitialized() {
+		return detailsInitialized;
+	}
+
+	public void setDetailsInitialized(boolean detailsInitialized) {
+		this.detailsInitialized = detailsInitialized;
+	}
+
+	@Transient
+	public void calculateTotals(List<AmortizationDetail> list)  {
+		double accumulated = 0.0;
+		double pending = 0.0;
+		double fiscalAccumulated = 0.0;
+		double fiscalPending = 0.0;
+		boolean first = true;
+		for (AmortizationDetail detail: list) {
+			if (first) {
+				pending = detail.getAmortization().getAmount();
+				fiscalPending = detail.getAmortization().getAmount();
+				first = false;
+			}
+			accumulated = CommonUtil.round(accumulated + detail.getAllocation());
+			fiscalAccumulated = CommonUtil.round(fiscalAccumulated + detail.getFiscalAllocation());
+
+			pending = CommonUtil.round(pending - detail.getAllocation());
+			fiscalPending = CommonUtil.round(fiscalPending - detail.getFiscalAllocation());
+
+			detail.setAccumulated(accumulated);
+			detail.setFiscalAccumulated(fiscalAccumulated);
+			detail.setPending(pending);
+			detail.setFiscalPending(fiscalPending);
+		}
 	}
 
 	@Override

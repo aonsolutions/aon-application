@@ -311,6 +311,10 @@
 				<value>#{amortizationControllerListener}</value>
 			</list-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Amortization_amortizationType</value>
+		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
@@ -353,7 +357,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>100</value>
+			<value>200</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>

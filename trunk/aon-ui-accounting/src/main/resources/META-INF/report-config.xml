@@ -285,8 +285,6 @@
 	<report id="amortizationForm" description="Amortization Form">
 		<template path="/com/code/aon/ui/accounting/report/amortizationForm.jasper" />
 		<collection provider="#{amortizationDetail.amortizationList}" />  
-		<!-- <bean key="com.code.aon.accounting.AmortizationDetail" />
-		<criteria provider="#{amortizationDetail}"/> -->
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />

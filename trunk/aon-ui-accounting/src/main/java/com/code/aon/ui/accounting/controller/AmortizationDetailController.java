@@ -4,15 +4,15 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 
 import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -24,37 +24,29 @@ public class AmortizationDetailController extends LinesController {
 
 	@SuppressWarnings("unchecked")
 	public List<AmortizationDetail> getAmortizationList() throws ManagerBeanException {
-		return (List<AmortizationDetail>) getCalculatedModel().getWrappedData();
+		return (List<AmortizationDetail>) getModel().getWrappedData();
 	}
 
-	public DataModel getCalculatedModel() throws ManagerBeanException {
-		DataModel model = super.getModel();
-
-		double accumulated = 0.0;
-		double pending = 0.0;
-
-		double fiscalAccumulated = 0.0;
-		double fiscalPending = 0.0;
-		
-		for (int i = 0; i < model.getRowCount(); i++) {
-			model.setRowIndex(i);
-			AmortizationDetail detail = (AmortizationDetail) model.getRowData();
-			if (i == 0) {
-				pending = detail.getAmortization().getAmount();
-				fiscalPending = detail.getAmortization().getAmount();
-			}
-			accumulated = CommonUtil.round(accumulated + detail.getAllocation());
-			fiscalAccumulated = CommonUtil.round(fiscalAccumulated + detail.getFiscalAllocation());
-
-			pending = CommonUtil.round(pending - detail.getAllocation());
-			fiscalPending = CommonUtil.round(fiscalPending - detail.getFiscalAllocation());
-
-			detail.setAccumulated(accumulated);
-			detail.setFiscalAccumulated(fiscalAccumulated);
-			detail.setPending(pending);
-			detail.setFiscalPending(fiscalPending);
-		}
-		return model;
+	@Override
+	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
+		List<ITransferObject> list = super.search(start, count);
+		calculateTotals(list);
+		return list; 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void forceRefresh() throws ManagerBeanException {
+		List<ITransferObject> details = (List<ITransferObject>) getModel().getWrappedData();
+		Amortization a = (Amortization) getMasterController().getTo();
+		a.setDetailsInitialized(false);
+		calculateTotals(details);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void calculateTotals(List<ITransferObject> list) {
+		List<?> details = list;
+		Amortization a = (Amortization) getMasterController().getTo();
+		a.calculateTotals((List<AmortizationDetail>) details);
 	}
 
 	public AmortizationDetailStatus getPendingStatus() {
