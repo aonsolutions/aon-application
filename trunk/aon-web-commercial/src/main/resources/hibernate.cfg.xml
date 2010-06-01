@@ -119,6 +119,10 @@
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 				
 		<!-- AON-SALES Mapping files -->
+		<mapping class="com.code.aon.sales.Sales"/>
+		<mapping class="com.code.aon.sales.SalesDetail"/>
+
+		<!-- AON-SELLER Mapping files -->
 		<mapping class="com.code.aon.seller.Seller"/>
 				
 		<!-- AON-COMPANY Mapping files -->
