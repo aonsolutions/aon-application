@@ -14,6 +14,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 
 	private ProductStatus[] itemStatuses;
 	private Supplier supplier;
+	private Supplier supplierParam;
 	
 	public ProductStatus[] getItemStatuses() {
 		return itemStatuses;
@@ -31,11 +32,20 @@ public class ItemSearchListener extends RegistrySearchListener {
 		this.supplier = supplier;
 	}
 
+	public Supplier getSupplierParam() {
+		return supplierParam;
+	}
+
+	public void setSupplierParam(Supplier supplierParam) {
+		this.supplierParam = supplierParam;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		ProductStatus[] defaultItemStatus = {ProductStatus.ACTIVE};
 		setItemStatuses(defaultItemStatus);
-		setSupplier(new Supplier());
+		setSupplier((getSupplierParam() != null && getSupplierParam().getId() != null) ? getSupplierParam() : new Supplier());
+		setSupplierParam(new Supplier());
 		super.init();
 	}
 	
