@@ -25,4 +25,8 @@ public class TargetController extends RegistryController {
 		this.bundle = AonUtil.getResourceBundle(bundleName);
 	}	
 		
+	public String getAliasPreffix() {
+		return getPojoShortName();
+	}
+	
 }
