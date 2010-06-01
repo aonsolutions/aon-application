@@ -318,11 +318,11 @@ public class PurchaseController extends BasicController {
 		Income income = incomeManager.purchaseIncome(to, getIncomeSeries(), getIncomeNumber(), getIncomeDate(), getIncomeWarehouse(), IncomeDetailType.MANUAL);
 
 		IController incomeController = FormUtil.getController(INCOME_CONTROLLER);
-		incomeController.clearCriteria();
+		incomeController.onEditSearch(event);
 		incomeController.getCriteria().addEqualExpression(incomeController.getFieldName(IWarehouseAlias.INCOME_ID), income.getId());
-		incomeController.onSearch(null);
+		incomeController.onSearch(event);
 		incomeController.getModel().setRowIndex(0);
-		incomeController.onSelect(null);
+		incomeController.onSelect(event);
 	}
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
@@ -343,11 +343,11 @@ public class PurchaseController extends BasicController {
 		Invoice invoice = invoicingManager.invoice(income, getInvoiceRefCode(), getInvoiceDate());
 
 		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER);
-		invoiceController.clearCriteria();
+		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(null);
+		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(null);
+		invoiceController.onSelect(event);
 	}
 
 	private int obtainMaxIncomeNumber(String seriesId) {
