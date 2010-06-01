@@ -219,7 +219,7 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 	public IPercepcion initializePercepcion(IEmpleado empleado) throws PayrollException{
 		PercepcionPK id = new PercepcionPK();
 		id.setNumero(empleado.getId());
-		id.setCdg(getMaxPercepcionesCdg(empleado));
+		id.setCdg(getMaxPercepcionesCdg(empleado)+1);
 		Percepcion percepcion = new Percepcion();
 		percepcion.setId(id);
 		return percepcion;
