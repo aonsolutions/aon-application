@@ -70,7 +70,7 @@ public class InventoryDetailController extends LinesController implements IColle
 	 * @throws ManagerBeanException 
 	 */
 	public void loadDetailModel(ActionEvent event) throws ManagerBeanException {
-		clearCriteria();
+		onEditSearch(event);
 		Criteria criteria = getCriteria();
 		criteria.addEqualExpression(getFieldName(IWarehouseAlias.INVENTORY_DETAIL_INVENTORY_ID), getCurrentInventory().getId());
 		if ( getCategory() != null ) {
