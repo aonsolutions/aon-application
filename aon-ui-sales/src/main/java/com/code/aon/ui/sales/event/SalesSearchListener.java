@@ -61,11 +61,10 @@ public class SalesSearchListener extends RegistrySearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		super.completeCriteria();
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria(Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		super.completeCriteria(criteria);
 		if (getCustomer() != null && getCustomer().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(ISalesAlias.SALES_CUSTOMER_ID), getCustomer().getId());			
+			criteria.addEqualExpression(getFieldName(ISalesAlias.SALES_CUSTOMER_ID), getCustomer().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getSalesStatuses())) {
 			String status = getController().resolveAlias(ISalesAlias.SALES_STATUS);

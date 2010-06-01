@@ -84,11 +84,9 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
-		
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getAsset() != null && getAsset().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
+			criteria.addEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
 			setAsset(new Asset());
 		}
 		if (!ArrayUtils.isEmpty(getActivityStatuses())) {
@@ -97,11 +95,11 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 			setActivityStatuses(null);
 		}
 		if(getFromDate() != null){
-			criteria.addGreaterThanOrEqualExpression(getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromDate());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromDate());
 			setFromDate(null);
 		}
 		if(getToDate() != null){
-			criteria.addLessThanOrEqualExpression(getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getToDate());
+			criteria.addLessThanOrEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getToDate());
 			setToDate(null);
 		}
 		
