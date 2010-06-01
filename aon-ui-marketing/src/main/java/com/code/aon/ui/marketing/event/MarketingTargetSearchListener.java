@@ -40,9 +40,8 @@ public class MarketingTargetSearchListener extends TargetSearchListener {
 	}
 
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		super.completeCriteria();
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		super.completeCriteria( criteria );
 		if ( (getQuestion() != null) && (getQuestion().getId() != null) ) {
 			criteria.addEqualExpression("MarketingTarget.profiles.question.id", getQuestion().getId());			
 		}
@@ -56,7 +55,6 @@ public class MarketingTargetSearchListener extends TargetSearchListener {
 			}
 			criteria.addExpression( ExpressionUtilities.getOrExpression(expText, expNumber) );
 		}
-		addEnumToCriteria( criteria, "MarketingTarget.target.registry.medias.mediaType", getMediaTypes().toArray() );
 	}
 
 }

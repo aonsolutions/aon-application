@@ -49,8 +49,7 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ( (getSurvey() != null) && (getSurvey().getId() != null) ) {
 			String alias = getFieldName(IMarketingAlias.SURVEY_RESPONSE_SURVEY_ID);
 			criteria.addEqualExpression(alias, getSurvey().getId());			

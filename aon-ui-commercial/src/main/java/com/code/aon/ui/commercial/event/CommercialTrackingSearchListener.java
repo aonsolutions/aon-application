@@ -37,8 +37,7 @@ public class CommercialTrackingSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
 			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID);
 			criteria.addEqualExpression(alias, getSeller().getId());			

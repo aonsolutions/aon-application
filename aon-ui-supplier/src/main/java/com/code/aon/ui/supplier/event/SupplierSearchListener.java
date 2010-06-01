@@ -29,13 +29,12 @@ public class SupplierSearchListener extends RegistryPayMethodSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getSupplierStatuses())) {
 			String status = getController().resolveAlias(ISupplierAlias.SUPPLIER_STATUS);
 			addEnumToCriteria(criteria, status, getSupplierStatuses());
 		}
-		super.completeCriteria();
+		super.completeCriteria(criteria);
 	}
 	
 }

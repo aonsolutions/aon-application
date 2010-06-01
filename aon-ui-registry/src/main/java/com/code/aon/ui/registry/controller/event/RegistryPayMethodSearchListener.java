@@ -55,11 +55,10 @@ public class RegistryPayMethodSearchListener extends RegistrySearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		String payMethod = resolveAlias("payMethods_payment_id");
 		addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
-		super.completeCriteria();
+		super.completeCriteria( criteria );
 	}
 	
 	public void onAddPayMethod(ActionEvent event) {

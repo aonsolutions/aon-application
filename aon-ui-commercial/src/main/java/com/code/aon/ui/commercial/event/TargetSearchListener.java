@@ -88,8 +88,7 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getTargetStatuses())) {
 			String status = getController().resolveAlias(ICommercialAlias.TARGET_STATUS);
 			addEnumToCriteria(criteria, status, getTargetStatuses());
@@ -109,7 +108,7 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		if (getUserName()!= null){					
 			criteria.addEqualExpression("id", getTargetId());
 		}
-		super.completeCriteria();
+		super.completeCriteria( criteria );
 	}
 	
 	@SuppressWarnings("unchecked")

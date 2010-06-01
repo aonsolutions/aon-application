@@ -56,8 +56,7 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ( (getItem() != null) && (getItem().getId() != null) ) {
 			String field = getController().getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_ID);
 			criteria.addEqualExpression(field, getItem().getId());

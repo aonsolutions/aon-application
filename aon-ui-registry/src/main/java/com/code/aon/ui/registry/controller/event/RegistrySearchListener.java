@@ -123,8 +123,7 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		String mediaType = resolveAlias("medias_mediaType");
 		addEnumToCriteria(criteria, mediaType, getMediaTypes().toArray());
 		String geozone = resolveAlias("addresses_geozone_id");

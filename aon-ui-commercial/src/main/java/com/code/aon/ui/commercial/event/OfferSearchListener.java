@@ -80,19 +80,18 @@ public class OfferSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getOfferType() != null) {
-			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_TYPE), getOfferType());			
+			criteria.addEqualExpression(getFieldName(ICommercialAlias.OFFER_TYPE), getOfferType());			
 		}
 		if (getTarget() != null && getTarget().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_TARGET_ID), getTarget().getId());			
+			criteria.addEqualExpression(getFieldName(ICommercialAlias.OFFER_TARGET_ID), getTarget().getId());			
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_SUPPLIER_ID), getSupplier().getId());			
+			criteria.addEqualExpression(getFieldName(ICommercialAlias.OFFER_SUPPLIER_ID), getSupplier().getId());			
 		}
 		if (getSeller() != null && getSeller().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.OFFER_SELLER_ID), getSeller().getId());			
+			criteria.addEqualExpression(getFieldName(ICommercialAlias.OFFER_SELLER_ID), getSeller().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getOfferStatuses())) {
 			String status = getController().resolveAlias(ICommercialAlias.OFFER_STATUS);
