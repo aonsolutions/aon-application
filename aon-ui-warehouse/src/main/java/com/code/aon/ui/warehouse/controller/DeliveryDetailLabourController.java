@@ -53,6 +53,7 @@ public class DeliveryDetailLabourController extends BasicController {
 			}else{
 				criteria.addNullExpression(this.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LABOUR_DELIVERY_DETAIL_ID));
 			}
+			this.onEditSearch(null);
 			this.setCriteria(criteria);
 			this.onSearch(null);
 		} catch (ManagerBeanException e) {

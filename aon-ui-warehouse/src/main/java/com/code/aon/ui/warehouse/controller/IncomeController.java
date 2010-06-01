@@ -322,11 +322,11 @@ public class IncomeController extends BasicController {
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceRefCode(), getInvoiceDate());
 
 		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER);
-		invoiceController.clearCriteria();
+		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(null);
+		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(null);
+		invoiceController.onSelect(event);
 	}
 
 }

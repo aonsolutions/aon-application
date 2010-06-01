@@ -391,11 +391,11 @@ public class DeliveryController extends BasicController {
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
 		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
-		invoiceController.clearCriteria();
+		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(null);
+		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(null);
+		invoiceController.onSelect(event);
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {

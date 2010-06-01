@@ -163,7 +163,7 @@ public class InventoryController extends BasicController {
 				inventoryDetail = (InventoryDetail) inventoryDetailBean.insert(inventoryDetail);
 			}
 			HibernateUtil.commitTransaction(sessionName);
-			this.clearCriteria();
+			this.onEditSearch(null);
 			getCriteria().addEqualExpression(inventoryBean.getFieldName(IWarehouseAlias.INVENTORY_ID), inventory.getId());
 			this.onSearch(null);
 			this.getModel().setRowIndex(0);
@@ -237,7 +237,7 @@ public class InventoryController extends BasicController {
 		IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
 		List list = getTodayList();
 		if (list.size()>0){
-			this.clearCriteria();
+			this.onEditSearch(null);
 			getCriteria().addEqualExpression(inventoryBean.getFieldName(IWarehouseAlias.INVENTORY_ID),((Inventory)list.get(0)).getId());
 			this.onSearch(null);
 			this.getModel().setRowIndex(0);
