@@ -96,7 +96,6 @@
 		<mapping class="com.code.aon.customer.Customer"/>
 		
 		<!-- AON-SUPPLIER Mapping files -->	
-		<mapping class="com.code.aon.supplier.ItemSupplier"/>
 		<mapping class="com.code.aon.supplier.Supplier"/>
 
 		<!-- AON-GEOZONE Mapping files -->		
@@ -112,6 +111,7 @@
 		<mapping class="com.code.aon.product.ItemAttachment"/>
 		<mapping class="com.code.aon.product.ItemAlternative"/>
 		<mapping class="com.code.aon.product.ItemPos"/>
+		<mapping class="com.code.aon.product.ItemSupplier"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
