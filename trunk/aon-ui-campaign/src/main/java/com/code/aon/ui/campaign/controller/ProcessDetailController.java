@@ -12,7 +12,6 @@ public class ProcessDetailController extends LinesController {
 
 	public ProcessDetailController() {
 		super();
-		this.addDataModelListener( new ProcessDetailDataModelListener());
 	}
 
 	@SuppressWarnings("unchecked")

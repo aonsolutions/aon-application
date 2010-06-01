@@ -44,6 +44,63 @@
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 
+
+
+				<aon:div id="newTransition">
+					<c:if test="#{processDetailTransition.newPanelVisible}">
+						<aon:div styleClass="aon-scroll-area aon-border"
+							style="width: 50%;margin-left: 20%; margin-top: 10px;">
+							<aon:div styleClass="aon-finding-title-toolbar">
+								<aon:panelGrid columns="3" dir="true"
+									columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+									<aon:div styleClass="aon-finding-title-internal">
+										<aon:outputText
+											value="#{campaignBundle.aon_process_transition_type_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-finding-subtitle-internal">
+										<aon:outputText value="#{bundle.aon_reset}" />
+									</aon:div>
+									<aon:div styleClass="aon-finding-toolbar-item-group">
+										<aon:commandButton title="#{bundle.aon_save}"
+											reRender="newTransition,fieldContainer"
+											actionListener="#{processDetailTransition.onAccept}"
+											onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
+											styleClass="aon-finding-toolbar-item  aon-icon-accept"
+											value="#{bundle.aon_accept}"
+											accesskey="#{bundle.aon_key_save_line}" />
+										<aon:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{processDetailTransition.onCancel}"
+											immediate="true"
+											onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+											styleClass="aon-finding-toolbar-item  aon-icon-cancel"
+											value="#{bundle.aon_cancel}"
+											accesskey="#{bundle.aon_key_cancel_line}" />
+									</aon:div>
+								</aon:panelGrid>
+							</aon:div>
+							<aon:panelGrid columns="4" styleClass="aon-margin-top" style="width:100%;">
+								<aon:outputLabel
+									value="#{campaignBundle.process_transition_type}"
+									for="processDetailTransition_processTransitionType" />
+								<aon:selectOneMenu required="true"
+									id="processDetailTransition_processTransitionType"
+									value="#{processDetailTransition.to.processTransitionType}">
+									<f:selectItems
+										value="#{campaignCollections.processTransitionTypes}" />
+								</aon:selectOneMenu>
+								<aon:outputLabel
+									value="#{campaignBundle.process_transition_next}"
+									for="process_transition_next" />
+								<aon:selectOneMenu id="process_transition_next" required="true"
+									value="#{processDetailTransition.to.nextProcessDetail}">
+									<f:selectItems
+										value="#{processDetailTransition.availableProcessDetails}" />
+								</aon:selectOneMenu>
+							</aon:panelGrid>
+						</aon:div>
+					</c:if>
+				</aon:div>
+
 				<aon:div styleClass="aon-form-group" rendered="#{!process.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:outputLabel for="ProcessDetailDataList"
@@ -279,6 +336,7 @@
 										actionListener="#{processDetailTransition.onReset}"
 										rendered="#{to==processDetail.to and !processDetailTransition.new}"
 										reRender="newTransition"
+										focus="processDetailTransition_processTransitionType"
 										accesskey="#{bundle.aon_key_new_line}">
 									</aon:commandButton>
 								</aon:div>
@@ -314,58 +372,5 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-
-
-		<aon:form id="newTransitionForm">
-			<aon:div id="newTransition">
-				<c:if test="#{processDetailTransition.newPanelVisible}">
-					<aon:div styleClass="aon-scroll-area" style="width: 90%;">
-						<aon:div styleClass="aon-finding-title-toolbar">
-							<aon:panelGrid columns="1" dir="true"
-								columnClasses="aon-finding-toolbar">
-								<aon:div styleClass="aon-finding-toolbar-item-group">
-									<aon:commandButton title="#{bundle.aon_save}"
-										reRender="newTransition,fieldContainer"
-										actionListener="#{processDetailTransition.onAccept}"
-										onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
-										styleClass="aon-finding-toolbar-item  aon-icon-accept"
-										value="#{bundle.aon_accept}"
-										accesskey="#{bundle.aon_key_save_line}" />
-									<aon:commandButton title="#{bundle.aon_cancel}"
-										actionListener="#{processDetailTransition.onCancel}"
-										immediate="true"
-										onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
-										styleClass="aon-finding-toolbar-item  aon-icon-cancel"
-										value="#{bundle.aon_cancel}"
-										accesskey="#{bundle.aon_key_cancel_line}" />
-
-								</aon:div>
-							</aon:panelGrid>
-						</aon:div>
-
-						<aon:panelGrid columns="2" styleClass="aon-margin-top">
-							<aon:outputLabel
-								value="#{campaignBundle.process_transition_type}"
-								for="processDetailTransition_processTransitionType" />
-							<aon:selectOneMenu required="true"
-								id="processDetailTransition_processTransitionType"
-								value="#{processDetailTransition.to.processTransitionType}">
-								<f:selectItems
-									value="#{campaignCollections.processTransitionTypes}" />
-							</aon:selectOneMenu>
-							<aon:outputLabel
-								value="#{campaignBundle.process_transition_next}"
-								for="process_transition_next" />
-							<aon:selectOneMenu id="process_transition_next" required="true"
-								value="#{processDetailTransition.to.nextProcessDetail}">
-								<f:selectItems
-									value="#{processDetailTransition.availableProcessDetails}" />
-							</aon:selectOneMenu>
-						</aon:panelGrid>
-					</aon:div>
-				</c:if>
-			</aon:div>
-		</aon:form>
-
 	</ui:define>
 </ui:composition>
