@@ -333,59 +333,89 @@
     TARGET="rules:#com#code#aon#ui#stat#facelet#commercialCategory#yearStats.xhtml"
     TITLE="commercial_category_stats_year" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="commercial_product_stats::#com#code#aon#ui#stat#facelet#commercialCategory#productStats.xhtml"
+    ID="commercial_product_stat_search::#com#code#aon#ui#stat#facelet#commercialCategory#searchProduct.xhtml"
     NAME="output2"
+    PATH="/com/code/aon/ui/stat/facelet/commercialCategory/searchProduct.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#commercialCategory#searchProduct.xhtml"
+    TITLE="commercial_product_stat_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercial_product_stats::#com#code#aon#ui#stat#facelet#commercialCategory#productStats.xhtml"
+    NAME="output3"
     PATH="/com/code/aon/ui/stat/facelet/commercialCategory/productStats.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#commercialCategory#productStats.xhtml"
     TITLE="commercial_product_stats" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="commercial_geozone_stat_search::#com#code#aon#ui#stat#facelet#commercialGeozone#search.xhtml"
-    NAME="output3"
+    NAME="output4"
     PATH="/com/code/aon/ui/stat/facelet/commercialGeozone/search.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#commercialGeozone#search.xhtml"
     TITLE="commercial_geozone_stat_search" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="commercial_geozone_stats_year::#com#code#aon#ui#stat#facelet#commercialGeozone#yearStats.xhtml"
-    NAME="output4"
+    NAME="output5"
     PATH="/com/code/aon/ui/stat/facelet/commercialGeozone/yearStats.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#commercialGeozone#yearStats.xhtml"
     TITLE="commercial_geozone_stats_year" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="commercial_seller_stat_search::#com#code#aon#ui#stat#facelet#commercialSeller#search.xhtml"
-    NAME="output5"
+    NAME="output6"
     PATH="/com/code/aon/ui/stat/facelet/commercialSeller/search.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#commercialSeller#search.xhtml"
     TITLE="commercial_seller_stat_search" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="commercial_seller_stats_year::#com#code#aon#ui#stat#facelet#commercialSeller#yearStats.xhtml"
-    NAME="output6"
+    NAME="output7"
     PATH="/com/code/aon/ui/stat/facelet/commercialSeller/yearStats.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#commercialSeller#yearStats.xhtml"
     TITLE="commercial_seller_stats_year" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
+    ID="commercial_target_stat_search::#com#code#aon#ui#stat#facelet#commercialTarget#search.xhtml"
+    NAME="output8"
+    PATH="/com/code/aon/ui/stat/facelet/commercialTarget/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#commercialTarget#search.xhtml"
+    TITLE="commercial_target_stat_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercial_target_stats_year::#com#code#aon#ui#stat#facelet#commercialTarget#yearStats.xhtml"
+    NAME="output9"
+    PATH="/com/code/aon/ui/stat/facelet/commercialTarget/yearStats.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#commercialTarget#yearStats.xhtml"
+    TITLE="commercial_target_stats_year" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
     ID="commercial_seller_search::#com#code#aon#ui#stat#facelet#commercialSellerControl#search.xhtml"
-    NAME="output7"
+    NAME="output10"
     PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/search.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#search.xhtml"
     TITLE="commercial_seller_search" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="commercial_seller_stat::#com#code#aon#ui#stat#facelet#commercialSellerControl#sellerStat.xhtml"
-    NAME="output8"
+    NAME="output11"
     PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/sellerStat.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#sellerStat.xhtml"
     TITLE="commercial_seller_stat" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="commercial_search_view::#com#code#aon#ui#stat#facelet#commercialSellerControl#searchView.xhtml"
-    NAME="output9"
+    NAME="output12"
     PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/searchView.xhtml"
     TARGET="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#searchView.xhtml"
     TITLE="commercial_search_view" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="commercial_seller_view::#com#code#aon#ui#stat#facelet#commercialSellerControl#sellersView.xhtml"
-    NAME="output10"
-    PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/sellersView.xhtml"
-    TARGET="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#sellersView.xhtml"
+    ID="commercial_seller_view::#com#code#aon#ui#stat#facelet#commercialSellerControl#controlView.xhtml"
+    NAME="output13"
+    PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/controlView.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#controlView.xhtml"
     TITLE="commercial_seller_view" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercial_activity_view::#com#code#aon#ui#stat#facelet#commercialSellerControl#activityView.xhtml"
+    NAME="output14"
+    PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/activityView.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#activityView.xhtml"
+    TITLE="commercial_activity_view" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="commercial_activity_list::#com#code#aon#ui#stat#facelet#commercialSellerControl#activityList.xhtml"
+    NAME="output15"
+    PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/activityList.xhtml"
+    TARGET="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#activityList.xhtml"
+    TITLE="commercial_activity_list" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM
@@ -429,7 +459,27 @@
   PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/searchView.xhtml"
   SHAPE="304,7089,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#sellersView.xhtml"
-  PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/sellersView.xhtml"
+  NAME="rules:#com#code#aon#ui#stat#facelet#commercialTarget#yearStats.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/commercialTarget/yearStats.xhtml"
+  SHAPE="304,7521,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#commercialTarget#search.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/commercialTarget/search.xhtml"
+  SHAPE="304,7089,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#commercialCategory#searchProduct.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/commercialCategory/searchProduct.xhtml"
+  SHAPE="304,7089,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#controlView.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/controlView.xhtml"
+  SHAPE="304,7089,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#activityView.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/activityView.xhtml"
+  SHAPE="304,7089,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#stat#facelet#commercialSellerControl#activityList.xhtml"
+  PATH="/com/code/aon/ui/stat/facelet/commercialSellerControl/activityList.xhtml"
   SHAPE="304,7089,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>
