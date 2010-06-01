@@ -68,8 +68,11 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="sellerControl"
 									value="#{statBundle.stat_show_seller}"
-									action="commercial_seller_search"
-									actionListener="#{commercialStat.onReset}" />
+									action="commercial_seller_search">
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onSellerType}" />
+								</aon:commandLink>
+									
 							</aon:div>
 
 							<aon:div styleClass="aon-direct-access-list-element">
