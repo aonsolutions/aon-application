@@ -56,8 +56,9 @@ public class RegistryNoteLinesController extends LinesController {
 		try {
 			Criteria customCriteria = new Criteria();
 			customCriteria = createCustomCriteria(customCriteria);
+			this.onEditSearch(event);
 			this.setCriteria(customCriteria);
-			this.onSearch(null);
+			this.onSearch(event);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error customizing search", e);
 			AonUtil.addErrorMessage("Error customizing search");

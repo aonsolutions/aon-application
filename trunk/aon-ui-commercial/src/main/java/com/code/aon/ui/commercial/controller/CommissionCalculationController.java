@@ -157,8 +157,9 @@ public class CommissionCalculationController {
 			
 			IController commissionController = FormUtil.getController("offerDetailCommission");
 			Criteria criteria = getCriteria(true);
+			commissionController.onEditSearch(event);
 			commissionController.setCriteria(criteria);
-			commissionController.onSearch(null);
+			commissionController.onSearch(event);
 		} catch (Exception e) {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
