@@ -61,11 +61,10 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		super.completeCriteria();		
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		super.completeCriteria( criteria );		
 		if (getSupplier() != null && getSupplier().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(IPurchaseAlias.PURCHASE_SUPPLIER_ID), getSupplier().getId());			
+			criteria.addEqualExpression(getFieldName(IPurchaseAlias.PURCHASE_SUPPLIER_ID), getSupplier().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getPurchaseStatuses())) {
 			String status = getController().resolveAlias(IPurchaseAlias.PURCHASE_STATUS);

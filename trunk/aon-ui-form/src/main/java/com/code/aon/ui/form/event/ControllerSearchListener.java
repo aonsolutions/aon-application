@@ -8,6 +8,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.IController;
 
 /**
  * ControllerListener prepared for complex search pages.
@@ -21,6 +22,16 @@ public class ControllerSearchListener extends ControllerAdapter {
 	
 	private Criteria criteria;
 	
+	private IController currentController;
+	
+	@Override
+	public IController getController() {
+		if ( this.currentController != null ) {
+			return this.currentController;
+		}
+		return super.getController();
+	}
+
 	/**
 	 * Return the name of the field that corresponds to the parameter alias.
 	 * 
@@ -35,10 +46,13 @@ public class ControllerSearchListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			if ( criteria != getController().getCriteria() ) {			
-				completeCriteria();
-				criteria = getController().getCriteria();
+			this.currentController = event.getController();
+			Criteria criteria = this.currentController.getCriteria();
+			if ( this.criteria != criteria ) {			
+				completeCriteria( criteria );
+				this.criteria = criteria;
 			}
+			this.currentController = null;
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error initializing Task Model", e);
 		} catch (ExpressionException e) {
@@ -66,11 +80,12 @@ public class ControllerSearchListener extends ControllerAdapter {
 
 	/**
 	 * Complete criteria.
+	 * @param criteria 
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 * @throws ExpressionException the expression exception
 	 */
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 	}
 	
 	/**

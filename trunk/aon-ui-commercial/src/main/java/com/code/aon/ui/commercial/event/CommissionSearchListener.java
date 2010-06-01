@@ -59,19 +59,18 @@ public class CommissionSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getStartDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression(getController().getFieldName(ICommercialAlias.COMMISSION_START_DATE), getStartDateFrom());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(ICommercialAlias.COMMISSION_START_DATE), getStartDateFrom());
 		}
 		if (getStartDateTo() != null) {
-			criteria.addLessThanOrEqualExpression(getController().getFieldName(ICommercialAlias.COMMISSION_START_DATE), getStartDateTo());
+			criteria.addLessThanOrEqualExpression(getFieldName(ICommercialAlias.COMMISSION_START_DATE), getStartDateTo());
 		}
 		if (getEndDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression(getController().getFieldName(ICommercialAlias.COMMISSION_END_DATE), getEndDateFrom());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(ICommercialAlias.COMMISSION_END_DATE), getEndDateFrom());
 		}
 		if (getEndDateTo() != null) {
-			criteria.addLessThanOrEqualExpression(getController().getFieldName(ICommercialAlias.COMMISSION_END_DATE), getEndDateTo());
+			criteria.addLessThanOrEqualExpression(getFieldName(ICommercialAlias.COMMISSION_END_DATE), getEndDateTo());
 		}
 	}	
 }

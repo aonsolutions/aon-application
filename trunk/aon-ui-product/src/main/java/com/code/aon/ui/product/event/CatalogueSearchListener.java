@@ -59,19 +59,18 @@ public class CatalogueSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getStartDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression(getController().getFieldName(IProductAlias.CATALOGUE_START_DATE), getStartDateFrom());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IProductAlias.CATALOGUE_START_DATE), getStartDateFrom());
 		}
 		if (getStartDateTo() != null) {
-			criteria.addLessThanOrEqualExpression(getController().getFieldName(IProductAlias.CATALOGUE_START_DATE), getStartDateTo());
+			criteria.addLessThanOrEqualExpression(getFieldName(IProductAlias.CATALOGUE_START_DATE), getStartDateTo());
 		}
 		if (getEndDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression(getController().getFieldName(IProductAlias.CATALOGUE_END_DATE), getEndDateFrom());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IProductAlias.CATALOGUE_END_DATE), getEndDateFrom());
 		}
 		if (getEndDateTo() != null) {
-			criteria.addLessThanOrEqualExpression(getController().getFieldName(IProductAlias.CATALOGUE_END_DATE), getEndDateTo());
+			criteria.addLessThanOrEqualExpression(getFieldName(IProductAlias.CATALOGUE_END_DATE), getEndDateTo());
 		}
 	}	
 }

@@ -116,20 +116,19 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
-		criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
 		if ((getCustomer() != null) && (getCustomer().getId() != null)) {
-			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCustomer().getId());			
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCustomer().getId());			
 		}
 		if ((getSupplier() != null) && (getSupplier().getId() != null)) {
-			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getSupplier().getId());			
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getSupplier().getId());			
 		}			
 		if ((getCreditor() != null) && (getCreditor().getId() != null)) {
-			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCreditor().getId());			
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCreditor().getId());			
 		}			
 		if ((getRegistryBank() != null) && (getRegistryBank().getId() != null)) {
-			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), getRegistryBank().getBankAccount());			
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), getRegistryBank().getBankAccount());			
 		}
 		if (!ArrayUtils.isEmpty(getFinanceStatuses())) {
 			String status = getController().resolveAlias(IFinanceAlias.FINANCE_FINANCE_STATUS);

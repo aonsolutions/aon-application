@@ -62,11 +62,10 @@ public class DeliverySearchListener extends RegistrySearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		super.completeCriteria();
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		super.completeCriteria(criteria);
 		if (getCustomer() != null && getCustomer().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), getCustomer().getId());			
+			criteria.addEqualExpression(getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), getCustomer().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getDeliveryStatuses())) {
 			String status = getController().resolveAlias(IWarehouseAlias.DELIVERY_STATUS);

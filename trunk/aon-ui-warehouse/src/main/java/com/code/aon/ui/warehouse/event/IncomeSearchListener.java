@@ -61,11 +61,10 @@ public class IncomeSearchListener extends RegistrySearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		super.completeCriteria();
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		super.completeCriteria( criteria);
 		if (getSupplier() != null && getSupplier().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), getSupplier().getId());			
+			criteria.addEqualExpression(getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), getSupplier().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getIncomeStatuses())) {
 			String status = getController().resolveAlias(IWarehouseAlias.INCOME_STATUS);

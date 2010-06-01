@@ -29,13 +29,12 @@ public class CreditorSearchListener extends RegistryPayMethodSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getCreditorStatuses())) {
 			String status = getController().resolveAlias(IFinanceAlias.CREDITOR_STATUS);
 			addEnumToCriteria(criteria, status, getCreditorStatuses());
 		}
-		super.completeCriteria();
+		super.completeCriteria(criteria);
 	}
 	
 }

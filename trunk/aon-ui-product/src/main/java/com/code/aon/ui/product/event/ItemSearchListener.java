@@ -40,8 +40,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getItemStatuses())) {
 			String status = getController().resolveAlias(IProductAlias.ITEM_STATUS);
 			addEnumToCriteria(criteria, status, getItemStatuses());
@@ -49,7 +48,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 		if (getSupplier() != null && getSupplier().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Item_suppliers_supplier_id"), getSupplier().getId());
 		}
-		super.completeCriteria();
+		super.completeCriteria(criteria);
 	}
 	
 }

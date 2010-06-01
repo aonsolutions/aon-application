@@ -50,10 +50,9 @@ public class ExpenseSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getRegistry() != null && getRegistry().getId() != null) {
-			criteria.addEqualExpression(getController().getFieldName(ICommercialAlias.EXPENSE_ACCOUNT_REGISTRY_ID), getRegistry().getId());			
+			criteria.addEqualExpression(getFieldName(ICommercialAlias.EXPENSE_ACCOUNT_REGISTRY_ID), getRegistry().getId());			
 		}
 		if (getExpense() != null && getExpense().getId() != null) {
 			String expense = getController().resolveAlias("ExpenseAccount_lines_expense_id");

@@ -27,8 +27,7 @@ public class InvoicingGroupSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ( (getCustomer() != null) && (getCustomer().getId() != null) ) {
 			String field = getController().getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_ID);
 			criteria.addEqualExpression(field, getCustomer().getId());			

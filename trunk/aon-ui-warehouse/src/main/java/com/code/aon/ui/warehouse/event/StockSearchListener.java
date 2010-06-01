@@ -28,10 +28,9 @@ public class StockSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ( (getItem() != null) && (getItem().getId() != null) ) {
-			String field = getController().getFieldName(IWarehouseAlias.STOCK_ITEM_ID);
+			String field = getFieldName(IWarehouseAlias.STOCK_ITEM_ID);
 			criteria.addEqualExpression(field, getItem().getId());			
 		}			
 	}

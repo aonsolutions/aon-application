@@ -160,9 +160,8 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		super.completeCriteria();
-		Criteria criteria = getController().getCriteria();
+	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		super.completeCriteria( criteria );
 		if (getDefaultType() != null) {
 			InvoiceType type = InvoiceType.valueOf(getDefaultType()); 
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_TYPE), type);	
