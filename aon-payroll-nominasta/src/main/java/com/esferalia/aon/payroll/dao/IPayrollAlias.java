@@ -6,6 +6,7 @@ import com.esferalia.aon.payroll.Actividad;
 import com.esferalia.aon.payroll.ActividadCCC;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
 import com.esferalia.aon.payroll.Cliente;
+import com.esferalia.aon.payroll.Complemento;
 import com.esferalia.aon.payroll.Contrato;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
@@ -177,6 +178,19 @@ public interface IPayrollAlias {
 	* Hibernate value: Cliente.inactivoBD
 	*/
 	String  CLIENTE_INACTIVO_BD = CLIENTE_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Complemento entity.
+	*/ 
+	DAOConstantsEntry COMPLEMENTO_ENTRY = DAOConstants.getDAOConstant(Complemento.class);
+
+	/** 
+	* Alias value: Complemento_cdg
+	* Hibernate value: Complemento.cdg
+	*/
+	String  COMPLEMENTO_CDG = COMPLEMENTO_ENTRY.getAliasNames()[0];
 
 
 
@@ -816,124 +830,160 @@ public interface IPayrollAlias {
 	DAOConstantsEntry PERCEPCION_ENTRY = DAOConstants.getDAOConstant(Percepcion.class);
 
 	/** 
+	* Alias value: Percepcion_complementoAplicar_cdg
+	* Hibernate value: Percepcion.complementoAplicar.cdg
+	*/
+	String  PERCEPCION_COMPLEMENTO_APLICAR_CDG = PERCEPCION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Percepcion_complemento_cdg
+	* Hibernate value: Percepcion.complemento.cdg
+	*/
+	String  PERCEPCION_COMPLEMENTO_CDG = PERCEPCION_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Percepcion_descripcionAbreviada
 	* Hibernate value: Percepcion.descripcionAbreviada
 	*/
-	String  PERCEPCION_DESCRIPCION_ABREVIADA = PERCEPCION_ENTRY.getAliasNames()[0];
+	String  PERCEPCION_DESCRIPCION_ABREVIADA = PERCEPCION_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Percepcion_descripcionComplemento
 	* Hibernate value: Percepcion.descripcionComplemento
 	*/
-	String  PERCEPCION_DESCRIPCION_COMPLEMENTO = PERCEPCION_ENTRY.getAliasNames()[1];
+	String  PERCEPCION_DESCRIPCION_COMPLEMENTO = PERCEPCION_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Percepcion_empleado_id
 	* Hibernate value: Percepcion.empleado.id
 	*/
-	String  PERCEPCION_EMPLEADO_ID = PERCEPCION_ENTRY.getAliasNames()[2];
+	String  PERCEPCION_EMPLEADO_ID = PERCEPCION_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Percepcion_fechaCreacion
 	* Hibernate value: Percepcion.fechaCreacion
 	*/
-	String  PERCEPCION_FECHA_CREACION = PERCEPCION_ENTRY.getAliasNames()[3];
+	String  PERCEPCION_FECHA_CREACION = PERCEPCION_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Percepcion_fechaFin
 	* Hibernate value: Percepcion.fechaFin
 	*/
-	String  PERCEPCION_FECHA_FIN = PERCEPCION_ENTRY.getAliasNames()[4];
+	String  PERCEPCION_FECHA_FIN = PERCEPCION_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Percepcion_fechaInicio
 	* Hibernate value: Percepcion.fechaInicio
 	*/
-	String  PERCEPCION_FECHA_INICIO = PERCEPCION_ENTRY.getAliasNames()[5];
+	String  PERCEPCION_FECHA_INICIO = PERCEPCION_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Percepcion_fechaModificacion
 	* Hibernate value: Percepcion.fechaModificacion
 	*/
-	String  PERCEPCION_FECHA_MODIFICACION = PERCEPCION_ENTRY.getAliasNames()[6];
+	String  PERCEPCION_FECHA_MODIFICACION = PERCEPCION_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Percepcion_fechaRetroactividad
 	* Hibernate value: Percepcion.fechaRetroactividad
 	*/
-	String  PERCEPCION_FECHA_RETROACTIVIDAD = PERCEPCION_ENTRY.getAliasNames()[7];
+	String  PERCEPCION_FECHA_RETROACTIVIDAD = PERCEPCION_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Percepcion_fijoVariable
+	* Hibernate value: Percepcion.fijoVariable
+	*/
+	String  PERCEPCION_FIJO_VARIABLE = PERCEPCION_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Percepcion_formaCalculo
 	* Hibernate value: Percepcion.formaCalculo
 	*/
-	String  PERCEPCION_FORMA_CALCULO = PERCEPCION_ENTRY.getAliasNames()[8];
+	String  PERCEPCION_FORMA_CALCULO = PERCEPCION_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Percepcion_garantizadoILT
 	* Hibernate value: Percepcion.garantizadoILT
 	*/
-	String  PERCEPCION_GARANTIZADO_ILT = PERCEPCION_ENTRY.getAliasNames()[9];
+	String  PERCEPCION_GARANTIZADO_ILT = PERCEPCION_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Percepcion_horaCreacion
 	* Hibernate value: Percepcion.horaCreacion
 	*/
-	String  PERCEPCION_HORA_CREACION = PERCEPCION_ENTRY.getAliasNames()[10];
+	String  PERCEPCION_HORA_CREACION = PERCEPCION_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Percepcion_horaModificacion
 	* Hibernate value: Percepcion.horaModificacion
 	*/
-	String  PERCEPCION_HORA_MODIFICACION = PERCEPCION_ENTRY.getAliasNames()[11];
+	String  PERCEPCION_HORA_MODIFICACION = PERCEPCION_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Percepcion_id_cdg
 	* Hibernate value: Percepcion.id.cdg
 	*/
-	String  PERCEPCION_ID_CDG = PERCEPCION_ENTRY.getAliasNames()[12];
+	String  PERCEPCION_ID_CDG = PERCEPCION_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Percepcion_id_numero
 	* Hibernate value: Percepcion.id.numero
 	*/
-	String  PERCEPCION_ID_NUMERO = PERCEPCION_ENTRY.getAliasNames()[13];
+	String  PERCEPCION_ID_NUMERO = PERCEPCION_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Percepcion_importe
 	* Hibernate value: Percepcion.importe
 	*/
-	String  PERCEPCION_IMPORTE = PERCEPCION_ENTRY.getAliasNames()[14];
+	String  PERCEPCION_IMPORTE = PERCEPCION_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Percepcion_importeUnitario
 	* Hibernate value: Percepcion.importeUnitario
 	*/
-	String  PERCEPCION_IMPORTE_UNITARIO = PERCEPCION_ENTRY.getAliasNames()[15];
+	String  PERCEPCION_IMPORTE_UNITARIO = PERCEPCION_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Percepcion_indiceComplemento
+	* Hibernate value: Percepcion.indiceComplemento
+	*/
+	String  PERCEPCION_INDICE_COMPLEMENTO = PERCEPCION_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: Percepcion_mes
 	* Hibernate value: Percepcion.mes
 	*/
-	String  PERCEPCION_MES = PERCEPCION_ENTRY.getAliasNames()[16];
+	String  PERCEPCION_MES = PERCEPCION_ENTRY.getAliasNames()[20];
 
 	/** 
 	* Alias value: Percepcion_redondeoPagaExtra
 	* Hibernate value: Percepcion.redondeoPagaExtra
 	*/
-	String  PERCEPCION_REDONDEO_PAGA_EXTRA = PERCEPCION_ENTRY.getAliasNames()[17];
+	String  PERCEPCION_REDONDEO_PAGA_EXTRA = PERCEPCION_ENTRY.getAliasNames()[21];
+
+	/** 
+	* Alias value: Percepcion_retribucion
+	* Hibernate value: Percepcion.retribucion
+	*/
+	String  PERCEPCION_RETRIBUCION = PERCEPCION_ENTRY.getAliasNames()[22];
+
+	/** 
+	* Alias value: Percepcion_tipoComplemento
+	* Hibernate value: Percepcion.tipoComplemento
+	*/
+	String  PERCEPCION_TIPO_COMPLEMENTO = PERCEPCION_ENTRY.getAliasNames()[23];
 
 	/** 
 	* Alias value: Percepcion_tipoCotizacion
 	* Hibernate value: Percepcion.tipoCotizacion
 	*/
-	String  PERCEPCION_TIPO_COTIZACION = PERCEPCION_ENTRY.getAliasNames()[18];
+	String  PERCEPCION_TIPO_COTIZACION = PERCEPCION_ENTRY.getAliasNames()[24];
 
 	/** 
 	* Alias value: Percepcion_unidades
 	* Hibernate value: Percepcion.unidades
 	*/
-	String  PERCEPCION_UNIDADES = PERCEPCION_ENTRY.getAliasNames()[19];
+	String  PERCEPCION_UNIDADES = PERCEPCION_ENTRY.getAliasNames()[25];
 
 
 
