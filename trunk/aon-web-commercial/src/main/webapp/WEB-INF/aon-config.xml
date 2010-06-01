@@ -50,7 +50,7 @@
 			showType="false"
 			showBrand="true"
 			showStock="false"
-			showSuppliers="false"
+			showSuppliers="true"
 			showAccount="false"
 			showAttachment="true"
 			showEcommerceData="false"
