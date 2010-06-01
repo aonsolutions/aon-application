@@ -139,16 +139,8 @@
 
 					<aon:outputLabel for="Amortization_saleAmount"
 						value="#{accountingBundle.accounting_sale_amount}" />
-					<aon:div>
-						<aon:inputText id="Amortization_saleAmount"
-							value="#{amortization.to.saleAmount}" size="15" />
-
-						<aon:commandButton 
-							style="margin-left: 100px;"
-							reRender="AmortizationDetailsList"
-							value="Mostrar totales">
-						</aon:commandButton>
-					</aon:div>
+					<aon:inputText id="Amortization_saleAmount"
+						value="#{amortization.to.saleAmount}" size="15" />
 				</aon:panelGrid>
 
 				<aon:panelGrid columns="2" style="width: 100%;margin-top:2px;"
@@ -156,8 +148,7 @@
 					<aon:outputLabel for="Amortization_comments"
 						value="#{bundle.aon_comment}" />
 					<aon:inputText id="Amortization_comments"
-						value="#{amortization.to.comments}" size="140" />
-
+						value="#{amortization.to.comments}" size="145" />
 				</aon:panelGrid>
 
 				<aon:panel id="AmortizationDetails" rendered="#{!amortization.new}">

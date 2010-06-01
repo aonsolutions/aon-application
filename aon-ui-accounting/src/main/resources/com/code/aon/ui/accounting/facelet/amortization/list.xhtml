@@ -50,6 +50,13 @@
 
 					<aon:column>
 						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_type}" />
+						</f:facet>
+						<aon:outputText value="#{to.amortizationType.description}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_date_from}" />
 						</f:facet>
 						<aon:outputText value="#{to.initialDate}">
@@ -75,7 +82,9 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_comment}" />
 						</f:facet>
-						<aon:outputText value="#{to.comments}" />
+						<aon:outputText value="#{to.comments}" >
+							<aon:abbreviateConverter maxWidth="50" />
+						</aon:outputText>
 					</aon:column>
 				</aon:dataTable>
 				<aon:dataScroller2 for="amortizationDataList" showNote="true" />
