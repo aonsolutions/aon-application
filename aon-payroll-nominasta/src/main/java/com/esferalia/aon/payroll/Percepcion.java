@@ -13,8 +13,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
+import com.esferalia.aon.payroll.core.IComplemento;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPercepcion;
+import com.esferalia.aon.payroll.core.enumeration.FijoVariable;
+import com.esferalia.aon.payroll.core.enumeration.IndiceComplemento;
+import com.esferalia.aon.payroll.core.enumeration.Retribucion;
+import com.esferalia.aon.payroll.core.enumeration.TipoComplemento;
 
 @Entity
 @Table(name = "percep")
@@ -36,16 +41,16 @@ public class Percepcion implements IPercepcion, ITransferObject {
 	private Integer mes;
 	private Double garantizadoILT;
 	private String redondeoPagaExtra;
-//	private FijoVariable fijovar;
+	private FijoVariable fijoVariable;
 	private Date fechaCreacion;
 	private Date horaCreacion;
 	private Date fechaModificacion;
 	private Date horaModificacion;
-//	private IndiceComplemento indiceComplemento;
-//	private TipoComplemento tipoComplemento;
-//	private Retribuciones retribucion;
-//	private Complemento complemento;
-//	private Complemento complementoAplicar;
+	private IndiceComplemento indiceComplemento;
+	private TipoComplemento tipoComplemento;
+	private Retribucion retribucion;
+	private IComplemento complemento;
+	private IComplemento complementoAplicar;
 	private IEmpleado empleado;
 
 	
@@ -192,15 +197,15 @@ public class Percepcion implements IPercepcion, ITransferObject {
 	}
 
 //	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.FijoVariable") })
-//	@Column(name = "fijovar", nullable = false, length = 1)
-//	@Override
-//	public FijoVariable getFijovar() {
-//		return this.fijovar;
-//	}
-//	@Override
-//	public void setFijovar(FijoVariable fijovar) {
-//		this.fijovar = fijovar;
-//	}
+	@Column(name = "fijovar", nullable = false, length = 1)
+	@Override
+	public FijoVariable getFijoVariable() {
+		return this.fijoVariable;
+	}
+	@Override
+	public void setFijoVariable(FijoVariable fijovar) {
+		this.fijoVariable = fijovar;
+	}
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fecnew")
@@ -247,60 +252,59 @@ public class Percepcion implements IPercepcion, ITransferObject {
 	}
 
 //	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.IndiceComplemento") })
-//	@Column(name = "indcom", length = 1)
-//	@Override
-//	public IndiceComplemento getIndiceComplemento() {
-//		return this.indiceComplemento;
-//	}
-//	@Override
-//	public void setIndiceComplemento(IndiceComplemento indiceComplemento) {
-//		this.indiceComplemento = indiceComplemento;
-//	}
+	@Column(name = "indcom", length = 1)
+	@Override
+	public IndiceComplemento getIndiceComplemento() {
+		return this.indiceComplemento;
+	}
+	@Override
+	public void setIndiceComplemento(IndiceComplemento indiceComplemento) {
+		this.indiceComplemento = indiceComplemento;
+	}
 
 //	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.TipoComplemento") })
-//	@Column(name = "tipcom", length = 1)
-//	@Override
-//	public TipoComplemento getTipoComplemento() {
-//		return this.tipoComplemento;
-//	}
-//	@Override
-//	public void setTipoComplemento(TipoComplemento tipoComplemento) {
-//		this.tipoComplemento = tipoComplemento;
-//	}
+	@Column(name = "tipcom", length = 1)
+	@Override
+	public TipoComplemento getTipoComplemento() {
+		return this.tipoComplemento;
+	}
+	@Override
+	public void setTipoComplemento(TipoComplemento tipoComplemento) {
+		this.tipoComplemento = tipoComplemento;
+	}
 
 //	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.Retribuciones") })
-//	@Column(name = "dinesp", nullable = false, length = 1)
-//	@Override
-//	public Retribuciones getRetribucion() {
-//		return this.retribucion;
-//	}
-//	@Override
-//	public void setRetribucion(Retribuciones retribucion) {
-//		this.retribucion = retribucion;
-//	}
+	@Column(name = "dinesp", nullable = false, length = 1)
+	@Override
+	public Retribucion getRetribucion() {
+		return this.retribucion;
+	}
+	@Override
+	public void setRetribucion(Retribucion retribucion) {
+		this.retribucion = retribucion;
+	}
 
-//	@ManyToOne(fetch = FetchType.EAGER)
-//	@JoinColumn(name = "codcom", nullable = false)
-//	@Override
-//	public Complemento getComplemento() {
-//		return this.complemento;
-//	}
-//	@Override
-//	public void setComplemento(Complemento complemento) {
-//		this.complemento = complemento;
-//	}
+	@ManyToOne(targetEntity = Complemento.class,fetch = FetchType.EAGER)
+	@JoinColumn(name = "codcom", nullable = false)
+	@Override
+	public IComplemento getComplemento() {
+		return this.complemento;
+	}
+	@Override
+	public void setComplemento(IComplemento complemento) {
+		this.complemento = complemento;
+	}
 
-//	@ManyToOne(fetch = FetchType.EAGER)
-//	@JoinColumn(name = "comapl")
-//	@Override
-//	public Complemento getComplementoAplicar() {
-//		return this.complementoAplicar;
-//	}
-//	@Override
-//	public void setComplementoAplicar(Complemento complementoAplicar) {
-//		this.complementoAplicar = complementoAplicar;
-//	}
-
+	@ManyToOne(targetEntity = Complemento.class,fetch = FetchType.EAGER)
+	@JoinColumn(name = "comapl")
+	@Override
+	public IComplemento getComplementoAplicar() {
+		return this.complementoAplicar;
+	}
+	@Override
+	public void setComplementoAplicar(IComplemento complementoAplicar) {
+		this.complementoAplicar = complementoAplicar;
+	}
 	
 	@ManyToOne(targetEntity = Empleado.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "numero", insertable = false, updatable = false)

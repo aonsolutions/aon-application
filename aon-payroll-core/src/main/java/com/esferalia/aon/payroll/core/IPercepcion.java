@@ -3,6 +3,11 @@ package com.esferalia.aon.payroll.core;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.payroll.core.enumeration.FijoVariable;
+import com.esferalia.aon.payroll.core.enumeration.IndiceComplemento;
+import com.esferalia.aon.payroll.core.enumeration.Retribucion;
+import com.esferalia.aon.payroll.core.enumeration.TipoComplemento;
+
 public interface IPercepcion extends Serializable{
 	
 	Serializable getId();
@@ -60,5 +65,23 @@ public interface IPercepcion extends Serializable{
 
 	IEmpleado getEmpleado();
 	void setEmpleado(IEmpleado empleado);
+
+	IComplemento getComplemento();
+	void setComplemento(IComplemento complemento);
+
+	IComplemento getComplementoAplicar();
+	void setComplementoAplicar(IComplemento complementoAplicar);
+
+	FijoVariable getFijoVariable();
+	void setFijoVariable(FijoVariable fijovar);
+
+	IndiceComplemento getIndiceComplemento();
+	void setIndiceComplemento(IndiceComplemento indiceComplemento);
+
+	TipoComplemento getTipoComplemento();
+	void setTipoComplemento(TipoComplemento tipoComplemento);
+
+	Retribucion getRetribucion();
+	void setRetribucion(Retribucion retribucion);
 	
 }
