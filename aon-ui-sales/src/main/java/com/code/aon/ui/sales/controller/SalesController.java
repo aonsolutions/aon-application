@@ -378,11 +378,11 @@ public class SalesController extends BasicController {
 		Delivery delivery = deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse(), DeliveryDetailType.MANUAL);
 
 		IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER);
-		deliveryController.clearCriteria();
+		deliveryController.onEditSearch(event);
 		deliveryController.getCriteria().addEqualExpression(deliveryController.getFieldName(IWarehouseAlias.DELIVERY_ID), delivery.getId());
-		deliveryController.onSearch(null);
+		deliveryController.onSearch(event);
 		deliveryController.getModel().setRowIndex(0);
-		deliveryController.onSelect(null);
+		deliveryController.onSelect(event);
 	}
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
@@ -415,11 +415,11 @@ public class SalesController extends BasicController {
 		Invoice invoice = invoicingManager.invoice(delivery, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
 		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
-		invoiceController.clearCriteria();
+		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(null);
+		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(null);
+		invoiceController.onSelect(event);
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
