@@ -254,6 +254,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
             criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
 
+            controller.onEditSearch(null);
             controller.setCriteria(criteria);
             controller.onSearch(null);
         } catch (ManagerBeanException e) {

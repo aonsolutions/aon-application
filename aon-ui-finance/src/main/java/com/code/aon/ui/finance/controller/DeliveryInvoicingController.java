@@ -178,8 +178,9 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 				IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 				Criteria criteria = new Criteria();
 				criteria.addBetweenExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), firstInvoice.getId(), lastInvoice.getId());
+				invoiceController.onEditSearch(event);
 				invoiceController.setCriteria(criteria);
-				invoiceController.onSearch(null);
+				invoiceController.onSearch(event);
 				setRedirect(true);
 			} else {
 				setRedirect(false);

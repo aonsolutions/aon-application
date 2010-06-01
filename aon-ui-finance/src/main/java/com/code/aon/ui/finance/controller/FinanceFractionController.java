@@ -159,6 +159,7 @@ public class FinanceFractionController implements IFinanceConstants {
 				Finance finance = (Finance)iterator.next();
 				criteria.addOrExpression(financeController.getFieldName(IFinanceAlias.FINANCE_ID), finance.getId().toString());
 			}
+			financeController.onEditSearch(null);
 			financeController.setCriteria(criteria);
 			financeController.onSearch(null);
 		} catch (ManagerBeanException e) {

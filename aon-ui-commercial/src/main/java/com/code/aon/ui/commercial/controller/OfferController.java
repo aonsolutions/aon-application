@@ -443,11 +443,11 @@ public class OfferController extends BasicController implements ISignatureContro
 		OfferImportManager manager = new OfferImportManager();
 		Offer offer = manager.createOfferVersion(to);
 		
-		this.clearCriteria();
+		this.onEditSearch(event);
 		this.getCriteria().addEqualExpression(this.getFieldName(ICommercialAlias.OFFER_ID), offer.getId());
-		this.onSearch(null);
+		this.onSearch(event);
 		this.getModel().setRowIndex(0);
-		this.onSelect(null);
+		this.onSelect(event);
 	}
 
 	public void onPending(ActionEvent event) {
@@ -502,11 +502,11 @@ public class OfferController extends BasicController implements ISignatureContro
 		OfferImportManager manager = new OfferImportManager();
 		Offer offer = manager.copyOffer(to, getOfferSeries(), getOfferNumber(), getOfferTarget(), getOfferDate());
 
-		this.clearCriteria();
+		this.onEditSearch(event);
 		this.getCriteria().addEqualExpression(this.getFieldName(ICommercialAlias.OFFER_ID), offer.getId());
-		this.onSearch(null);
+		this.onSearch(event);
 		this.getModel().setRowIndex(0);
-		this.onSelect(null);
+		this.onSelect(event);
 	}
 
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
@@ -532,11 +532,11 @@ public class OfferController extends BasicController implements ISignatureContro
 		Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
 
 		IController salesController = FormUtil.getController(SALES_CONTROLLER);
-		salesController.clearCriteria();
+		salesController.onEditSearch(event);
 		salesController.getCriteria().addEqualExpression(salesController.getFieldName(ISalesAlias.SALES_ID), sales.getId());
-		salesController.onSearch(null);
+		salesController.onSearch(event);
 		salesController.getModel().setRowIndex(0);
-		salesController.onSelect(null);
+		salesController.onSelect(event);
 	}
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
@@ -564,11 +564,11 @@ public class OfferController extends BasicController implements ISignatureContro
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
 		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
-		invoiceController.clearCriteria();
+		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(null);
+		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(null);
+		invoiceController.onSelect(event);
 	}
 
 	public String getInvoiceCode() throws ManagerBeanException {
