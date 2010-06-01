@@ -524,13 +524,13 @@ public class CommercialStatEngineController {
 		} else
 			return false;
 	}
-	
-	public Boolean getRegistryType(){
-		if (controlType == 0 ) {
+
+	public Boolean getRegistryType() {
+		if (controlType == 0) {
 			return true;
 		} else
 			return false;
-		
+
 	}
 
 	public void setShowCommercialActivities(Boolean showCommercialActivities) {
@@ -561,15 +561,17 @@ public class CommercialStatEngineController {
 			setNumAprovedOffers(0);
 			setNumLostOffers(0);
 			setNumVisits(0);
+			setNumPendingVisits(0);
+			setNumPendingOffers(0);
 			setNumOffers(0);
-			if (count < 1) {
-				setNumVisitsTot(0);
-				setNumAprovedOffersTot(0);
-				setNumLostOffersTot(0);
-				setNumPendingVisitsTot(0);
-				setNumOffersTot(0);
-				setNumPendingOffersTot(0);
-			}
+
+			setNumVisitsTot(0);
+			setNumAprovedOffersTot(0);
+			setNumLostOffersTot(0);
+			setNumPendingVisitsTot(0);
+			setNumOffersTot(0);
+			setNumPendingOffersTot(0);
+
 			setClosedOffersModel(null);
 			setDoneOffersModel(null);
 			setLostOffersModel(null);
@@ -988,7 +990,7 @@ public class CommercialStatEngineController {
 				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS), c);
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		list = commercialTrackingBean.getList(criteria);
-		
+
 		activitiesList = new LinkedList<CommercialTracking>();
 		for (ITransferObject to : list) {
 			CommercialTracking cmt = (CommercialTracking) to;
@@ -1059,7 +1061,8 @@ public class CommercialStatEngineController {
 		setCommercialActivityStatus(true);
 		IManagerBean TargetBean = BeanManager.getManagerBean(Target.class);
 		Criteria cri = new Criteria();
-		cri.addEqualExpression(TargetBean.getFieldName(ICommercialAlias.TARGET_ID),
+		cri.addEqualExpression(TargetBean
+				.getFieldName(ICommercialAlias.TARGET_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		list = TargetBean.getList(cri);
@@ -1108,14 +1111,15 @@ public class CommercialStatEngineController {
 		setReportName(AonUtil.getMessage(bundle, "report_activities_view"));
 		setItemTitle(AonUtil.getMessage(bundle, "report_activity"));
 
-
 	}
-	
-	public void onPendingTargetActivities(ActionEvent e) throws ManagerBeanException {
+
+	public void onPendingTargetActivities(ActionEvent e)
+			throws ManagerBeanException {
 		setCommercialActivityStatus(false);
 		IManagerBean TargetBean = BeanManager.getManagerBean(Target.class);
 		Criteria cri = new Criteria();
-		cri.addEqualExpression(TargetBean.getFieldName(ICommercialAlias.TARGET_ID),
+		cri.addEqualExpression(TargetBean
+				.getFieldName(ICommercialAlias.TARGET_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		list = TargetBean.getList(cri);
@@ -1164,9 +1168,8 @@ public class CommercialStatEngineController {
 		setReportName(AonUtil.getMessage(bundle, "report_activities_view"));
 		setItemTitle(AonUtil.getMessage(bundle, "report_activity"));
 
-
 	}
-	
+
 	public void onTargetActivityList(ActionEvent e) throws ManagerBeanException {
 		IManagerBean commercialTrackingBean = BeanManager
 				.getManagerBean(CommercialTracking.class);
@@ -1205,8 +1208,6 @@ public class CommercialStatEngineController {
 
 		setReportName(AonUtil.getMessage(bundle, "report_activities_view"));
 	}
-
-
 
 	public class ControlSummary {
 
