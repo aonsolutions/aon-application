@@ -40,12 +40,12 @@
 							</c:if>
 						</c:if>					
 						<c:if test="#{communicationCenter.action.mediaType  == 'MAIL'}" >							
-							<a4j:htmlCommandLink id="mailing" value="#{marketingBundle.marketing_mailing}" target="_blank"
-								action="communicationCenter" actionListener="#{communicationCenter.onGenerateTargetMailing}"
-								styleClass="aon-finding-toolbar-item aon-icon-webmail2" >
-								<a4j:support event="onclick" process="CommunicationCenter_action_id" 
-									reRender="aonContent" actionListener="#{communicationCenter.onInit}" />
-							</a4j:htmlCommandLink>
+							<aon:commandButton id="email"
+								action="communicationCenter_mail"
+								actionListener="#{communicationCenter.onGenerateTargetMailing}"
+								value="#{marketingBundle.marketing_mailing}"
+								styleClass="aon-finding-toolbar-item aon-icon-webmail2">
+							</aon:commandButton>								
 						</c:if>
 						<c:if test="#{communicationCenter.action.mediaType  == 'EMAIL'}" >
 							<aon:commandButton id="email"

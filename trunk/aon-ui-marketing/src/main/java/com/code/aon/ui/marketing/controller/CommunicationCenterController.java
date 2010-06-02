@@ -1,5 +1,6 @@
 package com.code.aon.ui.marketing.controller;
 
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -89,9 +90,19 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private int pendingTargets;
 	
+	private String mails;
+	
 	public CommunicationCenterController() {
 		this.date = new Date();
 		this.questionValues = new LinkedList<SelectItem>();
+	}
+	
+	public String getMails() {
+		return mails;
+	}
+
+	public void setMails(String mails) {
+		this.mails = mails;
 	}
 
 	public Date getDate() {
@@ -212,6 +223,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		setAction(null);
 		setTarget(null);
 		setSurvey(null);
+		setMails(null);
 		this.surveyResponse = null;
 		this.actionTarget = null;
 	}
@@ -527,17 +539,17 @@ public class CommunicationCenterController implements IMarketingConstants {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void refreshPendingTargets() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 		Criteria criteria = getPendingTargetsCriteria(bean, true);
 		setPendingTargets(bean.getCount(criteria));
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
 	public void onGenerateTargetMailing(ActionEvent event) throws ManagerBeanException {
         List<ActionTarget> targets = getActionTargets(false);
-        MailingManager.generateMailing(targets);
+        StringWriter writer = new StringWriter();
+        MailingManager.generateMailing(targets, writer);
+        this.mails = writer.toString();
         IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
         for( ActionTarget target : targets ) {
         	target.setStatus(ActionTargetStatus.FINISHED);
