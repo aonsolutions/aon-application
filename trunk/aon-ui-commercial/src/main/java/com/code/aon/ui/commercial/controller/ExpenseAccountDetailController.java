@@ -33,26 +33,19 @@ public class ExpenseAccountDetailController extends LinesController {
 
 	public void onQuantityChanged(ValueChangeEvent event) {
 		ExpenseAccountDetail expenseAccountDetail = (ExpenseAccountDetail)getTo();
-		
-			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-				expenseAccountDetail.setQuantity((Integer)event.getNewValue());
-				expenseAccountDetail.setAmount(expenseAccountDetail.getPrice()*expenseAccountDetail.getQuantity());
-			}
-			
-		
+		if ( event.getNewValue() != null ) {
+			expenseAccountDetail.setQuantity((Double)event.getNewValue());
+			expenseAccountDetail.setAmount(expenseAccountDetail.getPrice()*expenseAccountDetail.getQuantity());
+		}
 	}
 	
 	public void onUnitPriceChanged(ValueChangeEvent event) {
 		ExpenseAccountDetail expenseAccountDetail = (ExpenseAccountDetail)getTo();
-		
-			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-				expenseAccountDetail.setPrice((Double)event.getNewValue());
-				expenseAccountDetail.setAmount(expenseAccountDetail.getPrice()*expenseAccountDetail.getQuantity());
-			}
-			
-		
+		if (event.getNewValue() != null) {
+			expenseAccountDetail.setPrice((Double)event.getNewValue());
+			expenseAccountDetail.setAmount(expenseAccountDetail.getPrice()*expenseAccountDetail.getQuantity());
+		}
 	}
-
 	
 	@Override
 	public void onReset(ActionEvent event) {
