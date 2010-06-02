@@ -19,6 +19,7 @@ import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.IPersona;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 
@@ -38,6 +39,7 @@ public class Empleado implements ITransferObject,IEmpleado {
 	private Boolean mayor65;
 	private IActividad actividad;
 	private IPersona persona;
+	private IEmpresa empresa;
 	
 	
 	public Empleado() {
@@ -142,6 +144,17 @@ public class Empleado implements ITransferObject,IEmpleado {
 			setCodccc(null);	
 		}
 		
+	}
+	
+	@ManyToOne(targetEntity = Empresa.class,fetch = FetchType.EAGER)
+	@JoinColumn(name = "codemp", nullable = false)
+	@Override
+	public IEmpresa getEmpresa() {
+		return this.empresa;
+	}
+	@Override
+	public void setEmpresa(IEmpresa empresa) {
+		this.empresa = empresa;
 	}
 	
 	@Override

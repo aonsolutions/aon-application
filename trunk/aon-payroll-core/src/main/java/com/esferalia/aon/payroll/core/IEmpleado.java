@@ -28,4 +28,7 @@ public interface IEmpleado extends ITransferObject{
 	boolean isMayor65();
 	void setMayor65(boolean mayor65);
 	
+	IEmpresa getEmpresa();
+	void setEmpresa(IEmpresa empresa);
+	
 }
