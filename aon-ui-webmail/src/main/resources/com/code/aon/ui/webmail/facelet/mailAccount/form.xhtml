@@ -16,6 +16,7 @@
 				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_mailAccount}" />
 				<ui:param name="controller" value="#{mailAccount}" />
 				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="skipRemoveButton" value="#{!mailAccount.removable}" />
 			</ui:include>			
 			
 			<aon:div styleClass="aon-scroll-area">
@@ -40,7 +41,7 @@
 	
 						<aon:outputLabel for="MailAccount_signature"
 							value="#{webmailBundle.webmail_signature_signature}" />
-						<aon:selectOneMenu id="MailAccount_signature"
+						<aon:selectOneMenu id="MailAccount_signature" required="true"
 							value="#{mailAccount.to.signature.id}">
 							<f:selectItems value="#{signature.signatures}" />
 						</aon:selectOneMenu>

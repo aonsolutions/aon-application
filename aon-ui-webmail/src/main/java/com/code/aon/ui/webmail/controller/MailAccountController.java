@@ -48,10 +48,6 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	private List<SelectItem> mailAccounts;
 	
-	public MailAccountController() {
-		updateCurrentMailAccount();
-	}
-
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {
@@ -116,26 +112,34 @@ public class MailAccountController extends BasicController implements WebMailCon
 	}
 	
 	private void changeMailAccount() {
+		MailAccount previousAccount = null;
 		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
-		webmail.getServer().disconnect();
-		MailAccount previous = webmail.getServer().getAccount();
+		if ( webmail.isLogged() ) {
+			webmail.getServer().disconnect();
+			previousAccount = webmail.getServer().getAccount();			
+		}
 		try{
 			webmail.init((MailAccount)super.getSelectedTO());
 		} catch (Throwable e) {
 			try {
-				webmail.init((MailAccount)previous);
+				if ( previousAccount != null ) {
+					webmail.init( previousAccount );	
+				}
 			} catch (MessagingException e1) {
 				LOGGER.error( e.getMessage(), e);
 			}
 			AonUtil.addErrorMessage( e.getMessage() );
 		} finally {
-			this.accountId = webmail.getServer().getAccount().getId();			
+			if ( webmail.isLogged() ) {
+				this.accountId = webmail.getServer().getAccount().getId();	
+		    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(WebMailConstants.BEAN_TREE);
+		    	treeBean.initTree( webmail.getServer() );		
+			} else {
+				this.accountId = null;
+			}
 		}
-    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(WebMailConstants.BEAN_TREE);
-    	treeBean.initTree( webmail.getServer() );		
 	}
 	
-	@SuppressWarnings("unused")
 	public void onChangeServer(ActionEvent event) {
 		resetFolderController();
 		super.onSelect(event);
@@ -179,10 +183,13 @@ public class MailAccountController extends BasicController implements WebMailCon
 		updateCurrentMailAccount();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void updateCurrentMailAccount() {
 		WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		this.accountId = webmail.getServer().getAccount().getId();
+		if ( webmail.isLogged() ) {
+			this.accountId = webmail.getServer().getAccount().getId();			
+		} else {
+			this.accountId = null;
+		}
 	}
 	
 	public Name getAccountId() {
@@ -221,6 +228,18 @@ public class MailAccountController extends BasicController implements WebMailCon
 		super.onSelect(null);
 		changeMailAccount();
 		setShowMailAccountList(false);
+	}
+	
+	public boolean isRemovable() {
+		MailAccount account = (MailAccount)getTo();
+		if ( account.isDefault() ) {
+			return false;
+		}
+		WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+		if ( webmail.isLogged() ) {
+			return ! this.accountId.equals(account.getId());
+		}
+		return true;
 	}
 	
 }
