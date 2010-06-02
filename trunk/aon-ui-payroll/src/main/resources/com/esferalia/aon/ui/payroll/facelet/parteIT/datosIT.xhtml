@@ -61,11 +61,45 @@
 
 				<aon:outputLabel for="colegiado"
 					value="#{payrollBundle.payroll_colegiado}" />
-				<aon:inputText id="colegiado"
-					value="#{parteITWizard.numeroColegiado}" />
+				<aon:div id="colegiado">
+					<aon:inputText 
+						value="#{parteITWizard.numeroColegiado}" >
+						<a4j:support event="onchange" focus="Registry_name"
+							actionListener="#{parteITWizard.onChangeColegiado}" 
+							reRender="colegiado"  
+							ajaxSingle="true"/>
+					</aon:inputText>
+					<aon:outputText 
+						rendered="#{parteITWizard.validColegiado and parteITWizard.validColegiado!=null}"
+						styleClass="aon-icon-predetermine"
+						style="padding-left: 15px;"
+						value="&#160;" />
+					<aon:outputText 
+						rendered="#{!parteITWizard.validColegiado and parteITWizard.validColegiado!=null}"
+						styleClass="aon-icon-exception"
+						style="padding-left: 15px;"
+						value="&#160;" />
+				</aon:div>
 
 				<aon:outputLabel for="cias" value="#{payrollBundle.payroll_cias}" />
-				<aon:inputText id="cias" value="#{parteITWizard.cias}" />
+				<aon:div id="cias">
+					<aon:inputText value="#{parteITWizard.cias}" >
+						<a4j:support event="onchange" focus="Registry_name"
+							actionListener="#{parteITWizard.onChangeCias}" 
+							reRender="cias"  
+							ajaxSingle="true"/>
+					</aon:inputText>
+					<aon:outputText 
+						rendered="#{parteITWizard.validCias and parteITWizard.validCias!=null}"
+						styleClass="aon-icon-predetermine"
+						style="padding-left: 15px;"
+						value="&#160;" />
+					<aon:outputText 
+						rendered="#{!parteITWizard.validCias and parteITWizard.validCias!=null}"
+						styleClass="aon-icon-exception"
+						style="padding-left: 15px;"
+						value="&#160;" />
+				</aon:div>
 
 				<aon:outputLabel for="causaAlta"
 					rendered="#{parteITWizard.alta}"

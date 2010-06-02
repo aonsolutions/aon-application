@@ -46,6 +46,7 @@ import com.esferalia.aon.payroll.core.it.IParteITDAO;
 import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
 import com.esferalia.aon.payroll.core.nomina.INominaDAO;
 import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
+import com.esferalia.aon.payroll.utils.NumberValidation;
 
 public class ParteITWizard implements Serializable, IDataModelDataProvider, ICriteriaProvider {
 
@@ -75,7 +76,26 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 	private List<SelectItem> operations;
 	private int currentStep;
 	private static final String[] STEPS = { "parteITWizard_step0", "parteITWizard_step1", "parteITWizard_step2", "parteITWizard_step3" };
+	private Boolean validColegiado;
+	private Boolean validCias;
+	
+	public Boolean getValidColegiado() {
+		return validColegiado;
+	}
 
+	public void setValidColegiado(Boolean validColegiado) {
+		this.validColegiado = validColegiado;
+	}
+
+	public Boolean getValidCias() {
+		return validCias;
+	}
+
+	public void setValidCias(Boolean validCias) {
+		this.validCias = validCias;
+	}
+
+	
 	public IParteConfirmacionIT getParteConfirmacionIT() {
 		return parteConfirmacionIT;
 	}
@@ -324,6 +344,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 				
 				extendedList.add(pe);				
 			}
+			onChangeCias(null);
+			onChangeColegiado(null);
 		}
 		return extendedList;
 	}
@@ -419,6 +441,8 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 		ParteITEmpleado emp = (ParteITEmpleado) getEmpleosModel().getRowData();
 		setParteITEmpleado(emp);
 		onChangeEmpleado();
+		onChangeCias(event);
+		onChangeColegiado(event);
 	}
 
 	private void onChangeEmpleado() {
@@ -727,7 +751,36 @@ public class ParteITWizard implements Serializable, IDataModelDataProvider, ICri
 			empleado.setSelected(selected);
 		}
 	}
+	
+	public void onChangeColegiado(ActionEvent event) {
+		// El nº colegiado debe cumplir una mascara
+		// El nº colegiado corresponder con su digito de control
+		if (!StringUtils.isBlank(getNumeroColegiado())){ 
+			if(NumberValidation.validNumeroColegiadoPattern(getNumeroColegiado()) && NumberValidation.validNumeroColegiadoControlDigit(getNumeroColegiado())) {
+					setValidColegiado(true);
+			} else {
+				setValidColegiado(false);
+			}
+		} else {
+			setValidColegiado(null);
+		}
+	}
 
+	public void onChangeCias(ActionEvent event) {
+		// El CIAS debe cumplir una mascara
+		// El CIAS debe corresponder con su digito de control
+		if (!StringUtils.isBlank(getCias()) ) {
+			if(NumberValidation.validCiasPattern(getCias()) && NumberValidation.validCiasControlDigit(getCias())){
+				setValidCias(true);
+			} else {
+				setValidCias(false);
+			}
+		} else {
+			setValidCias(null);
+		}
+
+	}
+	
 	private void getNextNumeroRenovaciones( ParteITEmpleado pe ) throws PayrollException {
 		setNumParteRenovacion(pe.getNumeroRenovaciones() + 1);
 	}
