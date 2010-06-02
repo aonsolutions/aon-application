@@ -88,11 +88,11 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 	}
 
 	private void initDefault(AuthPrincipal user) throws ManagerBeanException, MessagingException {	
-		MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
+		MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName(), true);
 		if (mailAccount!=null) {
 			init(mailAccount);
 		}else{
-    		AonUtil.addErrorMessage("NOT VALID ACCOUNT");
+			this.initErrorMessage = AonUtil.getMessage(BUNDLE_NAME, NOT_MAIL_ACCOUNT, user.getShortName());
 		}
 	}
 
