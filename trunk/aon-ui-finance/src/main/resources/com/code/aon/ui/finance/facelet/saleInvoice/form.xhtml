@@ -60,7 +60,7 @@
 						</c:if>
 						<aon:commandButton value="&#160;" id="email"
 							actionListener="#{saleInvoice.onSendInvoiceByEmail}"
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+							rendered="#{webmail.logged and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 							reRender="showNewMessageWindow">
 						</aon:commandButton>						
