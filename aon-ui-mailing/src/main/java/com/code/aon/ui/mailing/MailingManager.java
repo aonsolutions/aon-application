@@ -4,17 +4,17 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.common.ITransferObject;
+import org.apache.commons.io.IOUtils;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
@@ -26,26 +26,27 @@ public class MailingManager {
 	private static final String SEPARATOR = ",";
 	private static final String FILENAME = "mailing.txt";
 	
-	@SuppressWarnings("unchecked")
-	public static void generateMailing(Collection collection) throws ManagerBeanException {
-		String filename = getFicheroDestino();
-		PrintWriter pw;
-		try {
-			pw = new PrintWriter(new FileOutputStream(new File(filename)));
-		} catch (FileNotFoundException e) {
-			throw new ManagerBeanException(e);
-		}
+	public static void generateMailing(Collection<? extends IRegistry> collection, Writer writer) throws ManagerBeanException {
+		PrintWriter pw = new PrintWriter(writer);
 
-        Iterator<ITransferObject> iterator = collection.iterator();
     	pw.print(parseStructure());
 		pw.println();
-        while (iterator.hasNext()){
-        	IRegistry iRegistry = (IRegistry)iterator.next();
+		for( IRegistry iRegistry : collection ) {
         	pw.print(parseLine(iRegistry.getRegistry()));
-			pw.println();
-        }
+			pw.println();			
+		}
 		pw.flush();
-		pw.close();
+	}
+
+	public static void generateMailing(Collection<? extends IRegistry> collection) throws ManagerBeanException {
+		String filename = getFicheroDestino();
+		try {
+			Writer writer = new FileWriter(new File(filename));
+			generateMailing(collection, writer);
+			writer.close();
+		} catch (IOException e) {
+			throw new ManagerBeanException(e);
+		}
         
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
@@ -53,27 +54,17 @@ public class MailingManager {
 			response.setContentType("aplication/disk");
 			response.setHeader("content-disposition", "attachment;filename=\"" + FILENAME + "\"");
 			BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
-			byte[] data = new byte[1024];
-			FileInputStream file = new FileInputStream(filename);
-			BufferedInputStream bis = new BufferedInputStream(file);
-			boolean eof = false;
-			while (!eof) {
-				int length = bis.read(data);
-				if (length == -1) {
-					eof = true;
-				} else {
-					bos.write(data, 0, length);
-				}
-			}
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filename));
+			IOUtils.copy(bis, bos);
 			bos.flush();
-			bos.close();
-			bis.close();
+			IOUtils.closeQuietly(bos);
+			IOUtils.closeQuietly(bis);
 			faces.responseComplete();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
+	}	
+	
 	private static String getFicheroDestino() {
 		return getTmpPath()+FILENAME;
 	}
