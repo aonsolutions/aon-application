@@ -740,7 +740,8 @@ public class CommercialStatEngineController {
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' order by OfferDetail.offer.issueDate desc";
+				+ "' group by OfferDetail.offer.id"
+				+ " order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -1472,7 +1473,8 @@ public class CommercialStatEngineController {
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' order by OfferDetail.offer.issueDate desc";
+				+ "' group by OfferDetail.offer.id"
+				+ " order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -1506,7 +1508,8 @@ public class CommercialStatEngineController {
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' order by OfferDetail.offer.issueDate desc";
+				+ "' group by OfferDetail.offer.id"
+				+ " order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
