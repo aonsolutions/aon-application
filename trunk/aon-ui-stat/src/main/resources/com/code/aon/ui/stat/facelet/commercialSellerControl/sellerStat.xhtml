@@ -24,28 +24,36 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:define name="beforeToolbarContent">
-					<aon:commandButton value="#{bundle.aon_back}"
-						action="commercial_seller_search"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_cancel}" />
+					<c:if test="#{commercialStat.controlType==0}">
+						<aon:commandButton value="#{bundle.aon_search}"
+							action="commercial_seller_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</c:if>
+					<c:if test="#{commercialStat.controlType==1}">
+
+					</c:if>
+					<c:if test="#{commercialStat.controlType==2}">
+
+					</c:if>
 
 					<c:if test="#{commercialStat.controlType==0}">
 						<aon:commandButton value="#{statBundle.seller_stat_control}"
 							action="commercial_seller_view"
 							actionListener="#{commercialStat.onSummary}"
-							styleClass="aon-finding-toolbar-item aon-icon-visit" />
+							styleClass="aon-finding-toolbar-item aon-icon-task" />
 					</c:if>
 					<c:if test="#{commercialStat.controlType==1}">
 						<aon:commandButton value="#{statBundle.seller_stat_control}"
 							action="commercial_seller_view"
 							actionListener="#{commercialStat.onTargetSummary}"
-							styleClass="aon-finding-toolbar-item aon-icon-visit" />
+							styleClass="aon-finding-toolbar-item aon-icon-task" />
 					</c:if>
 					<c:if test="#{commercialStat.controlType==2}">
 						<aon:commandButton value="#{statBundle.seller_stat_control}"
 							action="commercial_seller_view"
 							actionListener="#{commercialStat.onProductSummary}"
-							styleClass="aon-finding-toolbar-item aon-icon-visit" />
+							styleClass="aon-finding-toolbar-item aon-icon-task" />
 					</c:if>
 
 
@@ -94,7 +102,8 @@
 					<h:panelGrid columns="2">
 
 						<aon:div>
-							<aon:panel rendered="#{commercialStat.showCommercialActivities}" style="height:100px;width:250px;"
+							<aon:panel rendered="#{commercialStat.showCommercialActivities}"
+								style="height:100px;width:250px;"
 								header="#{statBundle.seller_stat_control_vis}">
 								<aon:panelGrid columns="2">
 									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
@@ -133,12 +142,15 @@
 				</aon:div>
 
 				<aon:panelTabSet switchType="client">
-					<aon:panelTab id="tab1" rendered="#{commercialStat.showCommercialActivities}"
+					<aon:panelTab id="tab1"
+						rendered="#{commercialStat.showCommercialActivities}"
 						label="#{statBundle.seller_stat_control_vis} #{statBundle.seller_stat_control_donef}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/visitsList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="tab2" rendered="#{commercialStat.showCommercialActivities}" label="#{statBundle.seller_stat_control_vis}  #{statBundle.seller_stat_control_pending}">
+					<aon:panelTab id="tab2"
+						rendered="#{commercialStat.showCommercialActivities}"
+						label="#{statBundle.seller_stat_control_vis}  #{statBundle.seller_stat_control_pending}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/pendingVisitsList.xhtml" />
 					</aon:panelTab>
