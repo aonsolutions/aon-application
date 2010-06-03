@@ -7,7 +7,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.ActividadCCC;
-import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IActividadCCC;
