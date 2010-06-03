@@ -48,7 +48,7 @@
 	<aon:selectOneMenu id="Item_product_category_id"
 		value="#{productCollections.category}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
 	
@@ -58,7 +58,7 @@
 		<aon:selectOneMenu id="Item_product_brand_id"
 			value="#{productCollections.brand}"
 			valueChangeListener="#{controller.addIdEqualExpression}">
-			<f:selectItem itemLabel="-" value="#{null}" itemDisabled="true" />
+			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{productCollections.brands}" />
 		</aon:selectOneMenu>
 	</c:if>
