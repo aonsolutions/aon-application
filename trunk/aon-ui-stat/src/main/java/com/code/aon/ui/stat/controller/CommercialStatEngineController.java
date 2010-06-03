@@ -779,7 +779,7 @@ public class CommercialStatEngineController {
 			getSellerControlStats();
 			count++;
 			s.setId(inv.getId());
-			s.setName(inv.getId() + " " + inv.getRegistry().getFullName());
+			s.setName(inv.getRegistry().getFullName());
 			s.setNumVisits(numVisits);
 			s.setNumOffers(numOffers);
 			s.setNumPendingVisits(numPendingVisits);
@@ -811,7 +811,7 @@ public class CommercialStatEngineController {
 			getTargetControlStats();
 			count++;
 			s.setId(tg.getId());
-			s.setName(tg.getId() + " " + tg.getRegistry().getFullName());
+			s.setName(tg.getRegistry().getFullName());
 			s.setNumVisits(numVisits);
 			s.setNumOffers(numOffers);
 			s.setNumPendingVisits(numPendingVisits);
@@ -844,7 +844,7 @@ public class CommercialStatEngineController {
 			getProductControlStats();
 			count++;
 			s.setId(pro.getId());
-			s.setName(pro.getId() + " " + pro.getName());
+			s.setName(pro.getName());
 			s.setNumVisits(numVisits);
 			s.setNumOffers(numOffers);
 			s.setNumPendingVisits(numPendingVisits);
