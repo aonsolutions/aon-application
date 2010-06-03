@@ -54,6 +54,15 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************ Remesa Certificado Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>remesaCertificadoWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.RemesaCertificadoWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- =================== Undeductible Invoice Management========================== -->
 	<navigation-rule id="parteITWizard">
@@ -129,6 +138,21 @@
 	    <navigation-case>
     	  	<from-outcome>salaryModificationWizard_step3</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryModification/step3.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<navigation-rule id="remesaCertificadoWizard">
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step2.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 
