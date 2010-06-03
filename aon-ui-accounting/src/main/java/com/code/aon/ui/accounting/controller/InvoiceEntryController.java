@@ -902,7 +902,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
 			total += detail.getTotal();
 		}
-		return total;
+		return CommonUtil.round(total);
 	}
 
 	/**
@@ -917,7 +917,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			Finance finance = (Finance) iter.next();
 			total += finance.getAmount();
 		}
-		return total;
+		return CommonUtil.round(total);
 	}
 
 	public boolean isSettled() {
