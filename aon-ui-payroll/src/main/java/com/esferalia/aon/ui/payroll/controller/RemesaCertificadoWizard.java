@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -18,6 +19,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.core.remesa.IRemesaParteIT;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
 public class RemesaCertificadoWizard implements Serializable {
@@ -98,8 +100,8 @@ public class RemesaCertificadoWizard implements Serializable {
 			String loggedUser = AonUtil.getRemoteUser();
 			loggedUser = StringUtils.substringBefore(loggedUser, "@");
 //			List<IRemesaParteIT> list = getParteITDAO().getRemesaParteITList(getRemesaINSS());
-//			setFileOutput(getFDIWriter().createFDI(list, loggedUser));
-			setFileOutput(getFDIWriter().createFDI(null, loggedUser));
+			List<IRemesaParteIT> list = null;
+			setFileOutput(getFDIWriter().createFDI(list, loggedUser));
 			if (getFileOutput() != null) {
 				if (getFileOutput().getErrors().size() > 0) {
 					AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
