@@ -1,5 +1,6 @@
 package com.code.aon.dbutils;
 
+import java.sql.Blob;
 import java.sql.DatabaseMetaData;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -8,8 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.util.HashMap;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+
+import org.apache.commons.codec.binary.Hex;
 
 import com.code.aon.dbutils.event.DBUtilsEvent;
 import com.code.aon.dbutils.event.DBUtilsEventSupport;
@@ -18,11 +22,13 @@ import com.code.aon.dbutils.runner.IDBUtilsRunnable;
 
 public class MySQLDBDumper implements IDBUtilsRunnable{
 
-	private static final String INT_TYPE = "int";
-	private static final String TINYINT_TYPE = "tinyint";
-	private static final String DOUBLE_TYPE = "double";
-	private static final String SMALLINT_TYPE = "smallint";
+	private static final String INT_TYPE = "INT";
+	private static final String INT_UNSIGNED_TYPE = "INT UNSIGNED";
+	private static final String TINYINT_TYPE = "TINYINT";
+	private static final String DOUBLE_TYPE = "DOUBLE";
+	private static final String SMALLINT_TYPE = "SMALLINT";
 	private static final String BIT_TYPE = "BIT";
+	private static final String MEDIUMBLOB_TYPE = "MEDIUMBLOB";
 	private static final String INSERT_IGNORE_INTO = "INSERT IGNORE INTO ";
 	private static final String VALUES = ") VALUES \n";
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
@@ -33,20 +39,21 @@ public class MySQLDBDumper implements IDBUtilsRunnable{
 	private static final String DELETE_FROM = "DELETE FROM ";
 	private static final String COLUMN_NAME = "COLUMN_NAME";
 	private static final String TYPE_NAME = "TYPE_NAME";
-	private static final Object NULL = "NULL";
+	private static final String NULL = "NULL";
+	
 
 	private Connection connection;
-	private Writer writer;
+	private OutputStream writer;
 	private boolean delete;
 	private DBUtilsEventSupport dumpEventSupport = new DBUtilsEventSupport();
 
-	public MySQLDBDumper(Connection connection, Writer writer) {
+	public MySQLDBDumper(Connection connection, OutputStream writer) {
 		this.connection = connection;
 		this.writer = writer;
 		this.delete = true;
 	}
 
-	public MySQLDBDumper(Connection connection, PrintWriter writer, boolean delete) {
+	public MySQLDBDumper(Connection connection, OutputStream writer, boolean delete) {
 		this.connection = connection;
 		this.writer = writer;
 		this.delete = delete;
@@ -55,7 +62,7 @@ public class MySQLDBDumper implements IDBUtilsRunnable{
 	private Connection getConnection() {
 		return connection;
 	}
-	private Writer getWriter() {
+	private OutputStream getWriter() {
 		return writer;
 	}
 
@@ -77,7 +84,7 @@ public class MySQLDBDumper implements IDBUtilsRunnable{
                 rs.close();
             } else {
             	getWriter().write('\n');
-            	getWriter().write(SET_FOREIGN_KEY_CHECKS_0);
+            	getWriter().write(SET_FOREIGN_KEY_CHECKS_0.getBytes());
             	getWriter().write('\n');
             	getWriter().flush();
                 do {
@@ -88,7 +95,7 @@ public class MySQLDBDumper implements IDBUtilsRunnable{
                     }
                 } while (rs.next());
                 getWriter().write('\n');
-                getWriter().write(SET_FOREIGN_KEY_CHECKS_1);
+                getWriter().write(SET_FOREIGN_KEY_CHECKS_1.getBytes());
                 getWriter().write('\n');
                 getWriter().flush();
                 rs.close();
@@ -97,15 +104,17 @@ public class MySQLDBDumper implements IDBUtilsRunnable{
             getWriter().close();
             fireDBUtilsEvent(null);
         } catch (IOException e) {
+        	e.printStackTrace();
             fireDBUtilsEvent(e.getMessage());
         } catch (SQLException e) {
+        	e.printStackTrace();
             fireDBUtilsEvent(e.getMessage());
         }
 	}
 	
     private void deleteTable(String tableName) throws IOException {
 		String deleteStr = DELETE_FROM+tableName+';'+'\n';
-		getWriter().write(deleteStr);
+		getWriter().write(deleteStr.getBytes());
 		getWriter().flush();
     }
 
@@ -136,51 +145,61 @@ public class MySQLDBDumper implements IDBUtilsRunnable{
 
         boolean first = true;
         while (rs.next()) {
-        	StringBuffer buf = new StringBuffer();
         	if (delete && first){
         		deleteTable(tableName);
         	}
         	if (first){
         		first = false;	
-        		buf.append(INSERT_IGNORE_INTO);
-            	buf.append(tableName);
-            	buf.append('(');
-            	buf.append(rows);
-            	buf.append(VALUES);
+        		getWriter().write(INSERT_IGNORE_INTO.getBytes());
+        		getWriter().write(tableName.getBytes());
+        		getWriter().write('(');
+        		getWriter().write(rows.getBytes());
+        		getWriter().write(VALUES.getBytes());
         	} else {
-        		buf.append(",\n");
+        		getWriter().write(',');
+        		getWriter().write('\n');
         	}
         	
-        	buf.append("\t(");
+        	getWriter().write('\t');
+        	getWriter().write('(');
             for (int i=0; i<columnCount; i++) {
                 if (i > 0) {
-                	buf.append(',');
+                	getWriter().write(',');
                 }
                 Object value = rs.getObject(i+1);
                 if (rs.wasNull()) {
-                	buf.append(NULL);
+                	getWriter().write(NULL.getBytes());
                 } else {
-                    String outputValue = value.toString();
-                    outputValue = outputValue.replaceAll("\\n","\\\\n");
-                    outputValue = outputValue.replaceAll("\\r","\\\\r");
-                    outputValue = outputValue.replaceAll("'","\\\\'");
                     String type = map.get(i);
-                    if (INT_TYPE.equals(type) ||
-                   		TINYINT_TYPE.equals(type) ||
-                   		DOUBLE_TYPE.equals(type) ||
-                   		SMALLINT_TYPE.equals(type) ||
-                   		BIT_TYPE.equals(type) ){
-                    	buf.append(outputValue);
-                    }else{ 
-                    	// TODO Tratar los Blob.
-                    	buf.append('\'');
-                    	buf.append(outputValue);
-                    	buf.append('\'');
+                    if (INT_TYPE.equalsIgnoreCase(type) ||
+                    	INT_UNSIGNED_TYPE.equalsIgnoreCase(type) ||
+                   		TINYINT_TYPE.equalsIgnoreCase(type) ||
+                   		DOUBLE_TYPE.equalsIgnoreCase(type) ||
+                   		SMALLINT_TYPE.equalsIgnoreCase(type) ||
+                   		BIT_TYPE.equalsIgnoreCase(type) ){
+                    	getWriter().write(value.toString().getBytes());
+                    }else if (MEDIUMBLOB_TYPE.equalsIgnoreCase(type)){
+                    	Blob blob = rs.getBlob(i+1);
+                    	int length = (int) blob.length();
+                    	byte[] data = blob.getBytes( 1, length);
+                    	Hex hex = new Hex();
+                    	// Marca para decir que lo que va a continuación es Hexadecimal
+                    	getWriter().write('0');
+                    	getWriter().write('x');
+                    	// Los datos.
+                    	getWriter().write(hex.encode(data));
+                    }else {
+                        String outputValue = value.toString();
+                    	outputValue = outputValue.replaceAll("\\n","\\\\n");
+                    	outputValue = outputValue.replaceAll("\\r","\\\\r");
+                    	outputValue = outputValue.replaceAll("'","\\\\'");
+                    	getWriter().write('\'');
+                    	getWriter().write(outputValue.getBytes());
+                    	getWriter().write('\'');
                     }
                 }
             }
-        	buf.append(')');
-        	getWriter().write(buf.toString());
+            getWriter().write(')');
         	getWriter().flush();
         }
         if (!first) {
