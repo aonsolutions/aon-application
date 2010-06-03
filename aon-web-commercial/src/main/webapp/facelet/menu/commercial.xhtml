@@ -94,6 +94,11 @@
 										value="#{productBundle.product_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="supplier" 
+										action="supplier_search" actionListener="#{supplier.onEditSearch}"
+										value="#{supplierBundle.supplier_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory-warehouse" 
 										action="productCategory"
 										value="#{productBundle.product_category_module}" />
