@@ -20,6 +20,23 @@
 				<ui:param name="controller" value="#{commercialTracking}" />
 			</ui:include>
 
+			<aon:div rendered="#{!commercialTracking.new}"
+				styleClass="aon-float-right aon-margin-right aon-margin-top aon-margin-bottom">
+				<aon:commandButton
+					rendered="#{commercialTracking.previous != null}" immediate="true"
+					actionListener="#{commercialTracking.onPreviousAction}"
+					value="Accion Anterior" ajaxSingle="true"
+					styleClass="aon-icon-commandButton aon-icon-mailPrevious">
+				</aon:commandButton>
+	
+				<aon:commandButton
+					rendered="#{commercialTracking.to.next.id != null}" immediate="true"
+					actionListener="#{commercialTracking.onNextAction}"
+					value="Accion Siguiente" ajaxSingle="true"
+					styleClass="aon-icon-commandButton aon-icon-mailNext">
+				</aon:commandButton>
+			</aon:div>
+
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%"
 					columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
@@ -109,18 +126,17 @@
 						
 					<aon:div>					
 						<aon:selectBooleanCheckbox id="CommercialTracking_next_id"
-							reRender="next_action" disabled="#{!commercialTracking.new}"
+							reRender="next_action" 
 							valueChangeListener="#{commercialTracking.nextActionChanged}"
 							value="#{commercialTracking.nextAction}">
 						</aon:selectBooleanCheckbox>
-						<aon:div id="next_action" styleClass="aon-box aon-box-outstanding aon-padding" style="display:inline;">
-							<aon:panelGrid rendered="#{commercialTracking.nextAction}" columns="2" dir="true">
+						<aon:div id="next_action">
+							<aon:panelGrid rendered="#{commercialTracking.nextAction}" columns="2">
 
 								<aon:outputLabel for="CommercialTracking_next_date"
 									value="#{bundle.aon_date}" />
 								<aon:selectInputDate id="CommercialTracking_next_date"
 									value="#{commercialTracking.next.date}" required="true"
-									renderAsPopup="true"
 									popupDateFormat="#{bundle.aon_date_pattern}">
 								</aon:selectInputDate>
 

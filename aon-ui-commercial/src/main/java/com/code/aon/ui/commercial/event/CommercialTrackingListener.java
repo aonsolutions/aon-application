@@ -1,7 +1,12 @@
 package com.code.aon.ui.commercial.event;
 
+import java.util.List;
+
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -33,14 +38,15 @@ public class CommercialTrackingListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		CommercialTrackingController controller = (CommercialTrackingController) event.getController();
+		CommercialTracking ct = (CommercialTracking) controller.getTo();
 		try {
 	    	CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 			collections.refreshActivities();
+			updatePreviousAction( controller, ct );
+			controller.setNext( ct.getNext() );
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
-		CommercialTracking ct = (CommercialTracking) controller.getTo();
-		controller.setNext( ct.getNext() );
 	}
 	
 	@Override
@@ -48,7 +54,7 @@ public class CommercialTrackingListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		CommercialTrackingController controller = (CommercialTrackingController) event.getController();
 		try {		
-			fillNextAction(controller);
+			updateNextAction(controller);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
@@ -59,6 +65,17 @@ public class CommercialTrackingListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		CommercialTrackingController controller = (CommercialTrackingController) event.getController();
 		updateLastValue(controller);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		CommercialTrackingController controller = (CommercialTrackingController) event.getController();
+		try {		
+			updateNextAction(controller);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
 	}
 
 	@Override
@@ -85,15 +102,30 @@ public class CommercialTrackingListener extends ControllerAdapter {
 		controller.setLastSeller( ct.getSeller() );
 	}
 
-	private void fillNextAction( CommercialTrackingController controller ) throws ManagerBeanException {
+	private void updateNextAction( CommercialTrackingController controller ) throws ManagerBeanException {
 		if ( controller.isNextAction() ) {
 			CommercialTracking ct = (CommercialTracking) controller.getTo();
 			CommercialTracking next = controller.getNext();
 			ct.setNext( next );
-			next.setSeller( ct.getSeller() );
+			next.setSeller( ct.getSeller() );	
 			next.setTarget( ct.getTarget() );
-			controller.getManagerBean().insert(next);
+			controller.getManagerBean().insertOrUpdate(next);
+		} else {
+			CommercialTracking ct = (CommercialTracking) controller.getTo();
+			ct.setNext(null);
 		}
+	}
+	
+	private void updatePreviousAction( CommercialTrackingController controller, CommercialTracking ct ) throws ManagerBeanException {
+		CommercialTracking previous = null;
+		Criteria criteria = new Criteria();
+		String alias = controller.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_NEXT_ID);
+		criteria.addEqualExpression(alias, ct.getId());
+		List<ITransferObject> list = controller.getManagerBean().getList(criteria);
+		if (! list.isEmpty()) {
+			previous = (CommercialTracking) list.get(0);
+		}
+		controller.setPrevious( previous );
 	}
 	
 }
