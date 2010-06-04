@@ -14,7 +14,43 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		
+		<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="empleadoData" value="#{remesaCertificadoWizard.empleadoModel}"
+					var="to" rows="20" rendered="#{remesaCertificadoWizard.empleadoModel.rowCount > 0}"
+					columnClasses="
+					aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn">
+
+					<aon:rowSelector action="remesaCertificadoWizard_step2"
+						actionListener="#{remesaCertificadoWizard.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_documento}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.document.value}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_nombre}" />
+						</f:facet>
+						<aon:outputText value="#{to.fullName}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_numss}" />
+						</f:facet>
+						<aon:outputText value="#{to.numSS}" />
+					</aon:column>
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="empleadoData" showNote="true" />
+			</aon:div>
 	</ui:define>
 
 </ui:composition>
