@@ -37,7 +37,7 @@ public class RemesaCertificadoWizard implements Serializable, IDataModelDataProv
 	private static final long serialVersionUID = -8284038117326971930L;
 	
 	private int currentStep;
-	private static final String[] STEPS = { "remesaCertificadoWizard_step0", "remesaCertificadoWizard_step1", "remesaCertificadoWizard_step2" };
+	private static final String[] STEPS = { "remesaCertificadoWizard_step0", "remesaCertificadoWizard_step1", "remesaCertificadoWizard_step2", "remesaCertificadoWizard_step3" };
 	private FileOutput fileOutput;
 	private FDIWriter fdiWriter;
 	private IEmpleadoDAO empleadoDAO;
@@ -142,10 +142,12 @@ public class RemesaCertificadoWizard implements Serializable, IDataModelDataProv
 			onSearch(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
-			onValidate(event);
 //			onDiskGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
+			onValidate(event);
+			setCurrentStep(getCurrentStep() + 1);
+		} else if (getCurrentStep() == 3) {
 			onFinish(event);
 		} 
 	}
@@ -167,7 +169,7 @@ public class RemesaCertificadoWizard implements Serializable, IDataModelDataProv
 	}
 
 	public boolean isNextAvailable() {
-		return (getCurrentStep() < 2);
+		return (getCurrentStep() < 3);
 	}
 
 	// ***************************************************
