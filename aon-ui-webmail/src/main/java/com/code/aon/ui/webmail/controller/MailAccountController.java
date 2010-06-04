@@ -95,7 +95,15 @@ public class MailAccountController extends BasicController implements WebMailCon
 	        addMessage(e.getMessage());
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		}				
+		resetSignature();
 		super.accept(event);
+	}
+	
+	private void resetSignature() {
+		MailAccount ma = (MailAccount) getTo();
+		if ( (ma.getSignature() != null) && (ma.getSignature().getId() == null) ) {
+			ma.setSignature(null);
+		}
 	}
 	
 	private void resetFolderController() {

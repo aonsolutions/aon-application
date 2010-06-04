@@ -33,13 +33,13 @@ public class MailAccountControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		updateMailAccount( (MailAccount) event.getController().getTo() );
+		updateSignature( (MailAccount) event.getController().getTo() );
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		MailAccount mailAccount = (MailAccount) event.getController().getTo(); 
-		updateMailAccount( mailAccount );
+		updateSignature( mailAccount );
 		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
 		if ( mailAccount.getId().equals(wmc.getServer().getAccount().getId()) ) {
 			wmc.getServer().setAccount(mailAccount);
@@ -65,16 +65,18 @@ public class MailAccountControllerListener extends ControllerAdapter {
 		}		
 	}
 	
-	private void updateMailAccount( MailAccount mailAccount ) throws ControllerListenerException {
-		SignatureController signatureController = (SignatureController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_SIGNATURE);
-		try {
-			Name id = mailAccount.getSignature().getId();			
-			Signature signature = (Signature) signatureController.getManagerBean().get( id );
-			if ( signature != null ) {
-				mailAccount.setSignature(signature);
+	private void updateSignature( MailAccount mailAccount ) throws ControllerListenerException {
+		if ( mailAccount.getSignature() != null ) {
+			SignatureController signatureController = (SignatureController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_SIGNATURE);
+			try {
+				Name id = mailAccount.getSignature().getId();			
+				Signature signature = (Signature) signatureController.getManagerBean().get( id );
+				if ( signature != null ) {
+					mailAccount.setSignature(signature);
+				}
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException( e.getMessage(), e );
 			}
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );
 		}
 	}
 	

@@ -41,8 +41,9 @@
 	
 						<aon:outputLabel for="MailAccount_signature"
 							value="#{webmailBundle.webmail_signature_signature}" />
-						<aon:selectOneMenu id="MailAccount_signature" required="true"
+						<aon:selectOneMenu id="MailAccount_signature" 
 							value="#{mailAccount.to.signature.id}">
+							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{signature.signatures}" />
 						</aon:selectOneMenu>
 	
