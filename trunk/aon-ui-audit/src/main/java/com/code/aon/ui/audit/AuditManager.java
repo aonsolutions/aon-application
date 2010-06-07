@@ -20,7 +20,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
@@ -47,8 +46,9 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 		return application;
 	}		
 
-	public static Application getApplication( String name ) throws ManagerBeanException {
+	public static Application getApplication( String context ) throws ManagerBeanException {
 		Application application = null;
+		String name = getApplicationName( context );
 		IManagerBean applicationBean = BeanManager.getManagerBean(Application.class);
 		String field = applicationBean.getFieldName(APPLICATION_NAME);
 		Criteria criteria = new Criteria();
@@ -63,11 +63,6 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 			application = (Application) list.get(0);
 		}
 		return application;
-	}
-
-	public static Application getApplication( AuthPrincipal principal ) throws ManagerBeanException {
-		String applicationName = getApplicationName(principal.getContext() );
-		return getApplication(applicationName);
 	}
 	
 	public static User getUser( String shortName ) {
