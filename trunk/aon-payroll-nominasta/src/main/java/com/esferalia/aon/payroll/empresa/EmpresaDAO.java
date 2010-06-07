@@ -12,6 +12,7 @@ import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IActividadCCC;
 import com.esferalia.aon.payroll.core.empresa.EmpresaDAOFactory;
 import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
+import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
@@ -57,6 +58,18 @@ public class EmpresaDAO implements IEmpresaDAO {
 				return (IActividadCCC) list.get(0);	
 			}
 			return null;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IRemesaCertificadoEmpresa> getRemesaCertificados() throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RemesaCertificadoEmpresa.class);
+			List<?> list = bean.getList(null);
+			return (List<IRemesaCertificadoEmpresa>)list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
