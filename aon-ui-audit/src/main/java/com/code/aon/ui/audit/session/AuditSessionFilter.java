@@ -47,7 +47,7 @@ public class AuditSessionFilter implements Filter {
 		try {
 			AuthPrincipal principal = getPrincipal(request);
 			LOGGER.info( "Principal {}", principal );
-			Application application = AuditManager.getApplication(principal);
+			Application application = AuditManager.getApplication(request.getContextPath());
 			LOGGER.info( "Application {}", application );
 			User user = AuditManager.getUser( principal.getShortName() );
 			LOGGER.info( "User {}", user );

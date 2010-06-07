@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,8 +98,9 @@ public class ApplicationOptionController {
 		this.groupMap = new HashMap<String, OptionGroup>();
 		this.categories = new ArrayList<ApplicationCategory>();
 		AuthPrincipal principal = UserUtils.getInstance().getPrincipal();
+		String context = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 		try {
-			this.application = AuditManager.getApplication(principal);
+			this.application = AuditManager.getApplication(context);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error getting application for " + principal, e );
 		}		
