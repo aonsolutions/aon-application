@@ -1,6 +1,6 @@
 package com.code.aon.ui.marketing.controller;
 
-import java.io.StringWriter;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -19,8 +20,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
-import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.ActionTarget;
+import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.Question;
 import com.code.aon.marketing.QuestionValue;
 import com.code.aon.marketing.Survey;
@@ -43,6 +44,7 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -90,19 +92,19 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private int pendingTargets;
 	
-	private String mails;
+	private ListDataModel mailingModel;
 	
 	public CommunicationCenterController() {
 		this.date = new Date();
 		this.questionValues = new LinkedList<SelectItem>();
 	}
-	
-	public String getMails() {
-		return mails;
+
+	public ListDataModel getMailingModel() {
+		return mailingModel;
 	}
 
-	public void setMails(String mails) {
-		this.mails = mails;
+	public void setMailingModel(ListDataModel mailingModel) {
+		this.mailingModel = mailingModel;
 	}
 
 	public Date getDate() {
@@ -223,7 +225,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		setAction(null);
 		setTarget(null);
 		setSurvey(null);
-		setMails(null);
+		setMailingModel(null);
 		this.surveyResponse = null;
 		this.actionTarget = null;
 	}
@@ -547,14 +549,19 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	public void onGenerateTargetMailing(ActionEvent event) throws ManagerBeanException {
         List<ActionTarget> targets = getActionTargets(false);
-        StringWriter writer = new StringWriter();
-        MailingManager.generateMailing(targets, writer);
-        this.mails = writer.toString();
+        List<MailData> data = MailingManager.generateMailingList(targets);
+        this.mailingModel = new ListDataModel(data);
         IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
         for( ActionTarget target : targets ) {
         	target.setStatus(ActionTargetStatus.FINISHED);
         	bean.update(target);
         }
+	}		
+
+	@SuppressWarnings("unchecked")
+	public void onDownloadMailing(ActionEvent event) throws IOException {
+        List<MailData> data = (List<MailData>) this.mailingModel.getWrappedData();
+        MailingManager.generateMailing(data);
 	}		
 	
 }
