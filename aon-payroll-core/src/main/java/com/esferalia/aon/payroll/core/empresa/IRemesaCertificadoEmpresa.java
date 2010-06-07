@@ -2,9 +2,10 @@ package com.esferalia.aon.payroll.core.empresa;
 
 import java.util.Date;
 
+import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IEmpresa;
 
-public interface IRemesaCertificadoEmpresa {
+public interface IRemesaCertificadoEmpresa extends ITransferObject {
 	
 	Integer getId();
 	void setId(Integer  id);
