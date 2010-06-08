@@ -15,6 +15,8 @@ import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.Percepcion;
 import com.esferalia.aon.payroll.Persona;
+import com.esferalia.aon.payroll.empresa.RemesaCertificadoEmpresa;
+import com.esferalia.aon.payroll.empresa.RemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.RemesaINSS;
 import com.esferalia.aon.payroll.RemesaParteIT;
 import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
@@ -1039,6 +1041,80 @@ public interface IPayrollAlias {
 	* Hibernate value: Persona.lastName
 	*/
 	String  PERSONA_LAST_NAME = PERSONA_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for RemesaCertificadoEmpresa entity.
+	*/ 
+	DAOConstantsEntry REMESA_CERTIFICADO_EMPRESA_ENTRY = DAOConstants.getDAOConstant(RemesaCertificadoEmpresa.class);
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresa_empresa_id
+	* Hibernate value: RemesaCertificadoEmpresa.empresa.id
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresa_estado
+	* Hibernate value: RemesaCertificadoEmpresa.estado
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_ESTADO = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresa_fecha
+	* Hibernate value: RemesaCertificadoEmpresa.fecha
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_FECHA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresa_huella
+	* Hibernate value: RemesaCertificadoEmpresa.huella
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_HUELLA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresa_id
+	* Hibernate value: RemesaCertificadoEmpresa.id
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresa_numeroCcc
+	* Hibernate value: RemesaCertificadoEmpresa.numeroCcc
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_NUMERO_CCC = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for RemesaCertificadoEmpresaDetalle entity.
+	*/ 
+	DAOConstantsEntry REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY = DAOConstants.getDAOConstant(RemesaCertificadoEmpresaDetalle.class);
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresaDetalle_empleado_id
+	* Hibernate value: RemesaCertificadoEmpresaDetalle.empleado.id
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_EMPLEADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresaDetalle_fecha_baja
+	* Hibernate value: RemesaCertificadoEmpresaDetalle.fecha_baja
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_FECHA_BAJA = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresaDetalle_id
+	* Hibernate value: RemesaCertificadoEmpresaDetalle.id
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresaDetalle_remesaCertificado_id
+	* Hibernate value: RemesaCertificadoEmpresaDetalle.remesaCertificado.id
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[3];
 
 
 
