@@ -23,6 +23,11 @@ public class MarketingTargetController extends TargetController {
 	private IManagerBean mtBean;
 	
 	@Override
+	protected Integer getId( Object o ) {
+		return ((MarketingTarget) o).getId();
+	}
+	
+	@Override
 	public String getAliasPreffix() {
 		return getPojoShortName() + ".target";
 	}

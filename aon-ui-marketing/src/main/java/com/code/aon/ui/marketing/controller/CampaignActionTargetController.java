@@ -1,30 +1,29 @@
 package com.code.aon.ui.marketing.controller;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.ActionTarget;
+import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.commercial.controller.TargetController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 
 public class CampaignActionTargetController extends LinesController {
 
+	@SuppressWarnings("unchecked")
 	private List<Integer> getCurrentTargets() throws ManagerBeanException {
-		Set<Integer> targets = new HashSet<Integer>();
 		Criteria criteria = getCriteria();
 		String targetId = getFieldName(IMarketingAlias.ACTION_TARGET_TARGET_ID);
 		ProjectionList projectList = new ProjectionList(Projection.property(targetId));
@@ -38,11 +37,8 @@ public class CampaignActionTargetController extends LinesController {
 	
 	public void onAcceptTargets( ActionEvent event ) throws ManagerBeanException {
 		List<Integer> currentTargets = getCurrentTargets();
-		IController targetController = FormUtil.getController(ICommercialConstants.TARGET_CONTROLLER_NAME);
-		Criteria criteria = targetController.getCriteria();
-		String filedId = targetController.getFieldName(ICommercialAlias.TARGET_ID);
-		ProjectionList projectList = new ProjectionList(Projection.property(filedId));
-		List<Integer> targets = targetController.getManagerBean().getList(projectList, criteria);
+		TargetController targetController = (TargetController) AonUtil.getRegisteredBean(ICommercialConstants.TARGET_CONTROLLER_NAME);
+		Set<Integer> targets = targetController.getCheckedTargets();
 		MarketingAction action = getAction();
 		for( Integer targetId : targets ) {
 			if (! currentTargets.contains(targetId) ) {

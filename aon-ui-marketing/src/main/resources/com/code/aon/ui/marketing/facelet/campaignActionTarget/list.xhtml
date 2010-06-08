@@ -34,10 +34,61 @@
 				</ui:define>
 			</ui:decorate>			
 
-			<ui:include src="/com/code/aon/ui/commercial/facelet/target/listContent.xhtml" >
-				<ui:param name="skipRowSelector" value="#{true}" />
-			</ui:include>
-
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:div styleClass="aon-toolbar" rendered="#{target.model.rowCount > 0}">
+					<aon:commandButton title="#{bundle.aon_check_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+						value="#{bundle.aon_check_all}"
+						ajaxSingle="true" reRender="targetDataDiv,aonToolbar"
+						actionListener="#{target.checkAll}"/>	
+					<aon:commandButton title="#{bundle.aon_uncheck_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+						value="#{bundle.aon_uncheck_all}"
+						ajaxSingle="true" reRender="targetDataDiv,aonToolbar"
+						actionListener="#{target.checkNone}" />				
+				</aon:div>
+					
+				<aon:div id="targetDataDiv">					
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{target}" />
+						<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+						<ui:param name="skipSelectButton" value="#{true}" />
+						<ui:define name="columns">
+						
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<aon:selectBooleanCheckbox id="Included_Row_checked"
+									value="#{target.rowChecked}"
+									ajaxSingle="true" reRender="aonToolbar" />	
+							</aon:column>
+	
+							<ui:include
+								src="/com/code/aon/ui/commercial/facelet/target/listBasic.xhtml" />
+				
+							<aon:column alias="#{controller.aliasPreffix}.registry.alias"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_company_alias}" />
+								</f:facet>
+								<aon:outputText value="#{to.registry.alias}" />
+							</aon:column>
+				
+							<aon:column alias="#{controller.aliasPreffix}.advertising"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{commercialBundle.commercial_target_advertising}" />
+								</f:facet>
+								<aon:outputText value="#{to.advertising}"/>
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+	
 		</aon:form>
 
 	</ui:define>
