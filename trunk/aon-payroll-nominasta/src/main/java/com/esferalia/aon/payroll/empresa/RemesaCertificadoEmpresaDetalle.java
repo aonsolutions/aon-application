@@ -16,7 +16,6 @@ import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.Empleado;
-import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
@@ -32,7 +31,7 @@ public class RemesaCertificadoEmpresaDetalle implements ITransferObject, IRemesa
 	private Integer id;
 	private IRemesaCertificadoEmpresa remesaCertificado;	
 	private IEmpleado empleado;
-	private Date fecha_baja;
+	private Date fechaBaja;
 
 	@Id     
 	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -45,7 +44,7 @@ public class RemesaCertificadoEmpresaDetalle implements ITransferObject, IRemesa
 		this.id = id;
 	}
 	
-	@ManyToOne(targetEntity = Empresa.class,fetch = FetchType.EAGER)
+	@ManyToOne(targetEntity = RemesaCertificadoEmpresa.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "rem_cert_empr", nullable = false)
 	@Override
 	public IRemesaCertificadoEmpresa getRemesaCertificado() {
@@ -70,12 +69,12 @@ public class RemesaCertificadoEmpresaDetalle implements ITransferObject, IRemesa
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fecha_baja", nullable = false)
 	@Override
-	public Date getFecha_baja() {
-		return fecha_baja;
+	public Date getFechaBaja() {
+		return fechaBaja;
 	}
 	@Override
-	public void setFecha_baja(Date fechaBaja) {
-		fecha_baja = fechaBaja;
+	public void setFechaBaja(Date fechaBaja) {
+		this.fechaBaja = fechaBaja;
 	}
 	
 	
