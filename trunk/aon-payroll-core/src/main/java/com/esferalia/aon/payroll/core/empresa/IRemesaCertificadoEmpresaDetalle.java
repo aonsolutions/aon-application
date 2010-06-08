@@ -16,7 +16,7 @@ public interface IRemesaCertificadoEmpresaDetalle extends ITransferObject {
 	IEmpleado getEmpleado();
 	void setEmpleado(IEmpleado empleado);
 	
-	Date getFecha_baja();
-	void setFecha_baja(Date fechaBaja);
+	Date getFechaBaja();
+	void setFechaBaja(Date fechaBaja);
 	
 }
