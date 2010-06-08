@@ -13,6 +13,7 @@ import com.esferalia.aon.payroll.core.IActividadCCC;
 import com.esferalia.aon.payroll.core.empresa.EmpresaDAOFactory;
 import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
+import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
@@ -20,6 +21,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 
 	private static String ACTCCC_ACT_ALIAS = null;
 	private static String ACTCCC_CCC_ALIAS = null;
+	private static String REMESA_CERT_DET_ALIAS = null;
 
 	static {
 		EmpresaDAOFactory.register(new EmpresaDAO());
@@ -29,8 +31,10 @@ public class EmpresaDAO implements IEmpresaDAO {
 	public void configure() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActividadCCC.class);
+			IManagerBean beanCertEmp = BeanManager.getManagerBean(RemesaCertificadoEmpresaDetalle.class);
 			ACTCCC_ACT_ALIAS = bean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_CDG);
 			ACTCCC_CCC_ALIAS = bean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_TIPCCC);
+			REMESA_CERT_DET_ALIAS = beanCertEmp.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -74,4 +78,19 @@ public class EmpresaDAO implements IEmpresaDAO {
 			throw new PayrollException(e);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IRemesaCertificadoEmpresaDetalle> getDetalleRemesaCertificados(IRemesaCertificadoEmpresa remesa) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RemesaCertificadoEmpresaDetalle.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(REMESA_CERT_DET_ALIAS, remesa.getId());
+			List<?> list = bean.getList(criteria);
+			return (List<IRemesaCertificadoEmpresaDetalle>)list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
 }
