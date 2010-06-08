@@ -10,40 +10,54 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.ICriteriaProvider;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.ExtendedPageDataModel;
-import com.code.aon.ui.form.IDataModelDataProvider;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.PayrollException;
-import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
-import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
-import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
+import com.esferalia.aon.payroll.core.empresa.EmpresaDAOFactory;
+import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
+import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
+import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.core.remesa.IRemesaParteIT;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
-public class RemesaCertificadoWizard implements Serializable, IDataModelDataProvider, ICriteriaProvider {
+public class RemesaCertificadoWizard implements Serializable {
 
 	private static final long serialVersionUID = -8284038117326971930L;
 	
 	private int currentStep;
-	private static final String[] STEPS = { "remesaCertificadoWizard_step0", "remesaCertificadoWizard_step1", "remesaCertificadoWizard_step2", "remesaCertificadoWizard_step3" };
+	private static final String[] STEPS = { "remesaCertificadoWizard_step0", "remesaCertificadoWizard_step1", "remesaCertificadoWizard_step2" };
 	private FileOutput fileOutput;
 	private FDIWriter fdiWriter;
-	private IEmpleadoDAO empleadoDAO;
-	private DataModel empleadoModel;
-	private EmpleadoParams params;
+	private IEmpresaDAO empresaDAO;
+	private DataModel model;
+	private IRemesaCertificadoEmpresa remesa;
+	private List<IRemesaCertificadoEmpresaDetalle> detailList;
 	
+	public IRemesaCertificadoEmpresa getRemesa() {
+		return remesa;
+	}
+	
+	public void setRemesa(IRemesaCertificadoEmpresa remesa) {
+		this.remesa = remesa;
+	}
+	
+	public List<IRemesaCertificadoEmpresaDetalle> getDetailList() {
+		return detailList;
+	}
+
+	public void setDetailList(List<IRemesaCertificadoEmpresaDetalle> detailList) {
+		this.detailList = detailList;
+	}
+
 	private FDIWriter getFDIWriter() {
 		if (fdiWriter == null) {
 			fdiWriter = new FDIWriter();
@@ -67,74 +81,33 @@ public class RemesaCertificadoWizard implements Serializable, IDataModelDataProv
 		this.currentStep = currentStep;
 	}
 	
-	public IEmpleadoDAO getEmpleadoDAO() {
-		if (empleadoDAO == null) {
-			empleadoDAO = EmpleadoDAOFactory.getInstance().getEmpleadoDAO();
+	public IEmpresaDAO getEmpresaDAO() {
+		if (empresaDAO == null) {
+			empresaDAO = EmpresaDAOFactory.getInstance().getEmpresaDAO();
 		}
-		return empleadoDAO;
+		return empresaDAO;
 	}
 	
-	public DataModel getEmpleadoModel() {
-		if (empleadoModel == null) {
-			empleadoModel = new ExtendedPageDataModel(this, this);
-		}
-		return empleadoModel;
+	public DataModel getModel() {
+		return model;
 	}
 	
-	public void setEmpleadoModel(DataModel empleadoModel) {
-		this.empleadoModel = empleadoModel;
+	public void setModel(DataModel model) {
+		this.model = model;
 	}
 
-	private void initializeEmpleadoModel() throws ManagerBeanException {
-		if (empleadoModel == null) {
-			empleadoModel = new ExtendedPageDataModel(this, this);
+	private void initializeEmpleadoModel() throws PayrollException {
+		if (model == null) {
+			model = new ListDataModel(getEmpresaDAO().getRemesaCertificados());
 		}
-		((ExtendedPageDataModel) empleadoModel).update(0, getPageLimit());
 	}
 	
-	public EmpleadoParams getParams() {
-		if (params == null) {
-			params = new EmpleadoParams();
-			params.setFinalizados(true);
-		}
-		return params;
+	private void refreshDetailList() throws PayrollException {
+//		IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa)getModel().getRowData();
+		setDetailList(getEmpresaDAO().getDetalleRemesaCertificados(getRemesa()));
+		
 	}
 	
-	// Implemented methods
-	@Override
-	public int getPageLimit() {
-		return 20;
-	}
-
-	@Override
-	public int getRowCount() throws ManagerBeanException {
-		try {
-			return getEmpleadoDAO().getCount(getParams());
-		} catch (PayrollException e) {
-			throw new ManagerBeanException(e);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ITransferObject> search(int start, int count)
-			throws ManagerBeanException {
-		try {
-			List<?> list = getEmpleadoDAO().getDistinctEmpleados(getParams(), start, count);
-			return (List<ITransferObject>) list;
-		} catch (PayrollException e) {
-			throw new ManagerBeanException(e);
-		}
-	}
-
-	@Override
-	public Criteria getCriteria() throws ManagerBeanException {
-		try {
-			return getEmpleadoDAO().getCriteria(getParams());
-		} catch (PayrollException e) {
-			throw new ManagerBeanException(e);
-		}
-	}
 
 	// Action Listeners
 	public void onNext(ActionEvent event) {
@@ -143,11 +116,9 @@ public class RemesaCertificadoWizard implements Serializable, IDataModelDataProv
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
 //			onDiskGenerate(event);
-			setCurrentStep(getCurrentStep() + 1);
-		} else if (getCurrentStep() == 2) {
 			onValidate(event);
 			setCurrentStep(getCurrentStep() + 1);
-		} else if (getCurrentStep() == 3) {
+		} else if (getCurrentStep() == 2) {
 			onFinish(event);
 		} 
 	}
@@ -169,12 +140,17 @@ public class RemesaCertificadoWizard implements Serializable, IDataModelDataProv
 	}
 
 	public boolean isNextAvailable() {
-		return (getCurrentStep() < 3);
+		return (getCurrentStep() < 2);
 	}
 
 	// ***************************************************
 	public void onStart(ActionEvent event) {
 		setCurrentStep(0);
+		try {
+			initializeEmpleadoModel();
+		} catch (PayrollException e) {
+			// NADA
+		}
 	}
 
 	private void onValidate(ActionEvent event) {
@@ -238,12 +214,20 @@ public class RemesaCertificadoWizard implements Serializable, IDataModelDataProv
 
 	public void onSelect(ActionEvent event) {
 		setCurrentStep(1);
+		IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa)getModel().getRowData();
+		setRemesa(remesa);
+		try {
+			refreshDetailList();
+		} catch (PayrollException e) {
+			// NADA
+		}
+		
 	}
 	
 	private void onSearch(ActionEvent event) {
 		try {
 			initializeEmpleadoModel();
-		} catch (ManagerBeanException e) {
+		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
