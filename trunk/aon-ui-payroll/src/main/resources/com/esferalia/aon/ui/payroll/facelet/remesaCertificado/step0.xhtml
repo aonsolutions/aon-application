@@ -14,55 +14,63 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		<ui:decorate
-			template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-			<ui:param name="skipSearchButton" value="true" />
+		<aon:div styleClass="aon-scroll-area">
+			<aon:dataTable id="remesaData" value="#{remesaCertificadoWizard.model}"
+				var="to" rows="20" rendered="#{remesaCertificadoWizard.model.rowCount > 0}"
+				columnClasses="
+				aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn">
 
-			<ui:define name="searchContent">
-				<aon:outputLabel for="documento"
-					value="#{payrollBundle.payroll_documento}" />
-				<aon:inputText id="documento" size="10" maxlength="10"
-					value="#{remesaCertificadoWizard.params.documento}">
-				</aon:inputText>
+				<aon:rowSelector action="remesaCertificadoWizard_step1"
+					actionListener="#{remesaCertificadoWizard.onSelect}" />
 
-				<aon:outputLabel for="numss" value="#{payrollBundle.payroll_numss}" />
-				<aon:inputText id="numss" size="15" maxlength="12"
-					value="#{remesaCertificadoWizard.params.numSS}" />
-
-<!--  
--->
-				<aon:outputLabel for="nombre"
-					value="#{payrollBundle.payroll_nombre}" />
-				<aon:inputText id="nombre" size="20" maxlength="25"
-					value="#{remesaCertificadoWizard.params.nombre}" />
-
-				<aon:outputLabel for="apellido"
-					value="#{payrollBundle.payroll_apellido}" />
-				<aon:inputText id="apellido" size="20" maxlength="35"
-					value="#{remesaCertificadoWizard.params.apellido}" />
-
-				<aon:outputLabel for="apellido2"
-					value="#{payrollBundle.payroll_apellido2}" />
-				<aon:inputText id="apellido2" size="20" maxlength="25"
-					value="#{remesaCertificadoWizard.params.apellido2}" />
-
-				<aon:outputLabel for="empresa"
-					value="#{payrollBundle.payroll_empresa}" />
-				<aon:inputText id="empresa" size="20" maxlength="25"
-					value="#{remesaCertificadoWizard.params.empresa}" />
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_cdg}" />
+					</f:facet>
+					<aon:outputText value="#{to.id}" />
+				</aon:column>
 				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+					</f:facet>
+					<aon:outputText value="#{to.empresa.name}" >
+						<aon:abbreviateConverter maxWidth="50" />
+					</aon:outputText>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_numeroCcc}" />
+					</f:facet>
+					<aon:outputText value="#{to.numeroCcc}" />
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_fecha}" />
+					</f:facet>
+					<aon:outputText value="#{to.fecha}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_estado}" />
+					</f:facet>
+					<aon:outputText value="#{to.estado}" />
+				</aon:column>
+			</aon:dataTable>
 <!--  
-				<aon:outputText value="&#160;" />
-				<aon:div>
-					<aon:selectBooleanCheckbox id="finalizados" 
-						value="#{remesaCertificadoWizard.params.finalizados}" />
-					<aon:outputLabel for="empresa"
-						value="#{payrollBundle.payroll_contratos_fin}" />
-				</aon:div>
--->				
-			</ui:define>
-		</ui:decorate>
-		
+			<aon:dataScroller2 for="remesaData" showNote="true" />
+-->
+
+		</aon:div>
 	</ui:define>
 
 </ui:composition>
