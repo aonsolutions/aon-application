@@ -15,4 +15,7 @@ public interface IEmpresaDAO {
 
 	List<IRemesaCertificadoEmpresa> getRemesaCertificados()
 			throws PayrollException;
+
+	List<IRemesaCertificadoEmpresaDetalle> getDetalleRemesaCertificados(
+			IRemesaCertificadoEmpresa remesa) throws PayrollException;
 }
