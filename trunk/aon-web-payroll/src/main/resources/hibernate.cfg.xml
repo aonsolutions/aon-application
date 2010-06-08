@@ -42,6 +42,9 @@
 		<mapping class="com.esferalia.aon.payroll.cotizacion.Bonificacion"/>
 		<mapping class="com.esferalia.aon.payroll.cotizacion.TipoBonificacion"/>
 		
+		<mapping class="com.esferalia.aon.payroll.empresa.RemesaCertificadoEmpresa"/>
+		<mapping class="com.esferalia.aon.payroll.empresa.RemesaCertificadoEmpresaDetalle"/>
+		
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 		
 		<!-- AON-AUDIT Mapping files -->
