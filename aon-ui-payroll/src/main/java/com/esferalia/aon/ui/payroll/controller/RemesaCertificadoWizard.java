@@ -103,9 +103,7 @@ public class RemesaCertificadoWizard implements Serializable {
 	}
 	
 	private void refreshDetailList() throws PayrollException {
-//		IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa)getModel().getRowData();
 		setDetailList(getEmpresaDAO().getDetalleRemesaCertificados(getRemesa()));
-		
 	}
 	
 
@@ -115,8 +113,8 @@ public class RemesaCertificadoWizard implements Serializable {
 			onSearch(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
-//			onDiskGenerate(event);
 			onValidate(event);
+			onDiskGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
 			onFinish(event);
