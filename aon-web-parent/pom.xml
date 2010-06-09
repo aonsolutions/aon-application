@@ -268,7 +268,6 @@
 						</configuration>
 					</plugin>
 
-					<!-- EUKE  -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>wagon-maven-plugin</artifactId>
@@ -282,14 +281,13 @@
 								</goals>
 								<configuration>
 									<fromDir>${maven.build.dir}/target/rpm/${pom.build.finalName}/RPMS</fromDir>
-									<includes>**/*.rpm</includes>
+									<!--includes>**/*.rpm</includes-->
 									<url>scp://dev.esferalia.com</url>
 									<toDir>tmp</toDir>
 								</configuration>
 							</execution>
 						</executions>
 					</plugin>
-					<!-- EUKE  -->
 
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
