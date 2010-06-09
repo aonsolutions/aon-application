@@ -13,11 +13,11 @@
  <PROCESS-ITEM NAME="rules::1" SHAPE="32,129,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
-    ID="sqlScript_form::#com#code#aon#ui#dbutils#facelet#script#form.xhtml"
+    ID="dbUptodate_form::#com#code#aon#ui#dbutils#facelet#uptodate#form.xhtml"
     NAME="output"
-    PATH="/com/code/aon/ui/dbutils/facelet/script/form.xhtml"
-    TARGET="rules:#com#code#aon#ui#dbutils#facelet#script#form.xhtml"
-    TITLE="sqlScript_form" model-entity="JSFProcessItemOutput"/>
+    PATH="/com/code/aon/ui/dbutils/facelet/uptodate/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#dbutils#facelet#uptodate#form.xhtml"
+    TITLE="dbUptodate_form" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM
@@ -28,4 +28,18 @@
   NAME="rules:#com#code#aon#ui#dbutils#facelet#script#form.xhtml"
   PATH="/com/code/aon/ui/dbutils/facelet/script/form.xhtml"
   SHAPE="240,145,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules::2" SHAPE="32,353,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::2" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="sqlScript_form::#com#code#aon#ui#dbutils#facelet#script#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/dbutils/facelet/script/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#dbutils#facelet#script#form.xhtml"
+    TITLE="sqlScript_form" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#dbutils#facelet#uptodate#form.xhtml"
+  PATH="/com/code/aon/ui/dbutils/facelet/uptodate/form.xhtml"
+  SHAPE="240,257,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

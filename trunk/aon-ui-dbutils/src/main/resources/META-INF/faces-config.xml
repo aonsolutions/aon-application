@@ -15,6 +15,12 @@
 		<managed-bean-class>com.code.aon.ui.dbutils.controller.DumpController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!-- **************** DUMPER ************************** -->
+	<managed-bean>
+		<managed-bean-name>dbUptodate</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.dbutils.controller.DatabaseUptodate</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	<!-- ********** SQL SCRIPT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>sqlScript</managed-bean-name>
@@ -30,6 +36,13 @@
 		<navigation-case>
 			<from-outcome>dbDumper_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/dbutils/facelet/dbdumper/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- ****************** UPTODATE **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>dbUptodate_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/dbutils/facelet/uptodate/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- **************** SQL SCRIPT ************************** -->
