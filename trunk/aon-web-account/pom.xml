@@ -25,7 +25,7 @@
 						<id>upload-rpm</id>
 						<phase>deploy</phase>
 						<goals>
-							<goal>rpm-build</goal>
+							<goal>rpm:attached-rpm</goal>
 						</goals>
 						<configuration>
 							<fromDir>local.dir</fromDir>
