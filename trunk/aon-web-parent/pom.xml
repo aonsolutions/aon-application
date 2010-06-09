@@ -281,9 +281,9 @@
 									<goal>upload</goal>
 								</goals>
 								<configuration>
-									<fromDir>${maven.build.dir}</fromDir>
-									<includes>target/rpm/${pom.build.finalName}/RPMS/**/*.rpm</includes>
-									<url>scp://dev.esferalia.com/</url>
+									<fromDir>${maven.build.dir}/target/rpm/${pom.build.finalName}/RPMS</fromDir>
+									<includes>**/*.rpm</includes>
+									<url>scp://dev.esferalia.com</url>
 									<toDir>tmp</toDir>
 								</configuration>
 							</execution>
