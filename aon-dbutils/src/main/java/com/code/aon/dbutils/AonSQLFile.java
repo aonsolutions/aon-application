@@ -1,5 +1,6 @@
 package com.code.aon.dbutils;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,12 +13,13 @@ import org.apache.commons.lang.StringUtils;
 public class AonSQLFile {
 
 	private final static String ESP = " ";
-	private final static String COMMENT = "//";
+	private final static String COMMENT0 = "//";
+	private final static String COMMENT1 = "#";
 
 	private LineNumberReader reader;
 	private int lineNumber;
 	private String separator;
-
+	private String fileName;
 
 	public AonSQLFile(InputStream input, String separator) {
 		this(input);
@@ -38,6 +40,13 @@ public class AonSQLFile {
 		this.lineNumber = lineNumber;
 	}
 
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 	public boolean ready() throws AonSQLException {
 		try {
 			return reader.ready();
@@ -52,10 +61,10 @@ public class AonSQLFile {
 			while (ready()) {
 				String line = reader.readLine();
 				setLineNumber( reader.getLineNumber());
-				StringUtils.trim(line);
-				if (!line.startsWith(COMMENT)) {
+				line = StringUtils.trim(line);
+				if (!StringUtils.isEmpty(line) && !line.startsWith(COMMENT0) && !line.startsWith(COMMENT1)) {
 					stmt.append(line);
-					if (!StringUtils.isEmpty(line) && line.endsWith(separator)) {
+					if (line.endsWith(separator)) {
 						break;
 					}
 					stmt.append(ESP);
@@ -75,12 +84,13 @@ public class AonSQLFile {
 				String line = reader.readLine();
 				setLineNumber( reader.getLineNumber());
 				StringUtils.trim(line);
-				stmt.append(line);
-				stmt.append(ESP);
-				if ((!StringUtils.isEmpty(line) && line.endsWith(separator)) ||
-					(!StringUtils.isEmpty(line) && line.startsWith(COMMENT))) {
-					list.add(stmt.toString());
-					stmt = new StringBuffer();
+				if (!line.startsWith(COMMENT0) && !line.startsWith(COMMENT1)) {
+					stmt.append(line);
+					stmt.append(ESP);
+					if (!StringUtils.isEmpty(line) && line.endsWith(separator)) {
+						list.add(stmt.toString());
+						stmt = new StringBuffer();
+					}
 				}
 			}
 			return list;
