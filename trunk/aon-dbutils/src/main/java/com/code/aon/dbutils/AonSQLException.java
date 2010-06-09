@@ -1,8 +1,7 @@
 package com.code.aon.dbutils;
 
-import com.code.aon.common.AonException;
 
-public class AonSQLException extends AonException {
+public class AonSQLException extends Exception {
 
 	private static final long serialVersionUID = -3307890710641195387L;
 
