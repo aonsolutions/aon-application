@@ -263,11 +263,34 @@
 							<executable>ssh</executable>
 							<arguments>
 								<argument>root@dev.esferalia.com</argument>
-								<argument>rpm -Uvh --force --root /mnt/alice
-									${env.JOB_URL}/ws/${env.JOB_NAME}/target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.2.0-${buildNumber}.noarch.rpm</argument>
+								<argument>rpm -Uvh --force --root /mnt/alice ${env.JOB_URL}/ws/${env.JOB_NAME}/target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.2.0-${buildNumber}.noarch.rpm</argument>
 							</arguments>
 						</configuration>
 					</plugin>
+
+					<!-- EUKE  -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<version>1.0-beta-3</version>
+						<executions>
+							<execution>
+								<id>upload-rpm</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>rpm:attached-rpm</goal>
+								</goals>
+								<configuration>
+									<fromDir>local.dir</fromDir>
+									<includes>target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.2.0-${buildNumber}.noarch.rpm</includes>
+									<excludes>pom.xml</excludes>
+									<url>scp://dev.esferalia.com/</url>
+									<toDir>tmp</toDir>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- EUKE  -->
 
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
