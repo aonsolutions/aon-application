@@ -281,9 +281,8 @@
 									<goal>upload</goal>
 								</goals>
 								<configuration>
-									<fromDir>local.dir</fromDir>
-									<includes>target/rpm/${pom.build.finalName}/RPMS/noarch/${pom.build.finalName}-5.2.0-${buildNumber}.noarch.rpm</includes>
-									<excludes>pom.xml</excludes>
+									<fromDir>${maven.build.dir}</fromDir>
+									<includes>*.noarch.rpm</includes>
 									<url>scp://dev.esferalia.com/</url>
 									<toDir>tmp</toDir>
 								</configuration>
