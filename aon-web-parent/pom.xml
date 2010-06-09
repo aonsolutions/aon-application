@@ -280,7 +280,7 @@
 									<goal>upload</goal>
 								</goals>
 								<configuration>
-									<fromDir>${maven.build.dir}/target/rpm/${pom.build.finalName}/RPMS</fromDir>
+									<fromDir>${maven.build.dir}/rpm/${pom.build.finalName}/RPMS</fromDir>
 									<!--includes>**/*.rpm</includes-->
 									<url>scp://dev.esferalia.com</url>
 									<toDir>tmp</toDir>
