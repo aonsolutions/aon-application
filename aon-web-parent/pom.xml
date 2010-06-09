@@ -282,7 +282,7 @@
 								</goals>
 								<configuration>
 									<fromDir>${maven.build.dir}</fromDir>
-									<includes>**/*.rpm</includes>
+									<includes>target/rpm/${pom.build.finalName}/RPMS/**/*.rpm</includes>
 									<url>scp://dev.esferalia.com/</url>
 									<toDir>tmp</toDir>
 								</configuration>
