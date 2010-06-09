@@ -280,7 +280,7 @@
 									<goal>upload</goal>
 								</goals>
 								<configuration>
-									<fromDir>${project.basedir}/target/</fromDir>
+									<fromDir>${project.basedir}/target/rpm/${project.artifactId}/RPMS/</fromDir>
 									<includes>**/*.rpm</includes>
 									<url>scp://dev.esferalia.com</url>
 									<toDir>tmp</toDir>
