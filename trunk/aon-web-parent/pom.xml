@@ -282,7 +282,7 @@
 								</goals>
 								<configuration>
 									<fromDir>local.dir</fromDir>
-									<includes>target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.2.0-${buildNumber}.noarch.rpm</includes>
+									<includes>target/rpm/${project.artifactId}/RPMS/noarch/${pom.build.finalName}-5.2.0-${buildNumber}.noarch.rpm</includes>
 									<excludes>pom.xml</excludes>
 									<url>scp://dev.esferalia.com/</url>
 									<toDir>tmp</toDir>
