@@ -74,10 +74,22 @@
 										value="#{accountingBundle.accounting_amortizationType_importer_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mbase_form" action="mbase_form"
-										actionListener="#{mbase.onInitialize}"
-										value="IMPORTACION DESDE MBASESOR" />
+									<aon:commandLink id="mbase_form" action="sqlScript_form"
+										actionListener="#{sqlScript.onInitialize}"
+										value="#{dbutilsBundle.dbutils_script_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="dbDumper" 
+										action="dbDumper_form"
+										value="#{dbutilsBundle.dbutils_dumper_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="dbUptodate" 
+										action="dbUptodate_form"
+										actionListener="#{dbUptodate.onCheck}"
+										value="#{dbutilsBundle.dbutils_database_uptodate}" />
+								</aon:div>
+								
 							</aon:div>
 						</aon:panelGrid>
 						
