@@ -6,7 +6,7 @@
 
 
 
-BEGIN;
+BEGIN; 
 
 CREATE TABLE `offer_detail_commission` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
