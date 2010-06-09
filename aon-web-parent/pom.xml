@@ -278,7 +278,7 @@
 								<id>upload-rpm</id>
 								<phase>deploy</phase>
 								<goals>
-									<goal>rpm:attached-rpm</goal>
+									<goal>upload</goal>
 								</goals>
 								<configuration>
 									<fromDir>local.dir</fromDir>
