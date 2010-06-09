@@ -14,33 +14,6 @@
 	<name>AON WEB ACCOUNT</name>
 	<build>
 		<finalName>aon-account</finalName>
-		<!-- EUKE  -->
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>wagon-maven-plugin</artifactId>
-				<version>1.0-beta-3</version>
-				<executions>
-					<execution>
-						<id>upload-rpm</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>rpm:attached-rpm</goal>
-						</goals>
-						<configuration>
-							<fromDir>local.dir</fromDir>
-								<includes>
-									target/rpm/${project.artifactId}/RPMS/noarch/${project.artifactId}-5.2.0-${buildNumber}.noarch.rpm
-								</includes>
-								<excludes>pom.xml</excludes>
-								<url>scp://dev.esferalia.com/</url>
-								<toDir>tmp</toDir>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<!-- EUKE  -->
 	</build>
 	<properties>
 		<dbVersion>5.2.1</dbVersion>
