@@ -19,8 +19,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class TargetControllerListener extends ControllerAdapter implements ICommercialConstants {
 	
 	@Override
-	public void afterBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		TargetController controller = (TargetController) event.getController();
 		((Target)controller.getTo()).setAdvertising(Advertising.ALLOWED);
 	}
