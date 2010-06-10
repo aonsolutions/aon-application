@@ -58,6 +58,9 @@
 				<value>#{targetForm}</value>
 				<value>#{targetAddressListener}</value>
 				<value>#{targetMediaListener}</value>
+				<value>#{targetRBankChildListener}</value>
+				<value>#{targetRPayMethodChildListener}</value>
+				<value>#{targetNoteChildListener}</value>
 				<value>#{targetSegmentListener}</value>
 				<value>#{targetAddInfoListener}</value>				
 			</list-entries>
