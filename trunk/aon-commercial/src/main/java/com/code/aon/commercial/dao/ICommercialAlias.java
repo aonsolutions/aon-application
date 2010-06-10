@@ -72,34 +72,46 @@ public interface ICommercialAlias {
 	String  COMMERCIAL_TRACKING_DATE = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: CommercialTracking_endDate
+	* Hibernate value: CommercialTracking.endDate
+	*/
+	String  COMMERCIAL_TRACKING_END_DATE = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: CommercialTracking_id
 	* Hibernate value: CommercialTracking.id
 	*/
-	String  COMMERCIAL_TRACKING_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[3];
+	String  COMMERCIAL_TRACKING_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: CommercialTracking_next_id
 	* Hibernate value: CommercialTracking.next.id
 	*/
-	String  COMMERCIAL_TRACKING_NEXT_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[4];
+	String  COMMERCIAL_TRACKING_NEXT_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: CommercialTracking_offer_id
+	* Hibernate value: CommercialTracking.offer.id
+	*/
+	String  COMMERCIAL_TRACKING_OFFER_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: CommercialTracking_seller_id
 	* Hibernate value: CommercialTracking.seller.id
 	*/
-	String  COMMERCIAL_TRACKING_SELLER_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[5];
+	String  COMMERCIAL_TRACKING_SELLER_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: CommercialTracking_status
 	* Hibernate value: CommercialTracking.status
 	*/
-	String  COMMERCIAL_TRACKING_STATUS = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[6];
+	String  COMMERCIAL_TRACKING_STATUS = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: CommercialTracking_target_id
 	* Hibernate value: CommercialTracking.target.id
 	*/
-	String  COMMERCIAL_TRACKING_TARGET_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[7];
+	String  COMMERCIAL_TRACKING_TARGET_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[9];
 
 
 
