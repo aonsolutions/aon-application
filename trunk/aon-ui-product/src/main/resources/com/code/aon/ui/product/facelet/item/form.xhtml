@@ -83,6 +83,7 @@
 
 				<c:if test="#{!item.new}">
 					<c:if test="#{aonConfiguration.bean.product.showAttachment or 
+									aonConfiguration.bean.product.showAlternatives or
 									aonConfiguration.bean.product.showSuppliers or
 									(aonConfiguration.bean.product.showStock and item.to.product.inventoriable)}">
 						<aon:panelTabSet id="itemTab" selectedTab="#{item.selectedTab}">
@@ -104,7 +105,9 @@
 										src="/com/code/aon/ui/warehouse/facelet/itemwarehouse/tab_grid.xhtml">
 									</ui:include>
 								</aon:panelTab>
+							</c:if>
 
+							<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
 								<aon:panelTab id="itemAlternativePanelTab"
 									label="#{productBundle.product_alternative_items}">
 									<ui:include
@@ -128,11 +131,11 @@
 			</aon:div>
 		</aon:form>
 
-		<c:if test="#{aonConfiguration.bean.product.showStock}">
-			<c:if test="#{!item.new and item.to.product.inventoriable}">
-				<ui:include
-					src="/com/code/aon/ui/warehouse/facelet/item/modalStock.xhtml" />
-			</c:if>
+		<c:if test="#{aonConfiguration.bean.product.showStock and !item.new and item.to.product.inventoriable}">
+			<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
+		</c:if>
+
+		<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
 			<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		</c:if>
 
