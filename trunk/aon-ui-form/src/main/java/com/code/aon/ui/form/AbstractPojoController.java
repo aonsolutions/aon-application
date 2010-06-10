@@ -2,12 +2,15 @@ package com.code.aon.ui.form;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -110,6 +113,20 @@ public class AbstractPojoController {
 		return getManagerBean().getFieldName(alias);
 	}
 
+	/**
+	 * Gets the id alias.
+	 * 
+	 * @return the id alias
+	 * @throws ManagerBeanException 
+	 */
+	protected String getIdAlias() throws ManagerBeanException {
+		String factoryName = HibernateUtil.getSessionFactoryName(getPojo());
+		SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);
+		ClassMetadata cmd = factory.getClassMetadata(getPojo());
+		String id = getPojoShortName() + "_" + cmd.getIdentifierPropertyName();
+		return getFieldName(id);
+	}
+	
 	/**
 	 * Resolves the alias.
 	 * 
