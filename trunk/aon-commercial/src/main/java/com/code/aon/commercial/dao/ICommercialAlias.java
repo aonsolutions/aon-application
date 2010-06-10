@@ -127,10 +127,16 @@ public interface ICommercialAlias {
 	String  COMMERCIAL_TERM_ID = COMMERCIAL_TERM_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: CommercialTerm_line
+	* Hibernate value: CommercialTerm.line
+	*/
+	String  COMMERCIAL_TERM_LINE = COMMERCIAL_TERM_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: CommercialTerm_name
 	* Hibernate value: CommercialTerm.name
 	*/
-	String  COMMERCIAL_TERM_NAME = COMMERCIAL_TERM_ENTRY.getAliasNames()[3];
+	String  COMMERCIAL_TERM_NAME = COMMERCIAL_TERM_ENTRY.getAliasNames()[4];
 
 
 
@@ -944,34 +950,40 @@ public interface ICommercialAlias {
 	String  TARGET_REGISTRY_DOCUMENT = TARGET_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: Target_tariff_id
+	* Hibernate value: Target.tariff.id
+	*/
+	String  TARGET_TARIFF_ID = TARGET_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: Target_advertising
 	* Hibernate value: Target.advertising
 	*/
-	String  TARGET_ADVERTISING = TARGET_ENTRY.getAliasNames()[6];
+	String  TARGET_ADVERTISING = TARGET_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Target_surcharge
 	* Hibernate value: Target.surcharge
 	*/
-	String  TARGET_SURCHARGE = TARGET_ENTRY.getAliasNames()[7];
+	String  TARGET_SURCHARGE = TARGET_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Target_withholding
 	* Hibernate value: Target.withholding
 	*/
-	String  TARGET_WITHHOLDING = TARGET_ENTRY.getAliasNames()[8];
+	String  TARGET_WITHHOLDING = TARGET_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Target_transaction
 	* Hibernate value: Target.transaction
 	*/
-	String  TARGET_TRANSACTION = TARGET_ENTRY.getAliasNames()[9];
+	String  TARGET_TRANSACTION = TARGET_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Target_status
 	* Hibernate value: Target.status
 	*/
-	String  TARGET_STATUS = TARGET_ENTRY.getAliasNames()[10];
+	String  TARGET_STATUS = TARGET_ENTRY.getAliasNames()[11];
 
 
 
