@@ -71,6 +71,7 @@
 			showType="true"
 			showBrand="true"
 			showStock="true"
+			showAlternatives="true"
 			showSuppliers="true"
 			showAccount="true"
 			showAttachment="false"
@@ -97,6 +98,9 @@
 			showSeller="true"
 			showAddInfo="true"
 			showSupplier="true"
+			showTariff="false"
+			showFinanceData="false"
+			showNote="false"
 		/>
 	</commercial:config>
 
