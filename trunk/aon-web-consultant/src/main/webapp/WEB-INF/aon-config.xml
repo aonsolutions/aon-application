@@ -71,6 +71,7 @@
 			showType="false"
 			showBrand="false"
 			showStock="false"
+			showAlternatives="false"
 			showSuppliers="false"
 			showAccount="true"
 			showAttachment="false"
