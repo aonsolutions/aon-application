@@ -142,7 +142,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Item_product_name</value>
+			<value>Item_product_category_name,Item_product_brand_name,Item_product_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -398,6 +398,13 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************ ITEM INFO ************* -->
+	<managed-bean>
+		<managed-bean-name>itemInfo</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemInfo</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************ ITEM LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>itemLookup</managed-bean-name>
@@ -422,7 +429,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Item_product_name</value>
+			<value>Item_product_category_name,Item_product_brand_name,Item_product_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
