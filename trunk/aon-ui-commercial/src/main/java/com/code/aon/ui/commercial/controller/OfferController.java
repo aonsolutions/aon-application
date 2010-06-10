@@ -19,11 +19,13 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
+import com.code.aon.commercial.TargetSeller;
 import com.code.aon.commercial.TargetSupplier;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
+import com.code.aon.commercial.enumeration.TargetSellerStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -45,6 +47,8 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryPayMethod;
@@ -318,7 +322,9 @@ public class OfferController extends BasicController implements ISignatureContro
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Target target = (Target)event.getNewValue();
 			getOffer().setTarget(target);
+			getOffer().setTariff(target.getTariff());
 			loadAddresses(target.getId());
+			loadCommercial(target.getId());
 			loadDefaultPayMethod(target.getId(), false);
 		} else {
 			setAddresses(null);
@@ -352,35 +358,28 @@ public class OfferController extends BasicController implements ISignatureContro
 		return 0;
 	}
 
-	public boolean isDealership() {
-		return OfferType.DEALERSHIP == getOffer().getType();
-	}
-
-	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+	@SuppressWarnings("unchecked")
+	public void loadCommercial(Integer id) throws ManagerBeanException {
+		if (id != null) {
 			Offer offer = getOffer();
-			offer.setSupplier((Supplier)event.getNewValue());
-
-			IManagerBean bean = BeanManager.getManagerBean(TargetSupplier.class);
+			IManagerBean targetSellerBean = BeanManager.getManagerBean(TargetSeller.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_SUPPLIER_TARGET_ID), offer.getTarget().getId());
-			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_SUPPLIER_SUPPLIER_ID), offer.getSupplier().getId());
-			Iterator<?> iterator = bean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				TargetSupplier targetSupplier = (TargetSupplier)iterator.next();
-				offer.setTariff(targetSupplier.getTariff());
-				offer.setPayMethod(targetSupplier.getPayMethod());
-				offer.setNumberOfPayments(targetSupplier.getNumberOfPayments());
-				offer.setDaysToFirstPayment(targetSupplier.getDaysToFirstPayment());
-				offer.setDaysBetweenPayments(targetSupplier.getDaysBetweenPayments());
-				offer.setPaymentDays(targetSupplier.getPaymentDays());
-				offer.setBank(targetSupplier.getBank());
-				offer.setBankAccount(targetSupplier.getBankAccount());
-				setDefaultPayMethod(false);
+			criteria.addEqualExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_TARGET_ID), id);
+			criteria.addEqualExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_STATUS), TargetSellerStatus.ACTIVE);
+			criteria.addLessThanOrEqualExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_START_DATE), offer.getIssueDate());
+			Expression endDateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_END_DATE), offer.getIssueDate());
+			Expression endNullExpr = ExpressionUtilities.getNullExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_END_DATE));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(endDateExpr, endNullExpr));
+			criteria.addOrder(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_START_DATE));
+			Iterator iter = targetSellerBean.getList(criteria).iterator();
+			if (iter.hasNext()) {
+				offer.setSeller(((TargetSeller)iter.next()).getSeller());
+			} else {
+				offer.setSeller(new Seller());
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
@@ -410,6 +409,35 @@ public class OfferController extends BasicController implements ISignatureContro
 		to.setPaymentDays("");
 		to.setBank(new Bank());
 		to.setBankAccount(new BankAccount());
+	}
+
+	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Offer offer = getOffer();
+			offer.setSupplier((Supplier)event.getNewValue());
+
+			IManagerBean bean = BeanManager.getManagerBean(TargetSupplier.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_SUPPLIER_TARGET_ID), offer.getTarget().getId());
+			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_SUPPLIER_SUPPLIER_ID), offer.getSupplier().getId());
+			Iterator<?> iterator = bean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				TargetSupplier targetSupplier = (TargetSupplier)iterator.next();
+				offer.setTariff(targetSupplier.getTariff());
+				offer.setPayMethod(targetSupplier.getPayMethod());
+				offer.setNumberOfPayments(targetSupplier.getNumberOfPayments());
+				offer.setDaysToFirstPayment(targetSupplier.getDaysToFirstPayment());
+				offer.setDaysBetweenPayments(targetSupplier.getDaysBetweenPayments());
+				offer.setPaymentDays(targetSupplier.getPaymentDays());
+				offer.setBank(targetSupplier.getBank());
+				offer.setBankAccount(targetSupplier.getBankAccount());
+				setDefaultPayMethod(false);
+			}
+		}
+	}
+	
+	public boolean isDealership() {
+		return OfferType.DEALERSHIP == getOffer().getType();
 	}
 
 	public void sellerData(LookupChangeEvent event) {
