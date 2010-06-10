@@ -23,7 +23,6 @@ public class OfferTermControllerListener extends ControllerAdapter {
 		offerTerm.setGeneral( controller.isGeneral() );
 		try {
 			offerTerm.setLine(calculateNextLine((Offer)controller.getMasterController().getTo(), controller.isGeneral()));
-			
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
