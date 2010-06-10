@@ -28,6 +28,9 @@
 			<xs:attribute name="showSeller" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSupplier" type="xs:boolean" use="required"/>
+			<xs:attribute name="showTariff" type="xs:boolean" use="required"/>
+			<xs:attribute name="showFinanceData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showNote" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
