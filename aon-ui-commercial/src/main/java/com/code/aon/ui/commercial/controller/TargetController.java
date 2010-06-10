@@ -9,8 +9,6 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Projection;
-import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.commercial.ICommercialMessages;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
