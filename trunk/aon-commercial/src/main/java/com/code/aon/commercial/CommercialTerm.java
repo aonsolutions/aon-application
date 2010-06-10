@@ -28,6 +28,9 @@ public class CommercialTerm implements ITransferObject {
 	/** The id. */
 	private Integer id;
 
+	/** The number of the line. */
+    private int line;
+
     /** The name. */
     private String name;
 	
@@ -57,6 +60,25 @@ public class CommercialTerm implements ITransferObject {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	/**
+     * Gets the line.
+     * 
+     * @return the line
+     */
+    @Column(nullable=true)
+    public int getLine() {
+        return line;
+    }
+
+    /**
+     * Sets the line.
+     * 
+     * @param line the line
+     */
+    public void setLine(int line) {
+        this.line = line;
+    }
 
     /**
      * Gets the name.
