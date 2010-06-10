@@ -601,6 +601,10 @@
 			<value>campaignActionTarget</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ActionTarget_target_registry_surname,ActionTarget_target_registry_name</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -758,6 +762,10 @@
 		<navigation-case>
 			<from-outcome>campaignActionTarget_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/marketing/facelet/campaignActionTarget/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>campaignActionTarget_import</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/campaignActionTarget/import.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>				
 
