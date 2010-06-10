@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -56,6 +58,12 @@ public class CommercialTracking implements ITransferObject {
 	/** The next. */
 	private CommercialTracking next;
 	
+	/** The offer. */
+	private Offer offer;
+	
+	/** The end date. */
+	private Date endDate;
+	
 	public CommercialTracking() {
 		this.status = CommercialTrackingStatus.PENDING;
 	}
@@ -86,6 +94,7 @@ public class CommercialTracking implements ITransferObject {
 	 * 
 	 * @return the date
 	 */
+	@Temporal(TemporalType.DATE)
 	public Date getDate() {
 		return date;
 	}
@@ -221,6 +230,47 @@ public class CommercialTracking implements ITransferObject {
 		this.next = next;
 	}
 	
+	/**
+	 * Gets the offer.
+	 * 
+	 * @return the offer
+	 */
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn( name="offer" )
+	@ForeignKey(name = "FK_COMMERCAIL_TRACKING_OFFER")
+	public Offer getOffer() {
+		return offer;
+	}
+
+	/**
+	 * Sets the offer.
+	 * 
+	 * @param offer the new offer
+	 */
+	public void setOffer(Offer offer) {
+		this.offer = offer;
+	}
+
+	/**
+	 * Gets the end date.
+	 * 
+	 * @return the end date
+	 */
+	@Temporal(TemporalType.DATE)
+	@Column(name="end_date")
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	/**
+	 * Sets the end date.
+	 * 
+	 * @param endDate the new end date
+	 */
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -232,7 +282,9 @@ public class CommercialTracking implements ITransferObject {
 				.append(this.activity, o.activity)				
 				.append(this.comments, o.comments)
 				.append(this.date, o.date)				
+				.append(this.endDate, o.endDate)
 				.append(this.next, o.next)
+				.append(this.offer, o.offer)
 				.append(this.seller, o.seller)				
 				.append(this.status, o.status)
 				.append(this.target, o.target)				
@@ -247,8 +299,10 @@ public class CommercialTracking implements ITransferObject {
 			.append(activity)
 			.append(comments)	
 			.append(date)
+			.append(endDate)
 			.append(id)			
 			.append(next)
+			.append(offer)
 			.append(seller)
 			.append(status)
 			.append(target)
