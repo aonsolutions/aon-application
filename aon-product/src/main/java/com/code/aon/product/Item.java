@@ -182,6 +182,11 @@ public class Item implements ITransferObject {
 	public void setSalesPrice(double salesPrice) {
 	}
 
+	@Transient
+	public boolean isActive() {
+		return getStatus() == ProductStatus.ACTIVE;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
