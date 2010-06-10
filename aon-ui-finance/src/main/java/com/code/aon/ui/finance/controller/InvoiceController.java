@@ -483,14 +483,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.onSelectFirst(event);
 	}
 	
-	private String getIdAlias() {
-		String factoryName = HibernateUtil.getSessionFactoryName();
-		SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);
-		ClassMetadata cm = factory.getClassMetadata(getPojo());
-		String id = getPojoShortName() + "_" + cm.getIdentifierPropertyName();
-		return id;
-	}
-	
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();
 	}
