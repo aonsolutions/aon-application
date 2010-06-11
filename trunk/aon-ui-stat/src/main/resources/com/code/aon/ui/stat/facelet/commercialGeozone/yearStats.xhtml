@@ -16,21 +16,14 @@
 				<ui:param name="categoryLabel" value="#{statBundle.stat_geozone}" />
 				<ui:param name="clickable" value="#{false}" />
 				<ui:param name="windowTitle" value="#{statBundle.stat_menu_commercial_geozone}"/>
-				<ui:param name="showLastColumn" value="false" />
 				<ui:param name="reportKeyParam" value="commercialStatsList" />
 				<ui:param name="reportGraphKeyParam" value="commercialStatsGraph" />
 				<aon:methodParam name="backAction" value="commercial_geozone_stat_search"/>	
 				<aon:methodParam name="backMethod" value="" type="actionListener" />			
-			<!--<aon:methodParam name="goAction" value="category_product_stats"/>
-				<aon:methodParam name="goMethod" value="#{stat.onCategorySelect}" type="actionListener" />
-				<aon:methodParam name="lastColumnAction" value="#{stat.onCategoryRegistryStats}" type="actionListener" />
-				<aon:methodParam  name="customerFacelet" value="category_customer_list" />				
-				  <c:if  test="#{stat.invoiceType==1}">
-				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
-				</c:if>
-				<c:if  test="#{stat.invoiceType==0}">
-				<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
-				</c:if>		  --> 
+				<ui:param name="showLastColumn" value="true" />
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_offers}" />	
+				<aon:methodParam name="lastColumnAction" value="#{commercialStat.onCommercialGeozoneOfferStats}" type="actionListener" />
+				<aon:methodParam  name="offerFacelet" value="offers_list" />
 			</ui:include>			
 	  </ui:define>
   </ui:composition>
