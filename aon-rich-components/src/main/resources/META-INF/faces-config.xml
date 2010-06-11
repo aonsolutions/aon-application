@@ -227,10 +227,6 @@
 			<property-class>java.lang.String</property-class>
 		</property>
 	</converter>
-    <converter>
-		<converter-id>chromeEditorConverter</converter-id>
-		<converter-class>com.code.aon.faces.component.converter.ChromeEditorConverter</converter-class>
-    </converter>
     
 	<application>
 		<resource-bundle>
