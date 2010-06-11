@@ -202,14 +202,14 @@
 								disabled="#{offer.readOnly}" size="5" 
 								lookupProperty="registry" lookup="#{targetLookup}"
 								lookupChangeListener="#{offer.targetData}" 
-								reRender="Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"
+								reRender="Target_full_name,Target_registry_document,OfferAddress,sellerDiv,Offer_tariff,Offer_defaultPayMethod,payMethodDiv"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{commercialBundle.commercial_target_selection}"
 								disabled="#{offer.readOnly}" minHeight="470" minWidth="650"
 								property="#{offer.to.target.registry}" lookupProperty="registry" lookup="#{targetLookup}"
 								lookupChangeListener="#{offer.targetData}"
-								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"
+								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,sellerDiv,Offer_tariff,Offer_defaultPayMethod,payMethodDiv"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -217,7 +217,7 @@
 								disabled="#{offer.readOnly}" minWidth="650" minHeight="600"
 								property="#{offer.to.target.registry}" lookupProperty="registry" lookup="#{targetLookup}"
 								lookupChangeListener="#{offer.targetData}"
-								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"		 
+								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,sellerDiv,Offer_tariff,Offer_defaultPayMethod,payMethodDiv"		 
 								actionType="new">
 							</aon:lookupButton>							
 							<aon:inputText id="Target_full_name" 
@@ -298,7 +298,7 @@
 
 					<aon:outputLabel for="Seller_id" 
 						value="#{salesBundle.sales_seller}" />
-					<aon:div styleClass="aon-lookup">
+					<aon:div id="sellerDiv" styleClass="aon-lookup">
 						<a4j:region>
 							<aon:lookupInputText id="Seller_id" 
 								value="#{offer.to.seller.registry.id}"
@@ -516,6 +516,7 @@
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalOfferCopy.xhtml" />
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalSales.xhtml" />
 		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
