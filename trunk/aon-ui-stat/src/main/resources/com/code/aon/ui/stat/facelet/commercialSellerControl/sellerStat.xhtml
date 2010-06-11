@@ -21,22 +21,13 @@
 				<ui:param name="toolbarTitle"
 					value="#{statBundle.seller_stat_control_product}" />
 			</c:if>
+			<c:if test="#{commercialStat.controlType==3}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control_category}" />
+			</c:if>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:define name="beforeToolbarContent">
-					<c:if test="#{commercialStat.controlType==0}">
-						<aon:commandButton value="#{bundle.aon_search}"
-							action="commercial_seller_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_cancel}" />
-					</c:if>
-					<c:if test="#{commercialStat.controlType==1}">
-
-					</c:if>
-					<c:if test="#{commercialStat.controlType==2}">
-
-					</c:if>
-
 					<c:if test="#{commercialStat.controlType==0}">
 						<aon:commandButton value="#{statBundle.seller_stat_control}"
 							action="commercial_seller_view"
@@ -55,6 +46,13 @@
 							actionListener="#{commercialStat.onProductSummary}"
 							styleClass="aon-finding-toolbar-item aon-icon-task" />
 					</c:if>
+					<c:if test="#{commercialStat.controlType==3}">
+						<aon:commandButton value="#{statBundle.seller_stat_control}"
+							action="commercial_seller_view"
+							actionListener="#{commercialStat.onCategorySummary}"
+							styleClass="aon-finding-toolbar-item aon-icon-task" />
+					</c:if>
+					
 
 
 				</ui:define>
@@ -80,6 +78,12 @@
 						<aon:outputLabel for="Target_trackings_seller_id"
 							value="#{statBundle.stat_product}" />
 						<aon:outputText value="#{commercialStat.product.name}"></aon:outputText>
+
+					</c:if>
+					<c:if test="#{commercialStat.controlType==3}">
+						<aon:outputLabel for="Target_trackings_seller_id"
+							value="#{statBundle.stat_category}" />
+						<aon:outputText value="#{commercialStat.productCategory.name}"></aon:outputText>
 
 					</c:if>
 

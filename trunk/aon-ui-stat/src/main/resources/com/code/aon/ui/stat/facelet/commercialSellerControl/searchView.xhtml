@@ -26,6 +26,10 @@
 					<ui:param name="toolbarTitle"
 						value="#{statBundle.seller_stat_control_product}" />
 				</c:if>
+				<c:if test="#{commercialStat.controlType==3}">
+					<ui:param name="toolbarTitle"
+						value="#{statBundle.seller_stat_control_category}" />
+				</c:if>
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
@@ -45,6 +49,11 @@
 						<aon:methodParam name="searchActionListener"
 							value="#{commercialStat.onProductSummary}" type="actionListener" />
 					</c:if>
+					
+					<c:if test="#{commercialStat.controlType==3}">
+						<aon:methodParam name="searchActionListener"
+							value="#{commercialStat.onCategorySummary}" type="actionListener" />
+					</c:if>
 
 					<aon:methodParam name="searchAction" value="commercial_seller_view" />
 
@@ -62,6 +71,14 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:panelGrid>
+
+					<aon:outputLabel 
+						value="#{statBundle.aon_zero_lines}" />
+					<aon:selectBooleanCheckbox id="zeroLines"
+						value="#{commercialStat.showZeroLines}">
+						<!--  <f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>-->
+					</aon:selectBooleanCheckbox>
 
 				</ui:define>
 			</ui:decorate>

@@ -23,6 +23,10 @@
 				<ui:param name="toolbarTitle"
 					value="#{statBundle.seller_stat_control_product}" />
 			</c:if>
+			<c:if test="#{commercialStat.controlType==3}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.seller_stat_control_category}" />
+			</c:if>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
@@ -84,6 +88,10 @@
 											<aon:outputText
 												value="#{statBundle.seller_stat_control_product}" />
 										</c:if>
+										<c:if test="#{commercialStat.controlType==3}">
+											<aon:outputText
+												value="#{statBundle.seller_stat_control_category}" />
+										</c:if>
 									</aon:div>
 									<aon:div>
 										<aon:outputText value="(" />
@@ -135,6 +143,9 @@
 							</c:if>
 							<c:if test="#{commercialStat.controlType==2}">
 								<aon:outputText value="#{statBundle.stat_product}" />
+							</c:if>
+							<c:if test="#{commercialStat.controlType==3}">
+								<aon:outputText value="#{statBundle.stat_category}" />
 							</c:if>
 						</f:facet>
 						<aon:outputText value="#{to.name}" />
@@ -244,6 +255,12 @@
 						<c:if test="#{commercialStat.controlType==2}">
 							<aon:htmlCommandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onProductDetail}"
+								action="commercial_seller_stat"
+								value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
+						</c:if>
+						<c:if test="#{commercialStat.controlType==3}">
+							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onCategoryDetail}"
 								action="commercial_seller_stat"
 								value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
 						</c:if>

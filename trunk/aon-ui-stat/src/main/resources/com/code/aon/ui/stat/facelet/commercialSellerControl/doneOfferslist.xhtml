@@ -5,10 +5,13 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:editDataTable id="offersDone"
+	<aon:dataTable id="offersDone"
 		value="#{commercialStat.doneOffersModel}" rows="10"
 		columnClasses="aon-editDataTable-textColumn, aon-editDataTable-dateColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
 		var="to">
+		
+		 	<aon:rowSelector action="offer_form"
+							actionListener="#{offer.onSelect}" />
 
 		<aon:column 
 			styleClass="aon-editDataTable-textColumn">
@@ -59,6 +62,6 @@
 							</aon:outputText>
 						</aon:column> 
 -->
-	</aon:editDataTable>
+	</aon:dataTable>
 	<aon:dataScroller2 for="offersDone" showNote="true" />
 </ui:composition>
