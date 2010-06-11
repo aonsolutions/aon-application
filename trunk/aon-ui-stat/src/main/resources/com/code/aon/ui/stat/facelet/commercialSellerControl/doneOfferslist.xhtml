@@ -9,12 +9,11 @@
 		value="#{commercialStat.doneOffersModel}" rows="10"
 		columnClasses="aon-editDataTable-textColumn, aon-editDataTable-dateColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
 		var="to">
-		
-		 	<aon:rowSelector action="offer_form"
-							actionListener="#{offer.onSelect}" />
 
-		<aon:column 
-			styleClass="aon-editDataTable-textColumn">
+		<!-- 	<aon:rowSelector action="offer_form"
+							actionListener="#{offer.onSelect}" /> -->
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
 				<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
 			</f:facet>
@@ -53,15 +52,28 @@
 			</f:facet>
 			<aon:outputText value="#{to.offer.status}" />
 		</aon:column>
-		<!--  <aon:column styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_total}" />
-							</f:facet>
-							<aon:outputText value="#{commercialStat.offerTotalPrice}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:column> 
--->
+		
+		<aon:column styleClass="aon-editDataTable-numberColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_total}" />
+			</f:facet>
+			<aon:outputText value="#{commercialStat.doneOfferTotalPrice}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:column>
+				<aon:column
+			styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:htmlCommandLink id="invoiceList-report"
+				value="&#160;&#160;&#160;&#160;&#160;&#160;" title="Pdf"
+				actionListener="#{commercialStat.onDoneOfferPdf}"
+				styleClass="aon-icon-pdf" action="#{report.onExecute}"
+				target="_blank">
+				<f:param name="reportKey" value="offerPdf" />
+			</aon:htmlCommandLink>
+		</aon:column>
 	</aon:dataTable>
 	<aon:dataScroller2 for="offersDone" showNote="true" />
 </ui:composition>
