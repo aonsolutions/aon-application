@@ -9,8 +9,8 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:form id="monthStat">
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 			<ui:param name="skipResetButton" value="true" />
 			<ui:param name="toolbarTitle" value="#{windowTitle}" />
 			<ui:param name="skipSearchButton" value="true" />
@@ -61,17 +61,17 @@
 								<aon:outputText value="#{windowTitle}" />
 							</aon:div>
 							<aon:div>
-								<aon:outputText value="("/>
+								<aon:outputText value="(" />
 								<aon:outputText value="#{stat.params.fromDate}">
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
+										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
-								<aon:outputText value="-"/>
+								<aon:outputText value="-" />
 								<aon:outputText value="#{stat.params.toDate}">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
-								<aon:outputText value=")"/>
+								<aon:outputText value=")" />
 							</aon:div>
 							<ui:insert name="extendedHeader" />
 						</h:panelGrid>
@@ -162,8 +162,6 @@
 						<f:param name="#{paramName}" value="#{to.key}" />
 						<!-- <f:param name="yearmonth" value="#{to.extra}" /> -->
 					</aon:htmlCommandLink>
-
-
 				</aon:column>
 
 			</aon:editDataTable>

@@ -151,14 +151,12 @@
 					<f:facet name="header">
 						<aon:outputText value="#{lastColumnName}" />
 					</f:facet>
-					<aon:htmlCommandLink styleClass="aon-dataTable-link-noicon"
-						actionListener="#{lastColumnAction}" action="#{customerFacelet}"
+					<aon:htmlCommandLink styleClass="aon-dataTable-link"
+						actionListener="#{lastColumnAction}" action="#{offerFacelet}"
 						value="#{lastColumnName}">
 						<f:param name="#{paramName}" value="#{to.key}" />
 						<!-- <f:param name="yearmonth" value="#{to.extra}" /> -->
 					</aon:htmlCommandLink>
-
-
 				</aon:column>
 
 			</aon:editDataTable>
