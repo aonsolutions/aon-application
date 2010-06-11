@@ -96,7 +96,7 @@
 	<managed-bean>
 		<managed-bean-name>commercialTerm</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.commercial.controller.CommercialTermController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -113,10 +113,27 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CommercialTerm_name</value>
+			<value>CommercialTerm_general desc,CommercialTerm_line</value>
 		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{commercialTermControllerListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
-	
+
+	<managed-bean>
+		<managed-bean-name>commercialTermControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.CommercialTermControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************ TARGET ************** -->
 	<managed-bean>
 		<managed-bean-name>target</managed-bean-name>
@@ -147,6 +164,9 @@
 				<value>#{targetForm}</value>
 				<value>#{targetAddressListener}</value>
 				<value>#{targetMediaListener}</value>
+				<value>#{targetRBankChildListener}</value>
+				<value>#{targetRPayMethodChildListener}</value>
+				<value>#{targetNoteChildListener}</value>
 				<value>#{targetSegmentListener}</value>
 				<value>#{targetAddInfoListener}</value>
 			</list-entries>
@@ -217,6 +237,63 @@
 		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>targetRBankChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>targetRbank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryBank_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>targetRPayMethodChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>targetRPayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryPayMethod_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>targetNoteChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>targetNote</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryNote_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>targetSegmentListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
@@ -412,6 +489,132 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
+	</managed-bean>
+
+	<!--  **** TARGET RBANK **** -->
+
+	<managed-bean>
+		<managed-bean-name>targetRbank</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>targetRbank</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>target</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener 
+				</value-class>
+				<value>#{bankAccountValidatorListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- **** TARGET RPAYMETHOD **** -->
+	<managed-bean>
+		<managed-bean-name>targetRPayMethod</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.commercial.controller.TargetRPayMethodController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryPayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>targetRPayMethod</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>target</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** TARGET NOTE **** -->
+
+	<managed-bean>
+		<managed-bean-name>targetNote</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryNoteLinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>targetNote</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryNote</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>target</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener 
+				</value-class>
+				<value>#{targetNoteControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>targetNoteControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryNoteControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!--  **** TARGET SEGMENT **** -->
