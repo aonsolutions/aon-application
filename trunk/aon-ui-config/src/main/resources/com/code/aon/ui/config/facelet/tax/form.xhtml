@@ -18,28 +18,23 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="4">
+				<aon:panelGrid id="dataTable" columns="2">
 					<aon:outputLabel for="Tax_name"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Tax_name" 
 						value="#{tax.to.name}" required="true" />
-					
+
 					<aon:outputLabel for="Tax_type" value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="Tax_type" 
 						required="true" value="#{tax.to.type}">
 						<f:selectItems value="#{configCollections.taxTypes}" />
 					</aon:selectOneMenu>
-					
-					<aon:outputLabel for="Tax_startDate" value="#{bundle.aon_date_from}" />
+
+					<aon:outputLabel for="Tax_startDate" value="#{bundle.aon_start_date}" />
 					<aon:selectInputDate id="Tax_startDate"
 						value="#{tax.to.startDate}" 
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
-						
-					<aon:outputLabel 
-						value="&#160;" />
-					<aon:outputText  
-						value="&#160;" />
 
 					<aon:outputLabel for="Tax_percentage" value="#{bundle.aon_percentage}" />
 					<aon:inputText id="Tax_percentage" size="6"
@@ -57,7 +52,7 @@
 						<ui:param name="required" value="#{false}" />
 						<ui:param name="size" value="12" />
 						<ui:param name="maxlength" value="12" />
-						<ui:param name="renderDescription" value="#{false}" />
+						<ui:param name="renderDescription" value="#{true}" />
 						<ui:param name="renderedAttr" value="true" />
 						<ui:param name="disabled" value="#{false}" />
 						<ui:param name="reRenderAttr" value="none" />
@@ -73,7 +68,7 @@
 						<ui:param name="required" value="#{false}" />
 						<ui:param name="size" value="12" />
 						<ui:param name="maxlength" value="12" />
-						<ui:param name="renderDescription" value="#{false}" />
+						<ui:param name="renderDescription" value="#{true}" />
 						<ui:param name="renderedAttr" value="true" />
 						<ui:param name="disabled" value="#{false}" />
 						<ui:param name="reRenderAttr" value="none" />
