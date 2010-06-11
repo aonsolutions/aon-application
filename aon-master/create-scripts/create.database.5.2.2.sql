@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 5.2.1
+# Version: 5.2.2
 # Created by: girazu
-# Creation Date: 27/05/2010 15:26
+# Creation Date: 11/06/2010 12:49
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1261,11 +1261,59 @@ CREATE TABLE `commercial_activity` (
 
 CREATE TABLE `commercial_term` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `line` smallint(2) default '1' COMMENT 'Numero de linea de Condicion',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Condicion Comercial',
   `description` text collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Condicion Comercial',
   `term_general` tinyint(1) default '0' COMMENT 'Indica si la Condición es particular o general',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones Comerciales';
+
+#
+# Structure for the `supplier_segment` table : 
+#
+
+CREATE TABLE `supplier_segment` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Segmento',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Segmento',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentacion de Proveedores';
+
+#
+# Structure for the `supplier` table : 
+#
+
+CREATE TABLE `supplier` (
+  `registry` int(4) NOT NULL auto_increment COMMENT 'Registro del Proveedor',
+  `withholding` tinyint(1) default '0' COMMENT 'Indica si el Proveedor aplica retencion de impuestos',
+  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Proveedor',
+  `status` tinyint(2) default NULL COMMENT 'Estado del Proveedor',
+  `segment` int(4) default NULL COMMENT 'Segmento del Proveedor',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  PRIMARY KEY  (`registry`),
+  KEY `segment` (`segment`),
+  KEY `scope` (`scope`),
+  CONSTRAINT `supplier_fk` FOREIGN KEY (`segment`) REFERENCES `supplier_segment` (`id`),
+  CONSTRAINT `supplier_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `supplier_ibfk_2` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores';
+
+#
+# Structure for the `target` table : 
+#
+
+CREATE TABLE `target` (
+  `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente Potencial',
+  `tariff` int(4) default NULL COMMENT 'Tarifa asociada al Cliente Potencial',
+  `advertising` tinyint(2) NOT NULL default '0' COMMENT 'Admision de Publicidad',
+  `surcharge` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial tiene recargo de equivalencia',
+  `withholding` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial aplica retencion de impuestos',
+  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Cliente Potencial',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Cliente Potencial',
+  PRIMARY KEY  (`registry`),
+  KEY `IDX_TARGET_TARIFF` (`tariff`),
+  CONSTRAINT `FK_TARGET_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
+  CONSTRAINT `target_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales';
 
 #
 # Structure for the `commission_type` table : 
@@ -1293,19 +1341,54 @@ CREATE TABLE `seller` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agentes Comerciales';
 
 #
-# Structure for the `target` table : 
+# Structure for the `offer` table : 
 #
 
-CREATE TABLE `target` (
-  `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente Potencial',
-  `advertising` tinyint(2) NOT NULL default '0' COMMENT 'Admision de Publicidad',
-  `surcharge` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial tiene recargo de equivalencia',
-  `withholding` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial aplica retencion de impuestos',
-  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Cliente Potencial',
-  `status` tinyint(2) default '0' COMMENT 'Estado del Cliente Potencial',
-  PRIMARY KEY  (`registry`),
-  CONSTRAINT `target_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales';
+CREATE TABLE `offer` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Presupuesto',
+  `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
+  `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Presupuesto',
+  `number` int(4) NOT NULL COMMENT 'Numero del Presupuesto',
+  `version` smallint(2) NOT NULL default '0' COMMENT 'Numero de version de Presupuesto',
+  `address` int(4) default NULL COMMENT 'Identificador de la Direccion de envio del Presupuesto',
+  `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa del Presupuesto',
+  `seller` int(4) default NULL COMMENT 'Agente Comercial del Presupuesto',
+  `supplier` int(4) default NULL COMMENT 'Identificador del Proveedor',
+  `discount_expr` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descuentos del Presupuesto',
+  `issue_date` date default NULL COMMENT 'Fecha de emision del Presupuesto',
+  `pay_method` int(4) default NULL COMMENT 'Forma de Pago del Presupuesto',
+  `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Presupuesto',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Presupuesto',
+  `type` tinyint(2) default '0' COMMENT 'Tipo de Presupuesto',
+  `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
+  `scope` int(4) NOT NULL default '1' COMMENT 'Ambito del Presupuesto',
+  `number_of_pymnts` smallint(2) default '0' COMMENT 'Numero de Vencimientos',
+  `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
+  `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
+  `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
+  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
+  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `signed` tinyint(1) default '0' COMMENT 'Indica si el Presupuesto esta firmada electronicamente',
+  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios del Presupuesto',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `series` (`series`,`number`,`version`),
+  KEY `target` (`target`),
+  KEY `seller` (`seller`),
+  KEY `pay_method` (`pay_method`),
+  KEY `workplace` (`workplace`),
+  KEY `tariff` (`tariff`),
+  KEY `IDX_OFFER_SCOPE` (`scope`),
+  KEY `IDX_OFFER_BANK` (`bank`),
+  KEY `IDX_OFFER_SUPPLIER` (`supplier`),
+  CONSTRAINT `FK_OFFER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
+  CONSTRAINT `FK_OFFER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
+  CONSTRAINT `FK_OFFER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
+  CONSTRAINT `offer_ibfk_1` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
+  CONSTRAINT `offer_ibfk_2` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
+  CONSTRAINT `offer_ibfk_3` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
+  CONSTRAINT `offer_ibfk_4` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
+  CONSTRAINT `offer_ibfk_5` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuestos';
 
 #
 # Structure for the `commercial_tracking` table : 
@@ -1320,11 +1403,15 @@ CREATE TABLE `commercial_tracking` (
   `comments` varchar(255) collate latin1_spanish_ci default NULL COMMENT 'Comentarios del Seguimiento Comercial',
   `status` tinyint(2) NOT NULL COMMENT 'Estado del Seguimiento Comercial',
   `next_commercial_tracking` int(4) default NULL COMMENT 'Identificador del siguiente Seguimiento Comercial',
+  `end_date` date default NULL COMMENT 'Fecha de cierre del Seguimiento Comercial',
+  `offer` int(4) default NULL COMMENT 'Identificador del Presupuesto',
   PRIMARY KEY  (`id`),
   KEY `seller` (`seller`),
   KEY `target` (`target`),
   KEY `activity` (`activity`),
   KEY `next_commercial_tracking` (`next_commercial_tracking`),
+  KEY `IDX_COMMERCIAL_TRACKING_OFFER` (`offer`),
+  CONSTRAINT `FK_COMMERCIAL_TRACKING_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`),
   CONSTRAINT `commercial_tracking_fk` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `commercial_tracking_fk1` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `commercial_tracking_fk2` FOREIGN KEY (`activity`) REFERENCES `commercial_activity` (`id`),
@@ -1885,85 +1972,6 @@ CREATE TABLE `warehouse` (
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Almacen',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Almacenes';
-
-#
-# Structure for the `supplier_segment` table : 
-#
-
-CREATE TABLE `supplier_segment` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Segmento',
-  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Segmento',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentacion de Proveedores';
-
-#
-# Structure for the `supplier` table : 
-#
-
-CREATE TABLE `supplier` (
-  `registry` int(4) NOT NULL auto_increment COMMENT 'Registro del Proveedor',
-  `withholding` tinyint(1) default '0' COMMENT 'Indica si el Proveedor aplica retencion de impuestos',
-  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Proveedor',
-  `status` tinyint(2) default NULL COMMENT 'Estado del Proveedor',
-  `segment` int(4) default NULL COMMENT 'Segmento del Proveedor',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
-  PRIMARY KEY  (`registry`),
-  KEY `segment` (`segment`),
-  KEY `scope` (`scope`),
-  CONSTRAINT `supplier_fk` FOREIGN KEY (`segment`) REFERENCES `supplier_segment` (`id`),
-  CONSTRAINT `supplier_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `supplier_ibfk_2` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores';
-
-#
-# Structure for the `offer` table : 
-#
-
-CREATE TABLE `offer` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Presupuesto',
-  `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
-  `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Presupuesto',
-  `number` int(4) NOT NULL COMMENT 'Numero del Presupuesto',
-  `version` smallint(2) NOT NULL default '0' COMMENT 'Numero de version de Presupuesto',
-  `address` int(4) default NULL COMMENT 'Identificador de la Direccion de envio del Presupuesto',
-  `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa del Presupuesto',
-  `seller` int(4) default NULL COMMENT 'Agente Comercial del Presupuesto',
-  `supplier` int(4) default NULL COMMENT 'Identificador del Proveedor',
-  `discount_expr` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descuentos del Presupuesto',
-  `issue_date` date default NULL COMMENT 'Fecha de emision del Presupuesto',
-  `pay_method` int(4) default NULL COMMENT 'Forma de Pago del Presupuesto',
-  `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Presupuesto',
-  `status` tinyint(2) default '0' COMMENT 'Estado del Presupuesto',
-  `type` tinyint(2) default '0' COMMENT 'Tipo de Presupuesto',
-  `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
-  `scope` int(4) NOT NULL default '1' COMMENT 'Ambito del Presupuesto',
-  `number_of_pymnts` smallint(2) default '0' COMMENT 'Numero de Vencimientos',
-  `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
-  `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
-  `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
-  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
-  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
-  `signed` tinyint(1) default '0' COMMENT 'Indica si el Presupuesto esta firmada electronicamente',
-  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios del Presupuesto',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `series` (`series`,`number`,`version`),
-  KEY `target` (`target`),
-  KEY `seller` (`seller`),
-  KEY `pay_method` (`pay_method`),
-  KEY `workplace` (`workplace`),
-  KEY `tariff` (`tariff`),
-  KEY `IDX_OFFER_SCOPE` (`scope`),
-  KEY `IDX_OFFER_BANK` (`bank`),
-  KEY `IDX_OFFER_SUPPLIER` (`supplier`),
-  CONSTRAINT `FK_OFFER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
-  CONSTRAINT `FK_OFFER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
-  CONSTRAINT `FK_OFFER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
-  CONSTRAINT `offer_ibfk_1` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
-  CONSTRAINT `offer_ibfk_2` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
-  CONSTRAINT `offer_ibfk_3` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
-  CONSTRAINT `offer_ibfk_4` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
-  CONSTRAINT `offer_ibfk_5` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuestos';
 
 #
 # Structure for the `offer_detail` table : 
@@ -4172,7 +4180,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('5.2.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('5.2.2');
 
 COMMIT;
 
