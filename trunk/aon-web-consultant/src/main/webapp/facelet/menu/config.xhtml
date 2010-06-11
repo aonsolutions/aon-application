@@ -52,6 +52,17 @@
 											actionListener="#{actionDenied.onInit}"
 											value="#{auditBundle.audit_option_denied_module}" />
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="dbDumper" 
+											action="dbDumper_form"
+											value="#{dbutilsBundle.dbutils_dumper_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mbase_form" action="sqlScript_form"
+											actionListener="#{sqlScript.onInitialize}"
+											value="#{dbutilsBundle.dbutils_script_module}" />
+									</aon:div>
+									
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
