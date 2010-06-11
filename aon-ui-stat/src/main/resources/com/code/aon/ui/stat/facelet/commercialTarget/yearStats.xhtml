@@ -20,7 +20,10 @@
 				<aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
 				<aon:methodParam name="backMethod" value="" type="actionListener" />
 				<ui:param name="paramName" value="year" />
-				<ui:param name="showLastColumn" value="false" />
+				<ui:param name="showLastColumn" value="true" />
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_offers}" />	
+				<aon:methodParam name="lastColumnAction" value="#{commercialStat.onCommercialTargetOfferStats}" type="actionListener" />
+				<aon:methodParam  name="offerFacelet" value="offers_list" />
 				<ui:param name="reportKeyParam" value="commercialStatsList" />
 				<ui:param name="reportGraphKeyParam" value="commercialStatsGraph" />
 			</ui:include>
