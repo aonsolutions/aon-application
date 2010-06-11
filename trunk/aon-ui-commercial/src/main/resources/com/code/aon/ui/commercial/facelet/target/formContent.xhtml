@@ -40,4 +40,14 @@
 		</aon:selectOneRadio>
 	</c:if>
 	
+	<c:if test="#{aonConfiguration.bean.target.showTariff}">
+		<aon:outputLabel for="Target_tariff_id"
+			value="#{productBundle.product_tariff}" />
+		<aon:selectOneMenu id="Target_tariff_id"
+			value="#{controller.to.tariff}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{configCollections.tariffs}" />
+		</aon:selectOneMenu>
+	</c:if>
+
 </ui:composition>
