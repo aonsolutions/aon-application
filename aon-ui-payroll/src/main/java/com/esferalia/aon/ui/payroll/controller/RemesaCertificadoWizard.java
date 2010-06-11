@@ -26,8 +26,7 @@ import com.esferalia.aon.payroll.core.empresa.EmpresaDAOFactory;
 import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
-import com.esferalia.aon.payroll.core.remesa.IRemesaParteIT;
-import com.esferalia.aon.ui.payroll.file.FDIWriter;
+import com.esferalia.aon.ui.payroll.file.CertificateWriter;
 
 public class RemesaCertificadoWizard implements Serializable {
 
@@ -36,7 +35,7 @@ public class RemesaCertificadoWizard implements Serializable {
 	private int currentStep;
 	private static final String[] STEPS = { "remesaCertificadoWizard_step0", "remesaCertificadoWizard_step1", "remesaCertificadoWizard_step2" };
 	private FileOutput fileOutput;
-	private FDIWriter fdiWriter;
+	private CertificateWriter certificateWriter;
 	private IEmpresaDAO empresaDAO;
 	private DataModel model;
 	private IRemesaCertificadoEmpresa remesa;
@@ -58,11 +57,11 @@ public class RemesaCertificadoWizard implements Serializable {
 		this.detailList = detailList;
 	}
 
-	private FDIWriter getFDIWriter() {
-		if (fdiWriter == null) {
-			fdiWriter = new FDIWriter();
+	private CertificateWriter getCertificateWriter() {
+		if (certificateWriter == null) {
+			certificateWriter = new CertificateWriter();
 		}
-		return fdiWriter;
+		return certificateWriter;
 	}
 	
 	public FileOutput getFileOutput() {
@@ -114,7 +113,7 @@ public class RemesaCertificadoWizard implements Serializable {
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
 			onValidate(event);
-			onDiskGenerate(event);
+//			onDiskGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
 			onFinish(event);
@@ -160,8 +159,8 @@ public class RemesaCertificadoWizard implements Serializable {
 			String loggedUser = AonUtil.getRemoteUser();
 			loggedUser = StringUtils.substringBefore(loggedUser, "@");
 //			List<IRemesaParteIT> list = getParteITDAO().getRemesaParteITList(getRemesaINSS());
-			List<IRemesaParteIT> list = null;
-			setFileOutput(getFDIWriter().createFDI(list, loggedUser));
+//			List<IRemesaParteIT> list = getDetailList();
+			setFileOutput(getCertificateWriter().createCertificate(getRemesa(), getDetailList()));
 			if (getFileOutput() != null) {
 				if (getFileOutput().getErrors().size() > 0) {
 					AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
@@ -177,9 +176,9 @@ public class RemesaCertificadoWizard implements Serializable {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-			String fileName = getFDIWriter().getEti().getFichero() + ".FDI";
-			response.setContentType(MimeType.MIME_TXT.getName());
-			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
+			String fileName = getCertificateWriter().getCertificate().getFichero();
+			response.setContentType(MimeType.MIME_XML.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xml\";");
 
 			ServletOutputStream output = response.getOutputStream();
 			InputStream input = new FileInputStream(getFileOutput().getFile());
@@ -196,6 +195,7 @@ public class RemesaCertificadoWizard implements Serializable {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
+		
 	}
 
 	public boolean isDiskOk() {
