@@ -65,7 +65,7 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 
-							<aon:div styleClass="aon-direct-access-list-element">
+							<!-- <aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="sellerControl"
 									value="#{statBundle.stat_show_seller}"
 									action="commercial_seller_search">
@@ -73,7 +73,7 @@
 									<aon:actionListener method="#{commercialStat.onSellerType}" />
 								</aon:commandLink>
 									
-							</aon:div>
+							</aon:div> -->
 
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="sellerControl2"
@@ -99,6 +99,14 @@
 									action="commercial_search_view">
 									<aon:actionListener method="#{commercialStat.onReset}" />
 									<aon:actionListener method="#{commercialStat.onProductType}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="sellerControl5"
+									value="#{statBundle.seller_stat_control_category}"
+									action="commercial_search_view">
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onCategoryType}" />
 								</aon:commandLink>
 							</aon:div>
 						</aon:div>
