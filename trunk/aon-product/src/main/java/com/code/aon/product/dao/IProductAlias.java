@@ -245,13 +245,13 @@ public interface IProductAlias {
 
 	/** 
 	* Alias value: Item_product_brand_id
-	* Hibernate value: Item.product.brand.id
+	* Hibernate value: Item.product.brand<id
 	*/
 	String  ITEM_PRODUCT_BRAND_ID = ITEM_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Item_product_brand_name
-	* Hibernate value: Item.product.brand.name
+	* Hibernate value: Item.product.brand<name
 	*/
 	String  ITEM_PRODUCT_BRAND_NAME = ITEM_ENTRY.getAliasNames()[14];
 
