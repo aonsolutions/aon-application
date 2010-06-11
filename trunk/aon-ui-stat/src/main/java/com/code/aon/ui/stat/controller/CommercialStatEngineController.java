@@ -30,6 +30,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.dao.IProductAlias;
@@ -42,7 +43,8 @@ import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
-import com.code.aon.ui.commercial.controller.OfferController;
+import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class CommercialStatEngineController {
@@ -124,6 +126,18 @@ public class CommercialStatEngineController {
 
 	public double getOfferTotalPrice() throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(((OfferDetail) getOffersModel().getRowData()).getOffer(), ((OfferDetail) getOffersModel().getRowData()).getOffer().getTarget());
+	}	
+	public double getDoneOfferTotalPrice() throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(((OfferDetail) getDoneOffersModel().getRowData()).getOffer(), ((OfferDetail)getDoneOffersModel().getRowData()).getOffer().getTarget());
+	}
+	public double getClosedOfferTotalPrice() throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(((OfferDetail) getClosedOffersModel().getRowData()).getOffer(), ((OfferDetail) getClosedOffersModel().getRowData()).getOffer().getTarget());
+	}
+	public double getLostOfferTotalPrice() throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(((OfferDetail) getLostOffersModel().getRowData()).getOffer(), ((OfferDetail)getLostOffersModel().getRowData()).getOffer().getTarget());
+	}
+	public double getPendingOfferTotalPrice() throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(((OfferDetail) getPendingOffersModel().getRowData()).getOffer(), ((OfferDetail) getPendingOffersModel().getRowData()).getOffer().getTarget());
 	}
 
 	public String getOfferBackAction() {
@@ -1153,19 +1167,39 @@ public class CommercialStatEngineController {
 		c.onSelectFirst(e);
 	}
 	
-	public void onOfferSelect(ActionEvent e) throws ManagerBeanException {
-		OfferController c = (OfferController) AonUtil
-				.getRegisteredBean(OFFER_CONTROLLER_NAME);
+	public void onOfferPdf(ActionEvent e) throws ManagerBeanException {
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
-		IManagerBean commercialTrackingBean = BeanManager
-				.getManagerBean(Offer.class);
-		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.OFFER_ID),
-				((OfferDetail) this.getOffersModel().getRowData()).getOffer().getId());
-		c.clearCriteria();
-		c.setCriteria(criteria);
-		c.onSearch(e);
-		c.onSelectFirst(e);
+		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getOffersModel().getRowData()).getOffer().getId());
+		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
+	}
+	
+	public void onDoneOfferPdf(ActionEvent e) throws ManagerBeanException {
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getDoneOffersModel().getRowData()).getOffer().getId());
+		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
+	}
+	
+	public void onLostOfferPdf(ActionEvent e) throws ManagerBeanException {
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getLostOffersModel().getRowData()).getOffer().getId());
+		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
+	}
+	
+	public void onPendingOfferPdf(ActionEvent e) throws ManagerBeanException {
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getPendingOffersModel().getRowData()).getOffer().getId());
+		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
+	}
+	
+	public void onClosedOfferPdf(ActionEvent e) throws ManagerBeanException {
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getClosedOffersModel().getRowData()).getOffer().getId());
+		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 
 	public void onActivityList(ActionEvent e) throws ManagerBeanException {
