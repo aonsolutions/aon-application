@@ -348,6 +348,13 @@
 				/com/code/aon/ui/stat/facelet/commercialSellerControl/activityList.xhtml</to-view-id>
 		</navigation-case>
 		
+		<navigation-case>
+			<from-outcome>offers_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/stat/facelet/generic/offerList.xhtml</to-view-id>
+		</navigation-case>
+		
+		
 		
 	</navigation-rule>
 
