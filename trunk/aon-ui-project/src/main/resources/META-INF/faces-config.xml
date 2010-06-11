@@ -10,14 +10,6 @@
 		</resource-bundle>
 	</application>
 
-	<!--  *************** CONVERTER ***************** -->
-    <converter>
-		<converter-id>chromeEditorConverter</converter-id>
-		<converter-class>
-			com.code.aon.ui.common.converter.ChromeEditorConverter
-		</converter-class>
-    </converter>
-
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>projectCollections</managed-bean-name>
