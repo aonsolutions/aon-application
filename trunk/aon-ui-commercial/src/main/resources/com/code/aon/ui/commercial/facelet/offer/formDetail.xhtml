@@ -83,6 +83,20 @@
 							selectReRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
 							actionType="new">
 						</aon:lookupButton>
+						<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
+							<aon:commandButton value="&#160;"
+								title="#{productBundle.product_info}"
+								rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
+								styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+								actionListener="#{itemInfo.onShowPanel}"
+								reRender="itemInfoContainer">
+								<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />
+								<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+								<aon:set var="#{itemInfo.item}" value="#{offerDetail.to.item}" /> 
+								<aon:set var="#{itemInfo.componentId}" value="OfferDetail_item_product_code" />
+								<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
+							</aon:commandButton>															
+						</c:if>
 					</a4j:region>
 					<aon:inputTextarea id="OfferDetail_item_product_name"
 						value="#{offerDetail.to.description}"
@@ -127,6 +141,20 @@
 								selectReRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
 								actionType="new">
 							</aon:lookupButton>												
+							<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
+								<aon:commandButton value="&#160;"
+									title="#{productBundle.product_info}"
+									rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
+									styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+									actionListener="#{itemInfo.onShowPanel}"
+									reRender="itemInfoContainer">
+									<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />
+									<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+									<aon:set var="#{itemInfo.item}" value="#{offerDetail.to.item}" /> 
+									<aon:set var="#{itemInfo.componentId}" value="OfferDetail_item_product_code-New" />
+									<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
+								</aon:commandButton>															
+							</c:if>
 						</a4j:region>
 						<aon:inputTextarea id="OfferDetail_item_product_name-New"
 							value="#{offerDetail.to.description}"
