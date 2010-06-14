@@ -44,6 +44,8 @@ public class CommercialTrackingListener extends ControllerAdapter {
 			collections.refreshActivities();
 			updatePreviousAction( controller, ct );
 			controller.setNext( ct.getNext() );
+			boolean check = (ct.getOffer().getId() !=null); 
+			controller.setOfferChecked(check);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
@@ -94,6 +96,7 @@ public class CommercialTrackingListener extends ControllerAdapter {
 			ct.setSeller( controller.getLastSeller() );
 		}
 		controller.setNext( new CommercialTracking() );
+		controller.setOfferChecked(false);
 	}
 	
 	private void updateLastValue( CommercialTrackingController controller ) {
