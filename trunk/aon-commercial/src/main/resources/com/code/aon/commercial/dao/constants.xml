@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.commercial.OfferDetail" sqlName="offer_detail">
-		<alias names="id,offer_id,offer_target_id,offer_issueDate,offer_series,offer_number,offer_seller_id,offer_securityLevel,offer_workPlace_id,line,item_id,item_product_type,description,quantity,price,discountExpression,status"/>
-		<hibernate names="id,offer.id,offer.target.id,offer.issueDate,offer.series,offer.number,offer.seller.id,offer.securityLevel,offer.workPlace.id,line,item.id,item.product.type,description,quantity,price,discountExpression,status"/>
+		<alias names="id,offer,offer_id,offer_target_id,offer_issueDate,offer_series,offer_number,offer_seller_id,offer_securityLevel,offer_status,offer_workPlace_id,line,item_id,item_product_product_category_id,item_product_type,description,quantity,price,discountExpression,status"/>
+		<hibernate names="id,offer,offer.id,offer.target.id,offer.issueDate,offer.series,offer.number,offer.seller.id,offer.securityLevel,offer.status,offer.workPlace.id,line,item.id,item.product.category.id,item.product.type,description,quantity,price,discountExpression,status"/>
 	</bean>
 	<bean class="com.code.aon.commercial.OfferDetailCommission" sqlName="offer_detail_commission">
 		<alias names="amount,commission,id,offerDetail_id,offerDetail_item_id,offerDetail_item_product_type,offerDetail_description,offerDetail_status,offerDetail_offer_id,offerDetail_offer_issueDate,offerDetail_offer_number,offerDetail_offer_scope_id,offerDetail_offer_securityLevel,offerDetail_offer_seller_id,offerDetail_offer_series,offerDetail_offer_status,offerDetail_offer_target_id,offerDetail_offer_supplier_id,offerDetail_offer_type,offerDetail_offer_signed,offerDetail_offer_workPlace_id,payDate,status"/>
