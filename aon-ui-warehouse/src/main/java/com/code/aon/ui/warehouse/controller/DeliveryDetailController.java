@@ -92,8 +92,8 @@ public class DeliveryDetailController extends LinesController {
 				deliveryDetail.setQuantity(1);
 			}
 
-			Date date = deliveryDetail.getDelivery().getIssueTime();
 			DeliveryController master = (DeliveryController)getMasterController();
+			Date date = ((Delivery)master.getTo()).getIssueTime();
 			Tariff tariff = ((Delivery)master.getTo()).getCustomer().getTariff();
 			price = getPriceStrategy().getUnitPrice(deliveryDetail, date, tariff);
 		}
@@ -107,8 +107,8 @@ public class DeliveryDetailController extends LinesController {
 			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 				deliveryDetail.setQuantity((Double)event.getNewValue());
 	
-				Date date = deliveryDetail.getDelivery().getIssueTime();
 				DeliveryController master = (DeliveryController)getMasterController();
+				Date date = ((Delivery)master.getTo()).getIssueTime();
 				Tariff tariff = ((Delivery)master.getTo()).getCustomer().getTariff();
 				price = getPriceStrategy().getUnitPrice(deliveryDetail, date, tariff);
 			}

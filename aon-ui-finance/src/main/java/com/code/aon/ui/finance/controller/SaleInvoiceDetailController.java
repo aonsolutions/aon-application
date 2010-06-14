@@ -10,6 +10,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.Item;
@@ -34,6 +35,7 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 			Tariff tariff;
 			try {
 				SaleInvoiceController master = (SaleInvoiceController) getMasterController();
+				date = ((Invoice)master.getTo()).getIssueDate();
 				Customer customer = master.getCustomer();
 				tariff = customer.getTariff();
 			} catch (ManagerBeanException e) {
@@ -55,6 +57,7 @@ public class SaleInvoiceDetailController extends InvoiceDetailController {
 				Tariff tariff;
 				try {
 					SaleInvoiceController master = (SaleInvoiceController) getMasterController();
+					date = ((Invoice)master.getTo()).getIssueDate();
 					Customer customer = master.getCustomer();
 					tariff = customer.getTariff();
 				} catch (ManagerBeanException e) {
