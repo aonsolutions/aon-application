@@ -61,6 +61,27 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<plugins>
+			<plugin>
+			        <artifactId>maven-jar-plugin</artifactId>
+			        <configuration>
+		          		<archive>
+						<manifest>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+                                                <manifestEntries>
+                                                        <buildNumber>${env.BUILD_NUMBER}</buildNumber>
+                                                        <buildDate>${maven.build.timestamp}</buildDate>
+                                                        <buildRevision>${buildNumber}</buildRevision>
+                                                </manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
         <profiles>
                 <profile>
                         <id>rpm-release</id>
