@@ -22,52 +22,42 @@
 						action="#{commercialStat.getOfferBackAction}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel">
 					</h:commandButton>
-					<!-- 	<aon:htmlCommandLink id="invoiceList-report" value="PDF"
-							title="Listado Pdf"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf"
-							action="#{report.onExecute}" target="_blank">
-							<f:param name="reportKey" value="invoiceList" />
-						</aon:htmlCommandLink>
-						<aon:htmlCommandLink id="invoiceList-excel-report" value="XLS"
-							title="Listado Xls"
-							styleClass="aon-finding-toolbar-item aon-icon-excel"
-							action="#{report.onExecute}" target="_blank">
-							<f:param name="reportKey" value="invoiceList" />
-							<f:param name="outputFormat" value="MS Excel" />
-						</aon:htmlCommandLink>
-						<aon:htmlCommandLink id="invoiceList-cvs-report" value="CSV" title="CSV"
-							styleClass="aon-finding-toolbar-item aon-icon-csv"
-							action="#{report.onExecute}" target="_blank">
-							<f:param name="reportKey" value="invoiceList" />
-							<f:param name="outputFormat" value="CSV" />
-						</aon:htmlCommandLink> -->
-
-
 				</ui:define>
-
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 
-					<!-- 	<c:if test="#{commercialStat.controlType==0}">
-						<aon:outputLabel for="Target_trackings_seller_id"
+					<c:if test="#{commercialStat.controlType==0}">
+						<aon:outputLabel 
 							value="#{statBundle.stat_seller}" />
-						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
+						<aon:outputText value="#{commercialStat.sellerName}"></aon:outputText>
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==1}">
-						<aon:outputLabel for="Target_trackings_seller_id"
+						<aon:outputLabel 
 							value="#{statBundle.stat_target}" />
-						<aon:outputText value="#{commercialStat.target.registry.fullName}"></aon:outputText>
+						<aon:outputText value="#{commercialStat.targetName}"></aon:outputText>
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==2}">
-						<aon:outputLabel for="Target_trackings_seller_id"
+						<aon:outputLabel 
 							value="#{statBundle.stat_product}" />
-						<aon:outputText value="#{commercialStat.product.name}"></aon:outputText>
+						<aon:outputText value="#{commercialStat.productName}"></aon:outputText>
 
-					</c:if> -->
+					</c:if>
+					<c:if test="#{commercialStat.controlType==3}">
+						<aon:outputLabel
+							value="#{statBundle.stat_category}" />
+						<aon:outputText value="#{commercialStat.categoryName}"></aon:outputText>
+
+					</c:if>
+					<c:if test="#{commercialStat.controlType==4}">
+						<aon:outputLabel 
+							value="#{statBundle.stat_geozone}" />
+						<aon:outputText value="#{commercialStat.zoneName}"></aon:outputText>
+					</c:if>
+					
 
 					<aon:outputLabel for="Target_trackings_seller_id"
 						value="#{statBundle.stat_period}" />
@@ -83,6 +73,7 @@
 						</aon:outputText>
 					</aon:div>
 				</aon:panelGrid>
+				<br />
 
 				<aon:editDataTable id="offers" value="#{commercialStat.offersModel}"
 					rows="20"
@@ -152,10 +143,11 @@
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
 						</f:facet>
-						<aon:htmlCommandLink id="invoiceList-report"  value="&#160;&#160;&#160;&#160;&#160;&#160;"
-							title="Pdf"  actionListener="#{commercialStat.onOfferPdf}"
-							styleClass="aon-icon-pdf"
-							action="#{report.onExecute}" target="_blank">
+						<aon:htmlCommandLink id="invoiceList-report"
+							value="&#160;&#160;&#160;&#160;&#160;&#160;" title="Pdf"
+							actionListener="#{commercialStat.onOfferPdf}"
+							styleClass="aon-icon-pdf" action="#{report.onExecute}"
+							target="_blank">
 							<f:param name="reportKey" value="offerPdf" />
 						</aon:htmlCommandLink>
 					</aon:column>
