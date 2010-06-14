@@ -47,17 +47,17 @@
 			<scope>compile</scope>
 		</dependency>
 -->		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jcl</artifactId>
+			<version>1.5.8</version>
+			<scope>runtime</scope>
+		</dependency>
 		<!-- TEST DEPENDENCIES -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jcl</artifactId>
-			<version>1.5.8</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -134,6 +134,11 @@
 											<classifier></classifier>
 										</classifiers>
 									</artifact>	
+									<dependency>
+										<includes>
+											<include>org.slf4j:slf4j-jcl</include>
+										</includes>
+									</dependency>
                                                                         <filemode>644</filemode>
                                                                         <username>root</username>
                                                                         <groupname>root</groupname>
