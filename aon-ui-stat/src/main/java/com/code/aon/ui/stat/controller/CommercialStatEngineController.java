@@ -30,7 +30,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.dao.IProductAlias;
@@ -101,14 +100,60 @@ public class CommercialStatEngineController {
 	private Boolean commercialActivityStatus;
 	private Boolean showCommercialActivities;
 	private Boolean showZeroLines;
+	private String sellerName;
+	private String categoryName;
+	private String productName;
+	private String zoneName;
+	private String targetName;
 	private List<CommercialTracking> activitiesList;
 	private static final String COMMERCIAL_TRACKING_CONTROLLER_NAME = "commercialTracking";
 	private static final String OFFER_CONTROLLER_NAME = "offer";
-
 	private String offerBackAction;
 	private IPriceStrategy priceStrategy;
 
 	
+	
+	
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getZoneName() {
+		return zoneName;
+	}
+
+	public void setZoneName(String zoneName) {
+		this.zoneName = zoneName;
+	}
+
+	public String getTargetName() {
+		return targetName;
+	}
+
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
+	}
+
 	public ProductCategory getProductCategory() {
 		return productCategory;
 	}
@@ -122,22 +167,6 @@ public class CommercialStatEngineController {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
-	}
-
-	public double getOfferTotalPrice() throws ManagerBeanException {
-		return getPriceStrategy().getTotalPrice(((OfferDetail) getOffersModel().getRowData()).getOffer(), ((OfferDetail) getOffersModel().getRowData()).getOffer().getTarget());
-	}	
-	public double getDoneOfferTotalPrice() throws ManagerBeanException {
-		return getPriceStrategy().getTotalPrice(((OfferDetail) getDoneOffersModel().getRowData()).getOffer(), ((OfferDetail)getDoneOffersModel().getRowData()).getOffer().getTarget());
-	}
-	public double getClosedOfferTotalPrice() throws ManagerBeanException {
-		return getPriceStrategy().getTotalPrice(((OfferDetail) getClosedOffersModel().getRowData()).getOffer(), ((OfferDetail) getClosedOffersModel().getRowData()).getOffer().getTarget());
-	}
-	public double getLostOfferTotalPrice() throws ManagerBeanException {
-		return getPriceStrategy().getTotalPrice(((OfferDetail) getLostOffersModel().getRowData()).getOffer(), ((OfferDetail)getLostOffersModel().getRowData()).getOffer().getTarget());
-	}
-	public double getPendingOfferTotalPrice() throws ManagerBeanException {
-		return getPriceStrategy().getTotalPrice(((OfferDetail) getPendingOffersModel().getRowData()).getOffer(), ((OfferDetail) getPendingOffersModel().getRowData()).getOffer().getTarget());
 	}
 
 	public String getOfferBackAction() {
@@ -597,6 +626,10 @@ public class CommercialStatEngineController {
 	public void onCategoryType(ActionEvent event) {
 		setControlType(3);
 	}
+	
+	public void onGeozoneType(ActionEvent event) {
+		setControlType(4);
+	}
 
 	public Date getFromDate() {
 		return this.params.getFromDate();
@@ -618,7 +651,22 @@ public class CommercialStatEngineController {
 			return true;
 		} else
 			return false;
-
+	}
+	
+	public double getOfferTotalPrice() throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(((OfferDetail) getOffersModel().getRowData()).getOffer(), ((OfferDetail) getOffersModel().getRowData()).getOffer().getTarget());
+	}	
+	public double getDoneOfferTotalPrice() throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(((OfferDetail) getDoneOffersModel().getRowData()).getOffer(), ((OfferDetail)getDoneOffersModel().getRowData()).getOffer().getTarget());
+	}
+	public double getClosedOfferTotalPrice() throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(((OfferDetail) getClosedOffersModel().getRowData()).getOffer(), ((OfferDetail) getClosedOffersModel().getRowData()).getOffer().getTarget());
+	}
+	public double getLostOfferTotalPrice() throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(((OfferDetail) getLostOffersModel().getRowData()).getOffer(), ((OfferDetail)getLostOffersModel().getRowData()).getOffer().getTarget());
+	}
+	public double getPendingOfferTotalPrice() throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(((OfferDetail) getPendingOffersModel().getRowData()).getOffer(), ((OfferDetail) getPendingOffersModel().getRowData()).getOffer().getTarget());
 	}
 
 	public void setShowCommercialActivities(Boolean showCommercialActivities) {
@@ -1586,11 +1634,14 @@ public class CommercialStatEngineController {
 	public void onCommercialCategoryOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
+		setControlType(3);
+		setCategoryName(((Stat)  yearStatModel.getRowData()).getName());
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.item.product.category = "
 				+ ((Stat) yearStatModel.getRowData()).getKey()
-				+ " AND   OfferDetail.offer.issueDate >= '"
+				//+ " AND OfferDetail.offer.status = :statuses "  
+				+ " AND OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
@@ -1599,6 +1650,7 @@ public class CommercialStatEngineController {
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
+		//query.setParameterList("statuses", this.params.getOfferStatuses());
 		offerList = query.list();
 		setOfferBackAction("commercial_category_stats_year");
 	}
@@ -1606,6 +1658,8 @@ public class CommercialStatEngineController {
 	public void onCommercialProductOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
+		setControlType(2);
+		setProductName(((Stat) productStatModel.getRowData()).getName());
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.item.id = "
@@ -1626,6 +1680,7 @@ public class CommercialStatEngineController {
 	public void onCommercialGeozoneOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
+		setZoneName(((Stat)  yearStatModel.getRowData()).getName());
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.address.geozone.id = "
@@ -1646,6 +1701,7 @@ public class CommercialStatEngineController {
 	public void onCommercialSellerOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
+		setSellerName(((Stat)  yearStatModel.getRowData()).getName());
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.seller.id = "
@@ -1666,6 +1722,7 @@ public class CommercialStatEngineController {
 	public void onCommercialTargetOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
+		setTargetName(((Stat)  yearStatModel.getRowData()).getName());
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.target.id = "
