@@ -10,8 +10,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
