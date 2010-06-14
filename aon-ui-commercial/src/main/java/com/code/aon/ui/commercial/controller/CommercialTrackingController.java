@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ManagerBeanException;
@@ -34,6 +35,16 @@ public class CommercialTrackingController extends BasicController {
 	
 	private CommercialTracking previous;
 	
+	private boolean offerChecked;
+	
+	public boolean isOfferChecked() {
+		return offerChecked;
+	}
+
+	public void setOfferChecked(boolean offerChecked) {
+		this.offerChecked = offerChecked;
+	}
+
 	public Date getLastDate() {
 		return lastDate;
 	}
@@ -116,6 +127,28 @@ public class CommercialTrackingController extends BasicController {
 		initializeModel();
 		getModel().setRowIndex(0);
 		onSelect(event);
+	}
+
+	public void statusChanged( ValueChangeEvent event ) {
+		CommercialTracking ct = (CommercialTracking) getTo();
+		CommercialTrackingStatus status = (CommercialTrackingStatus) event.getNewValue();
+		if ( status == CommercialTrackingStatus.CLOSED ) {
+			ct.setEndDate(new Date());
+		} else {
+			ct.setEndDate(null);
+		}
+	}
+
+	public void offerChanged( ValueChangeEvent event ) {
+		CommercialTracking ct = (CommercialTracking) getTo();
+		Boolean value = (Boolean) event.getNewValue();
+		if ( value ) {
+			if ( ct.getOffer() == null ) {
+				ct.setOffer( new Offer() );	
+			}
+		} else {
+			ct.setOffer(null);
+		}
 	}
 	
 }
