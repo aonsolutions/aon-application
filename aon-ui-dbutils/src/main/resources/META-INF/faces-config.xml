@@ -38,13 +38,6 @@
 			<to-view-id>/com/code/aon/ui/dbutils/facelet/dbdumper/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- ****************** UPTODATE **************** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>dbUptodate_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/dbutils/facelet/uptodate/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 	<!-- **************** SQL SCRIPT ************************** -->
 	<navigation-rule>
 		<navigation-case>
