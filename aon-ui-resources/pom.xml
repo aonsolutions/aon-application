@@ -20,6 +20,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.dbutils</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
     		<groupId>jmimemagic</groupId>
     		<artifactId>jmimemagic</artifactId>
     		<version>0.1.2</version>
