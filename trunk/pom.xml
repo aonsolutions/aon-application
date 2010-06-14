@@ -23,7 +23,7 @@
 	<module>aon-dbutils</module>
 	<module>aon-master</module>
 
-	<module>aon-jsf-bridge<module>
+	<module>aon-jsf-bridge</module>
 	<module>aon-account</module>
 	<module>aon-account-bridge</module>
 	<module>aon-accounting</module>
