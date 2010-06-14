@@ -137,6 +137,7 @@
 									<dependency>
 										<includes>
 											<include>org.slf4j:slf4j-jcl</include>
+											<include>org.slf4j:slf4j-api</include>
 										</includes>
 									</dependency>
                                                                         <filemode>644</filemode>
