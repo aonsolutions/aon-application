@@ -11,18 +11,6 @@ import com.code.aon.master.VersionManager;
 
 public class VersionTest extends TestCase{
 	
-	public void testCreateVersions() throws Exception {
-		System.out.println("[BEGIN] testCreateVersions");
-		VersionManager vm = new VersionManager();
-		String[] versions = vm.getVersions();
-		for (String version: versions ) {
-			URL url = vm.getCreateScript(version);
-			if (url == null) {
-				System.out.println("Version " + version + " has no create!");
-			}
-		}
-		System.out.println("[END] testCreateVersions");
-	}
 
 	public void testUpdateVersions() throws Exception {
 		System.out.println("[BEGIN] testUpdateVersions");
