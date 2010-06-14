@@ -58,12 +58,14 @@
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						</c:if>
-						<aon:commandButton value="&#160;" id="email"
-							actionListener="#{saleInvoice.onSendInvoiceByEmail}"
-							rendered="#{webmail.logged and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
-							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
-							reRender="showNewMessageWindow">
-						</aon:commandButton>						
+						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+							<aon:commandButton value="&#160;" id="email"
+								actionListener="#{saleInvoice.onSendInvoiceByEmail}"
+								rendered="#{webmail.logged and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+								reRender="showNewMessageWindow">
+							</aon:commandButton>
+						</c:if>						
 						<aon:htmlCommandLink id="saleInvoice-report"
 							value="#{financeBundle.finance_invoice}" target="_new" 
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and !saleInvoice.accountSource}"
@@ -273,11 +275,15 @@
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 			<ui:param name="invoiceAddress" value="#{saleInvoiceAddress}" />
 		</ui:include>
+		<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
+			<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/delivery/modalTransfer.xhtml" />
+		</c:if>
+		<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		</c:if>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
 			<ui:param name="signButtonreRender" value="saleInvoiceForm,showNewMessageWindow" />
 			<aon:methodParam name="signActionListener" value="#{saleInvoiceSigner.onSign}" type="actionListener" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/delivery/modalTransfer.xhtml" />
 	</ui:define>
 </ui:composition>
