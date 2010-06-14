@@ -122,18 +122,16 @@
 							
 						<aon:outputLabel
 							value="#{bundle.aon_date_from}" />
-						<aon:outputText 
-							value="#{profitAndLossReport.parameters.fromDate}"
-							timeZone="#{timeZoneController.timeZone}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
+						<aon:outputText value="#{profitAndLossReport.parameters.fromDate}">
+							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}" 
+							 	timeZone="#{timeZoneController.timeZone}"/>
 						</aon:outputText>
-	
+						
 						<aon:outputLabel
 							value="#{bundle.aon_date_to}" />
-						<aon:outputText 
-							value="#{profitAndLossReport.parameters.toDate}"
-							timeZone="#{timeZoneController.timeZone}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
+						<aon:outputText  value="#{profitAndLossReport.parameters.toDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" 
+								timeZone="#{timeZoneController.timeZone}"/>
 						</aon:outputText>
 					</aon:panelGrid>
 				</aon:div>
