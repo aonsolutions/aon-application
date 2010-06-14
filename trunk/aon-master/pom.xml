@@ -23,7 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.dbutils</artifactId>
+			<artifactId>aon-dbutils</artifactId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>
@@ -131,7 +131,7 @@
 									<artifact/>	
 									<dependency>
 										<includes>
-											<include>com.code.aon:aon.dbutils</include>
+											<include>com.code.aon:aon-dbutils</include>
 										</includes>
 									</dependency>
                                                                         <filemode>644</filemode>
