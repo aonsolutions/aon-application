@@ -27,32 +27,43 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="statCategory"
 									value="#{statBundle.stat_report_commercial_category}"
-									action="commercial_category_stat_search"
-									actionListener="#{commercialStat.onReset}" />
+									action="commercial_category_stat_search">
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onCategoryType}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="statZone"
 									value="#{statBundle.stat_report_commercial_geozone}"
 									action="commercial_geozone_stat_search"
-									actionListener="#{commercialStat.onReset}" />
+									>
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onGeozoneType}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="statSeller"
 									value="#{statBundle.stat_report_commercial_seller}"
-									action="commercial_seller_stat_search"
-									actionListener="#{commercialStat.onReset}" />
+									action="commercial_seller_stat_search">
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onSellerType}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="statTarget"
 									value="#{statBundle.stat_report_commercial_target}"
-									action="commercial_target_stat_search"
-									actionListener="#{commercialStat.onReset}" />
+									action="commercial_target_stat_search">
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onTargetType}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="statProduct"
 									value="#{statBundle.stat_report_commercial_product}"
-									action="commercial_product_stat_search"
-									actionListener="#{commercialStat.onReset}" />
+									action="commercial_product_stat_search">
+									<aon:actionListener method="#{commercialStat.onReset}" />
+									<aon:actionListener method="#{commercialStat.onProductType}" />
+								</aon:commandLink>
 							</aon:div>
 						</aon:div>
 					</aon:panelGrid>
