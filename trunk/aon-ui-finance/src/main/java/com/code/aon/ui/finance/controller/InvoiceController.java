@@ -298,6 +298,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+			
 			double invoiceTotal = getToInvoiceTotalPrice();
 			double financeTotal = getToInvoiceFinanceTotal();
 			if (financeTotal != 0 && invoiceTotal != financeTotal) {
@@ -307,6 +309,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			Invoice invoice = getInvoice();
 			invoice = (Invoice) HibernateUtil.getSession(sessionName).merge(invoice);
 			getAccountWriter().recordAndUpdateInvoice(invoice);
+			setTo(invoice);
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
 			try {
@@ -323,11 +326,35 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-		
 	}
 	
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException{
-		getAccountWriter().unrecordAndUpdateInvoice(getInvoice());
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+			
+			getAccountWriter().unrecordAndUpdateInvoice(getInvoice());
+			
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 
 	public boolean isRecorded() {

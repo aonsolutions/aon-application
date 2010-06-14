@@ -40,9 +40,6 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 
-/**
- * The Class AccountEntryInvoiceWriter.
- */
 public class AccountEntryInvoiceWriter {
 
 	private static final String N_FRA = "N/Fra";
@@ -293,47 +290,11 @@ public class AccountEntryInvoiceWriter {
 		return obtainConcept(prefix, invoice);
 	}
 
-	/**
-	 * Insert or update account entry.
-	 * 
-	 * @param entry
-	 *            the entry
-	 * @param isNew
-	 *            the is new
-	 * 
-	 * @return the account entry
-	 * 
-	 * @throws ManagerBeanException
-	 *             the manager bean exception
-	 */
 	public AccountEntry insertOrUpdateAccountEntry(AccountEntry entry) throws ManagerBeanException {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		return  (AccountEntry) entryBean.insertOrUpdate(entry);
 	}
 
-	/**
-	 * Insert entry details.
-	 * 
-	 * @param entry
-	 *            the entry
-	 * @param account
-	 *            the account
-	 * @param series
-	 *            invoice series
-	 * @param number
-	 *            invoice number
-	 * @param invoiceTotal
-	 *            the invoice total
-	 * @param retentionTotal
-	 *            the retention total
-	 * @param taxQuota
-	 *            the tax quota
-	 * @param basesPerAccount
-	 *            the bases per account
-	 * 
-	 * @throws ManagerBeanException
-	 *             the manager bean exception
-	 */
 	public List<AccountEntryDetail> insertEntryDetails(AccountEntry entry, Account account, String concept,	double invoiceTotal,
 			Map<Account, Double> retentionQuotasPerAccount, Map<Account, Double> taxQuotasPerAccount, 
 			Map<Account, Double> basesPerAccount,boolean save) throws ManagerBeanException {
@@ -431,19 +392,6 @@ public class AccountEntryInvoiceWriter {
 		return details;
 	}
 
-	/**
-	 * Insert account entry invoice.
-	 * 
-	 * @param entry
-	 *            the entry
-	 * @param invoice
-	 *            the invoice
-	 * 
-	 * @return the account entry invoice
-	 * 
-	 * @throws ManagerBeanException
-	 *             the manager bean exception
-	 */
 	public AccountEntryInvoice insertAccountEntryInvoice(AccountEntry entry, Invoice invoice) throws ManagerBeanException {
 		IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		AccountEntryInvoice accountEntryInvoice = new AccountEntryInvoice();
