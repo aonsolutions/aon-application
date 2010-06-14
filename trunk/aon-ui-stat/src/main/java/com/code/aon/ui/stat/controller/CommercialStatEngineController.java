@@ -3,6 +3,7 @@ package com.code.aon.ui.stat.controller;
 import java.sql.PreparedStatement;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -30,12 +32,18 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
 import com.code.aon.seller.dao.ISellerAlias;
 import com.code.aon.stat.Stat;
@@ -79,7 +87,7 @@ public class CommercialStatEngineController {
 	private List<ControlSummary> summary;
 	private List<ControlSummary> activitySummary;
 	private List<Integer> summaryGraph;
-	private List<OfferDetail> offerList;
+	private List<Offer> offerList;
 	private Integer numVisits;
 	private Integer numPendingVisits;
 	private Integer numOffers;
@@ -188,11 +196,11 @@ public class CommercialStatEngineController {
 		this.offersModel = offersModel;
 	}
 
-	public List<OfferDetail> getOfferList() {
+	public List<Offer> getOfferList() {
 		return offerList;
 	}
 
-	public void setOfferList(List<OfferDetail> offerList) {
+	public void setOfferList(List<Offer> offerList) {
 		this.offerList = offerList;
 	}
 
@@ -654,7 +662,7 @@ public class CommercialStatEngineController {
 	}
 	
 	public double getOfferTotalPrice() throws ManagerBeanException {
-		return getPriceStrategy().getTotalPrice(((OfferDetail) getOffersModel().getRowData()).getOffer(), ((OfferDetail) getOffersModel().getRowData()).getOffer().getTarget());
+		return getPriceStrategy().getTotalPrice(((Offer) getOffersModel().getRowData()), ((Offer) getOffersModel().getRowData()).getTarget());
 	}	
 	public double getDoneOfferTotalPrice() throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(((OfferDetail) getDoneOffersModel().getRowData()).getOffer(), ((OfferDetail)getDoneOffersModel().getRowData()).getOffer().getTarget());
@@ -1218,7 +1226,7 @@ public class CommercialStatEngineController {
 	public void onOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getOffersModel().getRowData()).getOffer().getId());
+		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((Offer) this.getOffersModel().getRowData()).getId());
 		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 	
@@ -1636,31 +1644,84 @@ public class CommercialStatEngineController {
 		setOffersModel(null);
 		setControlType(3);
 		setCategoryName(((Stat)  yearStatModel.getRowData()).getName());
-		String select = "select OfferDetail "
+
+		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_PRODUCT_PRODUCT_CATEGORY_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+		}
+		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
+		offerList= new LinkedList<Offer>();
+    	while(iter.hasNext()){
+    		Offer od = (Offer)iter.next();
+			offerList.add(od);
+    	}
+    	setOfferBackAction("commercial_category_stats_year");
+
+		/*String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.item.product.category = "
 				+ ((Stat) yearStatModel.getRowData()).getKey()
-				//+ " AND OfferDetail.offer.status = :statuses "  
 				+ " AND OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' group by OfferDetail.offer.id"
+				+ "' AND OfferDetail.offer.status = ALL( :statuses )"  	
+				+ " group by OfferDetail.offer.id"
 				+ " order by OfferDetail.offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		//query.setParameterList("statuses", this.params.getOfferStatuses());
+		query.setParameterList("statuses", this.params.getOfferStatuses());
 		offerList = query.list();
-		setOfferBackAction("commercial_category_stats_year");
+		setOfferBackAction("commercial_category_stats_year");*/
 	}
+	
+	public void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
+		Expression expToAdd = null;
+		for( Object value : values ) {
+			if ( value != null ) {
+				if ( expToAdd == null ) {
+					expToAdd = ExpressionUtilities.getEqualExpression(alias, value);				
+				} else {
+					Expression exp  = ExpressionUtilities.getEqualExpression(alias, value);
+					expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				}
+			}
+		}
+		if ( expToAdd != null ) {
+			criteria.addExpression(expToAdd);
+		}
+	}	
 
 	public void onCommercialProductOfferStats(ActionEvent e)
 			throws ManagerBeanException {
 		setOffersModel(null);
 		setControlType(2);
 		setProductName(((Stat) productStatModel.getRowData()).getName());
-		String select = "select OfferDetail "
+		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_ID),((Stat) productStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+		}
+		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
+		offerList= new LinkedList<Offer>();
+    	while(iter.hasNext()){
+    		Offer od = (Offer)iter.next();
+			offerList.add(od);
+    	}
+		
+	/*	String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.item.id = "
 				+ ((Stat) productStatModel.getRowData()).getKey()
@@ -1673,7 +1734,7 @@ public class CommercialStatEngineController {
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		offerList = query.list();
+		offerList = query.list();*/
 		setOfferBackAction("commercial_product_stats");
 	}
 
@@ -1681,6 +1742,23 @@ public class CommercialStatEngineController {
 			throws ManagerBeanException {
 		setOffersModel(null);
 		setZoneName(((Stat)  yearStatModel.getRowData()).getName());
+		
+	/*	IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_PRODUCT_PRODUCT_CATEGORY_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+		}
+		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
+		offerList= new LinkedList<Offer>();
+    	while(iter.hasNext()){
+    		Offer od = (Offer)iter.next();
+			offerList.add(od);
+    	}*/
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.address.geozone.id = "
@@ -1702,7 +1780,25 @@ public class CommercialStatEngineController {
 			throws ManagerBeanException {
 		setOffersModel(null);
 		setSellerName(((Stat)  yearStatModel.getRowData()).getName());
-		String select = "select OfferDetail "
+		
+		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_SELLER_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+		}
+		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
+		offerList= new LinkedList<Offer>();
+    	while(iter.hasNext()){
+    		Offer od = (Offer)iter.next();
+			offerList.add(od);
+    	}	
+		
+		/*String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.seller.id = "
 				+ ((Stat) yearStatModel.getRowData()).getKey()
@@ -1715,7 +1811,7 @@ public class CommercialStatEngineController {
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		offerList = query.list();
+		offerList = query.list();*/
 		setOfferBackAction("commercial_seller_stats_year");
 	}
 
@@ -1723,7 +1819,24 @@ public class CommercialStatEngineController {
 			throws ManagerBeanException {
 		setOffersModel(null);
 		setTargetName(((Stat)  yearStatModel.getRowData()).getName());
-		String select = "select OfferDetail "
+		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_TARGET_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+		}
+		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
+		offerList= new LinkedList<Offer>();
+    	while(iter.hasNext()){
+    		Offer od = (Offer)iter.next();
+			offerList.add(od);
+    	}
+		
+		/*String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.target.id = "
 				+ ((Stat) yearStatModel.getRowData()).getKey()
@@ -1736,7 +1849,7 @@ public class CommercialStatEngineController {
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		offerList = query.list();
+		offerList = query.list();*/
 		setOfferBackAction("commercial_target_stats_year");
 	}
 
