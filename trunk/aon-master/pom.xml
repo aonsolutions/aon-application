@@ -60,4 +60,68 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+        <profiles>
+                <profile>
+                        <id>rpm-release</id>
+                        <activation>
+                                <property>
+                                        <name>rpm.release</name>
+                                        <value>true</value>
+                                </property>
+                        </activation>
+                        <build>
+                                <plugins>
+                                        <!-- Para construir el RPM -->
+                                        <plugin>
+
+                                                <groupId>org.codehaus.mojo</groupId>
+                                                <artifactId>rpm-maven-plugin</artifactId>
+                                                <version>2.0.1</version>
+                                                <extensions>true</extensions>
+
+                                                <executions>
+                                                        <execution>
+                                                                <id>rpm-build</id>
+                                                                <goals>
+                                                                        <goal>attached-rpm</goal>
+                                                                </goals>
+                                                        </execution>
+
+                                                </executions>
+
+                                                <configuration>
+                                                        <group>Applications/Aon</group>
+                                                        <release>${buildNumber}</release>
+                                                        <copyright>2010, esferalia Networks S.A</copyright>
+                                                        <requires>
+                                                                <require>aon-directory-client &gt;= 5.0.0-4</require>
+                                                        </requires>
+                                                        <mappings>
+                                                                <mapping>
+                                                                        <filemode>644</filemode>
+                                                                        <username>root</username>
+                                                                        <groupname>root</groupname>
+                                                                        <directory>/usr/share/java</directory>
+                                                                        <sources>
+                                                                                <source>
+                                                                                        <includes>
+                                                                                                <include>*.jar</include>
+                                                                                        </includes>
+                                                                                        <location>target</location>
+                                                                                </source>
+                                                                        </sources>
+                                                                </mapping>
+                                                        </mappings>
+                                                        <postinstallScriptlet>
+                                                                <scriptFile>src/main/scripts/postinstall</scriptFile>
+                                                                <fileEncoding>utf-8</fileEncoding>
+                                                        </postinstallScriptlet>
+                                                </configuration>
+                                        </plugin>
+                                </plugins>
+                        </build>
+                </profile>
+        </profiles>
+
 </project>
