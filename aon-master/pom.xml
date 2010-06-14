@@ -25,7 +25,7 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon-dbutils</artifactId>
 			<version>${pom.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -124,16 +124,16 @@
                                                         <release>${buildNumber}</release>
                                                         <copyright>2010, esferalia Networks S.A</copyright>
                                                         <requires>
+                                                                <require>aon-dbutils</require>
                                                                 <require>aon-directory-client &gt;= 5.0.0-4</require>
                                                         </requires>
                                                         <mappings>
                                                                 <mapping>
-									<artifact/>	
-									<dependency>
-										<includes>
-											<include>com.code.aon:aon-dbutils</include>
-										</includes>
-									</dependency>
+									<artifact>
+										<classifiers>
+											<classifier></classifier>
+										</classifiers>
+									</artifact>	
                                                                         <filemode>644</filemode>
                                                                         <username>root</username>
                                                                         <groupname>root</groupname>
