@@ -1743,7 +1743,7 @@ public class CommercialStatEngineController {
 		setOffersModel(null);
 		setZoneName(((Stat)  yearStatModel.getRowData()).getName());
 		
-	/*	IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_PRODUCT_PRODUCT_CATEGORY_ID),((Stat) yearStatModel.getRowData()).getKey());
 		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
@@ -1758,8 +1758,8 @@ public class CommercialStatEngineController {
     	while(iter.hasNext()){
     		Offer od = (Offer)iter.next();
 			offerList.add(od);
-    	}*/
-		String select = "select OfferDetail "
+    	}
+		/*String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
 				+ "where  OfferDetail.offer.address.geozone.id = "
 				+ ((Stat) yearStatModel.getRowData()).getKey()
@@ -1772,7 +1772,7 @@ public class CommercialStatEngineController {
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		offerList = query.list();
+		offerList = query.list();*/
 		setOfferBackAction("commercial_geozone_stats_year");
 	}
 
