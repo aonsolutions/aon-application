@@ -129,10 +129,15 @@
                                                         <mappings>
                                                                 <mapping>
 									<artifact/>	
-									<dependency/>
+									<dependency>
+										<includes>
+											<include>com.code.aon:aon.dbutils</include>
+										</includes>
+									</dependency>
                                                                         <filemode>644</filemode>
                                                                         <username>root</username>
                                                                         <groupname>root</groupname>
+									<directory>/usr/share/java</directory>
                                                                 </mapping>
                                                         </mappings>
                                                         <postinstallScriptlet>
