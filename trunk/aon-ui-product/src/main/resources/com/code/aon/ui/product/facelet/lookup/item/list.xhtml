@@ -8,12 +8,12 @@
 
 <ui:composition>
 
-	<aon:column alias="Item.product.code"
-		styleClass="aon-editDataTable-numberColumn">
+	<aon:column alias="Item.product.category.name"
+		styleClass="aon-editDataTable-textColumn aon-nowrap">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_id}" />
+			<aon:outputText value="#{productBundle.product_category}" />
 		</f:facet>
-		<aon:outputText value="#{to.product.code}"/>
+		<aon:outputText value="#{to.product.category.name}" />
 	</aon:column>
 
 	<aon:column alias="Item.product.name"
@@ -26,12 +26,12 @@
 		</aon:outputText>
 	</aon:column>
 
-	<aon:column alias="Item.product.category.name"
-		styleClass="aon-editDataTable-textColumn aon-nowrap">
+	<aon:column alias="Item.product.code"
+		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
-			<aon:outputText value="#{productBundle.product_category}" />
+			<aon:outputText value="#{bundle.aon_id}" />
 		</f:facet>
-		<aon:outputText value="#{to.product.category.name}" />
+		<aon:outputText value="#{to.product.code}"/>
 	</aon:column>
 
 </ui:composition>
