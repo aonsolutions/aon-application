@@ -59,6 +59,7 @@
 		/>
 		<finance:invoice
 			showWarehouseData="false" 
+			showSendEmail="true"
 		/>
 	</finance:config>
 
