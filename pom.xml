@@ -20,6 +20,10 @@
 	<module>aon-parent</module>
 	<module>aon-web-parent</module>
 
+	<module>aon-dbutils</module>
+	<module>aon-master</module>
+
+	<module>aon-jsf-bridge<module>
 	<module>aon-account</module>
 	<module>aon-account-bridge</module>
 	<module>aon-accounting</module>
@@ -106,6 +110,8 @@
 	<module>aon-ui-supplier</module>
 	<module>aon-ui-warehouse</module>
 	<module>aon-ui-webmail</module>
+	<module>aon-ui-cms</module>
+	<module>aon-ui-dbutils</module>
 
 	<module>aon-web-account</module>
 	<module>aon-web-asset</module>
