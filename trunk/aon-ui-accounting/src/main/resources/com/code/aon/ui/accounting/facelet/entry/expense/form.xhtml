@@ -40,7 +40,7 @@
 					<aon:outputLabel for="AccountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="AccountEntry_accountPeriod"
-						value="#{expenseEntry.header.period}">
+						value="#{expenseEntry.entry.period}">
 						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
 					</aon:selectOneMenu>
@@ -48,14 +48,14 @@
 					<aon:outputLabel for="AccountEntry_date"
 						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="AccountEntry_date" required="true"
-						value="#{expenseEntry.header.date}"
+						value="#{expenseEntry.entry.date}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputLabel for="AccountEntry_registryBank"
 						value="#{configBundle.config_bank}" />
 					<aon:selectOneMenu id="AccountEntry_registryBank"
-						value="#{expenseEntry.header.registryBank}">
+						value="#{expenseEntry.entry.registryBank}">
 						<f:selectItem itemLabel="#{accountingBundle.accounting_def_cash_acc}" value="#{null}" />
 						<f:selectItems value="#{companyCollections.companyBanks}" />
 					</aon:selectOneMenu>
@@ -64,7 +64,7 @@
 						value="#{bundle.aon_concept}" />
 					<rich:comboBox id="AccountEntry_concept"
 						suggestionValues="#{accountingCollections.conceptsDescriptions}"
-						value="#{expenseEntry.header.concept}" required="true"
+						value="#{expenseEntry.entry.concept}" required="true"
 						maxlength="32" width="200" 
 						directInputSuggestions="true"
 						inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
@@ -75,7 +75,7 @@
 					<aon:outputLabel for="AccountEntry_account"
 						value="#{accountBundle.account_account}" />
 					<aon:selectOneMenu id="AccountEntry_account" required="true"
-						value="#{expenseEntry.header.account}">
+						value="#{expenseEntry.entry.account}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{accountCollections.expensesAccounts}" />
 					</aon:selectOneMenu>
@@ -83,14 +83,14 @@
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
 					<aon:selectOneRadio id="AccountEntry_securityLevel"
-						value="#{expenseEntry.header.securityLevel}">
+						value="#{expenseEntry.entry.securityLevel}">
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="AccountEntry_amount"
 						value="#{bundle.aon_amount}" />
 					<aon:inputText id="AccountEntry_amount"
-						value="#{expenseEntry.header.amount}" size="15"	/>
+						value="#{expenseEntry.entry.amount}" size="15"	/>
 
 				</aon:panelGrid>
 			</aon:div>
