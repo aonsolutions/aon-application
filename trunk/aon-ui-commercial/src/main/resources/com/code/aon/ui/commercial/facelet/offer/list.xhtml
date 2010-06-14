@@ -20,50 +20,9 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{offer}" />
 					<ui:define name="columns">
-						<aon:column alias="Offer.series,Offer.number"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.referenceCode}" />
-						</aon:column>
-	
-						<aon:column alias="Offer.issueDate"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.issueDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column alias="Offer.target.registry.surname,Offer.target.registry.name"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{commercialBundle.commercial_target}" />
-							</f:facet>
-							<aon:outputText value="#{to.target.registry.fullName}">
-								<aon:abbreviateConverter maxWidth="50" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column alias="Offer.target.registry.document"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_company_document}" />
-							</f:facet>
-							<aon:outputText value="#{to.target.registry.document}" />
-						</aon:column>
-		
-						<aon:column alias="Offer.status"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.status}" />
-						</aon:column>
+
+						<ui:include
+							src="/com/code/aon/ui/commercial/facelet/offer/listBasic.xhtml" />
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
