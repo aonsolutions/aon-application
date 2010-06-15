@@ -1662,24 +1662,6 @@ public class CommercialStatEngineController {
 			offerList.add(od);
     	}
     	setOfferBackAction("commercial_category_stats_year");
-
-		/*String select = "select OfferDetail "
-				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.item.product.category = "
-				+ ((Stat) yearStatModel.getRowData()).getKey()
-				+ " AND OfferDetail.offer.issueDate >= '"
-				+ new java.sql.Date(this.params.getFromDate().getTime())
-				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' AND OfferDetail.offer.status = ALL( :statuses )"  	
-				+ " group by OfferDetail.offer.id"
-				+ " order by OfferDetail.offer.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		query.setParameterList("statuses", this.params.getOfferStatuses());
-		offerList = query.list();
-		setOfferBackAction("commercial_category_stats_year");*/
 	}
 	
 	public void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
@@ -1720,21 +1702,6 @@ public class CommercialStatEngineController {
     		Offer od = (Offer)iter.next();
 			offerList.add(od);
     	}
-		
-	/*	String select = "select OfferDetail "
-				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.item.id = "
-				+ ((Stat) productStatModel.getRowData()).getKey()
-				+ " AND   OfferDetail.offer.issueDate >= '"
-				+ new java.sql.Date(this.params.getFromDate().getTime())
-				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' group by OfferDetail.offer.id"
-				+ " order by OfferDetail.offer.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		offerList = query.list();*/
 		setOfferBackAction("commercial_product_stats");
 	}
 
@@ -1745,7 +1712,7 @@ public class CommercialStatEngineController {
 		
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_PRODUCT_PRODUCT_CATEGORY_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ADDRESS_GEOZONE_ID),((Stat) yearStatModel.getRowData()).getKey());
 		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
 						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
@@ -1759,20 +1726,6 @@ public class CommercialStatEngineController {
     		Offer od = (Offer)iter.next();
 			offerList.add(od);
     	}
-		/*String select = "select OfferDetail "
-				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.address.geozone.id = "
-				+ ((Stat) yearStatModel.getRowData()).getKey()
-				+ " AND   OfferDetail.offer.issueDate >= '"
-				+ new java.sql.Date(this.params.getFromDate().getTime())
-				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' group by OfferDetail.offer.id"
-				+ " order by OfferDetail.offer.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		offerList = query.list();*/
 		setOfferBackAction("commercial_geozone_stats_year");
 	}
 
@@ -1797,21 +1750,6 @@ public class CommercialStatEngineController {
     		Offer od = (Offer)iter.next();
 			offerList.add(od);
     	}	
-		
-		/*String select = "select OfferDetail "
-				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.seller.id = "
-				+ ((Stat) yearStatModel.getRowData()).getKey()
-				+ " AND   OfferDetail.offer.issueDate >= '"
-				+ new java.sql.Date(this.params.getFromDate().getTime())
-				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' group by OfferDetail.offer.id"
-				+ " order by OfferDetail.offer.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		offerList = query.list();*/
 		setOfferBackAction("commercial_seller_stats_year");
 	}
 
