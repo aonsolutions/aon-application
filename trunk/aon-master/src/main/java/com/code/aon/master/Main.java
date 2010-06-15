@@ -32,21 +32,19 @@ public class Main {
 		try {
 			Arguments arguments = parseArgs(args);
 			VersionManager manager = new VersionManager();
+			System.out.printf("Updating database '%s'...", arguments.url );
 			Class.forName(arguments.driver);
 			Connection connection = 
 				DriverManager.getConnection(arguments.url,
 					arguments.user,
 					arguments.password);
 				manager.uptodateDatabase(connection);
-		} catch (SQLException e) {
-			System.err.print(e.getLocalizedMessage());
-		} catch ( AonSQLException e ){
-			System.err.print(e.getLocalizedMessage());
 		} catch ( IllegalArgumentsException e ){
 			printUsage(args);
-		} catch (ClassNotFoundException e) {
-			System.err.print(e.getLocalizedMessage());
+		} catch (Exception e) {
+			System.out.printf( "FAILURE (%s:%s)\r\n" ,e.getClass().getName(),  e.getMessage());
 		}
+		System.out.println("OK.");
 	}
 
 
