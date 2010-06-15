@@ -1,0 +1,20 @@
+. aondir-functions
+
+CLASSPATH=/usr/share/java/mysql-connector-java.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/slf4j-jcl-1.5.8.jar:/usr/share/java/slf4j-api-1.5.11.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/aon-dbutils-5.2.0-SNAPSHOT.jar:/usr/share/java/aon-master-5.2.0-SNAPSHOT.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/slf4j-api-1.5.11.jar:/usr/share/java/commons-logging-1.1.jar:/usr/share/java/commons-lang-2.5.jar 
+
+
+for db_connection in $(aondir_db_connections); do
+
+	URL=$(perl -e 'if ("'$db_connection'"=~ /([^?]*)/) { print "$1\n" }');
+	DB=$(perl -e 'if ("'$db_connection'"=~ /jdbc:mysql:\/\/\d+.\d+.\d+.\d+:\d+\/([^?]*)/) { print "$1\n" }');	
+	
+	echo -n "Actualizando '$DB'..." 
+	ERR=$(java -classpath $CLASSPATH com.code.aon.master.Main $URL  dbuser serubd2000 com.mysql.jdbc.Driver 2>&1)
+	[ $? -eq 0 ] && echo echo -e "\\033[1;32mOK\\033[0;39m" || echo -e "\\033[1;31mERROR $ERR\\033[0;39m"
+	
+fi
+
+
