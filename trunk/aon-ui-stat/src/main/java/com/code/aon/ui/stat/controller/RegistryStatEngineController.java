@@ -1,5 +1,6 @@
 package com.code.aon.ui.stat.controller;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -11,15 +12,23 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.Sales;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 
@@ -27,13 +36,13 @@ public class RegistryStatEngineController {
 
 	private Registry registry;
 	private DataModel pendingInvoiceModel;
-	private DataModel scoredInvoiceModel;
+	private DataModel unpayedFinanceModel;
 	private DataModel boughtProductModel;
 	private DataModel pendingDeliveryModel;
 	private DataModel pendingSalesModel;
 	private DataModel pendingOfferModel;
 	private List<Invoice> pendingInvoiceList;
-	private List<Invoice> scoredInvoiceList;
+	private List<Finance> pendingFinanceList;
 	private List<InvoiceDetail> boughtProductList;
 	private List<Delivery> pendingDeliveryList;
 	private List<Sales> pendingSalesList;
@@ -57,11 +66,6 @@ public class RegistryStatEngineController {
 
 	public double getPendingInvoicesTotalPrice() throws ManagerBeanException {
 		Invoice invoice = (Invoice) this.pendingInvoiceModel.getRowData();
-		return getPriceStrategy().getTotalPrice(invoice, invoice);
-	}
-
-	public double getScoredInvoicesTotalPrice() throws ManagerBeanException {
-		Invoice invoice = (Invoice) this.scoredInvoiceModel.getRowData();
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
 
@@ -91,15 +95,15 @@ public class RegistryStatEngineController {
 		this.pendingInvoiceModel = pendingInvoiceModel;
 	}
 
-	public DataModel getScoredInvoiceModel() {
-		if (scoredInvoiceModel == null) {
-			scoredInvoiceModel = new ListDataModel(getScoredInvoiceList());
+	public DataModel getUnpayedFinanceModel() {
+		if (unpayedFinanceModel == null) {
+			unpayedFinanceModel = new ListDataModel(getPendingFinanceList());
 		}
-		return scoredInvoiceModel;
+		return unpayedFinanceModel;
 	}
 
-	public void setScoredInvoiceModel(DataModel scoredInvoiceModel) {
-		this.scoredInvoiceModel = scoredInvoiceModel;
+	public void setUnpayedFinanceModel(DataModel model) {
+		this.unpayedFinanceModel = model;
 	}
 
 	public DataModel getBoughtProductModel() {
@@ -157,7 +161,7 @@ public class RegistryStatEngineController {
 	public List<Invoice> getPendingInvoiceList() {
 		try {
 			if (pendingInvoiceList == null) {
-				getPendingInvoices();
+				getInvoices();
 			}
 			return pendingInvoiceList;
 		} catch (ManagerBeanException e) {
@@ -171,12 +175,12 @@ public class RegistryStatEngineController {
 		this.pendingInvoiceList = pendingInvoiceList;
 	}
 
-	public List<Invoice> getScoredInvoiceList() {
+	public List<Finance> getPendingFinanceList() {
 		try {
-			if (scoredInvoiceList == null) {
-				getScoredInvoices();
+			if (pendingFinanceList == null) {
+				getPendingFinances();
 			}
-			return scoredInvoiceList;
+			return pendingFinanceList;
 		} catch (ManagerBeanException e) {
 			String msg = "Unable to load data.";
 			AonUtil.addErrorMessage(msg);
@@ -184,8 +188,8 @@ public class RegistryStatEngineController {
 		}
 	}
 
-	public void setScoredInvoiceList(List<Invoice> scoredInvoiceList) {
-		this.scoredInvoiceList = scoredInvoiceList;
+	public void setPendingFinanceList(List<Finance> list) {
+		this.pendingFinanceList = list;
 	}
 
 	public List<InvoiceDetail> getBoughtProductList() {
@@ -259,13 +263,19 @@ public class RegistryStatEngineController {
 	public void onRegistryStats(ActionEvent event) {
 		try {
 			setPendingInvoiceModel(null);
-			setScoredInvoiceModel(null);
+			setUnpayedFinanceModel(null);
 			setBoughtProductModel(null);
 			setPendingDeliveryModel(null);
 			setPendingSalesModel(null);
 			setPendingOfferModel(null);
-			getPendingInvoices();
-			getScoredInvoices();
+			setPendingInvoiceList(null);
+			setPendingFinanceList(null);
+			setBoughtProductList(null);
+			setPendingDeliveryList(null);
+			setPendingSalesList(null);
+			setPendingOfferList(null);
+			getInvoices();
+			getPendingFinances();
 			getBoughtProducts();
 			getPendingDeliveries();
 			getPendingSales();
@@ -279,16 +289,22 @@ public class RegistryStatEngineController {
 
 	public void getRegistryData() {
 		setPendingInvoiceModel(null);
-		setScoredInvoiceModel(null);
+		setUnpayedFinanceModel(null);
 		setBoughtProductModel(null);
 		setPendingDeliveryModel(null);
 		setPendingSalesModel(null);
 		setPendingOfferModel(null);
+		setPendingInvoiceList(null);
+		setPendingFinanceList(null);
+		setBoughtProductList(null);
+		setPendingDeliveryList(null);
+		setPendingSalesList(null);
+		setPendingOfferList(null);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void getPendingInvoices() throws ManagerBeanException {
-		String select = "select Invoice " + "from Invoice as Invoice " + "where Invoice.type=1 AND Invoice.status =0 AND Invoice.registry.id = "
+	public void getInvoices() throws ManagerBeanException {
+		String select = "select Invoice " + "from Invoice as Invoice " + "where Invoice.type=1  AND Invoice.registry.id = "
 				+ registry.getId() + "order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -296,12 +312,12 @@ public class RegistryStatEngineController {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void getScoredInvoices() throws ManagerBeanException {
-		String select = "select Invoice " + "from Invoice as Invoice " + "where Invoice.type=1 AND Invoice.status = 1 AND Invoice.registry.id = "
-				+ registry.getId() + "order by Invoice.issueDate desc";
+	public void getPendingFinances() throws ManagerBeanException {
+		String select = "select Finance " + "from Finance as Finance " + "where Finance.invoice.type=1 AND Finance.financeStatus = 0 AND Finance.invoice.registry.id = "
+				+ registry.getId() + "order by Finance.invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
-		scoredInvoiceList = query.list();
+		pendingFinanceList = query.list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -346,4 +362,34 @@ public class RegistryStatEngineController {
 		Invoice invoice = (Invoice) this.pendingInvoiceModel.getRowData();
 		return invoice.getReferenceCode();
 	}
+	
+	public FinanceStatus getFinanceStatus() throws ManagerBeanException {
+		Invoice invoice = ((Invoice) this.getPendingInvoiceModel().getRowData());
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
+			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
+				return FinanceStatus.PENDING;
+			}
+		}
+		return (financeBean.getCount(criteria) == 0) ? FinanceStatus.PENDING : FinanceStatus.PAID;
+	}	
+	
+	public void onInvoicePdf(ActionEvent event) throws ManagerBeanException {
+	
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), ((Invoice) this.getPendingInvoiceModel().getRowData()).getId());
+			FormUtil.getController("invoicePrint").setCriteria(criteria);
+	}
+	public void onFinancePdf(ActionEvent event) throws ManagerBeanException {
+		
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), ((Finance) this.getUnpayedFinanceModel().getRowData()).getInvoice().getId());
+		FormUtil.getController("invoicePrint").setCriteria(criteria);
+}
 }
