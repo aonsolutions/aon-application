@@ -1,12 +1,26 @@
 
 #/bin/sh
 
+
+fucntion link(){
+	local LIBRARY=$1
+	JAR=$(find /usr/share/java -name "${LIBRARY}-*.jar")
+	[ ! -z $JAR  ] && ln -sf $JAR ${LIBRARY}.jar ;
+}
+
+
+link aon-master
+link slf4j-api
+link slf4j-jcl
+link commons-lang
+link commons-logging
+
 . aondir-functions
 
 CLASSPATH=/usr/share/java/mysql-connector-java.jar
-CLASSPATH=$CLASSPATH:/usr/share/java/slf4j-jcl-1.5.8.jar:/usr/share/java/slf4j-api-1.5.11.jar
-CLASSPATH=$CLASSPATH:/usr/share/java/aon-dbutils-5.2.0-SNAPSHOT.jar:/usr/share/java/aon-master-5.2.0-SNAPSHOT.jar
-CLASSPATH=$CLASSPATH:/usr/share/java/slf4j-api-1.5.11.jar:/usr/share/java/commons-logging-1.1.jar:/usr/share/java/commons-lang-2.5.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/aon-dbutils.jar:/usr/share/java/aon-master.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/slf4j-jcl.jar:/usr/share/java/slf4j-api.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/commons-logging.jar:/usr/share/java/commons-lang.jar
 
 
 
