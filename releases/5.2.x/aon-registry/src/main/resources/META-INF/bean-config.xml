@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="">
+		<pojo>com.code.aon.registry.RegistryPayMethod</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.registry.event.RegistryPayMethodBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+</bean-config>

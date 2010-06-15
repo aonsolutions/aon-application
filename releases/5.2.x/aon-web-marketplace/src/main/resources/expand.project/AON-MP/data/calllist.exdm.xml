@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="calllist">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" length="25" name="description"
+            sqlType="varchar" type="string"/>
+        <column label="" name="date" sqlType="date" type="date"/>
+        <column label="" length="4" name="status" sqlType="tinyint" type="string"/>
+        <column label="" name="type" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="calllist_ibfk_1" foreignPath="data/calllist_type.exdm.xml">
+            <sourceColumns>
+                <column name="type"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

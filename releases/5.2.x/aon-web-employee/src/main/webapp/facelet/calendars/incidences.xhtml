@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/formHead.xhtml" />
+		<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Event.js">
+			// nothing
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="incidencesForm">
+
+			<ui:include src="/facelet/schedule/action/incidence.xhtml" />
+		
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>

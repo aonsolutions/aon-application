@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div id="aonLogin" styleClass="aon-login">
+		<aon:outputText value="LOGIIIIIINNNNNN" />
+	</aon:div>
+</ui:composition>
+<!-- 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:c="http://java.sun.com/jstl/core"		
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<f:view>
+	<head>
+		<title>
+			<ui:insert name="title"/>
+		</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Expires" content="0" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Cache-Control" content="no-store" />
+		<a4j:loadStyle src="/aonResource/com/code/aon/ui/resources/facelet/login/css/login-aon.css"/>
+		<a4j:loadScript src="/aonResource/com/code/aon/ui/resources/facelet/login/js/Login.js"/>		
+		<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/#{aonResource.resolve['/images/favicon.ico']}" />
+	</head>
+
+	<body id="aon-body" onload="loadInnerWindow();">
+		<aon:div styleClass="aon-login">
+			<aon:panelGrid style="width:100%;height:100%;">
+				<aon:div styleClass="aon-login-box-internal">
+					<form id="login" method="post" action="j_security_check">
+						<aon:div styleClass="aon-login-title">
+							<aon:outputText value=" / #{appBundle.aon_application_title}"/>
+						</aon:div>
+						<aon:div styleClass="aon-login-box">
+							<aon:outputText value="#{securityBundle.aon_login_label}" styleClass="aon-login-help"/>
+							<ui:insert name="error"/>
+							
+							<aon:panelGrid style="width:100%;" columns="2" columnClasses="aon-login-box-left,aon-login-box-right">
+						
+								<aon:outputLabel for="j_username_view" value="#{securityBundle.aon_login_user}:" styleClass="aon-login-label" />
+								<input type="text" id="j_username_view" name="j_username_view" class="aon-login-input"/>
+							
+								<aon:outputLabel for="j_password" value="#{securityBundle.aon_login_passwd}:"  styleClass="aon-login-label"/>
+								<input type="password" id="j_password" name="j_password" class="aon-login-input" />
+								
+								<aon:outputLabel for="login_btn" value="" />
+								<input id="login_btn" name="login_btn" type="submit" value="Validar" 
+										onclick="concatHost();" class="aon-login-button"/>
+											
+							</aon:panelGrid>
+							<input type="hidden" id="login_domain" name="login_domain"
+								value="#{domainResolver.domain}" />
+							<input type="hidden" id="j_username" name="j_username" />
+							
+							<aon:div styleClass="aon-login-info">
+								<aon:div styleClass="aon-login-info-title">
+									<aon:outputText value="#{bundle.aon_login_support}:" />
+								</aon:div>
+	
+								<aon:div styleClass="aon-bold">
+									<aon:outputText value="#{bundle.aon_login_phone}" />
+								</aon:div>
+								<aon:div>
+									<h:outputLink value="mailto:#{bundle.aon_login_email}" target="_blank" >
+										<aon:outputText value="#{bundle.aon_login_email}" />
+									</h:outputLink>
+								</aon:div>
+							</aon:div>							
+	
+							<aon:div styleClass="aon-login-info2">						
+								 <aon:outputText value="#{bundle.aon_trademark}" />
+								 <aon:outputText value="#{bundle.aon_esferalia} "  styleClass="aon-login-info2-company"/>
+								 <aon:outputText value="#{bundle.aon_networks}" styleClass="aon-login-info2-company"/>
+							</aon:div>	
+						</aon:div>
+					</form>
+				</aon:div>
+			</aon:panelGrid>
+		</aon:div>	
+	</body>
+  
+</f:view>
+</html>
+-->

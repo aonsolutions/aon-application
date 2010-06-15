@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+<ui:composition>
+
+<!-- RECURRENCE -->
+	<t:panelTab id="recurrence" label="#{plannerBundle.aon_planner_event_recurrence}" rendered="#{event.recur}" >
+		<t:div styleClass="aon-form-group" >
+			<t:div styleClass="aon-form-group-title" >
+				<h:outputText value="#{plannerBundle.aon_planner_event_time}" />
+			</t:div>
+			<t:div styleClass="aon-form-group-body">
+				<h:outputLabel for="Event_startTime_recur" value="#{appBundle.aon_start_time}" />
+				<t:inputDate id="Event_startTime_recur" forceId="#{true}" styleClass="aon-form-input-text"
+					type="short_time" 
+					disabled="#{event.event.allDay or event.event.holiday}"
+					value="#{event.startTime}"
+					onchange="document.getElementById('Event_startTime_recur_summary').value = document.getElementById('Event_startTime_recur.hours').value + ':' + document.getElementById('Event_startTime_recur.minutes').value;" 
+					 />
+
+				<f:verbatim>&#160;</f:verbatim>
+				<f:verbatim>&#160;</f:verbatim>
+	
+				<h:outputLabel for="Event_endTime_recur" value="#{appBundle.aon_end_time}" />
+				<t:inputDate id="Event_endTime_recur" forceId="#{true}" styleClass="aon-form-input-text"
+					type="short_time" 
+					disabled="#{event.event.allDay or event.event.holiday}"
+					value="#{event.endTime}" 
+					onchange="document.getElementById('Event_endTime_recur_summary').value = document.getElementById('Event_endTime_recur.hours').value + ':' + document.getElementById('Event_endTime_recur.minutes').value;" 
+					/>
+			</t:div>
+		</t:div>
+
+			<t:div styleClass="aon-form-group">
+				<t:div styleClass="aon-form-group-title" >
+					<h:outputText value="#{plannerBundle.aon_planner_event_frequency}" />
+				</t:div>
+				<t:div styleClass="aon-form-group-body">
+		            <t:panelGrid columns="2" dir="true" cellpadding="0" cellspacing="0" >
+						<t:panelGroup>
+							<t:div style="padding:0 10px 0 0;border-right:#ccc 1px solid;">
+				                <t:selectOneRadio id="Event_frequency" forceId="#{true}" 
+				                				  value="#{event.recurrence.recur.frequency}" layout="pageDirection" 
+				                				  styleClass="aon-form-selectOneRadio-field" 
+				                				  onclick="checkFrequency();" >
+				                    <f:selectItem itemValue="DAILY" itemLabel="#{plannerBundle.aon_planner_event_daily}" />
+				                    <f:selectItem itemValue="WEEKLY" itemLabel="#{plannerBundle.aon_planner_event_weekly}" />
+									<f:selectItem itemValue="MONTHLY" itemLabel="#{plannerBundle.aon_planner_event_monthly}" />
+				                    <f:selectItem itemValue="YEARLY" itemLabel="#{plannerBundle.aon_planner_event_yearly}" />
+				                </t:selectOneRadio>
+				             </t:div>
+						</t:panelGroup >
+
+						<t:panelGroup style="text-align:left;">
+						
+			                <t:div id="frequency_DAILY" forceId="#{true}" >
+					           <t:div style="padding:2px 10px;">					            	
+					                <t:selectOneRadio id="Event_dailyFreq" 
+					                			value="#{event.recurrence.daily.id}" 
+					                			layout="spread" styleClass="aon-form-selectOneRadio-field">
+					                    <f:selectItem itemValue="0" itemLabel="#{plannerBundle.aon_planner_event_each}" />
+					                    <!-- f:selectItem itemValue="1" itemLabel="#{plannerBundle.aon_planner_event_daily_all}" / -->
+					                </t:selectOneRadio>
+						    </t:div>         
+							 <t:div style="padding:2px 10px;">				
+								<t:radio for="Event_dailyFreq" index="0" />
+								<h:inputText value="#{event.recurrence.daily.interval}" size="1" styleClass="aon-form-input-text" style="text-align:right;" />
+								<h:outputText value="#{plannerBundle.aon_planner_event_daily_0}" />
+							</t:div>		
+						            
+									<!--h:panelGroup >
+							            <t:radio for="Event_dailyFreq" index="1" />
+						            </h:panelGroup -->
+					            
+			                </t:div>
+			                
+			                <t:div id="frequency_WEEKLY" forceId="#{true}" >
+								 <t:div style="padding:2px 10px;">	
+										<h:outputText value="#{plannerBundle.aon_planner_event_each}" />
+										<h:inputText value="#{event.recurrence.weekly.interval}" size="1" styleClass="aon-form-input-text" style="text-align:right;" />
+										<h:outputText value="#{plannerBundle.aon_planner_event_weekly_0}" />
+						          </t:div>
+						          <t:div style="padding:2px 10px;">	
+										<t:selectManyCheckbox id="selone_days" value="#{event.recurrence.weekly.days}" 
+												layout="pageDirection" layoutWidth="5" styleClass="aon-form-selectBooleanCheckbox">
+							                <f:selectItems value="#{event.recurrence.days}" />
+							            </t:selectManyCheckbox>
+						          </t:div>
+			                </t:div>
+			                
+			                <t:div id="frequency_MONTHLY" forceId="#{true}" >
+					             
+					         
+					            	<t:div style="padding:2px 10px;">	
+					             	  <t:selectOneRadio id="Event_monthlyFreq" 
+					                			value="#{event.recurrence.monthly.id}" 
+					                			layout="spread" styleClass="aon-form-selectOneRadio-field" >
+					                    <f:selectItem itemValue="0" itemLabel="#{plannerBundle.aon_planner_event_each}" />
+					                    <f:selectItem itemValue="1" itemLabel="" />
+					                </t:selectOneRadio>
+					               </t:div>
+					        
+									   <t:div style="padding:2px 10px;">	
+											<t:radio for="Event_monthlyFreq" index="0" />
+											<h:inputText value="#{event.recurrence.monthly.interval}" size="1" styleClass="aon-form-input-text" style="text-align:right;" />
+											<h:outputText value="#{plannerBundle.aon_planner_event_monthly_0}" />
+							           </t:div>
+									   <t:div style="padding:2px 10px;">	
+								            <t:radio for="Event_monthlyFreq" index="1" />
+											<f:verbatim>&#160;</f:verbatim>
+											<h:selectOneMenu id="Event_monthlyFreq_location" value="#{event.recurrence.monthly.dayMonthLocation}" styleClass="aon-form-selectOneMenu-field" >
+												<f:selectItems id="month_locations" value="#{event.recurrence.dayMonthLocations}" />
+											</h:selectOneMenu>
+										
+											<f:verbatim>&#160;</f:verbatim>
+											<h:selectOneMenu id="Event_monthlyFreq_day" value="#{event.recurrence.monthly.day}" styleClass="aon-form-selectOneMenu-field" >
+												<f:selectItems id="month_days" value="#{event.recurrence.days}" />
+											</h:selectOneMenu>
+											<h:outputText value="#{plannerBundle.aon_planner_event_each}" />
+											<h:inputText value="#{event.recurrence.monthly.rangeInterval}" size="1" styleClass="aon-form-input-text" style="text-align:right;" />
+											<h:outputText value="#{plannerBundle.aon_planner_event_monthly_0}" />
+							           </t:div>
+							         
+						        
+			                </t:div>
+			                
+			                <t:div id="frequency_YEARLY" forceId="#{true}" >
+								 <t:div style="padding:2px 10px;">	
+					                <t:selectOneRadio id="Event_yearlyFreq" 
+					                			value="#{event.recurrence.yearly.id}" 
+					                			layout="spread" styleClass="aon-form-selectOneRadio-field">
+					                    <f:selectItem itemValue="0" itemLabel="#{plannerBundle.aon_planner_event_each}" />
+					                    <f:selectItem itemValue="1" itemLabel="" />
+					                </t:selectOneRadio>
+								</t:div>
+								<t:div style="padding:2px 10px;">	
+										<t:radio for="Event_yearlyFreq" index="0" />
+										<h:inputText value="#{event.recurrence.yearly.interval}" size="1" styleClass="aon-form-input-text" style="text-align:right;" />
+										<h:outputText value="#{plannerBundle.aon_planner_event_yearly_0}" />
+						         </t:div>
+								 <t:div style="padding:2px 10px;">	
+							            <t:radio for="Event_yearlyFreq" index="1" />
+										<h:selectOneMenu id="Event_yearlyFreq_location" 
+												value="#{event.recurrence.yearly.dayMonthLocation}" 
+												styleClass="aon-form-selectOneMenu-field" >
+											<f:selectItems id="year_locations" value="#{event.recurrence.dayMonthLocations}" />
+										</h:selectOneMenu>
+										<h:selectOneMenu id="Event_yearlyFreq_day" 
+												value="#{event.recurrence.yearly.day}" 
+												styleClass="aon-form-selectOneMenu-field" >
+											<f:selectItems id="year_days" value="#{event.recurrence.days}" />
+										</h:selectOneMenu>
+										<h:selectOneMenu id="Event_yearlyFreq_months" 
+												value="#{event.recurrence.yearly.month}" 
+												styleClass="aon-form-selectOneMenu-field" >
+											<f:selectItems id="months" value="#{event.recurrence.months}" />
+										</h:selectOneMenu>
+						          </t:div>
+			                </t:div>
+			                
+						</t:panelGroup>
+		            </t:panelGrid>
+				</t:div>
+			</t:div>
+
+		<t:div styleClass="aon-form-group">
+			<t:div styleClass="aon-form-group-title" >
+				<h:outputText value="#{plannerBundle.aon_planner_event_interval}" />
+			</t:div>
+			<t:div styleClass="aon-form-group-body">
+	            <h:panelGrid columns="4" width="100%">
+					<h:outputLabel for="Event_startDate_recur" value="#{plannerBundle.aon_planner_event_start}" />
+					<h:panelGroup style="white-space:nowrap;width:100%;">
+						<t:inputText id="Event_startDate_recur" forceId="#{true}"
+								styleClass="aon-form-input-text" maxlength="12"
+								value="#{event.startDate}" 
+								onchange="document.getElementById('Event_startDate_recur_summary').value = this.value;" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</t:inputText>
+						<t:commandButton styleClass="aon-form-calendar-button"
+							id="Event_startDate_recur_button" forceId="#{true}" 
+							value=""
+							immediate="true" />
+						<script type="text/javascript">
+						  Calendar.setup( {
+							inputField  : "Event_startDate_recur", button : "Event_startDate_recur_button",
+							ifFormat    : "#{appBundle.aon_calendar_pattern}" } );
+						</script>
+		            </h:panelGroup>
+					
+		            <h:panelGrid columns="1">
+		                <t:selectOneRadio id="Event_interval" forceId="#{true}" value="#{event.recurrence.untilType}" 
+		                			layout="spread" styleClass="aon-form-selectOneRadio-field" >
+		                    <f:selectItem itemValue="0" itemLabel="#{plannerBundle.aon_planner_event_interval_0}" />
+		                    <f:selectItem itemValue="1" itemLabel="#{plannerBundle.aon_planner_event_interval_1}" />
+		                    <f:selectItem itemValue="2" itemLabel="#{plannerBundle.aon_planner_event_interval_2}" />
+		                </t:selectOneRadio>
+						<h:panelGroup >
+				            <t:radio for="Event_interval" index="0" />
+			            </h:panelGroup>
+						<h:panelGroup >
+							<t:radio for="Event_interval" index="1" />
+							<t:inputText id="Event_recurrence_count" forceId="#{true}" value="#{event.recurrence.count}" 
+										onchange="this.form.Event_interval[1].checked='true';document.getElementById('Event_endDate_recur').value='';" 
+										size="1" styleClass="aon-form-input-text" style="text-align:right;" />
+			            </h:panelGroup>
+						<h:panelGroup style="white-space:nowrap;width:100%;">
+							<t:radio for="Event_interval" index="2" />
+							<f:verbatim>&#160;</f:verbatim>
+							<t:inputText id="Event_endDate_recur" forceId="#{true}"
+									styleClass="aon-form-input-text" maxlength="12"
+									value="#{event.recurrence.until}" 
+									onchange="document.getElementById('Event_endDate_recur_summary').value = this.value;" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-calendar-button"
+								id="Event_endDate_recur_button" forceId="#{true}" 
+								value=""
+								immediate="true" />
+							<script type="text/javascript">
+							  Calendar.setup( {
+								inputField  : "Event_endDate_recur", button : "Event_endDate_recur_button",
+								ifFormat    : "#{appBundle.aon_calendar_pattern}" } );
+							</script>
+		             	</h:panelGroup>
+		            </h:panelGrid>
+				</h:panelGrid>
+			</t:div>
+		</t:div>
+	</t:panelTab>
+
+</ui:composition>
+</body>
+</html>
+
+	

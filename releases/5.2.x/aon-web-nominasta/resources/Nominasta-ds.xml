@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE datasources
+    PUBLIC "-//JBoss//DTD JBOSS JCA Config 1.5//EN"
+    "http://www.jboss.org/j2ee/dtd/jboss-ds_1_5.dtd">
+    
+<datasources>
+   
+   <local-tx-datasource>
+      <jndi-name>NominastaDS</jndi-name>
+      <connection-url>jdbc:ctsql://192.168.2.40:1101/empre055;DBPATH=c:/trabajo/DATABASES;RTRIMCHAR=true</connection-url>
+      <driver-class>com.transtools.jdbc.CtsqlJdbcDriver</driver-class>
+      <user-name>ctl</user-name>
+      <password>ctl</password>
+   </local-tx-datasource>
+    
+</datasources>

@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="trabajadorList">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_newpayroll_it}" />
+				<ui:param name="controller" value="#{itWizard}" />
+				
+				<aon:methodParam name="searchAction" value="mntoit_search" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSearchButton" value="true" />
+			</ui:include>
+			
+			<ui:include 
+				src="./navigation/toolbar.xhtml">
+				<ui:param name="flowPosition" value="list" />
+			</ui:include>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+			
+<!--  
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{persona}" />
+					<ui:param name="skipResetButton" value="true" />
+					<aon:methodParam name="rowSelectorAction" value="mntoit_form" />
+					<aon:methodParam name="rowSelectorActionListener" value="#{persona.onSelect}" />
+					<ui:param name="columnClasses"
+						value="aon-editDataTable-textColumn, 
+							aon-editDataTable-textColumn, 
+							aon-editDataTable-textColumn" />
+					<ui:define name="columns">
+-->
+
+				<aon:dataTable id="trabajadorData" value="#{itWizard.model}"
+					var="to" rows="20" rendered="#{itWizard.model.rowCount > 0}"
+					columnClasses="
+					aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn">
+
+					<aon:rowSelector action="mntoit_form"
+						actionListener="#{itWizard.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="PERSONA" />
+						</f:facet>
+						<aon:outputText value="#{to.persona.cdg}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="TRABAJADOR" />
+						</f:facet>
+						<aon:outputText value="#{to.cdg}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
+						</f:facet>
+						<aon:outputText value="#{to.persona.numdoc}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.persona.descripcion} #{to.persona.apellido2}, #{to.persona.nombre}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_pricipales_personas_numss}" />
+						</f:facet>
+						<aon:outputText value="#{to.persona.numss}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_trabajador_empresa}" />
+						</f:facet>
+						<aon:outputText value="#{to.empresa.descripcion}" />
+					</aon:column>
+
+<!--  
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}" />
+					</aon:column>
+-->
+
+
+<!--  
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_empresa_cdg}" />
+						</f:facet>
+						<aon:outputText value="#{to.fecalt}" />
+					</aon:column>
+
+
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
+						</f:facet>
+						<aon:outputText value="#{to.fecbaj}" />
+					</aon:column>
+-->
+
+
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="trabajadorData" showNote="true" />
+<!--  
+					</ui:define>
+				</ui:decorate>
+-->
+
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{financeBundle.finance_vat_report_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{vatReport.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="vat_report_list" />
+
+					<aon:outputLabel for="reportDate"
+						value="#{financeBundle.finance_report_date}" />
+					<aon:panelGrid columns="1">
+						<aon:selectInputDate id="reportDate" value="#{vatReport.date}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:panelGrid>
+
+					<aon:outputLabel for="Vat_period"
+						value="#{financeBundle.finance_vat_period}" />
+					<aon:panelGrid columns="2">
+						<aon:inputText id="Vat_Year" 
+							value="#{vatReport.year}" size="5"
+							reRender="entryDate-From,entryDate-To"
+							valueChangeListener="#{vatReport.onYearChanged}"
+							focus="Vat_period"
+							maxlength="4" />
+
+						<aon:selectOneMenu id="Vat_period"
+							valueChangeListener="#{vatReport.onVatPeriodChanged}"
+							reRender="entryDate-From,entryDate-To"
+							value="#{vatReport.vatPeriod}">
+							<f:selectItems value="#{financeCollections.vatPeriods}" />
+						</aon:selectOneMenu>
+					</aon:panelGrid>
+
+					<aon:outputLabel for="entryDate-From"
+						value="#{financeBundle.finance_tax_date}" />
+					<aon:panelGrid columns="3">
+						<aon:selectInputDate id="entryDate-From"
+							value="#{vatReport.fromDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+						<aon:outputLabel for="entryDate-To" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="entryDate-To" value="#{vatReport.toDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:panelGrid>
+
+					<aon:outputLabel for="invoiceDate-From"
+						value="#{financeBundle.finance_invoice_date}" />
+					<aon:panelGrid columns="3">
+						<aon:selectInputDate id="invoiceDate-From"
+							value="#{vatReport.fromInvoiceDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+
+						<aon:outputLabel for="entryDate-To" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="invoiceDate-To"
+							value="#{vatReport.toInvoiceDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</aon:panelGrid>
+
+					<aon:outputLabel for="entryDate-From"
+						value="#{financeBundle.finance_invoice_order}" />
+					<aon:panelGrid columns="3">
+						<aon:div>
+							<aon:inputText id="From_Series" value="#{vatReport.fromSeries}" size="4"/>
+							<aon:inputText id="From_Number" value="#{vatReport.fromNumber}" size="10"
+								style="margin-left: 0.5em;"/>
+						</aon:div>
+						<aon:outputLabel for="entryDate-To" value="#{bundle.aon_date_to}" />
+						<aon:div>
+							<aon:inputText id="To_Series" value="#{vatReport.toSeries}" size="4"/>
+							<aon:inputText id="To_Number" value="#{vatReport.toNumber}" size="10"
+								style="margin-left: 0.5em;"/>
+						</aon:div>
+					</aon:panelGrid>
+
+					<aon:outputLabel for="AccountEntry_securityLevel" value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu id="AccountEntry_securityLevel" value="#{vatReport.securityLevel}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Vat_type"
+						value="#{financeBundle.finance_invoice_order_by}" />
+					<aon:selectOneMenu id="Vat_type" value="#{vatReport.order}" style="margin-left: 0.5em;">
+						<f:selectItems value="#{financeCollections.vatReportOrders}" />
+					</aon:selectOneMenu>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

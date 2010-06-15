@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showIncomeTransferWindow">
+		<c:if test="#{purchaseInvoice.showIncomeTransferWindow}">
+			<rich:modalPanel id="incomeTransferModalPanel" minHeight="580"
+				minWidth="760" rendered="#{purchaseInvoice.showIncomeTransferWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{financeBundle.finance_invoice_deliveries}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showIncomeTransferWindow" immediate="true">
+							<f:setPropertyActionListener
+								target="#{purchaseInvoice.showIncomeTransferWindow}"
+								value="#{false}" />
+							<f:setPropertyActionListener
+								target="#{purchaseInvoice.incomeTransferManager}"
+								value="#{null}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="incomeTransferForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar" rendered="#{!purchaseInvoice.readOnly}">
+									<aon:commandButton id="incomeTransfer-selectAll"
+										value="#{bundle.aon_check_all}"
+										rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+										actionListener="#{purchaseInvoice.incomeTransferManager.checkAllIncomes}" 
+										reRender="incomeData" />	
+									<aon:commandButton id="incomeTransfer-selectNone"
+										value="#{bundle.aon_uncheck_all}"
+										rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+										actionListener="#{purchaseInvoice.incomeTransferManager.checkNoneIncomes}" 
+										reRender="incomeData" />	
+									<aon:commandButton id="incomeTransfer-accept"
+										value="#{financeBundle.finance_invoice_to_transfer}"
+										rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
+										reRender="showIncomeTransferWindow,invoiceDetails,menuExt"
+										actionListener="#{purchaseInvoice.onIncomeTransfer}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<f:setPropertyActionListener
+											target="#{purchaseInvoice.showIncomeTransferWindow}"
+											value="#{false}" />
+										<f:setPropertyActionListener
+											target="#{purchaseInvoice.incomeTransferManager}"
+											value="#{null}" />
+									</aon:commandButton>
+									<aon:commandButton id="incomeTransfer-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showIncomeTransferWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{purchaseInvoice.showIncomeTransferWindow}"
+											value="#{false}" />
+										<f:setPropertyActionListener
+											target="#{purchaseInvoice.incomeTransferManager}"
+											value="#{null}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area">
+
+									<aon:dataTable id="incomeData" value="#{purchaseInvoice.incomeTransferManager.incomeModel}"
+										var="to" rows="10" rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
+										columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+											aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
+
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:selectBooleanCheckbox id="IncomeCheck"
+												value="#{purchaseInvoice.incomeTransferManager.incomeRowChecked}"
+												rendered="#{!purchaseInvoice.readOnly}"
+												valueChangeListener="#{purchaseInvoice.incomeTransferManager.incomeRowSelected}"
+												reRender="detailDataContainer" ajaxSingle="true" />	
+										</aon:column>
+			
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+											</f:facet>
+											<aon:outputText value="#{to.referenceCode}" />
+										</aon:column>
+
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="#{bundle.aon_date}" />
+											</f:facet>
+											<aon:outputText value="#{to.issueTime}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+										</aon:column>
+
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<h:outputText value="#{supplierBundle.supplier_supplier}" />
+											</f:facet>
+											<aon:outputText value="#{to.supplier.registry.fullName}">
+												<aon:abbreviateConverter maxWidth="50" />
+											</aon:outputText>
+										</aon:column>
+
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="#{bundle.aon_total}" />
+											</f:facet>
+											<aon:outputText value="#{purchaseInvoice.incomeTransferManager.incomeTotalPrice}">
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											</aon:outputText>
+										</aon:column>
+
+										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
+											<f:facet name="header">
+												<aon:outputText value="&#160;" />
+											</f:facet>
+											<aon:commandButton value="&#160;" immediate="true"
+												title="#{financeBundle.finance_invoice_see_delivery_details}"
+												styleClass="aon-finding-toolbar-item aon-icon-tree-root aon-finding-toolbar-item-no-border"
+												actionListener="#{purchaseInvoice.incomeTransferManager.onSelectIncome}"
+												reRender="incomeData,detailDataContainer" ajaxSingle="true">
+											</aon:commandButton>															
+										</aon:column>
+									</aon:dataTable>
+					
+									<aon:dataScroller2 for="incomeData" showNote="true" />
+
+
+									<aon:div id="detailDataContainer">
+										<aon:dataTable id="detailData" value="#{purchaseInvoice.incomeTransferManager.detailModel}"
+											var="to" rows="0" rendered="#{purchaseInvoice.incomeTransferManager.detailModel.rowCount > 0}"
+											columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, 
+												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn">
+	
+											<aon:column>
+												<f:facet name="header">
+													<h:outputText value="#{productBundle.product_item}" />
+												</f:facet>
+												<aon:outputText value="#{to.description}">
+													<aon:abbreviateConverter maxWidth="50" />
+												</aon:outputText>
+											</aon:column>
+	
+											<aon:column>
+												<f:facet name="header">
+													<h:outputText value="#{bundle.aon_quantity}" />
+												</f:facet>
+												<aon:outputText value="#{(to.quantity)}">
+													<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+												</aon:outputText>
+											</aon:column>
+	
+											<aon:column>
+												<f:facet name="header">
+													<h:outputText value="#{bundle.aon_price}" />
+												</f:facet>
+												<aon:outputText value="#{(to.price)}">
+													<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+												</aon:outputText>
+											</aon:column>
+	
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputLabel value="#{bundle.aon_discount}" />
+												</f:facet>
+												<aon:outputText value="#{to.discountExpression.discountExpr}">
+													<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+												</aon:outputText>
+											</aon:column>
+	
+										</aon:dataTable>
+									</aon:div>
+					
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

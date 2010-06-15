@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+<ui:composition >
+
+	<aon:form id="contactForm">
+		<aon:panelGroup id="showWindow">
+			<rich:modalPanel id="contactModalPanel"
+					rendered="#{sms.showWindow}" showWhenRendered="true"
+					minHeight="550" height="550" width="670" top="50" left="100" zindex="2000">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+	            		<aon:outputText value="#{smsBundle.sms_module}"/>
+	            	</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:commandButton type="button" styleClass="aon-popupWindow-close" immediate="true">
+						<f:setPropertyActionListener target="#{sms.showWindow}" value="#{false}" />
+						<rich:componentControl for="contactModalPanel" operation="hide" event="onclick" />
+					</aon:commandButton>
+				</f:facet>
+				<aon:div styleClass="aon-toolbar">
+					<aon:commandButton id="selectContacts" value="#{bundle.aon_check}" 
+						action="sms" actionListener="#{sms.accept}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
+						<f:setPropertyActionListener target="#{sms.showWindow}" value="#{false}" />
+						<rich:componentControl for="contactModalPanel" operation="hide" event="onclick" />
+					</aon:commandButton>
+					<aon:commandButton id="cancelSelection"
+						value="#{bundle.aon_cancel}" immediate="true" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel">
+						<f:setPropertyActionListener target="#{sms.showWindow}" value="#{false}" />
+						<rich:componentControl for="contactModalPanel" operation="hide" event="onclick" />
+					</aon:commandButton>
+				</aon:div>
+				
+				<rich:panel style="margin-bottom:0.2em;">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_search}" />
+					</f:facet>
+					<aon:div styleClass="aon-toolbar">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							actionListener="#{smsContact.onSearch}"
+							reRender="contactDataListDiv"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+					</aon:div>
+					<aon:panelGrid id="searchData" columns="2" >
+						<aon:outputLabel for="Contact_displayName" value="#{webmailBundle.webmail_contact_displayName}" />
+						<aon:inputText id="Contact_displayName" size="80" maxlength="64" value="#{smsContact.displayName}" >
+							<a4j:support event="onblur" 
+								ajaxSingle="true" ignoreDupResponses="true" requestDelay="100"
+								 />
+						</aon:inputText>
+	
+						<aon:outputLabel for="Contact_name" value="#{bundle.aon_name}" />
+						<aon:inputText id="Contact_name" size="80" maxlength="64" value="#{smsContact.name}" >
+							<a4j:support event="onchange" 
+								ajaxSingle="true" ignoreDupResponses="true" requestDelay="100"
+								 />
+						</aon:inputText>
+	
+						<aon:outputLabel for="Contact_surname" value="#{webmailBundle.webmail_contact_surname}" />
+						<aon:inputText id="Contact_surname" size="80" maxlength="64" value="#{smsContact.surname}" >
+							<a4j:support event="onchange" 
+								ajaxSingle="true" ignoreDupResponses="true" requestDelay="100"
+								 />
+						</aon:inputText>
+					</aon:panelGrid>
+				</rich:panel>
+	
+				<aon:div id="contactDataListDiv" >
+					<aon:dataTable id="contactDataList" style="width:100%" rows="10"
+							rendered="#{smsContact.model.rowCount > 0}" showWhenRendered="true"
+							value="#{smsContact.model}" var="to"
+							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+						<aon:rowSelector reRender="contactSelected" actionListener="#{smsContact.onToggleSelected}" />
+		
+						<aon:column id="selectionCol">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="contactSelected"
+								styleClass="aon-float-left" value="#{to.readOnlySelected}">
+							</aon:selectBooleanCheckbox>
+						</aon:column>
+		
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_displayName}" />
+							</f:facet>
+							<aon:outputText value="#{to.contact.displayName}"/>
+						</aon:column>
+		
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_contact_cellular_phone}" />
+							</f:facet>
+							<aon:outputText value="#{to.contact.cellularPhone}"/>
+						</aon:column>							
+					</aon:dataTable>
+		
+					<aon:dataScroller for="contactDataList" rows="10" rowCount="#{smsContact.model.rowCount}"  />
+				</aon:div>	
+			</rich:modalPanel>
+		</aon:panelGroup>
+	</aon:form>
+
+</ui:composition>
+</body>
+</html>

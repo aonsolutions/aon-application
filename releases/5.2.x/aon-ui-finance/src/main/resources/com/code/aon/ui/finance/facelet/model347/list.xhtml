@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="accountEntryList">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{financeBundle.finance_model_347_report_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSearchButton" value="true" />
+				<ui:define name="toolbarActions">
+				</ui:define>
+
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="#{toolbarID}-back" 
+						value="#{bundle.aon_back}"
+						action="model_347_report_search" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+						accesskey="#{bundle.aon_key_cancel}" />			
+					<aon:htmlCommandLink id="model347List-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="model347List" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>							
+					<aon:htmlCommandLink id="model347List-report"
+						value="#{bundle.aon_listing}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="model347List" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
+				<aon:div id="totalPanel" style="width: 100%; margin-bottom: 1em;">
+					<aon:panelGrid columns="3" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-200,aon-panelGrid-even aon-width-auto">
+					
+						<aon:outputText value="#{financeBundle.finance_total_key_a}" rendered="#{model347Report.keyAVisible}"/>
+						<aon:outputText value="#{model347Report.totalKeyA}" rendered="#{model347Report.keyAVisible}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:div>
+							<aon:selectOneMenu id="Model_347_format"
+								value="#{model347Report.format}">
+								<f:selectItems value="#{model347Report.mod347Formats}" />
+							</aon:selectOneMenu>
+							<aon:commandButton id="gen-disk" 
+								value="#{financeBundle.finance_create_disk}"
+								actionListener="#{model347Report.onCreateDisk}" 
+								styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+								style="border-width: 0px 0px 0px 0px;"
+								reRender="totalPanel" 
+								accesskey="#{bundle.aon_key_cancel}" />
+						</aon:div>			
+
+						<aon:outputText value="#{financeBundle.finance_total_key_b}" rendered="#{model347Report.keyBVisible}" />
+						<aon:outputText value="#{model347Report.totalKeyB}" rendered="#{model347Report.keyBVisible}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:div>
+							<aon:htmlCommandLink target="_blank"
+								title="#{model347Report.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
+								value="#{model347Report.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
+								style="border-width: 0px 0px 0px 0px;"
+								actionListener="#{model347Report.downloadDisk}" rendered="#{model347Report.fileOutput!=null}"
+								styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>
+			
+				<aon:dataTable id="model347ReportList" value="#{model347Report.model}"
+					style="width: 100%;"
+					rows="20" var="to" rendered="#{model347Report.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn aon-width-60,
+								aon-editDataTable-textColumn aon-width-60,
+								aon-editDataTable-textColumn aon-width-80,
+								aon-editDataTable-textColumn aon-width-auto,
+								aon-editDataTable-textColumn aon-width-150,
+								aon-editDataTable-textColumn aon-width-130,
+								aon-editDataTable-numberColumn aon-width-80,
+								aon-editDataTable-iconColumn">
+								
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_type}" />
+						</f:facet>
+						<aon:outputText value="#{to.type}" style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}" style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_document}" />
+						</f:facet>
+						<aon:outputText rendered="#{to.disabled}" value="#{to.document.document}" 
+							style="text-decoration: line-through; color: #BBB;"/>
+						<aon:inputText id="m347_nif" value="#{to.document.document}"
+							rendered="#{!to.disabled}"
+							size="7" required="true" reRender="m347_nif" 
+							style="#{!to.document.valid?'color: red;':''};#{to.disabled?'text-decoration: line-through; color: #BBB;':''};"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}"
+							rendered="#{to.disabled}" 
+							style="text-decoration: line-through; color: #BBB;"/>
+						<aon:inputText id="m347_name" value="#{to.name}"
+							rendered="#{!to.disabled}"
+							size="50" required="true" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{geozoneBundle.geozone_province}" />
+						</f:facet>
+						<aon:inputText value="#{to.geozone}"
+							rendered="#{!to.disabled}"
+							size="1" required="true"/>
+						<aon:outputText value="#{to.geozoneName}" 
+							style="margin-left:5px;#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{geozoneBundle.geozone_country}" />
+						</f:facet>
+						<aon:inputText value="#{to.country}"
+							rendered="#{!to.disabled}"
+							size="1"/>
+						<aon:outputText value="#{to.countryName}" 
+							style="margin-left:5px;#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_total}" />
+						</f:facet>
+						<aon:inputText rendered="#{!to.disabled}" size="8"
+							value="#{to.total}"  required="true">
+							<a4j:support event="onchange"
+							 	actionListener="#{model347Report.onTotalChanged}"
+							 	reRender="totalPanel" />
+						</aon:inputText>
+						<aon:outputText rendered="#{to.disabled}"  value="#{to.total}" style="text-decoration: line-through; color: #BBB;">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:commandButton id="disable-declarado"
+							title="#{financeBundle.finance_disable}"
+							rendered="#{!to.disabled}" 
+							actionListener="#{model347Report.onDisable}" 
+							styleClass="aon-editDataTable-button aon-icon-file-entrance"
+							reRender="accountEntryData,totalPanel"/>
+						<aon:commandButton id="enable-declarado"
+							title="#{financeBundle.finance_enable}"
+							rendered="#{to.disabled}" 
+							actionListener="#{model347Report.onDisable}"
+							styleClass="aon-editDataTable-button aon-icon-file-exit-cancel"
+							reRender="accountEntryData,totalPanel"/> 
+					</aon:column>
+					
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="model347ReportList" showNote="true" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+		<aon:form id="menuForm">
+			<aon:menuBar> 
+				<aon:commandLink id="application"
+					value="#{auditBundle.audit_applications_module}"
+					styleClass="aon-top-menu-item aon-icon-applications" immediate="true" 
+					action="auditApplication_list" actionListener="#{auditApplication.onSearch}" />
+				<aon:commandLink id="session"
+					value="#{auditBundle.audit_sessions_module}"
+					styleClass="aon-top-menu-item aon-icon-sessions" immediate="true" 
+					action="auditSession_list" actionListener="#{auditSession.onSearch}" />
+			</aon:menuBar>
+			
+	
+		</aon:form>
+	</c:if>
+
+</ui:composition>
+
+</body>
+</html>

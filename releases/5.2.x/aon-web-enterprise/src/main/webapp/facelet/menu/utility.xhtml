@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<c:if test="#{(company.EInvoice and certificate.certificateCount > 0 and aonRole.ESignature) or aonRole.accountingOperator}">
+		<aon:panelGrid id="group_utility_#{category}"
+			styleClass="aon-width-all" columnClasses="aon-padding"
+			headerClass="aon-icon-utilities aon-direct-access-panel">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_utilities}" />
+			</f:facet>
+			<aon:div styleClass="aon-direct-access-list">
+				<c:if test="#{company.EInvoice and (certificate.certificateCount>0) and aonRole.ESignature}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="invoiceSigner-#{category}"
+							value="#{financeBundle.finance_invoice_signing_module}"
+							actionListener="#{invoiceSigner.onEditSearch}"
+							action="invoiceSigner_search" />
+					</aon:div>
+				</c:if>
+				<c:if test="#{aonRole.accountingOperator}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="saleInvoiceRecorder-#{category}"
+							value="#{financeBundle.finance_sale_invoice_recording_module}"
+							actionListener="#{saleInvoiceRecorder.onEditSearch}"
+							action="saleInvoiceRecorder_search" />
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="purchaseInvoiceRecorder-#{category}"
+							value="#{financeBundle.finance_purchase_invoice_recording_module}"
+							actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
+							action="purchaseInvoiceRecorder_search" />
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="expenseInvoiceRecorder-#{category}"
+							value="#{financeBundle.finance_expense_invoice_recording_module}"
+							actionListener="#{expenseInvoiceRecorder.onEditSearch}"
+							action="expenseInvoiceRecorder_search" />
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="undeductibleInvoiceRecorder-#{category}"
+							value="#{financeBundle.finance_undeductible_invoice_recording_module}"
+							actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
+							action="undeductibleInvoiceRecorder_search" />
+					</aon:div>
+				</c:if>
+				<ui:insert name="afterContent"/>
+			</aon:div>
+		</aon:panelGrid>
+	</c:if>
+
+</ui:composition>

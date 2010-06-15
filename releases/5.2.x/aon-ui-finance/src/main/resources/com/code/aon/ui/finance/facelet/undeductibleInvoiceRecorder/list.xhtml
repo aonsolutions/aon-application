@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceRecorder/listContent.xhtml" >
+			<ui:param name="toolbarTitle" value="#{financeBundle.finance_undeductible_invoice_recording_module}" />
+			<ui:param name="controller" value="#{undeductibleInvoiceRecorder}" />
+			<ui:param name="showReferenceNumberColumn" value="false" />
+		</ui:include>
+	
+	</ui:define>
+</ui:composition>

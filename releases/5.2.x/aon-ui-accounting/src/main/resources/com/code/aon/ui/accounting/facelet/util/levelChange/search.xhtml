@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_account_level_change_module}" />
+				<ui:param name="toolbarDescription" value="" />
+
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="validateChange"
+						value="#{accountingBundle.accounting_validate}"
+						actionListener="#{accountLevelChange.validateLevelChange}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" />
+					<aon:commandButton id="levelChange"
+						value="#{accountingBundle.accounting_process}"
+						actionListener="#{accountLevelChange.processLevelChange}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:dataTable id="resultData" value="#{accountLevelChange.resultModel}"
+					var="result" rows="100" rendered="#{accountLevelChange.resultModel.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn">				
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{accountingBundle.accounting_incidence_found_message}" />
+						</f:facet>
+						<aon:outputText value="#{result}" />
+					</aon:column>
+				</aon:dataTable>
+			</aon:div>
+
+		</aon:form>
+		<ui:include src="/facelet/shared/wait.xhtml">
+			<ui:param name="progressLabel"
+				value="#{accountingBundle.accounting_processing} ..." />
+			<ui:param name="progressBarBean" value="#{accountLevelChange}" />
+		</ui:include>
+	</ui:define>
+</ui:composition>

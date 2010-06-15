@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/esferalia/aon/ui/payroll/facelet/remesaITregeneration/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{payrollBundle.FDIRegeneration_step0}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+		<aon:div id="remesaINSSListContainer" layout="none">
+			<aon:dataTable id="remesaINSSList" var="to" rows="20" width="auto"
+				value="#{FDIRegenerationWizard.remesaINSSModel}"
+				columnClasses="
+						aon-editDataTable-iconColumn, 
+						aon-editDataTable-numberColumn aon-width-50,
+						aon-editDataTable-dateColumn aon-width-auto,
+						aon-editDataTable-dateColumn aon-width-100">
+
+				<aon:rowSelector action="FDIRegenerationWizard_step1" actionListener="#{FDIRegenerationWizard.onSelect}" />
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_id}" />
+					</f:facet>
+					<aon:outputText value="#{to.id}" />
+				</aon:column>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_fecha}" />
+					</f:facet>
+					<aon:outputText value="#{to.fecha}" />
+				</aon:column>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_hora}" />
+					</f:facet>
+					<aon:outputText value="#{to.hora}" />
+				</aon:column>
+	
+			</aon:dataTable>
+			
+			<aon:dataScroller2 for="remesaINSSList" showNote="true" />
+		</aon:div>
+	</ui:define>
+
+</ui:composition>

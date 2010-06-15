@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-scroll-area-internal">
+
+		<t:dataTable id="ContractDataList" var="to" value="#{contract.model}"
+			styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+			footerClass="aon-edit-table-footer" rowIndexVar="rowIndex" rows="20"
+			rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+			rowOnMouseOver="selectRow( this )"
+			rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+			cellpadding="0" cellspacing="0"
+			columnClasses="aon-edit-table-body-icon,
+				aon-edit-table-body aon-edit-table-body-string,
+				aon-edit-table-body aon-edit-table-body-string,
+				aon-edit-table-body aon-edit-table-body-string,
+				aon-edit-table-body aon-edit-table-body-number,
+				aon-edit-table-body aon-edit-table-body-buttons">
+
+			<h:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<t:commandLink styleClass="aon-table-row-selected"
+					rendered="#{to!=contract.to}" actionListener="#{contract.onSelect}" />
+				<f:facet name="footer">
+					<t:div>
+						<t:div rendered="#{!contract.new}">
+							<t:commandButton value="" styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+								rendered="#{contract.newContractAllowed}" 
+								actionListener="#{contract.onReset}" immediate="#{true}" />
+						</t:div>
+					</t:div>
+				</f:facet>
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">
+					<t:outputText value="#{appBundle.aon_start_date}" />
+				</f:facet>
+				<t:outputText value="#{to.startingDate}" rendered="#{to!=contract.to}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</t:outputText>
+				<t:inputCalendar size="8" id="Contract_startingDate-Edit"
+					value="#{contract.to.startingDate}"
+					monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+					currentDayCellClass="currentDayCell" renderAsPopup="true"
+					rendered="#{to==contract.to}" 
+					popupButtonStyleClass="aon-form-calendar-button"
+					styleClass="aon-form-input-text"
+					popupTodayString="#{bundle.aon_popup_today}"
+					popupWeekString="#{bundle.aon_popup_week}" />
+				<f:facet name="footer">
+					<t:inputCalendar size="8" id="Contract_startingDate-New"
+						value="#{contract.to.startingDate}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						rendered="#{contract.new}"
+						popupButtonStyleClass="aon-form-calendar-button"
+						styleClass="aon-form-input-text"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />
+				</f:facet>
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">
+					<t:outputText value="#{appBundle.aon_end_date}" />
+				</f:facet>
+				<t:outputText value="#{to.endingDate}" rendered="#{to!=contract.to}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</t:outputText>
+				<t:inputCalendar size="8" id="Contract_endingDate-Edit"
+					value="#{contract.to.endingDate}" monthYearRowClass="yearMonthHeader"
+					weekRowClass="weekHeader" currentDayCellClass="currentDayCell"
+					renderAsPopup="true" rendered="#{to==contract.to}"
+					popupButtonStyleClass="aon-form-calendar-button"
+					styleClass="aon-form-input-text"
+					popupTodayString="#{bundle.aon_popup_today}"
+					popupWeekString="#{bundle.aon_popup_week}" />
+				<f:facet name="footer">
+					<t:inputCalendar size="8" id="Contract_endingDate-New"
+						value="#{contract.to.endingDate}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						rendered="#{contract.new}"
+						popupButtonStyleClass="aon-form-calendar-button"
+						styleClass="aon-form-input-text"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />
+				</f:facet>
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">
+					<t:outputText value="#{appBundle.record_contractType}" />
+				</f:facet>
+				<t:outputText value="#{to.contractType}" rendered="#{to!=contract.to}" />
+				<t:selectOneMenu id="Contract_contractType-Edit" forceId="#{true}"
+					styleClass="aon-form-selectOneMenu-field"
+					value="#{contract.to.contractType}"
+					rendered="#{to==contract.to}" disabled="#{!contract.new}">
+					<f:selectItems value="#{recordCollections.contractTypes}" />
+				</t:selectOneMenu>
+				<f:facet name="footer">
+					<t:selectOneMenu id="Contract_contractType-New" forceId="#{true}"
+						styleClass="aon-form-selectOneMenu-field"
+						value="#{contract.to.contractType}"
+						rendered="#{contract.new}" >
+						<f:selectItems value="#{recordCollections.contractTypes}" />
+					</t:selectOneMenu>
+				</f:facet>
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header">
+					<t:outputText value="#{appBundle.record_grossSalary}" />
+				</f:facet>
+				<t:outputText value="#{to.grossSalary}" rendered="#{to!=contract.to}" />
+				<t:inputText id="Contract_grossSalary-Edit" styleClass="aon-form-input-text"
+					rendered="#{to==contract.to}" 
+					forceId="#{true}" value="#{contract.to.grossSalary}" size="15" />
+				<f:facet name="footer">
+					<t:inputText styleClass="aon-form-input-text"
+						rendered="#{contract.new}" id="Contract_grossSalary-New"
+						forceId="#{true}" value="#{contract.to.grossSalary}" size="15" />
+				</f:facet>
+			</h:column>
+
+			<t:column width="60">
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<t:div rendered="#{to==contract.to}">
+					<t:commandButton title="#{bundle.aon_save}"
+						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save" value=""
+						rendered="#{to.endingDate==null}"
+						actionListener="#{contract.onAccept}" />
+					<t:commandButton title="#{bundle.aon_cancel}"
+						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel" value=""
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+						actionListener="#{contract.onCancel}" immediate="true" />
+					<t:commandButton title="#{bundle.aon_remove}"
+						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete" value=""
+						actionListener="#{contract.onRemove}" immediate="true"
+						rendered="#{to.endingDate == null}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'));" />
+				</t:div>
+				<f:facet name="footer">
+					<t:div>
+						<t:div rendered="#{contract.new}">
+							<t:commandButton title="#{bundle.aon_save}"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save" value=""
+								actionListener="#{contract.onAccept}" />
+							<t:commandButton title="#{bundle.aon_cancel}"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel" value=""
+								onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+								actionListener="#{contract.onCancel}" immediate="true" />
+						</t:div>
+					</t:div>
+				</f:facet>
+			</t:column>
+
+		</t:dataTable>
+
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="diaryForm">
+		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+							<aon:div styleClass="aon-finding-title-internal">
+								<aon:outputText value="#{appBundle.diary}"/>	  						
+							</aon:div>					
+							
+							<aon:div styleClass="aon-finding-subtitle-internal">
+								<aon:outputText
+									value="#{bundle.aon_editing}" />
+							</aon:div>					
+								
+							<!-- start toolbar navigation -->
+							<aon:div styleClass="aon-finding-toolbar-item-group">
+								<aon:commandButton id="save"
+									value="#{bundle.aon_save}" 
+									styleClass="aon-finding-toolbar-item aon-icon-accept"
+									accesskey="#{bundle.aon_key_save}">
+									<aon:actionListener method="#{diary.accept}" />
+								</aon:commandButton>
+								<aon:commandButton id="generate" reRender="aonStatus"
+									value="#{appBundle.aon_generate}" immediate="true"
+									actionListener="#{generator.onGenerateDiary}"
+									rendered="#{cms.roleEditor}"
+									styleClass="aon-finding-toolbar-item aon-icon-accept"
+									accesskey="#{bundle.aon_key_save}">
+									<a4j:support 
+										event="onclick" reRender="poll,grid" ajaxSingle="true"
+										actionListener="#{generator_status.onActivePoll}"  
+										onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+								</aon:commandButton>	
+								<aon:commandButton id="exit"
+									value="#{bundle.aon_close}"
+									action="article_list" 
+									immediate="#{true}"
+									styleClass="aon-finding-toolbar-item aon-icon-cancel"
+									accesskey="#{bundle.aon_key_close}">
+								</aon:commandButton>
+						    </aon:div>
+							
+							<!-- end toolbar navigation -->
+						</aon:panelGrid>
+					</aon:div>
+		
+					<aon:div styleClass="aon-scroll-area">
+						<aon:div style="width:99%;">
+			
+							<aon:panelGrid columns="2" dir="true">
+
+								<aon:outputLabel for="show_categories"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.diary_categories}" />
+								<aon:div>
+									<aon:selectBooleanCheckbox id="show_categories" 
+										value="#{diary.to.categories}" />
+								</aon:div>
+
+								<aon:outputLabel for="past_events"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.past_events}" />
+								<aon:div>
+									<aon:selectBooleanCheckbox id="past_events" 
+										value="#{diary.to.pastEvents}" />
+								</aon:div>
+								
+								<aon:outputLabel for="Diary_section_id"
+									value="#{appBundle.cms_section}"/>
+								<aon:selectOneMenu id="Diary_section_id"  
+									value="#{diary.to.section}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{collections.sectionList}" />
+								</aon:selectOneMenu>
+			
+								<aon:outputLabel for="Diary_elementSection_id"
+									value="#{appBundle.cms_section_elements}"/>
+								<aon:selectOneMenu id="Diary_elementSection_id"  
+									value="#{diary.to.elementSection}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{collections.sectionList}" />
+								</aon:selectOneMenu>								
+
+								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+									<ui:param name="inputTextId" value="content" />
+									<ui:param name="inputTextValue" value="#{diary.toI18n.content}" />
+									<ui:param name="richTextEnabled" value="#{diary.richTextEnabled}" />
+								</ui:include>																	
+																
+							</aon:panelGrid>
+						</aon:div>
+		
+					</aon:div>
+			
+
+		</aon:form>
+		
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

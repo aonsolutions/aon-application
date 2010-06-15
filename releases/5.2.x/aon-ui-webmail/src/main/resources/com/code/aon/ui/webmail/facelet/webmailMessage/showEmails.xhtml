@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition>
+
+	<aon:form id="showEmailsForm">
+		<aon:panelGroup id="showEmailWindow">
+			<c:if test="#{webmailMessage.showEmailsWindow}">
+				<rich:modalPanel id="showEmailsModalPanel"
+					rendered="#{webmailMessage.showEmailsWindow}" showWhenRendered="true"
+					minHeight="390" height="390" width="650" top="50" zindex="2000">
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText
+								rendered="#{webmailMessage.selectedDestinyContainer=='To'}"
+								value="#{webmailBundle.webmail_to}" />
+							<aon:outputText
+								rendered="#{webmailMessage.selectedDestinyContainer=='Cc'}"
+								value="#{webmailBundle.webmail_cc}" />
+							<aon:outputText
+								rendered="#{webmailMessage.selectedDestinyContainer=='Bcc'}"
+								value="#{webmailBundle.webmail_bcc}" />
+							<aon:outputText value="-" />
+							<aon:outputText
+								value="#{webmailBundle.webmail_message_selectEmail}" />
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+							immediate="true" reRender="showEmailWindow,newMessageHeader">
+							<f:setPropertyActionListener target="#{webmailMessage.showEmailsWindow}"
+								value="#{false}" />
+							<rich:componentControl for="showEmailsModalPanel" operation="hide"
+								event="onclick" />
+						</aon:commandButton>
+					</f:facet>
+	
+	
+					<aon:div styleClass="aon-toolbar">
+						<aon:commandButton id="selectEmail"
+							actionListener="#{webmailMessage.onAcceptAllEmailItems}"
+							value="#{webmailBundle.webmail_accept}"
+							reRender="showEmailWindow,newMessageHeader"
+							styleClass="aon-icon-commandButton aon-icon-accept">
+							<f:setPropertyActionListener target="#{webmailMessage.showEmailsWindow}"
+								value="#{false}" />
+							<rich:componentControl for="showEmailsModalPanel" operation="hide"
+								event="onclick" />
+						</aon:commandButton>
+					</aon:div>
+					<aon:div>
+	
+						<aon:dataTable id="emailData" style="width:100%" rows="#{multiSelectionEmailBean.pageSize}"
+							value="#{multiSelectionEmailBean.model}" var="to"
+							rendered="#{multiSelectionEmailBean.model.rowCount > 0}"
+							columnClasses="aon-editDataTable-iconColumn aon-width-50,
+								aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+	
+							<aon:rowSelector reRender="messageSelected"
+								actionListener="#{multiSelectionEmailBean.onToggleSelected}" />
+	
+							<aon:column id="selectionCol">
+								<f:facet name="header">
+									<aon:div>
+										<aon:commandButton id="selectButton" style="margin-right:10px;"
+											actionListener="#{multiSelectionEmailBean.onSelectAllPageContacts}"
+											reRender="messageSelected"
+											styleClass="aon-icon-commandButton-disabled aon-icon-checkAll">
+										</aon:commandButton>
+						
+										<aon:commandButton id="deselectButton"
+											actionListener="#{multiSelectionEmailBean.onDeselectAllPageContacts}"
+											reRender="messageSelected"
+											styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
+										</aon:commandButton>
+									</aon:div>
+								</f:facet>
+								<aon:selectBooleanCheckbox id="messageSelected"
+									styleClass="aon-float-left" value="#{to.readOnlySelected}">
+								</aon:selectBooleanCheckbox>
+							</aon:column>
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{webmailBundle.webmail_contact_displayName}" />
+								</f:facet>
+								<aon:outputText value="#{to.email.displayName}"
+									styleClass="aon-list-icon #{to.email.contactGroup?'aon-icon-contactGroup':'aon-icon-contact'}" />
+							</aon:column>
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{webmailBundle.webmail_email_email}" />
+								</f:facet>
+								<aon:outputText value="#{to.email.emails}" />
+							</aon:column>
+						</aon:dataTable>
+	
+						<aon:dataScroller2 for="emailData" showNote="true" />
+	
+					</aon:div>
+				</rich:modalPanel>
+			</c:if>
+		</aon:panelGroup>
+	</aon:form>
+	
+</ui:composition>
+
+</body>
+</html>

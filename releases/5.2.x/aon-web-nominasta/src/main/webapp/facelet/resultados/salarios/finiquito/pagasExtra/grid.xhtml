@@ -1,0 +1,170 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:div>
+	
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{finipext}" />
+			<ui:param name="columnClasses" value="
+			aon-editDataTable-dateColumn, aon-editDataTable-dateColumn,
+			aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+			aon-editDataTable-textColumn, aon-editDataTable-numberColumn" />
+						
+			<ui:define name="columns">
+			
+			<f:facet name="header">
+				<rich:columnGroup>
+					<rich:column colspan="1" >
+					</rich:column>
+					<rich:column colspan="2">
+						<aon:outputText
+							value="#{appBundle.aon_payroll_resultados_salarios_finiquito_devengo}" />
+					</rich:column>
+					<rich:column colspan="3">
+						<aon:outputText
+							value="#{appBundle.aon_payroll_resultados_salarios_finiquito_complemento_datos}" />
+					</rich:column>
+					<rich:column colspan="1">
+						<aon:outputText
+							value="#{appBundle.aon_payroll_resultados_salarios_finiquito_parte_propor}" />
+					</rich:column>
+					<rich:column colspan="1">
+					</rich:column>
+					
+				</rich:columnGroup>
+			</f:facet>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_fecini}" />
+				</f:facet>
+				<aon:outputText value="#{to.id.fecini}" rendered="#{to!=finipext.to}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="fecha_inicio_devengo_edit" renderAsPopup="true" rendered="#{to==finipext.to}"
+					popupDateFormat="#{appBundle.aon_date_pattern}" inputSize="8" required="#{true}"
+					value="#{finipext.to.id.fecini}" enableManualInput="true" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="fecha_inicio_devengo_new" renderAsPopup="true" rendered="#{finipext.new}"
+						popupDateFormat="#{appBundle.aon_date_pattern}" inputSize="8" required="#{true}"
+						value="#{finipext.to.id.fecini}" enableManualInput="true" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_fecfin}" />
+				</f:facet>
+				<aon:outputText value="#{to.fecfin}" rendered="#{to!=finipext.to}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="fecha_fin_devengo_edit" renderAsPopup="true" rendered="#{to==finipext.to}"
+					popupDateFormat="#{appBundle.aon_date_pattern}" inputSize="8" required="#{true}"
+					value="#{finipext.to.fecfin}" enableManualInput="true" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="fecha_fin_devengo_new" renderAsPopup="true" rendered="#{finipext.new}"
+						popupDateFormat="#{appBundle.aon_date_pattern}" inputSize="8" required="#{true}"
+						value="#{finipext.to.fecfin}" enableManualInput="true" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_cdg}" />
+				</f:facet>
+				<aon:outputText rendered="#{to!=finipext.to}"
+					value="#{to.id.codcom}" size="6">
+				</aon:outputText>
+				<aon:outputText rendered="#{to==finipext.to}"
+					value="#{to.id.codcom}" size="6">
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText rendered="#{finipext.new}"
+							id="complemento_cdg" required="#{true}"
+							lookup="#{complementoLookup}"
+							reRender="complemento_descripcion"
+							value="#{finipext.to.complemento.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton rendered="#{finipext.new}"
+							id="complemento_lookup"
+							windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
+							selectReRender="complemento_cdg,complemento_descripcion"
+							lookup="#{complementoLookup}" minHeight="440"
+							property="#{finipext.to.complemento}">
+						</aon:lookupButton>
+						<!-- 
+						<aon:inputText
+							id="trabajador_descripcion"
+							value="#{(finipext.to.complemento.descripcion!=null)?(finipext.to.complemento.descripcion):('')}"
+							size="45" disabled="true" />
+						 -->
+					</aon:div>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_desc_completa}" />
+				</f:facet>
+				<aon:outputText id="complemento_descripcion_edit" 
+					value="#{to.complemento.description}" size="40" />
+				<!-- 
+				<aon:inputText id="desc_edit" styleClass="aon-form-input-text"
+					rendered="#{to==finipext.to}" 
+					value="#{finipext.to.complemento.description}" maxlength="10" size="13" />
+				-->
+				<f:facet name="footer">
+					<aon:inputText id="complemento_descripcion"  
+						value="#{(finipext.to.complemento.description!=null)?(finipext.to.complemento.description):('')}"
+						readonly="#{true}" rendered="#{finipext.new}" size="40"/>
+					<!-- 
+					<aon:inputText id="desc_new" styleClass="aon-form-input-text" 
+						rendered="#{finipext.new}" value="#{finipext.to.complemento.description}"
+						maxlength="10" size="13" />
+					-->
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_desc}" />
+				</f:facet>
+				<aon:outputText value="#{to.descom}" rendered="#{to!=finipext.to}" />
+				<aon:inputText id="desc_comp_edit" styleClass="aon-form-input-text"
+					rendered="#{to==finipext.to}"  
+					value="#{finipext.to.descom}" maxlength="50" size="20" />
+				<f:facet name="footer">
+					<aon:inputText id="desc_comp_new" styleClass="aon-form-input-text" 
+						rendered="#{finipext.new}" value="#{finipext.to.descom}" 
+						maxlength="50" size="20" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_importe}" />
+				</f:facet>
+				<aon:outputText value="#{to.importe}" rendered="#{to!=finipext.to}" />
+				<aon:inputText id="importe_edit" styleClass="aon-form-input-text"
+					rendered="#{to==finipext.to}"  required="#{true}"
+					value="#{finipext.to.importe}" maxlength="11" size="14" />
+				<f:facet name="footer">
+					<aon:inputText id="importe_new" styleClass="aon-form-input-text" 
+						rendered="#{finipext.new}" value="#{finipext.to.importe}" required="#{true}"
+						maxlength="11" size="14" />
+				</f:facet>
+			</aon:column>
+ 		 </ui:define>
+	 </ui:decorate>
+ 		 
+	</aon:div>
+
+</ui:composition>

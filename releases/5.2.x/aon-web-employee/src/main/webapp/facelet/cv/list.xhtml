@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+
+		<h:form id="CurriculumList">
+
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{!curriculum.new}"
+						action="curriculum_form" actionListener="#{curriculum.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" 
+						accesskey="#{bundle.aon_key_new}"/>
+					<t:commandButton value="#{bundle.aon_search}"
+						actionListener="#{curriculum.onEditSearch}" action="curriculum_search"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_search}"/>	
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="CurriculumList" cellpadding="0" cellspacing="0"
+							var="to" value="#{curriculum.model}" rows="20" styleClass="aon-table"
+							rendered="#{curriculum.model.rowCount > 0}"
+							rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							headerClass="aon-table-header"
+							rowClasses="aon-table-row-odd,aon-table-row-even"
+							columnClasses="aon-table-body aon-table-body-string,
+								aon-table-body aon-table-body-string,
+								aon-table-body aon-table-body-string,
+								aon-table-body aon-table-body-string">
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{appBundle.curriculum_name}" />
+								</f:facet>
+								<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
+								<t:commandLink immediate="#{true}"
+									styleClass="aon-table-row-selected" action="curriculum_form"
+									actionListener="#{curriculum.onSelect}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{appBundle.curriculum_birthdate}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.birthDate}" >
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</h:outputText>		
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{appBundle.curriculum_phone}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.phone}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{appBundle.curriculum_post_category}" />
+								</f:facet>
+								<h:outputText value="#{to.postcategory? appBundle.aon_employee: appBundle.curriculum_applicant}" />
+							</h:column>
+							
+						</t:dataTable>
+					</t:div>
+
+					<t:div styleClass="aon-form-note" 
+						rendered="#{curriculum.model.rowCount == 0}">
+						<t:div styleClass="aon-form-note-internal">
+							<h:panelGroup>
+								<h:outputText value="#{bundle.aon_search_no_results}" />
+							</h:panelGroup>
+						</t:div>
+					</t:div>
+					<t:div styleClass="aon-datascroller"
+						rendered="#{curriculum.model.rowCount > 20}">
+						<h:panelGrid columns="2"
+							columnClasses="aon-datascroller-text,aon-datascroller-buttons">
+							<t:dataScroller id="scroll_1" for="CurriculumList"
+								rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex"
+								lastRowIndexVar="lastRowIndex"
+								rendered="#{curriculum.model.rowCount > 20}">
+								<h:outputFormat value="#{appBundle.aon_scroll}">
+									<f:param value="#{firstRowIndex}" />
+									<f:param value="#{lastRowIndex}" />
+									<f:param value="#{rowsCount}" />
+								</h:outputFormat>
+							</t:dataScroller>
+
+							<t:dataScroller id="scroll_0" for="CurriculumList" fastStep="5"
+								paginator="#{true}" paginatorMaxPages="5"
+								paginatorActiveColumnClass="aon-datascroller-currentpage"
+								paginatorColumnClass="aon-datascroller-page"
+								rendered="#{curriculum.model.rowCount > 20}">
+
+								<f:facet name="first">
+									<t:div styleClass="aon-datascroller-button-first">&#160;</t:div>
+								</f:facet>
+								<f:facet name="last">
+									<t:div styleClass="aon-datascroller-button-last">&#160;</t:div>
+								</f:facet>
+								<f:facet name="previous">
+									<t:div styleClass="aon-datascroller-button-previous">&#160;</t:div>
+								</f:facet>
+								<f:facet name="next">
+									<t:div styleClass="aon-datascroller-button-next">&#160;</t:div>
+								</f:facet>
+								<f:facet name="fastforward">
+									<t:div styleClass="aon-datascroller-button-fastforward">&#160;</t:div>
+								</f:facet>
+								<f:facet name="fastrewind">
+									<t:div styleClass="aon-datascroller-button-fastrewind">&#160;</t:div>
+								</f:facet>
+							</t:dataScroller>
+						</h:panelGrid>
+					</t:div>
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

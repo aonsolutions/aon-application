@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="" label="Compras 12+1">
+    <external-parameters>
+        <external-parameter defaultValue="${currentMonth}" label="Mes"
+            name="month" prompt="true" type="INTEGER"/>
+        <external-parameter defaultValue="${currentYear}" label="Año"
+            name="year" prompt="true" type="INTEGER"/>
+        <external-parameter defaultValue="0" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_comparativa.gif"
+        iconOpen="icons/icon_comparativa.gif" label="12 + 1">
+        <layout type="COLUMN"/>
+        <contents>
+            <listViewContent id="view/Comparativa Ventas/12+1.exvw.xml">
+                <sentence>SELECT CAST(CONCAT(YEAR(invoice.issue_date), "/", LPAD(MONTH(invoice.issue_date),2,"0")) AS CHAR), &#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM invoice, invoice_detail&#xd;
+ WHERE invoice.id = invoice_detail.invoice&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY)&#xd;
+  AND invoice.type = ?&#xd;
+ GROUP BY 1&#xd;
+ ORDER BY 1&#xd;
+</sentence>
+                <metadata>
+                    <attribute label="Mes"
+                        name="CAST(CONCAT(YEAR(invoice.issue_date), &quot;/&quot;, LPAD(MONTH(invoice.issue_date),2,&quot;0&quot;)) AS CHAR)" type="STRING"/>
+                    <attribute label="Total"
+                        name="SUM(TRUNCATE(invoice_detail.taxable_base, 2))" type="DOUBLE"/>
+                </metadata>
+                <parameters>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="type"/>
+                </parameters>
+            </listViewContent>
+        </contents>
+        <node iconClose="icons/icon_users_group.gif"
+            iconOpen="icons/icon_users_group.gif" label="Proveedores">
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Comparativa Ventas/Cliente 12+1.exvw.xml">
+                    <sentence>&#xd;
+SELECT registry.id, document, name, alias, &#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base,2)) &#xd;
+  FROM registry, invoice, invoice_detail&#xd;
+ WHERE invoice.registry = registry.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY) &#xd;
+ GROUP BY 1,2,3,4&#xd;
+</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="CUSTOMER_ID" type="INTEGER"/>
+                        <attribute label="CIF / NIF" name="document" type="STRING"/>
+                        <attribute label="Nombre" name="CUSTOMER_NAME" type="STRING"/>
+                        <attribute label="Alias" name="alias" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Cliente 12+1.exvw.xml"
+                iconClose="icons/icon_usuario.gif"
+                iconOpen="icons/icon_usuario.gif" label="${CUSTOMER_NAME}">
+                <dynamicSentence>
+                    <sentence>&#xd;
+SELECT registry.id, document, name, alias, &#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base,2)) &#xd;
+  FROM registry, invoice, invoice_detail&#xd;
+ WHERE invoice.registry = registry.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY) &#xd;
+ GROUP BY 1,2,3,4&#xd;
+</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="CUSTOMER_ID" type="INTEGER"/>
+                        <attribute label="CIF / NIF" name="document" type="STRING"/>
+                        <attribute label="Nombre" name="CUSTOMER_NAME" type="STRING"/>
+                        <attribute label="Alias" name="alias" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="type"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Comparativa Ventas/Cliente Mes 12+1.exvw.xml">
+                        <sentence>SELECT CAST(CONCAT(YEAR(invoice.issue_date), "/", LPAD(MONTH(invoice.issue_date),2,"0")) AS CHAR), &#xd;
+       SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM registry, invoice, invoice_detail&#xd;
+ WHERE invoice.registry = registry.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND registry.id= ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY) &#xd;
+ GROUP BY 1&#xd;
+ ORDER BY 1&#xd;
+</sentence>
+                        <metadata>
+                            <attribute label="Mes" name="month" type="STRING"/>
+                            <attribute label="Total" name="total" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="CUSTOMER_ID"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+                <node
+                    dynamicViewId="view/Comparativa Ventas/Productos por cliente 12+1.exvw.xml"
+                    iconClose="icons/icon_articulo.gif"
+                    iconOpen="icons/icon_articulo.gif" label="${ITEM_NAME}">
+                    <dynamicSentence>
+                        <sentence>SELECT invoice_detail.item, product.name description,&#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base,2)) &#xd;
+  FROM invoice_detail, invoice, registry, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.registry = registry.id&#xd;
+   AND registry.id = ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY)&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1&#xd;
+ ORDER BY 1&#xd;
+&#xd;
+&#xd;
+</sentence>
+                        <metadata>
+                            <attribute label="Codigo" name="ITEM_ID" type="INTEGER"/>
+                            <attribute label="Articulo" name="ITEM_NAME" type="STRING"/>
+                            <attribute label="Total" name="total" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="CUSTOMER_ID"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </dynamicSentence>
+                    <dynamicParameters>
+                        <parameter name="CUSTOMER_ID"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <listViewContent id="view/Comparativa Ventas/Productos por cliente Mes 12+1.exvw.xml">
+                            <sentence>SELECT CAST(CONCAT(YEAR(invoice.issue_date), "/", LPAD(MONTH(invoice.issue_date),2,"0")) AS CHAR), &#xd;
+       SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM invoice_detail, invoice, registry, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.registry = registry.id&#xd;
+   AND item.id = ?&#xd;
+   AND registry.id = ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY)&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1&#xd;
+ ORDER BY 1&#xd;
+&#xd;
+&#xd;
+</sentence>
+                            <metadata>
+                                <attribute label="Mes" name="month" type="STRING"/>
+                                <attribute label="Total" name="total" type="DOUBLE"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="ITEM_ID"/>
+                                <parameter name="CUSTOMER_ID"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="type"/>
+                            </parameters>
+                        </listViewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+        <node iconClose="icons/icon_familia.gif"
+            iconOpen="icons/icon_familia.gif" label="Familias">
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Comparativa Ventas/Familia.exvw.xml">
+                    <sentence>SELECT pcategory.id, pcategory.name, SUM(TRUNCATE(invoice_detail.taxable_base,2)) &#xd;
+  FROM pcategory, invoice_detail, invoice, item, product &#xd;
+ WHERE invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY) &#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="CATEGORY_ID" type="INTEGER"/>
+                        <attribute label="Familia" name="CATEGORY_NAME" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Familia.exvw.xml"
+                iconClose="icons/icon_categoria.gif"
+                iconOpen="icons/icon_categoria.gif" label="${CATEGORY_NAME}">
+                <dynamicSentence>
+                    <sentence>SELECT pcategory.id, pcategory.name, SUM(TRUNCATE(invoice_detail.taxable_base,2)) &#xd;
+  FROM pcategory, invoice_detail, invoice, item, product &#xd;
+ WHERE invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY) &#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="CATEGORY_ID" type="INTEGER"/>
+                        <attribute label="Familia" name="CATEGORY_NAME" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Comparativa Ventas/Familias 12+1.exvw.xml">
+                        <sentence>SELECT CAST(CONCAT(YEAR(invoice.issue_date), "/", LPAD(MONTH(invoice.issue_date),2,"0")) AS CHAR), &#xd;
+ 	SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM pcategory, invoice_detail, invoice, item, product &#xd;
+ WHERE invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND pcategory.id = ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY)&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1&#xd;
+ ORDER BY 1&#xd;
+</sentence>
+                        <metadata>
+                            <attribute label="Mes" name="month" type="STRING"/>
+                            <attribute label="Total" name="total" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="CATEGORY_ID"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+                <node
+                    dynamicViewId="view/Comparativa Ventas/Productos por familia.exvw.xml"
+                    iconClose="icons/icon_articulo.gif" label="${PRODUCT_NAME}">
+                    <dynamicSentence>
+                        <sentence>SELECT invoice_detail.item, product.name description, SUM(invoice_detail.quantity), &#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, pcategory, item, product&#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND product.category = pcategory.id &#xd;
+   AND pcategory.id = ? &#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY) &#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY invoice_detail.item</sentence>
+                        <metadata>
+                            <attribute label="Codigo" name="PRODUCT_ID" type="INTEGER"/>
+                            <attribute label="Articulo"
+                                name="PRODUCT_NAME" type="STRING"/>
+                            <attribute label="Cantidad" name="quantity" type="DOUBLE"/>
+                            <attribute label="Total" name="total" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="CATEGORY_ID"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </dynamicSentence>
+                    <dynamicParameters>
+                        <parameter name="CATEGORY_ID"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <listViewContent id="view/Comparativa Ventas/Productos por familia 12+1.exvw.xml">
+                            <sentence>SELECT CAST(CONCAT(YEAR(invoice.issue_date), "/", LPAD(MONTH(invoice.issue_date),2,"0")) AS CHAR), &#xd;
+       SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM pcategory, invoice_detail, invoice, item, product &#xd;
+ WHERE invoice_detail.item = item.id &#xd;
+   AND item.product = product.id&#xd;
+   AND product.category = pcategory.id &#xd;
+   AND invoice_detail.invoice = invoice.id &#xd;
+   AND pcategory.id = ?&#xd;
+   AND item.id = ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY)&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1&#xd;
+ ORDER BY 1&#xd;
+</sentence>
+                            <metadata>
+                                <attribute label="Mes" name="month" type="STRING"/>
+                                <attribute label="Total" name="total" type="DOUBLE"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="CATEGORY_ID"/>
+                                <parameter name="PRODUCT_ID"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="type"/>
+                            </parameters>
+                        </listViewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+        <node iconClose="icons/icon_comparativa.gif"
+            iconOpen="icons/icon_comparativa.gif" label="Articulos">
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Comparativa Ventas/Productos.exvw.xml">
+                    <sentence>SELECT invoice_detail.item, product.name description,&#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base,2)) &#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY) &#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2&#xd;
+</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="ITEM_ID" type="INTEGER"/>
+                        <attribute label="Articulo" name="ITEM_NAME" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Productos.exvw.xml"
+                iconClose="icons/icon_articulo.gif"
+                iconOpen="icons/icon_articulo.gif" label="${ITEM_NAME}">
+                <dynamicSentence>
+                    <sentence>SELECT invoice_detail.item, product.name description,&#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base,2)) &#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY) &#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1,2&#xd;
+</sentence>
+                    <metadata>
+                        <attribute label="Codigo" name="ITEM_ID" type="INTEGER"/>
+                        <attribute label="Articulo" name="ITEM_NAME" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Comparativa Ventas/Clientes por producto Mes 12+1.exvw.xml">
+                        <sentence>SELECT CAST(CONCAT(YEAR(invoice.issue_date), "/", LPAD(MONTH(invoice.issue_date),2,"0")) AS CHAR), &#xd;
+       SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM invoice_detail, invoice, registry, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.registry = registry.id&#xd;
+   AND item.id = ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY)&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1&#xd;
+ ORDER BY 1&#xd;
+</sentence>
+                        <metadata>
+                            <attribute label="Mes" name="month" type="STRING"/>
+                            <attribute label="Total" name="total" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="ITEM_ID"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+                <node
+                    dynamicViewId="view/Comparativa Ventas/Clientes por producto 12+1.exvw.xml"
+                    iconClose="icons/icon_usuario.gif"
+                    iconOpen="icons/icon_usuario.gif" label="${REGISTRY_NAME}">
+                    <dynamicSentence>
+                        <sentence>SELECT registry.id, document, registry.name, registry.alias, &#xd;
+	SUM(TRUNCATE(invoice_detail.taxable_base,2)) &#xd;
+  FROM invoice_detail, invoice, registry, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.registry = registry.id&#xd;
+   AND item.id = ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY)&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1, 2, 3, 4&#xd;
+</sentence>
+                        <metadata>
+                            <attribute label="Codigo" name="REGISTRY_ID" type="INTEGER"/>
+                            <attribute label="NIF / CIF" name="document" type="STRING"/>
+                            <attribute label="Nombre"
+                                name="REGISTRY_NAME" type="STRING"/>
+                            <attribute label="Alias" name="alias" type="STRING"/>
+                            <attribute label="Total" name="total" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="ITEM_ID"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </dynamicSentence>
+                    <dynamicParameters>
+                        <parameter name="ITEM_ID"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <listViewContent id="view/Comparativa Ventas/Productos por cliente Mes 12+1.exvw.xml">
+                            <sentence>SELECT CAST(CONCAT(YEAR(invoice.issue_date), "/", LPAD(MONTH(invoice.issue_date),2,"0")) AS CHAR), &#xd;
+       SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;
+  FROM invoice_detail, invoice, registry, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.registry = registry.id&#xd;
+   AND item.id = ?&#xd;
+   AND registry.id = ?&#xd;
+   AND invoice.issue_date&#xd;
+      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,"-",?,"-",1), "%Y-%m-%d"), INTERVAL 12 MONTH)&#xd;
+          AND DATE_SUB(STR_TO_DATE(CONCAT(?,"-",? + 1,"-",1), "%Y-%m-%d"), INTERVAL 1 DAY)&#xd;
+   AND invoice.type = ?&#xd;
+ GROUP BY 1&#xd;
+ ORDER BY 1&#xd;
+&#xd;
+&#xd;
+</sentence>
+                            <metadata>
+                                <attribute label="Mes" name="month" type="STRING"/>
+                                <attribute label="Total" name="total" type="DOUBLE"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="ITEM_ID"/>
+                                <parameter name="REGISTRY_ID"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="type"/>
+                            </parameters>
+                        </listViewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+    </node>
+</workstation>

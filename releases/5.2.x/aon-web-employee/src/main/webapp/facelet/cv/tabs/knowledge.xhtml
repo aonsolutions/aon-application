@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition >
+
+		<t:div styleClass="aon-content-toolbar" >
+			<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="knowledge_save" value="#{bundle.aon_save}"
+						forceId="#{true}" actionListener="#{Knowledge.accept}"
+						onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"/>
+					<t:commandButton id="knowledge_reset" value="#{bundle.aon_reset}"
+						rendered="#{!Knowledge.new}"
+						actionListener="#{Knowledge.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" 
+						accesskey="#{bundle.aon_key_new}"/>
+					<t:commandButton id="knowledge_remove" value="#{bundle.aon_remove}"
+						rendered="#{!Knowledge.new}" forceId="#{true}"
+						actionListener="#{Knowledge.remove}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
+						accesskey="#{bundle.aon_key_remove}"/>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div styleClass="aon-scroll-area-internal">
+
+			<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+				styleClass="aon-form-table" style="width:720px;"
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+				
+				<t:outputLabel for="Knowledge_name"
+					styleClass="aon-form-input-text-label"
+					value="#{appBundle.knowledge_name}" />
+				<t:inputText id="Knowledge_name"
+					styleClass="aon-form-input-text" forceId="#{true}"
+					value="#{Knowledge.to.name}" size="64">
+					<f:validateLength maximum="64" />
+				</t:inputText>
+
+				<t:outputLabel for="Knowledge_level"
+					styleClass="aon-form-input-text-label"
+					value="#{appBundle.knowledge_level}" />
+				<t:selectOneMenu id="Knowledge_level" forceId="#{true}"
+					styleClass="aon-form-selectOneMenu-field"
+					value="#{Knowledge.to.level}">
+					<f:selectItems value="#{CVitaeCollections.knowledgeLevels}" />
+				</t:selectOneMenu>
+				
+				<t:outputLabel for="Knowledge_experience"
+					styleClass="aon-form-input-text-label"
+					value="#{appBundle.knowledge_experience}" />
+				<t:selectOneMenu id="Knowledge_experience" forceId="#{true}"
+					styleClass="aon-form-selectOneMenu-field"
+					value="#{Knowledge.to.experience}">
+					<f:selectItems value="#{CVitaeCollections.knowledgeExperiences}" />
+				</t:selectOneMenu>
+				
+				<t:outputLabel for="Knowledge_lastUse"
+					styleClass="aon-form-input-text-label"
+					value="#{appBundle.knowledge_lastuse}" />
+				<t:selectOneMenu id="Knowledge_lastUse" forceId="#{true}"
+					styleClass="aon-form-selectOneMenu-field"
+					value="#{Knowledge.to.lastUse}">
+					<f:selectItems value="#{CVitaeCollections.knowledgeLastUses}" />
+				</t:selectOneMenu>
+				
+			</h:panelGrid>
+
+			<t:div styleClass="aon-form-group"
+				rendered="#{Knowledge.model.rowCount > 0}">
+				<t:div styleClass="aon-form-group-title">
+					<t:outputLabel for="KnowledgeDataList"
+						value="#{appBundle.knowledge_knowledge}" />
+				</t:div>
+
+				<t:div styleClass="aon-form-group-body">
+					<t:dataTable id="KnowledgeDataList" var="to"
+						value="#{Knowledge.model}" styleClass="aon-edit-table"
+						headerClass="aon-edit-table-header"
+						footerClass="aon-edit-table-footer" rowIndexVar="rowIndex"
+						rendered="#{Knowledge.model.rowCount > 0}" rows="20"
+						rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+						rowOnMouseOver="selectRow( this )"
+						rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+						cellpadding="0" cellspacing="0"
+						columnClasses="aon-edit-table-body aon-edit-table-body-string,
+									   aon-edit-table-body aon-edit-table-body-string,
+									   aon-edit-table-body aon-edit-table-body-string,
+									   aon-edit-table-body aon-edit-table-body-string">
+						<h:column>
+							<f:facet name="header">
+								<t:outputText value="#{appBundle.knowledge_name}" />
+							</f:facet>
+							<t:outputText value="#{to.name}" />
+							<t:commandLink
+								styleClass="aon-table-row-selected"
+								rendered="#{to!=Studies.to}"
+								actionListener="#{Knowledge.onSelect}" />
+						</h:column>
+						
+						<h:column>
+							<f:facet name="header">
+								<t:outputText value="#{appBundle.knowledge_level}" />
+							</f:facet>
+							<t:outputText value="#{to.level}" />
+						</h:column>
+						
+						<h:column>
+							<f:facet name="header">
+								<t:outputText value="#{appBundle.knowledge_experience}" />
+							</f:facet>
+							<t:outputText value="#{to.experience}" />
+						</h:column>
+						
+						<h:column>
+							<f:facet name="header">
+								<t:outputText value="#{appBundle.knowledge_lastuse}" />
+							</f:facet>
+							<t:outputText value="#{to.lastUse}" />
+						</h:column>
+						
+					</t:dataTable>
+
+					<t:div styleClass="aon-datascroller"
+						rendered="#{Knowledge.model.rowCount > 20}">
+						<h:panelGrid columns="2"
+							columnClasses="aon-datascroller-text,aon-datascroller-buttons">
+							<t:dataScroller id="knowledge_scroll_2" for="KnowledgeDataList"
+								pageCountVar="pageCount" pageIndexVar="pageIndex"
+								rowsCountVar="rowsCount"
+								displayedRowsCountVar="displayedRowsCountVar"
+								firstRowIndexVar="firstRowIndex"
+								lastRowIndexVar="lastRowIndex"
+								rendered="#{Knowledge.model.rowCount > 20}">
+								<h:outputFormat value="#{appBundle.aon_scroll}">
+									<f:param value="#{displayedRowsCountVar}" />
+									<f:param value="#{rowsCount}" />
+									<f:param value="#{pageIndex}" />
+									<f:param value="#{pageCount}" />
+								</h:outputFormat>
+							</t:dataScroller>
+
+							<t:div id="knowledge_navigation2">
+								<t:dataScroller id="knowledge_scroll_3" for="KnowledgeDataList"
+									fastStep="5" paginator="#{true}" paginatorMaxPages="5"
+									paginatorActiveColumnClass="aon-datascroller-buton-currentpage"
+									paginatorColumnClass="aon-page-navigation-page"
+									rendered="#{Knowledge.model.rowCount > 20}">
+
+									<f:facet name="first">
+										<t:div styleClass="aon-datascroller-button-first">&#160;</t:div>
+									</f:facet>
+									<f:facet name="last">
+										<t:div styleClass="aon-datascroller-button-last">&#160;</t:div>
+									</f:facet>
+									<f:facet name="previous">
+										<t:div styleClass="aon-datascroller-button-previous">&#160;</t:div>
+									</f:facet>
+									<f:facet name="next">
+										<t:div styleClass="aon-datascroller-button-next">&#160;</t:div>
+									</f:facet>
+									<f:facet name="fastforward">
+										<t:div styleClass="aon-datascroller-button-fastforward">&#160;</t:div>
+									</f:facet>
+									<f:facet name="fastrewind">
+										<t:div styleClass="aon-datascroller-button-fastrewind">&#160;</t:div>
+									</f:facet>
+								</t:dataScroller>
+							</t:div>
+						</h:panelGrid>
+					</t:div>
+				</t:div>
+			</t:div>
+		</t:div>
+
+</ui:composition>
+
+</body>
+</html>

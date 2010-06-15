@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.audit.ActionDenied" sqlName="action_denied">
+		<alias names="action_id,id,user_id,action_application_id"/>
+		<hibernate names="action.id,id,user.id,action.application.id"/>
+	</bean>
+	<bean class="com.code.aon.audit.ActionEntry" sqlName="action_entry">
+		<alias names="action_id,executionDate,id,session_id,action_menu,session_user_id,session_application_id"/>
+		<hibernate names="action.id,executionDate,id,session.id,action.menu,session.user.id,session.application.id"/>
+	</bean>
+	<bean class="com.code.aon.audit.ActionFavorite" sqlName="action_favorite">
+		<alias names="action_id,id,position,user_id,action_application_id"/>
+		<hibernate names="action.id,id,position,user.id,action.application.id"/>
+	</bean>
+</dao>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	
+	<bean class="com.code.aon.payroll.resultados.salarios.Nominaex" sqlName="nominaex">
+		<alias names="anio,complemento_cdg,descat,descom,direccion,divisa_cdg,divisa_description,emprper_cdg,fecant,feccob,feccobreal,fecemi,fecfin,fecini,fecmod,fecnew,fijovar,hormod,hornew,id_cdg,id_numero,impirpf,importe,irpf,liquido,localidad,mes,nomdtoex_concepto,nomdtoex_fecmod,nomdtoex_fecnew,nomdtoex_hormod,nomdtoex_hornew,nomdtoex_id_cdg,nomdtoex_id_linea,nomdtoex_id_numero,nomdtoex_importe,nomemp,nomper,nummat,profesion,totalDeducir" />
+		<hibernate names="anio,complemento.cdg,descat,descom,direccion,divisa.cdg,divisa.description,emprper.cdg,fecant,feccob,feccobreal,fecemi,fecfin,fecini,fecmod,fecnew,fijovar,hormod,hornew,id.cdg,id.numero,impirpf,importe,irpf,liquido,localidad,mes,nomdtoex.concepto,nomdtoex.fecmod,nomdtoex.fecnew,nomdtoex.hormod,nomdtoex.hornew,nomdtoex.id.cdg,nomdtoex.id.linea,nomdtoex.id.numero,nomdtoex.importe,nomemp,nomper,nummat,profesion,totalDeducir" />
+	</bean>
+	
+</dao>
+
