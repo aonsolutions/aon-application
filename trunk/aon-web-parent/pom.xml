@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.2.0-SNAPSHOT</version>
+		<version>5.2.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.parent</artifactId>
-	<version>5.2.0-SNAPSHOT</version>
+	<version>5.2.0</version>
 	<packaging>pom</packaging>
 	<description>POM padre de los proyectos WEB de AON</description>
 	<name>AON WEB ENTITY PARENT</name>
@@ -20,9 +19,9 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon.web.parent</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon.web.parent</connection>
-		<url>http://dev.esferalia.com/websvn/wsvn/aon.web.parent</url>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.2.x/trunk/aon.web.parent</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.2.x/trunk/aon.web.parent</connection>
+		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.2.x/wsvn/aon.web.parent</url>
 	</scm>
 	<build>
 		<plugins>
@@ -304,8 +303,7 @@
 
 							<execution> <phase>post-integration-test</phase>
 							<id>stop-server</id> <goals> <goal>stop-server</goal> </goals>
-							</execution> </executions
-						-->
+							</execution> </executions -->
 					</plugin>
 
 					<plugin>
@@ -320,8 +318,7 @@
 							executions> <execution> <id>test</id>
 							<phase>integration-test</phase> <goals> <goal>test</goal>
 							</goals> <configuration> <skip>false</skip> </configuration>
-							</execution> </executions
-						-->
+							</execution> </executions -->
 
 					</plugin>
 
