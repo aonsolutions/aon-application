@@ -5,7 +5,7 @@
 function link(){
         LIBRARY=$1;
         JAR=$(find /usr/share/java -name "${LIBRARY}-*.jar");
-        [ ! -z $JAR  ] && ln -sf $JAR /usr/share/java/${LIBRARY}.jar ;
+        [ ! -z $JAR  ] && ln -sf $JAR /usr/share/java/${LIBRARY}.jar;
 }
 
 
