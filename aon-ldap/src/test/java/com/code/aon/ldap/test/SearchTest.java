@@ -21,10 +21,6 @@ import com.code.aon.ldap.NameResolver;
 
 public class SearchTest implements IAonObjectClasses, ILdapConstants {
 
-	private static final String LOCALHOST_DOMAIN = "localhost";
-	
-	private static final String DESKTOP_APPLICATION = "aon-desktop";
-	
 	private static LdapSession session;
 
 	@BeforeClass
@@ -50,7 +46,7 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 	@Test
     public void testSearch() {
 		try {
-			Name name = NameResolver.getDomainDN(LOCALHOST_DOMAIN);
+			Name name = NameResolver.getDomainDN(ValidateTest.TEST_DOMAIN);
 			List<Entry> list = session.search(name,NameResolver.getObjectClass(ACCESS_POLICY));
 			Assert.assertFalse( list.isEmpty() );
 		} catch (LdapException e) {
@@ -61,7 +57,7 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 	@Test
     public void testExists() {
 		try {
-			Name name = NameResolver.getApplicationDN(DESKTOP_APPLICATION);
+			Name name = NameResolver.getApplicationDN(ValidateTest.AON_WEBMAIL);
 			boolean value = session.exists(name,NameResolver.getObjectClass(APPLICATION));
 			Assert.assertTrue( value );
 		} catch (LdapException e) {
@@ -88,7 +84,7 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 	@Test
     public void testAttributes() {
 		try {
-			Name name = NameResolver.getUserDN(LOCALHOST_DOMAIN, "deletable");
+			Name name = NameResolver.getUserDN(ValidateTest.TEST_DOMAIN, "deletable");
 			Entry entry = new Entry(name);
 			entry.addObjectClasses(new String[]{TOP, PERSON, USER, POSIX_ACCOUNT});
 			entry.put( COMMON_NAME_ATTRIBUTE, "Deletable" );

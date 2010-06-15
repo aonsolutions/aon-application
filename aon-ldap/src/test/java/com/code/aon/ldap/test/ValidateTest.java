@@ -28,7 +28,9 @@ import com.code.aon.ldap.Scope;
 
 public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 
-	private static final String AON_WEBMAIL = "aon-webmail";
+	public static final String AON_WEBMAIL = "aon-webmail";
+	
+	public static final String TEST_DOMAIN = "esferalia.com";
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ValidateTest.class);
 	
@@ -187,6 +189,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 
     private void testApplication( Entry application ) {
     	String name = application.getAsString(COMMON_NAME_ATTRIBUTE);
+    	LOGGER.info( "Start validate application {}", name );    	
 		Name profilesDN = NameResolver.getApplicationProfilesDN(name);
 		ensureOrganizationalUnit( profilesDN );
 		Name rolesDN = NameResolver.getApplicationRolesDN(name);
@@ -200,7 +203,8 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		for( Entry profile : profiles ) {
 			testApplicationProfile(profile, application.getDN());
 		}
-}
+		LOGGER.info( "End validate application {}", name );
+    }
 	
 	@Test
     public void testApplications() {
@@ -326,6 +330,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 	
     private void testDomain( Entry domain ) {
     	String name = domain.getAsString(COMMON_NAME_ATTRIBUTE);
+    	LOGGER.info( "Start validate domain {}", name );
 		Name applicationsDN = NameResolver.getDomainApplicationsDN(name);
 		assertExist(applicationsDN, ORGANIZATIONAL_UNIT );
 		Name bdsDN = NameResolver.getDomainBDsDN(name);
@@ -355,14 +360,14 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		if ( ldap.exists(webmail, DOMAIN_APPLICATION) ) {
 			testWebmail( name );
 		}
+		LOGGER.info( "End validate domain {}", name );
     }
 	
 	@Test
-    public void testDomains() {
-		Name domains = NameResolver.getDomainsDN();
-		for( Entry domain : getList(domains, DOMAIN, COMMON_NAME_ATTRIBUTE) ) {
-			testDomain(domain);
-		}				
+    public void testDomain() {
+		Name domainName = NameResolver.getDomainDN(TEST_DOMAIN);
+		Entry domain = ldap.get(domainName, DOMAIN, COMMON_NAME_ATTRIBUTE);
+		testDomain(domain);				
 	}
 
 	public static junit.framework.Test suite() {
