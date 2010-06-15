@@ -349,6 +349,9 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	public VatReportType getExtracommunity() {
 		return VatReportType.EXTRACOMMUNITY;
 	}
+	public VatReportType getCanCeuMel() {
+		return VatReportType.CAN_CEU_MEL;
+	}
 	public Double getGeneralPercent() {
 		return GENERAL_PERCENT;
 	}

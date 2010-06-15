@@ -172,12 +172,12 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				tax = obtainTax(tax.getId(),date);
 			}
 
-			if (!invoiceDetail.getInvoice().isTaxFree()) {
+//			if (!invoiceDetail.getInvoice().isTaxFree()) {
 				percentage = tax.getPercentage();
 				if (invoiceDetail.getInvoice().isSurcharge()) {
 					surcharge = tax.getSurcharge();
 				}
-			}
+//			}
 		}
 		invoiceTax.setPercentage(percentage);
 		invoiceTax.setSurcharge(surcharge);
