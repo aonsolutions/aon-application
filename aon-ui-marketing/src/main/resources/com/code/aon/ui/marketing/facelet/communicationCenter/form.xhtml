@@ -169,19 +169,21 @@
 								</aon:lookupButton>
 							</aon:div>
 							<aon:div id="CommunicationCenter_target_detail" layout="inline">
-								<aon:panelGrid rendered="#{communicationCenter.targetSelected}" columns="2" dir="true">		
-								
-									<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" />
-	
-									<aon:outputLabel for="CommunicationCenter_status"
-										value="#{bundle.aon_status}" rendered="#{communicationCenter.actionTarget != null}" />
-									<aon:selectOneMenu id="CommunicationCenter_status" required="true"
-										value="#{communicationCenter.actionTarget.status}"
-										rendered="#{communicationCenter.actionTarget != null}">
-										<f:selectItems value="#{marketingCollections.actionTargetStatuses}" />
-									</aon:selectOneMenu>
-										
-								</aon:panelGrid>
+								<c:if test="#{communicationCenter.targetSelected}" >
+									<aon:panelGrid columns="2">		
+									
+										<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" />
+		
+										<aon:outputLabel for="CommunicationCenter_status"
+											value="#{bundle.aon_status}" rendered="#{communicationCenter.actionTarget != null}" />
+										<aon:selectOneMenu id="CommunicationCenter_status" required="true"
+											value="#{communicationCenter.actionTarget.status}"
+											rendered="#{communicationCenter.actionTarget != null}">
+											<f:selectItems value="#{marketingCollections.actionTargetStatuses}" />
+										</aon:selectOneMenu>
+											
+									</aon:panelGrid>
+								</c:if>
 							</aon:div>
 						</aon:div>
 					</c:if>
