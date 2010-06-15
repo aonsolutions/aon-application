@@ -64,6 +64,9 @@ public class Vat {
 		if (transactionType == InvoiceTransactionType.EXTRACOMMUNITY) {
 			return VatReportType.EXTRACOMMUNITY;
 		}
+		if (transactionType == InvoiceTransactionType.CAN_CEU_MEL) {
+			return VatReportType.CAN_CEU_MEL;
+		}
 		return VatReportType.GENERAL;
 	}
 
