@@ -6,63 +6,74 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:editDataTable id="scored"
-		value="#{registryStat.scoredInvoiceModel}" rows="20"
+		value="#{registryStat.unpayedFinanceModel}" rows="20"
 		columnClasses="aon-editDataTable-textColumn, aon-editDataTable-dateColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
 		var="to">
 
-		<h:column>
+		<aon:column styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
-				<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+				<aon:outputText value="#{financeBundle.finance_invoice}" />
 			</f:facet>
-			<h:outputText value="#{to.referenceCode}" />
-		</h:column>
+			<aon:outputText value="#{to.invoice.referenceCode}" />
+		</aon:column>
 
-		<h:column>
+		<aon:column styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
-				<h:panelGroup>
-					<h:outputText value="#{bundle.aon_date}" />
-				</h:panelGroup>
+				<aon:outputText value="#{bundle.aon_date}" />
 			</f:facet>
-			<h:outputText value="#{to.issueDate}">
+			<aon:outputText value="#{to.dueDate}">
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
-			</h:outputText>
-		</h:column>
+			</aon:outputText>
+		</aon:column>
 
-		<!--  <h:column>
+		<!-- 	<aon:column 
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText
+									value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoice.registryName}" />
+						</aon:column>
+	
+						<aon:column 
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoice.registryDocument}" />
+						</aon:column>
+	 -->
+		<aon:column styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
-				<h:panelGroup>
-					<h:outputText value="#{customerBundle.customer_customer}" />
-				</h:panelGroup>
+				<aon:outputText value="#{configBundle.config_pay_method}" />
 			</f:facet>
-			<h:outputText value="#{to.registryName}" />
-		</h:column>
+			<aon:outputText value="#{to.payMethod.name}" />
+		</aon:column>
 
-		<h:column>
+		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<h:panelGroup>
-					<h:outputText value="#{bundle.aon_company_document}" />
-				</h:panelGroup>
+				<aon:outputText value="#{bundle.aon_amount}" />
 			</f:facet>
-			<h:outputText value="#{to.registryDocument}" />
-		</h:column> -->
-		<h:column>
-			<f:facet name="header">
-				<h:panelGroup>
-					<h:outputText value="#{bundle.aon_status}" />
-				</h:panelGroup>
-			</f:facet>
-			<aon:outputText value="#{to.status}" />
-		</h:column>
-		<aon:column>
-			<f:facet name="header">
-				<aon:outputText value="#{bundle.aon_total}" />
-			</f:facet>
-			<aon:outputText value="#{registryStat.scoredInvoicesTotalPrice}">
+			<aon:outputText value="#{to.totalAmount}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>
-	
+				<aon:column
+			styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:htmlCommandLink id="invoicePrint-report" title="Ver Factura"
+				value="&#160;&#160;&#160;&#160;&#160;&#160;" target="_blank"
+				action="#{report.onExecute}"
+				actionListener="#{registryStat.onFinancePdf}"
+				styleClass="aon-icon-pdf">
+				<f:param name="reportKey" value="invoicePrint" />
+			</aon:htmlCommandLink>
+		</aon:column>
+		
+
 	</aon:editDataTable>
 
 
