@@ -14,7 +14,6 @@ link aon-master
 link slf4j-api
 link slf4j-jcl
 link commons-lang
-link commons-logging
 
 . aondir-functions
 
