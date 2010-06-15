@@ -32,7 +32,6 @@ public class Main {
 		try {
 			Arguments arguments = parseArgs(args);
 			VersionManager manager = new VersionManager();
-			System.out.printf("Updating database '%s'...", arguments.url );
 			Class.forName(arguments.driver);
 			Connection connection = 
 				DriverManager.getConnection(arguments.url,
@@ -41,10 +40,11 @@ public class Main {
 				manager.uptodateDatabase(connection);
 		} catch ( IllegalArgumentsException e ){
 			printUsage(args);
+			System.exit(1);
 		} catch (Exception e) {
-			System.out.printf( "FAILURE (%s:%s)\r\n" ,e.getClass().getName(),  e.getMessage());
+			System.err.printf( "%s:%s\r\n" ,e.getClass().getName(),  e.getMessage());
+			System.exit(-1);
 		}
-		System.out.println("OK.");
 	}
 
 
