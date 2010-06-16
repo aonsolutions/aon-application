@@ -13,8 +13,8 @@ public interface IRemesaCertificadoEmpresa extends ITransferObject {
 	IEmpresa getEmpresa();
 	void setEmpresa(IEmpresa empresa);
 	
-	Integer getNumeroCcc();
-	void setNumeroCcc(Integer numeroCcc);
+	String getCodigoCcc();
+	void setCodigoCcc(String codigoCcc);
 	
 	Date getFecha();
 	void setFecha(Date fecha);
