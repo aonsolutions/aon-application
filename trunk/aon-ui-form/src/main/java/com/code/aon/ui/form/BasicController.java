@@ -1033,6 +1033,13 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 	
+	/**
+	 * Select an ITransferObject.
+	 * 
+	 * @param event the event
+	 * @param to the to
+	 * @throws ManagerBeanException the manager bean exception
+	 */
 	public void select( ActionEvent event, ITransferObject to ) throws ManagerBeanException {
 		clearCriteria();
 		Criteria criteria = getCriteria();
