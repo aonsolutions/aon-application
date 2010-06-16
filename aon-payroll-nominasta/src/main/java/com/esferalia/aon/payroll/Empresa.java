@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll;
 
+import java.util.StringTokenizer;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -25,8 +27,10 @@ public class Empresa implements ITransferObject, IEmpresa {
     private Registry registry;
 	private String name;
 	private ICliente cliente;
+	private String representante;
+	private String representanteDocument;
+	private String cargo;
 	
-
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 4)
 	public Integer getId() {
@@ -68,9 +72,64 @@ public class Empresa implements ITransferObject, IEmpresa {
 	}
 	
 	@Override
+	@Column(name = "representante", length = 60)
+	public String getRepresentante() {
+		return this.representante;
+	}
+	@Override
+	public void setRepresentante(String representante) {
+		this.representante = representante;
+	}
+	@Override
+	@Transient
+	public String getNombreRepresentante() {
+		String linea = this.representante;
+		StringTokenizer tokens = new StringTokenizer(linea);
+		return tokens.nextToken();
+	}
+	@Override
+	@Transient
+	public String getApellido1Representante() {
+		String linea = this.representante;
+		StringTokenizer tokens = new StringTokenizer(linea);
+		tokens.nextToken();
+		return tokens.nextToken();
+	}
+	@Override
+	@Transient
+	public String getApellido2Representante() {
+		String linea = this.representante;
+		StringTokenizer tokens = new StringTokenizer(linea);
+		tokens.nextToken();
+		tokens.nextToken();
+		return tokens.nextToken();
+	}
+	
+	@Override
+	@Column(name = "nrodocrep", length = 10)
+	public String getRepresentanteDocument() {
+		return representanteDocument;
+	}
+	@Override
+	public void setRepresentanteDocument(String representanteDocument) {
+		this.representanteDocument = representanteDocument;
+	}
+
+	@Override
+	@Column(name = "cargo", length = 60)
+	public String getCargo() {
+		return this.cargo;
+	}
+	@Override
+	public void setCargo(String cargo) {
+		this.cargo = cargo;
+	}
+
+	@Override
 	@Transient
 	public boolean isActive() {
 		return !(getCliente().isInactivo());
 	}
-
+	
 }
+
