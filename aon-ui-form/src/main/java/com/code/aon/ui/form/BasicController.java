@@ -1032,5 +1032,16 @@ public class BasicController extends AbstractPojoController implements IControll
 			}
 		}
 	}
+	
+	public void select( ActionEvent event, ITransferObject to ) throws ManagerBeanException {
+		clearCriteria();
+		Criteria criteria = getCriteria();
+		String alias = getIdAlias();
+		Serializable id = getManagerBean().getId(to);
+		criteria.addEqualExpression(alias, id);
+		initializeModel();
+		getModel().setRowIndex(0);
+		onSelect(event);		
+	}
 
 }
