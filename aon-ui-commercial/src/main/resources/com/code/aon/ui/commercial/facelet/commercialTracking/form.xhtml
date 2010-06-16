@@ -25,14 +25,14 @@
 				<aon:commandButton
 					rendered="#{commercialTracking.previous != null}" immediate="true"
 					actionListener="#{commercialTracking.onPreviousAction}"
-					value="Accion Anterior" ajaxSingle="true"
+					value="#{commercialBundle.commercial_tracking_action_previous}" ajaxSingle="true"
 					styleClass="aon-icon-commandButton aon-icon-mailPrevious">
 				</aon:commandButton>
 	
 				<aon:commandButton
 					rendered="#{commercialTracking.to.next.id != null}" immediate="true"
 					actionListener="#{commercialTracking.onNextAction}"
-					value="Accion Siguiente" ajaxSingle="true"
+					value="#{commercialBundle.commercial_tracking_action_next}" ajaxSingle="true"
 					styleClass="aon-icon-commandButton aon-icon-mailNext">
 				</aon:commandButton>
 			</aon:div>
@@ -124,10 +124,17 @@
 								size="20" disabled="true" />
 							<aon:lookupButton id="CommercialTracking_offer_lookup"
 								windowTitle="#{commercialBundle.commercial_offer_selection}" actionType="search"
-								selectReRender="CommercialTracking_offer_detail"
+								controllerListener="#{commercialTracking.offerFilter}"
+								selectReRender="CommercialTracking_activity_offer"
 								lookup="#{offerLookup}" minHeight="500" minWidth="680"
 								property="#{commercialTracking.to.offer}">
 							</aon:lookupButton>
+							<aon:commandButton
+								rendered="#{commercialTracking.to.offer.id != null}"
+								actionListener="#{commercialTracking.onSelectOffer}"
+								value="&#160;" action="offer_form"
+								styleClass="aon-finding-toolbar-item aon-icon-file-entrance aon-finding-toolbar-item-no-border">
+							</aon:commandButton>							
 						</aon:div>																			
 					</h:panelGrid>
 

@@ -39,6 +39,7 @@ public class OfferControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		OfferController controller = (OfferController)event.getController();
+		controller.setBackAction(null);
 		try {
 			controller.loadAddresses(((Offer)controller.getTo()).getTarget().getRegistry().getId());
 			controller.loadDefaultPayMethod(((Offer)controller.getTo()).getTarget().getRegistry().getId(), true);
