@@ -14,7 +14,7 @@ import com.code.aon.ui.webmail.controller.MessageController;
 
 public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMessages {
 
-	private static final String REPORT_KEY = "purchase";
+	private static final String REPORT_KEY = "purchaseForm";
 
 	public void initMessageController( MessageController messageController, Purchase purchase ) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = getEmails( purchase.getSupplier().getRegistry() );
