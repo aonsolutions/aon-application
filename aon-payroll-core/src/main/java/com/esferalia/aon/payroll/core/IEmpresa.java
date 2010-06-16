@@ -20,4 +20,16 @@ public interface IEmpresa extends Serializable{
 	
 	boolean isActive();
 	
+	String getRepresentanteDocument();
+	void setRepresentanteDocument(String representanteDocument);
+	
+	String getRepresentante();
+	void setRepresentante(String representante);
+	
+	String getNombreRepresentante();
+	String getApellido1Representante();
+	String getApellido2Representante();
+	String getCargo();
+	void setCargo(String cargo);
+	
 }
