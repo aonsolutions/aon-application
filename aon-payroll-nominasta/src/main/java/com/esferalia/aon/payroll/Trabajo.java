@@ -23,6 +23,7 @@ import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.cotizacion.IBaseCotizacion;
 import com.esferalia.aon.payroll.core.enumeration.TiempoContrato;
+import com.esferalia.aon.payroll.core.enumeration.TipoTiempoParcial;
 import com.esferalia.aon.payroll.cotizacion.BaseCotizacion;
 
 /**
@@ -35,6 +36,7 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	private static final long serialVersionUID = 232006768210590160L;
 
 	private TrabajoPK id;
+	private Date fecfin;
 	private IBaseCotizacion baseCotizacion;
 	private IContratosTc2 contratoTc2;
 	private Date fechaInicioCont;
@@ -42,6 +44,7 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	private String cno;
 	private IEmpleado empleado;
 	private TiempoContrato tiempoContrato;
+	private TipoTiempoParcial tipoTP;
 
 	@EmbeddedId
 	@AttributeOverrides( {
@@ -54,6 +57,17 @@ public class Trabajo implements ITransferObject, ITrabajo {
 
 	public void setId(TrabajoPK id) {
 		this.id = id;
+	}
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "fecfin", nullable = false)
+	@Override
+	public Date getFecfin() {
+		return this.fecfin;
+	}
+	@Override
+	public void setFecfin(Date fecfin) {
+		this.fecfin = fecfin;
 	}
 	
 	@ManyToOne(targetEntity = BaseCotizacion.class,fetch = FetchType.EAGER)
@@ -131,5 +145,18 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	public void setTiempoContrato(TiempoContrato tiempoContrato) {
 		this.tiempoContrato = tiempoContrato;
 	}
+
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.core.enumeration.TipoTiempoParcial") })
+	@Column(name = "tipoTp", length = 1)
+	@Override
+	public TipoTiempoParcial getTipoTP() {
+		return this.tipoTP;
+	}
+	@Override
+	public void setTipoTP(TipoTiempoParcial tipoTP) {
+		this.tipoTP = tipoTP;
+	}
+	
+	
 
 }
