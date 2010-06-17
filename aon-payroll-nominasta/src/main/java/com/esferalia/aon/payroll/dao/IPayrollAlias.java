@@ -21,6 +21,7 @@ import com.esferalia.aon.payroll.empresa.RemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.empresa.RemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.RemesaINSS;
 import com.esferalia.aon.payroll.RemesaParteIT;
+import com.esferalia.aon.payroll.Trabajo;
 import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
 import com.esferalia.aon.payroll.Usuario;
 
@@ -1325,6 +1326,55 @@ public interface IPayrollAlias {
 	* Hibernate value: RemesaParteIT.tipoOperacionIT
 	*/
 	String  REMESA_PARTE_IT_TIPO_OPERACION_IT = REMESA_PARTE_IT_ENTRY.getAliasNames()[18];
+
+
+
+	/** 
+	* DAOConstantsEntry for Trabajo entity.
+	*/ 
+	DAOConstantsEntry TRABAJO_ENTRY = DAOConstants.getDAOConstant(Trabajo.class);
+
+	/** 
+	* Alias value: Trabajo_baseCotizacion_cdg
+	* Hibernate value: Trabajo.baseCotizacion.cdg
+	*/
+	String  TRABAJO_BASE_COTIZACION_CDG = TRABAJO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Trabajo_cno
+	* Hibernate value: Trabajo.cno
+	*/
+	String  TRABAJO_CNO = TRABAJO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Trabajo_contratoTc2_cdg
+	* Hibernate value: Trabajo.contratoTc2.cdg
+	*/
+	String  TRABAJO_CONTRATO_TC2_CDG = TRABAJO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Trabajo_fechaFinCont
+	* Hibernate value: Trabajo.fechaFinCont
+	*/
+	String  TRABAJO_FECHA_FIN_CONT = TRABAJO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Trabajo_fechaInicioCont
+	* Hibernate value: Trabajo.fechaInicioCont
+	*/
+	String  TRABAJO_FECHA_INICIO_CONT = TRABAJO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Trabajo_id_cdg
+	* Hibernate value: Trabajo.id.cdg
+	*/
+	String  TRABAJO_ID_CDG = TRABAJO_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Trabajo_id_fecini
+	* Hibernate value: Trabajo.id.fecini
+	*/
+	String  TRABAJO_ID_FECINI = TRABAJO_ENTRY.getAliasNames()[6];
 
 
 
