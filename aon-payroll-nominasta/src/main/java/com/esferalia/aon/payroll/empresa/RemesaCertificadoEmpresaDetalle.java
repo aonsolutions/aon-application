@@ -77,6 +77,15 @@ public class RemesaCertificadoEmpresaDetalle implements ITransferObject, IRemesa
 		this.fechaBaja = fechaBaja;
 	}
 	
+	@Override
+	public String getCausaSuspension() {
+		return null;
+	}
+	@Override
+	public void setCausaSuspension(String causaSuspension) {
+		
+	}
+	
 	
 	
 }
