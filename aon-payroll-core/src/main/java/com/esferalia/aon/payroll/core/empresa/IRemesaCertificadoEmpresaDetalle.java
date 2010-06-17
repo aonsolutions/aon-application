@@ -19,4 +19,7 @@ public interface IRemesaCertificadoEmpresaDetalle extends ITransferObject {
 	Date getFechaBaja();
 	void setFechaBaja(Date fechaBaja);
 	
+	String getCausaSuspension();
+	void setCausaSuspension(String causaSuspension);
+	
 }
