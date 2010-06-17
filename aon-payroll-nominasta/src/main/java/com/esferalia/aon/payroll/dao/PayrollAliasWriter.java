@@ -11,6 +11,7 @@ import com.esferalia.aon.payroll.ActividadCCC;
 import com.esferalia.aon.payroll.Cliente;
 import com.esferalia.aon.payroll.Complemento;
 import com.esferalia.aon.payroll.Contrato;
+import com.esferalia.aon.payroll.ContratosTc2;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
@@ -21,6 +22,7 @@ import com.esferalia.aon.payroll.Persona;
 import com.esferalia.aon.payroll.RemesaINSS;
 import com.esferalia.aon.payroll.RemesaParteIT;
 import com.esferalia.aon.payroll.Usuario;
+import com.esferalia.aon.payroll.cotizacion.BaseCotizacion;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
 import com.esferalia.aon.payroll.cotizacion.TipoBonificacion;
 import com.esferalia.aon.payroll.empresa.RemesaCertificadoEmpresa;
@@ -33,10 +35,12 @@ public class PayrollAliasWriter {
 		String[] classes = new String[] {
 				Actividad.class.getName(),
 				ActividadCCC.class.getName(),
+				BaseCotizacion.class.getName(),
 				Bonificacion.class.getName(),
 				Cliente.class.getName(),
 				Complemento.class.getName(),
 				Contrato.class.getName(),
+				ContratosTc2.class.getName(),
 				Empleado.class.getName(),			
 				Empresa.class.getName(),
 				Nomina.class.getName(),

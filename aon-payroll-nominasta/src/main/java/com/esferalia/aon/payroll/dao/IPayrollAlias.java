@@ -4,10 +4,12 @@ import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.esferalia.aon.payroll.Actividad;
 import com.esferalia.aon.payroll.ActividadCCC;
+import com.esferalia.aon.payroll.cotizacion.BaseCotizacion;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
 import com.esferalia.aon.payroll.Cliente;
 import com.esferalia.aon.payroll.Complemento;
 import com.esferalia.aon.payroll.Contrato;
+import com.esferalia.aon.payroll.ContratosTc2;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.Nomina;
@@ -106,6 +108,31 @@ public interface IPayrollAlias {
 	* Hibernate value: ActividadCCC.id.tipccc
 	*/
 	String  ACTIVIDAD_CCC_ID_TIPCCC = ACTIVIDAD_CCC_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for BaseCotizacion entity.
+	*/ 
+	DAOConstantsEntry BASE_COTIZACION_ENTRY = DAOConstants.getDAOConstant(BaseCotizacion.class);
+
+	/** 
+	* Alias value: BaseCotizacion_cdg
+	* Hibernate value: BaseCotizacion.cdg
+	*/
+	String  BASE_COTIZACION_CDG = BASE_COTIZACION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BaseCotizacion_description
+	* Hibernate value: BaseCotizacion.description
+	*/
+	String  BASE_COTIZACION_DESCRIPTION = BASE_COTIZACION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BaseCotizacion_tipoProrrateo
+	* Hibernate value: BaseCotizacion.tipoProrrateo
+	*/
+	String  BASE_COTIZACION_TIPO_PRORRATEO = BASE_COTIZACION_ENTRY.getAliasNames()[2];
 
 
 
@@ -242,6 +269,37 @@ public interface IPayrollAlias {
 	* Hibernate value: Contrato.prorrateo
 	*/
 	String  CONTRATO_PRORRATEO = CONTRATO_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContratosTc2 entity.
+	*/ 
+	DAOConstantsEntry CONTRATOS_TC2_ENTRY = DAOConstants.getDAOConstant(ContratosTc2.class);
+
+	/** 
+	* Alias value: ContratosTc2_cdg
+	* Hibernate value: ContratosTc2.cdg
+	*/
+	String  CONTRATOS_TC2_CDG = CONTRATOS_TC2_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContratosTc2_cdgAntiguo
+	* Hibernate value: ContratosTc2.cdgAntiguo
+	*/
+	String  CONTRATOS_TC2_CDG_ANTIGUO = CONTRATOS_TC2_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContratosTc2_descripcion
+	* Hibernate value: ContratosTc2.descripcion
+	*/
+	String  CONTRATOS_TC2_DESCRIPCION = CONTRATOS_TC2_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContratosTc2_descripcionAbreviada
+	* Hibernate value: ContratosTc2.descripcionAbreviada
+	*/
+	String  CONTRATOS_TC2_DESCRIPCION_ABREVIADA = CONTRATOS_TC2_ENTRY.getAliasNames()[3];
 
 
 
@@ -1050,40 +1108,40 @@ public interface IPayrollAlias {
 	DAOConstantsEntry REMESA_CERTIFICADO_EMPRESA_ENTRY = DAOConstants.getDAOConstant(RemesaCertificadoEmpresa.class);
 
 	/** 
+	* Alias value: RemesaCertificadoEmpresa_codigoCcc
+	* Hibernate value: RemesaCertificadoEmpresa.codigoCcc
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_CODIGO_CCC = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: RemesaCertificadoEmpresa_empresa_id
 	* Hibernate value: RemesaCertificadoEmpresa.empresa.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[0];
+	String  REMESA_CERTIFICADO_EMPRESA_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresa_estado
 	* Hibernate value: RemesaCertificadoEmpresa.estado
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_ESTADO = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[1];
+	String  REMESA_CERTIFICADO_EMPRESA_ESTADO = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresa_fecha
 	* Hibernate value: RemesaCertificadoEmpresa.fecha
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_FECHA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[2];
+	String  REMESA_CERTIFICADO_EMPRESA_FECHA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresa_huella
 	* Hibernate value: RemesaCertificadoEmpresa.huella
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_HUELLA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[3];
+	String  REMESA_CERTIFICADO_EMPRESA_HUELLA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresa_id
 	* Hibernate value: RemesaCertificadoEmpresa.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: RemesaCertificadoEmpresa_numeroCcc
-	* Hibernate value: RemesaCertificadoEmpresa.numeroCcc
-	*/
-	String  REMESA_CERTIFICADO_EMPRESA_NUMERO_CCC = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[5];
+	String  REMESA_CERTIFICADO_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[5];
 
 
 
@@ -1093,28 +1151,34 @@ public interface IPayrollAlias {
 	DAOConstantsEntry REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY = DAOConstants.getDAOConstant(RemesaCertificadoEmpresaDetalle.class);
 
 	/** 
+	* Alias value: RemesaCertificadoEmpresaDetalle_causaSuspension
+	* Hibernate value: RemesaCertificadoEmpresaDetalle.causaSuspension
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_CAUSA_SUSPENSION = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_empleado_id
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.empleado.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_EMPLEADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[0];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_EMPLEADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: RemesaCertificadoEmpresaDetalle_fecha_baja
-	* Hibernate value: RemesaCertificadoEmpresaDetalle.fecha_baja
+	* Alias value: RemesaCertificadoEmpresaDetalle_fechaBaja
+	* Hibernate value: RemesaCertificadoEmpresaDetalle.fechaBaja
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_FECHA_BAJA = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[1];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_FECHA_BAJA = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_id
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[2];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_remesaCertificado_id
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.remesaCertificado.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[3];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[4];
 
 
 
