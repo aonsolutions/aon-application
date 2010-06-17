@@ -224,20 +224,41 @@
 							</aon:panelGrid>
 						</c:if>							
 
-						<ui:decorate template="/facelet/menu/utility.xhtml" >
-							<ui:param name="category" value="sales" />
-							<ui:define name="afterContent">
-								<c:if test="#{aonRole.financeOperator}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="no_fee_customers"
-											value="#{financeBundle.finance_fee_no_fee_customer_module}"
-											actionListener="#{customerFee.onNoFeeCustomers}"
-											action="noFeeCustomer_list" >
-										</aon:commandLink>
-									</aon:div>
-								</c:if>								
-							</ui:define>
-						</ui:decorate>
+						<c:if test="#{aonRole.financeOperator or aonRole.accountingOperator}">
+							<aon:panelGrid id="group_sales_utility"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-utilities aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_utilities}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<c:if test="#{company.EInvoice and (certificate.certificateCount>0) and aonRole.ESignature}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="saleInvoiceSigner"
+												value="#{financeBundle.finance_invoice_signing_module}"
+												actionListener="#{invoiceSigner.onEditSearch}"
+												action="invoiceSigner_search" />
+										</aon:div>
+									</c:if>
+									<c:if test="#{aonRole.accountingOperator}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="saleInvoiceRecorder"
+												value="#{financeBundle.finance_sale_invoice_recording_module}"
+												actionListener="#{saleInvoiceRecorder.onEditSearch}"
+												action="saleInvoiceRecorder_search" />
+										</aon:div>
+									</c:if>
+									<c:if test="#{aonRole.financeOperator}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="no_fee_customers"
+												value="#{financeBundle.finance_fee_no_fee_customer_module}"
+												actionListener="#{customerFee.onNoFeeCustomers}"
+												action="noFeeCustomer_list" />
+										</aon:div>
+									</c:if>
+								</aon:div>								
+							</aon:panelGrid>
+						</c:if>
 													
 					</aon:panelGroup>
 
