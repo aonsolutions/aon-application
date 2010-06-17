@@ -28,6 +28,7 @@
 		<mapping class="com.esferalia.aon.payroll.Cliente"/>
 		<mapping class="com.esferalia.aon.payroll.Complemento"/>
 		<mapping class="com.esferalia.aon.payroll.Contrato"/>
+		<mapping class="com.esferalia.aon.payroll.ContratosTc2"/>
 		<mapping class="com.esferalia.aon.payroll.Empleado"/>			
 		<mapping class="com.esferalia.aon.payroll.Empresa"/>
 		<mapping class="com.esferalia.aon.payroll.Nomina"/>
@@ -39,6 +40,7 @@
 		<mapping class="com.esferalia.aon.payroll.RemesaParteIT"/>
 		<mapping class="com.esferalia.aon.payroll.Usuario"/>
 		
+		<mapping class="com.esferalia.aon.payroll.cotizacion.BaseCotizacion"/>
 		<mapping class="com.esferalia.aon.payroll.cotizacion.Bonificacion"/>
 		<mapping class="com.esferalia.aon.payroll.cotizacion.TipoBonificacion"/>
 		
