@@ -66,10 +66,32 @@
 							</aon:div>
 						</aon:panelGrid>
 					
-						<ui:include src="/facelet/menu/utility.xhtml" >
-							<ui:param name="category" value="expenses" />
-						</ui:include>
-					
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:panelGrid id="group_expenses_utility"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-utilities aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_utilities}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<c:if test="#{aonRole.accountingOperator}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="expenseInvoiceRecorder"
+												value="#{financeBundle.finance_expense_invoice_recording_module}"
+												actionListener="#{expenseInvoiceRecorder.onEditSearch}"
+												action="expenseInvoiceRecorder_search" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="undeductibleInvoiceRecorder"
+												value="#{financeBundle.finance_undeductible_invoice_recording_module}"
+												actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
+												action="undeductibleInvoiceRecorder_search" />
+										</aon:div>
+									</c:if>
+								</aon:div>								
+							</aon:panelGrid>
+						</c:if>
+
 					</aon:panelGroup>						
 
 					<aon:panelGroup>
