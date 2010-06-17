@@ -11,6 +11,8 @@ public interface ITrabajo extends Serializable{
 
 	Serializable getId();
 
+	Date getFecini();
+
 	Date getFecfin();
 	void setFecfin(Date fecfin);
 
@@ -37,5 +39,6 @@ public interface ITrabajo extends Serializable{
 
 	TipoTiempoParcial getTipoTP();
 	void setTipoTP(TipoTiempoParcial tipoTP);
+
 
 }
