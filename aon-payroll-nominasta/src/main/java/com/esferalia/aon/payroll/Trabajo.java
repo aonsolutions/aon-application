@@ -14,11 +14,15 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IContratosTc2;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.cotizacion.IBaseCotizacion;
+import com.esferalia.aon.payroll.core.enumeration.TiempoContrato;
 import com.esferalia.aon.payroll.cotizacion.BaseCotizacion;
 
 /**
@@ -37,6 +41,7 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	private Date fechaFinCont;
 	private String cno;
 	private IEmpleado empleado;
+	private TiempoContrato tiempoContrato;
 
 	@EmbeddedId
 	@AttributeOverrides( {
@@ -114,6 +119,17 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	@Override
 	public void setEmpleado(IEmpleado empleado) {
 		this.empleado = empleado;
+	}
+	
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.core.enumeration.TiempoContrato") })
+	@Column(name = "indtp", length = 1)
+	@Override
+	public TiempoContrato getTiempoContrato() {
+		return this.tiempoContrato;
+	}
+	@Override
+	public void setTiempoContrato(TiempoContrato tiempoContrato) {
+		this.tiempoContrato = tiempoContrato;
 	}
 
 }
