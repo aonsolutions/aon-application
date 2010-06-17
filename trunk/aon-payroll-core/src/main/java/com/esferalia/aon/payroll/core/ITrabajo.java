@@ -24,7 +24,7 @@ public interface ITrabajo extends Serializable{
 	String getCno();
 	void setCno(String cno);
 
-	
+	IEmpleado getEmpleado();
+	void setEmpleado(IEmpleado empleado);
 
-	
 }
