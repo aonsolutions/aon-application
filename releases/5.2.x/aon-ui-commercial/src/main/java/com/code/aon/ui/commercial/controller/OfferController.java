@@ -49,6 +49,7 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryPayMethod;
@@ -376,6 +377,7 @@ public class OfferController extends BasicController implements ISignatureContro
 				offer.setSeller(((TargetSeller)iter.next()).getSeller());
 			} else {
 				offer.setSeller(new Seller());
+				offer.getSeller().setRegistry(new Registry());
 			}
 		}
 	}
