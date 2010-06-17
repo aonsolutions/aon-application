@@ -9,15 +9,7 @@
 
 <ui:composition>
 	<aon:form >
-		<aon:div styleClass="aon-sidebarIcons-bottom">
-
-			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink action="home">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-home.png']}" />
-					<aon:div><aon:outputText value="#{bundle.aon_home}" /></aon:div>
-				</aon:commandLink>
-			</aon:div>
+		<aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{email.sidebarEnabled and email.mailActive}">
 				<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail">
