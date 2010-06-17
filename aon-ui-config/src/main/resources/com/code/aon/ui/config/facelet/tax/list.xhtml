@@ -27,21 +27,21 @@
 				<ui:define name="columns">
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputLabel for="Tax_name" value="#{bundle.aon_description}" />
+							<aon:outputLabel value="#{bundle.aon_description}" />
 						</f:facet>
 						<aon:outputText value="#{to.name}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputLabel for="Tax_type" value="#{bundle.aon_type}" />
+							<aon:outputLabel value="#{bundle.aon_type}" />
 						</f:facet>
 						<aon:outputText value="#{to.type}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputLabel for="Tax_startDate" value="#{bundle.aon_date_from}" />
+							<aon:outputLabel value="#{bundle.aon_date_from}" />
 						</f:facet>
 						<aon:outputText value="#{to.startDate}" >
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -51,21 +51,21 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputLabel for="Tax_percentage" value="#{bundle.aon_percentage}" />
+							<aon:outputLabel value="#{bundle.aon_percentage}" />
 						</f:facet>
 						<aon:outputText value="#{to.percentage}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputLabel for="Tax_surcharge" value="#{bundle.aon_surcharge}" />
+							<aon:outputLabel value="#{bundle.aon_surcharge}" />
 						</f:facet>
 						<aon:outputText value="#{to.surcharge}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputLabel for="Tax_salesAccount" value="#{configBundle.config_tax_sales_account}" />
+							<aon:outputLabel value="#{configBundle.config_tax_sales_account}" />
 						</f:facet>
 						<aon:outputText value="#{to.salesAccount}" />
 						<ui:include
@@ -86,7 +86,7 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputLabel for="Tax_purchaseAccount" value="#{configBundle.config_tax_purchase_account}" />
+							<aon:outputLabel value="#{configBundle.config_tax_purchase_account}" />
 						</f:facet>
 						<aon:outputText value="#{to.purchaseAccount}" />
 						<ui:include
