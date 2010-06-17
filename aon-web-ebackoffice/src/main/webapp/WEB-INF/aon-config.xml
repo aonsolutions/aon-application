@@ -16,6 +16,7 @@
 			showAttachment="true"
 			showEcommerceData="true"
 			showHistory="false"
+			showAlternatives="false"
 		/>
 		<product:productCategory
 			showCategoryGroup="true"
@@ -37,7 +38,10 @@
 			showProduct="true"
 			showSeller="true"
 			showAddInfo="true"
-			showThirdParty="false"
+			showSupplier="false"
+			showTariff="false"
+			showFinanceData="false"
+			showNote="false"
 		/>
 		
 	</commercial:config>
