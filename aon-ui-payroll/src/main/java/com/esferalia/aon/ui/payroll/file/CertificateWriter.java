@@ -94,7 +94,7 @@ public class CertificateWriter {
 //		trabajador.setCargoPublicoSindical();
 //		trabajador.setPorcentualDedicacion();
 		trabajador.setFechaAltaEmpresa(detalle.getEmpleado().getFechaInicio().toString());
-//		trabajador.setCodCausaSuspension();
+		trabajador.setCodCausaSuspension(detalle.getCausaSuspension());
 		trabajador.setFechaSuspensionExtincion(detalle.getEmpleado().getFechaFin().toString());
 //		trabajador.setFechaFinSuspension();
 //		trabajador.setEre();
@@ -114,7 +114,7 @@ public class CertificateWriter {
 			listaDatosCotizacion.add(createDatosCotizacionRecord(detalle));
 //		}
 		trabajador.setDatosCotizacion(listaDatosCotizacion);
-		trabajador.setDatosVacacionesCotizadas(createDatosVacacioneswCotizadasRecord());
+		trabajador.setDatosVacacionesCotizadas(createDatosVacacionesCotizadasRecord());
 		
 		return trabajador;
 	}
@@ -139,7 +139,7 @@ public class CertificateWriter {
 		return cotizacion;
 	}
 	
-	private Vacaciones createDatosVacacioneswCotizadasRecord() {
+	private Vacaciones createDatosVacacionesCotizadasRecord() {
 		
 		return null;
 	}
