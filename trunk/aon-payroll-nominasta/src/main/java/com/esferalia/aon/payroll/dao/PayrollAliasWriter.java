@@ -21,6 +21,7 @@ import com.esferalia.aon.payroll.Percepcion;
 import com.esferalia.aon.payroll.Persona;
 import com.esferalia.aon.payroll.RemesaINSS;
 import com.esferalia.aon.payroll.RemesaParteIT;
+import com.esferalia.aon.payroll.Trabajo;
 import com.esferalia.aon.payroll.Usuario;
 import com.esferalia.aon.payroll.cotizacion.BaseCotizacion;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
@@ -52,6 +53,7 @@ public class PayrollAliasWriter {
 				RemesaCertificadoEmpresaDetalle.class.getName(),
 				RemesaINSS.class.getName(),
 				RemesaParteIT.class.getName(),
+				Trabajo.class.getName(),
 				TipoBonificacion.class.getName(),
 				Usuario.class.getName()
 		        };
