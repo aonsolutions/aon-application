@@ -90,19 +90,19 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date_from}" />
+								<aon:outputText for="TaxDetail_startDate" value="#{bundle.aon_date_from}" />
 							</f:facet>
 							<aon:outputText value="#{to.startDate}" rendered="#{to!=taxDetail.to}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
-							<aon:selectInputDate id="Tax_startDate"
+							<aon:selectInputDate id="TaxDetail_startDate"
 								value="#{taxDetail.to.startDate}" rendered="#{to==taxDetail.to}"
 								required="#{true}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 							<f:facet name="footer">
-								<aon:selectInputDate id="Tax_startDate-New"
+								<aon:selectInputDate id="TaxDetail_startDate-New"
 									rendered="#{taxDetail.new}" value="#{taxDetail.to.startDate}"
 									required="#{true}"
 									timeZone="#{timeZoneController.timeZone}"
@@ -112,19 +112,19 @@
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date_to}" />
+								<aon:outputText for="TaxDetail_endDate" value="#{bundle.aon_date_to}" />
 							</f:facet>
 							<aon:outputText value="#{to.endDate}" rendered="#{to!=taxDetail.to}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
-							<aon:selectInputDate id="Tax_endDate"
+							<aon:selectInputDate id="TaxDetail_endDate"
 								value="#{taxDetail.to.endDate}" rendered="#{to==taxDetail.to}"
 								required="#{true}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 							<f:facet name="footer">
-								<aon:selectInputDate id="Tax_endDate-New"
+								<aon:selectInputDate id="TaxDetail_endDate-New"
 									rendered="#{taxDetail.new}" value="#{taxDetail.to.endDate}"
 									required="#{true}"
 									timeZone="#{timeZoneController.timeZone}"
@@ -134,28 +134,28 @@
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputLabel for="Tax_value" value="#{bundle.aon_value}" />
+								<aon:outputLabel for="TaxDetail_value" value="#{bundle.aon_percentage}" />
 							</f:facet>
 							<aon:outputText value="#{to.value}"
 								rendered="#{to!=taxDetail.to}" />
-							<aon:inputText id="Tax_value" rendered="#{to==taxDetail.to}" size="6"
+							<aon:inputText id="TaxDetail_value" rendered="#{to==taxDetail.to}" size="6"
 								value="#{taxDetail.to.value}" required="true" />
 							<f:facet name="footer">
-								<aon:inputText id="Tax_value-New" rendered="#{taxDetail.new}" size="6"
+								<aon:inputText id="TaxDetail_value-New" rendered="#{taxDetail.new}" size="6"
 									value="#{taxDetail.to.value}" required="true" />
 							</f:facet>
 						</aon:column>
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputLabel for="Tax_surcharge" value="#{bundle.aon_surcharge}" />
+								<aon:outputLabel for="TaxDetail_surcharge" value="#{bundle.aon_surcharge}" />
 							</f:facet>
 							<aon:outputText value="#{to.surcharge}"
 								rendered="#{to!=taxDetail.to}" />
-							<aon:inputText id="Tax_surcharge" rendered="#{to==taxDetail.to}" size="6"
+							<aon:inputText id="TaxDetail_surcharge" rendered="#{to==taxDetail.to}" size="6"
 								value="#{taxDetail.to.surcharge}" required="true" />
 							<f:facet name="footer">
-								<aon:inputText id="Tax_surcharge-New" rendered="#{taxDetail.new}" size="6"
+								<aon:inputText id="TaxDetail_surcharge-New" rendered="#{taxDetail.new}" size="6"
 									value="#{taxDetail.to.surcharge}" required="true" />
 							</f:facet>
 						</aon:column>
