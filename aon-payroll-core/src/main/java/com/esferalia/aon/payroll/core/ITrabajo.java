@@ -5,10 +5,14 @@ import java.util.Date;
 
 import com.esferalia.aon.payroll.core.cotizacion.IBaseCotizacion;
 import com.esferalia.aon.payroll.core.enumeration.TiempoContrato;
+import com.esferalia.aon.payroll.core.enumeration.TipoTiempoParcial;
 
 public interface ITrabajo extends Serializable{
 
 	Serializable getId();
+
+	Date getFecfin();
+	void setFecfin(Date fecfin);
 
 	IBaseCotizacion getBaseCotizacion();
 	void setBaseCotizacion(IBaseCotizacion baseCotizacion);
@@ -30,5 +34,8 @@ public interface ITrabajo extends Serializable{
 
 	TiempoContrato getTiempoContrato();
 	void setTiempoContrato(TiempoContrato tiempoContrato);
+
+	TipoTiempoParcial getTipoTP();
+	void setTipoTP(TipoTiempoParcial tipoTP);
 
 }
