@@ -1,29 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components">
-<body>
-
-<ui:composition>
-	<aon:div>
-		<aon:panelGroup>
-			<c:if test="#{!aonConfiguration.properties.hideMenuBar}">		
-				<!-- main menu declaration  -->
-				<aon:form>
-					<aon:menuBar id="menu"
-						imageDir="#{facesContext.externalContext.requestContextPath}/xmlhttp/css/xp/css-images/">
-						<aon:menuItem id="user_management" value="#{menuBundle.aon_user_management}" >
-							<aon:menuItem id="user" styleClass="aon-main-menu-leaf"
-								action="user" value="#{menuBundle.aon_user}"/>
-						</aon:menuItem>	
-					</aon:menuBar>
-				</aon:form>
-			</c:if>
-		</aon:panelGroup>
-	</aon:div>
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
+				
+	<ui:define name="afterMenuContent">
+		<c:if test="#{!currentDomain.domainManagement}">		
+			<c:forEach items="#{aonapps.applicationList}" var="app">
+				<aon:outputLink styleClass="aon-top-menu-item aon-menu-application" 
+						value="#{app.context}" target="_blank" rendered="#{app.toolbarEnabled}">
+					<aon:outputText value="#{app.name}" style="text-transform:capitalize"/> 
+				</aon:outputLink>
+			</c:forEach>
+		</c:if>
+		<c:if test="#{currentDomain.domainManagement}">
+			<c:forEach items="#{aonapps.applicationList}" var="app">
+				<aon:commandLink
+					styleClass="aon-top-menu-item aon-menu-application" 
+					action="domain_select" value="#{app.name}" rendered="#{app.toolbarEnabled}">
+					<f:setPropertyActionListener value="#{app}" target="#{domain.selectedApplication}" />
+				</aon:commandLink>
+			</c:forEach>
+		</c:if>					
+	</ui:define>
+	
 </ui:composition>
-
-</body>
-</html>
