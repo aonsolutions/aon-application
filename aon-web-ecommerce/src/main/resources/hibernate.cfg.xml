@@ -41,7 +41,7 @@
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
-		<mapping class="com.code.aon.commercial.TargetThirdParty"/>
+		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
@@ -84,6 +84,7 @@
 		<mapping class="com.code.aon.product.ItemAlternative"/>
 		<mapping class="com.code.aon.product.ItemAttachment"/>
 		<mapping class="com.code.aon.product.ItemPos"/>
+		<mapping class="com.code.aon.product.ItemSupplier"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
@@ -109,6 +110,9 @@
 		
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
+		
+		<!-- AON-SUPPLIER Mapping files -->	
+		<mapping class="com.code.aon.supplier.Supplier"/>
 
 	</session-factory>
 

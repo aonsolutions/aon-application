@@ -25,5 +25,13 @@ public interface IMarketingConstants {
 	String TARGET_PROFILE_CONTROLLER_NAME = "targetProfile";
 	
 	String COMMUNICATION_CENTER_CONTROLLER_NAME = "communicationCenter";
+	
+	String CAMPAIGN_CONTROLLER_NAME = "campaign";
 
+	// ************************************************************
+	// CONFIGURATION
+	// ************************************************************
+
+	String SHOW_PHONE_ACTION_MEDIA_TYPE = "showPhoneActionMediaType";
+	
 }

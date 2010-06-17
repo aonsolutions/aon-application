@@ -32,7 +32,7 @@
 
 					<aon:outputLabel for="Tax_startDate" value="#{bundle.aon_start_date}" />
 					<aon:selectInputDate id="Tax_startDate"
-						value="#{tax.to.startDate}" 
+						value="#{tax.to.startDate}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 

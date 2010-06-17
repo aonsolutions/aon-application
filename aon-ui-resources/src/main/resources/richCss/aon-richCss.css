@@ -284,45 +284,7 @@ color:#000;
 	line-height:34px;
 	height:34px;
 	}
-.aon-icon-big-commandButton-disabled{
-	}
-.aon-icon-big-correo{
-	background:transparent url(images/aon-icon-big/aon-icon-big-correo.png) center  center no-repeat;
-	}
-.aon-icon-big-alarms{
-	background:transparent url(images/aon-icon-big/aon-icon-big-avisos.png) center  center no-repeat;
-	}
-.aon-icon-big-contacts{
-	background:transparent url(images/aon-icon-big/aon-icon-big-contactos.png) center  center no-repeat;
-	}
-.aon-icon-big-notes{
-	background:transparent url(images/aon-icon-big/aon-icon-big-notas.png) center  center no-repeat;
-	}
-.aon-icon-big-agenda{
-	background:transparent url(images/aon-icon-big/aon-icon-big-notas.png) center  center no-repeat;
-	}
-.aon-icon-big-favorites{
-	background:transparent url(images/aon-icon-big/aon-icon-big-favoritos.png) center  center no-repeat;
-	}
-.aon-icon-big-home{
-	background:transparent url(images/aon-icon-big/aon-icon-big-home.png) center  center no-repeat;
-	}
-.aon-icon-big-employee{
-	background:transparent url(images/aon-icon-big/aon-icon-big-employee.png) center  center no-repeat;
-	}
-.aon-icon-big-employee-group{
-	background:transparent url(images/aon-icon-big/aon-icon-big-employee-group.png) center  center no-repeat;
-	}
-.aon-icon-big-users{
-	background:transparent url(images/aon-icon-big/aon-icon-big-users.png) center  center no-repeat;
-	}
-.aon-icon-big-ambito{
-	background:transparent url(images/aon-icon-big/aon-icon-big-ambito.png) center  center no-repeat;
-	}
-.aon-icon-big-configuration{
-	background:transparent url(images/aon-icon-big/aon-icon-big-configuration.png) center  center no-repeat;
-	}
- .aon-icon-big-sendingMail{
+.aon-icon-big-sendingMail{
 	background:transparent url(images/aon-icon-big/aon-icon-big-sending-mail.gif) scroll left center no-repeat;	
  }
 

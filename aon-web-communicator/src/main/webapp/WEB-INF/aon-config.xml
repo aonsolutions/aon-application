@@ -47,6 +47,9 @@
 			showSeller="false"
 			showAddInfo="true"			
 			showSupplier="false"
+			showTariff="false"
+			showFinanceData="false"
+			showNote="true"			
 		/>
 	</commercial:config>
 		
