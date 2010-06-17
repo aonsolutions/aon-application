@@ -574,13 +574,28 @@
 					<value>#{true}</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>								
+		</managed-property>										
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/lookup/campaignAction/list.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{campaignActionLookupListener}</value>
+			</list-entries>
+		</managed-property>		
 	</managed-bean>	
 
+	<managed-bean>
+		<managed-bean-name>campaignActionLookupListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.event.CampaignActionLookupListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************ CAMPAIGN ACTION TARGET ************** -->
 	<managed-bean>
 		<managed-bean-name>campaignActionTarget</managed-bean-name>
