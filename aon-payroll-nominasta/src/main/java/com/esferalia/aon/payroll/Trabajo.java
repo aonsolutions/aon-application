@@ -18,6 +18,7 @@ import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IContratosTc2;
 import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.cotizacion.IBaseCotizacion;
+import com.esferalia.aon.payroll.cotizacion.BaseCotizacion;
 
 /**
  * Trabajo
@@ -48,7 +49,7 @@ public class Trabajo implements ITransferObject, ITrabajo {
 		this.id = id;
 	}
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(targetEntity = BaseCotizacion.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "codbas", nullable = false)
 	@Override
 	public IBaseCotizacion getBaseCotizacion() {
@@ -59,7 +60,7 @@ public class Trabajo implements ITransferObject, ITrabajo {
 		this.baseCotizacion = baseCotizacion;
 	}
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(targetEntity = ContratosTc2.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "codtc2")
 	@Override
 	public IContratosTc2 getContratoTc2() {
