@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.payroll.core.cotizacion.IBaseCotizacion;
+import com.esferalia.aon.payroll.core.enumeration.TiempoContrato;
 
 public interface ITrabajo extends Serializable{
 
@@ -26,5 +27,8 @@ public interface ITrabajo extends Serializable{
 
 	IEmpleado getEmpleado();
 	void setEmpleado(IEmpleado empleado);
+
+	TiempoContrato getTiempoContrato();
+	void setTiempoContrato(TiempoContrato tiempoContrato);
 
 }
