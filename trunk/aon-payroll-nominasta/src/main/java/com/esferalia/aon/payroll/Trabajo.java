@@ -16,6 +16,7 @@ import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IContratosTc2;
+import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.cotizacion.IBaseCotizacion;
 import com.esferalia.aon.payroll.cotizacion.BaseCotizacion;
@@ -35,6 +36,7 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	private Date fechaInicioCont;
 	private Date fechaFinCont;
 	private String cno;
+	private IEmpleado empleado;
 
 	@EmbeddedId
 	@AttributeOverrides( {
@@ -102,10 +104,16 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	public void setCno(String cno) {
 		this.cno = cno;
 	}
+	
+	@ManyToOne(targetEntity = Empleado.class, fetch = FetchType.LAZY)
+	@JoinColumn(name = "cdg", insertable = false, updatable = false)
+	@Override
+	public IEmpleado getEmpleado() {
+		return this.empleado;
+	}
+	@Override
+	public void setEmpleado(IEmpleado empleado) {
+		this.empleado = empleado;
+	}
 
-	
-	
-	
-	
-	
 }
