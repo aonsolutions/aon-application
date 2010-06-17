@@ -28,6 +28,7 @@
 		<mapping class="com.esferalia.aon.payroll.ParteIT"/>		
 		<mapping class="com.esferalia.aon.payroll.Percepcion"/>
 		<mapping class="com.esferalia.aon.payroll.Persona"/>
+		<mapping class="com.esferalia.aon.payroll.Trabajo"/>
 		<mapping class="com.esferalia.aon.payroll.Usuario"/>
 		
 		<mapping class="com.esferalia.aon.payroll.cotizacion.BaseCotizacion"/>
