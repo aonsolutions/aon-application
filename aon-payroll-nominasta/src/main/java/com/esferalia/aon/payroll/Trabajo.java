@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -57,6 +58,12 @@ public class Trabajo implements ITransferObject, ITrabajo {
 
 	public void setId(TrabajoPK id) {
 		this.id = id;
+	}
+	
+	@Transient
+	@Override
+	public Date getFecini() {
+		return this.id.getFecini();
 	}
 	
 	@Temporal(TemporalType.DATE)
