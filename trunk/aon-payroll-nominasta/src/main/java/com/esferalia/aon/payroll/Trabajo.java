@@ -46,6 +46,7 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	private IEmpleado empleado;
 	private TiempoContrato tiempoContrato;
 	private TipoTiempoParcial tipoTP;
+	private Integer diasTP;
 
 	@EmbeddedId
 	@AttributeOverrides( {
@@ -162,6 +163,16 @@ public class Trabajo implements ITransferObject, ITrabajo {
 	@Override
 	public void setTipoTP(TipoTiempoParcial tipoTP) {
 		this.tipoTP = tipoTP;
+	}
+
+	@Column(name = "diasTp", length = 1)
+	@Override
+	public Integer getDiasTP() {
+		return this.diasTP;
+	}
+	@Override
+	public void setDiasTP(Integer diasTP) {
+		this.diasTP = diasTP;
 	}
 	
 	
