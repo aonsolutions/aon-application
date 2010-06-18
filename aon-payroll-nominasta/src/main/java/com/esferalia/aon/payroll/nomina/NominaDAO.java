@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.nomina;
 
+
 import java.util.List;
 
 import com.code.aon.common.BeanManager;
@@ -10,15 +11,12 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.Nomina;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IBonificacion;
-import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.INomina;
-import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
 import com.esferalia.aon.payroll.core.nomina.INominaDAO;
 import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
 import com.esferalia.aon.payroll.core.nomina.NominaParams;
 import com.esferalia.aon.payroll.cotizacion.Bonificacion;
-import com.esferalia.aon.payroll.cotizacion.BonificacionPK;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class NominaDAO implements INominaDAO {
@@ -59,11 +57,22 @@ public class NominaDAO implements INominaDAO {
 		} 
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<INomina> getNominas(NominaParams params) throws PayrollException {
+		try {
+			IManagerBean nominaBean = BeanManager.getManagerBean(Nomina.class);
+			List<?> list = nominaBean.getList(getCriteria(params),params.getOffset(),params.getCount());
+			return (List<INomina>) list;  
+		} catch (ManagerBeanException e) {
+			throw new PayrollException( e ); 
+		} 
+	}
 
 	@Override
 	public Criteria getCriteria(NominaParams params) {
 		Criteria c = new Criteria();
-		if (params.getEmpleado().getId() != null) {
+		if (params.getEmpleado() != null && params.getEmpleado().getId() != null) {
 			c.addEqualExpression(EMP_ALIAS, params.getEmpleado().getId());
 		}
 		if (params.getMes() != null) {
