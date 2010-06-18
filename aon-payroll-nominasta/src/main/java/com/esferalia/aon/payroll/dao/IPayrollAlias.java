@@ -1353,52 +1353,58 @@ public interface IPayrollAlias {
 	String  TRABAJO_CONTRATO_TC2_CDG = TRABAJO_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: Trabajo_diasTP
+	* Hibernate value: Trabajo.diasTP
+	*/
+	String  TRABAJO_DIAS_TP = TRABAJO_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: Trabajo_empleado_id
 	* Hibernate value: Trabajo.empleado.id
 	*/
-	String  TRABAJO_EMPLEADO_ID = TRABAJO_ENTRY.getAliasNames()[3];
+	String  TRABAJO_EMPLEADO_ID = TRABAJO_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Trabajo_fecfin
 	* Hibernate value: Trabajo.fecfin
 	*/
-	String  TRABAJO_FECFIN = TRABAJO_ENTRY.getAliasNames()[4];
+	String  TRABAJO_FECFIN = TRABAJO_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Trabajo_fechaFinCont
 	* Hibernate value: Trabajo.fechaFinCont
 	*/
-	String  TRABAJO_FECHA_FIN_CONT = TRABAJO_ENTRY.getAliasNames()[5];
+	String  TRABAJO_FECHA_FIN_CONT = TRABAJO_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Trabajo_fechaInicioCont
 	* Hibernate value: Trabajo.fechaInicioCont
 	*/
-	String  TRABAJO_FECHA_INICIO_CONT = TRABAJO_ENTRY.getAliasNames()[6];
+	String  TRABAJO_FECHA_INICIO_CONT = TRABAJO_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Trabajo_id_cdg
 	* Hibernate value: Trabajo.id.cdg
 	*/
-	String  TRABAJO_ID_CDG = TRABAJO_ENTRY.getAliasNames()[7];
+	String  TRABAJO_ID_CDG = TRABAJO_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Trabajo_id_fecini
 	* Hibernate value: Trabajo.id.fecini
 	*/
-	String  TRABAJO_ID_FECINI = TRABAJO_ENTRY.getAliasNames()[8];
+	String  TRABAJO_ID_FECINI = TRABAJO_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Trabajo_tiempoContrato
 	* Hibernate value: Trabajo.tiempoContrato
 	*/
-	String  TRABAJO_TIEMPO_CONTRATO = TRABAJO_ENTRY.getAliasNames()[9];
+	String  TRABAJO_TIEMPO_CONTRATO = TRABAJO_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Trabajo_tipoTP
 	* Hibernate value: Trabajo.tipoTP
 	*/
-	String  TRABAJO_TIPO_TP = TRABAJO_ENTRY.getAliasNames()[10];
+	String  TRABAJO_TIPO_TP = TRABAJO_ENTRY.getAliasNames()[11];
 
 
 
