@@ -25,9 +25,11 @@ import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.Percepcion;
 import com.esferalia.aon.payroll.PercepcionPK;
+import com.esferalia.aon.payroll.Trabajo;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPercepcion;
 import com.esferalia.aon.payroll.core.IPersona;
+import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
@@ -251,6 +253,36 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 				}
 			}
 			return max;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ITrabajo> getTrabajos(IEmpleado empleado) throws PayrollException{
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Trabajo.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_EMPLEADO_ID), empleado.getId());
+			List<?> list = bean.getList(c);
+			return (List<ITrabajo>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ITrabajo> getTrabajosTP(IEmpleado empleado) throws PayrollException{
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Trabajo.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_EMPLEADO_ID), empleado.getId());
+			c.addGreaterThanExpression(bean.getFieldName(IPayrollAlias.TRABAJO_TIEMPO_CONTRATO), 0);
+			c.addOrder(bean.getFieldName(IPayrollAlias.TRABAJO_FECFIN));
+			List<?> list = bean.getList(c);
+			return (List<ITrabajo>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
