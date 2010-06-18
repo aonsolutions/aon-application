@@ -29,6 +29,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
@@ -41,7 +42,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		Invoice invoice = (Invoice) evt.getTo();
 		checkInvoice(invoice);
 		if (invoice.getType() == InvoiceType.SALES) {
-	    	String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
+			checkNumber(invoice);
+			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
 			if (!StringUtils.isEmpty(invoice.getSeries())) {
 				referenceCode = invoice.getSeries() + "/" + referenceCode;
 			}
@@ -111,6 +113,30 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		int invoiceYear = CommonUtil.getYear(invoice.getIssueDate());
 		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
 			throw new ManagerBeanVetoListenerException("La fecha de la factura no esta dentro del rango válido");
+		}
+	}
+
+	private void checkNumber(Invoice invoice) throws ManagerBeanVetoListenerException {
+		try {
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Criteria criteria = new Criteria();
+			String seriesAlias = invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES);
+			if (StringUtils.isEmpty(invoice.getSeries())) {
+				Expression nullExpr = ExpressionUtilities.getNullExpression(seriesAlias);
+				Expression blankExpr = ExpressionUtilities.getEqualExpression(seriesAlias, invoice.getSeries());
+				criteria.addExpression(ExpressionUtilities.getOrExpression(nullExpr, blankExpr));
+			} else {
+				criteria.addEqualExpression(seriesAlias, invoice.getSeries());
+			}
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), invoice.getNumber());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), invoice.getType());
+			if (invoiceBean.getCount(criteria) > 0) {
+				criteria = new Criteria();
+				criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
+				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
+			}
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
 	}
 
