@@ -13,8 +13,12 @@
   <!-- =================== Tax  ============================= -->
   <navigation-rule>
     <navigation-case>
-      <from-outcome>brand_list</from-outcome>
-      <to-view-id>/facelet/product/auxiliary/tax/grid.faces</to-view-id>
+      <from-outcome>tax_list</from-outcome>
+      <to-view-id>/facelet/product/auxiliary/tax/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>tax_form</from-outcome>
+      <to-view-id>/facelet/product/auxiliary/tax/form.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
 
@@ -145,7 +149,7 @@
     </navigation-case>
     <navigation-case>
       <from-outcome>tax</from-outcome>
-      <to-view-id>/facelet/product/auxiliary/tax/grid.faces</to-view-id>
+      <to-view-id>/facelet/product/auxiliary/tax/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>productCategory</from-outcome>
