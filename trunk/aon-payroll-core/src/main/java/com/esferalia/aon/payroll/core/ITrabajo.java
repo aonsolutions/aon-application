@@ -40,5 +40,8 @@ public interface ITrabajo extends Serializable{
 	TipoTiempoParcial getTipoTP();
 	void setTipoTP(TipoTiempoParcial tipoTP);
 
+	Integer getDiasTP();
+	void setDiasTP(Integer diasTP);
+
 
 }
