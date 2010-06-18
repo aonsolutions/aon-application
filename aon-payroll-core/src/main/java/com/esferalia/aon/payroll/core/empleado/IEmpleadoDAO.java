@@ -7,6 +7,7 @@ import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IPercepcion;
 import com.esferalia.aon.payroll.core.IPersona;
+import com.esferalia.aon.payroll.core.ITrabajo;
 
 public interface IEmpleadoDAO {
 	
@@ -21,4 +22,7 @@ public interface IEmpleadoDAO {
 	List<IPercepcion> getPercepciones(IEmpleado empleado) throws PayrollException;
 	IPercepcion initializePercepcion(IEmpleado empleado) throws PayrollException;
 	IPercepcion accept(IPercepcion percepcion) throws PayrollException;
+
+	List<ITrabajo> getTrabajos(IEmpleado empleado) throws PayrollException;
+	List<ITrabajo> getTrabajosTP(IEmpleado empleado) throws PayrollException;
 }
