@@ -15,6 +15,8 @@ link slf4j-api
 link slf4j-jcl
 link commons-lang
 
+ln -sf  /usr/share/aon-master/bin/automysqlbackup.sh /etc/cron.daily/automysqlbackup
+
 . aondir-functions
 
 CLASSPATH=/usr/share/java/mysql-connector-java.jar
@@ -34,6 +36,9 @@ for db_connection in $(aondir_db_connections); do
         [ $? -eq 0 ] && echo -e "\\033[1;32mOK\\033[0;39m" || echo -e "\\033[1;31mERROR $ERR\\033[0;39m";
 
 done
+
+
+
 
 
 
