@@ -57,6 +57,7 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
@@ -1444,7 +1445,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class );
 		Criteria criteria = new Criteria();
 		if (StringUtils.isEmpty(seriesId)) {
 			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
@@ -1454,13 +1455,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		}
 		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE),
 				InvoiceType.SALES);
-		Projection projection = Projection.max(invoiceBean
-				.getFieldName(IFinanceAlias.INVOICE_NUMBER));
-		Object value = invoiceBean.getUniqueResult(projection, criteria);
-		if (value != null) {
-			return ((Integer) value).intValue() + 1;
-		}
-		return 1;
+		int value = SeriesNumberUtil.obtainNumber(seriesId, "invoice",criteria);
+		return value;
 	}
 
 	@SuppressWarnings("unchecked")
