@@ -144,11 +144,29 @@
                                                                         <groupname>root</groupname>
 									<directory>/usr/share/java</directory>
                                                                 </mapping>
+                                                                <mapping>
+                                                                        <sources>
+                                                                                <source>
+                                                                                        <location>src/main/scripts/automysqlbackup.sh</location>
+                                                                                </source>
+                                                                        </sources>
+                                                                        <filemode>755</filemode>
+                                                                        <username>root</username>
+                                                                        <groupname>root</groupname>
+                                                                        <directory>/usr/share/aon-master/bin</directory>
+                                                                </mapping>
                                                         </mappings>
-                                                        <postinstallScriptlet>
+                                                        
+							<postinstallScriptlet>
                                                                 <scriptFile>src/main/scripts/postinstall</scriptFile>
                                                                 <fileEncoding>utf-8</fileEncoding>
                                                         </postinstallScriptlet>
+                                                        
+							<postremoveScriptlet>
+                                                                <scriptFile>src/main/scripts/postremove</scriptFile>
+                                                                <fileEncoding>utf-8</fileEncoding>
+                                                        </postremoveScriptlet>
+
                                                 </configuration>
                                         </plugin>
 
