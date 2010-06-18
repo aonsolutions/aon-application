@@ -4,25 +4,28 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.payroll.Nomina;
+import com.esferalia.aon.payroll.AonPayroll;
+import com.esferalia.aon.payroll.core.INomina;
+import com.esferalia.aon.payroll.core.nomina.INominaDAO;
+import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
+import com.esferalia.aon.payroll.core.nomina.NominaParams;
 
 
 public class NominaTest extends TestCase{
 
 	public void testNomina() throws Exception {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Nomina.class);
-			List<ITransferObject> list = bean.getList( null,0,10 );
-			if (list.size() == 0) {
-				fail("No hay datos en Nominas");	
-			}
-			
-		} catch (Throwable e) {
-			e.printStackTrace();
-			fail(e.getMessage());
+		AonPayroll.configure();
+		NominaDAOFactory factory = NominaDAOFactory.getInstance();
+		INominaDAO nominaDAO = factory.getNominaDAO();
+		
+		NominaParams params = new NominaParams();
+		params.setYear(2009);
+		params.setMes(1);
+		params.setOffset(0);
+		params.setCount(500);
+		List<INomina> list = nominaDAO.getNominas(params);
+		for (INomina nomina :list) {
+			System.out.println( nomina );
 		}
 	}
 }

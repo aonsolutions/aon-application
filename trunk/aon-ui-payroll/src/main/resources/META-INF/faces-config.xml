@@ -64,7 +64,16 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- =================== Undeductible Invoice Management========================== -->
+	<!-- ************ Impresion Nomina Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>impNominaWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.ImpNominaWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- =================== ParteIT Wizard Management========================== -->
 	<navigation-rule id="parteITWizard">
 	    <navigation-case>
     	  	<from-outcome>parteITWizard_step0</from-outcome>
@@ -155,5 +164,17 @@
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step2.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
+
+	<navigation-rule id="impNominaWizard">
+	    <navigation-case>
+    	  	<from-outcome>impNominaWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/impNomina/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>impNominaWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/impNomina/step1.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
 
 </faces-config>
