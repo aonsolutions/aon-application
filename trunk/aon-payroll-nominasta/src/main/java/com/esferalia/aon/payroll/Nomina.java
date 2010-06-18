@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.INomina;
 import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
@@ -177,6 +178,7 @@ public class Nomina implements ITransferObject, INomina {
 
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 4)
+	@Override
 	public Integer getCdg() {
 		return this.cdg;
 	}
@@ -975,4 +977,16 @@ public class Nomina implements ITransferObject, INomina {
 	public void setTipo(TipoNomina tipoNomina) {
 		setTipoNomina(tipoNomina==TipoNomina.ATRASO?"1":"0");
 	}
+	
+	@Override
+	public String toString() {
+		return PojoToStringBuilder.reflectionToString(this);
+	}
+	
+	@Override
+	@Transient
+	public INomina getNomina() {
+		return this;
+	}
+
 }

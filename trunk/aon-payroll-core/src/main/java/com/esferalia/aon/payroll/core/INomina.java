@@ -6,6 +6,8 @@ import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
 
 public interface INomina extends Serializable{
 
+	Integer getCdg();
+	
 	IEmpleado getEmpleado();
 	void setEmpleado(IEmpleado empleado);
 	
@@ -45,6 +47,7 @@ public interface INomina extends Serializable{
 	Double getBaseHorasExtrasNoEstructurales();
 	void setBaseHorasExtrasNoEstructurales(Double baseHorasExtrasNoEstrcturales);
 	
+	INomina getNomina();
 	
 	/*
 Self.cdg                =     0;    // INTEGER      NOT NULL LABEL "Codigo de Nomina",
