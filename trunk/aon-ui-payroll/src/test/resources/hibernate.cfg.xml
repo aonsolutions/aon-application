@@ -21,9 +21,13 @@
 		<mapping class="com.esferalia.aon.payroll.Complemento"/>
 		<mapping class="com.esferalia.aon.payroll.Contrato"/>
 		<mapping class="com.esferalia.aon.payroll.ContratosTc2"/>
+		<mapping class="com.esferalia.aon.payroll.Divisa"/>
 		<mapping class="com.esferalia.aon.payroll.Empleado"/>			
 		<mapping class="com.esferalia.aon.payroll.Empresa"/>
+		<mapping class="com.esferalia.aon.payroll.Finiquito"/>
+		<mapping class="com.esferalia.aon.payroll.FiniquitoDiferencia"/>
 		<mapping class="com.esferalia.aon.payroll.Nomina"/>
+		<mapping class="com.esferalia.aon.payroll.NominaDiferencia"/>
 		<mapping class="com.esferalia.aon.payroll.ParteConfirmacionIT"/>		
 		<mapping class="com.esferalia.aon.payroll.ParteIT"/>		
 		<mapping class="com.esferalia.aon.payroll.Percepcion"/>
