@@ -23,6 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							reRender="showFinanceReturnWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{finance.showFinanceReturnWindow}"
 								value="#{false}" />
@@ -40,6 +41,8 @@
 										reRender="showFinanceReturnWindow,financeForm"
 										actionListener="#{finance.onFinanceReturn}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="financeReturnModalPanel"
+											event="onclick" operation="hide"/>											
 										<f:setPropertyActionListener
 											target="#{finance.showFinanceReturnWindow}"
 											value="#{false}" />
