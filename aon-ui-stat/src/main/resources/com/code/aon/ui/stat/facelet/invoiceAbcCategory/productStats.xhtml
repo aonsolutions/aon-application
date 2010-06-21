@@ -14,7 +14,7 @@
         
            <ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 				<ui:param name="statController" value="#{stat}" />
-				<ui:param name="statModel" value="#{stat.abcStatModel}" />
+				<ui:param name="statModel" value="#{stat.monthStatModel}" />
 				<aon:methodParam name="backAction" value="abc_category_stats"/>
 				
 				<ui:param name="windowTitle" value="#{statBundle.stat_abc_category}" />
@@ -22,8 +22,8 @@
 			    <aon:methodParam name="goMethod" value="#{stat.onAbcProductSelect}" type="actionListener" />
 				<ui:param name="paramName" value="product" />
 			     <ui:param name="showLastColumn" value="false" />
-				<ui:param name="reportKeyParam" value="abcStatsList" />
-				<ui:param name="reportGraphKeyParam" value="productStatsGraph" />
+				<ui:param name="reportKeyParam" value="monthStatsList" />
+				<ui:param name="reportGraphKeyParam" value="monthStatsGraph" />
 				<aon:methodParam name="backMethod" value="#{stat.onCategoryAbcStats}" type="actionListener" />
 				<ui:param name="showLastColumn" value="true" />
 			    <aon:methodParam name="lastColumnAction" value="#{stat.onProductRegistryStats}" type="actionListener" />
