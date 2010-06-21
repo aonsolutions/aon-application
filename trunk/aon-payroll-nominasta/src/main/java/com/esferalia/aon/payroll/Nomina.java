@@ -68,7 +68,7 @@ public class Nomina implements ITransferObject, INomina {
 //	private BigDecimal baseIrpfEspecie;
 //	private BigDecimal baseIrpfNocotiza;
 //	private BigDecimal baseHorascom;
-//	private BigDecimal basePerdes;
+	private Double basePerdes;
 //	private BigDecimal remuneracion;
 //	private BigDecimal baseIt;
 //	private BigDecimal total1;
@@ -105,8 +105,8 @@ public class Nomina implements ITransferObject, INomina {
 //	private BigDecimal baseIrpfAnt;
 //	private BigDecimal importeIrpfAnt;
 //	private BigDecimal importeCuotasAnt;
-//	private BigDecimal baseCgPts;
-//	private BigDecimal baseAccPts;
+	private Double baseCgPts;
+	private Double baseAccPts;
 //	private BigDecimal baseAccSinHPts;
 //  private Divisa divisa;
 
@@ -565,14 +565,15 @@ public class Nomina implements ITransferObject, INomina {
 //		this.baseHorascom = baseHorascom;
 //	}
 //
-//	@Column(name = "base_perdes", nullable = false, scale = 2, precision = 11)
-//	public BigDecimal getBasePerdes() {
-//		return this.basePerdes;
-//	}
-//
-//	public void setBasePerdes(BigDecimal basePerdes) {
-//		this.basePerdes = basePerdes;
-//	}
+	@Column(name = "base_perdes", nullable = false, scale = 2, precision = 11)
+	@Override
+	public Double getBasePerdes() {
+		return this.basePerdes;
+	}
+	@Override
+	public void setBasePerdes(Double basePerdes) {
+		this.basePerdes = basePerdes;
+	}
 //
 //	@Column(name = "remuneracion", nullable = false, scale = 2, precision = 11)
 //	public BigDecimal getRemuneracion() {
@@ -920,23 +921,25 @@ public class Nomina implements ITransferObject, INomina {
 //		this.importeCuotasAnt = importeCuotasAnt;
 //	}
 //
-//	@Column(name = "base_cg_pts", scale = 2, precision = 11)
-//	public BigDecimal getBaseCgPts() {
-//		return this.baseCgPts;
-//	}
-//
-//	public void setBaseCgPts(BigDecimal baseCgPts) {
-//		this.baseCgPts = baseCgPts;
-//	}
-//
-//	@Column(name = "base_acc_pts", scale = 2, precision = 11)
-//	public BigDecimal getBaseAccPts() {
-//		return this.baseAccPts;
-//	}
-//
-//	public void setBaseAccPts(BigDecimal baseAccPts) {
-//		this.baseAccPts = baseAccPts;
-//	}
+	@Column(name = "base_cg_pts", scale = 2, precision = 11)
+	@Override
+	public Double getBaseCgPts() {
+		return this.baseCgPts;
+	}
+	@Override
+	public void setBaseCgPts(Double baseCgPts) {
+		this.baseCgPts = baseCgPts;
+	}
+
+	@Column(name = "base_acc_pts", scale = 2, precision = 11)
+	@Override
+	public Double getBaseAccPts() {
+		return this.baseAccPts;
+	}
+	@Override
+	public void setBaseAccPts(Double baseAccPts) {
+		this.baseAccPts = baseAccPts;
+	}
 //
 //	@Column(name = "base_acc_sin_h_pts", scale = 2, precision = 11)
 //	public BigDecimal getBaseAccSinHPts() {
