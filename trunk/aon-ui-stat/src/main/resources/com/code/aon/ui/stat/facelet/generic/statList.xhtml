@@ -83,7 +83,7 @@
 					</f:facet>
 
 					<c:if test="#{clickable}">
-						<aon:htmlCommandLink styleClass="aon-dataTable-link-noicon"
+						<aon:htmlCommandLink styleClass="aon-dataTable-link"
 							value="#{to.name}" action="#{goAction}"
 							actionListener="#{goMethod}">
 							<f:param name="#{paramName}" value="#{to.key}" />
@@ -109,6 +109,9 @@
 						</c:if>
 						<c:if test="#{stat.invoiceType==0}">
 							<aon:outputText value="#{statBundle.stat_purchases_amount}" />
+						</c:if>
+						<c:if test="#{stat.invoiceType==2}">
+							<aon:outputText value="#{statBundle.stat_expenses_amount}" />
 						</c:if>
 					</f:facet>
 					<aon:outputText value="#{to.amount}">
@@ -156,7 +159,7 @@
 					<f:facet name="header">
 						<aon:outputText value="#{lastColumnName}" />
 					</f:facet>
-					<aon:htmlCommandLink styleClass="aon-dataTable-link-noicon"
+					<aon:htmlCommandLink styleClass="aon-dataTable-link"
 						actionListener="#{lastColumnAction}" action="#{customerFacelet}"
 						value="#{lastColumnName}">
 						<f:param name="#{paramName}" value="#{to.key}" />
