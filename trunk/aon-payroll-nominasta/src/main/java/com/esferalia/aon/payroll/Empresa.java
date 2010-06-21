@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.core.IRegistry;
 import com.esferalia.aon.payroll.core.ICliente;
+import com.esferalia.aon.payroll.core.IDivisa;
 import com.esferalia.aon.payroll.core.IEmpresa;
 
 @Entity
@@ -30,6 +31,7 @@ public class Empresa implements ITransferObject, IEmpresa {
 	private String representante;
 	private String representanteDocument;
 	private String cargo;
+	private IDivisa divisa;
 	
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 4)
@@ -129,6 +131,17 @@ public class Empresa implements ITransferObject, IEmpresa {
 	@Transient
 	public boolean isActive() {
 		return !(getCliente().isInactivo());
+	}
+
+	@ManyToOne(targetEntity = Divisa.class, fetch = FetchType.LAZY)
+	@JoinColumn(name = "divisa")
+	@Override
+	public IDivisa getDivisa() {
+		return this.divisa;
+	}
+	@Override
+	public void setDivisa(IDivisa divisa) {
+		this.divisa = divisa;
 	}
 	
 }
