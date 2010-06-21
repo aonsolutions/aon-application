@@ -15,7 +15,6 @@
 				<ui:param name="statModel" value="#{stat.yearStatModel}" />
 				<ui:param name="categoryLabel" value="#{statBundle.stat_category}" />
 				<ui:param name="clickable" value="#{true}" />
-				<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}"/>
 				<ui:param name="paramName" value="category" />
 				<ui:param name="showLastColumn" value="true" />
 				<ui:param name="reportKeyParam" value="yearStatsList" />
@@ -28,10 +27,16 @@
 				<aon:methodParam  name="customerFacelet" value="category_customer_list" />				
 				<c:if  test="#{stat.invoiceType==1}">
 				<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}"/>
 				</c:if>
 				<c:if  test="#{stat.invoiceType==0}">
 				<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
-				</c:if>		   
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}"/>
+				</c:if>	
+				<c:if  test="#{stat.invoiceType==2}">
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_creditors}" />
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_category_expense}"/>
+				</c:if>	 	   
 			</ui:include>			
 	  </ui:define>
   </ui:composition>

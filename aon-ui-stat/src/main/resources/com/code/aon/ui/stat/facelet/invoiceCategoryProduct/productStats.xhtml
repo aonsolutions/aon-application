@@ -18,18 +18,29 @@
 		<aon:methodParam  name="customerFacelet" value="category_customer_list" />	
 		<ui:param name="showLastColumn" value="true" />
 		<c:if test="#{stat.invoiceType==1}">
-			<ui:param name="lastColumnName"	value="#{statBundle.stat_show_clients}" />
+			<ui:param name="lastColumnName"
+				value="#{statBundle.stat_show_clients}" />
+			<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}" />
+			<ui:param name="categoryLabel" value="#{statBundle.stat_product}" />
 		</c:if>
 		<c:if test="#{stat.invoiceType==0}">
-			<ui:param name="lastColumnName"	value="#{statBundle.stat_show_suppliers}" />
+			<ui:param name="lastColumnName"
+				value="#{statBundle.stat_show_suppliers}" />
+			<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}" />
+			<ui:param name="categoryLabel" value="#{statBundle.stat_product}" />
+		</c:if>
+		<c:if test="#{stat.invoiceType==2}">
+			<ui:param name="lastColumnName"
+				value="#{statBundle.stat_show_creditors}" />
+			<ui:param name="windowTitle"
+				value="#{statBundle.stat_menu_category_expense}" />
+			<ui:param name="categoryLabel" value="#{statBundle.stat_expense}" />
 		</c:if>
 		<ui:decorate
 			template="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 			<ui:param name="statController" value="#{stat}" />
 			<ui:param name="statModel" value="#{stat.abcStatModel}" />
 			<ui:param name="clickable" value="#{false}" />
-			<ui:param name="categoryLabel" value="#{statBundle.stat_product}" />
-			<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}" />
 			<ui:param name="paramName" value="product" />
 			<ui:param name="reportKeyParam" value="monthStatsList" />
 			<ui:param name="reportGraphKeyParam" value="productStatsGraph" />
