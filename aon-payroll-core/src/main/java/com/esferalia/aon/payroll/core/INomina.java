@@ -49,6 +49,16 @@ public interface INomina extends Serializable{
 	
 	INomina getNomina();
 	
+	Double getBasePerdes();
+	void setBasePerdes(Double basePerdes);
+	
+	Double getBaseCgPts();
+	void setBaseCgPts(Double baseCgPts);
+	
+	Double getBaseAccPts();
+	void setBaseAccPts(Double baseAccPts);
+	
+	
 	/*
 Self.cdg                =     0;    // INTEGER      NOT NULL LABEL "Codigo de Nomina",
 ** Self.numero             =     0;    // INTEGER      NOT NULL LABEL "Numero Empresa Persona",
