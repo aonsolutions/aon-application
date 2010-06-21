@@ -23,6 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							reRender="showFinancePaymentWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{finance.showFinancePaymentWindow}"
 								value="#{false}" />
@@ -40,6 +41,8 @@
 										reRender="showFinancePaymentWindow,financeForm"
 										actionListener="#{finance.onFinancePayment}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="financePaymentModalPanel"
+											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
 											target="#{finance.showFinancePaymentWindow}"
 											value="#{false}" />
