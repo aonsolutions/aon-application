@@ -44,7 +44,7 @@
 					<categoryDataset>
 						<categorySeries>
 							<seriesExpression><![CDATA[$F{name}]]></seriesExpression>
-							<categoryExpression><![CDATA[$F{name}.substring( 0, 3 )]]></categoryExpression>
+							<categoryExpression><![CDATA[$F{name}.substring( 0, 2 )]]></categoryExpression>
 							<valueExpression><![CDATA[$F{amount}]]></valueExpression>
 						</categorySeries>
 					</categoryDataset>
