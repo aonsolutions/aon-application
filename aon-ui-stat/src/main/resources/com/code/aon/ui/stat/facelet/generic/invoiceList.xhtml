@@ -17,6 +17,10 @@
 				<ui:param name="toolbarTitle"
 					value="#{statBundle.stat_finance_purchase_invoice}" />
 			</c:if>
+			<c:if test="#{stat.invoiceType==2}">
+				<ui:param name="toolbarTitle"
+					value="#{statBundle.stat_finance_expense}" />
+			</c:if>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="skipResetButton" value="true" />
@@ -39,8 +43,8 @@
 							<f:param name="reportKey" value="invoiceList" />
 							<f:param name="outputFormat" value="MS Excel" />
 						</aon:htmlCommandLink>
-						<aon:htmlCommandLink id="invoiceList-cvs-report" value="CSV" title="CSV"
-							styleClass="aon-finding-toolbar-item aon-icon-csv"
+						<aon:htmlCommandLink id="invoiceList-cvs-report" value="CSV"
+							title="CSV" styleClass="aon-finding-toolbar-item aon-icon-csv"
 							action="#{report.onExecute}" target="_blank">
 							<f:param name="reportKey" value="invoiceList" />
 							<f:param name="outputFormat" value="CSV" />
@@ -55,7 +59,7 @@
 
 				<aon:editDataTable id="invoices" value="#{stat.invoicesModel}"
 					rows="20"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
 					var="to">
 
 					<aon:column>
@@ -83,6 +87,9 @@
 							<c:if test="#{stat.invoiceType==0}">
 								<aon:outputText value="#{statBundle.stat_supplier}" />
 							</c:if>
+							<c:if test="#{stat.invoiceType==2}">
+								<aon:outputText value="#{statBundle.stat_creditor}" />
+							</c:if>
 						</f:facet>
 						<aon:outputText value="#{to.registryName}">
 							<aon:abbreviateConverter maxWidth="50" />
@@ -102,6 +109,7 @@
 						</f:facet>
 						<aon:outputText value="#{to.status}" />
 					</aon:column>
+
 
 					<!--  	<aon:column>
 							<f:facet name="header">
@@ -127,6 +135,19 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
+					<aon:column
+						styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:htmlCommandLink id="invoicePrint-report" title="Ver Factura"
+							value="&#160;&#160;&#160;&#160;&#160;&#160;" target="_blank"
+							action="#{report.onExecute}"
+							actionListener="#{stat.onInvoicePdf}" styleClass="aon-icon-pdf">
+							<f:param name="reportKey" value="invoicePrint" />
+						</aon:htmlCommandLink>
+					</aon:column>
+
 				</aon:editDataTable>
 				<aon:dataScroller2 for="invoices" showNote="true" />
 			</aon:div>
