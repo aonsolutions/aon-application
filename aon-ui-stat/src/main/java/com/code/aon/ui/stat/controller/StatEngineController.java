@@ -667,11 +667,15 @@ public class StatEngineController {
 			if (invoiceType == 1) {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_customers"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
-			} else {
+			}
+			if (invoiceType == 0) {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_suppliers"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_supplier"));
 			}
-			
+			if (invoiceType == 2) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado_creditor"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_creditor"));
+			}			
 			customerStatModel = null;
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -975,14 +979,17 @@ public class StatEngineController {
 			setAbcStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(bundle,
-						"stat_report_abcCustomer"));
+				setReportName(AonUtil.getMessage(bundle, "stat_report_abcCustomer"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
-			} else {
+			}
+			if (invoiceType == 0) {
 				setReportName(AonUtil.getMessage(bundle, "stat_abc_supplier"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_supplier"));
 			}
-
+			if (invoiceType == 2) {
+				setReportName(AonUtil.getMessage(bundle, "stat_abc_creditor"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_creditor"));
+			}	
 			abcStatModel = null;
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -999,8 +1006,19 @@ public class StatEngineController {
 			list.addAll(se.getABCStatsByProduct(params));
 			setAbcStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_report_abcProduct"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+			if (invoiceType == 1) {
+				setReportName(AonUtil.getMessage(bundle, "stat_report_abcProduct"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+			}
+			if (invoiceType == 0) {
+				setReportName(AonUtil.getMessage(bundle, "stat_report_abcProduct"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+			}
+			if (invoiceType == 2) {
+				setReportName(AonUtil.getMessage(bundle, "stat_abc_expense"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_expense"));
+			}	
+			
 			abcStatModel = null;
 			setCheckLevel(1);
 		} catch (ManagerBeanException e) {
@@ -1109,11 +1127,22 @@ public class StatEngineController {
 		List<Stat> list = new LinkedList<Stat>();
 		params.setInvoiceType(invoiceType);
 		list.addAll(se.getCategoryProductsStats(params));
-		setAbcStats(list);
+		setMonthStats(list);
 		calculateTotals(list);
-		setReportName(AonUtil.getMessage(bundle, "stat_report_abcCategory"));
-		setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
-		abcStatModel = null;
+		if (invoiceType == 1) {
+			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
+			setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+		}
+		if (invoiceType == 0) {
+			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
+			setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+		}
+		if (invoiceType == 2) {
+			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
+			setItemTitle(AonUtil.getMessage(bundle, "stat_expense"));
+		}	
+		
+		monthStatModel = null;
 	}
 
 	public void calculateTotals(List<Stat> list) {
