@@ -26,6 +26,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class StatEngineController {
@@ -428,6 +429,11 @@ public class StatEngineController {
 		setInvoiceType(0);
 		setIType(InvoiceType.PURCHASE);
 	}
+	
+	public void onExpenseType(ActionEvent event) {
+		setInvoiceType(2);
+		setIType(InvoiceType.EXPENSES);
+	}
 
 	public String getMonthName() {
 
@@ -464,8 +470,13 @@ public class StatEngineController {
 			if (invoiceType == 1) {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
-			} else {
+			}
+			if (invoiceType == 0) {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado2"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+			}
+			if (invoiceType == 2) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_expense"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
 			}
 			yearStatModel = null;
@@ -511,11 +522,16 @@ public class StatEngineController {
 			if (invoiceType == 1) {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
-			} else {
-				setReportName(AonUtil
-						.getMessage(bundle, "stat_menu_acumulado2"));
+			}
+			if (invoiceType == 0) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado2"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
 			}
+			if (invoiceType == 2) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_expense"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
+			}
+	
 			monthStatModel = null;
 		}
 		/*
@@ -601,9 +617,13 @@ public class StatEngineController {
 			if (invoiceType == 1) {
 				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_day"));
-			} else {
-				setReportName(AonUtil
-						.getMessage(bundle, "stat_menu_acumulado2"));
+			}
+			if (invoiceType == 0) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado2"));
+				setItemTitle(AonUtil.getMessage(bundle, "stat_day"));
+			}
+			if (invoiceType == 2) {
+				setReportName(AonUtil.getMessage(bundle, "stat_menu_expense"));
 				setItemTitle(AonUtil.getMessage(bundle, "stat_day"));
 			}
 			dayStatModel = null;
@@ -1212,5 +1232,13 @@ public class StatEngineController {
 		setCurrentMonth(null);
 
 	}
+	
+	public void onInvoicePdf(ActionEvent event) throws ManagerBeanException {
+		
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), ((Invoice) this.getInvoicesModel().getRowData()).getId());
+		FormUtil.getController("invoicePrint").setCriteria(criteria);
+}
 
 }
