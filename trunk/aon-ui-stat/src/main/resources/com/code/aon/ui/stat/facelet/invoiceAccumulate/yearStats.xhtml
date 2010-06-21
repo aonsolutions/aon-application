@@ -33,7 +33,11 @@
 				<c:if  test="#{stat.invoiceType==0}">
 				<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
 				<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado2}" />
-				</c:if>		    
+				</c:if>
+				<c:if  test="#{stat.invoiceType==2}">
+				<ui:param name="windowTitle" value="#{statBundle.stat_menu_expense}" />
+				<ui:param name="lastColumnName" value="#{statBundle.stat_show_creditors}" />
+				</c:if>	 
 			</ui:include>
 			
 	</ui:define>

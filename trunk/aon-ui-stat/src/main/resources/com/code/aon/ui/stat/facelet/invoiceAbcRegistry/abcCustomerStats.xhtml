@@ -33,6 +33,10 @@
 				<ui:param name="categoryLabel" value="#{statBundle.stat_supplier}" />
 				<ui:param name="windowTitle" value="#{statBundle.stat_abc_supplier}" />
 			</c:if>
+			<c:if test="#{stat.invoiceType==2}">
+				<ui:param name="windowTitle" value="#{statBundle.stat_abc_creditor}" />
+				<ui:param name="categoryLabel" value="#{statBundle.stat_creditor}" />
+			</c:if>
 		</ui:include>
 
 	</ui:define>

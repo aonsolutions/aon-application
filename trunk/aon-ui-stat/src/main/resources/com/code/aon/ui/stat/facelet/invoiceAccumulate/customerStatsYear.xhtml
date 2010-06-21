@@ -22,6 +22,10 @@
 			<ui:param name="windowTitle" value="#{statBundle.stat_menu_suppliers}" />
 			<ui:param name="categoryLabel" value="#{statBundle.stat_supplier}" />
 		</c:if>
+		<c:if test="#{stat.invoiceType==2}">
+			<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado_creditor}" />
+			<ui:param name="categoryLabel" value="#{statBundle.stat_creditor}" />
+		</c:if>
 			<ui:decorate 
 			template="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">				
 				<ui:param name="statController" value="#{stat}" />

@@ -18,6 +18,9 @@
 				</c:if>
 				<c:if  test="#{stat.invoiceType==0}">
 				<ui:param name="toolbarTitle" value="#{statBundle.stat_menu_acumulado2}" />
+				</c:if>
+				<c:if  test="#{stat.invoiceType==2}">
+				<ui:param name="toolbarTitle" value="#{statBundle.stat_menu_expense}" />
 				</c:if>	
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
