@@ -29,7 +29,11 @@ public interface IEmpresa extends Serializable{
 	String getNombreRepresentante();
 	String getApellido1Representante();
 	String getApellido2Representante();
+	
 	String getCargo();
 	void setCargo(String cargo);
+	
+	IDivisa getDivisa();
+	void setDivisa(IDivisa divisa);
 	
 }
