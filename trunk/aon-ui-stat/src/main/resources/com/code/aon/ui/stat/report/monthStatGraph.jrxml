@@ -35,7 +35,7 @@
 		<groupFooter>
 			<band height="251" splitType="Stretch">
 				<stackedBar3DChart>
-					<chart isShowLegend="false">
+					<chart isShowLegend="true">
 						<reportElement key="element-3" x="5" y="35" width="530" height="203"/>
 						<chartTitle position="Top"/>
 						<chartSubtitle/>
