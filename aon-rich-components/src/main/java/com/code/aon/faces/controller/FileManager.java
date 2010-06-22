@@ -25,6 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.richfaces.event.UploadEvent;
@@ -73,6 +74,8 @@ public class FileManager {
 	
 	private File currentDirectory;
 	
+	private File startDirectory;
+	
 	public FileManager() {
 		this.pageLimit = 20;
 	}
@@ -109,6 +112,14 @@ public class FileManager {
 		this.currentDirectory = currentDirectory;
 	}
 	
+	public File getStartDirectory() {
+		return startDirectory;
+	}
+
+	public void setStartDirectory(File startDirectory) {
+		this.startDirectory = startDirectory;
+	}
+
 	public AonFile getAonFile() {
 		return aonFile;
 	}
@@ -174,7 +185,9 @@ public class FileManager {
 	}
 
 	public void onInit( ActionEvent event ) {
-		if ( getCurrentDirectory() == null ) {
+		if ( this.startDirectory != null ) {
+			setCurrentDirectory( this.startDirectory );
+		} else if ( getCurrentDirectory() == null ) {
 			setCurrentDirectory( getDefaultDirectory() );
 		}
 		loadModel( getCurrentDirectory() );
@@ -316,7 +329,12 @@ public class FileManager {
 
 	public void onGoRoot( ActionEvent event ) {
 		String parent = getCurrentDirectory().getParent();
-		File root = new File( FilenameUtils.getPrefix(parent) );
+		File root = null;
+		if ( this.startDirectory != null ) {
+			root = this.startDirectory;
+		} else {
+			root = new File( FilenameUtils.getPrefix(parent) );	
+		}
 		if ( root.canRead() ) {
 			setCurrentDirectory(root);
 			loadModel(getCurrentDirectory());
@@ -469,5 +487,19 @@ public class FileManager {
 		loadModel( getCurrentDirectory() );
 		reset();
 	}	
+	
+	public boolean isInRoot() {
+		return ObjectUtils.equals(getCurrentDirectory(), getStartDirectory());
+	}
+
+	public String getCurrentPath() {
+		if ( this.startDirectory != null ) {
+			if ( isInRoot() ) {
+				return File.separator;
+			}
+			return getRelativePath(this.startDirectory, getCurrentDirectory());
+		}
+		return getCurrentDirectory().toString();
+	}
 	
 }

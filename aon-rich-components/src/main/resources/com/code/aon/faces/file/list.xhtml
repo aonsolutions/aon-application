@@ -13,6 +13,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{richBundle.rich_fileManager}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="createFolder"
 						value="#{richBundle.aon_create_folder}"
@@ -50,15 +51,15 @@
 						columnClasses="aon-editDataTable-buttonsColumn,none">
 						<aon:panelGroup>
 							<aon:commandButton id="goRoot"
-								value="/" immediate="true"
+								value="/" immediate="true" rendered="#{!fileManager.inRoot}"
 								actionListener="#{fileManager.onGoRoot}" />				
 							<aon:commandButton id="goParent"
-								value=".." immediate="true"
+								value=".." immediate="true" rendered="#{!fileManager.inRoot}"
 								actionListener="#{fileManager.onGoParent}" />
 						</aon:panelGroup>				
 						<aon:panelGroup>
 							<aon:outputText value="#{richBundle.aon_current_folder}: " styleClass="aon-panel-title"/>
-							<aon:outputText value="#{fileManager.currentDirectory}" styleClass="aon-panel-title"/>
+							<aon:outputText value="#{fileManager.currentPath}" styleClass="aon-panel-title"/>
 						</aon:panelGroup>
 					</aon:panelGrid>
 				</aon:div>
