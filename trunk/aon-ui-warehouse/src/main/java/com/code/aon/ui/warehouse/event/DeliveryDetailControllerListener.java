@@ -26,6 +26,7 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 		controller.setLongDescription(false);
 		try {
 			deliveryDetail.setLine(calculateNextLine((Delivery)controller.getMasterController().getTo()));
+			deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
 			deliveryDetail.setType(DeliveryDetailType.MANUAL);
 			deliveryDetail.setSource(DeliveryDetailSource.DIRECT);
 		} catch (ManagerBeanException e) {
@@ -35,16 +36,16 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		DeliveryDetailController deliveryDetailController = (DeliveryDetailController)event.getController();
-		DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailController.getTo();
-		deliveryDetail.setWarehouse(((DeliveryController)deliveryDetailController.getMasterController()).getWarehouse());
+		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
+		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
+		deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		DeliveryDetailController deliveryDetailController = (DeliveryDetailController)event.getController();
-		DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailController.getTo();
-		deliveryDetail.setWarehouse(((DeliveryController)deliveryDetailController.getMasterController()).getWarehouse());
+		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
+		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
+		deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
 	}
 
 	@Override
@@ -56,6 +57,7 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController controller = (DeliveryDetailController)event.getController();
 		DeliveryDetail deliveryDetail = (DeliveryDetail)controller.getTo();
+		deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
 
 		controller.setLongDescription((deliveryDetail.getDescription().length() > 64) ? true : false);
 	}
