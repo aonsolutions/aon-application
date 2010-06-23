@@ -32,6 +32,7 @@ public class RemesaCertificadoEmpresaDetalle implements ITransferObject, IRemesa
 	private IRemesaCertificadoEmpresa remesaCertificado;	
 	private IEmpleado empleado;
 	private Date fechaBaja;
+	private String causaSuspension;
 
 	@Id     
 	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -77,13 +78,14 @@ public class RemesaCertificadoEmpresaDetalle implements ITransferObject, IRemesa
 		this.fechaBaja = fechaBaja;
 	}
 	
+	@Column(name = "causa_suspension", nullable = false)
 	@Override
 	public String getCausaSuspension() {
-		return null;
+		return causaSuspension;
 	}
 	@Override
 	public void setCausaSuspension(String causaSuspension) {
-		
+		this.causaSuspension = causaSuspension;
 	}
 	
 	
