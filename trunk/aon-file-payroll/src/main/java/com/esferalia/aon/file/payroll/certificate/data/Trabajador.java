@@ -2,6 +2,7 @@ package com.esferalia.aon.file.payroll.certificate.data;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -56,7 +57,7 @@ public class Trabajador {
 	private String fechaDesdePeriodoSalarios;
 	private String fechaHastaPeriodoSalarios;
 	private String diasSalarioTramitacion;
-	private Jornada distribucionJornada;
+	private DistribucionJornada distribucionJornada;
 	private List<Cotizacion> datosCotizacion;
 	private List<CotizacionRea> datosCotizacionRea;
 	private Vacaciones datosVacacionesCotizadas;
@@ -200,10 +201,10 @@ public class Trabajador {
 	public void setDiasSalarioTramitacion(String diasSalarioTramitacion) {
 		this.diasSalarioTramitacion = diasSalarioTramitacion;
 	}
-	public Jornada getDistribucionJornada() {
+	public DistribucionJornada getDistribucionJornada() {
 		return distribucionJornada;
 	}
-	public void setDistribucionJornada(Jornada distribucionJornada) {
+	public void setDistribucionJornada(DistribucionJornada distribucionJornada) {
 		this.distribucionJornada = distribucionJornada;
 	}
 	public List<Cotizacion> getDatosCotizacion() {
@@ -232,90 +233,154 @@ public class Trabajador {
 	}
 	
 	public Element getElement(Document xmldoc){
-		Element dniNie = xmldoc.createElement(DNI_NIE);
-		Element nombre = xmldoc.createElement(NOMBRE);
-		Element apellido1 = xmldoc.createElement(APELLIDO1);
-		Element apellido2 = xmldoc.createElement(APELLIDO2);
-		Element numSs = xmldoc.createElement(NUM_SS);
-		Element grupoCotizacion = xmldoc.createElement(GRUPO_COTIZACION);
-		Element tipoContrato = xmldoc.createElement(TIPO_CONTRATO);
-		Element duracionContrato = xmldoc.createElement(DURACION_CONTRATO);
-		Element indicadorDuracionContrato = xmldoc.createElement(INDICADOR_DURACION_CONTRATO);
-		Element codProfesion = xmldoc.createElement(COD_PROFESION);
-		Element cargoPublicoSindical = xmldoc.createElement(CARGO_PUBLICO_SINDICAL);
-		Element porcentualDedicacion = xmldoc.createElement(PORCENTUAL_DEDICACION);
-		Element fechaAltaEmpresa = xmldoc.createElement(FECHA_ALTA_EMPRESA);
-		Element codCausaSuspension = xmldoc.createElement(COD_CAUSA_SUSPENSION);
-		Element fechaSuspensionExtincion = xmldoc.createElement(FECHA_SUSPENSION_EXTINCION);
-		Element fechaFinSuspension = xmldoc.createElement(FECHA_FIN_SUSPENSION);
-		Element ere = xmldoc.createElement(ERE);
-		Element porcentualReduccionERE = xmldoc.createElement(PORCENTUAL_REDUCCION_ERE);
-		Element porcentualReduccionOTROS = xmldoc.createElement(PORCENTUAL_REDUCCION_OTROS);
-		Element codCausaPorcentReduccion = xmldoc.createElement(COD_CAUSA_PORCENT_REDUCCION);
-		Element fechaDesdePeriodoSalarios = xmldoc.createElement(FECHA_DESDE_PERIODO_SALARIOS);
-		Element fechaHastaPeriodoSalarios = xmldoc.createElement(FECHA_HASTA_PERIODO_SALARIOS);
-		Element diasSalarioTramitacion = xmldoc.createElement(DIAS_SALARIO_TRAMITACION);
-		
-		dniNie.appendChild(xmldoc.createTextNode(getDniNie() ));
-		nombre.appendChild(xmldoc.createTextNode(getNombre())); 
-		apellido1.appendChild(xmldoc.createTextNode(getApellido1())); 
-		apellido2.appendChild(xmldoc.createTextNode(getApellido2())); 
-		numSs.appendChild(xmldoc.createTextNode(getNumSs())); 
-		grupoCotizacion.appendChild(xmldoc.createTextNode(getGrupoCotizacion())); 
-		tipoContrato.appendChild(xmldoc.createTextNode(getTipoContrato())); 
-		duracionContrato.appendChild(xmldoc.createTextNode(getDuracionContrato())); 
-		indicadorDuracionContrato.appendChild(xmldoc.createTextNode(getIndicadorDuracionContrato())); 
-		codProfesion.appendChild(xmldoc.createTextNode(getCodProfesion())); 
-		cargoPublicoSindical.appendChild(xmldoc.createTextNode(getCargoPublicoSindical())); 
-		porcentualDedicacion.appendChild(xmldoc.createTextNode(getPorcentualDedicacion())); 
-		fechaAltaEmpresa.appendChild(xmldoc.createTextNode(getFechaAltaEmpresa())); 
-		codCausaSuspension.appendChild(xmldoc.createTextNode(getCodCausaSuspension())); 
-		fechaSuspensionExtincion.appendChild(xmldoc.createTextNode(getFechaSuspensionExtincion())); 
-		fechaFinSuspension.appendChild(xmldoc.createTextNode(getFechaFinSuspension())); 
-		ere.appendChild(xmldoc.createTextNode(getEre())); 
-		porcentualReduccionERE.appendChild(xmldoc.createTextNode(getPorcentualReduccionERE())); 
-		porcentualReduccionOTROS.appendChild(xmldoc.createTextNode(getPorcentualReduccionOTROS())); 
-		codCausaPorcentReduccion.appendChild(xmldoc.createTextNode(getCodCausaPorcentReduccion())); 
-		fechaDesdePeriodoSalarios.appendChild(xmldoc.createTextNode(getFechaDesdePeriodoSalarios())); 
-		fechaHastaPeriodoSalarios.appendChild(xmldoc.createTextNode(getFechaHastaPeriodoSalarios())); 
-		diasSalarioTramitacion.appendChild(xmldoc.createTextNode(getDiasSalarioTramitacion())); 
-		
 		Element trabajador = xmldoc.createElement(DATOS_TRABAJADOR);
+
+		Element dniNie = xmldoc.createElement(DNI_NIE);
+		dniNie.appendChild(xmldoc.createTextNode(getDniNie() ));
 		trabajador.appendChild(dniNie);
+
+		Element nombre = xmldoc.createElement(NOMBRE);
+		nombre.appendChild(xmldoc.createTextNode(getNombre())); 
 		trabajador.appendChild(nombre);
+
+		Element apellido1 = xmldoc.createElement(APELLIDO1);
+		apellido1.appendChild(xmldoc.createTextNode(getApellido1())); 
 		trabajador.appendChild(apellido1);
-		trabajador.appendChild(apellido2);
+
+		Element apellido2 = null;
+		if(!StringUtils.isBlank(getApellido2())){
+			apellido2 = xmldoc.createElement(APELLIDO2);
+			apellido2.appendChild(xmldoc.createTextNode(getApellido2()));
+			trabajador.appendChild(apellido2);
+		}
+		
+		Element numSs = xmldoc.createElement(NUM_SS);
+		numSs.appendChild(xmldoc.createTextNode(getNumSs())); 
 		trabajador.appendChild(numSs);
-		trabajador.appendChild(grupoCotizacion);
+
+		Element grupoCotizacion = null;
+		if(!StringUtils.isBlank(getGrupoCotizacion())){
+			grupoCotizacion = xmldoc.createElement(GRUPO_COTIZACION);
+			grupoCotizacion.appendChild(xmldoc.createTextNode(getGrupoCotizacion())); 
+			trabajador.appendChild(grupoCotizacion);
+		}
+
+		Element tipoContrato = xmldoc.createElement(TIPO_CONTRATO);
+		tipoContrato.appendChild(xmldoc.createTextNode(getTipoContrato())); 
 		trabajador.appendChild(tipoContrato);
-		trabajador.appendChild(duracionContrato);
-		trabajador.appendChild(indicadorDuracionContrato);
+
+		Element duracionContrato = null;
+		if(!StringUtils.isBlank(getDuracionContrato())){
+			duracionContrato = xmldoc.createElement(DURACION_CONTRATO);
+			duracionContrato.appendChild(xmldoc.createTextNode(getDuracionContrato())); 
+			trabajador.appendChild(duracionContrato);
+		}
+
+		Element indicadorDuracionContrato = null;
+		if(!StringUtils.isBlank(getIndicadorDuracionContrato())){
+			indicadorDuracionContrato = xmldoc.createElement(INDICADOR_DURACION_CONTRATO);
+			indicadorDuracionContrato.appendChild(xmldoc.createTextNode(getIndicadorDuracionContrato())); 
+			trabajador.appendChild(indicadorDuracionContrato);
+		}
+		
+		Element codProfesion = xmldoc.createElement(COD_PROFESION);
+		codProfesion.appendChild(xmldoc.createTextNode(getCodProfesion())); 
 		trabajador.appendChild(codProfesion);
-		trabajador.appendChild(cargoPublicoSindical);
-		trabajador.appendChild(porcentualDedicacion);
+		
+		Element cargoPublicoSindical = null;
+		if(!StringUtils.isBlank(getCargoPublicoSindical())){
+			cargoPublicoSindical = xmldoc.createElement(CARGO_PUBLICO_SINDICAL);
+			cargoPublicoSindical.appendChild(xmldoc.createTextNode(getCargoPublicoSindical())); 
+			trabajador.appendChild(cargoPublicoSindical);
+		}
+		
+		Element porcentualDedicacion = null;
+		if(!StringUtils.isBlank(getPorcentualDedicacion())){
+			porcentualDedicacion = xmldoc.createElement(PORCENTUAL_DEDICACION);
+			porcentualDedicacion.appendChild(xmldoc.createTextNode(getPorcentualDedicacion())); 
+			trabajador.appendChild(porcentualDedicacion);
+		}
+		
+		Element fechaAltaEmpresa = xmldoc.createElement(FECHA_ALTA_EMPRESA);
+		fechaAltaEmpresa.appendChild(xmldoc.createTextNode(getFechaAltaEmpresa())); 
 		trabajador.appendChild(fechaAltaEmpresa);
+		
+		Element codCausaSuspension = xmldoc.createElement(COD_CAUSA_SUSPENSION);
+		codCausaSuspension.appendChild(xmldoc.createTextNode(getCodCausaSuspension())); 
 		trabajador.appendChild(codCausaSuspension);
+		
+		Element fechaSuspensionExtincion = xmldoc.createElement(FECHA_SUSPENSION_EXTINCION);
+		fechaSuspensionExtincion.appendChild(xmldoc.createTextNode(getFechaSuspensionExtincion())); 
 		trabajador.appendChild(fechaSuspensionExtincion);
-		trabajador.appendChild(fechaFinSuspension);
-		trabajador.appendChild(ere);
-		trabajador.appendChild(porcentualReduccionERE);
-		trabajador.appendChild(porcentualReduccionOTROS);
-		trabajador.appendChild(codCausaPorcentReduccion);
-		trabajador.appendChild(fechaDesdePeriodoSalarios);
-		trabajador.appendChild(fechaHastaPeriodoSalarios);
+		
+		Element fechaFinSuspension = null;
+		if(!StringUtils.isBlank(getFechaFinSuspension())){
+			fechaFinSuspension = xmldoc.createElement(FECHA_FIN_SUSPENSION);
+			fechaFinSuspension.appendChild(xmldoc.createTextNode(getFechaFinSuspension())); 
+			trabajador.appendChild(fechaFinSuspension);
+		}
+		
+		Element ere = null;
+		if(!StringUtils.isBlank(getEre())){
+			ere = xmldoc.createElement(ERE);
+			ere.appendChild(xmldoc.createTextNode(getEre())); 
+			trabajador.appendChild(ere);
+		}
+		
+		Element porcentualReduccionERE = null;
+		if(!StringUtils.isBlank(getPorcentualReduccionERE())){
+			porcentualReduccionERE = xmldoc.createElement(PORCENTUAL_REDUCCION_ERE);
+			porcentualReduccionERE.appendChild(xmldoc.createTextNode(getPorcentualReduccionERE())); 
+			trabajador.appendChild(porcentualReduccionERE);
+		}
+		
+		Element porcentualReduccionOTROS = null;
+		if(!StringUtils.isBlank(getPorcentualReduccionOTROS())){
+			porcentualReduccionOTROS = xmldoc.createElement(PORCENTUAL_REDUCCION_OTROS);
+			porcentualReduccionOTROS.appendChild(xmldoc.createTextNode(getPorcentualReduccionOTROS())); 
+			trabajador.appendChild(porcentualReduccionOTROS);
+		}
+		
+		Element codCausaPorcentReduccion = null;
+		if(!StringUtils.isBlank(getCodCausaPorcentReduccion())){
+			codCausaPorcentReduccion = xmldoc.createElement(COD_CAUSA_PORCENT_REDUCCION);
+			codCausaPorcentReduccion.appendChild(xmldoc.createTextNode(getCodCausaPorcentReduccion())); 
+			trabajador.appendChild(codCausaPorcentReduccion);
+		}
+		
+		Element fechaDesdePeriodoSalarios = null;
+		if(!StringUtils.isBlank(getFechaDesdePeriodoSalarios())){
+			fechaDesdePeriodoSalarios = xmldoc.createElement(FECHA_DESDE_PERIODO_SALARIOS);
+			fechaDesdePeriodoSalarios.appendChild(xmldoc.createTextNode(getFechaDesdePeriodoSalarios())); 
+			trabajador.appendChild(fechaDesdePeriodoSalarios);
+		}
+		
+		Element fechaHastaPeriodoSalarios = null;
+		if(!StringUtils.isBlank(getFechaHastaPeriodoSalarios())){
+			fechaHastaPeriodoSalarios = xmldoc.createElement(FECHA_HASTA_PERIODO_SALARIOS);
+			fechaHastaPeriodoSalarios.appendChild(xmldoc.createTextNode(getFechaHastaPeriodoSalarios())); 
+			trabajador.appendChild(fechaHastaPeriodoSalarios);
+		}
+		
+		Element diasSalarioTramitacion = xmldoc.createElement(DIAS_SALARIO_TRAMITACION);
+		diasSalarioTramitacion.appendChild(xmldoc.createTextNode(getDiasSalarioTramitacion())); 
 		trabajador.appendChild(diasSalarioTramitacion);
 		
-		trabajador.appendChild(getDistribucionJornada().getElement(xmldoc));
+		if(getDistribucionJornada()!=null){
+			trabajador.appendChild(getDistribucionJornada().getElement(xmldoc));
+		}
+		
 		for(Cotizacion c: getDatosCotizacion()){
 			trabajador.appendChild(c.getElement(xmldoc));
 		}
-		for(CotizacionRea c: getDatosCotizacionRea()){
-			trabajador.appendChild(c.getElement(xmldoc));
-		}
-		trabajador.appendChild(getDatosVacacionesCotizadas().getElement(xmldoc));
-		trabajador.appendChild(getDatosVacacionesCotizadasRea().getElement(xmldoc));
+
+//		for(CotizacionRea c: getDatosCotizacionRea()){
+//			trabajador.appendChild(c.getElement(xmldoc));
+//		}
+//		trabajador.appendChild(getDatosVacacionesCotizadas().getElement(xmldoc));
+//		trabajador.appendChild(getDatosVacacionesCotizadasRea().getElement(xmldoc));
 		
-		return null;
+		return trabajador;
 	}
 
 }

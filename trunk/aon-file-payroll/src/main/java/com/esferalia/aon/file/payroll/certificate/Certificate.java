@@ -61,11 +61,12 @@ public class Certificate {
 	
 	public Element getElement(Document xmldoc){
 		Element certificadoEmpresa = xmldoc.createElement(CERTIFICADO_EMPRESA);
+		return certificadoEmpresa;
+	}
+	public void fillElement(Document xmldoc,Element certificadoEmpresa){
 		for(CuentaCotizacion cc: getCuentaCotizacion()){
 			certificadoEmpresa.appendChild(cc.getElement(xmldoc));
 		}
-		
-		return certificadoEmpresa;
 	}
 	
 }
