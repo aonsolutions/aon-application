@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class Periodo {
 	
@@ -45,21 +44,23 @@ public class Periodo {
 		this.numeroDiasTrabajadosPorSemanaOPeriodo = numeroDiasTrabajadosPorSemanaOPeriodo;
 	}
 	
-	public Node getElement(Document xmldoc) {
-		Element tipoDistribucion = xmldoc.createElement(TIPO_DISTRIBUCION);
-		Element fechaInicioPeriodo = xmldoc.createElement(FECHA_INICIO_PERIODO);
-		Element fechaFinPeriodo = xmldoc.createElement(FECHA_FIN_PERIODO);
-		Element numeroDiasTrabajadosPorSemanaOPeriodo = xmldoc.createElement(NUMERO_DIAS_TRAB_POR_SEMANA_O_PERIODO);
-		
-		tipoDistribucion.appendChild(xmldoc.createTextNode(getTipoDistribucion() ));
-		fechaInicioPeriodo.appendChild(xmldoc.createTextNode(getFechaInicioPeriodo().toString() ));
-		fechaFinPeriodo.appendChild(xmldoc.createTextNode(getFechaFinPeriodo().toString() ));
-		numeroDiasTrabajadosPorSemanaOPeriodo.appendChild(xmldoc.createTextNode(getNumeroDiasTrabajadosPorSemanaOPeriodo().toString() ));
-		
+	public Element getElement(Document xmldoc) {
 		Element periodo = xmldoc.createElement(PERIODO);
+
+		Element tipoDistribucion = xmldoc.createElement(TIPO_DISTRIBUCION);
+		tipoDistribucion.appendChild(xmldoc.createTextNode(getTipoDistribucion() ));
 		periodo.appendChild(tipoDistribucion);
+
+		Element fechaInicioPeriodo = xmldoc.createElement(FECHA_INICIO_PERIODO);
+		fechaInicioPeriodo.appendChild(xmldoc.createTextNode(getFechaInicioPeriodo().toString() ));
 		periodo.appendChild(fechaInicioPeriodo);
+		
+		Element fechaFinPeriodo = xmldoc.createElement(FECHA_FIN_PERIODO);
+		fechaFinPeriodo.appendChild(xmldoc.createTextNode(getFechaFinPeriodo().toString() ));
 		periodo.appendChild(fechaFinPeriodo);
+		
+		Element numeroDiasTrabajadosPorSemanaOPeriodo = xmldoc.createElement(NUMERO_DIAS_TRAB_POR_SEMANA_O_PERIODO);
+		numeroDiasTrabajadosPorSemanaOPeriodo.appendChild(xmldoc.createTextNode(getNumeroDiasTrabajadosPorSemanaOPeriodo().toString() ));
 		periodo.appendChild(numeroDiasTrabajadosPorSemanaOPeriodo);
 		
 		return periodo;
