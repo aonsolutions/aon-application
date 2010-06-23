@@ -1,8 +1,8 @@
 package com.esferalia.aon.file.payroll.certificate.data;
 
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class Cotizacion {
 	
@@ -57,28 +57,38 @@ public class Cotizacion {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	public Node getElement(Document xmldoc) {
-		Element ano = xmldoc.createElement(ANO);
-		Element mes = xmldoc.createElement(MES);
-		Element numDiasCotizados = xmldoc.createElement(NUM_DIAS_COTIZADOS);
-		Element baseCotizacionContingenciasComunes = xmldoc.createElement(BASE_COTIZACION_CONTINGENCIAS_COMUNES);
-		Element baseCotizacionDesempleo = xmldoc.createElement(BASE_COTIZACION_DESEMPLEO);
-		Element observaciones = xmldoc.createElement(OBSERVACIONES);
-		
-		ano.appendChild(xmldoc.createTextNode(getAno().toString() ));
-		mes.appendChild(xmldoc.createTextNode(getMes().toString() ));
-		numDiasCotizados.appendChild(xmldoc.createTextNode(getNumDiasCotizados().toString() ));
-		baseCotizacionContingenciasComunes.appendChild(xmldoc.createTextNode(getBaseCotizacionContingenciasComunes().toString() ));
-		baseCotizacionDesempleo.appendChild(xmldoc.createTextNode(getBaseCotizacionDesempleo().toString() ));
-		observaciones.appendChild(xmldoc.createTextNode(getObservaciones() ));
-		
+	public Element getElement(Document xmldoc) {
 		Element datosCotizacion = xmldoc.createElement(DATOS_COTIZACION);
+
+		Element ano = xmldoc.createElement(ANO);
+		ano.appendChild(xmldoc.createTextNode(getAno().toString() ));
 		datosCotizacion.appendChild(ano);
+
+		Element mes = xmldoc.createElement(MES);
+		mes.appendChild(xmldoc.createTextNode(getMes().toString() ));
 		datosCotizacion.appendChild(mes);
+		
+		Element numDiasCotizados = xmldoc.createElement(NUM_DIAS_COTIZADOS);
+		numDiasCotizados.appendChild(xmldoc.createTextNode(getNumDiasCotizados().toString() ));
 		datosCotizacion.appendChild(numDiasCotizados);
-		datosCotizacion.appendChild(baseCotizacionContingenciasComunes);
+		
+		Element baseCotizacionContingenciasComunes = null;
+		if(getBaseCotizacionContingenciasComunes()!=null){
+			baseCotizacionContingenciasComunes = xmldoc.createElement(BASE_COTIZACION_CONTINGENCIAS_COMUNES);
+			baseCotizacionContingenciasComunes.appendChild(xmldoc.createTextNode(getBaseCotizacionContingenciasComunes().toString() ));
+			datosCotizacion.appendChild(baseCotizacionContingenciasComunes);
+		}
+		
+		Element baseCotizacionDesempleo = xmldoc.createElement(BASE_COTIZACION_DESEMPLEO);
+		baseCotizacionDesempleo.appendChild(xmldoc.createTextNode(getBaseCotizacionDesempleo().toString() ));
 		datosCotizacion.appendChild(baseCotizacionDesempleo);
-		datosCotizacion.appendChild(observaciones);
+		
+		Element observaciones = null;
+		if(!StringUtils.isBlank(getObservaciones())){
+			observaciones = xmldoc.createElement(OBSERVACIONES);
+			observaciones.appendChild(xmldoc.createTextNode(getObservaciones() ));
+			datosCotizacion.appendChild(observaciones);
+		}
 		
 		return datosCotizacion;
 	}
