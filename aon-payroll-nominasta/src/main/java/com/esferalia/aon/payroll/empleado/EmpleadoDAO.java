@@ -33,6 +33,7 @@ import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
+import com.esferalia.aon.payroll.core.enumeration.TiempoContrato;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class EmpleadoDAO implements IEmpleadoDAO {
@@ -279,7 +280,7 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 			IManagerBean bean = BeanManager.getManagerBean(Trabajo.class);
 			Criteria c = new Criteria();
 			c.addEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_EMPLEADO_ID), empleado.getId());
-			c.addGreaterThanExpression(bean.getFieldName(IPayrollAlias.TRABAJO_TIEMPO_CONTRATO), 0);
+			c.addGreaterThanExpression(bean.getFieldName(IPayrollAlias.TRABAJO_TIEMPO_CONTRATO), TiempoContrato.COMPETO);
 			c.addOrder(bean.getFieldName(IPayrollAlias.TRABAJO_FECFIN));
 			List<?> list = bean.getList(c);
 			return (List<ITrabajo>) list;

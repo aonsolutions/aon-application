@@ -31,9 +31,9 @@ public class EmpresaDAO implements IEmpresaDAO {
 	public void configure() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActividadCCC.class);
-			IManagerBean beanCertEmp = BeanManager.getManagerBean(RemesaCertificadoEmpresaDetalle.class);
 			ACTCCC_ACT_ALIAS = bean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_CDG);
 			ACTCCC_CCC_ALIAS = bean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_TIPCCC);
+			IManagerBean beanCertEmp = BeanManager.getManagerBean(RemesaCertificadoEmpresaDetalle.class);
 			REMESA_CERT_DET_ALIAS = beanCertEmp.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();

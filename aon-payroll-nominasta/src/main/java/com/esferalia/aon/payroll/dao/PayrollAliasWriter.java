@@ -14,7 +14,10 @@ import com.esferalia.aon.payroll.Contrato;
 import com.esferalia.aon.payroll.ContratosTc2;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
+import com.esferalia.aon.payroll.Finiquito;
+import com.esferalia.aon.payroll.FiniquitoDiferencia;
 import com.esferalia.aon.payroll.Nomina;
+import com.esferalia.aon.payroll.NominaDiferencia;
 import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.Percepcion;
@@ -44,7 +47,10 @@ public class PayrollAliasWriter {
 				ContratosTc2.class.getName(),
 				Empleado.class.getName(),			
 				Empresa.class.getName(),
+				Finiquito.class.getName(),
+				FiniquitoDiferencia.class.getName(),
 				Nomina.class.getName(),
+				NominaDiferencia.class.getName(),
 				ParteConfirmacionIT.class.getName(),
 				ParteIT.class.getName(),
 				Percepcion.class.getName(),
