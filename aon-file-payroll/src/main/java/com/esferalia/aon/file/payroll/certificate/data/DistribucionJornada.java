@@ -4,9 +4,8 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-public class Jornada {
+public class DistribucionJornada {
 	
 	private static final String DISTRIBUCION_JORNADAS = "DistribucionJornadas";
 	
@@ -20,15 +19,15 @@ public class Jornada {
 		this.listaPeriodos = listaPeriodos;
 	}
 
-	public Node getElement(Document xmldoc) {
-		
-		Element distribucionJornadas = xmldoc.createElement(DISTRIBUCION_JORNADAS);
-		for(Periodo p: getListaPeriodos()){
-			distribucionJornadas.appendChild(p.getElement(xmldoc));
+	public Element getElement(Document xmldoc) {
+		Element distribucionJornadas = null;
+		if(getListaPeriodos()!=null){
+			distribucionJornadas = xmldoc.createElement(DISTRIBUCION_JORNADAS);
+			for(Periodo p: getListaPeriodos()){
+				distribucionJornadas.appendChild(p.getElement(xmldoc));
+			}
 		}
-		
 		return distribucionJornadas;
 	}
 	
-
 }
