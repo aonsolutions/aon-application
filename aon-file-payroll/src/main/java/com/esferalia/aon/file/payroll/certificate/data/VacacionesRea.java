@@ -2,7 +2,6 @@ package com.esferalia.aon.file.payroll.certificate.data;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class VacacionesRea {
 	
@@ -39,7 +38,7 @@ public class VacacionesRea {
 		this.numJornadasCotizadas = numJornadasCotizadas;
 	}
 
-	public Node getElement(Document xmldoc) {
+	public Element getElement(Document xmldoc) {
 		Element grupoCotizacion = xmldoc.createElement(GRUPO_COTIZACION);
 		Element numDiasCotizados = xmldoc.createElement(NUM_DIAS_COTIZADOS);
 		Element numJornadasCotizadas = xmldoc.createElement(NUM_JORNADAS_COTIZADAS);
