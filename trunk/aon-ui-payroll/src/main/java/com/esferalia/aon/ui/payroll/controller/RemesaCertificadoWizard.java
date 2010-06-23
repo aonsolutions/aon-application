@@ -113,7 +113,7 @@ public class RemesaCertificadoWizard implements Serializable {
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
 			onValidate(event);
-//			onDiskGenerate(event);
+			onDiskGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
 			onFinish(event);
