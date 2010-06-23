@@ -1,8 +1,11 @@
 package com.code.aon.ui.infoweb.controller;
 
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,6 +33,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.ImageUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.infoweb.WebInfo;
@@ -51,7 +55,6 @@ import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.FTPUtil;
-import com.code.aon.ui.infoweb.util.ImageUtil;
 import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.infoweb.util.VelocityUtil;
 import com.code.aon.ui.infoweb.velocity.ImageHandler;
@@ -551,8 +554,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 		if (attachList.size() > 0) {
 			RegistryAttachment ra = (RegistryAttachment) attachList.get(0);
 			String filename = getImageName(ra, LOGO_KEY);
-			if (ImageUtil.copyRegistryBlobToFile(ra, imagesDirectory, filename)) {
+			File path = new File( imagesDirectory, filename );
+			try {
+				FileUtils.writeByteArrayToFile(path, ra.getData());
 				vu.put(LOGO_KEY, filename);
+			} catch (IOException e) {
+				LOGGER.error( "Error writing company logo " + path, e );
 			}
 		}		
 	}
@@ -599,7 +606,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 			RegistryAttachment ra = (RegistryAttachment)attachList.get(i);
 			if ( (ra.getData() != null) && (!StringUtils.isEmpty(ra.getDescription())) ) {
 				String filename = getImageName(ra);
-				if (!ImageUtil.copyRegistryBlobToFile(ra, imagesDirectory, 200, 200, filename)) {
+				File path = new File(imagesDirectory, filename);
+				if (!copyRegistryBlobToFile(ra, 200, 200, path)) {
 					AonUtil.addErrorMessage("ERROR: Se produjo un error al intentar copiar la imagen " + filename); 
 				}
 				ImageHandler ih = new ImageHandler(filename, getImagePageLink(ra.getDescription()), ra.getDescription());
@@ -756,6 +764,23 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private boolean isGenerateDefaultPage() {
 		return this.homepage == 0;
+	}
+	
+	private boolean copyRegistryBlobToFile(RegistryAttachment ra, int maxWidth, int maxHeight, File file) {
+		try {
+			FileUtils.writeByteArrayToFile(file, ra.getData());
+			BufferedImage image = ImageUtil.getBufferedImage(file);
+			Dimension d = ImageUtil.getResizeDimension(image, maxWidth, maxHeight);
+			BufferedImage newImage = ImageUtil.scale(image, d.width, d.height);
+			File outputFile = new File(file.getParentFile(), "tn_" + file.getName());
+			ImageUtil.writeBufferedImage(newImage, outputFile);
+			return true;
+		} catch (FileNotFoundException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return false;
 	}
 	
 	private static class WebinfoFilter implements FileFilter {

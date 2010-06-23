@@ -47,12 +47,6 @@
 			</exclusions>			
 		</dependency>
 		<dependency>
-			<groupId>com.sun</groupId>
-			<artifactId>jimi</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
 			<version>2.1</version>
