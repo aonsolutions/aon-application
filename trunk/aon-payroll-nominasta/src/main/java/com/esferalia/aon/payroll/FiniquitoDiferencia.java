@@ -14,13 +14,13 @@ import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.IFiniquito;
+import com.esferalia.aon.payroll.core.IFiniquitoDiferencia;
 
 @Entity
-@Table(name = "finiquito")
-public class Finiquito implements ITransferObject, IFiniquito {
+@Table(name = "finiquitodf")
+public class FiniquitoDiferencia implements ITransferObject, IFiniquitoDiferencia {
 
-	private static final long serialVersionUID = -262895178660687226L;
+	private static final long serialVersionUID = 7864740320086091801L;
 
 	private Integer id;
 	private Date fechaBaja;

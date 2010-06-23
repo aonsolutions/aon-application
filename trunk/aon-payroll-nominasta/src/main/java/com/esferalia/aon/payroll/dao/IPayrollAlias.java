@@ -12,7 +12,10 @@ import com.esferalia.aon.payroll.Contrato;
 import com.esferalia.aon.payroll.ContratosTc2;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.Empresa;
+import com.esferalia.aon.payroll.Finiquito;
+import com.esferalia.aon.payroll.FiniquitoDiferencia;
 import com.esferalia.aon.payroll.Nomina;
+import com.esferalia.aon.payroll.NominaDiferencia;
 import com.esferalia.aon.payroll.ParteConfirmacionIT;
 import com.esferalia.aon.payroll.ParteIT;
 import com.esferalia.aon.payroll.Percepcion;
@@ -457,75 +460,240 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for Finiquito entity.
+	*/ 
+	DAOConstantsEntry FINIQUITO_ENTRY = DAOConstants.getDAOConstant(Finiquito.class);
+
+	/** 
+	* Alias value: Finiquito_baseAccidentesTrabajo
+	* Hibernate value: Finiquito.baseAccidentesTrabajo
+	*/
+	String  FINIQUITO_BASE_ACCIDENTES_TRABAJO = FINIQUITO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Finiquito_baseContingenciasGenerales
+	* Hibernate value: Finiquito.baseContingenciasGenerales
+	*/
+	String  FINIQUITO_BASE_CONTINGENCIAS_GENERALES = FINIQUITO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Finiquito_diasVacaciones
+	* Hibernate value: Finiquito.diasVacaciones
+	*/
+	String  FINIQUITO_DIAS_VACACIONES = FINIQUITO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Finiquito_empleado_id
+	* Hibernate value: Finiquito.empleado.id
+	*/
+	String  FINIQUITO_EMPLEADO_ID = FINIQUITO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Finiquito_fechaBaja
+	* Hibernate value: Finiquito.fechaBaja
+	*/
+	String  FINIQUITO_FECHA_BAJA = FINIQUITO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Finiquito_id
+	* Hibernate value: Finiquito.id
+	*/
+	String  FINIQUITO_ID = FINIQUITO_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Finiquito_importeVacaciones
+	* Hibernate value: Finiquito.importeVacaciones
+	*/
+	String  FINIQUITO_IMPORTE_VACACIONES = FINIQUITO_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for FiniquitoDiferencia entity.
+	*/ 
+	DAOConstantsEntry FINIQUITO_DIFERENCIA_ENTRY = DAOConstants.getDAOConstant(FiniquitoDiferencia.class);
+
+	/** 
+	* Alias value: FiniquitoDiferencia_baseAccidentesTrabajo
+	* Hibernate value: FiniquitoDiferencia.baseAccidentesTrabajo
+	*/
+	String  FINIQUITO_DIFERENCIA_BASE_ACCIDENTES_TRABAJO = FINIQUITO_DIFERENCIA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FiniquitoDiferencia_baseContingenciasGenerales
+	* Hibernate value: FiniquitoDiferencia.baseContingenciasGenerales
+	*/
+	String  FINIQUITO_DIFERENCIA_BASE_CONTINGENCIAS_GENERALES = FINIQUITO_DIFERENCIA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FiniquitoDiferencia_diasVacaciones
+	* Hibernate value: FiniquitoDiferencia.diasVacaciones
+	*/
+	String  FINIQUITO_DIFERENCIA_DIAS_VACACIONES = FINIQUITO_DIFERENCIA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: FiniquitoDiferencia_empleado_id
+	* Hibernate value: FiniquitoDiferencia.empleado.id
+	*/
+	String  FINIQUITO_DIFERENCIA_EMPLEADO_ID = FINIQUITO_DIFERENCIA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: FiniquitoDiferencia_fechaBaja
+	* Hibernate value: FiniquitoDiferencia.fechaBaja
+	*/
+	String  FINIQUITO_DIFERENCIA_FECHA_BAJA = FINIQUITO_DIFERENCIA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: FiniquitoDiferencia_id
+	* Hibernate value: FiniquitoDiferencia.id
+	*/
+	String  FINIQUITO_DIFERENCIA_ID = FINIQUITO_DIFERENCIA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: FiniquitoDiferencia_importeVacaciones
+	* Hibernate value: FiniquitoDiferencia.importeVacaciones
+	*/
+	String  FINIQUITO_DIFERENCIA_IMPORTE_VACACIONES = FINIQUITO_DIFERENCIA_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
 	* DAOConstantsEntry for Nomina entity.
 	*/ 
 	DAOConstantsEntry NOMINA_ENTRY = DAOConstants.getDAOConstant(Nomina.class);
 
 	/** 
+	* Alias value: Nomina_baseAccPts
+	* Hibernate value: Nomina.baseAccPts
+	*/
+	String  NOMINA_BASE_ACC_PTS = NOMINA_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Nomina_baseAccidentesTrabajo
 	* Hibernate value: Nomina.baseAccidentesTrabajo
 	*/
-	String  NOMINA_BASE_ACCIDENTES_TRABAJO = NOMINA_ENTRY.getAliasNames()[0];
+	String  NOMINA_BASE_ACCIDENTES_TRABAJO = NOMINA_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Nomina_baseAccidentesTrabajoSinHorasExtras
 	* Hibernate value: Nomina.baseAccidentesTrabajoSinHorasExtras
 	*/
-	String  NOMINA_BASE_ACCIDENTES_TRABAJO_SIN_HORAS_EXTRAS = NOMINA_ENTRY.getAliasNames()[1];
+	String  NOMINA_BASE_ACCIDENTES_TRABAJO_SIN_HORAS_EXTRAS = NOMINA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Nomina_baseCgPts
+	* Hibernate value: Nomina.baseCgPts
+	*/
+	String  NOMINA_BASE_CG_PTS = NOMINA_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Nomina_baseContingenciasGenerales
 	* Hibernate value: Nomina.baseContingenciasGenerales
 	*/
-	String  NOMINA_BASE_CONTINGENCIAS_GENERALES = NOMINA_ENTRY.getAliasNames()[2];
+	String  NOMINA_BASE_CONTINGENCIAS_GENERALES = NOMINA_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Nomina_baseHorasExtrasEstructurales
 	* Hibernate value: Nomina.baseHorasExtrasEstructurales
 	*/
-	String  NOMINA_BASE_HORAS_EXTRAS_ESTRUCTURALES = NOMINA_ENTRY.getAliasNames()[3];
+	String  NOMINA_BASE_HORAS_EXTRAS_ESTRUCTURALES = NOMINA_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Nomina_baseHorasExtrasNoEstructurales
 	* Hibernate value: Nomina.baseHorasExtrasNoEstructurales
 	*/
-	String  NOMINA_BASE_HORAS_EXTRAS_NO_ESTRUCTURALES = NOMINA_ENTRY.getAliasNames()[4];
+	String  NOMINA_BASE_HORAS_EXTRAS_NO_ESTRUCTURALES = NOMINA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Nomina_basePerdes
+	* Hibernate value: Nomina.basePerdes
+	*/
+	String  NOMINA_BASE_PERDES = NOMINA_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Nomina_cdg
 	* Hibernate value: Nomina.cdg
 	*/
-	String  NOMINA_CDG = NOMINA_ENTRY.getAliasNames()[5];
+	String  NOMINA_CDG = NOMINA_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Nomina_diasNomina
 	* Hibernate value: Nomina.diasNomina
 	*/
-	String  NOMINA_DIAS_NOMINA = NOMINA_ENTRY.getAliasNames()[6];
+	String  NOMINA_DIAS_NOMINA = NOMINA_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Nomina_empleado_id
 	* Hibernate value: Nomina.empleado.id
 	*/
-	String  NOMINA_EMPLEADO_ID = NOMINA_ENTRY.getAliasNames()[7];
+	String  NOMINA_EMPLEADO_ID = NOMINA_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Nomina_mes
 	* Hibernate value: Nomina.mes
 	*/
-	String  NOMINA_MES = NOMINA_ENTRY.getAliasNames()[8];
+	String  NOMINA_MES = NOMINA_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Nomina_tipoNomina
 	* Hibernate value: Nomina.tipoNomina
 	*/
-	String  NOMINA_TIPO_NOMINA = NOMINA_ENTRY.getAliasNames()[9];
+	String  NOMINA_TIPO_NOMINA = NOMINA_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Nomina_year
 	* Hibernate value: Nomina.year
 	*/
-	String  NOMINA_YEAR = NOMINA_ENTRY.getAliasNames()[10];
+	String  NOMINA_YEAR = NOMINA_ENTRY.getAliasNames()[13];
+
+
+
+	/** 
+	* DAOConstantsEntry for NominaDiferencia entity.
+	*/ 
+	DAOConstantsEntry NOMINA_DIFERENCIA_ENTRY = DAOConstants.getDAOConstant(NominaDiferencia.class);
+
+	/** 
+	* Alias value: NominaDiferencia_baseAccPts
+	* Hibernate value: NominaDiferencia.baseAccPts
+	*/
+	String  NOMINA_DIFERENCIA_BASE_ACC_PTS = NOMINA_DIFERENCIA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: NominaDiferencia_baseCgPts
+	* Hibernate value: NominaDiferencia.baseCgPts
+	*/
+	String  NOMINA_DIFERENCIA_BASE_CG_PTS = NOMINA_DIFERENCIA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: NominaDiferencia_basePerdes
+	* Hibernate value: NominaDiferencia.basePerdes
+	*/
+	String  NOMINA_DIFERENCIA_BASE_PERDES = NOMINA_DIFERENCIA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: NominaDiferencia_cdg
+	* Hibernate value: NominaDiferencia.cdg
+	*/
+	String  NOMINA_DIFERENCIA_CDG = NOMINA_DIFERENCIA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: NominaDiferencia_empleado_id
+	* Hibernate value: NominaDiferencia.empleado.id
+	*/
+	String  NOMINA_DIFERENCIA_EMPLEADO_ID = NOMINA_DIFERENCIA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: NominaDiferencia_mes
+	* Hibernate value: NominaDiferencia.mes
+	*/
+	String  NOMINA_DIFERENCIA_MES = NOMINA_DIFERENCIA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: NominaDiferencia_year
+	* Hibernate value: NominaDiferencia.year
+	*/
+	String  NOMINA_DIFERENCIA_YEAR = NOMINA_DIFERENCIA_ENTRY.getAliasNames()[6];
 
 
 
@@ -1152,34 +1320,28 @@ public interface IPayrollAlias {
 	DAOConstantsEntry REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY = DAOConstants.getDAOConstant(RemesaCertificadoEmpresaDetalle.class);
 
 	/** 
-	* Alias value: RemesaCertificadoEmpresaDetalle_causaSuspension
-	* Hibernate value: RemesaCertificadoEmpresaDetalle.causaSuspension
-	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_CAUSA_SUSPENSION = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[0];
-
-	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_empleado_id
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.empleado.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_EMPLEADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[1];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_EMPLEADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_fechaBaja
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.fechaBaja
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_FECHA_BAJA = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[2];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_FECHA_BAJA = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_id
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[3];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_remesaCertificado_id
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.remesaCertificado.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[4];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[3];
 
 
 
