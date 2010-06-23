@@ -66,18 +66,19 @@ public class Representante {
 		apellido1.appendChild(xmldoc.createTextNode(getApellido1()));
 		representante.appendChild(apellido1);
 		
-		Element apellido2 = xmldoc.createElement(APELLIDO2);
+		Element apellido2 = null;
 		if(!StringUtils.isBlank(getApellido2())){
+			apellido2 = xmldoc.createElement(APELLIDO2);
 			apellido2.appendChild(xmldoc.createTextNode(getApellido2()));
 			representante.appendChild(apellido2);
 		}
 		
-		Element cargo = xmldoc.createElement(CARGO);
+		Element cargo = null;
 		if(!StringUtils.isBlank(getCargo())){
+			cargo = xmldoc.createElement(CARGO);
 			cargo.appendChild(xmldoc.createTextNode(getCargo()));
 			representante.appendChild(cargo);
 		}
-
 
 		return representante;
 	}
