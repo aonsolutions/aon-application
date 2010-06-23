@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.ImageUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -38,7 +39,6 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
-import com.code.aon.ui.company.util.ImageUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -73,6 +73,7 @@ public class CompanyImagesController extends LinesController implements ICompany
 	private int height;
 	
 	private int maxWidth;
+	
 	private int maxHeight;	
 	
 	public CompanyImagesController() {
@@ -154,7 +155,7 @@ public class CompanyImagesController extends LinesController implements ICompany
 	private void init( byte[] data ) {
 		setImage(null);
 		if (! ArrayUtils.isEmpty(data) ) {
-			BufferedImage bImage = ImageUtil.getImage( data );
+			BufferedImage bImage = ImageUtil.getBufferedImage( data );
 			if ( bImage != null ) {
 				setImage(bImage);
 				setWidth(bImage.getWidth());
@@ -228,7 +229,8 @@ public class CompanyImagesController extends LinesController implements ICompany
 		byte[] data = aonFile.getData();
 		if ( (width != image.getWidth()) || (height != image.getHeight()) ) {
 			BufferedImage newImage = ImageUtil.scale(image, width, height);
-			data = ImageUtil.getJPEGImage(newImage, -1);
+			String format = (aonFile.getMimeType() != null) ? aonFile.getMimeType().getExtension() : null;
+			data = ImageUtil.getImage(newImage, format);
 		}
 		attachment.setData(data);
 		MimeType mimeType = CompanyImagesController.getMimeType(aonFile.getFileName(), data);
