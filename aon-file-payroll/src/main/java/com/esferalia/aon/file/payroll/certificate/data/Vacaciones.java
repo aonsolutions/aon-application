@@ -2,7 +2,6 @@ package com.esferalia.aon.file.payroll.certificate.data;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class Vacaciones {
 	
@@ -41,7 +40,7 @@ public class Vacaciones {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	public Node getElement(Document xmldoc) {
+	public Element getElement(Document xmldoc) {
 		Element numDiasCotizados = xmldoc.createElement(NUM_DIAS_COTIZADOS);
 		Element baseCotizacionDesempleo = xmldoc.createElement(BASE_COTIZACION_DESEMPLEO);
 		Element baseCotizacionContingenciasComunes = xmldoc.createElement(BASE_COTIZACION_CONTINGENCIAS_COMUNES);
