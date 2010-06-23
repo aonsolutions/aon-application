@@ -1,5 +1,6 @@
 package com.esferalia.aon.file.payroll.certificate.data;
 
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -51,23 +52,32 @@ public class Representante {
 	}
 
 	public Element getElement(Document xmldoc) {
+		Element representante = xmldoc.createElement(DATOS_REPRESENTANTE);
+
 		Element cifNif = xmldoc.createElement(CIF_NIF);
 		cifNif.appendChild(xmldoc.createTextNode(getCifNif()));
+		representante.appendChild(cifNif);
+
 		Element nombre = xmldoc.createElement(NOMBRE);
 		nombre.appendChild(xmldoc.createTextNode(getNombre()));
+		representante.appendChild(nombre);
+		
 		Element apellido1 = xmldoc.createElement(APELLIDO1);
 		apellido1.appendChild(xmldoc.createTextNode(getApellido1()));
-		Element apellido2 = xmldoc.createElement(APELLIDO2);
-		apellido2.appendChild(xmldoc.createTextNode(getApellido2()));
-		Element cargo = xmldoc.createElement(CARGO);
-		cargo.appendChild(xmldoc.createTextNode(getCargo()));
-
-		Element representante = xmldoc.createElement(DATOS_REPRESENTANTE);
-		representante.appendChild(cifNif);
-		representante.appendChild(nombre);
 		representante.appendChild(apellido1);
-		representante.appendChild(apellido2);
-		representante.appendChild(cargo);
+		
+		Element apellido2 = xmldoc.createElement(APELLIDO2);
+		if(!StringUtils.isBlank(getApellido2())){
+			apellido2.appendChild(xmldoc.createTextNode(getApellido2()));
+			representante.appendChild(apellido2);
+		}
+		
+		Element cargo = xmldoc.createElement(CARGO);
+		if(!StringUtils.isBlank(getCargo())){
+			cargo.appendChild(xmldoc.createTextNode(getCargo()));
+			representante.appendChild(cargo);
+		}
+
 
 		return representante;
 	}
