@@ -169,15 +169,13 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		} else {
 			Date date = invoiceDetail.getInvoice().getIssueDate();
 			if (date.before(tax.getStartDate())) {
-				tax = obtainTax(tax.getId(),date);
+				tax = obtainTax(tax.getId(), date);
 			}
 
-//			if (!invoiceDetail.getInvoice().isTaxFree()) {
-				percentage = tax.getPercentage();
-				if (invoiceDetail.getInvoice().isSurcharge()) {
-					surcharge = tax.getSurcharge();
-				}
-//			}
+			percentage = tax.getPercentage();
+			if (invoiceDetail.getInvoice().isSurcharge()) {
+				surcharge = tax.getSurcharge();
+			}
 		}
 		invoiceTax.setPercentage(percentage);
 		invoiceTax.setSurcharge(surcharge);
@@ -198,9 +196,9 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	private Tax obtainTax(Integer id, Date date) throws ManagerBeanException {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID),id);
-    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE),date);
-    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE),date);
+    	criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID), id);
+    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
+    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
     	Iterator iter = taxDetailBean.getList(criteria).iterator();
     	if (iter.hasNext()) {
     		TaxDetail taxDetail = (TaxDetail)iter.next();
