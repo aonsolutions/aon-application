@@ -6,6 +6,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -16,16 +17,31 @@
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="createFolder"
-						value="#{richBundle.aon_create_folder}"
+						value="#{richBundle.aon_create_folder}" immediate="true"
 						reRender="createSubFolderGrid"
 						styleClass="aon-finding-toolbar-item aon-icon-new">		
 						<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
 						<f:setPropertyActionListener value="#{null}" target="#{fileManager.folderName}" />
-					</aon:commandButton>						
+					</aon:commandButton>			
+					<aon:confirmButton id="cleanFolder"
+						value="#{richBundle.aon_clean_folder}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{richBundle.aon_clean_folder_confirm}"
+						confirmActionListener="#{fileManager.onCleanCurrentFolder}">
+					</aon:confirmButton>
+					<aon:commandButton id="uploadZip"
+						value="#{richBundle.aon_zip_upload}"
+						reRender="uploadFileTitle"
+						styleClass="aon-finding-toolbar-item aon-icon-file-upload">	
+						<f:setPropertyActionListener target="#{fileManager.uploadZip}" value="#{true}" />	
+						<rich:componentControl for="uploadFileModalPanel" operation="show" event="onclick"/>
+					</aon:commandButton>					
 					<aon:commandButton id="uploadFile"
 						value="#{richBundle.aon_file_upload}"
-						reRender="createSubFolderGrid"
+						reRender="uploadFileTitle"
 						styleClass="aon-finding-toolbar-item aon-icon-file-upload">		
+						<f:setPropertyActionListener target="#{fileManager.uploadZip}" value="#{false}" />
 						<rich:componentControl for="uploadFileModalPanel" operation="show" event="onclick"/>
 					</aon:commandButton>
 					<aon:commandButton id="zipDirectory"
@@ -71,7 +87,7 @@
 					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:define name="columns">
 
-						<aon:column styleClass="aon-width-60">
+						<aon:column styleClass="aon-width-50">
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>
@@ -96,33 +112,62 @@
 							</aon:div>								
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn">																													
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_name}" />
 							</f:facet>
-							<aon:outputText value="#{to.name}" 
-								styleClass="aon-list-icon #{fileManager.styleClass}" />
+							<aon:div id="renameDiv">
+								<h:panelGrid rendered="#{!fileManager.inRename}"
+									columnClasses="aon-noborder"
+									onmouseover="disableRowSelector();" onmouseout="enableRowSelector();" >
+									<aon:outputText value="#{to.name}" title="#{richBundle.aon_click_rename}"
+										styleClass="aon-list-icon #{to.styleClass}" />
+									<a4j:support event="onclick" reRender="renameDiv">
+										<f:setPropertyActionListener target="#{fileManager.inRename}" value="#{true}" />		
+									</a4j:support>
+								</h:panelGrid>
+								<h:panelGrid rendered="#{fileManager.inRename}"
+									columns="2" columnClasses="aon-noindent aon-noborder, aon-noborder" >
+									<aon:inputText value="#{to.name}" size="40"
+										validator="#{fileManager.fileNameCheck}"
+										styleClass="aon-list-icon #{to.styleClass}" />
+									<aon:div>
+										<aon:commandButton oncomplete="enableRowSelector();"
+											title="#{bundle.aon_save}"
+											actionListener="#{fileManager.onRefresh}"					
+											styleClass="aon-editDataTable-button aon-icon-accept" >
+											<f:setPropertyActionListener target="#{fileManager.inRename}" value="#{false}" />
+										</aon:commandButton>
+										<aon:commandButton oncomplete="enableRowSelector();"
+											title="#{bundle.aon_cancel}"
+											reRender="renameDiv" immediate="true" 
+											styleClass="aon-editDataTable-button aon-icon-cancel" >
+											<f:setPropertyActionListener target="#{fileManager.inRename}" value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+								</h:panelGrid>
+							</aon:div>
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{richBundle.aon_size}" />
 							</f:facet>
-							<aon:outputText value="#{fileManager.length}" />
+							<aon:outputText value="#{to.length}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{richBundle.aon_permissions}" />
 							</f:facet>
-							<aon:outputText value="#{fileManager.permissions}" />
+							<aon:outputText value="#{to.permissions}" />
 						</aon:column>
 	
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
-							<aon:outputText value="#{fileManager.lastModified}">
+							<aon:outputText value="#{to.lastModified}">
 								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>

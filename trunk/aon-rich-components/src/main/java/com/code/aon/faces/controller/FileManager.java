@@ -1,25 +1,23 @@
 package com.code.aon.faces.controller;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -35,22 +33,17 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.ZipUtil;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.util.AonUtil;
 
 public class FileManager {
 	
 	private static final String FILE_MANAGER_FORM = "fileManager_form";
+	
+	private static final String BUNDLE_NAME = "richBundle";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileManager.class);
-
-	private static final DecimalFormat BYTES_FORMAT = new DecimalFormat("0 bytes");
-	
-	private static final DecimalFormat KB_FORMAT = new DecimalFormat("0.## KB");
-	
-	private static final DecimalFormat MB_FORMAT = new DecimalFormat("0.## MB");
-	
-	private static final DecimalFormat GB_FORMAT = new DecimalFormat("0.## GB");
 	
 	private String beanName;
 	
@@ -75,6 +68,10 @@ public class FileManager {
 	private File currentDirectory;
 	
 	private File startDirectory;
+	
+	private boolean inRename;
+	
+	private boolean uploadZip;
 	
 	public FileManager() {
 		this.pageLimit = 20;
@@ -157,6 +154,22 @@ public class FileManager {
 		this.zipName = zipName;
 	}
 
+	public boolean isUploadZip() {
+		return uploadZip;
+	}
+
+	public void setUploadZip(boolean uploadZip) {
+		this.uploadZip = uploadZip;
+	}
+	
+	public boolean isInRename() {
+		return inRename;
+	}
+
+	public void setInRename(boolean inRename) {
+		this.inRename = inRename;
+	}
+
 	private File getDefaultDirectory() {
 		File directory = new File( "/home" );
 		if ( directory.exists() && directory.canRead() ) {
@@ -181,7 +194,11 @@ public class FileManager {
 			Collections.sort(files);
 			list.addAll( files );			
 		}
-		this.model = new ListDataModel( list );
+		List<FileWrapper> fws = new ArrayList<FileWrapper>(list.size());
+		for( File file : list ) {
+			fws.add( new FileWrapper(file) );
+		}
+		this.model = new ListDataModel( fws );
 	}
 
 	public void onInit( ActionEvent event ) {
@@ -193,73 +210,13 @@ public class FileManager {
 		loadModel( getCurrentDirectory() );
 	}
 	
-	private File getFile() {
+	public File getFile() {
+		File file = null;
 		if ( getModel().isRowAvailable() ) {
-			return (File) getModel().getRowData();
+			file = ((FileWrapper) getModel().getRowData()).getWrappedObject();
 		}
-		return null;		
+		return file;		
 	}
-	
-	public Date getLastModified() {
-		File file = getFile();
-		if ( file != null ) {
-			return new Date( file.lastModified() );
-		}
-		return null;
-	}
-
-	public static String getDisplaySize( long value ) {
-		String result = "";
-		double size = value;
-		if ( size != -1 ) {
-			if ( size < FileUtils.ONE_KB ) {
-				result = BYTES_FORMAT.format(size);
-			} else if ( size < FileUtils.ONE_MB ) {
-				result = KB_FORMAT.format(size / FileUtils.ONE_KB);
-			} else if ( size < FileUtils.ONE_GB ) {
-				result = MB_FORMAT.format(size / FileUtils.ONE_MB);
-			} else {
-				result = GB_FORMAT.format(size / FileUtils.ONE_GB);
-			}
-		}
-		return result;		
-	}
-	
-	public String getLength() {
-		File file = getFile();
-		if ( (file != null) && (! file.isDirectory()) ) {
-			return getDisplaySize( file.length() );
-		}
-		return null;
-	}	
-
-	public String getPermissions() {
-		File file = getFile();
-		if ( file != null ) {
-			StringBuffer sb = new StringBuffer();
-			if ( file.canRead() ) {
-				sb.append( "R" );
-			}
-			if ( file.canWrite() ) {
-				sb.append( "W" );
-			}
-			if ( file.canExecute() ) {
-				sb.append( "X" );
-			}
-			return sb.toString();
-		}
-		return null;
-	}	
-
-	public String getStyleClass() {
-		File file = getFile();
-		if ( file != null ) {
-			if ( file.isDirectory() ) {
-				return "aon-icon-folder";
-			}
-		}
-		return "aon-icon-csv";
-	}	
 
 	public String getSelectAction() {
 		return this.nextAction;
@@ -375,6 +332,7 @@ public class FileManager {
 	
 	private void reset() {
 		this.currentFile = null;
+		this.inRename = false;
 		setAonFile(null);
 		setFileValue(null);		
 		setFolderName(null);
@@ -387,7 +345,7 @@ public class FileManager {
 	}
 	
     public void downloadAttachment( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
-        File file = (File) getModel().getRowData();
+        File file = getFile();
         AonFile aonFile = getAonFile(file);
         AttachmentUtil.downloadAttachment(aonFile.getFileName(),aonFile.getMimeType(),aonFile.getData());    	
     }	
@@ -405,14 +363,17 @@ public class FileManager {
 		reset();
 	}
 
-	public void fileUploaded(UploadEvent event) {
+	public void onFileUploaded(UploadEvent event) {
 		UploadItem item = event.getUploadItem();
 		File file = new File( getCurrentDirectory(), item.getFileName() );
 		try {
-			if ( item.isTempFile() ) {
-				FileUtils.copyFile( item.getFile(), file );
+			if ( isUploadZip() ) {
+				zipUploaded(item);
 			} else {
-				FileUtils.writeByteArrayToFile(file, item.getData());
+				fileUploaded(item);
+			}
+			if ( item.isTempFile() ) {
+				FileUtils.deleteQuietly( item.getFile() );				
 			}
 			loadModel( getCurrentDirectory() );
 		} catch (IOException e) {
@@ -421,29 +382,30 @@ public class FileManager {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}	
-	
-	private String getRelativePath( File path, File file ) {
-		String fullPath = FilenameUtils.normalizeNoEndSeparator(file.getAbsolutePath());
-		String basePath = FilenameUtils.normalizeNoEndSeparator(path.getAbsolutePath());
-		return StringUtils.substring(fullPath, basePath.length());
-	}	
-	
-	private void addDirectory( ZipOutputStream out, File zipFile, File directory ) throws IOException {
-		for( File file : directory.listFiles() ) {
-			if ( file.canRead() ) {
-				if ( file.isDirectory() ) {
-					addDirectory(out, zipFile, file);
-				} else if ( file.isFile() && (!zipFile.equals(file)) ) {
-					InputStream in = new BufferedInputStream(new FileInputStream(file));
-					String name = getRelativePath(zipFile.getParentFile(), file);
-					out.putNextEntry(new ZipEntry(name));
-					IOUtils.copy(in, out);
-					out.closeEntry();
-					IOUtils.closeQuietly(in);
-				}
-			}
+
+	public void fileUploaded(UploadItem item) throws IOException {
+		File file = new File( getCurrentDirectory(), item.getFileName() );
+		if ( item.isTempFile() ) {
+			FileUtils.copyFile( item.getFile(), file );
+		} else {
+			FileUtils.writeByteArrayToFile(file, item.getData());
 		}
-	}
+	}	
+
+	public void zipUploaded(UploadItem item) throws IOException {
+		String fileName = item.getFileName();
+		String ext = FilenameUtils.getExtension(fileName);
+		if ( StringUtils.equalsIgnoreCase(ext, MimeType.MIME_ZIP.getExtension()) ) {
+			InputStream in = null;
+			if ( item.isTempFile() ) {
+				in = new FileInputStream( item.getFile() );
+			} else {
+				in = new ByteArrayInputStream( item.getData() );
+			}			
+			ZipUtil.uncompressZipData(in, this.currentDirectory);
+			IOUtils.closeQuietly(in);
+		}
+	}	
 	
 	public void onShowZipWindow( ActionEvent event ) {
 		this.zipName = null;
@@ -473,12 +435,9 @@ public class FileManager {
 			AonUtil.addErrorMessage( "File already exists: " + zipFile );
 		}
 		try {
-			OutputStream os = new BufferedOutputStream(new FileOutputStream(zipFile));
-			ZipOutputStream out = new ZipOutputStream(os);
 			if ( getCurrentDirectory().canRead() ) {
-				addDirectory(out, zipFile, getCurrentDirectory());	
+				ZipUtil.createZip(zipFile, getCurrentDirectory());
 			}
-		    IOUtils.closeQuietly(out);
 		} catch (IOException e) {
 			LOGGER.error("createZip " + zipFile, e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -497,9 +456,37 @@ public class FileManager {
 			if ( isInRoot() ) {
 				return File.separator;
 			}
-			return getRelativePath(this.startDirectory, getCurrentDirectory());
+			return ZipUtil.getRelativePath(this.startDirectory, getCurrentDirectory());
 		}
 		return getCurrentDirectory().toString();
+	}
+
+	public void onCleanCurrentFolder( ActionEvent event ) {
+		try {
+			FileUtils.cleanDirectory(this.currentDirectory);
+		} catch (IOException e) {
+			LOGGER.error("cleanCurrentFolder " + this.currentDirectory, e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		loadModel( getCurrentDirectory() );
+		reset();
+	}	
+
+	@SuppressWarnings("unchecked")
+	public void fileNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
+		String name = value.toString();
+		File file = getFile();
+		if (! StringUtils.equals(file.getName(), name) ) {
+			List<FileWrapper> list = (List<FileWrapper>) getModel().getWrappedData(); 
+			for( FileWrapper fw : list ) {
+				if ( fw.getWrappedObject().getName().equals(name) ) {
+					FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, "rich_file_duplicated_name"));
+					message.setSeverity(FacesMessage.SEVERITY_ERROR);
+					throw new ValidatorException( message );
+				}
+			}
+		}
 	}
 	
 }
