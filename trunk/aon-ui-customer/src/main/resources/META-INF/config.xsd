@@ -7,11 +7,13 @@
 		    <xs:sequence>
 		      <xs:element ref="customer" />
 		    </xs:sequence>		
-			<xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>		    
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.1"/>		    
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="customer">
 		<xs:complexType>
+			<xs:attribute name="showOfferData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showSalesData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showDeliveryData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showFinanceData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showProjectData" type="xs:boolean" use="required"/>
