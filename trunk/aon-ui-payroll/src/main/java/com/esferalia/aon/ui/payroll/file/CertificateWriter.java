@@ -87,7 +87,6 @@ public class CertificateWriter {
 			getCertificate().setCuentaCotizacion(listaCuentas);
 			
 			FileOutput output = new FileOutput();
-
 			File file = File.createTempFile("XXXXXXXX", ".XML");
 			FileOutputStream out = new FileOutputStream(file);
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -104,9 +103,6 @@ public class CertificateWriter {
 			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 			serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 			serializer.transform(domSource, streamResult);
-			
-			
-			
 			
 			output.setFile(file);
 //			output.setErrors(fdi.create());
@@ -253,7 +249,6 @@ public class CertificateWriter {
 				params.setMes(calFin.get(Calendar.MONTH));
 				params.setYear(calFin.get(Calendar.YEAR));
 				nomina = getNominaDAO().getNomina(params);
-				
 				nominaDiferencia = getNominaDAO().getNominaDiferencia(params);
 				Double baseAcc = nomina.getBaseAccPts();
 				if(nominaDiferencia!=null){
@@ -273,7 +268,6 @@ public class CertificateWriter {
 				totalDias += nomina.getDiasNomina();
 				calFin.set(Calendar.MONTH, calFin.get(Calendar.MONTH)-1);
 
-				
 				Cotizacion cotizacion = new Cotizacion();
 				cotizacion.setAno(nomina.getYear());
 				cotizacion.setMes(nomina.getMes());
@@ -281,11 +275,8 @@ public class CertificateWriter {
 				cotizacion.setBaseCotizacionContingenciasComunes(totalBaseCg.intValue());
 				cotizacion.setBaseCotizacionDesempleo(totalBaseDesempleo.intValue());
 				cotizacion.setObservaciones(null);
-				
 				cotizacionList.add(cotizacion);
 			}
-			
-			
 			return cotizacionList;
 		} catch (PayrollException e) {
 			// NADA
