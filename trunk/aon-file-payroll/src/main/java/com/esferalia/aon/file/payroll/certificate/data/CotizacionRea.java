@@ -2,7 +2,6 @@ package com.esferalia.aon.file.payroll.certificate.data;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 public class CotizacionRea {
 	
@@ -58,7 +57,7 @@ public class CotizacionRea {
 		this.observaciones = observaciones;
 	}
 	
-	public Node getElement(Document xmldoc) {
+	public Element getElement(Document xmldoc) {
 		Element ano = xmldoc.createElement(ANO);
 		Element mes = xmldoc.createElement(MES);
 		Element grupoCotizacion = xmldoc.createElement(GRUPO_COTIZACION);
