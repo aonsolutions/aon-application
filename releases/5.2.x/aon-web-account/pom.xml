@@ -3,20 +3,20 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>5.2.2</version>
+		<version>5.2.3</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-account</artifactId>
 	<packaging>war</packaging>
-	<version>5.2.2</version>
+	<version>5.2.3</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
 		<finalName>aon-account</finalName>
 	</build>
 	<properties>
-		<dbVersion>5.2.2</dbVersion>
+		<dbVersion>5.2.3</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
