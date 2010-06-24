@@ -139,11 +139,21 @@ COMMIT;
 #
 
 INSERT INTO `tax` (`id`, `name`, `tax_type`, `percentage`, `surcharge`, `start_date`) VALUES 
-  (1,'GENERAL',1,16,4,'2000-01-01'),
-  (2,'REDUCIDO',1,7,1,'2000-01-01'),
+  (1,'GENERAL',1,18,4,'2010-07-01'),
+  (2,'REDUCIDO',1,8,1,'2010-07-01'),
   (3,'SUPERREDUCIDO',1,4,0.5,'2000-01-01'),
   (4,'SIN IVA',1,0,0,'2000-01-01'),
   (5,'IRPF',2,15,0,'2000-01-01');
+
+COMMIT;
+
+#
+# Data for the `tax_detail` table  (LIMIT 0,500)
+#
+
+INSERT INTO `tax_detail` (`id`, `tax`, `start_date`, `end_date`, `value`, `surcharge`) VALUES 
+  (1,1,'2000-01-01','2010-06-30',16,4),
+  (1,2,'2000-01-01','2010-06-30',7,1);
 
 COMMIT;
 
