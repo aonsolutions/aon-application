@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon.parent</artifactId>
-  <version>5.2.3</version>
+  <version>5.2.4</version>
   <packaging>pom</packaging>
   <description>POM padre de los proyectos AON</description>
   <name>AON PARENT</name>
@@ -103,7 +103,7 @@
                 <version>2.0</version>
                 <configuration>
                         <preparationGoals>clean</preparationGoals>
-                        <releaseVersion>5.2.3</releaseVersion>
+                        <releaseVersion>5.2.4</releaseVersion>
                         <developmentVersion>5.3.0-SNAPSHOT</developmentVersion>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
 
