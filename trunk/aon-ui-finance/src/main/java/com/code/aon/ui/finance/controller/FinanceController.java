@@ -572,6 +572,14 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_ID));
 		orderedList=getManagerBean().getList(criteria);
 	}
+	
+	public void onOrderFinanceListByBank(ActionEvent event) throws ManagerBeanException {
+		Criteria criteria = getCriteria();
+		criteria.setOrderByList(null);
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_BANK_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_ID));
+		orderedList=getManagerBean().getList(criteria);
+	}
 
 	public void onShowInvoice(ActionEvent event) throws ManagerBeanException {
 		Finance to = (Finance)this.getTo();

@@ -58,6 +58,14 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="financeListByPayment" />
 					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="financeListByBank-report"
+						value="#{financeBundle.finance_list_by_bank}"
+						target="_blank" action="#{report.onExecute}" rendered="#{finance.payment}"
+						actionListener="#{finance.onOrderFinanceListByBank}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="financeListByBank" />
+					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="receiptFinance-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
