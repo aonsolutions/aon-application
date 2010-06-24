@@ -87,7 +87,7 @@ public class CertificateWriter {
 			getCertificate().setCuentaCotizacion(listaCuentas);
 			
 			FileOutput output = new FileOutput();
-			File file = File.createTempFile("XXXXXXXX", ".XML");
+			File file = File.createTempFile("aon-temp", ".XML");
 			FileOutputStream out = new FileOutputStream(file);
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -174,10 +174,15 @@ public class CertificateWriter {
 		trabajador.setCodProfesion(trabajos.get(0).getCno());
 //		trabajador.setCargoPublicoSindical();
 //		trabajador.setPorcentualDedicacion();
-		trabajador.setFechaAltaEmpresa(detalle.getEmpleado().getFechaInicio().toString());
+		trabajador.setFechaAltaEmpresa(parseFecha(detalle.getEmpleado().getFechaInicio()));
+		
+		
+		
+		
+		
 		trabajador.setCodCausaSuspension(detalle.getCausaSuspension());
 //		trabajador.setFechaSuspensionExtincion(detalle.getEmpleado().getFechaFin().toString());
-		trabajador.setFechaSuspensionExtincion(detalle.getFechaBaja().toString());
+		trabajador.setFechaSuspensionExtincion(parseFecha(detalle.getFechaBaja()));
 //		trabajador.setFechaFinSuspension();
 //		trabajador.setEre();
 //		trabajador.setPorcentualReduccionERE();
@@ -185,7 +190,7 @@ public class CertificateWriter {
 //		trabajador.setCodCausaPorcentReduccion();
 //		trabajador.setFechaDesdePeriodoSalarios();
 //		trabajador.setFechaHastaPeriodoSalarios();
-		trabajador.setDiasSalarioTramitacion("0");
+		trabajador.setDiasSalarioTramitacion("00000");
 
 		/*
 		 * NODOS
@@ -202,6 +207,15 @@ public class CertificateWriter {
 	}
 
 
+	private String parseFecha(Date date) {
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(date);
+		String d = String.valueOf(cal.get(Calendar.YEAR));
+		d += String.valueOf(cal.get(Calendar.MONTH));
+		d += String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+		return d;
+	}
+
 	private DistribucionJornada createDistribucionJornadaRecord(IRemesaCertificadoEmpresaDetalle detalle) {
 		List<ITrabajo> trabajosTP = null;
 		try {
@@ -214,8 +228,8 @@ public class CertificateWriter {
 			for(ITrabajo t: trabajosTP){
 				Periodo periodo = new Periodo();
 				periodo.setTipoDistribucion(t.getTipoTP().getValue());
-				periodo.setFechaInicioPeriodo(t.getFecini());
-				periodo.setFechaFinPeriodo(t.getFecfin());
+				periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
+				periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
 				periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(t.getDiasTP());
 				listaPeriodos.add(periodo);
 			}
@@ -238,8 +252,8 @@ public class CertificateWriter {
 			Calendar calInicio = new GregorianCalendar();
 			Calendar calFin = new GregorianCalendar();
 			calInicio.setTime(detalle.getEmpleado().getFechaInicio());
-//			calFin.setTime(detalle.getEmpleado().getFechaFin());
-			calFin.setTime(detalle.getFechaBaja());
+			calFin.setTime(detalle.getEmpleado().getFechaFin());
+//			calFin.setTime(detalle.getFechaBaja());
 			
 			List<Cotizacion> cotizacionList = new ArrayList<Cotizacion>();
 			while(calInicio.before(calFin) && totalDias < 180 && existNomina(detalle.getEmpleado(),calFin)){
