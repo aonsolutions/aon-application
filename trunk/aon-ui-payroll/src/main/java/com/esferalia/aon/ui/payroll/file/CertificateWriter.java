@@ -138,7 +138,8 @@ public class CertificateWriter {
 		}
 		cuentaCotizacion.setRepresentante(representante);
 		Empresa empresa = new Empresa();
-		empresa.setCcc(remesa.getCodigoCcc());
+		empresa.setCcc(parseCcc(remesa.getCodigoCcc()));
+		
 		empresa.setCifNif(remesa.getEmpresa().getRegistry().getDocument().getValue());
 		cuentaCotizacion.setEmpresa(empresa);
 
@@ -204,16 +205,6 @@ public class CertificateWriter {
 		trabajador.setDatosVacacionesCotizadas(createDatosVacacionesCotizadasRecord(detalle.getEmpleado()));
 		
 		return trabajador;
-	}
-
-
-	private String parseFecha(Date date) {
-		Calendar cal = new GregorianCalendar();
-		cal.setTime(date);
-		String d = String.valueOf(cal.get(Calendar.YEAR));
-		d += String.valueOf(cal.get(Calendar.MONTH));
-		d += String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
-		return d;
 	}
 
 	private DistribucionJornada createDistribucionJornadaRecord(IRemesaCertificadoEmpresaDetalle detalle) {
@@ -283,11 +274,11 @@ public class CertificateWriter {
 				calFin.set(Calendar.MONTH, calFin.get(Calendar.MONTH)-1);
 
 				Cotizacion cotizacion = new Cotizacion();
-				cotizacion.setAno(nomina.getYear());
-				cotizacion.setMes(nomina.getMes());
-				cotizacion.setNumDiasCotizados(nomina.getDiasNomina());
-				cotizacion.setBaseCotizacionContingenciasComunes(totalBaseCg.intValue());
-				cotizacion.setBaseCotizacionDesempleo(totalBaseDesempleo.intValue());
+				cotizacion.setAno(nomina.getYear().toString());
+				cotizacion.setMes(nomina.getMes().toString());
+				cotizacion.setNumDiasCotizados(nomina.getDiasNomina().toString());
+				cotizacion.setBaseCotizacionContingenciasComunes(totalBaseCg.toString());
+				cotizacion.setBaseCotizacionDesempleo(totalBaseDesempleo.toString());
 				cotizacion.setObservaciones(null);
 				cotizacionList.add(cotizacion);
 			}
@@ -359,5 +350,22 @@ public class CertificateWriter {
 		days2 += endDate.get(Calendar.DAY_OF_YEAR) - 1;
 		return (days2>days1)?(days2-days1):(days1-days2);
 	}
+	
+	private String parseCcc(String codigoCcc) {
+		while(codigoCcc.length()<15){
+			codigoCcc = "0".concat(codigoCcc);
+		}
+		return codigoCcc;
+	}
+
+	private String parseFecha(Date date) {
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(date);
+		String d = String.valueOf(cal.get(Calendar.YEAR));
+		d += String.valueOf(cal.get(Calendar.MONTH));
+		d += String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+		return d;
+	}
+
 	
 }
