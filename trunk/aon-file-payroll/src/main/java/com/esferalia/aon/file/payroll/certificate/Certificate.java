@@ -27,8 +27,7 @@ public class Certificate {
 		formatter = new SimpleDateFormat("HHmm");
 		String t =  formatter.format(date);
 		hora = Integer.parseInt(t);
-		formatter = new SimpleDateFormat("ddHHmmss");
-		fichero =  formatter.format(date);
+		fichero =  fecha.toString()+hora.toString();
 	}
 	
 	public Integer getFecha() {
@@ -44,6 +43,7 @@ public class Certificate {
 	public void setHora(Integer hora) {
 		this.hora = hora;
 	}
+	
 	public String getFichero() {
 		return fichero;
 	}
