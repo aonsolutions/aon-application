@@ -1320,28 +1320,34 @@ public interface IPayrollAlias {
 	DAOConstantsEntry REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY = DAOConstants.getDAOConstant(RemesaCertificadoEmpresaDetalle.class);
 
 	/** 
+	* Alias value: RemesaCertificadoEmpresaDetalle_causaSuspension
+	* Hibernate value: RemesaCertificadoEmpresaDetalle.causaSuspension
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_CAUSA_SUSPENSION = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_empleado_id
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.empleado.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_EMPLEADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[0];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_EMPLEADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_fechaBaja
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.fechaBaja
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_FECHA_BAJA = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[1];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_FECHA_BAJA = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_id
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[2];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresaDetalle_remesaCertificado_id
 	* Hibernate value: RemesaCertificadoEmpresaDetalle.remesaCertificado.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[3];
+	String  REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID = REMESA_CERTIFICADO_EMPRESA_DETALLE_ENTRY.getAliasNames()[4];
 
 
 
