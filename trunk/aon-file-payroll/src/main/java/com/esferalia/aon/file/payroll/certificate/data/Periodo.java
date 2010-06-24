@@ -1,7 +1,5 @@
 package com.esferalia.aon.file.payroll.certificate.data;
 
-import java.util.Date;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -14,8 +12,8 @@ public class Periodo {
 	private static final String NUMERO_DIAS_TRAB_POR_SEMANA_O_PERIODO = "NumeroDiasTrabajadosPorSemanaOPeriodo";
 	
 	private String tipoDistribucion;
-	private Date fechaInicioPeriodo;
-	private Date fechaFinPeriodo;
+	private String fechaInicioPeriodo;
+	private String fechaFinPeriodo;
 	private Integer numeroDiasTrabajadosPorSemanaOPeriodo;
 
 	public String getTipoDistribucion() {
@@ -24,16 +22,16 @@ public class Periodo {
 	public void setTipoDistribucion(String tipoDistribucion) {
 		this.tipoDistribucion = tipoDistribucion;
 	}
-	public Date getFechaInicioPeriodo() {
+	public String getFechaInicioPeriodo() {
 		return fechaInicioPeriodo;
 	}
-	public void setFechaInicioPeriodo(Date fechaInicioPeriodo) {
+	public void setFechaInicioPeriodo(String fechaInicioPeriodo) {
 		this.fechaInicioPeriodo = fechaInicioPeriodo;
 	}
-	public Date getFechaFinPeriodo() {
+	public String getFechaFinPeriodo() {
 		return fechaFinPeriodo;
 	}
-	public void setFechaFinPeriodo(Date fechaFinPeriodo) {
+	public void setFechaFinPeriodo(String fechaFinPeriodo) {
 		this.fechaFinPeriodo = fechaFinPeriodo;
 	}
 	public Integer getNumeroDiasTrabajadosPorSemanaOPeriodo() {
