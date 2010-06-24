@@ -25,7 +25,7 @@ COMMIT;
 
 INSERT INTO `tax_detail` (`id`, `tax`, `start_date`, `end_date`, `value`, `surcharge`) VALUES 
   (1,2,'2000-01-01','2010-06-30',16,4),
-  (1,3,'2000-01-01','2010-06-30',7,1);
+  (2,3,'2000-01-01','2010-06-30',7,1);
 
 COMMIT;
 
