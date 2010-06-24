@@ -96,7 +96,11 @@ public class CSB58Writer implements IFinanceConstants {
 		individual.setName(fBatchDetail.getFinance().getInvoice().getRegistryName());
 		individual.setReferenceCode(fBatchDetail.getFinance().getInvoice().getRegistryDocument()); 
 		individual.setReturnCode(fBatchDetail.getFinance().getId().toString());
-		individual.setExpiryDate(fBatchDetail.getFinance().getDueDate());
+		if (fBatchDetail.getFinance().getDueDate().before(fBatchDetail.getFinanceBatch().getIssueDate())) {
+			individual.setExpiryDate(fBatchDetail.getFinanceBatch().getIssueDate());
+		} else {
+			individual.setExpiryDate(fBatchDetail.getFinance().getDueDate());
+		}
 		IAddress detailAddress = obtainInvoiceAddress(fBatchDetail.getFinance().getInvoice());
 		if(detailAddress != null){
 			individual.setAccountUserAddress(detailAddress.getAddress());
