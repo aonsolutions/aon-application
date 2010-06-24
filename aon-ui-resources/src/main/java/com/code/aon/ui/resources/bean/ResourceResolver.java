@@ -24,8 +24,6 @@ public class ResourceResolver {
 	
 	private static final String ARTIFACT_ID = "aon.ui.resources";
 	
-	private static final String SNAPSHOT = "SNAPSHOT";
-	
 	/** The Constant POM_PROPERTIES. */
 	private static final String POM_PROPERTIES = "/META-INF/maven/" + GROUP_ID + "/" + ARTIFACT_ID + "/pom.properties";
 	
@@ -57,9 +55,7 @@ public class ResourceResolver {
 		String version = getVersion();
 		if (! StringUtils.isBlank(version) ) {
 			LOGGER.info( "Resources version: " + version );
-			if (! StringUtils.endsWith(version, SNAPSHOT) ) {
-				this.resourceURIPreffix += "/" + version;
-			}
+			this.resourceURIPreffix += "/" + version;
 		}
 	}
 	

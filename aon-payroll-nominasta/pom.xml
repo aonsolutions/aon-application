@@ -9,6 +9,7 @@
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.payroll.nominasta</artifactId>
 	<version>5.2.2</version>
+	<name>AON PAYROLL NOMINASTA</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>

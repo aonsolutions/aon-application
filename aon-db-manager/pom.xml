@@ -10,6 +10,7 @@
 	<artifactId>aon.db.manager</artifactId>
 	<version>5.2.2</version>
 	<description>AON DB MANAGER</description>
+	<name>AON DB MANAGER</name>
 	<dependencies>
 		<dependency>
 			<groupId>commons-lang</groupId>

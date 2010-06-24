@@ -102,6 +102,7 @@ public class OfferController extends BasicController implements ISignatureContro
 	private int invoiceNumber;
 	private Date invoiceDate;
 	private CommercialEmailUtil emailUtil;
+	private String backAction;
 	
 	public OfferController() {
 		this.emailUtil = new CommercialEmailUtil();
@@ -762,4 +763,20 @@ public class OfferController extends BasicController implements ISignatureContro
 		}
 		return null;
 	}
+
+	public String backAction() {
+		if ( backAction != null ) {
+			return backAction;
+		}
+		return ICommercialConstants.NAVIGATION_OFFER_LIST;
+	}
+	
+	public String getBackAction() {
+		return this.backAction;
+	}
+
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
+	}
+	
 }

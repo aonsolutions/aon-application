@@ -67,7 +67,8 @@ public class ResourceURI {
 	}
 	
 	private boolean isVersionString( String value ) {
-		String[] numbers = StringUtils.split( value, '.');
+		String _value = StringUtils.chomp(value, "-SNAPSHOT");
+		String[] numbers = StringUtils.split( _value, '.');
 		if (! ArrayUtils.isEmpty(numbers) ) {
 			for( String number : numbers ) {
 				if (! NumberUtils.isNumber(number) ) {

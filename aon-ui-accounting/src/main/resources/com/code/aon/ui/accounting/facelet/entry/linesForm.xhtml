@@ -325,6 +325,7 @@
 								rendered="#{accountEntryDetail.new}"
 								reRender="entryDetailTableDataScroller"
 								styleClass="aon-editDataTable-button aon-icon-accept"
+								onclick="disabled=true"								
 								accesskey="#{bundle.aon_key_save_line}" />
 							<aon:commandButton id="entryDetailTable-new-cancel"
 								title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel_line})"
@@ -339,7 +340,9 @@
 				</aon:column>
 			</aon:editDataTable>
 
-			<aon:dataScroller2 for="entryDetailTable" showNote="true" />
+			<aon:div id="entryDetailTableDataScroller">
+				<aon:dataScroller2 for="entryDetailTable" showNote="true" />
+			</aon:div>
 
 		</aon:div>
 	</aon:div>

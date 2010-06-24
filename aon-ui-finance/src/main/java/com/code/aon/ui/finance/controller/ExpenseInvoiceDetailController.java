@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -104,22 +105,23 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		return recordedItemList;
 	}
 
-	public void onItemChanged(ValueChangeEvent event) {
+	public void onItemChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			itemChanged(item);
 		}
 	}	
 
-	public void itemChanged(Item item) {
+	public void itemChanged(Item item) throws ManagerBeanException {
+		Date taxDate = ((Invoice)getMasterController().getTo()).getIssueDate();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setItem(item);
 		invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() !=null ? " " + item.getDetail() : ""));
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setTaxableBase(item.getPurchasePrice());
-		invoiceDetail.setVatPercent(item.getProduct().getVat() != null ? item.getProduct().getVat().getPercentage() : 0);
+		invoiceDetail.setVatPercent(item.getProduct().getVat() != null ? getTaxPercent(item.getProduct().getVat(), taxDate, false) : 0);
 		invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
-		invoiceDetail.setRetentionPercent(item.getProduct().getRetention() != null ? item.getProduct().getRetention().getPercentage() : 0);
+		invoiceDetail.setRetentionPercent(item.getProduct().getRetention() != null ? getTaxPercent(item.getProduct().getRetention(), taxDate, false) : 0);
 		invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
 	}
 

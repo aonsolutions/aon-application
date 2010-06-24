@@ -11,6 +11,7 @@
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.ui.payroll</artifactId>
 	<version>5.2.2</version>
+	<name>AON UI PAYROLL</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
