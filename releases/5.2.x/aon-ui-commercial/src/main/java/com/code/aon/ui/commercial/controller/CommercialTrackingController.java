@@ -14,9 +14,14 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the offer maintenance.
@@ -36,6 +41,8 @@ public class CommercialTrackingController extends BasicController {
 	private CommercialTracking previous;
 	
 	private boolean offerChecked;
+	
+	private IControllerListener offerFilter;
 	
 	public boolean isOfferChecked() {
 		return offerChecked;
@@ -118,16 +125,6 @@ public class CommercialTrackingController extends BasicController {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-	
-	private void select( ActionEvent event, CommercialTracking ct ) throws ManagerBeanException {
-		this.clearCriteria();
-		Criteria criteria = getCriteria();
-		String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_ID);
-		criteria.addEqualExpression(alias, ct.getId());
-		initializeModel();
-		getModel().setRowIndex(0);
-		onSelect(event);
-	}
 
 	public void statusChanged( ValueChangeEvent event ) {
 		CommercialTracking ct = (CommercialTracking) getTo();
@@ -149,6 +146,46 @@ public class CommercialTrackingController extends BasicController {
 		} else {
 			ct.setOffer(null);
 		}
+	}
+	
+	public IControllerListener getOfferFilter() {
+		if ( this.offerFilter == null ) {
+			this.offerFilter = new ControllerAdapter() {
+				@Override
+				public void beforeModelInitialized(ControllerEvent event)
+						throws ControllerListenerException {
+					IController controller = event.getController();
+					CommercialTracking ct = (CommercialTracking) getTo();
+					try {					
+						if ( ct.getSeller().getId() != null ) {
+							String alias = controller.getFieldName(ICommercialAlias.OFFER_SELLER_ID);
+							controller.getCriteria().addEqualExpression(alias, ct.getSeller().getId());
+						}
+						if ( ct.getTarget().getId() != null ) {
+							String alias = controller.getFieldName(ICommercialAlias.OFFER_TARGET_ID);
+							controller.getCriteria().addEqualExpression(alias, ct.getTarget().getId());
+						}
+					} catch (ManagerBeanException e) {
+						LOGGER.error("Error filtering offer", e);
+					}
+				}
+			};
+		}
+		return this.offerFilter;
+	}
+
+	public void onSelectOffer( ActionEvent event ) {
+		CommercialTracking ct = (CommercialTracking) getTo();
+		Offer offer = ct.getOffer();
+		OfferController controller = (OfferController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_CONTROLLER_NAME);
+		try {
+			controller.select(event, offer);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectOffer exception: ", e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		controller.setBackAction(ICommercialConstants.NAVIGATION_COMMERCIAL_TRACKING_FORM);
 	}
 	
 }

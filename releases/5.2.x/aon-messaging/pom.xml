@@ -10,6 +10,7 @@
 	<artifactId>aon.messaging</artifactId>
 	<version>5.2.2</version>
 	<description>AON MESSAGING</description>
+	<name>AON MESSAGING</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
