@@ -23,6 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							reRender="showDeliveryWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{sales.showDeliveryWindow}"
 								value="#{false}" />
@@ -40,6 +41,11 @@
 										actionListener="#{sales.onDelivery}"
 										action="delivery_form"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="deliveryModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{sales.showDeliveryWindow}"
+											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="delivery-cancel"
 										value="#{bundle.aon_cancel}"

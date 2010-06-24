@@ -23,6 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							reRender="showConfirmStockWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{deliveryDetail.stockWarning}"
 								value="#{false}" />
@@ -33,16 +34,16 @@
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
-
 							<aon:div styleClass="aon-message-big aon-icon-big-info">								
 								<aon:outputText value="#{warehouseBundle.warehouse_delivery_not_enough_stock_msg}" />
 							</aon:div>					
-
 							<aon:div styleClass="aon-text-center">
 								<aon:commandButton id="confirmStock-yes"
 									value="#{bundle.aon_yes}"
 									actionListener="#{deliveryDetail.onAccept}"
 									styleClass="aon-commandButton">
+									<rich:componentControl for="confirmStockModalPanel"
+										event="onclick" operation="hide"/>																					
 									<f:setPropertyActionListener
 										target="#{deliveryDetail.stockWarning}"
 										value="#{false}" />

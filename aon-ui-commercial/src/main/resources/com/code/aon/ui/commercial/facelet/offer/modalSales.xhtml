@@ -23,6 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							reRender="showSalesWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{offer.showSalesWindow}"
 								value="#{false}" />
@@ -40,6 +41,11 @@
 										actionListener="#{offer.onSales}"
 										action="sales_form"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="salesModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{offer.showSalesWindow}"
+											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="sales-cancel"
 										value="#{bundle.aon_cancel}"

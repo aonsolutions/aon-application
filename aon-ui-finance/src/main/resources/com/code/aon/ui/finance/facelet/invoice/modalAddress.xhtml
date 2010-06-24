@@ -23,6 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							reRender="showInvoiceAddressWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{invoiceController.showInvoiceAddressWindow}"
 								value="#{false}" />
@@ -41,6 +42,8 @@
 										actionListener="#{invoiceAddress.accept}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										accesskey="#{bundle.aon_key_save}">
+										<rich:componentControl for="invoiceAddressModalPanel"
+											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
 											target="#{invoiceController.showInvoiceAddressWindow}"
 											value="#{false}" />

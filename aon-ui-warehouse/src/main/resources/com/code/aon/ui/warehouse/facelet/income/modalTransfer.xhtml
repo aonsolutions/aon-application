@@ -23,6 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							reRender="showPurchaseTransferWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{income.showPurchaseTransferWindow}"
 								value="#{false}" />
@@ -56,6 +57,8 @@
 										reRender="showPurchaseTransferWindow,incomeDetails,menuExt"
 										actionListener="#{income.onPurchaseTransfer}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="purchaseTransferModalPanel"
+											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
 											target="#{income.showPurchaseTransferWindow}"
 											value="#{false}" />

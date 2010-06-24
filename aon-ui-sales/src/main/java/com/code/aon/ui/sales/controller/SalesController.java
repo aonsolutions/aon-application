@@ -371,8 +371,6 @@ public class SalesController extends BasicController {
 	}
 
 	public void onDelivery(ActionEvent event) throws ManagerBeanException {
-		setShowDeliveryWindow(false);
-
 		Sales to = (Sales)this.getTo();
 		DeliveryManager deliveryManager = new DeliveryManager();
 		Delivery delivery = deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse(), DeliveryDetailType.MANUAL);
@@ -404,8 +402,6 @@ public class SalesController extends BasicController {
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
-		setShowInvoiceWindow(false);
-
 		Sales to = (Sales)this.getTo();
 		String deliverySeries = to.getSeries();
 		int deliveryNumber = obtainMaxDeliveryNumber(deliverySeries);

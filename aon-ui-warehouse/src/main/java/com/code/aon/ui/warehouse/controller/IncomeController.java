@@ -315,8 +315,6 @@ public class IncomeController extends BasicController {
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
-		setShowInvoiceWindow(false);
-
 		Income to = (Income)this.getTo();
 		IncomeInvoicingManager invoicingManager = new IncomeInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceRefCode(), getInvoiceDate());

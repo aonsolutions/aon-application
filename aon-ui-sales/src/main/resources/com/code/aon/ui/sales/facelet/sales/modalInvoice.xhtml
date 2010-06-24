@@ -23,6 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							reRender="showInvoiceWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{sales.showInvoiceWindow}"
 								value="#{false}" />
@@ -40,6 +41,11 @@
 										actionListener="#{sales.onInvoice}"
 										action="saleInvoice_form"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="invoiceModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{sales.showInvoiceWindow}"
+											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="invoice-cancel"
 										value="#{bundle.aon_cancel}"
