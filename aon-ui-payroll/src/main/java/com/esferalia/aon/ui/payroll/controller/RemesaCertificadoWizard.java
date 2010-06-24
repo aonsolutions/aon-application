@@ -158,8 +158,6 @@ public class RemesaCertificadoWizard implements Serializable {
 		try {
 			String loggedUser = AonUtil.getRemoteUser();
 			loggedUser = StringUtils.substringBefore(loggedUser, "@");
-//			List<IRemesaParteIT> list = getParteITDAO().getRemesaParteITList(getRemesaINSS());
-//			List<IRemesaParteIT> list = getDetailList();
 			setFileOutput(getCertificateWriter().createCertificate(getRemesa(), getDetailList()));
 			if (getFileOutput() != null) {
 				if (getFileOutput().getErrors().size() > 0) {
@@ -219,7 +217,6 @@ public class RemesaCertificadoWizard implements Serializable {
 		} catch (PayrollException e) {
 			// NADA
 		}
-		
 	}
 	
 	private void onSearch(ActionEvent event) {
