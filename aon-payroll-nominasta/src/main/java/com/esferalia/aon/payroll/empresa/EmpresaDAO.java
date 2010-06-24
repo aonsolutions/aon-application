@@ -21,7 +21,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 
 	private static String ACTCCC_ACT_ALIAS = null;
 	private static String ACTCCC_CCC_ALIAS = null;
-	private static String REMESA_CERT_DET_ALIAS = null;
+	private static String REMESA_CERT_DET_REMESA_ALIAS = null;
 
 	static {
 		EmpresaDAOFactory.register(new EmpresaDAO());
@@ -34,7 +34,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 			ACTCCC_ACT_ALIAS = bean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_CDG);
 			ACTCCC_CCC_ALIAS = bean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_TIPCCC);
 			IManagerBean beanCertEmp = BeanManager.getManagerBean(RemesaCertificadoEmpresaDetalle.class);
-			REMESA_CERT_DET_ALIAS = beanCertEmp.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID);
+			REMESA_CERT_DET_REMESA_ALIAS = beanCertEmp.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_DETALLE_REMESA_CERTIFICADO_ID);
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -85,7 +85,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RemesaCertificadoEmpresaDetalle.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(REMESA_CERT_DET_ALIAS, remesa.getId());
+			criteria.addEqualExpression(REMESA_CERT_DET_REMESA_ALIAS, remesa.getId());
 			List<?> list = bean.getList(criteria);
 			return (List<IRemesaCertificadoEmpresaDetalle>)list;
 		} catch (ManagerBeanException e) {
