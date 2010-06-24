@@ -526,8 +526,6 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 	
 	public void onCopy(ActionEvent event) throws ManagerBeanException {
-		setShowOfferCopyWindow(false);
-
 		Offer to = getOffer();
 		this.getManagerBean().restoreNullSubPOJOs(to);
 		OfferImportManager manager = new OfferImportManager();
@@ -556,8 +554,6 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	public void onSales(ActionEvent event) throws ManagerBeanException {
-		setShowSalesWindow(false);
-
 		Offer to = getOffer();
 		SalesManager salesManager = new SalesManager();
 		Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
@@ -588,8 +584,6 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
-		setShowInvoiceWindow(false);
-
 		Offer to = getOffer();
 		OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());

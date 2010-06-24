@@ -311,8 +311,6 @@ public class PurchaseController extends BasicController {
 	}
 
 	public void onIncome(ActionEvent event) throws ManagerBeanException {
-		setShowIncomeWindow(false);
-
 		Purchase to = (Purchase)this.getTo();
 		IncomeManager incomeManager = new IncomeManager();
 		Income income = incomeManager.purchaseIncome(to, getIncomeSeries(), getIncomeNumber(), getIncomeDate(), getIncomeWarehouse(), IncomeDetailType.MANUAL);
@@ -332,8 +330,6 @@ public class PurchaseController extends BasicController {
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
-		setShowInvoiceWindow(false);
-
 		Purchase to = (Purchase)this.getTo();
 		String incomeSeries = to.getSeries();
 		int incomeNumber = obtainMaxIncomeNumber(incomeSeries);

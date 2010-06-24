@@ -384,8 +384,6 @@ public class DeliveryController extends BasicController {
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
-		setShowInvoiceWindow(false);
-
 		Delivery to = (Delivery)this.getTo();
 		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());

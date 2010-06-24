@@ -23,6 +23,7 @@
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
 							reRender="showDeliveryTransferWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{saleInvoice.showDeliveryTransferWindow}"
 								value="#{false}" />
@@ -56,6 +57,8 @@
 										reRender="showDeliveryTransferWindow,invoiceDetails,menuExt"
 										actionListener="#{saleInvoice.onDeliveryTransfer}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="deliveryTransferModalPanel"
+											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
 											target="#{saleInvoice.showDeliveryTransferWindow}"
 											value="#{false}" />
