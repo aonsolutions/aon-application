@@ -414,6 +414,10 @@
 					<value>invoice.id</value>
 				</map-entry>
 				<map-entry>
+					<key>issueDate</key>
+					<value>invoice.issueDate</value>
+				</map-entry>
+				<map-entry>
 					<key>surcharge</key>
 					<value>invoice.surcharge</value>
 				</map-entry>
