@@ -10,31 +10,31 @@ public class VacacionesRea {
 	private static final String NUM_DIAS_COTIZADOS = "NumDiasCotizados";
 	private static final String NUM_JORNADAS_COTIZADAS = "NumJornadasCotizadas";
 	
-	private Integer grupoCotizacion;
-	private Integer numDiasCotizados;
-	private Integer numJornadasCotizadas;
+	private String grupoCotizacion;
+	private String numDiasCotizados;
+	private String numJornadasCotizadas;
 	
-	public Integer getGrupoCotizacion() {
+	public String getGrupoCotizacion() {
 		return grupoCotizacion;
 	}
 
-	public void setGrupoCotizacion(Integer grupoCotizacion) {
+	public void setGrupoCotizacion(String grupoCotizacion) {
 		this.grupoCotizacion = grupoCotizacion;
 	}
 
-	public Integer getNumDiasCotizados() {
+	public String getNumDiasCotizados() {
 		return numDiasCotizados;
 	}
 
-	public void setNumDiasCotizados(Integer numDiasCotizados) {
+	public void setNumDiasCotizados(String numDiasCotizados) {
 		this.numDiasCotizados = numDiasCotizados;
 	}
 
-	public Integer getNumJornadasCotizadas() {
+	public String getNumJornadasCotizadas() {
 		return numJornadasCotizadas;
 	}
 
-	public void setNumJornadasCotizadas(Integer numJornadasCotizadas) {
+	public void setNumJornadasCotizadas(String numJornadasCotizadas) {
 		this.numJornadasCotizadas = numJornadasCotizadas;
 	}
 
