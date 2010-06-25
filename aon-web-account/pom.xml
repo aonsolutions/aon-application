@@ -103,6 +103,18 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.fiscal</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.warehouse</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
