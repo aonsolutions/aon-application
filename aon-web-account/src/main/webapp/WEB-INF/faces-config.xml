@@ -66,8 +66,8 @@
 			<to-view-id>/facelet/menu/masters.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>menu_pred_entries</from-outcome>
-			<to-view-id>/facelet/menu/pred_entries.xhtml</to-view-id> 
+			<from-outcome>menu_entries</from-outcome>
+			<to-view-id>/facelet/menu/entries.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_reports</from-outcome>
@@ -88,6 +88,10 @@
 		<navigation-case>
 			<from-outcome>menu_finance</from-outcome>
 			<to-view-id>/facelet/menu/finance.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_fiscal</from-outcome>
+			<to-view-id>/facelet/menu/fiscal.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_configuration</from-outcome>
