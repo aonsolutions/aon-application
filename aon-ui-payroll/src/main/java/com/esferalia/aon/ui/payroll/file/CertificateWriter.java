@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.file.payroll.certificate.Certificate;
 import com.esferalia.aon.file.payroll.certificate.data.Cotizacion;
@@ -138,7 +139,7 @@ public class CertificateWriter {
 		}
 		cuentaCotizacion.setRepresentante(representante);
 		Empresa empresa = new Empresa();
-		empresa.setCcc(parseCcc(remesa.getCodigoCcc()));
+		empresa.setCcc(parse15Digit(remesa.getCodigoCcc()));
 		
 		empresa.setCifNif(remesa.getEmpresa().getRegistry().getDocument().getValue());
 		cuentaCotizacion.setEmpresa(empresa);
@@ -166,13 +167,13 @@ public class CertificateWriter {
 		trabajador.setApellido2(detalle.getEmpleado().getPersona().getLastName());
 		trabajador.setNumSs(detalle.getEmpleado().getPersona().getNumSS());
 		trabajador.setGrupoCotizacion(trabajos.get(0).getBaseCotizacion().getCdg());
-		trabajador.setTipoContrato(trabajos.get(0).getContratoTc2().getCdg());
+		trabajador.setTipoContrato(parse3Digit(trabajos.get(0).getContratoTc2().getCdg()));
 		if(trabajos.get(0).getFechaFinCont()!=null && trabajos.get(0).getFechaInicioCont()!=null){
-			trabajador.setDuracionContrato(differenceBetweenDates(trabajos.get(0).getFechaFinCont(),trabajos.get(0).getFechaInicioCont()).toString());
+			trabajador.setDuracionContrato(parse5Digit(differenceBetweenDates(trabajos.get(0).getFechaFinCont(),trabajos.get(0).getFechaInicioCont())));
 		}
 		
 //		trabajador.setIndicadorDuracionContrato();
-		trabajador.setCodProfesion(trabajos.get(0).getCno());
+		trabajador.setCodProfesion(parse7Digit(trabajos.get(0).getCno()));
 //		trabajador.setCargoPublicoSindical();
 //		trabajador.setPorcentualDedicacion();
 		trabajador.setFechaAltaEmpresa(parseFecha(detalle.getEmpleado().getFechaInicio()));
@@ -181,7 +182,7 @@ public class CertificateWriter {
 		
 		
 		
-		trabajador.setCodCausaSuspension(detalle.getCausaSuspension());
+		trabajador.setCodCausaSuspension(parse2Digit(detalle.getCausaSuspension()));
 //		trabajador.setFechaSuspensionExtincion(detalle.getEmpleado().getFechaFin().toString());
 		trabajador.setFechaSuspensionExtincion(parseFecha(detalle.getFechaBaja()));
 //		trabajador.setFechaFinSuspension();
@@ -221,7 +222,7 @@ public class CertificateWriter {
 				periodo.setTipoDistribucion(t.getTipoTP().getValue());
 				periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
 				periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
-				periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(t.getDiasTP());
+				periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parse5Digit(t.getDiasTP()));
 				listaPeriodos.add(periodo);
 			}
 			DistribucionJornada jornada = new DistribucionJornada();
@@ -275,10 +276,10 @@ public class CertificateWriter {
 
 				Cotizacion cotizacion = new Cotizacion();
 				cotizacion.setAno(nomina.getYear().toString());
-				cotizacion.setMes(nomina.getMes().toString());
-				cotizacion.setNumDiasCotizados(nomina.getDiasNomina().toString());
-				cotizacion.setBaseCotizacionContingenciasComunes(totalBaseCg.toString());
-				cotizacion.setBaseCotizacionDesempleo(totalBaseDesempleo.toString());
+				cotizacion.setMes(parse2Digit(nomina.getMes()));
+				cotizacion.setNumDiasCotizados(parse3Digit(nomina.getDiasNomina()));
+				cotizacion.setBaseCotizacionContingenciasComunes(parse9Digit(totalBaseCg));
+				cotizacion.setBaseCotizacionDesempleo(parse9Digit(totalBaseDesempleo));
 				cotizacion.setObservaciones(null);
 				cotizacionList.add(cotizacion);
 			}
@@ -288,7 +289,7 @@ public class CertificateWriter {
 		}
 		return null;
 	}
-	
+
 	private boolean existNomina(IEmpleado empleado, Calendar calFin) throws PayrollException {
 		NominaParams params = new NominaParams();
 		params.setEmpleado(empleado);
@@ -306,9 +307,9 @@ public class CertificateWriter {
 			IFiniquito finiquito = getNominaDAO().getFiniquito(empleado);
 			if(finiquito!=null){
 				Vacaciones vacaciones = new Vacaciones();
-				vacaciones.setNumDiasCotizados(finiquito.getDiasVacaciones());
-				vacaciones.setBaseCotizacionDesempleo(finiquito.getBaseAccidentesTrabajo().intValue());
-				vacaciones.setBaseCotizacionContingenciasComunes(finiquito.getBaseContingenciasGenerales().intValue());
+				vacaciones.setNumDiasCotizados(parse3Digit(finiquito.getDiasVacaciones()));
+				vacaciones.setBaseCotizacionDesempleo(parse9Digit(finiquito.getBaseAccidentesTrabajo()));
+				vacaciones.setBaseCotizacionContingenciasComunes(parse9Digit(finiquito.getBaseContingenciasGenerales()));
 				vacaciones.setObservaciones(null);
 				IFiniquitoDiferencia finiquitodf = getNominaDAO().getFiniquitoDiferencia(empleado);
 				if(finiquitodf!=null){
@@ -328,7 +329,7 @@ public class CertificateWriter {
 		return null;
 	}
 	
-	private static Integer differenceBetweenDates(Date date1, Date date2){
+	private Integer differenceBetweenDates(Date date1, Date date2){
 		GregorianCalendar initDate = new GregorianCalendar();
 		GregorianCalendar endDate = new GregorianCalendar();
 		initDate.setTime(date1);
@@ -351,20 +352,68 @@ public class CertificateWriter {
 		return (days2>days1)?(days2-days1):(days1-days2);
 	}
 	
-	private String parseCcc(String codigoCcc) {
-		while(codigoCcc.length()<15){
-			codigoCcc = "0".concat(codigoCcc);
-		}
-		return codigoCcc;
-	}
-
 	private String parseFecha(Date date) {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(date);
 		String d = String.valueOf(cal.get(Calendar.YEAR));
-		d += String.valueOf(cal.get(Calendar.MONTH));
-		d += String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+		d += parse2Digit(cal.get(Calendar.MONTH));
+		d += parse2Digit(cal.get(Calendar.DAY_OF_MONTH));
 		return d;
+	}
+	
+	private String parse2Digit(Integer i) {
+		String m = String.valueOf(i);
+		return parse2Digit(m);
+	}
+	
+	private String parse2Digit(String s) {
+		while(s.length()<2){
+			s = "0".concat(s);
+		}
+		return s;
+	}
+	
+	private String parse3Digit(Integer i) {
+		String d = String.valueOf(i);
+		return parse3Digit(d);
+	}
+
+	private String parse3Digit(String s) {
+		while(s.length()<3){
+			s = "0".concat(s);
+		}
+		return s;
+	}
+	
+	private String parse5Digit(Integer i) {
+		String d = String.valueOf(i);
+		while(d.length()<5){
+			d = "0".concat(d);
+		}
+		return d;
+	}
+	
+	private String parse7Digit(String s) {
+		while(s.length()<7){
+			s = "0".concat(s);
+		}
+		return s;
+	}
+	
+	private String parse9Digit(Double d) {
+		d =(CommonUtil.round(d)*100);
+		String b = String.valueOf(d.intValue());
+		while(b.length()<9){
+			b = "0".concat(b);
+		}
+		return b;
+	}
+	
+	private String parse15Digit(String s) {
+		while(s.length()<15){
+			s = "0".concat(s);
+		}
+		return s;
 	}
 
 	
