@@ -7,7 +7,6 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:div styleClass="aon-toolbar" rendered="#{!fbatch.recorded}">
-	
 		<aon:commandButton title="#{bundle.aon_check_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 			value="#{bundle.aon_check_all}"
@@ -29,7 +28,7 @@
 		<aon:htmlCommandLink target="_blank"
 			title="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 			value="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
-			actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.csbOutput!=null}"
+			actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.aebOutput!=null}"
 			styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 	</aon:div>
 
