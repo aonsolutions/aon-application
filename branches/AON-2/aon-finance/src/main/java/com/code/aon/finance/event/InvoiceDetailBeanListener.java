@@ -110,8 +110,8 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
         	Criteria criteria = new Criteria();
         	criteria.addEqualExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_TAX_ID),id);
-        	criteria.addLessThanExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_START_DATE),date);
-        	criteria.addGreaterThanExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_END_DATE),date);
+        	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_START_DATE),date);
+        	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_END_DATE),date);
         	Iterator iter = taxDetailBean.getList(criteria).iterator();
         	while(iter.hasNext()){
         		TaxDetail taxDetail = (TaxDetail)iter.next();
