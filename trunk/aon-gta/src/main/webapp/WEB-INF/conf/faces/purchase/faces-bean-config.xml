@@ -406,6 +406,10 @@
 					<key>id</key>
 					<value>invoice.id</value>
 				</map-entry>
+				<map-entry>
+					<key>issueDate</key>
+					<value>invoice.issueDate</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 		<managed-property>
