@@ -12,9 +12,9 @@
 			value="#{appBundle.account_masters}"
 			action="menu_masters" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-master" />
-		<aon:commandLink id="pred_entries"
-			value="#{appBundle.account_pred_entries}"
-			action="menu_pred_entries" immediate="true"
+		<aon:commandLink id="entries"
+			value="#{appBundle.account_entries}"
+			action="menu_entries" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-account-entry" />
 		<aon:commandLink id="reports"
 			value="#{appBundle.account_reports}"
@@ -36,6 +36,10 @@
 			value="#{financeBundle.finance_menu_group}"
 			action="menu_finance" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-treasury" />
+		<aon:commandLink id="fiscal"
+			value="#{appBundle.account_fiscal}"
+			action="menu_fiscal" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-product" />
 		<aon:commandLink id="configuration"
 			value="#{appBundle.account_configuration}"
 			action="menu_configuration" immediate="true"
