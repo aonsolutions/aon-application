@@ -5,7 +5,7 @@
 <hibernate-configuration>
 
 	<session-factory>
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_master?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://volga:3306/aon_master?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -31,6 +31,7 @@
 		
 		<!-- AON-PRODUCT Mapping files -->	
 		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemSupplier"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
@@ -65,7 +66,10 @@
 		<mapping class="com.code.aon.config.Tax"/>
 
 		<!-- AON-CUSTOMER Mapping files -->		
-		<mapping class="com.code.aon.customer.Customer"/>			
+		<mapping class="com.code.aon.customer.Customer"/>
+		
+		<!-- AON-SUPPLIER Mapping files -->
+		<mapping class="com.code.aon.supplier.Supplier"/>		
 
 	</session-factory>
 
