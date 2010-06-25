@@ -9,6 +9,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
+import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FBatchController;
@@ -39,25 +40,26 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.loadAvailableFinances(fBatch.isPayment());
 		fBatchController.setRecordDate(fBatch.getIssueDate());
-		fBatchController.setCsbOutput(null);
+		fBatchController.setAebOutput(null);
 	}
 
     @Override
     public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
         FBatchController fBatchController = (FBatchController)event.getController();
         FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
-        try {
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression(fBatchController.getFieldName(IFinanceAlias.FINANCE_BATCH_ID), fBatch.getId());
-            Date oldDate = ((FinanceBatch)fBatchController.getManagerBean().getList(criteria).get(0)).getIssueDate();
-            if (oldDate.after(fBatch.getIssueDate())) {
-                fBatch.setIssueDate(oldDate);
-                AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DATE_ERROR);
+        if (fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19 || fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D) {
+            try {
+                Criteria criteria = new Criteria();
+                criteria.addEqualExpression(fBatchController.getFieldName(IFinanceAlias.FINANCE_BATCH_ID), fBatch.getId());
+                Date oldDate = ((FinanceBatch)fBatchController.getManagerBean().getList(criteria).get(0)).getIssueDate();
+                if (oldDate.after(fBatch.getIssueDate())) {
+                    fBatch.setIssueDate(oldDate);
+                    AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DATE_ERROR);
+                }
+            } catch (ManagerBeanException e) {
+                LOGGER.error("Error obtaining FinanceBatch with id=" + fBatch.getId(), e);
             }
-        } catch (ManagerBeanException e) {
-            LOGGER.error("Error obtaining FinanceBatch with id=" + fBatch.getId(), e);
         }
-
         fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
     }
 
@@ -67,7 +69,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
         FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
         fBatchController.loadAvailableFinances(fBatch.isPayment());
 		fBatchController.setRecordDate(fBatch.getIssueDate());
-		fBatchController.setCsbOutput(null);
+		fBatchController.setAebOutput(null);
     }
 
     @Override
@@ -76,7 +78,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.loadAvailableFinances(fBatch.isPayment());
 		fBatchController.setRecordDate(fBatch.getIssueDate());
-		fBatchController.setCsbOutput(null);
+		fBatchController.setAebOutput(null);
 
         FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
         fBatchDetailController.clearCheckedFinanceBatchDetails();
