@@ -11,27 +11,27 @@ public class Vacaciones {
 	private static final String BASE_COTIZACION_CONTINGENCIAS_COMUNES = "BaseCotizacionContingenciasComunes";
 	private static final String OBSERVACIONES = "Observaciones";
 	
-	private Integer numDiasCotizados;
-	private Integer baseCotizacionDesempleo;
-	private Integer baseCotizacionContingenciasComunes;
+	private String numDiasCotizados;
+	private String baseCotizacionDesempleo;
+	private String baseCotizacionContingenciasComunes;
 	private String observaciones;
 	
-	public Integer getNumDiasCotizados() {
+	public String getNumDiasCotizados() {
 		return numDiasCotizados;
 	}
-	public void setNumDiasCotizados(Integer numDiasCotizados) {
+	public void setNumDiasCotizados(String numDiasCotizados) {
 		this.numDiasCotizados = numDiasCotizados;
 	}
-	public Integer getBaseCotizacionDesempleo() {
+	public String getBaseCotizacionDesempleo() {
 		return baseCotizacionDesempleo;
 	}
-	public void setBaseCotizacionDesempleo(Integer baseCotizacionDesempleo) {
+	public void setBaseCotizacionDesempleo(String baseCotizacionDesempleo) {
 		this.baseCotizacionDesempleo = baseCotizacionDesempleo;
 	}
-	public Integer getBaseCotizacionContingenciasComunes() {
+	public String getBaseCotizacionContingenciasComunes() {
 		return baseCotizacionContingenciasComunes;
 	}
-	public void setBaseCotizacionContingenciasComunes(Integer baseCotizacionContingenciasComunes) {
+	public void setBaseCotizacionContingenciasComunes(String baseCotizacionContingenciasComunes) {
 		this.baseCotizacionContingenciasComunes = baseCotizacionContingenciasComunes;
 	}
 	public String getObservaciones() {
