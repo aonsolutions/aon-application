@@ -58,9 +58,9 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.finance.file.CSB19Writer;
-import com.code.aon.ui.finance.file.CSB32Writer;
-import com.code.aon.ui.finance.file.CSB58Writer;
+import com.code.aon.ui.finance.file.AEB19Writer;
+import com.code.aon.ui.finance.file.AEB32Writer;
+import com.code.aon.ui.finance.file.AEB58Writer;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -75,7 +75,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchController.class.getName());
 
 	private Company company;
-	private FileOutput csbOutput;
+	private FileOutput aebOutput;
 	private Date recordDate;
 	private boolean showFbatchRecordWindow;
 	private AccountingUtil accountingUtil;
@@ -93,12 +93,12 @@ public class FBatchController extends BasicController implements ICollectionProv
 		this.company = company;
 	}
 
-	public FileOutput getCsbOutput() {
-		return csbOutput;
+	public FileOutput getAebOutput() {
+		return aebOutput;
 	}
 
-	public void setCsbOutput(FileOutput csbOutput) {
-		this.csbOutput = csbOutput;
+	public void setAebOutput(FileOutput aebOutput) {
+		this.aebOutput = aebOutput;
 	}
 
 	public Date getRecordDate() {
@@ -242,10 +242,10 @@ public class FBatchController extends BasicController implements ICollectionProv
             criteria.addExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));
             if (!to.getFinanceBatchType().equals(FinanceBatchType.NONE)) {
                 criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_TYPE), PayMethodType.NEGOTIABLE_DOCUMENT);
-                if (!to.getFinanceBatchType().equals(FinanceBatchType.CSB_58)) {
+                if (!to.getFinanceBatchType().equals(FinanceBatchType.AEB_58) && !to.getFinanceBatchType().equals(FinanceBatchType.AEB_58_D)) {
                 	criteria.addNotNullExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT));
                 	criteria.addExpression(ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), new BankAccount()));
-                    if (!to.getFinanceBatchType().equals(FinanceBatchType.CSB_32)) {
+                    if (!to.getFinanceBatchType().equals(FinanceBatchType.AEB_32)) {
                         criteria.addLessThanOrEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getIssueDate());
                     }
                 }
@@ -274,7 +274,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             try {
                 fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
                 getManagerBean().update(fBatch);
-                setCsbOutput(null);
+                setAebOutput(null);
             } catch (ManagerBeanException e) {
                 LOGGER.error("Error updating FinanceBatch with id=" + fBatch.getId(), e);
             }
@@ -317,7 +317,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             try {
                 fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
                 getManagerBean().update(fBatch);
-                setCsbOutput(null);
+                setAebOutput(null);
             } catch (ManagerBeanException e) {
                 LOGGER.error("Error updating FinanceBatch with id=" + fBatch.getId(), e);
             }
@@ -346,21 +346,21 @@ public class FBatchController extends BasicController implements ICollectionProv
     	FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
         Collection fbatchDetailCollection = obtainDetailsCollection(fbatch);
-        if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19_D) || fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19)) {
-			CSB19Writer csb19Writer = new CSB19Writer();
-			csbOutput = csb19Writer.createCSB19(getCompany(), fbatch, fbatchDetailCollection);
+        if (fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_19) || fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_19_D)) {
+			AEB19Writer aeb19Writer = new AEB19Writer();
+			aebOutput = aeb19Writer.createAEB19(getCompany(), fbatch, fbatchDetailCollection);
 		}
-		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_32)) {
-			CSB32Writer csb32Writer = new CSB32Writer();
-			csbOutput = csb32Writer.createCSB32(getCompany(), fbatch, fbatchDetailCollection);
+		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_32)) {
+			AEB32Writer aeb32Writer = new AEB32Writer();
+			aebOutput = aeb32Writer.createAEB32(getCompany(), fbatch, fbatchDetailCollection);
 		}
-		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_58)) {
-			CSB58Writer csb58Writer = new CSB58Writer();
-			csbOutput = csb58Writer.createCSB58(getCompany(), fbatch, fbatchDetailCollection);
+		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_58) || fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_58_D)) {
+			AEB58Writer aeb58Writer = new AEB58Writer();
+			aebOutput = aeb58Writer.createAEB58(getCompany(), fbatch, fbatchDetailCollection);
 		}
 
-        if (csbOutput != null) {
-        	if (csbOutput.getErrors().size() > 0) {
+        if (aebOutput != null) {
+        	if (aebOutput.getErrors().size() > 0) {
         		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
         	} else {
                 fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
@@ -382,8 +382,8 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public boolean isDiskOk() {
 		int errors = 0;
-		if (csbOutput != null) {
-			errors = csbOutput.getErrors().size();
+		if (aebOutput != null) {
+			errors = aebOutput.getErrors().size();
 		}
 		return (errors==0);
 	}
@@ -395,13 +395,13 @@ public class FBatchController extends BasicController implements ICollectionProv
 
         	String fileName = ((FinanceBatch)this.getTo()).getFinanceBatchType().getName(AonUtil.getCurrentLocale());
 	        fileName += "-" + ((FinanceBatch)this.getTo()).getDescription();
-	        fileName = ((csbOutput.getErrors().size()>0) ? "ERROR-" : "") + fileName;
+	        fileName = ((aebOutput.getErrors().size()>0) ? "ERROR-" : "") + fileName;
 
 	        response.setContentType(MimeType.MIME_TXT.getName());
 	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\"");
 
 	        ServletOutputStream output = response.getOutputStream();
-	        InputStream input = new FileInputStream(csbOutput.getFile());
+	        InputStream input = new FileInputStream(aebOutput.getFile());
 	        int size = IOUtils.copy(input, output);
 	        if (size > 0) {
 		        response.setHeader("Content-Length", String.valueOf(size));
@@ -411,7 +411,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	        response.flushBuffer();
 	        faces.responseComplete();
-		} catch (IOException e) {
+        } catch (IOException e) {
 			throw new ManagerBeanException(e);
 		}
 	}
