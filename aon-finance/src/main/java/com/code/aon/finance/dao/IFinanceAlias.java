@@ -756,6 +756,24 @@ public interface IFinanceAlias {
 	*/
 	String  INVOICE_TAX_SURCHARGE_QUOTA = INVOICE_TAX_ENTRY.getAliasNames()[7];
 
+	/** 
+	* Alias value: InvoiceTax_vatDeductionType
+	* Hibernate value: InvoiceTax.vatDeductionType
+	*/
+	String  INVOICE_TAX_VAT_DEDUCTION_TYPE = INVOICE_TAX_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: InvoiceTax_withholdingType
+	* Hibernate value: InvoiceTax.withholdingType
+	*/
+	String  INVOICE_TAX_WITHHOLDING_TYPE = INVOICE_TAX_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: InvoiceTax_deductibleQuota
+	* Hibernate value: InvoiceTax.deductibleQuota
+	*/
+	String  INVOICE_TAX_DEDUCTIBLE_QUOTA = INVOICE_TAX_ENTRY.getAliasNames()[10];
+
 
 
 	/** 
