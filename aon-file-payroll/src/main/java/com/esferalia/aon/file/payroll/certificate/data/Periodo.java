@@ -14,7 +14,7 @@ public class Periodo {
 	private String tipoDistribucion;
 	private String fechaInicioPeriodo;
 	private String fechaFinPeriodo;
-	private Integer numeroDiasTrabajadosPorSemanaOPeriodo;
+	private String numeroDiasTrabajadosPorSemanaOPeriodo;
 
 	public String getTipoDistribucion() {
 		return tipoDistribucion;
@@ -34,11 +34,11 @@ public class Periodo {
 	public void setFechaFinPeriodo(String fechaFinPeriodo) {
 		this.fechaFinPeriodo = fechaFinPeriodo;
 	}
-	public Integer getNumeroDiasTrabajadosPorSemanaOPeriodo() {
+	public String getNumeroDiasTrabajadosPorSemanaOPeriodo() {
 		return numeroDiasTrabajadosPorSemanaOPeriodo;
 	}
 	public void setNumeroDiasTrabajadosPorSemanaOPeriodo(
-			Integer numeroDiasTrabajadosPorSemanaOPeriodo) {
+			String numeroDiasTrabajadosPorSemanaOPeriodo) {
 		this.numeroDiasTrabajadosPorSemanaOPeriodo = numeroDiasTrabajadosPorSemanaOPeriodo;
 	}
 	
