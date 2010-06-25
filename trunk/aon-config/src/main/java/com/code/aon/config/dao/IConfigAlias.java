@@ -227,6 +227,18 @@ public interface IConfigAlias {
 	*/
 	String  TAX_TYPE = TAX_ENTRY.getAliasNames()[5];
 
+	/** 
+	* Alias value: Tax_vatDeductionType
+	* Hibernate value: Tax.vatDeductionType
+	*/
+	String  TAX_VAT_DEDUCTION_TYPE = TAX_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Tax_withholdingType
+	* Hibernate value: Tax.withholdingType
+	*/
+	String  TAX_WITHHOLDING_TYPE = TAX_ENTRY.getAliasNames()[7];
+
 
 
 	/** 
