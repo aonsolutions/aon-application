@@ -61,7 +61,8 @@ public class SeriesNumberUtil {
 	 * @return El siguiente número.
 	 */
 	public static int obtainNumber(String series, String table,	Criteria criteria) {
-		Session session = HibernateUtil.getSession();
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(sessionFactoryName);
 		String hqlQuery = 
 			"SELECT MAX(" + table.toLowerCase() + ".number)"
 				+ " FROM " + table + " " + table.toLowerCase()
