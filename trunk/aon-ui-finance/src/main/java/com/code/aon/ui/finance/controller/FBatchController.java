@@ -408,9 +408,11 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        }
 	        output.close();
 	        input.close();
-
 	        response.flushBuffer();
 	        faces.responseComplete();
+
+	        aebOutput.getFile().delete();
+	        setAebOutput(null);
         } catch (IOException e) {
 			throw new ManagerBeanException(e);
 		}

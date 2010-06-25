@@ -29,7 +29,8 @@
 			title="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 			value="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 			actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.aebOutput!=null}"
-			styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+			styleClass="aon-finding-toolbar-item aon-icon-mail-save"
+			onclick="this.style.display='none';" />
 	</aon:div>
 
 	<aon:div id="fBatchDetailDataDiv">
