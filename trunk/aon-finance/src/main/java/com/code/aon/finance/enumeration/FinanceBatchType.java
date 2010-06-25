@@ -17,17 +17,20 @@ public enum FinanceBatchType implements IResourceable {
     /** NONE. */
 	NONE,
 
-    /** CSB_19. */
-    CSB_19,
+    /** AEB_19. */
+    AEB_19,
 
-    /** CSB_19. */
-    CSB_19_D,
+    /** AEB_19_D. */
+    AEB_19_D,
 
-    /** CSB_32. */ 
-    CSB_32,
+    /** AEB_32. */ 
+    AEB_32,
 
-    /** CSB_58. */
-    CSB_58; 
+    /** AEB_58. */
+    AEB_58, 
+    
+    /** AEB_58_D. */
+    AEB_58_D; 
     
     /** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
