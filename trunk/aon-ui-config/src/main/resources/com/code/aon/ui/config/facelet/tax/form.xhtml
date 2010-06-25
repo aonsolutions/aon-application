@@ -25,10 +25,25 @@
 						value="#{tax.to.name}" required="true" />
 
 					<aon:outputLabel for="Tax_type" value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Tax_type" 
-						required="true" value="#{tax.to.type}">
-						<f:selectItems value="#{configCollections.taxTypes}" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:selectOneMenu id="Tax_type"
+							reRender="typeTypeDiv" 
+							required="true" value="#{tax.to.type}">
+							<f:selectItems value="#{configCollections.taxTypes}" />
+						</aon:selectOneMenu>
+						<aon:div id="typeTypeDiv">
+							<aon:selectOneMenu id="vat_type"
+								rendered="#{tax.to.vat}" 
+								required="true" value="#{tax.to.vatDeductionType}">
+								<f:selectItems value="#{configCollections.vatDeductionTypes}" />
+							</aon:selectOneMenu>
+							<aon:selectOneMenu id="withholding_type"
+								rendered="#{tax.to.retention}" 
+								required="true" value="#{tax.to.withholdingType}">
+								<f:selectItems value="#{configCollections.withholdingTypes}" />
+							</aon:selectOneMenu>
+						</aon:div>
+					</aon:div>
 
 					<aon:outputLabel for="Tax_startDate" value="#{bundle.aon_start_date}" />
 					<aon:selectInputDate id="Tax_startDate"

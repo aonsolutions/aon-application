@@ -24,6 +24,8 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.enumeration.VatDeductionType;
+import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
@@ -38,6 +40,10 @@ public class ConfigCollectionsController {
 	private List<SelectItem> payMethodTypes;
 
 	private List<SelectItem> invoiceTransactionTypes;
+
+	private List<SelectItem> vatDeductionTypes;
+
+	private List<SelectItem> withholdingTypes;
 
 	public List<SelectItem> getSeries() throws ManagerBeanException{
 		return getSeries(false);		
@@ -361,6 +367,32 @@ public class ConfigCollectionsController {
 			}
 		}
 		return invoiceTransactionTypes;
+	}
+
+	public List<SelectItem> getVatDeductionTypes() {
+		if (vatDeductionTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			vatDeductionTypes = new LinkedList<SelectItem>();
+			for (VatDeductionType type:VatDeductionType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				vatDeductionTypes.add(item);
+			}
+		}
+		return vatDeductionTypes;
+	}
+	
+	public List<SelectItem> getWithholdingTypes() {
+		if (withholdingTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			withholdingTypes = new LinkedList<SelectItem>();
+			for (WithholdingType type:WithholdingType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				withholdingTypes.add(item);
+			}
+		}
+		return withholdingTypes;
 	}
 
 	public InvoiceTransactionType getInvoiceTransactionType() {
