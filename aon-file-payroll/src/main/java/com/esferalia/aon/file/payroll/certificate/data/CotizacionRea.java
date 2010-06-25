@@ -13,41 +13,41 @@ public class CotizacionRea {
 	private static final String NUM_JORNADAS_COTIZADAS = "NumJornadasCotizadas";
 	private static final String OBSERVACIONES = "Observaciones";
 	
-	private Integer ano;
-	private Integer mes;
-	private Integer grupoCotizacion;
-	private Integer numDiasCotizados;
-	private Integer numJornadasCotizadas;
+	private String ano;
+	private String mes;
+	private String grupoCotizacion;
+	private String numDiasCotizados;
+	private String numJornadasCotizadas;
 	private String observaciones;
 
-	public Integer getAno() {
+	public String getAno() {
 		return ano;
 	}
-	public void setAno(Integer ano) {
+	public void setAno(String ano) {
 		this.ano = ano;
 	}
-	public Integer getMes() {
+	public String getMes() {
 		return mes;
 	}
-	public void setMes(Integer mes) {
+	public void setMes(String mes) {
 		this.mes = mes;
 	}
-	public Integer getGrupoCotizacion() {
+	public String getGrupoCotizacion() {
 		return grupoCotizacion;
 	}
-	public void setGrupoCotizacion(Integer grupoCotizacion) {
+	public void setGrupoCotizacion(String grupoCotizacion) {
 		this.grupoCotizacion = grupoCotizacion;
 	}
-	public Integer getNumDiasCotizados() {
+	public String getNumDiasCotizados() {
 		return numDiasCotizados;
 	}
-	public void setNumDiasCotizados(Integer numDiasCotizados) {
+	public void setNumDiasCotizados(String numDiasCotizados) {
 		this.numDiasCotizados = numDiasCotizados;
 	}
-	public Integer getNumJornadasCotizadas() {
+	public String getNumJornadasCotizadas() {
 		return numJornadasCotizadas;
 	}
-	public void setNumJornadasCotizadas(Integer numJornadasCotizadas) {
+	public void setNumJornadasCotizadas(String numJornadasCotizadas) {
 		this.numJornadasCotizadas = numJornadasCotizadas;
 	}
 	public String getObservaciones() {
