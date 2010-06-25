@@ -32,16 +32,16 @@ import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 
-public class CSB32Writer implements IFinanceConstants {
+public class AEB32Writer implements IFinanceConstants {
 
 	@SuppressWarnings("unchecked")
-	public FileOutput createCSB32(Company company, FinanceBatch fbatch) throws ManagerBeanException {
+	public FileOutput createAEB32(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		return createCSB32(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
+		return createAEB32(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FileOutput createCSB32(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public FileOutput createAEB32(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
 		RegistryBank companyRBank = fbatch.getRegistryBank();
 		lot.setEntity(new Integer(companyRBank.getBankAccount().getEntity()));
@@ -72,7 +72,7 @@ public class CSB32Writer implements IFinanceConstants {
 		lot.addDelivery(delivery);
 
 		try {
-			File file = File.createTempFile("CSB32_", ".txt");
+			File file = File.createTempFile("AEB32_", ".txt");
 			FileFiller csb32 = new CSB32(lot, file.getAbsolutePath());
 			FileOutput output = new FileOutput();
 			output.setFile(file);

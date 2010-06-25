@@ -43,18 +43,18 @@ import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 
-public class CSB19Writer implements IFinanceConstants {
+public class AEB19Writer implements IFinanceConstants {
 	
 	@SuppressWarnings("unchecked")
-	public FileOutput createCSB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
+	public FileOutput createAEB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		return createCSB19(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
+		return createAEB19(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FileOutput createCSB19(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public FileOutput createAEB19(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
-		if(fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19)) {
+		if(fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_19)) {
 			lot.setType(Lot.RESUMED);
 		} else {
 			lot.setType(Lot.EXTENDED);
@@ -90,7 +90,7 @@ public class CSB19Writer implements IFinanceConstants {
 		lot.addOrderer(orderer);
 
 		try {
-			File file = File.createTempFile("CSB19_", ".txt");
+			File file = File.createTempFile("AEB19_", ".txt");
 			FileFiller csb19 = new CSB19(lot, file.getAbsolutePath());
 			FileOutput output = new FileOutput();
 			output.setFile(file);
