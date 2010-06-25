@@ -5,9 +5,11 @@ import java.util.Iterator;
 
 public class Lot {
 
-	private int numRegs = 0;
+	private int type = 0;
 	
 	private Presenter presenter;
+	
+	private int numRegs = 0;
 	
 	/**
 	 * Orderers
@@ -28,6 +30,20 @@ public class Lot {
 	 */
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public int getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(int type) {
+		this.type = type;
 	}
 
 	/**
@@ -91,5 +107,9 @@ public class Lot {
 	public void setNumRegs(int numRegs) {
 		this.numRegs = numRegs;
 	}
+	
+	public static int RESUMED = 0;
+	
+	public static int EXTENDED = 1;
 	
 }
