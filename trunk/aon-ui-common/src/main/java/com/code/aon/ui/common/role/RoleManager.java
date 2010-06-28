@@ -4,8 +4,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * Clase que controla los roles habituales de las aplicaciones AON.
  * 
@@ -14,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class RoleManager {
 	
-	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll", "search", "back"};
+	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll", "search", "back", "report"};
 
 	/**
 	 * @param role
