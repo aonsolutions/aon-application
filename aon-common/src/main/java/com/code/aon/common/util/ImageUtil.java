@@ -356,21 +356,23 @@ public class ImageUtil {
     }		
 	
 	/**
-	 * Save buffered image.
+	 * Write buffered image.
 	 * 
 	 * @param image the image
 	 * @param file the file
+	 * @return true, if successful
 	 */
-	public static void writeBufferedImage( BufferedImage image, File file ) {
+	public static boolean writeBufferedImage( BufferedImage image, File file ) {
         try {
         	String formatName = FilenameUtils.getExtension(file.getName());
         	if ( StringUtils.isBlank(formatName) ) {
         		formatName = DEFAULT_FORMAT;
         	}
-        	ImageIO.write( image, formatName, file );
+        	return ImageIO.write( image, formatName, file );
         } catch (IOException e) {
 			LOGGER.error( "Error saving image to " + file, e );        	
         }
+        return false;
     }	
 
 	/**
@@ -378,18 +380,20 @@ public class ImageUtil {
 	 * 
 	 * @param image the image
 	 * @param out the out
-	 * @param formatName the format name
+	 * @param type the type
+	 * @return true, if successful
 	 */
-	public static void writeBufferedImage( BufferedImage image, OutputStream out, String formatName ) {
+	public static boolean writeBufferedImage( BufferedImage image, OutputStream out, MimeType type ) {
         try {
-			String _formatName = formatName;
-        	if ( StringUtils.isBlank(_formatName) ) {
-        		_formatName = DEFAULT_FORMAT;
+			String _formatName = DEFAULT_FORMAT;
+        	if ( type != null ) {
+        		_formatName = type.getExtension();
         	}			
-        	ImageIO.write( image, _formatName, out );
+        	return ImageIO.write( image, _formatName, out );
         } catch (IOException e) {
-			LOGGER.error( "Error saving image to " + formatName, e );        	
+			LOGGER.error( "Error saving image to " + type, e );        	
         }
+        return false;
     }	
 	
 }
