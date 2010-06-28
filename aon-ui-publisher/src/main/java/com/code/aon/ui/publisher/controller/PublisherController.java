@@ -29,7 +29,7 @@ public class PublisherController {
 	private String webPage;
 	
 	public PublisherController() {
-		this.properties = FTPUtil.getProperties(PathUtil.getWebInfoProperties(), DEFAULT_FTP_PROPERTIES);
+		this.properties = FTPUtil.getProperties(PathUtil.getPublisherProperties(), DEFAULT_FTP_PROPERTIES);
 		this.previewPage = "http://preview." + getDomain() + "/";
 		this.webPage = "http://www." + getDomain() + "/";
 	}

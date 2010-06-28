@@ -13,7 +13,7 @@ public class PathUtil {
 	private static final String WEBSITE_PATH = "WEBSITES";
 	private static final String PREVIEW_PREFIX = "preview.";
 	
-	public static File getWebInfoProperties() {
+	public static File getPublisherProperties() {
 		return new File( PUBLISHER_PROPERTIES );
 	}
 	

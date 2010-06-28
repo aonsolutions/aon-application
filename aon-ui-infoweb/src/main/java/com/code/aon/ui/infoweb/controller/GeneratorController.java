@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -54,12 +53,13 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.infoweb.util.FTPUtil;
 import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.infoweb.util.VelocityUtil;
 import com.code.aon.ui.infoweb.velocity.ImageHandler;
 import com.code.aon.ui.infoweb.velocity.MenuOptionHandler;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
+import com.code.aon.ui.publisher.util.FTPUtil;
+import com.code.aon.ui.publisher.util.ImageUtilEx;
 import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController extends BasicController implements VelocityConstants  {
@@ -69,6 +69,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 	private static final String WEB_INFO_PAGE_RESOURCE_RATTACH_DATA = "WebInfoPageResource.rattach.data";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeneratorController.class.getName());
+	
+	private static final String DEFAULT_FTP_PROPERTIES = "/com/code/aon/ui/infoweb/ftp.default.properties";
 	
 	private static final int MAX_PAGE_COUNT = 8;
 	
@@ -91,15 +93,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	private Properties properties;
 	
 	public GeneratorController() {
-		this.properties = new Properties();
-		File file = PathUtil.getWebInfoProperties();
-		if ( file.exists() && file.canRead() ) {
-			try {
-				this.properties.load( new FileInputStream(file) );
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e );
-			}
-		}
+		this.properties = FTPUtil.getProperties(PathUtil.getWebInfoProperties(), DEFAULT_FTP_PROPERTIES);
 		this.previewPage = "http://preview." + getDomain() + "/";
 		this.webPage = "http://www." + getDomain() + "/";
 	}
@@ -769,12 +763,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 	private boolean copyRegistryBlobToFile(RegistryAttachment ra, int maxWidth, int maxHeight, File file) {
 		try {
 			FileUtils.writeByteArrayToFile(file, ra.getData());
-			BufferedImage image = ImageUtil.getBufferedImage(file);
+			MimeType type = ImageUtilEx.getMimeType(ra.getData(), ra.getMimeType());
+			BufferedImage image = ImageUtilEx.getBufferedImage(ra.getData(), type);
 			Dimension d = ImageUtil.getResizeDimension(image, maxWidth, maxHeight);
+			File outputFile = new File(file.getParentFile(), "tn_" + file.getName());		
 			BufferedImage newImage = ImageUtil.scale(image, d.width, d.height);
-			File outputFile = new File(file.getParentFile(), "tn_" + file.getName());
-			ImageUtil.writeBufferedImage(newImage, outputFile);
-			return true;
+			return ImageUtilEx.writeBufferedImage(newImage, type, outputFile);
 		} catch (FileNotFoundException e) {
 			LOGGER.error(e.getMessage(), e);
 		} catch (IOException e) {
