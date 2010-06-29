@@ -5,6 +5,7 @@ import java.util.List;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IActividadCCC;
+import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 
 public interface IEmpresaDAO {
@@ -18,4 +19,7 @@ public interface IEmpresaDAO {
 
 	List<IRemesaCertificadoEmpresaDetalle> getDetalleRemesaCertificados(
 			IRemesaCertificadoEmpresa remesa) throws PayrollException;
+
+	List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params)
+			throws PayrollException;
 }
