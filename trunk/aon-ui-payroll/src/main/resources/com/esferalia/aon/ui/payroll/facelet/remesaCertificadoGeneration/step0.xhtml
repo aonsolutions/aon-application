@@ -45,6 +45,15 @@
 				<aon:inputText id="apellido2" size="20" maxlength="25"
 					value="#{remesaCertificadoGenerationWizard.params.apellido2}" />
 
+				<aon:outputLabel for="fecha"
+					value="#{payrollBundle.payroll_fecha}" />
+				<aon:selectInputDate id="fecha" 
+					value="#{remesaCertificadoGenerationWizard.params.fecha}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+
 			</ui:define>
 		</ui:decorate>
 	</ui:define>
