@@ -114,10 +114,6 @@ public class CertificateWriter {
 			serializer.transform(domSource, streamResult);
 			
 			validateXml(file);
-//			if(!validateXml(file)){
-//				AonUtil.addErrorMessage("error de formato al generar el xml");
-//				throw new AbortProcessingException();
-//			} 
 			
 			output.setFile(file);
 			
@@ -198,6 +194,10 @@ public class CertificateWriter {
 			// NADA
 		}
 		
+		if(trabajos==null || trabajos.size()==0){
+			return null;
+		}
+			
 		Trabajador trabajador = new Trabajador();
 		trabajador.setDniNie(detalle.getEmpleado().getPersona().getRegistry().getDocument().getValue());
 		trabajador.setNombre(detalle.getEmpleado().getPersona().getName());
