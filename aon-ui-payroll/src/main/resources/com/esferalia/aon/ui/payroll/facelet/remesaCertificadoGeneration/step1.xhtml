@@ -14,7 +14,55 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		
+		<aon:div styleClass="aon-scroll-area">
+			<aon:dataTable id="empleadoData" value="#{remesaCertificadoGenerationWizard.model}"
+				var="to" rows="20" rendered="#{remesaCertificadoGenerationWizard.model.rowCount > 0}"
+				columnClasses="
+				aon-editDataTable-iconColumn, 
+				aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn, 
+				aon-editDataTable-dateColumn">
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:div layout="none">
+							<aon:commandButton id="selectButton" 
+								actionListener="#{remesaCertificadoGenerationWizard.onSelectAll}"
+								reRender="empleadoData"
+								onclick="if (!confirm('Desea marcar #{remesaCertificadoGenerationWizard.model.rowCount} filas?')) {return false;}"
+								value="&#160;" style="margin-right: 0px;"
+								styleClass="aon-editDataTable-button aon-icon-checkAll aon-vertical-align-top" />
+							<aon:commandButton id="deselectButton" 	
+								actionListener="#{remesaCertificadoGenerationWizard.onDeselectAll}"
+								reRender="empleadoData"
+								onclick="if (!confirm('Desea desmarcar #{remesaCertificadoGenerationWizard.model.rowCount} filas?')) {return false;}"
+								value="&#160;" style="margin-right: 0px;"
+								styleClass="aon-editDataTable-button aon-icon-checkNone aon-vertical-align-top" />
+						</aon:div>
+					</f:facet>
+					<aon:selectBooleanCheckbox id="checkMessage" value="#{to.selected}"
+						style="cursor: default;" styleClass="aon-vertical-align-middle">
+						<a4j:support event="onclick"
+							ajaxSingle="true"
+							reRender="checkMessage"
+							limitToList="true" />
+					</aon:selectBooleanCheckbox>
+				</aon:column>
+				
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/columns.xhtml" />
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
+					</f:facet>
+					<aon:inputText value="#{to.causaSuspension}" size="2" />
+				</aon:column>
+				
+			</aon:dataTable>
+			<aon:dataScroller2 for="empleadoData" showNote="true" />
+
+		</aon:div>
 	</ui:define>
 
 </ui:composition>

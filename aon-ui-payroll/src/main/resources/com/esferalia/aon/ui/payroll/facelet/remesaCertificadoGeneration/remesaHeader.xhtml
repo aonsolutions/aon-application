@@ -12,18 +12,55 @@
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_datos_remesa_certificado}" />
 		</f:facet>
+		
+		<aon:dataTable id="remesasData" value="#{remesaCertificadoGenerationWizard.listaRemesas}"
+			var="to" rows="20" 
+			columnClasses="
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-dateColumn">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+				</f:facet>
+				<aon:outputText value="#{to.empresa.name}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_numeroCcc}" />
+				</f:facet>
+				<aon:outputText value="#{to.codigoCcc}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_fecha}" />
+				</f:facet>
+				<aon:outputText value="#{to.fecha}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+			
+		</aon:dataTable>
+
+<!--  
 		<aon:panelGrid columns="6" dir="true" width="100%">
 
 			<aon:outputText value="#{payrollBundle.payroll_empresa}" />
 			<aon:outputText
-				value="#{remesaCertificadoWizard.remesa.empresa.name}" />
+				value="#{remesaCertificadoGenerationWizard.remesa.empresa.name}" />
 
 			<aon:outputText value="#{payrollBundle.payroll_numeroCcc}" />
-			<aon:outputText value="#{remesaCertificadoWizard.remesa.codigoCcc}" />
+			<aon:outputText value="#{remesaCertificadoGenerationWizard.remesa.codigoCcc}" />
 
 			<aon:outputText value="#{payrollBundle.payroll_fecha}" />
-			<aon:outputText value="#{remesaCertificadoWizard.remesa.fecha}" />
+			<aon:outputText value="#{remesaCertificadoGenerationWizard.remesa.fecha}" />
 		</aon:panelGrid>
+-->		
 	</aon:panel>
 
 </ui:composition>

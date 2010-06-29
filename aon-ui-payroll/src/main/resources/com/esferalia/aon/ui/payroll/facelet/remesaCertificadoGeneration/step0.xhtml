@@ -23,12 +23,14 @@
 					value="#{payrollBundle.payroll_empresa}" />
 				<aon:inputText id="empresa" size="20" maxlength="25"
 					value="#{remesaCertificadoGenerationWizard.params.empresa}" />
-				
+
+<!--  
 				<aon:outputLabel for="documento"
 					value="#{payrollBundle.payroll_documento}" />
 				<aon:inputText id="documento" size="10" maxlength="10"
 					value="#{remesaCertificadoGenerationWizard.params.documento}">
 				</aon:inputText>
+-->				
 				
 				<aon:outputLabel for="nombre"
 					value="#{payrollBundle.payroll_nombre}" />
@@ -48,6 +50,7 @@
 				<aon:outputLabel for="fecha"
 					value="#{payrollBundle.payroll_fecha}" />
 				<aon:selectInputDate id="fecha" 
+					required="true"
 					value="#{remesaCertificadoGenerationWizard.params.fecha}"
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
 					timeZone="#{timeZoneController.timeZone}"
