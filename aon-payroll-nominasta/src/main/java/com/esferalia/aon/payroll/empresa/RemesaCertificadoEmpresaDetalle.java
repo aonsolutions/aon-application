@@ -57,7 +57,7 @@ public class RemesaCertificadoEmpresaDetalle implements ITransferObject, IRemesa
 	}
 	
 	@ManyToOne(targetEntity = Empleado.class,fetch = FetchType.EAGER)
-	@JoinColumn(name = "empleado", insertable = false, updatable = false)
+	@JoinColumn(name = "empleado", nullable = false)
 	@Override
 	public IEmpleado getEmpleado() {
 		return empleado;
