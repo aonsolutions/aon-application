@@ -170,7 +170,7 @@ public class NominaDAO implements INominaDAO {
 			criteria.addEqualExpression(finiquitodfBean.getFieldName(IPayrollAlias.FINIQUITO_DIFERENCIA_EMPLEADO_ID), empleado.getId());
 			criteria.addEqualExpression(finiquitodfBean.getFieldName(IPayrollAlias.FINIQUITO_DIFERENCIA_FECHA_BAJA), empleado.getFechaFin());
 			criteria.addGreaterThanExpression(finiquitodfBean.getFieldName(IPayrollAlias.FINIQUITO_DIFERENCIA_DIAS_VACACIONES), 0);
-			criteria.addGreaterThanExpression(finiquitodfBean.getFieldName(IPayrollAlias.FINIQUITO_DIFERENCIA_IMPORTE_VACACIONES), 0);
+			criteria.addGreaterThanExpression(finiquitodfBean.getFieldName(IPayrollAlias.FINIQUITO_DIFERENCIA_IMPORTE_VACACIONES), 0.0);
 			List<ITransferObject> list = finiquitodfBean.getList(criteria);
 			if (list.size() > 0) {
 				return (IFiniquitoDiferencia) list.get(0);  

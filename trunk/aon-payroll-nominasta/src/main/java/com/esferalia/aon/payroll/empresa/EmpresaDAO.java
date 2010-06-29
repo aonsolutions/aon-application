@@ -5,17 +5,19 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.ActividadCCC;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IActividadCCC;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.empresa.EmpresaDAOFactory;
 import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
@@ -102,28 +104,74 @@ public class EmpresaDAO implements IEmpresaDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params) throws PayrollException {
+	public List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params)
+			throws PayrollException {
 		try {
 			Criteria criteria = new Criteria();
-			IManagerBean empleadoBean = BeanManager.getManagerBean(Empleado.class);
-			if (StringUtils.isEmpty(params.getEmpresa())){
-			     criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_NAME),params.getEmpresa());
+			IManagerBean empleadoBean = BeanManager
+					.getManagerBean(Empleado.class);
+			if (!StringUtils.isEmpty(params.getEmpresa())) {
+				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_NAME),params.getEmpresa());
 			}
-			if (StringUtils.isEmpty(params.getDocumento())){
-			    criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE),params.getDocumento());
+			if (!StringUtils.isEmpty(params.getDocumento())) {
+				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE),params.getDocumento());
 			}
-			if (StringUtils.isEmpty(params.getNombre())){
+			if (!StringUtils.isEmpty(params.getNombre())) {
 				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME),params.getNombre());
-				}
-			if (StringUtils.isEmpty(params.getApellido())){
+			}
+			if (!StringUtils.isEmpty(params.getApellido())) {
 				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME),params.getApellido());
-				}
-			if (StringUtils.isEmpty(params.getApellido2())){
+			}
+			if (!StringUtils.isEmpty(params.getApellido2())) {
 				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME),params.getApellido2());
-				}
-			criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN),params.getFecha());
-			List<?> list = empleadoBean.getList( criteria ); 
+			}
+			criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), params.getFecha());
+			Expression exp1  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "A");
+			Expression exp2  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "S");
+			criteria.addExpression( ExpressionUtilities.getAndExpression(exp1, exp2) );
+			criteria.addOrder(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_NAME));
+			
+			List<?> list = empleadoBean.getList(criteria);
 			return (List<IEmpleado>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	@Override
+	public IRemesaCertificadoEmpresa getNewRemesa(IEmpresa empresa, Date fecha) {
+		IRemesaCertificadoEmpresa remesa = new RemesaCertificadoEmpresa();
+		remesa.setEmpresa(empresa);
+		remesa.setFecha(fecha);
+//		remesa.setCodigoCcc();
+		
+		return remesa;
+	}
+	
+	@Override
+	public IRemesaCertificadoEmpresaDetalle getNewRemesaDetalle(IEmpleado empleado) {
+		IRemesaCertificadoEmpresaDetalle detalle = new RemesaCertificadoEmpresaDetalle();
+		detalle.setEmpleado(empleado);
+		return detalle;
+	}
+	
+	@Override
+	public IRemesaCertificadoEmpresa accept(IRemesaCertificadoEmpresa remesa) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RemesaCertificadoEmpresa.class);
+			RemesaCertificadoEmpresa r = (RemesaCertificadoEmpresa) remesa;
+			return (IRemesaCertificadoEmpresa) bean.insertOrUpdate(r);
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
+	@Override
+	public void accept(IRemesaCertificadoEmpresaDetalle detalle) throws PayrollException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RemesaCertificadoEmpresaDetalle.class);
+			RemesaCertificadoEmpresaDetalle d = (RemesaCertificadoEmpresaDetalle) detalle;
+			bean.insertOrUpdate(d);
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
