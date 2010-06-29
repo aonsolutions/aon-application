@@ -25,7 +25,8 @@
 				columnClasses="
 				aon-editDataTable-numberColumn, 
 				aon-editDataTable-textColumn, 
-				aon-editDataTable-dateColumn">
+				aon-editDataTable-dateColumn,
+				aon-editDataTable-textColumn">
 <!--  
 				<aon:rowSelector action="remesaCertificadoWizard_step2"
 					actionListener="#{remesaCertificadoWizard.onSelect}" />
@@ -55,6 +56,13 @@
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
+					</f:facet>
+					<aon:outputText value="#{to.causaSuspension}" />
 				</aon:column>
 
 			</aon:dataTable>
