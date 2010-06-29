@@ -1,11 +1,13 @@
 package com.esferalia.aon.payroll.core.empresa;
 
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IActividadCCC;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 
 public interface IEmpresaDAO {
@@ -22,4 +24,16 @@ public interface IEmpresaDAO {
 
 	List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params)
 			throws PayrollException;
+
+	IRemesaCertificadoEmpresa getNewRemesa(IEmpresa empresa, Date fecha);
+	IRemesaCertificadoEmpresaDetalle getNewRemesaDetalle(IEmpleado empleado);
+
+	IRemesaCertificadoEmpresa accept(IRemesaCertificadoEmpresa remesa) throws PayrollException;
+
+	void accept(IRemesaCertificadoEmpresaDetalle detalle)
+			throws PayrollException;
+
+
+
+	
 }
