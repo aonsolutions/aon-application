@@ -63,6 +63,15 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************ Remesa Certificado Generation Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>remesaCertificadoGenerationWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.RemesaCertificadoGenerationWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ************ Impresion Nomina Wizard **************** -->
 	<managed-bean>
@@ -162,6 +171,21 @@
 	    <navigation-case>
     	  	<from-outcome>remesaCertificadoWizard_step2</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step2.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<navigation-rule id="remesaCertificadoGenerationWizard">
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoGenerationWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoGenerationWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoGenerationWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/step2.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 
