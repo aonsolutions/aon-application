@@ -3,12 +3,15 @@ package com.esferalia.aon.ui.payroll.file;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,14 +22,19 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.Classpath;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.certificate.Certificate;
 import com.esferalia.aon.file.payroll.certificate.data.Cotizacion;
 import com.esferalia.aon.file.payroll.certificate.data.CuentaCotizacion;
@@ -105,11 +113,17 @@ public class CertificateWriter {
 			serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 			serializer.transform(domSource, streamResult);
 			
+			validateXml(file);
+//			if(!validateXml(file)){
+//				AonUtil.addErrorMessage("error de formato al generar el xml");
+//				throw new AbortProcessingException();
+//			} 
+			
 			output.setFile(file);
+			
 //			output.setErrors(fdi.create());
 			output.setErrors(new ArrayList<Exception>());
 			return output;
-			
 			
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
@@ -124,6 +138,30 @@ public class CertificateWriter {
 			throw new ManagerBeanException(e);
 		}
 	}
+	
+	
+	 private void validateXml(File xml) {
+		final String SCHEMA = "enterpriseCertificate.xsd"; 
+	        try {
+	            // Create a schema factory
+	            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+	            URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
+	            // Create a validator
+	            Validator validator = sf.newSchema(urls[0]).newValidator();
+	            // Create a streamSource based on input XML
+//	            StreamSource source = new StreamSource(new StringReader(xml));
+	            StreamSource source = new StreamSource(xml);
+	            // Invoke the validation
+	            validator.validate(source);
+//	            return true;
+	        } catch (Exception e) {
+	        	AonUtil.addErrorMessage("error de formato al generar el xml");
+				throw new AbortProcessingException();
+//	        	NADA
+	        }
+//	        return false;
+	    }
 	
 	private CuentaCotizacion createCuentaCotizacionRecord( IRemesaCertificadoEmpresa remesa, List<IRemesaCertificadoEmpresaDetalle> listaDetalle) throws PayrollException {
 		CuentaCotizacion cuentaCotizacion = new CuentaCotizacion();
@@ -216,6 +254,7 @@ public class CertificateWriter {
 			// NADA
 		}
 		if(trabajosTP!=null && trabajosTP.size()>0){
+//		if(trabajosTP!=null){
 			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
 			for(ITrabajo t: trabajosTP){
 				Periodo periodo = new Periodo();
