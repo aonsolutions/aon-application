@@ -215,7 +215,7 @@ public class CertificateWriter {
 		} catch (PayrollException e) {
 			// NADA
 		}
-		if(trabajosTP!=null){
+		if(trabajosTP!=null && trabajosTP.size()>0){
 			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
 			for(ITrabajo t: trabajosTP){
 				Periodo periodo = new Periodo();
