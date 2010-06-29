@@ -9,7 +9,6 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.ActividadCCC;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.PayrollException;
-import com.esferalia.aon.payroll.RemesaParteIT;
 import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IActividadCCC;
 import com.esferalia.aon.payroll.core.IEmpleado;
@@ -19,8 +18,6 @@ import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.core.empresa.RemesaCertificadoEmpresaParams;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
-import com.esferalia.aon.payroll.core.it.ParteITParams;
-import com.esferalia.aon.payroll.core.remesa.IRemesaParteIT;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class EmpresaDAO implements IEmpresaDAO {
@@ -99,6 +96,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params) throws PayrollException {
 		try {
