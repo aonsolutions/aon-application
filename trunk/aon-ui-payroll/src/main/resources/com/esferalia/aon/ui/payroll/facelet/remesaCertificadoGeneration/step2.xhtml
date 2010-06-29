@@ -14,7 +14,27 @@
 	</ui:define>
 
 	<ui:define name="step_content">
+	
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/remesaHeader.xhtml" />
 		
+		<aon:dataTable id="empleadoData" value="#{remesaCertificadoGenerationWizard.selectedModel}"
+			var="to" rows="20" rendered="#{remesaCertificadoGenerationWizard.selectedModel.rowCount > 0}"
+			columnClasses="
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-dateColumn">
+
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/columns.xhtml" />
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
+				</f:facet>
+				<aon:outputText value="#{to.causaSuspension}"  />
+			</aon:column>
+			
+		</aon:dataTable>
 	</ui:define>
 
 </ui:composition>
