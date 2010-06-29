@@ -70,6 +70,15 @@
 						
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="remesaCertificadoGenerationWizard" 
+									action="remesaCertificadoGenerationWizard_step0"
+									actionListener="#{remesaCertificadoGenerationWizard.onStart}"
+									value="#{payrollBundle.remesaCertificadoGeneration_module}" />
+							</aon:div>
+						</aon:div>
+						
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="impNominaWizard" 
 									action="impNominaWizard_step0"
 									actionListener="#{impNominaWizard.onStart}"
