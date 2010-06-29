@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.empresa;
 
+import java.util.Date;
 import java.util.List;
 
 import com.code.aon.common.BeanManager;
@@ -100,9 +101,18 @@ public class EmpresaDAO implements IEmpresaDAO {
 	@Override
 	public List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params) throws PayrollException {
 		try {
+			Date today = new Date();
 			Criteria criteria = new Criteria();
-			IManagerBean bean = BeanManager.getManagerBean(Empleado.class);
-			List<?> list = bean.getList( criteria ); 
+			IManagerBean empleadoBean = BeanManager.getManagerBean(Empleado.class);
+			if (params.getEmpresa()!=null){
+			criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_ID),params.getEmpresa());
+			}
+			if (params.getDocumento()!=null){
+			criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE),params.getDocumento());
+			}
+			criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN),params.getFecha());
+			
+			List<?> list = empleadoBean.getList( criteria ); 
 			return (List<IEmpleado>) list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
