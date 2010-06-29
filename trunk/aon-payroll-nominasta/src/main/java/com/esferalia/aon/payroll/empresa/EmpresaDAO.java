@@ -3,6 +3,9 @@ package com.esferalia.aon.payroll.empresa;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -101,17 +104,24 @@ public class EmpresaDAO implements IEmpresaDAO {
 	@Override
 	public List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params) throws PayrollException {
 		try {
-			Date today = new Date();
 			Criteria criteria = new Criteria();
 			IManagerBean empleadoBean = BeanManager.getManagerBean(Empleado.class);
-			if (params.getEmpresa()!=null){
-			criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_ID),params.getEmpresa());
+			if (StringUtils.isEmpty(params.getEmpresa())){
+			     criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_NAME),params.getEmpresa());
 			}
-			if (params.getDocumento()!=null){
-			criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE),params.getDocumento());
+			if (StringUtils.isEmpty(params.getDocumento())){
+			    criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE),params.getDocumento());
 			}
+			if (StringUtils.isEmpty(params.getNombre())){
+				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME),params.getNombre());
+				}
+			if (StringUtils.isEmpty(params.getApellido())){
+				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME),params.getApellido());
+				}
+			if (StringUtils.isEmpty(params.getApellido2())){
+				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME),params.getApellido2());
+				}
 			criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN),params.getFecha());
-			
 			List<?> list = empleadoBean.getList( criteria ); 
 			return (List<IEmpleado>) list;
 		} catch (ManagerBeanException e) {
