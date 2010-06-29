@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,7 +19,6 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
@@ -57,10 +57,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DesktopController extends BasicController implements IDesktopConstants {
 	
+	private static final int UPDATE_CONNECTION_TIMEOUT = 5000;
+
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
-	
-	private static final SelectItem NULL_SELECT_ITEM = new SelectItem(null, " ");	
-	private static final SelectItem ALL_SELECT_ITEM = new SelectItem(null, "Todos");	
     
     private ListDataModel recentNoteModel;
     private ListDataModel nextAlarmModel;
@@ -69,14 +68,6 @@ public class DesktopController extends BasicController implements IDesktopConsta
     private ListDataModel ancientAlarmModel;
     
     private boolean checkUpdateURL = true;
-
-	public SelectItem getNullValue() {
-		return NULL_SELECT_ITEM;
-	}
-
-	public SelectItem getAllValue() {
-		return ALL_SELECT_ITEM;
-	}
 
     @SuppressWarnings("unchecked")
     public List<DesktopNoticeSummary> getNoticeSummaryModel() {
@@ -357,9 +348,11 @@ public class DesktopController extends BasicController implements IDesktopConsta
     public boolean isUpdatesAvailable() {
     	boolean available = false;
     	if ( checkUpdateURL ) {
-	    	try {
+    		try {
 				URL url = new URL( getUpdateURL() + "/hasupdate.rpy" );
-				InputStream in = url.openStream();
+				URLConnection connection = url.openConnection();
+				connection.setConnectTimeout(UPDATE_CONNECTION_TIMEOUT);
+				InputStream in = connection.getInputStream();
 				char result = (char) in.read();
 				in.close();
 				available = (result == '1');
