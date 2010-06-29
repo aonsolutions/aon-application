@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.core.empresa;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class RemesaCertificadoEmpresaParams implements Serializable {
 
@@ -11,8 +12,15 @@ public class RemesaCertificadoEmpresaParams implements Serializable {
 	private String nombre;
 	private String apellido;
 	private String apellido2;
+	private Date fecha;
 	
 
+	public Date getFecha() {
+		return fecha;
+	}
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
 	public String getDocumento() {
 		return documento;
 	}
