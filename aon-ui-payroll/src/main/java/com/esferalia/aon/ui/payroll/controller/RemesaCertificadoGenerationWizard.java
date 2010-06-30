@@ -313,7 +313,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	}
 	
 	private void onSearch(ActionEvent event) {
-
+		setModel(null);
 	}
 	
 	public void onSelectAll(ActionEvent event) {
