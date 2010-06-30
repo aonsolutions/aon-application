@@ -11,7 +11,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.esferalia.aon.payroll.Actividad;
 import com.esferalia.aon.payroll.ActividadCCC;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.PayrollException;
@@ -144,7 +143,10 @@ public class EmpresaDAO implements IEmpresaDAO {
 		IRemesaCertificadoEmpresa remesa = new RemesaCertificadoEmpresa();
 		remesa.setEmpresa(empleado.getEmpresa());
 		remesa.setFecha(fecha);
-		remesa.setCodigoCcc(getNumeroCcc(empleado));
+		String ccc;
+		ccc = getRegimenCode(empleado.getActividad().getRegimen());
+		ccc += getActividadCCC(empleado.getActividad(), empleado.getCuentaCotizacion()).getDescripcion();
+		remesa.setCodigoCcc(ccc);
 		
 		return remesa;
 	}
@@ -178,34 +180,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 		}
 	}
 	
-	@Override
-	public String getNumeroCcc(IEmpleado empleado) throws PayrollException{
-		String ccc;
-		
-		try {
-			IManagerBean actividadBean = BeanManager.getManagerBean(Actividad.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(actividadBean.getFieldName(IPayrollAlias.ACTIVIDAD_ID), empleado.getActividad().getId());
-			List<?> list = actividadBean.getList(criteria);
-			Actividad actividad = (Actividad)list.get(0);
-			ccc = getRegimenCode(actividad.getRegimen());
-
-			IManagerBean actCccBean = BeanManager.getManagerBean(ActividadCCC.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression(actCccBean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_CDG), actividad.getId());
-			criteria.addEqualExpression(actCccBean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_TIPCCC), actividad.getIndregimen());
-			list = actCccBean.getList(criteria);
-			if(list!=null && list.size()>0){
-				ActividadCCC act = (ActividadCCC)list.get(0);
-				ccc += act.getDescripcion();
-			}
-		} catch (ManagerBeanException e) {
-			throw new PayrollException(e);
-		}
-		return ccc;
-	}
-	
-	public String getRegimenCode(Regimen regimen) {
+	private String getRegimenCode(Regimen regimen) {
 		if(regimen == Regimen.AGRARIO){
 			return "0613";
 		} else if(regimen == Regimen.GENERAL){
