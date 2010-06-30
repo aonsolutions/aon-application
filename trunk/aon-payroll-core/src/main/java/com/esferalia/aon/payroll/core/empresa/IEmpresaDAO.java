@@ -7,7 +7,6 @@ import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IActividadCCC;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
 
 public interface IEmpresaDAO {
@@ -25,13 +24,15 @@ public interface IEmpresaDAO {
 	List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params)
 			throws PayrollException;
 
-	IRemesaCertificadoEmpresa getNewRemesa(IEmpresa empresa, Date fecha);
+	IRemesaCertificadoEmpresa getNewRemesa(IEmpleado empleado, Date fecha) throws PayrollException;
 	IRemesaCertificadoEmpresaDetalle getNewRemesaDetalle(IEmpleado empleado);
 
 	IRemesaCertificadoEmpresa accept(IRemesaCertificadoEmpresa remesa) throws PayrollException;
 
 	void accept(IRemesaCertificadoEmpresaDetalle detalle)
 			throws PayrollException;
+
+	String getNumeroCcc(IEmpleado empleado) throws PayrollException;
 
 
 
