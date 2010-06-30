@@ -174,7 +174,7 @@ public class CertificateWriter {
 		}
 		cuentaCotizacion.setRepresentante(representante);
 		Empresa empresa = new Empresa();
-		empresa.setCcc(parse15Digit(remesa.getCodigoCcc()));
+		empresa.setCcc(parse15Digit(remesa.getNumeroCcc()));
 		
 		empresa.setCifNif(remesa.getEmpresa().getRegistry().getDocument().getValue());
 		cuentaCotizacion.setEmpresa(empresa);
