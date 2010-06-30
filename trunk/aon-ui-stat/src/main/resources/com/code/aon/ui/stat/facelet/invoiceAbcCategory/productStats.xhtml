@@ -10,13 +10,11 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-	 
         
            <ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
 				<ui:param name="statController" value="#{stat}" />
 				<ui:param name="statModel" value="#{stat.monthStatModel}" />
 				<aon:methodParam name="backAction" value="abc_category_stats"/>
-				
 				<ui:param name="windowTitle" value="#{statBundle.stat_abc_category}" />
 				<aon:methodParam name="goAction" value="month_stats"/>
 			    <aon:methodParam name="goMethod" value="#{stat.onAbcProductSelect}" type="actionListener" />
@@ -41,7 +39,6 @@
 				<ui:param name="categoryLabel" value="#{statBundle.stat_expense}" />
 				</c:if>	  
 			</ui:include>		
-       	
 		
 	</ui:define>
 </ui:composition>

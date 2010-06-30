@@ -1263,7 +1263,6 @@ public class StatEngineController {
 	}
 	
 	public void onInvoicePdf(ActionEvent event) throws ManagerBeanException {
-		
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), ((Invoice) this.getInvoicesModel().getRowData()).getId());

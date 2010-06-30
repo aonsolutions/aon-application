@@ -10,14 +10,7 @@
 		columnClasses="aon-editDataTable-dateColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
 		var="to">
 
-		<!--  	<aon:rowSelector action="saleInvoice_form">
-			<aon:actionListener method="#{saleInvoice.onEditSearch}"/>	
-			<f:setPropertyActionListener value="registry_stats"	target="#{saleInvoice.backAction}" />
-			<f:setPropertyActionListener value="#{to.id}"	target="#{saleInvoice.to.id}" />
-			<aon:actionListener method="#{saleInvoice.onInvoiceSelect}"/>	
-		</aon:rowSelector>-->
-
-		<aon:column alias="Invoice.issueDate"
+		<aon:column 
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_date}" />
@@ -27,45 +20,26 @@
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</h:outputText>
 		</aon:column>
-
-		<aon:column alias="Invoice.referenceCode"
+		<aon:column
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
 				<aon:outputText value="#{financeBundle.finance_invoice_number}" />
 			</f:facet>
 			<h:outputText value="#{to.referenceCode}" />
 		</aon:column>
-
-		<aon:column alias="Invoice.series, Invoice.number"
-			styleClass="aon-editDataTable-textColumn">
-			<f:facet name="header">
-				<aon:outputText value="#{financeBundle.finance_invoice_order}" />
-			</f:facet>
-			<h:outputText value="#{to.documentNumber}" />
-		</aon:column>
-
-	<!--  	<aon:column alias="Invoice.registryName"
-			styleClass="aon-editDataTable-textColumn">
-			<f:facet name="header">
-				<aon:outputText value="#{customerBundle.customer_customer}" />
-			</f:facet>
-			<h:outputText value="#{to.registryName}" />
-		</aon:column>
-
-		<aon:column alias="Invoice.registryDocument"
-			styleClass="aon-editDataTable-textColumn">
-			<f:facet name="header">
-				<aon:outputText value="#{bundle.aon_company_document}" />
-			</f:facet>
-			<h:outputText value="#{to.registryDocument}" />
-		</aon:column>-->
-
-		<aon:column alias="Invoice.status"
+		<aon:column 
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_status}" />
 			</f:facet>
 			<aon:outputText value="#{to.status}" />
+		</aon:column>
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText
+					value="#{statBundle.stat_invoice_status}" />
+			</f:facet>
+			<aon:outputText value="#{registryStat.financeStatus}" />
 		</aon:column>
 		<aon:column>
 			<f:facet name="header">
@@ -75,13 +49,6 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>
-		<!--  <aon:column styleClass="aon-editDataTable-textColumn">
-			<f:facet name="header">
-				<aon:outputText
-					value="#{financeBundle.finance_checking_finance_status_abbrv}" />
-			</f:facet>
-			<aon:outputText value="#{registryStat.financeStatus}" />
-		</aon:column>-->
 		<aon:column
 			styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 			<f:facet name="header">
@@ -95,9 +62,6 @@
 				<f:param name="reportKey" value="invoicePrint" />
 			</aon:htmlCommandLink>
 		</aon:column>
-
 	</aon:dataTable>
-
-
 	<aon:dataScroller2 for="pending" showNote="true" />
 </ui:composition>

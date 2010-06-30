@@ -7,15 +7,8 @@
 
 	<aon:editDataTable id="scored"
 		value="#{registryStat.unpayedFinanceModel}" rows="20"
-		columnClasses="aon-editDataTable-textColumn, aon-editDataTable-dateColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
+		columnClasses="aon-editDataTable-textColumn, aon-editDataTable-dateColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
 		var="to">
-
-		<aon:column styleClass="aon-editDataTable-textColumn">
-			<f:facet name="header">
-				<aon:outputText value="#{financeBundle.finance_invoice}" />
-			</f:facet>
-			<aon:outputText value="#{to.invoice.referenceCode}" />
-		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
@@ -27,28 +20,25 @@
 			</aon:outputText>
 		</aon:column>
 
-		<!-- 	<aon:column 
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText
-									value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
-							</f:facet>
-							<aon:outputText value="#{to.invoice.registryName}" />
-						</aon:column>
-	
-						<aon:column 
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_company_document}" />
-							</f:facet>
-							<aon:outputText value="#{to.invoice.registryDocument}" />
-						</aon:column>
-	 -->
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{financeBundle.finance_invoice}" />
+			</f:facet>
+			<aon:outputText value="#{to.invoice.referenceCode}" />
+		</aon:column>
+
 		<aon:column styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
 				<aon:outputText value="#{configBundle.config_pay_method}" />
 			</f:facet>
 			<aon:outputText value="#{to.payMethod.name}" />
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{configBundle.config_bank}" />
+			</f:facet>
+			<aon:outputText value="#{to.bank.name}" />
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
@@ -59,7 +49,7 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>
-				<aon:column
+		<aon:column
 			styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 			<f:facet name="header">
 				<aon:outputText value="&#160;" />
