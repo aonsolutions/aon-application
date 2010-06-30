@@ -188,7 +188,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 		} else if(regimen == Regimen.ARTISTAS){
 			return "0112";
 		} else if(regimen == Regimen.MARITIMO){
-			return "08xx";
+			return "0811";
 		}
 		return null;
 	}
