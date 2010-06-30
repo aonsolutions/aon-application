@@ -11,19 +11,20 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.payroll.Actividad;
 import com.esferalia.aon.payroll.ActividadCCC;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IActividad;
 import com.esferalia.aon.payroll.core.IActividadCCC;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.empresa.EmpresaDAOFactory;
 import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.core.empresa.RemesaCertificadoEmpresaParams;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
+import com.esferalia.aon.payroll.core.enumeration.Regimen;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class EmpresaDAO implements IEmpresaDAO {
@@ -139,11 +140,11 @@ public class EmpresaDAO implements IEmpresaDAO {
 	}
 	
 	@Override
-	public IRemesaCertificadoEmpresa getNewRemesa(IEmpresa empresa, Date fecha) {
+	public IRemesaCertificadoEmpresa getNewRemesa(IEmpleado empleado, Date fecha) throws PayrollException {
 		IRemesaCertificadoEmpresa remesa = new RemesaCertificadoEmpresa();
-		remesa.setEmpresa(empresa);
+		remesa.setEmpresa(empleado.getEmpresa());
 		remesa.setFecha(fecha);
-//		remesa.setCodigoCcc();
+		remesa.setCodigoCcc(getNumeroCcc(empleado));
 		
 		return remesa;
 	}
@@ -175,6 +176,46 @@ public class EmpresaDAO implements IEmpresaDAO {
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
+	}
+	
+	@Override
+	public String getNumeroCcc(IEmpleado empleado) throws PayrollException{
+		String ccc;
+		
+		try {
+			IManagerBean actividadBean = BeanManager.getManagerBean(Actividad.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(actividadBean.getFieldName(IPayrollAlias.ACTIVIDAD_ID), empleado.getActividad().getId());
+			List<?> list = actividadBean.getList(criteria);
+			Actividad actividad = (Actividad)list.get(0);
+			ccc = getRegimenCode(actividad.getRegimen());
+
+			IManagerBean actCccBean = BeanManager.getManagerBean(ActividadCCC.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(actCccBean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_CDG), actividad.getId());
+			criteria.addEqualExpression(actCccBean.getFieldName(IPayrollAlias.ACTIVIDAD_CCC_ID_TIPCCC), actividad.getIndregimen());
+			list = actCccBean.getList(criteria);
+			if(list!=null && list.size()>0){
+				ActividadCCC act = (ActividadCCC)list.get(0);
+				ccc += act.getDescripcion();
+			}
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+		return ccc;
+	}
+	
+	public String getRegimenCode(Regimen regimen) {
+		if(regimen == Regimen.AGRARIO){
+			return "0613";
+		} else if(regimen == Regimen.GENERAL){
+			return "0111";
+		} else if(regimen == Regimen.ARTISTAS){
+			return "0112";
+		} else if(regimen == Regimen.MARITIMO){
+			return "08xx";
+		}
+		return null;
 	}
 	
 }
