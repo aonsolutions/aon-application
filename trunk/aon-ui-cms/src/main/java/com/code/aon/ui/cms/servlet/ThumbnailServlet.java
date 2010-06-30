@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.cms.Album;
 import com.code.aon.cms.Config;
 import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.util.ImageUtil;
+import com.code.aon.ui.cms.util.ImageUtil2;
 
 /**
  *  
@@ -107,7 +107,7 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 			if ( (resource == null) && f.exists() && f.isFile()) {
 				setCacheControl(req, res);
 	        	res.setContentType( "image/jpeg" );
-				ImageUtil.resize(f, res.getOutputStream(), maxDim);
+				ImageUtil2.resize(f, res.getOutputStream(), maxDim);
             } else {
             	String image = OTHER_IMAGE;
             	if ( resource != null ) {

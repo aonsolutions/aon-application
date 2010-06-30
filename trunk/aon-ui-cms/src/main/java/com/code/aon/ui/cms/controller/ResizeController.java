@@ -1,24 +1,35 @@
 package com.code.aon.ui.cms.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.ImageUtil;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.ImageResize;
+import com.code.aon.ui.publisher.util.ImageUtilEx;
 import com.code.aon.ui.util.AonUtil;
 
 public class ResizeController implements ICMSConstants {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(ResizeController.class);
 
 	private Image resizeImage = null;
 
 	private boolean ratio = true;
 	private Integer width;
-	private Integer maxWidth;
-	private Integer maxHeight;
 	private Integer height;
+	private File file;
+	private BufferedImage image;
+	private MimeType type;
 	
 	public Image getResizeImage() {
 		return resizeImage;
@@ -54,27 +65,24 @@ public class ResizeController implements ICMSConstants {
 	}
 
 	public Integer getMaxWidth() {
-		return maxWidth;
-	}
-
-	public void setMaxWidth(Integer maxWidth) {
-		this.maxWidth = maxWidth;
+		return this.getWidth();
 	}
 
 	public Integer getMaxHeight() {
-		return maxHeight;
-	}
-
-	public void setMaxHeight(Integer maxHeight) {
-		this.maxHeight = maxHeight;
+		return this.getHeight();
 	}
 
 	private void onInit(){
-		File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
-		width = ImageResize.getMaxWidth(file);
-		maxWidth = width;
-		height = ImageResize.getMaxHeight(file);
-		maxHeight = height;
+		this.file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
+		try {
+			byte[] data = FileUtils.readFileToByteArray(file);
+			this.type = ImageUtilEx.getMimeType(data, null);
+			this.image = ImageUtilEx.getBufferedImage(data, type);
+			width = image.getWidth();
+			height = image.getHeight();
+		} catch (IOException e) {
+			LOGGER.error("Error loading image " + file, e);
+		}
 		ratio = true;
 	}
 	
@@ -84,32 +92,38 @@ public class ResizeController implements ICMSConstants {
 		onInit();
 	}
 
+	private void reset() {
+		this.resizeImage = null;
+		this.file = null;
+		this.image = null;
+		this.type = null;
+	}
+	
 	public void onCancel(ActionEvent event) {
-		resizeImage = null;
+		reset();
 	}
 	
 	public void onAccept(ActionEvent event) {
-		File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
-		File newFile = ImageResize.resize(file, width, height);
+		BufferedImage newImage = ImageUtil.scale(image, width, height);
+		File newFile = new File( file.getParentFile(), "resize_" + file.getName() );
+		ImageUtilEx.writeBufferedImage(newImage, type, newFile);
 		if ( file.delete() ) {
 			newFile.renameTo(file);
 		}
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		controller.chargeImageList();
-		resizeImage = null;
+		reset();
 	}
 
 	public void onChangeWidth(ActionEvent event) throws ManagerBeanException {
 		if (ratio){
-			File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
-			height = ImageResize.getHeight(file, width);
+			height = ImageUtil.getProportionalHeight(image, width);
 		}
 	}
 
 	public void onChangeHeight(ActionEvent event) throws ManagerBeanException {
 		if (ratio){
-			File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
-			width = ImageResize.getWidth(file, height);
+			width = ImageUtil.getProportionalWidth(image, height);
 		}
 	}
 	

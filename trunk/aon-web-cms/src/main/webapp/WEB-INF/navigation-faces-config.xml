@@ -355,22 +355,6 @@
     </navigation-case>
   </navigation-rule>
 
-  <!-- ===================================================== GALLERY -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>gallery_list</from-outcome>
-      <to-view-id>/facelet/content/gallery/list.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
-  <!-- ===================================================== DOCUMENT -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>document_list</from-outcome>
-      <to-view-id>/facelet/content/documents/list.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
   <!-- ===================================================== GENERATOR -->
   <navigation-rule>
     <navigation-case>
@@ -550,22 +534,6 @@
     <navigation-case>
       <from-outcome>sport_config_list</from-outcome>
       <to-view-id>/facelet/content/sport/list.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-  
-  <!-- ===================================================== CROPPER -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>cropper_form</from-outcome>
-      <to-view-id>/facelet/content/cropper/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
-  <!-- ===================================================== CROPPER -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>resizer_form</from-outcome>
-      <to-view-id>/facelet/content/resizer/form.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
 

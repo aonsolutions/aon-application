@@ -187,6 +187,35 @@
 			<value>/com/code/aon/ui/cms/facelet/lookup/article/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************** GALLERY ************** -->
+	<managed-bean>
+		<managed-bean-name>gallery</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.ImageGalleryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>gallery</value>
+		</managed-property>														
+	</managed-bean>
+
+	<!-- ************** DOCUMENTS ************** -->
+	<managed-bean>
+		<managed-bean-name>document</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.DocumentGalleryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>document</value>
+		</managed-property>														
+	</managed-bean>
+	
+	<!-- ************** RESIZER ************** -->
+	<managed-bean>
+		<managed-bean-name>resizer</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.ResizeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- =================== Article ========================== -->
 	<navigation-rule>
@@ -213,6 +242,22 @@
 		<navigation-case>
 			<from-outcome>article_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/cms/facelet/article/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Gallery ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gallery_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/cms/facelet/gallery/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>document_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/cms/facelet/document/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>resizer_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/cms/facelet/gallery/resizer.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
