@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.empresa;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -106,7 +108,16 @@ public class EmpresaDAO implements IEmpresaDAO {
 	@Override
 	public List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params)
 			throws PayrollException {
+		final int FROM_YEAR = 2010;
+		final int FROM_MONTH = 06;
+		final int FROM_DAY = 30;
 		try {
+			// fecha desde la que se empieza a usar el nuevo metodo de certificados de empresa
+			Calendar date = new GregorianCalendar();
+			date.set(Calendar.YEAR, FROM_YEAR);
+			date.set(Calendar.MONTH, FROM_MONTH);
+			date.set(Calendar.DAY_OF_MONTH, FROM_DAY);
+			
 			Criteria criteria = new Criteria();
 			IManagerBean empleadoBean = BeanManager
 					.getManagerBean(Empleado.class);
@@ -125,6 +136,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 			if (!StringUtils.isEmpty(params.getApellido2())) {
 				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME),params.getApellido2());
 			}
+//			criteria.addGreaterThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), date.getTime());
 			criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), params.getFecha());
 			Expression exp1  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "A");
 			Expression exp2  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "S");
@@ -146,7 +158,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 		String ccc;
 		ccc = getRegimenCode(empleado.getActividad().getRegimen());
 		ccc += getActividadCCC(empleado.getActividad(), empleado.getCuentaCotizacion()).getDescripcion();
-		remesa.setCodigoCcc(ccc);
+		remesa.setNumeroCcc(ccc);
 		
 		return remesa;
 	}
