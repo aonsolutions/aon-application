@@ -396,4 +396,18 @@ public class ImageUtil {
         return false;
     }	
 	
+	/**
+	 * Gets the mime type.
+	 * 
+	 * @param file the file
+	 * @return the mime type
+	 */
+	public static MimeType getMimeType( File file ) {
+		String ext = FilenameUtils.getExtension(file.getName());
+		if (! StringUtils.isEmpty(ext) ) {
+			return MimeType.getByExtension(ext);	
+		}
+		return null;
+	}
+	
 }
