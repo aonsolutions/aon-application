@@ -19,10 +19,14 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.dao.IPurchaseAlias;
+import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.dao.ISalesAlias;
+import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 
@@ -132,7 +136,7 @@ public class ProductStatEngineController {
 	public void setLatestShipmentsModel(DataModel latestShipmentsModel) {
 		this.latestShipmentsModel = latestShipmentsModel;
 	}
-
+	
 	public List<InvoiceDetail> getLatestEntriesList() {
 		return latestEntriesList;
 	}
@@ -148,7 +152,7 @@ public class ProductStatEngineController {
 	public void setLatestShipmentsList(List<InvoiceDetail> latestShipmentsList) {
 		this.latestShipmentsList = latestShipmentsList;
 	}
-	
+		
 	public void getLatestEntries() throws ManagerBeanException {
 		String select = "select InvoiceDetail "
 			+ "from InvoiceDetail as InvoiceDetail "
@@ -173,6 +177,8 @@ public class ProductStatEngineController {
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_ITEM_ID),item.getId());
+		Expression exp1  = ExpressionUtilities.getNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS),SalesDetailStatus.SETTLED);
+		criteria.addExpression( exp1 );
 		Projection projection = Projection.sum(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_QUANTITY));
 		Object value = salesDetailBean.getUniqueResult(projection, criteria);
 		setPendingSaleQuantity((value != null) ? ((Double)value) :0);
@@ -182,6 +188,8 @@ public class ProductStatEngineController {
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ITEM_ID),item.getId());
+		Expression exp1  = ExpressionUtilities.getNotEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_STATUS),PurchaseDetailStatus.SETTLED);
+		criteria.addExpression( exp1 );
 		Projection projection = Projection.sum(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_QUANTITY));
 		Object value = purchaseDetailBean.getUniqueResult(projection, criteria);
 		setPendingPurhaseQuantity((value != null) ? ((Double)value) :0);

@@ -20,7 +20,7 @@
 				</ui:define>
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2">
+				<aon:panelGrid columns="4">
 					<aon:outputLabel value="#{statBundle.registry_stat_code}" />
 					<aon:inputText value="#{registryStat.registry.id}" size="30"
 						disabled="true" />
@@ -31,40 +31,41 @@
 				</aon:panelGrid>
 
 				<aon:panelTabSet switchType="client">
-					<aon:panelTab id="tab1"
-						label="#{statBundle.registry_stat_invoices}">
-						<ui:include
-							src="/com/code/aon/ui/stat/facelet/registryStat/pendingInvoicesList.xhtml" />
-					</aon:panelTab>
-					<aon:panelTab id="tab2"
-						label="#{statBundle.registry_stat_unpayed_finances}">
-						<ui:include
-							src="/com/code/aon/ui/stat/facelet/registryStat/scoredInvoicesList.xhtml" />
-					</aon:panelTab>
 					<aon:panelTab id="tab3"
 						label="#{statBundle.registry_stat_products}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/registryStat/boughtProductsList.xhtml" />
 					</aon:panelTab>
+					<aon:panelTab id="tab2"
+						label="#{statBundle.registry_stat_unpayed_finances}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/registryStat/pendingFinancesList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab1"
+						label="#{statBundle.registry_stat_invoices}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/registryStat/pendingInvoicesList.xhtml" />
+					</aon:panelTab>
 
 					<c:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
-
-						<aon:panelTab id="tab4"
+					<aon:panelTab id="tab4"
 							label="#{statBundle.registry_stat_delivery}">
 							<ui:include
 								src="/com/code/aon/ui/stat/facelet/registryStat/pendingDeliveriesList.xhtml" />
 						</aon:panelTab>
-					
+				 	</c:if> 
+				 	<c:if test="#{aonConfiguration.bean.customer.showPurchaseData}">	
 						<aon:panelTab id="tab5" label="#{statBundle.registry_stat_purhase}">
 							<ui:include
 								src="/com/code/aon/ui/stat/facelet/registryStat/pendingSalesList.xhtml" />
 						</aon:panelTab>
-						
+					</c:if>
+					<c:if test="#{aonConfiguration.bean.customer.showOfferData}">		
 						<aon:panelTab id="tab6" label="#{statBundle.registry_stat_offer}">
 							<ui:include
 								src="/com/code/aon/ui/stat/facelet/registryStat/pendingOfferList.xhtml" />
 						</aon:panelTab>
-					</c:if>
+					</c:if>	
 				</aon:panelTabSet>
 			</aon:div>
 		</aon:form>

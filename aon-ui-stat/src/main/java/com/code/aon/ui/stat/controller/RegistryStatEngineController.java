@@ -12,6 +12,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,9 +29,11 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.Sales;
+import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
 
 public class RegistryStatEngineController {
 
@@ -379,17 +382,34 @@ public class RegistryStatEngineController {
 	}	
 	
 	public void onInvoicePdf(ActionEvent event) throws ManagerBeanException {
-	
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), ((Invoice) this.getPendingInvoiceModel().getRowData()).getId());
-			FormUtil.getController("invoicePrint").setCriteria(criteria);
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), ((Invoice) this.getPendingInvoiceModel().getRowData()).getId());
+		FormUtil.getController("invoicePrint").setCriteria(criteria);
 	}
 	public void onFinancePdf(ActionEvent event) throws ManagerBeanException {
-		
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), ((Finance) this.getUnpayedFinanceModel().getRowData()).getInvoice().getId());
 		FormUtil.getController("invoicePrint").setCriteria(criteria);
-}
+	}
+	public void onDeliveryPdf(ActionEvent event) throws ManagerBeanException {
+		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ID), ((Delivery) this.getPendingDeliveryModel().getRowData()).getId());
+		FormUtil.getController("delivery").setCriteria(criteria);
+	}
+	public void onSalesPdf(ActionEvent event) throws ManagerBeanException {
+		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_ID), ((Sales) this.getPendingSalesModel().getRowData()).getId());
+		FormUtil.getController("sales").setCriteria(criteria);
+	}
+	public void onOfferPdf(ActionEvent event) throws ManagerBeanException {
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((Offer) this.getPendingOfferModel().getRowData()).getId());
+		FormUtil.getController("offer").setCriteria(criteria);
+	}
+	
 }

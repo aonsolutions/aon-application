@@ -20,20 +20,28 @@
 				</ui:define>
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2">
+				<aon:panelGrid columns="4">
 					<aon:outputLabel value="#{statBundle.registry_stat_code}" />
 					<aon:outputText value="#{productStat.item.product.code}" size="30" />
-					<aon:outputLabel value="#{statBundle.registry_stat_customer}" />
+					<aon:outputLabel value="#{statBundle.stat_product}" />
 					<aon:outputText value="#{productStat.item.product.name}" size="70" />
 				</aon:panelGrid>
 
 				<aon:panelTabSet switchType="client">
-					<aon:panelTab id="tab1"
-						label="Stockaje">
+					<aon:panelTab id="tab1"	label="Resumen">
 						
-					<aon:panelGrid columns="2">
+					<aon:panelGrid columns="4">
+					<aon:outputLabel value="#{statBundle.product_stat_price}" />
+					<aon:outputText value="#{productStat.item.price}" size="70"
+						 >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
 					<aon:outputLabel value="#{statBundle.product_stat_stock}" />
 					<aon:outputText value="#{productStat.totalStock}" size="70">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputLabel value="#{statBundle.product_stat_puc}" />
+					<aon:outputText value="0" size="70"  >
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 					<aon:outputLabel value="#{statBundle.product_stat_pending}" />
@@ -41,24 +49,15 @@
 						disabled="true">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
+						<aon:outputLabel value="#{statBundle.product_stat_ppc}" />
+					<aon:outputText value="#{productStat.averagePurchasePrice}" size="70">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
 					<aon:outputLabel value="#{statBundle.product_stat_recieve}" />
 					<aon:outputText value="#{productStat.pendingPurhaseQuantity}"
 						size="70" >
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-					<aon:outputLabel value="#{statBundle.product_stat_price}" />
-					<aon:outputText value="#{productStat.item.price}" size="70"
-						 >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-					<aon:outputLabel value="#{statBundle.product_stat_puc}" />
-					<aon:outputText value="0" size="70"  >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-					<aon:outputLabel value="#{statBundle.product_stat_ppc}" />
-					<aon:outputText value="#{productStat.averagePurchasePrice}" size="70">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
+					</aon:outputText>				
 					<aon:outputLabel value="#{statBundle.product_stat_puv}" />
 					<aon:outputText value="0" size="70"  >
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
