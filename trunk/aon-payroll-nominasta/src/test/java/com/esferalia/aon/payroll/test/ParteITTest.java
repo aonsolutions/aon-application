@@ -31,7 +31,8 @@ public class ParteITTest extends TestCase{
 			c.set(Calendar.MONTH, 0);
 			c.set(Calendar.YEAR, 2009);
 			criteria.addGreaterThanExpression(alias, c.getTime() );
-			List<ITransferObject> list = bean.getList( criteria,0,10 );
+//			List<ITransferObject> list = bean.getList( criteria,0,10 );
+			List<ITransferObject> list = bean.getList( criteria,0,1 );
 			if (list.size() == 0) {
 				fail("No hay datos en ParteIT");	
 			}
