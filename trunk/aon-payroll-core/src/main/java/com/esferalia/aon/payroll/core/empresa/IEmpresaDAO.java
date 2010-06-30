@@ -32,9 +32,6 @@ public interface IEmpresaDAO {
 	void accept(IRemesaCertificadoEmpresaDetalle detalle)
 			throws PayrollException;
 
-	String getNumeroCcc(IEmpleado empleado) throws PayrollException;
-
-
 
 	
 }
