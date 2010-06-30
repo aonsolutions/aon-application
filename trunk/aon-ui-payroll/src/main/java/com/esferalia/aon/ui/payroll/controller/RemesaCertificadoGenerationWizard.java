@@ -176,14 +176,18 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	@SuppressWarnings("unchecked")
 	private void onValidate(ActionEvent event) {
 		
-		IEmpresa empresa;
+		IEmpleado empleado;
 		List<RemesableEmpleadoCertificate> list = new LinkedList<RemesableEmpleadoCertificate>();
 		for (RemesableEmpleadoCertificate remesable : (List<RemesableEmpleadoCertificate>) getModel().getWrappedData()) {
 			if (remesable.isSelected()) {
 				list.add(remesable);
-				empresa = remesable.getEmpleado().getEmpresa(); 
-				if(!existEmpresa(empresa)){
-					getListaRemesas().add(getEmpresaDAO().getNewRemesa(empresa, getParams().getFecha()));
+				empleado = remesable.getEmpleado(); 
+				if(!existEmpresa(empleado.getEmpresa())){
+					try {
+						getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado, getParams().getFecha()));
+					} catch (PayrollException e) {
+						// NADA
+					}
 				}
 			}
 		}
@@ -261,7 +265,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
 				for (IRemesaCertificadoEmpresa r: getListaRemesas()) {
-					r.setCodigoCcc("00");
+//					r.setCodigoCcc();
 					IRemesaCertificadoEmpresa remesa = getEmpresaDAO().accept(r);
 					List<IRemesaCertificadoEmpresaDetalle> list = getRemesaDetalleList(remesa);
 					for (IRemesaCertificadoEmpresaDetalle d: list) {
