@@ -43,13 +43,13 @@ public class PreInvoiceDetail extends InvoiceDetail {
 	
 	public void addInvoiceTaxes(InvoiceDetail detail) throws ManagerBeanException{
 		addTax(detail, detail.getItem().getProduct().getVat());
-		if(detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null){
+		if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null) {
 			addTax(detail, detail.getItem().getProduct().getRetention());
 		}
 	}
 	
 	private void addTax(InvoiceDetail detail, Tax tax) throws ManagerBeanException {
-		if(detail.getInvoice().getIssueDate().before(tax.getStartDate())){
+		if (detail.getInvoice().getIssueDate().before(tax.getStartDate())) {
 			tax = obtainTax(tax.getId(),detail.getInvoice().getIssueDate());
 		}
 		InvoiceTax invoiceTax = new InvoiceTax();
@@ -57,9 +57,9 @@ public class PreInvoiceDetail extends InvoiceDetail {
 		invoiceTax.setTaxType(tax.getType());
 		double surcharge = 0.0;
 		double percentage = 0.0;
-		if(!detail.getInvoice().isTaxFree()){
+		if (!detail.getInvoice().isTaxFree()) {
 			percentage = tax.getPercentage();
-			if(detail.getInvoice().isSurcharge()){
+			if (detail.getInvoice().isSurcharge()) {
 				surcharge = tax.getSurcharge();
 			}
 		}
@@ -73,10 +73,10 @@ public class PreInvoiceDetail extends InvoiceDetail {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID),id);
-    	criteria.addLessThanExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE),date);
-    	criteria.addGreaterThanExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE),date);
+    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
+    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
     	Iterator iter = taxDetailBean.getList(criteria).iterator();
-    	while(iter.hasNext()){
+    	while (iter.hasNext()) {
     		TaxDetail taxDetail = (TaxDetail)iter.next();
     		Tax tax = new Tax();
     		tax.setId(taxDetail.getTax().getId());
@@ -92,7 +92,7 @@ public class PreInvoiceDetail extends InvoiceDetail {
 	public List getTaxBreakDowns() {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
 		Iterator iter = this.taxList.iterator();
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			InvoiceTax invoiceTax = (InvoiceTax)iter.next();
 			TaxBreakDown taxBreakDown = new TaxBreakDown();
 			taxBreakDown.setBase(getTaxableBase());
