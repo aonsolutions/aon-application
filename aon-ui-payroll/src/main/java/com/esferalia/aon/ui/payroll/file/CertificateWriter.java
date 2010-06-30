@@ -45,6 +45,7 @@ import com.esferalia.aon.file.payroll.certificate.data.Representante;
 import com.esferalia.aon.file.payroll.certificate.data.Trabajador;
 import com.esferalia.aon.file.payroll.certificate.data.Vacaciones;
 import com.esferalia.aon.payroll.PayrollException;
+import com.esferalia.aon.payroll.core.IDivisa;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.IFiniquito;
 import com.esferalia.aon.payroll.core.IFiniquitoDiferencia;
@@ -305,7 +306,7 @@ public class CertificateWriter {
 				if(nomina.getBaseHorasExtrasEstructurales()==0 && nomina.getBaseHorasExtrasNoEstructurales()==0){
 					totalBaseDesempleo = baseAcc;
 				} else if(detalle.getEmpleado().getEmpresa().getDivisa().getCdg().equals("2")){
-					totalBaseDesempleo = convertMoney();
+					totalBaseDesempleo = convertMoney(totalBaseDesempleo, detalle.getEmpleado().getEmpresa().getDivisa());
 				}
 				
 				totalBaseCg += nomina.getBaseCgPts();
@@ -363,9 +364,9 @@ public class CertificateWriter {
 		return null;
 	}
 
-	private Double convertMoney() {
+	private Double convertMoney(Double totalBaseDesempleo, IDivisa iDivisa) {
 		
-		return null;
+		return totalBaseDesempleo;
 	}
 	
 	private Integer differenceBetweenDates(Date date1, Date date2){
