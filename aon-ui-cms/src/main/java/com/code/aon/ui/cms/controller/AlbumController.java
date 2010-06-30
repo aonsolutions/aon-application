@@ -25,7 +25,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.ImageUtil;
+import com.code.aon.ui.cms.util.ImageUtil2;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -187,7 +187,7 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 			albumImage.setImage(image.getRelativePath());
 			albumImage.setPosition(i);
 			File file = ControllerUtil.getImagePath(image.getRelativePath());
-			File thumb = ImageUtil.resize(file, Album.DEFAULT_THUMBNAIL_WIDTH);
+			File thumb = ImageUtil2.resize(file, Album.DEFAULT_THUMBNAIL_WIDTH);
 			String path = ControllerUtil.getRelativePath(ControllerUtil.getImagesPath(), thumb);
 			albumImage.setThumbnail(path);
 			albumImage = (AlbumImage) albumImageBean.insert(albumImage);

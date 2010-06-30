@@ -9,7 +9,7 @@ import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.ImageUtil;
+import com.code.aon.ui.cms.util.ImageUtil2;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -42,7 +42,7 @@ public class AlbumImageControllerListener extends ControllerAdapter {
 		if ( StringUtils.isBlank(ai.getThumbnail()) ) {
 			if (! StringUtils.isBlank(ai.getImage()) ) {
 				File file = ControllerUtil.getImagePath(ai.getImage());
-				File thumb = ImageUtil.resize(file, Album.DEFAULT_THUMBNAIL_WIDTH);
+				File thumb = ImageUtil2.resize(file, Album.DEFAULT_THUMBNAIL_WIDTH);
 				String path = ControllerUtil.getRelativePath(ControllerUtil.getImagesPath(), thumb);
 				ai.setThumbnail( path );
 			}

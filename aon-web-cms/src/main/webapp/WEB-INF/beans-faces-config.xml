@@ -1094,28 +1094,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************** GALLERY ************** -->
-	<managed-bean>
-		<managed-bean-name>gallery</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.ImageGalleryController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>gallery</value>
-		</managed-property>														
-	</managed-bean>
-
-	<!-- ************** DOCUMENTS ************** -->
-	<managed-bean>
-		<managed-bean-name>document</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.DocumentGalleryController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>document</value>
-		</managed-property>														
-	</managed-bean>
-
 	<!-- ************** GENERATOR CONFIG ************** -->
 	<managed-bean>
 		<managed-bean-name>generator_config</managed-bean-name>
@@ -1751,20 +1729,6 @@
 	<managed-bean>
 		<managed-bean-name>domainUtils</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.cms.controller.DomainUtilities</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ************** CROPPER ************** -->
-	<managed-bean>
-		<managed-bean-name>cropper</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.CropperController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ************** RESIZER ************** -->
-	<managed-bean>
-		<managed-bean-name>resizer</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.ResizeController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
