@@ -50,6 +50,17 @@ public class ImageUtilEx {
 		return image;
 	}		
 	
+	public static BufferedImage getBufferedImage(File file, MimeType type) {
+		BufferedImage image = null;
+		if ( (type != null) && (type == MimeType.MIME_GIF) ) {
+			image = SanselanUtil.getBufferedImage(file);
+		}
+		if ( image == null ) {
+			image = ImageUtil.getBufferedImage(file);
+		}
+		return image;
+	}		
+	
 	public static boolean writeBufferedImage( BufferedImage image, MimeType type, File file ) {
 		boolean ok = false;
 		if ( (type != null) && (type == MimeType.MIME_GIF) ) {
