@@ -63,9 +63,11 @@ public class PreInvoicingController implements ICollectionProvider {
 		engine.setInvoicingFeedBack(new ConsoleInvoicingFeedBack());
 		Series series = new Series();
 		series.setId("PRE");
+		Calendar calendar = new GregorianCalendar();
+		calendar.set(invoicingParams.getYear(), invoicingParams.getMonth().ordinal(), 1);
 		invoicingParams.setInvoiceSeries(series);
 		invoicingParams.setInvoiceNumber(0);
-		invoicingParams.setInvoiceDate(new Date());
+		invoicingParams.setInvoiceDate(calendar.getTime());
 		engine.invoice(invoicingParams);
 	}
 
