@@ -30,6 +30,18 @@
 						<f:param name="reportKey" value="feePrintList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="feePrintList-pdf-report"
+						value="Por Concepto" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="feePrintListByConcept" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="feePrintListByCustomer"
+						value="Por Cliente" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="feePrintListByCustomer" />
+					</aon:htmlCommandLink>
 				</ui:define>				
 				
 			</ui:decorate>
