@@ -288,7 +288,7 @@ public class CertificateWriter {
 //			calFin.setTime(detalle.getFechaBaja());
 			
 			List<Cotizacion> cotizacionList = new ArrayList<Cotizacion>();
-			while(calInicio.before(calFin) && totalDias < 180 && existNomina(detalle.getEmpleado(),calFin)){
+			while((calInicio.before(calFin) || calInicio.equals(calFin)) && totalDias < 180 && existNomina(detalle.getEmpleado(),calFin)){
 				NominaParams params = new NominaParams();
 				params.setEmpleado(detalle.getEmpleado());
 				params.setTipo(TipoNomina.NORMAL);
