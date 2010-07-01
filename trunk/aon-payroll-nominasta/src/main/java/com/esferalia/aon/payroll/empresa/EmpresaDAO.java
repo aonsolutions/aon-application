@@ -109,7 +109,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 	public List<IEmpleado> getEmpleados(RemesaCertificadoEmpresaParams params)
 			throws PayrollException {
 		final int FROM_YEAR = 2010;
-		final int FROM_MONTH = 06;
+		final int FROM_MONTH = 05;
 		final int FROM_DAY = 30;
 		try {
 			// fecha desde la que se empieza a usar el nuevo metodo de certificados de empresa
