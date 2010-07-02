@@ -55,8 +55,20 @@
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}">
+<!--  
+-->
+					<a4j:support event="oninputchange" reRender="remesable">
+						<aon:actionListener method="#{remesaCertificadoGenerationWizard.onChangeRemesableDate}" />
+					</a4j:support>
 				</aon:selectInputDate>
-
+<!--  
+-->				
+				<aon:outputText rendered="#{!remesaCertificadoGenerationWizard.remesable}"
+					value="&#160;"/>
+				<aon:outputText id="remesable" 
+					rendered="#{!remesaCertificadoGenerationWizard.remesable}"
+					value="#{payrollBundle.payroll_date_greater_than_today}"/>
+				
 			</ui:define>
 		</ui:decorate>
 	</ui:define>

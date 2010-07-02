@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.payroll.controller;
 import java.io.Serializable;
 
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.enumeration.CausaSuspension;
 
 public class RemesableEmpleadoCertificate implements Serializable {
 	
@@ -10,7 +11,7 @@ public class RemesableEmpleadoCertificate implements Serializable {
 
 	private boolean selected;
 	private IEmpleado empleado;
-	private String causaSuspension;
+	private CausaSuspension causaSuspension;
 	
 	public boolean isSelected() {
 		return selected;
@@ -24,10 +25,10 @@ public class RemesableEmpleadoCertificate implements Serializable {
 	public void setEmpleado(IEmpleado empleado) {
 		this.empleado = empleado;
 	}
-	public String getCausaSuspension() {
+	public CausaSuspension getCausaSuspension() {
 		return causaSuspension;
 	}
-	public void setCausaSuspension(String causaSuspension) {
+	public void setCausaSuspension(CausaSuspension causaSuspension) {
 		this.causaSuspension = causaSuspension;
 	}
 	

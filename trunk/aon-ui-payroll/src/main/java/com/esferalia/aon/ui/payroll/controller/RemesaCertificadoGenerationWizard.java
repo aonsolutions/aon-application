@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,10 +39,18 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	private DataModel model;
 	private DataModel selectedModel;
 	private IEmpresaDAO empresaDAO;
-	// private CertificateWriter certificateWriter;
 	private List<IRemesaCertificadoEmpresa> listaRemesas;
-
+	private boolean remesable;
+	// private CertificateWriter certificateWriter;
 	// private List<IRemesaCertificadoEmpresaDetalle> detailList;
+
+	public boolean isRemesable() {
+		return remesable;
+	}
+
+	public void setRemesable(boolean remesable) {
+		this.remesable = remesable;
+	}
 
 	public RemesaCertificadoEmpresaParams getParams() {
 		if (params == null) {
@@ -188,6 +197,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		setModel(null);
 		setSelectedModel(null);
 		setListaRemesas(null);
+		setRemesable(true);
 		setCurrentStep(0);
 	}
 
@@ -384,6 +394,14 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			RemesableEmpleadoCertificate r = (RemesableEmpleadoCertificate) getModel()
 					.getRowData();
 			r.setSelected(selected);
+		}
+	}
+	
+	public void onChangeRemesableDate(ActionEvent event) {
+		if(getParams().getFecha().after(Calendar.getInstance().getTime())){
+			setRemesable(false);
+		} else {
+			setRemesable(true);
 		}
 	}
 

@@ -113,15 +113,11 @@ public class CertificateWriter {
 			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 			serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 			serializer.transform(domSource, streamResult);
-			
 			validateXml(file);
-			
 			output.setFile(file);
-			
 //			output.setErrors(fdi.create());
 			output.setErrors(new ArrayList<Exception>());
 			return output;
-			
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
 		} 
@@ -136,29 +132,25 @@ public class CertificateWriter {
 		}
 	}
 	
-	
-	 private void validateXml(File xml) {
-		final String SCHEMA = "enterpriseCertificate.xsd"; 
-	        try {
-	            // Create a schema factory
-	            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-	            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-	            URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
-	            // Create a validator
-	            Validator validator = sf.newSchema(urls[0]).newValidator();
-	            // Create a streamSource based on input XML
-//	            StreamSource source = new StreamSource(new StringReader(xml));
-	            StreamSource source = new StreamSource(xml);
-	            // Invoke the validation
-	            validator.validate(source);
-//	            return true;
-	        } catch (Exception e) {
-	        	AonUtil.addErrorMessage("error de formato al generar el xml");
-				throw new AbortProcessingException();
-//	        	NADA
-	        }
-//	        return false;
-	    }
+	private void validateXml(File xml) {
+		final String SCHEMA = "enterpriseCertificate.xsd";
+		try {
+			// Create a schema factory
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+			URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
+			// Create a validator
+			Validator validator = sf.newSchema(urls[0]).newValidator();
+			// Create a streamSource based on input XML
+			StreamSource source = new StreamSource(xml);
+			// Invoke the validation
+			validator.validate(source);
+		} catch (Exception e) {
+			AonUtil.addErrorMessage("error de formato al generar el xml");
+			throw new AbortProcessingException();
+			// NADA
+		}
+	}
 	
 	private CuentaCotizacion createCuentaCotizacionRecord( IRemesaCertificadoEmpresa remesa, List<IRemesaCertificadoEmpresaDetalle> listaDetalle) throws PayrollException {
 		CuentaCotizacion cuentaCotizacion = new CuentaCotizacion();
@@ -210,18 +202,13 @@ public class CertificateWriter {
 		if(trabajos.get(0).getFechaFinCont()!=null && trabajos.get(0).getFechaInicioCont()!=null){
 			trabajador.setDuracionContrato(parse5Digit(differenceBetweenDates(trabajos.get(0).getFechaFinCont(),trabajos.get(0).getFechaInicioCont())));
 		}
-		
 //		trabajador.setIndicadorDuracionContrato();
 		trabajador.setCodProfesion(parse7Digit(trabajos.get(0).getCno()));
 //		trabajador.setCargoPublicoSindical();
 //		trabajador.setPorcentualDedicacion();
 		trabajador.setFechaAltaEmpresa(parseFecha(detalle.getEmpleado().getFechaInicio()));
 		
-		
-		
-		
-		
-		trabajador.setCodCausaSuspension(parse2Digit(detalle.getCausaSuspension()));
+		trabajador.setCodCausaSuspension(parse2Digit(detalle.getCausaSuspension().getValue()));
 //		trabajador.setFechaSuspensionExtincion(detalle.getEmpleado().getFechaFin().toString());
 		trabajador.setFechaSuspensionExtincion(parseFecha(detalle.getFechaBaja()));
 //		trabajador.setFechaFinSuspension();
@@ -255,7 +242,6 @@ public class CertificateWriter {
 			// NADA
 		}
 		if(trabajosTP!=null && trabajosTP.size()>0){
-//		if(trabajosTP!=null){
 			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
 			for(ITrabajo t: trabajosTP){
 				Periodo periodo = new Periodo();
@@ -285,14 +271,14 @@ public class CertificateWriter {
 			Calendar calFin = new GregorianCalendar();
 			calInicio.setTime(detalle.getEmpleado().getFechaInicio());
 			calFin.setTime(detalle.getEmpleado().getFechaFin());
-//			calFin.setTime(detalle.getFechaBaja());
+			calFin.set(Calendar.DAY_OF_MONTH, calFin.getActualMaximum(Calendar.DAY_OF_MONTH));
 			
 			List<Cotizacion> cotizacionList = new ArrayList<Cotizacion>();
 			while((calInicio.before(calFin) || calInicio.equals(calFin)) && totalDias < 180 && existNomina(detalle.getEmpleado(),calFin)){
 				NominaParams params = new NominaParams();
 				params.setEmpleado(detalle.getEmpleado());
 				params.setTipo(TipoNomina.NORMAL);
-				params.setMes(calFin.get(Calendar.MONTH));
+				params.setMes(calFin.get(Calendar.MONTH)+1);
 				params.setYear(calFin.get(Calendar.YEAR));
 				nomina = getNominaDAO().getNomina(params);
 				nominaDiferencia = getNominaDAO().getNominaDiferencia(params);
@@ -312,8 +298,7 @@ public class CertificateWriter {
 				totalBaseCg += nomina.getBaseCgPts();
 		        totalBaseDesempleo += nomina.getBasePerdes();
 				totalDias += nomina.getDiasNomina();
-				calFin.set(Calendar.MONTH, calFin.get(Calendar.MONTH)-1);
-
+				calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
 				Cotizacion cotizacion = new Cotizacion();
 				cotizacion.setAno(nomina.getYear().toString());
 				cotizacion.setMes(parse2Digit(nomina.getMes()));
@@ -334,7 +319,7 @@ public class CertificateWriter {
 		NominaParams params = new NominaParams();
 		params.setEmpleado(empleado);
 		params.setTipo(TipoNomina.NORMAL);
-		params.setMes(calFin.get(Calendar.MONTH));
+		params.setMes(calFin.get(Calendar.MONTH)+1);
 		params.setYear(calFin.get(Calendar.YEAR));
 		if(getNominaDAO().getNomina(params)!=null){
 			return true;
