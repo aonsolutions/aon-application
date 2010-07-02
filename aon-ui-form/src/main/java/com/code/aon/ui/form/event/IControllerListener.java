@@ -29,6 +29,21 @@ public interface IControllerListener {
 	IController getController();
 	
 	/**
+	 * Checks if is disabled.
+	 * 
+	 * @return true, if is disabled
+	 */
+	boolean isDisabled();
+
+	/**
+	 * Sets the disabled.
+	 * 
+	 * @param disabled the new disabled
+	 */
+	void setDisabled(boolean disabled);
+	
+	
+	/**
 	 * Método invocado cuando se añade un elemento.
 	 * 
 	 * @param event ChangeEvent Evento propagado.

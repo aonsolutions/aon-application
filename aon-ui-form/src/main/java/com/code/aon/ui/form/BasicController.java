@@ -798,8 +798,10 @@ public class BasicController extends AbstractPojoController implements IControll
 		Iterator<IControllerListener> iter = listenerClasses.iterator();
 		while (iter.hasNext()) {
 			IControllerListener listener = iter.next();
-			listener.setController(this);
-			this.addControllerListener(listener);
+			if (! listener.isDisabled() ) {
+				listener.setController(this);
+				this.addControllerListener(listener);				
+			}
 		}
 	}
 

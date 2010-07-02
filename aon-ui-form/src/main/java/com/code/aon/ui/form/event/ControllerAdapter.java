@@ -12,6 +12,9 @@ public class ControllerAdapter implements IControllerListener {
 	/** The controller. */
 	private IController controller;
 	
+	/** The disabled. */
+	private boolean disabled;
+	
 	/**
 	 * Gets the controller.
 	 * 
@@ -28,6 +31,24 @@ public class ControllerAdapter implements IControllerListener {
 	 */
 	public void setController(IController controller) {
 		this.controller = controller;
+	}
+	
+	/**
+	 * Checks if is disabled.
+	 * 
+	 * @return true, if is disabled
+	 */
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	/**
+	 * Sets the disabled.
+	 * 
+	 * @param disabled the new disabled
+	 */
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 
 	/**
