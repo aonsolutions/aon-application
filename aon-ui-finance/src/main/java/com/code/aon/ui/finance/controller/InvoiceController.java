@@ -32,6 +32,7 @@ import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -40,6 +41,7 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -278,13 +280,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 	
 	private boolean existFinanceTrackings(List<?> financeList) throws ManagerBeanException {
-		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Iterator<?> iter = financeList.iterator();
 		while(iter.hasNext()) {
 			Criteria criteria = new Criteria();
 			Finance finance = (Finance)iter.next();
-			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
-			if (financeTrackingBean.getCount(criteria) > 0) {
+			criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.FRACTIONED));
+			if (trackingBean.getCount(criteria) > 0) {
 				return true;
 			}
 		}
