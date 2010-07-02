@@ -154,6 +154,9 @@
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
 		
+		<!-- AON-SELLER Mapping files -->	
+		<mapping class="com.code.aon.seller.Seller"/>
+
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
 
