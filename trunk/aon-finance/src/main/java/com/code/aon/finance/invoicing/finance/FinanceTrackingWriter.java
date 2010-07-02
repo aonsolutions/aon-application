@@ -19,15 +19,19 @@ public class FinanceTrackingWriter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FinanceTrackingWriter.class.getName());
 
-    public static FinanceTracking addFinanceTracking(Finance finance, Date trackingDate, FinanceTrackingType trackingType, String description) {
+    public static FinanceTracking addFinanceTracking(Finance finance, Date date, FinanceTrackingType type, String description) {
+    	return addFinanceTracking(finance, date, type, description, finance.getTotalAmount());
+    }
+
+    public static FinanceTracking addFinanceTracking(Finance finance, Date date, FinanceTrackingType type, String description, double amount) {
         FinanceTracking tracking = new FinanceTracking();
         try {
             IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
             tracking.setFinance(finance);
-            tracking.setTrackingDate(trackingDate);
-            tracking.setType(trackingType);
+            tracking.setTrackingDate(date);
+            tracking.setType(type);
             tracking.setDescription(description);
-            tracking.setAmount(finance.getTotalAmount());
+            tracking.setAmount(amount);
             tracking = (FinanceTracking)financeTrackingBean.insert(tracking);
         } catch (ManagerBeanException e) {
             LOGGER.error("Error inserting finance tracking of finance with id=" + finance.getId(), e);
