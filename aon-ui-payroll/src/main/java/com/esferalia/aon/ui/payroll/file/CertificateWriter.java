@@ -244,12 +244,16 @@ public class CertificateWriter {
 		if(trabajosTP!=null && trabajosTP.size()>0){
 			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
 			for(ITrabajo t: trabajosTP){
-				Periodo periodo = new Periodo();
-				periodo.setTipoDistribucion(t.getTipoTP().getValue());
-				periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
-				periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
-				periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parse5Digit(t.getDiasTP()));
-				listaPeriodos.add(periodo);
+				try{
+					Periodo periodo = new Periodo();
+					periodo.setTipoDistribucion(t.getTipoTP().getValue());
+					periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
+					periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
+					periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parse5Digit(t.getDiasTP()));
+					listaPeriodos.add(periodo);
+				} catch(NullPointerException e){
+					// NADA, no tener en cuenta el periodo
+				}
 			}
 			DistribucionJornada jornada = new DistribucionJornada();
 			jornada.setListaPeriodos(listaPeriodos);
@@ -348,7 +352,10 @@ public class CertificateWriter {
 		}
 		return null;
 	}
-
+	
+	/*
+	 * CONVERSIONES
+	 */
 	private Double convertMoney(Double totalBaseDesempleo, IDivisa iDivisa) {
 		
 		return totalBaseDesempleo;
