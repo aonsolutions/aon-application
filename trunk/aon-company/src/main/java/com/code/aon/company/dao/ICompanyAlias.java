@@ -7,6 +7,8 @@ import com.code.aon.company.resources.Employee;
 import com.code.aon.company.resources.Resource;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.WorkActivity;
+import com.code.aon.company.Enterprise;
+import com.code.aon.company.EnterpriseCCC;
 
 /** 
 * Interface for holding entity properties constants.
@@ -269,6 +271,50 @@ public interface ICompanyAlias {
 	* Hibernate value: WorkActivity.workPlace.id
 	*/
 	String  WORK_ACTIVITY_WORK_PLACE_ID = WORK_ACTIVITY_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for Enterprise entity.
+	*/ 
+	DAOConstantsEntry ENTERPRISE_ENTRY = DAOConstants.getDAOConstant(Enterprise.class);
+
+	/** 
+	* Alias value: Enterprise_id
+	* Hibernate value: Enterprise.id
+	*/
+	String  ENTERPRISE_ID = ENTERPRISE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Enterprise_registry_id
+	* Hibernate value: Enterprise.registry.id
+	*/
+	String  ENTERPRISE_REGISTRY_ID = ENTERPRISE_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for EnterpriseCCC entity.
+	*/ 
+	DAOConstantsEntry ENTERPRISE_CCC_ENTRY = DAOConstants.getDAOConstant(EnterpriseCCC.class);
+
+	/** 
+	* Alias value: EnterpriseCCC_CCC
+	* Hibernate value: EnterpriseCCC.CCC
+	*/
+	String  ENTERPRISE_CCC_CCC = ENTERPRISE_CCC_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: EnterpriseCCC_enterprise_id
+	* Hibernate value: EnterpriseCCC.enterprise.id
+	*/
+	String  ENTERPRISE_CCC_ENTERPRISE_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EnterpriseCCC_id
+	* Hibernate value: EnterpriseCCC.id
+	*/
+	String  ENTERPRISE_CCC_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[2];
 
 
 }
