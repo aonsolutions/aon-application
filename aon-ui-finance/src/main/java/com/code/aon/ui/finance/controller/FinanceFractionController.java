@@ -124,6 +124,7 @@ public class FinanceFractionController implements IFinanceConstants {
 
 	@SuppressWarnings("unchecked")
 	public void onAcceptFractions(ActionEvent event) {
+		double amount = targetFinance.getTotalAmount();
 		try{
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			List list = (List)getModel().getWrappedData();
@@ -133,15 +134,19 @@ public class FinanceFractionController implements IFinanceConstants {
 			targetFinance.setPayMethod((targetFinance.getPayMethod().getId() == null) ? null : targetFinance.getPayMethod());
 			financeBean.update(targetFinance);
 
+			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 1, list.size());
+			FinanceTrackingWriter.addFinanceTracking(targetFinance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
+
 			for(int i=1; i<list.size(); i++) {
 				finance = (Finance)list.get(i);
 				finance.setBank((finance.getBank().getId() == null) ? null : finance.getBank());
 				finance.setPayMethod((finance.getPayMethod().getId() == null) ? null : finance.getPayMethod());
 				financeBean.insert(finance);
+
+				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, i+1, list.size());
+				FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 			}
 
-			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED);
-			FinanceTrackingWriter.addFinanceTracking(targetFinance, new Date(), FinanceTrackingType.FRACTIONED, message);
 			initializeFinanceControllerList(((List)getModel().getWrappedData()));
 		} catch (AonException e) {
 			AonUtil.addErrorMessage(e.getMessage());
