@@ -50,7 +50,7 @@
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name"
 								value="#{(deliveryInvoicing.params.customer.registry.fullName!=null)?(deliveryInvoicing.params.customer.registry.fullName):('')}"
-								size="50" disabled="true" />
+								size="60" disabled="true" />
 						</aon:div>
 	
 						<aon:outputLabel value="#{bundle.aon_period}" />
@@ -149,6 +149,12 @@
 								<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 							</aon:selectOneRadio>
 						</c:if>
+
+						<aon:outputLabel for="Invoice_comments"
+							value="#{bundle.aon_comment}" />
+						<aon:inputTextarea id="Invoice_comments" cols="82" rows="5"
+							value="#{deliveryInvoicing.params.invoiceComments}" />
+
 					</aon:panelGrid>
 				</aon:panel>
 			</aon:div>

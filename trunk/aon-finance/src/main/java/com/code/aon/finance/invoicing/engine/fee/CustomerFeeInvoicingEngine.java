@@ -334,6 +334,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
+		invoice.setComments(params.getInvoiceComments());
 		return invoice;
 	}
 	
@@ -348,6 +349,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
+		invoice.setComments(params.getInvoiceComments());
 		return invoice;
 	}
 
