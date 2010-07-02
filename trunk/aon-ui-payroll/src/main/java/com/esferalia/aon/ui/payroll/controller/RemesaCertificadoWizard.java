@@ -95,9 +95,9 @@ public class RemesaCertificadoWizard implements Serializable {
 		this.model = model;
 	}
 
-	private void initializeEmpleadoModel() throws PayrollException {
+	private void initializeRemesasModel() throws PayrollException {
+		model = new ListDataModel(getEmpresaDAO().getRemesaCertificados());
 		if (model == null) {
-			model = new ListDataModel(getEmpresaDAO().getRemesaCertificados());
 		}
 	}
 	
@@ -144,7 +144,7 @@ public class RemesaCertificadoWizard implements Serializable {
 	public void onStart(ActionEvent event) {
 		setCurrentStep(0);
 		try {
-			initializeEmpleadoModel();
+			initializeRemesasModel();
 		} catch (PayrollException e) {
 			// NADA
 		}
@@ -221,7 +221,7 @@ public class RemesaCertificadoWizard implements Serializable {
 	
 	private void onSearch(ActionEvent event) {
 		try {
-			initializeEmpleadoModel();
+			initializeRemesasModel();
 		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
