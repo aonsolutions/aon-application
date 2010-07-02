@@ -6,8 +6,9 @@
 		<xs:complexType>
 		    <xs:sequence>
 		      <xs:element ref="company" />
+		      <xs:element ref="enterprise" />
 		    </xs:sequence>		
-			<xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>		    
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.1"/>		    
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="company">
@@ -17,6 +18,13 @@
 			<xs:attribute name="showPanelTabSet" type="xs:boolean" use="required"/>
 			<xs:attribute name="showEInvoice" type="xs:boolean" use="required"/>
 			<xs:attribute name="showDigitalCertificate" type="xs:boolean" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="enterprise">
+		<xs:complexType>
+			<xs:attribute name="showFinanceData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
+			<xs:attribute name="showDirStaff" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

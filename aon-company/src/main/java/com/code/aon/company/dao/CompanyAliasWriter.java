@@ -6,6 +6,8 @@ import java.io.IOException;
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
+import com.code.aon.company.Enterprise;
+import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkActivity;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.resources.Employee;
@@ -23,12 +25,14 @@ public class CompanyAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-company/src/main/java/com/code/aon/company/dao/ICompanyAlias.java");
-		String[] classes = new String[5]; 
-		classes[0] = Company.class.getName();
-		classes[1] = Employee.class.getName();
-		classes[2] = Resource.class.getName();
-		classes[3] = WorkPlace.class.getName();
-		classes[4] = WorkActivity.class.getName();
+		String[] classes = new String[] { 
+				Company.class.getName(),
+				Employee.class.getName(),
+				Resource.class.getName(),
+				WorkPlace.class.getName(),
+				WorkActivity.class.getName(),
+				Enterprise.class.getName(),
+				EnterpriseCCC.class.getName() };
 		HibernateUtil.getSessionFactory( HibernateUtil.getSessionFactoryName() );
 		AliasWriter writer = new AliasWriter("com.code.aon.company.dao");
 		writer.write(classes, file);
