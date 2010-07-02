@@ -14,7 +14,6 @@ import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IEmpleado;
@@ -35,14 +34,11 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			"remesaCertificadoGenerationWizard_step1",
 			"remesaCertificadoGenerationWizard_step2" };
 	private RemesaCertificadoEmpresaParams params;
-	private FileOutput fileOutput;
 	private DataModel model;
 	private DataModel selectedModel;
 	private IEmpresaDAO empresaDAO;
 	private List<IRemesaCertificadoEmpresa> listaRemesas;
 	private boolean remesable;
-	// private CertificateWriter certificateWriter;
-	// private List<IRemesaCertificadoEmpresaDetalle> detailList;
 
 	public boolean isRemesable() {
 		return remesable;
@@ -74,29 +70,6 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		this.listaRemesas = listaRemesas;
 	}
 
-	// public List<IRemesaCertificadoEmpresaDetalle> getDetailList() {
-	// return detailList;
-	// }
-	// public void setDetailList(List<IRemesaCertificadoEmpresaDetalle>
-	// detailList) {
-	// this.detailList = detailList;
-	// }
-	//
-	// private CertificateWriter getCertificateWriter() {
-	// if (certificateWriter == null) {
-	// certificateWriter = new CertificateWriter();
-	// }
-	// return certificateWriter;
-	// }
-
-	public FileOutput getFileOutput() {
-		return fileOutput;
-	}
-
-	public void setFileOutput(FileOutput fileOutput) {
-		this.fileOutput = fileOutput;
-	}
-
 	public int getCurrentStep() {
 		return this.currentStep;
 	}
@@ -117,14 +90,6 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			model = new ListDataModel();
 		}
 		return model;
-		// try {
-		// if (model == null) {
-		// model = initializeModel();
-		// }
-		// } catch (PayrollException e) {
-		// AonUtil.addErrorMessage(e.getMessage());
-		// throw new AbortProcessingException(e);
-		// }
 	}
 
 	public DataModel getSelectedModel() {
@@ -139,7 +104,6 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		List<RemesableEmpleadoCertificate> list = transformList(getEmpresaDAO()
 				.getEmpleados(params));
 		setModel(new ListDataModel(list));
-		// return new ListDataModel(list);
 	}
 
 	private List<RemesableEmpleadoCertificate> transformList(
@@ -150,7 +114,6 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			r.setEmpleado(e);
 			list.add(r);
 		}
-
 		return list;
 	}
 
@@ -250,60 +213,6 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			}
 		}
 		return false;
-	}
-
-	public void onDiskGenerate(ActionEvent event) {
-		// try {
-		// String loggedUser = AonUtil.getRemoteUser();
-		// loggedUser = StringUtils.substringBefore(loggedUser, "@");
-		// setFileOutput(getCertificateWriter().createCertificate(getRemesa(),
-		// getDetailList()));
-		// if (getFileOutput() != null) {
-		// if (getFileOutput().getErrors().size() > 0) {
-		// AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
-		// }
-		// }
-		// } catch (ManagerBeanException e) {
-		// AonUtil.addErrorMessage(e.getMessage());
-		// // No se lanza excepción, que vaya a la última página.
-		// }
-	}
-
-	public void onDownloadDisk(ActionEvent event) {
-		// try {
-		// FacesContext faces = FacesContext.getCurrentInstance();
-		// HttpServletResponse response = (HttpServletResponse)
-		// faces.getExternalContext().getResponse();
-		// String fileName =
-		// getCertificateWriter().getCertificate().getFichero();
-		// response.setContentType(MimeType.MIME_XML.getName());
-		// response.setHeader("Content-disposition", "attachment; filename=\"" +
-		// fileName + ".xml\";");
-		//
-		// ServletOutputStream output = response.getOutputStream();
-		// InputStream input = new FileInputStream(getFileOutput().getFile());
-		// int size = IOUtils.copy(input, output);
-		// if (size > 0) {
-		// response.setHeader("Content-Length", String.valueOf(size));
-		// }
-		// output.close();
-		// input.close();
-		//
-		// response.flushBuffer();
-		// faces.responseComplete();
-		// } catch (IOException e) {
-		// AonUtil.addErrorMessage(e.getMessage());
-		// throw new AbortProcessingException(e);
-		// }
-
-	}
-
-	public boolean isDiskOk() {
-		int errors = 0;
-		if (getFileOutput() != null) {
-			errors = getFileOutput().getErrors().size();
-		}
-		return (errors == 0);
 	}
 
 	private void onFinish(ActionEvent event) {
