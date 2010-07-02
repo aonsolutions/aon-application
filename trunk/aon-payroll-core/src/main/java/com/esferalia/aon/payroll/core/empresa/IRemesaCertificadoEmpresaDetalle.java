@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IEmpleado;
+import com.esferalia.aon.payroll.core.enumeration.CausaSuspension;
 
 public interface IRemesaCertificadoEmpresaDetalle extends ITransferObject {
 
@@ -19,7 +20,7 @@ public interface IRemesaCertificadoEmpresaDetalle extends ITransferObject {
 	Date getFechaBaja();
 	void setFechaBaja(Date fechaBaja);
 	
-	String getCausaSuspension();
-	void setCausaSuspension(String causaSuspension);
+	CausaSuspension getCausaSuspension();
+	void setCausaSuspension(CausaSuspension causaSuspension);
 	
 }
