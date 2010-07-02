@@ -14,11 +14,15 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.Empleado;
 import com.esferalia.aon.payroll.core.IEmpleado;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
+import com.esferalia.aon.payroll.core.enumeration.CausaSuspension;
 
 
 
@@ -32,7 +36,7 @@ public class RemesaCertificadoEmpresaDetalle implements ITransferObject, IRemesa
 	private IRemesaCertificadoEmpresa remesaCertificado;	
 	private IEmpleado empleado;
 	private Date fechaBaja;
-	private String causaSuspension;
+	private CausaSuspension causaSuspension;
 
 	@Id     
 	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -78,13 +82,14 @@ public class RemesaCertificadoEmpresaDetalle implements ITransferObject, IRemesa
 		this.fechaBaja = fechaBaja;
 	}
 	
-	@Column(name = "causa_suspension", nullable = false)
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.core.enumeration.CausaSuspension") })
+	@Column(name = "causa_suspension", length = 2, nullable = false)
 	@Override
-	public String getCausaSuspension() {
+	public CausaSuspension getCausaSuspension() {
 		return causaSuspension;
 	}
 	@Override
-	public void setCausaSuspension(String causaSuspension) {
+	public void setCausaSuspension(CausaSuspension causaSuspension) {
 		this.causaSuspension = causaSuspension;
 	}
 	
