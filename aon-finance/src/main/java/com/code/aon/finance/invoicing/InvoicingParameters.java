@@ -26,6 +26,7 @@ public class InvoicingParameters {
 	private int invoiceNumber;
 	private Date invoiceDate;
 	private boolean invoiceRecordable;
+	private String invoiceComments;
 	
 	public Customer getCustomer() {
 		return customer;
@@ -145,6 +146,14 @@ public class InvoicingParameters {
 
 	public void setInvoiceRecordable(boolean invoiceRecordable) {
 		this.invoiceRecordable = invoiceRecordable;
+	}
+
+	public String getInvoiceComments() {
+		return invoiceComments;
+	}
+
+	public void setInvoiceComments(String invoiceComments) {
+		this.invoiceComments = invoiceComments;
 	}
 
 }

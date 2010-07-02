@@ -50,7 +50,7 @@
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name"
 								value="#{(feeInvoicing.params.customer.registry.name!=null)?(feeInvoicing.params.customer.registry.fullName):('')}"
-								size="50" disabled="true" />
+								size="60" disabled="true" />
 						</aon:div>
 	
 						<aon:outputLabel for="Item_product_code"
@@ -70,7 +70,7 @@
 							</aon:lookupButton>
 							<aon:inputText id="Item_product_name"
 								value="#{feeInvoicing.params.item.product.name}"
-								size="50" disabled="true" />
+								size="60" disabled="true" />
 						</aon:div>
 	
 						<aon:outputLabel value="#{bundle.aon_period}" />
@@ -144,6 +144,12 @@
 								<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 							</aon:selectOneRadio>
 						</c:if>
+
+						<aon:outputLabel for="Invoice_comments"
+							value="#{bundle.aon_comment}" />
+						<aon:inputTextarea id="Invoice_comments" cols="82" rows="5"
+							value="#{feeInvoicing.params.invoiceComments}" />
+
 					</aon:panelGrid>
 				</aon:panel>
 			</aon:div>
