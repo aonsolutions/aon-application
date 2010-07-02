@@ -29,10 +29,6 @@
 					<groupId>com.code.aon</groupId>
 					<artifactId>aon.warehouse</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.commercial</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
