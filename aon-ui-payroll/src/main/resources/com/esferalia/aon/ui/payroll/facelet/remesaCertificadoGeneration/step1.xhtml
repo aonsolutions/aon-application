@@ -56,7 +56,14 @@
 					<f:facet name="header">
 						<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
 					</f:facet>
+					<!--  
 					<aon:inputText value="#{to.causaSuspension}" size="2" />
+					-->
+					
+					<aon:selectOneMenu id="causaSuspension"
+						value="#{to.causaSuspension}" width="100">
+						<f:selectItems value="#{payrollCollections.causaSuspension}" />
+					</aon:selectOneMenu>
 				</aon:column>
 				
 			</aon:dataTable>
