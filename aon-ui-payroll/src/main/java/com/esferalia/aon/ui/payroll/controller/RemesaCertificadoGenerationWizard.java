@@ -173,16 +173,18 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		}
 		IEmpleado empleado;
 		List<RemesableEmpleadoCertificate> list = new LinkedList<RemesableEmpleadoCertificate>();
-		for (RemesableEmpleadoCertificate remesable : (List<RemesableEmpleadoCertificate>) getModel()
-				.getWrappedData()) {
+		for (RemesableEmpleadoCertificate remesable : (List<RemesableEmpleadoCertificate>) getModel().getWrappedData()) {
 			if (remesable.isSelected()) {
+				if (!isCausaSuspensionSelected(remesable)) {
+					String msg = "Debe seleccionar la causa de suspension de los empleados seleccionados.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
 				list.add(remesable);
 				empleado = remesable.getEmpleado();
 				if (!existEmpresa(empleado.getEmpresa())) {
 					try {
-						getListaRemesas().add(
-								getEmpresaDAO().getNewRemesa(empleado,
-										getParams().getFecha()));
+						getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado,getParams().getFecha()));
 					} catch (PayrollException e) {
 						// NADA
 					}
@@ -190,6 +192,10 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			}
 		}
 		setSelectedModel(new ListDataModel(list));
+	}
+
+	private boolean isCausaSuspensionSelected(RemesableEmpleadoCertificate remesable) {
+		return remesable.getCausaSuspension()!=null;
 	}
 
 	private boolean isAnyEmpleadoSelected() {
@@ -284,6 +290,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	private void onSearch(ActionEvent event) {
 		try {
 			initializeModel();
+			setListaRemesas(null);
 		} catch (PayrollException e) {
 			// NADA
 		}
