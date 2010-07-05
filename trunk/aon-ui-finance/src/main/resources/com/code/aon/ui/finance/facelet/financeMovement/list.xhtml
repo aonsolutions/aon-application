@@ -45,15 +45,9 @@
 				
 				<aon:editDataTable id="movements" value="#{financeMovement.model}"
 					rows="20"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn"
+					columnClasses="aon-editDataTable-textColumn,, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
 					var="to">
-					<aon:column alias="Finance.invoice.referenceCode"
-						styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_invoice}" />
-						</f:facet>
-						<aon:outputText value="#{to.invoice.referenceCode}" />
-					</aon:column>
+				
 
 					<aon:column alias="Finance.dueDate"
 						styleClass="aon-editDataTable-textColumn">
@@ -64,6 +58,13 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
+					</aon:column>
+					<aon:column alias="Finance.invoice.referenceCode"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{financeBundle.finance_invoice}" />
+						</f:facet>
+						<aon:outputText value="#{to.invoice.referenceCode}" />
 					</aon:column>
 
 					<aon:column alias="Finance.invoice.registryName"
@@ -91,9 +92,9 @@
 						<aon:outputText value="#{to.payMethod.name}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column  styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_pay_method}" />
+							<aon:outputText value="#{configBundle.config_bank}" />
 						</f:facet>
 						<aon:outputText value="#{to.bank.name}" />
 					</aon:column>
