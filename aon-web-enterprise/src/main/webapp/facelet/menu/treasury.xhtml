@@ -37,6 +37,14 @@
 									value="#{financeBundle.finance_payment_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="financeMovement-treasury"
+									action="financeMovement_search"
+									value="#{financeBundle.finance_payment_movement}">
+									<f:setPropertyActionListener value="#{null}"
+										target="#{financeMovement.balance}" />
+									</aon:commandLink>
+							</aon:div>							
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="aon_fbatch" action="fbatch_search"
 									actionListener="#{fbatch.onEditSearch}"
 									value="#{financeBundle.finance_fbatch_module}" />
