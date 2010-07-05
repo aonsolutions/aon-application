@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
 	xmlns="http://www.esferalia.com/config" >
 	
-	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
+	<company:config version="1.1" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="false" 
 			showCompanyOtherData="false"
@@ -12,6 +12,11 @@
 			showEInvoice="false"
 			showDigitalCertificate="true"
 		/>
+		<company:enterprise 
+			showFinanceData="false" 
+			showAddInfo="true"
+			showDirStaff="false"
+		/>		
 	</company:config>
 
 </config>
