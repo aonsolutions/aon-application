@@ -377,7 +377,7 @@ public class Trabajador {
 //		for(CotizacionRea c: getDatosCotizacionRea()){
 //			trabajador.appendChild(c.getElement(xmldoc));
 //		}
-//		trabajador.appendChild(getDatosVacacionesCotizadas().getElement(xmldoc));
+		trabajador.appendChild(getDatosVacacionesCotizadas().getElement(xmldoc));
 //		trabajador.appendChild(getDatosVacacionesCotizadasRea().getElement(xmldoc));
 		
 		return trabajador;
