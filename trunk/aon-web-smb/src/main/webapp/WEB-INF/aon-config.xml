@@ -10,7 +10,7 @@
 		/>
 	</registry:config>
 		
-	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
+	<company:config version="1.1" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="true" 
 			showCompanyOtherData="true"
@@ -18,6 +18,11 @@
 			showEInvoice="true"
 			showDigitalCertificate="true"
 		/>
+		<company:enterprise 
+			showFinanceData="false" 
+			showAddInfo="true"
+			showDirStaff="false"
+		/>				
 	</company:config>
 
 	<customer:config version="1.1" xmlns:customer="http://www.esferalia.com/customer">
