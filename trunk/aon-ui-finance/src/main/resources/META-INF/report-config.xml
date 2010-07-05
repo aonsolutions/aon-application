@@ -296,14 +296,14 @@
 	
 	<!--  *********  MovementFinanceList  ********* -->
 	<report id="movementFinanceList" description="Finance List">
-		<template path="/com/code/aon/ui/finance/report/movementFinanceList.jasper" />
+		<template path="/com/code/aon/ui/finance/report/financeMovementList.jasper" />
 		<bean key="com.code.aon.finance.Finance" />
 		<criteria provider="#{financeMovement}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="payment" value="#{finance.isPayment}" />
-			<param id="balance" value="#{financeMovement.getBalance}" />
+			<param id="initialBalance" value="#{financeMovement.getBalance}" />
 		</params>
 	</report>
 
@@ -433,6 +433,19 @@
 		<!--  *********  feePrintList  ********* -->
 	<report id="feePrintListByCustomer" description="Fee Print">
 		<template path="/com/code/aon/ui/finance/report/feeListByCustomer.jasper"/>
+		<bean key="com.code.aon.finance.CustomerFee" />
+		<criteria provider="#{feePrint}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="PriceStrategy" value="#{customerFee.getPriceStrategy}" />
+		</params>
+	</report>
+	
+			<!--  *********  feePrintList  ********* -->
+	<report id="feePrintListByDate" description="Fee Print">
+		<template path="/com/code/aon/ui/finance/report/feeListByDate.jasper"/>
 		<bean key="com.code.aon.finance.CustomerFee" />
 		<criteria provider="#{feePrint}"/>
 		<params>
