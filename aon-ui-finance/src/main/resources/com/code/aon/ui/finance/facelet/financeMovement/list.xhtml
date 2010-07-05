@@ -5,6 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -35,10 +36,13 @@
 				<aon:div>
 					<aon:panelGrid columns="2">
 						<aon:outputText value="#{financeBundle.finance_balance}" />
-						<aon:outputText value="#{financeMovement.balance}" />
+						<aon:outputText value="#{financeMovement.balance}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
 					</aon:panelGrid>
 				</aon:div>
-
+				<rich:spacer height="10px"/>
+				
 				<aon:editDataTable id="movements" value="#{financeMovement.model}"
 					rows="20"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn"
@@ -109,11 +113,18 @@
 						<aon:outputText value="#{to.totalAmount}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
-
-						<f:facet name="footer">
-
-						</f:facet>
+			
 					</aon:column>
+					
+					<!--  <aon:column styleClass="aon-editDataTable-numberColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{financeBundle.finance_balance}" />
+						</f:facet>
+						<aon:outputText value="#{financeMovement.currentBalance}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+			
+					</aon:column>-->
 
 				</aon:editDataTable>
 				<aon:dataScroller2 for="movements" showNote="true" />
