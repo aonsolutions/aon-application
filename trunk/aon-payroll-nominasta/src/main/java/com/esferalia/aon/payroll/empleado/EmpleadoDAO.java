@@ -266,6 +266,7 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 			IManagerBean bean = BeanManager.getManagerBean(Trabajo.class);
 			Criteria c = new Criteria();
 			c.addEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_EMPLEADO_ID), empleado.getId());
+			c.addOrder(bean.getFieldName(IPayrollAlias.TRABAJO_FECFIN), false);
 			List<?> list = bean.getList(c);
 			return (List<ITrabajo>) list;
 		} catch (ManagerBeanException e) {
