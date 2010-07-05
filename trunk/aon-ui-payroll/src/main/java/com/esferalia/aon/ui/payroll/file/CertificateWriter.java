@@ -90,6 +90,8 @@ public class CertificateWriter {
 	}
 
 	public FileOutput createCertificate(IRemesaCertificadoEmpresa remesa, List<IRemesaCertificadoEmpresaDetalle> remesaDetail ) throws ManagerBeanException {
+		final String INDENT_AMOUNT_PROPERTY = "{http://xml.apache.org/xslt}indent-amount";
+		final String INDENT_AMOUNT_VALUE = "4";
 		try {
 			setCertificate(new Certificate());
 			List<CuentaCotizacion> listaCuentas = new ArrayList<CuentaCotizacion>();
@@ -111,7 +113,7 @@ public class CertificateWriter {
 			Transformer serializer = tf.newTransformer();
 			serializer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
 			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-			serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+			serializer.setOutputProperty(INDENT_AMOUNT_PROPERTY, INDENT_AMOUNT_VALUE);
 			serializer.transform(domSource, streamResult);
 			validateXml(file);
 			output.setFile(file);

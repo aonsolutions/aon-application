@@ -22,7 +22,8 @@
 				aon-editDataTable-textColumn, 
 				aon-editDataTable-textColumn, 
 				aon-editDataTable-textColumn, 
-				aon-editDataTable-dateColumn">
+				aon-editDataTable-dateColumn,
+				aon-editDataTable-textColumn aon-width-400">
 
 				<aon:column>
 					<f:facet name="header">
@@ -52,18 +53,16 @@
 				
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/columns.xhtml" />
 				
-				<aon:column>
+				<aon:column >
 					<f:facet name="header">
 						<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
 					</f:facet>
-					<!--  
-					<aon:inputText value="#{to.causaSuspension}" size="2" />
-					-->
-					
-					<aon:selectOneMenu id="causaSuspension"
-						value="#{to.causaSuspension}" width="100">
-						<f:selectItems value="#{payrollCollections.causaSuspension}" />
-					</aon:selectOneMenu>
+					 <rich:inplaceSelect value="#{to.causaSuspension}"
+					 	listHeight="300px" listWidth="300px" 
+					 	style="width:400px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
+				        defaultLabel="Seleccionar causa">
+				       <f:selectItems value="#{payrollCollections.causaSuspension}" />
+				    </rich:inplaceSelect>
 				</aon:column>
 				
 			</aon:dataTable>
