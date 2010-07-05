@@ -1,5 +1,6 @@
 package com.esferalia.aon.file.payroll.certificate.data;
 
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -41,21 +42,26 @@ public class Vacaciones {
 		this.observaciones = observaciones;
 	}
 	public Element getElement(Document xmldoc) {
-		Element numDiasCotizados = xmldoc.createElement(NUM_DIAS_COTIZADOS);
-		Element baseCotizacionDesempleo = xmldoc.createElement(BASE_COTIZACION_DESEMPLEO);
-		Element baseCotizacionContingenciasComunes = xmldoc.createElement(BASE_COTIZACION_CONTINGENCIAS_COMUNES);
-		Element observaciones = xmldoc.createElement(OBSERVACIONES);
-		
-		numDiasCotizados.appendChild(xmldoc.createTextNode(getNumDiasCotizados().toString()));
-		baseCotizacionDesempleo.appendChild(xmldoc.createTextNode(getBaseCotizacionDesempleo().toString()));
-		baseCotizacionContingenciasComunes.appendChild(xmldoc.createTextNode(getBaseCotizacionContingenciasComunes().toString()));
-		observaciones.appendChild(xmldoc.createTextNode(getObservaciones()));
-		
 		Element datosVacacionesCotizadas = xmldoc.createElement(DATOS_VACACIONES_COTIZADAS);
+
+		Element numDiasCotizados = xmldoc.createElement(NUM_DIAS_COTIZADOS);
+		numDiasCotizados.appendChild(xmldoc.createTextNode(getNumDiasCotizados().toString()));
 		datosVacacionesCotizadas.appendChild(numDiasCotizados);
+
+		Element baseCotizacionDesempleo = xmldoc.createElement(BASE_COTIZACION_DESEMPLEO);
+		baseCotizacionDesempleo.appendChild(xmldoc.createTextNode(getBaseCotizacionDesempleo().toString()));
 		datosVacacionesCotizadas.appendChild(baseCotizacionDesempleo);
+
+		Element baseCotizacionContingenciasComunes = xmldoc.createElement(BASE_COTIZACION_CONTINGENCIAS_COMUNES);
+		baseCotizacionContingenciasComunes.appendChild(xmldoc.createTextNode(getBaseCotizacionContingenciasComunes().toString()));
 		datosVacacionesCotizadas.appendChild(baseCotizacionContingenciasComunes);
-		datosVacacionesCotizadas.appendChild(observaciones);
+
+		Element observaciones = null;
+		if(!StringUtils.isBlank(getObservaciones())){
+			observaciones = xmldoc.createElement(OBSERVACIONES);
+			observaciones.appendChild(xmldoc.createTextNode(getObservaciones()));
+			datosVacacionesCotizadas.appendChild(observaciones);
+		}
 		
 		return datosVacacionesCotizadas;
 	}
