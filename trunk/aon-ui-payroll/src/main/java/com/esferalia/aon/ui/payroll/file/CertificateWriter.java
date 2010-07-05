@@ -205,7 +205,7 @@ public class CertificateWriter {
 			trabajador.setDuracionContrato(parse5Digit(differenceBetweenDates(trabajos.get(0).getFechaFinCont(),trabajos.get(0).getFechaInicioCont())));
 		}
 //		trabajador.setIndicadorDuracionContrato();
-		trabajador.setCodProfesion(parse7Digit(trabajos.get(0).getCno()));
+		trabajador.setCodProfesion(parse7DigitRight(trabajos.get(0).getCno()));
 //		trabajador.setCargoPublicoSindical();
 //		trabajador.setPorcentualDedicacion();
 		trabajador.setFechaAltaEmpresa(parseFecha(detalle.getEmpleado().getFechaInicio()));
@@ -390,7 +390,7 @@ public class CertificateWriter {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(date);
 		String d = String.valueOf(cal.get(Calendar.YEAR));
-		d += parse2Digit(cal.get(Calendar.MONTH));
+		d += parse2Digit(cal.get(Calendar.MONTH)+1);
 		d += parse2Digit(cal.get(Calendar.DAY_OF_MONTH));
 		return d;
 	}
@@ -427,6 +427,12 @@ public class CertificateWriter {
 		return d;
 	}
 	
+	private String parse7DigitRight(String s) {
+		while(s.length()<7){
+			s = s.concat("0");
+		}
+		return s;
+	}
 	private String parse7Digit(String s) {
 		while(s.length()<7){
 			s = "0".concat(s);

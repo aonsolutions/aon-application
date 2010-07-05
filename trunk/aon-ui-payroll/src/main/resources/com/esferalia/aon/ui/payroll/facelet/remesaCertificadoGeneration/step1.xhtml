@@ -57,7 +57,9 @@
 					<f:facet name="header">
 						<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
 					</f:facet>
-					 <rich:inplaceSelect value="#{to.causaSuspension}"
+				    <aon:outputText rendered="#{!to.selected}" value="&#160;" />
+					 <rich:inplaceSelect rendered="#{to.selected}" 
+					 	value="#{to.causaSuspension}"
 					 	listHeight="300px" listWidth="300px" 
 					 	style="width:400px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
 				        defaultLabel="Seleccionar causa">
