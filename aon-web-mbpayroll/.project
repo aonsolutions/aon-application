@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>aon-web-payroll</name>
+	<name>aon-web-mbpayroll</name>
 	<comment></comment>
 	<projects>
-		<project>aon-ui-payroll</project>
 		<project>aon-payroll-nominasta</project>
 		<project>aon-payroll-core</project>
+		<project>aon-ui-resources</project>
+		<project>aon-ui-mbpayroll</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
