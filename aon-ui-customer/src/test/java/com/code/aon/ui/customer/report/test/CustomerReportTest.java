@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.customer.Customer;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -38,12 +37,8 @@ public class CustomerReportTest extends AbsReportPrintTest{
 
 	public CompanyController getCompanyController() {
 		if (companyController == null) {
-			try {
-				companyController = new CompanyController();
-				companyController.setPojo(Company.class.getName());
-			} catch (ManagerBeanException e) {
-				fail(e.getMessage());
-			}
+			companyController = new CompanyController();
+			companyController.setPojo(Company.class.getName());
 		}
 		return companyController;
 	}
