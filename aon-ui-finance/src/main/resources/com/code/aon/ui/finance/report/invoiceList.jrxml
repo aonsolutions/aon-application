@@ -12,6 +12,10 @@
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
+	<parameter name="title" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$R{invoice_list_report}]]></defaultValueExpression>
+	</parameter>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registry" class="com.code.aon.registry.Registry"/>
@@ -179,7 +183,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{invoice_list_report}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{title}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

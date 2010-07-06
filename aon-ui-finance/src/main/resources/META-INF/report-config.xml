@@ -19,6 +19,32 @@
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 	</report>
+	
+	<!--  *********  Listado de Facturas de Ventas  ********* -->
+	<report id="noFinanceInvoiceList" description="No Finance Invoice's List">
+		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
+		<collection provider="#{financeCollections.noFinanceInvoiceList}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="title" value="#{financeCollections.getReportName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Listado de Facturas de Ventas  ********* -->
+	<report id="notEqualAmountInvoiceList" description="No Finance Invoice's List">
+		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
+		<collection provider="#{financeCollections.notEqualAmountInvoiceList}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="title" value="#{financeCollections.getReportName}" />
+		</params>
+	</report>
 
 	<!--  *********  Listado Detallado Facturas de Ventas  ********* -->
 	<report id="saleInvoiceDetailledList" description="Listado Detallado de Facturas Generico">
