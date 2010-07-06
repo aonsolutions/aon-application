@@ -43,6 +43,9 @@ public class WorkPlace implements ITransferObject, IEntity {
 
 	/** Working place description */
 	private String description;
+	
+	/** Indicates the enterprise that this Working place belongs to */
+    private Enterprise enterprise; 	
 
 	/** Working place address */
     private RegistryAddress address;
@@ -102,6 +105,28 @@ public class WorkPlace implements ITransferObject, IEntity {
 		this.description = description;
 	}
 
+	/**
+	 * Gets the enterprise.
+	 * 
+	 * @return the enterprise
+	 */
+	@OneToOne
+    @JoinColumn(name="enterprise", updatable = false)
+    @ForeignKey(name = "FK_WORKPLACE_ENTERPRISE")
+    @Index(name = "IDX_WORKPLACE_ENTERPRISE")    
+    public Enterprise getEnterprise() {
+		return enterprise;
+	}
+
+	/**
+	 * Sets the enterprise.
+	 * 
+	 * @param enterprise the new enterprise
+	 */
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
+	}
+	
 	/**
 	 * Gets the address.
 	 * 
@@ -263,6 +288,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 				.append(this.address, o.address)
 				.append(this.calendar, o.calendar)				
 				.append(this.description, o.description)
+				.append(this.enterprise, o.enterprise)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -275,13 +301,18 @@ public class WorkPlace implements ITransferObject, IEntity {
 			.append(address)
 			.append(calendar)
 			.append(description)
+			.append(enterprise)
 			.append(id)
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("id", id).append("description", description).toString();
+		return new ToStringBuilder(this)
+			.append("id", id)
+			.append("active", active)
+			.append("enterprise", enterprise.getId())
+			.append("description", description).toString();
 	}
 
 }
