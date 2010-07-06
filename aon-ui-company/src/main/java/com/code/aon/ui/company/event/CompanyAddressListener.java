@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
@@ -50,6 +52,7 @@ public class CompanyAddressListener extends ControllerAdapter {
 			try {
 				IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
 				WorkPlace workPlace = new WorkPlace();
+				workPlace.setEnterprise(obtainEnterprise(address));
 				workPlace.setDescription( address.getAddress() + (address.getAddress2() != null?" " + address.getAddress2():"" ) +  (address.getAddress3() != null?" " + address.getAddress3():"" ));
 				workPlace.setAddress( address );
 				workPlace.setActive( true );
@@ -113,4 +116,18 @@ public class CompanyAddressListener extends ControllerAdapter {
 		return null;
 	}
 
+	private Enterprise obtainEnterprise(RegistryAddress registryAddress) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_REGISTRY_ID), registryAddress.getRegistry().getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				return (Enterprise) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining enterprise with address= " + registryAddress.getId(), e);
+		}
+		return null;
+	}	
 }
