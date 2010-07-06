@@ -7,6 +7,7 @@ import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.customer.Customer;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.EnterpriseTree;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -18,6 +19,14 @@ import com.code.aon.ui.util.AonUtil;
  * 
  */
 public class EnterpriseControllerListener extends ControllerAdapter {
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		Enterprise enterprise = (Enterprise) event.getController().getTo();
+		EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_TREE_CONTROLLER_NAME);
+		tree.loadTree(enterprise);
+	}
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event)

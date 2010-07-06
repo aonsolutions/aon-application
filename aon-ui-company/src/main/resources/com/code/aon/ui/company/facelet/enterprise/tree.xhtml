@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:form>
+		<rich:tree id="enterpriseTree"
+			styleClass="aon-normal" selectedClass="aon-tree-node-active" 
+			reRender="aonStatus" 
+			ajaxSubmitSelection="true"  switchType="ajax"
+			value="#{enterpriseTree.rootNode}" var="enterpriseNode"
+			nodeFace="#{enterpriseNode.typeName}">
+			
+			<rich:treeNode type="ENTERPRISE" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-root.png']}">
+				<aon:outputText value="#{enterpriseNode.label}" />
+			</rich:treeNode>
+			<rich:treeNode type="WORKPLACE" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree.png']}">
+				<aon:outputText value="#{enterpriseNode.label}" />
+			</rich:treeNode>
+			<rich:treeNode type="ACTIVITY" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-task-assume.png']}">
+				<aon:outputText value="#{enterpriseNode.label}" />
+			</rich:treeNode>
+				
+		</rich:tree>
+	</aon:form>	
+	
+</ui:composition>
