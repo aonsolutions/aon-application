@@ -2943,6 +2943,12 @@
 			<to-view-id>/com/code/aon/ui/finance/facelet/financePrint/checking.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>invoice_checking</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financePrint/invoiceChecking.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 	<!-- =================== Invoicing Group ========================== -->
 	<navigation-rule>
