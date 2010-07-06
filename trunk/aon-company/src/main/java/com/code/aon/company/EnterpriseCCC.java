@@ -57,8 +57,8 @@ public class EnterpriseCCC implements ITransferObject {
 
 	@OneToOne
     @JoinColumn(name="enterprise", updatable = false)
-    @ForeignKey(name = "FK_ENTERPRICE_CCC_ENTERPRICE")
-    @Index(name = "IDX_ENTERPRICE_CCC_ENTERPRICE")    
+    @ForeignKey(name = "FK_ENTERPRICE_CCC_ENTERPRISE")
+    @Index(name = "IDX_ENTERPRICE_CCC_ENTERPRISE")    
     public Enterprise getEnterprise() {
 		return enterprise;
 	}
