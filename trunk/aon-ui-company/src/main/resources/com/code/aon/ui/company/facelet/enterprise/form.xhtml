@@ -39,6 +39,9 @@
 						<aon:panelTab id="workplace" label="#{companyBundle.company_workplace}">
 							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/gridContent.xhtml">
 								<ui:param name="controller" value="#{enterpriseWorkplace}" />
+								<ui:param name="newSaveButtonReRender" value="enterpriseTree" />
+								<ui:param name="removeButtonReRender" value="enterpriseTree" />
+								<ui:param name="saveButtonReRender" value="enterpriseTree" />
 							</ui:include>
 						</aon:panelTab>
 						
