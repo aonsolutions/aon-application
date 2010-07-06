@@ -11,7 +11,6 @@ import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.common.io.AonFile;
 
@@ -22,16 +21,6 @@ public class CompanyController extends CompanyParentController {
 
 	/** The uploaded file. */
 	private AonFile aonFile;
-
-	/**
-	 * The empty constructor.
-	 * 
-	 * @throws ManagerBeanException
-	 *             the manager bean exception
-	 */
-	public CompanyController() throws ManagerBeanException {
-		super();
-	}
 
 	/**
 	 * Gets the uploaded file.

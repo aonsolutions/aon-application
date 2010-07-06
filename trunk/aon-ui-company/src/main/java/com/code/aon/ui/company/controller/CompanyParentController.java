@@ -3,7 +3,6 @@ package com.code.aon.ui.company.controller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -13,7 +12,6 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
@@ -31,8 +29,6 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -372,35 +368,6 @@ public class CompanyParentController extends BasicController implements ICompany
 		addressDirty = true;
 	}
 
-	/**
-	 * On addresses. Loads the addresses of the company
-	 * 
-	 * @param event the event
-	 */
-	public void onAddresses(ActionEvent event){
-		loadAddresses();
-	}
-
-	/**
-	 * Loads the addresses of the company.
-	 */
-	public void loadAddresses(){
-		try {
-			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-			IController master = this;
-			IController detail = FormUtil.getController(getChildBean());
-			ITransferObject to = master.getTo();
-			String reg = detail.getFieldName(getMasterFieldName());
-			Criteria criteria = new Criteria();
-			Serializable id = master.getManagerBean().getId( to );			
-			criteria.addEqualExpression(reg, id);
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.DELEGATION);
-			detail.setCriteria(criteria);
-			detail.initializeModel();
-		} catch (ManagerBeanException e) {
-		}		
-	}
-	
 	@SuppressWarnings("unchecked")
 	private void loadMainAddress() throws ManagerBeanException {
 		Integer id = ((Company)this.getModel().getRowData()).getId();

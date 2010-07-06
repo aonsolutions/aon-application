@@ -1,13 +1,12 @@
 package com.code.aon.ui.company.event;
 
-import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
@@ -15,7 +14,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -30,17 +28,13 @@ public class CompanyAddressListener extends ControllerAdapter {
 	/** The LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyAddressListener.class.getName());
 	
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
-	 */
 	@Override
-	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		RegistryAddress address = null;
-		if ( event.getController().getTo() instanceof RegistryAddress ) {
-			address = (RegistryAddress)event.getController().getTo();
-			address.setAddressType( (address.getAddressType() == null)? AddressType.DELEGATION: address.getAddressType() ); 
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		RegistryAddress rAddress = (RegistryAddress) event.getController().getTo();
+		if(rAddress.getAddressType() == null){
+			rAddress.setAddressType(AddressType.DELEGATION);
 		}
-	}
+	}	
 
 	/**
 	 * Adds a workPlace related with the current RegistryAddress
@@ -51,14 +45,7 @@ public class CompanyAddressListener extends ControllerAdapter {
 	 */
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		RegistryAddress address = null;
-		if ( event.getController() instanceof ICompanyController ) {
-			ICompanyController cc = (ICompanyController) event.getController();
-			address = cc.getMainAddress();
-		}
-		if ( address == null && event.getController().getTo() instanceof RegistryAddress ) {
-			address = (RegistryAddress)event.getController().getTo();
-		}
+		RegistryAddress address = (RegistryAddress) event.getController().getTo();
 		if( address.getAddressType().equals(AddressType.MAIN) || address.getAddressType().equals(AddressType.DELEGATION) ) {
 			try {
 				IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
@@ -85,26 +72,21 @@ public class CompanyAddressListener extends ControllerAdapter {
 	 */
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		RegistryAddress address = null;
-		if ( event.getController() instanceof ICompanyController ) {
-			ICompanyController cc = (ICompanyController) event.getController();
-			address = cc.getMainAddress();
-		}
-		if ( address == null && event.getController().getTo() instanceof RegistryAddress ) {
-			address = (RegistryAddress)event.getController().getTo();
-		}
+		RegistryAddress address = (RegistryAddress) event.getController().getTo();
 		if( address.getAddressType().equals(AddressType.MAIN) || address.getAddressType().equals(AddressType.DELEGATION) ) {
-			WorkPlace workPlace = obtainWorkPlace( address );
+			List<WorkPlace> workPlaces = obtainWorkPlaces( address );
 			try {
-				IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
-				if(workPlace != null){
-					workPlace.setActive( false );
-					workPlaceBean.insertOrUpdate( workPlace );
+				if (! workPlaces.isEmpty() ) {
+					IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);	
+					for( WorkPlace workPlace : workPlaces ) {
+						workPlace.setActive( false );
+						workPlaceBean.insertOrUpdate( workPlace );
+					}
 				}
 			} catch (ManagerBeanException e) {
 				//	TODO i18n
 				String message = "No se puede borrar esta dirección: " + address.getId() 
-								+ " ya que está asociada al Centro de Trabajo: " + workPlace.getDescription()
+								+ " ya que está asociada al Centro de Trabajo: " + workPlaces.get(0).getDescription()
 								+ ", desvincule 1º la relación de Empleados que trabajan en él.";
 				throw new ControllerListenerException( message, e);
 			}
@@ -118,18 +100,17 @@ public class CompanyAddressListener extends ControllerAdapter {
 	 * 
 	 * @return the work place
 	 */
-	private WorkPlace obtainWorkPlace(RegistryAddress registryAddress) {
+	@SuppressWarnings("unchecked")
+	private List<WorkPlace> obtainWorkPlaces(RegistryAddress registryAddress) {
 		try {
 			IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ADDRESS_ID), registryAddress.getId());
-			Iterator<ITransferObject> iter = workPlaceBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (WorkPlace)iter.next();
-			}
+			return (List) workPlaceBean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining workPlace with address= " + registryAddress.getId(), e);
 		}
 		return null;
 	}
+
 }

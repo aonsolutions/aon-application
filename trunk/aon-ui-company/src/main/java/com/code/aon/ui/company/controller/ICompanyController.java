@@ -31,7 +31,6 @@ public interface ICompanyController extends IController {
 	void setFax(RegistryMedia fax);
 	void setEmail(RegistryMedia email);
 	void setWeb(RegistryMedia web);
-	void loadAddresses();
 	boolean isPhoneDirty();
 	RegistryMedia getPhone();
 	boolean isFaxDirty();

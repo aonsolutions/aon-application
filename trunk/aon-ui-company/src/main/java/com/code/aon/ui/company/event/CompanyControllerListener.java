@@ -59,22 +59,25 @@ public class CompanyControllerListener extends ControllerAdapter {
 			Iterator mediaIter = mediaList.iterator();
 			while (mediaIter.hasNext()){
 				RegistryMedia rmedia = (RegistryMedia)mediaIter.next();
-				if (MediaType.FIXED_PHONE == rmedia.getMediaType()){
-					phone = rmedia;
-				}else if (MediaType.FAX == rmedia.getMediaType()){
-					fax = rmedia;
-				}else if (MediaType.EMAIL == rmedia.getMediaType()){
-					email = rmedia;
-				}else if (MediaType.WEB == rmedia.getMediaType()){
-					web = rmedia;
+				switch ( rmedia.getMediaType() ) {
+					case FIXED_PHONE:
+						phone = rmedia;
+						break;
+					case FAX:
+						fax = rmedia;
+						break;
+					case EMAIL:
+						email = rmedia;
+						break;
+					case WEB:
+						web = rmedia;
+						break;
 				}
 			}
 			c.setPhone(phone);				
 			c.setFax(fax);				
 			c.setEmail(email);				
 			c.setWeb(web);				
-			
-			c.loadAddresses();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -151,8 +154,6 @@ public class CompanyControllerListener extends ControllerAdapter {
 				c.getMainAddress().setRegistry((Company)c.getTo());
 				saveRegistryAddress(c.getMainAddress());
 			}
-			
-			c.loadAddresses();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -167,19 +168,12 @@ public class CompanyControllerListener extends ControllerAdapter {
 	 */
 	private void saveRegistryMedia(RegistryMedia rmedia) throws ManagerBeanException{
 		IManagerBean beanMedia = BeanManager.getManagerBean( RegistryMedia.class);
-		if (rmedia.getId()==null){
-			beanMedia.insert(rmedia);				
-		}else{
-			beanMedia.update(rmedia);				
-		}		
+		beanMedia.insertOrUpdate(rmedia);
 	}
 
 	private void saveRegistryAddress(RegistryAddress mainAddress) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-		if(mainAddress.getId() == null){
-			rAddressBean.insert(mainAddress);
-		}else{
-			rAddressBean.update(mainAddress);
-		}
+		rAddressBean.insertOrUpdate(mainAddress);
 	}
+	
 }
