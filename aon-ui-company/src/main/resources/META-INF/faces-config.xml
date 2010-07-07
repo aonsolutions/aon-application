@@ -1102,7 +1102,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!--  **** ENTERPRISE WORKPLACE **** -->
+	<!--  **** ENTERPRISE ACTIVITY **** -->
 	<managed-bean>
 		<managed-bean-name>workActivity</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
@@ -1123,6 +1123,10 @@
 			<property-name>masterControllerName</property-name>
 			<value>enterpriseWorkplace</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>WorkActivity_description</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -1173,6 +1177,225 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
+	<!--  **** EMPLOYEE **** -->
+	<managed-bean>
+		<managed-bean-name>employee</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.company.controller.EmployeeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>employee</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.resources.Employee</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Employee_registry_surname,Employee_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{employeeSearch}</value>
+				<value>#{employeeForm}</value>
+				<value>#{employeeAddressListener}</value>
+				<value>#{employeeMediaListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{employeeOptionalListeners}</value>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>employeeOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>employeeSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistrySearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>employeeForm</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.company.event.EmployeeeFormListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!--  **** EMPLOYEE ADDRESS **** -->
+	<managed-bean>
+		<managed-bean-name>employeeAddress</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>employeeAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>employee</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{employeeAddressControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>employeeAddressControllerListener</managed-bean-name>
+		<managed-bean-class> com.code.aon.ui.registry.controller.event.RegistryAddressControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>employeeAddressListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>employeeAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAddress_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** EMPLOYEE MEDIA **** -->
+	<managed-bean>
+		<managed-bean-name>employeeMedia</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class> 
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>employeeMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryMedia_mediaType,RegistryMedia_administrative desc,RegistryMedia_commercial desc,RegistryMedia_technical desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>employee</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>employeeMediaListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>employeeMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryMedia_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ========================================================== -->
+	<!-- ======================= LOOKUP =========================== -->
+	<!-- ========================================================== -->
+	
+	<!-- ************ WORK ACTIVITY LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>workActivityLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>workActivityLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.company.WorkActivity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>WorkActivity_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/company/facelet/lookup/workActivity/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/company/facelet/lookup/workActivity/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{workActivitySearch}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>workActivitySearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.company.event.WorkActivitySearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	
 	<!-- =================== Company ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -1213,4 +1436,20 @@
 		</navigation-case>
 	</navigation-rule>	
 	
+	<!-- =================== Employee ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>employee_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/employee/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/employee/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/employee/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+		
 </faces-config>

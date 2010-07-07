@@ -35,7 +35,13 @@
 									action="enterprise_search" actionListener="#{enterprise.onEditSearch}"
 									value="#{companyBundle.company_enterprise_module}">
 								</aon:commandLink>
-							</aon:div>								
+							</aon:div>				
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="employee" 
+									action="employee_search" actionListener="#{employee.onEditSearch}"
+									value="#{companyBundle.company_employee_module}">
+								</aon:commandLink>
+							</aon:div>		
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="workplace" 
 									action="workplace" 

@@ -51,6 +51,8 @@ public interface ICompanyConstants {
 	String ENTERPRISE_TREE_CONTROLLER_NAME = "enterpriseTree";
 	
 	String ENTERPRISE_WORK_PLACE_CONTROLLER_NAME = "enterpriseWorkplace";
+	
+	String EMPLOYEE_CONTROLLER_NAME = "employee";	
 
 	// ************************************************************
 	// CONFIGURATION
