@@ -36,7 +36,11 @@
 					action="enterpriseWorkplace_form"
 					actionListener="#{enterpriseTree.onSelectWorkActivity}"/>
 			</rich:treeNode>
-				
+			<rich:treeNode type="EMPLOYEE"
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-user.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-user.png']}">
+				<aon:outputText value="#{enterpriseNode.label}" />
+			</rich:treeNode>				
 		</rich:tree>
 	</aon:form>	
 	
