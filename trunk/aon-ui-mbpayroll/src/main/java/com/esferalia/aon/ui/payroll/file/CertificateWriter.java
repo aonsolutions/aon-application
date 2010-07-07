@@ -246,16 +246,17 @@ public class CertificateWriter {
 		if(trabajosTP!=null && trabajosTP.size()>0){
 			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
 			for(ITrabajo t: trabajosTP){
+				Periodo periodo=null;
 				try{
-					Periodo periodo = new Periodo();
+					periodo = new Periodo();
 					periodo.setTipoDistribucion(t.getTipoTP().getValue());
 					periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
 					periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
 					periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parse5Digit(t.getDiasTP()));
-					listaPeriodos.add(periodo);
 				} catch(NullPointerException e){
 					// NADA, no tener en cuenta el periodo
 				}
+				listaPeriodos.add(periodo);
 			}
 			DistribucionJornada jornada = new DistribucionJornada();
 			jornada.setListaPeriodos(listaPeriodos);
@@ -339,8 +340,8 @@ public class CertificateWriter {
 			if(finiquito!=null){
 				Vacaciones vacaciones = new Vacaciones();
 				vacaciones.setNumDiasCotizados(parse3Digit(finiquito.getDiasVacaciones()));
-				vacaciones.setBaseCotizacionDesempleo(parse9Digit(finiquito.getBaseAccidentesTrabajo()));
 				vacaciones.setBaseCotizacionContingenciasComunes(parse9Digit(finiquito.getBaseContingenciasGenerales()));
+				vacaciones.setBaseCotizacionDesempleo(parse9Digit(finiquito.getBaseAccidentesTrabajo()));
 				vacaciones.setObservaciones(null);
 				IFiniquitoDiferencia finiquitodf = getNominaDAO().getFiniquitoDiferencia(empleado);
 				if(finiquitodf!=null){
