@@ -15,6 +15,7 @@ import org.hibernate.annotations.Parameter;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.company.IEntity;
 import com.code.aon.company.IEntityVisitor;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 
 /**
@@ -27,7 +28,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name="employee")
-public class Employee implements ITransferObject, IEntity {
+public class Employee implements ITransferObject, IEntity, IRegistry {
 
 	private static final long serialVersionUID = 1244821002402216187L;
 
