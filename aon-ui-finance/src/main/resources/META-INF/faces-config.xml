@@ -18,6 +18,15 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- ************ CHECKING**************** -->
+	<managed-bean>
+		<managed-bean-name>financeChecking</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.FinanceCheckingController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- ************* FBATCH ***************** -->
 	<managed-bean>
