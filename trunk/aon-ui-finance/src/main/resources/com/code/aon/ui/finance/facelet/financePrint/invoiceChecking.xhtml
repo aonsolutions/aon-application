@@ -57,14 +57,14 @@
 					<aon:outputLabel for="Finance_dueDate-From"
 						styleClass="aon-form-date-label" value="#{bundle.aon_date_from}:" />
 					<aon:selectInputDate id="Invoice_issueDate"
-						value="#{financeCollections.fromDate}" 
+						value="#{financeChecking.fromDate}" 
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Finance_dueDate-To"
 						styleClass="aon-form-date-label" value="#{bundle.aon_date_to}:" />
 					<aon:selectInputDate id="Invoice_issueDater"
-						value="#{financeCollections.toDate}" 
+						value="#{financeChecking.toDate}" 
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 				</aon:panelGrid>
