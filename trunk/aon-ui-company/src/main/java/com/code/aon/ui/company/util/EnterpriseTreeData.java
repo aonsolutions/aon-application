@@ -1,5 +1,7 @@
 package com.code.aon.ui.company.util;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 public class EnterpriseTreeData {
 
 	private Integer id;
@@ -28,6 +30,18 @@ public class EnterpriseTreeData {
 
 	public String getTypeName() {
 		return type.toString();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final EnterpriseTreeData o = (EnterpriseTreeData) obj;
+		return new EqualsBuilder()
+			.append(this.id, o.id)
+			.append(this.type, o.type)
+			.isEquals();
 	}
 	
 }
