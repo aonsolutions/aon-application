@@ -64,18 +64,20 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 
 		Finance finance = (Finance)financeController.getTo();
 		try {
-			for (SelectItem item : financeController.getBanks()) {
-				RegistryBank rBank = (RegistryBank)item.getValue();
-				BankAccount bankAccount = rBank.getBankAccount();
-				if (bankAccount != null) {
-					if (StringUtils.equals(finance.getBankAccount().getValue(), bankAccount.getValue())) {
-						financeController.setRegistryBank(rBank);
-						break;
+			if (StringUtils.isNotEmpty(finance.getBankAccount().getValue())) {
+				for (SelectItem item : financeController.getBanks()) {
+					RegistryBank rBank = (RegistryBank)item.getValue();
+					BankAccount bankAccount = rBank.getBankAccount();
+					if (bankAccount!= null) {
+						if (StringUtils.equals(finance.getBankAccount().getValue(), bankAccount.getValue())) {
+							financeController.setRegistryBank(rBank);
+							break;
+						}
 					}
 				}
 			}
 		} catch (ManagerBeanException e) {
-			financeController.setRegistryBank(null);
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
