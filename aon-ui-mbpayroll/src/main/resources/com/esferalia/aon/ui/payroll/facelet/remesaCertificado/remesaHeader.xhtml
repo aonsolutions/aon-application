@@ -22,7 +22,10 @@
 			<aon:outputText value="#{remesaCertificadoWizard.remesa.numeroCcc}" />
 
 			<aon:outputText value="#{payrollBundle.payroll_fecha}" />
-			<aon:outputText value="#{remesaCertificadoWizard.remesa.fecha}" />
+			<aon:outputText value="#{remesaCertificadoWizard.remesa.fecha}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
 		</aon:panelGrid>
 	</aon:panel>
 
