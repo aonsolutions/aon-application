@@ -81,25 +81,26 @@
 										<aon:outputText value=" - #{configBundle.config_bank_account}" />
 									</aon:div>
 								</f:facet>
-								<aon:outputText value="#{to.bank.name}" rendered="#{formList}" />
+								<aon:outputText rendered="#{formList}" value="#{to.bank.code}" />
 								<aon:outputText rendered="#{formList}" value=" #{to.bankAccount}" />
 								<aon:div id="RegistryBank_lookup" styleClass="aon-lookup"
 									rendered="#{formEdit}">
 									<aon:lookupInputText id="RegistryBank_code"
-										property="#{to.bank}" reRender="RegistryBank_lookup"
-										lookup="#{bankLookup}"
 										value="#{financeController.to.bank.code}" size="3"
+										property="#{financeController.to.bank}" lookup="#{bankLookup}"
 										lookupChangeListener="#{financeController.onBankChanged}"
-										maxlength="4">
+										reRender="RegistryBank_lookup" 
+										ajaxSingle="true" maxlength="4">
 										<aon:joinProperty alias="Bank_code"
 											value="#{financeController.to.bank.code}" />
 									</aon:lookupInputText>
 									<aon:lookupButton
 										windowTitle="#{configBundle.config_bank_selection}"
-										selectReRender="RegistryBank_lookup" actionType="search"
+										minHeight="460"	minWidth="650"
+										property="#{financeController.to.bank}"	lookup="#{bankLookup}"
 										lookupChangeListener="#{financeController.onBankChanged}"
-										lookup="#{bankLookup}" minHeight="460" minWidth="650"
-										property="#{financeController.to.bank}">
+										selectReRender="RegistryBank_lookup" 
+										actionType="search">
 									</aon:lookupButton>
 									<aon:inputText id="RegistryBank_name"
 										value="#{financeController.to.bank.name}" size="30"
@@ -140,25 +141,26 @@
 											<f:selectItems value="#{financeController.banks}" />
 										</aon:selectOneMenu>
 									</aon:div>
-								</aon:div>
+ 								</aon:div>
 								<f:facet name="footer">
 									<aon:div id="RegistryBank_lookup-New" styleClass="aon-lookup"
 										rendered="#{formNew}">
 										<aon:lookupInputText id="RegistryBank_code-New"
-											property="#{financeController.to.bank}"
-											reRender="RegistryBank_lookup-New" lookup="#{bankLookup}"
-											lookupChangeListener="#{financeController.onBankChanged}"
 											value="#{financeController.to.bank.code}" size="3"
-											maxlength="4">
+											property="#{financeController.to.bank}" lookup="#{bankLookup}"
+											lookupChangeListener="#{financeController.onBankChanged}"
+											reRender="RegistryBank_lookup-New" 
+											ajaxSingle="true" maxlength="4">
 											<aon:joinProperty alias="Bank_code"
 												value="#{financeController.to.bank.code}" />
 										</aon:lookupInputText>
 										<aon:lookupButton
 											windowTitle="#{configBundle.config_bank_selection}"
-											selectReRender="RegistryBank_lookup-New"
+											minHeight="460"	minWidth="650"
+											property="#{financeController.to.bank}"	lookup="#{bankLookup}"
 											lookupChangeListener="#{financeController.onBankChanged}"
-											actionType="search" lookup="#{bankLookup}" minHeight="460"
-											minWidth="650" property="#{financeController.to.bank}">
+											selectReRender="RegistryBank_lookup-New"
+											actionType="search">
 										</aon:lookupButton>
 										<aon:inputText id="RegistryBank_name-New"
 											value="#{financeController.to.bank.name}" size="30"
@@ -202,8 +204,8 @@
 										</aon:div>
 									</aon:div>
 								</f:facet>
-							</aon:column>
-	
+ 							</aon:column>
+
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_status}" />
