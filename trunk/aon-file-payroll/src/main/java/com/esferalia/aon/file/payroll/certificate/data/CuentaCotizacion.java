@@ -38,7 +38,9 @@ public class CuentaCotizacion {
 		cuentaCotizacion.appendChild(getRepresentante().getElement(xmldoc));
 		cuentaCotizacion.appendChild(getEmpresa().getElement(xmldoc));
 		for(Trabajador t: getListaTrabajadores()){
-			cuentaCotizacion.appendChild(t.getElement(xmldoc));
+			if(t!=null){
+				cuentaCotizacion.appendChild(t.getElement(xmldoc));
+			}
 		}
 		return cuentaCotizacion;
 	}
