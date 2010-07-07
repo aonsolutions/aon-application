@@ -4,6 +4,7 @@ public enum EnterpriseTreeType {
 	
 	ENTERPRISE,
 	WORKPLACE,
-	ACTIVITY;
+	ACTIVITY,
+	EMPLOYEE;
 
 }

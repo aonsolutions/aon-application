@@ -20,6 +20,7 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkActivity;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
+import com.code.aon.company.resources.Employee;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.util.EnterpriseTreeData;
 import com.code.aon.ui.company.util.EnterpriseTreeType;
@@ -63,6 +64,24 @@ public class EnterpriseTree implements ICompanyConstants {
 	public EnterpriseTreeData getTreeData( WorkActivity wa ) {
 		return new EnterpriseTreeData( wa.getId(), wa.getDescription(), EnterpriseTreeType.ACTIVITY);
 	}
+
+	public EnterpriseTreeData getTreeData( Employee e ) {
+		return new EnterpriseTreeData( e.getId(), e.getRegistry().getFullName(), EnterpriseTreeType.EMPLOYEE);
+	}
+	
+	private void loadEmployees( TreeNodeImpl<EnterpriseTreeData> workActivityNode, WorkActivity workActivity ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Employee.class);		
+		Criteria criteria = new Criteria();
+		String workActivityId = bean.getFieldName(ICompanyAlias.EMPLOYEE_CALENDAR);
+		criteria.addEqualExpression(workActivityId, workActivity.getId());
+		for( ITransferObject to : bean.getList(criteria) ) {
+			Employee e = (Employee) to;
+			TreeNodeImpl<EnterpriseTreeData> employeeNode = new TreeNodeImpl<EnterpriseTreeData>();
+			EnterpriseTreeData etd = getTreeData(e);
+			employeeNode.setData(etd);
+			workActivityNode.addChild( etd.getType().toString() + etd.getId(), employeeNode );
+		}		
+	}	
 	
 	private void loadWorkActivities( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(WorkActivity.class);		
@@ -75,6 +94,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			EnterpriseTreeData etd = getTreeData(wa);
 			waNode.setData(etd);
 			workPlaceNode.addChild( etd.getType().toString() + etd.getId(), waNode );
+			loadEmployees(waNode, wa);
 		}		
 	}
 
