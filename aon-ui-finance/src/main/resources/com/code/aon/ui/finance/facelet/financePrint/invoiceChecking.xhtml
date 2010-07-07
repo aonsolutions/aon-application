@@ -20,6 +20,7 @@
 				<ui:define name="toolbarContent">
 					<aon:htmlCommandLink id="customeFeeChecking-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
+						actionListener="#{financeChecking.onNoFinanceList}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="noFinanceInvoiceList" />
 						<f:param name="outputFormat" value="MS Excel" />
@@ -27,6 +28,7 @@
 					<aon:htmlCommandLink id="customeFeeChecking-report"
 						value="#{financeBundle.finance_invoice_checking_module_no_finance}"
 						target="_blank" action="#{report.onExecute}"
+						actionListener="#{financeChecking.onNoFinanceList}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="noFinanceInvoiceList" />
@@ -34,12 +36,14 @@
 
 					<aon:htmlCommandLink id="financeChecking-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
+						actionListener="#{financeChecking.onWrongFinanceList}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="notEqualAmountInvoiceList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="financeChecking-report" value="#{financeBundle.finance_invoice_checking_module_wrong_finance}"
 						target="_blank" action="#{report.onExecute}"
+						actionListener="#{financeChecking.onWrongFinanceList}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="notEqualAmountInvoiceList" />

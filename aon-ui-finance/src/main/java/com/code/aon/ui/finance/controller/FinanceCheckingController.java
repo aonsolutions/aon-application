@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,6 +7,8 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.hibernate.Query;
@@ -36,9 +37,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.ui.util.AonUtil;
 
-
 public class FinanceCheckingController {
-
 
 	private List<Invoice> noFinanceInvoiceList;
 	private List<Invoice> notEqualAmountInvoiceList;
@@ -47,7 +46,7 @@ public class FinanceCheckingController {
 	private IPriceStrategy priceStrategy;
 	private String reportName;
 	private static final String bundle = "financeBundle";
-	
+
 	public String getReportName() {
 		return reportName;
 	}
@@ -71,7 +70,7 @@ public class FinanceCheckingController {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
-	
+
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
@@ -79,78 +78,112 @@ public class FinanceCheckingController {
 		return priceStrategy;
 	}
 
-	public List<Invoice> getNotEqualAmountInvoiceList() throws ManagerBeanException {
-	
+	public void onWrongFinanceList(ActionEvent e) throws ManagerBeanException {
+
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
-		if (this.getFromDate()!=null){
-			criteria.addGreaterThanOrEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE),this.fromDate);
+		criteria.addEqualExpression(invoiceBean
+				.getFieldName(IFinanceAlias.INVOICE_STATUS),
+				InvoiceStatus.PENDING);
+		if (this.getFromDate() != null) {
+			criteria.addGreaterThanOrEqualExpression(invoiceBean
+					.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE),
+					this.fromDate);
 		}
-		if (this.getToDate()!=null){
-			criteria.addLessThanOrEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE),this.toDate);
+		if (this.getToDate() != null) {
+			criteria.addLessThanOrEqualExpression(invoiceBean
+					.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE),
+					this.toDate);
 		}
-		Iterator<ITransferObject> iterator = invoiceBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iterator = invoiceBean.getList(criteria)
+				.iterator();
 		notEqualAmountInvoiceList = new LinkedList<Invoice>();
 		while (iterator.hasNext()) {
-			Double invoiceTotal =0.0;
-			Double financeTotal=0.0;
-			Invoice inv = (Invoice)iterator.next();
+			Double invoiceTotal = 0.0;
+			Double financeTotal = 0.0;
+			Invoice inv = (Invoice) iterator.next();
 			if (InvoiceType.UNDEDUCTIBLE == inv.getType()) {
-				invoiceTotal=getPriceStrategy().getTaxableBase((ICalculableContainer)inv);
+				invoiceTotal = getPriceStrategy().getTaxableBase(
+						(ICalculableContainer) inv);
+			} else {
+				invoiceTotal = getPriceStrategy().getTotalPrice(
+						(ICalculableContainer) inv, (ITaxInfo) inv);
 			}
-			else{
-				invoiceTotal =getPriceStrategy().getTotalPrice((ICalculableContainer)inv, (ITaxInfo)inv);
-			}
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			IManagerBean financeBean = BeanManager
+					.getManagerBean(Finance.class);
 			Criteria cri = new Criteria();
-			cri.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE), inv.getReferenceCode());
-			Iterator<ITransferObject> iter = financeBean.getList(cri).iterator();
-			while(iter.hasNext()) {
-				Finance finance = (Finance)iter.next();
+			cri
+					.addEqualExpression(
+							financeBean
+									.getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE),
+							inv.getReferenceCode());
+			Iterator<ITransferObject> iter = financeBean.getList(cri)
+					.iterator();
+			while (iter.hasNext()) {
+				Finance finance = (Finance) iter.next();
 				financeTotal += finance.getAmount();
 			}
-			if(!invoiceTotal.equals(financeTotal)){
+			if (!invoiceTotal.equals(financeTotal)) {
 				notEqualAmountInvoiceList.add(inv);
 			}
 		}
-		if(notEqualAmountInvoiceList.size()==0){
-			AonUtil.addInfoMessage("No hay facturas con vencimientos Erroneos");
+		if (noFinanceInvoiceList.size() == 0) {
+			String msg = "No hay facturas con vencimientos erroneos";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
-		setReportName(AonUtil.getMessage(bundle, "finance_invoice_checking_module_wrong_finance"));	
+		setReportName(AonUtil.getMessage(bundle,
+				"finance_invoice_checking_module_wrong_finance"));
+	}
+
+	public void onNoFinanceList(ActionEvent e) {
+
+		String dateCriteria = "";
+		if (this.getFromDate() != null) {
+			dateCriteria = " Invoice.issueDate >= '"
+					+ new java.sql.Date(this.getFromDate().getTime())
+							.toString() + "' AND";
+		}
+		if (this.getToDate() != null) {
+			dateCriteria = dateCriteria + " Invoice.issueDate <= '"
+					+ new java.sql.Date(this.getToDate().getTime()).toString()
+					+ "' AND ";
+		}
+		String select = "select Invoice "
+				+ "from Invoice as Invoice "
+				+ "where "
+				+ dateCriteria
+				+ " Invoice.referenceCode not in (select Finance.invoice.referenceCode from Finance as Finance)";
+		Session session = HibernateUtil.getSession(HibernateUtil
+				.getSessionFactoryName());
+		Query query = session.createQuery(select);
+		noFinanceInvoiceList = query.list();
+
+		setReportName(AonUtil.getMessage(bundle,
+				"finance_invoice_checking_module_no_finance"));
+		if (noFinanceInvoiceList.size() == 0) {
+			String msg = "No hay facturas sin vencimientos";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
+	public List<Invoice> getNotEqualAmountInvoiceList()
+			throws ManagerBeanException {
 		return notEqualAmountInvoiceList;
 	}
 
-	public void setNotEqualAmountInvoiceList(List<Invoice> notEqualAmountInvoiceList) {
+	public void setNotEqualAmountInvoiceList(
+			List<Invoice> notEqualAmountInvoiceList) {
 		this.notEqualAmountInvoiceList = notEqualAmountInvoiceList;
 	}
 
 	public List<Invoice> getNoFinanceInvoiceList() {
-		String dateCriteria ="";
-		if(this.getFromDate()!=null){
-			dateCriteria=" Invoice.issueDate >= '"+ new java.sql.Date(this.getFromDate().getTime()).toString()	+ "' AND";
-		}
-		if(this.getToDate()!=null){
-			dateCriteria=dateCriteria+" Invoice.issueDate <= '"+ new java.sql.Date(this.getToDate().getTime()).toString() +"' AND " ;
-		}
-		String select = "select Invoice "
-			+ "from Invoice as Invoice "
-			+ "where " 
-			+  dateCriteria 
-			+" Invoice.referenceCode not in (select Finance.invoice.referenceCode from Finance as Finance)";
-	Session session = HibernateUtil.getSession(HibernateUtil
-			.getSessionFactoryName());
-	Query query = session.createQuery(select);
-	noFinanceInvoiceList = query.list();
-	if(noFinanceInvoiceList.size()==0){
-		AonUtil.addErrorMessage("No hay facturas sin vencimientos ");
-	}
-	setReportName(AonUtil.getMessage(bundle, "finance_invoice_checking_module_no_finance"));
-	return noFinanceInvoiceList;
+		return noFinanceInvoiceList;
 	}
 
 	public void setNoFinanceInvoiceList(List<Invoice> noFinanceInvoiceList) {
 		this.noFinanceInvoiceList = noFinanceInvoiceList;
 	}
-	
+
 }
