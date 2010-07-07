@@ -148,8 +148,10 @@ public class CertificateWriter {
 			// Invoke the validation
 			validator.validate(source);
 		} catch (Exception e) {
-			AonUtil.addErrorMessage("error de formato al generar el xml");
-			throw new AbortProcessingException();
+			String msg = "error de formato al generar el xml";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(msg,e);
 			// NADA
 		}
 	}
@@ -158,13 +160,13 @@ public class CertificateWriter {
 		CuentaCotizacion cuentaCotizacion = new CuentaCotizacion();
 		Representante representante = new Representante();
 		representante.setCifNif(remesa.getEmpresa().getRepresentanteDocument());
-		representante.setNombre(remesa.getEmpresa().getNombreRepresentante());
-		representante.setApellido1(remesa.getEmpresa().getApellido1Representante());
+		representante.setNombre(parseNombre(remesa.getEmpresa().getNombreRepresentante()));
+		representante.setApellido1(parseApellido(remesa.getEmpresa().getApellido1Representante()));
 		if(!StringUtils.isBlank(remesa.getEmpresa().getApellido2Representante())){
-			representante.setApellido2(remesa.getEmpresa().getApellido2Representante());
+			representante.setApellido2(parseApellido(remesa.getEmpresa().getApellido2Representante()));
 		}
 		if(!StringUtils.isBlank(remesa.getEmpresa().getCargo())){
-			representante.setCargo(remesa.getEmpresa().getCargo());
+			representante.setCargo(parseCargo(remesa.getEmpresa().getCargo()));
 		}
 		cuentaCotizacion.setRepresentante(representante);
 		Empresa empresa = new Empresa();
@@ -195,11 +197,13 @@ public class CertificateWriter {
 			
 		Trabajador trabajador = new Trabajador();
 		trabajador.setDniNie(detalle.getEmpleado().getPersona().getRegistry().getDocument().getValue());
-		trabajador.setNombre(detalle.getEmpleado().getPersona().getName());
-		trabajador.setApellido1(detalle.getEmpleado().getPersona().getSurname());
-		trabajador.setApellido2(detalle.getEmpleado().getPersona().getLastName());
+		trabajador.setNombre(parseNombre(detalle.getEmpleado().getPersona().getName()));
+		trabajador.setApellido1(parseApellido(detalle.getEmpleado().getPersona().getSurname()));
+		if(!StringUtils.isBlank(detalle.getEmpleado().getPersona().getLastName())){
+			trabajador.setApellido2(parseApellido(detalle.getEmpleado().getPersona().getLastName()));
+		}
 		trabajador.setNumSs(detalle.getEmpleado().getPersona().getNumSS());
-		trabajador.setGrupoCotizacion(trabajos.get(0).getBaseCotizacion().getCdg());
+		trabajador.setGrupoCotizacion(parse2Digit(trabajos.get(0).getBaseCotizacion().getCdg()));
 		trabajador.setTipoContrato(parse3Digit(trabajos.get(0).getContratoTc2().getCdg()));
 		if(trabajos.get(0).getFechaFinCont()!=null && trabajos.get(0).getFechaInicioCont()!=null){
 			trabajador.setDuracionContrato(parse5Digit(differenceBetweenDates(trabajos.get(0).getFechaFinCont(),trabajos.get(0).getFechaInicioCont())));
@@ -386,6 +390,27 @@ public class CertificateWriter {
 		days2 += endDate.get(Calendar.DAY_OF_YEAR) - 1;
 		return (days2>days1)?(days2-days1):(days1-days2);
 	}
+
+	private String parseNombre(String nombre){
+		if(nombre.length()>15){
+			return nombre.substring(0, 15);
+		}
+		return nombre;
+	}
+			
+	private String parseApellido(String apellido){
+		if(apellido.length()>20){
+			return apellido.substring(0, 20);
+		}
+		return apellido;
+	}
+	
+	private String parseCargo(String cargo){
+		if(cargo.length()>40){
+			return cargo.substring(0, 40);
+		}
+		return cargo;
+	}
 	
 	private String parseFecha(Date date) {
 		Calendar cal = new GregorianCalendar();
@@ -434,6 +459,8 @@ public class CertificateWriter {
 		}
 		return s;
 	}
+	
+	@SuppressWarnings("unused")
 	private String parse7Digit(String s) {
 		while(s.length()<7){
 			s = "0".concat(s);
