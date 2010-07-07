@@ -23,9 +23,8 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		Enterprise enterprise = (Enterprise) event.getController().getTo();
 		EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_TREE_CONTROLLER_NAME);
-		tree.loadTree(enterprise);
+		tree.loadTree();
 	}
 
 	@Override

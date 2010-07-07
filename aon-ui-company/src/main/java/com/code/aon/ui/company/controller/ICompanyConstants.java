@@ -32,7 +32,7 @@ public interface ICompanyConstants {
 
 	String COMPANY_CONTROLLER_NAME = "company";	
 
-	String WORK_ACTIVITY_CONTROLLER_NAME = "workactivity";
+	String WORK_ACTIVITY_CONTROLLER_NAME = "workActivity";
 
 	String WORK_PLACE_CONTROLLER_NAME = "workplace";
 	
@@ -44,9 +44,13 @@ public interface ICompanyConstants {
 	
 	String COMPANY_RPAY_METHOD_CONTROLLER_NAME = "companyRPayMethod";
 	
-	String COMPANY_IMAGES_CONTROLLER_NAME = "companyImages";	
+	String COMPANY_IMAGES_CONTROLLER_NAME = "companyImages";
+	
+	String ENTERPRISE_CONTROLLER_NAME = "enterprise";
 	
 	String ENTERPRISE_TREE_CONTROLLER_NAME = "enterpriseTree";
+	
+	String ENTERPRISE_WORK_PLACE_CONTROLLER_NAME = "enterpriseWorkplace";
 
 	// ************************************************************
 	// CONFIGURATION
