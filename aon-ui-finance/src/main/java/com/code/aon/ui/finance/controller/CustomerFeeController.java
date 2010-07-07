@@ -17,13 +17,16 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
 
@@ -36,6 +39,17 @@ public class CustomerFeeController extends LinesController {
 	private IPriceStrategy priceStrategy;
 	private DataModel noFeeCustomersModel;
 	private List<Customer> noFeeCustomersList;
+	private List<?> orderedList;
+	
+	@SuppressWarnings("unchecked")
+	public List getOrderedList() {
+		return orderedList;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setOrderedList(List orderedList) {
+		this.orderedList = orderedList;
+	}
 	
 	public boolean isLongDescription() {
 		return longDescription;
@@ -142,6 +156,13 @@ public class CustomerFeeController extends LinesController {
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		noFeeCustomersList = query.list();
+	}
+	
+	public void onOrderCustomerFeeByDate(ActionEvent event) throws ManagerBeanException {
+		Criteria criteria = getCriteria();
+		criteria.setOrderByList(null);
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.CUSTOMER_FEE_BILLING_DATE));
+		orderedList=getManagerBean().getList(criteria);
 	}
 
 }

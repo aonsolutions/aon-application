@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="feeList" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="812" leftMargin="15" rightMargin="15" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.2100000000000097"/>
-	<property name="ireport.x" value="147"/>
+	<property name="ireport.zoom" value="1.4641000000000122"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -40,7 +40,7 @@
 		<initialValueExpression><![CDATA[0.00]]></initialValueExpression>
 	</variable>
 	<group name="CustomerGroup">
-		<groupExpression><![CDATA[$F{billingDateMonth}.name()+" "+$F{billingDateYear}]]></groupExpression>
+		<groupExpression><![CDATA[$F{billingDateMonth}.getValue()+" "+$F{billingDateYear}]]></groupExpression>
 		<groupHeader>
 			<band height="20" splitType="Stretch">
 				<textField pattern="#,##0" isBlankWhenNull="true">
@@ -54,7 +54,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="9" isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{billingDateMonth}.getValue()+" "+$F{billingDateYear}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{billingDateMonth}.getName($P{REPORT_LOCALE})+" "+$F{billingDateYear}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -308,7 +308,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{billingDateMonth}.getValue()+1+ "/" + $F{billingDateYear}+"-"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{billingDateMonth}.getValue()+1+ "/" + $F{billingDateYear}+($F{finalDate}!=null ? "-" : "" )]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-10" x="500" y="0" width="40" height="11"/>
