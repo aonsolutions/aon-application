@@ -9,7 +9,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -44,6 +46,7 @@ import com.esferalia.aon.file.payroll.certificate.data.Periodo;
 import com.esferalia.aon.file.payroll.certificate.data.Representante;
 import com.esferalia.aon.file.payroll.certificate.data.Trabajador;
 import com.esferalia.aon.file.payroll.certificate.data.Vacaciones;
+import com.esferalia.aon.payroll.AonPayroll;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.IDivisa;
 import com.esferalia.aon.payroll.core.IEmpleado;
@@ -115,7 +118,8 @@ public class CertificateWriter {
 			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 			serializer.setOutputProperty(INDENT_AMOUNT_PROPERTY, INDENT_AMOUNT_VALUE);
 			serializer.transform(domSource, streamResult);
-			validateXml(file);
+			validateCertificateData(certificate);
+			validateXmlPattern(file);
 			output.setFile(file);
 //			output.setErrors(fdi.create());
 			output.setErrors(new ArrayList<Exception>());
@@ -134,7 +138,117 @@ public class CertificateWriter {
 		}
 	}
 	
-	private void validateXml(File xml) {
+	private void validateCertificateData(Certificate certificate) {
+		ArrayList<Integer> errors = new ArrayList<Integer>();
+		for(CuentaCotizacion cc: certificate.getCuentaCotizacion()){
+			if(cc.getRepresentante().getCifNif()==null){
+				errors.add(0);
+			}
+			if(cc.getRepresentante().getNombre()==null){
+				errors.add(1);
+			}
+			if(cc.getRepresentante().getApellido1()==null){
+				errors.add(2);
+			}
+			if(cc.getEmpresa().getCifNif()==null){
+				errors.add(3);
+			}
+			if(cc.getEmpresa().getCcc()==null){
+				errors.add(4);
+			}
+			
+			if(cc.getListaTrabajadores()!=null){
+				for(Trabajador t: cc.getListaTrabajadores()){
+					if(t!=null){
+					if(t.getDniNie()==null){
+						errors.add(5);
+					}
+					if(t.getNombre()==null){
+						errors.add(6);
+					}
+					if(t.getApellido1()==null){
+						errors.add(7);
+					}
+					if(t.getNumSs()==null){
+						errors.add(8);
+					}
+					if(t.getTipoContrato()==null){
+						errors.add(9);
+					}
+					if(t.getCodProfesion()==null){
+						errors.add(10);
+					}
+					if(t.getFechaAltaEmpresa()==null){
+						errors.add(11);	
+					}
+					if(t.getCodCausaSuspension()==null){
+						errors.add(12);
+					}
+					if(t.getFechaSuspensionExtincion()==null){
+						errors.add(13);
+					}
+					if(t.getDiasSalarioTramitacion()==null){
+						errors.add(14);
+					}
+				
+					/*
+					 * NODOS
+					 */
+					if(t.getDistribucionJornada()!=null){
+						for(Periodo p: t.getDistribucionJornada().getListaPeriodos()){
+							if(p.getTipoDistribucion()==null){
+								errors.add(15);
+							}
+							if(p.getFechaInicioPeriodo()==null){
+								errors.add(16);
+							}
+							if(p.getFechaFinPeriodo()==null){
+								errors.add(17);
+							}
+							if(p.getNumeroDiasTrabajadosPorSemanaOPeriodo()==null){
+								errors.add(18);
+							}
+						}
+					}
+					for(Cotizacion c: t.getDatosCotizacion()){
+						if(c.getAno()==null){
+							errors.add(19);
+						}
+						if(c.getMes()==null){
+							errors.add(20);
+						}
+						if(c.getNumDiasCotizados()==null){
+							errors.add(21);
+						}
+						if(c.getBaseCotizacionDesempleo()==null){
+							errors.add(22);
+						}
+					}
+					if(t.getDatosVacacionesCotizadas()!=null){
+						if(t.getDatosVacacionesCotizadas().getNumDiasCotizados()==null){
+							errors.add(23);
+						}
+						if(t.getDatosVacacionesCotizadas().getBaseCotizacionDesempleo()==null){
+							errors.add(24);
+						}
+					}
+				}
+				}
+			}
+		}
+		if (!errors.isEmpty()) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			String errorMsg = null;
+			for(Integer i: errors){
+				errorMsg = AonPayroll.getMessage(locale, "aon_payroll_error_" + i);
+				AonUtil.addErrorMessage(errorMsg);
+			}
+			throw new AbortProcessingException(errorMsg);
+		}
+		
+	}
+	
+	private void validateXmlPattern(File xml) {
 		final String SCHEMA = "enterpriseCertificate.xsd";
 		try {
 			// Create a schema factory
@@ -292,22 +406,24 @@ public class CertificateWriter {
 				params.setMes(calFin.get(Calendar.MONTH)+1);
 				params.setYear(calFin.get(Calendar.YEAR));
 				nomina = getNominaDAO().getNomina(params);
+				totalBaseCg = nomina.getBaseCgPts();
+		        totalBaseDesempleo = nomina.getBasePerdes();
+		        Double baseAcc = nomina.getBaseAccPts();
 				nominaDiferencia = getNominaDAO().getNominaDiferencia(params);
-				Double baseAcc = nomina.getBaseAccPts();
 				if(nominaDiferencia!=null){
 					totalBaseCg += nominaDiferencia.getBaseCgPts();
 					totalBaseDesempleo += nominaDiferencia.getBasePerdes();
-					baseAcc = nominaDiferencia.getBaseAccPts();
+					baseAcc += nominaDiferencia.getBaseAccPts();
 				}
 				
 				if(nomina.getBaseHorasExtrasEstructurales()==0 && nomina.getBaseHorasExtrasNoEstructurales()==0){
 					totalBaseDesempleo = baseAcc;
-				} else if(detalle.getEmpleado().getEmpresa().getDivisa().getCdg().equals("2")){
+				} else if(!detalle.getEmpleado().getEmpresa().getDivisa().getCdg().equals("2")){
 					totalBaseDesempleo = convertMoney(totalBaseDesempleo, detalle.getEmpleado().getEmpresa().getDivisa());
 				}
 				
-				totalBaseCg += nomina.getBaseCgPts();
-		        totalBaseDesempleo += nomina.getBasePerdes();
+//				totalBaseCg = nomina.getBaseCgPts();
+//		        totalBaseDesempleo = nomina.getBasePerdes();
 				totalDias += nomina.getDiasNomina();
 				calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
 				Cotizacion cotizacion = new Cotizacion();
