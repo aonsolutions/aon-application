@@ -20,8 +20,18 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 	
 	private Month billingDateMonth;
 	
-	private Integer billingDateYear;	
+	private Integer billingDateYear;
 	
+	private Boolean anual;
+	
+	public Boolean getAnual() {
+		return anual;
+	}
+
+	public void setAnual(Boolean anual) {
+		this.anual = anual;
+	}
+
 	public Item getItem() {
 		return item;
 	}
@@ -80,14 +90,26 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 	}
 
 	private Date obtainToDate() {
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(obtainFromDate());
-		calendar.add(Calendar.MONTH, 1);
-		calendar.add(Calendar.DATE, -1);
-		calendar.set(Calendar.HOUR_OF_DAY, 23);
-		calendar.set(Calendar.MINUTE, 59);
-		calendar.set(Calendar.SECOND, 59);
-		return calendar.getTime();
+		if(!anual){
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(obtainFromDate());
+			calendar.add(Calendar.MONTH, 1);
+			calendar.add(Calendar.DATE, -1);
+			calendar.set(Calendar.HOUR_OF_DAY, 23);
+			calendar.set(Calendar.MINUTE, 59);
+			calendar.set(Calendar.SECOND, 59);
+			return calendar.getTime();
+		}else {
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(obtainFromDate());
+			calendar.add(Calendar.YEAR, 1);
+			calendar.add(Calendar.DATE, -1);
+			calendar.set(Calendar.HOUR_OF_DAY, 23);
+			calendar.set(Calendar.MINUTE, 59);
+			calendar.set(Calendar.SECOND, 59);
+			return calendar.getTime();
+			
+		}
 	}
 
 }
