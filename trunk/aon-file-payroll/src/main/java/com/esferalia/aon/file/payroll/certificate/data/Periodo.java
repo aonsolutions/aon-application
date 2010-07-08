@@ -50,15 +50,15 @@ public class Periodo {
 		periodo.appendChild(tipoDistribucion);
 
 		Element fechaInicioPeriodo = xmldoc.createElement(FECHA_INICIO_PERIODO);
-		fechaInicioPeriodo.appendChild(xmldoc.createTextNode(getFechaInicioPeriodo().toString() ));
+		fechaInicioPeriodo.appendChild(xmldoc.createTextNode(getFechaInicioPeriodo() ));
 		periodo.appendChild(fechaInicioPeriodo);
 		
 		Element fechaFinPeriodo = xmldoc.createElement(FECHA_FIN_PERIODO);
-		fechaFinPeriodo.appendChild(xmldoc.createTextNode(getFechaFinPeriodo().toString() ));
+		fechaFinPeriodo.appendChild(xmldoc.createTextNode(getFechaFinPeriodo() ));
 		periodo.appendChild(fechaFinPeriodo);
 		
 		Element numeroDiasTrabajadosPorSemanaOPeriodo = xmldoc.createElement(NUMERO_DIAS_TRAB_POR_SEMANA_O_PERIODO);
-		numeroDiasTrabajadosPorSemanaOPeriodo.appendChild(xmldoc.createTextNode(getNumeroDiasTrabajadosPorSemanaOPeriodo().toString() ));
+		numeroDiasTrabajadosPorSemanaOPeriodo.appendChild(xmldoc.createTextNode(getNumeroDiasTrabajadosPorSemanaOPeriodo() ));
 		periodo.appendChild(numeroDiasTrabajadosPorSemanaOPeriodo);
 		
 		return periodo;
