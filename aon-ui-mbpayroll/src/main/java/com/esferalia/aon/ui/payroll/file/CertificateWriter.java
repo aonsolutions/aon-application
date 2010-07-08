@@ -485,27 +485,12 @@ public class CertificateWriter {
 		return totalBaseDesempleo;
 	}
 	
-	private Integer differenceBetweenDates(Date date1, Date date2){
-		GregorianCalendar initDate = new GregorianCalendar();
-		GregorianCalendar endDate = new GregorianCalendar();
-		initDate.setTime(date1);
-		endDate.setTime(date2);
-		int days1 = 0;
-		int days2 = 0;
-		int maxYear = Math.max(initDate.get(Calendar.YEAR), endDate.get(Calendar.YEAR));
-		GregorianCalendar gctmp = (GregorianCalendar) initDate.clone();
-		for (int f = gctmp.get(Calendar.YEAR); f < maxYear; f++) {
-			days1 += gctmp.getActualMaximum(Calendar.DAY_OF_YEAR);
-			gctmp.add(Calendar.YEAR, 1);
-		}
-		gctmp = (GregorianCalendar) endDate.clone();
-		for (int f = gctmp.get(Calendar.YEAR); f < maxYear; f++) {
-			days2 += gctmp.getActualMaximum(Calendar.DAY_OF_YEAR);
-			gctmp.add(Calendar.YEAR, 1);
-		}
-		days1 += initDate.get(Calendar.DAY_OF_YEAR) - 1;
-		days2 += endDate.get(Calendar.DAY_OF_YEAR) - 1;
-		return (days2>days1)?(days2-days1):(days1-days2);
+	private Integer differenceBetweenDates(Date from, Date to) {
+        long difDays = 0;
+        if(from.before(to)) {
+              difDays = ((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        }
+        return (int)difDays;
 	}
 
 	private String parseNombre(String nombre){
