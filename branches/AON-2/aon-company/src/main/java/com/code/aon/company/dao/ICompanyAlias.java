@@ -225,13 +225,13 @@ public interface ICompanyAlias {
 	* Alias value: WorkActivity_id
 	* Hibernate value: WorkActivity.id
 	*/
-	String  WORK_ACTIVITY_ID = WORK_ACTIVITY_ENTRY.getAliasNames()[3];
+	String  WORK_ACTIVITY_ID = WORK_ACTIVITY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: WorkActivity_workPlace_id
 	* Hibernate value: WorkActivity.workPlace.id
 	*/
-	String  WORK_ACTIVITY_WORK_PLACE_ID = WORK_ACTIVITY_ENTRY.getAliasNames()[4];
+	String  WORK_ACTIVITY_WORK_PLACE_ID = WORK_ACTIVITY_ENTRY.getAliasNames()[3];
 
 
 }
