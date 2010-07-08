@@ -369,8 +369,8 @@ public class CertificateWriter {
 			for(ITrabajo t: trabajosTP){
 				Periodo periodo = new Periodo();
 				periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
-				periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
-				periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
+				periodo.setFechaInicioPeriodo(parseFecha(t.getFechaInicioCont()));
+				periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
 				periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parse5Digit(t.getDiasTP()));
 				listaPeriodos.add(periodo);
 			}
@@ -581,10 +581,13 @@ public class CertificateWriter {
 	}
 	
 	private String parse7DigitRight(String s) {
-		while(s.length()<7){
+		if(s!=null){
+			while(s.length()<7){
 			s = s.concat("0");
+			}
+			return s;
 		}
-		return s;
+		return null;
 	}
 	
 	@SuppressWarnings("unused")
