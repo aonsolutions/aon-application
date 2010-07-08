@@ -7,18 +7,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.INomina;
 import com.esferalia.aon.payroll.core.INominaDiferencia;
-import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
 
 @Entity
-@Table(name = "nomina")
+@Table(name = "nominadf")
 public class NominaDiferencia implements ITransferObject, INominaDiferencia {
 
+	private static final long serialVersionUID = 5627462033332875299L;
 	
 	private Integer cdg;
 	private Integer mes;
