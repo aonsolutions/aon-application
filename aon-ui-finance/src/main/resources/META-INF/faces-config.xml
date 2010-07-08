@@ -1055,7 +1055,7 @@
 	<managed-bean>
 		<managed-bean-name>feePrint</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.finance.controller.FeePrintController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>

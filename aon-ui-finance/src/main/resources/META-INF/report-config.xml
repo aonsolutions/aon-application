@@ -472,7 +472,7 @@
 			<!--  *********  feePrintList  ********* -->
 	<report id="feePrintListByDate" description="Fee Print">
 		<template path="/com/code/aon/ui/finance/report/feeListByDate.jasper"/>
-		<collection provider="#{customerFee.orderedList}" />
+		<collection provider="#{feePrint.orderedList}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
