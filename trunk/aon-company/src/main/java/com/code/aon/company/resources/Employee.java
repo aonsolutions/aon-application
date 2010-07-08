@@ -4,17 +4,25 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.IEntity;
 import com.code.aon.company.IEntityVisitor;
+import com.code.aon.company.WorkActivity;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 
@@ -36,12 +44,12 @@ public class Employee implements ITransferObject, IEntity, IRegistry {
 	private Integer id;
 
 	private Registry registry;
+	
+	/** Indicates the working activity that this employee belongs to */
+    private WorkActivity workActivity; 	
 
 	/** Social Security number */
 	private String socialSecurityNumber;
-
-    /** Indicates the employee calendar identifier. */
-    private Integer calendar;
 
     /** Agreement Working hours. */
     private int agreementTime;
@@ -97,24 +105,6 @@ public class Employee implements ITransferObject, IEntity, IRegistry {
 		this.socialSecurityNumber = socialSecurityNumber;
 	}
 
-	/**
-	 * Return calendar identifier.
-	 * 
-	 * @return calendar
-	 */
-	public Integer getCalendar() {
-		return calendar;
-	}
-
-	/**
-	 * Set calendar identifier.
-	 * 
-	 * @param calendar
-	 */
-	public void setCalendar(Integer calendar) {
-		this.calendar = calendar;
-	}
-
     /**
 	 * @return the agreementTime
 	 */
@@ -154,4 +144,51 @@ public class Employee implements ITransferObject, IEntity, IRegistry {
 		visitor.visitEmployee( this );
 	}
 
+	@ManyToOne
+    @JoinColumn(name="workactivity", nullable = false, updatable = false)
+    @ForeignKey(name = "FK_EMPLOYEE_WORKACTIVITY")
+    @Index(name = "IDX_EMPLOYEE_WORKACTIVITY")    
+	public WorkActivity getWorkActivity() {
+		return workActivity;
+	}
+
+	public void setWorkActivity(WorkActivity workActivity) {
+		this.workActivity = workActivity;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Employee o = (Employee) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.agreementTime, o.agreementTime)			
+				.append(this.registry, o.registry)
+				.append(this.socialSecurityNumber, o.socialSecurityNumber)
+				.append(this.workActivity, o.workActivity)			
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(agreementTime)
+			.append(id)
+			.append(registry)
+			.append(socialSecurityNumber)
+			.append(workActivity)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 }
