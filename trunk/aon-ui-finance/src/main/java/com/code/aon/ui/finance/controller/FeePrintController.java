@@ -28,6 +28,7 @@ public class FeePrintController extends BasicController {
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
 		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.CUSTOMER_FEE_BILLING_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
 		orderedList=getManagerBean().getList(criteria);
 	}
 
