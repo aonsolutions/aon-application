@@ -17,16 +17,13 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
 
