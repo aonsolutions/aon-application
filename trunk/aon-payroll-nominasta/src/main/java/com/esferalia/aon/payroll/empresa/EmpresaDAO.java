@@ -12,6 +12,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.ActividadCCC;
 import com.esferalia.aon.payroll.Empleado;
@@ -122,19 +123,19 @@ public class EmpresaDAO implements IEmpresaDAO {
 			IManagerBean empleadoBean = BeanManager
 					.getManagerBean(Empleado.class);
 			if (!StringUtils.isEmpty(params.getEmpresa())) {
-				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_NAME),params.getEmpresa());
+				criteria.addExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_NAME),params.getEmpresa());
 			}
 			if (!StringUtils.isEmpty(params.getDocumento())) {
 				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_REGISTRY_DOCUMENT_VALUE),params.getDocumento());
 			}
 			if (!StringUtils.isEmpty(params.getNombre())) {
-				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME),params.getNombre());
+				criteria.addExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_NAME),params.getNombre());
 			}
 			if (!StringUtils.isEmpty(params.getApellido())) {
-				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME),params.getApellido());
+				criteria.addExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME),params.getApellido());
 			}
 			if (!StringUtils.isEmpty(params.getApellido2())) {
-				criteria.addEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME),params.getApellido2());
+				criteria.addExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME),params.getApellido2());
 			}
 			criteria.addGreaterThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), date.getTime());
 			criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), params.getFecha());
@@ -146,6 +147,8 @@ public class EmpresaDAO implements IEmpresaDAO {
 			List<?> list = empleadoBean.getList(criteria);
 			return (List<IEmpleado>) list;
 		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		} catch (ExpressionException e) {
 			throw new PayrollException(e);
 		}
 	}
