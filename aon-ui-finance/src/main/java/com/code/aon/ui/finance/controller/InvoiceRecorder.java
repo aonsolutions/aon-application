@@ -244,7 +244,7 @@ public class InvoiceRecorder implements ITransferObject {
 						if (ahs != null && ahs.size() > 0) {
 							AccountHelper ah = (AccountHelper) ahs.get(0);
 							Account balancingAccount = ah.getBalancingAccount();
-							if (!getAccount().equals(balancingAccount) ) {
+							if (!balancingAccount.equals(getAccount()) ) {
 								addMessage("La contrapartida más usada para el gasto: \"" + invoiceDetail.getDescription() + "\" es \"" + balancingAccount.getFullDescription() +"\".");		
 							}
 						}
