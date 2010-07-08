@@ -60,6 +60,7 @@ import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
+import com.esferalia.aon.payroll.core.enumeration.TipoTiempoParcial;
 import com.esferalia.aon.payroll.core.nomina.INominaDAO;
 import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
 import com.esferalia.aon.payroll.core.nomina.NominaParams;
@@ -110,6 +111,8 @@ public class CertificateWriter {
 			Element root = certificate.getElement(xmldoc);
 			xmldoc.appendChild(root);
 			certificate.fillElement(xmldoc, root);
+			validateCertificateData(certificate);
+
 			DOMSource domSource = new DOMSource(xmldoc);
 			StreamResult streamResult = new StreamResult(out);
 			TransformerFactory tf = TransformerFactory.newInstance();
@@ -118,8 +121,8 @@ public class CertificateWriter {
 			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 			serializer.setOutputProperty(INDENT_AMOUNT_PROPERTY, INDENT_AMOUNT_VALUE);
 			serializer.transform(domSource, streamResult);
-			validateCertificateData(certificate);
 			validateXmlPattern(file);
+			
 			output.setFile(file);
 //			output.setErrors(fdi.create());
 			output.setErrors(new ArrayList<Exception>());
@@ -364,16 +367,11 @@ public class CertificateWriter {
 		if(trabajosTP!=null && trabajosTP.size()>0){
 			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
 			for(ITrabajo t: trabajosTP){
-				Periodo periodo=null;
-				try{
-					periodo = new Periodo();
-					periodo.setTipoDistribucion(t.getTipoTP().getValue());
-					periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
-					periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
-					periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parse5Digit(t.getDiasTP()));
-				} catch(NullPointerException e){
-					// NADA, no tener en cuenta el periodo
-				}
+				Periodo periodo = new Periodo();
+				periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
+				periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
+				periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
+				periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parse5Digit(t.getDiasTP()));
 				listaPeriodos.add(periodo);
 			}
 			DistribucionJornada jornada = new DistribucionJornada();
@@ -390,6 +388,7 @@ public class CertificateWriter {
 		try {
 	        Double totalBaseCg=0.0;
 	        Double totalBaseDesempleo=0.0;
+	        Double baseAcc = 0.0;
 	        Integer totalDias = 0;
 			
 			Calendar calInicio = new GregorianCalendar();
@@ -405,11 +404,13 @@ public class CertificateWriter {
 				params.setTipo(TipoNomina.NORMAL);
 				params.setMes(calFin.get(Calendar.MONTH)+1);
 				params.setYear(calFin.get(Calendar.YEAR));
+				
 				nomina = getNominaDAO().getNomina(params);
 				totalBaseCg = nomina.getBaseCgPts();
 		        totalBaseDesempleo = nomina.getBasePerdes();
-		        Double baseAcc = nomina.getBaseAccPts();
-				nominaDiferencia = getNominaDAO().getNominaDiferencia(params);
+		        baseAcc = nomina.getBaseAccPts();
+				
+		        nominaDiferencia = getNominaDAO().getNominaDiferencia(params);
 				if(nominaDiferencia!=null){
 					totalBaseCg += nominaDiferencia.getBaseCgPts();
 					totalBaseDesempleo += nominaDiferencia.getBasePerdes();
@@ -537,6 +538,13 @@ public class CertificateWriter {
 		return d;
 	}
 	
+	private String parseTipoDistribucion(TipoTiempoParcial tipoTP) {
+		if(tipoTP!=null){
+			return tipoTP.getValue();
+		}
+		return null;
+	}
+	
 	private String parse2Digit(Integer i) {
 		String m = String.valueOf(i);
 		return parse2Digit(m);
@@ -562,11 +570,14 @@ public class CertificateWriter {
 	}
 	
 	private String parse5Digit(Integer i) {
-		String d = String.valueOf(i);
-		while(d.length()<5){
-			d = "0".concat(d);
+		if(i!=null){
+			String d = String.valueOf(i);
+			while(d.length()<5){
+				d = "0".concat(d);
+			}
+			return d;
 		}
-		return d;
+		return null;
 	}
 	
 	private String parse7DigitRight(String s) {
