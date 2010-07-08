@@ -20,14 +20,14 @@
 	<aon:div styleClass="aon-lookup">
 		<aon:lookupInputText id="WorkActivity_id"
 			reRender="WorkActivity_detail" lookup="#{workActivityLookup}"
-			value="#{controller.workActivity.id}" size="5" />
+			value="#{controller.to.workActivity.id}" size="5" />
 		<aon:lookupButton windowTitle="#{companyBundle.company_activity_selection}"
 			selectReRender="WorkActivity_id,WorkActivity_detail"  
 			lookup="#{workActivityLookup}" minHeight="460" minWidth="650"
-			property="#{controller.workActivity}">
+			property="#{controller.to.workActivity}">
 		</aon:lookupButton>
 		<aon:inputText id="WorkActivity_detail"
-			value="#{controller.workActivity.description}"
+			value="#{controller.to.workActivity.description}"
 			size="50" disabled="true" />
 	</aon:div>
 

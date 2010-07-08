@@ -72,7 +72,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void loadEmployees( TreeNodeImpl<EnterpriseTreeData> workActivityNode, WorkActivity workActivity ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Employee.class);		
 		Criteria criteria = new Criteria();
-		String workActivityId = bean.getFieldName(ICompanyAlias.EMPLOYEE_CALENDAR);
+		String workActivityId = bean.getFieldName(ICompanyAlias.EMPLOYEE_WORK_ACTIVITY_ID);
 		criteria.addEqualExpression(workActivityId, workActivity.getId());
 		for( ITransferObject to : bean.getList(criteria) ) {
 			Employee e = (Employee) to;

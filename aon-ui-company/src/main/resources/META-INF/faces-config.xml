@@ -1228,7 +1228,7 @@
 
 	<managed-bean>
 		<managed-bean-name>employeeForm</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.company.event.EmployeeeFormListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
