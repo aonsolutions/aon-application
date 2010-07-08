@@ -43,9 +43,6 @@ public class Employee implements ITransferObject, IEntity, ILookupObject {
 	/** Social Security number */
 	private String socialSecurityNumber;
 
-    /** Indicates the employee calendar identifier. */
-    private Integer calendar;
-
     /** Agreement Working hours. */
     private int agreementTime;
 
@@ -97,24 +94,6 @@ public class Employee implements ITransferObject, IEntity, ILookupObject {
 
 	public void setSocialSecurityNumber(String socialSecurityNumber) {
 		this.socialSecurityNumber = socialSecurityNumber;
-	}
-
-	/**
-	 * Return calendar identifier.
-	 * 
-	 * @return
-	 */
-	public Integer getCalendar() {
-		return calendar;
-	}
-
-	/**
-	 * Set calendar identifier.
-	 * 
-	 * @param calendar
-	 */
-	public void setCalendar(Integer calendar) {
-		this.calendar = calendar;
 	}
 
     /**

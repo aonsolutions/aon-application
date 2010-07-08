@@ -39,9 +39,6 @@ public class WorkPlace implements ITransferObject, IEntity {
 	/** Working place address */
     private RegistryAddress address;
 
-    /** Indicates the working place calendar identifier. */
-    private Integer calendar;
-
     /** Indicates if the working place is currently active. */
 	private boolean active;
 
@@ -113,24 +110,6 @@ public class WorkPlace implements ITransferObject, IEntity {
 	 */
 	public void setAddress(RegistryAddress address) {
 		this.address = address;
-	}
-
-	/**
-	 * Return calendar identifier.
-	 * 
-	 * @return
-	 */
-	public Integer getCalendar() {
-		return calendar;
-	}
-
-	/**
-	 * Set calendar identifier.
-	 * 
-	 * @param calendar
-	 */
-	public void setCalendar(Integer calendar) {
-		this.calendar = calendar;
 	}
 
     /**

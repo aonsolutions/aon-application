@@ -63,16 +63,10 @@ public interface ICompanyAlias {
 	String  COMPANY_ACTIVE = COMPANY_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Company_calendar
-	* Hibernate value: Company.calendar
-	*/
-	String  COMPANY_CALENDAR = COMPANY_ENTRY.getAliasNames()[7];
-
-	/** 
 	* Alias value: Company_surcharge
 	* Hibernate value: Company.surcharge
 	*/
-	String  COMPANY_SURCHARGE = COMPANY_ENTRY.getAliasNames()[8];
+	String  COMPANY_SURCHARGE = COMPANY_ENTRY.getAliasNames()[7];
 
 
 
@@ -118,28 +112,22 @@ public interface ICompanyAlias {
 	String  EMPLOYEE_REGISTRY_DOCUMENT = EMPLOYEE_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: Employee_calendar
-	* Hibernate value: Employee.calendar
-	*/
-	String  EMPLOYEE_CALENDAR = EMPLOYEE_ENTRY.getAliasNames()[6];
-
-	/** 
 	* Alias value: Employee_socialSecurityNumber
 	* Hibernate value: Employee.socialSecurityNumber
 	*/
-	String  EMPLOYEE_SOCIAL_SECURITY_NUMBER = EMPLOYEE_ENTRY.getAliasNames()[7];
+	String  EMPLOYEE_SOCIAL_SECURITY_NUMBER = EMPLOYEE_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Employee_agreementTime
 	* Hibernate value: Employee.agreementTime
 	*/
-	String  EMPLOYEE_AGREEMENT_TIME = EMPLOYEE_ENTRY.getAliasNames()[8];
+	String  EMPLOYEE_AGREEMENT_TIME = EMPLOYEE_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Employee_active
 	* Hibernate value: Employee.active
 	*/
-	String  EMPLOYEE_ACTIVE = EMPLOYEE_ENTRY.getAliasNames()[9];
+	String  EMPLOYEE_ACTIVE = EMPLOYEE_ENTRY.getAliasNames()[8];
 
 
 
@@ -203,22 +191,16 @@ public interface ICompanyAlias {
 	String  WORK_PLACE_ADDRESS_ID = WORK_PLACE_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: WorkPlace_calendar
-	* Hibernate value: WorkPlace.calendar
-	*/
-	String  WORK_PLACE_CALENDAR = WORK_PLACE_ENTRY.getAliasNames()[2];
-
-	/** 
 	* Alias value: WorkPlace_description
 	* Hibernate value: WorkPlace.description
 	*/
-	String  WORK_PLACE_DESCRIPTION = WORK_PLACE_ENTRY.getAliasNames()[3];
+	String  WORK_PLACE_DESCRIPTION = WORK_PLACE_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: WorkPlace_id
 	* Hibernate value: WorkPlace.id
 	*/
-	String  WORK_PLACE_ID = WORK_PLACE_ENTRY.getAliasNames()[4];
+	String  WORK_PLACE_ID = WORK_PLACE_ENTRY.getAliasNames()[3];
 
 
 
@@ -234,16 +216,10 @@ public interface ICompanyAlias {
 	String  WORK_ACTIVITY_ACTIVE = WORK_ACTIVITY_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: WorkActivity_calendar
-	* Hibernate value: WorkActivity.calendar
-	*/
-	String  WORK_ACTIVITY_CALENDAR = WORK_ACTIVITY_ENTRY.getAliasNames()[1];
-
-	/** 
 	* Alias value: WorkActivity_description
 	* Hibernate value: WorkActivity.description
 	*/
-	String  WORK_ACTIVITY_DESCRIPTION = WORK_ACTIVITY_ENTRY.getAliasNames()[2];
+	String  WORK_ACTIVITY_DESCRIPTION = WORK_ACTIVITY_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: WorkActivity_id

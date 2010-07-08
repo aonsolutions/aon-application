@@ -29,9 +29,6 @@ public class Company extends Registry implements ITaxInfo{
 	/** Indicates if a surcharge has to be applied to the company. */
     private boolean surcharge;
     
-    /** Indicates the company calendar identifier. */
-    private Integer calendar;
-
     /**
 	 * The empty constructor.
 	 */
@@ -74,20 +71,6 @@ public class Company extends Registry implements ITaxInfo{
 		this.surcharge = surcharge;
 	}
 	
-	/**
-	 * @return the calendar
-	 */
-	public Integer getCalendar() {
-		return calendar;
-	}
-
-	/**
-	 * @param calendar the calendar to set
-	 */
-	public void setCalendar(Integer calendar) {
-		this.calendar = calendar;
-	}
-
 	@Transient
 	public boolean isTaxFree() {
 		return false;

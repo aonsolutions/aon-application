@@ -35,9 +35,6 @@ public class WorkActivity implements ITransferObject, IEntity {
 	/** Indicates the working place that this activity belongs to */
     private WorkPlace workPlace; 
 
-    /** Indicates the working activity calendar identifier. */
-    private Integer calendar;
-
     /** Indicates if the working activity is currently active. */
 	private boolean active;
 
@@ -75,24 +72,6 @@ public class WorkActivity implements ITransferObject, IEntity {
 
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
-	}
-
-	/**
-	 * Return calendar identifier.
-	 * 
-	 * @return
-	 */
-	public Integer getCalendar() {
-		return calendar;
-	}
-
-	/**
-	 * Set calendar identifier.
-	 * 
-	 * @param calendar
-	 */
-	public void setCalendar(Integer calendar) {
-		this.calendar = calendar;
 	}
 
     /**
