@@ -52,7 +52,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font size="9" isBold="true"/>
+						<font size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{billingDateMonth}.getName($P{REPORT_LOCALE})+" "+$F{billingDateYear}]]></textFieldExpression>
 				</textField>
