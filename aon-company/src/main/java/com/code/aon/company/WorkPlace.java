@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -49,9 +50,6 @@ public class WorkPlace implements ITransferObject, IEntity {
 
 	/** Working place address */
     private RegistryAddress address;
-
-    /** Indicates the working place calendar identifier. */
-    private Integer calendar;
 
     /** Indicates if the working place is currently active. */
 	private boolean active;
@@ -110,8 +108,8 @@ public class WorkPlace implements ITransferObject, IEntity {
 	 * 
 	 * @return the enterprise
 	 */
-	@OneToOne
-    @JoinColumn(name="enterprise", updatable = false)
+	@ManyToOne
+    @JoinColumn(name="enterprise", nullable = false, updatable = false)
     @ForeignKey(name = "FK_WORKPLACE_ENTERPRISE")
     @Index(name = "IDX_WORKPLACE_ENTERPRISE")    
     public Enterprise getEnterprise() {
@@ -148,24 +146,6 @@ public class WorkPlace implements ITransferObject, IEntity {
 	 */
 	public void setAddress(RegistryAddress address) {
 		this.address = address;
-	}
-
-	/**
-	 * Return calendar identifier.
-	 * 
-	 * @return calendar
-	 */
-	public Integer getCalendar() {
-		return calendar;
-	}
-
-	/**
-	 * Set calendar identifier.
-	 * 
-	 * @param calendar
-	 */
-	public void setCalendar(Integer calendar) {
-		this.calendar = calendar;
 	}
 
     /**
@@ -285,8 +265,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.active, o.active)
-				.append(this.address, o.address)
-				.append(this.calendar, o.calendar)				
+				.append(this.address, o.address)			
 				.append(this.description, o.description)
 				.append(this.enterprise, o.enterprise)
 				.isEquals();
@@ -299,7 +278,6 @@ public class WorkPlace implements ITransferObject, IEntity {
 		return new HashCodeBuilder()
 			.append(active)
 			.append(address)
-			.append(calendar)
 			.append(description)
 			.append(enterprise)
 			.append(id)

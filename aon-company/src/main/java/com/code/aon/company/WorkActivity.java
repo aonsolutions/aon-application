@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -43,8 +44,8 @@ public class WorkActivity implements ITransferObject, IEntity {
 	/** Indicates the working place that this activity belongs to */
     private WorkPlace workPlace; 
 
-    /** Indicates the working activity calendar identifier. */
-    private Integer calendar;
+	/** Indicates the ccc of this activity */
+    private EnterpriseCCC enterpriseCCC; 
 
     /** Indicates if the working activity is currently active. */
 	private boolean active;
@@ -76,7 +77,7 @@ public class WorkActivity implements ITransferObject, IEntity {
 	}
 
 	@OneToOne
-    @JoinColumn(name="workplace", updatable = false)
+    @JoinColumn(name="workplace", nullable = false, updatable = false)
     @ForeignKey(name = "FK_WORKACTIVITY_WORKPLACE")
     @Index(name = "IDX_WORKACTIVITY_WORKPLACE")    
     public WorkPlace getWorkPlace() {
@@ -85,24 +86,6 @@ public class WorkActivity implements ITransferObject, IEntity {
 
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
-	}
-
-	/**
-	 * Return calendar identifier.
-	 * 
-	 * @return calendar
-	 */
-	public Integer getCalendar() {
-		return calendar;
-	}
-
-	/**
-	 * Set calendar identifier.
-	 * 
-	 * @param calendar
-	 */
-	public void setCalendar(Integer calendar) {
-		this.calendar = calendar;
 	}
 
     /**
@@ -174,6 +157,18 @@ public class WorkActivity implements ITransferObject, IEntity {
 	public void setResources( Set<Resource> resources) {
 		this.resources = resources;
 	}
+	
+	@ManyToOne
+    @JoinColumn( name="enterpriseCCC" )
+    @ForeignKey(name = "FK_WORKACTIVITY_ENTERPRISECCC")
+    @Index(name = "IDX_WORKACTIVITY_ENTERPRISECCC")
+    public EnterpriseCCC getEnterpriseCCC() {
+		return enterpriseCCC;
+	}
+
+	public void setEnterpriseCCC(EnterpriseCCC enterpriseCCC) {
+		this.enterpriseCCC = enterpriseCCC;
+	}
 
 	/*(non-Javadoc)
 	 * @see com.code.aon.employee.INode#accept(com.code.aon.employee.INodeVisitor)
@@ -191,7 +186,6 @@ public class WorkActivity implements ITransferObject, IEntity {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.active, o.active)
-				.append(this.calendar, o.calendar)
 				.append(this.description, o.description)
 				.append(this.workPlace, o.workPlace)
 				.isEquals();
@@ -203,7 +197,6 @@ public class WorkActivity implements ITransferObject, IEntity {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(active)
-			.append(calendar)
 			.append(description)
 			.append(id)
 			.append(workPlace)

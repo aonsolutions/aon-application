@@ -35,9 +35,6 @@ public class Company extends Registry implements ITaxInfo {
 	/** Indicates if the company is active or not. */
 	private boolean active;    
 
-    /** Indicates the company calendar identifier. */
-    private Integer calendar;
-
 	/** Indicates if a surcharge has to be applied to the company. */
     private boolean surcharge;
 
@@ -64,20 +61,6 @@ public class Company extends Registry implements ITaxInfo {
 	 */
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	/**
-	 * @return the calendar
-	 */
-	public Integer getCalendar() {
-		return calendar;
-	}
-
-	/**
-	 * @param calendar the calendar to set
-	 */
-	public void setCalendar(Integer calendar) {
-		this.calendar = calendar;
 	}
 
 	/**
@@ -157,7 +140,6 @@ public class Company extends Registry implements ITaxInfo {
 			return new EqualsBuilder()
 				.appendSuper(super.equals(obj))
 				.append(this.active, o.active)
-				.append(this.calendar, o.calendar)
 				.append(this.eInvoice, o.eInvoice)
 				.append(this.surcharge, o.surcharge)
 				.append(this.withholding, o.withholding)
@@ -171,7 +153,6 @@ public class Company extends Registry implements ITaxInfo {
 		return new HashCodeBuilder()
 			.appendSuper(super.hashCode())
 			.append(active)
-			.append(calendar)
 			.append(eInvoice)
 			.append(surcharge)
 			.append(withholding)

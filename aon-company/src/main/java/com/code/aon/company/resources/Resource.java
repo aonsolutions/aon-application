@@ -175,16 +175,6 @@ public class Resource implements ITransferObject {
 	}
 
 	/**
-	 * Returns the calendar identifier.
-	 * 
-	 * @return calendar
-	 */
-	@Transient
-	public Integer getCalendar() {
-		return this.employee.getCalendar();
-	}
-
-	/**
 	 * Returns the event identifier.
 	 * 
 	 * @return owner
