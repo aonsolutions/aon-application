@@ -39,17 +39,6 @@ public class CustomerFeeController extends LinesController {
 	private IPriceStrategy priceStrategy;
 	private DataModel noFeeCustomersModel;
 	private List<Customer> noFeeCustomersList;
-	private List<?> orderedList;
-	
-	@SuppressWarnings("unchecked")
-	public List getOrderedList() {
-		return orderedList;
-	}
-
-	@SuppressWarnings("unchecked")
-	public void setOrderedList(List orderedList) {
-		this.orderedList = orderedList;
-	}
 	
 	public boolean isLongDescription() {
 		return longDescription;
@@ -157,12 +146,4 @@ public class CustomerFeeController extends LinesController {
 		Query query = session.createQuery(select);
 		noFeeCustomersList = query.list();
 	}
-	
-	public void onOrderCustomerFeeByDate(ActionEvent event) throws ManagerBeanException {
-		Criteria criteria = getCriteria();
-		criteria.setOrderByList(null);
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.CUSTOMER_FEE_BILLING_DATE));
-		orderedList=getManagerBean().getList(criteria);
-	}
-
 }
