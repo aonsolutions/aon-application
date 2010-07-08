@@ -310,6 +310,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				throw new AbortProcessingException(message);
 			}
 			Invoice invoice = getInvoice();
+			getManagerBean().restoreNullSubPOJOs(invoice);
 			invoice = (Invoice) HibernateUtil.getSession(sessionName).merge(invoice);
 			getAccountWriter().recordAndUpdateInvoice(invoice);
 			setTo(invoice);
@@ -340,7 +341,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			
-			getAccountWriter().unrecordAndUpdateInvoice(getInvoice());
+			Invoice invoice = getInvoice();
+			getManagerBean().restoreNullSubPOJOs(invoice);
+			getAccountWriter().unrecordAndUpdateInvoice(invoice);
 			
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
