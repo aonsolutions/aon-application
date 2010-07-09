@@ -15,27 +15,49 @@
 
 	<ui:define name="step_content">
 	
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/remesaHeader.xhtml" />
-		
-		<aon:dataTable id="empleadoData" value="#{remesaCertificadoGenerationWizard.selectedModel}"
-			var="to" rows="20" rendered="#{remesaCertificadoGenerationWizard.selectedModel.rowCount > 0}"
+	<aon:dataTable id="remesasData" value="#{remesaCertificadoGenerationWizard.listaRemesas}"
+			var="to" rows="20" 
 			columnClasses="
 			aon-editDataTable-textColumn, 
 			aon-editDataTable-textColumn, 
 			aon-editDataTable-textColumn, 
-			aon-editDataTable-dateColumn,
-			aon-editDataTable-textColumn aon-width-400">
+			aon-editDataTable-dateColumn">
 
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/columns.xhtml" />
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+				</f:facet>
+				<aon:outputText value="#{to.empresa.name}" />
+			</aon:column>
 			
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
+					<aon:outputText value="#{payrollBundle.payroll_numeroCcc}" />
 				</f:facet>
-				<aon:outputText value="#{to.causaSuspension}"  />
+				<aon:outputText value="#{to.numeroCcc}" />
 			</aon:column>
 			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_fecha}" />
+				</f:facet>
+				<aon:outputText value="#{to.fecha}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_estado}" />
+				</f:facet>
+				<aon:outputText value="#{to.estado}"  />
+			</aon:column>
+			
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/listaEmpleadosRemesa.xhtml" />
+			
 		</aon:dataTable>
+	
 	</ui:define>
 
 </ui:composition>
