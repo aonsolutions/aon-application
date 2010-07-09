@@ -2,8 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="feeList" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="812" leftMargin="15" rightMargin="15" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.610510000000014"/>
-	<property name="ireport.x" value="385"/>
+	<property name="ireport.zoom" value="1.2100000000000106"/>
+	<property name="ireport.x" value="40"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -35,12 +35,12 @@
 	<variable name="total" class="java.lang.Double">
 		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable)$V{currentFee}))]]></variableExpression>
 	</variable>
-	<variable name="totalGroup" class="java.lang.Double" resetType="Group" resetGroup="Total Group" calculation="Sum">
-		<variableExpression><![CDATA[$V{proyection}]]></variableExpression>
+	<variable name="totalGroup" class="java.lang.Double" resetType="Group" resetGroup="CustomerGroup" calculation="Sum">
+		<variableExpression><![CDATA[new Double(new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable )$V{currentFee}))*$V{period})]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<variable name="totalAmount" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{totalGroup}]]></variableExpression>
+		<variableExpression><![CDATA[$V{proyection}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<variable name="proyection" class="java.lang.Double">
@@ -445,7 +445,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[new Double(new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable )$V{currentFee}))*$V{period})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{proyection}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-10" x="584" y="0" width="49" height="11"/>
