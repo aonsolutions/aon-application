@@ -446,8 +446,7 @@
 	<!--  *********  feePrintList  ********* -->
 	<report id="feePrintListByConcept" description="Fee Print">
 		<template path="/com/code/aon/ui/finance/report/feeListByConcept.jasper"/>
-		<bean key="com.code.aon.finance.CustomerFee" />
-		<criteria provider="#{feePrint}"/>
+		<collection provider="#{feePrint.orderedList}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
@@ -459,8 +458,7 @@
 		<!--  *********  feePrintList  ********* -->
 	<report id="feePrintListByCustomer" description="Fee Print">
 		<template path="/com/code/aon/ui/finance/report/feeListByCustomer.jasper"/>
-		<bean key="com.code.aon.finance.CustomerFee" />
-		<criteria provider="#{feePrint}"/>
+		<collection provider="#{feePrint.orderedList}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />

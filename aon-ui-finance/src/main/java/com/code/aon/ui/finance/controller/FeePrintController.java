@@ -31,5 +31,21 @@ public class FeePrintController extends BasicController {
 		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
 		orderedList=getManagerBean().getList(criteria);
 	}
+	
+	public void onOrderCustomerFeeByItem(ActionEvent event) throws ManagerBeanException {
+		Criteria criteria = getCriteria();
+		criteria.setOrderByList(null);
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
+		orderedList=getManagerBean().getList(criteria);
+	}
+	
+	public void onOrderCustomerFeeByCustomer(ActionEvent event) throws ManagerBeanException {
+		Criteria criteria = getCriteria();
+		criteria.setOrderByList(null);
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
+		orderedList=getManagerBean().getList(criteria);
+	}
 
 }
