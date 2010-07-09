@@ -36,8 +36,8 @@
 		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable)$V{currentFee}))]]></variableExpression>
 	</variable>
 	<variable name="totalGroup" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{proyection}]]></variableExpression>
-		<initialValueExpression><![CDATA[0.00]]></initialValueExpression>
+		<variableExpression><![CDATA[new Double(new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable )$V{currentFee}))*$V{period})]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<variable name="proyection" class="java.lang.Double">
 		<variableExpression><![CDATA[new Double(new Double($P{PriceStrategy}.getBasePrice((com.code.aon.product.strategy.ICalculable )$V{currentFee}))*$V{period})]]></variableExpression>
