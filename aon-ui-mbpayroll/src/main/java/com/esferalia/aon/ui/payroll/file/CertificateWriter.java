@@ -287,7 +287,7 @@ public class CertificateWriter {
 		}
 		cuentaCotizacion.setRepresentante(representante);
 		Empresa empresa = new Empresa();
-		empresa.setCcc(parse15Digit(remesa.getNumeroCcc()));
+		empresa.setCcc(parseToLength(remesa.getNumeroCcc(),15));
 		
 		empresa.setCifNif(remesa.getEmpresa().getRegistry().getDocument().getValue());
 		cuentaCotizacion.setEmpresa(empresa);
@@ -320,18 +320,18 @@ public class CertificateWriter {
 			trabajador.setApellido2(parseApellido(detalle.getEmpleado().getPersona().getLastName()));
 		}
 		trabajador.setNumSs(detalle.getEmpleado().getPersona().getNumSS());
-		trabajador.setGrupoCotizacion(parse2Digit(trabajos.get(0).getBaseCotizacion().getCdg()));
-		trabajador.setTipoContrato(parse3Digit(trabajos.get(0).getContratoTc2().getCdg()));
+		trabajador.setGrupoCotizacion(parseToLength(trabajos.get(0).getBaseCotizacion().getCdg(),2));
+		trabajador.setTipoContrato(parseToLength(trabajos.get(0).getContratoTc2().getCdg(),3));
 		if(trabajos.get(0).getFechaFinCont()!=null && trabajos.get(0).getFechaInicioCont()!=null){
-			trabajador.setDuracionContrato(parse5Digit(differenceBetweenDates(trabajos.get(0).getFechaFinCont(),trabajos.get(0).getFechaInicioCont())));
+			trabajador.setDuracionContrato(parseToLength(differenceBetweenDates(trabajos.get(0).getFechaFinCont(),trabajos.get(0).getFechaInicioCont()),5));
 		}
 //		trabajador.setIndicadorDuracionContrato();
-		trabajador.setCodProfesion(parse7DigitRight(trabajos.get(0).getCno()));
+		trabajador.setCodProfesion(parseToLength(trabajos.get(0).getCno(),7,false));
 //		trabajador.setCargoPublicoSindical();
 //		trabajador.setPorcentualDedicacion();
 		trabajador.setFechaAltaEmpresa(parseFecha(detalle.getEmpleado().getFechaInicio()));
 		
-		trabajador.setCodCausaSuspension(parse2Digit(detalle.getCausaSuspension().getValue()));
+		trabajador.setCodCausaSuspension(parseToLength(detalle.getCausaSuspension().getValue(),2));
 //		trabajador.setFechaSuspensionExtincion(detalle.getEmpleado().getFechaFin().toString());
 		trabajador.setFechaSuspensionExtincion(parseFecha(detalle.getFechaBaja()));
 //		trabajador.setFechaFinSuspension();
@@ -371,7 +371,7 @@ public class CertificateWriter {
 				periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
 				periodo.setFechaInicioPeriodo(parseFecha(t.getFechaInicioCont()));
 				periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
-				periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parse5Digit(t.getDiasTP()));
+				periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(),5));
 				listaPeriodos.add(periodo);
 			}
 			DistribucionJornada jornada = new DistribucionJornada();
@@ -429,10 +429,10 @@ public class CertificateWriter {
 				calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
 				Cotizacion cotizacion = new Cotizacion();
 				cotizacion.setAno(nomina.getYear().toString());
-				cotizacion.setMes(parse2Digit(nomina.getMes()));
-				cotizacion.setNumDiasCotizados(parse3Digit(nomina.getDiasNomina()));
-				cotizacion.setBaseCotizacionContingenciasComunes(parse9Digit(totalBaseCg));
-				cotizacion.setBaseCotizacionDesempleo(parse9Digit(totalBaseDesempleo));
+				cotizacion.setMes(parseToLength(nomina.getMes(),2));
+				cotizacion.setNumDiasCotizados(parseToLength(nomina.getDiasNomina(),3));
+				cotizacion.setBaseCotizacionContingenciasComunes(parseToLength(totalBaseCg,9));
+				cotizacion.setBaseCotizacionDesempleo(parseToLength(totalBaseDesempleo,9));
 				cotizacion.setObservaciones(null);
 				cotizacionList.add(cotizacion);
 			}
@@ -460,9 +460,9 @@ public class CertificateWriter {
 			IFiniquito finiquito = getNominaDAO().getFiniquito(empleado);
 			if(finiquito!=null){
 				Vacaciones vacaciones = new Vacaciones();
-				vacaciones.setNumDiasCotizados(parse3Digit(finiquito.getDiasVacaciones()));
-				vacaciones.setBaseCotizacionContingenciasComunes(parse9Digit(finiquito.getBaseContingenciasGenerales()));
-				vacaciones.setBaseCotizacionDesempleo(parse9Digit(finiquito.getBaseAccidentesTrabajo()));
+				vacaciones.setNumDiasCotizados(parseToLength(finiquito.getDiasVacaciones(),3));
+				vacaciones.setBaseCotizacionContingenciasComunes(parseToLength(finiquito.getBaseContingenciasGenerales(),9));
+				vacaciones.setBaseCotizacionDesempleo(parseToLength(finiquito.getBaseAccidentesTrabajo(),9));
 				vacaciones.setObservaciones(null);
 				IFiniquitoDiferencia finiquitodf = getNominaDAO().getFiniquitoDiferencia(empleado);
 				if(finiquitodf!=null){
@@ -519,8 +519,8 @@ public class CertificateWriter {
 			Calendar cal = new GregorianCalendar();
 			cal.setTime(date);
 			String d = String.valueOf(cal.get(Calendar.YEAR));
-			d += parse2Digit(cal.get(Calendar.MONTH)+1);
-			d += parse2Digit(cal.get(Calendar.DAY_OF_MONTH));
+			d += parseToLength(cal.get(Calendar.MONTH)+1,2);
+			d += parseToLength(cal.get(Calendar.DAY_OF_MONTH),2);
 			return d;
 		}
 		return null;
@@ -533,74 +533,37 @@ public class CertificateWriter {
 		return null;
 	}
 	
-	private String parse2Digit(Integer i) {
-		String m = String.valueOf(i);
-		return parse2Digit(m);
-	}
-	
-	private String parse2Digit(String s) {
-		while(s.length()<2){
-			s = "0".concat(s);
-		}
-		return s;
-	}
-	
-	private String parse3Digit(Integer i) {
-		String d = String.valueOf(i);
-		return parse3Digit(d);
-	}
-
-	private String parse3Digit(String s) {
-		while(s.length()<3){
-			s = "0".concat(s);
-		}
-		return s;
-	}
-	
-	private String parse5Digit(Integer i) {
-		if(i!=null){
-			String d = String.valueOf(i);
-			while(d.length()<5){
-				d = "0".concat(d);
+	/**
+	 * complete a string with cero digits up to digits indicated in length.
+	 * direction indicates with a true value the completion should be on the left hand. 
+	 * 
+	 * @param value
+	 * @param length
+	 * @param direction
+	 * @return
+	 */
+	private String parseToLength(String value, Integer length, boolean direction) {
+		if(value!=null){
+			while(value.length()<length){
+				if(direction){
+					value = "0".concat(value);
+				} else {
+					value = value.concat("0");
+				}
 			}
-			return d;
+			return value;
 		}
 		return null;
 	}
-	
-	private String parse7DigitRight(String s) {
-		if(s!=null){
-			while(s.length()<7){
-			s = s.concat("0");
-			}
-			return s;
-		}
-		return null;
+	private String parseToLength(String value, Integer length) {
+		return parseToLength(value, length, true);
 	}
-	
-	@SuppressWarnings("unused")
-	private String parse7Digit(String s) {
-		while(s.length()<7){
-			s = "0".concat(s);
-		}
-		return s;
+	private String parseToLength(Integer value, Integer length) {
+		return parseToLength(String.valueOf(value), length, true);
 	}
-	
-	private String parse9Digit(Double d) {
-		d =(CommonUtil.round(d)*100);
-		String b = String.valueOf(d.intValue());
-		while(b.length()<9){
-			b = "0".concat(b);
-		}
-		return b;
+	private String parseToLength(Double value, Integer length) {
+		value =(CommonUtil.round(value)*100);
+		return parseToLength(String.valueOf(value.intValue()), length, true);
 	}
-	
-	private String parse15Digit(String s) {
-		while(s.length()<15){
-			s = "0".concat(s);
-		}
-		return s;
-	}
-
-	
+		
 }
