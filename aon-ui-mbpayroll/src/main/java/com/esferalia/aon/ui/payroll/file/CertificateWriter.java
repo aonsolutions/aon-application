@@ -605,7 +605,8 @@ public class CertificateWriter {
 	}
 	
 	private String parseToLength(Double var, Integer lon, Boolean dir) {
-		var = CommonUtil.round(var) * 100;
+		var *= 100;
+		var = CommonUtil.round(var);
 		
 		return parseToLength(String.valueOf(var.intValue()), lon, dir);
 	}
