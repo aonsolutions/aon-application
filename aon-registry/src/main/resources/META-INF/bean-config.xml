@@ -7,6 +7,13 @@
 <bean-config>
 
 	<bean description="">
+		<pojo>com.code.aon.registry.RegistryNote</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.registry.event.RegistryNoteBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.registry.RegistryPayMethod</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.registry.event.RegistryPayMethodBeanVetoListener</vetoListener>
