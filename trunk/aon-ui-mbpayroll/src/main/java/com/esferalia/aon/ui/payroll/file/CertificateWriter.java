@@ -515,12 +515,15 @@ public class CertificateWriter {
 	}
 	
 	private String parseFecha(Date date) {
-		Calendar cal = new GregorianCalendar();
-		cal.setTime(date);
-		String d = String.valueOf(cal.get(Calendar.YEAR));
-		d += parse2Digit(cal.get(Calendar.MONTH)+1);
-		d += parse2Digit(cal.get(Calendar.DAY_OF_MONTH));
-		return d;
+		if(date!=null){
+			Calendar cal = new GregorianCalendar();
+			cal.setTime(date);
+			String d = String.valueOf(cal.get(Calendar.YEAR));
+			d += parse2Digit(cal.get(Calendar.MONTH)+1);
+			d += parse2Digit(cal.get(Calendar.DAY_OF_MONTH));
+			return d;
+		}
+		return null;
 	}
 	
 	private String parseTipoDistribucion(TipoTiempoParcial tipoTP) {
