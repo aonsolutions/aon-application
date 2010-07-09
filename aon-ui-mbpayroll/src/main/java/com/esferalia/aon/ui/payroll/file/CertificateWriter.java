@@ -277,13 +277,13 @@ public class CertificateWriter {
 		CuentaCotizacion cuentaCotizacion = new CuentaCotizacion();
 		Representante representante = new Representante();
 		representante.setCifNif(remesa.getEmpresa().getRepresentanteDocument());
-		representante.setNombre(parseNombre(remesa.getEmpresa().getNombreRepresentante()));
-		representante.setApellido1(parseApellido(remesa.getEmpresa().getApellido1Representante()));
+		representante.setNombre(parseMaxLength(remesa.getEmpresa().getNombreRepresentante(),15));
+		representante.setApellido1(parseMaxLength(remesa.getEmpresa().getApellido1Representante(),20));
 		if(!StringUtils.isBlank(remesa.getEmpresa().getApellido2Representante())){
-			representante.setApellido2(parseApellido(remesa.getEmpresa().getApellido2Representante()));
+			representante.setApellido2(parseMaxLength(remesa.getEmpresa().getApellido2Representante(),20));
 		}
 		if(!StringUtils.isBlank(remesa.getEmpresa().getCargo())){
-			representante.setCargo(parseCargo(remesa.getEmpresa().getCargo()));
+			representante.setCargo(parseMaxLength(remesa.getEmpresa().getCargo(),40));
 		}
 		cuentaCotizacion.setRepresentante(representante);
 		Empresa empresa = new Empresa();
@@ -314,10 +314,10 @@ public class CertificateWriter {
 			
 		Trabajador trabajador = new Trabajador();
 		trabajador.setDniNie(detalle.getEmpleado().getPersona().getRegistry().getDocument().getValue());
-		trabajador.setNombre(parseNombre(detalle.getEmpleado().getPersona().getName()));
-		trabajador.setApellido1(parseApellido(detalle.getEmpleado().getPersona().getSurname()));
+		trabajador.setNombre(parseMaxLength(detalle.getEmpleado().getPersona().getName(),15));
+		trabajador.setApellido1(parseMaxLength(detalle.getEmpleado().getPersona().getSurname(),20));
 		if(!StringUtils.isBlank(detalle.getEmpleado().getPersona().getLastName())){
-			trabajador.setApellido2(parseApellido(detalle.getEmpleado().getPersona().getLastName()));
+			trabajador.setApellido2(parseMaxLength(detalle.getEmpleado().getPersona().getLastName(),20));
 		}
 		trabajador.setNumSs(detalle.getEmpleado().getPersona().getNumSS());
 		trabajador.setGrupoCotizacion(parseToLength(trabajos.get(0).getBaseCotizacion().getCdg(),2));
@@ -493,25 +493,20 @@ public class CertificateWriter {
         return (int)difDays;
 	}
 
-	private String parseNombre(String nombre){
-		if(nombre.length()>15){
-			return nombre.substring(0, 15);
+	/**
+	 * set the maximun number of digits of the value
+	 * @param value
+	 * @param length
+	 * @return
+	 */
+	private String parseMaxLength(String value, Integer length){
+		if(value!=null){
+			if(value.length()>length){
+				return value.substring(0, length);
+			}
+			return value;
 		}
-		return nombre;
-	}
-			
-	private String parseApellido(String apellido){
-		if(apellido.length()>20){
-			return apellido.substring(0, 20);
-		}
-		return apellido;
-	}
-	
-	private String parseCargo(String cargo){
-		if(cargo.length()>40){
-			return cargo.substring(0, 40);
-		}
-		return cargo;
+		return null;
 	}
 	
 	private String parseFecha(Date date) {
