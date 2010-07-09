@@ -172,6 +172,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			throw new AbortProcessingException(msg);
 		}
 		IEmpleado empleado;
+		setListaRemesas(null);
 		List<RemesableEmpleadoCertificate> list = new LinkedList<RemesableEmpleadoCertificate>();
 		for (RemesableEmpleadoCertificate remesable : (List<RemesableEmpleadoCertificate>) getModel().getWrappedData()) {
 			if (remesable.isSelected()) {
