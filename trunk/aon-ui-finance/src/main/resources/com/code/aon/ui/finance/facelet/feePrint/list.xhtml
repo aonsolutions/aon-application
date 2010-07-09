@@ -33,12 +33,14 @@
 					<aon:htmlCommandLink id="feePrintList-pdf-report" rendered="#{feePrintSearch.anual}"
 						value="Por Concepto" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						actionListener="#{feePrint.onOrderCustomerFeeByItem}"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="feePrintListByConcept" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="feePrintListByCustomer" rendered="#{feePrintSearch.anual}"
 						value="Por Cliente" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						actionListener="#{feePrint.onOrderCustomerFeeByCustomer}"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="feePrintListByCustomer" />
 					</aon:htmlCommandLink>
