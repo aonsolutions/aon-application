@@ -376,11 +376,11 @@ public class CertificateWriter {
 		}
 		
 		// trabajador.setIndicadorDuracionContrato();
-		trabajador.setCodProfesion(parseToLength(trabajos.get(0).getCno(), 7));
+		trabajador.setCodProfesion(parseToLength(trabajos.get(0).getCno(), 7, false));
 		// trabajador.setCargoPublicoSindical();
 		// trabajador.setPorcentualDedicacion();
 		trabajador.setFechaAltaEmpresa(parseFecha(detalle.getEmpleado().getFechaInicio()));
-		trabajador.setCodCausaSuspension(parseToLength(detalle.getCausaSuspension().getValue(), 2, false));
+		trabajador.setCodCausaSuspension(parseToLength(detalle.getCausaSuspension().getValue(), 2));
 		// trabajador.setFechaSuspensionExtincion(detalle.getEmpleado().getFechaFin().toString());
 		trabajador.setFechaSuspensionExtincion(parseFecha(detalle.getFechaBaja()));
 		// trabajador.setFechaFinSuspension();
