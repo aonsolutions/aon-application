@@ -549,14 +549,14 @@ public class CertificateWriter {
 	}
 	
 	private Integer differenceBetweenDates(Date from, Date to) {
-		Long difDays = new Long(0);
-		final Long MS_PER_DAY = new Long(1000 * 60 * 60 * 24);
+		Integer diffDays = new Integer(0);
+		final Double MS_PER_DAY = new Double(1000 * 60 * 60 * 24);
 		
 		if(from.before(to)) {
-			difDays = ((to.getTime() - from.getTime()) / MS_PER_DAY) + 1;
+			diffDays = (int)((Math.floor((to.getTime() - from.getTime()) / MS_PER_DAY + 0.5d) + 1));
 		}
 		
-		return difDays.intValue();
+		return diffDays;
 	}
 	
 	private String parseMaxLength(String var, Integer lon) {
