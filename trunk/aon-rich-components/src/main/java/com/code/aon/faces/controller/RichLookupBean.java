@@ -161,10 +161,10 @@ public class RichLookupBean {
 	 * 
 	 * @return the join bindings map
 	 */
-	public Map<String, ValueExpression> getJoinBindingsMap(ValueChangeEvent event) {
+	public Map<String, ValueExpression> getJoinBindingsMap(UIComponent component) {
 		Map<String, ValueExpression> joinBindingsMap = Collections.emptyMap();
-		if (event.getComponent() instanceof HtmlLookupInputText) {
-			HtmlLookupInputText lookupComponent = (HtmlLookupInputText) event.getComponent();
+		if (component instanceof HtmlLookupInputText) {
+			HtmlLookupInputText lookupComponent = (HtmlLookupInputText) component;
 			joinBindingsMap = lookupComponent.getJoinBindingsMap();
 		}
 		return joinBindingsMap;
@@ -562,11 +562,15 @@ public class RichLookupBean {
 	 *            the event
 	 * @throws ManagerBeanException
 	 */
-	public void lookupChanged(ValueChangeEvent event) throws ManagerBeanException {
-		LOGGER.info("lookupChanged: {} old: {}", event.getNewValue(), event.getOldValue());
+	public void lookupChanged(ActionEvent event) throws ManagerBeanException {
+		UIComponent component = event.getComponent().getParent();
+		lookupChanged(component);
+	}
+	
+	public void lookupChanged( UIComponent component ) throws ManagerBeanException {
 		boolean restoreValues = false;
-		setBindings(event.getComponent());
-		Map<String, ValueExpression> joinBindingsMap = getJoinBindingsMap(event);
+		setBindings( component );
+		Map<String, ValueExpression> joinBindingsMap = getJoinBindingsMap(component);
 		Map<String, Object> valuesMap = getValuesMap(joinBindingsMap);
 		Criteria criteria = getCriteria(valuesMap);
 		getController().setCriteria(criteria);
@@ -578,14 +582,13 @@ public class RichLookupBean {
 			onReset(null);
 			restoreValues = true;
 		}
-		fireLookupChangeListener(event.getComponent(), !restoreValues);
+		fireLookupChangeListener(component, !restoreValues);
 		updateSourcePojo();
 		if (restoreValues) {
 			restoreValues(joinBindingsMap, valuesMap);
 		}
 		removeControllerListener();
-	}
-
+	}	
 	private void setBindings(UIComponent component) {
 		if (component instanceof ILookupComponent) {
 			this.component = (ILookupComponent) component;

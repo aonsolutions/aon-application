@@ -33,5 +33,13 @@ public interface IRichFacesTags {
 	String METHOD = "method";
 	
 	String FAMILY = "family";
+
+	String ACTION = "action";
+	
+	String ACTION_LISTENER = "actionListener";	
+	
+	String VALUE_CHANGE_LISTENER = "valueChangeListener";
+	
+	String VALIDATOR = "validator";
 	
 }

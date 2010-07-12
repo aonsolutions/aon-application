@@ -206,11 +206,6 @@
             <renderer-class>com.code.aon.faces.component.richfaces.rowSelector.RowSelectorRenderer</renderer-class>
         </renderer>
     </render-kit>
-	<lifecycle>
-		<phase-listener>
-			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
-		</phase-listener>
-	</lifecycle>   
 	<converter>
 		<converter-id>aon.AbbreviateConverter</converter-id>
 		<converter-class>com.code.aon.faces.component.converter.AbbreviateConverter</converter-class>

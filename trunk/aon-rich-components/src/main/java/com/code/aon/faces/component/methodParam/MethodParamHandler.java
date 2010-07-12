@@ -12,6 +12,7 @@ import javax.faces.component.UIComponent;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.faces.component.param.ParamHandler;
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.MethodValueExpression;
 import com.sun.facelets.FaceletContext;
@@ -20,20 +21,12 @@ import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagConfig;
 import com.sun.facelets.tag.TagHandler;
 
-public class MethodParamHandler extends TagHandler {
+public class MethodParamHandler extends TagHandler implements IRichFacesTags {
 
 	private static final String TYPE = "type";
 	
 	private static final String RESOLVE = "resolve";
 	
-	private static final String ACTION = "action";
-	
-	private static final String ACTION_LISTENER = "actionListener";	
-	
-	private static final String VALUE_CHANGE_LISTENER = "valueChangeListener";
-	
-	private static final String VALIDATOR = "validator";
-
 	private final TagAttribute name;
 	
 	private Class<?> returnType;

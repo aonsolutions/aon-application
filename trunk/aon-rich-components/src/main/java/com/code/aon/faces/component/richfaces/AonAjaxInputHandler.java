@@ -9,6 +9,7 @@ import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.AttributeInfo;
@@ -39,6 +40,8 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	
 	private TagAttribute ajaxSingle;
 	
+	private TagAttribute actionListener;
+	
 	private boolean ajaxNeeded;
 	
 	public AonAjaxInputHandler(ComponentConfig config) {
@@ -46,21 +49,25 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 		partialSubmit = getAttribute(PARTIAL_SUBMIT);
 		reRender = getAttribute(RERENDER);
 		ajaxSingle = getAttribute(AJAX_SINGLE);
-		ajaxNeeded = (partialSubmit != null) || (reRender != null) || (ajaxSingle != null);
+		actionListener = getAttribute(ACTION_LISTENER);
+		ajaxNeeded = isTrueValue(partialSubmit) || isTrueValue(ajaxSingle)
+			|| (reRender != null) || (actionListener != null);
+	}
+	
+	private boolean isTrueValue( TagAttribute tag ) {
+		if ( tag != null ) {
+			String value = tag.getValue();
+			return StringUtils.equals( value, Boolean.TRUE.toString() );
+		}
+		return false;
 	}
 	
 	@Override
 	protected MetaRuleset createMetaRuleset(Class type) {
 		MetaRuleset set = super.createMetaRuleset(type);
 		set.ignore(RERENDER).ignore(PARTIAL_SUBMIT);
-		set.ignore(AJAX_SINGLE).ignore(FOCUS);
+		set.ignore(AJAX_SINGLE).ignore(FOCUS).ignore(ACTION_LISTENER);
 		return set;
-	}
-
-	@Override
-	protected void setAttributes( FaceletContext ctx, Object instance ) {
-		super.setAttributes(ctx, instance);
-		UIComponent component = (UIComponent) instance;
 	}
 
 	public boolean isAjaxNeeded() {
@@ -114,6 +121,10 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 				if ( focus != null ) {
 					String value = focus.getValue(ctx);
 					attributes.add( BasicComponentConfig.newAttribute(tag, FOCUS, value) );					
+				}
+				if ( actionListener != null ) {
+					String value = actionListener.getValue();
+					attributes.add( BasicComponentConfig.newAttribute(tag, ACTION_LISTENER, value) );					
 				}
 				BasicComponentConfig config = new BasicComponentConfig(getConfig(), attributes );
 				config.setComponentType(SUPPORT_COMPONENT_TYPE);
