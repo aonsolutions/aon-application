@@ -25,10 +25,10 @@ public class AonComponentConfig implements ComponentConfig {
 	}
 	
 	public AonComponentConfig( ComponentConfig config ) {
-		this( config, null );
+		this.config = config;
 	}
 	
-	private Tag duplicate( Tag tag, List<AttributeInfo> extraAttributes ) {
+	protected Tag duplicate( Tag tag, List<AttributeInfo> extraAttributes ) {
 		TagAttributes attributes = newTagAttributes( tag, extraAttributes );
 		return new Tag(tag, attributes);
 	}
@@ -44,8 +44,12 @@ public class AonComponentConfig implements ComponentConfig {
     public FaceletHandler getNextHandler() {
         return config.getNextHandler();
     }
+    
+    protected void setTag(Tag tag) {
+		this.tag = tag;
+	}
 
-    public Tag getTag() {
+	public Tag getTag() {
         return this.tag;
     }
 

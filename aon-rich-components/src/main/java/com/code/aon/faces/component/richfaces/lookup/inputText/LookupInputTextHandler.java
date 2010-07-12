@@ -7,7 +7,6 @@ import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import com.code.aon.common.dao.AliasEntry;
 import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.faces.component.richfaces.AonAjaxInputHandler;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
-import com.code.aon.faces.component.sandbox.ValueChangeNotifierHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ui.form.BasicController;
 import com.sun.facelets.FaceletContext;
@@ -33,24 +31,16 @@ public class LookupInputTextHandler extends AonAjaxInputHandler implements ILook
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(LookupInputTextHandler.class);
 	
-    private static final String VALUE_CHANGE_LISTENER = "lookupChanged";
-	
    	/**
 	 * The Constructor.
 	 * 
 	 * @param config the config
 	 */
 	public LookupInputTextHandler(ComponentConfig config) {
-		super( config );
+		super( new LookupInputTextConfig(config) );
 		setAjaxNeeded( true );
 	}
 
-	private void setValueChangeNotifier( FaceletContext ctx, UIInput text ) {
-		String lookup = getRequiredAttribute(LOOKUP).getValue();
-		String valueChangeListener = FaceletUtil.appendExpression( lookup, VALUE_CHANGE_LISTENER);
-		ValueChangeNotifierHandler.setupClassListener(ctx, text, valueChangeListener);
-	}
-	
 	private void setLookupChangeListener( FaceletContext ctx, HtmlLookupInputText text ) {	
 		TagAttribute vcl = getAttribute(LOOKUP_CHANGE_LISTENER);
 		if ( vcl != null ) {
@@ -132,7 +122,6 @@ public class LookupInputTextHandler extends AonAjaxInputHandler implements ILook
 	protected void setAttributes(FaceletContext ctx, Object instance) {
 		super.setAttributes(ctx, instance);
 		HtmlLookupInputText text = (HtmlLookupInputText) instance;
-		setValueChangeNotifier(ctx, text);
 		setLookupChangeListener(ctx, text);
 	}
 	

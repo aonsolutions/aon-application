@@ -404,12 +404,6 @@
 		</component>
 	</tag>
 	<tag>
-		<tag-name>valueChangeNotifier</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.sandbox.ValueChangeNotifierHandler
-		</handler-class>
-	</tag>
-	<tag>
 		<tag-name>mediaOutput</tag-name>
 		<component>
 			<component-type>
