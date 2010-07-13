@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -26,6 +27,8 @@ import com.esferalia.aon.payroll.core.empresa.EmpresaDAOFactory;
 import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
+import com.esferalia.aon.payroll.core.empresa.RemesaCertificadoEmpresaParams;
+import com.esferalia.aon.payroll.core.enumeration.FileStatus;
 import com.esferalia.aon.ui.payroll.file.CertificateWriter;
 
 public class RemesaCertificadoWizard implements Serializable {
@@ -40,7 +43,20 @@ public class RemesaCertificadoWizard implements Serializable {
 	private DataModel model;
 	private IRemesaCertificadoEmpresa remesa;
 	private List<IRemesaCertificadoEmpresaDetalle> detailList;
+	private RemesaCertificadoEmpresaParams params;
 	
+	
+	public RemesaCertificadoEmpresaParams getParams() {
+		if (params == null) {
+			params = new RemesaCertificadoEmpresaParams();
+		}
+		return params;
+	}
+
+	public void setParams(RemesaCertificadoEmpresaParams params) {
+		this.params = params;
+	}
+
 	public IRemesaCertificadoEmpresa getRemesa() {
 		return remesa;
 	}
@@ -96,7 +112,8 @@ public class RemesaCertificadoWizard implements Serializable {
 	}
 
 	private void initializeRemesasModel() throws PayrollException {
-		model = new ListDataModel(getEmpresaDAO().getRemesaCertificados());
+//		getParams().getEstados().add(FileStatus.NO_GENERADO);
+		model = new ListDataModel(getEmpresaDAO().getRemesaCertificados(getParams()));
 	}
 	
 	private void refreshDetailList() throws PayrollException {
@@ -140,6 +157,10 @@ public class RemesaCertificadoWizard implements Serializable {
 	// ***************************************************
 	public void onStart(ActionEvent event) {
 		setCurrentStep(0);
+		setParams(null);
+		getParams().setFecha(Calendar.getInstance().getTime());
+		FileStatus[] estados = {FileStatus.NO_GENERADO};
+		getParams().setEstados(estados);
 		try {
 			initializeRemesasModel();
 		} catch (PayrollException e) {
@@ -162,9 +183,13 @@ public class RemesaCertificadoWizard implements Serializable {
 					AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
 				}
 			}
+			getRemesa().setEstado(FileStatus.GENERADO);
+			getEmpresaDAO().accept(getRemesa());
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			// No se lanza excepción, que vaya a la última página.
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
 		} 
 	}
 	
@@ -217,7 +242,7 @@ public class RemesaCertificadoWizard implements Serializable {
 		}
 	}
 	
-	private void onSearch(ActionEvent event) {
+	public void onSearch(ActionEvent event) {
 		try {
 			initializeRemesasModel();
 		} catch (PayrollException e) {
@@ -225,7 +250,6 @@ public class RemesaCertificadoWizard implements Serializable {
 			throw new AbortProcessingException(e);
 		}
 	}
-
 	
 	
 }

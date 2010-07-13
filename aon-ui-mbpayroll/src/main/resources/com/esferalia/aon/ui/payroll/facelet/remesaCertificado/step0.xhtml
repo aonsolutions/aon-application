@@ -14,9 +14,43 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		<aon:div styleClass="aon-scroll-area">
-			<aon:dataTable id="remesaData" value="#{remesaCertificadoWizard.model}"
-				var="to" rows="20" rendered="#{remesaCertificadoWizard.model.rowCount > 0}"
+	
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_remesa_certificado_filter}" />
+			</f:facet>
+			<aon:panelGrid columns="4" dir="true" width="100%">
+				<aon:outputLabel for="fecha"
+					value="#{payrollBundle.payroll_fecha}" />
+				<aon:selectInputDate id="fecha" 
+					value="#{remesaCertificadoWizard.params.fecha}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange" reRender="remesaData">
+						<aon:actionListener method="#{remesaCertificadoWizard.onSearch}" />
+					</a4j:support>
+					<a4j:support event="onchanged" reRender="remesaData">
+						<aon:actionListener method="#{remesaCertificadoWizard.onSearch}" />
+					</a4j:support>
+				</aon:selectInputDate>
+				
+				<aon:outputLabel for="estado"
+					value="#{payrollBundle.payroll_estado}" />
+				<aon:selectManyCheckbox id="estado"
+					value="#{remesaCertificadoWizard.params.estados}">
+					<f:selectItems value="#{payrollCollections.fileStatus}" />
+					<a4j:support event="onclick" reRender="remesaData">
+						<aon:actionListener method="#{remesaCertificadoWizard.onSearch}" />
+					</a4j:support>
+				</aon:selectManyCheckbox>
+			</aon:panelGrid>
+			
+		</aon:panel>
+	
+		<aon:div styleClass="aon-scroll-area" id="remesaData">
+			<aon:dataTable id="remesaDataTable" value="#{remesaCertificadoWizard.model}"
+				var="to" rows="20" 
 				columnClasses="
 				aon-editDataTable-textColumn, 
 				aon-editDataTable-textColumn, 
@@ -66,8 +100,8 @@
 					<aon:outputText value="#{to.estado}" />
 				</aon:column>
 			</aon:dataTable>
+			<aon:dataScroller2 for="remesaDataTable" showNote="true" />
 <!--  
-			<aon:dataScroller2 for="remesaData" showNote="true" />
 -->
 
 		</aon:div>
