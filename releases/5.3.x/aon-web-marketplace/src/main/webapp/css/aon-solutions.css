@@ -1,0 +1,171 @@
+/*****************
+*  CONTENT MENU   *
+******************/
+.aon-content-menu{
+	border-top:#3C5F84 4px solid;
+	padding:4px 0.5em 7px 0.5em;
+	margin:0 6px;
+	}
+.aon-content-menu-item{
+	border:0;
+	background:#fff url("../images/content/ibm-content-menu-item.gif") left center no-repeat;
+	color:#5C81A7;
+	padding:0 14px 0 4px;
+	text-decoration:none;	
+	font-weight:bold;
+	}
+.aon-content-menu-item:visited{
+	color:#5C81A7;
+	text-decoration:none;	
+	}
+.aon-content-menu-item:hover{
+	color:#5C81A7;
+	text-decoration:none;	
+	}
+.aon-content-menu-item-active{
+	border:0;
+	color:#000;
+	padding:0 10px 0 8px;
+	text-decoration:none;
+	font-weight:bold;
+	background:#fff url("../images/content/ibm-content-menu-item-active.gif") left center no-repeat;
+
+	}
+.aon-content-menu-item-active:visited{
+	color:#000;
+	text-decoration:none;	
+	}
+.aon-content-menu-item-active:hover{
+	color:#000;
+	text-decoration:none;	
+	}
+/* text placed over the content menu*/
+.aon-content-menu-aux{
+	padding:0 1em 3px 1em;
+	font-family:arial,verdana,sans-serif;
+	color:#666;
+	}
+
+/*****************
+* TABLE PANELGRID. Used to organize the content into several columns   *
+******************/
+.aon-panelGrid{
+	width:100%;
+	border:0;
+	}
+.aon-panelGrid td{
+	padding:0;
+	vertical-align:top;	
+	}
+	
+
+.aon-datalist-unordered{
+	margin:0 1em 0 2em;
+}
+
+
+
+/***************/
+/*AUXILIARY WINDOW */
+/***************/
+/* USED FOR HELP WINDOW, ACCELERATORS WINDOW, ETC*/
+
+.aon-auxiliary-window-content{
+	text-align:center;
+	padding:15px;
+	height:100%;
+	background:transparent url("../images/aon-home.jpg") left top no-repeat;
+	}
+.aon-auxiliary-window-content-int{
+	text-align:left;
+	width:400px;
+	margin:20% auto;
+	
+	}
+.aon-auxiliary-window-foot{
+	color:#fff;
+	padding:3px 5px;
+	text-align:left;
+	font-size:0.9em;
+	font-family:arial,verdana,sans-serif;
+	background-color:#000;
+	position:absolute;
+	bottom:0;
+	width:100%;
+}
+.aon-auxiliary-window-header{	
+	
+	background-color:#000;
+}
+.aon-auxiliary-window-name{
+	font-size:1.2em;	
+	color:#f4f4f4;
+	position:relative;
+	top:-12px;
+	left:40px;
+
+ }
+.aon-auxiliary-window-helpInfo{
+	margin:20px 20px 0 20px;
+	border-left:#ccc 1px solid;
+	border-right:#ccc 1px solid;
+	padding:0 20px;
+	font-size:0.8em;
+	text-align:justify;
+	}
+.aon-auxiliary-window-helpInfo div{
+	padding-bottom:1em;
+	
+}
+/*********************************/	
+/******** POP UP WINDOW *********/
+/********************************/
+/* USED IN DELIVERY TO SIMULATE A POPUP WINDOW*/
+.aon-popup-window{
+	border-left:#ccc 2px outset;
+	border-right:#ccc 2px inset;
+	border-top:#ccc 2px outset;
+	border-bottom:#ccc 2px inset;
+	background-color:#fff;
+	padding:0 0px 5px 0px;
+	width:495px;
+	}
+.aon-popup-window-title{
+	color:#D9D9D9;
+	padding:0px 0 0px 32px;	
+	line-height:22px;
+	font-family:tahoma,arial,verdana,sans-serif;
+	font-size:1em;
+	font-weight:bold;
+	border-bottom:#fff 1px solid;
+	height:22px;
+	background:#000 url("../images/window/aon-popup-window-title.gif") 5px top no-repeat;
+	}
+.aon-popup-window-close{
+	color:#000;
+	background:#000 url("../images/window/aon-popup-window-close.gif") left top no-repeat;
+	border:0;
+	float:right;
+	width:13px;
+	height:22px;
+  }
+.aon-popup-window-body{
+	padding:8px 0 0 0;
+   }
+.aon-popup-window-scroll-area{
+	padding:10px;
+   }
+
+
+/*********************************/	
+/******** DL, DT, DD *********/
+/********************************/
+/* used in accelerators window*/
+  .aon-dt{
+  font-weight:bold;
+  padding-right:1em;
+  white-space:nowrap;
+  }
+  .aon-dd{
+  padding-right:2em;
+  }

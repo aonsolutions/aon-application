@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="accountManager_form::#com#code#aon#ui#account#bridge#facelet#account#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/account/bridge/facelet/account/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#account#bridge#facelet#account#form.xhtml"
+    TITLE="accountManager_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountManager_list::#com#code#aon#ui#account#bridge#facelet#account#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/account/bridge/facelet/account/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#account#bridge#facelet#account#list.xhtml"
+    TITLE="accountManager_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountManager_search::#com#code#aon#ui#account#bridge#facelet#account#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/account/bridge/facelet/account/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#account#bridge#facelet#account#search.xhtml"
+    TITLE="accountManager_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#account#bridge#facelet#account#search.xhtml"
+  PATH="/com/code/aon/ui/account/bridge/facelet/account/search.xhtml"
+  SHAPE="272,321,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#account#bridge#facelet#account#form.xhtml"
+  PATH="/com/code/aon/ui/account/bridge/facelet/account/form.xhtml"
+  SHAPE="272,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#account#bridge#facelet#account#list.xhtml"
+  PATH="/com/code/aon/ui/account/bridge/facelet/account/list.xhtml"
+  SHAPE="272,209,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules::1" SHAPE="32,193,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="customerAccountChecker_list::#com#code#aon#ui#account#bridge#facelet#checker#customerAccount#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/account/bridge/facelet/checker/customerAccount/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#account#bridge#facelet#checker#customerAccount#list.xhtml"
+    TITLE="customerAccountChecker_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="customerAccountChecker_search::#com#code#aon#ui#account#bridge#facelet#checker#customerAccount#search.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/account/bridge/facelet/checker/customerAccount/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#account#bridge#facelet#checker#customerAccount#search.xhtml"
+    TITLE="customerAccountChecker_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#account#bridge#facelet#checker#customerAccount#list.xhtml"
+  PATH="/com/code/aon/ui/account/bridge/facelet/checker/customerAccount/list.xhtml"
+  SHAPE="272,465,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#account#bridge#facelet#checker#customerAccount#search.xhtml"
+  PATH="/com/code/aon/ui/account/bridge/facelet/checker/customerAccount/search.xhtml"
+  SHAPE="256,465,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules::2" SHAPE="32,673,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::2" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="supplierAccountChecker_list::#com#code#aon#ui#account#bridge#facelet#checker#supplierAccount#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/account/bridge/facelet/checker/supplierAccount/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#account#bridge#facelet#checker#supplierAccount#list.xhtml"
+    TITLE="supplierAccountChecker_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="supplierAccountChecker_search::#com#code#aon#ui#account#bridge#facelet#checker#supplierAccount#search.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/account/bridge/facelet/checker/supplierAccount/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#account#bridge#facelet#checker#supplierAccount#search.xhtml"
+    TITLE="supplierAccountChecker_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::3" SHAPE="32,929,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::3" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="creditorAccountChecker_list::#com#code#aon#ui#account#bridge#facelet#checker#creditorAccount#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/account/bridge/facelet/checker/creditorAccount/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#account#bridge#facelet#checker#creditorAccount#list.xhtml"
+    TITLE="creditorAccountChecker_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="creditorAccountChecker_search::#com#code#aon#ui#account#bridge#facelet#checker#creditorAccount#search.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/account/bridge/facelet/checker/creditorAccount/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#account#bridge#facelet#checker#creditorAccount#search.xhtml"
+    TITLE="creditorAccountChecker_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#account#bridge#facelet#checker#creditorAccount#list.xhtml"
+  PATH="/com/code/aon/ui/account/bridge/facelet/checker/creditorAccount/list.xhtml"
+  SHAPE="256,945,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#account#bridge#facelet#checker#supplierAccount#search.xhtml"
+  PATH="/com/code/aon/ui/account/bridge/facelet/checker/supplierAccount/search.xhtml"
+  SHAPE="256,833,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#account#bridge#facelet#checker#creditorAccount#search.xhtml"
+  PATH="/com/code/aon/ui/account/bridge/facelet/checker/creditorAccount/search.xhtml"
+  SHAPE="256,1089,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#account#bridge#facelet#checker#supplierAccount#list.xhtml"
+  PATH="/com/code/aon/ui/account/bridge/facelet/checker/supplierAccount/list.xhtml"
+  SHAPE="256,689,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

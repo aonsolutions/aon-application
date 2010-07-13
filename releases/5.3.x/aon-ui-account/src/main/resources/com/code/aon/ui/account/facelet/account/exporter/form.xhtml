@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle" value="#{accountBundle.account_exporter_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
+
+				<ui:define name="toolbarContent">
+					<aon:htmlCommandLink id="execute" 
+						value="#{accountBundle.account_export}"
+						target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{accountExporter.onExport}"
+						/>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+					<aon:outputText value="#{accountBundle.account_export_customer}" />
+					<aon:selectBooleanCheckbox value="#{accountExporter.exportCustomerAccount}" />
+
+					<aon:outputText value="#{accountBundle.account_export_supplier}" />
+					<aon:selectBooleanCheckbox value="#{accountExporter.exportSupplierAccount}" />
+
+					<aon:outputText value="#{accountBundle.account_export_creditor}" />
+					<aon:selectBooleanCheckbox value="#{accountExporter.exportCreditorAccount}" />
+
+					<aon:outputText value="#{accountBundle.account_export_bank}" />
+					<aon:selectBooleanCheckbox value="#{accountExporter.exportBankAccount}" />
+				</aon:panelGrid>				
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

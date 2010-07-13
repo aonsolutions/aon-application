@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"	
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	>
+<body>
+
+<ui:composition>
+
+	<aon:div id="noFolderSelected"
+		rendered="#{!webmailFolder.folderSelected and webmail.logged}">
+		<aon:div styleClass="aon-content-home">
+			<aon:outputText value="NO FOLDER SELECTED" />
+		</aon:div>
+	</aon:div>
+
+	<aon:div id="folderSelected"
+		rendered="#{webmailFolder.folderSelected and webmail.logged}">
+
+		<aon:div id="messageGrid">
+
+			<aon:div id="messagesDiv" layout="none">
+
+				<aon:div styleClass="aon-box aon-box-outstanding2"
+					rendered="#{webmailFolder.folder.messageCount==0}">
+					<aon:outputText value="#{webmailBundle.webmail_nomessages}" />
+				</aon:div>
+			
+				<aon:div style="width:99%" rendered="#{webmailFolder.folder.messageCount>0}">
+					
+					<aon:extendedDataTable id="messageDataTable"
+						tableState="#{webmailFolder.tableState}" height="#{webmailFolder.tableHeight}" 
+						value="#{webmailFolder.model}" var="to" rows="#{webmailFolder.pageSize}">
+								
+						<aon:rowSelector action="#{webmailFolder.getSelectedMessageAction}"
+							actionListener="#{webmailFolder.changeSelectedMessage}" />
+							
+						<aon:column id="stateColumn" label="#{webmailBundle.webmail_message_selectEmail}"
+							styleClass="aon-nopadding aon-nomargin" width="70px" >
+							<f:facet name="header" >
+								<aon:div layout="none">
+ 
+									<aon:outputLabel id="selectButton"
+										onclick="aonSelectAllMessages();"
+										value="&#160;" style="padding-right: 16px;"
+										styleClass="aon-icon-checkAll aon-vertical-align-top" />
+
+									<aon:outputLabel id="deselectButton"
+										onclick="aonDeselectAllMessages();"
+										value="&#160;" style="padding-left: 16px;"
+										styleClass="aon-icon-checkNone aon-vertical-align-top" />
+										
+									<rich:jQuery name="aonSelectAllMessages" timing="onJScall"
+										selector="#messageDataTable :checkbox" query="attr('checked', true);" />
+									<rich:jQuery name="aonDeselectAllMessages" timing="onJScall"
+										selector="#messageDataTable :checkbox:checked" query="removeAttr('checked');" />																				
+															
+								</aon:div>
+							</f:facet>
+							<aon:div  
+								onmouseover="disableRowSelector();" onmouseout="enableRowSelector();">
+	 							<rich:dragSupport dragIndicator="messageIndicator" dragType="MESSAGE" dragValue="#{to}" />
+								<aon:graphicImage height="18" width="10"
+									styleClass="aon-vertical-align-middle aon-nopadding aon-nomargin"
+									url="#{aonResource.resolve['/richCss/images/aon-icon/aon-icon-dnd.gif']}" >
+								</aon:graphicImage>
+								<aon:selectBooleanCheckbox id="checkMessage"
+									value="#{to.selected}" style="cursor: default;"
+									styleClass="aon-vertical-align-middle"/>
+								<aon:outputText rendered="#{!to.readed}" value="&#160;"
+									styleClass="aon-icon aon-icon-mailInbox aon-vertical-align-top"
+									style="margin-right: 0px;padding-left: 16px;" />
+								<aon:outputText rendered="#{to.readed and !to.answered}"
+									value="&#160;" styleClass="aon-icon aon-icon-mailInbox-read"
+									style="margin-right: 0px;padding-left: 16px;" />
+								<aon:outputText rendered="#{to.answered}" value="&#160;"
+									styleClass="aon-icon aon-icon-mailInbox-answered"
+									style="margin-right: 0px;padding-left: 16px;" />
+								<aon:graphicImage styleClass="aon-vertical-align-middle aon-nopadding aon-nomargin"
+									value="#{aonResource.resolve['/images/aon-icon/aon-icon-attach-file.png']}"
+									rendered="#{to.attachment}" />
+							</aon:div>
+						</aon:column>
+						<aon:column id="mailColumn" width="180px" sortable="true" 
+							label="#{webmailFolder.sentItemColumn?(webmailBundle.webmail_to):(webmailBundle.webmail_from)}"
+							sortBy="#{webmailFolder.sentItemColumn?(to.recipientsToEmail):(to.senderEmail)}">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailFolder.sentItemColumn?(webmailBundle.webmail_to):(webmailBundle.webmail_from)}" />
+							</f:facet>
+							<aon:outputText escape="true" title="#{to.senderEmail}"
+								value="#{to.senderSummary}"
+								rendered="#{!webmailFolder.sentItemColumn}"
+								style="#{to.readed?'':'font-weight: bold'}" />
+							<aon:outputText escape="true" title="#{to.recipientsToEmail}"
+								value="#{to.recipientsToSummary}"
+								rendered="#{webmailFolder.sentItemColumn}"
+								style="#{to.readed?'':'font-weight: bold'}" />
+						</aon:column>
+						<aon:column id="subjectColumn" 
+							label="#{webmailBundle.webmail_subject}" width="340px" 
+							sortable="true" sortBy="#{to.subject}">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_subject}" />
+							</f:facet>
+							<aon:outputText escape="true" value="#{to.subject}"
+								style="#{to.readed?'':'font-weight: bold'}" />
+						</aon:column>
+						<aon:column id="dateColumn" width="100px" label="#{webmailBundle.webmail_date}"
+							sortable="true" sortBy="#{to.date}" sortOrder="#{webmailFolder.dateOrder}">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.sentDateString}"
+								title="#{to.sentDateFullString}"
+								style="#{to.readed?'':'font-weight: bold'}" />
+						</aon:column>
+						<aon:column id="sizeColumn" width="80px" label="#{webmailBundle.webmail_size}"
+							sortable="true" sortBy="#{to.message.size}">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_size}" />
+							</f:facet>
+							<aon:outputText value="#{to.displaySize}"
+								style="#{to.readed?'':'font-weight: bold'}" />
+						</aon:column>						
+					</aon:extendedDataTable>
+
+					<aon:dataScroller2 for="messageDataTable" page="#{webmailFolder.currentPage}" />
+	
+				</aon:div>
+				
+			</aon:div>
+
+		</aon:div>
+	</aon:div>
+
+</ui:composition>
+
+</body>
+</html>

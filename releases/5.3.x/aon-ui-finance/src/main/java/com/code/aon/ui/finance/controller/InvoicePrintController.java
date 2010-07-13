@@ -1,0 +1,90 @@
+package com.code.aon.ui.finance.controller;
+
+import java.io.UnsupportedEncodingException;
+import java.security.KeyStore;
+import java.util.List;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.mail.MessagingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.finance.util.FinanceEmailUtil;
+import com.code.aon.ui.sign.controller.CertificateController;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.EmailSender;
+import com.code.aon.webmail.SecurityInfo;
+
+public class InvoicePrintController extends InvoiceController implements IFinanceConstants {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoicePrintController.class.getName());
+	
+	private IPriceStrategy priceStrategy;
+	
+	public IPriceStrategy getPriceStrategy() {
+		if (priceStrategy == null) {
+			priceStrategy = new InvoicePriceStrategy();
+		}
+		return priceStrategy;
+	}
+
+	public double getInvoiceTotalPrice() throws ManagerBeanException{
+		Invoice invoice = (Invoice)this.getModel().getRowData();
+		return getPriceStrategy().getTotalPrice(invoice, invoice);
+	}
+
+	private SecurityInfo getSecurityInfo(CertificateController signer) {
+		KeyStore keyStore = signer.getSignStore().getKeySore();
+		String alias = signer.getCertificado().getAlias();
+		SecurityInfo si = new SecurityInfo( keyStore, alias, signer.getPassword());
+		return si;
+	}
+	
+	public void onSendInvoicesBySignedEmail( ActionEvent event ) {
+		CertificateController signer = (CertificateController) AonUtil.getRegisteredBean(SALE_INVOICE_SIGNER_CONTROLLER_NAME);
+		if (! signer.resolveCertificado() ) {
+			return;
+		}
+		try {		
+			sendInvoicesByEmail( getSecurityInfo(signer) );
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
+			AonUtil.addErrorMessage(th.getMessage());
+			throw new AbortProcessingException(th.getMessage(), th);
+		} finally {
+			signer.setShowSignWindow(false);
+		}
+	}	
+	
+	public void onSendInvoicesByEmail( ActionEvent event ) {
+		try {		
+			sendInvoicesByEmail( null );
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
+			AonUtil.addErrorMessage(th.getMessage());
+			throw new AbortProcessingException(th.getMessage(), th);
+		}
+	}	
+
+	public void sendInvoicesByEmail( SecurityInfo si ) throws UnsupportedEncodingException, MessagingException, ManagerBeanException {
+		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+		FinanceEmailUtil emailController = controller.getEmailController();
+		EmailSender sender = emailController.getEmailSender();
+		sender.connect();
+		Criteria criteria = getCriteria();
+		List<ITransferObject> list = getManagerBean().getList(criteria);
+		for( ITransferObject to : list ) {
+			emailController.sendInvoice( (Invoice) to, si );	
+		}
+		sender.disconnect();
+	}	
+	
+}

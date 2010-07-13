@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="contactSearch">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_contacts}" />
+				<ui:param name="controller" value="#{contact}" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{contact}" />
+				<ui:define name="searchContent">
+
+					<aon:outputLabel for="Contact_displayName"
+						value="#{webmailBundle.webmail_contact_displayName}" />
+					<aon:inputText id="Contact_displayName" size="80"
+						maxlength="64" valueChangeListener="#{contact.addExpression}" />
+
+					<aon:outputLabel for="Contact_outlookName"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="Contact_outlookName" size="80"
+						maxlength="64" valueChangeListener="#{contact.addExpression}" />
+
+					<aon:outputLabel for="Contact_surname"
+						value="#{webmailBundle.webmail_contact_surname}" />
+					<aon:inputText id="Contact_surname" size="80"
+						maxlength="64" valueChangeListener="#{contact.addExpression}" />
+
+					<aon:outputLabel for="Contact_organization"
+						value="#{webmailBundle.webmail_contact_organization}" />
+					<aon:inputText id="Contact_organization" size="80"
+						maxlength="64" valueChangeListener="#{contact.addExpression}" />
+
+					<aon:outputLabel for="Contact_email"
+						value="#{webmailBundle.webmail_contact_email}" />
+					<aon:inputText id="Contact_email" size="40"
+						maxlength="64" valueChangeListener="#{contact.addExpression}" />
+
+					<aon:outputLabel for="Contact_postalCode"
+						value="#{webmailBundle.webmail_contact_postal_code}" />
+					<aon:inputText id="Contact_postalCode" size="80"
+						maxlength="128" valueChangeListener="#{contact.addExpression}" />
+
+					<aon:outputLabel for="Contact_outlookCity"
+						value="#{webmailBundle.webmail_contact_city}" />
+					<aon:inputText id="Contact_outlookCity" size="25"
+						maxlength="64" valueChangeListener="#{contact.addExpression}" />
+
+					<aon:outputLabel for="Contact_state"
+						value="#{webmailBundle.webmail_contact_state}" />
+					<aon:inputText id="Contact_state" size="25"
+						maxlength="64" valueChangeListener="#{contact.addExpression}" />
+
+				</ui:define>
+			</ui:decorate>
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>

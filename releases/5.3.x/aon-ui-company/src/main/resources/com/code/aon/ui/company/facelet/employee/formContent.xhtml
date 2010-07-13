@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include
+		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+
+	<aon:outputLabel for="Employee_socialSecurityNumber"
+		value="#{companyBundle.company_employee_nss}" />
+	<aon:inputText id="Employee_socialSecurityNumber"
+		value="#{controller.to.socialSecurityNumber}"
+		size="32" maxlength="32" />
+
+	<aon:outputLabel for="WorkActivity_id"
+		value="#{companyBundle.company_activity}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="WorkActivity_id"
+			reRender="WorkActivity_detail" lookup="#{workActivityLookup}"
+			value="#{controller.to.workActivity.id}" size="5" />
+		<aon:lookupButton windowTitle="#{companyBundle.company_activity_selection}"
+			selectReRender="WorkActivity_id,WorkActivity_detail"  
+			lookup="#{workActivityLookup}" minHeight="460" minWidth="650"
+			property="#{controller.to.workActivity}">
+		</aon:lookupButton>
+		<aon:inputText id="WorkActivity_detail"
+			value="#{controller.to.workActivity.description}"
+			size="50" disabled="true" />
+	</aon:div>
+
+</ui:composition>
+

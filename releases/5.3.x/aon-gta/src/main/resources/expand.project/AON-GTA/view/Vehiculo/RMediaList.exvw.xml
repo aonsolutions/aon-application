@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Contactos de un registry"
+    label="Contactos de un registry" sqlSentence="SELECT &#xd;&#xa;CASE rmedia.media&#xd;&#xa;&#x9;WHEN 1 THEN 'Tlfno. Fijo'&#xd;&#xa;&#x9;WHEN 2 THEN 'Tlfno. Movil'&#xd;&#xa;&#x9;WHEN 3 THEN 'Fax'&#xd;&#xa;&#x9;WHEN 4 THEN 'eMail'&#xd;&#xa;&#x9;WHEN 5 THEN 'Pág. WEB'&#xd;&#xa;&#x9;ELSE 'Desconocido'&#xd;&#xa;END &#xd;&#xa;, rmedia.value, rmedia.comment&#xd;&#xa;FROM rmedia &#xd;&#xa;WHERE rmedia.registry = ? &#xd;&#xa;">
+    <parameters>
+        <parameter columnReference="data/rmedia.exdm.xml/registry"
+            label="" name="registry" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="media"
+            columnId="CASE rmedia.media&#xd;&#xa;&#x9;WHEN 1 THEN 'Tlfno. Fijo'&#xd;&#xa;&#x9;WHEN 2 THEN 'Tlfno. Movil'&#xd;&#xa;&#x9;WHEN 3 THEN 'Fax'&#xd;&#xa;&#x9;WHEN 4 THEN 'eMail'&#xd;&#xa;&#x9;WHEN 5 THEN 'PÃ¡g. WEB'&#xd;&#xa;&#x9;ELSE 'Desconocido'&#xd;&#xa;END"
+            label="Forma de Contacto" type="STRING"/>
+        <result accessName="value" columnId="value"
+            columnReference="data/rmedia.exdm.xml/value" label="Valor"
+            tableId="rmedia" type="STRING"/>
+        <result accessName="comment" columnId="comment"
+            columnReference="data/rmedia.exdm.xml/comment"
+            label="Comentario" tableId="rmedia" type="STRING"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/rmedia.exdm.xml"/>
+    </dataModelReferences>
+</view>

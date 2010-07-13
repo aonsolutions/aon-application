@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+	
+		<aon:form id="productCategoryForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.product_category}" />
+				<ui:param name="controller" value="#{productCategory}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				<ui:define name="beforeSpinToolbarContent">
+					<!-- 
+					<aon:commandButton id="partial_generate" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" 
+						rendered="#{productCategory.to!=null}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateCurrentProductCategory}" />
+						<a4j:support 
+							event="onclick" reRender="poll,grid" 
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>
+					 -->
+				</ui:define>
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="ProductCategory_alias" style="width:100px"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="ProductCategory_alias"
+						required="true" size="32" maxlength="32"
+						value="#{productCategory.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+
+					<aon:outputLabel for="ProductCategoryDetail_label"
+						value="#{appBundle.product_category_label}" />
+					<aon:inputText id="ProductCategoryDetail_label"
+						required="true" size="50" maxlength="64"
+						value="#{productCategory.toI18n.label}" />
+
+					<aon:outputLabel for="ProductCategory_section"
+						value="#{appBundle.cms_section}"/>
+					<aon:selectOneMenu id="ProductCategory_section"  
+						value="#{productCategory.to.section}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="ProductCategory_active"
+						value="#{appBundle.cms_active}"/>
+					<aon:selectBooleanCheckbox id="ProductCategory_active" 
+						value="#{productCategory.to.active}" />
+						
+				</aon:panelGrid>
+		
+				<aon:div id="detail_panel">
+					<aon:div styleClass="aon-form-group" rendered="#{!productCategory.new}">
+						<aon:div styleClass="aon-form-group-title">
+							<aon:div styleClass="aon-form-group-title-internal">
+								<aon:outputLabel for="subCategoryData" value="#{appBundle.product_subcategory}" />
+							</aon:div>
+						</aon:div>
+				
+						<aon:div rendered="#{subCategory.to==null}">
+	
+							<aon:div styleClass="aon-toolbar">
+									
+								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
+										rendered="#{!subCategory.new and cms.roleEditor}"
+										reRender="detail_panel"
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{subCategory.onReset}" />
+									</aon:commandButton>
+							    </aon:div>
+	
+							</aon:div>
+							
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+								<ui:param name="controller" value="#{subCategory}" />
+								<ui:param name="rowSelectorReRender" value="detail_panel" />
+								<ui:define name="columns">								
+
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.cms_alias}"/>
+										</f:facet>
+										<aon:outputText value="#{to.alias}"/>
+									</aon:column>
+		
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.product_category_label}"/>
+										</f:facet>
+										<aon:outputText value="#{subCategory.i18nLabel}"/>
+									</aon:column>
+		
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.cms_section}" />
+										</f:facet>
+										<aon:outputText value="#{to.section.alias}" />
+									</aon:column>
+							
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.product_category_active}" />
+										</f:facet>
+										<aon:div onmouseover="disableRowSelector();"
+											onmouseout="enableRowSelector();" >																																							
+											<aon:commandLink title="#{appBundle.product_category_activate}" 
+												actionListener="#{subCategory.onActivate}"
+												reRender="dataTable" ajaxSingle="true"
+												rendered="#{!to.active}">
+												<aon:graphicImage id="subCategory_active" alt="#{appBundle.product_category_activate}"
+													url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+											</aon:commandLink>
+											<aon:commandLink title="#{appBundle.product_category_deactivate}" 
+												reRender="dataTable" ajaxSingle="true"
+												actionListener="#{subCategory.onDeactivate}" 
+												rendered="#{to.active}">
+												<aon:graphicImage id="subCategory_deactive" alt="#{appBundle.link_deactivate}"
+													url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:column>
+								</ui:define>
+							</ui:decorate>	
+								
+						</aon:div>
+					
+						<c:if test="#{subCategory.new or subCategory.to != null}">
+	
+							<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+								<aon:valueParam name="toolbarID" default="menuOptionToolbar" />
+								<ui:param name="controller" value="#{subCategory}" />
+								<ui:param name="innerToolbar" value="#{true}" />
+								<ui:param name="skipToolbarDescription" value="#{true}" />
+								<ui:param name="skipSearchButton" value="#{true}" />
+							</ui:include>
+				
+							<aon:div styleClass="aon-scroll-area">
+								<aon:panelGrid id="menuOptionGrid" columns="2" dir="true">
+						
+									<aon:outputLabel for="ProductSubCategory_alias" style="width:100px"
+										value="#{appBundle.cms_alias}" />
+									<aon:inputText id="ProductSubCategory_alias"
+										required="true" size="32" maxlength="32"
+										value="#{subCategory.to.alias}">
+										<f:validator validatorId="AliasValidator" />
+									</aon:inputText>
+				
+									<aon:outputLabel for="ProductSubCategoryDetail_label"
+										value="#{appBundle.product_category_label}" />
+									<aon:inputText id="ProductSubCategoryDetail_label"
+										required="true" size="50" maxlength="64"
+										value="#{subCategory.toI18n.label}" />
+				
+									<aon:outputLabel for="ProductSubCategory_section"
+										value="#{appBundle.cms_section}"/>
+									<aon:selectOneMenu id="ProductSubCategory_section"  
+										value="#{subCategory.to.section}">
+										<f:selectItem itemLabel="-" value="#{null}" />
+										<f:selectItems value="#{collections.sectionList}" />
+									</aon:selectOneMenu>
+									
+									<aon:outputLabel for="ProductSubCategory_active"
+										value="#{appBundle.cms_active}"/>
+									<aon:selectBooleanCheckbox id="ProductSubCategory_active" 
+										value="#{subCategory.to.active}" />
+																			
+								</aon:panelGrid>
+							</aon:div>
+						</c:if>
+						
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+
+	<!--  LISTADO DEL LIBRO DE IVA -->
+	<report id="vatBook" description="Listado del Libro de IVA">
+		<template path="/com/code/aon/ui/fiscal/report/vatBook.jasper"/>
+		<collection provider="#{vatReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{vatReport.getFromDate}" />
+			<param id="toDate" value="#{vatReport.getToDate}" />
+			<param id="date" value="#{vatReport.getDate}" />
+			<param id="title" value="#{vatReport.getTitle}" />
+		</params>
+	</report>
+
+	<!--  *********  Modelo 347 ********* -->
+	<report id="model347List" description="Model 347List">
+		<template path="/com/code/aon/ui/fiscal/report/model347.jasper"/>
+		<collection provider="#{model347Report.summaryActive}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="totalA" value="#{model347Report.getTotalKeyA}" />
+			<param id="totalB" value="#{model347Report.getTotalKeyB}" />
+			<param id="format" value="#{model347Report.getFormat}" />
+			<param id="params" value="#{model347Report.getParams}" />
+			<param id="year" value="#{model347Report.getYear}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	
+</report-config>

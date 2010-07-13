@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<library>
+  <!--JBuilder Library Definition File-->
+  <fullname>junit</fullname>
+  <class>
+    <path>[../external/junit3.7/junit.jar]</path>
+  </class>
+  <source>
+    <path>[../external/junit3.7/src.jar]</path>
+  </source>
+  <documentation>
+    <path>../external/junit3.7/javadoc</path>
+  </documentation>
+</library>
+
