@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.core.IEmpresa;
+import com.esferalia.aon.payroll.core.enumeration.FileStatus;
 
 public interface IRemesaCertificadoEmpresa extends ITransferObject {
 	
@@ -19,8 +20,8 @@ public interface IRemesaCertificadoEmpresa extends ITransferObject {
 	Date getFecha();
 	void setFecha(Date fecha);
 	
-	Integer getEstado();
-	void setEstado(Integer estado);
+	FileStatus getEstado();
+	void setEstado(FileStatus generado);
 	
 	String getHuella();
 	void setHuella(String huella);

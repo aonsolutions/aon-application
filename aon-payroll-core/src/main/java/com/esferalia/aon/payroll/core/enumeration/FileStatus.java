@@ -8,6 +8,7 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum FileStatus implements IResourceable {
 	
 	GENERADO, 
+	NO_GENERADO, 
 	PROCESADO, 
 	VALIDO, 
 	ERRONEO;

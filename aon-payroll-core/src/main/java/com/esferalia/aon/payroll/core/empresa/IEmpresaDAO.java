@@ -15,8 +15,8 @@ public interface IEmpresaDAO {
 
 	IActividadCCC getActividadCCC(IActividad actividad, CuentaCotizacion ccc) throws PayrollException;
 
-	List<IRemesaCertificadoEmpresa> getRemesaCertificados()
-			throws PayrollException;
+	List<IRemesaCertificadoEmpresa> getRemesaCertificados(
+			RemesaCertificadoEmpresaParams params) throws PayrollException;
 
 	List<IRemesaCertificadoEmpresaDetalle> getDetalleRemesaCertificados(
 			IRemesaCertificadoEmpresa remesa) throws PayrollException;
@@ -31,6 +31,7 @@ public interface IEmpresaDAO {
 
 	void accept(IRemesaCertificadoEmpresaDetalle detalle)
 			throws PayrollException;
+
 
 
 	
