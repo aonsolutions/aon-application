@@ -107,7 +107,7 @@
                         <developmentVersion>5.4.0-SNAPSHOT</developmentVersion>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
 
-                        <tag>5.2.x</tag>
+                        <tag>5.3.x</tag>
                         <tagBase>http://dev.esferalia.com/repos/aon-application/releases</tagBase>
                 </configuration>
         </plugin>
