@@ -98,21 +98,29 @@
                                                         <copyright>2010, esferalia Networks S.A</copyright>
                                                         <mappings>                                                   
                                                                 <mapping>                                            
-                                                                        <artifact>                                   
-                                                                                <classifiers>                        
-                                                                                        <classifier />    
-                                                                                </classifiers>                       
-                                                                        </artifact>                                  
                                                                         <filemode>755</filemode>                     
                                                                         <username>root</username>                    
                                                                         <groupname>root</groupname>
                                                                         <directory>/usr/share/java</directory>
+
+									<sources>
+										<source>
+											<location>target</location>
+											<includes>
+												
+<include>${project.artifactId}-${project.version}.jar</include>
+											</includes>
+										</source>
+										<softlinkSource>
+											
+<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
+											<destination>${project.artifactId}.jar</destination>
+										</softlinkSource>
+									</sources>
                                                                 </mapping>
                                                         </mappings>
-                                                        <postinstallScriptlet>
-                                                                <scriptFile>src/main/scripts/postinstall</scriptFile>
-                                                                <fileEncoding>utf-8</fileEncoding>
-                                                        </postinstallScriptlet>
+                                                        <!--mappings>                                                   
+                                                        </mappings-->
                                                 </configuration>
                                         </plugin>
 
