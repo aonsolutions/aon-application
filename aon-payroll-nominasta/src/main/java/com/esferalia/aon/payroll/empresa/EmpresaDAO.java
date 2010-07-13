@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -26,6 +27,7 @@ import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.core.empresa.RemesaCertificadoEmpresaParams;
 import com.esferalia.aon.payroll.core.enumeration.CuentaCotizacion;
+import com.esferalia.aon.payroll.core.enumeration.FileStatus;
 import com.esferalia.aon.payroll.core.enumeration.Regimen;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
@@ -81,10 +83,32 @@ public class EmpresaDAO implements IEmpresaDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IRemesaCertificadoEmpresa> getRemesaCertificados() throws PayrollException {
+	public List<IRemesaCertificadoEmpresa> getRemesaCertificados(RemesaCertificadoEmpresaParams params) throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RemesaCertificadoEmpresa.class);
-			List<?> list = bean.getList(null);
+			Criteria criteria = new Criteria();
+			if (params.getFecha() != null) {
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_FECHA),params.getFecha());
+			}
+			if (!ArrayUtils.isEmpty(params.getEstados())) {
+				String status = bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_ESTADO);
+				addEnumToCriteria(criteria, status, params.getEstados());
+			}
+//			if (params.getEstados().size() > 0) {
+//				
+//				for(FileStatus status: params.getEstados()){
+//					if (status == FileStatus.NO_GENERADO) {
+//						Expression expr1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_ESTADO),status);
+//						Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_ESTADO));
+//						Expression expr = ExpressionUtilities.getOrExpression(expr1, expr2);
+//						criteria.addExpression(expr);
+//					} else {
+//						criteria.addEqualExpression((bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_ESTADO)),status);
+//					}
+//				}
+//			}
+			criteria.addOrder(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_FECHA), false);
+			List<?> list = bean.getList(criteria);
 			return (List<IRemesaCertificadoEmpresa>)list;
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
@@ -137,7 +161,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 			if (!StringUtils.isEmpty(params.getApellido2())) {
 				criteria.addExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME),params.getApellido2());
 			}
-			criteria.addGreaterThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), date.getTime());
+//			criteria.addGreaterThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), date.getTime());
 			criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), params.getFecha());
 			Expression exp1  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "A");
 			Expression exp2  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "S");
@@ -158,6 +182,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 		IRemesaCertificadoEmpresa remesa = new RemesaCertificadoEmpresa();
 		remesa.setEmpresa(empleado.getEmpresa());
 		remesa.setFecha(fecha);
+		remesa.setEstado(FileStatus.NO_GENERADO);
 		String ccc;
 		ccc = getRegimenCode(empleado.getActividad().getRegimen());
 		ccc += getActividadCCC(empleado.getActividad(), empleado.getCuentaCotizacion()).getDescripcion();
@@ -207,5 +232,22 @@ public class EmpresaDAO implements IEmpresaDAO {
 		}
 		return null;
 	}
+	
+	protected void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
+		Expression expToAdd = null;
+		for( Object value : values ) {
+			if ( value != null ) {
+				if ( expToAdd == null ) {
+					expToAdd = ExpressionUtilities.getEqualExpression(alias, value);				
+				} else {
+					Expression exp  = ExpressionUtilities.getEqualExpression(alias, value);
+					expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				}
+			}
+		}
+		if ( expToAdd != null ) {
+			criteria.addExpression(expToAdd);
+		}
+	}	
 	
 }
