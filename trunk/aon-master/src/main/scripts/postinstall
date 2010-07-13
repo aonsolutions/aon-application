@@ -2,21 +2,6 @@
 #/bin/sh
 
 
-function link(){
-        LIBRARY=$1;
-        JAR=$(find /usr/share/java -name "${LIBRARY}-*.jar");
-        [ ! -z $JAR  ] && ln -sf $JAR /usr/share/java/${LIBRARY}.jar;
-}
-
-
-
-link aon-master
-link slf4j-api
-link slf4j-jcl
-link commons-lang
-
-ln -sf  /usr/share/aon-master/bin/automysqlbackup.sh /etc/cron.daily/automysqlbackup
-
 . aondir-functions
 
 CLASSPATH=/usr/share/java/mysql-connector-java.jar

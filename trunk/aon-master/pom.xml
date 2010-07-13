@@ -43,7 +43,7 @@
 			<artifactId>aon.common</artifactId>
 			<version>${aon-version}</version>
 			<scope>compile</scope>
-		</dependency>
+	</dependency>
 -->		
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -127,11 +127,6 @@
                                                         </requires>
                                                         <mappings>
                                                                 <mapping>
-									<artifact>
-										<classifiers>
-											<classifier />
-										</classifiers>
-									</artifact>	
 									<dependency>
 										<includes>
 											<include>org.slf4j:slf4j-jcl</include>
@@ -143,17 +138,63 @@
                                                                         <username>root</username>
                                                                         <groupname>root</groupname>
 									<directory>/usr/share/java</directory>
+                                                                      <sources>
+                                                                               <source>
+                                                                                       <location>target</location>
+                                                                                       <includes>
+
+<include>${project.artifactId}-${project.version}.jar</include>
+                                                                                       </includes>
+                                                                               </source>
+                                                                               <softlinkSource>											
+<location>/usr/share/java/commons-lang-2.5.jar.jar</location>
+                                                                                       <destination>commons-lang.jar</destination>
+
+                                                                               </softlinkSource>
+                                                                               <softlinkSource>											
+<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
+                                                                                       <destination>${project.artifactId}.jar</destination>
+
+                                                                               </softlinkSource>
+                                                                               <softlinkSource>											
+<location>/usr/share/java/slf4j-api-1.5.11.jar</location>
+                                                                                       <destination>slf4j-api.jar</destination>
+                                                                               </softlinkSource>
+                                                                               <softlinkSource>											
+<location>/usr/share/java/slf4j-jcl-1.5.8.jar</location>
+                                                                                       <destination>slf4j-jcl.jar</destination>
+                                                                               </softlinkSource>
+                                                                       </sources>
+
                                                                 </mapping>
                                                                 <mapping>
                                                                         <sources>
                                                                                 <source>
-                                                                                        <location>src/main/scripts/automysqlbackup.sh</location>
+
+                                                                                      <location>src/main/scripts</location>
+											<excludes><exclude>postinstall</exclude></excludes>
                                                                                 </source>
                                                                         </sources>
                                                                         <filemode>755</filemode>
                                                                         <username>root</username>
                                                                         <groupname>root</groupname>
                                                                         <directory>/usr/share/aon-master/bin</directory>
+                                                                </mapping>
+
+                                                                <mapping>
+									<filemode>755</filemode>
+                                                                        <username>root</username>
+                                                                        <groupname>root</groupname>
+                                                                        <directory>/etc/cron.daily</directory>
+                                                                        <sources>
+                                                                               <softlinkSource>                                                            
+											
+<location>/usr/share/aon-master/bin/automysqlbackup.sh</location>
+                                                                                       <destination>automysqlbackup</destination>
+                                                                               </softlinkSource>
+
+                                                                        </sources>
+
                                                                 </mapping>
                                                         </mappings>
                                                         
@@ -162,10 +203,6 @@
                                                                 <fileEncoding>utf-8</fileEncoding>
                                                         </postinstallScriptlet>
                                                         
-							<postremoveScriptlet>
-                                                                <scriptFile>src/main/scripts/postremove</scriptFile>
-                                                                <fileEncoding>utf-8</fileEncoding>
-                                                        </postremoveScriptlet>
 
                                                 </configuration>
                                         </plugin>
