@@ -157,6 +157,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	// ***************************************************
 	public void onStart(ActionEvent event) {
 		setParams(null);
+		getParams().setFecha(Calendar.getInstance().getTime());
 		setModel(null);
 		setSelectedModel(null);
 		setListaRemesas(null);
