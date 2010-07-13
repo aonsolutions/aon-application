@@ -1277,40 +1277,40 @@ public interface IPayrollAlias {
 	DAOConstantsEntry REMESA_CERTIFICADO_EMPRESA_ENTRY = DAOConstants.getDAOConstant(RemesaCertificadoEmpresa.class);
 
 	/** 
-	* Alias value: RemesaCertificadoEmpresa_codigoCcc
-	* Hibernate value: RemesaCertificadoEmpresa.codigoCcc
-	*/
-	String  REMESA_CERTIFICADO_EMPRESA_CODIGO_CCC = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[0];
-
-	/** 
 	* Alias value: RemesaCertificadoEmpresa_empresa_id
 	* Hibernate value: RemesaCertificadoEmpresa.empresa.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[1];
+	String  REMESA_CERTIFICADO_EMPRESA_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresa_estado
 	* Hibernate value: RemesaCertificadoEmpresa.estado
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_ESTADO = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[2];
+	String  REMESA_CERTIFICADO_EMPRESA_ESTADO = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresa_fecha
 	* Hibernate value: RemesaCertificadoEmpresa.fecha
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_FECHA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[3];
+	String  REMESA_CERTIFICADO_EMPRESA_FECHA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresa_huella
 	* Hibernate value: RemesaCertificadoEmpresa.huella
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_HUELLA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[4];
+	String  REMESA_CERTIFICADO_EMPRESA_HUELLA = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: RemesaCertificadoEmpresa_id
 	* Hibernate value: RemesaCertificadoEmpresa.id
 	*/
-	String  REMESA_CERTIFICADO_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[5];
+	String  REMESA_CERTIFICADO_EMPRESA_ID = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: RemesaCertificadoEmpresa_numeroCcc
+	* Hibernate value: RemesaCertificadoEmpresa.numeroCcc
+	*/
+	String  REMESA_CERTIFICADO_EMPRESA_NUMERO_CCC = REMESA_CERTIFICADO_EMPRESA_ENTRY.getAliasNames()[5];
 
 
 

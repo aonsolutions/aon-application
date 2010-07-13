@@ -17,6 +17,7 @@ import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.Empresa;
 import com.esferalia.aon.payroll.core.IEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
+import com.esferalia.aon.payroll.core.enumeration.FileStatus;
 
 @Entity
 @Table(name = "rem_cert_empr")
@@ -29,7 +30,7 @@ public class RemesaCertificadoEmpresa implements ITransferObject,
 	private IEmpresa empresa;
 	private String numeroCcc;
 	private Date fecha;
-	private Integer estado;
+	private FileStatus estado;
 	private String huella;
 	
 	@Id     
@@ -78,11 +79,11 @@ public class RemesaCertificadoEmpresa implements ITransferObject,
 	
 	@Column(name = "estado", length = 1)
 	@Override
-	public Integer getEstado() {
+	public FileStatus getEstado() {
 		return estado;
 	}
 	@Override
-	public void setEstado(Integer estado) {
+	public void setEstado(FileStatus estado) {
 		this.estado = estado;
 	}
 
