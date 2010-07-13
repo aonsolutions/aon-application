@@ -147,7 +147,7 @@
                                                                                        </includes>
                                                                                </source>
                                                                                <softlinkSource>											
-<location>/usr/share/java/commons-lang-2.5.jar.jar</location>
+<location>/usr/share/java/commons-lang-2.5.jar</location>
                                                                                        <destination>commons-lang.jar</destination>
 
                                                                                </softlinkSource>
