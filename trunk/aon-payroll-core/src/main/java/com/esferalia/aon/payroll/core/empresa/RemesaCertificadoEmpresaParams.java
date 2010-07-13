@@ -3,6 +3,8 @@ package com.esferalia.aon.payroll.core.empresa;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.payroll.core.enumeration.FileStatus;
+
 public class RemesaCertificadoEmpresaParams implements Serializable {
 
 	private static final long serialVersionUID = -3353191952616724056L;
@@ -13,8 +15,8 @@ public class RemesaCertificadoEmpresaParams implements Serializable {
 	private String apellido;
 	private String apellido2;
 	private Date fecha;
+	private FileStatus[] estados;
 	
-
 	public Date getFecha() {
 		return fecha;
 	}
@@ -51,4 +53,11 @@ public class RemesaCertificadoEmpresaParams implements Serializable {
 	public void setEmpresa(String empresa) {
 		this.empresa = empresa;
 	}
+	public FileStatus[] getEstados() {
+		return estados;
+	}
+	public void setEstados(FileStatus[] estados) {
+		this.estados = estados;
+	}
+	
 }
