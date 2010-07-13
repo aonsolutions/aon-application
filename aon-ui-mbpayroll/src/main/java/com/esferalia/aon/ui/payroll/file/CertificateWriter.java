@@ -494,7 +494,6 @@ public class CertificateWriter {
 					
 					totalDias += nomina.getDiasNomina();
 					
-					calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
 					
 					Cotizacion cotizacion = new Cotizacion();
 					
@@ -507,6 +506,7 @@ public class CertificateWriter {
 					
 					cotizacionList.add(cotizacion);
 				}
+				calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
 			}
 			
 			return cotizacionList;
