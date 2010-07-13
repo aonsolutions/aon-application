@@ -417,24 +417,24 @@ public class CertificateWriter {
 			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
 			Periodo periodo = null;
 			for(ITrabajo t: trabajosTP){
-				
-				if (periodo == null){
-					periodo = new Periodo();
-					periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
-					periodo.setFechaInicioPeriodo(parseFecha(t.getFechaInicioCont()));
-					periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
-					periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(),5));
-				} else if (periodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(t.getDiasTP())
-						&& periodo.getTipoDistribucion().equals(parseTipoDistribucion(t.getTipoTP()))) {
-					periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
-				} else {
-					listaPeriodos.add(periodo);
-					periodo = new Periodo();
-					periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
-					periodo.setFechaInicioPeriodo(parseFecha(t.getFechaInicioCont()));
-					periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
-					periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(),5));
-					
+				if(t.getTipoTP()!=null && t.getDiasTP()!=null){
+					if (periodo == null){
+						periodo = new Periodo();
+						periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
+						periodo.setFechaInicioPeriodo(parseFecha(t.getFechaInicioCont()));
+						periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
+						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(),5));
+					} else if (periodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(t.getDiasTP())
+							&& periodo.getTipoDistribucion().equals(parseTipoDistribucion(t.getTipoTP()))) {
+						periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
+					} else {
+						listaPeriodos.add(periodo);
+						periodo = new Periodo();
+						periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
+						periodo.setFechaInicioPeriodo(parseFecha(t.getFechaInicioCont()));
+						periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
+						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(),5));
+					}
 				}
 			}
 			periodo.setFechaFinPeriodo(parseFecha(detalle.getEmpleado().getFechaFin()));
