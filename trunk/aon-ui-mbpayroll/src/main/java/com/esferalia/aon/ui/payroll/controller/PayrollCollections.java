@@ -16,6 +16,7 @@ import com.esferalia.aon.payroll.core.commons.ICommonsPayrollDAO;
 import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
 import com.esferalia.aon.payroll.core.enumeration.CausaAlta;
 import com.esferalia.aon.payroll.core.enumeration.CausaSuspension;
+import com.esferalia.aon.payroll.core.enumeration.FileStatus;
 import com.esferalia.aon.payroll.core.enumeration.Periodicidad;
 import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
 
@@ -28,6 +29,7 @@ public class PayrollCollections implements Serializable {
 	private List<SelectItem> tiposBonificacion;
 	private List<SelectItem> causasAlta;
 	private List<SelectItem> causaSuspension;
+	private List<SelectItem> fileStatus;
 
 	private ICommonsPayrollDAO commonsPayrollDAO;
 
@@ -115,6 +117,20 @@ public class PayrollCollections implements Serializable {
 			}
 		}
 		return causaSuspension;
+	}
+	
+	public List<SelectItem> getFileStatus() {
+		if (fileStatus == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			fileStatus = new LinkedList<SelectItem>();
+			FileStatus[] estados = FileStatus.values();
+			for (FileStatus c : estados) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				fileStatus.add(item);
+			}
+		}
+		return fileStatus;
 	}
 	
 }
