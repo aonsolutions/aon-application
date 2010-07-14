@@ -19,12 +19,13 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.WhereJoinTable;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.company.enumeration.EconomicAgreement;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.company.resources.Resource;
 import com.code.aon.registry.RegistryAddress;
@@ -51,6 +52,9 @@ public class WorkPlace implements ITransferObject, IEntity {
 	/** Working place address */
     private RegistryAddress address;
 
+	/** Economic Agreement */
+    private EconomicAgreement economicAgreement;
+    
     /** Indicates if the working place is currently active. */
 	private boolean active;
 
@@ -164,6 +168,25 @@ public class WorkPlace implements ITransferObject, IEntity {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+	
+	/**
+	 * Gets the economic agreement.
+	 * 
+	 * @return the economic agreement
+	 */
+	@Column(name="economicAgreement", nullable = true)
+	public EconomicAgreement getEconomicAgreement() {
+		return economicAgreement;
+	}
+
+	/**
+	 * Sets the economic agreement.
+	 * 
+	 * @param economicAgreement the new economic agreement
+	 */
+	public void setEconomicAgreement(EconomicAgreement economicAgreement) {
+		this.economicAgreement = economicAgreement;
+	}
 
 	/**
 	 * Get the activities.
@@ -267,6 +290,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 				.append(this.active, o.active)
 				.append(this.address, o.address)			
 				.append(this.description, o.description)
+				.append(this.economicAgreement, o.economicAgreement)
 				.append(this.enterprise, o.enterprise)
 				.isEquals();
 		}
@@ -279,6 +303,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 			.append(active)
 			.append(address)
 			.append(description)
+			.append(economicAgreement)
 			.append(enterprise)
 			.append(id)
 			.toHashCode();
@@ -286,11 +311,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this)
-			.append("id", id)
-			.append("active", active)
-			.append("enterprise", enterprise.getId())
-			.append("description", description).toString();
+		return new PojoToStringBuilder(this).toString();
 	}
 
 }
