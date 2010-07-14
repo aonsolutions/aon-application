@@ -159,7 +159,7 @@ public class RemesaCertificadoWizard implements Serializable {
 		setCurrentStep(0);
 		setParams(null);
 		getParams().setFecha(Calendar.getInstance().getTime());
-		FileStatus[] estados = {FileStatus.NO_GENERADO};
+		FileStatus[] estados = {FileStatus.PENDIENTE};
 		getParams().setEstados(estados);
 		try {
 			initializeRemesasModel();
