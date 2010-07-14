@@ -498,12 +498,12 @@ public class CertificateWriter {
 					Double baseAcc = nomina.getBaseAccPts();
 					Double baseDesempleo = nomina.getBasePerdes();
 					
-					INominaDiferencia nominaDiferencia = getNominaDAO().getNominaDiferencia(params);
+					List<INominaDiferencia> nominasDiferencia = getNominaDAO().getNominasDiferencia(params);
 					
-					if(nominaDiferencia != null) {
-						baseCg += nominaDiferencia.getBaseCgPts();
-						baseAcc += nominaDiferencia.getBaseAccPts();
-						baseDesempleo += nominaDiferencia.getBasePerdes();
+					for(INominaDiferencia nomDf:nominasDiferencia) {
+						baseCg += nomDf.getBaseCgPts();
+						baseAcc += nomDf.getBaseAccPts();
+						baseDesempleo += nomDf.getBasePerdes();
 					}
 					
 					if(nomina.getBaseHorasExtrasEstructurales() == 0 && nomina.getBaseHorasExtrasNoEstructurales() == 0) {
