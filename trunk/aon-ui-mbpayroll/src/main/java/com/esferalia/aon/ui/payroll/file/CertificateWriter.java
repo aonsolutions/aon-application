@@ -444,6 +444,8 @@ public class CertificateWriter {
 					else {
 						listaPeriodos.add(periodo);
 						
+						periodo = new Periodo();
+						
 						periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
 						periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
 						periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
