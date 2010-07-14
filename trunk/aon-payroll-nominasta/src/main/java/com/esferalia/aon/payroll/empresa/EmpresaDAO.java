@@ -88,25 +88,12 @@ public class EmpresaDAO implements IEmpresaDAO {
 			IManagerBean bean = BeanManager.getManagerBean(RemesaCertificadoEmpresa.class);
 			Criteria criteria = new Criteria();
 			if (params.getFecha() != null) {
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_FECHA),params.getFecha());
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_FECHA),params.getFecha());
 			}
 			if (!ArrayUtils.isEmpty(params.getEstados())) {
 				String status = bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_ESTADO);
 				addEnumToCriteria(criteria, status, params.getEstados());
 			}
-//			if (params.getEstados().size() > 0) {
-//				
-//				for(FileStatus status: params.getEstados()){
-//					if (status == FileStatus.NO_GENERADO) {
-//						Expression expr1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_ESTADO),status);
-//						Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_ESTADO));
-//						Expression expr = ExpressionUtilities.getOrExpression(expr1, expr2);
-//						criteria.addExpression(expr);
-//					} else {
-//						criteria.addEqualExpression((bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_ESTADO)),status);
-//					}
-//				}
-//			}
 			criteria.addOrder(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_FECHA), false);
 			List<?> list = bean.getList(criteria);
 			return (List<IRemesaCertificadoEmpresa>)list;
