@@ -60,19 +60,16 @@
 				    <aon:outputText rendered="#{!to.selected}" value="&#160;" />
 					 <rich:inplaceSelect rendered="#{to.selected}" 
 					 	id="causaSuspension"
-					 	
 					 	value="#{to.causaSuspension}"
 					 	listHeight="300px" listWidth="300px" 
-					 	style="#{to.causaSuspension==null?'color:red;':''}width:250px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
-				        defaultLabel="Seleccionar causa" >
-				       <f:selectItems value="#{payrollCollections.causaSuspension}" />
+					 	style="width:250px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
+				        defaultLabel="&#160;-&#160;" >
+						<f:selectItems value="#{payrollCollections.causaSuspension}" />
 				    </rich:inplaceSelect>
 				</aon:column>
-				
 			</aon:dataTable>
 			<aon:dataScroller2 for="empleadoData" showNote="true" />
-
 		</aon:div>
-	</ui:define>
 
+	</ui:define>
 </ui:composition>
