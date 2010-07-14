@@ -143,6 +143,18 @@ public class NominaDAO implements INominaDAO {
 		} 
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<INominaDiferencia> getNominasDiferencia(NominaParams params) throws PayrollException {
+		try {
+			IManagerBean nominaBean = BeanManager.getManagerBean(NominaDiferencia.class);
+			List<?> list = nominaBean.getList(getCriteriaNominaDiferencia(params));
+			return (List<INominaDiferencia>) list;
+		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		}
+	}
+	
 	@Override
 	public IFiniquito getFiniquito(IEmpleado empleado) throws PayrollException {
 		try {
