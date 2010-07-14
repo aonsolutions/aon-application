@@ -24,11 +24,14 @@ public interface INominaDAO {
 	Criteria getCriteriaNominaDiferencia(NominaParams params);
 
 	INominaDiferencia getNominaDiferencia(NominaParams params)
-			throws PayrollException;
+		throws PayrollException;
+	List<INominaDiferencia> getNominasDiferencia(NominaParams params)
+		throws PayrollException;
 
 	IFiniquito getFiniquito(IEmpleado empleado) throws PayrollException;
 	IFiniquitoDiferencia getFiniquitoDiferencia(IEmpleado empleado)
-			throws PayrollException;
+		throws PayrollException;
+
 
 	
 }
