@@ -439,7 +439,7 @@ public class CertificateWriter {
 						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(), 5));
 					}
 					else if(periodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(parseToLength(t.getDiasTP(), 5)) && periodo.getTipoDistribucion().equals(parseTipoDistribucion(t.getTipoTP()))) {
-						periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
+						periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
 					}
 					else {
 						listaPeriodos.add(periodo);
