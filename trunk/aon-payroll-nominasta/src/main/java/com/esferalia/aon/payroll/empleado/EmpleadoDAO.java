@@ -276,16 +276,13 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ITrabajo> getTrabajosTP(IEmpleado empleado) throws PayrollException{
+	public List<ITrabajo> getTrabajosTP(IEmpleado empleado)	throws PayrollException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Trabajo.class);
 			Criteria c = new Criteria();
 			c.addEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_EMPLEADO_ID), empleado.getId());
-			c.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_FECFIN), empleado.getFechaFin());
-			c.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_ID_FECINI), empleado.getFechaFin());
-			Expression exp1 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_TIEMPO_CONTRATO), TiempoContrato.COMPETO);
-			c.addExpression( exp1 );
-			c.addOrder(bean.getFieldName(IPayrollAlias.TRABAJO_FECFIN));
+			c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_TIEMPO_CONTRATO),	TiempoContrato.COMPETO));
+			c.addOrder(bean.getFieldName(IPayrollAlias.TRABAJO_FECFIN), false);
 			List<?> list = bean.getList(c);
 			return (List<ITrabajo>) list;
 		} catch (ManagerBeanException e) {
