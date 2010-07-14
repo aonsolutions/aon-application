@@ -1,5 +1,7 @@
 package com.code.aon.ui.company.controller;
 
+import java.util.List;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -153,23 +155,46 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	public void onSelectWorkPlace( ActionEvent event ) {
-		LinesController controller = (LinesController) AonUtil.getRegisteredBean(ENTERPRISE_WORK_PLACE_CONTROLLER_NAME);
 		try {
-			ITransferObject to = controller.getManagerBean().get(currentNode.getId());
-			controller.select(event, to);
+			selectWorkPlace(event, currentNode.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectWorkPlace exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")	
+	private void selectWorkPlace( ActionEvent event, Integer id ) throws ManagerBeanException {
+		LinesController controller = (LinesController) AonUtil.getRegisteredBean(ENTERPRISE_WORK_PLACE_CONTROLLER_NAME);
+		List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
+		int index;
+		for( index = 0; index < list.size(); index++) {
+			WorkPlace workPlace = (WorkPlace) list.get(index);
+			if ( ObjectUtils.equals(workPlace.getId(), id) ) {
+				break;
+			}
+		}
+		controller.getModel().setRowIndex(index);
+		controller.onSelect(event);			
+	}
 
 	public void onSelectWorkActivity( ActionEvent event ) {
 		LinesController controller = (LinesController) AonUtil.getRegisteredBean(WORK_ACTIVITY_CONTROLLER_NAME);
 		try {
-			WorkActivity wa = (WorkActivity) controller.getManagerBean().get(currentNode.getId());
-			LinesController wpController = (LinesController) AonUtil.getRegisteredBean(ENTERPRISE_WORK_PLACE_CONTROLLER_NAME);
-			wpController.select(event, wa.getWorkPlace());
+			Integer id = currentNode.getId();
+			WorkActivity currentWorkActivity = (WorkActivity) controller.getManagerBean().get(id);
+			selectWorkPlace(event, currentWorkActivity.getWorkPlace().getId());
+			List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
+			int index;
+			for( index = 0; index < list.size(); index++) {
+				WorkActivity workActivity = (WorkActivity) list.get(index);
+				if ( ObjectUtils.equals(workActivity.getId(), id) ) {
+					break;
+				}
+			}
+			controller.getModel().setRowIndex(index);
+			controller.onSelect(event);			
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectActivity exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());

@@ -3,7 +3,9 @@ package com.code.aon.ui.company.controller;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
@@ -13,6 +15,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
+import com.code.aon.company.enumeration.EconomicAgreement;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
@@ -20,6 +23,21 @@ import com.code.aon.registry.dao.IRegistryAlias;
 
 public class CompanyCollectionsController {
 
+	private List<SelectItem> economicAgreements;
+	
+	public List<SelectItem> getEconomicAgreements() {
+		if (economicAgreements == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			economicAgreements = new LinkedList<SelectItem>();
+			for( EconomicAgreement economicAgreement : EconomicAgreement.values() ) {
+				String name = economicAgreement.getName(locale);
+				SelectItem item = new SelectItem(economicAgreement, name);
+				economicAgreements.add(item);			
+			}
+		}
+		return economicAgreements;
+	}
+	
     /**
      * Gets the addresses of the company.
      * 

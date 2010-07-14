@@ -1047,6 +1047,10 @@
 			<value>com.code.aon.company.WorkPlace</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+		<managed-property>
 			<property-name>beanName</property-name>
 			<value>enterpriseWorkplace</value>
 		</managed-property>
@@ -1111,6 +1115,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.company.WorkActivity</value>
 		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>workActivity</value>
@@ -1435,7 +1443,15 @@
 			<to-view-id>/com/code/aon/ui/company/facelet/workplace/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
-	
+
+	<!-- =================== Work Activity ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>workActivity_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/workActivity/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+		
 	<!-- =================== Employee ========================== -->
 	<navigation-rule>
 		<navigation-case>
