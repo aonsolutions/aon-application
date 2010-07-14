@@ -12,6 +12,7 @@
 		<aon:form id="enterpriseForm">
 			<aon:methodParam name="backAction" value="enterprise_form" />
 			<aon:methodParam name="removeAction" value="enterprise_form" />
+			<aon:methodParam name="cancelAction" value="enterprise_form" />
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{companyBundle.company_workplace}" />
@@ -32,8 +33,16 @@
 						value="#{companyBundle.company_workplace_address}" />	
 					<aon:selectOneMenu id="WorkPlace_address_id"
 						value="#{enterpriseWorkplace.to.address}" required="true">
-						<f:selectItems value="#{companyCollections.companyAddresses}" />
+						<f:selectItems value="#{enterprise.addresses}" />
 					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="WorkPlace_economicAgreement"
+						value="#{companyBundle.company_workplace_economic_agreement}" />	
+					<aon:selectOneMenu id="WorkPlace_economicAgreement"
+						value="#{enterpriseWorkplace.to.economicAgreement}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{companyCollections.economicAgreements}" />
+					</aon:selectOneMenu>					
 
 				</aon:panelGrid>
 
@@ -45,11 +54,7 @@
 							</aon:div>
 						</aon:div>
 						
-						<ui:include	src="/com/code/aon/ui/company/facelet/workActivity/tab_grid.xhtml" >
-							<ui:param name="newSaveButtonReRender" value="enterpriseTreeForm" />
-							<ui:param name="removeButtonReRender" value="enterpriseTreeForm" />
-							<ui:param name="saveButtonReRender" value="enterpriseTreeForm" />
-						</ui:include>
+						<ui:include	src="/com/code/aon/ui/company/facelet/workActivity/list.xhtml" />
 					</aon:div>
 				</aon:div>
 			</aon:div>
