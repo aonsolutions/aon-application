@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -406,6 +408,7 @@ public class CertificateWriter {
 	
 	private DistribucionJornada createDistribucionJornadaRecord(IRemesaCertificadoEmpresaDetalle detalle) {
 		List<ITrabajo> trabajosTP = null;
+		DistribucionJornada jornada = null;
 		
 		try {
 			trabajosTP = getEmpleadoDAO().getTrabajosTP(detalle.getEmpleado());
@@ -414,37 +417,50 @@ public class CertificateWriter {
 		}
 		
 		if(trabajosTP != null && trabajosTP.size() > 0) {
-			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
 			Periodo periodo = null;
-			for(ITrabajo t: trabajosTP){
-				if(t.getTipoTP()!=null && t.getDiasTP()!=null){
-					if (periodo == null){
+			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
+			DateFormat dateDDMMYYYY = new SimpleDateFormat("ddMMyyyy");
+			
+			for(ITrabajo t:trabajosTP){
+				if(t.getTipoTP() != null && t.getDiasTP()!= null) {
+					if(periodo == null) {
 						periodo = new Periodo();
+						
+						periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
+						
+						if(dateDDMMYYYY.format(t.getFecfin()).equals("31129999")) {
+							periodo.setFechaFinPeriodo(parseFecha(detalle.getFechaBaja()));
+						}
+						else {
+							periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
+						}
+						
 						periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
-						periodo.setFechaInicioPeriodo(parseFecha(t.getFechaInicioCont()));
-						periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
-						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(),5));
-					} else if (periodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(t.getDiasTP())
-							&& periodo.getTipoDistribucion().equals(parseTipoDistribucion(t.getTipoTP()))) {
-						periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
-					} else {
+						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(), 5));
+					}
+					else if(periodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(parseToLength(t.getDiasTP(), 5)) && periodo.getTipoDistribucion().equals(parseTipoDistribucion(t.getTipoTP()))) {
+						periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
+					}
+					else {
 						listaPeriodos.add(periodo);
-						periodo = new Periodo();
+						
+						periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
+						periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
 						periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
-						periodo.setFechaInicioPeriodo(parseFecha(t.getFechaInicioCont()));
-						periodo.setFechaFinPeriodo(parseFecha(t.getFechaFinCont()));
-						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(),5));
+						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(), 5));
 					}
 				}
 			}
-			periodo.setFechaFinPeriodo(parseFecha(detalle.getEmpleado().getFechaFin()));
-			listaPeriodos.add(periodo);
-			DistribucionJornada jornada = new DistribucionJornada();
-			jornada.setListaPeriodos(listaPeriodos);
-
-			return jornada;
+			
+			if(periodo != null) {
+				listaPeriodos.add(periodo);
+				
+				jornada = new DistribucionJornada();
+				jornada.setListaPeriodos(listaPeriodos);
+			}
 		}
-		return null;
+		
+		return jornada;
 	}
 	
 	private List<Cotizacion> createDatosCotizacionRecord(IRemesaCertificadoEmpresaDetalle detalle) {
@@ -473,6 +489,8 @@ public class CertificateWriter {
 				
 				nomina = getNominaDAO().getNomina(params);
 				
+				calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
+				
 				if(nomina != null) {
 					Double baseCg = nomina.getBaseCgPts();
 					Double baseAcc = nomina.getBaseAccPts();
@@ -494,7 +512,6 @@ public class CertificateWriter {
 					
 					totalDias += nomina.getDiasNomina();
 					
-					
 					Cotizacion cotizacion = new Cotizacion();
 					
 					cotizacion.setAno(nomina.getYear().toString());
@@ -506,7 +523,6 @@ public class CertificateWriter {
 					
 					cotizacionList.add(cotizacion);
 				}
-				calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
 			}
 			
 			return cotizacionList;
