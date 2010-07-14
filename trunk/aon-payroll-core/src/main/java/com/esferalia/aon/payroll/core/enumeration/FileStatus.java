@@ -7,11 +7,17 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum FileStatus implements IResourceable {
 	
-	GENERADO, 
-	NO_GENERADO, 
-	PROCESADO, 
-	VALIDO, 
-	ERRONEO;
+//	GENERADO, 
+//	NO_GENERADO, 
+//	PROCESADO, 
+//	VALIDO, 
+//	ERRONEO;
+	
+	PENDIENTE,
+	GENERADO,
+	PROCESADO,
+	PARCIALMENTE,
+	RECHAZADO;
 	
     private static final String BASE_NAME = "com.esferalia.aon.payroll.core.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_file_status_";
