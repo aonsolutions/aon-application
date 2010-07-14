@@ -182,7 +182,7 @@ public class EmpresaDAO implements IEmpresaDAO {
 		IRemesaCertificadoEmpresa remesa = new RemesaCertificadoEmpresa();
 		remesa.setEmpresa(empleado.getEmpresa());
 		remesa.setFecha(fecha);
-		remesa.setEstado(FileStatus.NO_GENERADO);
+		remesa.setEstado(FileStatus.PENDIENTE);
 		String ccc;
 		ccc = getRegimenCode(empleado.getActividad().getRegimen());
 		ccc += getActividadCCC(empleado.getActividad(), empleado.getCuentaCotizacion()).getDescripcion();
