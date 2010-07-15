@@ -19,6 +19,20 @@
 			<param id="title" value="#{vatReport.getTitle}" />
 		</params>
 	</report>
+	
+		<!--  LISTADO DE RETENCIONES -->
+	<report id="retentionList" description="Listado de Retenciones">
+		<template path="/com/code/aon/ui/fiscal/report/retentionList.jasper"/>
+		<collection provider="#{retentionReport.invoiceList}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{retentionReport.getFromDate}" />
+			<param id="toDate" value="#{retentionReport.getToDate}" />
+			<param id="date" value="#{retentionReport.getDate}" />
+			<param id="PriceStrategy" value="#{retentionReport.getPriceStrategy}" />
+		</params>
+	</report>
 
 	<!--  *********  Modelo 347 ********* -->
 	<report id="model347List" description="Model 347List">
