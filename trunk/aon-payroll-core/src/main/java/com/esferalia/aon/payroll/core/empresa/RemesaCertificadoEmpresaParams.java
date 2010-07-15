@@ -15,6 +15,8 @@ public class RemesaCertificadoEmpresaParams implements Serializable {
 	private String apellido;
 	private String apellido2;
 	private Date fecha;
+	private Date fechaDesde;
+	private Date fechaHasta;
 	private FileStatus[] estados;
 	
 	public Date getFecha() {
@@ -22,6 +24,18 @@ public class RemesaCertificadoEmpresaParams implements Serializable {
 	}
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
+	}
+	public Date getFechaDesde() {
+		return fechaDesde;
+	}
+	public void setFechaDesde(Date fechaDesde) {
+		this.fechaDesde = fechaDesde;
+	}
+	public Date getFechaHasta() {
+		return fechaHasta;
+	}
+	public void setFechaHasta(Date fechaHasta) {
+		this.fechaHasta = fechaHasta;
 	}
 	public String getDocumento() {
 		return documento;
