@@ -29,9 +29,9 @@
 					</aon:form>
 				</f:facet>
 
-				<aon:form id="pagesResourcesForm">
-				
-					<rich:panel id="pageResourcePanel">				
+				<rich:panel id="pageResourcePanel">				
+
+					<aon:form id="pagesResourcesForm">
 
 						<aon:div styleClass="aon-toolbar">
 							<aon:commandButton 
@@ -43,122 +43,13 @@
 									event="onclick" />
 							</aon:commandButton>
 						</aon:div>
-										
-						<aon:editDataTable
-							id="WebInfoPageResource_datatable" value="#{webPage.resources}"
-							var="to" rows="10"
-							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn aon-width-auto, aon-editDataTable-textColumn, 
-								aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						
+						<ui:include src="/com/code/aon/ui/infoweb/facelet/webPage/resourceGrid.xhtml" />
 
-							<aon:rowSelector
-								toggleOnClick="#{webPage.resource == null}"
-								actionListener="#{webPage.onSelectResource}" />
+					</aon:form>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-								<aon:outputText value="&#160;" />
-								<f:facet name="footer">
-									<aon:commandButton id="resetR"
-										styleClass="aon-icon-reset aon-icon-commandButton" value=""
-										rendered="#{!webPage.newResource}"
-										actionListener="#{webPage.onResetResource}"
-										accesskey="#{bundle.aon_key_new_line}">
-									</aon:commandButton>
-								</f:facet>
-							</aon:column>
+				</rich:panel>
 
-							<aon:column style="width:140px">
-								<f:facet name="header">
-									<aon:outputLabel for="WebInfoPageResource_rattach"
-										value="#{infowebBundle.infoweb_page_resource}" />
-								</f:facet>
-								<aon:outputText
-									value="#{to.rattach.description}"
-									rendered="#{to != webPage.resource}" />
-								<aon:selectOneMenu id="WebInfoPageResource_rattach"
-									value="#{webPage.attachment}"
-									rendered="#{to == webPage.resource}" required="true">
-									<f:selectItems value="#{webPage.images}" />
-								</aon:selectOneMenu>
-								<f:facet name="footer">
-									<aon:selectOneMenu id="WebInfoPageResource_rattach-New"
-										value="#{webPage.attachment}" 
-										rendered="#{webPage.newResource}" required="true">
-										<f:selectItems value="#{webPage.images}" />
-									</aon:selectOneMenu>
-								</f:facet>
-							</aon:column>
-
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputLabel for="WebInfoPageResource_content"
-										value="#{bundle.aon_description}" />
-								</f:facet>
-								<aon:outputText 
-									value="#{to.content}" rendered="#{to!=webPage.resource}" />
-								<aon:inputText id="WebInfoPageResource_content"
-									value="#{webPage.resource.content}" maxlength="255"
-									rendered="#{to==webPage.resource}" size="32" />
-								<f:facet name="footer">
-									<aon:inputText id="WebInfoPageResource_content-New"
-										value="#{webPage.resource.content}" maxlength="255"
-										rendered="#{webPage.newResource}" size="32" />
-								</f:facet>
-							</aon:column>
-
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-								<aon:div
-									rendered="#{to == webPage.resource}">
-									<aon:commandButton
-										title="#{bundle.aon_save}"
-										actionListener="#{webPage.onAcceptResource}" value=""
-										styleClass="aon-editDataTable-button aon-icon-accept"
-										accesskey="#{bundle.aon_key_save_line}"/>
-									<aon:commandButton
-										title="#{bundle.aon_cancel}"
-										actionListener="#{webPage.onCancelResource}"
-										immediate="#{true}" value=""
-										styleClass="aon-editDataTable-button aon-icon-cancel"
-										accesskey="#{bundle.aon_key_cancel_line}" />
-									<aon:commandButton reRender="pageResourcePanel"
-										title="#{bundle.aon_remove}"
-										actionListener="#{webPage.onRemoveResource}"
-										styleClass="aon-editDataTable-button aon-icon-delete"
-										value="" accesskey="#{bundle.aon_key_remove_line}" />
-								</aon:div>
-								<f:facet name="footer">
-									<aon:div>
-										<aon:outputText
-											rendered="#{!webPage.newResource}" value="&#160;" />
-										<aon:commandButton reRender="pageResourcePanel"
-											title="#{bundle.aon_save}"
-											actionListener="#{webPage.onAcceptResource}"
-											rendered="#{webPage.newResource}" value=""
-											styleClass="aon-editDataTable-button aon-icon-accept"
-											accesskey="#{bundle.aon_key_save_line}"/>
-										<aon:commandButton 
-											title="#{bundle.aon_cancel}"
-											actionListener="#{webPage.onCancelResource}"
-											immediate="#{true}" rendered="#{webPage.newResource}"
-											styleClass="aon-editDataTable-button aon-icon-cancel"
-											value="" accesskey="#{bundle.aon_key_cancel_line}" />
-									</aon:div>
-								</f:facet>
-							</aon:column>
-						</aon:editDataTable>
-
-						<aon:dataScroller2
-							for="WebInfoPageResource_datatable" showNote="true" />
-
-					</rich:panel>
-
-				</aon:form>
 			</rich:modalPanel>
 		</c:if>
 	</aon:panelGroup>
