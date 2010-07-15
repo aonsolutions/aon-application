@@ -63,6 +63,7 @@ import com.esferalia.aon.payroll.core.empresa.EmpresaDAOFactory;
 import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
+import com.esferalia.aon.payroll.core.enumeration.TiempoContrato;
 import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
 import com.esferalia.aon.payroll.core.enumeration.TipoTiempoParcial;
 import com.esferalia.aon.payroll.core.nomina.INominaDAO;
@@ -418,7 +419,9 @@ public class CertificateWriter {
 		/*
 		 * NODOS
 		 */
-		trabajador.setDistribucionJornada(createDistribucionJornadaRecord(detalle));
+		if(!trabajos.get(0).getTiempoContrato().equals(TiempoContrato.COMPETO)) {
+			trabajador.setDistribucionJornada(createDistribucionJornadaRecord(detalle));
+		}
 		
 		List<Cotizacion> listaDatosCotizacion = new ArrayList<Cotizacion>();
 		
