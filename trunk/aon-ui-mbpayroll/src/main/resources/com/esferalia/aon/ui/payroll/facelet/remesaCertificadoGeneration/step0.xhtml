@@ -47,11 +47,19 @@
 				<aon:inputText id="apellido2" size="20" maxlength="25"
 					value="#{remesaCertificadoGenerationWizard.params.apellido2}" />
 
-				<aon:outputLabel for="fecha"
-					value="#{payrollBundle.payroll_fecha_cese}" />
-				<aon:selectInputDate id="fecha" 
-					required="true"
-					value="#{remesaCertificadoGenerationWizard.params.fecha}"
+				<aon:outputLabel for="fecha-desde"
+					value="#{payrollBundle.payroll_fecha_cese_desde}" />
+				<aon:selectInputDate id="fecha-desde" 
+					value="#{remesaCertificadoGenerationWizard.params.fechaDesde}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+
+				<aon:outputLabel for="fecha-hasta"
+					value="#{payrollBundle.payroll_fecha_cese_hasta}" />
+				<aon:selectInputDate id="fecha-hasta" 
+					value="#{remesaCertificadoGenerationWizard.params.fechaHasta}"
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}">
