@@ -38,6 +38,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	private DataModel selectedModel;
 	private IEmpresaDAO empresaDAO;
 	private List<IRemesaCertificadoEmpresa> listaRemesas;
+	private List<IRemesaCertificadoEmpresa> savedRemesas;
 	private boolean remesable;
 
 	public boolean isRemesable() {
@@ -68,6 +69,16 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 
 	public void setListaRemesas(List<IRemesaCertificadoEmpresa> listaRemesas) {
 		this.listaRemesas = listaRemesas;
+	}
+	public List<IRemesaCertificadoEmpresa> getSavedRemesas() {
+		if (savedRemesas == null) {
+			savedRemesas = new ArrayList<IRemesaCertificadoEmpresa>();
+		}
+		return savedRemesas;
+	}
+	
+	public void setSavedRemesas(List<IRemesaCertificadoEmpresa> savedRemesas) {
+		this.savedRemesas = savedRemesas;
 	}
 
 	public int getCurrentStep() {
@@ -184,7 +195,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 				}
 				list.add(remesable);
 				empleado = remesable.getEmpleado();
-				if (!existEmpresa(empleado.getEmpresa())) {
+				if (!isEmpresaInList(empleado.getEmpresa())) {
 					try {
 						getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado,getParams().getFecha()));
 					} catch (PayrollException e) {
@@ -211,7 +222,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		return false;
 	}
 
-	private boolean existEmpresa(IEmpresa empresa) {
+	private boolean isEmpresaInList(IEmpresa empresa) {
 		Iterator<?> iterator = getListaRemesas().iterator();
 		while (iterator.hasNext()) {
 			IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa) iterator
@@ -234,9 +245,9 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
 				for (IRemesaCertificadoEmpresa r : getListaRemesas()) {
-					// r.setCodigoCcc();
 					IRemesaCertificadoEmpresa remesa = getEmpresaDAO()
 							.accept(r);
+					getSavedRemesas().add(remesa);
 					List<IRemesaCertificadoEmpresaDetalle> list = getRemesaDetalleList(remesa);
 					for (IRemesaCertificadoEmpresaDetalle d : list) {
 						getEmpresaDAO().accept(d);
@@ -321,6 +332,14 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		} else {
 			setRemesable(true);
 		}
+	}
+
+	public void onChangeWizard(ActionEvent event) {
+		this.onNext(event);
+		RemesaCertificadoWizard wizard = (RemesaCertificadoWizard) AonUtil.getRegisteredBean("remesaCertificadoWizard");
+		wizard.setCurrentStep(1);
+		wizard.initializeRemesasModel(getSavedRemesas());
+		setSavedRemesas(null);
 	}
 
 }

@@ -10,27 +10,55 @@
 	template="/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{payrollBundle.remesaCertificado_step1}" />
+		<aon:outputText value="#{payrollBundle.remesaCertificado_step0}" />
 	</ui:define>
 
 	<ui:define name="step_content">
-		
-		<aon:div styleClass="aon-scroll-area">
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/remesaHeader.xhtml" />
-		</aon:div>
-		
-		<aon:div styleClass="aon-scroll-area">
-			<aon:dataTable id="remesaDetailData" value="#{remesaCertificadoWizard.detailList}"
+<!--  
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_remesa_certificado_filter}" />
+			</f:facet>
+			<aon:panelGrid columns="4" dir="true" width="100%">
+				<aon:outputLabel for="fecha"
+					value="#{payrollBundle.payroll_fecha}" />
+				<aon:selectInputDate id="fecha" 
+					value="#{remesaCertificadoWizard.params.fecha}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange" reRender="remesaData">
+						<aon:actionListener method="#{remesaCertificadoWizard.onSearch}" />
+					</a4j:support>
+					<a4j:support event="onchanged" reRender="remesaData">
+						<aon:actionListener method="#{remesaCertificadoWizard.onSearch}" />
+					</a4j:support>
+				</aon:selectInputDate>
+				
+				<aon:outputLabel for="estado"
+					value="#{payrollBundle.payroll_estado}" />
+				<aon:selectManyCheckbox id="estado"
+					value="#{remesaCertificadoWizard.params.estados}">
+					<f:selectItems value="#{payrollCollections.fileStatus}" />
+					<a4j:support event="onclick" reRender="remesaData">
+						<aon:actionListener method="#{remesaCertificadoWizard.onSearch}" />
+					</a4j:support>
+				</aon:selectManyCheckbox>
+			</aon:panelGrid>
+			
+		</aon:panel>
+-->
+	
+		<aon:div styleClass="aon-scroll-area" id="remesaData">
+			<aon:dataTable id="remesaDataTable" value="#{remesaCertificadoWizard.model}"
 				var="to" rows="20" 
 				columnClasses="
-				aon-editDataTable-numberColumn, 
 				aon-editDataTable-textColumn, 
-				aon-editDataTable-dateColumn,
+				aon-editDataTable-textColumn, 
 				aon-editDataTable-textColumn">
-<!--  
+
 				<aon:rowSelector action="remesaCertificadoWizard_step2"
 					actionListener="#{remesaCertificadoWizard.onSelect}" />
--->
 
 				<aon:column>
 					<f:facet name="header">
@@ -41,33 +69,32 @@
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_nombre}" />
+						<aon:outputText value="#{payrollBundle.payroll_empresa}" />
 					</f:facet>
-					<aon:outputText value="#{to.empleado.persona.fullName}" >
+					<aon:outputText value="#{to.empresa.name}" >
 						<aon:abbreviateConverter maxWidth="50" />
 					</aon:outputText>
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
+						<aon:outputText value="#{payrollBundle.payroll_fecha}" />
 					</f:facet>
-					<aon:outputText value="#{to.fechaBaja}">
+					<aon:outputText value="#{to.fecha}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
 				</aon:column>
-
+				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
+						<aon:outputText value="#{payrollBundle.payroll_estado}" />
 					</f:facet>
-					<aon:outputText value="#{to.causaSuspension}" />
+					<aon:outputText value="#{to.estado}" />
 				</aon:column>
-
 			</aon:dataTable>
+			<aon:dataScroller2 for="remesaDataTable" showNote="true" />
 <!--  
-			<aon:dataScroller2 for="remesaData" showNote="true" />
 -->
 
 		</aon:div>
