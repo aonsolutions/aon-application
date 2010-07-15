@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.empresa;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -153,8 +152,13 @@ public class EmpresaDAO implements IEmpresaDAO {
 			if (!StringUtils.isEmpty(params.getApellido2())) {
 				criteria.addExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME),params.getApellido2());
 			}
-			criteria.addGreaterThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), date.getTime());
-			criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), params.getFecha());
+			if (params.getFechaDesde()!=null) {
+				criteria.addGreaterThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), params.getFechaDesde());
+			}
+			if (params.getFechaHasta()!=null) {
+				criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), params.getFechaHasta());
+			}
+			
 			Expression exp1  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "A");
 			Expression exp2  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "S");
 			criteria.addExpression( ExpressionUtilities.getAndExpression(exp1, exp2) );
@@ -170,10 +174,10 @@ public class EmpresaDAO implements IEmpresaDAO {
 	}
 	
 	@Override
-	public IRemesaCertificadoEmpresa getNewRemesa(IEmpleado empleado, Date fecha) throws PayrollException {
+	public IRemesaCertificadoEmpresa getNewRemesa(IEmpleado empleado) throws PayrollException {
 		IRemesaCertificadoEmpresa remesa = new RemesaCertificadoEmpresa();
 		remesa.setEmpresa(empleado.getEmpresa());
-		remesa.setFecha(fecha);
+		remesa.setFecha(Calendar.getInstance().getTime());
 		remesa.setEstado(FileStatus.PENDIENTE);
 		return remesa;
 	}
