@@ -168,7 +168,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	// ***************************************************
 	public void onStart(ActionEvent event) {
 		setParams(null);
-		getParams().setFecha(Calendar.getInstance().getTime());
+		getParams().setFechaHasta(Calendar.getInstance().getTime());
 		setModel(null);
 		setSelectedModel(null);
 		setListaRemesas(null);
@@ -197,7 +197,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 				empleado = remesable.getEmpleado();
 				if (!isEmpresaInList(empleado.getEmpresa())) {
 					try {
-						getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado,getParams().getFecha()));
+						getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado));
 					} catch (PayrollException e) {
 						// NADA
 					}
@@ -327,7 +327,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	}
 	
 	public void onChangeRemesableDate(ActionEvent event) {
-		if(getParams().getFecha().after(Calendar.getInstance().getTime())){
+		if(getParams().getFechaHasta().after(Calendar.getInstance().getTime())){
 			setRemesable(false);
 		} else {
 			setRemesable(true);
