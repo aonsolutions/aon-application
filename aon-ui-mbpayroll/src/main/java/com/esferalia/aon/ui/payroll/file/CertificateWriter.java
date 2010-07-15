@@ -59,6 +59,8 @@ import com.esferalia.aon.payroll.core.INominaDiferencia;
 import com.esferalia.aon.payroll.core.ITrabajo;
 import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
 import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
+import com.esferalia.aon.payroll.core.empresa.EmpresaDAOFactory;
+import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.core.enumeration.TipoNomina;
@@ -71,6 +73,7 @@ public class CertificateWriter {
 	
 	private Certificate certificate;
 	private IEmpleadoDAO empleadoDAO;
+	private IEmpresaDAO empresaDAO;
 	private INominaDAO nominaDAO;
 	
 	private IEmpleadoDAO getEmpleadoDAO() {
@@ -80,7 +83,13 @@ public class CertificateWriter {
 		
 		return empleadoDAO;
 	}
-	
+	private IEmpresaDAO getEmpresaDAO() {
+		if(empresaDAO == null) {
+			empresaDAO = EmpresaDAOFactory.getInstance().getEmpresaDAO();
+		}
+		
+		return empresaDAO;
+	}
 	private INominaDAO getNominaDAO() {
 		if(nominaDAO == null) {
 			nominaDAO = NominaDAOFactory.getInstance().getNominaDAO();
@@ -103,8 +112,11 @@ public class CertificateWriter {
 		
 		try {
 			setCertificate(new Certificate());
+			
 			List<CuentaCotizacion> listaCuentas = new ArrayList<CuentaCotizacion>();
-			listaCuentas.add(createCuentaCotizacionRecord(remesa, remesaDetail));
+			for(String ccc: getCccList(remesaDetail)) {
+				listaCuentas.add(createCuentaCotizacionRecord(ccc, remesa, remesaDetail));
+			}
 			getCertificate().setCuentaCotizacion(listaCuentas);
 			
 			FileOutput output = new FileOutput();
@@ -144,6 +156,18 @@ public class CertificateWriter {
 		} catch (TransformerException e) {
 			throw new ManagerBeanException(e);
 		}
+	}
+	
+	private List<String> getCccList(List<IRemesaCertificadoEmpresaDetalle> remesaDetail) throws PayrollException{
+		List<String> list = new ArrayList<String>();
+		String ccc;
+		for(IRemesaCertificadoEmpresaDetalle detail: remesaDetail){
+			ccc = getEmpresaDAO().getEmpresaCccEmpleado(detail.getEmpleado());
+			if(!list.contains(ccc)){
+				list.add(ccc);
+			}
+		}
+		return list;
 	}
 	
 	private void validateCertificateData(Certificate certificate) {
@@ -304,7 +328,7 @@ public class CertificateWriter {
 		}
 	}
 	
-	private CuentaCotizacion createCuentaCotizacionRecord(IRemesaCertificadoEmpresa remesa, List<IRemesaCertificadoEmpresaDetalle> listaDetalle) throws PayrollException {
+	private CuentaCotizacion createCuentaCotizacionRecord(String ccc, IRemesaCertificadoEmpresa remesa, List<IRemesaCertificadoEmpresaDetalle> listaDetalle) throws PayrollException {
 		CuentaCotizacion cuentaCotizacion = new CuentaCotizacion();
 		Representante representante = new Representante();
 		
@@ -324,7 +348,7 @@ public class CertificateWriter {
 		
 		Empresa empresa = new Empresa();
 		
-		empresa.setCcc(parseToLength(remesa.getNumeroCcc(), 15));
+		empresa.setCcc(parseToLength(ccc, 15));
 		empresa.setCifNif(remesa.getEmpresa().getRegistry().getDocument().getValue());
 		
 		cuentaCotizacion.setEmpresa(empresa);
@@ -332,7 +356,9 @@ public class CertificateWriter {
 		List<Trabajador> listaTrabajadores = new ArrayList<Trabajador>();
 		
 		for(IRemesaCertificadoEmpresaDetalle detalle:listaDetalle) {
-			listaTrabajadores.add(createTrabajadorRecord(detalle));
+			if(getEmpresaDAO().getEmpresaCccEmpleado(detalle.getEmpleado()).equals(ccc)){
+				listaTrabajadores.add(createTrabajadorRecord(detalle));
+			}
 		}
 		
 		cuentaCotizacion.setListaTrabajadores(listaTrabajadores);
@@ -396,9 +422,7 @@ public class CertificateWriter {
 		
 		List<Cotizacion> listaDatosCotizacion = new ArrayList<Cotizacion>();
 		
-		// for(IRemesaCertificadoEmpresaDetalle detalle: listaDetalle){
 		listaDatosCotizacion.addAll(createDatosCotizacionRecord(detalle));
-		// }
 		
 		trabajador.setDatosCotizacion(listaDatosCotizacion);
 		trabajador.setDatosVacacionesCotizadas(createDatosVacacionesCotizadasRecord(detalle.getEmpleado()));
