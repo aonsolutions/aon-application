@@ -83,6 +83,29 @@
 			<value>webPageStyle</value>
 		</managed-property>				
 	</managed-bean>
+	
+	<!-- **** WEB PAGE RESOURCE **** -->
+	<managed-bean>
+		<managed-bean-name>webPageResource</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.infoweb.controller.WebInfoPageResourceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.infoweb.WebInfoPageResource</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>webPageResource</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>WebInfoPageResource_content</value>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ******************
 		COLLECTIONS CONTROLLER
