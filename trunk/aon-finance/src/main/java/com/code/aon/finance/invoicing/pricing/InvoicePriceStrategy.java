@@ -6,9 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.strategy.BasicPriceStrategy;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.TaxBreakDown;
@@ -94,5 +94,19 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 			}
 		}
 		return CommonUtil.round(total);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public double getRetentionPercent(ICalculableContainer icc, ITaxInfo iti) {
+		double percent = 0;
+		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
+		while(iter.hasNext()){
+			TaxBreakDown taxBreakDown = (TaxBreakDown)iter.next();
+			if(taxBreakDown.getTaxType().equals(TaxType.RETENTION)){
+				percent = taxBreakDown.getTaxPercent();
+				break;
+			}
+		}
+		return CommonUtil.round(percent);
 	}
 }
