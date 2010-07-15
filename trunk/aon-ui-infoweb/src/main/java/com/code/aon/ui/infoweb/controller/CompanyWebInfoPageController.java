@@ -8,7 +8,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 
@@ -22,9 +21,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoPageDetail;
-import com.code.aon.infoweb.WebInfoPageResource;
 import com.code.aon.infoweb.dao.IWebInfoAlias;
-import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -51,14 +48,6 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 	public WebInfoPage current;
 	
 	public WebInfoPageDetail detail;
-
-	public boolean newResource;
-	
-	public RegistryAttachment attachment;
-
-	public ListDataModel resources;
-	
-	public WebInfoPageResource resource;
 	
 	public CompanyWebInfoPageController() {
 		this.richTextEnabled = true;
@@ -158,13 +147,20 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 	public void onSelectDetail(ActionEvent event) {
 		WebInfoPage wip = (WebInfoPage) getSelectedTO();
 		current = wip;
-		setSelectedData(wip);
-		if (wip.getType().equals(WebInfoPageType.GENERIC)) {
-			setShowGenericModalPanel(true);
-		} else if (wip.getType().equals(WebInfoPageType.LOCATION)) {
-			setShowLocationModalPanel(true);
-		} else if (wip.getType().equals(WebInfoPageType.GALLERY)) {
-			setShowResourceModalPanel(true);
+		switch ( wip.getType() ) {
+			case LOCATION:
+				setShowLocationModalPanel(true);
+				selecteDetail(wip);
+				break;
+			case GALLERY:
+				setShowResourceModalPanel(true);
+				selectResource(event, wip);
+				break;
+			case GENERIC:
+				setShowGenericModalPanel(true);
+				selecteDetail(wip);
+				selectResource(event, wip);
+				break;
 		}
 	}
 
@@ -192,7 +188,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		this.showResourceModalPanel = showResourceModalPanel;
 	}
 
-	public void setSelectedData(WebInfoPage wip) {
+	private void selecteDetail(WebInfoPage wip) {
 		try {
 			IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 			Criteria criteria = new Criteria();
@@ -200,18 +196,16 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			List<ITransferObject> listWipd = wipdBean.getList(criteria);
 			if (listWipd.size() > 0) detail = (WebInfoPageDetail)listWipd.get(0);
 			else detail = new WebInfoPageDetail();
-
-			IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression(wiprBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), wip.getId());
-			List<ITransferObject> listWipr = wiprBean.getList(criteria);
-			resources = new ListDataModel(listWipr);
-			resetResource();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
+	private void selectResource(ActionEvent event, WebInfoPage wip) {
+		WebInfoPageResourceController controller = (WebInfoPageResourceController) AonUtil.getRegisteredBean(WEB_PAGE_RESOURCE_CONTROLLER_NAME);
+		controller.onSelect(event, wip);
+	}
+	
 	public WebInfoPageDetail getDetail() {
 		return detail;
 	}
@@ -224,55 +218,6 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 			detail.setWebInfoPage( current );
 			wipdBean.insertOrUpdate( detail );
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-    }
-
-    public void onResetResource(ActionEvent event) {
-    	resource = new WebInfoPageResource();
-    	resource.setRattach(new RegistryAttachment());
-    	setNewResource(true);
-    }
-
-    public void onCancelResource(ActionEvent event) {
-		LOGGER.debug("Resource: {} canceled.", resource.getContent());
-		resource = new WebInfoPageResource();
-		resetResource();
-    }
-
-	public void onSelectResource(ActionEvent event) {
-		WebInfoPageResource wipr = (WebInfoPageResource)this.resources.getRowData();
-		resource = wipr; 
-		attachment = resource.getRattach();
-		setNewResource(false);
-	}
-
-	/* (non-Javadoc)
-     * @see com.code.aon.ui.form.IController#onAccept(javax.faces.event.ActionEvent)
-     */
-    public void onAcceptResource(ActionEvent event) {
-		try {
-			IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
-			resource.setWebInfoPage(current);
-			resource.setRattach(attachment);
-			wiprBean.insertOrUpdate(resource);
-			setSelectedData(current);
-			resetResource();
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-    }
-
-	/* (non-Javadoc)
-     * @see com.code.aon.ui.form.IController#onAccept(javax.faces.event.ActionEvent)
-     */
-    public void onRemoveResource(ActionEvent event) {
-		try {
-			IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
-			wiprBean.remove(resource);
-			setSelectedData(current);
-			resetResource();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -292,45 +237,12 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		return images;
 	}
 
-	public ListDataModel getResources() {
-		return resources;
-	}
-
-	public WebInfoPageResource getResource() {
-		return resource;
-	}
-
-	public void setResource(WebInfoPageResource resource) {
-		this.resource = resource;
-	}
-
-	public boolean isNewResource() {
-		return newResource;
-	}
-
-	public void setNewResource(boolean newResource) {
-		this.newResource = newResource;
-	}
-
-	public RegistryAttachment getAttachment() {
-		return attachment;
-	}
-
-	public void setAttachment(RegistryAttachment attachment) {
-		this.attachment = attachment;
-	}
-
 	public boolean isRichTextEnabled() {
 		return richTextEnabled;
 	}
 
 	public void setRichTextEnabled(boolean richTextEnabled) {
 		this.richTextEnabled = richTextEnabled;
-	}
-
-	private void resetResource() {
-		setResource(null);
-		setNewResource(false);
 	}
 	
 	private boolean isValidChar( char c ) {
