@@ -30,9 +30,9 @@ public class EntryComparator implements Comparator<Entry> {
 		String value2 = ObjectUtils.toString( getValue(o2) );
 		int result = 0;
 		if ( ascending ) {
-			result = value1.compareTo(value2);
+			result = value1.compareToIgnoreCase(value2);
 		} else {
-			result = value2.compareTo(value1);
+			result = value2.compareToIgnoreCase(value1);
 		}
 		return result;
 	}
