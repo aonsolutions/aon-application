@@ -31,7 +31,6 @@
 			<param id="toDate" value="#{retentionReport.getToDate}" />
 			<param id="date" value="#{retentionReport.getDate}" />
 			<param id="PriceStrategy" value="#{retentionReport.getPriceStrategy}" />
-			<param id="retention" value="#{retentionReport.getRetentionPercent}" />
 		</params>
 	</report>
 
