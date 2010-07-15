@@ -6,6 +6,10 @@ public interface IInfoWebConstants {
 
 	String WEB_INFO_CONTROLLER_NAME = "companyWebInfo";
 	
+	String WEB_PAGE_CONTROLLER_NAME = "webPage";
+	
+	String WEB_PAGE_RESOURCE_CONTROLLER_NAME = "webPageResource";
+	
 	// WEB INFO PROPERTIES
 	String WEB_INFO_PROPERTIES = "/home/COMMON-RESOURCES/aon-web-info/ftp.properties";
 	
