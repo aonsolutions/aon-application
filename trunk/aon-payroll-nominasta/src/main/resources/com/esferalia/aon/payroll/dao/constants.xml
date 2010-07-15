@@ -25,6 +25,11 @@
 		<hibernate names="id,registry.document.tipo,registry.document.pais,registry.document.value,name,numSS,surname,lastName" />
 	</bean>
 
+	<bean class="com.esferalia.aon.payroll.empresa.RemesaCertificadoEmpresa" sqlName="rem_cert_empr">
+		<alias names="id,empresa_id,empresa_name,estado,fecha,huella,numeroCcc" />
+		<hibernate names="id,empresa.id,empresa.name,estado,fecha,huella,numeroCcc" />
+	</bean>
+
 </dao>
 
 
