@@ -28,7 +28,6 @@ public class RemesaCertificadoEmpresa implements ITransferObject,
 	
 	private Integer id;
 	private IEmpresa empresa;
-	private String numeroCcc;
 	private Date fecha;
 	private FileStatus estado;
 	private String huella;
@@ -54,16 +53,6 @@ public class RemesaCertificadoEmpresa implements ITransferObject,
 	@Override
 	public void setEmpresa(IEmpresa empresa) {
 		this.empresa = empresa;
-	}
-
-	@Column(name = "numero_ccc", nullable = false, length = 1)
-	@Override
-	public String getNumeroCcc() {
-		return numeroCcc;
-	}
-	@Override
-	public void setNumeroCcc(String numeroCcc) {
-		this.numeroCcc = numeroCcc;
 	}
 	
 	@Temporal(TemporalType.DATE)

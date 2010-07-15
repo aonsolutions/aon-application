@@ -87,6 +87,9 @@ public class EmpresaDAO implements IEmpresaDAO {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RemesaCertificadoEmpresa.class);
 			Criteria criteria = new Criteria();
+			if (!StringUtils.isEmpty(params.getEmpresa())) {
+				criteria.addExpression(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_EMPRESA_NAME),params.getEmpresa());
+			}
 			if (params.getFecha() != null) {
 				criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.REMESA_CERTIFICADO_EMPRESA_FECHA),params.getFecha());
 			}
@@ -98,6 +101,8 @@ public class EmpresaDAO implements IEmpresaDAO {
 			List<?> list = bean.getList(criteria);
 			return (List<IRemesaCertificadoEmpresa>)list;
 		} catch (ManagerBeanException e) {
+			throw new PayrollException(e);
+		} catch (ExpressionException e) {
 			throw new PayrollException(e);
 		}
 	}
@@ -170,11 +175,6 @@ public class EmpresaDAO implements IEmpresaDAO {
 		remesa.setEmpresa(empleado.getEmpresa());
 		remesa.setFecha(fecha);
 		remesa.setEstado(FileStatus.PENDIENTE);
-		String ccc;
-		ccc = getRegimenCode(empleado.getActividad().getRegimen());
-		ccc += getActividadCCC(empleado.getActividad(), empleado.getCuentaCotizacion()).getDescripcion();
-		remesa.setNumeroCcc(ccc);
-		
 		return remesa;
 	}
 	
@@ -205,6 +205,15 @@ public class EmpresaDAO implements IEmpresaDAO {
 		} catch (ManagerBeanException e) {
 			throw new PayrollException(e);
 		}
+	}
+	
+	@Override
+	public String getEmpresaCccEmpleado(IEmpleado empleado) throws PayrollException {
+		String ccc;
+		ccc = getRegimenCode(empleado.getActividad().getRegimen());
+		ccc += getActividadCCC(empleado.getActividad(), empleado.getCuentaCotizacion()).getDescripcion();
+//		remesa.setNumeroCcc(ccc);
+		return ccc;
 	}
 	
 	private String getRegimenCode(Regimen regimen) {
