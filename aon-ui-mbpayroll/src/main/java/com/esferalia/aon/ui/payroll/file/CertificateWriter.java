@@ -660,7 +660,7 @@ public class CertificateWriter {
 		String parse = null;
 		
 		if(tipoTP != null) {
-			parse = new String(tipoTP.getValue());
+			parse = new String(String.valueOf(tipoTP.ordinal() + 1));
 		}
 		
 		return parse;
