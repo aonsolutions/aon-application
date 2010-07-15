@@ -32,7 +32,7 @@ public interface IEmpresaDAO {
 	void accept(IRemesaCertificadoEmpresaDetalle detalle)
 			throws PayrollException;
 
-
+	String getEmpresaCccEmpleado(IEmpleado empleado) throws PayrollException;
 
 	
 }
