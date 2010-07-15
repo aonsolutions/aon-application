@@ -37,11 +37,18 @@
 							rendered="#{remesaCertificadoGenerationWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-next" />
 
-						<aon:commandButton id="end"
-							value="#{payrollBundle.payroll_finalice}"
+						<aon:commandButton id="end1"
+							value="#{payrollBundle.payroll_finalice_and_search}"
 							action="#{remesaCertificadoGenerationWizard.next}"
 							actionListener="#{remesaCertificadoGenerationWizard.onNext}"
-							onclick="if (!confirm('#{payrollBundle.payroll_finalice}?')) { return false;}"
+							onclick="if (!confirm('#{payrollBundle.payroll_finalice_and_search}?')) { return false;}"
+							rendered="#{!remesaCertificadoGenerationWizard.nextAvailable}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />
+						<aon:commandButton id="end2"
+							value="#{payrollBundle.payroll_finalice_and_generate}"
+							action="remesaCertificadoWizard_step1"
+							actionListener="#{remesaCertificadoGenerationWizard.onChangeWizard}"
+							onclick="if (!confirm('#{payrollBundle.payroll_finalice_and_generate}?')) { return false;}"
 							rendered="#{!remesaCertificadoGenerationWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
 

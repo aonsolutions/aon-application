@@ -10,36 +10,66 @@
 	template="/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{payrollBundle.remesaCertificado_step2}" />
+		<aon:outputText value="#{payrollBundle.remesaCertificado_step1}" />
 	</ui:define>
 
 	<ui:define name="step_content">
-		<aon:div styleClass="aon-text-center">
-			<aon:div styleClass="aon-text-center" style="font-size: 1.5em;margin-top: 20px; ">
-				<aon:outputText rendered="#{remesaCertificadoWizard.diskOk}"
-					value="#{payrollBundle.payroll_remesa_disk_ok}" />
-				<aon:outputText rendered="#{!remesaCertificadoWizard.diskOk}"
-					value="#{payrollBundle.payroll_remesa_disk_ko}" />
-			</aon:div>
-			
-			<rich:separator lineType="solid" style="margin-top: 20px; margin-bottom: 20px;"/>
-			
-			<h:commandLink target="_blank"
-				title="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				value="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				style="border-width: 0px 0px 0px 0px;"
-				actionListener="#{remesaCertificadoWizard.onDownloadDisk}"
-				rendered="#{remesaCertificadoWizard.fileOutput!=null}"
-				styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
-
+		
+		<aon:div styleClass="aon-scroll-area">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/remesaHeader.xhtml" />
+		</aon:div>
+		
+		<aon:div styleClass="aon-scroll-area">
+			<aon:dataTable id="remesaDetailData" value="#{remesaCertificadoWizard.detailList}"
+				var="to"  
+				columnClasses="
+				aon-editDataTable-numberColumn, 
+				aon-editDataTable-textColumn, 
+				aon-editDataTable-dateColumn,
+				aon-editDataTable-textColumn">
 <!--  
-			<h:commandLink target="_blank"
-				title="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				value="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				style="border-width: 0px 0px 0px 0px;"
-				actionListener="#{remesaCertificadoWizard.onDownloadDisk}"
-				styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+				<aon:rowSelector action="remesaCertificadoWizard_step2"
+					actionListener="#{remesaCertificadoWizard.onSelect}" />
 -->
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_cdg}" />
+					</f:facet>
+					<aon:outputText value="#{to.id}" />
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_nombre}" />
+					</f:facet>
+					<aon:outputText value="#{to.empleado.persona.fullName}" >
+						<aon:abbreviateConverter maxWidth="50" />
+					</aon:outputText>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
+					</f:facet>
+					<aon:outputText value="#{to.fechaBaja}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
+					</f:facet>
+					<aon:outputText value="#{to.causaSuspension}" />
+				</aon:column>
+
+			</aon:dataTable>
+<!--  
+			<aon:dataScroller2 for="remesaDetailData" showNote="true" />
+-->
+
 		</aon:div>
 	</ui:define>
 

@@ -36,7 +36,7 @@ public class RemesaCertificadoWizard implements Serializable {
 	private static final long serialVersionUID = -8284038117326971930L;
 	
 	private int currentStep;
-	private static final String[] STEPS = { "remesaCertificadoWizard_step0", "remesaCertificadoWizard_step1", "remesaCertificadoWizard_step2" };
+	private static final String[] STEPS = { "remesaCertificadoWizard_step0", "remesaCertificadoWizard_step1", "remesaCertificadoWizard_step2", "remesaCertificadoWizard_step3" };
 	private FileOutput fileOutput;
 	private CertificateWriter certificateWriter;
 	private IEmpresaDAO empresaDAO;
@@ -112,8 +112,11 @@ public class RemesaCertificadoWizard implements Serializable {
 	}
 
 	private void initializeRemesasModel() throws PayrollException {
-//		getParams().getEstados().add(FileStatus.NO_GENERADO);
 		model = new ListDataModel(getEmpresaDAO().getRemesaCertificados(getParams()));
+	}
+	
+	protected void initializeRemesasModel(List<IRemesaCertificadoEmpresa> list) {
+		model = new ListDataModel(list);
 	}
 	
 	private void refreshDetailList() throws PayrollException {
@@ -126,10 +129,13 @@ public class RemesaCertificadoWizard implements Serializable {
 			onSearch(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
+			onSearch(event);
+			setCurrentStep(getCurrentStep() + 1);
+		} else if (getCurrentStep() == 2) {
 			onDiskGenerate(event);
 			onValidate(event);
 			setCurrentStep(getCurrentStep() + 1);
-		} else if (getCurrentStep() == 2) {
+		} else if (getCurrentStep() == 3) {
 			onFinish(event);
 		} 
 	}
@@ -151,7 +157,7 @@ public class RemesaCertificadoWizard implements Serializable {
 	}
 
 	public boolean isNextAvailable() {
-		return (getCurrentStep() < 2);
+		return (getCurrentStep() < 3);
 	}
 
 	// ***************************************************
@@ -232,7 +238,7 @@ public class RemesaCertificadoWizard implements Serializable {
 	}
 
 	public void onSelect(ActionEvent event) {
-		setCurrentStep(1);
+		setCurrentStep(2);
 		IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa)getModel().getRowData();
 		setRemesa(remesa);
 		try {
