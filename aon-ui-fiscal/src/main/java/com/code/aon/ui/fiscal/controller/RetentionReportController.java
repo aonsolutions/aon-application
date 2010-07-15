@@ -492,8 +492,37 @@ public class RetentionReportController extends BasicController{
 		}
 	
 	public void getInvoiceRetentionList() throws ManagerBeanException {
+		String dateCriteria = "";
+		if (this.getFromInvoiceDate() != null) {
+			dateCriteria = " InvoiceTax.invoiceDetail.invoice.issueDate >= '"
+					+ new java.sql.Date(this.getFromInvoiceDate().getTime())
+							.toString() + "' AND";
+		}
+		if (this.getToInvoiceDate() != null ) {
+			dateCriteria = dateCriteria + " InvoiceTax.invoiceDetail.invoice.issueDate <= '"
+					+ new java.sql.Date(this.getToInvoiceDate().getTime()).toString()
+					+ "' AND ";
+		}
+		if (this.getFromDate() != null) {
+			dateCriteria = dateCriteria + " InvoiceTax.invoiceDetail.invoice.taxDate >= '"
+					+ new java.sql.Date(this.getFromDate().getTime())
+							.toString() + "' AND";
+		}
+		if (this.getToDate() != null) {
+			dateCriteria = dateCriteria + " InvoiceTax.invoiceDetail.invoice.taxDate <= '"
+					+ new java.sql.Date(this.getToDate().getTime()).toString()
+					+ "' AND ";
+		}
+		
+		if (this.getSecurityLevel() != null) {
+			dateCriteria = dateCriteria + " InvoiceTax.invoiceDetail.invoice.securityLevel <= '"
+					+ this.getSecurityLevel()
+					+ "' AND ";
+		}
+		
 		String select = "select InvoiceTax.invoiceDetail.invoice "
 				+ "from InvoiceTax as InvoiceTax " + "where "
+				+   dateCriteria
 				+ " InvoiceTax.taxType= 2"
 				+ " group by InvoiceTax.invoiceDetail.invoice.id"
 				+ " order by InvoiceTax.invoiceDetail.invoice.issueDate,InvoiceTax.invoiceDetail.invoice.registryName";;
@@ -503,10 +532,5 @@ public class RetentionReportController extends BasicController{
 		invoiceList = query.list();
 
 	}
-
-
-
-	
-
 
 }
