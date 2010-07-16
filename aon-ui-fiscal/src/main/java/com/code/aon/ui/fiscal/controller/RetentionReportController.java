@@ -276,9 +276,13 @@ public class RetentionReportController extends BasicController{
 		c.setTime(new Date());
 		setDate(c.getTime());
 		setYear(c.get(Calendar.YEAR));
-		setVatPeriod( VatPeriod.getQuarterlyVatPeriod( c.get(Calendar.MONTH )) );
-		setFromDate(getVatPeriod().getStartDate(getYear()));	
-		setToDate(getVatPeriod().getDueDate(getYear()));
+		//setVatPeriod( VatPeriod.getQuarterlyVatPeriod( c.get(Calendar.MONTH )) );
+		c.set(Calendar.MONTH, 0);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		setFromDate(c.getTime());	
+		c.set(Calendar.MONTH, 11);
+		c.set(Calendar.DAY_OF_MONTH, 31);
+		setToDate(c.getTime());
 		setFromSeries(null);
 		setFromNumber(null);
 		setToSeries(null);

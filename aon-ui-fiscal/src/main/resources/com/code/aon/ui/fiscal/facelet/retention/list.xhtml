@@ -120,7 +120,7 @@
 
 					<aon:column styleClass="aon-editDataTable-numberColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_vat}" />
+							<aon:outputText value="#{financeBundle.aon_surcharge_ivare}" />
 						</f:facet>
 						<aon:outputText value="#{retentionReport.invoiceTotalVat}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -129,16 +129,7 @@
 
 					<aon:column styleClass="aon-editDataTable-numberColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_surcharge}" />
-						</f:facet>
-						<aon:outputText value="23">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<f:facet name="header">
-							<aon:outputText value="%" />
+							<aon:outputText value="#{financeBundle.invoice_list_report_irpf_percent}" />
 						</f:facet>
 						<aon:outputText value="#{retentionReport.invoiceRetentionPercent}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
