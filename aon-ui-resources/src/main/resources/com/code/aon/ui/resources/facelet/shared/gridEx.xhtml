@@ -12,7 +12,7 @@
 	
 			<aon:rowSelector id="#{dataTableId}-select" 
 				toggleOnClick="#{controller.to == null and !skipLineEdition}"
-				actionListener="#{controller.onSelect}" reRender="#{rowSelectorReRender}"
+				actionListener="#{rowSelectorActionListener}" reRender="#{rowSelectorReRender}"
 				focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
 	
 			<c:if test="#{!skipResetButton}">
