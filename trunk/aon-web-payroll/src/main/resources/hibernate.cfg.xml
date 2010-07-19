@@ -54,6 +54,7 @@
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 		
 		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.person.Person"/>
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RegistryBank"/>
 		<mapping class="com.code.aon.registry.RecordData"/>
