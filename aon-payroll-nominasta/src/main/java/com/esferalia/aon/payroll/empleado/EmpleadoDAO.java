@@ -281,7 +281,7 @@ public class EmpleadoDAO implements IEmpleadoDAO {
 			IManagerBean bean = BeanManager.getManagerBean(Trabajo.class);
 			Criteria c = new Criteria();
 			c.addEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_EMPLEADO_ID), empleado.getId());
-			c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_TIEMPO_CONTRATO),	TiempoContrato.COMPETO));
+			c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IPayrollAlias.TRABAJO_TIEMPO_CONTRATO),	TiempoContrato.COMPLETO));
 			c.addOrder(bean.getFieldName(IPayrollAlias.TRABAJO_FECFIN), false);
 			List<?> list = bean.getList(c);
 			return (List<ITrabajo>) list;
