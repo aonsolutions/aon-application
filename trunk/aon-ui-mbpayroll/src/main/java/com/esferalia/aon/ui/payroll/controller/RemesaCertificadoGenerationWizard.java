@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.payroll.controller;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -212,8 +211,8 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	}
 	
 	private void addEmpresaToRemesasList(IEmpleado empleado) throws PayrollException {
-		List<IRemesaCertificadoEmpresa> remesas = getExistingRemesas(empleado);
 		if (!isEmpresaInList(empleado.getEmpresa())) {
+			List<IRemesaCertificadoEmpresa> remesas = getExistingRemesas(empleado);
 			if(remesas.size()>0){
 				IRemesaCertificadoEmpresa remesa = findRemesa(remesas, empleado);
 				if(remesa!=null){
@@ -229,9 +228,8 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	
 	private IRemesaCertificadoEmpresa findRemesa(
 			List<IRemesaCertificadoEmpresa> remesas, IEmpleado empleado) {
-		Date today = Calendar.getInstance().getTime();
 		for(IRemesaCertificadoEmpresa remesa: remesas){
-			if(remesa.getFecha().before(today)){
+			if(remesa.getFecha().before(Calendar.getInstance().getTime())){
 				return remesa;
 			}
 		}
