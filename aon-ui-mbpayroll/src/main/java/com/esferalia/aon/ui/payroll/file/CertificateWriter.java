@@ -419,7 +419,7 @@ public class CertificateWriter {
 		/*
 		 * NODOS
 		 */
-		if(!trabajos.get(0).getTiempoContrato().equals(TiempoContrato.COMPETO)) {
+		if(!trabajos.get(0).getTiempoContrato().equals(TiempoContrato.COMPLETO)) {
 			trabajador.setDistribucionJornada(createDistribucionJornadaRecord(detalle));
 		}
 		
