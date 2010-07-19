@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.empresa;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -177,7 +178,11 @@ public class EmpresaDAO implements IEmpresaDAO {
 	public IRemesaCertificadoEmpresa getNewRemesa(IEmpleado empleado) throws PayrollException {
 		IRemesaCertificadoEmpresa remesa = new RemesaCertificadoEmpresa();
 		remesa.setEmpresa(empleado.getEmpresa());
-		remesa.setFecha(Calendar.getInstance().getTime());
+		if(empleado.getFechaFin().before(Calendar.getInstance().getTime())){
+			remesa.setFecha(Calendar.getInstance().getTime());
+		} else {
+			remesa.setFecha(new Date(empleado.getFechaFin().getTime()+(1*24*60*60*1000)));
+		}
 		remesa.setEstado(FileStatus.PENDIENTE);
 		return remesa;
 	}
@@ -216,7 +221,6 @@ public class EmpresaDAO implements IEmpresaDAO {
 		String ccc;
 		ccc = getRegimenCode(empleado.getActividad().getRegimen());
 		ccc += getActividadCCC(empleado.getActividad(), empleado.getCuentaCotizacion()).getDescripcion();
-//		remesa.setNumeroCcc(ccc);
 		return ccc;
 	}
 	
