@@ -213,19 +213,15 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	
 	private void addEmpresaToRemesasList(IEmpleado empleado) throws PayrollException {
 		List<IRemesaCertificadoEmpresa> remesas = getExistingRemesas(empleado);
-		if(remesas.size()>0){
-			IRemesaCertificadoEmpresa remesa = findRemesa(remesas, empleado);
-			if(remesa!=null){
-				if (!isEmpresaInList(empleado.getEmpresa())) {
+		if (!isEmpresaInList(empleado.getEmpresa())) {
+			if(remesas.size()>0){
+				IRemesaCertificadoEmpresa remesa = findRemesa(remesas, empleado);
+				if(remesa!=null){
 					getListaRemesas().add(remesa);
-				}
-			} else {
-				if (!isEmpresaInList(empleado.getEmpresa())) {
+				} else {
 					getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado));
 				}
-			}
-		} else {
-			if (!isEmpresaInList(empleado.getEmpresa())) {
+			} else {
 				getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado));
 			}
 		}
@@ -234,16 +230,10 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	private IRemesaCertificadoEmpresa findRemesa(
 			List<IRemesaCertificadoEmpresa> remesas, IEmpleado empleado) {
 		Date today = Calendar.getInstance().getTime();
-		
 		for(IRemesaCertificadoEmpresa remesa: remesas){
-			if(remesa.getFecha().after(empleado.getFechaFin())){
+			if(remesa.getFecha().before(today)){
 				return remesa;
 			}
-//			if(empleado.getFechaFin().before(today)){
-//
-//			} else {
-//				
-//			}
 		}
 		return null;
 	}
