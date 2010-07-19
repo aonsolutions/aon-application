@@ -8,7 +8,7 @@ import com.code.aon.common.enumeration.IStringEnum;
 
 public enum TiempoContrato implements IResourceable, IStringEnum {
 	
-	COMPETO("0"),
+	COMPLETO("0"),
 	PARCIAL_HORAS("1"),	
 	PARCIAL_DIAS("2");
 	
