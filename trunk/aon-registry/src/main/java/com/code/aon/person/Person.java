@@ -17,12 +17,14 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 
 /**
@@ -33,7 +35,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name="person")
-public class Person implements ITransferObject {
+public class Person implements ITransferObject, IRegistry {
 
 	private static final long serialVersionUID = -8638619556227571794L;
 
@@ -52,6 +54,8 @@ public class Person implements ITransferObject {
 	/** The marital status. */
 	private MaritalStatus maritalStatus;
 
+	/** Social Security number */
+	private String socialSecurityNumber;
 
 	/**
 	 * Gets the id.
@@ -155,6 +159,16 @@ public class Person implements ITransferObject {
 		this.maritalStatus = maritalStatus;
 	}
 
+	@Column(name="social_security_num", length = 32)
+	@Index(name = "IDX_EMPLOYEE_SOCIAL_SECURITY_NUM")
+	public String getSocialSecurityNumber() {
+		return socialSecurityNumber;
+	}
+
+	public void setSocialSecurityNumber(String socialSecurityNumber) {
+		this.socialSecurityNumber = socialSecurityNumber;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -167,6 +181,7 @@ public class Person implements ITransferObject {
 				.append(this.gender, o.gender)
 				.append(this.maritalStatus, o.maritalStatus)
 				.append(this.registry, o.registry)
+				.append(this.socialSecurityNumber, o.socialSecurityNumber)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -180,6 +195,7 @@ public class Person implements ITransferObject {
 			.append(id)
 			.append(maritalStatus)
 			.append(registry)
+			.append(socialSecurityNumber)
 			.toHashCode();
 	}
 

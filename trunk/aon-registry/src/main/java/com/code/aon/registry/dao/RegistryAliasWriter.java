@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.DAOConstantsWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.person.Person;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
@@ -32,7 +34,7 @@ public class RegistryAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-TRUNK/aon-registry/src/main/java/com/code/aon/registry/dao/IRegistryAlias.java");
+		File file = new File("/AON-PROJECT/aon-registry/src/main/java/com/code/aon/registry/dao/IRegistryAlias.java");
 		String[] classes = new String[] { 
 			Category.class.getName(),
 			RecordData.class.getName(),
@@ -48,7 +50,8 @@ public class RegistryAliasWriter {
 			RegistryRelationship.class.getName(),
 			RegistrySegment.class.getName(),
 			Relationship.class.getName(),
-			Segment.class.getName() };
+			Segment.class.getName(),
+			Person.class.getName() };
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.registry.dao");
 		writer.write(classes, file);
