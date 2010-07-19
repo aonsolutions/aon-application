@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.payroll.controller;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.core.empresa.RemesaCertificadoEmpresaParams;
+import com.esferalia.aon.payroll.core.enumeration.FileStatus;
 
 public class RemesaCertificadoGenerationWizard implements Serializable {
 
@@ -176,13 +178,21 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		setCurrentStep(0);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void onValidate(ActionEvent event) {
 		if (!isAnyEmpleadoSelected()) {
 			String msg = "Debe seleccionar algún empleado.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+		try {
+			generateRemesasList();
+		} catch (PayrollException e) {
+			throw new AbortProcessingException(e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void generateRemesasList() throws PayrollException{
 		IEmpleado empleado;
 		setListaRemesas(null);
 		List<RemesableEmpleadoCertificate> list = new LinkedList<RemesableEmpleadoCertificate>();
@@ -195,16 +205,55 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 				}
 				list.add(remesable);
 				empleado = remesable.getEmpleado();
-				if (!isEmpresaInList(empleado.getEmpresa())) {
-					try {
-						getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado));
-					} catch (PayrollException e) {
-						// NADA
-					}
-				}
+				addEmpresaToRemesasList(empleado);
 			}
 		}
 		setSelectedModel(new ListDataModel(list));
+	}
+	
+	private void addEmpresaToRemesasList(IEmpleado empleado) throws PayrollException {
+		List<IRemesaCertificadoEmpresa> remesas = getExistingRemesas(empleado);
+		if(remesas.size()>0){
+			IRemesaCertificadoEmpresa remesa = findRemesa(remesas, empleado);
+			if(remesa!=null){
+				if (!isEmpresaInList(empleado.getEmpresa())) {
+					getListaRemesas().add(remesa);
+				}
+			} else {
+				if (!isEmpresaInList(empleado.getEmpresa())) {
+					getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado));
+				}
+			}
+		} else {
+			if (!isEmpresaInList(empleado.getEmpresa())) {
+				getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado));
+			}
+		}
+	}
+	
+	private IRemesaCertificadoEmpresa findRemesa(
+			List<IRemesaCertificadoEmpresa> remesas, IEmpleado empleado) {
+		Date today = Calendar.getInstance().getTime();
+		
+		for(IRemesaCertificadoEmpresa remesa: remesas){
+			if(remesa.getFecha().after(empleado.getFechaFin())){
+				return remesa;
+			}
+//			if(empleado.getFechaFin().before(today)){
+//
+//			} else {
+//				
+//			}
+		}
+		return null;
+	}
+
+	private List<IRemesaCertificadoEmpresa> getExistingRemesas(IEmpleado empleado) throws PayrollException {
+		RemesaCertificadoEmpresaParams params = new RemesaCertificadoEmpresaParams();
+		FileStatus[] estados = {FileStatus.PENDIENTE};
+		params.setEmpresa(empleado.getEmpresa().getName());
+		params.setEstados(estados);
+		return getEmpresaDAO().getRemesaCertificados(params);
 	}
 
 	private boolean isCausaSuspensionSelected(RemesableEmpleadoCertificate remesable) {
@@ -283,7 +332,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 
 		for (RemesableEmpleadoCertificate d : (List<RemesableEmpleadoCertificate>) getSelectedModel()
 				.getWrappedData()) {
-			if (d.getEmpleado().getEmpresa().equals(remesa.getEmpresa())) {
+			if (d.getEmpleado().getEmpresa().getId().equals(remesa.getEmpresa().getId())) {
 				IRemesaCertificadoEmpresaDetalle detalle = getEmpresaDAO()
 						.getNewRemesaDetalle(d.getEmpleado());
 				detalle.setRemesaCertificado(remesa);
