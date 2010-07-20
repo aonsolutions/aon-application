@@ -1185,6 +1185,25 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
+	<!-- ************ CNAE ************** -->
+	<managed-bean>
+		<managed-bean-name>cnae</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.CNAE</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae</value>
+		</managed-property>
+	</managed-bean>	
+	
 	<!-- =================== Company ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -1232,5 +1251,13 @@
 			<to-view-id>/com/code/aon/ui/company/facelet/workActivity/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
-		
+
+	<!-- =================== CNAE ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cnae</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/cnae/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+			
 </faces-config>
