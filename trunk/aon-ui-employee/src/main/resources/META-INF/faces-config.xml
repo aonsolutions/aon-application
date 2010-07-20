@@ -10,7 +10,16 @@
 		</resource-bundle>
 	</application>
 	
-	<!--  **** CONTRACT **** -->
+	<!-- ************** EMPLOYEE COLLECTIONS ****************** -->
+	<managed-bean>
+		<managed-bean-name>employeeCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.controller.EmployeeCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ CONTRACT ************** -->
 	<managed-bean>
 		<managed-bean-name>contract</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.employee.controller.ContractController</managed-bean-class>
@@ -28,6 +37,25 @@
 			<value>contract</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************ CONTRACT TYPE ************** -->
+	<managed-bean>
+		<managed-bean-name>contractType</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.ContractType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractType</value>
+		</managed-property>
+	</managed-bean>		
 			
 	<!-- =================== Contract ========================== -->
 	<navigation-rule>
@@ -44,5 +72,13 @@
 			<to-view-id>/com/code/aon/ui/employee/facelet/contract/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
+	
+	<!-- =================== Contract Type ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractType</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contractType/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
 	
 </faces-config>

@@ -49,6 +49,11 @@
 								</aon:commandLink>
 							</aon:div>		
 							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contractType"
+									action="contractType" actionListener="#{contractType.onSearch}" 
+									value="#{employeeBundle.employee_contractType_module}" />
+							</aon:div>								
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="workplace" 
 									action="workplace" 
 									value="#{companyBundle.company_workplace_module}" />

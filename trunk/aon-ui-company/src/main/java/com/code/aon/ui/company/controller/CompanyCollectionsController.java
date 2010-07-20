@@ -15,6 +15,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
+import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EconomicAgreement;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -24,6 +25,8 @@ import com.code.aon.registry.dao.IRegistryAlias;
 public class CompanyCollectionsController {
 
 	private List<SelectItem> economicAgreements;
+	
+	private List<SelectItem> cccTypes;
 	
 	public List<SelectItem> getEconomicAgreements() {
 		if (economicAgreements == null) {
@@ -37,6 +40,19 @@ public class CompanyCollectionsController {
 		}
 		return economicAgreements;
 	}
+	
+	public List<SelectItem> getCCCTypes() {
+		if (cccTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			cccTypes = new LinkedList<SelectItem>();
+			for( CCCType cccType : CCCType.values() ) {
+				String name = cccType.getName(locale);
+				SelectItem item = new SelectItem(cccType, name);
+				cccTypes.add(item);			
+			}
+		}
+		return cccTypes;
+	}	
 	
     /**
      * Gets the addresses of the company.
