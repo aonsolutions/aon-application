@@ -51,7 +51,7 @@ public class EnterpriseController extends RegistryController {
     	Enterprise enterprise = (Enterprise) getTo();
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ENTERPRISE_ID), enterprise.getId());
+		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
 		criteria.addOrder(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_CCC));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to : list) {

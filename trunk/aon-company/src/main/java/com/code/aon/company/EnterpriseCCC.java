@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -19,6 +20,8 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.company.enumeration.CCCType;
+import com.code.aon.geozone.GeoZone;
 
 @Entity
 @Table(name="enterprise_ccc")
@@ -26,18 +29,29 @@ public class EnterpriseCCC implements ITransferObject {
 	
 	private static final long serialVersionUID = -8232319254583226675L;
 
-	/** CCC identifier */
-	private Integer id;
-	
-	/** CCC value */
-    private String ccc;
-
-	/** Indicates the enterprise that this ccc belongs to */
-    private Enterprise enterprise; 
-
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
+	private Integer id;
+	
+	@Column(name="ccc", length = 11, nullable = false)
+    private String ccc;
+	
+	@Column( nullable = false )
+	private CCCType type;
+	
+	@ManyToOne
+    @JoinColumn( name="geozone", nullable = false)
+    @ForeignKey(name = "FK_ENTERPRICE_CCC_GEOZONE")
+    @Index(name = "IDX_ENTERPRICE_CCC_GEOZONE")	
+	private GeoZone geozone;
+
+	@OneToOne
+    @JoinColumn(name="enterprise_activity", nullable = false)
+    @ForeignKey(name = "FK_ENTERPRICE_CCC_ENTERPRISEACTIVITY")
+    @Index(name = "IDX_ENTERPRICE_CCC_ENTERPRISEACTIVITY")    
+    private EnterpriseActivity activity; 
+
 	public Integer getId() {
 		return id;
 	}
@@ -46,7 +60,6 @@ public class EnterpriseCCC implements ITransferObject {
 		this.id = id;
 	}
 	
-	@Column(name="ccc", length = 11)
 	public String getCCC() {
 		return ccc;
 	}
@@ -55,16 +68,28 @@ public class EnterpriseCCC implements ITransferObject {
 		this.ccc = ccc;
 	}
 
-	@OneToOne
-    @JoinColumn(name="enterprise", updatable = false)
-    @ForeignKey(name = "FK_ENTERPRICE_CCC_ENTERPRISE")
-    @Index(name = "IDX_ENTERPRICE_CCC_ENTERPRISE")    
-    public Enterprise getEnterprise() {
-		return enterprise;
+	public CCCType getType() {
+		return type;
 	}
 
-	public void setEnterprise(Enterprise enterprise) {
-		this.enterprise = enterprise;
+	public void setType(CCCType type) {
+		this.type = type;
+	}
+
+	public GeoZone getGeozone() {
+		return geozone;
+	}
+
+	public void setGeozone(GeoZone geozone) {
+		this.geozone = geozone;
+	}
+
+	public EnterpriseActivity getActivity() {
+		return activity;
+	}
+
+	public void setActivity(EnterpriseActivity activity) {
+		this.activity = activity;
 	}
 
 	@Override
@@ -75,8 +100,10 @@ public class EnterpriseCCC implements ITransferObject {
 		final EnterpriseCCC o = (EnterpriseCCC) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.activity, o.activity)
 				.append(this.ccc, o.ccc)
-				.append(this.enterprise, o.enterprise)
+				.append(this.geozone, o.geozone)
+				.append(this.type, o.type)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -85,9 +112,11 @@ public class EnterpriseCCC implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(activity)
 			.append(ccc)
-			.append(enterprise)
+			.append(geozone)
 			.append(id)
+			.append(type)
 			.toHashCode();
 	}
 
