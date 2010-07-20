@@ -1,19 +1,13 @@
 package com.code.aon.company;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -21,13 +15,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.WhereJoinTable;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.enumeration.EconomicAgreement;
-import com.code.aon.company.resources.Employee;
-import com.code.aon.company.resources.Resource;
 import com.code.aon.registry.RegistryAddress;
 
 /**
@@ -57,15 +48,6 @@ public class WorkPlace implements ITransferObject, IEntity {
     
     /** Indicates if the working place is currently active. */
 	private boolean active;
-
-	/** The activities. */
-	private Set<WorkActivity> activities = new HashSet<WorkActivity>();
-
-	/** The employees. */
-	private Set<Employee> employees = new HashSet<Employee>();
-
-	/** The resources. */
-	private Set<Resource> resources = new HashSet<Resource>();
 
 	/**
 	 * Gets the id.
@@ -186,90 +168,6 @@ public class WorkPlace implements ITransferObject, IEntity {
 	 */
 	public void setEconomicAgreement(EconomicAgreement economicAgreement) {
 		this.economicAgreement = economicAgreement;
-	}
-
-	/**
-	 * Get the activities.
-	 * 
-	 * @return the activities
-	 */
-	@OneToMany()
-	@JoinColumn(name="workplace")
-	@OrderBy("id")
-	public Set<WorkActivity> getActivities() {
-		return this.activities;
-	}
-	
-	/**
-	 * Set the activities.
-	 * 
-	 * @param activities the activities
-	 */
-	public void setActivities( Set<WorkActivity> activities) {
-		this.activities = activities;
-	}
-
-	/**
-	 * Add an activity.
-	 * 
-	 * @param activity
-	 */
-	public void addActivity(WorkActivity activity) {
-		this.activities.add( activity );
-	}
-
-	/**
-	 * Get the employees.
-	 * 
-	 * @return the employees
-	 */
-	@OneToMany()
-	@JoinTable( name="resource", 
-				joinColumns = { @JoinColumn( name="workplace") }, 
-				inverseJoinColumns = @JoinColumn( name="employee" )
-			)
-	@WhereJoinTable(clause="endingdate is null and workactivity is null")
-	public Set<Employee> getEmployees() {
-		return this.employees;
-	}
-	
-	/**
-	 * Set the employees.
-	 * 
-	 * @param employees the employees
-	 */
-	public void setEmployees( Set<Employee> employees) {
-		this.employees = employees;
-	}
-
-	/**
-	 * Add an employee.
-	 * 
-	 * @param employee
-	 */
-	public void addEmployee(Employee employee) {
-		this.employees.add( employee );
-	}
-
-	/**
-	 * Get the resources.
-	 * 
-	 * @return the resources
-	 */
-	@OneToMany()
-	@JoinColumn(name="workplace")
-	@OrderBy("workActivity")
-	public Set<Resource> getResources() {
-		return this.resources;
-	}
-	
-	/**
-	 * Set the resources.
-	 * 
-	 * @param resources the resources
-	 */
-	public void setResources( Set<Resource> resources) {
-		this.resources = resources;
 	}
 
 	/* (non-Javadoc)

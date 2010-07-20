@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.DAOConstantsWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.company.CNAE;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
+import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkActivity;
 import com.code.aon.company.WorkPlace;
@@ -32,11 +35,14 @@ public class CompanyAliasWriter {
 				WorkPlace.class.getName(),
 				WorkActivity.class.getName(),
 				Enterprise.class.getName(),
-				EnterpriseCCC.class.getName() };
+				EnterpriseCCC.class.getName(),
+				CNAE.class.getName(),
+				EnterpriseActivity.class.getName() };
 		HibernateUtil.getSessionFactory( HibernateUtil.getSessionFactoryName() );
 		AliasWriter writer = new AliasWriter("com.code.aon.company.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
 		System.out.println("Alias generados");
+		DAOConstantsWriter.write( new File( "/tmp/constants.xml") );
 	}
 }

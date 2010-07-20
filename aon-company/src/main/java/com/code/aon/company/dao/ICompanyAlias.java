@@ -9,6 +9,8 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.company.WorkActivity;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseCCC;
+import com.code.aon.company.CNAE;
+import com.code.aon.company.EnterpriseActivity;
 
 /** 
 * Interface for holding entity properties constants.
@@ -299,22 +301,102 @@ public interface ICompanyAlias {
 	DAOConstantsEntry ENTERPRISE_CCC_ENTRY = DAOConstants.getDAOConstant(EnterpriseCCC.class);
 
 	/** 
-	* Alias value: EnterpriseCCC_CCC
-	* Hibernate value: EnterpriseCCC.CCC
+	* Alias value: EnterpriseCCC_activity_id
+	* Hibernate value: EnterpriseCCC.activity.id
 	*/
-	String  ENTERPRISE_CCC_CCC = ENTERPRISE_CCC_ENTRY.getAliasNames()[0];
+	String  ENTERPRISE_CCC_ACTIVITY_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: EnterpriseCCC_enterprise_id
-	* Hibernate value: EnterpriseCCC.enterprise.id
+	* Alias value: EnterpriseCCC_ccc
+	* Hibernate value: EnterpriseCCC.ccc
 	*/
-	String  ENTERPRISE_CCC_ENTERPRISE_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[1];
+	String  ENTERPRISE_CCC_CCC = ENTERPRISE_CCC_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EnterpriseCCC_geozone_id
+	* Hibernate value: EnterpriseCCC.geozone.id
+	*/
+	String  ENTERPRISE_CCC_GEOZONE_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: EnterpriseCCC_id
 	* Hibernate value: EnterpriseCCC.id
 	*/
-	String  ENTERPRISE_CCC_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[2];
+	String  ENTERPRISE_CCC_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: EnterpriseCCC_type
+	* Hibernate value: EnterpriseCCC.type
+	*/
+	String  ENTERPRISE_CCC_TYPE = ENTERPRISE_CCC_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: EnterpriseCCC_activity_enterprise_id
+	* Hibernate value: EnterpriseCCC.activity.enterprise.id
+	*/
+	String  ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for CNAE entity.
+	*/ 
+	DAOConstantsEntry CNAE_ENTRY = DAOConstants.getDAOConstant(CNAE.class);
+
+	/** 
+	* Alias value: CNAE_code
+	* Hibernate value: CNAE.code
+	*/
+	String  CNAE_CODE = CNAE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CNAE_id
+	* Hibernate value: CNAE.id
+	*/
+	String  CNAE_ID = CNAE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CNAE_title
+	* Hibernate value: CNAE.title
+	*/
+	String  CNAE_TITLE = CNAE_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for EnterpriseActivity entity.
+	*/ 
+	DAOConstantsEntry ENTERPRISE_ACTIVITY_ENTRY = DAOConstants.getDAOConstant(EnterpriseActivity.class);
+
+	/** 
+	* Alias value: EnterpriseActivity_cnae_id
+	* Hibernate value: EnterpriseActivity.cnae.id
+	*/
+	String  ENTERPRISE_ACTIVITY_CNAE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: EnterpriseActivity_description
+	* Hibernate value: EnterpriseActivity.description
+	*/
+	String  ENTERPRISE_ACTIVITY_DESCRIPTION = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EnterpriseActivity_enterprise_id
+	* Hibernate value: EnterpriseActivity.enterprise.id
+	*/
+	String  ENTERPRISE_ACTIVITY_ENTERPRISE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: EnterpriseActivity_id
+	* Hibernate value: EnterpriseActivity.id
+	*/
+	String  ENTERPRISE_ACTIVITY_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: EnterpriseActivity_type
+	* Hibernate value: EnterpriseActivity.type
+	*/
+	String  ENTERPRISE_ACTIVITY_TYPE = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[4];
 
 
 }
