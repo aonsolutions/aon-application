@@ -85,11 +85,11 @@ public class ContractType implements ITransferObject {
 		this.workingDay = workingDay;
 	}
 	
-	public CCCType getCccType() {
+	public CCCType getCCCType() {
 		return cccType;
 	}
 
-	public void setCccType(CCCType cccType) {
+	public void setCCCType(CCCType cccType) {
 		this.cccType = cccType;
 	}
 
