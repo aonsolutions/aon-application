@@ -271,7 +271,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		while (iterator.hasNext()) {
 			IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa) iterator
 					.next();
-			if (remesa.getEmpresa().equals(empresa)) {
+			if (remesa.getEmpresa().getId().equals(empresa.getId())) {
 				return true;
 			}
 		}
