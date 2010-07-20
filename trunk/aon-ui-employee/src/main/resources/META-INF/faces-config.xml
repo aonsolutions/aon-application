@@ -1,0 +1,48 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.employee.i18n.messages</base-name>
+			<var>employeeBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!--  **** CONTRACT **** -->
+	<managed-bean>
+		<managed-bean-name>contract</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.ContractController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.Contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contract</value>
+		</managed-property>
+	</managed-bean>
+			
+	<!-- =================== Contract ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contract_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contract_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contract_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
+</faces-config>
