@@ -19,90 +19,114 @@
 				<ui:param name="controller" value="#{calendar}" />
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2">
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_calendar}" />
-					<aon:inputText id="Calendar_description" size="40" maxlength="32"
-						value="#{calendar.to.description}" required="true" />
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_anual_hours}" />
-					<aon:inputText id="Calendar_anualHours" size="20" maxlength="6"
-						value="#{calendar.to.anualHours}" />
-
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_monday}" />
-					<aon:div>
-					<aon:selectOneMenu 
-						value="#{calendar.to.monday}" >
-						<f:selectItems value="#{calendar.dayTypes}" />
-					</aon:selectOneMenu>
-					<aon:inputText size="1" maxlength="6"
-						value="#{calendar.to.mondayHours}" >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:inputText>
+				<h:panelGrid columns="3">
+					<aon:div styleClass="aon-scroll-area">
+						<aon:panelGrid columns="2">
+							<aon:outputLabel value="#{calendarBundle.aon_calendar_calendar}" />
+							<aon:inputText id="Calendar_description" size="40" maxlength="32"
+								value="#{calendar.to.description}" required="true" />
+							<aon:outputLabel value="#{bundle.aon_year}" />
+							<aon:inputText id="Calendar_year" size="10" maxlength="4"
+								value="#{calendar.to.year}" />
+							<aon:outputLabel
+								value="#{calendarBundle.aon_calendar_anual_hours}" />
+							<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
+								value="#{calendar.to.anualHours}" />
+							<aon:outputLabel value="#{bundle.aon_comment}" />
+							<aon:inputTextarea id="Calendar_comments"
+								value="#{calendar.to.comments}" cols="60" rows="6">
+								<f:validateLength maximum="1024" />
+							</aon:inputTextarea>
+						</aon:panelGrid>
 					</aon:div>
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_tuesday}" />
-					<aon:div>
-						<aon:selectOneMenu 
-						value="#{calendar.to.tuesday}" >
-						<f:selectItems value="#{calendar.dayTypes}" />
-					</aon:selectOneMenu> 
-					<aon:inputText size="1" maxlength="6"
-						value="#{calendar.to.tuesdayHours}" />
-				    </aon:div>
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_wednesday}" />
-					<aon:div>
-					<aon:selectOneMenu 
-						value="#{calendar.to.wednesday}" >
-						<f:selectItems value="#{calendar.dayTypes}" />
-					</aon:selectOneMenu> 
-					<aon:inputText size="1" maxlength="6"
-						value="#{calendar.to.wednesdayHours}" />
+					<aon:div styleClass="aon-scroll-area">
+						<aon:panelGrid columns="2">
+							<aon:outputLabel value="#{calendarBundle.aon_calendar_monday}" />
+							<aon:div>
+								<aon:selectOneMenu value="#{calendar.to.monday}">
+									<f:selectItems value="#{calendar.dayTypes}" />
+								</aon:selectOneMenu>
+								<aon:inputText size="1" maxlength="6"
+									value="#{calendar.to.mondayHours}" />
+							</aon:div>
+							<aon:outputLabel value="#{calendarBundle.aon_calendar_tuesday}" />
+							<aon:div>
+								<aon:selectOneMenu value="#{calendar.to.tuesday}">
+									<f:selectItems value="#{calendar.dayTypes}" />
+								</aon:selectOneMenu>
+								<aon:inputText size="1" maxlength="6"
+									value="#{calendar.to.tuesdayHours}" />
+							</aon:div>
+							<aon:outputLabel value="#{calendarBundle.aon_calendar_wednesday}" />
+							<aon:div>
+								<aon:selectOneMenu value="#{calendar.to.wednesday}">
+									<f:selectItems value="#{calendar.dayTypes}" />
+								</aon:selectOneMenu>
+								<aon:inputText size="1" maxlength="6"
+									value="#{calendar.to.wednesdayHours}" />
+							</aon:div>
+							<aon:outputLabel value="#{calendarBundle.aon_calendar_thursday}" />
+							<aon:div>
+								<aon:selectOneMenu value="#{calendar.to.thursday}">
+									<f:selectItems value="#{calendar.dayTypes}" />
+								</aon:selectOneMenu>
+								<aon:inputText size="1" maxlength="6"
+									value="#{calendar.to.thursdayHours}" />
+							</aon:div>
+							<aon:outputLabel value="#{calendarBundle.aon_calendar_friday}" />
+							<aon:div>
+								<aon:selectOneMenu value="#{calendar.to.friday}">
+									<f:selectItems value="#{calendar.dayTypes}" />
+								</aon:selectOneMenu>
+								<aon:inputText size="1" maxlength="6"
+									value="#{calendar.to.fridayHours}" />
+							</aon:div>
+							<aon:outputLabel value="#{calendarBundle.aon_calendar_saturday}" />
+							<aon:div>
+								<aon:selectOneMenu value="#{calendar.to.saturday}">
+									<f:selectItems value="#{calendar.dayTypes}" />
+								</aon:selectOneMenu>
+								<aon:inputText size="1" maxlength="6"
+									value="#{calendar.to.saturdayHours}" />
+							</aon:div>
+							<aon:outputLabel value="#{calendarBundle.aon_calendar_sunday}" />
+							<aon:div>
+								<aon:selectOneMenu value="#{calendar.to.sunday}">
+									<f:selectItems value="#{calendar.dayTypes}" />
+								</aon:selectOneMenu>
+								<aon:inputText size="1" maxlength="6"
+									value="#{calendar.to.sundayHours}" />
+							</aon:div>
+						</aon:panelGrid>
 					</aon:div>
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_thursday}" />
-					<aon:div>
-					<aon:selectOneMenu 
-						value="#{calendar.to.thursday}" >
-						<f:selectItems value="#{calendar.dayTypes}" />
-					</aon:selectOneMenu> 
-					<aon:inputText size="1" maxlength="6"
-						value="#{calendar.to.thursdayHours}" />
+					<aon:div styleClass="aon-scroll-area">
+					<c:if test="#{calendar.new}">
+						<aon:panel style="height=80px"  width="100" header="#{calendarBundle.aon_calendar_import_holidays}">
+							<h:panelGrid columns="2">
+							<aon:outputText value="#{calendarBundle.aon_calendar_import_national}" />
+							<aon:selectBooleanCheckbox />
+							<aon:outputText value="#{calendarBundle.aon_calendar_import_regional}" />
+							<aon:selectBooleanCheckbox />
+							<aon:outputText value="#{calendarBundle.aon_calendar_import_local}" />
+							<aon:selectBooleanCheckbox />
+							</h:panelGrid>
+						</aon:panel>
+					</c:if>
 					</aon:div>
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_friday}" />
+				</h:panelGrid>
+				
+				<c:if test="#{!calendar.new}">
 					<aon:div>
-					<aon:selectOneMenu 
-						value="#{calendar.to.friday}" >
-						<f:selectItems value="#{calendar.dayTypes}" />
-					</aon:selectOneMenu>
-					<aon:inputText size="1" maxlength="6"
-						value="#{calendar.to.fridayHours}" />
-					 </aon:div>
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_saturday}" />
-					<aon:div>
-					<aon:selectOneMenu 
-						value="#{calendar.to.saturday}" >
-						<f:selectItems value="#{calendar.dayTypes}" />
-					</aon:selectOneMenu> 
-					<aon:inputText size="1" maxlength="6"
-						value="#{calendar.to.saturdayHours}" />
+						<aon:panelTabSet>
+							<aon:panelTab label="#{calendarBundle.aon_calendar_holidays}">
+								<ui:include src="grid.xhtml" />
+							</aon:panelTab>
+							<aon:panelTab label="#{calendarBundle.aon_calendar_period}">
+								<ui:include src="period_grid.xhtml" />
+							</aon:panelTab>
+						</aon:panelTabSet>
 					</aon:div>
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_sunday}" />
-					<aon:div>
-					<aon:selectOneMenu 
-						value="#{calendar.to.sunday}" >
-						<f:selectItems value="#{calendar.dayTypes}" />
-					</aon:selectOneMenu> 
-					<aon:inputText size="1" maxlength="6"
-						value="#{calendar.to.sundayHours}" />
-					</aon:div>
-				</aon:panelGrid>
-				<aon:div>
-					<aon:panelTabSet>
-						<aon:panelTab label="#{calendarBundle.aon_calendar_holidays}">
-							<ui:include src="grid.xhtml" />
-						</aon:panelTab>
-						<aon:panelTab label="#{calendarBundle.aon_calendar_period}">
-							<ui:include src="period_grid.xhtml" />
-						</aon:panelTab>
-					</aon:panelTabSet>
-				</aon:div>
+				</c:if>
 			</aon:div>
 		</aon:form>
 	</ui:define>

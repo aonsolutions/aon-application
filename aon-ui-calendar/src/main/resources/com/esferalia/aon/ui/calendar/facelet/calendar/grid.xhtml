@@ -11,20 +11,7 @@
 		<ui:param name="columnClasses"	value="aon-editDataTable-text,aon-editDataTable-text" />
 		<ui:param name="showDataScroller" value="#{true}"/>
 		<ui:define name="columns">
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
-				<f:facet name="header">
-					<aon:outputLabel  value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.description}" rendered="#{formList}" />
-				<aon:inputText id="Calendar_name" rendered="#{formEdit}" size="50"
-					value="#{calendarHoliday.to.description}" maxlength="64" />
-				<f:facet name="footer">
-					<aon:inputText id="Calendar_name-New" required="true"
-						rendered="#{formNew}" size="50" maxlength="64" value="#{calendarHoliday.to.description}"
-						 />
-				</f:facet>
-			</aon:column>
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
 				<f:facet name="header">
 					<aon:outputLabel for="Calendar_date" value="#{bundle.aon_date}" />
 				</f:facet>
@@ -46,6 +33,20 @@
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 				</f:facet>
 			</aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+				<f:facet name="header">
+					<aon:outputLabel  value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" rendered="#{formList}" />
+				<aon:inputText id="Calendar_name" rendered="#{formEdit}" size="50"
+					value="#{calendarHoliday.to.description}" maxlength="64" />
+				<f:facet name="footer">
+					<aon:inputText id="Calendar_name-New" required="true"
+						rendered="#{formNew}" size="50" maxlength="64" value="#{calendarHoliday.to.description}"
+						 />
+				</f:facet>
+			</aon:column>
+
 		</ui:define>
 	</ui:decorate>
 </ui:composition>

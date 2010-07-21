@@ -10,21 +10,39 @@ import javax.faces.model.SelectItem;
 import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
-public class CalendarController extends BasicController  {
-	
-	private List<SelectItem> dayTypes;
-	
+public class CalendarController extends BasicController {
 
-	public List<SelectItem> getDayTypes() {
-		if (dayTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	private List<SelectItem> dayTypes;
+
+	public List<SelectItem> getAllDayTypes() {
+		
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+					.getLocale();
 			dayTypes = new LinkedList<SelectItem>();
-			for( DayType day : DayType.values() ) {
+			for (DayType day : DayType.values()) {
 				String name = day.getName(locale);
 				SelectItem item = new SelectItem(day, name);
-				dayTypes.add(item);			
+				dayTypes.add(item);
 			}
-		}
+		
+		return dayTypes;
+	}
+
+	public List<SelectItem> getDayTypes() {
+		
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+					.getLocale();
+			dayTypes = new LinkedList<SelectItem>();
+			for (DayType day : DayType.values()) {
+				String name = day.getName(locale);
+				SelectItem item = new SelectItem(day, name);
+				if (item.getLabel().equals("V")) {
+					return dayTypes;
+				} else {
+					dayTypes.add(item);
+				}
+			}
+		
 		return dayTypes;
 	}
 
