@@ -26,6 +26,11 @@
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
 		
+		<!-- AON-CALENDAR Mapping files -->		
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>
+		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
+		
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.CNAE"/>
 		<mapping class="com.code.aon.company.Company"/>
