@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
@@ -13,9 +14,14 @@ import com.esferalia.aon.calendar.enumeration.DayType;
 @Table(name = "calendar")
 public class Calendar implements ITransferObject{
 	
-    private Integer id;
+
+	private Integer id;
 
     private String description;
+    
+    private Integer year;
+    
+    private String comments;
     
     private DayType monday;
     
@@ -67,6 +73,24 @@ public class Calendar implements ITransferObject{
 
 	public DayType getMonday() {
 		return monday;
+	}
+	
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+	
+	@Column(name="comments")
+	@Lob
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 
 	public void setMonday(DayType monday) {

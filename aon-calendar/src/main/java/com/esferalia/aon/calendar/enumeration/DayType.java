@@ -10,7 +10,8 @@ public enum DayType implements IResourceable {
 
 	WORKING_DAY,
 	NOT_WORKING_DAY,
-	HOLIDAY;
+	HOLIDAY,
+	VACATION;
 	
     /** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.calendar.i18n.messages";
