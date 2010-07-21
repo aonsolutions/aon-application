@@ -1,5 +1,6 @@
 package com.code.aon.ui.company.event;
 
+import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.WorkActivity;
 import com.code.aon.ui.company.controller.EnterpriseTree;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -12,14 +13,14 @@ import com.code.aon.ui.util.AonUtil;
  * Listener added to the WorkAcitivityController
  * 
  */
-public class WorkActivityControllerListener extends ControllerAdapter {
+public class EnterpriseActivityControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		WorkActivity workActivity = (WorkActivity) event.getController().getTo();
+		EnterpriseActivity enterpriseActivity = (EnterpriseActivity) event.getController().getTo();
 		EnterpriseTree tree = getTreeController();
-		tree.setCurrentNode(tree.getTreeData(workActivity));
+		tree.setCurrentNode(tree.getTreeData(enterpriseActivity));
 	}
 	
 	@Override
@@ -31,9 +32,8 @@ public class WorkActivityControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCanceled(ControllerEvent event)
 			throws ControllerListenerException {
-		WorkActivity workActivity = (WorkActivity) event.getController().getTo();
 		EnterpriseTree tree = getTreeController();
-		tree.setCurrentNode(tree.getTreeData(workActivity.getWorkPlace()));
+		tree.setCurrentNode(tree.getEnterpriseNode().getData());
 	}
 
 	@Override

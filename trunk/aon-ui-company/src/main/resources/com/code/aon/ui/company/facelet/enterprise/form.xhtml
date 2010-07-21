@@ -41,7 +41,7 @@
 						</aon:panelTab>
 
 						<aon:panelTab id="ccc" label="#{companyBundle.company_activity_module}">
-							<ui:include	src="/com/code/aon/ui/company/facelet/enterpriseActivity/tab_grid.xhtml">
+							<ui:include	src="/com/code/aon/ui/company/facelet/enterpriseActivity/list.xhtml">
 								<ui:param name="controller" value="#{enterpriseActivity}" />
 							</ui:include>
 						</aon:panelTab>
@@ -109,6 +109,5 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{cnaeLookup}" />
 	</ui:define>
 </ui:composition>
