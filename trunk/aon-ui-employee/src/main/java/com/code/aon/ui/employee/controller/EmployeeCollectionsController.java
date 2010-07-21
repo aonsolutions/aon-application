@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.employee.enumeration.ContractDuration;
+import com.code.aon.employee.enumeration.ContractTrackingType;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
 
 public class EmployeeCollectionsController {
@@ -15,6 +16,8 @@ public class EmployeeCollectionsController {
 	private List<SelectItem> contractDurations;
 	
 	private List<SelectItem> contractWorkingDays;
+	
+	private List<SelectItem> contractTrackingTypes;
 	
 	public List<SelectItem> getContractDurations() {
 		if (contractDurations == null) {
@@ -40,6 +43,19 @@ public class EmployeeCollectionsController {
 			}
 		}
 		return contractWorkingDays;
+	}
+	
+	public List<SelectItem> getContractTrackingTypes() {
+		if (contractTrackingTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			contractTrackingTypes = new LinkedList<SelectItem>();
+			for( ContractTrackingType contractTrackingType : ContractTrackingType.values() ) {
+				String name = contractTrackingType.getName(locale);
+				SelectItem item = new SelectItem(contractTrackingType, name);
+				contractTrackingTypes.add(item);			
+			}
+		}
+		return contractTrackingTypes;
 	}
 	
 }
