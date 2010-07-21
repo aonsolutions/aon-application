@@ -3,6 +3,7 @@ package com.code.aon.employee.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.employee.Contract;
+import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
 
 /** 
@@ -64,6 +65,43 @@ public interface IEmployeeAlias {
 	* Hibernate value: Contract.workPlace.enterprise.id
 	*/
 	String  CONTRACT_WORK_PLACE_ENTERPRISE_ID = CONTRACT_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractTracking entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_TRACKING_ENTRY = DAOConstants.getDAOConstant(ContractTracking.class);
+
+	/** 
+	* Alias value: ContractTracking_contract_id
+	* Hibernate value: ContractTracking.contract.id
+	*/
+	String  CONTRACT_TRACKING_CONTRACT_ID = CONTRACT_TRACKING_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractTracking_date
+	* Hibernate value: ContractTracking.date
+	*/
+	String  CONTRACT_TRACKING_DATE = CONTRACT_TRACKING_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractTracking_duration
+	* Hibernate value: ContractTracking.duration
+	*/
+	String  CONTRACT_TRACKING_DURATION = CONTRACT_TRACKING_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractTracking_id
+	* Hibernate value: ContractTracking.id
+	*/
+	String  CONTRACT_TRACKING_ID = CONTRACT_TRACKING_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractTracking_type
+	* Hibernate value: ContractTracking.type
+	*/
+	String  CONTRACT_TRACKING_TYPE = CONTRACT_TRACKING_ENTRY.getAliasNames()[4];
 
 
 
