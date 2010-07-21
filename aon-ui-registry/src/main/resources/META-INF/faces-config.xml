@@ -299,6 +299,45 @@
 		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
+	
+	<!-- ************ PERSON LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>personLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>personLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.person.Person</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Person_registry_surname,Person_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/person/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/person/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/person/formNewContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{personSearch}</value>
+				<value>#{personForm}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
 
 	<!-- ======================= NAVIGATION ========================== -->
 	<navigation-rule>
