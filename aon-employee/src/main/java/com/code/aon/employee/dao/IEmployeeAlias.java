@@ -59,6 +59,12 @@ public interface IEmployeeAlias {
 	*/
 	String  CONTRACT_WORK_PLACE_ID = CONTRACT_ENTRY.getAliasNames()[6];
 
+	/** 
+	* Alias value: Contract_workPlace_enterprise_id
+	* Hibernate value: Contract.workPlace.enterprise.id
+	*/
+	String  CONTRACT_WORK_PLACE_ENTERPRISE_ID = CONTRACT_ENTRY.getAliasNames()[7];
+
 
 
 	/** 
