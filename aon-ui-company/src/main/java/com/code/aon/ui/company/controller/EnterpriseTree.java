@@ -19,6 +19,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.WorkActivity;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
@@ -63,40 +64,25 @@ public class EnterpriseTree implements ICompanyConstants {
 		return new EnterpriseTreeData( wp.getId(), wp.getDescription(), EnterpriseTreeType.WORKPLACE);
 	}
 	
-	public EnterpriseTreeData getTreeData( WorkActivity wa ) {
-		return new EnterpriseTreeData( wa.getId(), wa.getDescription(), EnterpriseTreeType.ACTIVITY);
+	public EnterpriseTreeData getTreeData( EnterpriseActivity ea ) {
+		return new EnterpriseTreeData( ea.getId(), ea.getDescription(), EnterpriseTreeType.ACTIVITY);
 	}
 
 	public EnterpriseTreeData getTreeData( Employee e ) {
 		return new EnterpriseTreeData( e.getId(), e.getRegistry().getFullName(), EnterpriseTreeType.EMPLOYEE);
 	}
 	
-	private void loadEmployees( TreeNodeImpl<EnterpriseTreeData> workActivityNode, WorkActivity workActivity ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Employee.class);		
+	private void loadActivities( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(EnterpriseActivity.class);		
 		Criteria criteria = new Criteria();
-		String workActivityId = bean.getFieldName(ICompanyAlias.EMPLOYEE_WORK_ACTIVITY_ID);
-		criteria.addEqualExpression(workActivityId, workActivity.getId());
+		String enterpriseId = bean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID);
+		criteria.addEqualExpression(enterpriseId, enterprise.getId());
 		for( ITransferObject to : bean.getList(criteria) ) {
-			Employee e = (Employee) to;
-			TreeNodeImpl<EnterpriseTreeData> employeeNode = new TreeNodeImpl<EnterpriseTreeData>();
-			EnterpriseTreeData etd = getTreeData(e);
-			employeeNode.setData(etd);
-			workActivityNode.addChild( etd.getType().toString() + etd.getId(), employeeNode );
-		}		
-	}	
-	
-	private void loadWorkActivities( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(WorkActivity.class);		
-		Criteria criteria = new Criteria();
-		String workPlaceId = bean.getFieldName(ICompanyAlias.WORK_ACTIVITY_WORK_PLACE_ID);
-		criteria.addEqualExpression(workPlaceId, workPlace.getId());
-		for( ITransferObject to : bean.getList(criteria) ) {
-			WorkActivity wa = (WorkActivity) to;
-			TreeNodeImpl<EnterpriseTreeData> waNode = new TreeNodeImpl<EnterpriseTreeData>();
-			EnterpriseTreeData etd = getTreeData(wa);
-			waNode.setData(etd);
-			workPlaceNode.addChild( etd.getType().toString() + etd.getId(), waNode );
-			loadEmployees(waNode, wa);
+			EnterpriseActivity ea = (EnterpriseActivity) to;
+			TreeNodeImpl<EnterpriseTreeData> eaNode = new TreeNodeImpl<EnterpriseTreeData>();
+			EnterpriseTreeData etd = getTreeData(ea);
+			eaNode.setData(etd);
+			enterpriseNode.addChild( etd.getType().toString() + etd.getId(), eaNode );
 		}		
 	}
 
@@ -111,7 +97,6 @@ public class EnterpriseTree implements ICompanyConstants {
 			EnterpriseTreeData etd = getTreeData(wp);
 			wpNode.setData(etd);
 			enterpriseNode.addChild( etd.getType().toString() + etd.getId(), wpNode );
-			loadWorkActivities( wpNode, wp );
 		}
 	}
 	
@@ -125,6 +110,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		rootNode.addChild( etd.getType().toString() + etd.getId(), enterpriseNode );
 		try {
 			loadWorkPlaces(enterpriseNode, enterprise);
+			loadActivities(enterpriseNode, enterprise);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
 		}
@@ -163,6 +149,16 @@ public class EnterpriseTree implements ICompanyConstants {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
+
+	public void onSelectEnterpriseActivity( ActionEvent event ) {
+		try {
+			selectEnterpriseActivity(event, currentNode.getId());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectWorkPlace exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}	
 	
 	@SuppressWarnings("unchecked")	
 	private void selectWorkPlace( ActionEvent event, Integer id ) throws ManagerBeanException {
@@ -179,27 +175,18 @@ public class EnterpriseTree implements ICompanyConstants {
 		controller.onSelect(event);			
 	}
 
-	public void onSelectWorkActivity( ActionEvent event ) {
-		LinesController controller = (LinesController) AonUtil.getRegisteredBean(WORK_ACTIVITY_CONTROLLER_NAME);
-		try {
-			Integer id = currentNode.getId();
-			WorkActivity currentWorkActivity = (WorkActivity) controller.getManagerBean().get(id);
-			selectWorkPlace(event, currentWorkActivity.getWorkPlace().getId());
-			List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
-			int index;
-			for( index = 0; index < list.size(); index++) {
-				WorkActivity workActivity = (WorkActivity) list.get(index);
-				if ( ObjectUtils.equals(workActivity.getId(), id) ) {
-					break;
-				}
+	public void selectEnterpriseActivity( ActionEvent event, Integer id ) throws ManagerBeanException {
+		LinesController controller = (LinesController) AonUtil.getRegisteredBean(ENTERPRISE_ACTIVITY_CONTROLLER_NAME);
+		List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
+		int index;
+		for( index = 0; index < list.size(); index++) {
+			EnterpriseActivity activity = (EnterpriseActivity) list.get(index);
+			if ( ObjectUtils.equals(activity.getId(), id) ) {
+				break;
 			}
-			controller.getModel().setRowIndex(index);
-			controller.onSelect(event);			
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onSelectActivity exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
 		}
+		controller.getModel().setRowIndex(index);
+		controller.onSelect(event);			
 	}
 	
 }
