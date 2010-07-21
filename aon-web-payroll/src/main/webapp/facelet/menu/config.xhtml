@@ -59,10 +59,9 @@
 									value="#{companyBundle.company_workplace_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="cnae"
-									action="cnae" actionListener="#{cnae.onSearch}" 
-									value="#{companyBundle.company_cnae_module}" />
-							</aon:div>							
+									<aon:commandLink id="calendar" action="calendar_search"
+									value="#{calendarBundle.aon_calendar_menu}"  />
+							</aon:div>
 						</aon:div>
 					</aon:panelGrid>
 						
@@ -82,7 +81,7 @@
 							</aon:div>
 						</aon:panelGrid>
 					</c:if>
-
+					
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>
