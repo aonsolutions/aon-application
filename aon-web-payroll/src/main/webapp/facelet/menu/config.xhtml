@@ -52,7 +52,13 @@
 								<aon:commandLink id="contractType"
 									action="contractType" actionListener="#{contractType.onSearch}" 
 									value="#{employeeBundle.employee_contractType_module}" />
-							</aon:div>								
+							</aon:div>							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contractTracking" 
+									action="contractTracking_search"
+									value="#{employeeBundle.employee_contractTracking_module}">
+								</aon:commandLink>
+							</aon:div>	
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="workplace" 
 									action="workplace" 
@@ -62,6 +68,11 @@
 									<aon:commandLink id="calendar" action="calendar_search"
 									value="#{calendarBundle.aon_calendar_menu}"  />
 							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="cnae"
+									action="cnae" actionListener="#{cnae.onSearch}" 
+									value="#{companyBundle.company_cnae_module}" />
+							</aon:div>							
 						</aon:div>
 					</aon:panelGrid>
 						
@@ -81,7 +92,7 @@
 							</aon:div>
 						</aon:panelGrid>
 					</c:if>
-					
+
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>
