@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.employee.Contract">
+		<alias names="ccc_id,contractType_id,endDate,id,person_id,startDate,workPlace_id,workPlace_enterprise_id"/>
+		<hibernate names="ccc.id,contractType.id,endDate,id,person.id,startDate,workPlace.id,workPlace.enterprise.id"/>
+	</bean>
+</dao>
