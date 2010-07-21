@@ -669,7 +669,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>EnterpriseCCC_enterprise_id</key>
+					<key>EnterpriseCCC_activity_enterprise_id</key>
 					<value>id</value>
 				</map-entry>
 			</map-entries>
@@ -1203,6 +1203,50 @@
 			<value>cnae</value>
 		</managed-property>
 	</managed-bean>	
+
+	<!-- ========================================================== -->
+	<!-- ======================= LOOKUPS ========================== -->
+	<!-- ========================================================== -->
+	
+	<!-- ************ ENTERPRISE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>enterpriseLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>enterpriseLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.company.Enterprise</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Enterprise_registry_surname,Enterprise_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/company/facelet/enterprise/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/company/facelet/enterprise/searchBasicContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/code/aon/ui/company/facelet/enterprise/formNewContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{enterpriseSearch}</value>
+				<value>#{enterpriseForm}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	
 	
 	<!-- =================== Company ========================== -->
 	<navigation-rule>
