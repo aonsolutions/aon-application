@@ -88,6 +88,7 @@
 		
 		<!-- AON-EMPLOYEE Mapping files -->
 		<mapping class="com.code.aon.employee.Contract"/>
+		<mapping class="com.code.aon.employee.ContractTracking"/>		
 		<mapping class="com.code.aon.employee.ContractType"/>		
 
 	</session-factory>
