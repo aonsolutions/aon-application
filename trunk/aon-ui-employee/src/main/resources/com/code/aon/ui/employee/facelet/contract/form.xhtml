@@ -18,15 +18,48 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" >
 				
+					<aon:outputLabel for="Enterprise_id"
+						value="#{companyBundle.company_enterprise}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Enterprise_id" rendered="#{contract.new}"
+							lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
+							reRender="Enterprise_full_name,Contract_workPlace_id,Contract_ccc_id"
+							value="#{contract.enterprise.id}" size="5" />
+						<aon:lookupButton rendered="#{contract.new}"
+							windowTitle="#{companyBundle.company_enterprise_selection}"
+							selectReRender="Enterprise_id,Enterprise_full_name,Contract_workPlace_id,Contract_ccc_id"
+							lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
+							minHeight="460" minWidth="650" actionType="search"
+							property="#{contract.enterprise}">
+						</aon:lookupButton>
+						<aon:inputText id="Enterprise_full_name"
+							value="#{(contract.enterprise.registry.fullName!=null)?(contract.enterprise.registry.fullName):('')}"
+							size="50" disabled="true" />							
+					</aon:div>
+
+					<aon:outputLabel for="Contract_workPlace_id"
+						value="#{companyBundle.company_workplace}" />
+					<aon:selectOneMenu id="Contract_workPlace_id" required="true"
+						value="#{contract.to.workPlace}" disabled="#{!contract.enterpriseSelected}">
+						<f:selectItems value="#{contract.workPlaces}" />
+					</aon:selectOneMenu>
+						
+					<aon:outputLabel for="Contract_ccc_id"
+						value="#{companyBundle.company_enterprise_ccc}" />
+					<aon:selectOneMenu id="Contract_ccc_id" required="true"
+						value="#{contract.to.ccc}" disabled="#{!contract.enterpriseSelected}">
+						<f:selectItems value="#{contract.CCCs}" />
+					</aon:selectOneMenu>						
+									
 					<aon:outputLabel for="Person_id"
 						value="#{registryBundle.registry_person}" />
 					<aon:div id="Finance_bankAccount" styleClass="aon-lookup">
-						<aon:lookupInputText id="Person_id"
+						<aon:lookupInputText id="Person_id" rendered="#{contract.new}"
 							value="#{contract.to.person.id}" required="true"
 							size="5" lookup="#{personLookup}"
 							reRender="Person_full_name">
 						</aon:lookupInputText>
-						<aon:lookupButton 
+						<aon:lookupButton rendered="#{contract.new}"
 							windowTitle="#{employeeBundle.employee_contractType_selection}"
 							selectReRender="Person_id,Person_full_name" 
 							lookup="#{personLookup}" minHeight="460" minWidth="650"
@@ -72,6 +105,7 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		<aon:lookupButtonPopup lookup="#{contractTypeLookup}" />
 	</ui:define>
 </ui:composition>
