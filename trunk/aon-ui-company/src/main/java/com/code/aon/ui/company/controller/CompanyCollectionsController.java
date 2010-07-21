@@ -17,6 +17,7 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EconomicAgreement;
+import com.code.aon.company.enumeration.EnterpriseActivityType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
@@ -27,6 +28,8 @@ public class CompanyCollectionsController {
 	private List<SelectItem> economicAgreements;
 	
 	private List<SelectItem> cccTypes;
+	
+	private List<SelectItem> enterpriseActivityTypes;
 	
 	public List<SelectItem> getEconomicAgreements() {
 		if (economicAgreements == null) {
@@ -52,6 +55,19 @@ public class CompanyCollectionsController {
 			}
 		}
 		return cccTypes;
+	}	
+
+	public List<SelectItem> getEnterpriseActivityTypes() {
+		if (enterpriseActivityTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			enterpriseActivityTypes = new LinkedList<SelectItem>();
+			for( EnterpriseActivityType type : EnterpriseActivityType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				enterpriseActivityTypes.add(item);			
+			}
+		}
+		return enterpriseActivityTypes;
 	}	
 	
     /**
