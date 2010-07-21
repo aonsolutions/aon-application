@@ -34,7 +34,24 @@
 							value="#{(contractSearch.person.registry.fullName!=null)?(contractSearch.person.registry.fullName):('')}"
 							size="50" disabled="true" />							
 					</aon:div>
-					
+
+					<aon:outputLabel for="Enterprise_id"
+						value="#{companyBundle.company_enterprise}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Enterprise_id" lookup="#{enterpriseLookup}"
+							reRender="Enterprise_full_name"
+							value="#{contractSearch.enterprise.id}" size="5" />
+						<aon:lookupButton 
+							windowTitle="#{companyBundle.company_enterprise_selection}"
+							selectReRender="Enterprise_id,Enterprise_full_name" actionType="search"
+							lookup="#{enterpriseLookup}" minHeight="460" minWidth="650"
+							property="#{contractSearch.enterprise}">
+						</aon:lookupButton>
+						<aon:inputText id="Enterprise_full_name"
+							value="#{(contractSearch.enterprise.registry.fullName!=null)?(contractSearch.enterprise.registry.fullName):('')}"
+							size="50" disabled="true" />							
+					</aon:div>
+										
 					<aon:outputLabel for="ContractType_id"
 						value="#{employeeBundle.employee_contractType}" />
 					<aon:div styleClass="aon-lookup">
@@ -90,6 +107,7 @@
 			</ui:decorate>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		<aon:lookupButtonPopup lookup="#{contractTypeLookup}" />
 	</ui:define>
 </ui:composition>
