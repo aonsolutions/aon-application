@@ -36,7 +36,26 @@
 			<property-name>beanName</property-name>
 			<value>contract</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Contract_person_registry_surname,Contract_person_registry_name</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener	</value-class>
+				<value>#{contractSearch}</value>
+			</list-entries>
+		</managed-property>		
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>contractSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.event.ContractSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>		
 	
 	<!-- ************ CONTRACT TYPE ************** -->
 	<managed-bean>
@@ -55,7 +74,38 @@
 			<property-name>beanName</property-name>
 			<value>contractType</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractType_description</value>
+		</managed-property>		
 	</managed-bean>		
+			
+	<!-- ========================================================== -->
+	<!-- ======================= LOOKUPS ========================== -->
+	<!-- ========================================================== -->
+	
+	<!-- ************ CONTRACT TYPE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>contractTypeLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractTypeLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.employee.ContractType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractType_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/employee/facelet/lookup/contractType/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
 			
 	<!-- =================== Contract ========================== -->
 	<navigation-rule>
