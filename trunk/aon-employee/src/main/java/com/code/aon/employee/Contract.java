@@ -46,19 +46,19 @@ public class Contract implements ITransferObject {
 	private Person person;
 	
 	@ManyToOne
-    @JoinColumn( name="work_place", nullable = false, updatable = false )	
+    @JoinColumn( name="work_place", nullable = false )	
 	@ForeignKey(name = "FK_CONTRACT_WORK_PLACE")
 	@Index(name = "IDX_CONTRACT_WORK_PLACE")
 	private WorkPlace workPlace;
 	
 	@ManyToOne
-    @JoinColumn( name="ccc", nullable = false, updatable = false )	
+    @JoinColumn( name="ccc", nullable = false )	
 	@ForeignKey(name = "FK_CONTRACT_CCC")
 	@Index(name = "IDX_CONTRACT_CCC")
 	private EnterpriseCCC ccc;
 	
 	@ManyToOne
-    @JoinColumn( name="type", nullable = false, updatable = false )	
+    @JoinColumn( name="type", nullable = false )	
 	@ForeignKey(name = "FK_CONTRACT_TYPE")
 	@Index(name = "IDX_CONTRACT_TYPE")
 	private ContractType contractType;
