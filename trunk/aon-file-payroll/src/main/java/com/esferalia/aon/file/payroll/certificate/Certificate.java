@@ -19,7 +19,7 @@ public class Certificate {
 	
 	private List<CuentaCotizacion> cuentaCotizacion;
 
-	public Certificate(){
+	public Certificate(String cif){
 		Date date = new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		String f =  formatter.format(date);
@@ -27,7 +27,7 @@ public class Certificate {
 		formatter = new SimpleDateFormat("HHmm");
 		String t =  formatter.format(date);
 		hora = Integer.parseInt(t);
-		fichero =  fecha.toString()+hora.toString();
+		fichero =  cif+fecha.toString()+hora.toString();
 	}
 	
 	public Integer getFecha() {
