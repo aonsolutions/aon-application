@@ -5,22 +5,26 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="contractForm">
+	
+		<aon:form id="contractViewForm">
+			<aon:methodParam name="backAction" value="enterpriseWorkplace_form" />
+			<aon:methodParam name="saveAction" value="contractView_form" />
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contract_module}" />
 				<ui:param name="controller" value="#{contract}" />
+				<ui:param name="skipSaveButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
 			</ui:include>
 
-			<aon:div styleClass="aon-scroll-area">		
+			<aon:div styleClass="aon-scroll-area">
 				<ui:include src="/com/code/aon/ui/employee/facelet/contract/formContent.xhtml" />
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{personLookup}" />
-		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
-		<aon:lookupButtonPopup lookup="#{contractTypeLookup}" />
 	</ui:define>
 </ui:composition>

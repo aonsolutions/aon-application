@@ -1345,6 +1345,10 @@
 			<from-outcome>enterpriseWorkplace_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/workplace/form.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractView_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/workplace/contractView.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
 	<!-- =================== Work Activity ========================== -->

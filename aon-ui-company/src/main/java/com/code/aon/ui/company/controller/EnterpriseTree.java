@@ -1,5 +1,6 @@
 package com.code.aon.ui.company.controller;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -33,6 +34,8 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseTree implements ICompanyConstants {
+
+	private static final String CONTRACT_CONTROLLER_NAME = "contract";
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(EnterpriseTree.class);
 	
@@ -159,7 +162,8 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	public void onSelectWorkPlace( ActionEvent event ) {
 		try {
-			selectWorkPlace(event, currentNode.getId());
+			selectNode(event, ENTERPRISE_WORK_PLACE_CONTROLLER_NAME, currentNode.getId());
+			selectContracts(currentNode.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectWorkPlace exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -169,47 +173,57 @@ public class EnterpriseTree implements ICompanyConstants {
 
 	public void onSelectEnterpriseActivity( ActionEvent event ) {
 		try {
-			selectEnterpriseActivity(event, currentNode.getId());
+			selectNode(event, ENTERPRISE_ACTIVITY_CONTROLLER_NAME, currentNode.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectWorkPlace exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}	
-	
-	@SuppressWarnings("unchecked")	
-	private void selectWorkPlace( ActionEvent event, Integer id ) throws ManagerBeanException {
-		LinesController controller = (LinesController) AonUtil.getRegisteredBean(ENTERPRISE_WORK_PLACE_CONTROLLER_NAME);
-		List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
-		int index;
-		for( index = 0; index < list.size(); index++) {
-			WorkPlace workPlace = (WorkPlace) list.get(index);
-			if ( ObjectUtils.equals(workPlace.getId(), id) ) {
-				break;
-			}
-		}
-		controller.getModel().setRowIndex(index);
-		controller.onSelect(event);			
-		selectContracts(id);
-	}
 
+	public void onSelectContract( ActionEvent event ) {
+		try {
+			selectContract(event, currentNode.getId());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectContract exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}	
+	
 	@SuppressWarnings("unchecked")
-	private void selectEnterpriseActivity( ActionEvent event, Integer id ) throws ManagerBeanException {
-		LinesController controller = (LinesController) AonUtil.getRegisteredBean(ENTERPRISE_ACTIVITY_CONTROLLER_NAME);
+	private void selectNode( ActionEvent event, String controllerName, Integer id ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(controllerName);
 		List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
 		int index;
 		for( index = 0; index < list.size(); index++) {
-			EnterpriseActivity activity = (EnterpriseActivity) list.get(index);
-			if ( ObjectUtils.equals(activity.getId(), id) ) {
+			ITransferObject to = list.get(index);
+			Serializable currentId = controller.getManagerBean().getId(to);
+			if ( ObjectUtils.equals(currentId, id) ) {
 				break;
 			}
 		}
 		controller.getModel().setRowIndex(index);
 		controller.onSelect(event);			
+	}	
+	
+	private void selectContract( ActionEvent event, Integer id ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
+		try {
+			Contract contract = (Contract) controller.getManagerBean().get(currentNode.getId());
+			LinesController wpController = (LinesController) AonUtil.getRegisteredBean(ENTERPRISE_WORK_PLACE_CONTROLLER_NAME);
+			wpController.select(event, contract.getWorkPlace());
+			selectContracts( contract.getWorkPlace().getId() );
+			selectNode(event, CONTRACT_CONTROLLER_NAME, id);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectActivity exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}		
 	}
 	
 	private void selectContracts( Integer id ) throws ManagerBeanException {
-		IController controller = FormUtil.getController("contract");
+		IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
 		controller.clearCriteria();
 		Criteria criteria = controller.getCriteria();
 		String wpAlias = controller.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ID);

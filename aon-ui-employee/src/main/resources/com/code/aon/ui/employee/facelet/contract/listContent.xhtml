@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -19,16 +20,18 @@
 				</aon:div>
 			</aon:column>
 		
-			<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{companyBundle.company_enterprise}" />
-				</f:facet>
-				<aon:div styleClass="aon-nowrap">
-					<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}"/>
-				</aon:div>
-			</aon:column>
-		
+			<c:if test="#{!skipEnterpriseColumn}">		
+				<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{companyBundle.company_enterprise}" />
+					</f:facet>
+					<aon:div styleClass="aon-nowrap">
+						<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}"/>
+					</aon:div>
+				</aon:column>
+			</c:if>
+
 			<aon:column alias="Contract.contractType.description"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
@@ -36,6 +39,16 @@
 				</f:facet>
 				<aon:div styleClass="aon-nowrap">
 					<aon:outputText value="#{to.contractType.description}"/>
+				</aon:div>
+			</aon:column>
+					
+			<aon:column alias="Contract.ccc.activity.description"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{companyBundle.company_activity}" />
+				</f:facet>
+				<aon:div styleClass="aon-nowrap">
+					<aon:outputText value="#{to.ccc.activity.description}"/>
 				</aon:div>
 			</aon:column>
 			
