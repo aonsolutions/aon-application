@@ -45,6 +45,9 @@ public enum CausaSuspension implements IResourceable, IStringEnum  {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+    public String getFullName(Locale locale) {
+    	return getValue()+". "+getName(locale);
+    }
     
     private String value;
     
