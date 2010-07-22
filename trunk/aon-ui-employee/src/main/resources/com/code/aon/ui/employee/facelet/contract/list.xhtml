@@ -15,54 +15,7 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{contract}" />
-					<ui:define name="columns">
-					
-						<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{registryBundle.registry_person}" />
-							</f:facet>
-							<aon:div styleClass="aon-nowrap">
-								<aon:outputText value="#{to.person.registry.fullName}"/>
-							</aon:div>
-						</aon:column>
-					
-						<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{companyBundle.company_enterprise}" />
-							</f:facet>
-							<aon:div styleClass="aon-nowrap">
-								<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}"/>
-							</aon:div>
-						</aon:column>
-					
-						<aon:column alias="Contract.contractType.description"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{employeeBundle.employee_contractType}" />
-							</f:facet>
-							<aon:div styleClass="aon-nowrap">
-								<aon:outputText value="#{to.contractType.description}"/>
-							</aon:div>
-						</aon:column>
-						
-						<aon:column alias="Contract.startDate"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_start_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.startDate}" >
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>		
-						</aon:column>
-	
-					</ui:define>
-				</ui:decorate>
-	
+				<ui:include src="/com/code/aon/ui/employee/facelet/contract/listContent.xhtml" />
 			</aon:div>
 			
 		</aon:form>
