@@ -111,7 +111,7 @@ public class PayrollCollections implements Serializable {
 			causaSuspension = new LinkedList<SelectItem>();
 			CausaSuspension[] causas = CausaSuspension.values();
 			for (CausaSuspension c : causas) {
-				String name = c.getName(locale);
+				String name = c.getFullName(locale);
 				SelectItem item = new SelectItem(c, name);
 				causaSuspension.add(item);
 			}

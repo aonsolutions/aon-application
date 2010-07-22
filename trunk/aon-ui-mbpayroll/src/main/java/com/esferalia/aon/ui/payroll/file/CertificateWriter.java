@@ -112,7 +112,7 @@ public class CertificateWriter {
 		final String INDENT_AMOUNT_PROPERTY = "{http://xml.apache.org/xslt}indent-amount";
 		
 		try {
-			setCertificate(new Certificate());
+			setCertificate(new Certificate(remesa.getEmpresa().getRegistry().getDocument().getValue()));
 			
 			List<CuentaCotizacion> listaCuentas = new ArrayList<CuentaCotizacion>();
 			for(String ccc: getCccList(remesaDetail)) {
