@@ -39,7 +39,9 @@
 			<rich:treeNode type="CONTRACT"
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-user.png']}" 
 				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-user.png']}">
-				<aon:outputText value="#{enterpriseNode.label}" />
+				<aon:commandLink value="#{enterpriseNode.label}"
+					action="contractView_form"
+					actionListener="#{enterpriseTree.onSelectContract}"/>
 			</rich:treeNode>				
 		</rich:tree>
 	</aon:form>	

@@ -55,7 +55,10 @@
 								</aon:div>
 							</aon:div>
 							
-							<ui:include src="/com/code/aon/ui/employee/facelet/contract/listContent.xhtml" />						
+							<aon:methodParam name="rowSelectorAction" value="contractView_form" />
+							<ui:include src="/com/code/aon/ui/employee/facelet/contract/listContent.xhtml" >
+								<ui:param name="skipEnterpriseColumn" value="#{true}" />
+							</ui:include>						
 	
 						</aon:div>
 					</aon:div>
