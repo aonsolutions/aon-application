@@ -12,8 +12,8 @@
 		<aon:form id="contractTypeForm">
 		
 			<aon:div id="menuExt"> 
-				<ui:include 
-					src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contractTracking_module}" />
 					<ui:param name="controller" value="#{contract}" />
 					<ui:param name="skipRemoveButton" value="true" />
@@ -22,45 +22,46 @@
 					<ui:param name="skipSaveButton" value="true" />
 					<ui:param name="skipSpin" value="false" />
 					<ui:param name="skipFocusFirst" value="true" />
-					<aon:methodParam name="backAction" value="contractTracking_list" />
-					<aon:methodParam name="saveAction" value="contractTracking_form" />
-<!--  
+
+					<ui:define name="toolbarActions">
+						<aon:methodParam name="backAction" value="contractTracking_list" />
+						<aon:methodParam name="saveAction" value="contractTracking_form" />
+					</ui:define>
+					
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:outputText value="AAAAA" />
+						<aon:commandButton id="multiple_tracking"
+							value="#{employeeBundle.employee_multiple_tracking}"
+							immediate="#{true}" 
+							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
+							actionListener="#{contractTracking.onMultipleTrackingShow}"
+							reRender="showMultipleTrackingWindow">
+							<f:setPropertyActionListener target="#{contractTracking.showMultipleTrackingWindow}"
+								value="#{true}" />
+						</aon:commandButton>
+					</ui:define>
+
+<!--  
+					<ui:define name="additionalToolbarContent">
+						<aon:commandButton id="multiple_tracking"
+							value="#{employeeBundle.employee_multiple_tracking}"
+							immediate="#{true}" 
+							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
+							actionListener="#{contractTracking.onMultipleTrackingShow}"
+							reRender="showMultipleTrackingWindow">
+							<f:setPropertyActionListener target="#{contractTracking.showMultipleTrackingWindow}"
+								value="#{true}" />
+						</aon:commandButton>
 					</ui:define>
 -->					
 					
-				</ui:include>
+				</ui:decorate>
 			</aon:div>	
 
 			<aon:div ajaxRendered="true" layout="none">
-<!--  
-				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contractTracking_module}" />
-					<ui:param name="controller" value="#{contractTracking}" />
-				</ui:include>			
--->			
-
-
-<aon:commandButton id="multiple_tracking"
-	value="#{employeeBundle.employee_multiple_tracking}"
-	immediate="#{true}" 
-	styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
-	actionListener="#{contractTracking.onMultipleTrackingShow}"
-	reRender="showMultipleTrackingWindow">
-	<f:setPropertyActionListener target="#{contractTracking.showMultipleTrackingWindow}"
-		value="#{true}" />
-</aon:commandButton>
-
-
 
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
 					<aon:panelGrid columns="8" dir="true" width="100%">
-<!--  
-						<aon:outputLabel value="#{bundle.aon_id}" />
-						<aon:outputText value="#{contract.to.id}" />
--->
 						
 						<aon:outputLabel value="#{employeeBundle.employee_name}" />
 						<aon:outputText value="#{contract.to.person.registry.fullName}" />
@@ -162,12 +163,7 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-		<ui:include src="/com/code/aon/ui/employee/facelet/contractTracking/modalPanel.xhtml" >
-<!--  
-			<ui:param name="signButtonreRender" value="offerForm,showNewMessageWindow" />
-			<aon:methodParam name="signActionListener" value="#{offerSigner.onSign}" type="actionListener" />
--->
-		</ui:include>
+		<ui:include src="/com/code/aon/ui/employee/facelet/contractTracking/modalPanel.xhtml" />
 	</ui:define>
 
 </ui:composition>

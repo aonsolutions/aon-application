@@ -10,8 +10,6 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.employee.Contract;
@@ -75,15 +73,16 @@ public class ContractTrackingController extends LinesController {
 	public void onSelectFullTime(ActionEvent event){
 		if(isFullTime()){
 			
+		} else{
+			
 		}
 	}
 	
 	public void onMultipleTrackingShow(ActionEvent event)  {
-//		Offer to = getOffer();
-//		setSalesSeries(to.getSeries());
-//		setSalesNumber(obtainMaxSalesNumber(to.getSeries()));
-//		setSalesDate(new Date());
-		
+		setTrack(null);
+		setFullTime(false);
+		setStartDate(null);
+		setEndDate(null);
 	}
 	
 	
