@@ -46,7 +46,7 @@ public class Contract implements ITransferObject {
 	private Person person;
 	
 	@ManyToOne
-    @JoinColumn( name="work_place", nullable = false )	
+    @JoinColumn( name="workplace", nullable = false )	
 	@ForeignKey(name = "FK_CONTRACT_WORK_PLACE")
 	@Index(name = "IDX_CONTRACT_WORK_PLACE")
 	private WorkPlace workPlace;
