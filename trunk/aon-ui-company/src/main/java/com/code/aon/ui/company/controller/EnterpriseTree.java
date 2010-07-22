@@ -222,13 +222,19 @@ public class EnterpriseTree implements ICompanyConstants {
 		}		
 	}
 	
-	private void selectContracts( Integer id ) throws ManagerBeanException {
-		IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
-		controller.clearCriteria();
-		Criteria criteria = controller.getCriteria();
-		String wpAlias = controller.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ID);
-		criteria.addEqualExpression(wpAlias, id);
-		controller.initializeModel();
+	public void selectContracts( Integer id ) {
+		try {
+			IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
+			controller.clearCriteria();
+			Criteria criteria = controller.getCriteria();
+			String wpAlias = controller.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ID);
+			criteria.addEqualExpression(wpAlias, id);
+			controller.initializeModel();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> selectContracts exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}		
 	}
 	
 }
