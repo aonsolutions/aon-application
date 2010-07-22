@@ -20,10 +20,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseActivity;
-import com.code.aon.company.WorkActivity;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
-import com.code.aon.company.resources.Employee;
+import com.code.aon.employee.Contract;
+import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.util.EnterpriseTreeData;
 import com.code.aon.ui.company.util.EnterpriseTreeType;
@@ -68,9 +68,23 @@ public class EnterpriseTree implements ICompanyConstants {
 		return new EnterpriseTreeData( ea.getId(), ea.getDescription(), EnterpriseTreeType.ACTIVITY);
 	}
 
-	public EnterpriseTreeData getTreeData( Employee e ) {
-		return new EnterpriseTreeData( e.getId(), e.getRegistry().getFullName(), EnterpriseTreeType.EMPLOYEE);
+	public EnterpriseTreeData getTreeData( Contract c ) {
+		return new EnterpriseTreeData( c.getId(), c.getPerson().getRegistry().getFullName(), EnterpriseTreeType.CONTRACT);
 	}
+	
+	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
+		Criteria criteria = new Criteria();
+		String workPlaceId = bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ID);
+		criteria.addEqualExpression(workPlaceId, workPlace.getId());
+		for( ITransferObject to : bean.getList(criteria) ) {
+			Contract contract = (Contract) to;
+			TreeNodeImpl<EnterpriseTreeData> contractNode = new TreeNodeImpl<EnterpriseTreeData>();
+			EnterpriseTreeData etd = getTreeData(contract);
+			contractNode.setData(etd);
+			workPlaceNode.addChild( etd.getType().toString() + etd.getId(), contractNode );
+		}		
+	}		
 	
 	private void loadActivities( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseActivity.class);		
@@ -97,6 +111,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			EnterpriseTreeData etd = getTreeData(wp);
 			wpNode.setData(etd);
 			enterpriseNode.addChild( etd.getType().toString() + etd.getId(), wpNode );
+			loadContracts(wpNode, wp);
 		}
 	}
 	
