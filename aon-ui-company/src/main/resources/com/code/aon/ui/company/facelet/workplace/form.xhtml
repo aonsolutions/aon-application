@@ -45,6 +45,21 @@
 					</aon:selectOneMenu>					
 
 				</aon:panelGrid>
+				
+				<c:if test="#{contract != null}">
+					<aon:div id="detail_panel">
+						<aon:div styleClass="aon-form-group" rendered="#{!enterpriseActivity.new}">
+							<aon:div styleClass="aon-form-group-title">
+								<aon:div styleClass="aon-form-group-title-internal">
+									<aon:outputLabel for="contractData" value="#{companyBundle.company_employee_module}" />
+								</aon:div>
+							</aon:div>
+							
+							<ui:include src="/com/code/aon/ui/employee/facelet/contract/listContent.xhtml" />						
+	
+						</aon:div>
+					</aon:div>
+				</c:if>								
 
 			</aon:div>
 		</aon:form>

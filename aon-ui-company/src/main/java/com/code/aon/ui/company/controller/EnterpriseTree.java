@@ -27,6 +27,8 @@ import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.util.EnterpriseTreeData;
 import com.code.aon.ui.company.util.EnterpriseTreeType;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -188,9 +190,11 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 		controller.getModel().setRowIndex(index);
 		controller.onSelect(event);			
+		selectContracts(id);
 	}
 
-	public void selectEnterpriseActivity( ActionEvent event, Integer id ) throws ManagerBeanException {
+	@SuppressWarnings("unchecked")
+	private void selectEnterpriseActivity( ActionEvent event, Integer id ) throws ManagerBeanException {
 		LinesController controller = (LinesController) AonUtil.getRegisteredBean(ENTERPRISE_ACTIVITY_CONTROLLER_NAME);
 		List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
 		int index;
@@ -202,6 +206,15 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 		controller.getModel().setRowIndex(index);
 		controller.onSelect(event);			
+	}
+	
+	private void selectContracts( Integer id ) throws ManagerBeanException {
+		IController controller = FormUtil.getController("contract");
+		controller.clearCriteria();
+		Criteria criteria = controller.getCriteria();
+		String wpAlias = controller.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ID);
+		criteria.addEqualExpression(wpAlias, id);
+		controller.initializeModel();
 	}
 	
 }
