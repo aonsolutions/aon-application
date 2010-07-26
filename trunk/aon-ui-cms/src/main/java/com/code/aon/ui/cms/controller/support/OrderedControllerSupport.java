@@ -10,6 +10,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.IController;
 
 public class OrderedControllerSupport {
@@ -36,7 +37,6 @@ public class OrderedControllerSupport {
 		this.positionAlias = positionAlias;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void move(IController controller, IPositionObject object, int movement ) throws ManagerBeanException, ExpressionException {
 		int oldPosition = object.getPosition();
 		int newPosition = oldPosition + movement;
@@ -57,7 +57,8 @@ public class OrderedControllerSupport {
 		object.setPosition(newPosition);
 		controller.getManagerBean().update((ITransferObject)object);
 		
-		controller.initializeModel();
+		ExtendedPageDataModel model = (ExtendedPageDataModel) controller.getModel();
+		model.refresh();
 	}
 	
     public void onMoveUp(IController controller) throws ManagerBeanException, ExpressionException {
