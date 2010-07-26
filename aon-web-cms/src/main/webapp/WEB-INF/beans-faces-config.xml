@@ -172,7 +172,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>10</value>
+			<value>15</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -858,7 +858,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>10</value>
+			<value>15</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -980,7 +980,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>10</value>
+			<value>15</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

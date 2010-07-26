@@ -110,14 +110,6 @@ public class MenuOptionController extends BasicI18nController implements IOrdere
     	orderedControllerSupport.onMoveDown(this);
     }
 
-	protected void afterRemoveSelected(){
-		try {
-			orderedControllerSupport.reorderObjects(this);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-	}
-
 	public void fireBeforeUseCriteria(Criteria criteria) {
 		try {
 			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_MENU_ID), "" + getCurrentMenu().getId());
