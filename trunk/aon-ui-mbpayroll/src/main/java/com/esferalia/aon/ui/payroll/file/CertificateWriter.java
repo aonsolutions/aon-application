@@ -129,7 +129,6 @@ public class CertificateWriter {
 			Element root = certificate.getElement(xmldoc);
 			xmldoc.appendChild(root);
 			certificate.fillElement(xmldoc, root);
-			validateCertificateData(certificate);
 			
 			DOMSource domSource = new DOMSource(xmldoc);
 			StreamResult streamResult = new StreamResult(out);
@@ -139,11 +138,16 @@ public class CertificateWriter {
 			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 			serializer.setOutputProperty(INDENT_AMOUNT_PROPERTY, INDENT_AMOUNT_VALUE);
 			serializer.transform(domSource, streamResult);
-			validateXmlPattern(file);
 			
+			output.setErrors(certificate.getExceptions());
 			output.setFile(file);
-			// output.setErrors(fdi.create());
-			output.setErrors(new ArrayList<Exception>());
+			
+			if (output.getErrors().size() > 0) {
+				AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
+				// No se lanza excepción, que vaya a la última página.
+			} else {
+				validateXmlPattern(file);
+			}
 			
 			return output;
 		} catch (IOException e) {
@@ -159,6 +163,25 @@ public class CertificateWriter {
 		}
 	}
 	
+	public Element getError(Document xmldoc, Certificate certificate){
+		if(certificate.getErrors()!=null){
+			final String ERRORS = "Errores";
+			final String ERROR = "Error";
+			Element errores = xmldoc.createElement(ERRORS);
+			for (Integer i : certificate.getErrors()) {
+				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+				String errorMsg = null;
+				errorMsg = AonPayroll.getMessage(locale,"aon_payroll_certificate_error_" + i);
+				Element error = xmldoc.createElement(ERROR);
+				error.appendChild(xmldoc.createTextNode(errorMsg));
+				errores.appendChild(error);
+			}
+			return errores;
+		} else {
+			return null;
+		}
+	}
+	
 	private List<String> getCccList(List<IRemesaCertificadoEmpresaDetalle> remesaDetail) throws PayrollException{
 		List<String> list = new ArrayList<String>();
 		String ccc;
@@ -170,142 +193,7 @@ public class CertificateWriter {
 		}
 		return list;
 	}
-	
-	private void validateCertificateData(Certificate certificate) {
-		ArrayList<Integer> errors = new ArrayList<Integer>();
 		
-		for(CuentaCotizacion cc:certificate.getCuentaCotizacion()) {
-			if(StringUtils.isBlank(cc.getRepresentante().getCifNif())) {
-				errors.add(0);
-			}
-			
-			if(StringUtils.isBlank(cc.getRepresentante().getNombre())) {
-				errors.add(1);
-			}
-			
-			if(StringUtils.isBlank(cc.getRepresentante().getApellido1())) {
-				errors.add(2);
-			}
-			
-			if(StringUtils.isBlank(cc.getEmpresa().getCifNif())) {
-				errors.add(3);
-			}
-			
-			if(StringUtils.isBlank(cc.getEmpresa().getCcc())) {
-				errors.add(4);
-			}
-			
-			if(cc.getListaTrabajadores() != null) {
-				for(Trabajador t:cc.getListaTrabajadores()) {
-					if(t != null) {
-						if(StringUtils.isBlank(t.getDniNie())) {
-							errors.add(5);
-						}
-						
-						if(StringUtils.isBlank(t.getNombre())) {
-							errors.add(6);
-						}
-						
-						if(StringUtils.isBlank(t.getApellido1())) {
-							errors.add(7);
-						}
-						
-						if(StringUtils.isBlank(t.getNumSs())) {
-							errors.add(8);
-						}
-						
-						if(StringUtils.isBlank(t.getTipoContrato())) {
-							errors.add(9);
-						}
-						
-						if(StringUtils.isBlank(t.getCodProfesion())) {
-							errors.add(10);
-						}
-						
-						if(StringUtils.isBlank(t.getFechaAltaEmpresa())) {
-							errors.add(11);	
-						}
-						
-						if(StringUtils.isBlank(t.getCodCausaSuspension())) {
-							errors.add(12);
-						}
-						
-						if(StringUtils.isBlank(t.getFechaSuspensionExtincion())) {
-							errors.add(13);
-						}
-						
-						if(StringUtils.isBlank(t.getDiasSalarioTramitacion())) {
-							errors.add(14);
-						}
-						
-						/*
-						 * NODOS
-						 */
-						if(t.getDistribucionJornada() != null) {
-							for(Periodo p:t.getDistribucionJornada().getListaPeriodos()) {
-								if(StringUtils.isBlank(p.getTipoDistribucion())) {
-									errors.add(15);
-								}
-								
-								if(StringUtils.isBlank(p.getFechaInicioPeriodo())) {
-									errors.add(16);
-								}
-								
-								if(StringUtils.isBlank(p.getFechaFinPeriodo())) {
-									errors.add(17);
-								}
-								
-								if(StringUtils.isBlank(p.getNumeroDiasTrabajadosPorSemanaOPeriodo())) {
-									errors.add(18);
-								}
-							}
-						}
-						
-						for(Cotizacion c:t.getDatosCotizacion()) {
-							if(StringUtils.isBlank(c.getAno())) {
-								errors.add(19);
-							}
-							
-							if(StringUtils.isBlank(c.getMes())) {
-								errors.add(20);
-							}
-							
-							if(StringUtils.isBlank(c.getNumDiasCotizados())) {
-								errors.add(21);
-							}
-							
-							if(StringUtils.isBlank(c.getBaseCotizacionDesempleo())) {
-								errors.add(22);
-							}
-						}
-						
-						if(t.getDatosVacacionesCotizadas() != null) {
-							if(StringUtils.isBlank(t.getDatosVacacionesCotizadas().getNumDiasCotizados())) {
-								errors.add(23);
-							}
-							
-							if(StringUtils.isBlank(t.getDatosVacacionesCotizadas().getBaseCotizacionDesempleo())) {
-								errors.add(24);
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		if(!errors.isEmpty()) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			String errorMsg = null;
-			
-			for(Integer i:errors) {
-				errorMsg = AonPayroll.getMessage(locale, "aon_payroll_certificate_error_" + i);
-				AonUtil.addErrorMessage(errorMsg);
-			}
-			
-			throw new AbortProcessingException(errorMsg);
-		}
-	}
-	
 	private void validateXmlPattern(File xml) {
 		final String SCHEMA = "enterpriseCertificate.xsd";
 		

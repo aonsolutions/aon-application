@@ -24,6 +24,7 @@
 			
 			<rich:separator lineType="solid" style="margin-top: 20px; margin-bottom: 20px;"/>
 			
+<!--  
 			<h:commandLink target="_blank"
 				title="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
 				value="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
@@ -31,15 +32,16 @@
 				actionListener="#{remesaCertificadoWizard.onDownloadDisk}"
 				rendered="#{remesaCertificadoWizard.fileOutput!=null}"
 				styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
-
-<!--  
-			<h:commandLink target="_blank"
-				title="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				value="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				style="border-width: 0px 0px 0px 0px;"
-				actionListener="#{remesaCertificadoWizard.onDownloadDisk}"
-				styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 -->
+
+			<h:commandLink target="_blank"
+				title="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_zip):(payrollBundle.download_error)}"
+				value="#{remesaCertificadoWizard.diskOk?(payrollBundle.download_zip):(payrollBundle.download_error)}"
+				style="border-width: 0px 0px 0px 0px;"
+				actionListener="#{remesaCertificadoWizard.onDownloadZip}"
+				rendered="#{remesaCertificadoWizard.fileOutput!=null}"
+				styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+
 		</aon:div>
 	</ui:define>
 

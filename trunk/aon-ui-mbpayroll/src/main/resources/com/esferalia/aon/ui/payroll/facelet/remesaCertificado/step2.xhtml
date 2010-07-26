@@ -14,63 +14,44 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		
-		<aon:div styleClass="aon-scroll-area">
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/remesaHeader.xhtml" />
-		</aon:div>
-		
-		<aon:div styleClass="aon-scroll-area">
-			<aon:dataTable id="remesaDetailData" value="#{remesaCertificadoWizard.detailList}"
-				var="to"  
-				columnClasses="
-				aon-editDataTable-numberColumn, 
-				aon-editDataTable-textColumn, 
-				aon-editDataTable-dateColumn,
-				aon-editDataTable-textColumn">
+	
+	<aon:dataTable id="remesasData" value="#{remesaCertificadoWizard.selectedRemesas}"
+			var="to" rows="20" 
+			columnClasses="
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-dateColumn">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+				</f:facet>
+				<aon:outputText value="#{to.remesa.empresa.name}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_fecha}" />
+				</f:facet>
+				<aon:outputText value="#{to.remesa.fecha}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_estado}" />
+				</f:facet>
+				<aon:outputText value="#{to.remesa.estado}"  />
+			</aon:column>
+			
 <!--  
-				<aon:rowSelector action="remesaCertificadoWizard_step2"
-					actionListener="#{remesaCertificadoWizard.onSelect}" />
--->
-
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_cdg}" />
-					</f:facet>
-					<aon:outputText value="#{to.id}" />
-				</aon:column>
-				
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_nombre}" />
-					</f:facet>
-					<aon:outputText value="#{to.empleado.persona.fullName}" >
-						<aon:abbreviateConverter maxWidth="50" />
-					</aon:outputText>
-				</aon:column>
-				
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_fecha_baja}" />
-					</f:facet>
-					<aon:outputText value="#{to.fechaBaja}">
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
-				</aon:column>
-
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_causa_suspension}" />
-					</f:facet>
-					<aon:outputText value="#{to.causaSuspension}" />
-				</aon:column>
-
-			</aon:dataTable>
-<!--  
-			<aon:dataScroller2 for="remesaDetailData" showNote="true" />
--->
-
-		</aon:div>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/listaEmpleadosRemesa.xhtml" />
+-->			
+			
+		</aon:dataTable>		
+	
 	</ui:define>
 
 </ui:composition>
