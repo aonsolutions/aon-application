@@ -1,11 +1,17 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -41,7 +47,9 @@ public class RemesaCertificadoWizard implements Serializable {
 	private CertificateWriter certificateWriter;
 	private IEmpresaDAO empresaDAO;
 	private DataModel model;
+//	private DataModel selectedModel;
 	private IRemesaCertificadoEmpresa remesa;
+	private List<RemesableCertificate> selectedRemesas;
 	private List<IRemesaCertificadoEmpresaDetalle> detailList;
 	private RemesaCertificadoEmpresaParams params;
 	
@@ -63,6 +71,14 @@ public class RemesaCertificadoWizard implements Serializable {
 	
 	public void setRemesa(IRemesaCertificadoEmpresa remesa) {
 		this.remesa = remesa;
+	}
+	
+	public List<RemesableCertificate> getSelectedRemesas() {
+		return selectedRemesas;
+	}
+
+	public void setSelectedRemesas(List<RemesableCertificate> selectedRemesas) {
+		this.selectedRemesas = selectedRemesas;
 	}
 	
 	public List<IRemesaCertificadoEmpresaDetalle> getDetailList() {
@@ -110,14 +126,34 @@ public class RemesaCertificadoWizard implements Serializable {
 	public void setModel(DataModel model) {
 		this.model = model;
 	}
+	
+//	public DataModel getSelectedModel() {
+//		return selectedModel;
+//	}
+//	
+//	public void setSelectedModel(DataModel selectedModel) {
+//		this.selectedModel = selectedModel;
+//	}
 
 	private void initializeRemesasModel() throws PayrollException {
-		model = new ListDataModel(getEmpresaDAO().getRemesaCertificados(getParams()));
+		model = new ListDataModel(transformList(getEmpresaDAO().getRemesaCertificados(getParams())));
 	}
 	
 	protected void initializeRemesasModel(List<IRemesaCertificadoEmpresa> list) {
-		model = new ListDataModel(list);
+		model = new ListDataModel(transformList(list));
 	}
+	
+	private List<RemesableCertificate> transformList(
+			List<IRemesaCertificadoEmpresa> remesas) {
+		List<RemesableCertificate> list = new ArrayList<RemesableCertificate>();
+		for (IRemesaCertificadoEmpresa remesa : remesas) {
+			RemesableCertificate r = new RemesableCertificate();
+			r.setRemesa(remesa);
+			list.add(r);
+		}
+		return list;
+	}
+
 	
 	private void refreshDetailList() throws PayrollException {
 		setDetailList(getEmpresaDAO().getDetalleRemesaCertificados(getRemesa()));
@@ -129,11 +165,11 @@ public class RemesaCertificadoWizard implements Serializable {
 			onSearch(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
-			onSearch(event);
+//			onSearch(event);
+			onValidate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
-			onDiskGenerate(event);
-			onValidate(event);
+			onZipGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {
 			onFinish(event);
@@ -159,6 +195,19 @@ public class RemesaCertificadoWizard implements Serializable {
 	public boolean isNextAvailable() {
 		return (getCurrentStep() < 3);
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void generateRemesasList() throws PayrollException{
+		setSelectedRemesas(null);
+		List<RemesableCertificate> list = new LinkedList<RemesableCertificate>();
+		for (RemesableCertificate remesable : (List<RemesableCertificate>) getModel().getWrappedData()) {
+			if (remesable.isSelected()) {
+//				remesable.setDetail(getEmpresaDAO().getDetalleRemesaCertificados(remesable.getRemesa()));
+				list.add(remesable);
+			}
+		}
+		setSelectedRemesas(list);
+	}
 
 	// ***************************************************
 	public void onStart(ActionEvent event) {
@@ -176,27 +225,17 @@ public class RemesaCertificadoWizard implements Serializable {
 	}
 
 	private void onValidate(ActionEvent event) {
-		
+		try {
+			generateRemesasList();
+		} catch (PayrollException e) {
+			// NADA
+		}
 	}
 	
 	public void onDiskGenerate(ActionEvent event) {
-		try {
-			String loggedUser = AonUtil.getRemoteUser();
-			loggedUser = StringUtils.substringBefore(loggedUser, "@");
-			setFileOutput(getCertificateWriter().createCertificate(getRemesa(), getDetailList()));
-			if (getFileOutput() != null) {
-				if (getFileOutput().getErrors().size() > 0) {
-					AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
-				}
-			}
-			getRemesa().setEstado(FileStatus.GENERADO);
-			getEmpresaDAO().accept(getRemesa());
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			// No se lanza excepción, que vaya a la última página.
-		} catch (PayrollException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-		} 
+		String loggedUser = AonUtil.getRemoteUser();
+		loggedUser = StringUtils.substringBefore(loggedUser, "@");
+		onZipGenerate(event);
 	}
 	
 	public void onDownloadDisk(ActionEvent event) {
@@ -239,8 +278,9 @@ public class RemesaCertificadoWizard implements Serializable {
 
 	public void onSelect(ActionEvent event) {
 		setCurrentStep(2);
-		IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa)getModel().getRowData();
-		setRemesa(remesa);
+		RemesableCertificate remesa = (RemesableCertificate)getModel().getRowData();
+//		IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa)getModel().getRowData();
+		setRemesa(remesa.getRemesa());
 		try {
 			refreshDetailList();
 		} catch (PayrollException e) {
@@ -257,5 +297,87 @@ public class RemesaCertificadoWizard implements Serializable {
 		}
 	}
 	
+	public void onSelectAll(ActionEvent event) {
+		processAll(true);
+	}
+
+	public void onDeselectAll(ActionEvent event) {
+		processAll(false);
+	}
+
+	private void processAll(boolean selected) {
+		for (int i = 0; i < getModel().getRowCount(); i++) {
+			getModel().setRowIndex(i);
+			RemesableCertificate r = (RemesableCertificate) getModel()
+					.getRowData();
+			r.setSelected(selected);
+		}
+	}
+	
+	public void onZipGenerate(ActionEvent event) {
+		// Crear un bufer para leer los archivos
+		byte[] buf = new byte[1024];
+		try {
+			// Crear el archivo ZIP
+			File file = File.createTempFile("aon-zip", ".ZIP");
+			FileOutputStream fos = new FileOutputStream(file);
+			ZipOutputStream out = new ZipOutputStream(fos);
+			
+			// Comprimir los archivos
+			for(RemesableCertificate remesable: getSelectedRemesas()){
+				setFileOutput(getCertificateWriter().createCertificate(remesable.getRemesa(), getEmpresaDAO().getDetalleRemesaCertificados(remesable.getRemesa())));
+				
+				FileInputStream in = new FileInputStream(getFileOutput().getFile());
+				// Agregar las entradas ZIP al outputstream.
+				out.putNextEntry(new ZipEntry(getCertificateWriter().getCertificate().getFichero()+".xml"));
+				// Transferencia de bytes desde el archivo original al archivo ZIP
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+				out.closeEntry();
+				in.close();
+			}
+			
+			out.close();
+			FileOutput output = new FileOutput();
+			output.setFile(file);
+			output.setErrors(new ArrayList<Exception>());
+			setFileOutput(output);
+		} catch (IOException e) {
+			System.out.println("fallo");
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			// No se lanza excepción, que vaya a la última página.
+		} catch (PayrollException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+		} 
+	}	
+	
+	public void onDownloadZip(ActionEvent event) {
+		try {
+			FacesContext faces = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+			String fileName = "out";
+			response.setContentType(MimeType.MIME_ZIP.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".zip\";");
+
+			ServletOutputStream output = response.getOutputStream();
+			InputStream input = new FileInputStream(getFileOutput().getFile());
+			int size = IOUtils.copy(input, output);
+			if (size > 0) {
+				response.setHeader("Content-Length", String.valueOf(size));
+			}
+			output.close();
+			input.close();
+
+			response.flushBuffer();
+			faces.responseComplete();
+		} catch (IOException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+		
+	}
 	
 }
