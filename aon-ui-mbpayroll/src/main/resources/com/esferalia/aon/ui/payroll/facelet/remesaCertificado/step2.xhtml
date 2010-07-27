@@ -15,12 +15,15 @@
 
 	<ui:define name="step_content">
 	
-	<aon:dataTable id="remesasData" value="#{remesaCertificadoWizard.selectedRemesas}"
+		<aon:dataTable id="remesasData" value="#{remesaCertificadoWizard.selectedModel}"
 			var="to" rows="20" 
 			columnClasses="
 			aon-editDataTable-textColumn, 
 			aon-editDataTable-textColumn, 
 			aon-editDataTable-dateColumn">
+			
+			<aon:rowSelector 
+				actionListener="#{remesaCertificadoWizard.onSelect}" />
 
 			<aon:column>
 				<f:facet name="header">
@@ -46,12 +49,14 @@
 				<aon:outputText value="#{to.remesa.estado}"  />
 			</aon:column>
 			
-<!--  
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/listaEmpleadosRemesa.xhtml" />
--->			
 			
 		</aon:dataTable>		
 	
+	</ui:define>
+	<ui:define name="after_form">
+		<ui:include
+			src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 
 </ui:composition>
