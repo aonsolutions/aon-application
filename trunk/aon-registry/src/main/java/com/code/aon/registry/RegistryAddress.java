@@ -7,8 +7,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
@@ -154,6 +156,13 @@ public class RegistryAddress implements ITransferObject, IAddress {
 	public String getAddress3() {
         return address3;
     }
+    
+    @Transient
+    public String getFullAddress() {
+    	return getAddress() +
+    		( StringUtils.isEmpty(getAddress2())?"":" " + getAddress2() ) +
+    		( StringUtils.isEmpty(getAddress3())?"":" " + getAddress3() );
+    }    
 
     /**
      * Sets the address3.
