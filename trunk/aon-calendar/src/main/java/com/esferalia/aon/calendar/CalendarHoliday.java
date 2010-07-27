@@ -22,6 +22,8 @@ import com.esferalia.aon.calendar.enumeration.DayType;
 @Entity
 @Table(name = "calendar_holiday")
 public class CalendarHoliday implements ITransferObject {
+	
+	private static final long serialVersionUID = 1008072886778528235L;
 
 	/** The id. */
     private Integer id;
