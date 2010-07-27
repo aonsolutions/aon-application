@@ -1,10 +1,13 @@
 package com.esferalia.aon.ui.calendar.controller;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.ui.form.BasicController;
@@ -13,6 +16,15 @@ import com.esferalia.aon.calendar.enumeration.DayType;
 public class CalendarController extends BasicController {
 
 	private List<SelectItem> dayTypes;
+	private Integer year;
+	
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
 
 	public List<SelectItem> getAllDayTypes() {
 		
@@ -44,6 +56,12 @@ public class CalendarController extends BasicController {
 			}
 		
 		return dayTypes;
+	}
+	
+	public void onReset(ActionEvent e){
+		
+		GregorianCalendar cal= new GregorianCalendar();
+		this.setYear(cal.get(Calendar.YEAR));
 	}
 
 }
