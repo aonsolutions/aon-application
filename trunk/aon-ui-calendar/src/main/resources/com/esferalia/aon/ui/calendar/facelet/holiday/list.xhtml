@@ -23,7 +23,8 @@
 								<h:outputText value="#{bundle.aon_description}"  />
 							</f:facet>
 							<aon:outputText value="#{to.description}">
-								</aon:outputText>
+								<aon:abbreviateConverter maxWidth="50" />
+							</aon:outputText>
 						</aon:column>
 					</ui:define>
 				</ui:decorate>			
