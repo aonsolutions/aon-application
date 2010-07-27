@@ -22,7 +22,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -47,7 +46,7 @@ public class RemesaCertificadoWizard implements Serializable {
 	private CertificateWriter certificateWriter;
 	private IEmpresaDAO empresaDAO;
 	private DataModel model;
-//	private DataModel selectedModel;
+	private DataModel selectedModel;
 	private IRemesaCertificadoEmpresa remesa;
 	private List<RemesableCertificate> selectedRemesas;
 	private List<IRemesaCertificadoEmpresaDetalle> detailList;
@@ -82,6 +81,9 @@ public class RemesaCertificadoWizard implements Serializable {
 	}
 	
 	public List<IRemesaCertificadoEmpresaDetalle> getDetailList() {
+		if(detailList==null){
+			detailList = new ArrayList<IRemesaCertificadoEmpresaDetalle>();
+		}
 		return detailList;
 	}
 
@@ -127,13 +129,13 @@ public class RemesaCertificadoWizard implements Serializable {
 		this.model = model;
 	}
 	
-//	public DataModel getSelectedModel() {
-//		return selectedModel;
-//	}
-//	
-//	public void setSelectedModel(DataModel selectedModel) {
-//		this.selectedModel = selectedModel;
-//	}
+	public DataModel getSelectedModel() {
+		return selectedModel;
+	}
+	
+	public void setSelectedModel(DataModel selectedModel) {
+		this.selectedModel = selectedModel;
+	}
 
 	private void initializeRemesasModel() throws PayrollException {
 		model = new ListDataModel(transformList(getEmpresaDAO().getRemesaCertificados(getParams())));
@@ -154,18 +156,12 @@ public class RemesaCertificadoWizard implements Serializable {
 		return list;
 	}
 
-	
-	private void refreshDetailList() throws PayrollException {
-		setDetailList(getEmpresaDAO().getDetalleRemesaCertificados(getRemesa()));
-	}
-
 	// Action Listeners
 	public void onNext(ActionEvent event) {
 		if (getCurrentStep() == 0) {
 			onSearch(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
-//			onSearch(event);
 			onValidate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
@@ -199,14 +195,16 @@ public class RemesaCertificadoWizard implements Serializable {
 	@SuppressWarnings("unchecked")
 	private void generateRemesasList() throws PayrollException{
 		setSelectedRemesas(null);
+		setDetailList(null);
 		List<RemesableCertificate> list = new LinkedList<RemesableCertificate>();
 		for (RemesableCertificate remesable : (List<RemesableCertificate>) getModel().getWrappedData()) {
 			if (remesable.isSelected()) {
-//				remesable.setDetail(getEmpresaDAO().getDetalleRemesaCertificados(remesable.getRemesa()));
 				list.add(remesable);
+				getDetailList().addAll(getEmpresaDAO().getDetalleRemesaCertificados(remesable.getRemesa()));
 			}
 		}
 		setSelectedRemesas(list);
+		setSelectedModel(new ListDataModel(list));
 	}
 
 	// ***************************************************
@@ -230,12 +228,6 @@ public class RemesaCertificadoWizard implements Serializable {
 		} catch (PayrollException e) {
 			// NADA
 		}
-	}
-	
-	public void onDiskGenerate(ActionEvent event) {
-		String loggedUser = AonUtil.getRemoteUser();
-		loggedUser = StringUtils.substringBefore(loggedUser, "@");
-		onZipGenerate(event);
 	}
 	
 	public void onDownloadDisk(ActionEvent event) {
@@ -277,15 +269,8 @@ public class RemesaCertificadoWizard implements Serializable {
 	}
 
 	public void onSelect(ActionEvent event) {
-		setCurrentStep(2);
-		RemesableCertificate remesa = (RemesableCertificate)getModel().getRowData();
-//		IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa)getModel().getRowData();
-		setRemesa(remesa.getRemesa());
-		try {
-			refreshDetailList();
-		} catch (PayrollException e) {
-			// NADA
-		}
+		RemesableCertificate r = (RemesableCertificate) getSelectedModel().getRowData();
+		r.setShowEmployees(!r.isShowEmployees());
 	}
 	
 	public void onSearch(ActionEvent event) {
@@ -308,35 +293,31 @@ public class RemesaCertificadoWizard implements Serializable {
 	private void processAll(boolean selected) {
 		for (int i = 0; i < getModel().getRowCount(); i++) {
 			getModel().setRowIndex(i);
-			RemesableCertificate r = (RemesableCertificate) getModel()
-					.getRowData();
+			RemesableCertificate r = (RemesableCertificate) getModel().getRowData();
 			r.setSelected(selected);
 		}
 	}
 	
 	public void onZipGenerate(ActionEvent event) {
-		// Crear un bufer para leer los archivos
 		byte[] buf = new byte[1024];
 		try {
-			// Crear el archivo ZIP
 			File file = File.createTempFile("aon-zip", ".ZIP");
 			FileOutputStream fos = new FileOutputStream(file);
 			ZipOutputStream out = new ZipOutputStream(fos);
 			
-			// Comprimir los archivos
 			for(RemesableCertificate remesable: getSelectedRemesas()){
 				setFileOutput(getCertificateWriter().createCertificate(remesable.getRemesa(), getEmpresaDAO().getDetalleRemesaCertificados(remesable.getRemesa())));
-				
 				FileInputStream in = new FileInputStream(getFileOutput().getFile());
-				// Agregar las entradas ZIP al outputstream.
 				out.putNextEntry(new ZipEntry(getCertificateWriter().getCertificate().getFichero()+".xml"));
-				// Transferencia de bytes desde el archivo original al archivo ZIP
 				int len;
 				while ((len = in.read(buf)) > 0) {
 					out.write(buf, 0, len);
 				}
 				out.closeEntry();
 				in.close();
+				
+				remesable.getRemesa().setEstado(FileStatus.GENERADO);
+				getEmpresaDAO().accept(remesable.getRemesa());
 			}
 			
 			out.close();
@@ -345,7 +326,7 @@ public class RemesaCertificadoWizard implements Serializable {
 			output.setErrors(new ArrayList<Exception>());
 			setFileOutput(output);
 		} catch (IOException e) {
-			System.out.println("fallo");
+			AonUtil.addErrorMessage(e.getMessage());
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			// No se lanza excepción, que vaya a la última página.
@@ -358,7 +339,7 @@ public class RemesaCertificadoWizard implements Serializable {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-			String fileName = "out";
+			String fileName = "aon-out";
 			response.setContentType(MimeType.MIME_ZIP.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".zip\";");
 

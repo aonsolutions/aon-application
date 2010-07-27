@@ -1,10 +1,8 @@
 package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.Serializable;
-import java.util.List;
 
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
-import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 
 public class RemesableCertificate implements Serializable {
 	
@@ -12,6 +10,7 @@ public class RemesableCertificate implements Serializable {
 
 	private boolean selected;
 	private IRemesaCertificadoEmpresa remesa;
+	private boolean showEmployees;
 	
 	public boolean isSelected() {
 		return selected;
@@ -24,6 +23,12 @@ public class RemesableCertificate implements Serializable {
 	}
 	public void setRemesa(IRemesaCertificadoEmpresa remesa) {
 		this.remesa = remesa;
+	}
+	public boolean isShowEmployees() {
+		return showEmployees;
+	}
+	public void setShowEmployees(boolean showEmployees) {
+		this.showEmployees = showEmployees;
 	}
 		
 }

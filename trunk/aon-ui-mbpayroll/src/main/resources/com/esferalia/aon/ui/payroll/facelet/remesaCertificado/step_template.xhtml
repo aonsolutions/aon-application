@@ -34,7 +34,15 @@
 							value="#{payrollBundle.payroll_forward}"
 							action="#{remesaCertificadoWizard.next}"
 							actionListener="#{remesaCertificadoWizard.onNext}"
-							rendered="#{remesaCertificadoWizard.nextAvailable}"
+							rendered="#{remesaCertificadoWizard.nextAvailable and remesaCertificadoWizard.currentStep!=2}"
+							styleClass="aon-finding-toolbar-item aon-icon-next" />
+						<aon:commandButton id="next-waitProccess"
+							value="#{payrollBundle.payroll_forward}"
+							action="#{remesaCertificadoWizard.next}"
+							actionListener="#{remesaCertificadoWizard.onNext}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')"
+							rendered="#{remesaCertificadoWizard.nextAvailable and remesaCertificadoWizard.currentStep==2}"
 							styleClass="aon-finding-toolbar-item aon-icon-next" />
 
 						<aon:commandButton id="end"
