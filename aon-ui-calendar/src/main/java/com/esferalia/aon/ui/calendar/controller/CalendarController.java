@@ -36,7 +36,7 @@ public class CalendarController extends BasicController {
 			for (DayType day : DayType.values()) {
 				String name = day.getName(locale);
 				SelectItem item = new SelectItem(day, name);
-				if (item.getLabel().equals("V")) {
+				if (item.getLabel().equals("V")||item.getLabel().equals("F")) {
 					return dayTypes;
 				} else {
 					dayTypes.add(item);

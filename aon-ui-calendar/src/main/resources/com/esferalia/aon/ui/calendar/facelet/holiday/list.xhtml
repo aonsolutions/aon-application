@@ -8,23 +8,22 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="calendarList">
+		<aon:form id="holidayList">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_menu}"  />
-				<ui:param name="controller" value="#{calendar}" />
+				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_holiday}"  />
+				<ui:param name="controller" value="#{holiday}" />
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{calendar}" />
+					<ui:param name="controller" value="#{holiday}" />
 					<ui:define name="columns">
 						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_description}"  />
 							</f:facet>
 							<aon:outputText value="#{to.description}">
-								<aon:abbreviateConverter maxWidth="50" />
-							</aon:outputText>
+								</aon:outputText>
 						</aon:column>
 					</ui:define>
 				</ui:decorate>			
