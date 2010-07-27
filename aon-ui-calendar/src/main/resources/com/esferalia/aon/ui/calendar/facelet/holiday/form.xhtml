@@ -32,7 +32,7 @@
 						value="#{calendarBundle.aon_calendar_holiday}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Holiday_id"
-							value="#{to.holiday.id}" size="5"
+							value="#{holiday.to.holiday.id}" size="5"
 							lookup="#{holidayLookup}" reRender="Holiday_name" />
 						<aon:lookupButton
 							windowTitle="#{calendarBundle.aon_calendar_holiday}"
@@ -42,7 +42,7 @@
 							actionType="list">
 						</aon:lookupButton>
 						<aon:inputText id="Holiday_id_name"
-							value="#{to.holiday.description}"
+							value="#{holiday.to.holiday.description}"
 							disabled="true" size="60" />
 					</aon:div>
 				</aon:panelGrid>
