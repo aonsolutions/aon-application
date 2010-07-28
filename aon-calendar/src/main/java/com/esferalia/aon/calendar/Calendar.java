@@ -2,12 +2,19 @@ package com.esferalia.aon.calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.common.ITransferObject;
+import com.esferalia.aon.calendar.enumeration.CalendarSource;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
 @Entity
@@ -17,6 +24,12 @@ public class Calendar implements ITransferObject{
 	private static final long serialVersionUID = -3190986972412754073L;
 
 	private Integer id;
+
+	private Holiday holiday;
+	
+	private CalendarSource source;
+
+	private Integer sourceId;
 
     private String description;
     
@@ -60,6 +73,37 @@ public class Calendar implements ITransferObject{
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn( name="holiday", nullable = false)	
+	@ForeignKey(name = "FK_CALENDAR_HOLIDAY")
+	@Index(name = "IDX_CALENDAR_HOLIDAY")
+	public Holiday getHoliday() {
+		return holiday;
+	}
+	
+	public void setHoliday(Holiday holiday) {
+		this.holiday = holiday;
+	}
+	
+	@Column(name = "source")
+	public CalendarSource getSource() {
+		return source;
+	}
+
+	public void setSource(CalendarSource source) {
+		this.source = source;
+	}
+
+	@Column(name = "source_id")
+	@Index(name = "IDX_CALENDAR_SOURCE")
+	public Integer getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(Integer sourceId) {
+		this.sourceId = sourceId;
 	}
 
 	public String getDescription() {
