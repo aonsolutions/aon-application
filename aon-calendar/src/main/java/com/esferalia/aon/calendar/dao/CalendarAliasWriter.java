@@ -20,16 +20,19 @@ public class CalendarAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-TRUNK/aon-calendar/src/main/java/com/esferalia/aon/calendar/dao/ICalendarAlias.java");
-		String[] classes = new String[5]; 
-		classes[0] = Calendar.class.getName();
-		classes[1] = CalendarHoliday.class.getName();
-		classes[2] = CalendarPeriod.class.getName();
-		classes[3] = Holiday.class.getName();
-		classes[4] = HolidayDetail.class.getName();
+		
+		String[] classes = new String[] {
+				Calendar.class.getName(),
+				CalendarHoliday.class.getName(),
+				CalendarPeriod.class.getName(),
+				Holiday.class.getName(),
+				HolidayDetail.class.getName() 
+				};
 		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.esferalia.aon.calendar.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
 		System.out.println("Alias generados");
 	}
+	
 }

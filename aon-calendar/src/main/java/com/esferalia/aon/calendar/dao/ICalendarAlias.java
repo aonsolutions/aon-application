@@ -128,12 +128,6 @@ public interface ICalendarAlias {
 	*/
 	String  CALENDAR_WEDNESDAY_HOURS = CALENDAR_ENTRY.getAliasNames()[17];
 
-	/** 
-	* Alias value: Calendar_year
-	* Hibernate value: Calendar.year
-	*/
-	String  CALENDAR_YEAR = CALENDAR_ENTRY.getAliasNames()[18];
-
 
 
 	/** 
@@ -312,10 +306,10 @@ public interface ICalendarAlias {
 	String  HOLIDAY_EDITABLE = HOLIDAY_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Holiday_holiday
-	* Hibernate value: Holiday.holiday
+	* Alias value: Holiday_holiday_id
+	* Hibernate value: Holiday.holiday.id
 	*/
-	String  HOLIDAY_HOLIDAY = HOLIDAY_ENTRY.getAliasNames()[2];
+	String  HOLIDAY_HOLIDAY_ID = HOLIDAY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Holiday_id
