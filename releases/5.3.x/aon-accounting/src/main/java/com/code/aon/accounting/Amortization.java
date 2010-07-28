@@ -237,27 +237,29 @@ public class Amortization implements ITransferObject {
 
 	@Transient
 	public void calculateTotals(List<AmortizationDetail> list)  {
-		double accumulated = 0.0;
-		double pending = 0.0;
-		double fiscalAccumulated = 0.0;
-		double fiscalPending = 0.0;
-		boolean first = true;
-		for (AmortizationDetail detail: list) {
-			if (first) {
-				pending = detail.getAmortization().getAmount();
-				fiscalPending = detail.getAmortization().getAmount();
-				first = false;
+		if (list != null) {
+			double accumulated = 0.0;
+			double pending = 0.0;
+			double fiscalAccumulated = 0.0;
+			double fiscalPending = 0.0;
+			boolean first = true;
+			for (AmortizationDetail detail: list) {
+				if (first) {
+					pending = detail.getAmortization().getAmount();
+					fiscalPending = detail.getAmortization().getAmount();
+					first = false;
+				}
+				accumulated = CommonUtil.round(accumulated + detail.getAllocation());
+				fiscalAccumulated = CommonUtil.round(fiscalAccumulated + detail.getFiscalAllocation());
+	
+				pending = CommonUtil.round(pending - detail.getAllocation());
+				fiscalPending = CommonUtil.round(fiscalPending - detail.getFiscalAllocation());
+	
+				detail.setAccumulated(accumulated);
+				detail.setFiscalAccumulated(fiscalAccumulated);
+				detail.setPending(pending);
+				detail.setFiscalPending(fiscalPending);
 			}
-			accumulated = CommonUtil.round(accumulated + detail.getAllocation());
-			fiscalAccumulated = CommonUtil.round(fiscalAccumulated + detail.getFiscalAllocation());
-
-			pending = CommonUtil.round(pending - detail.getAllocation());
-			fiscalPending = CommonUtil.round(fiscalPending - detail.getFiscalAllocation());
-
-			detail.setAccumulated(accumulated);
-			detail.setFiscalAccumulated(fiscalAccumulated);
-			detail.setPending(pending);
-			detail.setFiscalPending(fiscalPending);
 		}
 	}
 

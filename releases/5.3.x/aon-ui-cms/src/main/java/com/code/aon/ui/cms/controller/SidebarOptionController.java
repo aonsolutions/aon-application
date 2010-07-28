@@ -119,12 +119,4 @@ public class SidebarOptionController extends BasicI18nController implements IOrd
 		}
 	}
 
-	protected void afterRemoveSelected(){
-		try {
-			orderedControllerSupport.reorderObjects(this);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-	}
-
 }

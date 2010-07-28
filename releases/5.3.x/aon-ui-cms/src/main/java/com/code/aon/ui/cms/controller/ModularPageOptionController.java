@@ -121,12 +121,4 @@ public class ModularPageOptionController extends BasicI18nController implements 
 		}
 	}
 
-	protected void afterRemoveSelected(){
-		try {
-			orderedControllerSupport.reorderObjects(this);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-	}
-
 }
