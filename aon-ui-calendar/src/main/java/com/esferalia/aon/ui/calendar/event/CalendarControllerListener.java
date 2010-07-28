@@ -1,7 +1,5 @@
 package com.esferalia.aon.ui.calendar.event;
 
-import java.util.GregorianCalendar;
-
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -32,8 +30,6 @@ public class CalendarControllerListener extends ControllerAdapter {
 			calendar.setSaturdayHours(0);
 			calendar.setSunday(DayType.HOLIDAY);
 			calendar.setSundayHours(0);
-			GregorianCalendar g = new GregorianCalendar();
-			calendar.setYear(g.get(g.YEAR));
 	}
 
 
