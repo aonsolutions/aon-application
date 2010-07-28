@@ -3,10 +3,17 @@ package com.code.aon.ui.company.event;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.company.Enterprise;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
@@ -23,6 +30,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  */
 public class CompanyControllerListener extends ControllerAdapter {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyControllerListener.class.getName());
+	
 	/**
 	 * Initializes controller fields and loads the addresses and medias of the company
 	 * 
@@ -110,6 +119,8 @@ public class CompanyControllerListener extends ControllerAdapter {
 			
 			if(c.isAddressDirty()){
 				saveRegistryAddress(c.getMainAddress());
+				Enterprise enterprise = obtainEnterprise(c.getMainAddress());
+				updateWorkPlace(c.getMainAddress(), enterprise);
 			}
 			
 		} catch (ManagerBeanException e) {
@@ -128,31 +139,35 @@ public class CompanyControllerListener extends ControllerAdapter {
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try{
 			ICompanyController c = (ICompanyController)event.getController();
+			Company company = (Company) c.getTo();
+			
+			Enterprise enterprise = addEnterprise(company);
 
 			if (c.isPhoneDirty()){
 				c.getPhone().setMediaType(MediaType.FIXED_PHONE);
-				c.getPhone().setRegistry((Company)c.getTo());
+				c.getPhone().setRegistry(company);
 				saveRegistryMedia(c.getPhone());
 			}
 			if (c.isFaxDirty()){
 				c.getFax().setMediaType(MediaType.FAX);
-				c.getFax().setRegistry((Company)c.getTo());
+				c.getFax().setRegistry(company);
 				saveRegistryMedia(c.getFax());
 			}
 			if (c.isEmailDirty()){
 				c.getEmail().setMediaType(MediaType.EMAIL);
-				c.getEmail().setRegistry((Company)c.getTo());
+				c.getEmail().setRegistry(company);
 				saveRegistryMedia(c.getEmail());
 			}
 			if (c.isWebDirty()){
 				c.getWeb().setMediaType(MediaType.WEB);
-				c.getWeb().setRegistry((Company)c.getTo());
+				c.getWeb().setRegistry(company);
 				saveRegistryMedia(c.getWeb());
 			}
 			
 			if(c.isAddressDirty()){
-				c.getMainAddress().setRegistry((Company)c.getTo());
+				c.getMainAddress().setRegistry(company);
 				saveRegistryAddress(c.getMainAddress());
+				updateWorkPlace(c.getMainAddress(), enterprise);
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
@@ -174,6 +189,46 @@ public class CompanyControllerListener extends ControllerAdapter {
 	private void saveRegistryAddress(RegistryAddress mainAddress) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		rAddressBean.insertOrUpdate(mainAddress);
+	}
+	
+	private Enterprise addEnterprise( Company company ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+		Enterprise enterprise = new Enterprise();
+		enterprise.setRegistry(company);
+		return (Enterprise) bean.insert(enterprise);
+	}
+
+	private Enterprise obtainEnterprise(RegistryAddress registryAddress) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_REGISTRY_ID), registryAddress.getRegistry().getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				return (Enterprise) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining enterprise with address= " + registryAddress.getId(), e);
+		}
+		return null;
+	}		
+
+	private void updateWorkPlace(RegistryAddress address, Enterprise enterprise) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
+		WorkPlace workPlace = null;
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ADDRESS_ID), address.getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			workPlace = (WorkPlace) list.get(0);
+		} else {
+			workPlace = new WorkPlace();
+			workPlace.setEnterprise( enterprise );
+			workPlace.setAddress( address );
+			workPlace.setActive( true );
+		}
+		workPlace.setDescription( address.getFullAddress() );
+		bean.insertOrUpdate(workPlace);
 	}
 	
 }

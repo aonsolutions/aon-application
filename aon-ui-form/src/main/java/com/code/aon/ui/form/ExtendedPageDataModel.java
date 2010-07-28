@@ -222,6 +222,16 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
     }
 	
 	/**
+	 * Refresh.
+	 */
+	public void refresh() {
+		this.page = getPage( this.page.getStart(), dataProvider.getPageLimit());
+		if ( this.page.isEmpty() ) {
+			this._rowIndex = -1;
+		}
+	}
+	
+	/**
 	 * Checks if is sortable.
 	 * 
 	 * @return true, if is sortable
