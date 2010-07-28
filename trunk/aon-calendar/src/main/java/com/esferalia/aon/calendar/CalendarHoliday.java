@@ -16,7 +16,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.calendar.enumeration.DayType;
 
 
 @Entity
@@ -36,9 +35,6 @@ public class CalendarHoliday implements ITransferObject {
     
     /** The date. */
     private Date date;
-    
-    /** The type. */
-    private DayType type;
     
     @Id
     @GeneratedValue
@@ -79,16 +75,4 @@ public class CalendarHoliday implements ITransferObject {
 		this.date = date;
 	}
 
-	public DayType getType() {
-		return type;
-	}
-
-	public void setType(DayType type) {
-		this.type = type;
-	}
-    
-    
-
-  
-	
 }

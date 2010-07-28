@@ -159,12 +159,6 @@ public interface ICalendarAlias {
 	*/
 	String  CALENDAR_HOLIDAY_ID = CALENDAR_HOLIDAY_ENTRY.getAliasNames()[3];
 
-	/** 
-	* Alias value: CalendarHoliday_type
-	* Hibernate value: CalendarHoliday.type
-	*/
-	String  CALENDAR_HOLIDAY_TYPE = CALENDAR_HOLIDAY_ENTRY.getAliasNames()[4];
-
 
 
 	/** 
