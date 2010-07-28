@@ -20,8 +20,6 @@ public class Calendar implements ITransferObject{
 
     private String description;
     
-    private Integer year;
-    
     private String comments;
     
     private DayType monday;
@@ -74,14 +72,6 @@ public class Calendar implements ITransferObject{
 
 	public DayType getMonday() {
 		return monday;
-	}
-	
-	public Integer getYear() {
-		return year;
-	}
-
-	public void setYear(Integer year) {
-		this.year = year;
 	}
 	
 	@Column(name="comments")
