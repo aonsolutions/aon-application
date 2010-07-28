@@ -37,19 +37,11 @@
 			<version>1.5.11</version>
 			<scope>compile</scope>
 		</dependency>
-<!-- 
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.common</artifactId>
-			<version>${aon-version}</version>
-			<scope>compile</scope>
-	</dependency>
--->		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jcl</artifactId>
-			<version>1.5.8</version>
-			<scope>runtime</scope>
+			<version>1.5.11</version>
+			<scope>test</scope>
 		</dependency>
 		<!-- TEST DEPENDENCIES -->
 		<dependency>

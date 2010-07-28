@@ -21,6 +21,12 @@
 			<artifactId>aon.ui.webmail</artifactId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.dbutils</artifactId>
+				</exclusion>
+			</exclusions>				
 		</dependency>
 	</dependencies>
 </project>
