@@ -198,22 +198,17 @@ public class CertificateWriter {
 		final String SCHEMA = "enterpriseCertificate.xsd";
 		
 		try {
-			// Create a schema factory
 			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
-			// Create a validator
 			Validator validator = sf.newSchema(urls[0]).newValidator();
-			// Create a streamSource based on input XML
 			StreamSource source = new StreamSource(xml);
-			// Invoke the validation
 			validator.validate(source);
 		} catch (Exception e) {
 			String msg = "Error de formato al generar el XML";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(msg, e);
-			// NADA
 		}
 	}
 	
@@ -262,7 +257,7 @@ public class CertificateWriter {
 			trabajos = getEmpleadoDAO().getTrabajos(detalle.getEmpleado());
 		}
 		catch(PayrollException e) {
-			// NADA
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 		
 		if(trabajos == null || trabajos.size() == 0) {
@@ -328,7 +323,7 @@ public class CertificateWriter {
 		try {
 			trabajosTP = getEmpleadoDAO().getTrabajosTP(detalle.getEmpleado());
 		} catch(PayrollException e) {
-			// NADA
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 		
 		if(trabajosTP != null && trabajosTP.size() > 0) {
@@ -444,7 +439,7 @@ public class CertificateWriter {
 			
 			return cotizacionList;
 		} catch(PayrollException e) {
-			// NADA
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 		
 		return null;
@@ -475,7 +470,7 @@ public class CertificateWriter {
 				return vacaciones;
 			}
 		} catch (PayrollException e) {
-			// NADA
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 		
 		return null;

@@ -226,7 +226,8 @@ public class RemesaCertificadoWizard implements Serializable {
 		try {
 			generateRemesasList();
 		} catch (PayrollException e) {
-			// NADA
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
 	}
 	
