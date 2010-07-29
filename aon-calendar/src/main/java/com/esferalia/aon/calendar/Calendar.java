@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -65,8 +66,26 @@ public class Calendar implements ITransferObject{
     
     private double anualHours;    
     
+    public Calendar() {
+    	setAnualHours(0);
+		setMonday(DayType.WORKING_DAY);
+		setMondayHours(8);
+		setTuesday(DayType.WORKING_DAY);
+		setTuesdayHours(8);
+		setWednesday(DayType.WORKING_DAY);
+		setWednesdayHours(8);
+		setThursday(DayType.WORKING_DAY);
+		setThursdayHours(8);
+		setFriday(DayType.WORKING_DAY);
+		setFridayHours(8);
+		setSaturday(DayType.NOT_WORKING_DAY);
+		setSaturdayHours(0);
+		setSunday(DayType.HOLIDAY);
+		setSundayHours(0);
+	}
+    
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.AUTO)
 	public Integer getId() {
 		return id;
 	}
@@ -76,7 +95,7 @@ public class Calendar implements ITransferObject{
 	}
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn( name="holiday", nullable = false)	
+	@JoinColumn( name="holiday")	
 	@ForeignKey(name = "FK_CALENDAR_HOLIDAY")
 	@Index(name = "IDX_CALENDAR_HOLIDAY")
 	public Holiday getHoliday() {
