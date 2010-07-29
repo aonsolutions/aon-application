@@ -8,15 +8,20 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.richfaces.model.CalendarDataModel;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.calendar.dao.ICalendarAlias;
+import com.esferalia.aon.calendar.enumeration.CalendarSource;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
-public class CalendarController extends BasicController{
+public class CalendarController extends BasicController {
 
 	private List<SelectItem> dayTypes;
 	private Integer year;
@@ -33,7 +38,48 @@ public class CalendarController extends BasicController{
 	private Date date9;
 	private Date date10;
 	private Date date11;
+	private String sourceKey;
+	private CalendarSource source;
+	private Integer sourceId;
+
+	public String getSourceKey() {
+		return sourceKey;
+	}
+
+	public void setSourceKey(String sourceKey) {
+		if(CalendarSource.ENTERPRISE.ordinal()==Integer.parseInt(sourceKey)){
+			setSource(CalendarSource.ENTERPRISE);
+		} else if(CalendarSource.WORKPLACE.ordinal()==Integer.parseInt(sourceKey)){
+			setSource(CalendarSource.WORKPLACE);
+		} else if(CalendarSource.CONTRACT.ordinal()==Integer.parseInt(sourceKey)){
+			setSource(CalendarSource.CONTRACT);
+		}
+		this.sourceKey = sourceKey;
+	}
 	
+	public CalendarSource getSource() {
+		return source;
+	}
+
+	public void setSource(CalendarSource source) {
+		this.source = source;
+	}
+	
+	public Integer getSourceId() {
+		return sourceId;
+	}
+	
+	public void setSourceId(Integer sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
 	
 	public Date getDate0() {
 		return date0;
@@ -139,14 +185,6 @@ public class CalendarController extends BasicController{
 		this.januaryModel = januaryModel;
 	}
 
-	public Integer getYear() {
-		return year;
-	}
-
-	public void setYear(Integer year) {
-		this.year = year;
-	}
-
 	public List<SelectItem> getAllDayTypes() {
 		
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
@@ -179,8 +217,10 @@ public class CalendarController extends BasicController{
 		return dayTypes;
 	}
 	
-	public void onReset(ActionEvent e){
-		
+	// Action Listeners
+	@Override
+	public void onReset(ActionEvent event){
+//		setYear(Calendar.getInstance().get(Calendar.YEAR));
 		GregorianCalendar cal= new GregorianCalendar();
 		this.setYear(cal.get(Calendar.YEAR));
 		cal.set(Calendar.MONTH,0);
@@ -207,6 +247,29 @@ public class CalendarController extends BasicController{
 		this.setDate10(cal.getTime());
 		cal.set(Calendar.MONTH,11);
 		this.setDate11(cal.getTime());
+		super.onReset(event);
+	}
+	
+	public void onInitialize(ActionEvent event){
+		try {
+			clearCriteria();
+			getCriteria().addEqualExpression(getFieldName(ICalendarAlias.CALENDAR_SOURCE), getSource());
+			getCriteria().addEqualExpression(getFieldName(ICalendarAlias.CALENDAR_SOURCE_ID), getSourceId());
+			onSearch(event);
+			if(getModel().getRowCount() == 0){
+				onReset(event);
+				((com.esferalia.aon.calendar.Calendar)getTo()).setSource(getSource());
+				((com.esferalia.aon.calendar.Calendar)getTo()).setSourceId(getSourceId());
+			} else {
+				onSelectFirst(event);
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
 	}
 
+	public void onChangeYear(ActionEvent event){
+		
+	}
 }
