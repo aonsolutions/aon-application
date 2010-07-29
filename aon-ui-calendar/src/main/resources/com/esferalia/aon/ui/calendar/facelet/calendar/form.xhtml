@@ -19,7 +19,6 @@
 				<ui:param name="controller" value="#{calendar}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
-				
 					<aon:htmlCommandLink id="export2pdf" value="CALENDARIO"
 						title="Listado Pdf"
 						styleClass="aon-finding-toolbar-item aon-icon-info"
@@ -38,8 +37,7 @@
 							<aon:inputText id="Calendar_description" size="40" maxlength="32"
 								value="#{calendar.to.description}" required="true" />
 							<aon:outputLabel value="#{bundle.aon_year}" />
-							<aon:inputText id="Calendar_year" size="10" maxlength="4"
-								value="#{calendar.year}" />
+							<rich:inputNumberSpinner minValue="2000" value="#{calendar.year}"  maxValue="2100"/>
 							<aon:outputLabel
 								value="#{calendarBundle.aon_calendar_anual_hours}" />
 							<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
