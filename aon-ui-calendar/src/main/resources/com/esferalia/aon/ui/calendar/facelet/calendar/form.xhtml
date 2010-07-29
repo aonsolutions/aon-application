@@ -15,10 +15,12 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{calendarBundle.aon_calendar_menu}" />
-				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="controller" value="#{calendar}" />
+				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="skipSpin" value="true" />
 				
 				<ui:define name="beforeSpinToolbarContent">
+				
 					<aon:htmlCommandLink id="export2pdf" value="CALENDARIO"
 						title="Listado Pdf"
 						styleClass="aon-finding-toolbar-item aon-icon-info"
@@ -36,12 +38,23 @@
 							<aon:outputLabel value="#{calendarBundle.aon_calendar_calendar}" />
 							<aon:inputText id="Calendar_description" size="40" maxlength="32"
 								value="#{calendar.to.description}" required="true" />
+							
 							<aon:outputLabel value="#{bundle.aon_year}" />
-							<rich:inputNumberSpinner minValue="2000" value="#{calendar.year}"  maxValue="2100"/>
+							<rich:inputNumberSpinner value="#{calendar.year}" 
+								inputSize="4" minValue="2010" maxValue="2100"
+								enableManualInput="true" step="1"
+								ignoreDupResponses="true"
+								cycled="false"  style="width:5px;height:5px;" >
+								<a4j:support event="onchange" reRender="tabPanel"
+									actionListener="#{calendar.onChangeYear}"
+									ignoreDupResponses="true" />
+							</rich:inputNumberSpinner>
+							
 							<aon:outputLabel
 								value="#{calendarBundle.aon_calendar_anual_hours}" />
 							<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
 								value="#{calendar.to.anualHours}" />
+							
 							<aon:outputLabel value="#{bundle.aon_comment}" />
 							<aon:inputTextarea id="Calendar_comments"
 								value="#{calendar.to.comments}" cols="60" rows="6">
@@ -49,6 +62,7 @@
 							</aon:inputTextarea>
 						</aon:panelGrid>
 					</aon:div>
+					
 					<aon:div styleClass="aon-scroll-area">
 						<aon:panelGrid columns="2">
 							<aon:outputLabel value="#{calendarBundle.aon_calendar_monday}" />
@@ -127,7 +141,7 @@
 				
 				<c:if test="#{!calendar.new}">
 					<aon:div>
-						<aon:panelTabSet>
+						<aon:panelTabSet id="tabPanel">
 							<aon:panelTab label="#{calendarBundle.aon_calendar_holidays}">
 								<ui:include src="grid.xhtml" />
 							</aon:panelTab>
