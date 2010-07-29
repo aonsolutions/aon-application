@@ -8,10 +8,10 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="controller" value="#{calendarHoliday}" />
-		<ui:param name="columnClasses"	value="aon-editDataTable-text,aon-editDataTable-text" />
+		<ui:param name="columnClasses"	value="aon-editDataTable-date,aon-editDataTable-text" />
 		<ui:param name="showDataScroller" value="#{true}"/>
 		<ui:define name="columns">
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-30">
+			<aon:column>
 				<f:facet name="header">
 					<aon:outputLabel for="Calendar_date" value="#{bundle.aon_date}" />
 				</f:facet>
@@ -33,7 +33,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 				</f:facet>
 			</aon:column>
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+			<aon:column >
 				<f:facet name="header">
 					<aon:outputLabel  value="#{bundle.aon_description}" />
 				</f:facet>
