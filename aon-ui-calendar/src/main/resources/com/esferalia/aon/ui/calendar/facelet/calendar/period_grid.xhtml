@@ -19,10 +19,10 @@
 					<aon:outputLabel value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" rendered="#{formList}" />
-				<aon:inputText id="Calendar_name" rendered="#{formEdit}" size="15"
+				<aon:inputText id="Calendar_period_description" rendered="#{formEdit}" size="15"
 					value="#{calendarPeriod.to.description}" maxlength="64" />
 				<f:facet name="footer">
-					<aon:inputText id="Calendar_name-New" required="true"
+					<aon:inputText id="Calendar_period_description-New" required="true"
 						rendered="#{formNew}" size="15" maxlength="64"
 						value="#{calendarPeriod.to.description}" />
 				</f:facet>
@@ -34,32 +34,39 @@
 						value="#{calendarBundle.aon_calendar_month}" />
 				</f:facet>
 				<aon:outputText value="#{to.month}" rendered="#{formList}" />
-				<aon:selectOneMenu value="#{controller.to.month}" rendered="#{formEdit}">
+				<aon:selectOneMenu id="Calendar_month"
+					value="#{controller.to.month}" rendered="#{formEdit}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{commonCollections.months}" />
+					<a4j:support event="onchange" reRender="#{dataTableId}" 
+						actionListener="#{calendar.onChangeMonth}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<rich:inputNumberSpinner id="Calendar_period_month-New"
-						value="#{controller.to.month}" rendered="#{formNew}"
-						inputSize="2" minValue="1" maxValue="12"
-						enableManualInput="true" step="1"
-						ignoreDupResponses="true"
-						cycled="false"  style="width:5px;height:5px;" />
+					<aon:selectOneMenu id="Calendar_month-New"
+						value="#{controller.to.month}" rendered="#{formNew}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{commonCollections.months}" />
+						<a4j:support event="onchange" reRender="#{dataTableId}" ajaxSingle="true"
+							actionListener="#{calendarController.onChangeMonth}" />
+					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
 			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel for="Calendar_startDay"
+					<aon:outputLabel for="Calendar_period_startDay"
 						value="#{calendarBundle.aon_calendar_start_day}" />
 				</f:facet>
 				<aon:outputText value="#{to.startDay}" rendered="#{formList}" />
-
-				<aon:selectOneMenu value="#{controller.to.startDay}" rendered="#{formEdit}">
+				<aon:selectOneMenu id="Calendar_period_startDay"
+					value="#{controller.to.startDay}" 
+					disabled="#{controller.to.month==null}" rendered="#{formEdit}">
 					<f:selectItems value="#{calendarCollections.monthDays}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu value="#{controller.to.startDay}" rendered="#{formNew}">
+					<aon:selectOneMenu id="Calendar_period_startDay-New"
+						value="#{controller.to.startDay}" 
+						disabled="#{controller.to.month==null}" rendered="#{formNew}">
 						<f:selectItems value="#{calendarCollections.monthDays}" />
 					</aon:selectOneMenu>
 				</f:facet>
@@ -71,19 +78,17 @@
 						value="#{calendarBundle.aon_calendar_end_day}" />
 				</f:facet>
 				<aon:outputText value="#{to.endDay}" rendered="#{formList}" />
-				<rich:inputNumberSpinner id="Calendar_period_end_day"
-					value="#{controller.to.endDay}" rendered="#{formEdit}"
-					inputSize="2" minValue="1" maxValue="31"
-					enableManualInput="true" step="1"
-					ignoreDupResponses="true"
-					cycled="false"  style="width:5px;height:5px;" />
+				<aon:selectOneMenu id="Calendar_period_end_day"
+					value="#{controller.to.endDay}" 
+					disabled="#{controller.to.month==null}" rendered="#{formEdit}">
+					<f:selectItems value="#{calendarCollections.monthDays}" />
+				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<rich:inputNumberSpinner id="Calendar_period_end_day-New"
-						value="#{controller.to.endDay}" rendered="#{formNew}"
-						inputSize="2" minValue="1" maxValue="31"
-						enableManualInput="true" step="1"
-						ignoreDupResponses="true"
-						cycled="false"  style="width:5px;height:5px;" />
+					<aon:selectOneMenu id="Calendar_period_end_day-New"
+						value="#{controller.to.endDay}" 
+						disabled="#{controller.to.month==null}" rendered="#{formNew}">
+						<f:selectItems value="#{calendarCollections.monthDays}" />
+					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
 			
