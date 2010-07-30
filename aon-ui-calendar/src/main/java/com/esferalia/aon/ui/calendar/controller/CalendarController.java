@@ -3,14 +3,9 @@ package com.esferalia.aon.ui.calendar.controller;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import org.richfaces.model.CalendarDataModel;
 
@@ -19,11 +14,10 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.dao.ICalendarAlias;
 import com.esferalia.aon.calendar.enumeration.CalendarSource;
-import com.esferalia.aon.calendar.enumeration.DayType;
 
 public class CalendarController extends BasicController {
 
-	private List<SelectItem> dayTypes;
+//	private List<SelectItem> dayTypes;
 	private Integer year;
 	private CalendarDataModel januaryModel;
 	private Date date0;
@@ -185,37 +179,53 @@ public class CalendarController extends BasicController {
 		this.januaryModel = januaryModel;
 	}
 
-	public List<SelectItem> getAllDayTypes() {
-		
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-					.getLocale();
-			dayTypes = new LinkedList<SelectItem>();
-			for (DayType day : DayType.values()) {
-				String name = day.getName(locale);
-				SelectItem item = new SelectItem(day, name);
-				dayTypes.add(item);
-			}
-		
-		return dayTypes;
-	}
-
-	public List<SelectItem> getDayTypes() {
-		
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-					.getLocale();
-			dayTypes = new LinkedList<SelectItem>();
-			for (DayType day : DayType.values()) {
-				String name = day.getName(locale);
-				SelectItem item = new SelectItem(day, name);
-				if (item.getLabel().equals("V")||item.getLabel().equals("F")) {
-					return dayTypes;
-				} else {
-					dayTypes.add(item);
-				}
-			}
-		
-		return dayTypes;
-	}
+//	public List<SelectItem> getAllDayTypes() {
+//		
+//			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+//					.getLocale();
+//			dayTypes = new LinkedList<SelectItem>();
+//			for (DayType day : DayType.values()) {
+//				String name = day.getName(locale);
+//				SelectItem item = new SelectItem(day, name);
+//				dayTypes.add(item);
+//			}
+//		
+//		return dayTypes;
+//	}
+//
+//	public List<SelectItem> getDayTypes() {
+//		
+//			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+//					.getLocale();
+//			dayTypes = new LinkedList<SelectItem>();
+//			for (DayType day : DayType.values()) {
+//				String name = day.getName(locale);
+//				SelectItem item = new SelectItem(day, name);
+//				if (item.getLabel().equals("V")||item.getLabel().equals("F")) {
+//					return dayTypes;
+//				} else {
+//					dayTypes.add(item);
+//				}
+//			}
+//		
+//		return dayTypes;
+//	}
+//	
+//	public List<SelectItem> getMonths(){
+//		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+//		if (months.get(locale) == null) {
+//			List<SelectItem> monthList = new LinkedList<SelectItem>();
+//			Month[] m = Month.values();
+//			for (int i = 0; i < m.length; i++) {
+//				Month month = m[i];
+//				String name = month.getName(locale);
+//				SelectItem item = new SelectItem(month, name);
+//				monthList.add(item);
+//			}
+//			months.put(locale,monthList);			
+//		}
+//		return months.get(locale);
+//	}
 	
 	// Action Listeners
 	@Override

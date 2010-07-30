@@ -33,37 +33,12 @@
 					<aon:outputLabel for="Calendar_month"
 						value="#{calendarBundle.aon_calendar_month}" />
 				</f:facet>
-				
-										<aon:selectOneMenu value="#{feePrintSearch.billingDateMonth}">
-							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{commonCollections.months}" />
-						</aon:selectOneMenu>
-				
-				
 				<aon:outputText value="#{to.month}" rendered="#{formList}" />
-<!--  
-				<aon:inputText id="Calendar_month"
-					value="#{controller.to.month}" rendered="#{formEdit}"
-					required="true" />
--->
-				<rich:inputNumberSpinner id="Calendar_month"
-					value="#{controller.to.month}" rendered="#{formEdit}"
-					inputSize="2" minValue="1" maxValue="12"
-					enableManualInput="true" step="1"
-					ignoreDupResponses="true"
-					cycled="false"  style="width:5px;height:5px;" />
-<!--  
-					<a4j:support event="onchange" reRender="tabPanel"
-						actionListener="#{calendar.onChangeYear}"
-						ignoreDupResponses="true" />
-				</rich:inputNumberSpinner>
--->
+				<aon:selectOneMenu value="#{controller.to.month}" rendered="#{formEdit}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{commonCollections.months}" />
+				</aon:selectOneMenu>
 				<f:facet name="footer">
-<!--  
-					<aon:inputText id="Calendar_period_month-New"
-						value="#{controller.to.month}" rendered="#{formNew}"
-						required="true" inputSize="2" />
--->						
 					<rich:inputNumberSpinner id="Calendar_period_month-New"
 						value="#{controller.to.month}" rendered="#{formNew}"
 						inputSize="2" minValue="1" maxValue="12"
@@ -79,29 +54,14 @@
 						value="#{calendarBundle.aon_calendar_start_day}" />
 				</f:facet>
 				<aon:outputText value="#{to.startDay}" rendered="#{formList}" />
-<!--  
-				<aon:inputText id="Calendar_period_start_day"
-					value="#{controller.to.startDay}" rendered="#{formEdit}"
-					required="true" />
--->
-				<rich:inputNumberSpinner id="Calendar_period_start_day"
-					value="#{controller.to.startDay}" rendered="#{formEdit}"
-					inputSize="2" minValue="1" maxValue="31"
-					enableManualInput="true" step="1"
-					ignoreDupResponses="true"
-					cycled="false"  style="width:5px;height:5px;" />
+
+				<aon:selectOneMenu value="#{controller.to.startDay}" rendered="#{formEdit}">
+					<f:selectItems value="#{calendarCollections.monthDays}" />
+				</aon:selectOneMenu>
 				<f:facet name="footer">
-<!--  
-					<aon:inputText id="Calendar_period_start_day-New"
-						value="#{controller.to.startDay}" rendered="#{formNew}"
-						required="true" inputSize="2" />
--->						
-					<rich:inputNumberSpinner id="Calendar_period_start_day-New"
-						value="#{controller.to.startDay}" rendered="#{formNew}"
-						inputSize="2" minValue="1" maxValue="31"
-						enableManualInput="true" step="1"
-						ignoreDupResponses="true"
-						cycled="false"  style="width:5px;height:5px;" />
+					<aon:selectOneMenu value="#{controller.to.startDay}" rendered="#{formNew}">
+						<f:selectItems value="#{calendarCollections.monthDays}" />
+					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
 			
@@ -111,11 +71,6 @@
 						value="#{calendarBundle.aon_calendar_end_day}" />
 				</f:facet>
 				<aon:outputText value="#{to.endDay}" rendered="#{formList}" />
-<!--  
-				<aon:inputText id="Calendar_period_end_day"
-					value="#{controller.to.endDay}" rendered="#{formEdit}"
-					required="true" />
--->
 				<rich:inputNumberSpinner id="Calendar_period_end_day"
 					value="#{controller.to.endDay}" rendered="#{formEdit}"
 					inputSize="2" minValue="1" maxValue="31"
@@ -123,11 +78,6 @@
 					ignoreDupResponses="true"
 					cycled="false"  style="width:5px;height:5px;" />
 				<f:facet name="footer">
-<!--  
-					<aon:inputText id="Calendar_period_end_day-New"
-						value="#{controller.to.endDay}" rendered="#{formNew}"
-						required="true" inputSize="2" />
--->
 					<rich:inputNumberSpinner id="Calendar_period_end_day-New"
 						value="#{controller.to.endDay}" rendered="#{formNew}"
 						inputSize="2" minValue="1" maxValue="31"
@@ -136,53 +86,6 @@
 						cycled="false"  style="width:5px;height:5px;" />
 				</f:facet>
 			</aon:column>
-<!--  
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
-				<f:facet name="header">
-					<aon:outputLabel for="Calendar_date"
-						value="#{calendarBundle.aon_calendar_fromdate}" />
-				</f:facet>
-				<aon:outputText value="#{to.fromDate}" rendered="#{formList}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-				<aon:selectInputDate id="period_initialDate"
-					value="#{controller.to.fromDate}" rendered="#{formEdit}"
-					required="true" inputSize="7"
-					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}" />
-				<f:facet name="footer">
-					<aon:selectInputDate id="periodDate-New"
-						value="#{controller.to.fromDate}" rendered="#{formNew}"
-						required="true" inputSize="7"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-				</f:facet>
-			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
-				<f:facet name="header">
-					<aon:outputLabel for="Calendar_date"
-						value="#{calendarBundle.aon_calendar_todate}" />
-				</f:facet>
-				<aon:outputText value="#{to.toDate}" rendered="#{formList}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-				<aon:selectInputDate id="period_finalDate"
-					value="#{controller.to.toDate}" rendered="#{formEdit}"
-					required="true" 
-					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}" />
-				<f:facet name="footer">
-					<aon:selectInputDate id="perios_finalDate-New"
-						value="#{controller.to.toDate}" rendered="#{formNew}"
-						required="true" inputSize="7"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-				</f:facet>
-			</aon:column>
--->			
 			
 			<aon:column styleClass="aon-width-10">
 				<f:facet name="header">
@@ -196,7 +99,7 @@
 
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.monday}">
-					<f:selectItems value="#{calendar.allDayTypes}" />
+					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.mondayHours}" />
@@ -205,7 +108,7 @@
 				<aon:div>
 					<aon:selectOneMenu rendered="#{formNew}"
 						value="#{controller.to.monday}">
-						<f:selectItems value="#{calendar.allDayTypes}" />
+						<f:selectItems value="#{calendarCollections.allDayTypes}" />
 					</aon:selectOneMenu>
 					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
 						value="#{controller.to.mondayHours}" />
@@ -225,7 +128,7 @@
 
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.tuesday}">
-					<f:selectItems value="#{calendar.allDayTypes}" />
+					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.tuesdayHours}" />
@@ -234,7 +137,7 @@
 				<aon:div>
 					<aon:selectOneMenu rendered="#{formNew}"
 						value="#{controller.to.tuesday}">
-						<f:selectItems value="#{calendar.allDayTypes}" />
+						<f:selectItems value="#{calendarCollections.allDayTypes}" />
 					</aon:selectOneMenu>
 					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
 						value="#{controller.to.tuesdayHours}" />
@@ -255,7 +158,7 @@
 
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.wednesday}">
-					<f:selectItems value="#{calendar.allDayTypes}" />
+					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.wednesdayHours}" />
@@ -264,7 +167,7 @@
 				<aon:div>
 					<aon:selectOneMenu rendered="#{formNew}"
 						value="#{controller.to.wednesday}">
-						<f:selectItems value="#{calendar.allDayTypes}" />
+						<f:selectItems value="#{calendarCollections.allDayTypes}" />
 					</aon:selectOneMenu>
 					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
 						value="#{controller.to.wednesdayHours}" />
@@ -284,7 +187,7 @@
 
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.thursday}">
-					<f:selectItems value="#{calendar.allDayTypes}" />
+					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.thursdayHours}" />
@@ -293,7 +196,7 @@
 				<aon:div>
 					<aon:selectOneMenu rendered="#{formNew}"
 						value="#{controller.to.thursday}">
-						<f:selectItems value="#{calendar.allDayTypes}" />
+						<f:selectItems value="#{calendarCollections.allDayTypes}" />
 					</aon:selectOneMenu>
 					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
 						value="#{controller.to.thursdayHours}" />
@@ -313,7 +216,7 @@
 
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.friday}">
-					<f:selectItems value="#{calendar.allDayTypes}" />
+					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.fridayHours}" />
@@ -322,7 +225,7 @@
 				<aon:div>
 					<aon:selectOneMenu rendered="#{formNew}"
 						value="#{controller.to.friday}">
-						<f:selectItems value="#{calendar.allDayTypes}" />
+						<f:selectItems value="#{calendarCollections.allDayTypes}" />
 					</aon:selectOneMenu>
 					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
 						value="#{controller.to.fridayHours}" />
@@ -342,7 +245,7 @@
 
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.saturday}">
-					<f:selectItems value="#{calendar.allDayTypes}" />
+					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.saturdayHours}" />
@@ -351,7 +254,7 @@
 				<aon:div>
 					<aon:selectOneMenu rendered="#{formNew}"
 						value="#{controller.to.saturday}">
-						<f:selectItems value="#{calendar.allDayTypes}" />
+						<f:selectItems value="#{calendarCollections.allDayTypes}" />
 					</aon:selectOneMenu>
 					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
 						value="#{controller.to.saturdayHours}" />
@@ -371,7 +274,7 @@
 
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.sunday}">
-					<f:selectItems value="#{calendar.allDayTypes}" />
+					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.sundayHours}" />
@@ -380,7 +283,7 @@
 					<aon:div>
 						<aon:selectOneMenu rendered="#{formNew}"
 							value="#{controller.to.sunday}">
-							<f:selectItems value="#{calendar.allDayTypes}" />
+							<f:selectItems value="#{calendarCollections.allDayTypes}" />
 						</aon:selectOneMenu>
 						<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
 							value="#{controller.to.sundayHours}" />

@@ -8,6 +8,13 @@
 			<var>calendarBundle</var>
 		</resource-bundle>
 	</application>
+	
+		<!--  *************** COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>calendarCollections</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.calendar.controller.CalendarCollections</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- ************ CALENDAR ************* -->
 	<managed-bean>
