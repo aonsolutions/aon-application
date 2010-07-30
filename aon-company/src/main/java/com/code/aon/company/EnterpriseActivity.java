@@ -3,12 +3,17 @@
  */
 package com.code.aon.company;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -50,6 +55,9 @@ public class EnterpriseActivity implements ITransferObject {
 	
 	@Column( nullable = false )
 	private EnterpriseActivityType type;
+
+	@OneToMany(mappedBy = "activity", cascade={CascadeType.REMOVE})
+	private Set<EnterpriseCCC> cccs = new HashSet<EnterpriseCCC>();
 	
 	public Integer getId() {
 		return id;
@@ -89,6 +97,14 @@ public class EnterpriseActivity implements ITransferObject {
 
 	public void setType(EnterpriseActivityType type) {
 		this.type = type;
+	}
+
+	public Set<EnterpriseCCC> getCccs() {
+		return cccs;
+	}
+
+	public void setCccs(Set<EnterpriseCCC> cccs) {
+		this.cccs = cccs;
 	}
 
 	@Override

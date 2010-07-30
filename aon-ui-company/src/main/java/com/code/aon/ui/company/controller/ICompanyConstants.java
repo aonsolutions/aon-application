@@ -48,6 +48,8 @@ public interface ICompanyConstants {
 	
 	String ENTERPRISE_CONTROLLER_NAME = "enterprise";
 	
+	String ENTERPRISE_FORM_CONTROLLER_NAME = "enterpriseForm";
+	
 	String ENTERPRISE_TREE_CONTROLLER_NAME = "enterpriseTree";
 	
 	String ENTERPRISE_WORK_PLACE_CONTROLLER_NAME = "enterpriseWorkplace";

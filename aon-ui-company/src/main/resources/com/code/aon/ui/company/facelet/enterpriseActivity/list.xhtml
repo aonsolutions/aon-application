@@ -3,42 +3,50 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
 
-	<aon:div styleClass="aon-toolbar" >
-		<aon:commandButton id="enterpriseActivity-reset"
-			title="#{bundle.aon_key_new_accelerator}"
-			value="#{bundle.aon_reset}"
-			action="enterpriseActivity_form" actionListener="#{enterpriseActivity.onReset}"
-			styleClass="aon-finding-toolbar-item aon-icon-new" />	
-	</aon:div>
-	
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-		<ui:param name="controller" value="#{enterpriseActivity}" />
-		<ui:define name="columns">
-
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.description}" />
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_type}" />
-				</f:facet>
-				<aon:outputText value="#{to.type}" />
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{companyBundle.company_cnae_module}" />
-				</f:facet>
-				<aon:outputText value="#{to.cnae.title}"  />
-			</aon:column>
-
-		</ui:define>
-	</ui:decorate>
-
+	<ui:define name="content">
+		<aon:form>
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{companyBundle.company_activity_module}" />
+				<ui:param name="controller" value="#{enterpriseActivity}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+			</ui:include>
+			
+			<aon:div styleClass="aon-scroll-area">
+				
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{enterpriseActivity}" />
+					<ui:define name="columns">
+			
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+			
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_type}" />
+							</f:facet>
+							<aon:outputText value="#{to.type}" />
+						</aon:column>
+			
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{companyBundle.company_cnae_module}" />
+							</f:facet>
+							<aon:outputText value="#{to.cnae.title}"  />
+						</aon:column>
+			
+					</ui:define>
+				</ui:decorate>
+				
+			</aon:div>
+			
+		</aon:form>
+	</ui:define>
 </ui:composition>
