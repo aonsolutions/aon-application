@@ -149,7 +149,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CalendarPeriod_fromDate</value>
+			<value>CalendarPeriod_month</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>

@@ -54,10 +54,28 @@
 								value="#{calendarBundle.aon_calendar_anual_hours}" />
 							<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
 								value="#{calendar.to.anualHours}" />
+								
+							<aon:outputLabel for="Holiday_id"
+								value="#{calendarBundle.aon_calendar_holiday}" />
+							<aon:div styleClass="aon-lookup">
+								<aon:lookupInputText id="Holiday_id"
+									value="#{calendar.to.holiday.id}" size="5"
+									lookup="#{holidayLookup}" reRender="Holiday_name" />
+								<aon:lookupButton
+									windowTitle="#{calendarBundle.aon_calendar_holiday}"
+									minHeight="460" minWidth="650" property="#{calendar.to.holiday}"
+									lookup="#{holidayLookup}"
+									selectReRender="Holiday_id,Holiday_name"
+									actionType="list">
+								</aon:lookupButton>
+								<aon:inputText id="Holiday_name"
+									value="#{calendar.to.holiday.description}"
+									disabled="true" size="60" />
+							</aon:div>
 							
 							<aon:outputLabel value="#{bundle.aon_comment}" />
 							<aon:inputTextarea id="Calendar_comments"
-								value="#{calendar.to.comments}" cols="60" rows="6">
+								value="#{calendar.to.comments}" cols="60" rows="5">
 								<f:validateLength maximum="1024" />
 							</aon:inputTextarea>
 						</aon:panelGrid>
@@ -123,7 +141,9 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:div>
+					
 					<aon:div styleClass="aon-scroll-area">
+<!--  
 					<c:if test="#{calendar.new}">
 						<aon:panel style="height=80px"  width="100" header="#{calendarBundle.aon_calendar_import_holidays}">
 							<h:panelGrid columns="2">
@@ -136,6 +156,7 @@
 							</h:panelGrid>
 						</aon:panel>
 					</c:if>
+-->					
 					</aon:div>
 				</h:panelGrid>
 				
@@ -153,5 +174,6 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{holidayLookup}" />
 	</ui:define>
 </ui:composition>
