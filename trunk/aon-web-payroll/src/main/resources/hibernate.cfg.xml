@@ -93,6 +93,9 @@
 		<mapping class="com.code.aon.employee.ContractTracking"/>		
 		<mapping class="com.code.aon.employee.ContractType"/>		
 
+		<!-- AON-CUSTOMER Mapping files -->	
+		<mapping class="com.code.aon.customer.Customer"/>
+
 	</session-factory>
 
 </hibernate-configuration>
