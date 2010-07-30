@@ -20,7 +20,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.employee.Contract;
@@ -69,10 +68,6 @@ public class EnterpriseTree implements ICompanyConstants {
 		return new EnterpriseTreeData( wp.getId(), wp.getDescription(), EnterpriseTreeType.WORKPLACE);
 	}
 	
-	public EnterpriseTreeData getTreeData( EnterpriseActivity ea ) {
-		return new EnterpriseTreeData( ea.getId(), ea.getDescription(), EnterpriseTreeType.ACTIVITY);
-	}
-
 	public EnterpriseTreeData getTreeData( Contract c ) {
 		return new EnterpriseTreeData( c.getId(), c.getPerson().getRegistry().getFullName(), EnterpriseTreeType.CONTRACT);
 	}
@@ -91,20 +86,6 @@ public class EnterpriseTree implements ICompanyConstants {
 		}		
 	}		
 	
-	private void loadActivities( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(EnterpriseActivity.class);		
-		Criteria criteria = new Criteria();
-		String enterpriseId = bean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID);
-		criteria.addEqualExpression(enterpriseId, enterprise.getId());
-		for( ITransferObject to : bean.getList(criteria) ) {
-			EnterpriseActivity ea = (EnterpriseActivity) to;
-			TreeNodeImpl<EnterpriseTreeData> eaNode = new TreeNodeImpl<EnterpriseTreeData>();
-			EnterpriseTreeData etd = getTreeData(ea);
-			eaNode.setData(etd);
-			enterpriseNode.addChild( etd.getType().toString() + etd.getId(), eaNode );
-		}		
-	}
-
 	private void loadWorkPlaces( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);		
 		Criteria criteria = new Criteria();
@@ -130,7 +111,6 @@ public class EnterpriseTree implements ICompanyConstants {
 		rootNode.addChild( etd.getType().toString() + etd.getId(), enterpriseNode );
 		try {
 			loadWorkPlaces(enterpriseNode, enterprise);
-			loadActivities(enterpriseNode, enterprise);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
 		}
@@ -170,16 +150,6 @@ public class EnterpriseTree implements ICompanyConstants {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-
-	public void onSelectEnterpriseActivity( ActionEvent event ) {
-		try {
-			selectNode(event, ENTERPRISE_ACTIVITY_CONTROLLER_NAME, currentNode.getId());
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onSelectWorkPlace exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-	}	
 
 	public void onSelectContract( ActionEvent event ) {
 		try {

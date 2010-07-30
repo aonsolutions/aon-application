@@ -293,6 +293,18 @@ public interface ICompanyAlias {
 	*/
 	String  ENTERPRISE_REGISTRY_ID = ENTERPRISE_ENTRY.getAliasNames()[1];
 
+	/** 
+	* Alias value: Enterprise_scope_id
+	* Hibernate value: Enterprise.scope.id
+	*/
+	String  ENTERPRISE_SCOPE_ID = ENTERPRISE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Enterprise_registry_document
+	* Hibernate value: Enterprise.registry.document
+	*/
+	String  ENTERPRISE_REGISTRY_DOCUMENT = ENTERPRISE_ENTRY.getAliasNames()[3];
+
 
 
 	/** 
