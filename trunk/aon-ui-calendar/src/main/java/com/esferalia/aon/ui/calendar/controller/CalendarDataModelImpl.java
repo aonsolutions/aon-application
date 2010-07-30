@@ -17,16 +17,16 @@ public class CalendarDataModelImpl implements CalendarDataModel {
 				return null;
 			}
 			
-			CalendarDataModelItem[] items = new CalendarDataModelItem[dateArray.length];
+			CalendarDataModelItemImpl[] items = new CalendarDataModelItemImpl[dateArray.length];
 			for (int i = 0; i < dateArray.length; i++) {
 				items[i] = createDataModelItem(dateArray[i]);
-				//items[i].s
+				items[i].setToolTip("dfsadafds");
 			}
 	
 			return items;
 		}
 	
-		protected CalendarDataModelItem createDataModelItem(Date date) {
+		protected CalendarDataModelItemImpl createDataModelItem(Date date) {
 			CalendarDataModelItemImpl item = new CalendarDataModelItemImpl();
 			item.setDate(date);
 			/*Map data = new HashMap();

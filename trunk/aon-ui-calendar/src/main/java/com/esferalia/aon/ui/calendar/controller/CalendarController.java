@@ -40,6 +40,15 @@ public class CalendarController extends BasicController {
 	private String sourceKey;
 	private CalendarSource source;
 	private Integer sourceId;
+	private CalendarDataModelImpl modelo;
+	
+	public CalendarDataModelImpl getModelo() {
+		return modelo;
+	}
+
+	public void setModelo(CalendarDataModelImpl modelo) {
+		this.modelo = modelo;
+	}
 
 	public String getSourceKey() {
 		return sourceKey;
@@ -233,9 +242,26 @@ public class CalendarController extends BasicController {
 //	}
 	
 	// Action Listeners
-	@Override
-	public void onReset(ActionEvent event){
-//		setYear(Calendar.getInstance().get(Calendar.YEAR));
+
+	public void onInitCalendar(ActionEvent event){
+		
+		modelo = new CalendarDataModelImpl();
+		Date[] a = new Date[10];
+		GregorianCalendar cal0 = new GregorianCalendar();
+		cal0.set(Calendar.DAY_OF_MONTH, 12);
+		GregorianCalendar cal1 = new GregorianCalendar();
+		cal1.set(Calendar.DAY_OF_MONTH, 15);
+		GregorianCalendar cal2 = new GregorianCalendar();
+		cal2.set(Calendar.DAY_OF_MONTH, 17);
+		GregorianCalendar cal3 = new GregorianCalendar();
+		cal3.set(Calendar.DAY_OF_MONTH, 19);
+		a[0] = cal0.getTime();
+		a[1] = cal1.getTime();
+		a[2] = cal2.getTime();
+		a[3] = cal3.getTime();
+		modelo.getData(a);
+
+		
 		GregorianCalendar cal= new GregorianCalendar();
 		this.setYear(cal.get(Calendar.YEAR));
 		cal.set(Calendar.MONTH,0);
@@ -262,7 +288,7 @@ public class CalendarController extends BasicController {
 		this.setDate10(cal.getTime());
 		cal.set(Calendar.MONTH,11);
 		this.setDate11(cal.getTime());
-		super.onReset(event);
+		
 	}
 	
 	public void onInitialize(ActionEvent event){
@@ -276,6 +302,8 @@ public class CalendarController extends BasicController {
 				((com.esferalia.aon.calendar.Calendar)getTo()).setSource(getSource());
 				((com.esferalia.aon.calendar.Calendar)getTo()).setSourceId(getSourceId());
 			} else {
+				GregorianCalendar cal= new GregorianCalendar();
+				this.setYear(cal.get(Calendar.YEAR));				
 				onSelectFirst(event);
 			}
 		} catch (ManagerBeanException e) {
