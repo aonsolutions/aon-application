@@ -13,6 +13,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
 @Entity
@@ -27,7 +28,7 @@ public class CalendarPeriod implements ITransferObject{
 
     private String description;
 
-	private Integer month;
+	private Month month;
     
     private Integer startDay;
     
@@ -95,11 +96,11 @@ public class CalendarPeriod implements ITransferObject{
 		this.description = description;
 	}
 	
-    public Integer getMonth() {
+    public Month getMonth() {
 		return month;
 	}
 
-	public void setMonth(Integer month) {
+	public void setMonth(Month month) {
 		this.month = month;
 	}
 
