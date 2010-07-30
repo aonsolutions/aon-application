@@ -197,22 +197,22 @@ public interface ICalendarAlias {
 	String  CALENDAR_PERIOD_DESCRIPTION = CALENDAR_PERIOD_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: CalendarPeriod_endDay
+	* Hibernate value: CalendarPeriod.endDay
+	*/
+	String  CALENDAR_PERIOD_END_DAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: CalendarPeriod_friday
 	* Hibernate value: CalendarPeriod.friday
 	*/
-	String  CALENDAR_PERIOD_FRIDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[2];
+	String  CALENDAR_PERIOD_FRIDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: CalendarPeriod_fridayHours
 	* Hibernate value: CalendarPeriod.fridayHours
 	*/
-	String  CALENDAR_PERIOD_FRIDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: CalendarPeriod_fromDate
-	* Hibernate value: CalendarPeriod.fromDate
-	*/
-	String  CALENDAR_PERIOD_FROM_DATE = CALENDAR_PERIOD_ENTRY.getAliasNames()[4];
+	String  CALENDAR_PERIOD_FRIDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: CalendarPeriod_id
@@ -233,70 +233,76 @@ public interface ICalendarAlias {
 	String  CALENDAR_PERIOD_MONDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[7];
 
 	/** 
+	* Alias value: CalendarPeriod_month
+	* Hibernate value: CalendarPeriod.month
+	*/
+	String  CALENDAR_PERIOD_MONTH = CALENDAR_PERIOD_ENTRY.getAliasNames()[8];
+
+	/** 
 	* Alias value: CalendarPeriod_saturday
 	* Hibernate value: CalendarPeriod.saturday
 	*/
-	String  CALENDAR_PERIOD_SATURDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[8];
+	String  CALENDAR_PERIOD_SATURDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: CalendarPeriod_saturdayHours
 	* Hibernate value: CalendarPeriod.saturdayHours
 	*/
-	String  CALENDAR_PERIOD_SATURDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[9];
+	String  CALENDAR_PERIOD_SATURDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: CalendarPeriod_startDay
+	* Hibernate value: CalendarPeriod.startDay
+	*/
+	String  CALENDAR_PERIOD_START_DAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: CalendarPeriod_sunday
 	* Hibernate value: CalendarPeriod.sunday
 	*/
-	String  CALENDAR_PERIOD_SUNDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[10];
+	String  CALENDAR_PERIOD_SUNDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: CalendarPeriod_sundayHours
 	* Hibernate value: CalendarPeriod.sundayHours
 	*/
-	String  CALENDAR_PERIOD_SUNDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[11];
+	String  CALENDAR_PERIOD_SUNDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: CalendarPeriod_thursday
 	* Hibernate value: CalendarPeriod.thursday
 	*/
-	String  CALENDAR_PERIOD_THURSDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[12];
+	String  CALENDAR_PERIOD_THURSDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: CalendarPeriod_thursdayHours
 	* Hibernate value: CalendarPeriod.thursdayHours
 	*/
-	String  CALENDAR_PERIOD_THURSDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[13];
-
-	/** 
-	* Alias value: CalendarPeriod_toDate
-	* Hibernate value: CalendarPeriod.toDate
-	*/
-	String  CALENDAR_PERIOD_TO_DATE = CALENDAR_PERIOD_ENTRY.getAliasNames()[14];
+	String  CALENDAR_PERIOD_THURSDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: CalendarPeriod_tuesday
 	* Hibernate value: CalendarPeriod.tuesday
 	*/
-	String  CALENDAR_PERIOD_TUESDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[15];
+	String  CALENDAR_PERIOD_TUESDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: CalendarPeriod_tuesdayHours
 	* Hibernate value: CalendarPeriod.tuesdayHours
 	*/
-	String  CALENDAR_PERIOD_TUESDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[16];
+	String  CALENDAR_PERIOD_TUESDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: CalendarPeriod_wednesday
 	* Hibernate value: CalendarPeriod.wednesday
 	*/
-	String  CALENDAR_PERIOD_WEDNESDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[17];
+	String  CALENDAR_PERIOD_WEDNESDAY = CALENDAR_PERIOD_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: CalendarPeriod_wednesdayHours
 	* Hibernate value: CalendarPeriod.wednesdayHours
 	*/
-	String  CALENDAR_PERIOD_WEDNESDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[18];
+	String  CALENDAR_PERIOD_WEDNESDAY_HOURS = CALENDAR_PERIOD_ENTRY.getAliasNames()[19];
 
 
 

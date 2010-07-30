@@ -1,7 +1,5 @@
 package com.esferalia.aon.calendar;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,8 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -30,6 +26,12 @@ public class CalendarPeriod implements ITransferObject{
     private Calendar calendar;
 
     private String description;
+
+	private Integer month;
+    
+    private Integer startDay;
+    
+    private Integer endDay;
     
     private DayType monday;
     
@@ -59,9 +61,9 @@ public class CalendarPeriod implements ITransferObject{
     
     private double sundayHours;
     
-    private Date fromDate;
-    
-    private Date toDate;   
+//    private Date fromDate;
+//    
+//    private Date toDate;   
     
     @Id
     @GeneratedValue
@@ -91,6 +93,32 @@ public class CalendarPeriod implements ITransferObject{
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+    public Integer getMonth() {
+		return month;
+	}
+
+	public void setMonth(Integer month) {
+		this.month = month;
+	}
+
+	@Column(name="start_day")
+	public Integer getStartDay() {
+		return startDay;
+	}
+
+	public void setStartDay(Integer startDay) {
+		this.startDay = startDay;
+	}
+
+	@Column(name="end_day")
+	public Integer getEndDay() {
+		return endDay;
+	}
+
+	public void setEndDay(Integer endDay) {
+		this.endDay = endDay;
 	}
 
 	public DayType getMonday() {
@@ -205,25 +233,26 @@ public class CalendarPeriod implements ITransferObject{
 	public void setSundayHours(double sundayHours) {
 		this.sundayHours = sundayHours;
 	}
-	@Column(name="from_date")
-	@Temporal(TemporalType.DATE)
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
 	
-	@Column(name="to_date")
-	@Temporal(TemporalType.DATE)
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+//	@Column(name="from_date")
+//	@Temporal(TemporalType.DATE)
+//	public Date getFromDate() {
+//		return fromDate;
+//	}
+//
+//	public void setFromDate(Date fromDate) {
+//		this.fromDate = fromDate;
+//	}
+//	
+//	@Column(name="to_date")
+//	@Temporal(TemporalType.DATE)
+//	public Date getToDate() {
+//		return toDate;
+//	}
+//
+//	public void setToDate(Date toDate) {
+//		this.toDate = toDate;
+//	}
 	
 	
 
