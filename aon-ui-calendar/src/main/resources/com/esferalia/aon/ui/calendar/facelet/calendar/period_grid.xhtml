@@ -33,6 +33,13 @@
 					<aon:outputLabel for="Calendar_month"
 						value="#{calendarBundle.aon_calendar_month}" />
 				</f:facet>
+				
+										<aon:selectOneMenu value="#{feePrintSearch.billingDateMonth}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{commonCollections.months}" />
+						</aon:selectOneMenu>
+				
+				
 				<aon:outputText value="#{to.month}" rendered="#{formList}" />
 <!--  
 				<aon:inputText id="Calendar_month"
