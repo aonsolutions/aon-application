@@ -148,24 +148,30 @@
 								<aon:abbreviateConverter maxWidth="50" />
 							</aon:outputText>
 						</aon:column>
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">
-								<h:outputText value="#{calendarBundle.aon_calendar_fromdate}" />
+								<aon:outputLabel for="Calendar_month"
+									value="#{calendarBundle.aon_calendar_month}" />
 							</f:facet>
-							<aon:outputText value="#{to.fromDate}" >
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
+							<aon:outputText value="#{to.month}" />
+
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">
-								<h:outputText value="#{calendarBundle.aon_calendar_todate}" />
+								<aon:outputLabel for="Calendar_startDay"
+									value="#{calendarBundle.aon_calendar_start_day}" />
 							</f:facet>
-							<aon:outputText value="#{to.toDate}" >
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
+							<aon:outputText value="#{to.startDay}" />
+
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputLabel for="Calendar_period_end_day"
+									value="#{calendarBundle.aon_calendar_end_day}" />
+							</f:facet>
+							<aon:outputText value="#{to.endDay}" />
 						</aon:column>
 					</ui:define>
 				</ui:decorate>
@@ -175,61 +181,65 @@
 		</aon:div>
 		<aon:div styleClass="aon-scroll-area">
 			<h:panelGrid columns="3">
-				<rich:calendar currentDate="#{calendar.date0}" popup="false"
+				<rich:calendar value="#{calendar.date0}"
+					dataModel="#{calendarModel.calendarDataModel}" popup="false"
+					datePattern="dd/MM/yyyy" showApplyButton="false" cellWidth="25px"
+					cellHeight="25px" showWeeksBar="false" showFooter="false"
+					disabled="true">
+				</rich:calendar>
+
+				<rich:calendar value="#{calendar.date1}" popup="false"
+					datePattern="dd/MM/yyyy" showApplyButton="false" cellWidth="25px"
+					cellHeight="25px" showWeeksBar="false" showFooter="false"
+					disabled="true">
+				</rich:calendar>
+
+				<rich:calendar value="#{calendar.date2}" popup="false"
+					datePattern="dd/MM/yyyy" showApplyButton="false" cellWidth="25px"
+					cellHeight="25px" showWeeksBar="false" showFooter="false"
+					disabled="true">
+				</rich:calendar>
+
+				<rich:calendar value="#{calendar.date3}" popup="false"
+					showApplyButton="false" cellWidth="25px" cellHeight="25px"
+					showWeeksBar="false" showFooter="false" disabled="true">
+				</rich:calendar>
+				<rich:calendar value="#{calendar.date4}" popup="false"
 					showApplyButton="false" cellWidth="25px" cellHeight="25px"
 					showWeeksBar="false" showFooter="false" disabled="true">
 				</rich:calendar>
 
-				<rich:calendar currentDate="#{calendar.date1}" popup="false"
+				<rich:calendar dataModel="#{calendar.modelo}" popup="false"
 					showApplyButton="false" cellWidth="25px" cellHeight="25px"
 					showWeeksBar="false" showFooter="false" disabled="true">
 				</rich:calendar>
 
-				<rich:calendar currentDate="#{calendar.date2}" popup="false"
+				<rich:calendar dataModel="#{calendar.modelo}" popup="false"
 					showApplyButton="false" cellWidth="25px" cellHeight="25px"
 					showWeeksBar="false" showFooter="false" disabled="true">
 				</rich:calendar>
 
-				<rich:calendar currentDate="#{calendar.date3}" popup="false"
-					showApplyButton="false" cellWidth="25px" cellHeight="25px"
-					showWeeksBar="false" showFooter="false" disabled="true">
-				</rich:calendar>
-				<rich:calendar currentDate="#{calendar.date4}" popup="false"
+				<rich:calendar value="#{calendar.date7}" popup="false"
 					showApplyButton="false" cellWidth="25px" cellHeight="25px"
 					showWeeksBar="false" showFooter="false" disabled="true">
 				</rich:calendar>
 
-				<rich:calendar currentDate="#{calendar.date5}" popup="false"
+				<rich:calendar value="#{calendar.date8}" popup="false"
 					showApplyButton="false" cellWidth="25px" cellHeight="25px"
 					showWeeksBar="false" showFooter="false" disabled="true">
 				</rich:calendar>
 
-				<rich:calendar currentDate="#{calendar.date6}" popup="false"
+				<rich:calendar value="#{calendar.date9}" popup="false"
 					showApplyButton="false" cellWidth="25px" cellHeight="25px"
 					showWeeksBar="false" showFooter="false" disabled="true">
 				</rich:calendar>
 
-				<rich:calendar currentDate="#{calendar.date7}" popup="false"
+				<rich:calendar value="#{calendar.date10}" popup="false"
 					showApplyButton="false" cellWidth="25px" cellHeight="25px"
 					showWeeksBar="false" showFooter="false" disabled="true">
 				</rich:calendar>
 
-				<rich:calendar currentDate="#{calendar.date8}" popup="false"
-					showApplyButton="false" cellWidth="25px" cellHeight="25px"
-					showWeeksBar="false" showFooter="false" disabled="true">
-				</rich:calendar>
-
-				<rich:calendar currentDate="#{calendar.date9}" popup="false"
-					showApplyButton="false" cellWidth="25px" cellHeight="25px"
-					showWeeksBar="false" showFooter="false" disabled="true">
-				</rich:calendar>
-
-				<rich:calendar currentDate="#{calendar.date10}" popup="false"
-					showApplyButton="false" cellWidth="25px" cellHeight="25px"
-					showWeeksBar="false" showFooter="false" disabled="true">
-				</rich:calendar>
-
-				<rich:calendar currentDate="#{calendar.date11}" popup="false"
+				<rich:calendar value="#{calendar.date11}" popup="false"
 					disabled="true" showApplyButton="false" cellWidth="25px"
 					cellHeight="25px" showWeeksBar="false" showFooter="false">
 				</rich:calendar>
