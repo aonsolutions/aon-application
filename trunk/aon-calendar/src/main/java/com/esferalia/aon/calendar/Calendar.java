@@ -80,7 +80,7 @@ public class Calendar implements ITransferObject{
 		setFridayHours(8);
 		setSaturday(DayType.NOT_WORKING_DAY);
 		setSaturdayHours(0);
-		setSunday(DayType.HOLIDAY);
+		setSunday(DayType.NOT_WORKING_DAY);
 		setSundayHours(0);
 	}
     
