@@ -135,9 +135,10 @@ public class CompanyDisplay {
 	
 	@SuppressWarnings({ "unchecked"})
 	private void init() {
+		SessionFactory factory = null;
 		try {
 			Configuration configuration = getConfiguration();
-			SessionFactory factory =  configuration.buildSessionFactory();
+			factory =  configuration.buildSessionFactory();
 			
 			StatelessSession session = factory.openStatelessSession();
 			Criteria companyCriteria = session.createCriteria(Company.class);
@@ -156,6 +157,10 @@ public class CompanyDisplay {
 			session.close();
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting company name and logo", th );
+		} finally {
+			if ( factory != null ) {
+				factory.close();	
+			}
 		}
 	}
 	
