@@ -16,43 +16,38 @@ public class DatabaseUptodate {
 	private boolean updatable;
 	private VersionManager versionManager;
 	
-	private VersionManager getVersionManager() {
-		if (versionManager == null) {
-			versionManager = new VersionManager();
-		}
-		return versionManager; 
+	public DatabaseUptodate() {
+		versionManager = new VersionManager();		
+		setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);		
 	}
+	
 	public String getCurrentVersion() {
 		if (currentVersion == null) {
+			Connection c = null;
 			try {
 				String sessionFactoryName = HibernateUtil.getSessionFactoryName(); 
-				Connection c = HibernateUtil.getSQLConnection(sessionFactoryName);
-				setCurrentVersion( getVersionManager().getDatabaseVersion(c) );
+				c = HibernateUtil.getSQLConnection(sessionFactoryName);
+				setCurrentVersion( versionManager.getDatabaseVersion(c) );
 			} catch (AonSQLException e) {
 				AonUtil.addErrorMessage("Imposible conseguir el número de versión");
 			}
 		}
 		return currentVersion;
 	}
+	
 	public void setCurrentVersion(String currentVersion) {
 		this.currentVersion = currentVersion;
 	}
-	public boolean isUpdatable() {
-		return updatable;
-	}
-	public void setUpdatable(boolean updatable) {
+	
+	private void setUpdatable(boolean updatable) {
 		this.updatable = updatable;
 	}
 	
-	public void onCheck(ActionEvent event) {
-		setCurrentVersion( null );
-		setUpdatable(getVersionManager().getAvailableUpdateScripts(getCurrentVersion()) != null);
-	}
 	public void onUptodate(ActionEvent event) {
 		try {
 			String sessionFactoryName = HibernateUtil.getSessionFactoryName(); 
 			Connection c = HibernateUtil.getSQLConnection(sessionFactoryName);
-			getVersionManager().uptodateDatabase(c);
+			versionManager.uptodateDatabase(c);
 			setCurrentVersion( null );
 			setUpdatable(false);
 		} catch (AonSQLException e) {
@@ -63,7 +58,6 @@ public class DatabaseUptodate {
 	}
 	
 	public boolean isUptodate() {
-		onCheck(null);
 		return updatable;
 	}
 }
