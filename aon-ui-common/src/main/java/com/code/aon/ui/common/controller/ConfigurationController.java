@@ -220,6 +220,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		        	String dbVersion = (String) list.get(0);
 		        	getProperties().put(DATA_BASE_VERSION, dbVersion );
 		        }
+		        HibernateUtil.closeSession(name);
 			}
 		} catch (Throwable e) {
 			LOGGER.warn("Imposible determinar la versión");
