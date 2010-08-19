@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.code.aon.dbutils.AonSQLException;
-
 public class Main {
 
 	private static class Arguments
@@ -28,21 +26,25 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+		Connection connection = null;
 		try {
 			Arguments arguments = parseArgs(args);
 			VersionManager manager = new VersionManager();
 			Class.forName(arguments.driver);
-			Connection connection = 
-				DriverManager.getConnection(arguments.url,
-					arguments.user,
-					arguments.password);
-				manager.uptodateDatabase(connection);
+			connection = DriverManager.getConnection(arguments.url,
+					arguments.user, arguments.password);
+			manager.uptodateDatabase(connection);
 		} catch ( IllegalArgumentsException e ){
 			printUsage(args);
 			System.exit(1);
-		} catch (Exception e) {
-			System.err.printf( "%s:%s\r\n" ,e.getClass().getName(),  e.getMessage());
+		} catch ( Throwable th ) {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+			System.err.printf( "%s:%s\r\n" ,th.getClass().getName(), th.getMessage());
 			System.exit(-1);
 		}
 	}
