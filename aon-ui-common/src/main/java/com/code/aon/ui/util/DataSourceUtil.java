@@ -1,13 +1,18 @@
-package com.code.aon.dao.ldap.util;
+package com.code.aon.ui.util;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Properties;
 
+import javax.faces.context.FacesContext;
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
@@ -17,18 +22,40 @@ import com.code.aon.ldap.NameResolver;
 /**
  * Default implementation of the factory for creating Hibernate Configuration objects.
  */
-public class AonLdapUtil implements IAonObjectClasses, ILdapConstants {
+public class DataSourceUtil implements IAonObjectClasses, ILdapConstants {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AonLdapUtil.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceUtil.class.getName());
 
+	/**
+	 * Gets the application id.
+	 * 
+	 * @param context the context
+	 * @return the application id
+	 */
 	public static String getApplicationId( String context ) {
-		String application = context;
-		if ( application.startsWith("/") ) {
-			application = application.substring(1);
-		}
-		return application;
-	}    
+		return StringUtils.removeStart(context, "/");
+	}
 	
+	/**
+	 * Gets the dB properties.
+	 * 
+	 * @return the dB properties
+	 */
+	public static Properties getDBProperties() {
+    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+    	String domain = resolver.getDomain();
+    	FacesContext ctx = FacesContext.getCurrentInstance();
+    	String context = ctx.getExternalContext().getRequestContextPath();
+    	return DataSourceUtil.getDBProperties(domain, context);
+	}
+	
+    /**
+     * Gets the dB properties.
+     * 
+     * @param domain the domain
+     * @param context the context
+     * @return the dB properties
+     */
     public static Properties getDBProperties( String domain, String context ) {
     	Properties properties = new Properties();
     	String application = getApplicationId(context);
@@ -60,4 +87,25 @@ public class AonLdapUtil implements IAonObjectClasses, ILdapConstants {
     	return properties;
     }
 
+    /**
+     * Gets the connection.
+     * 
+     * @param properties the properties
+     * @return the connection
+     */
+    public static Connection getConnection( Properties properties ) {
+    	Connection connection = null;
+    	try {
+    		String driver = (String) properties.get(Environment.DRIVER);
+			Class.forName( driver );
+			String url = properties.getProperty(Environment.URL);		
+			String user = properties.getProperty(Environment.USER);
+			String password = properties.getProperty(Environment.PASS);			
+			connection = DriverManager.getConnection(url, user, password);
+    	} catch ( Throwable th ) {
+    		LOGGER.error( "Error creating connection: " + properties );
+    	}
+    	return connection;
+    }
+    
 }
