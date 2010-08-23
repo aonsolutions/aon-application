@@ -1,14 +1,16 @@
 package com.code.aon.ui.dbutils.controller;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.master.VersionManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DataSourceUtil;
 
 public class DatabaseUptodate {
 
@@ -21,15 +23,26 @@ public class DatabaseUptodate {
 		setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);		
 	}
 	
+	private Connection getConnection() {
+		Properties properties = DataSourceUtil.getDBProperties();
+		return DataSourceUtil.getConnection(properties);
+	}
+	
 	public String getCurrentVersion() {
 		if (currentVersion == null) {
-			Connection c = null;
+			Connection connection = null;
 			try {
-				String sessionFactoryName = HibernateUtil.getSessionFactoryName(); 
-				c = HibernateUtil.getSQLConnection(sessionFactoryName);
-				setCurrentVersion( versionManager.getDatabaseVersion(c) );
+				connection = getConnection();
+				setCurrentVersion( versionManager.getDatabaseVersion(connection) );
 			} catch (AonSQLException e) {
 				AonUtil.addErrorMessage("Imposible conseguir el número de versión");
+			} finally {
+				if (connection != null) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+					}
+				}				
 			}
 		}
 		return currentVersion;
@@ -44,16 +57,23 @@ public class DatabaseUptodate {
 	}
 	
 	public void onUptodate(ActionEvent event) {
+		Connection connection = null;
 		try {
-			String sessionFactoryName = HibernateUtil.getSessionFactoryName(); 
-			Connection c = HibernateUtil.getSQLConnection(sessionFactoryName);
-			versionManager.uptodateDatabase(c);
+			connection = getConnection();
 			setCurrentVersion( null );
+			versionManager.uptodateDatabase(connection);
 			setUpdatable(false);
 		} catch (AonSQLException e) {
 			String msg = "Se produjeron errores al actualizar la base de datos. \n Detalle: " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}							
 		}
 	}
 	
