@@ -18,9 +18,11 @@ import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 
 public class DomainResolver implements ILdapConstants, IAonObjectClasses {
-
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainResolver.class);
 
+	public static final String CONTROLLER_NAME = "domainResolver";
+	
     private static boolean isIPAddress( String host ) {
     	return IPAddressUtil.isIPv4LiteralAddress(host) || IPAddressUtil.isIPv6LiteralAddress(host);
     }
