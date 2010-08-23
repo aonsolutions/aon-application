@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Properties;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.imageio.ImageIO;
 
@@ -23,18 +21,15 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.company.Company;
-import com.code.aon.dao.ldap.util.AonLdapUtil;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DataSourceUtil;
 
 public class CompanyDisplay {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDisplay.class.getName());
-	
-	private static final String DOMAIN_RESOLVER = "domainResolver";
 	
 	private static final String HIBERNATE_CONFIGURATION_FILE = "/hibernate.company.cfg.xml";
 	
@@ -93,16 +88,9 @@ public class CompanyDisplay {
 	}
 
 	private Configuration getConfiguration() {
-    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER);
-    	String domain = resolver.getDomain();
-    	FacesContext ctx = FacesContext.getCurrentInstance();
-    	String context = ctx.getExternalContext().getRequestContextPath();
-		Properties properties = AonLdapUtil.getDBProperties(domain, context);
-		
 		AnnotationConfiguration configuration = new AnnotationConfiguration();
-		configuration.addProperties(properties);
+		configuration.addProperties(DataSourceUtil.getDBProperties());
 		configuration.configure(HIBERNATE_CONFIGURATION_FILE);
-		
 		return configuration;
 	}
 	
