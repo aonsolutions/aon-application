@@ -31,7 +31,7 @@ public class ImageUtilEx {
 			Collection mimeTypes = MimeUtil.getMimeTypes(data);
 			if (! mimeTypes.isEmpty() ) {
 				eu.medsea.mimeutil.MimeType type = (eu.medsea.mimeutil.MimeType) mimeTypes.iterator().next();
-				return MimeType.get(type.getMediaType());
+				return MimeType.get(type.toString());
 			}			
 			return null;			
 		} else {
