@@ -50,27 +50,19 @@
 					<aon:outputLabel for="width"
 						value="#{appBundle.resizer_width}" />
 					<rich:inputNumberSlider id="width" 
-						value="#{resizer.width}" 
-						width="500" 
-						minValue="1" 
-						maxValue="#{resizer.maxWidth}">
-						<a4j:support 
-							event="onchange" 
-							actionListener="#{resizer.onChangeWidth}"
-							reRender="main_panel" />
+						value="#{resizer.width}" width="500" 
+						minValue="1" maxValue="#{resizer.maxWidth}">
+						<a4j:support event="onchange" reRender="main_panel" 
+							requestDelay="2000"  actionListener="#{resizer.onChangeWidth}" />
 					</rich:inputNumberSlider>
 
 					<aon:outputLabel for="height"
 						value="#{appBundle.resizer_height}" />
 					<rich:inputNumberSlider id="height" 
-						value="#{resizer.height}" 
-						width="500" 
-						minValue="1" 
-						maxValue="#{resizer.maxHeight}">
-						<a4j:support 
-							event="onchange" 
-							actionListener="#{resizer.onChangeHeight}"
-							reRender="main_panel" />
+						value="#{resizer.height}" width="500" 
+						minValue="1" maxValue="#{resizer.maxHeight}">
+						<a4j:support event="onchange" reRender="main_panel" 
+							requestDelay="2000" actionListener="#{resizer.onChangeHeight}" />
 					</rich:inputNumberSlider>
 					
 					<aon:outputLabel value="#{resizer.resizeImage.name}" />
