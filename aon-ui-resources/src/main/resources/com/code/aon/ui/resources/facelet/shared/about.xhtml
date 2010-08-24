@@ -55,6 +55,9 @@
 									rendered="#{aonConfiguration.properties.databaseVersion != null}" >
 									<f:param value="#{aonConfiguration.properties.databaseVersion}" />
 								</aon:outputFormat>
+								<aon:outputFormat style="color: #000;" value="#{bundle.aon_session_id}" >
+									<f:param value="#{aonConfiguration.sessionId}" />
+								</aon:outputFormat>									
 							</h:panelGrid>	
 							<aon:div styleClass="aon-footer-box">
 								<aon:outputText value="#{bundle.aon_trademark}" />

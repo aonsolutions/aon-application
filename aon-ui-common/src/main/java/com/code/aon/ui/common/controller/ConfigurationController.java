@@ -237,6 +237,17 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
     }
 
     /**
+     * Gets the session id.
+     * 
+     * @return the session id
+     */
+    public String getSessionId() {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+    	return session.getId();
+    }
+    
+    /**
      * Logout from the current session.
      * 
      * @param event the event
