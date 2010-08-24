@@ -65,11 +65,11 @@ public class ResizeController implements ICMSConstants {
 	}
 
 	public Integer getMaxWidth() {
-		return this.getWidth();
+		return image.getWidth();
 	}
 
 	public Integer getMaxHeight() {
-		return this.getHeight();
+		return image.getHeight();
 	}
 
 	private void onInit(){
@@ -104,15 +104,17 @@ public class ResizeController implements ICMSConstants {
 	}
 	
 	public void onAccept(ActionEvent event) {
-		BufferedImage newImage = ImageUtil.scale(image, width, height);
-		File newFile = new File( file.getParentFile(), "resize_" + file.getName() );
-		ImageUtilEx.writeBufferedImage(newImage, type, newFile);
-		if ( file.delete() ) {
-			newFile.renameTo(file);
+		if ( (image.getWidth() != width) || (image.getHeight() != height) ) {
+			BufferedImage newImage = ImageUtil.scale(image, width, height);
+			File newFile = new File( file.getParentFile(), "resize_" + file.getName() );
+			ImageUtilEx.writeBufferedImage(newImage, type, newFile);
+			if ( file.delete() ) {
+				newFile.renameTo(file);
+			}
+			GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
+			controller.chargeImageList();
+			reset();
 		}
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
-		controller.chargeImageList();
-		reset();
 	}
 
 	public void onChangeWidth(ActionEvent event) throws ManagerBeanException {
