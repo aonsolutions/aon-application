@@ -155,13 +155,15 @@
 		<dependency>
 			<groupId>jfree</groupId>
 			<artifactId>jcommon</artifactId>
-			<version>[1.0.0,)</version>
+			<!--version>[1.0.0,)</version-->
+			<version>1.0.15</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>jfree</groupId>
 			<artifactId>jfreechart</artifactId>
-			<version>[1.0.0,)</version>
+			<!--version>[1.0.0,)</version-->
+			<version>1.0.12</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -285,6 +287,8 @@
 									<dependency>
 										<includes>
 											<include>axis:axis</include>
+											<include>axis:axis-saaj</include>
+											<include>axis:axis-jaxrpc</include>
 											<include>org.bouncycastle:bcmail-jdk14</include>
 											<include>org.bouncycastle:bcprov-jdk14</include>
 											<include>org.bouncycastle:bctsp-jdk14</include>
