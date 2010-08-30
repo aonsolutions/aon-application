@@ -263,7 +263,7 @@
                                                                         <filemode>755</filemode>
                                                                         <username>root</username>
                                                                         <groupname>root</groupname>
-									<directory>/var/lib/jbossas/server/default/deploy</directory>
+									<directory>/var/lib/jbossas/server/default/lib</directory>
 									<sources>
 										<source>
 											<includes>
