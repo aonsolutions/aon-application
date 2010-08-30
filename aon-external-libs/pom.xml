@@ -313,7 +313,7 @@
 <include>com.code.aon:aon.jsf.bridge:${pom.version}</include>
 <include>wsdl4j:wsdl4j:1.5.1</include>
 <include>org.slf4j:slf4j-api:1.5.11</include>
-<include>net.sf.jasperreports:jasperreports:3.7.2</include>
+<include>jasperreports:jasperreports:3.7.2</include>
 <include>oro:oro:2.0.8</include>
 										</includes>
 									</dependency>
