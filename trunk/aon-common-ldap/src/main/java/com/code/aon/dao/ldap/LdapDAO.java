@@ -313,7 +313,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	}
 
 	private List<Entry> getSubList( List<Entry> list, int offset, int count ) {
-		if ( offset >= 0 ) {
+		if ( (offset >= 0) && (count >= 0) ) {
 			int toIndex = Math.min( offset+count, list.size() );
 			LOGGER.debug( "SubList, offset={},toIndex={}", offset, toIndex );
 			return list.subList( offset, toIndex );	
