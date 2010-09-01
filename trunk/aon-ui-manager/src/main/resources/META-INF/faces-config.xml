@@ -1,0 +1,155 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.manager.i18n.messages</base-name>
+			<var>managerBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!-- ************* DOMAIN ***************** -->
+	<managed-bean>
+		<managed-bean-name>domain</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.DomainController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.Domain</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domain</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Domain_commonName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{domainControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>domainControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.event.DomainControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* DOMAIN APPLICATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>domainApplication</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.DomainApplicationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.DomainApplication</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domainApplication</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>DomainApplication_commonName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+	</managed-bean>			
+		
+	<!-- ************* DOMAIN DB CONNECTION ***************** -->
+	<managed-bean>
+		<managed-bean-name>domainDBConnection</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.DomainDBConnectionController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.DBConnnection</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domainDBConnection</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>DBConnnection_commonName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+	</managed-bean>			
+		
+	<!-- =================== Domain ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>domain_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/domain/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domain_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/domain/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domain_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/domain/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Domain DB Connection ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>domainDBConnection_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/domainDBConnection/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domainDBConnection_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/domainDBConnection/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+		
+	<!-- =================== Domain Application ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>domainApplication_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/domainApplication/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domainApplication_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/domainApplication/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
+</faces-config>
