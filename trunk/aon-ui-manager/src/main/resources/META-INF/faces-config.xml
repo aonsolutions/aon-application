@@ -9,7 +9,16 @@
 			<var>managerBundle</var>
 		</resource-bundle>
 	</application>
-	
+
+	<!-- ************* MANAGER ***************** -->
+	<managed-bean>
+		<managed-bean-name>manager</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.ManagerController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+		
 	<!-- ************* DOMAIN ***************** -->
 	<managed-bean>
 		<managed-bean-name>domain</managed-bean-name>
@@ -136,6 +145,14 @@
 			<value>DomainUser_commonName</value>
 		</managed-property>
 	</managed-bean>					
+
+	<!-- =================== Main ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>advancedMode</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/manager/advancedMode.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 		
 	<!-- =================== Domain ================= -->
 	<navigation-rule>
