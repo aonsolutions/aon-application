@@ -11,7 +11,7 @@
 		<aon:form id="domainDBConnectionList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{managerBundle.manager_db_connections}" />
+				<ui:param name="toolbarTitle" value="#{managerBundle.manager_db_connections} (#{domain.to.commonName})" />
 				<ui:param name="controller" value="#{domainDBConnection}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:define name="additionalToolbarContent">				
