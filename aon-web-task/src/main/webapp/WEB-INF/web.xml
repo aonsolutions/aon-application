@@ -196,7 +196,7 @@
  
 	<context-param>
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
-		<param-value>../aon-desktop/richFaces3.3.2.SR1/</param-value>
+		<param-value>../aon-desktop/richFaces3.3.3.Final/</param-value>
 	</context-param>
 
 	<filter>
@@ -290,7 +290,6 @@
 	<security-role><role-name>Confidentiality</role-name></security-role>
 	<security-role><role-name>TaskMonitoring</role-name></security-role>
 	
-
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonTask</resource-env-ref-name>
 	  <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
