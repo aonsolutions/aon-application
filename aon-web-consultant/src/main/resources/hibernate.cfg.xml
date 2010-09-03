@@ -162,6 +162,15 @@
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
+		<!-- AON-PROJECT Mapping files -->  
+		<mapping class="com.code.aon.project.Activity"/>
+		<mapping class="com.code.aon.project.ActivityType"/>
+		<mapping class="com.code.aon.project.DailyTracking"/>
+		<mapping class="com.code.aon.project.Dossier"/>
+		<mapping class="com.code.aon.project.DossierType"/>
+		<mapping class="com.code.aon.project.JobType"/>
+		<mapping class="com.code.aon.project.Task"/>		
+
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RecordData"/>
@@ -181,15 +190,6 @@
 
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
-
-		<!-- AON-PROJECT Mapping files -->  
-		<mapping class="com.code.aon.project.Activity"/>
-		<mapping class="com.code.aon.project.ActivityType"/>
-		<mapping class="com.code.aon.project.DailyTracking"/>
-		<mapping class="com.code.aon.project.Dossier"/>
-		<mapping class="com.code.aon.project.DossierType"/>
-		<mapping class="com.code.aon.project.JobType"/>
-		<mapping class="com.code.aon.project.Task"/>		
 
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
