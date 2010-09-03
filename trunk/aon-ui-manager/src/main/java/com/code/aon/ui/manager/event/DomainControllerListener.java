@@ -12,6 +12,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.manager.controller.DomainApplicationController;
 import com.code.aon.ui.manager.controller.DomainController;
 import com.code.aon.ui.manager.controller.DomainDBConnectionController;
+import com.code.aon.ui.manager.controller.DomainUserController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.util.AonUtil;
 
@@ -67,5 +68,8 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		dac.setDomain(domain.getCommonName());
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		ddbc.setDomain(domain.getCommonName());		
+		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
+		duc.setDomain(domain.getCommonName());		
 	}
+
 }
