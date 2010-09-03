@@ -12,15 +12,15 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.dao.ldap.util.IPerson;
 import com.code.aon.ldap.IAonObjectClasses;
 
 @EntryObject(mainObjectClass=IAonObjectClasses.CONTACT, objectClasses={IAonObjectClasses.TOP})
-public class Contact implements ILdapTransferObject {
+public class Contact implements IPerson {
 
 	private static final long serialVersionUID = 7825997921660369372L;
 
@@ -90,7 +90,7 @@ public class Contact implements ILdapTransferObject {
 	}
 	
 	@RDN
-	@Attribute(name="displayName")
+	@Attribute(name="displayName", nullable=false)
 	public String getDisplayName() {
 		return displayName;
 	}

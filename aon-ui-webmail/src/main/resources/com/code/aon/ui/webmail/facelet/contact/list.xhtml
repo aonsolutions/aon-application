@@ -31,7 +31,7 @@
 						<aon:column alias="displayName"
 							styleClass="aon-width-180 aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{webmailBundle.webmail_contact_displayName}" />
+								<aon:outputText value="#{bundle.aon_displayName}" />
 							</f:facet>
 							<aon:outputText value="#{to.displayName}"
 								styleClass="aon-list-icon #{to.contactGroup?'aon-icon-contactGroup':'aon-icon-contact'}" />
@@ -40,7 +40,7 @@
 						<aon:column alias="mail"	
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{webmailBundle.webmail_contact_email}" />
+								<aon:outputText value="#{bundle.aon_email}" />
 							</f:facet>
 							<aon:outputText value="#{to.emails}"/>
 						</aon:column>
@@ -48,7 +48,7 @@
 						<aon:column alias="homePhone"	
 							styleClass="aon-width-100 aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{webmailBundle.webmail_contact_phone}" />
+								<aon:outputText value="#{bundle.aon_phone}" />
 							</f:facet>
 							<aon:outputText value="#{to.phone}"/>
 						</aon:column>
@@ -56,7 +56,7 @@
 						<aon:column alias="mobile"
 							styleClass="aon-width-100 aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{webmailBundle.webmail_contact_cellular_phone}" />
+								<aon:outputText value="#{bundle.aon_cellular}" />
 							</f:facet>
 							<aon:outputText value="#{to.cellularPhone}"/>
 						</aon:column>
