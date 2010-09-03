@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGrid columns="2" styleClass="aon-width-500">
+		<aon:outputLabel for="Contact_organization"
+			value="#{bundle.aon_organization}" />
+		<aon:inputText id="Contact_organization"
+			maxlength="64" size="95"
+			value="#{controller.to.organization}" />
+
+		<aon:outputLabel for="Contact_title"
+			value="#{bundle.aon_contact_category}" />
+		<aon:inputText id="Contact_title"
+			maxlength="128" size="95"
+			value="#{controller.to.title}" />
+
+		<aon:outputLabel for="Contact_organization_address"
+			value="#{bundle.aon_address}" />
+		<aon:inputText id="Contact_organization_address"
+			maxlength="128" size="95"
+			value="#{controller.to.organizationAddress}" />
+
+		<aon:outputLabel for="Contact_organization_postal_code"
+			value="#{bundle.aon_postal_code}" />
+		<aon:panelGrid id="contactOrganizationAddress" columns="5" dir="true" 
+			columnClasses="aon-text-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left">
+			<aon:inputText id="Contact_organization_postal_code"
+				maxlength="16" size="11"
+				value="#{controller.to.organizationPostalCode}" />
+
+			<aon:outputLabel for="Contact_organization_city"
+				value="#{bundle.aon_city}" />
+			<aon:inputText id="Contact_organization_city"
+				maxlength="64" size="22"
+				value="#{controller.to.organizationCity}" />
+
+			<aon:outputLabel for="Contact_organization_state"
+				value="#{bundle.aon_state}" />
+			<aon:inputText id="Contact_organization_state"
+				maxlength="128" size="22"
+				value="#{controller.to.organizationState}" />
+		</aon:panelGrid>
+		<aon:outputLabel for="Contact_organization_phone"
+			value="#{bundle.aon_phone}" />
+		<aon:panelGrid id="contactOrganizationPhone" columns="5" dir="true" 
+			columnClasses="aon-text-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left,aon-text-left aon-bold aon-padding-left,aon-text-left aon-padding-left">
+			<aon:inputText id="Contact_organization_phone"
+				maxlength="32" size="16"
+				value="#{controller.to.organizationPhone}" />
+
+			<aon:outputLabel for="Contact_organization_fax"
+				value="#{bundle.aon_fax}" />
+			<aon:inputText id="Contact_organization_fax"
+				maxlength="20" size="16"
+				value="#{controller.to.organizationFax}" />
+
+			<aon:outputLabel for="Contact_organization_web"
+				value="#{bundle.aon_web}" />
+			<aon:inputText id="Contact_organization_web"
+				maxlength="20" size="35"
+				value="#{controller.to.web}" />
+
+		</aon:panelGrid>
+
+	</aon:panelGrid>
+
+</ui:composition>
