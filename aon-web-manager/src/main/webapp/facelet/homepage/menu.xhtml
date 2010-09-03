@@ -16,5 +16,11 @@
 		</aon:commandLink>
 				
 	</ui:define>
-	
+
+	<ui:define name="beforeHelpMenuContent">	
+		<aon:menuItem id="advancedMode" action="advancedMode"
+			rendered="#{!manager.administrator}"
+			value="#{managerBundle.manager_advanced_mode}" />		
+	</ui:define>
+		
 </ui:composition>
