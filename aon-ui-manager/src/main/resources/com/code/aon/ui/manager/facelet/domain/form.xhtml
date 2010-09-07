@@ -71,25 +71,27 @@
 					<aon:inputText id="Domain_host" size="40" maxlength="256"
 						value="#{domain.to.host}" />
 
-					<aon:outputLabel for="Domain_status"
-						value="#{bundle.aon_status}" />
-					<aon:inputText id="Domain_status" size="5"
-						disabled="true" value="#{domain.to.status}" />
-
-					<aon:outputLabel for="Domain_dnsManagement"
-						value="#{managerBundle.manager_domain_dnsManagement}" />
-	                <aon:selectBooleanCheckbox id="Domain_dnsManagement"
-						disabled="true" value="#{domain.to.dnsManagement}"/>
-
-					<aon:outputLabel for="Domain_userManagement"
-						value="#{managerBundle.manager_domain_userManagement}" />
-	                <aon:selectBooleanCheckbox id="Domain_userManagement"
-						disabled="true" value="#{domain.to.userManagement}"/>
-
-					<aon:outputLabel for="Domain_domainManagement"
-						value="#{managerBundle.manager_domain_domainManagement}" />
-	                <aon:selectBooleanCheckbox id="Domain_domainManagement"
-						disabled="true" value="#{domain.to.domainManagement}"/>
+					<c:if test="#{manager.administrator}">
+						<aon:outputLabel for="Domain_status"
+							value="#{bundle.aon_status}" />
+						<aon:inputText id="Domain_status" size="5"
+							value="#{domain.to.status}" />
+	
+						<aon:outputLabel for="Domain_dnsManagement"
+							value="#{managerBundle.manager_domain_dnsManagement}" />
+		                <aon:selectBooleanCheckbox id="Domain_dnsManagement"
+							value="#{domain.to.dnsManagement}"/>
+	
+						<aon:outputLabel for="Domain_userManagement"
+							value="#{managerBundle.manager_domain_userManagement}" />
+		                <aon:selectBooleanCheckbox id="Domain_userManagement"
+							value="#{domain.to.userManagement}"/>
+	
+						<aon:outputLabel for="Domain_domainManagement"
+							value="#{managerBundle.manager_domain_domainManagement}" />
+		                <aon:selectBooleanCheckbox id="Domain_domainManagement"
+							value="#{domain.to.domainManagement}"/>
+					</c:if>
 					
 				</aon:panelGrid>
 			</aon:div>

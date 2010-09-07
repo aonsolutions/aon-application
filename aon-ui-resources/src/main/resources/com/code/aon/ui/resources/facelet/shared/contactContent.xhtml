@@ -15,13 +15,13 @@
 		<aon:outputLabel for="Contact_outlookName"
 			value="#{bundle.aon_name}" />
 		<aon:inputText id="Contact_outlookName"
-			maxlength="128" size="95"
+			maxlength="128" size="95" required="#{nameRequired}"
 			value="#{controller.to.outlookName}" />
 
 		<aon:outputLabel for="Contact_surname"
 			value="#{bundle.aon_surname}" />
 		<aon:inputText id="Contact_surname"
-			maxlength="128" size="95"
+			maxlength="128" size="95" required="#{surnameRequired}"
 			value="#{controller.to.surname}" />
 
 		<aon:outputLabel for="Contact_address"
