@@ -14,6 +14,7 @@ import javax.naming.ldap.Rdn;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.slf4j.Logger;
@@ -107,10 +108,13 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	private Name getDN( ITransferObject to ) throws DAOException {
 		try {
 			String name = BeanUtils.getProperty( to, metadata.getDnHolder() );
-			return NameResolver.getName(name);
+			if (! StringUtils.isEmpty(name) ) {
+				return NameResolver.getName(name);	
+			}
 		} catch (Exception e) {
 			throw new DAOException( e );
 		}
+		return null;
 	}
 	
 	/**
@@ -216,7 +220,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			if ( result instanceof Boolean ) {
 				result = ((Boolean) result).booleanValue() ? LdapSession.TRUE_VALUE : LdapSession.FALSE_VALUE;
 			} else if (! (result instanceof byte[]) ) {
-				result = result.toString();
+				result = ObjectUtils.toString(result);
 			}
 			if ( result instanceof String ) {
 				result = StringUtils.trimToNull( (String) result );
