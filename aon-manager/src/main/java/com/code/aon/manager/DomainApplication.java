@@ -35,6 +35,10 @@ public class DomainApplication implements ITransferObject, Cloneable {
 	private DBConnnection dataSource;
 	
 	private Integer status;
+	
+	public DomainApplication() {
+		this.status = 0;
+	}
 
 	@Id
 	@GeneratedValue

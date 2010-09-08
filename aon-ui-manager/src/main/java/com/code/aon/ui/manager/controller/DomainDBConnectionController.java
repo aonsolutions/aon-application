@@ -12,7 +12,6 @@ import javax.naming.Name;
 
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ldap.NameResolver;
@@ -40,13 +39,15 @@ public class DomainDBConnectionController extends BasicController {
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		return this.ldapManagerBean;
 	}
-
+	
 	@SuppressWarnings("unchecked")
+	public List<DBConnnection> getDBConnections() throws ManagerBeanException {
+		return (List) getModel().getWrappedData();
+	}
+
 	public List<SelectItem> getDataSources() throws ManagerBeanException {
 		List<SelectItem> dataSources = new LinkedList<SelectItem>();
-		List<ITransferObject> list = (List<ITransferObject>) getModel().getWrappedData();
-		for (ITransferObject to : list) {
-			DBConnnection dbc = (DBConnnection) to;
+		for (DBConnnection dbc : getDBConnections()) {
 			SelectItem item = new SelectItem(dbc.getId(), dbc.getCommonName() );
 			dataSources.add(item);
 		}

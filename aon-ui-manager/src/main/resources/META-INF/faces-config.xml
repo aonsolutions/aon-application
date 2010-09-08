@@ -62,6 +62,35 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- ************* APPLICATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>aonApplication</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.ApplicationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.Application</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>aonApplication</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Application_commonName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+	</managed-bean>		
 
 	<!-- ************* DOMAIN APPLICATION ***************** -->
 	<managed-bean>

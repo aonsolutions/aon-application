@@ -22,8 +22,14 @@
 
 					<aon:outputLabel for="DomainApplication_commonName"
 						value="#{bundle.aon_name}" />
-					<aon:inputText id="DomainApplication_commonName"
-						size="80" required="true" disabled="#{!domainApplication.new}"
+					<aon:selectOneMenu id="DomainApplication_commonName"
+						rendered="#{domainApplication.new}" required="true" 
+						value="#{domainApplication.to.commonName}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{domainApplication.availableApplications}" />
+					</aon:selectOneMenu>						
+					<aon:inputText id="DomainApplication_commonName-New"
+						size="80" disabled="true" rendered="#{!domainApplication.new}"
 						value="#{domainApplication.to.commonName}" />
 
 					<aon:outputLabel for="DomainApplication_dataSource"
@@ -34,10 +40,12 @@
 						<f:selectItems value="#{domainDBConnection.dataSources}" />
 					</aon:selectOneMenu>						
 
-					<aon:outputLabel for="DomainApplication_status"
-						value="#{bundle.aon_status}" />
-					<aon:inputText id="DomainApplication_status" required="true"
-						size="10" value="#{domainApplication.to.status}" />
+					<c:if test="#{manager.administrator}">
+						<aon:outputLabel for="DomainApplication_status"
+							value="#{bundle.aon_status}" />
+						<aon:inputText id="DomainApplication_status" required="true"
+							size="10" value="#{domainApplication.to.status}" />
+					</c:if>
 					
 				</aon:panelGrid>
 			</aon:div>

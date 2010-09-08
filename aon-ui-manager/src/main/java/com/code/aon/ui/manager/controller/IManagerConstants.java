@@ -7,6 +7,8 @@ public interface IManagerConstants {
 	
 	String DOMAIN_CONTROLLER_NAME = "domain";
 	
+	String APPLICATION_CONTROLLER_NAME = "aonApplication";
+	
 	String DOMAIN_DB_CONNECTION_CONTROLLER_NAME = "domainDBConnection";
 	
 	String DOMAIN_APPLICATION_CONTROLLER_NAME = "domainApplication";
