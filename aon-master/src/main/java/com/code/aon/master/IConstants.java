@@ -4,6 +4,8 @@ public interface IConstants {
 
 	String CREATE_SCRIPT_PREFIX = "com/code/aon/master/create/create.database.";	
 	String UPDATE_SCRIPT_PREFIX = "com/code/aon/master/update/update.database.";	
+	String INSERT_SCRIPT_PREFIX = "com/code/aon/master/defaults/insert.database.";
+	String INSERT_DEFAULT_SCRIPT = "aon";
 	String SCRIPT_SUFFIX = ".sql";	
 	String DATABASE_VERSION_STMT = "SELECT version_number FROM db_version";
 
@@ -20,5 +22,7 @@ public interface IConstants {
 			"4.6.2", "4.7.0", "4.8.0", "4.8.1", "4.9.0", "5.0.0", "5.1.0", "5.1.1",
 			"5.2.0", "5.2.1", "5.2.2", "5.3.0", "5.3.1", "5.3.2", "5.4.0", "5.4.1"};
 
-	
+	String[] DEFAULTS = {
+			"aon-academy", "aon-ecommerce", "aon-employee", "aon-gta" };
+
 }

@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,10 @@ public class VersionManager {
 	public String[] getVersions() {
 		return IConstants.VERSIONS;
 	}
+	
+	public String getLastVersion() {
+		return IConstants.VERSIONS[IConstants.VERSIONS.length-1];
+	}
 
 	public URL getCreateScript(String version) {
 		String name = getCreateScriptName(version);
@@ -30,6 +35,11 @@ public class VersionManager {
 
 	public URL getUpdateScript(String version) {
 		String name = getUpdateScriptName(version);
+		return getScript(name);
+	}
+	
+	public URL getInsertScript(String application) {
+		String name = getInsertScriptName(application);
 		return getScript(name);
 	}
 
@@ -67,6 +77,10 @@ public class VersionManager {
 	private String getUpdateScriptName(String version) {
 		return IConstants.UPDATE_SCRIPT_PREFIX + version + IConstants.SCRIPT_SUFFIX;
 	}
+	
+	private String getInsertScriptName(String application) {
+		return IConstants.INSERT_SCRIPT_PREFIX + application + IConstants.SCRIPT_SUFFIX;
+	}	
 
 	public String getDatabaseVersion(Connection c) throws AonSQLException {
 		PreparedStatement stmt = null;
@@ -97,27 +111,61 @@ public class VersionManager {
 			}
 		}
 	}
+	
+	private void execute( Connection c, URL url ) throws IOException, AonSQLException {
+		LOGGER.info("sql script: {}", url.getFile());
+		AonSQLFile file = new AonSQLFile(url.openStream());
+		file.setFileName( url.getFile());
+		AonSQLScript script = new AonSQLScript(file, c);
+		script.execute();
+		LOGGER.info("script done !" );
+	}	
 
 	public void uptodateDatabase(Connection c) throws AonSQLException {
 		try {
 			String currentVersion = getDatabaseVersion(c);
 			URL[] urls = getAvailableUpdateScripts(currentVersion);
-			if (urls != null) {
-				AonSQLFile file;
-				AonSQLScript script;
+			if (! ArrayUtils.isEmpty(urls) ) {
 				for (URL url : urls) {
-					LOGGER.info(" ..  trying to update --> " + url.getFile());
-					file = new AonSQLFile(url.openStream());
-					file.setFileName( url.getFile());
-					script = new AonSQLScript(file, c);
-					script.execute();
-					LOGGER.info(" ..  done! ");
+					execute(c, url);
 				}
 			}
-			LOGGER.info("Database is uptodate! ");
+			LOGGER.info("Database is uptodate!");
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(),e);
 			throw new AonSQLException(e.getMessage(),e); 
 		}
 	}
+
+	public void createDatabase(Connection c) throws AonSQLException {
+		try {
+			String version = getLastVersion();
+			URL createUrl = getCreateScript(version);
+			if (createUrl != null) {
+				execute(c, createUrl);
+			}
+			URL insertUrl = getInsertScript(IConstants.INSERT_DEFAULT_SCRIPT);
+			if (insertUrl != null) {
+				execute(c, insertUrl);
+			}
+			LOGGER.info("Database is created!");
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(),e);
+			throw new AonSQLException(e.getMessage(),e); 
+		}
+	}
+	
+	public void insertApplicationDefaults(Connection c, String application) throws AonSQLException {
+		try {
+			URL insertUrl = getInsertScript(application);
+			if (insertUrl != null) {
+				execute(c, insertUrl);
+			}
+			LOGGER.info("Application {} defaults inserted!", application);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(),e);
+			throw new AonSQLException(e.getMessage(),e); 
+		}
+	}	
+
 }
