@@ -1,24 +1,19 @@
 package com.code.aon.ui.manager.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.manager.DBConnnection;
+import com.code.aon.master.VersionManager;
 
 public class DBManager {
 
@@ -27,67 +22,11 @@ public class DBManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DBManager.class);
 	
 	public static final String AON_MASTER = "aon_master";
-	
-	private static final String CREATE_SQL = "com/code/aon/master/create/create.database.sql";
-	
-	private static final String INSERT_SQL = "com/code/aon/master/defaults/default-insert.database.sql";
-	
-	private URL createSql;
-	
-	private URL defaultInsertSql;
+
+	private VersionManager versionManager;
 	
 	public DBManager() {
-		init();
-	}
-	
-	private void init() {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		createSql = cl.getResource(CREATE_SQL);
-		if ( defaultInsertSql == null ) {
-			defaultInsertSql = cl.getResource(INSERT_SQL);	
-		}
-	}
-	
-	private URL getCreateSqlURL() {
-		return createSql;
-	}
-
-	private URL getInsertSqlURL() {
-		return defaultInsertSql;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private List<String> readSqlScript( URL url, String dbName ) throws IOException {
-		InputStream in = url.openStream();
-		List<String> lines = IOUtils.readLines( in, "ISO-8859-1" );
-		for( int i = lines.size()-1; i >= 0; i-- ) {
-			String line = lines.get(i);
-			if ( line.startsWith("#") || StringUtils.isBlank(line) ) {
-				lines.remove(i);
-			}
-		}
-		List<String> statements = new LinkedList<String>();
-		StringBuffer statement = new StringBuffer();
-		for( String line : lines ) {
-			int pos = StringUtils.indexOf(line, ";" );
-			if ( pos == -1 ) {
-				if ( statement.length() > 1 ) {
-					statement.append(" ");
-				}
-				statement.append( StringUtils.trim(line) );
-			} else {
-				String part1 = StringUtils.substring(line, 0, pos);
-				if ( statement.length() > 1 ) {
-					statement.append(" ");
-				}
-				statement.append( StringUtils.trim(part1) );
-				String sql = StringUtils.replace( statement.toString(), DB_SEP + AON_MASTER + DB_SEP, DB_SEP + dbName + DB_SEP ); 
-				statements.add( sql );
-				String part2 = StringUtils.substring(line, pos+1);
-				statement = new StringBuffer( StringUtils.trim(part2) );
-			}
-		}
-		return statements;
+		this.versionManager = new VersionManager();
 	}
 	
 	private Connection getConnection( DBConnnection dbc ) throws SQLException {
@@ -95,37 +34,6 @@ public class DBManager {
 		String url = StringUtils.substringBeforeLast(dbc.getLabeledURI(), "/") + "/mysql";
 	    Connection connection = DriverManager.getConnection(url, dbc.getUid(), dbc.getUserPasswordString() );
 	    return connection;
-	}
-	
-	private void executeScript( DBConnnection dbc, URL scriptUrl ) throws AonException {
-		LOGGER.info( "Executing script {} for {}", scriptUrl, dbc);
-		List<String> statements = null;
-		try {
-			statements = readSqlScript(scriptUrl, dbc.getDBName());
-		} catch (IOException e) {
-			throw new AonException( "Error reading sql script: " + scriptUrl + ", " + e.getMessage(), e );
-		}
-	    Connection connection = null;
-	    Statement statement = null;
-		try {
-			connection = getConnection(dbc);
-			connection.setAutoCommit(false);
-			for( String sql : statements ) {
-				statement = connection.createStatement();
-				statement.execute(sql);
-				statement.close();
-			}
-		} catch ( SQLException e ) {
-			LOGGER.error(e.getMessage(), e);
-			DbUtils.closeQuietly(statement);
-			statement = null;
-			DbUtils.rollbackAndCloseQuietly(connection);
-			connection = null;
-			throw new AonException( e.getMessage(), e );
-		} finally {
-			DbUtils.closeQuietly(statement);
-			DbUtils.commitAndCloseQuietly(connection);
-		}
 	}
 	
 	public void dropDB( DBConnnection dbc ) throws SQLException {
@@ -143,6 +51,18 @@ public class DBManager {
 		}		
 	}
 
+	public boolean test( DBConnnection dbc ) throws SQLException {
+	    Connection connection = null;
+	    boolean connected = false;
+		try {
+			connection = getConnection(dbc);
+			connected = true;
+		} finally {
+			DbUtils.closeQuietly(connection);
+		}	
+		return connected;
+	}	
+	
 	public boolean exists( DBConnnection dbc ) throws SQLException {
 	    Connection connection = null;
 	    Statement statement = null;
@@ -160,8 +80,18 @@ public class DBManager {
 	}	
 	
 	public void createDB( DBConnnection dbc ) throws AonException {
-		executeScript( dbc, getCreateSqlURL() );
-		executeScript( dbc, getInsertSqlURL() );
+	    Connection connection = null;
+		try {
+			connection = getConnection(dbc);
+			this.versionManager.createDatabase(connection);
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
+			DbUtils.rollbackAndCloseQuietly(connection);
+			connection = null;
+			throw new AonException(th.getMessage(), th);
+		} finally {
+			DbUtils.commitAndCloseQuietly(connection);
+		}
 	}
 	
 }

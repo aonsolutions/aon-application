@@ -10,12 +10,10 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.Application;
-import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;

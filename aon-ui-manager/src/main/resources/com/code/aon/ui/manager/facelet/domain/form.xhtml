@@ -18,13 +18,16 @@
 				<ui:param name="removeOnClick" value="Richfaces.showModalPanel('waitProccess')" />
 				<ui:param name="removeOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="domainDBConnection" value="#{managerBundle.manager_db_connections}"
+					<aon:commandButton id="domainDBConnection" rendered="#{!domain.new}"
+						value="#{managerBundle.manager_db_connections}"
 						action="domainDBConnection_list" actionListener="#{domainDBConnection.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-master"/>
-					<aon:commandButton id="domainApplications" value="#{managerBundle.manager_applications}"
+					<aon:commandButton id="domainApplications" rendered="#{!domain.new}"
+						value="#{managerBundle.manager_applications}"
 						action="domainApplication_list" actionListener="#{domainApplication.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities"/>
-					<aon:commandButton id="domainUsers" value="#{managerBundle.manager_users}"
+					<aon:commandButton id="domainUsers" rendered="#{!domain.new}"
+						value="#{managerBundle.manager_users}"
 						action="domainUser_list" actionListener="#{domainUser.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-user"/>
 				</ui:define>				
@@ -32,22 +35,18 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:panelGrid columns="2" dir="true">
+				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="Domain_commonName"
 						value="#{bundle.aon_name}" />
 					<c:if test="#{domain.new}" >
-						<aon:div>
-							<aon:inputText id="Domain_commonName" validator="#{domain.domainNameCheck}"
-								size="14" maxlength="#{domain.domainNameMaxLength}" required="true" disabled="#{!domain.new}"
-								value="#{domain.to.commonName}" />
-							<aon:outputText value="."  styleClass="aon-bold aon-margin-left aon-margin-right" />
-							<aon:inputText id="Domain_suffix" 
-								size="20" disabled="true" value="#{domain.domainSuffix}" />
-						</aon:div>
+						<aon:inputText id="Domain_commonName"
+							validator="#{domain.domainNameCheck}" required="true"
+							size="40" maxlength="#{domain.domainNameMaxLength}" 
+							value="#{domain.to.commonName}" />
 					</c:if>
 					<c:if test="#{!domain.new}" >
-						<aon:inputText id="Domain_commonName" validator="#{domain.domainNameCheck}"
+						<aon:inputText id="Domain_commonName"
 							size="60" disabled="true" value="#{domain.to.commonName}" />
 					</c:if>
 
