@@ -1,5 +1,8 @@
 package com.code.aon.ldap;
 
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -11,7 +14,6 @@ import javax.naming.Name;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class BasicLdap {
 
@@ -126,5 +128,21 @@ public class BasicLdap {
 		}
 		return entry;
 	}
+	
+	public Entry addOrganizationUnit( Name dn ) {
+		Entry entry = null;
+		try {
+			entry = new Entry(dn);
+			entry.addObjectClasses(new String[]{TOP, ORGANIZATIONAL_UNIT});
+			entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, NameResolver.getFirstValue(dn) );
+			LOGGER.info( "Add Organization Unit entry: {}", dn );
+			getLdapSession().add(entry);
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e);
+		} finally {
+			closeSession();
+		}
+		return entry;
+	}		
 	
 }
