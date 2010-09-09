@@ -90,7 +90,80 @@
 			<property-name>pageLimit</property-name>
 			<value>-1</value>
 		</managed-property>
-	</managed-bean>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{applicationControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>applicationControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.event.ApplicationControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* ROLE ***************** -->
+	<managed-bean>
+		<managed-bean-name>role</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.RoleController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.Role</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>role</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Role_commonName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+	</managed-bean>	
+
+	<!-- ************* PROFILE ***************** -->
+	<managed-bean>
+		<managed-bean-name>profile</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.ProfileController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.Profile</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>profile</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Profile_commonName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+	</managed-bean>	
 
 	<!-- ************* DOMAIN APPLICATION ***************** -->
 	<managed-bean>
@@ -214,6 +287,18 @@
 		</navigation-case>
 	</navigation-rule>	
 
+	<!-- =================== Applications ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>aonApplication_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/aonApplication/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>aonApplication_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/aonApplication/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
 	<!-- =================== Domain DB Connection ================= -->
 	<navigation-rule>
 		<navigation-case>
