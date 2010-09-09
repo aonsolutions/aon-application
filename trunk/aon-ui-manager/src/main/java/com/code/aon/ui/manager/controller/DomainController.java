@@ -1,10 +1,14 @@
 package com.code.aon.ui.manager.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.naming.Context;
 import javax.naming.Name;
@@ -14,17 +18,16 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.dao.ldap.LdapDAO;
-import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.AccessPolicy;
 import com.code.aon.manager.Domain;
-import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.manager.enumeration.AccessPolicyType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -34,21 +37,26 @@ public class DomainController extends BasicController implements IAonObjectClass
 	
 	private final static int DOMAIN_NAME_MAX_LENGTH = 14;
 	
-	private String currentDomain;
+	private AccessPolicy accessPolicy;
+	
+	private List<SelectItem> accessPolicies;
 	
 	private BasicManagerBean ldapManagerBean;
-	
-	public DomainController() {
-		AuthPrincipal auc = UserUtils.getInstance().getPrincipal();
-		this.currentDomain = auc.getDomain();
-	}
-	
-	public String getCurrentDomain() {
-		return currentDomain;
-	}
-	
+		
 	public int getDomainNameMaxLength() {
 		return DOMAIN_NAME_MAX_LENGTH;
+	}
+	
+	public AccessPolicy getAccessPolicy() {
+		return accessPolicy;
+	}
+
+	public void setAccessPolicy(AccessPolicy accessPolicy) {
+		this.accessPolicy = accessPolicy;
+	}
+	
+	public Domain getDomain() {
+		return (Domain) getTo();
 	}
 
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) {
@@ -75,17 +83,35 @@ public class DomainController extends BasicController implements IAonObjectClass
 		return new BasicManagerBean(dao);
 	}		
 	
-	public void addAccessPolicy( String domain ) throws ManagerBeanException {
-		BasicManagerBean bean = getAccessPolicyManagerBean(domain);
-		AccessPolicy ap = new AccessPolicy();
-		ap.setCommonName(IAccessPolicy.ACCESS_POLICY[1]);
-		ap.setMaxAllowedUsers(999);
-		ap.setMaxDefinedUsers(999);
-		ap.setMaxSessions4User(999);
-		ap.setExceptionThrowableIfMaximumExceeded(true);
-		bean.insert(ap);
+	public List<SelectItem> getAccessPolicies() throws ManagerBeanException {
+		if ( accessPolicies == null) {
+			Locale locale = AonUtil.getCurrentLocale();
+			this.accessPolicies = new LinkedList<SelectItem>();
+			for (AccessPolicyType type : AccessPolicyType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type.getName(), name );
+				accessPolicies.add(item);
+			}			
+		}
+		return accessPolicies;
+	}	
+	
+	public void insertOrUpdateAccessPolicy() throws ManagerBeanException {
+		BasicManagerBean bean = getAccessPolicyManagerBean( getDomain().getCommonName() );
+		bean.insertOrUpdate(accessPolicy);
 	}
 
+	public void initAccessPolicy() throws ManagerBeanException {
+		this.accessPolicy = new AccessPolicy();
+		if (! isNew() ) {
+			BasicManagerBean bean = getAccessPolicyManagerBean( getDomain().getCommonName() );
+			List<ITransferObject> list = bean.getList(null);
+			if (! list.isEmpty() ) {
+				this.accessPolicy = (AccessPolicy) list.get(0);
+			}
+		}
+	}
+	
 	public void removeDomain( String domain, boolean selftDelete ) {
 		BasicLdap ldap = null;
 		try {

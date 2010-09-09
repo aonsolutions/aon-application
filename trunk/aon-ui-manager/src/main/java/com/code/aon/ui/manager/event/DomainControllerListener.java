@@ -3,6 +3,7 @@ package com.code.aon.ui.manager.event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.manager.Domain;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -19,13 +20,25 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainControllerListener.class);
 
 	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainController domainController = (DomainController) event.getController();
+		try {
+			domainController.initAccessPolicy();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
+	}
+
+	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainController domainController = (DomainController) event.getController();
 		Domain domain = (Domain) event.getController().getTo();
 		String name = domain.getCommonName();
 		try {
-			domainController.addAccessPolicy(name);
+			domainController.insertOrUpdateAccessPolicy();
 			domainController.createOrganizationalUnits(name);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
@@ -45,10 +58,28 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		Domain domain = (Domain) event.getController().getTo();
-		updateDomain(domain);
+		DomainController domainController = (DomainController) event.getController();
+		updateDomain(domainController.getDomain());
+		try {
+			domainController.initAccessPolicy();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
 	}
 
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainController domainController = (DomainController) event.getController();
+		try {
+			domainController.insertOrUpdateAccessPolicy();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
+	}
+	
 	private void updateDomain( Domain domain ) {
 		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
 		dac.setDomain(domain.getCommonName());
