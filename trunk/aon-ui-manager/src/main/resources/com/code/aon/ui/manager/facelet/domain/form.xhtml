@@ -68,9 +68,9 @@
 					
 				</aon:panelGrid>
 				
-				<aon:panelTabSet>
+				<aon:panelTabSet rendered="#{manager.administrator}">
 				
-					<aon:panelTab name="domainManagament" rendered="#{manager.administrator}"
+					<aon:panelTab name="domainManagament"
 						label="#{managerBundle.manager_domain_management}">
 						
 						<aon:panelGrid columns="2">
@@ -97,7 +97,7 @@
 						
                     </aon:panelTab>
 
-					<aon:panelTab name="accessPolicy" rendered="#{manager.administrator}"
+					<aon:panelTab name="accessPolicy"
 						label="#{managerBundle.manager_access_policy}">
 						
 						<aon:panelGrid columns="2">
@@ -132,10 +132,6 @@
 								value="#{domain.accessPolicy.exceptionThrowableIfMaximumExceeded}" />
 						</aon:panelGrid>
 												
-                    </aon:panelTab>
-
-					<aon:panelTab name="domainDBConnection" rendered="#{!domain.new}"
-						label="#{managerBundle.manager_db_connections}">
                     </aon:panelTab>
 
 				</aon:panelTabSet>		
