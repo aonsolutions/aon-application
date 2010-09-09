@@ -46,13 +46,15 @@ public class AonSQLScript {
 			autoCommitChanged = true;
 			while (getFile().ready()) {
 				String stmt = getFile().getStatement();
-				Statement s = getConnection().createStatement();
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug(stmt);
-				}
-				int result = s.executeUpdate(stmt);
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug(result + MSG1);	
+				if ( stmt != null ) {
+					Statement s = getConnection().createStatement();
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug(stmt);
+					}
+					int result = s.executeUpdate(stmt);
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug(result + MSG1);	
+					}
 				}
 			}
 			getFile().close();

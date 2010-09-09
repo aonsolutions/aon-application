@@ -28,8 +28,8 @@ public class VersionManager {
 		return IConstants.VERSIONS[IConstants.VERSIONS.length-1];
 	}
 
-	public URL getCreateScript(String version) {
-		String name = getCreateScriptName(version);
+	public URL getCreateScript() {
+		String name = getCreateScriptName();
 		return getScript(name);
 	}
 
@@ -70,8 +70,8 @@ public class VersionManager {
 		return null;
 	}
 
-	private String getCreateScriptName(String version) {
-		return IConstants.CREATE_SCRIPT_PREFIX + version + IConstants.SCRIPT_SUFFIX;
+	private String getCreateScriptName() {
+		return IConstants.CREATE_SCRIPT_PREFIX + IConstants.SCRIPT_SUFFIX;
 	}
 
 	private String getUpdateScriptName(String version) {
@@ -112,9 +112,12 @@ public class VersionManager {
 		}
 	}
 	
-	private void execute( Connection c, URL url ) throws IOException, AonSQLException {
+	private void execute( Connection c, URL url, String dbName ) throws IOException, AonSQLException {
 		LOGGER.info("sql script: {}", url.getFile());
 		AonSQLFile file = new AonSQLFile(url.openStream());
+		if ( dbName != null ) {
+			file.setDbName(dbName);
+		}
 		file.setFileName( url.getFile());
 		AonSQLScript script = new AonSQLScript(file, c);
 		script.execute();
@@ -127,7 +130,7 @@ public class VersionManager {
 			URL[] urls = getAvailableUpdateScripts(currentVersion);
 			if (! ArrayUtils.isEmpty(urls) ) {
 				for (URL url : urls) {
-					execute(c, url);
+					execute(c, url, null);
 				}
 			}
 			LOGGER.info("Database is uptodate!");
@@ -137,16 +140,15 @@ public class VersionManager {
 		}
 	}
 
-	public void createDatabase(Connection c) throws AonSQLException {
+	public void createDatabase(Connection c, String dbName) throws AonSQLException {
 		try {
-			String version = getLastVersion();
-			URL createUrl = getCreateScript(version);
+			URL createUrl = getCreateScript();
 			if (createUrl != null) {
-				execute(c, createUrl);
+				execute(c, createUrl, dbName);
 			}
 			URL insertUrl = getInsertScript(IConstants.INSERT_DEFAULT_SCRIPT);
 			if (insertUrl != null) {
-				execute(c, insertUrl);
+				execute(c, insertUrl, dbName);
 			}
 			LOGGER.info("Database is created!");
 		} catch (IOException e) {
@@ -155,11 +157,11 @@ public class VersionManager {
 		}
 	}
 	
-	public void insertApplicationDefaults(Connection c, String application) throws AonSQLException {
+	public void insertApplicationDefaults(Connection c, String dbName, String application) throws AonSQLException {
 		try {
 			URL insertUrl = getInsertScript(application);
 			if (insertUrl != null) {
-				execute(c, insertUrl);
+				execute(c, insertUrl, dbName);
 			}
 			LOGGER.info("Application {} defaults inserted!", application);
 		} catch (IOException e) {

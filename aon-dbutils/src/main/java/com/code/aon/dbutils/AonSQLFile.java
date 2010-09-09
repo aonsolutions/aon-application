@@ -12,14 +12,21 @@ import org.apache.commons.lang.StringUtils;
 
 public class AonSQLFile {
 
+	public final static String AON_MASTER = "aon_master";
+
+	private static final String DB_SEP = "`";
 	private final static String ESP = " ";
 	private final static String COMMENT0 = "//";
 	private final static String COMMENT1 = "#";
 
+	private final static String USE_STATEMENT = "USE";
+	private final static String CREATE_DATABASE_STATEMENT = "CREATE DATABASE";
+	
 	private LineNumberReader reader;
 	private int lineNumber;
 	private String separator;
 	private String fileName;
+	private String dbName;
 
 	public AonSQLFile(InputStream input, String separator) {
 		this(input);
@@ -43,8 +50,17 @@ public class AonSQLFile {
 	public String getFileName() {
 		return fileName;
 	}
+	
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getDbName() {
+		return dbName;
+	}
+
+	public void setDbName(String dbName) {
+		this.dbName = dbName;
 	}
 
 	public boolean ready() throws AonSQLException {
@@ -53,6 +69,12 @@ public class AonSQLFile {
 		} catch (IOException e) {
 			throw new AonSQLException(e.getMessage(), e);
 		}
+	}
+	
+	private boolean isDataBaseStatement( String statement ) {
+		return (dbName != null) &&
+			( StringUtils.startsWithIgnoreCase(statement, USE_STATEMENT) ||
+			StringUtils.startsWithIgnoreCase(statement, CREATE_DATABASE_STATEMENT) );
 	}
 
 	public String getStatement() throws AonSQLException {
@@ -70,7 +92,11 @@ public class AonSQLFile {
 					stmt.append(ESP);
 				}
 			}
-			return stmt.toString();
+			String statement = StringUtils.trimToNull(stmt.toString());
+			if ( isDataBaseStatement(statement) ) {
+				statement = StringUtils.replace( statement.toString(), DB_SEP + AON_MASTER + DB_SEP, DB_SEP + dbName + DB_SEP );
+			}
+			return statement;
 		} catch (Exception e) {
 			throw new AonSQLException("Line " + lineNumber + ": " + e.getMessage(), e);
 		}
