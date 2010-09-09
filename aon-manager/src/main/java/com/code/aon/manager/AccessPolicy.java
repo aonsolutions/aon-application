@@ -4,6 +4,9 @@
  */
 package com.code.aon.manager;
 
+import static com.code.aon.ldap.IAonObjectClasses.ACCESS_POLICY;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+
 import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -18,7 +21,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.manager.enumeration.AccessPolicyType;
 
 /**
  * 
@@ -26,7 +29,7 @@ import com.code.aon.ldap.IAonObjectClasses;
  * @since 1.0
  *
  */
-@EntryObject(mainObjectClass=IAonObjectClasses.ACCESS_POLICY, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(mainObjectClass=ACCESS_POLICY, objectClasses={TOP})
 public class AccessPolicy implements ITransferObject {
 
 	private static final long serialVersionUID = -9075569722189572290L;
@@ -46,7 +49,15 @@ public class AccessPolicy implements ITransferObject {
 	private Integer maxSessions4User;
 
 	/** If the maximum sessions for user has exceeded has to throw an exception. */
-	private boolean exceptionThrowableIfMaximumExceeded = true;
+	private boolean exceptionThrowableIfMaximumExceeded;
+	
+	public AccessPolicy() {
+		this.commonName = AccessPolicyType.CONCURRENT.getName();
+		this.exceptionThrowableIfMaximumExceeded = true;
+		this.maxAllowedUsers = 999;
+		this.maxDefinedUsers = 999;
+		this.maxSessions4User = 999;
+	}
 
 	@Id
 	@GeneratedValue
