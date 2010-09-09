@@ -58,9 +58,6 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				throw new ManagerBeanVetoListenerException("La cuenta bancaria del vencimiento no es válida. Los digitos de control no coinciden.");
 			}
 		}
-		if (finance.getBank() != null && finance.getBank().getId() == null) {
-			finance.setBank(null);
-		}
 		if (finance.getSecurityLevel() == null) {
 			finance.setSecurityLevel(finance.getInvoice().getSecurityLevel());
 		}
@@ -70,7 +67,7 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (StringUtils.isEmpty(finance.getConcept())) {
 			Invoice invoice = finance.getInvoice();
 			String concept = invoice.getReferenceCode();
-			if (invoice.getRegistryName()!=null && !invoice.getRegistryName().equals( invoice.getRegistry().getFullName())) {
+			if (invoice.getRegistryName() != null && !invoice.getRegistryName().equals(invoice.getRegistry().getFullName())) {
 				concept = StringUtils.abbreviate(invoice.getReferenceCode() + " - " + invoice.getRegistryName(), 64);
 			}
 	        finance.setConcept(concept); 
