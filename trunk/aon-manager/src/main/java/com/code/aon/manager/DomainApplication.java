@@ -1,8 +1,6 @@
 package com.code.aon.manager;
 
 import javax.naming.Name;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -41,8 +39,6 @@ public class DomainApplication implements ITransferObject, Cloneable {
 	}
 
 	@Id
-	@GeneratedValue
-	@Column(nullable=false)
 	public Name getId() {
 		return id;
 	}
