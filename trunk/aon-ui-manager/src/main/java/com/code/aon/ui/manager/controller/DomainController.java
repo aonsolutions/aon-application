@@ -54,7 +54,7 @@ public class DomainController extends BasicController implements IAonObjectClass
 	public void domainNameCheck(FacesContext context, UIComponent component, Object value) {
 		String domainName = value.toString();
 		if (! domainName.matches("[a-zA-Z][a-zA-Z0-9]*") ) {
-			String summary = AonUtil.getMessage("appBundle", "desktop_domain_invalid_name");
+			String summary = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME);
 			throw new ValidatorException( new FacesMessage(summary) );
 		}
 	}

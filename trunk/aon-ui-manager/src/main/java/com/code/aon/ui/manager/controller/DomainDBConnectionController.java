@@ -11,6 +11,10 @@ import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.AonException;
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
@@ -22,7 +26,9 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.manager.util.DBManager;
 import com.code.aon.ui.util.AonUtil;
 
-public class DomainDBConnectionController extends BasicController {
+public class DomainDBConnectionController extends BasicController implements IManagerConstants {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainDBConnectionController.class);
 	
 	private LdapDAO ldapDAO;
 	
@@ -30,10 +36,13 @@ public class DomainDBConnectionController extends BasicController {
 	
 	private DBManager manager;
 	
+	private boolean createDB;
+	
 	public DomainDBConnectionController() {
 		this.ldapDAO = new LdapDAO(DBConnnection.class);		
 		this.ldapManagerBean = new BasicManagerBean(this.ldapDAO);
 		this.manager = new DBManager();
+		this.createDB = true;
 	}
 
 	public void setDomain( String domain ) {
@@ -60,17 +69,45 @@ public class DomainDBConnectionController extends BasicController {
 		return dataSources;
 	}	
 	
+	private boolean exists( String name ) {
+		try {
+			for( DBConnnection dbc : getDBConnections() ) {
+				if ( StringUtils.equals(name, dbc.getCommonName()) ) {
+					return true;
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return false;
+	}
+	
 	public void dbConnectionNameCheck(FacesContext context, UIComponent component, Object value) {
-		String domainName = value.toString();
-		if (! domainName.matches("[a-zA-Z][a-zA-Z0-9]*") ) {
-			String summary = AonUtil.getMessage("appBundle", "desktop_domain_invalid_name");
+		String name = value.toString();
+		if (! name.matches("[a-zA-Z][a-zA-Z0-9_-]*") ) {
+			String summary = AonUtil.getMessage(BUNDLE_NAME, DB_CONNECTION_INVALID_NAME);
 			throw new ValidatorException( new FacesMessage(summary) );
+		}
+		if ( exists(name) ) {
+			String summary = AonUtil.getMessage(BUNDLE_NAME, DB_CONNECTION_DUPLICATED_NAME, name);
+			throw new ValidatorException( new FacesMessage(summary) );			
 		}
 	}
 	
-	public void createDB() throws AonException {
-		DBConnnection dbConnection = (DBConnnection) getTo();
-		manager.createDB(dbConnection);
+	public boolean isCreateDB() {
+		return createDB;
+	}
+
+	public void setCreateDB(boolean createDB) {
+		this.createDB = createDB;
+	}
+
+	public void createDB( DBConnnection dbConnection ) throws AonException, SQLException {
+		if (! manager.exists(dbConnection) ) {
+			manager.createDB(dbConnection);
+		} else {
+			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DB_DUPLICATED, dbConnection.getDBName());
+		}
 	}
 	
 	public void removeDB( DBConnnection dbConnection ) throws SQLException {
