@@ -2,7 +2,7 @@ package com.code.aon.master;
 
 public interface IConstants {
 
-	String CREATE_SCRIPT_PREFIX = "com/code/aon/master/create/create.database.";	
+	String CREATE_SCRIPT_PREFIX = "com/code/aon/master/create/create.database";	
 	String UPDATE_SCRIPT_PREFIX = "com/code/aon/master/update/update.database.";	
 	String INSERT_SCRIPT_PREFIX = "com/code/aon/master/defaults/insert.database.";
 	String INSERT_DEFAULT_SCRIPT = "aon";
