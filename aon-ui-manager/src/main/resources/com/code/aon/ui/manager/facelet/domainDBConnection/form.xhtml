@@ -24,7 +24,7 @@
 						value="#{bundle.aon_name}" />
 					<aon:inputText id="DBConnnection_commonName"
 						validator="#{domainDBConnection.dbConnectionNameCheck}"
-						size="80" required="true" disabled="#{!domainDBConnection.new}"
+						size="40" required="true" disabled="#{!domainDBConnection.new}"
 						value="#{domainDBConnection.to.commonName}" />
 
 					<aon:outputLabel for="DBConnnection_driverClassName"
@@ -35,17 +35,24 @@
 					<aon:outputLabel for="DBConnnection_labeledURI"
 						value="#{managerBundle.manager_db_connection_url}" />
 					<aon:inputText id="DBConnnection_labeledURI" required="true"
-						size="80" value="#{domainDBConnection.to.labeledURI}" />
+						size="120" value="#{domainDBConnection.to.labeledURI}" />
 
 					<aon:outputLabel for="DBConnnection_uid"
 						value="#{managerBundle.manager_user}" />
 					<aon:inputText id="DBConnnection_uid" required="true"
-						size="80" maxlength="256" value="#{domainDBConnection.to.uid}" />
+						size="40" maxlength="256" value="#{domainDBConnection.to.uid}" />
 
 					<aon:outputLabel for="DBConnnection_userPassword"
 						value="#{bundle.aon_login_passwd}" />
 					<aon:inputSecret id="DBConnnection_userPassword" redisplay="true" required="true"
-						size="80" maxlength="256" value="#{domainDBConnection.to.userPasswordString}" />
+						size="40" maxlength="256" value="#{domainDBConnection.to.userPasswordString}" />
+						
+					<c:if test="#{domainDBConnection.new}" >					
+						<aon:outputLabel for="DBConnnection_createDB"
+							value="#{managerBundle.manager_domain_create_db}" />
+						<aon:selectBooleanCheckbox id="DBConnnection_createDB" 
+							value="#{domainDBConnection.createDB}" />
+					</c:if>
 
 				</aon:panelGrid>
 			</aon:div>

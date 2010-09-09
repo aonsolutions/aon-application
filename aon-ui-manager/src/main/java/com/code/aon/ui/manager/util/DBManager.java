@@ -83,7 +83,7 @@ public class DBManager {
 	    Connection connection = null;
 		try {
 			connection = getConnection(dbc);
-			this.versionManager.createDatabase(connection);
+			this.versionManager.createDatabase(connection, dbc.getDBName());
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			DbUtils.rollbackAndCloseQuietly(connection);
