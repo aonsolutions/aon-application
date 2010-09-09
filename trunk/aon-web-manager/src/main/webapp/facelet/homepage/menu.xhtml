@@ -14,6 +14,14 @@
 			value="#{managerBundle.manager_domains}"
 			styleClass="aon-top-menu-item aon-icon-config">
 		</aon:commandLink>
+		<aon:commandLink id="applications" 
+			action="aonApplication_list"
+			actionListener="#{aonApplication.onEditSearch}"
+			rendered="#{manager.administrator}"
+			title="#{managerBundle.manager_applications}"  
+			value="#{managerBundle.manager_applications}"
+			styleClass="aon-top-menu-item aon-icon-general">
+		</aon:commandLink>
 				
 	</ui:define>
 
