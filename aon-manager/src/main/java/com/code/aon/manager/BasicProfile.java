@@ -4,6 +4,7 @@
  */
 package com.code.aon.manager;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.naming.Name;
@@ -106,13 +107,19 @@ public class BasicProfile {
 		return roles;
 	}
 
-	public void setContacts(List<Role> roles) {
+	public void setRoles(List<Role> roles) {
 		this.roles = roles;
-	}	
-	
+	}
+
 	public String getRoleList() {
 		if ( this.roles != null ) {
-			return StringUtils.join(this.roles.iterator(), ",");
+			List<String> list = new LinkedList<String>();
+			for( Role role : this.roles ) {
+				if ( role != null ) {
+					list.add(role.getCommonName());
+				}
+			}
+			return StringUtils.join(list, ", ");
 		}
 		return null;
 	}
