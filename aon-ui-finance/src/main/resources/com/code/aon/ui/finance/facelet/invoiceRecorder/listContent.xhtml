@@ -249,18 +249,17 @@
 						<aon:column alias="Invoice.referenceCode"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText
-									value="#{bundle.aon_series}/#{bundle.aon_number}" />
+								<h:outputText value="#{financeBundle.finance_invoice_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoice.referenceCode}" />
+						</aon:column>
+	
+						<aon:column alias="Invoice.series,Invoice.number"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
 							</f:facet>
 							<aon:outputText value="#{to.invoice.documentNumber}" />
-						</aon:column>
-
-						<aon:column
-							styleClass="aon-editDataTable-textColumn aon-width-100">
-							<f:facet name="header">
-								<aon:outputText value="#{accountBundle.account_account}" />
-							</f:facet>
-							<aon:outputText value="#{to.account.id}" />
 						</aon:column>
 
 						<aon:column alias="Invoice.registryName"
@@ -269,6 +268,14 @@
 								<aon:outputText value="#{customerBundle.customer_customer}" />
 							</f:facet>
 							<aon:outputText value="#{to.invoice.registryName}" />
+						</aon:column>
+
+						<aon:column
+							styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{accountBundle.account_account}" />
+							</f:facet>
+							<aon:outputText value="#{to.account.id}" />
 						</aon:column>
 
 						<aon:column alias="Invoice.issueDate"
@@ -292,14 +299,6 @@
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
-						</aon:column>
-
-						<aon:column alias="Invoice.status"
-							styleClass="aon-editDataTable-textColumn aon-width-80 aon-nowrap">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.invoice.status}" />
 						</aon:column>
 
 						<aon:column

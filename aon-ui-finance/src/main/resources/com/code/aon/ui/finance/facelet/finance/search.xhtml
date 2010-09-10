@@ -97,6 +97,29 @@
 						valueChangeListener="#{finance.addExpression}"
 						size="20" />
 
+					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+					<aon:div>
+						<aon:outputLabel for="Finance_invoice_series-Document" rendered="#{!finance.payment}"
+							styleClass="aon-form-date-label aon-margin-right" value="E-" />
+						<aon:selectOneMenu id="Finance_invoice_typ-Document" rendered="#{finance.payment}"
+							value="#{financeSearch.receivedInvoiceType}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItem itemLabel="R" itemValue="R" />
+							<f:selectItem itemLabel="G" itemValue="G" />
+						</aon:selectOneMenu>
+						<aon:outputLabel for="Finance_invoice_series-Document" rendered="#{finance.payment}"
+							styleClass="aon-form-date-label aon-margin-right" value="-" />
+						<aon:inputText id="Finance_invoice_series-Document"
+							onblur="toUpperCase(this);"
+							valueChangeListener="#{controller.addExpression}"
+							size="5" maxlength="5" />
+						<aon:outputLabel for="Finance_invoice_number-Document"
+							styleClass="aon-form-date-label aon-margin-right" value="-" />
+						<aon:inputText id="Finance_invoice_number-Document"
+							valueChangeListener="#{controller.addExpression}"
+							size="6" />
+					</aon:div>
+
 					<aon:outputLabel value="#{financeBundle.finance_invoice_date}" />
 					<aon:div>
 						<aon:outputLabel for="Finance_invoice_issueDate-From" styleClass="aon-form-date-label"

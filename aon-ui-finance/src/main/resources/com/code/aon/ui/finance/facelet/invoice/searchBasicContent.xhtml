@@ -86,24 +86,24 @@
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:div>
 
-	<c:if test="#{!searchController.sales}">
-		<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
-		<aon:div>
-			<aon:outputLabel for="Invoice_series" rendered="#{!searchController.undeductible}"
-				styleClass="aon-form-date-label aon-margin-right" value="R-" />
-			<aon:outputLabel for="Invoice_series" rendered="#{searchController.undeductible}"
-				styleClass="aon-form-date-label aon-margin-right" value="G-" />
-			<aon:inputText id="Invoice_series"
-				onblur="toUpperCase(this);"
-				valueChangeListener="#{controller.addExpression}"
-				size="5" maxlength="5" />
-			<aon:outputLabel for="Invoice_number"
-				styleClass="aon-form-date-label aon-margin-right" value="-" />
-			<aon:inputText id="Invoice_number"
-				valueChangeListener="#{controller.addExpression}"
-				size="6" />
-		</aon:div>
-	</c:if>
+	<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+	<aon:div>
+		<aon:outputLabel for="Invoice_series-Document" rendered="#{searchController.sales}"
+			styleClass="aon-form-date-label aon-margin-right" value="E-" />
+		<aon:outputLabel for="Invoice_series-Document" rendered="#{searchController.purchase or searchController.expenses}"
+			styleClass="aon-form-date-label aon-margin-right" value="R-" />
+		<aon:outputLabel for="Invoice_series-Document" rendered="#{searchController.undeductible}"
+			styleClass="aon-form-date-label aon-margin-right" value="G-" />
+		<aon:inputText id="Invoice_series-Document"
+			onblur="toUpperCase(this);"
+			valueChangeListener="#{controller.addExpression}"
+			size="5" maxlength="5" />
+		<aon:outputLabel for="Invoice_number-Document"
+			styleClass="aon-form-date-label aon-margin-right" value="-" />
+		<aon:inputText id="Invoice_number-Document"
+			valueChangeListener="#{controller.addExpression}"
+			size="6" />
+	</aon:div>
 
 	<c:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Invoice_securityLevel"
