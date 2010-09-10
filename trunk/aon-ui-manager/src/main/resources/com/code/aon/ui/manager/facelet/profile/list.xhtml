@@ -5,6 +5,18 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+		<ui:param name="toolbarID" value="profileToolbar" />	
+		<ui:param name="innerToolbar" value="#{true}" />
+		<ui:param name="controller" value="#{profile}" />	
+		<ui:param name="skipToolbarDescription" value="true" />
+		<ui:param name="skipSearchButton" value="true" />
+		
+		<aon:methodParam name="resetAction" value="" />
+		<ui:param name="resetButtonReRender" value="profilesDiv" />		
+	</ui:include>
+
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 		<ui:param name="controller" value="#{profile}" />
 		<ui:define name="columns">

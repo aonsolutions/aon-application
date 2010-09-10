@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+		<ui:param name="toolbarID" value="profileToolbar" />
+		<ui:param name="innerToolbar" value="#{true}" />
+		<ui:param name="controller" value="#{profile}" />
+		<ui:param name="skipToolbarDescription" value="true" />
+		<ui:param name="skipSearchButton" value="#{true}" />
+		
+		<aon:methodParam name="saveAction" value="" />
+		<ui:param name="saveButtonReRender" value="profilesDiv" />
+		<aon:methodParam name="cancelAction" value="" />
+		<ui:param name="cancelButtonReRender" value="profilesDiv" />
+		<aon:methodParam name="removeAction" value="" />
+		<ui:param name="removeButtonReRender" value="profilesDiv" />
+		<aon:methodParam name="resetAction" value="" />
+		<ui:param name="resetButtonReRender" value="profilesDiv" />
+		<aon:methodParam name="backAction" value="" />
+		<ui:param name="backButtonReRender" value="profilesDiv" />		
+	</ui:include>
+
+	<aon:div styleClass="aon-scroll-area">
+
+		<aon:panelGrid columns="2" dir="true">
+
+			<aon:outputLabel for="Profile_commonName"
+				value="#{bundle.aon_name}" />
+			<c:if test="#{profile.new}" >
+				<aon:inputText id="Profile_commonName"
+					size="80" required="true"
+					value="#{profile.to.commonName}" />
+			</c:if>
+			<c:if test="#{!profile.new}" >
+				<aon:inputText id="Profile_commonName"
+					size="80" disabled="true" value="#{profile.to.commonName}" />
+			</c:if>
+					
+			<aon:outputLabel for="Profile_roles"
+				value="#{managerBundle.manager_roles}" />
+			<aon:selectManyCheckbox id="Profile_roles"
+				value="#{profile.currentRoles}" layout="pageDirection"
+				required="true">
+				<f:selectItems value="#{role.availableRoles}" />
+			</aon:selectManyCheckbox>				
+
+		</aon:panelGrid>
+	</aon:div>
+
+</ui:composition>
