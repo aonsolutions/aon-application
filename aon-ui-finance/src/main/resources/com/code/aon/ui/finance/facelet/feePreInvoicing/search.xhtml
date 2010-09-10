@@ -72,6 +72,13 @@
 							size="50" disabled="true" />
 					</aon:div>
 
+					<aon:outputLabel for="Item_product_category" 
+						value="#{productBundle.product_category}" />
+					<aon:selectOneMenu id="Item_product_category" value="#{preInvoicing.invoicingParams.category}">
+						<f:selectItem itemLabel="-" itemValue="#{null}" />
+						<f:selectItems value="#{productCollections.categories}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel value="#{bundle.aon_period}" />
 					<aon:panelGrid columns="4">
 						<aon:outputLabel for="BillingDate_Month"

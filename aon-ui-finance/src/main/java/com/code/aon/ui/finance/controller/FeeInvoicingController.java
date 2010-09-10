@@ -38,6 +38,7 @@ import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
+import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -101,6 +102,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		params.setCustomer(new Customer());
 		params.setItem(new Item());
 		params.getItem().setProduct(new Product());
+		params.setCategory(new ProductCategory());
 		params.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		params.setYear(calendar.get(Calendar.YEAR));
 		params.setConfidential(false);
