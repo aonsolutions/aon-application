@@ -77,6 +77,9 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if (params.getItem() != null && params.getItem().getId() != null) {
 			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_ID), params.getItem().getId());
 		}
+		if (params.getCategory() != null && params.getCategory().getId() != null) {
+			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_PRODUCT_CATEGORY_ID), params.getCategory().getId());
+		}
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}

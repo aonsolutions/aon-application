@@ -7,11 +7,13 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
+import com.code.aon.product.ProductCategory;
 
 public class InvoicingParameters {
 	
 	private Customer customer;
 	private Item item;
+	private ProductCategory category;
 	private Month month;
 	private int year;
 	private Series series;
@@ -42,6 +44,14 @@ public class InvoicingParameters {
 
 	public void setItem(Item item) {
 		this.item = item;
+	}
+
+	public ProductCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ProductCategory category) {
+		this.category = category;
 	}
 
 	public Month getMonth() {
