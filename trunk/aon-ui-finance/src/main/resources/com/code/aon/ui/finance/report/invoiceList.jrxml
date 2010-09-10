@@ -292,7 +292,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{invoice_document_number}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_document_number}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

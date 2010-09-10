@@ -183,7 +183,7 @@
 					<reportElement key="line-1" x="0" y="231" width="534" height="2"/>
 				</line>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField-20" mode="Opaque" x="0" y="82" width="69" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+					<reportElement key="textField-20" mode="Opaque" x="64" y="82" width="69" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -196,7 +196,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement key="textField-21" mode="Opaque" x="69" y="82" width="192" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+					<reportElement key="textField-21" mode="Opaque" x="133" y="82" width="192" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -209,7 +209,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[($P{payment}.booleanValue()==true?$R{finance_creditor}:$R{finance_debtor})]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField-22" mode="Opaque" x="261" y="82" width="64" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+					<reportElement key="textField-22" mode="Opaque" x="0" y="82" width="64" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -261,7 +261,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_payMethod}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField-26" x="0" y="97" width="69" height="14"/>
+					<reportElement key="textField-26" x="64" y="97" width="69" height="14"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -300,7 +300,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{financeStatus}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement key="textField-29" x="261" y="97" width="64" height="14"/>
+					<reportElement key="textField-29" x="0" y="97" width="64" height="14"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -313,7 +313,7 @@
 					<textFieldExpression class="java.util.Date"><![CDATA[$F{dueDate}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement key="textField-30" x="69" y="97" width="192" height="14"/>
+					<reportElement key="textField-30" x="133" y="97" width="192" height="14"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
