@@ -88,8 +88,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	public void setBaseDN(Name baseDN) {
 		this.baseDN = baseDN; 
 		try {
-			Name base = getLdapSession().getBaseDN();
-			this.baseDN = NameResolver.getName(baseDN, base);
+			this.baseDN = getLdapSession().getFullDN(baseDN);
 		} catch ( LdapException e ) {
 			LOGGER.warn( "Error obtaining base DN of the LDAP connection", e );
 		} finally {
