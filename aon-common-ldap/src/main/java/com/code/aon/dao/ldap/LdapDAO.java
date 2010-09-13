@@ -131,8 +131,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		try {
 			Object value = getValue(to, metadata.getRDN());
 			if ( value != null ) {
-				Rdn rdn = NameResolver.getRdn(metadata.getRDN().getLdapName(), value);
-				dn = NameResolver.getName( rdn, this.baseDN );
+				dn = calculateDN(value);
 			}
 		} catch (Exception e) {
 			throw new DAOException(e);
@@ -140,6 +139,20 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return dn;
 	}
 
+	/**
+	 * Calculate dn.
+	 * 
+	 * @param to the to
+	 * 
+	 * @return the string
+	 * 
+	 * @throws DAOException the DAO exception
+	 */
+	public Name calculateDN( Object value ) throws DAOException {
+		Rdn rdn = NameResolver.getRdn(metadata.getRDN().getLdapName(), value);
+		return NameResolver.getName( rdn, this.baseDN );
+	}	
+	
 	/**
 	 * Exists.
 	 * 
