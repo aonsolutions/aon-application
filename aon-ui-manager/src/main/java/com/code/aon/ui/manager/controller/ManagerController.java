@@ -24,7 +24,7 @@ public class ManagerController {
 
 	private String _password;
 	
-	private boolean administrator = true;
+	private boolean administrator;
 	
 	public boolean isAdministrator() {
 		return administrator;

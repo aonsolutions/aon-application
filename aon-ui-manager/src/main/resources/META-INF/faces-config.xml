@@ -164,6 +164,35 @@
 			<value>-1</value>
 		</managed-property>
 	</managed-bean>	
+	
+	<!-- ************* DOMAIN PROFILE ***************** -->
+	<managed-bean>
+		<managed-bean-name>domainProfile</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.ProfileController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.DomainProfile</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domainProfile</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>DomainProfile_commonName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+	</managed-bean>		
 
 	<!-- ************* DOMAIN APPLICATION ***************** -->
 	<managed-bean>
@@ -192,8 +221,23 @@
 			<property-name>pageLimit</property-name>
 			<value>-1</value>
 		</managed-property>
-	</managed-bean>			
-		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{domainApplicationControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>domainApplicationControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.event.DomainApplicationControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+			
 	<!-- ************* DOMAIN DB CONNECTION ***************** -->
 	<managed-bean>
 		<managed-bean-name>domainDBConnection</managed-bean-name>

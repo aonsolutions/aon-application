@@ -39,10 +39,10 @@ public class ApplicationControllerListener extends ControllerAdapter implements 
 	
 	private void updateApplication( Application application ) {
 		RoleController rc = (RoleController) AonUtil.getRegisteredBean(ROLE_CONTROLLER_NAME);
-		rc.setApplication(application.getCommonName());
+		rc.updateBaseDN(application.getId());
 		rc.onSearch(null);
 		ProfileController pc = (ProfileController) AonUtil.getRegisteredBean(PROFILE_CONTROLLER_NAME);
-		pc.setApplication(application.getCommonName());
+		pc.updateBaseDN(application.getId());
 		pc.onSearch(null);		
 	}
 
