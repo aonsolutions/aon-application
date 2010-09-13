@@ -1,5 +1,7 @@
 package com.code.aon.ui.manager.controller;
 
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,37 +10,26 @@ import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.BasicManagerBean;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.dao.ldap.LdapDAO;
+import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.Application;
 import com.code.aon.manager.DomainApplication;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class DomainApplicationController extends BasicController implements IManagerConstants {
-	
-	private LdapDAO ldapDAO;
-	
-	private BasicManagerBean ldapManagerBean;
-	
-	public DomainApplicationController() {
-		this.ldapDAO = new LdapDAO(DomainApplication.class);		
-		this.ldapManagerBean = new BasicManagerBean(this.ldapDAO);			
-	}
-
-	public void setDomain( String domain ) {
-		Name dasDN = NameResolver.getDomainApplicationsDN(domain);
-		this.ldapDAO.setBaseDN(dasDN);
-	}
+public class DomainApplicationController extends LdapBasicController {
 	
 	@Override
-	public IManagerBean getManagerBean() throws ManagerBeanException {
-		return this.ldapManagerBean;
+	public void updateBaseDN(Name parent) {
+		String domain = NameResolver.getValue(parent, 0);
+		Name baseDN = NameResolver.getDomainApplicationsDN(domain);
+		getLdapDAO().setBaseDN(baseDN);
 	}
-
+	
+	public DomainApplication getDomainApplication() {
+		return (DomainApplication) getTo();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<DomainApplication> getDomainApplications() throws ManagerBeanException {
 		return (List) getModel().getWrappedData();
@@ -65,5 +56,19 @@ public class DomainApplicationController extends BasicController implements IMan
 		}
 		return list;
 	}	
+	
+	public void createOrganizationalUnits( DomainApplication da ) {
+		BasicLdap ldap = new BasicLdap();
+		String domainName = NameResolver.getValue(da.getId(), 2);
+		String application = NameResolver.getValue(da.getId(), 0);
+		Name profilesDN = NameResolver.getDomainApplicationProfilesDN(domainName, application);
+		if (! ldap.exists(profilesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(profilesDN);
+		}
+		Name usersDN = NameResolver.getDomainApplicationUsersDN(domainName, application);
+		if (! ldap.exists(usersDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(usersDN);
+		}
+	}		
 	
 }

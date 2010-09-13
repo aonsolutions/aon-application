@@ -23,7 +23,8 @@
 					<aon:outputLabel for="DomainUser_uid"
 						value="#{bundle.aon_login}" />
 					<aon:inputText id="DomainUser_uid"
-						size="80" required="true" disabled="#{!domainUser.new}"
+						size="80" required="true" 
+						validator="#{domainUser.idCheck}"
 						value="#{domainUser.to.uid}" />
 
 					<aon:outputLabel for="DomainUser_active"

@@ -56,14 +56,9 @@
 
 					<aon:panelTab name="profiles"
 						label="#{managerBundle.manager_profiles}">
-						<aon:div id="profilesDiv" >
-							<c:if test="#{profile.to == null}">
-								<ui:include src="/com/code/aon/ui/manager/facelet/profile/list.xhtml" />
-							</c:if>
-							<c:if test="#{profile.to != null}">
-								<ui:include src="/com/code/aon/ui/manager/facelet/profile/form.xhtml" />
-							</c:if>
-						</aon:div>
+						<ui:include src="/com/code/aon/ui/manager/facelet/profile/grid.xhtml" >
+							<ui:param name="controller" value="#{profile}" />
+						</ui:include>
                     </aon:panelTab>
 				</aon:panelTabSet>		
 												

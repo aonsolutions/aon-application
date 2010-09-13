@@ -9,7 +9,6 @@
 		src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 		<ui:param name="toolbarID" value="profileToolbar" />	
 		<ui:param name="innerToolbar" value="#{true}" />
-		<ui:param name="controller" value="#{profile}" />	
 		<ui:param name="skipToolbarDescription" value="true" />
 		<ui:param name="skipSearchButton" value="true" />
 		
@@ -18,7 +17,7 @@
 	</ui:include>
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-		<ui:param name="controller" value="#{profile}" />
+		<ui:param name="showNote" value="#{false}" />
 		<ui:define name="columns">
 	
 			<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn">

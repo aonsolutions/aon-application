@@ -10,11 +10,14 @@ public interface IManagerConstants {
 	String APPLICATION_CONTROLLER_NAME = "aonApplication";
 	String ROLE_CONTROLLER_NAME = "role";
 	String PROFILE_CONTROLLER_NAME = "profile";
+	String DOMAIN_PROFILE_CONTROLLER_NAME = "domainProfile";
 	String DOMAIN_DB_CONNECTION_CONTROLLER_NAME = "domainDBConnection";
 	String DOMAIN_APPLICATION_CONTROLLER_NAME = "domainApplication";
 	String DOMAIN_USER_CONTROLLER_NAME = "domainUser";
 	
 	// Messages
+	String ID_DUPLICATED = "manager_id_duplicated";
+	String INVALID_NAME = "manager_invalid_name";
 	String DOMAIN_INVALID_NAME = "manager_domain_invalid_name";
 	String APPLICATION_INVALID_NAME = "manager_application_invalid_name";
 	String APPLICATION_DUPLICATED_NAME = "manager_application_duplicated_name";

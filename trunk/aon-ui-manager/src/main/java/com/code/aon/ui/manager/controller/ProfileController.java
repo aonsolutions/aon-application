@@ -5,36 +5,18 @@ import java.util.List;
 
 import javax.naming.Name;
 
-import com.code.aon.common.BasicManagerBean;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.BasicProfile;
-import com.code.aon.manager.Profile;
 import com.code.aon.manager.Role;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class ProfileController extends BasicController implements IManagerConstants {
-	
-	private LdapDAO ldapDAO;
-	
-	private BasicManagerBean ldapManagerBean;
-	
-	public ProfileController() {
-		this.ldapDAO = new LdapDAO(Profile.class);		
-		this.ldapManagerBean = new BasicManagerBean(this.ldapDAO);
-	}
-
-	public void setApplication( String application ) {
-		Name profilesDN = NameResolver.getApplicationProfilesDN(application);
-		this.ldapDAO.setBaseDN(profilesDN);
-	}
+public class ProfileController extends LdapBasicController {
 	
 	@Override
-	public IManagerBean getManagerBean() throws ManagerBeanException {
-		return this.ldapManagerBean;
+	public void updateBaseDN(Name parent) {
+		Name baseDN = NameResolver.getName( NameResolver.ou(NameResolver.PROFILES), parent );
+		getLdapDAO().setBaseDN(baseDN);
 	}
 	
 	public BasicProfile getProfile() {

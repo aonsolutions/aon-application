@@ -1,41 +1,20 @@
 package com.code.aon.ui.manager.controller;
 
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
+
 import javax.naming.Name;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.code.aon.common.BasicManagerBean;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DomainUser;
-import com.code.aon.ui.form.BasicController;
 
-public class DomainUserController extends BasicController implements IAonObjectClasses {
+public class DomainUserController extends LdapBasicController {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(DomainUserController.class);
-	
-	private LdapDAO ldapDAO;
-	
-	private BasicManagerBean ldapManagerBean;
-	
-	public DomainUserController() {
-		this.ldapDAO = new LdapDAO(DomainUser.class);		
-		this.ldapManagerBean = new BasicManagerBean(this.ldapDAO);			
-	}
-
-	public void setDomain( String domain ) {
-		Name dasDN = NameResolver.getUsersDN(domain);
-		this.ldapDAO.setBaseDN(dasDN);
-	}
-	
 	@Override
-	public IManagerBean getManagerBean() throws ManagerBeanException {
-		return this.ldapManagerBean;
+	public void updateBaseDN(Name parent) {
+		String domain = NameResolver.getValue(parent, 0);
+		Name baseDN = NameResolver.getUsersDN(domain);
+		getLdapDAO().setBaseDN(baseDN);
 	}
 
 	public void createUserWebmailDefaultData( DomainUser user ) {
