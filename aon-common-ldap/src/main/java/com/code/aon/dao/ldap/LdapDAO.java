@@ -343,6 +343,8 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			IDAO dao = getDAO(info);
 			Name id = NameResolver.getName( value.toString() );
 			result = dao.get( id );								
+		} else if ( info.isName() ) {
+			result = NameResolver.getName( ObjectUtils.toString(value) );
 		} else {
 			result = ConvertUtils.convert(value, info.getBaseClass());	
 		}
