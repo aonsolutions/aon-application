@@ -2,6 +2,8 @@ package com.code.aon.dao.ldap;
 
 import java.util.List;
 
+import javax.naming.Name;
+
 import com.code.aon.common.ITransferObject;
 
 public class PropertyInfo {
@@ -24,6 +26,8 @@ public class PropertyInfo {
 	
 	private boolean transferObject;
 	
+	private boolean name;
+	
 	private boolean collection;
 
 	public PropertyInfo(String accesPath, String ldapName, Class<?> propertyClass) {
@@ -38,9 +42,8 @@ public class PropertyInfo {
 	private void init() {
 		if ( List.class.isAssignableFrom(this.propertyClass) ) {
 			this.collection = true;
-		} else {
-			setBaseClass( this.propertyClass );
-		} 
+		}
+		setBaseClass( this.propertyClass );
 	}
 
 	public String getAccesPath() {
@@ -82,6 +85,7 @@ public class PropertyInfo {
 	public void setBaseClass(Class<?> baseClass) {
 		this.baseClass = baseClass;
 		this.transferObject = ITransferObject.class.isAssignableFrom(this.baseClass);
+		this.name = Name.class.isAssignableFrom(this.baseClass);
 	}
 
 	public boolean isTransferObject() {
@@ -90,6 +94,10 @@ public class PropertyInfo {
 	
 	public boolean isCollection() {
 		return collection;
+	}
+	
+	public boolean isName() {
+		return name;
 	}
 
 	public String getToAccessPath() {
