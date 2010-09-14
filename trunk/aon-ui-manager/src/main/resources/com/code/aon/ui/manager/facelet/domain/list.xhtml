@@ -13,6 +13,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{managerBundle.manager_domains}" />
 				<ui:param name="controller" value="#{domain}" />
+				<ui:param name="skipResetButton" value="#{!manager.administrator}" />
 			</ui:include>
 
 			<!--  aon-region-body -->
