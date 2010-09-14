@@ -48,7 +48,8 @@
 					
 				</aon:panelGrid>
 								
-				<aon:panelTabSet>
+				<aon:panelTabSet rendered="#{!aonApplication.new}"
+					selectedTab="#{aonApplication.selectedTab}">
 					<aon:panelTab name="roles"
 						label="#{managerBundle.manager_roles}">
 						<ui:include src="/com/code/aon/ui/manager/facelet/role/grid.xhtml" />

@@ -30,6 +30,16 @@ public class ApplicationController extends BasicController implements IManagerCo
 	
 	private BasicManagerBean ldapManagerBean;
 	
+	private String selectedTab;
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+	
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {

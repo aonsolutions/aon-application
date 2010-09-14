@@ -12,6 +12,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.manager.controller.DomainApplicationController;
+import com.code.aon.ui.manager.controller.DomainApplicationUserController;
 import com.code.aon.ui.manager.controller.DomainController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ProfileController;
@@ -40,6 +41,9 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 	}
 	
 	private void updateApplication( DomainApplication application ) {
+		DomainApplicationUserController dau = (DomainApplicationUserController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_USER_CONTROLLER_NAME);
+		dau.updateBaseDN(application.getId());
+		dau.onSearch(null);		
 		RoleController rc = (RoleController) AonUtil.getRegisteredBean(ROLE_CONTROLLER_NAME);
 		Name applicationId = NameResolver.getApplicationDN(application.getCommonName()); 
 		rc.updateBaseDN(applicationId);

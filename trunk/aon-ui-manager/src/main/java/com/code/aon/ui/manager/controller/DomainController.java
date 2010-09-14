@@ -42,6 +42,16 @@ public class DomainController extends BasicController implements IAonObjectClass
 	private List<SelectItem> accessPolicies;
 	
 	private BasicManagerBean ldapManagerBean;
+	
+	private String selectedTab;
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}	
 		
 	public int getDomainNameMaxLength() {
 		return DOMAIN_NAME_MAX_LENGTH;
