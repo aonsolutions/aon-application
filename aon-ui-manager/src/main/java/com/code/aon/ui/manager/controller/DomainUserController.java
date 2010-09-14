@@ -2,14 +2,22 @@ package com.code.aon.ui.manager.controller;
 
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 
+import java.util.List;
+
 import javax.naming.Name;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DomainUser;
 
 public class DomainUserController extends LdapBasicController {
 
+	@SuppressWarnings("unchecked")
+	public List<DomainUser> getUsers() throws ManagerBeanException {
+		return (List) getModel().getWrappedData();
+	}	
+	
 	@Override
 	public void updateBaseDN(Name parent) {
 		String domain = NameResolver.getValue(parent, 0);
