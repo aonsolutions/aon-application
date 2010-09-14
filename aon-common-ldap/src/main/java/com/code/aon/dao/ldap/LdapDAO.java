@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -231,7 +232,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			}
 			if ( result instanceof Boolean ) {
 				result = ((Boolean) result).booleanValue() ? LdapSession.TRUE_VALUE : LdapSession.FALSE_VALUE;
-			} else if (! (result instanceof byte[]) ) {
+			} else if (! ((result instanceof byte[]) || (result instanceof Date)) ) {
 				result = ObjectUtils.toString(result);
 			}
 			if ( result instanceof String ) {
