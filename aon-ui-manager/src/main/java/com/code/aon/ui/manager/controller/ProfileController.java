@@ -7,7 +7,9 @@ import javax.naming.Name;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.manager.Application;
 import com.code.aon.manager.BasicProfile;
+import com.code.aon.manager.Profile;
 import com.code.aon.manager.Role;
 import com.code.aon.ui.util.AonUtil;
 
@@ -22,6 +24,17 @@ public class ProfileController extends LdapBasicController {
 	public BasicProfile getProfile() {
 		return (BasicProfile) getTo();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BasicProfile> getProfiles() throws ManagerBeanException {
+		return (List) getModel().getWrappedData();
+	}	
+	
+	@SuppressWarnings("unchecked")
+	public List<BasicProfile> getProfiles( Name parent ) throws ManagerBeanException {
+		updateBaseDN(parent);
+		return (List) getManagerBean().getList(null);
+	}	
 	
 	public Name[] getCurrentRoles() {
 		BasicProfile profile = getProfile();

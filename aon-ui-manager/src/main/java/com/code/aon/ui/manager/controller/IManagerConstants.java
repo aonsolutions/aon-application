@@ -14,6 +14,7 @@ public interface IManagerConstants {
 	String DOMAIN_DB_CONNECTION_CONTROLLER_NAME = "domainDBConnection";
 	String DOMAIN_APPLICATION_CONTROLLER_NAME = "domainApplication";
 	String DOMAIN_USER_CONTROLLER_NAME = "domainUser";
+	String DOMAIN_APPLICATION_USER_CONTROLLER_NAME = "appUser";
 	
 	// Messages
 	String ID_DUPLICATED = "manager_id_duplicated";
