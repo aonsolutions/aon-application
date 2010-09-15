@@ -53,7 +53,13 @@
 								   aon-panelGrid2-header,
 								   aon-panelGrid2-header">
 					
-					<aon:outputText value="&#160;"/>
+					<aon:div styleClass="aon-panelGrid2-header-text">
+						<aon:commandLink styleClass="aon-dataTable-link-noicon"
+							actionListener="#{vatReport.onDetail}" 
+							action="vat_report_detail">
+							<aon:outputText value="------"/>
+						</aon:commandLink>
+					</aon:div>
 					<aon:div styleClass="aon-panelGrid2-header-text">
 						<aon:commandLink styleClass="aon-dataTable-link-noicon"
 							actionListener="#{vatReport.onDetail}" 

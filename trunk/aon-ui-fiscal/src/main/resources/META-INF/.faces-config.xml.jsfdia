@@ -24,17 +24,17 @@
  <PROCESS-ITEM NAME="rules::1" SHAPE="32,417,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
-    ID="retentionReport_search::#com#code#aon#ui#fiscal#facelet#retention#search.xhtml"
+    ID="invoiceReport_search::#com#code#aon#ui#fiscal#facelet#invoice#search.xhtml"
     NAME="output"
-    PATH="/com/code/aon/ui/fiscal/facelet/retention/search.xhtml"
-    TARGET="rules:#com#code#aon#ui#fiscal#facelet#retention#search.xhtml"
-    TITLE="retentionReport_search" model-entity="JSFProcessItemOutput"/>
+    PATH="/com/code/aon/ui/fiscal/facelet/invoice/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#invoice#search.xhtml"
+    TITLE="invoiceReport_search" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="retentionReport_list::#com#code#aon#ui#fiscal#facelet#retention#list.xhtml"
+    ID="invoiceReport_list::#com#code#aon#ui#fiscal#facelet#invoice#list.xhtml"
     NAME="output1"
-    PATH="/com/code/aon/ui/fiscal/facelet/retention/list.xhtml"
-    TARGET="rules:#com#code#aon#ui#fiscal#facelet#retention#list.xhtml"
-    TITLE="retentionReport_list" model-entity="JSFProcessItemOutput"/>
+    PATH="/com/code/aon/ui/fiscal/facelet/invoice/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#invoice#list.xhtml"
+    TITLE="invoiceReport_list" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules::2" SHAPE="32,673,0,0" model-entity="JSFProcessGroup">
@@ -98,11 +98,11 @@
   </PROCESS-ITEM>
  </PROCESS-ITEM>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#fiscal#facelet#retention#search.xhtml"
-  PATH="/com/code/aon/ui/fiscal/facelet/retention/search.xhtml"
-  SHAPE="256,577,0,0" model-entity="JSFProcessGroup"/>
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#invoice#list.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/invoice/list.xhtml"
+  SHAPE="256,1057,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
-  NAME="rules:#com#code#aon#ui#fiscal#facelet#retention#list.xhtml"
-  PATH="/com/code/aon/ui/fiscal/facelet/retention/list.xhtml"
-  SHAPE="256,1089,0,0" model-entity="JSFProcessGroup"/>
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#invoice#search.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/invoice/search.xhtml"
+  SHAPE="256,577,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>
