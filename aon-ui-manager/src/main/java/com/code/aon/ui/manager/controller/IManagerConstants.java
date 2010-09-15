@@ -6,6 +6,7 @@ public interface IManagerConstants {
 	String BUNDLE_NAME = "managerBundle";
 	
 	// Controllers
+	String MANAGER_CONTROLLER_NAME = "manager";
 	String DOMAIN_CONTROLLER_NAME = "domain";
 	String APPLICATION_CONTROLLER_NAME = "aonApplication";
 	String ROLE_CONTROLLER_NAME = "role";
@@ -15,6 +16,8 @@ public interface IManagerConstants {
 	String DOMAIN_APPLICATION_CONTROLLER_NAME = "domainApplication";
 	String DOMAIN_USER_CONTROLLER_NAME = "domainUser";
 	String DOMAIN_APPLICATION_USER_CONTROLLER_NAME = "appUser";
+	String WORK_GROUP_CONTROLLER_NAME = "workGroup";
+	String SCOPE_CONTROLLER_NAME = "scope";
 	
 	// Messages
 	String ID_DUPLICATED = "manager_id_duplicated";

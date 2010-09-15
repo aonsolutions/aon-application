@@ -2,15 +2,28 @@ package com.code.aon.ui.manager.controller;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
+import com.code.aon.config.enumeration.WorkGroupStatus;
+import com.code.aon.manager.DBConnnection;
+import com.code.aon.ui.manager.util.DBManager;
 import com.code.aon.ui.util.AonUtil;
 
-public class ManagerController {
+public class ManagerController implements IManagerConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ManagerController.class);
 	
@@ -26,6 +39,22 @@ public class ManagerController {
 	
 	private boolean administrator;
 	
+	private List<SelectItem> workGroupStatuses;
+	
+	private DBManager dbManager;
+	
+	private DBConnnection dbConnection;
+	
+	private SessionFactory sessionFactory;
+	
+	public ManagerController() {
+		this.dbManager = new DBManager();
+	}
+	
+	public DBManager getDBManager() {
+		return dbManager;
+	}
+
 	public boolean isAdministrator() {
 		return administrator;
 	}
@@ -89,5 +118,53 @@ public class ManagerController {
 		}
 		return md5_passwd;
 	} 
+	
+
+	public void createDB( DBConnnection dbConnection ) throws AonException, SQLException {
+		if (! getDBManager().exists(dbConnection) ) {
+			getDBManager().createDB(dbConnection);
+		} else {
+			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DB_DUPLICATED, dbConnection.getDBName());
+		}
+	}
+	
+	public void removeDB( DBConnnection dbConnection ) throws SQLException {
+		if ( getDBManager().exists(dbConnection) ) {
+			getDBManager().dropDB(dbConnection);
+		}
+	}		
+	
+	public List<SelectItem> getWorkGroupStatuses() {
+		if(workGroupStatuses == null){
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			workGroupStatuses = new LinkedList<SelectItem>();
+			for (WorkGroupStatus status : WorkGroupStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				workGroupStatuses.add(item);
+			}
+		}
+		return workGroupStatuses;
+	}	
+	
+	public void changeDbConnection(DBConnnection dbc) {
+		if (! ObjectUtils.equals(dbConnection, dbc) ) {
+			this.dbConnection = dbc;	
+			if ( this.sessionFactory != null ) {
+				this.sessionFactory.close();
+				this.sessionFactory = null;				
+			}
+		}
+	}
+
+	public SessionFactory getSessionFactory() {
+		if ( sessionFactory == null )  {
+			AnnotationConfiguration configuration = new AnnotationConfiguration();
+			dbConnection.configure(configuration);
+	   		configuration.buildMappings();
+			sessionFactory = configuration.buildSessionFactory();
+		}
+		return sessionFactory;
+	}
 	
 }

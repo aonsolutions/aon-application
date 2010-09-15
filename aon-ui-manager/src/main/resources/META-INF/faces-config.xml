@@ -336,6 +336,56 @@
 		</managed-property>
 	</managed-bean>					
 
+	<!-- ************ WORK GROUP ************** -->
+	<managed-bean>
+		<managed-bean-name>workGroup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.DBBasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.WorkGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>workGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>WorkGroup_description</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ************ SCOPE ************** -->
+	<managed-bean>
+		<managed-bean-name>scope</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.DBBasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Scope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>scope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Scope_description</value>
+		</managed-property>		
+	</managed-bean>
+		
 	<!-- =================== Main ================= -->
 	<navigation-rule>
 		<navigation-case>

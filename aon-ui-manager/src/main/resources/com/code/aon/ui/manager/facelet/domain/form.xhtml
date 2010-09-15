@@ -15,10 +15,6 @@
 				<ui:param name="controller" value="#{domain}" />
 				<ui:param name="skipResetButton" value="#{!manager.administrator}" />
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="domainDBConnection" rendered="#{!domain.new}"
-						value="#{managerBundle.manager_db_connections}"
-						action="domainDBConnection_list" actionListener="#{domainDBConnection.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-master"/>
 					<aon:commandButton id="domainApplications" rendered="#{!domain.new}"
 						value="#{managerBundle.manager_applications}"
 						action="domainApplication_list" actionListener="#{domainApplication.onSearch}"
@@ -27,6 +23,10 @@
 						value="#{managerBundle.manager_users}"
 						action="domainUser_list" actionListener="#{domainUser.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-user"/>
+					<aon:commandButton id="domainDBConnection" rendered="#{!domain.new}"
+						value="#{managerBundle.manager_db_connections}"
+						action="domainDBConnection_list" actionListener="#{domainDBConnection.onSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-master"/>
 				</ui:define>				
 			</ui:decorate>
 

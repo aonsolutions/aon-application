@@ -65,6 +65,21 @@
 							<ui:param name="controller" value="#{domainProfile}" />
 						</ui:include>
                     </aon:panelTab>
+                    
+					<aon:panelTab name="userWorkGroups" rendered="#{domainApplication.aonDB}"
+						label="#{managerBundle.manager_workgroups}">
+						<ui:include src="/com/code/aon/ui/manager/facelet/workGroup/grid.xhtml" >
+							<ui:param name="controller" value="#{workGroup}" />
+						</ui:include>
+                    </aon:panelTab>
+                                        
+					<aon:panelTab name="scopes" rendered="#{domainApplication.aonDB}"
+						label="#{managerBundle.manager_scopes}">
+						<ui:include src="/com/code/aon/ui/manager/facelet/scope/grid.xhtml" >
+							<ui:param name="controller" value="#{scope}" />
+						</ui:include>
+                    </aon:panelTab>
+                                                            
 				</aon:panelTabSet>						
 				
 			</aon:div>

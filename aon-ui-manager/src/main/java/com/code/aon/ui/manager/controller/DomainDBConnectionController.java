@@ -1,6 +1,5 @@
 package com.code.aon.ui.manager.controller;
 
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -23,7 +21,6 @@ import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.manager.util.DBManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class DomainDBConnectionController extends BasicController implements IManagerConstants {
@@ -34,14 +31,11 @@ public class DomainDBConnectionController extends BasicController implements IMa
 	
 	private BasicManagerBean ldapManagerBean;
 	
-	private DBManager manager;
-	
 	private boolean createDB;
 	
 	public DomainDBConnectionController() {
 		this.ldapDAO = new LdapDAO(DBConnnection.class);		
 		this.ldapManagerBean = new BasicManagerBean(this.ldapDAO);
-		this.manager = new DBManager();
 		this.createDB = true;
 	}
 
@@ -54,7 +48,7 @@ public class DomainDBConnectionController extends BasicController implements IMa
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		return this.ldapManagerBean;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<DBConnnection> getDBConnections() throws ManagerBeanException {
 		return (List) getModel().getWrappedData();
@@ -101,19 +95,5 @@ public class DomainDBConnectionController extends BasicController implements IMa
 	public void setCreateDB(boolean createDB) {
 		this.createDB = createDB;
 	}
-
-	public void createDB( DBConnnection dbConnection ) throws AonException, SQLException {
-		if (! manager.exists(dbConnection) ) {
-			manager.createDB(dbConnection);
-		} else {
-			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DB_DUPLICATED, dbConnection.getDBName());
-		}
-	}
-	
-	public void removeDB( DBConnnection dbConnection ) throws SQLException {
-		if ( manager.exists(dbConnection) ) {
-			manager.dropDB(dbConnection);
-		}
-	}	
 	
 }
