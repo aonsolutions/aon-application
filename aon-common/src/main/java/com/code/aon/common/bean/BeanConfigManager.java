@@ -15,8 +15,10 @@ import com.code.aon.common.IFinderBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.IDAO;
+import com.code.aon.common.dao.hibernate.DefaultSessionManager;
 import com.code.aon.common.dao.hibernate.HibernateDAO;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.hibernate.ISessionManager;
 import com.code.aon.common.event.IManagerBeanListener;
 import com.code.aon.common.event.IManagerBeanVetoListener;
 
@@ -108,7 +110,8 @@ public class BeanConfigManager {
 		if ( cmd == null ) {
 			throw new ManagerBeanException( pojoClass + " must have Hiberante mapping" );
 		}
-		return new HibernateDAO( pojoClass, sessionFactoryName );
+		ISessionManager sessionManager = new DefaultSessionManager(sessionFactoryName);
+		return new HibernateDAO( pojoClass, sessionManager );
 	}
 
 	/**
