@@ -137,6 +137,7 @@ public class DomainUser implements IPerson {
 		this.password = (value != null) ? value.getBytes() : null;
 	}
 	
+	@Attribute(name="passwordExpirationTimestamp")
 	public Date getPasswordExpirationTimestamp() {
 		return passwordExpirationTimestamp;
 	}
