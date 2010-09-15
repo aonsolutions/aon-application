@@ -289,7 +289,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	public boolean remove(ITransferObject to) throws DAOException {
 		try {
 			Name dn = getDN(to);
-			getLdapSession().delete(dn);
+			getLdapSession().deleteDepth(dn, true);
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in remove of " + metadata.getMainObjectClass(), e );
 		} finally {
