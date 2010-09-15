@@ -87,6 +87,25 @@ public class EndPeriodEntriesController {
 		this.securityLevel = securityLevel;
 	}
 
+	public void onInitOperatingEntry(ActionEvent event) {
+		onInit(event);
+		if (getPeriod() != null) {
+			setDate( getPeriod().getDeadline() );
+		}
+	}
+	public void onInitClosingEntry(ActionEvent event) {
+		onInit(event);	
+		if (getPeriod() != null) {
+			setDate( getPeriod().getDeadline() );
+		}
+	}
+	public void onInitOpeningEntry(ActionEvent event) {
+		onInit(event);	
+		if (getPeriod() != null) {
+			setDate( getPeriod().getInitiationDate() );
+		}
+	}
+	
 	public void onInit(ActionEvent event) {
 		setDate(null);
 		try {

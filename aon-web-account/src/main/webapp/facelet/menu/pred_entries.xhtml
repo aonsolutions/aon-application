@@ -79,17 +79,17 @@
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="accountOperatingEntry" 
-									action="accountOperatingEntry" actionListener="#{endPeriodEntries.onInit}"
-									value="#{accountingBundle.accounting_operating_entry_module}" />
+									action="accountOperatingEntry" actionListener="#{endPeriodEntries.onInitOperatingEntry}"
+									value="#{accountingBundle.accounting_operating_entry_module} XX" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="accountClosingEntry" 
-									action="accountClosingEntry" actionListener="#{endPeriodEntries.onInit}"
+									action="accountClosingEntry" actionListener="#{endPeriodEntries.onInitClosingEntry}"
 									value="#{accountingBundle.accounting_closing_entry_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="accountOpeningEntry" 
-									action="accountOpeningEntry" actionListener="#{endPeriodEntries.onInit}"
+									action="accountOpeningEntry" actionListener="#{endPeriodEntries.onInitOpeningEntry}"
 									value="#{accountingBundle.accounting_opening_entry_module}" />
 							</aon:div>
 						</aon:div>
