@@ -238,15 +238,28 @@ public class InvoiceRecorder implements ITransferObject {
 					} else {
 						ProductAccount acc = (ProductAccount) accounts.get(0);
 						Criteria c = new Criteria();
-						c.addEqualExpression(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID), acc.getAccount().getId());
+						c.addEqualExpression(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID), getAccount().getId());
 						c.addOrder(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER), false);
 						List<ITransferObject> ahs = accountHelperBean.getList(c);
-						if (ahs != null && ahs.size() > 0) {
-							AccountHelper ah = (AccountHelper) ahs.get(0);
-							Account balancingAccount = ah.getBalancingAccount();
-							if (!balancingAccount.equals(getAccount()) ) {
-								addMessage("La contrapartida más usada para el gasto: \"" + invoiceDetail.getDescription() + "\" es \"" + balancingAccount.getFullDescription() +"\".");		
+						AccountHelper first = null;
+						boolean used = false;
+						for (ITransferObject aht: ahs) {
+							AccountHelper ah = (AccountHelper) aht;
+							if (first == null && ah.getBalancingAccount().getFullDescription().startsWith("6") ) {
+								first = ah;
 							}
+							Account balancingAccount = ah.getBalancingAccount();
+							if (balancingAccount.equals(getAccount()) ) {
+								used = true;
+								break;
+							}
+						}
+						if (!used) {
+							String msg = "Este acreedor nunca ha registrado una factura de gasto \"" + invoiceDetail.getDescription() + "\""; 
+							if (first != null) {
+								msg += " y su cuenta de gastos más utilizada es \"" + first.getBalancingAccount().getFullDescription() +"\".";
+							}
+							addMessage(msg);
 						}
 					}
 					

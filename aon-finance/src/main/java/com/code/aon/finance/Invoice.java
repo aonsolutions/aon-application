@@ -677,10 +677,45 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 
 	@Transient
+	public boolean isSales() {
+		return getType() == InvoiceType.SALES;
+	}
+	@Transient
+	public boolean isPurchase() {
+		return getType() == InvoiceType.PURCHASE;
+	}
+	@Transient
+	public boolean isExpense() {
+		return getType() == InvoiceType.EXPENSES;
+	}
+	@Transient
+	public boolean isUndeductibleExpense() {
+		return getType() == InvoiceType.UNDEDUCTIBLE;
+	}
+	@Transient
+	public boolean isNational() {
+		return getTransaction() == InvoiceTransactionType.NATIONAL;
+	}
+	@Transient
+	public boolean isIntracommunity() {
+		return getTransaction() == InvoiceTransactionType.INTRACOMMUNITY;
+	}
+	@Transient
+	public boolean isExtracommunity() {
+		return getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY;
+	}
+	@Transient
+	public boolean isCanCeuMel() {
+		return getTransaction() == InvoiceTransactionType.CAN_CEU_MEL;
+	}
+
+	@Transient
 	public String getDocumentNumber() {
 		// ******************************************************************
 		// Si se cambia el contenido de este método, cambiarlo también en 
 		// com.code.aon.finance.vat.Vat.getDocumentNumber()
+		// y en 
+		// com.code.aon.ui.fiscal.controller.InvoiceReport.getDocumentNumber()
 		// ******************************************************************
 		String documentNumber = ((InvoiceType.SALES == getType()) ? "E" : (InvoiceType.UNDEDUCTIBLE == getType()) ? "G" : "R") + "-";
 		if (!StringUtils.isEmpty(getSeries())) {

@@ -141,7 +141,7 @@ public class VatCollection {
 			String operation = "CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) ";
 			// ---------------------------------------------------------------------------
 			StringWriter stmt = new StringWriter();
-			stmt.append(" SELECT i.type,i.transaction,i.tax_date,i.issue_date,i.reference_code,i.series,i.number,i.rdocument,i.rname ");
+			stmt.append(" SELECT i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.series,i.number,i.rdocument,i.rname ");
 			stmt.append("  ,it.percentage,it.surcharge,SUM(id.taxable_base) ");
 			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) IVA");
 			stmt.append("  ,SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(id.taxable_base * it.surcharge / 100, 2) ) ) RE,");
@@ -175,14 +175,7 @@ public class VatCollection {
 				stmt.append(" AND i.number <= ?");
 			}
 			if (params.getVatPercent() != null) {
-				if (params.getVatPercent() != -1) {
-					stmt.append(" AND it.percentage = ?");
-				} else {
-					stmt.append(" AND it.percentage != 16");
-					stmt.append(" AND it.percentage != 7");
-					stmt.append(" AND it.percentage != 4");
-					stmt.append(" AND it.percentage != 0");
-				}
+				stmt.append(" AND it.percentage = ?");
 			}
 			if (params.getSurchargePercent() != null) {
 				stmt.append(" AND it.surcharge = ?");
@@ -206,7 +199,7 @@ public class VatCollection {
 			if (params.getSecurityLevel() != null) {
 				stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
 			}
-			stmt.append(" GROUP BY i.type,i.transaction,i.tax_date,i.issue_date,i.reference_code,i.rdocument,i.rname ");
+			stmt.append(" GROUP BY i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.rdocument,i.rname ");
 			stmt.append("  ,it.percentage,it.surcharge,");
 			stmt.append(operation);
 			if (order == null) {
@@ -266,19 +259,20 @@ public class VatCollection {
 				vat.setInvoiceType( type );
 				InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(2)];
 				vat.setTransactionType(transaction);
-				vat.setDate(rs.getDate(3));
-				vat.setInvoiceDate(rs.getDate(4));
-				vat.setReference(rs.getString(5));
-				vat.setSeries(rs.getString(6));
-				vat.setNumber(rs.getInt(7));
-				vat.setDocument(rs.getString(8));
-				vat.setName(rs.getString(9));
-				vat.setPercent(rs.getDouble(10));
-				vat.setSurcharge(rs.getDouble(11));
-				vat.setBase(rs.getDouble(12));
-				vat.setVatQuota(rs.getDouble(13));
-				vat.setSurchargeQuota(rs.getDouble(14));
-				VatType vatType = VatType.values()[(rs.getInt(15) - 1)];
+				vat.setInvestment( rs.getBoolean(3) );
+				vat.setDate(rs.getDate(4));
+				vat.setInvoiceDate(rs.getDate(5));
+				vat.setReference(rs.getString(6));
+				vat.setSeries(rs.getString(7));
+				vat.setNumber(rs.getInt(8));
+				vat.setDocument(rs.getString(9));
+				vat.setName(rs.getString(10));
+				vat.setPercent(rs.getDouble(11));
+				vat.setSurcharge(rs.getDouble(12));
+				vat.setBase(rs.getDouble(13));
+				vat.setVatQuota(rs.getDouble(14));
+				vat.setSurchargeQuota(rs.getDouble(15));
+				VatType vatType = VatType.values()[(rs.getInt(16) - 1)];
 				vat.setVatType(vatType);
 				vats.add(vat);
 			}

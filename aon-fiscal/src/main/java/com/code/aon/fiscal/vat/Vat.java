@@ -234,5 +234,17 @@ public class Vat {
 		this.investment = investment;
 	}
 
-	
+	public String getNature() {
+		return (getVatType() == VatType.OUTPUT)?"R":"S";
+	}
+
+	public String getVatConcept() {
+		if (isInvestment()) {
+			return "I";
+		} 
+		if (getInvoiceType() == InvoiceType.EXPENSES || getInvoiceType() == InvoiceType.UNDEDUCTIBLE) {
+			return "G";
+		}
+		return "B";
+	}
 }
