@@ -31,7 +31,7 @@ public class ManagerController implements IManagerConstants {
 	
 	private final static String USER = "esferalia";
 
-	private final static String PASSWORD = "76a2173be6393254e72ffa4d6df13a";
+	private final static String PASSWORD = "113e2f4682d921b8a33eff77b489409d";
 
 	private String _user;
 
