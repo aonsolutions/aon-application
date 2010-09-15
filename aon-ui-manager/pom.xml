@@ -24,12 +24,6 @@
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>		
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.db.manager</artifactId>
-			<version>${pom.version}</version>
-			<scope>compile</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon-master</artifactId>
@@ -44,7 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.config</artifactId>
+			<artifactId>aon.config</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
