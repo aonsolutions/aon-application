@@ -133,7 +133,6 @@ public class HibernateUtil {
      * Open session from named instance.
      * 
      * @param sessionFactoryName  
-     * @throws HibernateException
      */
     public static void startSession( String sessionFactoryName ) {
     	HibernateUtil.getSession(sessionFactoryName);
@@ -153,7 +152,6 @@ public class HibernateUtil {
      *  Close session from named instance.
      *  
      * @param sessionFactoryName  
-     * @throws HibernateException
      */
     public static void closeSession( String sessionFactoryName ) { 
         Session s = session.get(sessionFactoryName).get(); 
