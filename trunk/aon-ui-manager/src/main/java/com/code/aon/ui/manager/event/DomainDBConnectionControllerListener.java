@@ -13,6 +13,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.manager.controller.DomainController;
 import com.code.aon.ui.manager.controller.DomainDBConnectionController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
+import com.code.aon.ui.manager.controller.ManagerController;
 import com.code.aon.ui.util.AonUtil;
 
 public class DomainDBConnectionControllerListener extends ControllerAdapter implements IManagerConstants {
@@ -39,12 +40,13 @@ public class DomainDBConnectionControllerListener extends ControllerAdapter impl
 		DomainDBConnectionController controller = (DomainDBConnectionController) event.getController();
 		if ( controller.isCreateDB() ) {
 			DBConnnection dbc = (DBConnnection) event.getController().getTo();
+			ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 			try {
-				controller.createDB(dbc);
+				manager.createDB(dbc);
 			} catch (Throwable e) {
 				LOGGER.error(e.getMessage(), e);
 				try {
-					controller.removeDB(dbc);
+					manager.removeDB(dbc);
 				} catch ( SQLException sqle ) {
 					LOGGER.error(sqle.getMessage(), sqle);
 				}

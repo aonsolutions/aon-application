@@ -27,12 +27,6 @@
 						validator="#{domainUser.idCheck}"
 						value="#{domainUser.to.uid}" />
 						
-					<aon:outputLabel for="DomainUser_password"
-						value="#{bundle.aon_login_passwd}" />
-					<aon:inputSecret id="DomainUser_password" 
-						size="60" maxlength="45" redisplay="true"
-						value="#{domainUser.to.passwordString}" />		
-						
 					<aon:outputLabel for="DomainUser_passwordExpirationTimestamp"
 						value="#{managerBundle.manager_password_expiration}" />
 					<aon:selectInputDate id="DomainUser_passwordExpirationTimestamp" 

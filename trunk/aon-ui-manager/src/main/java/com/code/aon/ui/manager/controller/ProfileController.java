@@ -7,9 +7,7 @@ import javax.naming.Name;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ldap.NameResolver;
-import com.code.aon.manager.Application;
 import com.code.aon.manager.BasicProfile;
-import com.code.aon.manager.Profile;
 import com.code.aon.manager.Role;
 import com.code.aon.ui.util.AonUtil;
 

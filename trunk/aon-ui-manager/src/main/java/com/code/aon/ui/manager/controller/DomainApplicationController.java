@@ -27,6 +27,8 @@ public class DomainApplicationController extends LdapBasicController {
 	
 	private String selectedTab;
 	
+	private boolean aonDB;
+	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -35,6 +37,14 @@ public class DomainApplicationController extends LdapBasicController {
 		this.selectedTab = selectedTab;
 	}
 	
+	public boolean isAonDB() {
+		return aonDB;
+	}
+
+	public void setAonDB(boolean aonDB) {
+		this.aonDB = aonDB;
+	}
+
 	@Override
 	public void updateBaseDN(Name parent) {
 		String domain = NameResolver.getValue(parent, 0);

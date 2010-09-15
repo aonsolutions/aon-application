@@ -1,6 +1,7 @@
 package com.code.aon.ui.manager.util;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -78,6 +79,20 @@ public class DBManager {
 			DbUtils.closeQuietly(connection);
 		}		
 	}	
+	
+	public boolean existsTable( DBConnnection dbc, String tableName ) throws SQLException {
+	    Connection connection = null;
+	    ResultSet tables = null;
+		try {
+			connection = getConnection(dbc);
+			DatabaseMetaData dbm = connection.getMetaData();
+			tables = dbm.getTables(dbc.getDBName(), "", tableName, null);
+			return tables.next();
+		} finally {
+			DbUtils.closeQuietly(tables);
+			DbUtils.closeQuietly(connection);
+		}
+	}		
 	
 	public void createDB( DBConnnection dbc ) throws AonException {
 	    Connection connection = null;
