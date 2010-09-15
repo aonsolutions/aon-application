@@ -221,7 +221,22 @@
 			<property-name>pageLimit</property-name>
 			<value>-1</value>
 		</managed-property>
-	</managed-bean>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{domainApplicationUserControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>domainApplicationUserControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.event.DomainApplicationUserControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 
 	<!-- ************* DOMAIN APPLICATION ***************** -->
 	<managed-bean>
@@ -386,6 +401,56 @@
 		</managed-property>		
 	</managed-bean>
 		
+	<!-- ************ USER SCOPE ************** -->
+	<managed-bean>
+		<managed-bean-name>userScope</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.DBBasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.UserScope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>userScope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>UserScope_scope_description</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ************ USER WORKGROUP ************** -->
+	<managed-bean>
+		<managed-bean-name>userWorkgroup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.DBBasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.UserWorkGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>userWorkgroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>UserWorkGroup_workGroup_description</value>
+		</managed-property>		
+	</managed-bean>	
+			
 	<!-- =================== Main ================= -->
 	<navigation-rule>
 		<navigation-case>

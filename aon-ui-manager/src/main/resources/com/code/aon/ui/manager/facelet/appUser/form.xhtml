@@ -45,9 +45,16 @@
 				value="#{controller.to.profiles}" layout="pageDirection"
 				required="true">
 				<f:selectItems value="#{domainApplication.availableProfiles}" />
-			</aon:selectManyCheckbox>				
+			</aon:selectManyCheckbox>			
 
 		</aon:panelGrid>
+
+		<c:if test="#{domainApplication.aonDB}">
+			<ui:include src="/com/code/aon/ui/manager/facelet/userScope/grid.xhtml" />
+			
+			<ui:include src="/com/code/aon/ui/manager/facelet/workGroup/grid.xhtml" />
+		</c:if>	
+		
 	</aon:div>
 
 </ui:composition>

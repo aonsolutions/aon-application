@@ -13,12 +13,21 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Scope;
+import com.code.aon.config.WorkGroup;
+import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.Application;
 import com.code.aon.manager.BasicProfile;
 import com.code.aon.manager.DomainApplication;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 public class DomainApplicationController extends LdapBasicController {
@@ -124,6 +133,33 @@ public class DomainApplicationController extends LdapBasicController {
         return list;
     }	
     
-    
+	public List<SelectItem> getScopes() throws ManagerBeanException {
+		List<SelectItem> scopes = new LinkedList<SelectItem>();
+		IController controller = FormUtil.getController(SCOPE_CONTROLLER_NAME);
+		IManagerBean scopeBean = controller.getManagerBean();
+		Criteria criteria = new Criteria();
+		criteria.addOrder("Scope.description");
+		for( ITransferObject to : scopeBean.getList(criteria) ) {
+			Scope scope = (Scope) to;
+			SelectItem item = new SelectItem(scope, scope.getDescription());
+			scopes.add(item);
+		}
+		return scopes;
+	}
+	
+	public List<SelectItem> getWorkgroups() throws ManagerBeanException {
+		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
+		IController controller = FormUtil.getController(WORK_GROUP_CONTROLLER_NAME);
+		IManagerBean workGroupBean = controller.getManagerBean(); 
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression("WorkGroup.status", WorkGroupStatus.ACTIVE);
+		criteria.addOrder("WorkGroup.description");
+		for( ITransferObject to : workGroupBean.getList(criteria) ) {
+			WorkGroup workGroup = (WorkGroup) to;
+			SelectItem item = new SelectItem(workGroup, workGroup.getDescription());
+			workgroups.add(item);
+		}
+		return workgroups;
+	}    
     
 }
