@@ -18,7 +18,7 @@ public interface IManagerConstants {
 	String DOMAIN_APPLICATION_USER_CONTROLLER_NAME = "appUser";
 	String WORK_GROUP_CONTROLLER_NAME = "workGroup";
 	String SCOPE_CONTROLLER_NAME = "scope";
-	String USER_WORK_GROUP_CONTROLLER_NAME = "userWorkGroup";
+	String USER_WORK_GROUP_CONTROLLER_NAME = "userWorkgroup";
 	String USER_SCOPE_CONTROLLER_NAME = "userScope";	
 	
 	// Messages

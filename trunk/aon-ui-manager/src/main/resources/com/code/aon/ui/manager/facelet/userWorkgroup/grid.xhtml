@@ -21,13 +21,13 @@
 					</f:facet>
 					<aon:outputText value="#{to.workGroup.description}"
 						rendered="#{formList}" />
-					<aon:selectOneMenu rendered="#{formEdit}"
-						value="#{controller.to.workGroup}">
+					<aon:selectOneMenu id="UserWorkgroup_workgroup"
+						rendered="#{formEdit}" value="#{controller.to.workGroup}">
 						<f:selectItems value="#{domainApplication.workgroups}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
-						<aon:selectOneMenu rendered="#{formNew}"
-							value="#{controller.to.workGroup}">
+						<aon:selectOneMenu id="UserWorkgroup_workgroup-New"
+							rendered="#{formNew}" value="#{controller.to.workGroup}">
 							<f:selectItems value="#{domainApplication.workgroups}" />
 						</aon:selectOneMenu>
 					</f:facet>

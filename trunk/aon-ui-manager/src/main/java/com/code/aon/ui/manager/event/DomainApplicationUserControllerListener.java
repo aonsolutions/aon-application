@@ -33,7 +33,9 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter i
 	private void updateLines( DomainApplicationUser user ) throws ManagerBeanException {
 		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
 		if ( dac.isAonDB() ) {
-			DBBasicController uwg = (DBBasicController) AonUtil.getRegisteredBean(USER_SCOPE_CONTROLLER_NAME);
+			DBBasicController us = (DBBasicController) AonUtil.getRegisteredBean(USER_SCOPE_CONTROLLER_NAME);
+			updateLine( us, user );
+			DBBasicController uwg = (DBBasicController) AonUtil.getRegisteredBean(USER_WORK_GROUP_CONTROLLER_NAME);
 			updateLine( uwg, user );
 		}
 	}	
