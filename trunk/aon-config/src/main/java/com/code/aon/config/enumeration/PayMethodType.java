@@ -12,9 +12,6 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum PayMethodType implements IResourceable {
 
-	/** UNKNOWN. */
-	UNKNOWN,
-
 	/** CASH BASIS. */
 	CASH_BASIS,
 
@@ -29,9 +26,12 @@ public enum PayMethodType implements IResourceable {
 
 	/** CHEQUE. */
 	CHEQUE,
-    
+
 	/** BANK TRANSFER. */
-	BANK_TRANSFER;
+	BANK_TRANSFER,
+
+	/** OTHER. */
+	OTHER;
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.config.i18n.messages";
