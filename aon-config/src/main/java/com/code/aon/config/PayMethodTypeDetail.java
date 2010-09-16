@@ -12,6 +12,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.config.enumeration.PayMethodType;
 
 @Entity
@@ -26,6 +27,7 @@ public class PayMethodTypeDetail implements ITransferObject{
 
 	@Id
 	@GeneratedValue
+	@AonPOJOInitializationInvalidateRestoreNull
 	@Column(nullable=false)
 	public Integer getId() {
 		return id;
