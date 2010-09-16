@@ -185,7 +185,7 @@ color:#000;
 }	
 
 /************  REGIONES DE CONTENIDO *****************/
-/* tamaño inicial de la aplicacion*/
+/* tamaï¿½o inicial de la aplicacion*/
 .aon-canvas{  
  }
 .aon-menu-sidebar{
@@ -362,6 +362,9 @@ color:#000;
  }
 .aon-icon-attach-file{
 	background:transparent url(images/aon-icon/aon-icon-attach-file.png) scroll left center no-repeat;	
+ }
+.aon-icon-attach-file-disabled{
+	background:transparent url(images/aon-icon/aon-icon-attach-file-disabled.png) scroll left center no-repeat;	
  }
 .aon-icon-mail-save{
 	background:transparent url(images/aon-icon/aon-icon-mail-save.png) scroll left center no-repeat;	
@@ -1115,7 +1118,7 @@ color:#000;
 	background-color:#f2f2f2;
 }*/
 /**********************************************/
-/*      ESTILOS PARA LAS PANTALLAS DE BÚSQUEDA   */
+/*      ESTILOS PARA LAS PANTALLAS DE Bï¿½SQUEDA   */
 /**********************************************/
 .aon-panelGrid-search{
 	background-color:#f6f5e3;
@@ -1180,7 +1183,7 @@ color:#000;
 	margin:0 !important;
 	}
 /*********************************************************/
-/******  PANELGRID SIN BORDES, SOLO PARA MAQUETACIÓN ******/
+/******  PANELGRID SIN BORDES, SOLO PARA MAQUETACIï¿½N ******/
 /*********************************************************/
 .aon-panelGrid-formatting{
 	border:0 !important;
