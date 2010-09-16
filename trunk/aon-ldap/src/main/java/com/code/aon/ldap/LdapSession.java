@@ -336,15 +336,10 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	public void add(Entry entry) throws LdapException {
 		try {
 			Attributes attributes = new BasicAttributes();
-			for (Map.Entry<String, List<Object>> mapEntry : entry.entrySet()) {
-				Attribute attribute = new BasicAttribute(mapEntry.getKey());
-				for (Object object : mapEntry.getValue()) {
-					if ( object instanceof byte[] ) {
-						attribute.add(object);						
-					} else {
-						attribute.add(object.toString());
-					}
-				}
+			for (Map.Entry<String, List<Object>> me : entry.entrySet()) {
+				List<Object> list = me.getValue();
+				Object value = (list.size() == 1) ? list.get(0) : list;
+				Attribute attribute = getAttribute(me.getKey(), value);
 				attributes.put(attribute);
 			}
 			dc.createSubcontext( resolveBase(entry.getDN()), attributes);
@@ -414,16 +409,16 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	@SuppressWarnings("unchecked")
 	private Attribute getAttribute( String name, Object value ) {
 		Attribute attribute = new BasicAttribute(name);
-		if ( List.class.isAssignableFrom(value.getClass()) ) {
-			for( Object _value : (List<Object>) value ) {
-				attribute.add(_value);
-			}				
-		} else if ( Boolean.class.isAssignableFrom(value.getClass()) ) {
+		if ( Boolean.class.isAssignableFrom(value.getClass()) ) {
 			Boolean b = (Boolean) value;
 			attribute.add( b ? TRUE_VALUE : FALSE_VALUE );
 		} else if ( Date.class.isAssignableFrom(value.getClass()) ) {
 			String date = GENERALIZED_TIME_FORMAT.format( (Date) value );
 			attribute.add( date );
+		} else if ( List.class.isAssignableFrom(value.getClass()) ) {
+			for( Object _value : (List<Object>) value ) {
+				attribute.add(_value);
+			}				
 		} else {
 			attribute.add(value);
 		}
