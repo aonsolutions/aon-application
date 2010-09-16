@@ -405,7 +405,7 @@
 	<managed-bean>
 		<managed-bean-name>userScope</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.manager.controller.DBBasicController
+			com.code.aon.ui.manager.controller.UserLinesController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -424,13 +424,17 @@
 			<property-name>defaultOrder</property-name>
 			<value>UserScope_scope_description</value>
 		</managed-property>		
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>		
 	</managed-bean>
 	
 	<!-- ************ USER WORKGROUP ************** -->
 	<managed-bean>
 		<managed-bean-name>userWorkgroup</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.manager.controller.DBBasicController
+			com.code.aon.ui.manager.controller.UserLinesController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -448,6 +452,10 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>UserWorkGroup_workGroup_description</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>		
 	</managed-bean>	
 			

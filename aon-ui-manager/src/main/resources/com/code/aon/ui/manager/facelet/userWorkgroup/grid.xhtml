@@ -13,6 +13,7 @@
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 			<ui:param name="controller" value="#{userWorkgroup}" />
+			<ui:param name="showDataScroller" value="#{false}" />
 			<ui:define name="columns">
 
 				<aon:column styleClass="aon-editDataTable-textColumn">
@@ -22,11 +23,13 @@
 					<aon:outputText value="#{to.workGroup.description}"
 						rendered="#{formList}" />
 					<aon:selectOneMenu id="UserWorkgroup_workgroup"
+						converter="#{appUser.workgroupConverter}" required="true"
 						rendered="#{formEdit}" value="#{controller.to.workGroup}">
 						<f:selectItems value="#{domainApplication.workgroups}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
 						<aon:selectOneMenu id="UserWorkgroup_workgroup-New"
+							converter="#{appUser.workgroupConverter}" required="true"
 							rendered="#{formNew}" value="#{controller.to.workGroup}">
 							<f:selectItems value="#{domainApplication.workgroups}" />
 						</aon:selectOneMenu>

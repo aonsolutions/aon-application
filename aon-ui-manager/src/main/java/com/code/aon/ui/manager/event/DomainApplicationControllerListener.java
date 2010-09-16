@@ -76,10 +76,8 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 			if ( manager.getDBManager().existsTable(dbc, "user") ) {
 				dac.setAonDB(true);
 				DBBasicController uwg = (DBBasicController) AonUtil.getRegisteredBean(WORK_GROUP_CONTROLLER_NAME);
-				uwg.updateDAO();
 				uwg.onSearch(null);			
 				DBBasicController scopes = (DBBasicController) AonUtil.getRegisteredBean(SCOPE_CONTROLLER_NAME);
-				scopes.updateDAO();
 				scopes.onSearch(null);			
 			}
 		}		

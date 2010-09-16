@@ -83,10 +83,10 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	private void updateDomain( Domain domain ) {
 		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
 		dac.updateBaseDN(domain.getId());
-		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
-		ddbc.setDomain(domain.getCommonName());		
 		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
 		duc.updateBaseDN(domain.getId());		
+		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+		ddbc.updateBaseDN(domain.getId());		
 	}
 
 }

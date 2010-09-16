@@ -27,8 +27,6 @@ public interface IManagerConstants {
 	String DOMAIN_INVALID_NAME = "manager_domain_invalid_name";
 	String APPLICATION_INVALID_NAME = "manager_application_invalid_name";
 	String APPLICATION_DUPLICATED_NAME = "manager_application_duplicated_name";
-	String DB_CONNECTION_INVALID_NAME = "manager_db_connection_invalid_name";
-	String DB_CONNECTION_DUPLICATED_NAME = "manager_db_connection_duplicated_name";
 	String DB_DUPLICATED = "manager_db_duplicated";
 
 }
