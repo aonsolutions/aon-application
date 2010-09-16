@@ -9,6 +9,7 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
 import com.code.aon.config.CommissionType;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tariff;
@@ -32,6 +33,7 @@ public class ConfigAliasWriter {
 			Bank.class.getName(),
 			CommissionType.class.getName(),
 			PayMethod.class.getName(),
+			PayMethodTypeDetail.class.getName(),
 			Scope.class.getName(),
 			Series.class.getName(),
 			Tariff.class.getName(),
