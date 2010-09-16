@@ -21,13 +21,13 @@
 					</f:facet>
 					<aon:outputText value="#{to.scope.description}"
 						rendered="#{formList}" />
-					<aon:selectOneMenu rendered="#{formEdit}"
-						value="#{controller.to.scope}">
+					<aon:selectOneMenu id="UserScope_scope"
+						rendered="#{formEdit}" value="#{controller.to.scope}">
 						<f:selectItems value="#{domainApplication.scopes}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
-						<aon:selectOneMenu rendered="#{formNew}"
-							value="#{controller.to.scope}">
+						<aon:selectOneMenu id="UserScope_scope-New"
+							rendered="#{formNew}" value="#{controller.to.scope}">
 							<f:selectItems value="#{domainApplication.scopes}" />
 						</aon:selectOneMenu>
 					</f:facet>
