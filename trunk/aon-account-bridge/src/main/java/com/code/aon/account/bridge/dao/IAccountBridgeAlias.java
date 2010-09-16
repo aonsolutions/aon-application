@@ -5,6 +5,7 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.CreditorAccount;
+import com.code.aon.account.bridge.PayMethodTypeDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.TaxAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
@@ -94,6 +95,31 @@ public interface IAccountBridgeAlias {
 	* Hibernate value: CreditorAccount.id
 	*/
 	String  CREDITOR_ACCOUNT_ID = CREDITOR_ACCOUNT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for PayMethodTypeDetailAccount entity.
+	*/ 
+	DAOConstantsEntry PAY_METHOD_TYPE_DETAIL_ACCOUNT_ENTRY = DAOConstants.getDAOConstant(PayMethodTypeDetailAccount.class);
+
+	/** 
+	* Alias value: PayMethodTypeDetailAccount_account_id
+	* Hibernate value: PayMethodTypeDetailAccount.account.id
+	*/
+	String  PAY_METHOD_TYPE_DETAIL_ACCOUNT_ACCOUNT_ID = PAY_METHOD_TYPE_DETAIL_ACCOUNT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: PayMethodTypeDetailAccount_id
+	* Hibernate value: PayMethodTypeDetailAccount.id
+	*/
+	String  PAY_METHOD_TYPE_DETAIL_ACCOUNT_ID = PAY_METHOD_TYPE_DETAIL_ACCOUNT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: PayMethodTypeDetailAccount_payMethodTypeDetail_id
+	* Hibernate value: PayMethodTypeDetailAccount.payMethodTypeDetail.id
+	*/
+	String  PAY_METHOD_TYPE_DETAIL_ACCOUNT_PAY_METHOD_TYPE_DETAIL_ID = PAY_METHOD_TYPE_DETAIL_ACCOUNT_ENTRY.getAliasNames()[2];
 
 
 
