@@ -67,34 +67,40 @@ public interface IAccountingAlias {
 	String  ACCOUNT_ENTRY_ACCOUNT_PERIOD = ACCOUNT_ENTRY_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: AccountEntry_comments
+	* Hibernate value: AccountEntry.comments
+	*/
+	String  ACCOUNT_ENTRY_COMMENTS = ACCOUNT_ENTRY_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: AccountEntry_entryDate
 	* Hibernate value: AccountEntry.entryDate
 	*/
-	String  ACCOUNT_ENTRY_ENTRY_DATE = ACCOUNT_ENTRY_ENTRY.getAliasNames()[1];
+	String  ACCOUNT_ENTRY_ENTRY_DATE = ACCOUNT_ENTRY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: AccountEntry_id
 	* Hibernate value: AccountEntry.id
 	*/
-	String  ACCOUNT_ENTRY_ID = ACCOUNT_ENTRY_ENTRY.getAliasNames()[2];
+	String  ACCOUNT_ENTRY_ID = ACCOUNT_ENTRY_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: AccountEntry_journal
 	* Hibernate value: AccountEntry.journal
 	*/
-	String  ACCOUNT_ENTRY_JOURNAL = ACCOUNT_ENTRY_ENTRY.getAliasNames()[3];
+	String  ACCOUNT_ENTRY_JOURNAL = ACCOUNT_ENTRY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: AccountEntry_securityLevel
 	* Hibernate value: AccountEntry.securityLevel
 	*/
-	String  ACCOUNT_ENTRY_SECURITY_LEVEL = ACCOUNT_ENTRY_ENTRY.getAliasNames()[4];
+	String  ACCOUNT_ENTRY_SECURITY_LEVEL = ACCOUNT_ENTRY_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: AccountEntry_type
 	* Hibernate value: AccountEntry.type
 	*/
-	String  ACCOUNT_ENTRY_TYPE = ACCOUNT_ENTRY_ENTRY.getAliasNames()[5];
+	String  ACCOUNT_ENTRY_TYPE = ACCOUNT_ENTRY_ENTRY.getAliasNames()[6];
 
 
 

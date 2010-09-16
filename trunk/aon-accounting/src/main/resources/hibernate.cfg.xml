@@ -49,13 +49,14 @@
 		<!-- GEOZONE -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 		
-		<!-- PRODUCT -->
+		<!-- PRODUCT 
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.Product"/>
 	  	<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
 		<mapping class="com.code.aon.product.Brand"/>
-
+		-->
+		
 		<!-- CONFIG -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
