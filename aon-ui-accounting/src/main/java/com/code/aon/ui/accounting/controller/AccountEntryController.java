@@ -42,6 +42,8 @@ public class AccountEntryController extends BasicController {
 	
 	private Double totalDebit;
 	private Double totalCredit;
+
+	private boolean commentPanelVisible;
 	
 	private SpecialEntryControllerManager getControllerManager() {
 		if (controllerManager == null) {
@@ -53,7 +55,7 @@ public class AccountEntryController extends BasicController {
 			// Wizard de cobros y pagos.
 			controllerManager.register(AccountEntryType.PAYMENT, "financeEntry");
 			controllerManager.register(AccountEntryType.COLLECTION, "financeEntry");
-			// Wizard de Cuotas de préstamos.			
+			// Wizard de Cuotas de prï¿½stamos.			
 			controllerManager.register(AccountEntryType.LOAN_FEE, "loanFeeEntry");
 		}
 		return controllerManager;
@@ -200,8 +202,8 @@ public class AccountEntryController extends BasicController {
 
 	public boolean isStatementAvailable() {
 		// Si se ha accedido al manto. de apuntes desde el extracto, se desahilita 
-		// la opción de ir al extracto desde las líneas de apuntes, porque se  
-		// cambiaría el contenido del controlador del extracto. 
+		// la opciï¿½n de ir al extracto desde las lï¿½neas de apuntes, porque se  
+		// cambiarï¿½a el contenido del controlador del extracto. 
 		return getBackAction() == null || !("account_statement_list".equals(getBackAction()) );
 	}
 
@@ -215,7 +217,7 @@ public class AccountEntryController extends BasicController {
 		try {
 			return (getModel().getRowCount() > 0 )?"accountEntry_form":"accountEntry_list";
 		} catch (ManagerBeanException e) {
-			String msg = "No se pudo realizar la búsqueda.";
+			String msg = "No se pudo realizar la bï¿½squeda.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
@@ -287,6 +289,20 @@ public class AccountEntryController extends BasicController {
 				CommonUtil.round(getTotalDebit().doubleValue()) == 
 				CommonUtil.round(getTotalCredit().doubleValue())
 				); 
+	}
+	
+	public boolean isCommentPanelVisible() {
+		return commentPanelVisible;
+	}
+	public void setCommentPanelVisible(boolean commentPanelVisible) {
+		this.commentPanelVisible = commentPanelVisible;
+	}
+
+	public void showCommentPanel(ActionEvent event  ) {
+		setCommentPanelVisible(true);
+	}
+	public void hideCommentPanel(ActionEvent event  ) {
+		setCommentPanelVisible(false);
 	}
 	
 }
