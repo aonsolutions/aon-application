@@ -27,7 +27,6 @@ public class PayMethodTypeDetail implements ITransferObject{
 
 	@Id
 	@GeneratedValue
-	@AonPOJOInitializationInvalidateRestoreNull
 	@Column(nullable=false)
 	public Integer getId() {
 		return id;
