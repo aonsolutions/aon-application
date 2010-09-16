@@ -6,6 +6,7 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
 import com.code.aon.config.CommissionType;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tariff;
@@ -114,6 +115,31 @@ public interface IConfigAlias {
 	* Hibernate value: PayMethod.type
 	*/
 	String  PAY_METHOD_TYPE = PAY_METHOD_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for PayMethodTypeDetail entity.
+	*/ 
+	DAOConstantsEntry PAY_METHOD_TYPE_DETAIL_ENTRY = DAOConstants.getDAOConstant(PayMethodTypeDetail.class);
+
+	/** 
+	* Alias value: PayMethodTypeDetail_description
+	* Hibernate value: PayMethodTypeDetail.description
+	*/
+	String  PAY_METHOD_TYPE_DETAIL_DESCRIPTION = PAY_METHOD_TYPE_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: PayMethodTypeDetail_id
+	* Hibernate value: PayMethodTypeDetail.id
+	*/
+	String  PAY_METHOD_TYPE_DETAIL_ID = PAY_METHOD_TYPE_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: PayMethodTypeDetail_type
+	* Hibernate value: PayMethodTypeDetail.type
+	*/
+	String  PAY_METHOD_TYPE_DETAIL_TYPE = PAY_METHOD_TYPE_DETAIL_ENTRY.getAliasNames()[2];
 
 
 
