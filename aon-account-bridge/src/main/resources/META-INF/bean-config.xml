@@ -82,4 +82,14 @@
 	        <vetoListener>com.code.aon.account.bridge.event.ProductAccountBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
+
+	<bean description="Control de enlace entre PayMethodTypeDetail y Account">
+		<pojo>com.code.aon.account.bridge.PayMethodTypeDetailAccount</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.PayMethodTypeDetailAccountBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.PayMethodTypeDetailAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
 </bean-config>

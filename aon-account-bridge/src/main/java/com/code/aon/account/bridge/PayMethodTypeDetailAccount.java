@@ -15,6 +15,7 @@ import org.hibernate.annotations.Index;
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.config.PayMethodTypeDetail;
 
 @Entity
@@ -41,7 +42,8 @@ public class PayMethodTypeDetailAccount implements ITransferObject, IAccount {
 	@ManyToOne
 	@JoinColumn( name="pm_type_detail", nullable = false)
 	@ForeignKey(name="FK_PM_TYPE_DETAIL_ACCOUNT_DETAIL")
-	@Index(name="IDX_PM_TYPE_DETAIL_ACCOUNT_DETAIL")							
+	@Index(name="IDX_PM_TYPE_DETAIL_ACCOUNT_DETAIL")
+	@AonPOJOInitializationInvalidateRestoreNull
 	public PayMethodTypeDetail getPayMethodTypeDetail() {
 		return payMethodTypeDetail;
 	}
