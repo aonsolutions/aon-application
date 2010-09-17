@@ -140,7 +140,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 							COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE, ACTIVE_ATTRIBUTE);
 					name = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
 					surname = userEntry.getAsString(SURNAME_ATTRIBUTE);
-					active = userEntry.getAsBoolean(ACTIVE_ATTRIBUTE);
+					active = userEntry.toBoolean(ACTIVE_ATTRIBUTE);
 					if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
 						alternativeEmail = userEntry.getAsString(MAIL_ATTRIBUTE);
 					}
