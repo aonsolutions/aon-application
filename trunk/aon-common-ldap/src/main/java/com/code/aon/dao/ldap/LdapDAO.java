@@ -17,7 +17,6 @@ import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -231,7 +230,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 				result = dao.getId( (ITransferObject) result );
 			}
 			if ( result instanceof Boolean ) {
-				result = ((Boolean) result).booleanValue() ? LdapSession.TRUE_VALUE : LdapSession.FALSE_VALUE;
+				result = Entry.convertToString( (Boolean) result );
 			} else if (! ((result instanceof byte[]) || (result instanceof Date)) ) {
 				result = ObjectUtils.toString(result);
 			}
@@ -346,6 +345,10 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			result = dao.get( id );								
 		} else if ( info.isName() ) {
 			result = NameResolver.getName( ObjectUtils.toString(value) );
+		} else if (  Boolean.class.isAssignableFrom(info.getBaseClass()) ) {
+			result = Entry.convertToBoolean(value.toString());
+		} else if (  Date.class.isAssignableFrom(info.getBaseClass()) ) {
+			result = Entry.convertToDate(value.toString());
 		} else {
 			result = ConvertUtils.convert(value, info.getBaseClass());	
 		}

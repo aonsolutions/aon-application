@@ -149,7 +149,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 			domainApplication.setDataSource(NameResolver.getName(dataSource));
 		}
 		if ( entry.containsKey(STATUS_ATTRIBUTE) ) {
-			domainApplication.setStatus(entry.getAsInteger(STATUS_ATTRIBUTE));	
+			domainApplication.setStatus(entry.toInteger(STATUS_ATTRIBUTE));	
 		}		
 		return domainApplication;
 	}

@@ -1,5 +1,7 @@
 package com.code.aon.ldap;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,8 +11,20 @@ import java.util.Set;
 
 import javax.naming.Name;
 
+import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Entry implements ILdapConstants, IAonObjectClasses { 
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(Entry.class);
+	
+	private static final String TRUE_VALUE = "TRUE";
+	
+	private static final String FALSE_VALUE = "FALSE";
+
+	private static final SimpleDateFormat GENERALIZED_TIME_FORMAT = new SimpleDateFormat( "yyyyMMddHHmmss'Z'" );
+	
 	private static final long serialVersionUID = -3592232487775900337L;
 	
 	private Name dn;
@@ -79,8 +93,18 @@ public class Entry implements ILdapConstants, IAonObjectClasses {
 		return (String) getAsObject(key);
 	}
 
+	public Integer toInteger( String key ) {
+		Object value = getAsObject(key);
+		return NumberUtils.createInteger(value.toString());
+	}
+	
 	public Integer getAsInteger( String key ) {
 		return (Integer) getAsObject(key);
+	}
+	
+	public Number toNumber( String key ) {
+		Object value = getAsObject(key);
+		return NumberUtils.createNumber(value.toString());
 	}
 
 	public Number getAsNumber( String key ) {
@@ -91,10 +115,20 @@ public class Entry implements ILdapConstants, IAonObjectClasses {
 		return (byte[]) getAsObject(key);
 	}
 
+	public Boolean toBoolean( String key ) {
+		Object value = getAsObject(key);
+		return TRUE_VALUE.equals(value) ? Boolean.TRUE : Boolean.FALSE;
+	}
+	
 	public Boolean getAsBoolean( String key ) {
 		return (Boolean) getAsObject(key);
 	}
 
+	public Date toDate( String key ) {
+		Object value = getAsObject(key);
+		return convertToDate(value.toString());
+	}
+	
 	public Date getAsDate( String key ) {
 		return (Date) getAsObject(key);
 	}
@@ -102,6 +136,32 @@ public class Entry implements ILdapConstants, IAonObjectClasses {
 	public boolean hasObjectClass( String name ) {
 		List<Object> objectClasses = get(OBJECT_CLASS_ATTRIBUTE);
 		return ( objectClasses != null ) ? objectClasses.contains(name) : false;
+	}
+	
+	public static Date convertToDate( String value ) {
+		try {
+			return GENERALIZED_TIME_FORMAT.parse( value.toString() );
+		} catch (ParseException e) {
+			LOGGER.debug( e.getMessage(), e );
+		}
+		return null;		
+	}
+
+	public static String convertToString( Date value ) {
+		return GENERALIZED_TIME_FORMAT.format( value );
+	}
+
+	public static Date convertToBoolean( String value ) {
+		try {
+			return GENERALIZED_TIME_FORMAT.parse( value.toString() );
+		} catch (ParseException e) {
+			LOGGER.debug( e.getMessage(), e );
+		}
+		return null;		
+	}
+
+	public static String convertToString( Boolean value ) {
+		return value ? TRUE_VALUE : FALSE_VALUE;
 	}
 	
 }
