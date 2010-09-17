@@ -103,6 +103,9 @@ public class DomainApplicationUserController extends LdapBasicController {
 			DomainUser domainUser = (DomainUser) list.get(0);
 			user.setName( domainUser.getFullName() );
 		}
+		if ( StringUtils.isEmpty(user.getName()) ) {
+			user.setName(dau.getCommonName());
+		}
 		return user;
 	}
 	

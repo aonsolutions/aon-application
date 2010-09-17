@@ -1,11 +1,6 @@
 package com.code.aon.ui.manager.event;
 
-import java.sql.SQLException;
-
 import javax.naming.Name;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
@@ -24,19 +19,12 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DomainApplicationControllerListener extends ControllerAdapter implements IManagerConstants {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationControllerListener.class);
-	
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainApplicationController dac = (DomainApplicationController) event.getController();
 		dac.createOrganizationalUnits(dac.getDomainApplication());
-		try {
-			updateApplication(dac);
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ControllerListenerException( e.getMessage(), e );
-		}
+		updateApplication(dac);
 	}	
 	
 	@Override
@@ -44,15 +32,10 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 			throws ControllerListenerException {
 		DomainApplicationController dac = (DomainApplicationController) event.getController();
 		dac.createOrganizationalUnits(dac.getDomainApplication());
-		try {
-			updateApplication(dac);
-		} catch (SQLException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ControllerListenerException( e.getMessage(), e );
-		}
+		updateApplication(dac);
 	}
 	
-	private void updateApplication( DomainApplicationController dac ) throws SQLException {
+	private void updateApplication( DomainApplicationController dac ) {
 		DomainApplication application = dac.getDomainApplication();
 		DomainApplicationUserController dau = (DomainApplicationUserController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_USER_CONTROLLER_NAME);
 		dau.updateBaseDN(application.getId());
@@ -67,18 +50,20 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 		updateDBConnection(dac);
 	}
 	
-	private void updateDBConnection( DomainApplicationController dac ) throws SQLException {
+	private void updateDBConnection( DomainApplicationController dac ) {
 		dac.setAonDB(false);
 		DBConnnection dbc = dac.getDomainApplication().getDataSource();
 		if ( (dbc != null) && (dbc.getId() != null) ) {
 			ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
-			manager.changeDbConnection(dbc);
-			if ( manager.getDBManager().existsTable(dbc, "user") ) {
-				dac.setAonDB(true);
-				DBBasicController uwg = (DBBasicController) AonUtil.getRegisteredBean(WORK_GROUP_CONTROLLER_NAME);
-				uwg.onSearch(null);			
-				DBBasicController scopes = (DBBasicController) AonUtil.getRegisteredBean(SCOPE_CONTROLLER_NAME);
-				scopes.onSearch(null);			
+			if ( manager.getDBManager().exists(dbc) ) {
+				manager.changeDbConnection(dbc);
+				if ( manager.getDBManager().existsTable(dbc, "user") ) {
+					dac.setAonDB(true);
+					DBBasicController uwg = (DBBasicController) AonUtil.getRegisteredBean(WORK_GROUP_CONTROLLER_NAME);
+					uwg.onSearch(null);			
+					DBBasicController scopes = (DBBasicController) AonUtil.getRegisteredBean(SCOPE_CONTROLLER_NAME);
+					scopes.onSearch(null);			
+				}
 			}
 		}		
 	}

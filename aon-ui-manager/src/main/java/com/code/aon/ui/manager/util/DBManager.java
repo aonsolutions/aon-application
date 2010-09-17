@@ -64,7 +64,7 @@ public class DBManager {
 		return connected;
 	}	
 	
-	public boolean exists( DBConnnection dbc ) throws SQLException {
+	public boolean exists( DBConnnection dbc ) {
 	    Connection connection = null;
 	    Statement statement = null;
 		try {
@@ -74,13 +74,16 @@ public class DBManager {
 			LOGGER.info( "Check if exists database: {}", sql );
 			ResultSet set = statement.executeQuery(sql);
 			return set.next();
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
 		} finally {
 			DbUtils.closeQuietly(statement);
 			DbUtils.closeQuietly(connection);
 		}		
+		return false;
 	}	
 	
-	public boolean existsTable( DBConnnection dbc, String tableName ) throws SQLException {
+	public boolean existsTable( DBConnnection dbc, String tableName ) {
 	    Connection connection = null;
 	    ResultSet tables = null;
 		try {
@@ -88,10 +91,13 @@ public class DBManager {
 			DatabaseMetaData dbm = connection.getMetaData();
 			tables = dbm.getTables(dbc.getDBName(), "", tableName, null);
 			return tables.next();
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
 		} finally {
 			DbUtils.closeQuietly(tables);
 			DbUtils.closeQuietly(connection);
 		}
+		return false;
 	}		
 	
 	public void createDB( DBConnnection dbc ) throws AonException {
