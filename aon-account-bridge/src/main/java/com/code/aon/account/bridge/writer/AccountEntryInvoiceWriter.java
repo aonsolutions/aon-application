@@ -138,7 +138,9 @@ public class AccountEntryInvoiceWriter {
 		Map<Account, Double> retentionQuotas = obtainRetentionQuotasPerAccount(taxBreakDownList, invoice);
 		Map<Account, Double> taxQuotas = obtainTaxQuotasPerAccount(taxBreakDownList, invoice);
 		Map<Account, Double> bases = obtainBasesPerAccount(invoice);
-		List<AccountEntryDetail> details = insertEntryDetails(entry, account, obtainConcept(invoice, total), total, retentionQuotas, taxQuotas, bases, save);
+		List<AccountEntryDetail> details = insertEntryDetails(entry, account, 
+					obtainConcept(invoice, total), invoice.getDocumentNumber(), 
+					total, retentionQuotas, taxQuotas, bases, save);
 		if (save) {
 			insertAccountEntryInvoice(entry, invoice);	
 		}
@@ -295,7 +297,8 @@ public class AccountEntryInvoiceWriter {
 		return  (AccountEntry) entryBean.insertOrUpdate(entry);
 	}
 
-	public List<AccountEntryDetail> insertEntryDetails(AccountEntry entry, Account account, String concept,	double invoiceTotal,
+	public List<AccountEntryDetail> insertEntryDetails(AccountEntry entry, Account account, 
+			String concept,	String documentNumber, double invoiceTotal, 
 			Map<Account, Double> retentionQuotasPerAccount, Map<Account, Double> taxQuotasPerAccount, 
 			Map<Account, Double> basesPerAccount,boolean save) throws ManagerBeanException {
 		List<AccountEntryDetail> details = new LinkedList<AccountEntryDetail>();
@@ -313,6 +316,7 @@ public class AccountEntryInvoiceWriter {
 			entryDetail.setCredit(invoiceTotal);
 		}
 		entryDetail.setConcept(concept);
+		entryDetail.setDocumentNumber(documentNumber);
 		if (save) {
 			entryDetail = (AccountEntryDetail) entryDetailBean.insert(entryDetail);	
 		}
@@ -329,6 +333,7 @@ public class AccountEntryInvoiceWriter {
 					entryDetail.setAccountEntry(entry);
 					entryDetail.setBalancingAccount(account);
 					entryDetail.setConcept(concept);
+					entryDetail.setDocumentNumber(documentNumber);
 					if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 						entryDetail.setDebit(retentionQuota);
 					} else {
@@ -353,6 +358,7 @@ public class AccountEntryInvoiceWriter {
 					entryDetail.setAccountEntry(entry);
 					entryDetail.setBalancingAccount(account);
 					entryDetail.setConcept(concept);
+					entryDetail.setDocumentNumber(documentNumber);
 					if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 						entryDetail.setCredit(taxQuota);
 					} else {
@@ -377,6 +383,7 @@ public class AccountEntryInvoiceWriter {
 					entryDetail.setAccountEntry(entry);
 					entryDetail.setBalancingAccount(account);
 					entryDetail.setConcept(concept);
+					entryDetail.setDocumentNumber(documentNumber);
 					if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 						entryDetail.setCredit(base);
 					} else {

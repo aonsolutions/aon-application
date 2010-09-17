@@ -142,6 +142,7 @@ public class StatementController extends BasicController {
 				balance.setDebit(d.getDebit());
 				balance.setCredit(d.getCredit());
 				balance.setConcept(d.getConcept());
+				balance.setDocumentNumber(d.getDocumentNumber());
 				balance.setBalancingAccount(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getId());
 				balance.setBalancingAccountDescription(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getDescription());
 				if (previous != null) {

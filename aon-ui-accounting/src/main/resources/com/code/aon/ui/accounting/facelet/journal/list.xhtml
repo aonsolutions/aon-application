@@ -118,10 +118,14 @@
 									<aon:outputText
 										value="#{accountingBundle.accounting_balancing_account}" />
 								</aon:column>
+								<aon:column styleClass="aon-dataTable-header">
+									<aon:outputText
+										value="#{accountingBundle.accounting_document_number}" />
+								</aon:column>
 							</rich:columnGroup>
 						</f:facet>
 
-						<aon:column colspan="6" rendered="#{journalReport.firstEntry}" 
+						<aon:column colspan="7" rendered="#{journalReport.firstEntry}" 
 							style="#{journalReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
 							
 							
@@ -175,6 +179,11 @@
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
 							style="#{journalReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
 							<aon:outputText value="#{to.balancingAccount.id}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+							style="#{journalReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
+							<aon:outputText value="#{to.documentNumber}" />
 						</aon:column>
 					</aon:dataTable>
 				</aon:div>
