@@ -197,7 +197,7 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 				this.rejectedExtensions = (List) user.get(REJECTED_EXTENSIONS);
 			}
 			if ( user.containsKey(MAX_ATTACHMENT_SIZE) ) {
-				this.maxAttachmentSize = user.getAsInteger(MAX_ATTACHMENT_SIZE);
+				this.maxAttachmentSize = user.toInteger(MAX_ATTACHMENT_SIZE);
 			}
 		}
 		if ( (maxAttachmentSize == -1) || rejectedExtensions.isEmpty() ) {
@@ -208,7 +208,7 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 					this.rejectedExtensions = (List) domain.get(REJECTED_EXTENSIONS);
 				}
 				if ( (maxAttachmentSize == -1) && domain.containsKey(MAX_ATTACHMENT_SIZE) ) {
-					this.maxAttachmentSize = domain.getAsInteger(MAX_ATTACHMENT_SIZE);
+					this.maxAttachmentSize = domain.toInteger(MAX_ATTACHMENT_SIZE);
 				}
 			}
 		}
