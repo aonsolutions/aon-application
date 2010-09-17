@@ -9,35 +9,32 @@ import javax.naming.Context;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.util.Util;
+import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.core.User;
-import com.code.aon.jaas.ldap.AuthInfo;
+import com.code.aon.jaas.ldap.Domain;
+import com.code.aon.jaas.ldap.DomainApplication;
 import com.code.aon.jaas.ldap.SecurityLdap;
-import com.code.aon.ldap.Entry;
 
 public class LDAPReaderTest {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(LDAPReaderTest.class);
 	
-	private static final String HOST = "192.168.2.100";
+	private static final String HOST = "volga";
 	
-	private static final String BASE_DN = "o=Esferalia-CODE,c=ES";
+	private static final String BASE_DN = "o=aondirectory";
 	
 	private static final String USER = "cn=Manager," + BASE_DN;
 	
-	private static final String PASSWORD = "secret";
+	private static final String PASSWORD = "GeForce";
 	
 	private static SecurityLdap ldap;
 
@@ -53,30 +50,31 @@ public class LDAPReaderTest {
 	
 	@Test
     public void testGetApplications() throws AuthenticationLoginException {
-		Assert.assertTrue( ldap.hasDomain( "aon.code.es") );
+		Assert.assertFalse( ldap.hasDomain( "aon.code.es") );
 		Assert.assertTrue( ldap.hasDomain( "localhost") );
-		Assert.assertTrue( ldap.hasUser("localhost", "aon-task", "atellitu") );
-		Assert.assertFalse( ldap.hasUser("aon.code.es", "aon-nothing", "atellitu") );
+		Assert.assertTrue( ldap.hasUser("localhost", "aon-desktop", "admin") );
+		Assert.assertFalse( ldap.hasUser("localhost", "aon-nothing", "admin") );
 		
-		Entry user = ldap.getUser("localhost", "atellitu");
+		Domain domain = Domain.get(ldap, "localhost" );
+		IUser user = domain.getStandaloneUser("admin");
 		Assert.assertNotNull( user );
 		LOGGER.info( "User: {}", user );
 		
-		Entry domainApplicationUser = ldap.getDomainApplicationUser("localhost", "aon-task", "atellitu");
+		DomainApplication domainApplication = DomainApplication.get(ldap, "localhost", "aon-desktop");
+		IRelation domainApplicationUser = domainApplication.getUser("admin");
 		Assert.assertNotNull( domainApplicationUser );
 		LOGGER.info( "Domain Application User: {}", domainApplicationUser );
 		
-		List<String> applications = ldap.getUserApplications("localhost", "atellitu");
+		List<String> applications = ldap.getUserApplications("localhost", "admin");
 		Assert.assertNotNull( applications );
 		LOGGER.info( "Applications: {}", applications );
     }
 
 	@Test
     public void changePassword() throws AuthenticationLoginException, NoSuchAlgorithmException {
-		Entry entry = ldap.getUser("localhost", "atellitu");
-		Assert.assertNotNull( entry );
-		User user = ldap.getUser(entry);
-		String newPassword = "at111276";
+		Domain domain = Domain.get(ldap, "localhost" );
+		User user = (User) domain.getStandaloneUser("admin");		
+		String newPassword = "demo";
         byte[] hash = MessageDigest.getInstance("SHA").digest(newPassword.getBytes());
         String passwordHash = Util.encodeBase64(hash);		
         user.setPasswd( passwordHash );
