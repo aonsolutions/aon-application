@@ -38,7 +38,7 @@ public class AccountEntryController extends BasicController {
 	
 	private boolean updatable;
 	private boolean aonInvoice;
-	private String documentNumber;
+//	private String documentNumber;
 	
 	private Double totalDebit;
 	private Double totalCredit;
@@ -73,16 +73,17 @@ public class AccountEntryController extends BasicController {
 	public void setAonInvoice(boolean aonInvoice) {
 		this.aonInvoice = aonInvoice;
 	}
-	public String getDocumentNumber() {
-		return documentNumber;
-	}
-	public void setDocumentNumber(String documentNumber) {
-		this.documentNumber = documentNumber;
-	}
+	
+//	public String getDocumentNumber() {
+//		return documentNumber;
+//	}
+//	public void setDocumentNumber(String documentNumber) {
+//		this.documentNumber = documentNumber;
+//	}
 	
 	public void calculateUpdatableFlag() {
 		setAonInvoice(false);
-		setDocumentNumber(null);
+//		setDocumentNumber(null);
 		boolean flag = false;
 		try {
 			AccountEntry entry = (AccountEntry) this.getTo();
@@ -115,7 +116,7 @@ public class AccountEntryController extends BasicController {
 		if (list.size() > 0  ) {
 			AccountEntryInvoice aei = (AccountEntryInvoice) list.get(0);
 			IManagerBean idBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			setDocumentNumber( aei.getInvoice().getDocumentNumber() );
+//			setDocumentNumber( aei.getInvoice().getDocumentNumber() );
 			criteria = new Criteria();
 			criteria.addEqualExpression(idBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), aei.getInvoice().getId());
 			List<ITransferObject> details = idBean.getList(criteria);

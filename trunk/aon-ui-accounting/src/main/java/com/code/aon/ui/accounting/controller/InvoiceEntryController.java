@@ -832,7 +832,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			}
 			concept = StringUtils.abbreviate(concept, 32);
 			getHeader().setConcept(concept);
-			getWriter().insertEntryDetails(entry, account, getHeader().getConcept(), invoiceTotal,
+			getWriter().insertEntryDetails(entry, account, getHeader().getConcept(),
+					invoice.getDocumentNumber(), invoiceTotal,
 					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
 					obtainBasesPerAccount(details),true);
 			getHeader().setAccountEntryId(entry.getId());
@@ -865,7 +866,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				concept += "]";
 			}
 			getHeader().setConcept(concept);
-			getWriter().insertEntryDetails(entry, account, getHeader().getConcept(), invoiceTotal,
+			getWriter().insertEntryDetails(entry, account, getHeader().getConcept(),
+					invoice.getDocumentNumber(),invoiceTotal,
 					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
 					obtainBasesPerAccount(details),true);
 			getHeader().setAccountEntryId(entry.getId());

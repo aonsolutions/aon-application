@@ -10,11 +10,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.util.CommonUtil;
 
 /**
@@ -26,56 +30,26 @@ public class AccountEntryDetail implements ITransferObject {
 
 	private static final long serialVersionUID = -1771463579504113080L;
 
-	/** The id. */
 	private Integer id;
-	
-	/** The account entry. */
 	private AccountEntry accountEntry;
-	
-	/** The line. */
 	private int line;
-	
-	/** The account. */
 	private Account account;
-	
-	/** The concept. */
 	private String concept;
-	
-	/** The balancing account. */
 	private Account balancingAccount;
-	
-	/** The debit. */
 	private double debit;
-	
-	/** The credit. */
 	private double credit;
+	private String documentNumber;
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the id
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	/**
-	 * Gets the account entry.
-	 * 
-	 * @return the account entry
-	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="account_entry", nullable=false )
 	@ForeignKey(name = "FK_ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY")
@@ -83,39 +57,17 @@ public class AccountEntryDetail implements ITransferObject {
 	public AccountEntry getAccountEntry() {
 		return accountEntry;
 	}
-
-	/**
-	 * Sets the account entry.
-	 * 
-	 * @param accountEntry the account entry
-	 */
 	public void setAccountEntry(AccountEntry accountEntry) {
 		this.accountEntry = accountEntry;
 	}
 
-	/**
-	 * Gets the line.
-	 * 
-	 * @return the line
-	 */
 	public int getLine() {
 		return line;
 	}
-
-	/**
-	 * Sets the line.
-	 * 
-	 * @param line the line
-	 */
 	public void setLine(int line) {
 		this.line = line;
 	}
 
-	/**
-	 * Gets the account.
-	 * 
-	 * @return the account
-	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="account", nullable=false )
 	@ForeignKey(name = "FK_ACCOUNT_ENTRY_DETAIL_ACCOUNT")
@@ -123,40 +75,18 @@ public class AccountEntryDetail implements ITransferObject {
 	public Account getAccount() {
 		return account;
 	}
-
-	/**
-	 * Sets the account.
-	 * 
-	 * @param account the account
-	 */
 	public void setAccount(Account account) {
 		this.account = account;
 	}
 
-	/**
-	 * Gets the concept.
-	 * 
-	 * @return the concept
-	 */
 	@Column(length=32)
 	public String getConcept() {
 		return concept;
 	}
-
-	/**
-	 * Sets the concept.
-	 * 
-	 * @param concept the concept
-	 */
 	public void setConcept(String concept) {
 		this.concept = concept;
 	}
 	
-	/**
-	 * Gets the balancing account.
-	 * 
-	 * @return the balancing account
-	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="balancing_account")
 	@ForeignKey(name = "FK_ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT")
@@ -164,31 +94,14 @@ public class AccountEntryDetail implements ITransferObject {
 	public Account getBalancingAccount() {
 		return balancingAccount;
 	}
-
-	/**
-	 * Sets the balancing account.
-	 * 
-	 * @param balancingAccount the balancing account
-	 */
 	public void setBalancingAccount(Account balancingAccount) {
 		this.balancingAccount = balancingAccount;
 	}
 
-	/**
-	 * Gets the debit.
-	 * 
-	 * @return the debit
-	 */
 	@Column(nullable=true)
 	public double getDebit() {
 		return debit;
 	}
-
-	/**
-	 * Sets the debit.
-	 * 
-	 * @param debit the debit
-	 */
 	public void setDebit(double debit) {
 		if (debit != 0) {
 			if (debit < 0) {
@@ -201,21 +114,10 @@ public class AccountEntryDetail implements ITransferObject {
 		this.debit = debit;
 	}
 
-	/**
-	 * Gets the credit.
-	 * 
-	 * @return the credit
-	 */
 	@Column(nullable=true)
 	public double getCredit() {
 		return credit;
 	}
-
-	/**
-	 * Sets the credit.
-	 * 
-	 * @param credit the credit
-	 */
 	public void setCredit(double credit) {
 		if (credit != 0) {
 			if (credit < 0) {
@@ -228,6 +130,14 @@ public class AccountEntryDetail implements ITransferObject {
 		this.credit = credit;
 	}
 
+
+	@Column(name="document_number",length=32)
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+	}
 
 	@Transient
 	public double getUnpaidBalance() {
@@ -245,4 +155,44 @@ public class AccountEntryDetail implements ITransferObject {
 		return 0;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final AccountEntryDetail o = (AccountEntryDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.accountEntry,o.accountEntry)
+				.append(this.line,o.line)		
+				.append(this.account,o.account)		
+				.append(this.concept,o.concept)
+				.append(this.balancingAccount,o.balancingAccount)
+				.append(this.debit,o.debit)
+				.append(this.credit,o.credit)
+				.append(this.documentNumber,o.documentNumber)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.accountEntry)
+			.append(this.line)		
+			.append(this.account)		
+			.append(this.concept)
+			.append(this.balancingAccount)
+			.append(this.debit)
+			.append(this.credit)
+			.append(this.documentNumber)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 }

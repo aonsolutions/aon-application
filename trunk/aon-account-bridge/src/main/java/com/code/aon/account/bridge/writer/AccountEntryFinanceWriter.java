@@ -88,6 +88,7 @@ public class AccountEntryFinanceWriter {
 		}
 		detail.setAccount(registryAccount);
 		detail.setConcept(obtainConcept(fbatchDetail.getFinance().getInvoice(), fbatchDetail.getAmount(), fbatchDetail.getFinanceBatch()));
+		detail.setDocumentNumber(fbatchDetail.getFinance().getInvoice().getDocumentNumber());
 		detail.setBalancingAccount(paymentAccount);
 
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -99,6 +100,7 @@ public class AccountEntryFinanceWriter {
 		detail.setAccountEntry(entry);
 		detail.setAccount(paymentAccount);
 		detail.setConcept(concept);
+		detail.setDocumentNumber(null);
 		detail.setBalancingAccount(null);
 		if (entry.getType().equals(AccountEntryType.COLLECTION)) {
 			detail.setDebit(amount);
@@ -137,9 +139,8 @@ public class AccountEntryFinanceWriter {
 		Account registryAccount = null;
 		double balancingAmount = 0;
 		// Primer Apunte
-		Iterator<Finance> iterator = recordingTo.getFinanceList().iterator();
-		while (iterator.hasNext()) {
-			Finance finance = iterator.next();
+		String documentNumber = null;
+		for (Finance finance: recordingTo.getFinanceList()) {
 			invoice = finance.getInvoice();
 			balancingAmount += finance.getTotalAmount();
 
@@ -157,15 +158,20 @@ public class AccountEntryFinanceWriter {
 			}
 			detail.setAccount(registryAccount);
 			detail.setConcept(obtainConcept(finance.getInvoice(), finance.getTotalAmount(), null));
+			documentNumber = finance.getInvoice().getDocumentNumber();
+			detail.setDocumentNumber(documentNumber);
 			detail.setBalancingAccount(paymentAccount);
 			accountEntryDetailBean.insert(detail);
 		}
-
+		
 		balancingAmount = CommonUtil.round(balancingAmount);
 		// Segundo Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
 		detail.setAccount(paymentAccount);
+		if (recordingTo.getFinanceList() != null && recordingTo.getFinanceList().size() == 1) {
+			detail.setDocumentNumber(documentNumber);	
+		}
 		detail.setConcept((StringUtils.isEmpty(recordingTo.getBalancingConcept()))?obtainConcept(invoice, balancingAmount, null):recordingTo.getBalancingConcept());
 		detail.setBalancingAccount((recordingTo.getFinanceList().size()==1)?registryAccount:null);
 		if (entry.getType().equals(AccountEntryType.COLLECTION)) {
@@ -216,6 +222,7 @@ public class AccountEntryFinanceWriter {
 		}
 		detail.setAccount(registryAccount);
 		detail.setConcept(obtainReturnConcept(finance.getInvoice()));
+		detail.setDocumentNumber(finance.getInvoice().getDocumentNumber());
 		detail.setBalancingAccount(paymentAccount);
 		accountEntryDetailBean.insert(detail);
 
@@ -224,6 +231,7 @@ public class AccountEntryFinanceWriter {
 		detail.setAccountEntry(entry);
 		detail.setAccount(paymentAccount);
 		detail.setConcept(obtainReturnConcept(finance.getInvoice()));
+		detail.setDocumentNumber(finance.getInvoice().getDocumentNumber());
 		detail.setBalancingAccount(registryAccount);
 		if (entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)) {
 			detail.setCredit(finance.getTotalAmount());

@@ -187,6 +187,12 @@ public interface IAccountingAlias {
 	*/
 	String  ACCOUNT_ENTRY_DETAIL_LINE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[12];
 
+	/** 
+	* Alias value: AccountEntryDetail_documentNumber
+	* Hibernate value: AccountEntryDetail.documentNumber
+	*/
+	String  ACCOUNT_ENTRY_DETAIL_DOCUMENT_NUMBER = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[13];
+
 
 
 	/** 

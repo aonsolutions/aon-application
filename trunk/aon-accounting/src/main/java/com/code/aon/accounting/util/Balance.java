@@ -14,6 +14,7 @@ public class Balance implements Serializable {
 	private String account;
 	private String description;
 	private String concept;
+	private String documentNumber;
 	private Date fromDate;
 	private Date toDate;
 	private double debit;
@@ -139,9 +140,15 @@ public class Balance implements Serializable {
 	public String getConcept() {
 		return concept;
 	}
-
 	public void setConcept(String concept) {
 		this.concept = concept;
 	}
-	
+
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+	}
+
 }

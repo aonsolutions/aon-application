@@ -137,6 +137,10 @@
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
 										<aon:outputText value="&#160;" />
 									</aon:column>
+									<aon:column
+										style="font-size: 1em;background: #FFF;font-weight: normal;">
+										<aon:outputText value="&#160;" />
+									</aon:column>
 								</c:if>
 
 								<c:if test="#{statement.fromOpeningEntryPresent}">
@@ -189,6 +193,10 @@
 											rendered="#{statement.fromOpeningEntry.creditBalance != 0}">
 											<f:convertNumber pattern="#,##0.00" />
 										</aon:outputText>
+									</aon:column>
+									<aon:column
+										style="font-size: 1em;background: #FFF;font-weight: normal;">
+										<aon:outputText value="&#160;" />
 									</aon:column>
 									<aon:column
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
@@ -248,6 +256,10 @@
 										rendered="#{statement.periodBalance.creditBalance != 0}">
 										<f:convertNumber pattern="#,##0.00" />
 									</aon:outputText>
+								</aon:column>
+								<aon:column
+									style="font-size: 1em;background: #FFF;font-weight: normal;">
+									<aon:outputText value="&#160;" />
 								</aon:column>
 								<aon:column
 									style="font-size: 1em;background: #FFF;font-weight: normal;">
@@ -342,8 +354,15 @@
 									hideEvent="onmouseout" showDelay="200">
 								</rich:toolTip>
 							</aon:outputText>
-
 						</aon:column>
+
+						<aon:column styleClass="aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{accountingBundle.accounting_document_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.documentNumber}" />
+						</aon:column>
+
 					</aon:editDataTable>
 
 					<aon:dataScroller2 for="statementDetailData" showNote="true" />
