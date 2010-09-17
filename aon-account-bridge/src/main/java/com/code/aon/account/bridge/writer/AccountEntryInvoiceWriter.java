@@ -300,7 +300,7 @@ public class AccountEntryInvoiceWriter {
 	public List<AccountEntryDetail> insertEntryDetails(AccountEntry entry, Account account, 
 			String concept,	String documentNumber, double invoiceTotal, 
 			Map<Account, Double> retentionQuotasPerAccount, Map<Account, Double> taxQuotasPerAccount, 
-			Map<Account, Double> basesPerAccount,boolean save) throws ManagerBeanException {
+			Map<Account, Double> basesPerAccount, boolean save) throws ManagerBeanException {
 		List<AccountEntryDetail> details = new LinkedList<AccountEntryDetail>();
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte (Cliente o Proveedor)
