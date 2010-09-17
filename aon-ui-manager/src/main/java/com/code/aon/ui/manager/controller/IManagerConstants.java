@@ -28,5 +28,6 @@ public interface IManagerConstants {
 	String APPLICATION_INVALID_NAME = "manager_application_invalid_name";
 	String APPLICATION_DUPLICATED_NAME = "manager_application_duplicated_name";
 	String DB_DUPLICATED = "manager_db_duplicated";
+	String NEW_PASSWORD_ERROR = "manager_new_passwd_error";
 
 }
