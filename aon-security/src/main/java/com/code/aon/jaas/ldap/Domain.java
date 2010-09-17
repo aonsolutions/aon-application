@@ -152,7 +152,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 		Domain domain = new Domain(ldap);
 		domain.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
 		if ( entry.containsKey(STATUS_ATTRIBUTE) ) {
-			domain.setStatus(entry.getAsInteger(STATUS_ATTRIBUTE));	
+			domain.setStatus(entry.toInteger(STATUS_ATTRIBUTE));	
 		}
 		return domain;
 	}
@@ -170,10 +170,10 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	private IAccessPolicy getAccessPolicy( Entry entry ) {
 		AccessPolicy accessPolicy = new AccessPolicy();
 		accessPolicy.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
-		accessPolicy.setExceptionThrowableIfMaximumExceeded(entry.getAsBoolean(EXCEPTION_THROWABLE_IF_MAXIMUM_EXCEEDED_ATTRIBUTE));
-		accessPolicy.setMaxAllowedUsers(entry.getAsInteger(MAX_ALLOWED_USERS_ATTRIBUTE));
-		accessPolicy.setMaxDefinedUsers(entry.getAsInteger(MAX_DEFINED_USERS_ATTRIBUTE));
-		accessPolicy.setMaxSessions4User(entry.getAsInteger(MAX_SESSIONS4_USER_ATTRIBUTE));
+		accessPolicy.setExceptionThrowableIfMaximumExceeded(entry.toBoolean(EXCEPTION_THROWABLE_IF_MAXIMUM_EXCEEDED_ATTRIBUTE));
+		accessPolicy.setMaxAllowedUsers(entry.toInteger(MAX_ALLOWED_USERS_ATTRIBUTE));
+		accessPolicy.setMaxDefinedUsers(entry.toInteger(MAX_DEFINED_USERS_ATTRIBUTE));
+		accessPolicy.setMaxSessions4User(entry.toInteger(MAX_SESSIONS4_USER_ATTRIBUTE));
 		return accessPolicy;
 	}
 

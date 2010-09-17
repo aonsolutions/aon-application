@@ -81,7 +81,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
     	if ( userEntry == null ) {
     		return false;
     	}
-    	boolean active = userEntry.getAsBoolean(ACTIVE_ATTRIBUTE);
+    	boolean active = userEntry.toBoolean(ACTIVE_ATTRIBUTE);
     	if (! active ) {
     		throw new AuthenticationLoginException( "aon_login_user_inactive", arguments );
     	}
@@ -99,7 +99,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
     		return false;
     	}
     	if ( domainUserEntry.containsKey(STATUS_ATTRIBUTE) ) {
-	    	int status = domainUserEntry.getAsInteger(STATUS_ATTRIBUTE);
+	    	int status = domainUserEntry.toInteger(STATUS_ATTRIBUTE);
 	    	if ( status > 10 ) {
 	    		throw new AuthenticationLoginException( LOGIN_ERROR_PREFFIX + status, arguments );
 	    	}
@@ -214,7 +214,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 			entry.addObjectClass(PERSON);
 			entry.addObjectClass(POSIX_ACCOUNT);
 			entry.addObjectClass(TOP);
-			entry.put( ACTIVE_ATTRIBUTE, LdapSession.FALSE_VALUE );
+			entry.put( ACTIVE_ATTRIBUTE, Entry.convertToString(Boolean.FALSE) );
 			String cn = StringUtils.trim(user.getName());
 			String sn = StringUtils.trim(user.getName());
 			int pos = cn.indexOf(" ");

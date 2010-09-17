@@ -1,7 +1,5 @@
 package com.code.aon.ldap;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,27 +28,10 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LdapSession implements ILdapConstants, IAonObjectClasses {
-
-	public static final String TRUE_VALUE = "TRUE";
-	
-	public static final String FALSE_VALUE = "FALSE";
-
-	private static final String NUMERIC_OID = "NUMERICOID";
-
-	private static final String BOOLEAN_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.7";
-
-	private static final String INTEGER_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.27";
-
-	private static final String GENERALIZED_TIME_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.24";
-	
-	private static final String DISTINGUISHED_NAME_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.12";
-	
-	private static final SimpleDateFormat GENERALIZED_TIME_FORMAT = new SimpleDateFormat( "yyyyMMddHHmmss'Z'" );
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(LdapSession.class);
 
@@ -103,31 +84,6 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return dc;
 	}
 	
-	private Object convertValue(Object value, DirContext syntax)
-			throws NamingException {
-		Object result = value;
-		if ((value != null) && (syntax != null)) {
-			Attributes attributes = syntax.getAttributes("",
-					new String[] { NUMERIC_OID });
-			String oid = (String) attributes.get(NUMERIC_OID).get();
-			if (oid.equals(INTEGER_SYNTAX)) {
-				result = NumberUtils.createNumber(value.toString());
-			} else if (oid.equals(DISTINGUISHED_NAME_SYNTAX)) {
-				result = NameResolver.getName(value.toString());
-			} else if (oid.equals(BOOLEAN_SYNTAX)) {
-				result = TRUE_VALUE.equals(value) ? Boolean.TRUE
-						: Boolean.FALSE;
-			} else if (oid.equals(GENERALIZED_TIME_SYNTAX)) {
-				try {
-					result = GENERALIZED_TIME_FORMAT.parse( value.toString() );
-				} catch (ParseException e) {
-					LOGGER.error( "Error parsing Generalized Time: " + value, e );
-				}
-			}
-		}
-		return result;
-	}
-
 	private SearchControls getSearchControls(Scope scope, String[] attributes) {
 		SearchControls sc = new SearchControls();
 		sc.setSearchScope(scope.getScope());
@@ -161,33 +117,11 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return base;
 	}
 	
-	private Attribute getAttribute( Name dn, String attributeId ) throws NamingException {
-		Attributes attributes = dc.getAttributes( resolveBase(dn), new String[]{attributeId} );
-		return attributes.get(attributeId);
-	}
-	
-	private DirContext getSyntax( Entry entry, Attribute attribute ) {
-		DirContext syntax = null;
-		try {
-			syntax = attribute.getAttributeSyntaxDefinition();
-		} catch (NamingException e) {
-			try {
-				Attribute attr = getAttribute(entry.getDN(), attribute.getID());
-				syntax = attr.getAttributeSyntaxDefinition();
-			} catch (NamingException ne) {
-				LOGGER.debug(e.getMessage(), ne);
-			}
-		}
-		return syntax;
-	}
-	
 	private void addAttribute( Entry entry, Attribute attribute ) throws NamingException {
 		String name = attribute.getID();
 		NamingEnumeration<?> values = attribute.getAll();
-		DirContext syntax = getSyntax(entry, attribute);
 		while (values.hasMore()) {
-			Object value = values.nextElement();
-			entry.put(name, convertValue(value, syntax));
+			entry.put(name, values.nextElement());
 		}
 	}
 	
@@ -410,10 +344,10 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	private Attribute getAttribute( String name, Object value ) {
 		Attribute attribute = new BasicAttribute(name);
 		if ( Boolean.class.isAssignableFrom(value.getClass()) ) {
-			Boolean b = (Boolean) value;
-			attribute.add( b ? TRUE_VALUE : FALSE_VALUE );
+			String _boolean = Entry.convertToString( (Boolean) value );
+			attribute.add( _boolean );
 		} else if ( Date.class.isAssignableFrom(value.getClass()) ) {
-			String date = GENERALIZED_TIME_FORMAT.format( (Date) value );
+			String date = Entry.convertToString( (Date) value );
 			attribute.add( date );
 		} else if ( List.class.isAssignableFrom(value.getClass()) ) {
 			for( Object _value : (List<Object>) value ) {
