@@ -159,6 +159,8 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
 		invoiceTax.setTaxType(tax.getType());
+		invoiceTax.setVatDeductionType(tax.getVatDeductionType());
+		invoiceTax.setWithholdingType(tax.getWithholdingType());
 		double percentage = 0.0;
 		double surcharge = 0.0;
 		double quota = 0.0;
