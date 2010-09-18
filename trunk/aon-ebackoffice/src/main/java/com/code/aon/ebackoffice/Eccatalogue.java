@@ -32,7 +32,8 @@ import com.code.aon.product.Catalogue;
 @Table(name="ec_catalogue")
 public class Eccatalogue implements ITransferObject {
 	
-	
+	private static final long serialVersionUID = 4155730302439394204L;
+
 	private Integer id;	
 	private Catalogue catalogue;	
 	private byte[] catalogueImg;

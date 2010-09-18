@@ -33,7 +33,8 @@ import com.code.aon.ebackoffice.enumeration.TaxType;
 @Table(name="ec_config")
 public class Ecconfig implements ITransferObject {
 	
-	
+	private static final long serialVersionUID = 6356961539904581559L;
+
 	private Integer id;	
 	private boolean active;
 	private String name;

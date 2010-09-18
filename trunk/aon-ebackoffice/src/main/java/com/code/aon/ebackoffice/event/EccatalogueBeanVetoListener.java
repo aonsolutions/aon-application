@@ -1,8 +1,5 @@
 package com.code.aon.ebackoffice.event;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
@@ -48,23 +45,23 @@ public class EccatalogueBeanVetoListener extends ManagerBeanVetoListenerAdapter 
 
 	public static void checkMainCatalogue(ITransferObject to)
 			throws ManagerBeanException {
-
-/*		IManagerBean eccatalogueBean = BeanManager.getManagerBean(Eccatalogue.class);
-		List<ITransferObject> list = new LinkedList<ITransferObject>();
-		Eccatalogue catalog = (Eccatalogue) to;
-
-		List<ITransferObject> lista;
-		lista = eccatalogueBean.getList(null);
-
-		for (ITransferObject rec : lista) {
-			Eccatalogue eccat = (Eccatalogue) rec;
-			if (catalog.getId() != eccat.getId()) {
-				eccat.setType(CatalogueType.STANDARD);
-				eccatalogueBean.update(eccat);
-				;
-			}
-
-		}*/
+		
+//		IManagerBean eccatalogueBean = BeanManager.getManagerBean(Eccatalogue.class);
+//		List<ITransferObject> list = new LinkedList<ITransferObject>();
+//		Eccatalogue catalog = (Eccatalogue) to;
+//
+//		List<ITransferObject> lista;
+//		lista = eccatalogueBean.getList(null);
+//
+//		for (ITransferObject rec : lista) {
+//			Eccatalogue eccat = (Eccatalogue) rec;
+//			if (catalog.getId() != eccat.getId()) {
+//				eccat.setType(CatalogueType.STANDARD);
+//				eccatalogueBean.update(eccat);
+//				;
+//			}
+//
+//		}
 	}
 
 }
