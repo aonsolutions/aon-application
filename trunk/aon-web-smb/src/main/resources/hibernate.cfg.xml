@@ -52,6 +52,7 @@
 		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
 		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
+		<mapping class="com.code.aon.account.bridge.PayMethodTypeDetailAccount"/>
 		<mapping class="com.code.aon.account.bridge.ProductAccount"/>
 		<mapping class="com.code.aon.account.bridge.RegistryBankAccount"/>
 		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>
@@ -94,6 +95,7 @@
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.Tariff"/>
