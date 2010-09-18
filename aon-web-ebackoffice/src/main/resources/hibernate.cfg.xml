@@ -12,6 +12,7 @@
 		<property name="connection.datasource">java:comp/env/jdbc/AonEcommerce</property>
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 		<property name="show_sql">false</property>
+		
 
 		<!-- C3P0 Stuff -->
 		<property name="c3p0.acquire_increment">1</property>
@@ -26,6 +27,14 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type" />
 
 		<!-- Mapping files -->
+
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Application"/>
+		<mapping class="com.code.aon.audit.Session"/>		
 
 		<!-- AON-COMMERCIAL Mapping files -->	
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
@@ -64,6 +73,7 @@
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.Tariff"/>
@@ -71,6 +81,7 @@
 		<mapping class="com.code.aon.config.TaxDetail"/>
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
 		
 		<!-- AON-CUSTOMER Mapping files -->	
@@ -126,17 +137,8 @@
 
 		<!-- AON-SELLER Mapping files -->
 		<mapping class="com.code.aon.seller.Seller" />
-		
-		<!-- AON-SUPPLIER Mapping files -->	
-		<mapping class="com.code.aon.supplier.Supplier"/>
 
-		<!-- AON-AUDIT Mapping files -->
-		<mapping class="com.code.aon.audit.Action"/>
-		<mapping class="com.code.aon.audit.ActionDenied"/>
-		<mapping class="com.code.aon.audit.ActionEntry"/>
-		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Application"/>
-		<mapping class="com.code.aon.audit.Session"/>		
+		<mapping class="com.code.aon.supplier.Supplier" />
 
 	</session-factory>
 
