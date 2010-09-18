@@ -22,6 +22,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -29,6 +30,7 @@ import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
 
 /**
  * The Class AccountEntryFinanceWriter.
@@ -112,14 +114,15 @@ public class AccountEntryFinanceWriter {
 		accountEntryDetailBean.insert(detail);
 	}
 	
-	public AccountEntry recordFinance(Finance finance, Account paymentAccount, Date paymentDate) throws ManagerBeanException {
+	public AccountEntry recordFinance(Finance finance, RegistryBank registryBank, PayMethodTypeDetail payMethodTypeDetail, Date paymentDate) 
+		throws ManagerBeanException {
 		List<Finance> list = new LinkedList<Finance>();
 		list.add(finance);
 
 		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
 		recordingTo.setType((finance.isPayment())?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION);
 		recordingTo.setDate(paymentDate);
-		recordingTo.setPaymentAccount(paymentAccount);
+		recordingTo.setPaymentAccount(obtainPaymentAccount(registryBank, payMethodTypeDetail));
 		recordingTo.setSecurityLevel((finance.getSecurityLevel()==null)?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
 		recordingTo.setFinanceList(list);
 		return recordFinances(recordingTo, null);
@@ -182,14 +185,15 @@ public class AccountEntryFinanceWriter {
 		accountEntryDetailBean.insert(detail);
 	}
 
-	public AccountEntry returnFinance(Finance finance, Account paymentAccount, Date returnDate) throws ManagerBeanException {
+	public AccountEntry returnFinance(Finance finance, RegistryBank registryBank, PayMethodTypeDetail payMethodTypeDetail, Date returnDate) 
+		throws ManagerBeanException {
 		List<Finance> list = new LinkedList<Finance>();
 		list.add(finance);
 
 		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
 		recordingTo.setType((finance.isPayment()?AccountEntryType.RETURNED_PAYMENT:AccountEntryType.RETURNED_COLLECTION));
 		recordingTo.setDate(returnDate);
-		recordingTo.setPaymentAccount(paymentAccount);
+		recordingTo.setPaymentAccount(obtainPaymentAccount(registryBank, payMethodTypeDetail));
 		recordingTo.setSecurityLevel(finance.getSecurityLevel()==null?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
 		recordingTo.setFinanceList(list);
 		return returnFinances(recordingTo);
@@ -252,6 +256,16 @@ public class AccountEntryFinanceWriter {
 
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 		return (AccountEntry)accountEntryBean.insert(entry);
+	}
+
+	private Account obtainPaymentAccount(RegistryBank registryBank, PayMethodTypeDetail payMethodTypeDetail) throws ManagerBeanException {
+		Account account = null;
+		if (registryBank != null) {
+			account = getAccountBridgeUtil().obtainRBankAccount(registryBank);
+		} else if (payMethodTypeDetail != null) {
+			account = getAccountBridgeUtil().obtainPayMethodTypeDetailAccount(payMethodTypeDetail);
+		}
+		return (account!=null) ? account : getAccountingUtil().obtainCashAccount();
 	}
 
 	private String obtainConcept(Invoice invoice, double total, FinanceBatch fbatch) {

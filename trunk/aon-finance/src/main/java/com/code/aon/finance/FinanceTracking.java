@@ -12,46 +12,33 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
+import com.code.aon.registry.RegistryBank;
 
-/**
- * Transfer Object that represents a FinanceTracking.
- */
 @Entity
 @Table(name="finance_tracking")
 public class FinanceTracking implements ITransferObject {
 	
 	private static final long serialVersionUID = 6433514583468654955L;
 
-	/** The id. */
 	private Integer id;
-	
-	/** The finance. */
 	private Finance finance;
-	
-	/** The tracking date. */
 	private Date trackingDate;
-	
-	/** The type. */
 	private FinanceTrackingType type;
-
-    /** The description. */
     private String description;
-
-    /** The amount. */
+	private PayMethodTypeDetail payMethodTypeDetail;
+    private RegistryBank registryBank;
 	private double amount;
+	private boolean recorded;
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
@@ -59,20 +46,10 @@ public class FinanceTracking implements ITransferObject {
 		return id;
 	}
 
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the id
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 	
-	/**
-	 * Gets the finance.
-	 * 
-	 * @return the finance
-	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="finance", nullable=false)
     @ForeignKey(name="FK_FINANCE_TRACKING_FINANCE")
@@ -81,93 +58,86 @@ public class FinanceTracking implements ITransferObject {
 		return finance;
 	}
 
-	/**
-	 * Sets the finance.
-	 * 
-	 * @param finance the finance
-	 */
 	public void setFinance(Finance finance) {
 		this.finance = finance;
 	}
 
-	/**
-	 * Gets the tracking date.
-	 * 
-	 * @return the tracking date
-	 */
 	@Column(name="tracking_date", nullable=false)
 	@Temporal(TemporalType.DATE)
 	public Date getTrackingDate() {
 		return trackingDate;
 	}
 
-	/**
-	 * Sets the tracking date.
-	 * 
-	 * @param trackingDate the tracking date
-	 */
 	public void setTrackingDate(Date trackingDate) {
 		this.trackingDate = trackingDate;
 	}
 
-	/**
-	 * Gets the type.
-	 * 
-	 * @return the type
-	 */
 	@Column(nullable=false)
 	public FinanceTrackingType getType() {
 		return type;
 	}
 
-	/**
-	 * Sets the type.
-	 * 
-	 * @param type the type
-	 */
 	public void setType(FinanceTrackingType type) {
 		this.type = type;
 	}
 
-    /**
-     * Gets the description.
-     * 
-     * @return the description
-     */
 	@Column(length=64)
     public String getDescription() {
         return description;
     }
     
-    /**
-     * Sets the description.
-     * 
-     * @param description the description
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * Gets the amount.
-     * 
-     * @return the amount
-     */
-    @Column(nullable=true, precision=15, scale=3)
+	@ManyToOne
+	@JoinColumn( name="pm_type_detail")
+	@ForeignKey(name="FK_FINANCE_TRACKING_PM_TYPE_DETAIL_")
+	@Index(name="IDX_FINANCE_TRACKING_PM_TYPE_DETAIL_")							
+	public PayMethodTypeDetail getPayMethodTypeDetail() {
+		return payMethodTypeDetail;
+	}
+
+	public void setPayMethodTypeDetail(PayMethodTypeDetail payMethodTypeDetail) {
+		this.payMethodTypeDetail = payMethodTypeDetail;
+	}
+
+    @ManyToOne
+    @JoinColumn(name="rbank")
+    @ForeignKey(name="FK_FINANCE_TRACKING_RBANK")
+    @Index(name="IDX_FINANCE_TRACKING_RBANK")            
+	public RegistryBank getRegistryBank() {
+		return registryBank;
+	}
+
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
+
+	@Column(nullable=true, precision=15, scale=3)
     public double getAmount() {
         return amount;
     }
     
-    /**
-     * Sets the amount.
-     * 
-     * @param amount the amount
-     */
     public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    @Override
+	@Column(nullable = false)
+	public boolean isRecorded() {
+		return recorded;
+	}
+
+	public void setRecorded(boolean recorded) {
+		this.recorded = recorded;
+	}
+
+	@Transient
+	public boolean isRecordable() {
+		return (type == FinanceTrackingType.PAID || type == FinanceTrackingType.RETURNED);
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
     		return super.equals(obj);

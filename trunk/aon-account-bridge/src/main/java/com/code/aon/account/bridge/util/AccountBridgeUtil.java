@@ -7,6 +7,7 @@ import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.LoanAccount;
+import com.code.aon.account.bridge.PayMethodTypeDetailAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -16,6 +17,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.ql.Criteria;
@@ -76,6 +78,18 @@ public class AccountBridgeUtil {
 		} catch (ExpressionException e) {
 			throw new ManagerBeanException(e.getMessage(),e );
 		}
+	}
+	
+	public Account obtainPayMethodTypeDetailAccount(PayMethodTypeDetail payMethodTypeDetail) throws ManagerBeanException {
+		IManagerBean payMethodTypeDetailAccountBean = BeanManager.getManagerBean(PayMethodTypeDetailAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(payMethodTypeDetailAccountBean.getFieldName(IAccountBridgeAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_PAY_METHOD_TYPE_DETAIL_ID), payMethodTypeDetail.getId());
+		Iterator<ITransferObject> iter = payMethodTypeDetailAccountBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			PayMethodTypeDetailAccount payMethodTypeDetailAccount = (PayMethodTypeDetailAccount)iter.next();
+			return payMethodTypeDetailAccount.getAccount();
+		}
+		return null;
 	}
 	
 	public IAccount obtainIRegistryAccount(IRegistry iRegistry) throws ManagerBeanException {
