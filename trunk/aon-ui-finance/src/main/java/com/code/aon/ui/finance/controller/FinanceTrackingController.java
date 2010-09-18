@@ -21,8 +21,10 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 
 public class FinanceTrackingController extends LinesController implements IFinanceConstants {
 
@@ -35,23 +37,66 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		return writer;
 	}
 
-	public boolean isUnrecordable() throws ManagerBeanException{
+	public String getTrackingDescription() throws ManagerBeanException {
+		String description = null;
 		if (getModel().isRowAvailable()) {
 			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+			if (tracking.getType() == FinanceTrackingType.PAID || tracking.getType() == FinanceTrackingType.RETURNED) {
+				description = obtainPaymentDescription(tracking);
+			} else {
+				description = tracking.getDescription();
+			}
+		}
+		return description;
+	}
+
+	private String obtainPaymentDescription(FinanceTracking tracking) {
+		if (tracking.getRegistryBank() != null) {
+			return tracking.getRegistryBank().getFullName();
+		} else if (tracking.getPayMethodTypeDetail() != null) {
+			return tracking.getPayMethodTypeDetail().getDescription();
+		} else {
+			return AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CASH);
+		}
+	}
+
+	public void recordTracking(ActionEvent event) throws ManagerBeanException {
+		FinanceTracking to = (FinanceTracking)this.getModel().getRowData();
+
+		AccountEntry entry = null;
+		if (to.getType() == FinanceTrackingType.PAID) {
+			entry = getWriter().recordFinance(to.getFinance(), to.getRegistryBank(), to.getPayMethodTypeDetail(), to.getTrackingDate());
+		} else if (to.getType() == FinanceTrackingType.RETURNED) {
+			entry = getWriter().returnFinance(to.getFinance(), to.getRegistryBank(), to.getPayMethodTypeDetail(), to.getTrackingDate());
+		}
+
+		if (entry != null) {
+			to.setDescription(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId());
+			to.setRecorded(true);
+			getManagerBean().update(to);
+
+			getWriter().insertAccountEntryFinanceTracking(entry, to);
+		}
+	}
+
+	public boolean isUndoable() throws ManagerBeanException{
+		if (getModel().isRowAvailable()) {
+			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+			if (tracking.getType() == FinanceTrackingType.BATCHED || tracking.getType() == FinanceTrackingType.FRACTIONED) {
+				return false;
+			}
+
 			if (FinanceTrackingWriter.isLastTracking(tracking)) {
-				if (tracking.getType().equals(FinanceTrackingType.SETTLED)) {
+				if (tracking.getType() == FinanceTrackingType.SETTLED || !tracking.isRecorded()) {
 					return true;
 				}
+
 				IManagerBean entryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(entryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
-				criteria.addOrder(entryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ID), false);
+				criteria.addEqualExpression(entryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
 				Iterator<?> iterator = entryFinanceTrackingBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					AccountEntryFinanceTracking entryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
-					if (!entryFinanceTracking.getFinanceTracking().getId().equals(tracking.getId())) {
-						return false;
-					}
 
 					IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 					AccountEntry entry = entryFinanceTracking.getAccountEntry();
@@ -68,8 +113,8 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
 		getWriter().removeAccountEntryFinanceTracking(tracking);
 		updateFinanceStatus(tracking);
-
 		getManagerBean().remove(tracking);
+
 		this.onSearch(null);
 	}
 

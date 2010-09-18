@@ -28,6 +28,8 @@ public interface IFinanceMessages {
 	String FINANCE_INVOICE_EMAIL_BODY = "finance_invoice_email_body";
 	String FINANCE_INVOICE_WITHOUT_EMAIL = "finance_invoice_without_email";
 	String FINANCE_INVOICE_SEND_EMAIL_ERROR = "finance_invoice_send_email_error";
-
+	String FINANCE_CASH = "finance_cash";
+	String FINANCE_PENDING = "finance_pending";
+	
 }
 

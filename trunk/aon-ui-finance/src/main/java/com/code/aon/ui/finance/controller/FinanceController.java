@@ -11,12 +11,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.account.Account;
-import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
-import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -26,6 +22,8 @@ import com.code.aon.company.Company;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.PayMethodTypeDetail;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -40,7 +38,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -63,23 +60,22 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	private boolean payment;
 	private Date paymentDate;
 	private double paymentAmount;
-	private Account paymentCashAccount;
 	private RegistryBank paymentRegistryBank;
-	private RegistryPayMethod paymentRegistryPayMethod;
+	private PayMethodTypeDetail paymentPayMethodTypeDetail;
+	private boolean paymentRecordable;
 	private Date returnDate;
 	private double returnExpenses;
 	private int returnDeposit;
-	private Account returnCashAccount;
 	private RegistryBank returnRegistryBank;
+	private PayMethodTypeDetail returnPayMethodTypeDetail;
+	private boolean returnRecordable;
 	private FinanceGenerator financeGenerator;
 	private AccountEntryFinanceWriter writer;
 	private boolean showFinancePaymentWindow;
 	private boolean showFinanceReturnWindow;
-	private List<SelectItem> cashAccountList;
+	private List<SelectItem> payMethodTypeDetailList;
 	private List<?> orderedList;
 	private Double totalFinanceAmount;
-	private AccountingUtil accountingUtil;
-	private AccountBridgeUtil accountBridgeUtil;
 	private ArrayList<Finance> checks= new ArrayList<Finance>();
 
 	public Company getCompany() {
@@ -118,14 +114,6 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.paymentAmount = paymentAmount;
 	}
 
-	public Account getPaymentCashAccount() {
-		return paymentCashAccount;
-	}
-
-	public void setPaymentCashAccount(Account paymentCashAccount) {
-		this.paymentCashAccount = paymentCashAccount;
-	}
-
 	public RegistryBank getPaymentRegistryBank() {
 		return paymentRegistryBank;
 	}
@@ -134,12 +122,20 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.paymentRegistryBank = paymentRegistryBank;
 	}
 
-	public RegistryPayMethod getPaymentRegistryPayMethod() {
-		return paymentRegistryPayMethod;
+	public PayMethodTypeDetail getPaymentPayMethodTypeDetail() {
+		return paymentPayMethodTypeDetail;
 	}
 
-	public void setPaymentRegistryPayMethod(RegistryPayMethod paymentRegistryPayMethod) {
-		this.paymentRegistryPayMethod = paymentRegistryPayMethod;
+	public void setPaymentPayMethodTypeDetail(PayMethodTypeDetail paymentPayMethodTypeDetail) {
+		this.paymentPayMethodTypeDetail = paymentPayMethodTypeDetail;
+	}
+
+	public boolean isPaymentRecordable() {
+		return paymentRecordable;
+	}
+
+	public void setPaymentRecordable(boolean paymentRecordable) {
+		this.paymentRecordable = paymentRecordable;
 	}
 
 	public Date getReturnDate() {
@@ -166,20 +162,28 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.returnDeposit = returnDeposit;
 	}
 
-	public Account getReturnCashAccount() {
-		return returnCashAccount;
-	}
-
-	public void setReturnCashAccount(Account returnCashAccount) {
-		this.returnCashAccount = returnCashAccount;
-	}
-
 	public RegistryBank getReturnRegistryBank() {
 		return returnRegistryBank;
 	}
 
 	public void setReturnRegistryBank(RegistryBank returnRegistryBank) {
 		this.returnRegistryBank = returnRegistryBank;
+	}
+
+	public PayMethodTypeDetail getReturnPayMethodTypeDetail() {
+		return returnPayMethodTypeDetail;
+	}
+
+	public void setReturnPayMethodTypeDetail(PayMethodTypeDetail returnPayMethodTypeDetail) {
+		this.returnPayMethodTypeDetail = returnPayMethodTypeDetail;
+	}
+
+	public boolean isReturnRecordable() {
+		return returnRecordable;
+	}
+
+	public void setReturnRecordable(boolean returnRecordable) {
+		this.returnRecordable = returnRecordable;
 	}
 
 	public FinanceGenerator getFinanceGenerator() {
@@ -220,104 +224,6 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.totalFinanceAmount = totalFinanceAmount;
 	}
 
-	private AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
-
-	private AccountBridgeUtil getAccountBridgeUtil() {
-		if (accountBridgeUtil == null) {
-			accountBridgeUtil = new AccountBridgeUtil();
-		}
-		return accountBridgeUtil;
-	}
-
-	public void onFinancePaymentShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		Finance finance = (Finance) getTo();
-		if (finance.getPayMethod() == null || finance.getPayMethod().getId() == null) {
-			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR);
-			throw new AbortProcessingException();
-		} 
-		super.accept();
-
-		setPaymentDate(finance.getDueDate());
-		setPaymentAmount(finance.getTotalAmount());
-		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS) {
-			setPaymentRegistryBank(null);
-		} else {
-			setPaymentRegistryBank(obtainPaymentRegistryBank(getCompany(), finance.getBank(), finance.getBankAccount()));
-		}
-		if (getCashAccountsSize() < 2) {
-			//No se renderiza la lista de Cajas, por lo tanto se le asigna el valor por defecto.
-			setPaymentCashAccount(getAccountingUtil().obtainCashAccount());
-		} else {
-			//Se resetea el valor.
-			setPaymentCashAccount(null);
-		}
-	}
-
-	public void onFinanceReturnShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		Finance finance = (Finance) getTo();
-		setReturnDate(new Date());
-		setReturnExpenses(finance.getExpenses());
-		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS) {
-			setReturnDeposit(1);
-			setReturnRegistryBank(null);
-		} else {
-			setReturnDeposit(0);
-			setReturnRegistryBank(obtainReturnRegistryBank(getCompany(), finance));
-		}
-		if (getCashAccountsSize() < 2) {
-			//No se renderiza la lista de Cajas, por lo tanto se le asigna el valor por defecto.
-			setReturnCashAccount(getAccountingUtil().obtainCashAccount());
-		} else {
-			//Se resetea el valor.
-			setReturnCashAccount(null);
-		}
-	}
-
-	private RegistryBank obtainPaymentRegistryBank(Registry registry, Bank bank, BankAccount bankAccount) throws ManagerBeanException {
-		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-		if (bank != null && bank.getId() != null) {
-			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ID), bank.getId());
-		}
-		if (bankAccount != null && bankAccount.getValue() != null) {
-			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAccount);
-		}
-		Iterator<ITransferObject> iterator = registryBankBean.getList(criteria, 0, 1).iterator();
-		if (iterator.hasNext()) {
-			return (RegistryBank)iterator.next();
-		}
-		criteria = new Criteria();
-		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-		iterator = registryBankBean.getList(criteria, 0, 1).iterator();
-		if (iterator.hasNext()) {
-			return (RegistryBank)iterator.next();
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	private RegistryBank obtainReturnRegistryBank(Registry registry, Finance finance) throws ManagerBeanException {
-		Bank bank = finance.getBank();
-		BankAccount bankAccount = finance.getBankAccount();
-		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
-		Iterator iterator = fBatchDetailBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
-			bank = detail.getFinanceBatch().getRegistryBank().getBank();
-			bankAccount = detail.getFinanceBatch().getRegistryBank().getBankAccount();
-		}
-		return obtainPaymentRegistryBank(registry, bank, bankAccount);
-	}
-
 	public void onPayMethodChanged(ValueChangeEvent event) {
 		PayMethod oldPay = (PayMethod) event.getOldValue();
 		PayMethod newPay = (PayMethod) event.getNewValue();
@@ -325,6 +231,8 @@ public class FinanceController extends BasicController implements IFinanceConsta
 			Finance finance = (Finance) getTo();
 			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
+
+			payMethodTypeDetailList = null;
 		}
 	}
 
@@ -347,28 +255,6 @@ public class FinanceController extends BasicController implements IFinanceConsta
 			finance.setBank(null);
 			finance.setBankAccount(null);
 		}
-	}
-
-	public List<SelectItem> getCashAccounts() throws ManagerBeanException, ExpressionException {
-		if (cashAccountList == null) {
-			cashAccountList = new LinkedList<SelectItem>();
-			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "570*");
-			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(true));
-			criteria.addOrder(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID));
-			Iterator<?> iter = accountBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				Account account = (Account) iter.next();
-				SelectItem item = new SelectItem(account, account.getFullDescription());
-				cashAccountList.add(item);
-			}
-		}
-		return cashAccountList;
-	}
-
-	public int getCashAccountsSize() throws ManagerBeanException, ExpressionException {
-		return getCashAccounts().size();
 	}
 
 	public List<SelectItem> getBanks() throws ManagerBeanException {
@@ -407,6 +293,102 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		super.onEditSearch(event);
 	}
 
+	public void onFinancePaymentShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		Finance finance = (Finance) getTo();
+		if (finance.getPayMethod() == null || finance.getPayMethod().getId() == null) {
+			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR);
+			throw new AbortProcessingException();
+		} 
+		super.accept();
+
+		setPaymentDate(finance.getDueDate());
+		setPaymentAmount(finance.getTotalAmount());
+		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS || finance.getPayMethod().getType() == PayMethodType.OTHER) {
+			setPaymentRegistryBank(null);
+		} else {
+			setPaymentRegistryBank(obtainPaymentRegistryBank(getCompany(), finance.getBank(), finance.getBankAccount()));
+		}
+		setPaymentPayMethodTypeDetail(null);
+		setPaymentRecordable(AonUtil.getRoleManager().isAccountingOperator());
+	}
+
+	private RegistryBank obtainPaymentRegistryBank(Registry registry, Bank bank, BankAccount bankAccount) throws ManagerBeanException {
+		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		if (bank != null && bank.getId() != null) {
+			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ID), bank.getId());
+		}
+		if (bankAccount != null && bankAccount.getValue() != null) {
+			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAccount);
+		}
+		Iterator<ITransferObject> iterator = registryBankBean.getList(criteria, 0, 1).iterator();
+		if (iterator.hasNext()) {
+			return (RegistryBank)iterator.next();
+		}
+		criteria = new Criteria();
+		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		iterator = registryBankBean.getList(criteria, 0, 1).iterator();
+		if (iterator.hasNext()) {
+			return (RegistryBank)iterator.next();
+		}
+		return null;
+	}
+
+	public void onFinanceReturnShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		Finance finance = (Finance) getTo();
+		setReturnDate(new Date());
+		setReturnExpenses(finance.getExpenses());
+		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS || finance.getPayMethod().getType() == PayMethodType.OTHER) {
+			setReturnDeposit(1);
+			setReturnRegistryBank(null);
+		} else {
+			setReturnDeposit(0);
+			setReturnRegistryBank(obtainReturnRegistryBank(getCompany(), finance));
+		}
+		setReturnPayMethodTypeDetail(null);
+		setReturnRecordable(AonUtil.getRoleManager().isAccountingOperator());
+	}
+
+	@SuppressWarnings("unchecked")
+	private RegistryBank obtainReturnRegistryBank(Registry registry, Finance finance) throws ManagerBeanException {
+		Bank bank = finance.getBank();
+		BankAccount bankAccount = finance.getBankAccount();
+		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
+		Iterator iterator = fBatchDetailBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
+			bank = detail.getFinanceBatch().getRegistryBank().getBank();
+			bankAccount = detail.getFinanceBatch().getRegistryBank().getBankAccount();
+		}
+		return obtainPaymentRegistryBank(registry, bank, bankAccount);
+	}
+
+	public List<SelectItem> getPayMethodTypeDetails() throws ManagerBeanException, ExpressionException {
+		if (payMethodTypeDetailList == null) {
+			payMethodTypeDetailList = new LinkedList<SelectItem>();
+			Finance to = (Finance)this.getTo();
+			IManagerBean payMethodTypeDetailBean = BeanManager.getManagerBean(PayMethodTypeDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_TYPE), to.getPayMethod().getType());
+			criteria.addOrder(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_DESCRIPTION));
+			Iterator<?> iter = payMethodTypeDetailBean.getList(criteria).iterator();
+			while (iter.hasNext()) {
+				PayMethodTypeDetail payMethodTypeDetail = (PayMethodTypeDetail) iter.next();
+				SelectItem item = new SelectItem(payMethodTypeDetail, payMethodTypeDetail.getDescription());
+				payMethodTypeDetailList.add(item);
+			}
+		}
+		return payMethodTypeDetailList;
+	}
+
+	public int getPayMethodTypeDetailsSize() throws ManagerBeanException, ExpressionException {
+		return getPayMethodTypeDetails().size();
+	}
+
 	public void onFinancePayment(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)this.getTo();
 		if (getPaymentAmount() == 0) {
@@ -418,36 +400,62 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		}
 
 		if (getPaymentAmount() != finance.getTotalAmount()) {
-			getFinanceGenerator().duplicateFinance(finance, CommonUtil.round(finance.getTotalAmount() - getPaymentAmount(), 2));
+			double amount = finance.getTotalAmount();
+
 			finance.setAmount(CommonUtil.round(getPaymentAmount() - finance.getExpenses(), 2));
-			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED);
-			FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message);
+			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 1, 2);
+			FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
+
+			Finance fraction = getFinanceGenerator().duplicateFinance(finance, CommonUtil.round(amount - getPaymentAmount(), 2));
+			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 2, 2);
+			FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 		}
 		finance.setFinanceStatus(FinanceStatus.PAID);
 		getManagerBean().update(finance);
 
-		Account paymentAccount = (getPaymentRegistryBank() != null)?getAccountBridgeUtil().obtainRBankAccount(getPaymentRegistryBank()):paymentCashAccount;
-		AccountEntry entry = getWriter().recordFinance(finance, paymentAccount, getPaymentDate());
-		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RECORDED, message);
-		getWriter().insertAccountEntryFinanceTracking(entry, tracking);
+		AccountEntry entry = null;
+		String message = null;
+		if (isPaymentRecordable()) {
+			entry = getWriter().recordFinance(finance, getPaymentRegistryBank(), getPaymentPayMethodTypeDetail(), getPaymentDate());
+			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
+		}
+
+		message = (message!=null) ? message : AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_PENDING);
+		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, getPaymentDate(), FinanceTrackingType.PAID, message, 
+				getPaymentRegistryBank(), getPaymentPayMethodTypeDetail(), finance.getTotalAmount(), isPaymentRecordable());
+
+		if (isPaymentRecordable()) {
+			getWriter().insertAccountEntryFinanceTracking(entry, tracking);
+		}
 
 		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
 		financeTrackingController.onSearch(null);
 	}
-	
+
 	public void onFinanceReturn(ActionEvent event) throws ManagerBeanException {
+		setReturnRegistryBank((getReturnDeposit()==0) ? getReturnRegistryBank() : null);
+		setReturnPayMethodTypeDetail((getReturnDeposit()==1) ? getReturnPayMethodTypeDetail() : null);
+
 		Finance finance = (Finance)this.getTo();
 		finance.setExpenses(getReturnExpenses());
 		finance.setFinanceStatus(FinanceStatus.RETURNED);
 		getManagerBean().update(finance);
 		returnFinanceBatchDetail(finance);
 
-		Account returnAccount = (getReturnDeposit() == 0)?getAccountBridgeUtil().obtainRBankAccount(getReturnRegistryBank()):returnCashAccount;
-		AccountEntry entry = getWriter().returnFinance(finance, returnAccount, getReturnDate());
-		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RETURNED, message);
-		getWriter().insertAccountEntryFinanceTracking(entry, tracking);
+		AccountEntry entry = null;
+		String message = null;
+		if (isReturnRecordable()) {
+			entry = getWriter().returnFinance(finance, getReturnRegistryBank(), getReturnPayMethodTypeDetail(), getReturnDate());
+			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
+		}
+
+		message = (message!=null) ? message : AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_PENDING);
+		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, getReturnDate(), FinanceTrackingType.RETURNED, message,
+				getReturnRegistryBank(), getReturnPayMethodTypeDetail(), finance.getTotalAmount(), isReturnRecordable());
+
+		if (isReturnRecordable()) {
+			getWriter().insertAccountEntryFinanceTracking(entry, tracking);
+		}
 
 		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
 		financeTrackingController.onSearch(null);

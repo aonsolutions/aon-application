@@ -94,14 +94,24 @@
 											rendered="#{finance.returnDeposit == 0}">
 											<f:selectItems value="#{companyCollections.companyBanks}" />
 										</aon:selectOneMenu>
-										<aon:outputLabel for="Finance_returnCashAccount"
+										<aon:outputLabel for="Finance_returnPayMethodTypeDetail"
 											value="#{financeBundle.finance_cash}"
-											rendered="#{finance.returnDeposit == 1 and finance.cashAccountsSize > 1}" />
-										<aon:selectOneMenu id="Finance_returnCashAccount"
-											value="#{finance.returnCashAccount}"
-											rendered="#{finance.returnDeposit == 1 and finance.cashAccountsSize > 1}">
-											<f:selectItems value="#{finance.cashAccounts}" />
+											rendered="#{finance.returnDeposit == 1 and finance.payMethodTypeDetailsSize > 1}" />
+										<aon:selectOneMenu id="Finance_returnPayMethodTypeDetail"
+											value="#{finance.returnPayMethodTypeDetail}"
+											rendered="#{finance.returnDeposit == 1 and finance.payMethodTypeDetailsSize > 1}">
+											<f:selectItems value="#{finance.payMethodTypeDetails}" />
 										</aon:selectOneMenu>
+
+										<c:if test="#{aonRole.accountingOperator}">
+											<aon:outputLabel for="Finance_record"
+												value="#{financeBundle.finance_record}" />
+											<aon:selectOneRadio id="Finance_record" ajaxSingle="true"
+												value="#{finance.returnRecordable}">
+												<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+												<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+											</aon:selectOneRadio>
+										</c:if>
 
 									</aon:panelGrid>
 								</aon:div>
