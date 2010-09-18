@@ -885,22 +885,40 @@ public interface IFinanceAlias {
 	String  FINANCE_TRACKING_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: FinanceTracking_payMethodTypeDetail_id
+	* Hibernate value: FinanceTracking.payMethodTypeDetail.id
+	*/
+	String  FINANCE_TRACKING_PAY_METHOD_TYPE_DETAIL_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: FinanceTracking_recorded
+	* Hibernate value: FinanceTracking.recorded
+	*/
+	String  FINANCE_TRACKING_RECORDED = FINANCE_TRACKING_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: FinanceTracking_registryBank_id
+	* Hibernate value: FinanceTracking.registryBank.id
+	*/
+	String  FINANCE_TRACKING_REGISTRY_BANK_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: FinanceTracking_trackingDate
 	* Hibernate value: FinanceTracking.trackingDate
 	*/
-	String  FINANCE_TRACKING_TRACKING_DATE = FINANCE_TRACKING_ENTRY.getAliasNames()[4];
+	String  FINANCE_TRACKING_TRACKING_DATE = FINANCE_TRACKING_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: FinanceTracking_type
 	* Hibernate value: FinanceTracking.type
 	*/
-	String  FINANCE_TRACKING_TYPE = FINANCE_TRACKING_ENTRY.getAliasNames()[5];
+	String  FINANCE_TRACKING_TYPE = FINANCE_TRACKING_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: FinanceTracking_finance_invoice_id
 	* Hibernate value: FinanceTracking.finance.invoice.id
 	*/
-	String  FINANCE_TRACKING_FINANCE_INVOICE_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[6];
+	String  FINANCE_TRACKING_FINANCE_INVOICE_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[9];
 
 
 

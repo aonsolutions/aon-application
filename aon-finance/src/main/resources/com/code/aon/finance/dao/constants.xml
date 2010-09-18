@@ -41,8 +41,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.FinanceTracking" sqlName="finance_tracking">
-		<alias names="amount,description,finance_id,id,trackingDate,type,finance_invoice_id" />
-		<hibernate names="amount,description,finance.id,id,trackingDate,type,finance.invoice.id" />
+		<alias names="amount,description,finance_id,id,payMethodTypeDetail_id,recorded,registryBank_id,trackingDate,type,finance_invoice_id" />
+		<hibernate names="amount,description,finance.id,id,payMethodTypeDetail.id,recorded,registryBank.id,trackingDate,type,finance.invoice.id" />
 	</bean>
 
 	<bean class="com.code.aon.finance.FinanceBatchDetail" sqlName="fbatch_detail">

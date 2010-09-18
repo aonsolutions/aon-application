@@ -9,21 +9,28 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
 
 public class FinanceTrackingWriter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FinanceTrackingWriter.class.getName());
 
     public static FinanceTracking addFinanceTracking(Finance finance, Date date, FinanceTrackingType type, String description) {
-    	return addFinanceTracking(finance, date, type, description, finance.getTotalAmount());
+    	return addFinanceTracking(finance, date, type, description, null, null, finance.getTotalAmount(), false);
     }
 
     public static FinanceTracking addFinanceTracking(Finance finance, Date date, FinanceTrackingType type, String description, double amount) {
+    	return addFinanceTracking(finance, date, type, description, null, null, amount, false);
+    }
+
+    public static FinanceTracking addFinanceTracking(Finance finance, Date date, FinanceTrackingType type, String description, 
+    		RegistryBank registryBank, PayMethodTypeDetail payMethodTypeDetail, double amount, boolean recorded) {
         FinanceTracking tracking = new FinanceTracking();
         try {
             IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
@@ -31,7 +38,10 @@ public class FinanceTrackingWriter {
             tracking.setTrackingDate(date);
             tracking.setType(type);
             tracking.setDescription(description);
+            tracking.setRegistryBank(registryBank);
+            tracking.setPayMethodTypeDetail(payMethodTypeDetail);
             tracking.setAmount(amount);
+            tracking.setRecorded(recorded);
             tracking = (FinanceTracking)financeTrackingBean.insert(tracking);
         } catch (ManagerBeanException e) {
             LOGGER.error("Error inserting finance tracking of finance with id=" + finance.getId(), e);
