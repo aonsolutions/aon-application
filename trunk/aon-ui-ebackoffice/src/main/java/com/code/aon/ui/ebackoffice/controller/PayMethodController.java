@@ -1,12 +1,9 @@
 package com.code.aon.ui.ebackoffice.controller;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,7 +15,6 @@ import com.code.aon.ebackoffice.EcPaymethod;
 import com.code.aon.ebackoffice.dao.IEbackofficeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
 
 public class PayMethodController extends BasicController {
 

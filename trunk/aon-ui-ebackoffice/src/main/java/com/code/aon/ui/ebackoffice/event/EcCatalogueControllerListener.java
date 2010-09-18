@@ -1,26 +1,19 @@
 package com.code.aon.ui.ebackoffice.event;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.logging.Logger;
-
 import com.code.aon.ebackoffice.Eccatalogue;
-import com.code.aon.ebackoffice.Ecconfig;
 import com.code.aon.ebackoffice.enumeration.CatalogueType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.ebackoffice.controller.EccatalogueController;
-import com.code.aon.ui.ebackoffice.controller.EcconfigController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.product.controller.IItemConstants;
-import com.code.aon.ui.util.AonUtil;
 
 public class EcCatalogueControllerListener extends ControllerAdapter implements
 		IItemConstants {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(EcCatalogueControllerListener.class.getName());
+//	private static final Logger LOGGER = Logger
+//			.getLogger(EcCatalogueControllerListener.class.getName());
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
