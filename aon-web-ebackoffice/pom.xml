@@ -21,16 +21,16 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security.bridge</artifactId>
-			<version>${pom.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>	
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.audit</artifactId>
@@ -45,9 +45,21 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.ebackoffice</artifactId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.form</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -55,11 +67,13 @@
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
-			<dependency>
+<!--  
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
+-->
 	</dependencies>
 </project>
