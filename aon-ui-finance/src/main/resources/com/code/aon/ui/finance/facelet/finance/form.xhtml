@@ -67,7 +67,7 @@
 
 					<aon:outputText value="#{financeBundle.finance_invoice}" />
 					<aon:div> 
-						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+						<h:panelGrid columns="3" columnClasses="aon-width-180,aon-width-auto,aon-width-100">
 							<aon:div>
 								<aon:outputText styleClass="aon-bold"
 									value="#{finance.to.invoice.referenceCode}" />
@@ -81,6 +81,10 @@
 
 								<aon:outputText styleClass="aon-margin-left"
 									value="#{finance.to.financeStatus}" />
+							</aon:div>
+							<aon:div>
+								<aon:outputText styleClass="aon-bold"
+									value="#{finance.to.invoice.documentNumber}" />
 							</aon:div>
 						</h:panelGrid>
 					</aon:div>
@@ -232,16 +236,23 @@
 									<aon:outputText value="#{to.type}" />
 								</aon:column>
 						
+								<aon:column styleClass="aon-editDataTable-textColumn">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_description}" />
+									</f:facet>
+									<aon:outputText value="#{financeTracking.trackingDescription}" />
+								</aon:column>
+
 								<c:if test="#{aonRole.accountingOperator}">
 									<aon:column styleClass="aon-editDataTable-textColumn">
 										<f:facet name="header">
-											<aon:outputText value="#{bundle.aon_description}" />
+											<aon:outputText value="#{financeBundle.finance_accounting}" />
 										</f:facet>
-										<aon:outputText value="#{to.description}" />
+										<aon:outputText value="#{(to.recordable)?(to.description):('NO')}" />
 									</aon:column>
 								</c:if>
 
-								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-200">
+								<aon:column styleClass="aon-editDataTable-numberColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_amount}" />
 									</f:facet>
@@ -250,18 +261,30 @@
 									</aon:outputText>	
 								</aon:column>
 								
-								<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
 									</f:facet>
-									<aon:confirmButton id="undo"
-										title="#{financeBundle.finance_tracking_undo}"
-										immediate="true" rendered="#{financeTracking.unrecordable}" 
-										confirmTitle="#{bundle.aon_confirm_title}"
-										confirmMessage="#{bundle.aon_remove_confirm}"
-										confirmActionListener="#{financeTracking.undoTracking}"
-										styleClass="aon-editDataTable-button aon-icon-delete"
-										accesskey="#{bundle.aon_key_remove_line}" />										
+									<aon:panelGroup columns="2">
+										<c:if test="#{aonRole.accountingOperator}">
+											<aon:commandButton id="record"
+												title="#{financeBundle.finance_record}"
+												immediate="true" rendered="#{to.recordable and !to.recorded}"
+												actionListener="#{financeTracking.recordTracking}"
+												styleClass="aon-editDataTable-button aon-icon-task-assume"
+												reRender="financeTrackingData" 
+												onclick="Richfaces.showModalPanel('waitProccess')" 
+									     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+										</c:if>
+										<aon:confirmButton id="undo"
+											title="#{financeBundle.finance_tracking_undo}"
+											immediate="true" rendered="#{financeTracking.undoable}" 
+											confirmTitle="#{bundle.aon_confirm_title}"
+											confirmMessage="#{bundle.aon_remove_confirm}"
+											confirmActionListener="#{financeTracking.undoTracking}"
+											styleClass="aon-editDataTable-button aon-icon-delete"
+											accesskey="#{bundle.aon_key_remove_line}" />										
+									</aon:panelGroup>
 								</aon:column>
 
 						</aon:dataTable>

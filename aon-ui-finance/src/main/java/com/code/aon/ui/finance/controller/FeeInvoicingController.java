@@ -108,7 +108,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		params.setConfidential(false);
 		params.setInvoiceNumber(obtainMaxNumber(null));
 		params.setInvoiceDate(new Date());
-		params.setInvoiceRecordable(false);
+		params.setInvoiceRecordable(AonUtil.getRoleManager().isAccountingOperator());
 		setParams(params);
 
 		setProgressionPanelVisible(false);

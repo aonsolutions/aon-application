@@ -84,13 +84,13 @@
 											rendered="#{finance.paymentRegistryBank != null}">
 											<f:selectItems value="#{companyCollections.companyBanks}" />
 										</aon:selectOneMenu>
-										<aon:outputLabel for="Finance_paymentCashAccount"
-											value="#{configBundle.config_bank}"
-											rendered="#{finance.paymentRegistryBank == null and finance.cashAccountsSize > 1}" />
-										<aon:selectOneMenu id="Finance_paymentCashAccount"
-											value="#{finance.paymentCashAccount}"
-											rendered="#{finance.paymentRegistryBank == null and finance.cashAccountsSize > 1}">
-											<f:selectItems value="#{finance.cashAccounts}" />
+										<aon:outputLabel for="Finance_paymentPayMethodTypeDetail"
+											value="#{financeBundle.finance_cash}"
+											rendered="#{finance.paymentRegistryBank == null and finance.payMethodTypeDetailsSize > 1}" />
+										<aon:selectOneMenu id="Finance_paymentPayMethodTypeDetail"
+											value="#{finance.paymentPayMethodTypeDetail}"
+											rendered="#{finance.paymentRegistryBank == null and finance.payMethodTypeDetailsSize > 1}">
+											<f:selectItems value="#{finance.payMethodTypeDetails}" />
 										</aon:selectOneMenu>
 
 										<aon:outputLabel for="Finance_paymentPayMethod"
@@ -100,6 +100,16 @@
 										 	styleClass="aon-bold"
 											value="#{finance.to.payMethod.name}"
 											rendered="#{finance.to.payMethod != null and finance.to.payMethod.id != null}" />
+
+										<c:if test="#{aonRole.accountingOperator}">
+											<aon:outputLabel for="Finance_record"
+												value="#{financeBundle.finance_record}" />
+											<aon:selectOneRadio id="Finance_record" 
+												value="#{finance.paymentRecordable}">
+												<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+												<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+											</aon:selectOneRadio>
+										</c:if>
 
 									</aon:panelGrid>
 								</aon:div>

@@ -457,7 +457,8 @@ public class FBatchController extends BasicController implements ICollectionProv
             financeBean.update(fbatchDetail.getFinance());
 
             String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
-            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), entry.getEntryDate(), FinanceTrackingType.RECORDED, message);
+            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), entry.getEntryDate(), FinanceTrackingType.PAID, message,
+            		fbatch.getRegistryBank(), null, fbatchDetail.getFinance().getTotalAmount(), true);
         }
 
         fbatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
@@ -511,7 +512,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.BATCHED);
             financeBean.update(fbatchDetail.getFinance());
 
-            FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED);
+            FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.PAID);
         }
         
         fbatch.setFinanceBatchStatus(fbatch.getFinanceBatchType().equals(FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
