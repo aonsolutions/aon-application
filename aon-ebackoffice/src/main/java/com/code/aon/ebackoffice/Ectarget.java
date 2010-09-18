@@ -30,6 +30,8 @@ import com.code.aon.ebackoffice.enumeration.TargetType;
 @Table(name="ec_target")
 public class Ectarget implements ITransferObject {
 	
+	private static final long serialVersionUID = 8808692809991674392L;
+
 	/** The id. */
 	private Integer id;
 	/** The target. */

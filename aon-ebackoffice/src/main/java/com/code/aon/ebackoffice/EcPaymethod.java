@@ -8,12 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-import com.code.aon.commercial.Offer;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.PayMethod;
-import com.code.aon.ebackoffice.enumeration.PaymentStatus;
 
 
 /**
@@ -25,7 +25,8 @@ import com.code.aon.ebackoffice.enumeration.PaymentStatus;
 @Table(name="ec_paymethod")
 public class EcPaymethod implements ITransferObject {
 	
-	
+	private static final long serialVersionUID = -4127000937468882936L;
+
 	private Integer id;	
 	private PayMethod paymethod;	
 	private String userName;

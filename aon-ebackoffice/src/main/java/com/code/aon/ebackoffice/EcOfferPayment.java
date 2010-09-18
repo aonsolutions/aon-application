@@ -24,7 +24,8 @@ import com.code.aon.ebackoffice.enumeration.PaymentStatus;
 @Table(name="ec_offer_pay_info")
 public class EcOfferPayment implements ITransferObject {
 	
-	
+	private static final long serialVersionUID = -49527870949312808L;
+
 	private Integer id;	
 	private Offer offer;	
 	private PaymentStatus status;
