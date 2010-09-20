@@ -15,6 +15,8 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.config.PayMethodTypeDetail;
+import com.code.aon.finance.FinanceTracking;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -82,4 +84,21 @@ public class PayMethodTypeDetailAccountBeanVetoListener extends ManagerBeanVetoL
 		}
 	}
 
+	@Override
+	public void vetoableBeanRemoved(ManagerBeanEvent evt)
+			throws ManagerBeanVetoListenerException {
+		try {
+			PayMethodTypeDetailAccount pmtda = (PayMethodTypeDetailAccount) evt.getTo();
+			IManagerBean ftBean = BeanManager.getManagerBean(FinanceTracking.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(ftBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_PAY_METHOD_TYPE_DETAIL_ID), pmtda.getPayMethodTypeDetail().getId() );
+			int size = ftBean.getCount(c);
+			if (size > 0) {
+				throw new ManagerBeanVetoListenerException("Existen movimientos de vencimientos que apuntan a esta cuenta");
+			}
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(),e); 
+		}
+		
+	}
 }

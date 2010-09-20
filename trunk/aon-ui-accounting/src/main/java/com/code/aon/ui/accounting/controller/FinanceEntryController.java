@@ -373,7 +373,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	
 					String message = AonUtil.getMessage(IAccountingMessages.BUNDLE_KEY, IAccountingMessages.FINANCE_TRACKING_RECORDED) + " " + accountEntry.getId();
 					FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, getDate(), FinanceTrackingType.PAID, message, 
-								getRegistryBank(), getPayMethodTypeDetail(), finance.getTotalAmount(), true);
+								getDeposit()==0?getRegistryBank():null, getDeposit()==1?getPayMethodTypeDetail():null, finance.getTotalAmount(), true);
 					getWriter().insertAccountEntryFinanceTracking(accountEntry, tracking);
 				}
 			}
