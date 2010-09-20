@@ -617,6 +617,7 @@
 	                            <release>${buildNumber}</release>
 				    <copyright>2009, esferalia Networks S.A</copyright>
 					<requires>
+						<require>aon-external-libs</require>
 						<require>aon-directory-client &gt;= 5.0.0-4</require>
 					</requires>
                                         <mappings>
