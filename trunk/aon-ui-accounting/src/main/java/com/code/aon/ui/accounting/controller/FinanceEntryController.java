@@ -31,12 +31,14 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -61,6 +63,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private AccountEntryFinanceWriter writer;
 	private AccountEntry accountEntry;
 	private AccountBridgeUtil accountBridgeUtil;
+	private AccountingUtil accountingUtil;
 
 	private boolean isNew;
 	private Boolean payment;
@@ -68,7 +71,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private Date date;
 	private int deposit;
 	private RegistryBank registryBank;
-	private Account cashAccount;
+	private PayMethodTypeDetail payMethodTypeDetail;
 	private SecurityLevel securityLevel;
 	private String concept;
 	private DataModel lines;
@@ -88,6 +91,13 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			accountBridgeUtil = new AccountBridgeUtil();
 		}
 		return accountBridgeUtil;
+	}
+
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
 	}
 
 	public AccountEntryFinanceWriter getWriter() {
@@ -153,12 +163,12 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		this.registryBank = registryBank;
 	}
 
-	public Account getCashAccount() {
-		return cashAccount;
+	public PayMethodTypeDetail getPayMethodTypeDetail() {
+		return payMethodTypeDetail;
 	}
 
-	public void setCashAccount(Account cashAccount) {
-		this.cashAccount = cashAccount;
+	public void setPayMethodTypeDetail(PayMethodTypeDetail payMethodTypeDetail) {
+		this.payMethodTypeDetail = payMethodTypeDetail;
 	}
 
 	public SecurityLevel getSecurityLevel() {
@@ -296,6 +306,11 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		return expression;
 	}
 
+	public int getPayMethodTypeDetailsSize() throws ManagerBeanException {
+		IManagerBean payMethodTypeDetailBean = BeanManager.getManagerBean(PayMethodTypeDetail.class);
+		return payMethodTypeDetailBean.getCount(null);
+	}
+
 	@SuppressWarnings("unchecked")
 	public void onAddSelected(ActionEvent event) {
         Iterator iterator = getCheckedFinances().iterator();
@@ -341,7 +356,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			recordingTo.setType((getPayment().booleanValue())?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION);
 			recordingTo.setPeriod(getPeriod());
 			recordingTo.setDate(getDate());
-			recordingTo.setPaymentAccount((getDeposit()==0)?getAccountBridgeUtil().obtainRBankAccount(getRegistryBank()):getCashAccount());
+			recordingTo.setPaymentAccount(obtainPaymentAccount());
 			recordingTo.setBalancingConcept(getConcept());
 			recordingTo.setSecurityLevel(getSecurityLevel());
 			recordingTo.setFinanceList((List)lines.getWrappedData());
@@ -387,6 +402,16 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+	}
+
+	private Account obtainPaymentAccount() throws ManagerBeanException {
+		Account account = null;
+		if (getDeposit() == 0 && getRegistryBank() != null) {
+			account = getAccountBridgeUtil().obtainRBankAccount(getRegistryBank());
+		} else if (getDeposit() == 1 && getPayMethodTypeDetail() != null) {
+			account = getAccountBridgeUtil().obtainPayMethodTypeDetailAccount(getPayMethodTypeDetail());
+		}
+		return (account!=null) ? account : getAccountingUtil().obtainCashAccount();
 	}
 
 	public void onRemove(ActionEvent event) {
@@ -670,11 +695,11 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			if (accountEntryDetail.getAccount().getId().substring(0, 3).equals(AccountConstants.CASH_ACCOUNT_PREFIX.substring(0, 3))) {
 				setDeposit(1);
 				setRegistryBank(null);
-				setCashAccount(accountEntryDetail.getAccount());
+				setPayMethodTypeDetail(getAccountBridgeUtil().obtainPayMethodTypeDetail(accountEntryDetail.getAccount().getId()));
 			} else {
 				setDeposit(0);
 				setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getId()));
-				setCashAccount(null);
+				setPayMethodTypeDetail(null);
 			}
 
 			setConcept(accountEntryDetail.getConcept());

@@ -80,6 +80,21 @@ public class AccountBridgeUtil {
 		}
 	}
 	
+	public PayMethodTypeDetail obtainPayMethodTypeDetail(String account) throws ManagerBeanException {
+		try {
+			IManagerBean pmTypeDetailAccountBean = BeanManager.getManagerBean(PayMethodTypeDetailAccount.class);
+			Criteria criteria = new Criteria();
+			criteria.addExpression(pmTypeDetailAccountBean.getFieldName(IAccountBridgeAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_ACCOUNT_ID), account);
+			Iterator<ITransferObject> iter = pmTypeDetailAccountBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				return ((PayMethodTypeDetailAccount)iter.next()).getPayMethodTypeDetail();
+			}
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		}
+		return null;
+	}
+
 	public Account obtainPayMethodTypeDetailAccount(PayMethodTypeDetail payMethodTypeDetail) throws ManagerBeanException {
 		IManagerBean payMethodTypeDetailAccountBean = BeanManager.getManagerBean(PayMethodTypeDetailAccount.class);
 		Criteria criteria = new Criteria();
