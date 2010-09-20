@@ -20,6 +20,8 @@
 	<module>aon-parent</module>
 	<module>aon-web-parent</module>
 
+	<module>aon-external-libs</module>
+
 	<module>aon-dbutils</module>
 	<module>aon-master</module>
 
@@ -75,6 +77,10 @@
 	<module>aon-warehouse</module>
 	<module>aon-warehouse-bridge</module>
 	<module>aon-fiscal</module>
+	<module>aon-manager</module>
+	<module>aon-calendar</module>
+	<module>aon-employee</module>
+	<module>aon-security</module>
 
 	<module>aon-ui-account</module>
 	<module>aon-ui-account-bridge</module>
@@ -115,6 +121,9 @@
 	<module>aon-ui-dbutils</module>
 	<module>aon-ui-publisher</module>
 	<module>aon-ui-fiscal</module>
+	<module>aon-ui-calendar</module>
+	<module>aon-ui-employee</module>
+	<module>aon-ui-manager</module>
 
 	<module>aon-web-account</module>
 	<module>aon-web-asset</module>
@@ -134,6 +143,7 @@
 	<module>aon-web-task</module>
 	<module>aon-web-webmail</module>
 	<module>aon-web-publisher</module>
+	<module>aon-web-manager</module>
   </modules>
 
 </project>
