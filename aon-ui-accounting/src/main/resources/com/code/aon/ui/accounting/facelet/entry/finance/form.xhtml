@@ -124,14 +124,16 @@
 							rendered="#{financeEntry.deposit == 0}">
 							<f:selectItems value="#{companyCollections.companyBanks}" />
 						</aon:selectOneMenu>
-						<aon:outputLabel for="AccountEntry_balancingCashAccount"
+						<aon:outputLabel for="AccountEntry_balancingPayMethodTypeDetail"
 							value="#{financeBundle.finance_cash}"
 							rendered="#{financeEntry.deposit == 1}" />
-						<aon:selectOneMenu id="AccountEntry_balancingCashAccount"
-							value="#{financeEntry.cashAccount}"
-							rendered="#{financeEntry.deposit == 1}">
-							<f:selectItems value="#{accountCollections.cashAccounts}" />
+						<aon:selectOneMenu id="AccountEntry_balancingPayMethodTypeDetail"
+							value="#{financeEntry.payMethodTypeDetail}"
+							rendered="#{financeEntry.deposit == 1 and financeEntry.payMethodTypeDetailsSize > 0}">
+							<f:selectItems value="#{configCollections.payMethodTypeDetails}" />
 						</aon:selectOneMenu>
+						<aon:outputText value="#{financeBundle.finance_cash}"
+							rendered="#{financeEntry.deposit == 1 and financeEntry.payMethodTypeDetailsSize == 0}" />
 
 						<aon:outputLabel for="AccountEntry_securityLevel"
 							value="#{bundle.aon_security_level}" />
