@@ -224,17 +224,8 @@ public class FileManager {
 
 	private AonFile getAonFile( File file ) {
 		AonFile aonFile = new AonFile();
-		aonFile.setFileName(file.getName());
-		try {
-			byte[] data = FileUtils.readFileToByteArray(file);
-			aonFile.setData(data);
-			MimeType type = AttachmentUtil.getMimeType(aonFile);
-			aonFile.setMimeType(type);
-		} catch (IOException e) {
-			LOGGER.error("change to file " + file, e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}		
+		aonFile.setFile(file);
+		aonFile.setMimeType(aonFile.resolverMimeType());
 		return aonFile;
 	}
 	
@@ -242,7 +233,12 @@ public class FileManager {
 		this.currentFile = file;
 		this.aonFile = getAonFile(file);
 		if (! isImage() ) {
-			this.fileValue = new String(this.aonFile.getData());
+			try {
+				byte[] data = this.aonFile.getOrReadData();
+				this.fileValue = new String(data);
+			} catch (IOException e) {
+				LOGGER.error( e.getMessage(), e );
+			}
 		}
 	}
 	
@@ -339,15 +335,18 @@ public class FileManager {
 	}
 
 	public void createImageContent(OutputStream out, Object data) throws IOException {
-		if (! ArrayUtils.isEmpty(this.aonFile.getData()) ) {
-			out.write( this.aonFile.getData() );
+		byte[] buffer = this.aonFile.getOrReadData();
+		if (! ArrayUtils.isEmpty(buffer) ) {
+			out.write(buffer);
 		}
 	}
 	
-    public void downloadAttachment( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
+    public void downloadAttachment( ActionEvent event ) throws IOException {
         File file = getFile();
-        AonFile aonFile = getAonFile(file);
-        AttachmentUtil.downloadAttachment(aonFile.getFileName(),aonFile.getMimeType(),aonFile.getData());    	
+        AonFile af = getAonFile(file);
+        InputStream in = af.openStream();
+        AttachmentUtil.downloadAttachment(af.getFileName(), af.getMimeType(), in, af.getSize());
+        in.close();
     }	
     
 	public void onCreateFolder( ActionEvent event ) {

@@ -26,33 +26,6 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-    		<groupId>jmimemagic</groupId>
-    		<artifactId>jmimemagic</artifactId>
-    		<version>0.1.2</version>
-			<exclusions>
-				<exclusion>
-				      <groupId>xerces</groupId>
-				      <artifactId>xerces</artifactId>
-				</exclusion>
-				<exclusion>
-				      <groupId>xerces</groupId>
-				      <artifactId>xercesImpl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xmlParserAPIs</artifactId>
-				</exclusion>
-				<exclusion>
-				      <groupId>log4j</groupId>
-				      <artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>		
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.4</version>

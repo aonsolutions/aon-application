@@ -14,16 +14,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicMatch;
-
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.MimeResolver;
 
 /**
  * Servlet class invoked whenever a field form needs a Resource.
@@ -116,25 +113,11 @@ public class ResourceServlet extends HttpServlet {
 
 	private String getMimeType(String resource, byte[] data)
 			throws ServletException {
-		String result = null;
-		String extension = FilenameUtils.getExtension(resource);
-		if (! StringUtils.isEmpty(extension)) {
-			MimeType mimeType = MimeType.getByExtension(extension);
-			if ( mimeType != null ) {
-				result = mimeType.getName();	
-			}
+		MimeType mt = MimeResolver.getMimeTypeByExtension(resource);
+		if ( mt == null ) {
+			mt = MimeResolver.getMimeType(data);
 		}
-		if (result == null) {
-			try {
-				MagicMatch match = Magic.getMagicMatch(data, true);
-				if (match != null) {
-					result = match.getMimeType();
-				}
-			} catch (Exception e) {
-				throw new ServletException(e.getMessage(), e);
-			}
-		}
-		return result;
+		return (mt != null) ? mt.getName() : null;
 	}
 
 	/**
