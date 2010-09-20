@@ -1,20 +1,22 @@
 package com.code.aon.faces.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicMatch;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
@@ -33,7 +35,7 @@ import com.sun.faces.util.MessageFactory;
 public class AttachmentUtil implements ICommonConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(AttachmentUtil.class);
-	
+
 	/**
 	 * Checks if is uploaded.
 	 * 
@@ -71,24 +73,6 @@ public class AttachmentUtil implements ICommonConstants {
 		}
 	}
 	
-	public static MimeType getMimeType( AonFile aonFile ) {
-		String ext = FilenameUtils.getExtension(aonFile.getFileName());
-		MimeType mt = null;
-		if ( StringUtils.isEmpty(ext) ) {
-			try {
-				MagicMatch match = Magic.getMagicMatch(aonFile.getData());
-				if ( match != null ) {
-					mt = MimeType.get(match.getMimeType());					
-				}
-			} catch (Throwable th) {
-				LOGGER.error( "Error finding file Mime Type", th );
-			}
-		} else {
-			mt = MimeType.getByExtension(ext);	
-		}
-		return mt;
-	}
-	
 	public static void updateAttachment( IAttachmentController controller ) throws ControllerListenerException {
 		try {			
 			if ( isUploaded(controller) ) {
@@ -121,7 +105,7 @@ public class AttachmentUtil implements ICommonConstants {
 				FileUtils.deleteQuietly(file);
 			}
 			f.setFileName(item.getFileName());
-			f.setMimeType(getMimeType(f));
+			f.setMimeType(f.resolverMimeType());
 			controller.setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
@@ -129,28 +113,46 @@ public class AttachmentUtil implements ICommonConstants {
 	}
 
 	public static void downloadAttachment(IAttachment attach) {
-		downloadAttachment(attach.getDescription(), attach.getMimeType(), attach.getData());
+		InputStream in = new ByteArrayInputStream(attach.getData());
+		long size = new Long( attach.getSize() );
+		downloadAttachment(attach.getDescription(), attach.getMimeType(), in, size);
+	}
+	
+	private static HttpServletResponse getResponse( FacesContext context ) {
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		if ( response instanceof HttpServletResponseWrapper) {
+			response = (HttpServletResponse) ((HttpServletResponseWrapper) response).getResponse();
+		}
+		return response;
 	}
 
-	public static void downloadAttachment(String fileName, MimeType type, byte[] data) {
+	public static void downloadAttachment(String fileName, MimeType type, InputStream in, long size) {
+		OutputStream out = null;
 		try {
 	        FacesContext context = FacesContext.getCurrentInstance();
-	        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();			
+	        HttpServletResponse response = getResponse(context);
 			if ( type != null ) {
 				response.setContentType( type.getName() );	
 			}
-			if ( (type != MimeType.MIME_PDF) && (type != MimeType.MIME_SIGNED_PDF) && ! StringUtils.isEmpty(fileName) ) {
-				response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");	
+			if (! StringUtils.isEmpty(fileName) ) {
+				if ( (type != MimeType.MIME_PDF) && (type != MimeType.MIME_SIGNED_PDF) ) {
+					response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");	
+				} else {
+					response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+				}
 			}
-			response.setHeader("Content-Length", String.valueOf(data.length));
-			ServletOutputStream sos = response.getOutputStream();
-			sos.write( data );
-			sos.close();
+			if ( size > 0 ) {
+				response.setHeader("Content-Length", String.valueOf(size));	
+			}
+			out = new BufferedOutputStream(response.getOutputStream());
+			IOUtils.copyLarge(in, out);
+			out.close();
 			response.flushBuffer();
 	        context.responseComplete();    	
 		} catch (IOException e) {
 			LOGGER.error( e.getMessage(), e );
+		} finally {
+			IOUtils.closeQuietly(out);
 		}
-	}
-	
+	}	
 }

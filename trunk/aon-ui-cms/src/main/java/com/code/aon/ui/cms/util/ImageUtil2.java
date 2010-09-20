@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ImageUtil;
-import com.code.aon.ui.publisher.util.ImageUtilEx;
+import com.code.aon.common.util.MimeResolver;
 
 public class ImageUtil2 {
 
@@ -29,9 +29,9 @@ public class ImageUtil2 {
 
 	public ImageUtil2(File file, int maxDim) throws IOException {
 		byte[] data = FileUtils.readFileToByteArray(file);
-		this.type = ImageUtil.getMimeType(file);
+		this.type = MimeResolver.getMimeTypeByExtension(file.getName());
 		if ( this.type == null ) {
-			this.type = ImageUtilEx.getMimeType(data, this.type);
+			this.type = MimeResolver.getMimeType(data);
 		}
 		this.imageFile = ImageUtil.getBufferedImage(data);
 		double scale = (double) maxDim / (double) imageFile.getHeight();

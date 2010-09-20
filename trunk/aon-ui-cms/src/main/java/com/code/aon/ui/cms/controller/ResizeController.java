@@ -14,6 +14,7 @@ import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ImageUtil;
+import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.publisher.util.ImageUtilEx;
 import com.code.aon.ui.util.AonUtil;
@@ -76,7 +77,7 @@ public class ResizeController implements ICMSConstants {
 		this.file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
 		try {
 			byte[] data = FileUtils.readFileToByteArray(file);
-			this.type = ImageUtilEx.getMimeType(data, null);
+			this.type = MimeResolver.getMimeType(data);
 			this.image = ImageUtilEx.getBufferedImage(data, type);
 			width = image.getWidth();
 			height = image.getHeight();
