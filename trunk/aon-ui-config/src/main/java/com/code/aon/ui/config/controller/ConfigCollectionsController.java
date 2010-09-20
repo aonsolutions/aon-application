@@ -15,6 +15,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.CommissionType;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tariff;
@@ -311,24 +312,24 @@ public class ConfigCollectionsController {
 	}
 
 	/**
-	 * Gets the tariffs.
+	 * Gets the PayMethodTypeDetails.
 	 * 
-	 * @return the tariffs
+	 * @return the PayMethodTypeDetailss
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	public List<SelectItem> getTariffs() throws ManagerBeanException {
-		List<SelectItem> tariffs = new LinkedList<SelectItem>();
-		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
+	public List<SelectItem> getPayMethodTypeDetails() throws ManagerBeanException {
+		List<SelectItem> payMethodTypeDetails = new LinkedList<SelectItem>();
+		IManagerBean payMethodTypeDetailBean = BeanManager.getManagerBean(PayMethodTypeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(tariffBean.getFieldName(IConfigAlias.TARIFF_NAME));
-		Iterator<ITransferObject> iter = tariffBean.getList(criteria).iterator();
+		criteria.addOrder(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_DESCRIPTION));
+		Iterator<ITransferObject> iter = payMethodTypeDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
-			Tariff tariff = (Tariff) iter.next();
-			SelectItem item = new SelectItem(tariff, tariff.getName());
-			tariffs.add(item);
+			PayMethodTypeDetail p = (PayMethodTypeDetail) iter.next();
+			SelectItem item = new SelectItem(p, p.getDescription());
+			payMethodTypeDetails.add(item);
 		}
-		return tariffs;
+		return payMethodTypeDetails;
 	}
 
 	/**
@@ -367,6 +368,20 @@ public class ConfigCollectionsController {
 			}
 		}
 		return invoiceTransactionTypes;
+	}
+
+	public List<SelectItem> getTariffs() throws ManagerBeanException {
+		List<SelectItem> tariffs = new LinkedList<SelectItem>();
+		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(tariffBean.getFieldName(IConfigAlias.TARIFF_NAME));
+		Iterator<ITransferObject> iter = tariffBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Tariff tariff = (Tariff) iter.next();
+			SelectItem item = new SelectItem(tariff, tariff.getName());
+			tariffs.add(item);
+		}
+		return tariffs;
 	}
 
 	public List<SelectItem> getVatDeductionTypes() {
