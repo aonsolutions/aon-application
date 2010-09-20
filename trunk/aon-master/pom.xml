@@ -38,13 +38,13 @@
 			<version>1.5.11</version>
 			<scope>compile</scope>
 		</dependency>
+		<!-- TEST DEPENDENCIES -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jcl</artifactId>
 			<version>1.5.11</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- TEST DEPENDENCIES -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -114,18 +114,15 @@
 							<release>${buildNumber}</release>
 							<copyright>2010, esferalia Networks S.A</copyright>
 							<requires>
+								<require>slf4j</require>
 								<require>aon-dbutils</require>
+								<require>jakarta-commons-lang</require>
+								<require>mysql-connector-java</require>
+								<require>jakarta-commons-logging</require>
 								<require>aon-directory-client &gt;= 5.0.0-4</require>
 							</requires>
 							<mappings>
 								<mapping>
-									<dependency>
-										<includes>
-											<include>org.slf4j:slf4j-jcl</include>
-											<include>org.slf4j:slf4j-api</include>
-											<include>commons-lang:commons-lang</include>
-										</includes>
-									</dependency>
 									<!-- 
 									<filemode>755</filemode>
 									<username>root</username>
@@ -140,22 +137,9 @@
 											</includes>
 										</source>
 										<softlinkSource>
-											<location>/usr/share/java/commons-lang-2.5.jar</location>
-											<destination>commons-lang.jar</destination>
-
-										</softlinkSource>
-										<softlinkSource>
 											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
 											<destination>${project.artifactId}.jar</destination>
 
-										</softlinkSource>
-										<softlinkSource>
-											<location>/usr/share/java/slf4j-api-1.5.11.jar</location>
-											<destination>slf4j-api.jar</destination>
-										</softlinkSource>
-										<softlinkSource>
-											<location>/usr/share/java/slf4j-jcl-1.5.8.jar</location>
-											<destination>slf4j-jcl.jar</destination>
 										</softlinkSource>
 									</sources>
 
