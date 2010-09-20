@@ -16,22 +16,16 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicMatch;
-
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ImageUtil;
+import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -44,8 +38,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CompanyImagesController extends LinesController implements ICompanyConstants {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyImagesController.class.getName());
-	
 	private static final RegistryAttachmentType[] DEFAULT_DISPLAYED_TYPES = new RegistryAttachmentType[] {RegistryAttachmentType.ADDITIONAL_IMAGE};
 
 	private static final int DEFAULT_MAXIMUM_SIZE = 256 * 1024;
@@ -238,24 +230,11 @@ public class CompanyImagesController extends LinesController implements ICompany
 	}
 	
 	public static MimeType getMimeType(String resource, byte[] data) {
-		MimeType result = null;
-		if (! StringUtils.isEmpty(resource) ) {
-			String extension = FilenameUtils.getExtension(resource);
-			if (! StringUtils.isEmpty(extension) ) {
-				result = MimeType.getByExtension(extension);
-			}
+		MimeType mt = MimeResolver.getMimeTypeByExtension(resource);
+		if ( mt == null ) {
+			mt = MimeResolver.getMimeType(data);
 		}
-		if (result == null) {
-			try {
-				MagicMatch match = Magic.getMagicMatch(data, true);
-				if (match != null) {
-					result = MimeType.get(match.getMimeType());
-				}
-			} catch (Throwable th) {
-				LOGGER.error(th.getMessage(), th );
-			}
-		}
-		return result;
+		return mt;
 	}
 	
 	public void imageNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {

@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.event;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.faces.event.ActionEvent;
 
 import org.richfaces.event.UploadEvent;
@@ -137,8 +140,11 @@ public class ExpenseInvoiceAttachmentListener extends ControllerAdapter implemen
 		AttachmentUtil.fileUploaded(event, this);
 	}
 
-    public void downloadAttachment( ActionEvent event ) {
-        AttachmentUtil.downloadAttachment( getAonFile().getFileName(), getAonFile().getMimeType(), getAonFile().getData() );    	
+    public void downloadAttachment( ActionEvent event ) throws IOException {
+    	AonFile af = getAonFile();
+    	InputStream in = af.openStream();
+        AttachmentUtil.downloadAttachment( af.getFileName(), af.getMimeType(), in, af.getSize() );
+        in.close();
     }
     
     public void removeAttachment( ActionEvent event ) {
