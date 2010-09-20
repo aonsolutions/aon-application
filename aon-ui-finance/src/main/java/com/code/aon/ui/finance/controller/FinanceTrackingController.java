@@ -62,21 +62,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 
 	public void recordTracking(ActionEvent event) throws ManagerBeanException {
 		FinanceTracking to = (FinanceTracking)this.getModel().getRowData();
-
-		AccountEntry entry = null;
-		if (to.getType() == FinanceTrackingType.PAID) {
-			entry = getWriter().recordFinance(to.getFinance(), to.getRegistryBank(), to.getPayMethodTypeDetail(), to.getTrackingDate());
-		} else if (to.getType() == FinanceTrackingType.RETURNED) {
-			entry = getWriter().returnFinance(to.getFinance(), to.getRegistryBank(), to.getPayMethodTypeDetail(), to.getTrackingDate());
-		}
-
-		if (entry != null) {
-			to.setDescription(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId());
-			to.setRecorded(true);
-			getManagerBean().update(to);
-
-			getWriter().insertAccountEntryFinanceTracking(entry, to);
-		}
+		getWriter().recordFinanceTracking(to);
 	}
 
 	public boolean isUndoable() throws ManagerBeanException{
