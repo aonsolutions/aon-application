@@ -33,6 +33,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ImageUtil;
+import com.code.aon.common.util.MimeResolver;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.infoweb.WebInfo;
@@ -760,10 +761,18 @@ public class GeneratorController extends BasicController implements VelocityCons
 		return this.homepage == 0;
 	}
 	
+	private MimeType getMimeType( RegistryAttachment ra ) {
+		MimeType type = ra.getMimeType();
+		if ( type == null ) {
+			return MimeResolver.getMimeType(ra.getData());
+		}
+		return type;
+	}
+	
 	private boolean copyRegistryBlobToFile(RegistryAttachment ra, int maxWidth, int maxHeight, File file) {
 		try {
 			FileUtils.writeByteArrayToFile(file, ra.getData());
-			MimeType type = ImageUtilEx.getMimeType(ra.getData(), ra.getMimeType());
+			MimeType type = getMimeType(ra);
 			BufferedImage image = ImageUtilEx.getBufferedImage(ra.getData(), type);
 			Dimension d = ImageUtil.getResizeDimension(image, maxWidth, maxHeight);
 			File outputFile = new File(file.getParentFile(), "tn_" + file.getName());		
