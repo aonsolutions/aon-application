@@ -873,52 +873,160 @@ public interface IFinanceAlias {
 	String  FINANCE_TRACKING_DESCRIPTION = FINANCE_TRACKING_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: FinanceTracking_finance_id
-	* Hibernate value: FinanceTracking.finance.id
-	*/
-	String  FINANCE_TRACKING_FINANCE_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[2];
-
-	/** 
 	* Alias value: FinanceTracking_id
 	* Hibernate value: FinanceTracking.id
 	*/
-	String  FINANCE_TRACKING_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[3];
+	String  FINANCE_TRACKING_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: FinanceTracking_payMethodTypeDetail_id
 	* Hibernate value: FinanceTracking.payMethodTypeDetail.id
 	*/
-	String  FINANCE_TRACKING_PAY_METHOD_TYPE_DETAIL_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[4];
+	String  FINANCE_TRACKING_PAY_METHOD_TYPE_DETAIL_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: FinanceTracking_recorded
 	* Hibernate value: FinanceTracking.recorded
 	*/
-	String  FINANCE_TRACKING_RECORDED = FINANCE_TRACKING_ENTRY.getAliasNames()[5];
+	String  FINANCE_TRACKING_RECORDED = FINANCE_TRACKING_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: FinanceTracking_registryBank_id
 	* Hibernate value: FinanceTracking.registryBank.id
 	*/
-	String  FINANCE_TRACKING_REGISTRY_BANK_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[6];
+	String  FINANCE_TRACKING_REGISTRY_BANK_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: FinanceTracking_trackingDate
 	* Hibernate value: FinanceTracking.trackingDate
 	*/
-	String  FINANCE_TRACKING_TRACKING_DATE = FINANCE_TRACKING_ENTRY.getAliasNames()[7];
+	String  FINANCE_TRACKING_TRACKING_DATE = FINANCE_TRACKING_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: FinanceTracking_type
 	* Hibernate value: FinanceTracking.type
 	*/
-	String  FINANCE_TRACKING_TYPE = FINANCE_TRACKING_ENTRY.getAliasNames()[8];
+	String  FINANCE_TRACKING_TYPE = FINANCE_TRACKING_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: FinanceTracking_finance_amount
+	* Hibernate value: FinanceTracking.finance.amount
+	*/
+	String  FINANCE_TRACKING_FINANCE_AMOUNT = FINANCE_TRACKING_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: FinanceTracking_finance_bankAccount
+	* Hibernate value: FinanceTracking.finance.bankAccount
+	*/
+	String  FINANCE_TRACKING_FINANCE_BANK_ACCOUNT = FINANCE_TRACKING_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: FinanceTracking_finance_bank_id
+	* Hibernate value: FinanceTracking.finance.bank.id
+	*/
+	String  FINANCE_TRACKING_FINANCE_BANK_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: FinanceTracking_finance_bank_code
+	* Hibernate value: FinanceTracking.finance.bank.code
+	*/
+	String  FINANCE_TRACKING_FINANCE_BANK_CODE = FINANCE_TRACKING_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: FinanceTracking_finance_concept
+	* Hibernate value: FinanceTracking.finance.concept
+	*/
+	String  FINANCE_TRACKING_FINANCE_CONCEPT = FINANCE_TRACKING_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: FinanceTracking_finance_dueDate
+	* Hibernate value: FinanceTracking.finance.dueDate
+	*/
+	String  FINANCE_TRACKING_FINANCE_DUE_DATE = FINANCE_TRACKING_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: FinanceTracking_finance_expenses
+	* Hibernate value: FinanceTracking.finance.expenses
+	*/
+	String  FINANCE_TRACKING_FINANCE_EXPENSES = FINANCE_TRACKING_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: FinanceTracking_finance_financeStatus
+	* Hibernate value: FinanceTracking.finance.financeStatus
+	*/
+	String  FINANCE_TRACKING_FINANCE_FINANCE_STATUS = FINANCE_TRACKING_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: FinanceTracking_finance_id
+	* Hibernate value: FinanceTracking.finance.id
+	*/
+	String  FINANCE_TRACKING_FINANCE_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: FinanceTracking_finance_invoice_id
 	* Hibernate value: FinanceTracking.finance.invoice.id
 	*/
-	String  FINANCE_TRACKING_FINANCE_INVOICE_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[9];
+	String  FINANCE_TRACKING_FINANCE_INVOICE_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: FinanceTracking_finance_payMethod_id
+	* Hibernate value: FinanceTracking.finance.payMethod.id
+	*/
+	String  FINANCE_TRACKING_FINANCE_PAY_METHOD_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: FinanceTracking_finance_payMethod_type
+	* Hibernate value: FinanceTracking.finance.payMethod.type
+	*/
+	String  FINANCE_TRACKING_FINANCE_PAY_METHOD_TYPE = FINANCE_TRACKING_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: FinanceTracking_finance_payment
+	* Hibernate value: FinanceTracking.finance.payment
+	*/
+	String  FINANCE_TRACKING_FINANCE_PAYMENT = FINANCE_TRACKING_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: FinanceTracking_finance_registry_id
+	* Hibernate value: FinanceTracking.finance.registry.id
+	*/
+	String  FINANCE_TRACKING_FINANCE_REGISTRY_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[21];
+
+	/** 
+	* Alias value: FinanceTracking_finance_securityLevel
+	* Hibernate value: FinanceTracking.finance.securityLevel
+	*/
+	String  FINANCE_TRACKING_FINANCE_SECURITY_LEVEL = FINANCE_TRACKING_ENTRY.getAliasNames()[22];
+
+	/** 
+	* Alias value: FinanceTracking_finance_invoice_type
+	* Hibernate value: FinanceTracking.finance.invoice.type
+	*/
+	String  FINANCE_TRACKING_FINANCE_INVOICE_TYPE = FINANCE_TRACKING_ENTRY.getAliasNames()[23];
+
+	/** 
+	* Alias value: FinanceTracking_finance_invoice_series
+	* Hibernate value: FinanceTracking.finance.invoice.series
+	*/
+	String  FINANCE_TRACKING_FINANCE_INVOICE_SERIES = FINANCE_TRACKING_ENTRY.getAliasNames()[24];
+
+	/** 
+	* Alias value: FinanceTracking_finance_invoice_number
+	* Hibernate value: FinanceTracking.finance.invoice.number
+	*/
+	String  FINANCE_TRACKING_FINANCE_INVOICE_NUMBER = FINANCE_TRACKING_ENTRY.getAliasNames()[25];
+
+	/** 
+	* Alias value: FinanceTracking_finance_invoice_referenceCode
+	* Hibernate value: FinanceTracking.finance.invoice.referenceCode
+	*/
+	String  FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE = FINANCE_TRACKING_ENTRY.getAliasNames()[26];
+
+	/** 
+	* Alias value: FinanceTracking_finance_invoice_issueDate
+	* Hibernate value: FinanceTracking.finance.invoice.issueDate
+	*/
+	String  FINANCE_TRACKING_FINANCE_INVOICE_ISSUE_DATE = FINANCE_TRACKING_ENTRY.getAliasNames()[27];
 
 
 
