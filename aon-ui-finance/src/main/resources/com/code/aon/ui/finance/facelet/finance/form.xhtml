@@ -61,13 +61,13 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150
-						,aon-panelGrid-even aon-width-auto
+						,aon-panelGrid-even aon-width-500
 						,aon-panelGrid-odd aon-width-150
-						,aon-panelGrid-even aon-width-200">
+						,aon-panelGrid-even aon-width-auto">
 
 					<aon:outputText value="#{financeBundle.finance_invoice}" />
 					<aon:div> 
-						<h:panelGrid columns="3" columnClasses="aon-width-180,aon-width-auto,aon-width-100">
+						<h:panelGrid columns="3" columnClasses="aon-width-170,aon-width-160,aon-width-auto">
 							<aon:div>
 								<aon:outputText styleClass="aon-bold"
 									value="#{finance.to.invoice.referenceCode}" />
@@ -243,14 +243,12 @@
 									<aon:outputText value="#{financeTracking.trackingDescription}" />
 								</aon:column>
 
-								<c:if test="#{aonRole.accountingOperator}">
-									<aon:column styleClass="aon-editDataTable-textColumn">
-										<f:facet name="header">
-											<aon:outputText value="#{financeBundle.finance_accounting}" />
-										</f:facet>
-										<aon:outputText value="#{(to.recordable)?(to.description):('NO')}" />
-									</aon:column>
-								</c:if>
+								<aon:column styleClass="aon-editDataTable-textColumn">
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.finance_recorded}" />
+									</f:facet>
+									<aon:outputText value="#{(to.recordable)?((aonRole.accountingOperator)?(to.description):((to.recorded)?(bundle.aon_yes):(bundle.aon_no))):('---------')}" />
+								</aon:column>
 
 								<aon:column styleClass="aon-editDataTable-numberColumn">
 									<f:facet name="header">

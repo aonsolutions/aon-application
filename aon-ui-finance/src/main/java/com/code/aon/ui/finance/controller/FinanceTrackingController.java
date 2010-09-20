@@ -61,8 +61,8 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	}
 
 	public void recordTracking(ActionEvent event) throws ManagerBeanException {
-		FinanceTracking to = (FinanceTracking)this.getModel().getRowData();
-		getWriter().recordFinanceTracking(to);
+		FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+		getWriter().recordFinanceTracking(tracking);
 	}
 
 	public boolean isUndoable() throws ManagerBeanException{
@@ -75,20 +75,20 @@ public class FinanceTrackingController extends LinesController implements IFinan
 			if (FinanceTrackingWriter.isLastTracking(tracking)) {
 				if (tracking.getType() == FinanceTrackingType.SETTLED || !tracking.isRecorded()) {
 					return true;
-				}
-
-				IManagerBean entryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(entryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
-				Iterator<?> iterator = entryFinanceTrackingBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-					AccountEntryFinanceTracking entryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
-
-					IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-					AccountEntry entry = entryFinanceTracking.getAccountEntry();
-					criteria = new Criteria();
-					criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
-					return (entryDetailBean.getCount(criteria) <= 2);
+				} else if (tracking.isRecorded() && AonUtil.getRoleManager().isAccountingOperator()) {
+					IManagerBean entryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(entryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
+					Iterator<?> iterator = entryFinanceTrackingBean.getList(criteria).iterator();
+					if (iterator.hasNext()) {
+						AccountEntryFinanceTracking entryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
+	
+						IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+						AccountEntry entry = entryFinanceTracking.getAccountEntry();
+						criteria = new Criteria();
+						criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+						return (entryDetailBean.getCount(criteria) <= 2);
+					}
 				}
 			}
 		}

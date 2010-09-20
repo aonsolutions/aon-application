@@ -125,7 +125,7 @@
 	</c:if>
 
 	<c:if test="#{aonRole.accountingOperator and searchController.defaultStatus == null}">
-		<aon:outputLabel for="Invoice_status" value="#{financeBundle.finance_recorded}" />
+		<aon:outputLabel for="Invoice_status" value="#{financeBundle.finance_invoice_recorded}" />
 		<aon:selectOneRadio id="Invoice_status"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
