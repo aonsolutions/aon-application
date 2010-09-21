@@ -262,5 +262,14 @@
     		<to-view-id>/com/code/aon/faces/file/form.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
+
+	<!-- ************* Log Panel ***************** -->
+	<managed-bean>
+		<managed-bean-name>logPanel</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.faces.controller.LogPanelController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
     
 </faces-config>

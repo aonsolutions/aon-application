@@ -37,12 +37,8 @@ import com.code.aon.common.util.ZipUtil;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.util.AonUtil;
 
-public class FileManager {
+public class FileManager implements IRichConstants {
 	
-	private static final String FILE_MANAGER_FORM = "fileManager_form";
-	
-	private static final String BUNDLE_NAME = "richBundle";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileManager.class);
 	
 	private String beanName;
@@ -480,7 +476,7 @@ public class FileManager {
 			List<FileWrapper> list = (List<FileWrapper>) getModel().getWrappedData(); 
 			for( FileWrapper fw : list ) {
 				if ( fw.getWrappedObject().getName().equals(name) ) {
-					FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, "rich_file_duplicated_name"));
+					FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, FILE_DUPLICATED_NAME));
 					message.setSeverity(FacesMessage.SEVERITY_ERROR);
 					throw new ValidatorException( message );
 				}
