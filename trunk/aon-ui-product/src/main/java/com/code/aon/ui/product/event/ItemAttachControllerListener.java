@@ -3,18 +3,14 @@ package com.code.aon.ui.product.event;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicMatch;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.MimeResolver;
 import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
@@ -29,8 +25,6 @@ import com.sun.faces.util.MessageFactory;
 
 public class ItemAttachControllerListener extends ControllerAdapter implements IItemConstants{
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ItemAttachControllerListener.class.getName());
-
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
@@ -101,24 +95,16 @@ public class ItemAttachControllerListener extends ControllerAdapter implements I
 				AonFile aonFile = ciaController.getAonFile();
 				ItemAttachment attach = (ItemAttachment)ciaController.getTo();
 				attach.setData(aonFile.getData());				
-				String ext = FilenameUtils.getExtension(aonFile.getFileName());
-				MimeType mt = null;
-				if ( StringUtils.isEmpty(ext) ) {
-					try {
-						MagicMatch match = Magic.getMagicMatch(aonFile.getData());
-						ext = match.getExtension();
-						mt = MimeType.get(match.getMimeType());
-					} catch (Throwable th) {
-						LOGGER.error("Error finding file Mime Type", th );
-					}
-				} else {
-					mt = MimeType.getByExtension(ext);	
+				MimeType mt = MimeResolver.getMimeTypeByExtension(aonFile.getFileName());
+				if ( mt == null ) {
+					mt = MimeResolver.getMimeType(aonFile.getData());
 				}
 				attach.setMimeType(mt);
 				if ( StringUtils.isBlank(attach.getDescription()) ) {
 					attach.setDescription(FilenameUtils.getBaseName(aonFile.getFileName()));
 				} else {
 					if (attach.getDescription().indexOf(".") < 0) {
+						String ext = FilenameUtils.getExtension(aonFile.getFileName());
 						attach.setDescription(attach.getDescription() + "." + ext);
 					}
 				}
