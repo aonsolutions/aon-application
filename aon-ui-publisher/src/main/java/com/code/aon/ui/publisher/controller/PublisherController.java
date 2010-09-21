@@ -56,14 +56,19 @@ public class PublisherController {
 	}	
 
 	public void onPublish(ActionEvent event) {
+		FTPUtil ftp = new FTPUtil();
 		try {
 			File previewDirectory = PathUtil.getPreviewPath(getDomain());
 			String destination = "/" + getDomain() + "/WEBSITES/www." + getDomain();
-			FTPUtil.uploadFTP(previewDirectory, destination, properties);
+			ftp.connect(properties);
+			// ftp.delete(destination);
+			ftp.synchronize(previewDirectory, destination);
 			AonUtil.addInfoMessage("OK: La web ha sido publicada." );
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
-		}		
+		} finally {
+			ftp.close();
+		}
 	}		
 }
