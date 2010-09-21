@@ -56,4 +56,8 @@ public class Util {
 		return pc;
 	}
 	
+	public static String toTextMax40Type( String value ) {
+		return StringUtils.substring(value, 0, 40);
+	}
+	
 }
