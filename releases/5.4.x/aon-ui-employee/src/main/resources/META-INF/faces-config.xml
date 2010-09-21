@@ -1,0 +1,227 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.employee.i18n.messages</base-name>
+			<var>employeeBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!-- ************** EMPLOYEE COLLECTIONS ****************** -->
+	<managed-bean>
+		<managed-bean-name>employeeCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.controller.EmployeeCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ CONTRACT ************** -->
+	<managed-bean>
+		<managed-bean-name>contract</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.ContractController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.Contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Contract_person_registry_surname,Contract_person_registry_name</value>
+		</managed-property>
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractSearch}</value>
+				<value>#{contractListener}</value>
+				<value>#{contractTrackingLinesListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{contractOptionalListeners}</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>contractOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>contractSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.event.ContractSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>contractListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.event.ContractControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>contractTrackingLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>contractTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ContractTracking_contract_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ CONTRACT TYPE ************** -->
+	<managed-bean>
+		<managed-bean-name>contractType</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.ContractType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractType_description</value>
+		</managed-property>	
+	</managed-bean>
+
+	<!--  **** CONTRACT TRACKING **** -->
+	<managed-bean>
+		<managed-bean-name>contractTracking</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.ContractTrackingController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.ContractTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractTracking_date</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>contract.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ========================================================== -->
+	<!-- ======================= LOOKUPS ========================== -->
+	<!-- ========================================================== -->
+	
+	<!-- ************ CONTRACT TYPE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>contractTypeLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractTypeLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.employee.ContractType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractType_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/employee/facelet/lookup/contractType/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
+			
+	<!-- =================== Contract ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contract_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contract_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contract_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
+	<!-- =================== Contract Type ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractType</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contractType/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+	
+	<!-- =================== Contract Tracking Management========================== -->
+	<navigation-rule id="contractTracking">
+	    <navigation-case>
+    	  	<from-outcome>contractTracking_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/contractTracking/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractTracking_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/contractTracking/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractTracking_form</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/contractTracking/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+</faces-config>

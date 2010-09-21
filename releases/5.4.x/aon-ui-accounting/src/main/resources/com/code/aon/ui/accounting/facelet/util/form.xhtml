@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="checkForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_regenerate_account_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="execute" 
+						value="EJECUTAR"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{accountRegenerator.onShowPanel}"
+						/>
+<!-- 
+			onclick="Richfaces.showModalPanel('waitProccess')"
+			oncomplete="Richfaces.hideModalPanel('waitProccess')"
+			actionListener="#{accountRegenerator.regenerateAccount}"
+ -->						
+				</ui:define>
+			</ui:decorate>
+			
+		<aon:div>
+			<aon:panelGrid columns="2" style="width:90%; margin:10px auto;">
+
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu
+						id="AccountEntryDetail_accountEntry_accountPeriod"
+						value="#{accountRegenerator.period}">
+						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu
+						id="AccountEntryDetail_accountEntry_securityLevel"
+						value="#{accountRegenerator.securityLevel}">
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+	
+				<aon:outputText value="&#160;" />
+				<aon:outputText value="&#160;" />
+
+				<aon:outputText value="Procesos" />
+				<aon:div>
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{accountRegenerator.summary}" />
+						<aon:outputText value="#{accountingBundle.accounting_regenerate_summary_module}" />
+					</aon:div>
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{accountRegenerator.journal}" />
+						<aon:outputText value="#{accountingBundle.accounting_regenerate_journal_counter_module}" />
+					</aon:div>
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{accountRegenerator.helper}" />
+						<aon:outputText value="#{accountingBundle.accounting_regenerate_helper_module}" />
+					</aon:div>
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{accountRegenerator.vat}" />
+						<aon:outputText value="#{accountingBundle.accounting_regenerate_vat_module}" />
+					</aon:div>
+				</aon:div>
+			</aon:panelGrid>
+			
+		</aon:div>
+
+		</aon:form>
+		<ui:include
+			src="/com/code/aon/ui/resources/facelet/shared/progressBar.xhtml">
+			<ui:param name="progressLabel" value="#{accountingBundle.accounting_regenerate_account_module}" />
+			<ui:param name="progressBarBean" value="#{accountRegenerator}" />
+			<ui:param name="panelVisible" value="#{accountRegenerator.progressionPanelVisible}"/>
+			<ui:param name="initialMessage" value="#{accountingBundle.accounting_regenerate_account_module}?"/>
+			<ui:param name="startMessage" value="#{bundle.aon_accept}"/>
+			<ui:param name="completeMessage" value=""/>
+			<aon:methodParam name="startActionListener" default="#{accountRegenerator.regenerateAccount}" type="actionListener" />
+			<aon:methodParam name="closeActionListener" default="#{accountRegenerator.onClosePanel}" type="actionListener" />
+			<ui:param name="redirect" value="false" />
+			<ui:param name="redirectMessage" value=""/>
+			<aon:methodParam name="redirectAction" default=""/>
+		</ui:include>
+	</ui:define>
+
+</ui:composition>

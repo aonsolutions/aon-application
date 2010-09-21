@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="contract_form::#com#code#aon#ui#employee#facelet#contract#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/employee/facelet/contract/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#employee#facelet#contract#form.xhtml"
+    TITLE="contract_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="contract_list::#com#code#aon#ui#employee#facelet#contract#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/employee/facelet/contract/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#employee#facelet#contract#list.xhtml"
+    TITLE="contract_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="contract_search::#com#code#aon#ui#employee#facelet#contract#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/employee/facelet/contract/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#employee#facelet#contract#search.xhtml"
+    TITLE="contract_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#employee#facelet#contract#form.xhtml"
+  PATH="/com/code/aon/ui/employee/facelet/contract/form.xhtml"
+  SHAPE="240,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#employee#facelet#contract#list.xhtml"
+  PATH="/com/code/aon/ui/employee/facelet/contract/list.xhtml"
+  SHAPE="272,209,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#employee#facelet#contract#search.xhtml"
+  PATH="/com/code/aon/ui/employee/facelet/contract/search.xhtml"
+  SHAPE="272,321,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

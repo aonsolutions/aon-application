@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbarEx.xhtml" >
+		<aon:valueParam name="formNew" default="#{controller.new}" />	
+		<aon:valueParam name="toolbarDescription" default="#{formNew?(bundle.aon_reset):(bundle.aon_editing)}" />	
+		<aon:methodParam name="saveActionListener" default="#{controller.accept}" type="actionListener" />
+		<aon:methodParam name="saveAction" default="#{controller.beanName}_form" resolve="true" />			
+		<aon:methodParam name="cancelActionListener" default="#{controller.onCancel}" type="actionListener" />
+		<aon:methodParam name="cancelAction" default="#{controller.beanName}_list" resolve="true" />			
+		<aon:methodParam name="removeActionListener" default="#{controller.onRemove}" type="actionListener" />
+		<aon:methodParam name="removeAction" default="#{controller.beanName}_list" resolve="true" />			
+		<aon:methodParam name="searchActionListener" default="#{controller.onEditSearch}" type="actionListener" />
+		<aon:methodParam name="searchAction" default="#{controller.beanName}_search" resolve="true" />		
+		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
+		<aon:methodParam name="resetAction" default="#{controller.beanName}_form" resolve="true" />			
+		<aon:methodParam name="backActionListener" default="#{controller.onCancel}" type="actionListener" />
+		<aon:methodParam name="backAction" default="#{controller.beanName}_list" resolve="true" />									
+	</ui:include>
+	
+</ui:composition>

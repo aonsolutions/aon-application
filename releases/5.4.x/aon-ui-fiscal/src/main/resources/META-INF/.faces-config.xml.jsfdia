@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="vat_report_search::#com#code#aon#ui#fiscal#facelet#vat#search.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/fiscal/facelet/vat/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#vat#search.xhtml"
+    TITLE="vat_report_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="vat_report_list::#com#code#aon#ui#fiscal#facelet#vat#list.xhtml"
+    NAME="output1" PATH="/com/code/aon/ui/fiscal/facelet/vat/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#vat#list.xhtml"
+    TITLE="vat_report_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="vat_report_detail::#com#code#aon#ui#fiscal#facelet#vat#detailList.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/fiscal/facelet/vat/detailList.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#vat#detailList.xhtml"
+    TITLE="vat_report_detail" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::1" SHAPE="32,417,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="invoiceReport_search::#com#code#aon#ui#fiscal#facelet#invoice#search.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/fiscal/facelet/invoice/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#invoice#search.xhtml"
+    TITLE="invoiceReport_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="invoiceReport_list::#com#code#aon#ui#fiscal#facelet#invoice#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/fiscal/facelet/invoice/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#invoice#list.xhtml"
+    TITLE="invoiceReport_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::2" SHAPE="32,673,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::2" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="model347_search::#com#code#aon#ui#fiscal#facelet#model347#search.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/fiscal/facelet/model347/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#model347#search.xhtml"
+    TITLE="model347_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="model347_list::#com#code#aon#ui#fiscal#facelet#model347#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/fiscal/facelet/model347/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#model347#list.xhtml"
+    TITLE="model347_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#model347#list.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/model347/list.xhtml"
+  SHAPE="256,577,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#vat#detailList.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/vat/detailList.xhtml"
+  SHAPE="272,321,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#model347#search.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/model347/search.xhtml"
+  SHAPE="256,433,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#model303#search.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/model303/search.xhtml"
+  SHAPE="256,689,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#vat#list.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/vat/list.xhtml"
+  SHAPE="272,209,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#model303#list.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/model303/list.xhtml"
+  SHAPE="256,833,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#vat#search.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/vat/search.xhtml"
+  SHAPE="272,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules::3" SHAPE="32,929,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::3" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="model303_search::#com#code#aon#ui#fiscal#facelet#model303#search.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/fiscal/facelet/model303/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#model303#search.xhtml"
+    TITLE="model303_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="model303_list::#com#code#aon#ui#fiscal#facelet#model303#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/fiscal/facelet/model303/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#fiscal#facelet#model303#list.xhtml"
+    TITLE="model303_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#invoice#list.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/invoice/list.xhtml"
+  SHAPE="256,1057,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#fiscal#facelet#invoice#search.xhtml"
+  PATH="/com/code/aon/ui/fiscal/facelet/invoice/search.xhtml"
+  SHAPE="256,577,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

@@ -1,0 +1,16 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/headerEx.xhtml" >
+		<ui:define name="userInfoContent">
+			<aon:outputText value="#{loggedUser.companyName}" />
+			<aon:outputText value=" / " />
+			<aon:outputText value="#{loggedUser.loggedUserName}" styleClass="aon-bold" />		
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

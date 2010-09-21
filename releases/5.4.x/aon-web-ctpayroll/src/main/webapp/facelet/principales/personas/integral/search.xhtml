@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="embargoForm">
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.principales_personas__integral_per}" />
+				<ui:param name="controller" value="#{persona}"/>
+				<aon:methodParam name="backAction" value="integralTrab_form"/>
+				
+			</ui:include>
+				
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{persona.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="integralTrab_list" />	
+		
+			
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_pricipales_personas_cdg}" />
+					<aon:inputText id="Persona_cdg" 
+						valueChangeListener="#{persona.addExpression}"/>
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
+					<aon:inputText id="Persona_numdoc" 
+						valueChangeListener="#{persona.addExpression}"/>
+					
+					<aon:outputLabel
+						value="&#160;" />
+					<aon:outputText value="&#160;" maxlength="4" />
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_pricipales_personas_apellido1}" />
+					<aon:inputText id="Persona_descripcion" 
+						valueChangeListener="#{persona.addExpression}"/>
+						
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_pricipales_personas_apellido2}" />
+					<aon:inputText id="Persona_apellido2" 
+						valueChangeListener="#{persona.addExpression}"/>
+												
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_pricipales_personas_nombre}" />
+					<aon:inputText id="Persona_nombre" 
+						valueChangeListener="#{persona.addExpression}"/>
+
+			 
+		    	</ui:define>
+			</ui:decorate>
+		</aon:form>
+		
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

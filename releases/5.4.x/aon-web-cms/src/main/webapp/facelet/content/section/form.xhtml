@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="sectionForm">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.cms_section}" />
+				<ui:param name="controller" value="#{section}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+			</ui:include>		
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="width:99%;">
+	
+					<aon:panelTabSet id="menuTabSet">
+
+						<aon:panelTab id="content" label="CONTENIDO">
+							<aon:panelGrid columns="2" dir="true">
+							
+								<aon:outputLabel for="section_alias"
+									value="#{appBundle.cms_alias}" />
+								<aon:inputText id="section_alias"
+									required="true" size="32" maxlength="32"
+									value="#{section.to.alias}">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
+	
+								<aon:outputLabel for="section_header"
+									value="#{appBundle.section_header}" />
+								<aon:div>
+									<aon:selectOneMenu id="section_header" 
+										value="#{section.to.header.id}">
+										<f:selectItem itemLabel="-" itemValue="-1" />
+										<f:selectItems value="#{collections.headerList}" />
+									</aon:selectOneMenu> 
+								</aon:div>
+	
+								<aon:outputLabel for="section_footer"
+									value="#{appBundle.section_footer}" />
+								<aon:div>
+									<aon:selectOneMenu id="section_footer" 
+										value="#{section.to.footer.id}">
+										<f:selectItem itemLabel="-" itemValue="-1" />
+										<f:selectItems value="#{collections.footerList}" />
+									</aon:selectOneMenu> 
+								</aon:div>
+	
+								<aon:outputLabel for="section_sidebar"
+									value="#{appBundle.section_sidebar}" />
+								<aon:div>
+									<aon:selectOneMenu id="section_sidebar" 
+										value="#{section.to.sidebar.id}">
+										<f:selectItem itemLabel="-" itemValue="-1" />
+										<f:selectItems value="#{collections.sidebarList}" />
+									</aon:selectOneMenu> 
+								</aon:div>
+	
+								<aon:outputLabel for="section_menu"
+									value="#{appBundle.section_menu}"/>
+								<aon:div>
+									<aon:selectOneMenu id="section_menu"  
+										value="#{section.to.menu.id}">
+										<f:selectItem itemLabel="-" itemValue="-1" />
+										<f:selectItems value="#{collections.menuSideList}" />
+									</aon:selectOneMenu> 
+								</aon:div>
+	
+								<aon:outputLabel for="section_menu_alt"
+									value="#{appBundle.section_menu_alt}"/>
+								<aon:div>
+									<aon:selectOneMenu id="section_menu_alt"  
+										value="#{section.to.menu_alt.id}">
+										<f:selectItem itemLabel="-" itemValue="-1" />
+										<f:selectItems value="#{collections.menuInnerList}" />
+									</aon:selectOneMenu> 
+								</aon:div>
+								
+								<aon:outputLabel for="Section_parent_"
+									value="#{appBundle.section_parent}"/>
+								<aon:div>
+									<aon:selectOneMenu id="Section_parent_"  
+										value="#{section.to.parent_.id}">
+										<f:selectItem itemLabel="-" itemValue="-1" />
+										<f:selectItems value="#{collections.availableParentSectionList}" />
+									</aon:selectOneMenu>
+									<aon:div>
+										<aon:selectBooleanCheckbox id="parent_sidebar_left" 
+											value="#{section.to.parent_sidebar_left}" />
+										<aon:outputLabel for="parent_sidebar_left"
+											value="#{appBundle.section_parent_sidebar_left}" />
+									</aon:div>
+									<aon:div>
+										<aon:selectBooleanCheckbox id="parent_sidebar_right" 
+											value="#{section.to.parent_sidebar_right}" />
+										<aon:outputLabel for="parent_sidebar_right"
+											value="#{appBundle.section_parent_sidebar_right}" />
+									</aon:div>
+								</aon:div>
+
+						</aon:panelGrid>
+					</aon:panelTab>
+
+					<aon:panelTab id="visual" label="VISUALIZADO">
+						<aon:panelGrid columns="2" dir="true">
+							
+							<aon:outputLabel for="section_header_selected"
+								value="Visualizar Cabecera" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="section_header_selected" 
+									value="#{section.to.show_header}" />
+							</aon:div>
+
+							<aon:outputLabel for="section_footer_selected"
+								value="Visualizar Pie" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="section_footer_selected" 
+									value="#{section.to.show_footer}" />
+							</aon:div>
+
+							<aon:outputLabel for="section_sidebar_left_selected"
+								value="Visualizar Laterales" />
+							<aon:div>
+								<aon:div>
+									<aon:selectBooleanCheckbox id="section_sidebar_left_selected" 
+										value="#{section.to.show_sidebar_left}" />
+									<aon:outputLabel for="section_sidebar_left_selected"
+										value="#{appBundle.section_sidebar_left_enabled}" />
+								</aon:div>
+								<aon:div>
+									<aon:selectBooleanCheckbox id="section_sidebar_right_selected" 
+										value="#{section.to.show_sidebar_right}" />
+									<aon:outputLabel for="section_sidebar_right_selected"
+										value="#{appBundle.section_sidebar_right_enabled}" />
+								</aon:div>
+							</aon:div>
+
+							<aon:outputLabel for="section_menu_selected"
+								value="Visualizar Menu Principal"/>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="section_menu_selected" 
+									value="#{section.to.show_menu}" />
+							</aon:div>
+
+							<aon:outputLabel for="section_menu_alt_selected"
+								value="Visualizar Rastro de Migas"/>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="section_menu_alt_selected" 
+									value="#{section.to.show_menu_alt}" />
+							</aon:div>
+							
+						</aon:panelGrid>
+					</aon:panelTab>
+				</aon:panelTabSet>
+				
+			</aon:div>
+		</aon:div>
+	</aon:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

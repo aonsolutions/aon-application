@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+	<default-config>
+		<fetch-mode paginated="false" />
+	</default-config>
+
+	<!--  *********  CustomerList  ********* -->
+	<report id="customerList" description="Customers List">
+		<template path="/com/code/aon/ui/customer/report/customer.jasper"/>
+		<bean key="com.code.aon.customer.Customer" />
+		<criteria provider="#{customer}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.customer.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+
+	<!--  *********  InvoiceList  ********* -->
+	<report id="salesInvoiceList" description="Sales Invoice's List">
+		<template path="/com/code/aon/ui/finance/report/salesInvoiceList.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{feeInvoicing}"/>
+		<!-- 
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+		 -->
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="customer" value="#{feeInvoicing.getCustomer}" />
+		</params>
+	</report>
+
+	<report id="invoiceList" description="Purchase Invoice's List">
+		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{purchaseDirectInvoicing}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{purchaseDirectInvoicing.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+
+	<!--  *********  InvoicePrint  ********* -->
+	<report id="invoicePrint" description="Invoice's Report">
+		<template path="/com/code/aon/ui/finance/report/feeInvoicing.jasper"/>
+		<collection provider="#{invoicePrint}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+		</params>
+		
+		<nested-report report="feeInvoicingDetail"/>
+		<nested-report report="taxBreakDown"/>
+		<nested-report report="feeInvoicingFinances"/>
+	</report>
+
+	<!--  *********  Receipt  ********* -->
+	<report id="receipt" description="Receipt's Report">
+		<template path="/com/code/aon/ui/finance/report/receipt.jasper"/>
+		<collection provider="#{invoicePrint}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+		
+		<nested-report report="feeInvoicingDetail"/>
+	</report>
+
+	<!--  *********  FinanceList  ********* -->
+	<report id="financeList" description="Finance List">
+		<template path="/com/code/aon/ui/finance/report/financeList.jasper" />
+		<bean key="com.code.aon.finance.Finance" />
+		<criteria provider="#{finance}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="payment" value="#{finance.getPayment}" />
+		</params>
+	</report>
+
+	<!--  *********  FinanceBatchList  ********* -->
+	<report id="fBatchList" description="Finance Batch List">
+		<template path="/com/code/aon/ui/finance/report/fBatchList.jasper" />
+		<collection provider="#{fBatchPrinter}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+	<!--  *********  FinanceBatch  ********* -->
+	<report id="fBatch" description="Finance Batches' Report">
+		<template path="/com/code/aon/ui/finance/report/fBatch.jasper"/>
+		<collection provider="#{fbatch}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="total" value="#{fbatch.getToTotalAmount}" />
+			<param id="totalRegs" value="#{fbatch.getToTotalDetails}" />
+		</params>
+		
+		<nested-report report="fBatchDetail"/>
+	</report>
+	
+	<report id="fBatchDetail" description="Finance Batch Details">
+		<template path="/com/code/aon/ui/finance/report/fBatchDetail.jasper"/>
+	</report>
+
+	<!--  *********  financeCheckingPrint  ********* -->
+	<report id="financeChecking" description="Finance Checking">
+		<template path="/com/code/aon/ui/finance/report/financeChecking.jasper"/>
+		<collection provider="#{financeCheckingPrinter}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+		
+		<nested-report report="financeCheckingDetail"/>
+	</report>
+	
+	<report id="financeCheckingDetail" description="financeCheckingDetail">
+		<template path="/com/code/aon/ui/finance/report/financeCheckingDetail.jasper"/>
+	</report>
+
+	<!--  **********************************************************
+						      PRODUCT
+		  ********************************************************** -->
+	<report id="item" description="Items report">
+		<template path="/com/code/aon/ui/product/report/item.jasper" />
+		<bean key="com.code.aon.product.Item" />
+		<criteria provider="#{item}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+</report-config>

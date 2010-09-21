@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{payrollBundle.remesaCertificado_step0}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+
+		<aon:div styleClass="aon-scroll-area" id="remesaData">
+			<aon:dataTable id="remesaDataTable" value="#{remesaCertificadoWizard.model}"
+				var="to" rows="20" 
+				columnClasses="
+				aon-editDataTable-iconColumn, 
+				aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn">
+					
+					<aon:column>
+					<f:facet name="header">
+						<aon:div layout="none">
+							<aon:commandButton id="selectButton" 
+								actionListener="#{remesaCertificadoWizard.onSelectAll}"
+								reRender="remesaData"
+								onclick="if (!confirm('Desea marcar #{remesaCertificadoWizard.model.rowCount} filas?')) {return false;}"
+								value="&#160;" style="margin-right: 0px;"
+								styleClass="aon-editDataTable-button aon-icon-checkAll aon-vertical-align-top" />
+							<aon:commandButton id="deselectButton" 	
+								actionListener="#{remesaCertificadoWizard.onDeselectAll}"
+								reRender="remesaData"
+								onclick="if (!confirm('Desea desmarcar #{remesaCertificadoWizard.model.rowCount} filas?')) {return false;}"
+								value="&#160;" style="margin-right: 0px;"
+								styleClass="aon-editDataTable-button aon-icon-checkNone aon-vertical-align-top" />
+						</aon:div>
+					</f:facet>
+					<aon:selectBooleanCheckbox id="checkMessage" value="#{to.selected}"
+						style="cursor: default;" styleClass="aon-vertical-align-middle">
+						<a4j:support event="onclick"
+							reRender="checkMessage"  />
+					</aon:selectBooleanCheckbox>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_empresa}" />
+					</f:facet>
+					<aon:outputText value="#{to.remesa.empresa.name}" >
+						<aon:abbreviateConverter maxWidth="50" />
+					</aon:outputText>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_fecha}" />
+					</f:facet>
+					<aon:outputText value="#{to.remesa.fecha}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{payrollBundle.payroll_estado}" />
+					</f:facet>
+					<aon:outputText value="#{to.remesa.estado}" />
+				</aon:column>
+			</aon:dataTable>
+			<aon:dataScroller2 for="remesaDataTable" showNote="true" />
+
+		</aon:div>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,99 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{ectarget}" />
+		<ui:param name="columnClasses"
+			value="aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+		<ui:define name="columns">
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{ebackofficeBundle.aon_ebackoffice_ectarget_login}" />
+				</f:facet>
+				<aon:outputText value="#{to.login}" rendered="#{to!=ectarget.to}" />
+				<aon:inputText required="true" rendered="#{to==ectarget.to}"
+					size="20" value="#{ectarget.to.login}" maxlength="48" />
+				<aon:outputLabel rendered="#{to==ectarget.to}" value=" * email valido" style="color:#808080;" />
+				<f:facet name="footer">
+					<aon:div>
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{ectarget.new}" size="20" value="#{ectarget.to.login}"
+						maxlength="48" />
+					<aon:outputLabel rendered="#{ectarget.new}" value=" * email valido" style="color:#808080;" />	
+					 </aon:div>	
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{ebackofficeBundle.aon_ebackoffice_ectarget_password}" />
+				</f:facet>
+				<aon:outputText value="#{to.password}" rendered="#{to!=ectarget.to}" />
+				<aon:inputText required="true" rendered="#{to==ectarget.to}"
+					size="20" value="#{ectarget.to.password}" maxlength="20" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{ectarget.new}" size="20"
+						value="#{ectarget.to.password}" maxlength="20" />
+				</f:facet>
+			</aon:column>
+
+
+
+<!-- 
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{ebackofficeBundle.aon_ebackoffice_ectarget_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.type}" rendered="#{to!=ectarget.to}" />
+
+				<aon:selectOneMenu value="#{ectarget.to.type}"
+					rendered="#{to==ectarget.to}">
+					<f:selectItems value="#{ectarget.targetTypes}" />
+				</aon:selectOneMenu>
+
+
+				<f:facet name="footer">
+					<aon:selectOneMenu value="#{ectarget.to.type}"
+						rendered="#{ectarget.new}">
+						<f:selectItems value="#{ectarget.targetTypes}" />
+					</aon:selectOneMenu>
+
+				</f:facet>
+			</aon:column>
+ -->
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{ebackofficeBundle.aon_ebackoffice_ectarget_lastAccess}" />
+				</f:facet>
+				<aon:outputText value="#{to.lastAccess}"
+					rendered="#{to!=ectarget.to}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate value="#{ectarget.to.lastAccess}"
+					inputSize="10" rendered="#{to==ectarget.to}" renderAsPopup="true"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+				<f:facet name="footer">
+					<aon:selectInputDate styleClass="aon-form-input-text"
+						value="#{ectarget.to.lastAccess}" rendered="#{ectarget.new}"
+						inputSize="10" renderAsPopup="true"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+				</f:facet>
+			</aon:column>
+
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

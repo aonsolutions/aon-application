@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition template="/front/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="frontOfferList">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid columns="3" dir="true" 
+			columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{menuBundle.gbp_front_offer}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{appBundle.gbp_listing}" />
+				</aon:div>					
+					
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="front_offer_search" actionListener="#{frontOffer.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}"/>
+					<aon:commandButton id="reset"
+						value="#{bundle.aon_reset}" rendered="#{!frontOffer.new}" 
+						actionListener="#{frontOffer.onReset}"
+						action="front_offer_form"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}" />
+			    </aon:div>
+				
+				<!-- end toolbar navigation -->
+			</aon:panelGrid>
+		</aon:div>
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">					
+			<aon:dataTable id="frontOfferDataList" 
+				value="#{frontOffer.model}" var="to" rows="20">
+					<aon:rowSelector action="front_offer_form" actionListener="#{frontOffer.onSelect}" />
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_offer_campaign_code}" />
+						</f:facet>
+						<aon:outputText value="#{to.campaign.code}"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_offer_price}" />
+						</f:facet>
+						<aon:outputText value="#{to.price}"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_offer_offer_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.offerDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>						
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_offer_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}"/>
+					</aon:column>
+
+				</aon:dataTable>
+						
+				<aon:dataScroller dataTable="frontOfferDataList"
+					model="#{frontOffer.model}" showNote="true" />					
+				
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

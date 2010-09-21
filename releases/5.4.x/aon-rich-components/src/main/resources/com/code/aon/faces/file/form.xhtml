@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="formFileManager">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{richBundle.rich_fileManager}" />
+				<ui:param name="controller" value="#{fileManager}" />
+				<ui:param name="skipSpin" value="true" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="skipSaveButton" value="#{fileManager.image}" />
+			</ui:include>			
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2">
+	
+					<aon:outputLabel for="File_name"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="File_name"
+						size="60" required="true"
+						value="#{fileManager.aonFile.fileName}"/>
+					
+					<aon:outputLabel for="File_value"
+						value="#{bundle.aon_value}" />
+					<aon:inputTextarea id="File_value"
+						rendered="#{!fileManager.image}"
+						cols="120" rows="30"
+						value="#{fileManager.fileValue}" />
+					<aon:div rendered="#{fileManager.image}" styleClass="aon-width-all">	
+						<a4j:mediaOutput element="img" cacheable="false"
+							value="#{fileManager.aonFile.key}"
+							createContent="#{fileManager.createImageContent}" />
+					</aon:div>								
+							
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="" label="Compras">
+    <external-parameters>
+        <external-parameter defaultValue="${currentYearFirstDay}"
+            label="Desde" name="inidate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="${currentYearLastDay}"
+            label="Hasta" name="enddate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="0" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_albaran_compra.gif"
+        iconOpen="icons/icon_albaran_compra.gif" label="Compras">
+        <layout type="COLUMN"/>
+        <contents/>
+        <node iconClose="icons/icon_users_group.gif"
+            iconOpen="icons/icon_users_group.gif" label="Proveedor">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent id="view/Compras/Proveedor.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node dynamicViewId="view/Compras/Proveedor.exvw.xml"
+                iconClose="icons/icon_usuario.gif" label="${SUPPLIER_NAME}">
+                <dynamicParameters>
+                    <parameter name="type"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent
+                        id="view/Compras/Productos por proveedor.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="SUPPLIER_ID"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+            </node>
+        </node>
+        <node iconClose="icons/icon_familia.gif"
+            iconOpen="icons/icon_familia.gif" label="Familias">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent id="view/Compras/Familias.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node dynamicViewId="view/Compras/Familias.exvw.xml"
+                iconClose="icons/icon_categoria.gif"
+                iconOpen="icons/icon_categoria.gif" label="${CATEGORY_NAME}">
+                <dynamicParameters>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <contentComposite label="Articulos y Proveedores">
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <viewContent
+                                id="view/Compras/Productos por familia.exvw.xml" type="LIST">
+                                <parameters>
+                                    <parameter name="CATEGORY_ID"/>
+                                    <parameter name="inidate"/>
+                                    <parameter name="enddate"/>
+                                </parameters>
+                            </viewContent>
+                            <viewContent
+                                id="view/Compras/Proveedor por familia.exvw.xml" type="LIST">
+                                <parameters>
+                                    <parameter name="type"/>
+                                    <parameter name="inidate"/>
+                                    <parameter name="enddate"/>
+                                    <parameter name="CATEGORY_ID"/>
+                                </parameters>
+                            </viewContent>
+                        </contents>
+                    </contentComposite>
+                </contents>
+                <node
+                    dynamicViewId="view/Compras/Proveedor por familia.exvw.xml"
+                    iconClose="icons/icon_usuario.gif" label="${REGISTRY_NAME}">
+                    <dynamicParameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="CATEGORY_ID"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <viewContent
+                            id="view/Compras/Productos por familia y proveedor.exvw.xml" type="LIST">
+                            <parameters>
+                                <parameter name="type"/>
+                                <parameter name="CATEGORY_ID"/>
+                                <parameter name="inidate"/>
+                                <parameter name="enddate"/>
+                                <parameter name="SUPPLIER_ID"/>
+                            </parameters>
+                        </viewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+        <node iconClose="icons/icon_comparativa.gif"
+            iconOpen="icons/icon_comparativa.gif" label="Articulos">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent id="view/Ventas/Productos.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node dynamicViewId="view/Ventas/Productos.exvw.xml"
+                iconClose="icons/icon_articulo.gif" label="${ITEM_NAME}">
+                <dynamicParameters>
+                    <parameter name="type"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent
+                        id="view/Compras/Proveedor por articulo.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="ITEM_ID"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+            </node>
+        </node>
+    </node>
+</workstation>

@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="linkSearch">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.link}" />
+				<ui:param name="controller" value="#{link}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+			</ui:include>		
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{link}" />
+				<ui:define name="searchContent">
+	
+					<aon:outputLabel for="Link_alias"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="Link_alias" size="50"
+						valueChangeListener="#{controller.addExpression}" />
+						
+					<aon:outputLabel for="Link_details_label"
+						value="#{appBundle.link_label}" />
+					<aon:inputText id="Link_details_label" size="50"
+						valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="Link_url"
+						value="#{appBundle.link_url}" />
+					<aon:inputText id="Link_url" size="50"
+						valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="Link_linkCategory_id"
+						value="#{appBundle.link_category}"/>
+					<aon:selectOneMenu id="Link_linkCategory_id"  
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.linkCategoryList}" />
+					</aon:selectOneMenu>
+	
+					<aon:outputLabel for="Link_position"
+						value="#{appBundle.link_position}" />
+					<aon:inputText id="Link_position" size="10"
+						valueChangeListener="#{controller.addExpression}" />
+	
+					<aon:outputLabel for="Link_active"
+						value="#{appBundle.cms_active}" />
+					<aon:selectOneMenu id="Link_active"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>						
+						
+				</ui:define>
+			</ui:decorate>	
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

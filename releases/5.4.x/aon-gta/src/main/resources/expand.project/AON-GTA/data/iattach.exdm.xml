@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="iattach">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="item" sqlType="integer" type="integer"/>
+        <column label="" length="4" name="mimeType" sqlType="tinyint" type="string"/>
+        <column label="" length="64" name="description"
+            sqlType="varchar" type="string"/>
+        <column label="" length="65535" name="data"
+            sqlType="longvarbinary" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="iattach_ibfk_1" foreignPath="data/item.exdm.xml">
+            <sourceColumns>
+                <column name="item"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

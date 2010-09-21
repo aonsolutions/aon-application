@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<digester-rules>
+
+	<object-create-rule pattern="*/amortizationTypes"
+		classname="com.code.aon.ui.accounting.controller.AmortizationTypeImporterManager" />
+
+	<pattern value="*/amortizationType">
+		<object-create-rule
+			classname="com.code.aon.accounting.AmortizationType" />
+
+		<call-method-rule pattern="id" methodname="setId" paramcount="0" paramtypes="java.lang.Integer"/>
+		<call-method-rule pattern="description" methodname="setDescription" paramcount="0" />
+		<call-method-rule pattern="percentage" methodname="setPercentage" paramcount="0" paramtypes="java.lang.Double"/>
+		
+		<set-next-rule methodname="addAmortizationType" />
+	</pattern>
+	
+	<pattern value="*/amortizationType/fixedAssetAccount">
+		<object-create-rule
+			classname="com.code.aon.account.Account" />
+		<call-method-rule pattern="id" methodname="setId" paramcount="0" />
+		<call-method-rule pattern="description" methodname="setDescription" paramcount="0" />
+		<call-method-rule pattern="level" methodname="setLevel" paramcount="0" paramtypes="java.lang.Integer"/>
+		<set-next-rule methodname="setFixedAssetAccount" />
+	</pattern>
+	<pattern value="*/amortizationType/accumulatedAccount">
+		<object-create-rule
+			classname="com.code.aon.account.Account" />
+		<call-method-rule pattern="id" methodname="setId" paramcount="0" />
+		<call-method-rule pattern="description" methodname="setDescription" paramcount="0" />
+		<call-method-rule pattern="level" methodname="setLevel" paramcount="0" paramtypes="java.lang.Integer"/>
+		<set-next-rule methodname="setAccumulatedAccount" />
+	</pattern>
+	<pattern value="*/amortizationType/allocationAccount">
+		<object-create-rule
+			classname="com.code.aon.account.Account" />
+		<call-method-rule pattern="id" methodname="setId" paramcount="0" />
+		<call-method-rule pattern="description" methodname="setDescription" paramcount="0" />
+		<call-method-rule pattern="level" methodname="setLevel" paramcount="0" paramtypes="java.lang.Integer"/>
+		<set-next-rule methodname="setAllocationAccount" />
+	</pattern>
+
+</digester-rules>

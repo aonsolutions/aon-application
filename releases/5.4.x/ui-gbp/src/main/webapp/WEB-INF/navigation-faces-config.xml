@@ -1,0 +1,239 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+    <!-- =================== Incidence Type ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>incidence_type_list</from-outcome>
+			<to-view-id>/facelet/incidence/incidence_type/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Office ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>office_list</from-outcome>
+			<to-view-id>/facelet/office/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>office_search</from-outcome>
+			<to-view-id>/facelet/office/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Requirement ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>requirement_list</from-outcome>
+			<to-view-id>/facelet/requirement/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Internal Customer ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>internal_customer_list</from-outcome>
+			<to-view-id>/facelet/internal_customer/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>internal_customer_search</from-outcome>
+			<to-view-id>/facelet/internal_customer/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Account Contact ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>account_contact_list</from-outcome>
+			<to-view-id>/facelet/account_contact/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Supplier ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>supplier_form</from-outcome>
+			<to-view-id>/facelet/supplier/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_list</from-outcome>
+			<to-view-id>/facelet/supplier/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_search</from-outcome>
+			<to-view-id>/facelet/supplier/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Campaign ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>campaign_form</from-outcome>
+			<to-view-id>/facelet/campaign/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>campaign_list</from-outcome>
+			<to-view-id>/facelet/campaign/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>campaign_search</from-outcome>
+			<to-view-id>/facelet/campaign/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Offer ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>offer_form</from-outcome>
+			<to-view-id>/facelet/offer/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>offer_list</from-outcome>
+			<to-view-id>/facelet/offer/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>offer_search</from-outcome>
+			<to-view-id>/facelet/offer/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Pro Forma ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>pro_forma_form</from-outcome>
+			<to-view-id>/facelet/pro_forma/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>pro_forma_list</from-outcome>
+			<to-view-id>/facelet/pro_forma/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>pro_forma_search</from-outcome>
+			<to-view-id>/facelet/pro_forma/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Application Menu Navigation Rules ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>firstContent</from-outcome>
+			<to-view-id>/facelet/homepage/firstContent.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>content</from-outcome>
+			<to-view-id>/facelet/homepage/content.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+    <!-- =================== Supplier Type ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>supplier_type_list</from-outcome>
+			<to-view-id>/facelet/supplier/supplier_type/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Bank ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>bank_form</from-outcome>
+			<to-view-id>/facelet/bank/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bank_list</from-outcome>
+			<to-view-id>/facelet/bank/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
+	<!-- =================== Bank Percent ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>bank_percent_form</from-outcome>
+			<to-view-id>/facelet/bankPercent/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bank_percent_list</from-outcome>
+			<to-view-id>/facelet/bankPercent/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== STATISTICS ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>supplier_evolution_stat</from-outcome>
+			<to-view-id>/facelet/stats/supplierEvolution.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>campaign_evolution_stat</from-outcome>
+			<to-view-id>/facelet/stats/campaignEvolution.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_type_evolution_stat</from-outcome>
+			<to-view-id>/facelet/stats/supplierTypeEvolution.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>offer_control_stat</from-outcome>
+			<to-view-id>/facelet/stats/offerControl.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>invoice_control_stat</from-outcome>
+			<to-view-id>/facelet/stats/invoiceControl.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>campaign_comparer_stat</from-outcome>
+			<to-view-id>/facelet/stats/campaignComparer.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>anual_comparer_stat</from-outcome>
+			<to-view-id>/facelet/stats/anualComparer.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>byarea_evolution_stat</from-outcome>
+			<to-view-id>/facelet/stats/byAreaEvolution.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Batch Config ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>batch_config_list</from-outcome>
+			<to-view-id>/facelet/batch_config/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>batch_config_search</from-outcome>
+			<to-view-id>/facelet/batch_config/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Area Group ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>area_group_list</from-outcome>
+			<to-view-id>/facelet/area_group/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>area_group_search</from-outcome>
+			<to-view-id>/facelet/area_group/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Area ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>area_form</from-outcome>
+			<to-view-id>/facelet/area/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>area_list</from-outcome>
+			<to-view-id>/facelet/area/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>area_search</from-outcome>
+			<to-view-id>/facelet/area/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+</faces-config>

@@ -1,0 +1,62 @@
+package com.code.aon.ui.manager.controller;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.model.SelectItem;
+import javax.naming.Name;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ldap.NameResolver;
+import com.code.aon.manager.DBConnnection;
+
+public class DomainDBConnectionController extends LdapBasicController {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainDBConnectionController.class);
+	
+	private List<SelectItem> dataSources;
+	
+	private boolean createDB;
+	
+	public DomainDBConnectionController() {
+		this.createDB = true;
+	}
+	
+	@Override
+	public void updateBaseDN(Name parent) {
+		String domain = NameResolver.getValue(parent, 0);
+		Name baseDN = NameResolver.getDomainBDsDN(domain);
+		getLdapDAO().setBaseDN(baseDN);
+		updateDataSources();
+	}	
+	
+	public List<SelectItem> getDataSources() {
+		return this.dataSources;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void updateDataSources() {
+		this.dataSources = new LinkedList<SelectItem>();
+		try {
+			List<DBConnnection> list = (List) getManagerBean().getList(null);
+			for (DBConnnection dbc : list) {
+				SelectItem item = new SelectItem(dbc.getId(), dbc.getCommonName() );
+				this.dataSources.add(item);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}	
+	
+	public boolean isCreateDB() {
+		return createDB;
+	}
+
+	public void setCreateDB(boolean createDB) {
+		this.createDB = createDB;
+	}
+	
+}
