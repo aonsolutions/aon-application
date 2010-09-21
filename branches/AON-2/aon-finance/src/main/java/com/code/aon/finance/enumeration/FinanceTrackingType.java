@@ -14,18 +14,12 @@ public enum FinanceTrackingType implements IResourceable {
 	/** BATCHED. */
 	BATCHED,
 	
-	/** UNBATCHED. */
-	UNBATCHED,
-	
-	/** RECORDED. */
-	RECORDED,
+	/** PAID. */
+	PAID,
 	
 	/** RETURNED. */
 	RETURNED,
 	
-    /** UNRECORDED. */
-    UNRECORDED,
-    
     /** FRACTIONED. */
     FRACTIONED,
 

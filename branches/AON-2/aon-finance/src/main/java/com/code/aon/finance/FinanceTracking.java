@@ -43,6 +43,9 @@ public class FinanceTracking implements ITransferObject {
     /** The amount. */
 	private double amount;
 
+    private RegistryBank registryBank;
+	private boolean recorded;
+
 	/**
 	 * Gets the id.
 	 * 
@@ -157,6 +160,25 @@ public class FinanceTracking implements ITransferObject {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    @ManyToOne
+    @JoinColumn(name="rbank")
+	public RegistryBank getRegistryBank() {
+		return registryBank;
+	}
+
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
+
+	@Column(nullable = false)
+	public boolean isRecorded() {
+		return recorded;
+	}
+
+	public void setRecorded(boolean recorded) {
+		this.recorded = recorded;
+	}
 
     @Override
 	public boolean equals(Object obj) {

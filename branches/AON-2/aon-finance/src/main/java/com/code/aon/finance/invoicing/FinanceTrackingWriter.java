@@ -10,6 +10,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
+import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
@@ -18,7 +19,7 @@ public class FinanceTrackingWriter {
 
     private static final Logger LOGGER = Logger.getLogger(FinanceTrackingWriter.class.getName());
 
-    public static FinanceTracking addFinanceTracking(Finance finance, FinanceTrackingType trackingType, String description) {
+    public static FinanceTracking addFinanceTracking(Finance finance, FinanceTrackingType trackingType, String description, RegistryBank rBank) {
         FinanceTracking tracking = new FinanceTracking();
         try {
             IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
@@ -27,6 +28,8 @@ public class FinanceTrackingWriter {
             tracking.setType(trackingType);
             tracking.setDescription(description);
             tracking.setAmount(finance.getTotalAmount());
+            tracking.setRegistryBank(rBank);
+            tracking.setRecorded(trackingType == FinanceTrackingType.PAID || trackingType == FinanceTrackingType.RETURNED);
             tracking = (FinanceTracking)financeTrackingBean.insert(tracking);
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error inserting finance tracking of finance with id=" + finance.getId(), e);
