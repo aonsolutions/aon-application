@@ -114,7 +114,7 @@ public class AttachmentUtil implements ICommonConstants {
 
 	public static void downloadAttachment(IAttachment attach) {
 		InputStream in = new ByteArrayInputStream(attach.getData());
-		long size = new Long( attach.getSize() );
+		long size = ArrayUtils.getLength(attach.getData());
 		downloadAttachment(attach.getDescription(), attach.getMimeType(), in, size);
 	}
 	
