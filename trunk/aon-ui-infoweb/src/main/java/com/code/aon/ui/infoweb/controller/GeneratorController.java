@@ -248,15 +248,20 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
 		this.published = false;
+		FTPUtil ftp = new FTPUtil();
 		try {
 			File previewDirectory = PathUtil.getPreviewPath(getDomain());
 			String destination = "/" + getDomain() + "/WEBSITES/www." + getDomain();
-			FTPUtil.uploadFTP(previewDirectory, destination, properties);
+			ftp.connect(properties);
+			ftp.delete(destination);
+			ftp.upload(previewDirectory, destination);
 			this.published = true;
 			AonUtil.addInfoMessage("OK: La web ha sido publicada." );
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
+		} finally {
+			ftp.close();
 		}		
 	}	
 
