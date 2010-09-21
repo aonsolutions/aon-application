@@ -169,7 +169,7 @@ public class FinanceReturnController extends BasicController {
 		financeBean.update(finance);
 		AccountEntry entry = returnFinance(finance);
 		ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RETURNED, bundle.getString("aon_finance_tracking_recorded") + " " + entry.getId());
+		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RETURNED, bundle.getString("aon_finance_tracking_recorded") + " " + entry.getId(), null);
 		insertAccountEntryFinanceTracking(entry, tracking);
 		initializeSearch();
 	}

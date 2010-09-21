@@ -96,7 +96,7 @@ public class FinanceFractionController {
 			targetFinance.setPayMethod((targetFinance.getPayMethod().getId() == null?null:targetFinance.getPayMethod()));
 			financeBean.update(targetFinance);
 			ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
-			FinanceTrackingWriter.addFinanceTracking(targetFinance, FinanceTrackingType.FRACTIONED, bundle.getString("aon_finance_tracking_fractioned"));
+			FinanceTrackingWriter.addFinanceTracking(targetFinance, FinanceTrackingType.FRACTIONED, bundle.getString("aon_finance_tracking_fractioned"), null);
 			for(int i = 1;i<list.size();i++){
 				finance = (Finance)list.get(i);
 				finance.setBank((finance.getBank().getId() == null?null:finance.getBank()));

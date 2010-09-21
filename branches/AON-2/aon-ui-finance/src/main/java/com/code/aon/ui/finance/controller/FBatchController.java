@@ -290,7 +290,7 @@ public class FBatchController extends BasicController implements ICollectionProv
                 fBatchDetail.setStatus(FinanceStatus.BATCHED);
 				financeBatchDetailBean.insert(fBatchDetail);
 
-                FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.BATCHED, trackingDescription);
+                FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.BATCHED, trackingDescription, null);
             }
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error adding selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
@@ -465,7 +465,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.PAID);
             financeBean.update(fbatchDetail.getFinance());
 
-            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED, trackingDescription);
+            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.PAID, trackingDescription, fbatch.getRegistryBank());
         }
 
         fbatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
@@ -538,7 +538,7 @@ public class FBatchController extends BasicController implements ICollectionProv
                 }
             }
 
-            FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED);
+            FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.PAID);
         }
         
         fbatch.setRegistryBank(fbatch.getRegistryBank().getId() == null?null:fbatch.getRegistryBank());
