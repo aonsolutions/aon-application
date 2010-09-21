@@ -25,7 +25,7 @@
 						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 							<aon:commandButton id="deliveryTransfer"
 								value="#{financeBundle.finance_invoice_deliveries}"
-								immediate="#{true}" rendered="#{!saleInvoice.new}"
+								immediate="#{true}" rendered="#{!saleInvoice.new and !saleInvoice.recorded}"
 								styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 								actionListener="#{saleInvoice.onDeliveryTransferShow}"
 								reRender="showDeliveryTransferWindow">
