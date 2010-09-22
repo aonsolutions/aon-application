@@ -2,6 +2,7 @@ package com.code.aon.faces.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,6 +69,12 @@ public class FileManager implements IRichConstants {
 	private boolean inRename;
 	
 	private boolean uploadZip;
+	
+	private FileFilter fileFilter;
+	
+	private String searchName;
+	
+	private String searchContent;
 	
 	public FileManager() {
 		this.pageLimit = 20;
@@ -166,6 +173,22 @@ public class FileManager implements IRichConstants {
 		this.inRename = inRename;
 	}
 
+	public String getSearchName() {
+		return searchName;
+	}
+
+	public void setSearchName(String searchName) {
+		this.searchName = searchName;
+	}
+
+	public String getSearchContent() {
+		return searchContent;
+	}
+
+	public void setSearchContent(String searchContent) {
+		this.searchContent = searchContent;
+	}
+
 	private File getDefaultDirectory() {
 		File directory = new File( "/home" );
 		if ( directory.exists() && directory.canRead() ) {
@@ -177,7 +200,7 @@ public class FileManager implements IRichConstants {
 	private void loadModel( File directory ) {
 		List<File> list = new ArrayList<File>();
 		List<File> files = new ArrayList<File>();
-		File[] fileArray = directory.listFiles();
+		File[] fileArray = directory.listFiles(this.fileFilter);
 		if (! ArrayUtils.isEmpty(fileArray) ) {
 			for( File file : fileArray ) {
 				if ( file.isDirectory() ) {
@@ -318,6 +341,7 @@ public class FileManager implements IRichConstants {
 	}
 
 	public void onRefresh( ActionEvent event ) {
+		this.fileFilter = null;
 		loadModel( getCurrentDirectory() );
 		reset();
 	}
@@ -483,5 +507,44 @@ public class FileManager implements IRichConstants {
 			}
 		}
 	}
-	
+
+	public void onEditSearch( ActionEvent event ) {
+		setSearchName(null);
+		setSearchContent(null);
+		this.fileFilter = null;
+	}	
+
+	public void onSearch( ActionEvent event ) {
+		if (! (StringUtils.isEmpty(searchName) && StringUtils.isEmpty(searchContent)) ) {
+			this.fileFilter = new FileFilter() {
+				
+				@Override
+				public boolean accept(File file) {
+					boolean ok = true;
+					if (! StringUtils.isEmpty(searchName) ) {
+						ok = StringUtils.containsIgnoreCase(file.getName(), searchName);
+					}
+					if ( ok ) {
+						if (! StringUtils.isEmpty(searchContent) ) {
+							if ( file.isFile() && file.canRead() ) {
+								try {
+									String content = FileUtils.readFileToString(file);
+									ok = StringUtils.containsIgnoreCase(content, searchContent);
+								} catch (IOException e) {
+									LOGGER.error( e.getMessage(), e );
+								}								
+							} else {
+								ok = false;
+							}
+						}
+					}
+					return ok;
+				}
+				
+			};
+			loadModel( getCurrentDirectory() );
+			reset();
+		}
+	}
+
 }

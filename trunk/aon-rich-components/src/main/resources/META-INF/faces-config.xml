@@ -261,6 +261,10 @@
     	  	<from-outcome>fileManager_form</from-outcome>
     		<to-view-id>/com/code/aon/faces/file/form.xhtml</to-view-id>
 	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>fileManager_search</from-outcome>
+    		<to-view-id>/com/code/aon/faces/file/search.xhtml</to-view-id>
+	    </navigation-case>
 	</navigation-rule>
 
 	<!-- ************* Log Panel ***************** -->
