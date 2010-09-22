@@ -17,7 +17,7 @@ public interface ILogger {
 	 * 
 	 * @param msg the msg
 	 */
-	void warning(String msg);
+	void warn(String msg);
 	
 	/**
 	 * Error.
