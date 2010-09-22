@@ -99,7 +99,7 @@ public class ActivityGenerator extends Generator {
 			criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ACTIVITY_DETAIL_ACTIVITY_ID), activity.getId());
 			List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 			if (ld.isEmpty()) {
-				getLogger().warning("La actividad "+activity.getAlias()+" no esta internacionalizada");
+				getLogger().warn("La actividad "+activity.getAlias()+" no esta internacionalizada");
 			} else {
 				ActivityDetail lcd = (ActivityDetail)ld.get(0);
 				List<CompanyHandler> lstCompanies = new ArrayList<CompanyHandler>();
@@ -109,7 +109,7 @@ public class ActivityGenerator extends Generator {
 				criteria.addOrder(beanCompanyActivity.getFieldName(ICMSAlias.COMPANY_ACTIVITY_COMPANY_NAME));
 				List<ITransferObject> l_company = (List<ITransferObject>)beanCompanyActivity.getList(criteria);
 				if ( l_company.isEmpty() ) {
-					getLogger().warning("La actividad "+activity.getAlias()+" no tiene empresas.");	
+					getLogger().warn("La actividad "+activity.getAlias()+" no tiene empresas.");	
 				}
 				for (ITransferObject _company : l_company) {
 					Company company = ((CompanyActivity)_company).getCompany();

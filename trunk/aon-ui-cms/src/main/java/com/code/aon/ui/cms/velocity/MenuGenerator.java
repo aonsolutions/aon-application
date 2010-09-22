@@ -31,7 +31,7 @@ public class MenuGenerator extends Generator {
 				criteria.addOrder(moBean.getFieldName(ICMSAlias.MENU_OPTION_POSITION));
 				List<ITransferObject> l = (List<ITransferObject>)moBean.getList(criteria);
 				if (l.isEmpty())
-					getLogger().warning("El menu "+menu.getAlias()+" no tiene opciones");
+					getLogger().warn("El menu "+menu.getAlias()+" no tiene opciones");
 				for (int i = 0; i < l.size(); i++) {
 					MenuOption mo = (MenuOption)l.get(i);
 					IManagerBean modBean = BeanManager.getManagerBean(MenuOptionDetail.class);
@@ -40,7 +40,7 @@ public class MenuGenerator extends Generator {
 					criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MENU_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 					List<ITransferObject> ld = (List<ITransferObject>)modBean.getList(criteria_detail);
 					if (ld.isEmpty()) {
-						getLogger().warning("La opcion de menu "+mo.getAlias()+" no esta internacionalizada");
+						getLogger().warn("La opcion de menu "+mo.getAlias()+" no esta internacionalizada");
 					}else{
 						MenuOptionDetail mod = (MenuOptionDetail)ld.get(0);
 						MenuOptionHandler moh = new MenuOptionHandler(mod);

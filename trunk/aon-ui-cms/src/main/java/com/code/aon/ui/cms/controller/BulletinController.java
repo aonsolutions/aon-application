@@ -4,19 +4,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import javax.mail.Address;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.IOUtils;
 
-import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.Bulletin;
 import com.code.aon.cms.BulletinArticle;
@@ -28,6 +24,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
@@ -37,34 +34,10 @@ import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.GeneratorContext;
 import com.code.aon.ui.cms.velocity.IVelocityConstants;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class BulletinController extends BasicI18nController implements ICMSConstants, Constants, IVelocityConstants {
-
-	/*
-	public List<SelectItem> getArticleList() throws ManagerBeanException {
-		List<SelectItem> itemList = new LinkedList<SelectItem>();
-		IManagerBean bean = BeanManager.getManagerBean(Article.class);
-		Criteria criteria = new Criteria();
-		if (publishDate!=null)
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE),publishDate);
-		if (expireDate!=null)
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE),expireDate);
-		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_ALIAS));
-		List<ITransferObject> list = bean.getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			Article article = (Article)list.get(i);
-			int id = article.getId();
-			String name = article.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			itemList.add(item);
-		}
-		return itemList;
-	}
-	*/
 
 	public void onSelectArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		BulletinArticleController c = (BulletinArticleController)FormUtil.getController(BULLETIN_ARTICLE);
@@ -79,16 +52,13 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 	}
 
 	public void onInit(ActionEvent event){
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
-		status.onInit(event);
 		this.onSearch(event);
 	}
 
 	public void onGenerate(ActionEvent event){
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
-		status.onInit(event);
+		LogPanelController logger = LogPanelController.getInstance();
 		
-		GeneratorContext context = new GeneratorContext();
+		GeneratorContext context = new GeneratorContext( logger );
 		BufferedWriter buff = null;
 		List<ITransferObject> list;
 		List<ITransferObject> listBulletinArticle;
@@ -147,7 +117,7 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 				
 				File template = new File( ControllerUtil.getCurrentVmTemplatePath(), Templates.BULLETIN.getTemplateName() );  
 			    if (!template.exists()){
-			    	status.error("No se ha encontrado plantilla " 
+			    	logger.error("No se ha encontrado plantilla " 
 			    			+ Templates.BULLETIN.getTemplateName());
 			    }else{
 			    	StringWriter writer = new StringWriter();
@@ -160,21 +130,21 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 			        vu.remove(CONTENT_KEY);
 			        vu.remove(TITLE_KEY);
 			        
-			        status.info("Enviando mails...");
+			        logger.info("Enviando mails...");
 
 					Emailer emailer = new Emailer();
 					emailer.sendEmail(emails,
 							bulletinDetail.getTitle(),
 							writer.toString());
 					
-					status.info("Mails enviados");
+					logger.info("Mails enviados");
 
 			    }
 			}
 		} catch (AuthenticationFailedException e) {
-			status.error("Error de autentificacion.");
+			logger.error("Error de autentificacion.");
 		} catch (Throwable th) {
-			status.error(th.getMessage());
+			logger.error(th.getMessage());
 		} finally {
 			article_content = null;
 			list = null;

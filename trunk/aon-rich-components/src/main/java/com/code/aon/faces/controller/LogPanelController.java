@@ -63,6 +63,11 @@ public class LogPanelController implements ILogger {
 		addErrorMessage(" <i>WARNING: " + msg + "</i>");
 	}
 
+	public void reset() {
+		this.status.clear();
+		this.errors.clear();				
+	}
+	
 	public void finish() {
 		this.activePoll = false;
 	}	
@@ -73,14 +78,12 @@ public class LogPanelController implements ILogger {
 
 	public void onShowWindow(ActionEvent event){
 		this.activePoll = true;
-		this.status.clear();
-		this.errors.clear();		
+		reset();
 	}
 	
 	public void onCloseWindow(ActionEvent event){
 		this.activePoll = false;
-		this.status.clear();
-		this.errors.clear();		
+		reset();
 	}	
 
 }

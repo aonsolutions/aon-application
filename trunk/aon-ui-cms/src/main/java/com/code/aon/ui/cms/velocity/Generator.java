@@ -3,9 +3,9 @@ package com.code.aon.ui.cms.velocity;
 import java.io.File;
 
 import com.code.aon.cms.enumeration.Templates;
-import com.code.aon.ui.cms.IGeneratorLogger;
+import com.code.aon.common.ILogger;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ui.cms.controller.GeneratorController;
-import com.code.aon.ui.cms.controller.GeneratorStatusController;
 import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -15,7 +15,7 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 	
 	protected GeneratorContext context;
 
-	protected IGeneratorLogger logger;
+	protected ILogger logger;
 	
 	public Generator() {
 		GeneratorController generator = (GeneratorController) AonUtil.getRegisteredBean(GENERATOR);
@@ -23,8 +23,8 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 		this.logger = this.context.getLogger();		
 	}
 	
-    protected static IGeneratorLogger getLogger() {
-    	return (GeneratorStatusController) AonUtil.getRegisteredBean(GENERATOR_STATUS);
+    protected static ILogger getLogger() {
+    	return LogPanelController.getInstance();
 	}	
 	
 	public void generate(VelocityUtil vu, Templates type) {

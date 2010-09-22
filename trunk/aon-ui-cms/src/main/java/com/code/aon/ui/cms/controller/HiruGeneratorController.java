@@ -2,18 +2,20 @@ package com.code.aon.ui.cms.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Properties;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Config;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.hiru.XmlBuilder;
 import com.code.aon.ui.cms.hiru.XmlBuilderException;
 import com.code.aon.ui.cms.hiru.XmlBuilderListener;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.FTPUtil;
+import com.code.aon.ui.publisher.util.FTPUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class HiruGeneratorController implements XmlBuilderListener, ICMSConstants {
@@ -24,12 +26,12 @@ public class HiruGeneratorController implements XmlBuilderListener, ICMSConstant
 	
 	private boolean generated;
 
-	private GeneratorStatusController status;
+	private LogPanelController logger;
 	
 	public HiruGeneratorController(){
 		url = ControllerUtil.getWebURL()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
 		sourceFolder = new File( ControllerUtil.getDocumentsPath(), "hiru" );
-		status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
+		logger = LogPanelController.getInstance();
 	}
 	
 	public void onGenerateXmlFiles(ActionEvent event) throws ManagerBeanException{
@@ -50,17 +52,21 @@ public class HiruGeneratorController implements XmlBuilderListener, ICMSConstant
 	}
 	
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
+		FTPUtil ftp = new FTPUtil(logger);
 		try {
 			initGenerator();
 			Config config = ControllerUtil.getCurrentConfig();	
-			String destinationFolder = config.getFtp_path()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
-			String server = config.getFtp_server();
-			String user = config.getFtp_user();
-			String password = config.getFtp_password();			
-			FTPUtil.uploadFTP(destinationFolder, sourceFolder, server, user, password);
+			String destination = config.getFtp_path()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
+			Properties properties = ControllerUtil.getFtpProperties(config);
+			ftp.connect(properties);
+			if ( ftp.isConnected() ) {
+				ftp.synchronize(sourceFolder, destination);
+			}
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
+		} finally {
+			ftp.close();
 		}		
 	}
 
@@ -74,12 +80,11 @@ public class HiruGeneratorController implements XmlBuilderListener, ICMSConstant
 	
 	@Override
 	public void addMessage(String message) {
-		status.info(message);
+		logger.info(message);
 	}
 
 	private void initGenerator(){
 		System.gc();
-		status.onInit(null);
 	}
 
 	private void finalizeGenerator() {
@@ -87,19 +92,19 @@ public class HiruGeneratorController implements XmlBuilderListener, ICMSConstant
 	}
 	
 	private void finalizeGenerator( boolean withErrors ) {
-		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
+		logger.info("----------------------------------------------------------------------------------------------------------------------------------------");
 		if ( withErrors ) {
-			status.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_ERROR) );
+			logger.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_ERROR) );
 		} else {
-			status.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_FINISHED) );
+			logger.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_FINISHED) );
 		}		
-		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
-		status.finalized();
+		logger.info("----------------------------------------------------------------------------------------------------------------------------------------");
+		logger.finish();
 		System.gc();
 	}
 
 	private void generatorError( Throwable th ) {
-		status.error( th.getMessage() );
+		logger.error( th.getMessage() );
 		finalizeGenerator( true );
 		throw new AbortProcessingException(th.getMessage(), th);		
 	}	

@@ -61,7 +61,7 @@ public class HiruGenerator extends Generator {
 				criteria.addGreaterThanOrEqualExpression(courseBean.getFieldName(ICMSAlias.HIRU_COURSE_END_DATE), new Date());
 				List<ITransferObject> l = (List<ITransferObject>)courseBean.getList(criteria);
 				if (l.isEmpty())
-					logger.warning("El centro "+hoc.getName()+" no tiene cursos ya iniciados");
+					logger.warn("El centro "+hoc.getName()+" no tiene cursos ya iniciados");
 				for (int j = 0; j < l.size(); j++) {
 					HiruCourse hc = (HiruCourse)l.get(j);
 					criteria_detail = new Criteria();
@@ -69,7 +69,7 @@ public class HiruGenerator extends Generator {
 					criteria_detail.addEqualExpression(courseDetailBean.getFieldName(ICMSAlias.HIRU_COURSE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 					List<ITransferObject> ld = (List<ITransferObject>)courseDetailBean.getList(criteria_detail);
 					if (ld.isEmpty()) {
-						logger.warning("La curso "+hc.getAlias()+" no esta internacionalizada");
+						logger.warn("La curso "+hc.getAlias()+" no esta internacionalizada");
 					}else{
 						HiruCourseDetail hcd = (HiruCourseDetail)ld.get(0);
 						HiruCourseHandler hcoh = new HiruCourseHandler(hcd);
@@ -97,7 +97,7 @@ public class HiruGenerator extends Generator {
 				criteria.addGreaterThanExpression(courseBean.getFieldName(ICMSAlias.HIRU_COURSE_INIT_DATE), new Date());
 				List<ITransferObject> l = (List<ITransferObject>)courseBean.getList(criteria);
 				if (l.isEmpty())
-					logger.warning("El centro "+hoc.getName()+" no tiene cursos futuros");
+					logger.warn("El centro "+hoc.getName()+" no tiene cursos futuros");
 				for (int j = 0; j < l.size(); j++) {
 					HiruCourse hc = (HiruCourse)l.get(j);
 					criteria_detail = new Criteria();
@@ -105,7 +105,7 @@ public class HiruGenerator extends Generator {
 					criteria_detail.addEqualExpression(courseDetailBean.getFieldName(ICMSAlias.HIRU_COURSE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 					List<ITransferObject> ld = (List<ITransferObject>)courseDetailBean.getList(criteria_detail);
 					if (ld.isEmpty()) {
-						logger.warning("La curso "+hc.getAlias()+" no esta internacionalizada");
+						logger.warn("La curso "+hc.getAlias()+" no esta internacionalizada");
 					}else{
 						HiruCourseDetail hcd = (HiruCourseDetail)ld.get(0);
 						HiruCourseHandler hcoh = new HiruCourseHandler(hcd);

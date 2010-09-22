@@ -265,8 +265,7 @@
 				action="template_list" actionListener="#{template.onInit}" />
 			<aon:menuItem id="generator" value="#{menuBundle.cms_generate_pages}"
 				rendered="#{cms.roleEditor or cms.rolePublisher}"
-				action="generator_form"
-				actionListener="#{generator_status.onInit}"/>
+				action="generator_form" />
 		</aon:dropDownMenu>
 	</ui:define>
 

@@ -14,27 +14,12 @@
 	
 		<aon:form id="productCategoryForm">
 		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:incluide src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.product_category}" />
 				<ui:param name="controller" value="#{productCategory}" />
 				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
 				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
-				<ui:define name="beforeSpinToolbarContent">
-					<!-- 
-					<aon:commandButton id="partial_generate" reRender="aonStatus"
-						value="#{appBundle.aon_generate}" 
-						rendered="#{productCategory.to!=null}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_save}">
-						<aon:actionListener method="#{generator.onGenerateCurrentProductCategory}" />
-						<a4j:support 
-							event="onclick" reRender="poll,grid" 
-							actionListener="#{generator_status.onActivePoll}"  
-							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
-					</aon:commandButton>
-					 -->
-				</ui:define>
-			</ui:decorate>
+			</ui:incluide>
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="main_panel" columns="2" dir="true">

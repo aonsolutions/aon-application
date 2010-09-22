@@ -2,16 +2,20 @@ package com.code.aon.ui.cms.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.Config;
 import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.FaqCategory;
@@ -19,8 +23,10 @@ import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.enumeration.ArticleType;
+import com.code.aon.common.ILogger;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
@@ -40,11 +46,15 @@ import com.code.aon.ui.cms.velocity.MenuGenerator;
 import com.code.aon.ui.cms.velocity.ModularPageGenerator;
 import com.code.aon.ui.cms.velocity.ProductGenerator;
 import com.code.aon.ui.cms.velocity.SportGenerator;
+import com.code.aon.ui.publisher.controller.IPublisherConstants;
+import com.code.aon.ui.publisher.util.FTPUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController implements Constants, ICMSConstants {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(GeneratorController.class);
 	
-	private GeneratorStatusController status;
+	private LogPanelController logger;
 	
 	private GeneratorApplicationController applicationController;
 	
@@ -59,11 +69,11 @@ public class GeneratorController implements Constants, ICMSConstants {
 	private String sessionFactoryName;
 
 	public GeneratorController(){
-		status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
+		logger = LogPanelController.getInstance();
 	}
 
-	public GeneratorStatusController getStatus() {
-		return status;
+	public ILogger getLogger() {
+		return logger;
 	}
 	
 	public GeneratorContext getContext() {
@@ -367,12 +377,12 @@ public class GeneratorController implements Constants, ICMSConstants {
 	}
 	
 	private void initGenerator(){
-		context = new GeneratorContext();
+		context = new GeneratorContext( logger );
+		logger.reset();
 		stopWatch = new StopWatch();
 		stopWatch.start();		
 		System.gc();
 		initSession();
-		status.onInit(null);
 		//Copy css and js files from current template
 		try {
 			File cssPath = ControllerUtil.getCssTemplatePath();
@@ -395,15 +405,15 @@ public class GeneratorController implements Constants, ICMSConstants {
 	
 	private void finalizeGenerator( boolean withErrors ) {
 		stopWatch.stop();
-		status.info("Duración de la generación: " + stopWatch.toString());		
-		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
+		logger.info("Duración de la generación: " + stopWatch.toString());		
+		logger.info("----------------------------------------------------------------------------------------------------------------------------------------");
 		if ( withErrors ) {
-			status.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_ERROR) );
+			logger.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_ERROR) );
 		} else {
-			status.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_FINISHED) );
+			logger.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_FINISHED) );
 		}		
-		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
-		status.finalized();
+		logger.info("----------------------------------------------------------------------------------------------------------------------------------------");
+		logger.finish();
 		closeSession();
 		context = null;
 		System.gc();
@@ -413,9 +423,41 @@ public class GeneratorController implements Constants, ICMSConstants {
 		if ( applicationController != null ) {
 			this.applicationController.unlock();
 		}
-		status.error( th.getMessage() );
+		logger.error( th.getMessage() );
 		finalizeGenerator( true );
 		throw new AbortProcessingException(th.getMessage(), th);		
 	}
+	
+	public void onPublish(ActionEvent event) throws ManagerBeanException {
+		boolean published = false;
+		FTPUtil ftp = new FTPUtil(logger);
+		try {
+			Config config = ControllerUtil.getCurrentConfig();
+			File previewDirectory = ControllerUtil.getPreviewPath();
+			Properties properties = ControllerUtil.getFtpProperties(config);
+			ftp.connect(properties);
+			if ( ftp.isConnected() ) {
+				ftp.synchronize(previewDirectory, config.getFtp_path());
+				published = true;
+			}
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th );
+			logger.error( AonUtil.getMessage(IPublisherConstants.BUNDLE_NAME, IPublisherConstants.PUBLISH_ERROR) );
+		} finally {
+			ftp.close();
+		}
+		if ( published ) {
+			logger.info( AonUtil.getMessage(IPublisherConstants.BUNDLE_NAME, IPublisherConstants.PUBLISH_OK) );
+		}
+		logger.finish();		
+	}
+
+	public String getPreviewURL() {
+		return ControllerUtil.getPreviewURL();
+	}
+
+	public String getWebURL() {
+		return ControllerUtil.getWebURL();
+	}	
 		
 }

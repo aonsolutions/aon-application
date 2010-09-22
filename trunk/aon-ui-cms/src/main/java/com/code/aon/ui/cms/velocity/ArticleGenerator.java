@@ -39,7 +39,7 @@ public class ArticleGenerator extends Generator {
 			articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			List<ITransferObject> articleDetailList = articleDetailBean.getList(articleDetailCriteria);
 			if (articleDetailList.isEmpty()) {
-				logger.warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
+				logger.warn(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 			} else {
 				ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
 				String backURL = getBackURL(article.getArticleType(),article.getArticleCategory());
@@ -120,7 +120,7 @@ public class ArticleGenerator extends Generator {
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
 				if (articleCategoryDetailList.isEmpty()) {
-					logger.warning(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.");
+					logger.warn(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.");
 				} else {
 					ArticleCategoryDetail articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 					Templates templates = getTemplate(articleType);
@@ -146,7 +146,7 @@ public class ArticleGenerator extends Generator {
 							articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 							List<ITransferObject> articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 							if (articleDetailList.isEmpty()) {
-								logger.warning(" Articulo " + article.getAlias() + " de la categoria " + articleCategory.getAlias() + " no internacionalizado.");
+								logger.warn(" Articulo " + article.getAlias() + " de la categoria " + articleCategory.getAlias() + " no internacionalizado.");
 							}else{
 								ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
 								ArticleHandler ahandler = new ArticleHandler(articleDetail);
@@ -213,7 +213,7 @@ public class ArticleGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					getLogger().warning(" Articulo " + a.getAlias() + " no internacionalizada.");
+					getLogger().warn(" Articulo " + a.getAlias() + " no internacionalizada.");
 				}else{
 					ArticleDetail ad = (ArticleDetail)ld.get(0);
 					ArticleHandler ah = new ArticleHandler(ad);
@@ -240,7 +240,7 @@ public class ArticleGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), ident);
 			List<ITransferObject> lcd = (List<ITransferObject>)bean.getList(criteria);
 			if (lcd.isEmpty()){
-				getLogger().warning(" Categoria de Articulo " + ac.getAlias() + " no internacionalizada.");
+				getLogger().warn(" Categoria de Articulo " + ac.getAlias() + " no internacionalizada.");
 				return null;
 			}
 			ArticleCategoryDetail acd = (ArticleCategoryDetail) lcd.get(0);
@@ -267,7 +267,7 @@ public class ArticleGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), a.getId());
 				List<ITransferObject> ld = (List<ITransferObject>)bean.getList(criteria);
 				if (ld.isEmpty()){
-					getLogger().warning(" Articulo " + a.getAlias() + " de categoria " + ac.getAlias() + " no internacionalizada.");
+					getLogger().warn(" Articulo " + a.getAlias() + " de categoria " + ac.getAlias() + " no internacionalizada.");
 				}else{
 					ArticleDetail ad = (ArticleDetail)ld.get(0);
 					ArticleHandler ah = new ArticleHandler(ad);

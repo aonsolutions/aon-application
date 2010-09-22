@@ -1,6 +1,7 @@
 package com.code.aon.ui.cms.util;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -12,6 +13,7 @@ import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.controller.ConfigController;
 import com.code.aon.ui.cms.controller.I18NController;
 import com.code.aon.ui.cms.controller.ICMSConstants;
+import com.code.aon.ui.publisher.util.FTPUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ControllerUtil implements Constants, ICMSConstants {
@@ -135,4 +137,12 @@ public class ControllerUtil implements Constants, ICMSConstants {
 		return new File( getCurrentTemplatePath(), CONFIG_PATH);
 	}	
 
+	public static Properties getFtpProperties( Config config ) {
+		Properties properties = new Properties();
+		properties.put(FTPUtil.FTP_SERVER, config.getFtp_server());
+		properties.put(FTPUtil.FTP_USER, config.getFtp_user());
+		properties.put(FTPUtil.FTP_PASSWORD, config.getFtp_password());
+		return properties;
+	}
+		
 }

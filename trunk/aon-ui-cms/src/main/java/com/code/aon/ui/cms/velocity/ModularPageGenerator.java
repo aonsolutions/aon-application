@@ -50,7 +50,7 @@ public class ModularPageGenerator extends Generator {
 				criteria_mdBean.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> modularPageDetailList = (List<ITransferObject>) mdBean.getList(criteria_mdBean);
 				if (modularPageDetailList.isEmpty()) {
-					logger.warning("La pagina modular " + mp.getAlias() + " no esta internacionalizada.");
+					logger.warn("La pagina modular " + mp.getAlias() + " no esta internacionalizada.");
 				} else {
 					ModularPageDetail mpd = (ModularPageDetail)modularPageDetailList.get(0);
 	
@@ -61,7 +61,7 @@ public class ModularPageGenerator extends Generator {
 					List<ITransferObject> modularPageOptionList = (List<ITransferObject>) moBean.getList(criteria_moBean);
 	
 					if (modularPageOptionList.isEmpty()) {
-						logger.warning("La pagina modular " + mp.getAlias() + " esta vacia.");
+						logger.warn("La pagina modular " + mp.getAlias() + " esta vacia.");
 					}
 					
 					List<ModularPageOptionHandler> modularPageOptionHandlerList = new ArrayList<ModularPageOptionHandler>();
@@ -77,7 +77,7 @@ public class ModularPageGenerator extends Generator {
 						criteria_modBean.addEqualExpression(modBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
 						List<ITransferObject> modularPageOptionDetailList = (List<ITransferObject>) modBean.getList(criteria_modBean);
 						if (modularPageOptionDetailList.isEmpty()) {
-							logger.warning("La opcion de la pagina modular " + mpo.getAlias() + " no esta internacionalizada.");
+							logger.warn("La opcion de la pagina modular " + mpo.getAlias() + " no esta internacionalizada.");
 						}else{
 							ModularPageOptionDetail mpod = (ModularPageOptionDetail) modularPageOptionDetailList.get(0);
 							if (mpod.getModular_page_option().isActive()) {

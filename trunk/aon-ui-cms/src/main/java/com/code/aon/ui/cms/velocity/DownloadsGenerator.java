@@ -53,7 +53,7 @@ public class DownloadsGenerator extends Generator {
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> detailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (detailList.isEmpty()) {
-					logger.warning("La categoria de descargas " + group.getAlias() + " no esta internacionalizada.");
+					logger.warn("La categoria de descargas " + group.getAlias() + " no esta internacionalizada.");
 				}else{
 					DownloadCategoryDetail detail = (DownloadCategoryDetail)detailList.get(0);
 					DownloadCategoryHandler downloadCategoryHandler = new DownloadCategoryHandler(detail,getDownloadsList(detail));
@@ -117,7 +117,7 @@ public class DownloadsGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.DOWNLOAD_POSITION));
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty())
-				getLogger().warning("La categoria de descargas " + groupDetail.getDownloadCategory().getAlias() + " no tiene descargas.");
+				getLogger().warn("La categoria de descargas " + groupDetail.getDownloadCategory().getAlias() + " no tiene descargas.");
 			for (int i = 0; i < l.size(); i++) {
 				Download da = (Download)l.get(i);
 				IManagerBean detailBean = BeanManager.getManagerBean(DownloadDetail.class);
@@ -126,7 +126,7 @@ public class DownloadsGenerator extends Generator {
 				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DOWNLOAD_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> ld = (List<ITransferObject>)detailBean.getList(criteria_detail);
 				if (ld.isEmpty()) {
-					getLogger().warning("La descarga " + da.getAlias() + " no esta internacionalizada.");
+					getLogger().warn("La descarga " + da.getAlias() + " no esta internacionalizada.");
 				}else{
 					DownloadDetail detail = (DownloadDetail)ld.get(0);
 					DownloadHandler handler = new DownloadHandler(detail);
@@ -154,7 +154,7 @@ public class DownloadsGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			List<ITransferObject> l = bean.getList(criteria);
 			if  (l.isEmpty()) {
-				getLogger().warning("La categoria de descarga " + dc.getAlias() + " no esta internacionalizada.");
+				getLogger().warn("La categoria de descarga " + dc.getAlias() + " no esta internacionalizada.");
 			}else{
 				DownloadCategoryDetail groupDetail = (DownloadCategoryDetail)l.get(0);
 				DownloadCategoryHandler h = new DownloadCategoryHandler(groupDetail,getDownloadsList(groupDetail));

@@ -98,7 +98,7 @@ public class ArticleCalendarGenerator extends Generator {
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> articleDetailList = articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
-					logger.warning("Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
+					logger.warn("Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
 					ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
 					Date initDate = article.getInitDate();
@@ -273,7 +273,7 @@ public class ArticleCalendarGenerator extends Generator {
 			articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			List<ITransferObject> articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
 			if (articleCategoryDetailList.isEmpty()) {
-				getLogger().warning(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.");
+				getLogger().warn(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.");
 			}else{
 				ArticleCategoryDetail articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 				ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,ArticleType.EVENTS,null);
@@ -390,7 +390,7 @@ public class ArticleCalendarGenerator extends Generator {
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
-					getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
+					getLogger().warn(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
 					articleDetail = (ArticleDetail)articleDetailList.get(0);
 					ahandler = new ArticleHandler(articleDetail);
@@ -477,7 +477,7 @@ public class ArticleCalendarGenerator extends Generator {
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
-					getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
+					getLogger().warn(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
 					ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
 					Date initDate = article.getInitDate();
