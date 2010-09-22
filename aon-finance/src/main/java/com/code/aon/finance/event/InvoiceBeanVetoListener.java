@@ -2,13 +2,19 @@ package com.code.aon.finance.event;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -81,7 +87,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
 		checkInvoice(invoice);
-		if (InvoiceType.SALES == invoice.getType()) {
+		if (checkInvoiceDate(invoice)) {
 			invoice.setTaxDate(invoice.getIssueDate());
 		}
 		if (invoice.isDefaultTaxInfo()) {
@@ -138,6 +144,33 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
+	}
+
+    @SuppressWarnings("unchecked")
+	private boolean checkInvoiceDate(Invoice invoice) throws ManagerBeanVetoListenerException {
+    	if (invoice.getTaxDate() == null) {
+    		return true;
+    	}
+
+    	String select = "select invoice.issue_date issue_date, invoice.tax_date tax_date" +
+						" from invoice as invoice" +
+						" where invoice.id = " + invoice.getId();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		SQLQuery query = session.createSQLQuery(select);
+        List list = query
+    		.addScalar("issue_date", Hibernate.DATE)
+        	.addScalar("tax_date", Hibernate.DATE)
+        	.list();
+        Iterator iterator = list.iterator();
+        if (iterator.hasNext()) {
+        	Object[] obj = (Object[])iterator.next();
+            Date issueDate= (Date) obj[0];
+            Date taxDate= (Date) obj[1];
+            if (!ObjectUtils.equals(issueDate, invoice.getIssueDate())) {
+                return (taxDate == null || ObjectUtils.equals(issueDate, taxDate));
+            }
+        }
+        return false;
 	}
 
 	private Scope obtainInvoiceScope(InvoiceType type, Registry registry) throws ManagerBeanVetoListenerException {

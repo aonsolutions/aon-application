@@ -73,7 +73,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	public Invoice() {
 		this.issueDate = new Date();
-		this.taxDate = new Date();
 		this.defaultTaxInfo = true;
 	}
 
