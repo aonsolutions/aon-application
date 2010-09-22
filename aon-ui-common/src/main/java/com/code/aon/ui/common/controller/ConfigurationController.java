@@ -20,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.naming.Name;
 import javax.servlet.http.HttpSession;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -299,7 +300,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		factory.setNamespaceAware(true);
 		factory.setValidating(true);
 		factory.setIgnoringElementContentWhitespace(true);
-		factory.setAttribute( JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
+		factory.setAttribute( JAXP_SCHEMA_LANGUAGE, XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		
 		String[] schemas = getXmlSchemas();
 		factory.setAttribute( JAXP_SCHEMA_SOURCE, schemas );		
