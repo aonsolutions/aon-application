@@ -25,10 +25,7 @@
 						rendered="#{cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
-						<a4j:support 
-							event="onclick" reRender="poll,grid" ajaxSingle="true"
-							actionListener="#{generator_status.onActivePoll}"  
-							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 					</aon:commandButton>	
 					<aon:commandButton id="home"
 						value="#{bundle.aon_home}"
@@ -123,7 +120,9 @@
 			</aon:div>
 		</aon:form>
 
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+			<ui:param name="logPanelTitle" value="#{menuBundle.cms_generate_pages}" />
+		</ui:include>		
 		
 	</ui:define>
 

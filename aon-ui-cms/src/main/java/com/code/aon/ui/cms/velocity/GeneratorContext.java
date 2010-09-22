@@ -32,12 +32,12 @@ import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.SidebarSide;
 import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.ILogger;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -58,10 +58,10 @@ public class GeneratorContext implements IVelocityConstants {
 	
 	private VelocityUtil velocityUtil;
 	
-	private IGeneratorLogger logger;
+	private ILogger logger;
 	
-	public GeneratorContext() {
-		logger = CommonGenerator.getLogger();
+	public GeneratorContext( ILogger logger ) {
+		this.logger = logger;
 		try {
 			defaultSection = GeneratorConfigController.defaultSection();
 		} catch (ManagerBeanException e) {
@@ -75,7 +75,7 @@ public class GeneratorContext implements IVelocityConstants {
 		sectionContexts = new HashMap<Section, Map<String,Object>>();
 	}
 	
-	public IGeneratorLogger getLogger() {
+	public ILogger getLogger() {
 		return logger;
 	}
 
@@ -310,7 +310,7 @@ public class GeneratorContext implements IVelocityConstants {
 	        vc.put(LANGUAGE_KEY, currentLanguage.getLanguage().getLocale().getLanguage());
 			vc.put(BUNDLE_KEY, bundle);
 		} catch (MissingResourceException mre) { 
-			logger.warning("No se ha encontrado fichero de mensajes para el idioma actual (" + currentLanguage.getDescription() + ")");
+			logger.warn("No se ha encontrado fichero de mensajes para el idioma actual (" + currentLanguage.getDescription() + ")");
 		}
 	}
 

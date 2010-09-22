@@ -21,7 +21,7 @@ import org.w3c.tidy.TidyMessage;
 import org.w3c.tidy.TidyMessageListener;
 import org.w3c.tidy.TidyMessage.Level;
 
-import com.code.aon.ui.cms.IGeneratorLogger;
+import com.code.aon.common.ILogger;
 
 public class TidyUtil implements TidyMessageListener {
 
@@ -29,11 +29,11 @@ public class TidyUtil implements TidyMessageListener {
 	
 	private static String TIDY_PROPERTIES = "tidy.properties";
 	
-	private IGeneratorLogger logger;
+	private ILogger logger;
 	
 	private String relativePath;
 	
-	public TidyUtil( IGeneratorLogger logger ) {
+	public TidyUtil( ILogger logger ) {
 		this.logger = logger;
 	}
 
@@ -63,7 +63,7 @@ public class TidyUtil implements TidyMessageListener {
 			LOGGER.info( message );
 		} else if ( msg.getLevel() == Level.WARNING ) {
 			LOGGER.warn( message );
-			logger.warning( StringEscapeUtils.escapeHtml(message) );
+			logger.warn( StringEscapeUtils.escapeHtml(message) );
 		} else if ( msg.getLevel() == Level.SUMMARY ) {
 			LOGGER.debug( message );
 		}

@@ -66,7 +66,7 @@ public class FaqGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				faqCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
 				if(faqCategoryDetailList.isEmpty()){
-					logger.warning("La categoria de FAQ " + fc.getAlias() + " no esta internacionalizada.");
+					logger.warn("La categoria de FAQ " + fc.getAlias() + " no esta internacionalizada.");
 				}else{
 					fcd = (FaqCategoryDetail)faqCategoryDetailList.get(0);
 					if (fc.isActive()) {
@@ -136,7 +136,7 @@ public class FaqGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.FAQ_POSITION));
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty())
-				logger.warning("La categoria de FAQ " + fc.getAlias() + " no tiene FAQs.");
+				logger.warn("La categoria de FAQ " + fc.getAlias() + " no tiene FAQs.");
 			Criteria detailCriteria;
 			Faq f;
 			FaqDetail fd;
@@ -147,7 +147,7 @@ public class FaqGenerator extends Generator {
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.FAQ_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				ld = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (ld.isEmpty()) {
-					logger.warning("La FAQ " + f.getAlias() + " no esta internacionalizada.");
+					logger.warn("La FAQ " + f.getAlias() + " no esta internacionalizada.");
 				}else{
 					fd = (FaqDetail)ld.get(0);
 					FaqHandler fh = new FaqHandler(fd);

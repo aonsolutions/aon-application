@@ -71,7 +71,7 @@ public class LinkGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				linkCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
 				if (linkCategoryDetailList.isEmpty()){
-					logger.warning("La categoria de links " + lc.getAlias() + " no esta internacionalizada.");
+					logger.warn("La categoria de links " + lc.getAlias() + " no esta internacionalizada.");
 				}else{
 					lcd = (LinkCategoryDetail)linkCategoryDetailList.get(0);
 				
@@ -145,7 +145,7 @@ public class LinkGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.LINK_POSITION));
 			linkList = (List<ITransferObject>)bean.getList(criteria);
 			if (linkList.isEmpty())
-				getLogger().warning("La categoria de links " + lc.getAlias() + " no tiene links asociados.");
+				getLogger().warn("La categoria de links " + lc.getAlias() + " no tiene links asociados.");
 			Link l;
 			Criteria detailCriteria;
 			for (int i = 0; i < linkList.size(); i++) {
@@ -155,7 +155,7 @@ public class LinkGenerator extends Generator {
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.LINK_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				linkDetailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (linkDetailList.isEmpty()) {
-					getLogger().warning("El link " + l.getAlias() + " no esta internacionalizado.");
+					getLogger().warn("El link " + l.getAlias() + " no esta internacionalizado.");
 				}else{
 					LinkDetail fd = (LinkDetail)linkDetailList.get(0);
 					LinkHandler fh = new LinkHandler(fd);
@@ -190,7 +190,7 @@ public class LinkGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.LINK_CATEGORY_DETAIL_LINK_CATEGORY_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					getLogger().warning("El categoria de links " + link.getAlias() + " no esta internacionalizado.");
+					getLogger().warn("El categoria de links " + link.getAlias() + " no esta internacionalizado.");
 				}else{
 					LinkCategoryDetail lcd = (LinkCategoryDetail)ld.get(0);
 					LinkCategoryHandler lch = new LinkCategoryHandler(lcd,getlinkList(link));

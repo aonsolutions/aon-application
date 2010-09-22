@@ -46,7 +46,7 @@ public class GenericGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				genericPageDetailList = (List<ITransferObject>)bean.getList(criteria);
 				if (genericPageDetailList.isEmpty()){
-					logger.warning("La pagina generica " + gp.getAlias() + " no esta internacionalizada.");
+					logger.warn("La pagina generica " + gp.getAlias() + " no esta internacionalizada.");
 				}else{
 					gpd = (GenericPageDetail)genericPageDetailList.get(0);
 
@@ -98,7 +98,7 @@ public class GenericGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_GENERIC_PAGE_ID), ident);
 				List<ITransferObject> genericPageDetailList = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (genericPageDetailList.isEmpty()){
-					getLogger().warning("La pagina generica " + gp.getAlias() + " no esta internacionalizada.");
+					getLogger().warn("La pagina generica " + gp.getAlias() + " no esta internacionalizada.");
 				}else{
 					GenericPageDetail gpd = (GenericPageDetail)genericPageDetailList.get(0);
 					GenericPageHandler gph = new GenericPageHandler(gpd);

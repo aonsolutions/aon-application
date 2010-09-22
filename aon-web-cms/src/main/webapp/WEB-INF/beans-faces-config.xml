@@ -1066,34 +1066,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************** GENERATOR ************** -->
-	<managed-bean>
-		<managed-bean-name>generator</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorController</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ************** GENERATOR ************** -->
-	<managed-bean>
-		<managed-bean-name>generatorApplication</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorApplicationController</managed-bean-class>
-		<managed-bean-scope>application</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ************** GENERATOR STATUS ************** -->
-	<managed-bean>
-		<managed-bean-name>generator_status</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorStatusController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- ************** PREVIEW ************** -->
-	<managed-bean>
-		<managed-bean-name>preview</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.PreviewController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 	<!-- ************** GENERATOR CONFIG ************** -->
 	<managed-bean>
 		<managed-bean-name>generator_config</managed-bean-name>

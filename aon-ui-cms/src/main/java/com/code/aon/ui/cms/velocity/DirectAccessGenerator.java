@@ -50,7 +50,7 @@ public class DirectAccessGenerator extends Generator {
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				directAccessGroupDetailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (directAccessGroupDetailList.isEmpty()){
-					logger.warning("La categoria de accesos directos " + group.getAlias() + " no esta internacionalizada.");
+					logger.warn("La categoria de accesos directos " + group.getAlias() + " no esta internacionalizada.");
 				}else{
 					detail = (DirectAccessGroupDetail)directAccessGroupDetailList.get(0);
 					dagh = new DirectAccessGroupHandler(detail,getDirectAccessList(group));
@@ -82,7 +82,7 @@ public class DirectAccessGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_POSITION));
 			directAccessList = (List<ITransferObject>)bean.getList(criteria);
 			if (directAccessList.isEmpty())
-				getLogger().warning("La categoria de accesos directos " + group.getAlias() + " no tiene accesos directos.");
+				getLogger().warn("La categoria de accesos directos " + group.getAlias() + " no tiene accesos directos.");
 			DirectAccess da;
 			DirectAccessDetail detail;
 			Criteria criteria_detail;
@@ -93,7 +93,7 @@ public class DirectAccessGenerator extends Generator {
 				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				directAccessDetailList = (List<ITransferObject>)detailBean.getList(criteria_detail);
 				if (directAccessDetailList.isEmpty()) {
-					getLogger().warning("El acceso directo " + da.getAlias() + " no esta internacionalizado.");
+					getLogger().warn("El acceso directo " + da.getAlias() + " no esta internacionalizado.");
 				}else{
 					detail = (DirectAccessDetail)directAccessDetailList.get(0);
 					DirectAccessHandler handler = new DirectAccessHandler(detail);
@@ -125,7 +125,7 @@ public class DirectAccessGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					getLogger().warning("El acceso directo " + a.getAlias() + " no esta internacionalizado.");
+					getLogger().warn("El acceso directo " + a.getAlias() + " no esta internacionalizado.");
 				}else{
 					DirectAccessDetail ad = (DirectAccessDetail)ld.get(0);
 					DirectAccessHandler ah = new DirectAccessHandler(ad);
@@ -153,7 +153,7 @@ public class DirectAccessGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_DIRECT_ACCESS_GROUP_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					getLogger().warning("El grupo de accesos directos " + a.getAlias() + " no esta internacionalizado.");
+					getLogger().warn("El grupo de accesos directos " + a.getAlias() + " no esta internacionalizado.");
 				}else{
 					DirectAccessGroupDetail ad = (DirectAccessGroupDetail)ld.get(0);
 					DirectAccessGroupHandler ah = new DirectAccessGroupHandler(ad,getDirectAccessList(a));

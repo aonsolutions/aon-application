@@ -34,10 +34,7 @@
 							reRender="generatorForm"
 							actionListener="#{hiru_generator.onGenerateXmlFiles}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
-							<a4j:support 
-								event="onclick" reRender="poll,grid" ajaxSingle="true"
-								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+							<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 						</aon:commandButton>
 						<aon:commandButton id="publish"
 							value="#{appBundle.aon_publish}" immediate="true"
@@ -45,10 +42,7 @@
 							rendered="#{hiru_generator.generated and cms.rolePublisher}"
 							actionListener="#{hiru_generator.onPublish}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
-							<a4j:support 
-								event="onclick" reRender="poll,grid" ajaxSingle="true"
-								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+							<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 						</aon:commandButton>
 				    </aon:div>
 					
@@ -58,7 +52,9 @@
 
 		</aon:form>
 		
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+			<ui:param name="logPanelTitle" value="#{menuBundle.cms_generate_pages}" />
+		</ui:include>		
 
 	</ui:define>
 </ui:composition>

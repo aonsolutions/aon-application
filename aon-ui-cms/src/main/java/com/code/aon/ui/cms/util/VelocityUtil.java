@@ -14,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.cms.enumeration.Templates;
+import com.code.aon.common.ILogger;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.ICMSConstants;
 
 public class VelocityUtil extends VelocityEngine implements Constants, ICMSConstants {
@@ -31,7 +31,7 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 
 	private File templatePath;
 	
-	private IGeneratorLogger logger;
+	private ILogger logger;
 	
 	private VelocityContext context;
 	
@@ -53,11 +53,11 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 		this.context = context;
 	}
 	
-    public void setLogger(IGeneratorLogger logger) {
+    public void setLogger(ILogger logger) {
 		this.logger = logger;
 	}
     
-	public IGeneratorLogger getLogger() {
+	public ILogger getLogger() {
 		return logger;
 	}
 

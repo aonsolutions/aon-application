@@ -2,8 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.Date;
 
-import javax.faces.event.ActionEvent;
-
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
 
@@ -20,11 +18,6 @@ public class HiruCourseController extends BasicI18nController {
 
 	private String activeTo = "true";
 	
-	@SuppressWarnings("unused")
-	public void onBuildFile(ActionEvent event) {
-		
-	}
-
 	public void completeCriteria() throws ManagerBeanException {
 		if (getInitDateFrom() != null) {
 			String alias = getFieldName(ICMSAlias.HIRU_COURSE_INIT_DATE); 

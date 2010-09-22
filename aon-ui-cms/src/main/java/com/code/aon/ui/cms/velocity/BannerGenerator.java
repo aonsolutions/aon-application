@@ -31,7 +31,7 @@ public class BannerGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.BANNER_POSITION));
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty())
-				getLogger().warning("La categoria de banners " + groupDetail.getBannerCategory().getAlias() + " no tiene banners.");
+				getLogger().warn("La categoria de banners " + groupDetail.getBannerCategory().getAlias() + " no tiene banners.");
 			for (int i = 0; i < l.size(); i++) {
 				Banner da = (Banner)l.get(i);
 				IManagerBean detailBean = BeanManager.getManagerBean(BannerDetail.class);
@@ -40,7 +40,7 @@ public class BannerGenerator extends Generator {
 				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.BANNER_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> ld = (List<ITransferObject>)detailBean.getList(criteria_detail);
 				if (ld.isEmpty()){
-					getLogger().warning("El banner " + da.getAlias() + " no esta internacionalizado.");
+					getLogger().warn("El banner " + da.getAlias() + " no esta internacionalizado.");
 				}else{
 					BannerDetail detail = (BannerDetail)ld.get(0);
 					BannerHandler handler = new BannerHandler(detail);
@@ -66,7 +66,7 @@ public class BannerGenerator extends Generator {
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.BANNER_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> detailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (detailList.isEmpty()){
-					logger.warning("La categoria de banners " + group.getAlias() + " no esta internacionalizada.");
+					logger.warn("La categoria de banners " + group.getAlias() + " no esta internacionalizada.");
 				}else{
 					BannerCategoryDetail detail = (BannerCategoryDetail)detailList.get(0);
 					BannerCategoryHandler bch = new BannerCategoryHandler(detail);
@@ -102,7 +102,7 @@ public class BannerGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.BANNER_DETAIL_BANNER_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					getLogger().warning("El banner " + a.getAlias() + " no esta internacionalizado.");
+					getLogger().warn("El banner " + a.getAlias() + " no esta internacionalizado.");
 				}else{
 					BannerDetail ad = (BannerDetail)ld.get(0);
 					BannerHandler ah = new BannerHandler(ad);
@@ -139,7 +139,7 @@ public class BannerGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.BANNER_CATEGORY_DETAIL_BANNER_CATEGORY_ID), bannerCategory.getId());
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					getLogger().warning("La categoria de banner " + bannerCategory.getAlias() + " no esta internacionalizado.");
+					getLogger().warn("La categoria de banner " + bannerCategory.getAlias() + " no esta internacionalizado.");
 				}else{
 					BannerCategoryDetail ad = (BannerCategoryDetail)ld.get(0);
 					BannerCategoryHandler ah = new BannerCategoryHandler(ad);

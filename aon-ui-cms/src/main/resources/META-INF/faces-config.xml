@@ -217,6 +217,20 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** GENERATOR ************** -->
+	<managed-bean>
+		<managed-bean-name>generator</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************** GENERATOR ************** -->
+	<managed-bean>
+		<managed-bean-name>generatorApplication</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorApplicationController</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+
 	<!-- =================== Article ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -258,6 +272,15 @@
 		<navigation-case>
 			<from-outcome>resizer_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/cms/facelet/gallery/resizer.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+
+	<!-- =================== Generator ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>generator_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/cms/facelet/generator/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
