@@ -59,7 +59,7 @@ public class LogPanelController implements ILogger {
 	}
 
 	@Override
-	public void warning(String msg) {
+	public void warn(String msg) {
 		addErrorMessage(" <i>WARNING: " + msg + "</i>");
 	}
 

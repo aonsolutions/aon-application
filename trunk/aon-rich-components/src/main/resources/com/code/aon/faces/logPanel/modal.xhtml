@@ -37,7 +37,7 @@
 				</aon:panelGrid>
 				<rich:panel bodyClass="aon-log-panel">
 			        <rich:dataList var="msg" value="#{logPanel.status}">
-						<aon:outputText value="#{msg}"/>
+						<aon:outputText escape="false" value="#{msg}"/>
 					</rich:dataList>
 				</rich:panel>
          		<aon:div styleClass="aon-margin-top">
