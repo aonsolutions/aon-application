@@ -7,6 +7,7 @@ import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceControllerListener extends ControllerAdapter {
 
@@ -16,6 +17,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			InvoiceController invoiceController = (InvoiceController)this.getController(); 
 			Invoice invoice = (Invoice) invoiceController.getTo();
 			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
+			invoice.setTaxDate(AonUtil.getRoleManager().isAccountingOperator() ? invoice.getIssueDate() : null);
 
 			invoiceController.loadAddresses(null);
 		} catch (ManagerBeanException e) {
