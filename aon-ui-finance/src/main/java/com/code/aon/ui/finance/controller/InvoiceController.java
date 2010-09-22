@@ -9,6 +9,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -518,4 +519,15 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.emailController = new FinanceEmailUtil();
 	}
 
+	public void onDateChanged(ActionEvent event) {
+		getInvoice().setTaxDate( getInvoice().getIssueDate() );
+	}
+	public boolean isTaxDateEquals() {
+		Invoice invoice = getInvoice();
+		if (invoice != null) {
+			return ObjectUtils.equals(invoice.getIssueDate(), invoice.getTaxDate());
+		}
+		return true;
+	}
+	
 }
