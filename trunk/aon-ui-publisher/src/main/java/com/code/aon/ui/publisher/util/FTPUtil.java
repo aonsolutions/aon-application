@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.ILogger;
 import com.code.aon.ui.publisher.controller.IPublisherConstants;
 import com.code.aon.ui.util.AonUtil;
 
@@ -44,6 +45,12 @@ public class FTPUtil implements IPublisherConstants {
 	
 	private FTPClient ftp;
 	
+	private ILogger logger;
+	
+	public FTPUtil(ILogger logger) {
+		this.logger = logger;
+	}
+
 	public static Properties getProperties( File file, String resource ) {
 		Properties properties = new Properties();
 		try {
@@ -58,53 +65,83 @@ public class FTPUtil implements IPublisherConstants {
 		return properties;
 	}
 	
-	/**
-	 * Gets the fTP client.
-	 * 
-	 * @param properties the properties
-	 * @return the fTP client
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	private FTPClient getFTPClient( Properties properties ) throws IOException {
-		FTPClient ftp = new FTPClient();
-		String server = properties.getProperty(FTP_SERVER);
+	private boolean isReplyOk() {
+		int code = ftp.getReplyCode();
+		if ( (code >= 200) && (code <300) ) {
+			return true;
+		}
+		LOGGER.error( ftp.getReplyString() );
+		return false;
+	}
+	
+	private boolean connect(String server) {
+		this.ftp = new FTPClient();
 		LOGGER.debug("Connecting to: {}", server );
-		ftp.connect(server);
-		String user = properties.getProperty(FTP_USER);
-		String password = properties.getProperty(FTP_PASSWORD);
-		ftp.login(user, password);
-		ftp.enterLocalPassiveMode();
-		ftp.setListHiddenFiles(true);
-		return ftp;
+		logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_CONNECTING) );
+		try {
+			ftp.connect(server);
+			if ( isReplyOk() ) {
+				return true;
+			}
+		} catch (Throwable e) {
+			LOGGER.error("Error connecting " + server, e);
+		}		
+		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CONNECTION) );
+		return false;
+	}
+
+	private void login( String user, String password ) {
+		try {
+			logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_LOGIN) );
+			LOGGER.debug("Login user: {}", user );
+			ftp.login(user, password);
+			if ( isReplyOk() ) {
+				ftp.enterLocalPassiveMode();
+				ftp.setListHiddenFiles(true);
+				LOGGER.debug("Reply String: {}", ftp.getReplyString());
+				LOGGER.debug("System Name: {}", ftp.getSystemName());
+				LOGGER.debug("Working Directory: {}", ftp.printWorkingDirectory());
+				LOGGER.debug("File Type: {}", ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
+				logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_CONNECTED) );
+				return;
+			}
+		} catch (Throwable e) {
+			LOGGER.error("Error login user " + user, e);
+		}		
+		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_LOGIN) );
+		close();
 	}
 	
 	/**
 	 * Upload ftp.
 	 * 
 	 * @param properties the properties
+	 * @throws IOException 
 	 * @throws AonException the aon exception
 	 */
-	public void connect(Properties properties) throws AonException {
-		try {
-			this.ftp = getFTPClient( properties );
-			LOGGER.debug("Connected.");
-			LOGGER.debug("Reply String: {}", ftp.getReplyString());
-			LOGGER.debug("System Name: {}", ftp.getSystemName());
-			LOGGER.debug("Working Directory: {}", ftp.printWorkingDirectory());
-			LOGGER.debug("File Type: {}", ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
-		} catch (IOException e) {
-			LOGGER.error("Error connecting to " + properties, e);
-			throw new AonException( e.getMessage(), e);
+	public void connect(Properties properties) throws IOException {
+		String server = properties.getProperty(FTP_SERVER);
+		if ( connect(server) ) {
+			String user = properties.getProperty(FTP_USER);
+			String password = properties.getProperty(FTP_PASSWORD);
+			login(user, password);
 		}
 	}	
+	
+	public boolean isConnected() {
+		return ( this.ftp != null ) && ( ftp.isConnected() );
+	}
 	
 	public void close() {
 		if ( ftp != null ) {
 			try {
+				logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_LOGOUT) );
 				ftp.logout();
 				if ( ftp.isConnected() ) {
 					ftp.disconnect();
 				}
+				logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_DISCONNECTED) );
+				ftp = null;
 			} catch (IOException e) {
 				LOGGER.error("Error closing ftp connection", e);
 			}
@@ -130,8 +167,7 @@ public class FTPUtil implements IPublisherConstants {
 		} catch (Throwable th) {
 			LOGGER.error("Error deleting file {}", pathname, th);
 		}
-		String message = AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_DELETE_FILE, pathname);
-		AonUtil.addErrorMessage( message );
+		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_DELETE_FILE, pathname) );
 	}
 
 	/**
@@ -149,8 +185,7 @@ public class FTPUtil implements IPublisherConstants {
 		} catch (Throwable th) {
 			LOGGER.error("Error deleting directory {}", pathname, th);
 		}
-		String message = AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_DELETE_DIRECTORY, pathname);
-		AonUtil.addErrorMessage( message );
+		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_DELETE_DIRECTORY, pathname) );
 	}
 
 	private void delete( String destination, FTPFile file ) throws IOException {
@@ -171,8 +206,7 @@ public class FTPUtil implements IPublisherConstants {
 		} catch (Throwable th) {
 			LOGGER.error( "Error in change of working directory: " + destination, th );
 		}
-		String message = AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CHANGE_DIRECTORY, destination);
-		AonUtil.addErrorMessage( message );
+		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CHANGE_DIRECTORY, destination) );
 		return false;
 	}
 	
@@ -200,8 +234,7 @@ public class FTPUtil implements IPublisherConstants {
 		} catch (IOException e) {
 			LOGGER.error( "Error in make directory: " + destination, e );
 		}
-		String message = AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CREATE_DIRECTORY, destination);
-		AonUtil.addErrorMessage( message );
+		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CREATE_DIRECTORY, destination) );
 	}	
 
 	private void uploadFile(File file, String destination) {
@@ -209,6 +242,8 @@ public class FTPUtil implements IPublisherConstants {
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream( new FileInputStream(file) );
+			double kbs = file.length() /1024.0;
+			logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_UPLOAD_FILE, file.getName(), kbs) );
 			if ( ftp.storeFile(destination, in) ) {
 				return;
 			}
@@ -217,8 +252,7 @@ public class FTPUtil implements IPublisherConstants {
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
-		String message = AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CREATE_FILE, destination);
-		AonUtil.addErrorMessage( message );
+		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CREATE_FILE, destination) );
 	}	
 	
 	private  void uploadContent(File file, String destination) {
@@ -267,7 +301,7 @@ public class FTPUtil implements IPublisherConstants {
 		return null;
 	}
 	
-	private void synchronizeDirecotry(File directory, String destination, FTPFile ftpFile) throws IOException {
+	private void synchronizeDirectory(File directory, String destination, FTPFile ftpFile) throws IOException {
 		String path = getFTPPath(destination, ftpFile.getName());
 		if (! ftpFile.isDirectory() ) {
 			delete(destination, ftpFile);
@@ -313,7 +347,7 @@ public class FTPUtil implements IPublisherConstants {
 				if ( ftpFile != null ) {
 					ftpFiles.remove(ftpFile);
 					if ( file.isDirectory() ) {
-						synchronizeDirecotry(file, destination, ftpFile);
+						synchronizeDirectory(file, destination, ftpFile);
 					} else {
 						synchronizeFile(file, destination, ftpFile);
 					}

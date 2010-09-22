@@ -21,12 +21,22 @@
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance" > 
 						<aon:outputText value="#{publisherBundle.publisher_preview}"/>
 					</h:outputLink>				     									
-					<aon:commandButton id="publish"
+					<aon:commandButton id="publish" reRender="aonStatus"
 						value="#{publisherBundle.publisher_publish}"
 						styleClass="aon-finding-toolbar-item aon-icon-file-upload"
-						actionListener="#{publisher.onPublish}" immediate="true"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />								
+						actionListener="#{publisher.onPublish}" immediate="true" >
+			     		<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+			     	</aon:commandButton>								
+					<aon:confirmButton id="delete"
+						title="#{bundle.aon_key_remove_accelerator}"
+						value="#{publisherBundle.publisher_delete_web}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{publisher.onDelete}"
+						confirmOnClick="Richfaces.showModalPanel('waitProccess')"
+						confirmOnComplete="Richfaces.hideModalPanel('waitProccess')"
+						accesskey="#{bundle.aon_key_remove}" />
 					<h:outputLink id="web" value="#{publisher.webPage}" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance">
 						<aon:outputText value="#{publisherBundle.publisher_view}"/>
@@ -36,5 +46,8 @@
 
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />		
+		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+			<ui:param name="logPanelTitle" value="#{publisherBundle.publisher_publish}" />
+		</ui:include>		
 	</ui:define>
 </ui:composition>

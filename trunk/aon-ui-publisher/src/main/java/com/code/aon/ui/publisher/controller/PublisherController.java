@@ -9,12 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.LoggedUser;
+import com.code.aon.common.DefaultLogger;
+import com.code.aon.common.ILogger;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.publisher.util.FTPUtil;
 import com.code.aon.ui.publisher.util.PathUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class PublisherController {
+public class PublisherController implements IPublisherConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PublisherController.class.getName());
 	
@@ -54,21 +57,50 @@ public class PublisherController {
 		}
 		return domain;
 	}	
+	
+	private String getDestination() {
+		return "/" + getDomain() + "/WEBSITES/www." + getDomain();
+	}
 
 	public void onPublish(ActionEvent event) {
-		FTPUtil ftp = new FTPUtil();
+		boolean published = false;
+		LogPanelController log = LogPanelController.getInstance();
+		FTPUtil ftp = new FTPUtil(log);
 		try {
 			File previewDirectory = PathUtil.getPreviewPath(getDomain());
-			String destination = "/" + getDomain() + "/WEBSITES/www." + getDomain();
 			ftp.connect(properties);
-			// ftp.delete(destination);
-			ftp.synchronize(previewDirectory, destination);
-			AonUtil.addInfoMessage("OK: La web ha sido publicada." );
+			if ( ftp.isConnected() ) {
+				ftp.synchronize(previewDirectory, getDestination());
+				published = true;
+			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
+			log.error( AonUtil.getMessage(BUNDLE_NAME, PUBLISH_ERROR) );
 		} finally {
 			ftp.close();
 		}
+		if ( published ) {
+			log.info( AonUtil.getMessage(BUNDLE_NAME, PUBLISH_OK) );
+		}
+		log.finish();
 	}		
+
+	public void onDelete(ActionEvent event) {
+		ILogger log = new DefaultLogger(LOGGER);
+		FTPUtil ftp = new FTPUtil(log);
+		try {
+			ftp.connect(properties);
+			if ( ftp.isConnected() ) {
+				ftp.delete(getDestination());
+				AonUtil.addInfoMessageFromBundle( BUNDLE_NAME, DELETE_OK );
+				return;
+			}
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th );
+		} finally {
+			ftp.close();
+		}
+		log.error( AonUtil.getMessage(BUNDLE_NAME, DELETE_ERROR) );		
+	}		
+	
 }
