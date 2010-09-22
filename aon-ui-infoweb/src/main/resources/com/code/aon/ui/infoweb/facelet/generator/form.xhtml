@@ -33,13 +33,13 @@
 							rendered="#{generator.generated}" > 
 							<aon:outputText value="#{infowebBundle.infoweb_preview}"/>
 						</h:outputLink>				     									
-						<aon:commandButton id="publish"
+						<aon:commandButton id="publish" reRender="aonStatus"
 							value="#{infowebBundle.infoweb_publish}"
 							rendered="#{generator.generated}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-upload"
-							actionListener="#{generator.onPublish}" immediate="true"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />								
+							actionListener="#{generator.onPublish}" immediate="true" >
+							<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+						</aon:commandButton>								
 						<h:outputLink id="web" value="#{generator.webPage}" target="_blank"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							rendered="#{generator.published}">
@@ -52,5 +52,8 @@
 		</rich:panel>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />		
+		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+			<ui:param name="logPanelTitle" value="#{infowebBundle.infoweb_publish}" />
+		</ui:include>		
 	</ui:define>
 </ui:composition>

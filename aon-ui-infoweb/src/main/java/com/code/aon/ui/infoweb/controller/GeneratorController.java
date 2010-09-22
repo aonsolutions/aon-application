@@ -1,5 +1,9 @@
 package com.code.aon.ui.infoweb.controller;
 
+import static com.code.aon.ui.publisher.controller.IPublisherConstants.BUNDLE_NAME;
+import static com.code.aon.ui.publisher.controller.IPublisherConstants.PUBLISH_ERROR;
+import static com.code.aon.ui.publisher.controller.IPublisherConstants.PUBLISH_OK;
+
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -36,6 +40,7 @@ import com.code.aon.common.util.ImageUtil;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.infoweb.WebInfo;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoPageDetail;
@@ -246,23 +251,31 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}		
 	}
 	
+	private String getDestination() {
+		return "/" + getDomain() + "/WEBSITES/www." + getDomain();
+	}
+	
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
 		this.published = false;
-		FTPUtil ftp = new FTPUtil();
+		LogPanelController log = LogPanelController.getInstance();
+		FTPUtil ftp = new FTPUtil(log);
 		try {
 			File previewDirectory = PathUtil.getPreviewPath(getDomain());
-			String destination = "/" + getDomain() + "/WEBSITES/www." + getDomain();
 			ftp.connect(properties);
-			ftp.delete(destination);
-			ftp.upload(previewDirectory, destination);
-			this.published = true;
-			AonUtil.addInfoMessage("OK: La web ha sido publicada." );
+			if ( ftp.isConnected() ) {
+				ftp.synchronize(previewDirectory, getDestination());
+				published = true;
+			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
+			log.error( AonUtil.getMessage(BUNDLE_NAME, PUBLISH_ERROR) );
 		} finally {
 			ftp.close();
-		}		
+		}
+		if ( published ) {
+			log.info( AonUtil.getMessage(BUNDLE_NAME, PUBLISH_OK) );
+		}
+		log.finish();
 	}	
 
 	private void copyImageToCss(File temporalDirectory, File cssTemporalDirectory, String value) {
