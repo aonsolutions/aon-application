@@ -16,6 +16,12 @@
 				<ui:param name="toolbarTitle" value="#{richBundle.rich_fileManager}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
+					<aon:commandButton id="search" 
+						title="#{bundle.aon_key_search_accelerator}"
+						value="#{bundle.aon_search}" immediate="true"
+						action="fileManager_search" actionListener="#{fileManager.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}" />				
 					<aon:commandButton id="createFolder"
 						value="#{richBundle.aon_create_folder}" immediate="true"
 						reRender="createSubFolderGrid"

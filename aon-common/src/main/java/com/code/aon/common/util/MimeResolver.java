@@ -1,5 +1,6 @@
 package com.code.aon.common.util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -96,19 +97,16 @@ public class MimeResolver {
 	 * @return the mime type
 	 */
 	public static MimeType getMimeType( File file ) {
-		MimeType mt = getMimeTypeByExtension(file.getName());
-		if ( mt == null ) {
-			InputStream in = null;
-			try {
-				in = new FileInputStream( file );
-				mt = getMimeType(in);
-			} catch ( IOException e ) {
-				LOGGER.error( e.getMessage(), e );
-			} finally {
-				IOUtils.closeQuietly(in);
-			}
+		InputStream in = null;
+		try {
+			in = new BufferedInputStream(new FileInputStream(file));
+			return getMimeType(in);
+		} catch ( IOException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			IOUtils.closeQuietly(in);
 		}
-		return mt;			
+		return null;			
 	}
 
 }
