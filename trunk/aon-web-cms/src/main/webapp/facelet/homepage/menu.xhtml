@@ -216,7 +216,7 @@
 				rendered="#{cms.roleEditor or cms.rolePublisher}" 
 				value="#{menuBundle.cms_bulletin_send}"
 				action="bulletin_send_list"
-				actionListener="#{bulletin.onInit}" />
+				actionListener="#{bulletin.onSearch}" />
 		</aon:dropDownMenu>
 		<aon:dropDownMenu id="sport"
 			rendered="#{domainUtils.sportMenu and ( cms.roleEditor or cms.roleRevisor )}" >

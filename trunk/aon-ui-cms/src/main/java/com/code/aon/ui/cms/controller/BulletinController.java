@@ -39,7 +39,7 @@ import com.code.aon.ui.form.FormUtil;
 
 public class BulletinController extends BasicI18nController implements ICMSConstants, Constants, IVelocityConstants {
 
-	public void onSelectArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
+	public void selectArticles() throws ManagerBeanException, ExpressionException {
 		BulletinArticleController c = (BulletinArticleController)FormUtil.getController(BULLETIN_ARTICLE);
 		IManagerBean moBean = BeanManager.getManagerBean(BulletinArticle.class);
 		Bulletin bulletin = (Bulletin) this.getTo();
@@ -48,11 +48,7 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 		criteria.addOrder(moBean.getFieldName(ICMSAlias.BULLETIN_ARTICLE_POSITION));
 		c.setCurrentBulletin(bulletin);
 		c.setCriteria(criteria);
-		c.onSearch(event);
-	}
-
-	public void onInit(ActionEvent event){
-		this.onSearch(event);
+		c.onSearch(null);
 	}
 
 	public void onGenerate(ActionEvent event){
@@ -60,40 +56,28 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 		
 		GeneratorContext context = new GeneratorContext( logger );
 		BufferedWriter buff = null;
-		List<ITransferObject> list;
-		List<ITransferObject> listBulletinArticle;
-		List<ITransferObject> listBulletinEmail;
-		List<ITransferObject> article_list;
-		List<ArticleHandler> article_content = new ArrayList<ArticleHandler>();
-		Address[] emails = null;
 		try{
-			Bulletin bulletin = null; 
-			BulletinDetail bulletinDetail = null;
-			ArticleDetail articleDetail = null;
-			Criteria criteria = null;
-			IManagerBean bean;
-				
-			bulletin = (Bulletin)getTo(); 
-			bulletinDetail = null;
-			criteria = new Criteria();
+			Bulletin bulletin = (Bulletin)getTo(); 
+			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.BULLETIN_DETAIL_BULLETIN_ID), bulletin.getId());
-			list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
+			List<ITransferObject> list = getManagerBeanI18n().getList(criteria);
+			List<ArticleHandler> article_content = new ArrayList<ArticleHandler>();
 			for (ITransferObject toDetail: list) {
-				bulletinDetail = (BulletinDetail)toDetail;
+				BulletinDetail bulletinDetail = (BulletinDetail)toDetail;
 				
-				bean = BeanManager.getManagerBean(BulletinArticle.class); 
+				IManagerBean bean = BeanManager.getManagerBean(BulletinArticle.class); 
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BULLETIN_ARTICLE_BULLETIN_ID), bulletin.getId());
-				listBulletinArticle = (List<ITransferObject>)bean.getList(criteria);
+				List<ITransferObject> listBulletinArticle = bean.getList(criteria);
 				for (ITransferObject bulletinArticle: listBulletinArticle) {
 					
 					bean = BeanManager.getManagerBean(ArticleDetail.class); 
 					criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ((BulletinArticle)bulletinArticle).getArticle().getId());
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), bulletinDetail.getLanguage().getId());
-					article_list = (List<ITransferObject>)bean.getList(criteria);
+					List<ITransferObject> article_list = bean.getList(criteria);
 					if (!article_list.isEmpty()){
-						articleDetail = (ArticleDetail) article_list.get(0);
+						ArticleDetail articleDetail = (ArticleDetail) article_list.get(0);
 						ArticleHandler ah = new ArticleHandler(articleDetail);
 						article_content.add(ah);
 					}
@@ -104,8 +88,8 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BULLETIN_EMAIL_LANGUAGE_ID), bulletinDetail.getLanguage().getId());
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BULLETIN_EMAIL_ACTIVE), Boolean.TRUE);
-				listBulletinEmail = (List<ITransferObject>)bean.getList(criteria);
-				emails = new Address[listBulletinEmail.size()];
+				List<ITransferObject> listBulletinEmail = bean.getList(criteria);
+				Address[] emails = new Address[listBulletinEmail.size()];
 				int i = 0;
 				for (ITransferObject bulletinEmail: listBulletinEmail) {
 					String email = ((BulletinEmail)bulletinEmail).getEmail();
@@ -146,17 +130,9 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 		} catch (Throwable th) {
 			logger.error(th.getMessage());
 		} finally {
-			article_content = null;
-			list = null;
-			article_list = null;
-			listBulletinArticle = null;
-			listBulletinEmail = null;
 			IOUtils.closeQuietly(buff);
 	    }
-
 	}
-	
-	// END SENDER
 	
 	public String getI18nTitle() throws ManagerBeanException {
 		String label = NO_VALUE_LABEL;

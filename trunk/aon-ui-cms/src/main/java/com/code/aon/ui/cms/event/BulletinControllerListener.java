@@ -30,7 +30,7 @@ public class BulletinControllerListener extends ControllerAdapter {
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		try{
-			((BulletinController) event.getController()).onSelectArticles(null);
+			((BulletinController) event.getController()).selectArticles();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		} catch (ExpressionException e) {
@@ -42,7 +42,7 @@ public class BulletinControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		try{
-			((BulletinController) event.getController()).onSelectArticles(null);
+			((BulletinController) event.getController()).selectArticles();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		} catch (ExpressionException e) {
