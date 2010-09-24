@@ -1,7 +1,5 @@
 package com.code.aon.ui.ebackoffice.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -9,14 +7,15 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -43,6 +42,8 @@ import com.code.aon.ui.form.BasicController;
 
 public class EcconfigController extends BasicController {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(EcconfigController.class);
+	
 	private List<SelectItem> skins;
 	private List<SelectItem> loginTypes;
 	private List<SelectItem> priceTypes;
@@ -440,20 +441,26 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void headerUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
+		setHeaderImage( getAonFile(event) );
+	}
+	
+	private AonFile getAonFile( UploadEvent event ) {
+		UploadItem item = event.getUploadItem();
+		AonFile f = new AonFile();
+		byte[] data = null;
+		if ( item.isTempFile() ) {
+			try {
+				data = FileUtils.readFileToByteArray(item.getFile());
+			} catch (IOException e) {
+				LOGGER.error( "Error reading " + item.getFile(), e );
 			}
-			f.setFileName(item.getFileName());
-			setHeaderImage(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
+			item.getFile().delete();
+		} else {
+			data = item.getData();
 		}
+		f.setData(data);
+		f.setFileName(item.getFileName());
+		return f;
 	}
 
 	public void paintHeader(OutputStream out, Object data) throws IOException {
@@ -467,20 +474,7 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void leftBannerUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName(item.getFileName());
-			setLeftBanner(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setLeftBanner( getAonFile(event) );
 	}
 
 	public void paintLeftBanner(OutputStream out, Object data)
@@ -495,20 +489,7 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void rightBannerUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName(item.getFileName());
-			setRightBanner(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setRightBanner( getAonFile(event) );
 	}
 
 	public void paintRightBanner(OutputStream out, Object data)
@@ -523,20 +504,7 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void welcomeBannerUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName(item.getFileName());
-			setWelcomeBanner(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
+		setWelcomeBanner( getAonFile(event) );
 	}
 
 	public void paintWelcomeBanner(OutputStream out, Object data)

@@ -14,6 +14,8 @@ import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
+import com.code.aon.config.Scope;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
@@ -195,7 +197,15 @@ public class CompanyControllerListener extends ControllerAdapter {
 		IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
 		Enterprise enterprise = new Enterprise();
 		enterprise.setRegistry(company);
+		enterprise.setScope(obtainScope());
 		return (Enterprise) bean.insert(enterprise);
+	}
+
+	private Scope obtainScope() throws ManagerBeanException {
+		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(scopeBean.getFieldName(IConfigAlias.SCOPE_ID));
+		return (Scope)scopeBean.getList(criteria).get(0);
 	}
 
 	private Enterprise obtainEnterprise(RegistryAddress registryAddress) {

@@ -37,10 +37,11 @@
 		/>
 	</marketing:config>
 	
-	<commercial:config version="1.1" xmlns:commercial="http://www.esferalia.com/commercial">
+	<commercial:config version="1.2" xmlns:commercial="http://www.esferalia.com/commercial">
 		<commercial:offer
 			showInvoicing="false"
 			showSalesOrder="false"
+			showSeller="true"
 		/>
 		<commercial:target
 			showTaxInfoData="false"
