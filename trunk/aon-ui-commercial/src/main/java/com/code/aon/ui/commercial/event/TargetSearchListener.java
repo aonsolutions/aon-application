@@ -4,6 +4,7 @@ package com.code.aon.ui.commercial.event;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -105,7 +106,7 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 			String status = getController().resolveAlias("Target_trackings_status");
 			addEnumToCriteria( criteria, status, getTrackingStatuses() );
 		}
-		if (getUserName()!= null){					
+		if (! StringUtils.isEmpty(getUserName()) ){					
 			criteria.addEqualExpression("id", getTargetId());
 		}
 		super.completeCriteria( criteria );
@@ -119,8 +120,9 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		List<Target> targetList = query.list();
-		if (targetList.size() > 0)
+		if (targetList.size() > 0) {
 			return targetList.get(0).getId();
+		}
 		return -1;
 	}
 }
