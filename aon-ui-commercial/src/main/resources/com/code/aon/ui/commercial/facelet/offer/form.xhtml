@@ -297,38 +297,40 @@
 						rendered="#{offer.dealership}"
 						disabled="true" size="10" />
 
-					<aon:outputLabel for="Seller_id" 
-						value="#{salesBundle.sales_seller}" />
-					<aon:div id="sellerDiv" styleClass="aon-lookup">
-						<a4j:region>
-							<aon:lookupInputText id="Seller_id" 
-								value="#{offer.to.seller.registry.id}"
-								disabled="#{offer.readOnly}" size="5"
-								lookupProperty="registry" lookup="#{sellerLookup}" 
-								lookupChangeListener="#{offer.sellerData}" 
-								reRender="Seller_full_name"
-								ajaxSingle="true" />
-							<aon:lookupButton
-								windowTitle="#{salesBundle.sales_seller_selection}"
-								disabled="#{offer.readOnly}" minHeight="460" minWidth="650"
-								property="#{offer.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
-								lookupChangeListener="#{offer.sellerData}"
-								selectReRender="Seller_id,Seller_full_name"
-								actionType="search">
-							</aon:lookupButton>
-							<aon:lookupButton 
-								windowTitle="#{salesBundle.sales_seller_new}"
-								disabled="#{offer.readOnly}" minWidth="650" minHeight="600"
-								property="#{offer.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
-								lookupChangeListener="#{offer.sellerData}"
-								selectReRender="Seller_id,Seller_full_name"
-								actionType="new">
-							</aon:lookupButton>														
-							<aon:inputText id="Seller_full_name" 
-								value="#{(offer.to.seller.registry.fullName!=null)?(offer.to.seller.registry.fullName):('')}"
-								disabled="true" size="60" />
-						</a4j:region>
-					</aon:div>
+					<c:if test="#{aonConfiguration.bean.offer.showSeller}">
+						<aon:outputLabel for="Seller_id" 
+							value="#{salesBundle.sales_seller}" />
+						<aon:div id="sellerDiv" styleClass="aon-lookup">
+							<a4j:region>
+								<aon:lookupInputText id="Seller_id" 
+									value="#{offer.to.seller.registry.id}"
+									disabled="#{offer.readOnly}" size="5"
+									lookupProperty="registry" lookup="#{sellerLookup}" 
+									lookupChangeListener="#{offer.sellerData}" 
+									reRender="Seller_full_name"
+									ajaxSingle="true" />
+								<aon:lookupButton
+									windowTitle="#{salesBundle.sales_seller_selection}"
+									disabled="#{offer.readOnly}" minHeight="460" minWidth="650"
+									property="#{offer.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
+									lookupChangeListener="#{offer.sellerData}"
+									selectReRender="Seller_id,Seller_full_name"
+									actionType="search">
+								</aon:lookupButton>
+								<aon:lookupButton 
+									windowTitle="#{salesBundle.sales_seller_new}"
+									disabled="#{offer.readOnly}" minWidth="650" minHeight="600"
+									property="#{offer.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
+									lookupChangeListener="#{offer.sellerData}"
+									selectReRender="Seller_id,Seller_full_name"
+									actionType="new">
+								</aon:lookupButton>														
+								<aon:inputText id="Seller_full_name" 
+									value="#{(offer.to.seller.registry.fullName!=null)?(offer.to.seller.registry.fullName):('')}"
+									disabled="true" size="60" />
+							</a4j:region>
+						</aon:div>
+					</c:if>
 
 					<aon:outputLabel for="Offer_workPlace" 
 						value="#{companyBundle.company_workplace}" />
@@ -510,7 +512,9 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<c:if test="#{aonConfiguration.bean.offer.showSeller}">
+			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		</c:if>
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{commercialTermLookup}" />

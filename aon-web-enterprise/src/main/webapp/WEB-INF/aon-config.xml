@@ -91,10 +91,11 @@
  		/>
 	</product:config>
 
-	<commercial:config version="1.1" xmlns:commercial="http://www.esferalia.com/commercial">
+	<commercial:config version="1.2" xmlns:commercial="http://www.esferalia.com/commercial">
 		<commercial:offer
 			showInvoicing="false"
 			showSalesOrder="true"
+			showSeller="true"
 		/>
 		<commercial:target
 			showTaxInfoData="true"
