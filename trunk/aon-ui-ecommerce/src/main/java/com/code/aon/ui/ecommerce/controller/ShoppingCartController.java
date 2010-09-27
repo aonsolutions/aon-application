@@ -211,6 +211,7 @@ public class ShoppingCartController extends EmailParentController{
 		setCartTarget(new CartTarget());
 		getCartTarget().setEcTarget(new Ectarget());
 		getCartTarget().getEcTarget().setTarget(new Target());
+		getCartTarget().getEcTarget().getTarget().setRegistry(new Registry());
 		getCartTarget().setMainAddress(new RegistryAddress());
 		getCartTarget().getMainAddress().setAddressType( AddressType.MAIN );
 		getCartTarget().getMainAddress().setGeozone( new GeoZone() );
