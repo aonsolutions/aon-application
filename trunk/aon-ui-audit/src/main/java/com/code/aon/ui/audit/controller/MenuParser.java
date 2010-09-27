@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
-import com.code.aon.ui.util.AonUtil;
 import com.sun.facelets.impl.DefaultResourceResolver;
 import com.sun.facelets.impl.ResourceResolver;
 import com.sun.faces.application.ApplicationAssociate;
@@ -105,10 +104,6 @@ public class MenuParser {
 		return null;
 	}	
 	
-	private String getStringValue(String expression) {
-		return (String) AonUtil.getValue(expression);
-	}	
-	
 	private String getRendered( Element element ) {
 		Element parent = element.getParent();
 		while ( parent != null ) {
@@ -153,7 +148,7 @@ public class MenuParser {
 	private void parseCategory( Element element ) {
 		String action = element.attributeValue(ACTION_ATTRIBUTE);
 		if ( StringUtils.startsWith(action, MENU_ACTION_PREFFIX) ) {
-			String categoryName = getStringValue(element.attributeValue(VALUE_ATTRIBUTE));
+			String categoryName = element.attributeValue(VALUE_ATTRIBUTE);
 			String alias = StringUtils.substringAfter(action, MENU_ACTION_PREFFIX);
 			category = new ApplicationCategory(categoryName, alias);
 			String styleClass = element.attributeValue(STYLE_CLASS_ATTRIBUTE);
@@ -207,7 +202,7 @@ public class MenuParser {
 	private String getOptionGroupDescription( Element panelGrid ) {
 		String path = panelGrid.getUniquePath() + "/" + F_FACET + "/" + AON_OUTPUTTEXT;
 		Element outputText = (Element) panelGrid.selectSingleNode(path );
-		return getStringValue(outputText.attributeValue(VALUE_ATTRIBUTE));
+		return outputText.attributeValue(VALUE_ATTRIBUTE);
 	}
 	
 	private OptionGroup getOptionGroup( Element commandLink ) {
@@ -262,7 +257,7 @@ public class MenuParser {
 				element.addAttribute(RENDERED_ATTRIBUTE, rendered);
 			}
 			option.setGroup( getOptionGroup(element) );
-			option.setDescription( getStringValue(element.attributeValue(VALUE_ATTRIBUTE)) );
+			option.setDescription( element.attributeValue(VALUE_ATTRIBUTE) );
 			element.addAttribute(ID_ATTRIBUTE, ApplicationOption.ID_PATTERN);
 			element.addAttribute(VALUE_ATTRIBUTE, ApplicationOption.VALUE_PATTERN);
 			option.setXml( element.asXML() );

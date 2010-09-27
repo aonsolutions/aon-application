@@ -58,7 +58,7 @@ public class OptionGroup {
 	}
 
 	public String getDescription() {
-		return description;
+		return (String) AonUtil.getValue(description);
 	}
 
 	/**

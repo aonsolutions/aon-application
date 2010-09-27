@@ -84,7 +84,7 @@ public class ApplicationOption {
 	 * @return the description
 	 */
 	public String getDescription() {
-		return description;
+		return (String) AonUtil.getValue(description);
 	}
 
 	/**

@@ -52,7 +52,7 @@ public class ApplicationCategory implements Comparable<ApplicationCategory> {
 	}
 
 	public String getName() {
-		return name;
+		return (String) AonUtil.getValue(name);
 	}
 
 	public String getAlias() {
