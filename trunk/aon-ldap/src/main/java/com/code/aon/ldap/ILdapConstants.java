@@ -35,6 +35,10 @@ public interface ILdapConstants {
 	String REF_ATTRIBUTE = "ref";
 	
     String USER_MANAGEMENT_ATTRIBUTE = "userManagement";
+    
+    String DOMAIN_MANAGEMENT_ATTRIBUTE = "domainManagement";
+    
+    String DNS_MANAGEMENT_ATTRIBUTE = "dnsManagement";
 	
 	String PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE = "passwordExpirationTimestamp";
 
@@ -55,5 +59,11 @@ public interface ILdapConstants {
 	String DRIVER_CLASS_NAME_ATTRIBUTE = "driverClassName";
 	
 	String PARENT_DOMAIN_ATTRIBUTE = "parentDomain";
+	
+	String BUSINESS_CATEGORY_ATTRIBUTE = "businessCategory";
+	
+	String DISPLAY_NAME_ATTRIBUTE = "displayName";
+	
+	String GIVEN_NAME_ATTRIBUTE = "givenName";
 	
 }
