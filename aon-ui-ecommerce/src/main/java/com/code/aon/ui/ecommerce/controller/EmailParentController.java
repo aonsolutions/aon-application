@@ -81,7 +81,7 @@ public class EmailParentController {
 	private MailAccount getDefaultMailAccount() {
 		MailAccount mailAccount = new MailAccount();
 		mailAccount.setHost("mail.esferalia.com");
-		mailAccount.setEmail("eagirrezabal@esferalia.com");
+		mailAccount.setEmail("info@esferalia.com");
 		mailAccount.setOutgoingHost("mail.esferalia.com");
 		mailAccount.setOutgoingPort(25);
 		mailAccount.setOutgoingSsl(false);
