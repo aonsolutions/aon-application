@@ -18,6 +18,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.ILdapConstants;
 
 /**
  * 
@@ -48,7 +49,7 @@ public class Role implements ITransferObject {
 	}
 
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=ILdapConstants.COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}

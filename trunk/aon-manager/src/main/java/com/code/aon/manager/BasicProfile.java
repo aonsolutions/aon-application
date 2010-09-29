@@ -19,6 +19,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.ILdapConstants;
 
 /**
  * 
@@ -26,7 +27,7 @@ import com.code.aon.dao.ldap.annotations.RDN;
  * @since 1.0
  *
  */
-public class BasicProfile {
+public class BasicProfile implements ILdapConstants {
 
 	/** Security domain identifier. This can be Nominal or Concurrent. */
 	private Name id;
@@ -56,7 +57,7 @@ public class BasicProfile {
 	}
 
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -65,7 +66,7 @@ public class BasicProfile {
 		this.commonName = commonName;
 	}	
 	
-	@Attribute(name="description", length=1024)
+	@Attribute(name=DESCRIPTION_ATTRIBUTE, length=1024)
 	public String getDescription() {
 		return description;
 	}
@@ -74,7 +75,7 @@ public class BasicProfile {
 		this.description = description;
 	}
 
-	@Attribute(name="o")
+	@Attribute(name=ORGANIZATION_NAME_ATTRIBUTE)
 	public String getOrganizationName() {
 		return organizationName;
 	}
@@ -83,7 +84,7 @@ public class BasicProfile {
 		this.organizationName = organizationName;
 	}
 
-	@Attribute(name="ou")
+	@Attribute(name=ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE)
 	public String getOrganizationUnitName() {
 		return organizationUnitName;
 	}
@@ -92,7 +93,7 @@ public class BasicProfile {
 		this.organizationUnitName = organizationUnitName;
 	}
 	
-	@Attribute(name="businessCategory",length=128)
+	@Attribute(name=BUSINESS_CATEGORY_ATTRIBUTE,length=128)
 	public String getBusinessCategory() {
 		return businessCategory;
 	}
@@ -102,7 +103,7 @@ public class BasicProfile {
 	}	
 	
 	@BaseDN("ou=roles,{parent}")	
-	@Attribute(name="member",baseClass="com.code.aon.manager.Role")
+	@Attribute(name=MEMBER_ATTRIBUTE,baseClass="com.code.aon.manager.Role")
 	public List<Role> getRoles() {
 		return roles;
 	}
