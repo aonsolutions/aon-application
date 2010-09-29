@@ -14,7 +14,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
@@ -27,7 +27,7 @@ import com.code.aon.ldap.ILdapConstants;
  *
  */
 @EntryObject(mainObjectClass=ROLE, objectClasses={TOP})
-public class Role implements ITransferObject {
+public class Role implements ILdapTransferObject {
 
 	private static final long serialVersionUID = -3515823504544911369L;
 

@@ -1,5 +1,8 @@
 package com.code.aon.manager;
 
+import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+
 import javax.naming.Name;
 import javax.persistence.Id;
 
@@ -10,16 +13,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
 
-@EntryObject(baseDN="ou=domains",mainObjectClass=IAonObjectClasses.DOMAIN, objectClasses={IAonObjectClasses.TOP})
-public class Domain implements ITransferObject, ILdapConstants {
+@EntryObject(baseDN="ou=domains",mainObjectClass=DOMAIN, objectClasses={TOP})
+public class Domain implements ILdapTransferObject {
 
 	private static final long serialVersionUID = -4808900608917312113L;
 

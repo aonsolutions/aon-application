@@ -15,15 +15,14 @@ import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
 
 @EntryObject(mainObjectClass=IAonObjectClasses.DB_CONNECTION, objectClasses={IAonObjectClasses.TOP})
-public class DBConnnection implements ITransferObject, ILdapConstants, Cloneable {
+public class DBConnnection implements ILdapTransferObject, Cloneable {
 
 	private static final long serialVersionUID = -16395756416577198L;
 	
