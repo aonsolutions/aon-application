@@ -24,8 +24,9 @@ import com.code.aon.manager.AccessPolicy;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.enumeration.AccessPolicyType;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.LdapBasicController;
 
-public class DomainController extends LdapBasicController implements IAonObjectClasses {
+public class DomainController extends LdapBasicController implements IAonObjectClasses, IManagerConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
 	

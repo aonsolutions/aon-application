@@ -11,6 +11,7 @@ import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.Application;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class ApplicationController extends LdapBasicController implements IManagerConstants {
 
