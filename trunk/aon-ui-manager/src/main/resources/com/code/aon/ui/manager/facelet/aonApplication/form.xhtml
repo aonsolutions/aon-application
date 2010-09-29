@@ -24,7 +24,7 @@
 						value="#{bundle.aon_name}" />
 					<c:if test="#{aonApplication.new}" >
 						<aon:inputText id="Applicaiton_commonName"
-							validator="#{aonApplication.aonApplicationNameCheck}" 
+							validator="#{aonApplication.idCheck}" 
 							size="80" required="true"
 							value="#{aonApplication.to.commonName}" />
 					</c:if>

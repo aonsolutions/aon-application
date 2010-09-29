@@ -22,9 +22,10 @@ public interface IManagerConstants {
 	String USER_SCOPE_CONTROLLER_NAME = "userScope";	
 	
 	// Messages
-	String ID_DUPLICATED = "manager_id_duplicated";
-	String INVALID_NAME = "manager_invalid_name";
+	String ID_DUPLICATED = "ldap_id_duplicated";
+	String INVALID_NAME = "ldap_invalid_name";
 	String DOMAIN_INVALID_NAME = "manager_domain_invalid_name";
+	String DOMAIN_DUPLICATED_NAME = "manager_domain_duplicated_name";
 	String APPLICATION_INVALID_NAME = "manager_application_invalid_name";
 	String APPLICATION_DUPLICATED_NAME = "manager_application_duplicated_name";
 	String DB_DUPLICATED = "manager_db_duplicated";

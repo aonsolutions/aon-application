@@ -17,6 +17,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -28,7 +29,8 @@ public abstract class LdapBasicController extends BasicController implements IMa
 	
 	private BasicManagerBean ldapManagerBean;
 	
-	public abstract void updateBaseDN( Name parent );
+	public void updateBaseDN( Name parent ) {
+	}
 	
 	public LdapDAO getLdapDAO() {
 		return ldapDAO;
@@ -66,16 +68,22 @@ public abstract class LdapBasicController extends BasicController implements IMa
 		return name.matches("[a-zA-Z][a-zA-Z0-9_-]*");
 	}
 	
+	protected String getInvalidMessage( String name ) {
+		return AonUtil.getMessage(BUNDLE_NAME, INVALID_NAME, name);
+	}
+
+	protected String getDuplicatedMessage( String name ) {
+		return AonUtil.getMessage(BUNDLE_NAME, ID_DUPLICATED, name);
+	}
+	
 	public void idCheck(FacesContext context, UIComponent component, Object value) {
 		String name = value.toString();
 		if (! isValidName(name) ) {
-			String summary = AonUtil.getMessage(BUNDLE_NAME, INVALID_NAME, name);
-			throw new ValidatorException( new FacesMessage(summary) );
+			throw new ValidatorException(new FacesMessage(getInvalidMessage(name)));
 		}
 		try {
 			if ( isDuplicated(name) ) {
-				String summary = AonUtil.getMessage(BUNDLE_NAME, ID_DUPLICATED, name);
-				throw new ValidatorException( new FacesMessage(summary) );			
+				throw new ValidatorException(new FacesMessage(getDuplicatedMessage(name)));			
 			}
 		} catch (DAOException e) {
 			LOGGER.error( e.getMessage(), e );
@@ -91,7 +99,8 @@ public abstract class LdapBasicController extends BasicController implements IMa
 				Name oldId = (Name) this.savedToId;
 				if (! oldId.equals(currentId) ) {
 					if ( getLdapDAO().exists(currentId) ) {
-						AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, ID_DUPLICATED );
+						String name = NameResolver.getFirstValue(currentId);
+						AonUtil.addErrorMessage( getDuplicatedMessage(name) );
 						return;
 					}			
 					getManagerBean().setId( to, oldId );
