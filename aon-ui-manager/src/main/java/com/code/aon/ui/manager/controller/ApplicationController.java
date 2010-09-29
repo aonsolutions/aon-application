@@ -1,35 +1,19 @@
 package com.code.aon.ui.manager.controller;
 
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
+
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.validator.ValidatorException;
 import javax.naming.Name;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.code.aon.common.BasicManagerBean;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.Application;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-import static com.code.aon.ldap.IAonObjectClasses.*;
+public class ApplicationController extends LdapBasicController implements IManagerConstants {
 
-public class ApplicationController extends BasicController implements IManagerConstants {
-
-	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
-	
-	private BasicManagerBean ldapManagerBean;
-	
 	private String selectedTab;
 	
 	public String getSelectedTab() {
@@ -39,15 +23,6 @@ public class ApplicationController extends BasicController implements IManagerCo
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-	
-	@Override
-	public IManagerBean getManagerBean() throws ManagerBeanException {
-		if (this.ldapManagerBean == null) {
-			LdapDAO dao = new LdapDAO(Application.class);
-			this.ldapManagerBean = new BasicManagerBean(dao);
-		}
-		return this.ldapManagerBean;
-	}	
 	
 	public Application getApplication() {
 		return (Application) getTo();
@@ -69,29 +44,13 @@ public class ApplicationController extends BasicController implements IManagerCo
 			ldap.addOrganizationUnit(profilesDN);
 		}
 	}	
-	
-	private boolean exists( String name ) {
-		try {
-			for( Application app : getApplications() ) {
-				if ( StringUtils.equals(name, app.getCommonName()) ) {
-					return true;
-				}
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-		return false;
-	}	
 
-	public void dbConnectionNameCheck(FacesContext context, UIComponent component, Object value) {
-		String name = value.toString();
-		if (! name.matches("[a-zA-Z][a-zA-Z0-9_-]*") ) {
-			String summary = AonUtil.getMessage(BUNDLE_NAME, APPLICATION_INVALID_NAME);
-			throw new ValidatorException( new FacesMessage(summary) );
-		}
-		if ( exists(name) ) {
-			String summary = AonUtil.getMessage(BUNDLE_NAME, APPLICATION_DUPLICATED_NAME, name);
-			throw new ValidatorException( new FacesMessage(summary) );			
-		}
-	}	
+	protected String getInvalidMessage( String name ) {
+		return AonUtil.getMessage(BUNDLE_NAME, APPLICATION_INVALID_NAME, name);
+	}
+
+	protected String getDuplicatedMessage( String name ) {
+		return AonUtil.getMessage(BUNDLE_NAME, APPLICATION_DUPLICATED_NAME, name);
+	}
+
 }

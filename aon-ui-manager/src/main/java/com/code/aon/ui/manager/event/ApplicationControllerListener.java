@@ -28,6 +28,7 @@ public class ApplicationControllerListener extends ControllerAdapter implements 
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
+		updateApplication(controller.getApplication());
 	}
 
 	@Override

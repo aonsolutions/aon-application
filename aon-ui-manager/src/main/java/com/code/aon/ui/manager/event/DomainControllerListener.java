@@ -35,24 +35,16 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainController domainController = (DomainController) event.getController();
-		Domain domain = (Domain) event.getController().getTo();
-		String name = domain.getCommonName();
+		Domain domain = domainController.getDomain();
+		updateDomain(domain);
 		try {
 			domainController.insertOrUpdateAccessPolicy();
-			domainController.createOrganizationalUnits(name);
+			domainController.createOrganizationalUnits(domain);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
-			domainController.removeDomain(name, true);
+			domainController.removeDomain( domain );
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
-	}
-
-	@Override
-	public void beforeBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		DomainController domainController = (DomainController) event.getController();
-		Domain domain = (Domain) event.getController().getTo();
-		domainController.removeDomain(domain.getCommonName(), true);
 	}
 
 	@Override

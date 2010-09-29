@@ -5,11 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.faces.validator.ValidatorException;
 import javax.naming.Context;
 import javax.naming.Name;
 
@@ -17,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BasicManagerBean;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.dao.ldap.LdapDAO;
@@ -28,10 +23,9 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.AccessPolicy;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.enumeration.AccessPolicyType;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class DomainController extends BasicController implements IAonObjectClasses, IManagerConstants {
+public class DomainController extends LdapBasicController implements IAonObjectClasses {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
 	
@@ -40,8 +34,6 @@ public class DomainController extends BasicController implements IAonObjectClass
 	private AccessPolicy accessPolicy;
 	
 	private List<SelectItem> accessPolicies;
-	
-	private BasicManagerBean ldapManagerBean;
 	
 	private String selectedTab;
 	
@@ -52,7 +44,7 @@ public class DomainController extends BasicController implements IAonObjectClass
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}	
-		
+	
 	public int getDomainNameMaxLength() {
 		return DOMAIN_NAME_MAX_LENGTH;
 	}
@@ -68,23 +60,14 @@ public class DomainController extends BasicController implements IAonObjectClass
 	public Domain getDomain() {
 		return (Domain) getTo();
 	}
-
-	public void domainNameCheck(FacesContext context, UIComponent component, Object value) {
-		String domainName = value.toString();
-		if (! domainName.matches("[a-zA-Z][a-zA-Z0-9]*") ) {
-			String summary = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME);
-			throw new ValidatorException( new FacesMessage(summary) );
-		}
+	
+	protected String getInvalidMessage( String name ) {
+		return AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME, name);
 	}
 	
-	@Override
-	public IManagerBean getManagerBean() throws ManagerBeanException {
-		if (this.ldapManagerBean == null) {
-			LdapDAO dao = new LdapDAO(Domain.class);
-			this.ldapManagerBean = new BasicManagerBean(dao);
-		}
-		return this.ldapManagerBean;
-	}
+	protected String getDuplicatedMessage( String name ) {
+		return AonUtil.getMessage(BUNDLE_NAME, DOMAIN_DUPLICATED_NAME, name);
+	}	
 
 	private BasicManagerBean getAccessPolicyManagerBean( String domain ) {
 		LdapDAO dao = new LdapDAO(AccessPolicy.class);
@@ -122,15 +105,15 @@ public class DomainController extends BasicController implements IAonObjectClass
 		}
 	}
 	
-	public void removeDomain( String domain, boolean selftDelete ) {
+	public void removeDomain( Domain domain ) {
 		BasicLdap ldap = null;
 		try {
 			Properties properties = (Properties) BasicLdap.getLdapProperties().clone();
 			properties.put(Context.REFERRAL, "ignore");
 			ldap = new BasicLdap( properties );
-			Name dn = NameResolver.getDomainDN(domain);
+			Name dn = domain.getId();
 			if ( ldap.exists(dn, DOMAIN) ) {
-				ldap.getLdapSession().deleteDepth(dn, selftDelete);	
+				ldap.getLdapSession().deleteDepth(dn, true);	
 			}
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e);
@@ -139,8 +122,9 @@ public class DomainController extends BasicController implements IAonObjectClass
 		}
 	}	
 	
-	public void createOrganizationalUnits( String domainName ) {
+	public void createOrganizationalUnits( Domain domain ) {
 		BasicLdap ldap = new BasicLdap();
+		String domainName = domain.getCommonName();
 		Name applicationsDN = NameResolver.getDomainApplicationsDN(domainName);
 		if (! ldap.exists(applicationsDN, ORGANIZATIONAL_UNIT) ) {
 			ldap.addOrganizationUnit(applicationsDN);
