@@ -20,9 +20,10 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.ILdapConstants;
 
 @EntryObject(mainObjectClass=IAonObjectClasses.DB_CONNECTION, objectClasses={IAonObjectClasses.TOP})
-public class DBConnnection implements ITransferObject, Cloneable {
+public class DBConnnection implements ITransferObject, ILdapConstants, Cloneable {
 
 	private static final long serialVersionUID = -16395756416577198L;
 	
@@ -50,7 +51,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 	}
 	
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -59,7 +60,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		this.commonName = commonName;
 	}
 	
-	@Attribute(name="driverClassName",nullable=false)
+	@Attribute(name=DRIVER_CLASS_NAME_ATTRIBUTE,nullable=false)
 	public String getDriverClassName() {
 		return driverClassName;
 	}
@@ -68,7 +69,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		this.driverClassName = driverClassName;
 	}
 
-	@Attribute(name="labeledURI",nullable=false)
+	@Attribute(name=LABELED_URI_ATTRIBUTE,nullable=false)
 	public String getLabeledURI() {
 		return labeledURI;
 	}
@@ -77,7 +78,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		this.labeledURI = labeledURI;
 	}
 
-	@Attribute(name="uid",length=256,nullable=false)
+	@Attribute(name=USER_ID_ATTRIBUTE,length=256,nullable=false)
 	public String getUid() {
 		return uid;
 	}
@@ -86,7 +87,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		this.uid = uid;
 	}
 	
-	@Attribute(name="userPassword",length=128,nullable=false)
+	@Attribute(name=USER_PASSWORD_ATTRIBUTE,length=128,nullable=false)
 	public byte[] getUserPassword() {
 		return userPassword;
 	}

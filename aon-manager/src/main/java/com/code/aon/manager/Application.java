@@ -16,9 +16,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.ILdapConstants;
 
 @EntryObject(baseDN="ou=applications",mainObjectClass=APPLICATION, objectClasses={TOP})
-public class Application implements ITransferObject {
+public class Application implements ITransferObject, ILdapConstants {
 
 	private static final long serialVersionUID = 8038659081389444525L;
 
@@ -40,7 +41,7 @@ public class Application implements ITransferObject {
 	}
 	
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -49,7 +50,7 @@ public class Application implements ITransferObject {
 		this.commonName = commonName;
 	}
 
-	@Attribute(name="description",length=1024,nullable=false)
+	@Attribute(name=DESCRIPTION_ATTRIBUTE,length=1024,nullable=false)
 	public String getDescription() {
 		return description;
 	}

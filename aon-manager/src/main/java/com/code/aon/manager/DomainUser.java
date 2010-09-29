@@ -23,9 +23,10 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.dao.ldap.util.IPerson;
+import com.code.aon.ldap.ILdapConstants;
 
 @EntryObject(mainObjectClass=USER, objectClasses={TOP, POSIX_ACCOUNT, PERSON, ORGANIZATIONAL_PERSON, INET_ORG_PERSON, AMAVIS_ACCOUNT})
-public class DomainUser implements IPerson {
+public class DomainUser implements IPerson, ILdapConstants {
 
 	private static final long serialVersionUID = -4210439762962373670L;
 
@@ -111,7 +112,7 @@ public class DomainUser implements IPerson {
 	}	
 
 	@RDN
-	@Attribute(name="uid", length=256, nullable=false)
+	@Attribute(name=USER_ID_ATTRIBUTE, length=256, nullable=false)
 	public String getUid() {
 		return uid;
 	}
@@ -120,7 +121,7 @@ public class DomainUser implements IPerson {
 		this.uid = uid;
 	}	
 
-	@Attribute(name="userPassword",length=128)
+	@Attribute(name=USER_PASSWORD_ATTRIBUTE,length=128)
 	public byte[] getPassword() {
 		return password;
 	}
@@ -137,7 +138,7 @@ public class DomainUser implements IPerson {
 		this.password = (value != null) ? value.getBytes() : null;
 	}
 	
-	@Attribute(name="passwordExpirationTimestamp")
+	@Attribute(name=PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE)
 	public Date getPasswordExpirationTimestamp() {
 		return passwordExpirationTimestamp;
 	}
@@ -146,7 +147,7 @@ public class DomainUser implements IPerson {
 		this.passwordExpirationTimestamp = passwordExpirationTimestamp;
 	}
 
-	@Attribute(name="active",nullable=false)
+	@Attribute(name=ACTIVE_ATTRIBUTE,nullable=false)
 	public boolean isActive() {
 		return active;
 	}
@@ -155,7 +156,7 @@ public class DomainUser implements IPerson {
 		this.active = active;
 	}
 	
-	@Attribute(name="gidNumber",nullable=false)
+	@Attribute(name=GROUP_ID_NUMBER_ATTRIBUTE,nullable=false)
 	public Integer getGidNumber() {
 		return gidNumber;
 	}
@@ -164,7 +165,7 @@ public class DomainUser implements IPerson {
 		this.gidNumber = gidNumber;
 	}
 
-	@Attribute(name="uidNumber",nullable=false)
+	@Attribute(name=USER_ID_NUMBER_ATTRIBUTE,nullable=false)
 	public Integer getUidNumber() {
 		return uidNumber;
 	}
@@ -173,7 +174,7 @@ public class DomainUser implements IPerson {
 		this.uidNumber = uidNumber;
 	}
 
-	@Attribute(name="homeDirectory",nullable=false)
+	@Attribute(name=HOME_DIRECTORY_ATTRIBUTE,nullable=false)
 	public String getHomeDirectory() {
 		return homeDirectory;
 	}
@@ -182,7 +183,7 @@ public class DomainUser implements IPerson {
 		this.homeDirectory = homeDirectory;
 	}
 
-	@Attribute(name="displayName")
+	@Attribute(name=DISPLAY_NAME_ATTRIBUTE)
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -191,7 +192,7 @@ public class DomainUser implements IPerson {
 		this.displayName = displayName;
 	}
 
-	@Attribute(name="cn", nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE, nullable=false)
 	public String getName() {
 		return name;
 	}
@@ -200,7 +201,7 @@ public class DomainUser implements IPerson {
 		this.name = name;
 	}
 
-	@Attribute(name="givenName")
+	@Attribute(name=GIVEN_NAME_ATTRIBUTE)
 	public String getOutlookName() {
 		return getName();
 	}
@@ -209,7 +210,7 @@ public class DomainUser implements IPerson {
 		setName(outlookName);
 	}
 
-	@Attribute(name="sn", nullable=false)
+	@Attribute(name=SURNAME_ATTRIBUTE, nullable=false)
 	public String getSurname() {
 		return surname;
 	}
@@ -218,7 +219,7 @@ public class DomainUser implements IPerson {
 		this.surname = surname;
 	}
 
-	@Attribute(name="o")
+	@Attribute(name=ORGANIZATION_NAME_ATTRIBUTE)
 	public String getOrganization() {
 		return organization;
 	}
@@ -236,7 +237,7 @@ public class DomainUser implements IPerson {
 		this.phone = phone;
 	}
 
-	@Attribute(name="mobile")
+	@Attribute(name=MOBILE_ATTRIBUTE)
 	public String getCellularPhone() {
 		return cellularPhone;
 	}
@@ -254,7 +255,7 @@ public class DomainUser implements IPerson {
 		this.fax = fax;
 	}
 
-	@Attribute(name="mail",length=256)
+	@Attribute(name=MAIL_ATTRIBUTE,length=256)
 	public String getEmail() {
 		return email;
 	}
@@ -317,7 +318,7 @@ public class DomainUser implements IPerson {
 		this.state = state;
 	}
 
-	@Attribute(name="businessCategory",length=128)
+	@Attribute(name=BUSINESS_CATEGORY_ATTRIBUTE,length=128)
 	public String getCategory() {
 		return category;
 	}
@@ -380,7 +381,7 @@ public class DomainUser implements IPerson {
 		this.organizationState = organizationState;
 	}
 
-	@Attribute(name="labeledURI")
+	@Attribute(name=LABELED_URI_ATTRIBUTE)
 	public String getWeb() {
 		return web;
 	}

@@ -24,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
 
 /**
@@ -33,7 +34,7 @@ import com.code.aon.ldap.NameResolver;
  *
  */
 @EntryObject(mainObjectClass=DOMAIN_APPLICATION_USER, objectClasses={TOP, GROUP_OF_NAMES})
-public class DomainApplicationUser implements ITransferObject {
+public class DomainApplicationUser implements ITransferObject, ILdapConstants {
 
 	private static final long serialVersionUID = -8564661655482298057L;
 
@@ -65,7 +66,7 @@ public class DomainApplicationUser implements ITransferObject {
 	}
 
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -74,7 +75,7 @@ public class DomainApplicationUser implements ITransferObject {
 		this.commonName = commonName;
 	}	
 	
-	@Attribute(name="description", length=1024)
+	@Attribute(name=DESCRIPTION_ATTRIBUTE, length=1024)
 	public String getDescription() {
 		return description;
 	}
@@ -83,7 +84,7 @@ public class DomainApplicationUser implements ITransferObject {
 		this.description = description;
 	}
 
-	@Attribute(name="o")
+	@Attribute(name=ORGANIZATION_NAME_ATTRIBUTE)
 	public String getOrganizationName() {
 		return organizationName;
 	}
@@ -92,7 +93,7 @@ public class DomainApplicationUser implements ITransferObject {
 		this.organizationName = organizationName;
 	}
 
-	@Attribute(name="ou")
+	@Attribute(name=ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE)
 	public String getOrganizationUnitName() {
 		return organizationUnitName;
 	}
@@ -101,7 +102,7 @@ public class DomainApplicationUser implements ITransferObject {
 		this.organizationUnitName = organizationUnitName;
 	}
 	
-	@Attribute(name="businessCategory",length=128)
+	@Attribute(name=BUSINESS_CATEGORY_ATTRIBUTE,length=128)
 	public String getBusinessCategory() {
 		return businessCategory;
 	}
@@ -110,7 +111,7 @@ public class DomainApplicationUser implements ITransferObject {
 		this.businessCategory = businessCategory;
 	}	
 	
-	@Attribute(name="member", baseClass="javax.naming.ldap.LdapName")
+	@Attribute(name=MEMBER_ATTRIBUTE, baseClass="javax.naming.ldap.LdapName")
 	public List<Name> getProfiles() {
 		return profiles;
 	}

@@ -16,9 +16,10 @@ import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.ILdapConstants;
 
 @EntryObject(baseDN="ou=domains",mainObjectClass=IAonObjectClasses.DOMAIN, objectClasses={IAonObjectClasses.TOP})
-public class Domain implements ITransferObject {
+public class Domain implements ITransferObject, ILdapConstants {
 
 	private static final long serialVersionUID = -4808900608917312113L;
 
@@ -60,7 +61,7 @@ public class Domain implements ITransferObject {
 	}
 	
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -69,7 +70,7 @@ public class Domain implements ITransferObject {
 		this.commonName = commonName;
 	}
 	
-	@Attribute(name="o")
+	@Attribute(name=ORGANIZATION_NAME_ATTRIBUTE)
 	public String getOrganizationName() {
 		return organizationName;
 	}
@@ -78,7 +79,7 @@ public class Domain implements ITransferObject {
 		this.organizationName = organizationName;
 	}
 
-	@Attribute(name="host",length=256)
+	@Attribute(name=HOST_ATTRIBUTE,length=256)
 	public String getHost() {
 		return host;
 	}
@@ -87,7 +88,7 @@ public class Domain implements ITransferObject {
 		this.host = host;
 	}
 
-	@Attribute(name="mail",length=256)
+	@Attribute(name=MAIL_ATTRIBUTE,length=256)
 	public String getMail() {
 		return mail;
 	}
@@ -96,7 +97,7 @@ public class Domain implements ITransferObject {
 		this.mail = mail;
 	}
 
-	@Attribute(name="mobile")
+	@Attribute(name=MOBILE_ATTRIBUTE)
 	public String getMobile() {
 		return mobile;
 	}
@@ -105,7 +106,7 @@ public class Domain implements ITransferObject {
 		this.mobile = mobile;
 	}
 
-	@Attribute(name="dnsManagement")
+	@Attribute(name=DNS_MANAGEMENT_ATTRIBUTE)
 	public Boolean getDnsManagement() {
 		return dnsManagement;
 	}
@@ -114,7 +115,7 @@ public class Domain implements ITransferObject {
 		this.dnsManagement = dnsManagement;
 	}
 
-	@Attribute(name="status")
+	@Attribute(name=STATUS_ATTRIBUTE)
 	public Integer getStatus() {
 		return status;
 	}
@@ -123,7 +124,7 @@ public class Domain implements ITransferObject {
 		this.status = status;
 	}
 
-	@Attribute(name="userManagement")
+	@Attribute(name=USER_MANAGEMENT_ATTRIBUTE)
 	public Boolean getUserManagement() {
 		return userManagement;
 	}
@@ -132,7 +133,7 @@ public class Domain implements ITransferObject {
 		this.userManagement = userManagement;
 	}
 	
-	@Attribute(name="domainManagement")	
+	@Attribute(name=DOMAIN_MANAGEMENT_ATTRIBUTE)	
 	public Boolean getDomainManagement() {
 		return domainManagement;
 	}
@@ -143,7 +144,7 @@ public class Domain implements ITransferObject {
 
 	@Cascade(CascadeType.ALL)
 	@BaseDN("{this}")
-	@Attribute(name="parentDomain")
+	@Attribute(name=PARENT_DOMAIN_ATTRIBUTE)
 	public Domain getParentDomain() {
 		return parentDomain;
 	}

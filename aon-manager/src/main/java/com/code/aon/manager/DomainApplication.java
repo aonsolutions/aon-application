@@ -18,9 +18,10 @@ import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.ILdapConstants;
 
 @EntryObject(mainObjectClass=IAonObjectClasses.DOMAIN_APPLICATION, objectClasses={IAonObjectClasses.TOP})
-public class DomainApplication implements ITransferObject, Cloneable {
+public class DomainApplication implements ITransferObject, ILdapConstants, Cloneable {
 
 	private static final long serialVersionUID = -1729654908005345126L;
 	
@@ -48,7 +49,7 @@ public class DomainApplication implements ITransferObject, Cloneable {
 	}
 	
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -57,7 +58,7 @@ public class DomainApplication implements ITransferObject, Cloneable {
 		this.commonName = commonName;
 	}
 	
-	@Attribute(name="status")
+	@Attribute(name=STATUS_ATTRIBUTE)
 	public Integer getStatus() {
 		return status;
 	}
@@ -68,7 +69,7 @@ public class DomainApplication implements ITransferObject, Cloneable {
 
 	@Cascade(CascadeType.ALL)
 	@BaseDN("ou=bds,{parent}")
-	@Attribute(name="dataSource")
+	@Attribute(name=DATA_SOURCE_ATTRIBUTE)
 	public DBConnnection getDataSource() {
 		return dataSource;
 	}
