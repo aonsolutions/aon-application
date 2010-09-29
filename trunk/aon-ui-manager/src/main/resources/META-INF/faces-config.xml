@@ -347,8 +347,23 @@
 		</managed-property>								
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>DomainUser_commonName</value>
+			<value>DomainUser_name</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{domainUserControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>domainUserControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.event.DomainUserControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>					
 
 	<!-- ************ WORK GROUP ************** -->

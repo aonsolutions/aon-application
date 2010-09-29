@@ -28,8 +28,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.LdapBasicController;
 
-public class DomainApplicationController extends LdapBasicController {
+public class DomainApplicationController extends LdapBasicController implements IManagerConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationController.class);
 	

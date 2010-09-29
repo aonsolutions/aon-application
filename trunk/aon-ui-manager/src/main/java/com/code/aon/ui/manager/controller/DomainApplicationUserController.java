@@ -21,8 +21,9 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.ManagerBeanWrapper;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.LdapBasicController;
 
-public class DomainApplicationUserController extends LdapBasicController {
+public class DomainApplicationUserController extends LdapBasicController implements IManagerConstants {
 	
 	private User user;
 	
