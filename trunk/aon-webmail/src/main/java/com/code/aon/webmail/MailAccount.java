@@ -1,5 +1,8 @@
 package com.code.aon.webmail;
 
+import static com.code.aon.ldap.IAonObjectClasses.MAIL_ACCOUNT;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+
 import javax.naming.Name;
 import javax.persistence.Id;
 
@@ -16,9 +19,8 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
 
-@EntryObject(mainObjectClass=IAonObjectClasses.MAIL_ACCOUNT, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(mainObjectClass=MAIL_ACCOUNT, objectClasses={TOP})
 public class MailAccount implements ILdapTransferObject {
 	
 	public static final String DEFAULT_MAIL_ACCOUNT_NAME = "default";
@@ -84,7 +86,7 @@ public class MailAccount implements ILdapTransferObject {
 	 * @return the name
 	 */
 	@RDN
-	@Attribute(name="cn", length=32768, nullable=false)    
+	@Attribute(name=COMMON_NAME_ATTRIBUTE, length=32768, nullable=false)    
 	public String getName() {
 		return name;
 	}
@@ -101,7 +103,7 @@ public class MailAccount implements ILdapTransferObject {
 	/**
 	 * @return the email
 	 */
-    @Attribute(name="mail", length=256, nullable=false)
+    @Attribute(name=MAIL_ATTRIBUTE, length=256, nullable=false)
 	public String getEmail() {
 		return email;
 	}
@@ -116,7 +118,7 @@ public class MailAccount implements ILdapTransferObject {
 	/**
 	 * @return the host
 	 */
-	@Attribute(name="host", length=256)
+	@Attribute(name=HOST_ATTRIBUTE, length=256)
 	public String getHost() {
 		return host;
 	}
@@ -191,7 +193,7 @@ public class MailAccount implements ILdapTransferObject {
 	/**
 	 * @return the mailUsername
 	 */
-	@Attribute(name="uid",length=256)
+	@Attribute(name=USER_ID_ATTRIBUTE,length=256)
 	public String getMailUsername() {
 		return mailUsername;
 	}
@@ -275,7 +277,7 @@ public class MailAccount implements ILdapTransferObject {
 	/**
 	 * @return the password
 	 */
-	@Attribute(name="userPassword",length=128)
+	@Attribute(name=USER_PASSWORD_ATTRIBUTE,length=128)
 	public byte[] getPassword() {
 		return password;
 	}
@@ -304,7 +306,7 @@ public class MailAccount implements ILdapTransferObject {
 
 	@Cascade(CascadeType.ALL)
 	@BaseDN("ou=signatures,{parent}")
-	@Attribute(name="signatureMember")
+	@Attribute(name=SIGNATURE_MEMBER_ATTRIBUTE)
 	public Signature getSignature() {
 		return signature;
 	}

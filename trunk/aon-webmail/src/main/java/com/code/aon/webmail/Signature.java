@@ -1,11 +1,10 @@
 package com.code.aon.webmail;
 
+import static com.code.aon.ldap.IAonObjectClasses.SIGNATURE;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+
 import javax.naming.Name;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -16,11 +15,8 @@ import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
 
-@Entity
-@Table(name="signature")
-@EntryObject(mainObjectClass=IAonObjectClasses.SIGNATURE, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(mainObjectClass=SIGNATURE, objectClasses={TOP})
 public class Signature implements ILdapTransferObject {
 
 	private static final long serialVersionUID = 714322089783136934L;
@@ -38,8 +34,6 @@ public class Signature implements ILdapTransferObject {
 	 * @return the id
 	 */
 	@Id
-	@GeneratedValue
-	@Column(nullable=false)
 	public Name getId() {
 		return id;
 	}
@@ -70,7 +64,7 @@ public class Signature implements ILdapTransferObject {
 	 * @return the name
 	 */
 	@RDN
-	@Attribute(name="cn", length=32768)    	
+	@Attribute(name=COMMON_NAME_ATTRIBUTE, length=32768)    	
 	public String getName() {
 		return name;
 	}

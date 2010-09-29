@@ -21,13 +21,6 @@ public class WebmailUtil {
 		dao.setBaseDN( baseDN );
 		return dao;
 	}
-	
-	public static LdapDAO getSignatureDAO( String domain, String user ) {
-		LdapDAO dao = new LdapDAO(Signature.class);
-		Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
-		dao.setBaseDN( baseDN );
-		return dao;
-	}
 
     public static MailAccount getDefaultAccount( String domain, String user ) throws ManagerBeanException {
     	return getDefaultAccount(domain, user, false);
