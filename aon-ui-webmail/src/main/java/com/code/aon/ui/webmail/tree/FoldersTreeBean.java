@@ -14,15 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.FolderController;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
 
-public class FoldersTreeBean implements WebMailConstants {
+public class FoldersTreeBean implements IWebMailConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(FoldersTreeBean.class);
 	
@@ -64,7 +64,7 @@ public class FoldersTreeBean implements WebMailConstants {
 	
 	public void loadTree() {
 		WebMailController webMailController = (WebMailController) AonUtil
-				.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
+				.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
 		loadTree( webMailController.getServer() );
 	}
 	
@@ -127,7 +127,7 @@ public class FoldersTreeBean implements WebMailConstants {
 	public void moveMessageToFolder(NodeSelectedEvent event) {
 		UITree tree = (UITree) event.getComponent();
 		AonFolder destinyFolder = (AonFolder) tree.getRowData();
-   		MessageController message = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+   		MessageController message = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
    		message.moveSelectedMessage(destinyFolder);
    		getFolderController().updateModel();
 	}

@@ -30,7 +30,6 @@ import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailException;
@@ -38,7 +37,7 @@ import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonListEmail;
 import com.code.aon.webmail.enumeration.SpamScoreType;
 
-public class SpamController extends BasicLdap implements WebMailConstants {
+public class SpamController extends BasicLdap implements IWebMailConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(SpamController.class);
 	

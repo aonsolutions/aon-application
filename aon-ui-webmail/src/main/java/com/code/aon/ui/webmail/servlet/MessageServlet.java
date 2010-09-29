@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.util.ServleJSFtUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 
 public class MessageServlet extends HttpServlet {
 	
@@ -31,7 +31,7 @@ public class MessageServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, java.io.IOException {
 
-		MessageController messageController = (MessageController) ServleJSFtUtil.getManagedBean( request, response, WebMailConstants.BEAN_MESSAGE );
+		MessageController messageController = (MessageController) ServleJSFtUtil.getManagedBean( request, response, IWebMailConstants.BEAN_MESSAGE );
 		try {	
             response.setContentType( MimeType.MIME_HTML.getName() );
            	response.setCharacterEncoding( CharEncoding.UTF_8 );

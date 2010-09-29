@@ -7,9 +7,9 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MailAccountController;
 import com.code.aon.ui.webmail.controller.SignatureController;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
@@ -40,7 +40,7 @@ public class MailAccountControllerListener extends ControllerAdapter {
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		MailAccount mailAccount = (MailAccount) event.getController().getTo(); 
 		updateSignature( mailAccount );
-		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
+		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
 		if ( mailAccount.getId().equals(wmc.getServer().getAccount().getId()) ) {
 			wmc.getServer().setAccount(mailAccount);
 		}
@@ -48,7 +48,7 @@ public class MailAccountControllerListener extends ControllerAdapter {
 	}
 
 	private void updateSignatureList() throws ControllerListenerException {
-		SignatureController signatureController = (SignatureController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_SIGNATURE);
+		SignatureController signatureController = (SignatureController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE);
 		try {
 			signatureController.updateSignatureList();
 		} catch (ManagerBeanException e) {
@@ -67,7 +67,7 @@ public class MailAccountControllerListener extends ControllerAdapter {
 	
 	private void updateSignature( MailAccount mailAccount ) throws ControllerListenerException {
 		if ( mailAccount.getSignature() != null ) {
-			SignatureController signatureController = (SignatureController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_SIGNATURE);
+			SignatureController signatureController = (SignatureController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE);
 			try {
 				Name id = mailAccount.getSignature().getId();			
 				Signature signature = (Signature) signatureController.getManagerBean().get( id );

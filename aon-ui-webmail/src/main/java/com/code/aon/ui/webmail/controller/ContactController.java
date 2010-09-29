@@ -27,12 +27,11 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.GroupContact;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
-public class ContactController extends BasicController implements WebMailConstants {
+public class ContactController extends BasicController implements IWebMailConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContactController.class);
 
