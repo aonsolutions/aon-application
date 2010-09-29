@@ -16,10 +16,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.ILdapConstants;
 
 /**
  * 
@@ -27,7 +27,7 @@ import com.code.aon.ldap.ILdapConstants;
  * @since 1.0
  *
  */
-public class BasicProfile implements ILdapConstants {
+public class BasicProfile implements ILdapTransferObject {
 
 	/** Security domain identifier. This can be Nominal or Concurrent. */
 	private Name id;

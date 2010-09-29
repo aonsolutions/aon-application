@@ -20,11 +20,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
 
 /**
@@ -34,7 +33,7 @@ import com.code.aon.ldap.NameResolver;
  *
  */
 @EntryObject(mainObjectClass=DOMAIN_APPLICATION_USER, objectClasses={TOP, GROUP_OF_NAMES})
-public class DomainApplicationUser implements ITransferObject, ILdapConstants {
+public class DomainApplicationUser implements ILdapTransferObject {
 
 	private static final long serialVersionUID = -8564661655482298057L;
 

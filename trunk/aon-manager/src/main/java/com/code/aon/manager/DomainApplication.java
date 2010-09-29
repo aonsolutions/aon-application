@@ -1,5 +1,8 @@
 package com.code.aon.manager;
 
+import static com.code.aon.ldap.IAonObjectClasses.DOMAIN_APPLICATION;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+
 import javax.naming.Name;
 import javax.persistence.Id;
 
@@ -11,17 +14,15 @@ import org.hibernate.annotations.CascadeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
 
-@EntryObject(mainObjectClass=IAonObjectClasses.DOMAIN_APPLICATION, objectClasses={IAonObjectClasses.TOP})
-public class DomainApplication implements ITransferObject, ILdapConstants, Cloneable {
+@EntryObject(mainObjectClass=DOMAIN_APPLICATION, objectClasses={TOP})
+public class DomainApplication implements ILdapTransferObject, Cloneable {
 
 	private static final long serialVersionUID = -1729654908005345126L;
 	

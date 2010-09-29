@@ -12,14 +12,13 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.ILdapConstants;
 
 @EntryObject(baseDN="ou=applications",mainObjectClass=APPLICATION, objectClasses={TOP})
-public class Application implements ITransferObject, ILdapConstants {
+public class Application implements ILdapTransferObject {
 
 	private static final long serialVersionUID = 8038659081389444525L;
 

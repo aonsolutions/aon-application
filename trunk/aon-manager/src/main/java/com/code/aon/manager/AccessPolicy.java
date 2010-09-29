@@ -15,11 +15,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.manager.enumeration.AccessPolicyType;
 
 /**
@@ -29,7 +28,7 @@ import com.code.aon.manager.enumeration.AccessPolicyType;
  *
  */
 @EntryObject(mainObjectClass=ACCESS_POLICY, objectClasses={TOP})
-public class AccessPolicy implements ITransferObject, ILdapConstants {
+public class AccessPolicy implements ILdapTransferObject {
 
 	private static final long serialVersionUID = -9075569722189572290L;
 
