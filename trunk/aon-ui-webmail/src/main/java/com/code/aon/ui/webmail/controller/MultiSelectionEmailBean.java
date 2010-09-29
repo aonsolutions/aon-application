@@ -16,7 +16,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
@@ -53,7 +52,7 @@ public class MultiSelectionEmailBean {
 		if ( loadContacts ) {
 	        emails = new ArrayList<SelectionEmail>();
 	    	try{
-				IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
+				IManagerBean bean = FormUtil.getController(IWebMailConstants.BEAN_CONTACT).getManagerBean();
 				Criteria criteria = new Criteria();			
 				String email = bean.getFieldName(IWebMailAlias.CONTACT_EMAIL);
 				String contacts = bean.getFieldName(IWebMailAlias.CONTACT_CONTACTS);

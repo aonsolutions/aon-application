@@ -65,7 +65,6 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonMessageTracer;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.EmailSecurity;
@@ -83,7 +82,7 @@ import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
 
-public class MessageController implements WebMailConstants, BundleConstants {
+public class MessageController implements IWebMailConstants, BundleConstants {
 
 	private static final int MAX_LENGTH_STRING = 120;
 
@@ -1088,7 +1087,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 			if (! StringUtils.isBlank(text) ) {
 				setErrorMessage(null);
 				try {
-					IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
+					IManagerBean bean = FormUtil.getController(IWebMailConstants.BEAN_CONTACT).getManagerBean();
 					Criteria criteria = new Criteria();
 					String displayName = bean.getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME);
 					String email = bean.getFieldName(IWebMailAlias.CONTACT_EMAIL);

@@ -12,13 +12,12 @@ import org.richfaces.model.Ordering;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.MessageDataModel;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonSearcher;
 
-public class SearchController implements IMessageContainer, WebMailConstants {
+public class SearchController implements IMessageContainer, IWebMailConstants {
 
 	private ModifiableModel model;
 	
@@ -104,14 +103,14 @@ public class SearchController implements IMessageContainer, WebMailConstants {
 		sortOrders = new Ordering[]{ Ordering.UNSORTED, Ordering.UNSORTED, Ordering.DESCENDING };
 		setShowResults(false);
 		setMessagesFound(false);
-    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
-    	messageController.setReturnAction(WebMailConstants.NAVIGATION_SEARCH);		
+    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+    	messageController.setReturnAction(IWebMailConstants.NAVIGATION_SEARCH);		
 	}
 	
 	public void searchMessagesCurrentFolder(ActionEvent event) {
 		try {
 			setShowResults(false);
-			FolderController folderController = (FolderController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_FOLDER);
+			FolderController folderController = (FolderController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_FOLDER);
 			AonFolder sourceFolder = folderController.getFolder();
 			AonSearcher as = new AonSearcher();
 			as.setAonFolder(sourceFolder);
@@ -138,8 +137,8 @@ public class SearchController implements IMessageContainer, WebMailConstants {
 	}
 
 	public void onExit(ActionEvent event) {
-		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
-		messageController.setReturnAction(WebMailConstants.NAVIGATION_FOLDER);
+		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+		messageController.setReturnAction(IWebMailConstants.NAVIGATION_FOLDER);
 	}
 	
     public void changeSelectedMessage(ActionEvent event) throws MessagingException {

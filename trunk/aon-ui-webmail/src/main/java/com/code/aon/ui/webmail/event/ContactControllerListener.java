@@ -20,12 +20,12 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.ContactController;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
-public class ContactControllerListener extends ControllerAdapter implements WebMailConstants {
+public class ContactControllerListener extends ControllerAdapter implements IWebMailConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContactControllerListener.class);	
 	

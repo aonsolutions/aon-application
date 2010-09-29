@@ -31,7 +31,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.MailAccount;
@@ -41,7 +40,7 @@ import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
-public class WebMailController implements WebMailConstants, BundleConstants {
+public class WebMailController implements IWebMailConstants, BundleConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(WebMailController.class);
 	

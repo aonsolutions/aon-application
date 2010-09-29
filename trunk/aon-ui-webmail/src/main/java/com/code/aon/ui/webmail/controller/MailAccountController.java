@@ -26,13 +26,12 @@ import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.BundleConstants;
 
-public class MailAccountController extends BasicController implements WebMailConstants {
+public class MailAccountController extends BasicController implements IWebMailConstants {
 
 	private static final String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
 
@@ -107,7 +106,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 	}
 	
 	private void resetFolderController() {
-		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_FOLDER);
+		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_FOLDER);
 		if (folderController.getFolder()!=null){
 			try {
 				folderController.getFolder().getFolder().expunge();
@@ -121,7 +120,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	private void changeMailAccount() {
 		MailAccount previousAccount = null;
-		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
+		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
 		if ( webmail.isLogged() ) {
 			webmail.getServer().disconnect();
 			previousAccount = webmail.getServer().getAccount();			
@@ -140,7 +139,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 		} finally {
 			if ( webmail.isLogged() ) {
 				this.accountId = webmail.getServer().getAccount().getId();	
-		    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(WebMailConstants.BEAN_TREE);
+		    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_TREE);
 		    	treeBean.initTree( webmail.getServer() );		
 			} else {
 				this.accountId = null;

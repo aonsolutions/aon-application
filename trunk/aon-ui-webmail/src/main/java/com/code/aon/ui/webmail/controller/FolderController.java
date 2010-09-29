@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.MessageDataModel;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
@@ -31,7 +30,7 @@ import com.code.aon.webmail.bean.AonMessageSortableList;
 import com.code.aon.webmail.bean.AonServer;
 import com.sun.mail.imap.IMAPFolder;
 
-public class FolderController implements IMessageContainer, WebMailConstants {
+public class FolderController implements IMessageContainer, IWebMailConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(FolderController.class);
 	
