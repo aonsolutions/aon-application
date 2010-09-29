@@ -1,5 +1,8 @@
 package com.code.aon.webmail;
 
+import static com.code.aon.ldap.IAonObjectClasses.CONTACT;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,9 +20,8 @@ import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.dao.ldap.util.IPerson;
-import com.code.aon.ldap.IAonObjectClasses;
 
-@EntryObject(mainObjectClass=IAonObjectClasses.CONTACT, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(mainObjectClass=CONTACT, objectClasses={TOP})
 public class Contact implements IPerson {
 
 	private static final long serialVersionUID = 7825997921660369372L;
@@ -90,7 +92,7 @@ public class Contact implements IPerson {
 	}
 	
 	@RDN
-	@Attribute(name="displayName", nullable=false)
+	@Attribute(name=DISPLAY_NAME_ATTRIBUTE, nullable=false)
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -99,7 +101,7 @@ public class Contact implements IPerson {
 		this.displayName = displayName;
 	}
 
-	@Attribute(name="cn")
+	@Attribute(name=COMMON_NAME_ATTRIBUTE)
 	public String getName() {
 		return name;
 	}
@@ -108,7 +110,7 @@ public class Contact implements IPerson {
 		this.name = name;
 	}
 
-	@Attribute(name="givenName")
+	@Attribute(name=GIVEN_NAME_ATTRIBUTE)
 	public String getOutlookName() {
 		return outlookName;
 	}
@@ -117,7 +119,7 @@ public class Contact implements IPerson {
 		this.outlookName = outlookName;
 	}
 
-	@Attribute(name="sn")
+	@Attribute(name=SURNAME_ATTRIBUTE)
 	public String getSurname() {
 		return surname;
 	}
@@ -126,7 +128,7 @@ public class Contact implements IPerson {
 		this.surname = surname;
 	}
 
-	@Attribute(name="o")
+	@Attribute(name=ORGANIZATION_NAME_ATTRIBUTE)
 	public String getOrganization() {
 		return organization;
 	}
@@ -144,7 +146,7 @@ public class Contact implements IPerson {
 		this.phone = phone;
 	}
 
-	@Attribute(name="mobile")
+	@Attribute(name=MOBILE_ATTRIBUTE)
 	public String getCellularPhone() {
 		return cellularPhone;
 	}
@@ -162,7 +164,7 @@ public class Contact implements IPerson {
 		this.fax = fax;
 	}
 
-	@Attribute(name="mail",length=256)
+	@Attribute(name=MAIL_ATTRIBUTE,length=256)
 	public String getEmail() {
 		return email;
 	}
@@ -225,7 +227,7 @@ public class Contact implements IPerson {
 		this.state = state;
 	}
 
-	@Attribute(name="businessCategory",length=128)
+	@Attribute(name=BUSINESS_CATEGORY_ATTRIBUTE,length=128)
 	public String getCategory() {
 		return category;
 	}
@@ -288,7 +290,7 @@ public class Contact implements IPerson {
 		this.organizationState = organizationState;
 	}
 
-	@Attribute(name="labeledURI")
+	@Attribute(name=LABELED_URI_ATTRIBUTE)
 	public String getWeb() {
 		return web;
 	}
@@ -325,7 +327,7 @@ public class Contact implements IPerson {
 	}
 		
 	@BaseDN("{this}")	
-	@Attribute(name="member",baseClass="com.code.aon.webmail.GroupContact")
+	@Attribute(name=MEMBER_ATTRIBUTE,baseClass="com.code.aon.webmail.GroupContact")
 	public List<GroupContact> getContacts() {
 		return contacts;
 	}

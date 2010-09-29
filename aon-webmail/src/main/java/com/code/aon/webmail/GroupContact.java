@@ -1,5 +1,8 @@
 package com.code.aon.webmail;
 
+import static com.code.aon.ldap.IAonObjectClasses.CONTACT;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+
 import javax.naming.Name;
 import javax.persistence.Id;
 
@@ -13,9 +16,8 @@ import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
 
-@EntryObject(mainObjectClass=IAonObjectClasses.CONTACT, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(mainObjectClass=CONTACT, objectClasses={TOP})
 public class GroupContact implements ILdapTransferObject {
 
 	private static final long serialVersionUID = 2735479153538882108L;
@@ -36,7 +38,7 @@ public class GroupContact implements ILdapTransferObject {
 	}
 	
 	@RDN
-	@Attribute(name="displayName")
+	@Attribute(name=DISPLAY_NAME_ATTRIBUTE)
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -45,7 +47,7 @@ public class GroupContact implements ILdapTransferObject {
 		this.displayName = displayName;
 	}
 
-	@Attribute(name="mail",length=64)
+	@Attribute(name=MAIL_ATTRIBUTE,length=64)
 	public String getEmail() {
 		return email;
 	}
