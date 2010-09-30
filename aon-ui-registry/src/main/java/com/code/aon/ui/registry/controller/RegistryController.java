@@ -18,7 +18,7 @@ import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 
 /**
@@ -45,7 +45,7 @@ public class RegistryController extends BasicController {
 
 	public void onSendEmail(ActionEvent event) {
 		MessageController messageController = (MessageController) AonUtil
-				.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+				.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
 		FacesContext context = FacesContext.getCurrentInstance();
 		Object email = context.getExternalContext().getRequestParameterMap().get("email");
