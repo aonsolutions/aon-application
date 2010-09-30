@@ -1,0 +1,25 @@
+<?xml encoding="UTF-8"?>
+
+<!ELEMENT bean-config (bean+)>
+<!ELEMENT bean (pojo,dao?,listeners?,vetoListeners?)>
+<!ELEMENT pojo (#PCDATA)>
+<!ELEMENT dao (dao-factory,dao-method)>
+<!ELEMENT dao-factory (#PCDATA)>
+<!ELEMENT dao-method (#PCDATA)>
+<!ELEMENT listeners (listener+)>
+<!ELEMENT listener (#PCDATA)>
+<!ELEMENT vetoListeners (vetoListener+)>
+<!ELEMENT vetoListener (#PCDATA)>
+
+<!ATTLIST bean-config xmlns CDATA #FIXED ''>
+<!ATTLIST bean xmlns CDATA #FIXED ''
+  description CDATA #REQUIRED>
+<!ATTLIST bean xmlns CDATA #FIXED ''>
+<!ATTLIST pojo xmlns CDATA #FIXED ''>
+<!ATTLIST dao xmlns CDATA #FIXED ''>
+<!ATTLIST dao-factory xmlns CDATA #FIXED ''>
+<!ATTLIST dao-method xmlns CDATA #FIXED ''>
+<!ATTLIST listeners xmlns CDATA #FIXED ''>
+<!ATTLIST listener xmlns CDATA #FIXED ''>
+<!ATTLIST vetoListeners xmlns CDATA #FIXED ''>
+<!ATTLIST vetoListener xmlns CDATA #FIXED ''>

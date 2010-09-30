@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="smsForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{smsBundle.sms_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<c:if test="#{sms.showToolbar}" >
+						<aon:commandButton id="sendSMS" value="#{smsBundle.sms_send}"
+							disabled="#{!sms.allowSending}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{smsManager.sendMessage}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')"							
+							accesskey="#{bundle.aon_key_save}" />
+					</c:if>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2"  style="border:0;width:auto;"
+						columnClasses="aon-vertical-align-top, aon-vertical-align-top">
+					<aon:div id="smsSender" >
+						<c:if test="#{sms.showDemoMessage}">
+							<aon:div rendered="#{smsManager.demoMode}" styleClass="aon-text-center aon-margin-bottom">
+								<aon:outputText value="#{smsManager.demoMessage}" 
+									style="color:#e55302 !important;" styleClass="aon-bold" /> 							
+							</aon:div>
+						</c:if>
+						<aon:panelGrid columns="2">
+							<aon:outputLabel for="SMS_originator" value="#{smsBundle.sms_from}" />
+							<aon:inputText id="SMS_originator" size="40" maxlength="11" value="#{sms.message.info.originator}" />
+		
+							<aon:outputLabel for="SMS_message" value="#{smsBundle.sms_message}" />
+							<a4j:region>
+								<aon:div>
+									<aon:inputTextarea id="SMS_message" value="#{sms.message.info.message}"
+										cols="80" rows="4" required="true" />
+										<a4j:support event="onkeyup" reRender="characterCount"
+											eventsQueue="smsCharacterCount"
+											requestDelay="500" ignoreDupResponses="true" />										
+									<aon:div id="characterCount" styleClass="#{(sms.characterCount &gt; 160)?'aon-message-error':''}">
+										<aon:outputText value="#{sms.characterCountMessage}" />
+									</aon:div>
+								</aon:div>
+							</a4j:region>
+
+							<aon:outputLabel for="SMS_recipient" value="#{smsBundle.sms_recipients}" />
+							<a4j:region>
+								<aon:div style="height: 240px;overflow: auto;">
+									<c:if test="#{sms.allowUpdateRecipients}">								
+										<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{sms.recipient}" >
+											<f:validateLength maximum="13" />
+											<f:validateLongRange maximum="0099999999999" />
+										</aon:inputText>
+										<aon:commandButton id="add2List" value="#{smsBundle.sms_add2list}" title="#{smsBundle.sms_add2list}"
+											styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
+											actionListener="#{sms.add2List}"
+											reRender="SMS_recipient, recipientList"
+											accesskey="#{bundle.aon_key_save}" />										
+										<aon:commandButton id="findContact" value="#{smsBundle.sms_find_contacts}" title="#{smsBundle.sms_find_contacts}"
+											reRender="showWindow" immediate="true"
+											styleClass="aon-commandButton  aon-icon-search aon-icon-button"
+											actionListener="#{sms.openContacts}" />
+									</c:if>									
+									<aon:div styleClass="aon-dataList-scroll">
+										<rich:dataList id="recipientList" var="recipient" value="#{sms.recipients}"
+												style="margin-left:1.1em;" rowKeyVar="row" >
+					           				<aon:outputText value="#{recipient}"/>
+					           				<c:if test="#{sms.allowUpdateRecipients}">
+												<a4j:commandButton id="removeFromList" value="" 
+													title="#{smsBundle.sms_removeFromlist}"
+													styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"													
+													reRender="SMS_recipient, recipientList"
+													accesskey="#{bundle.aon_key_save}" >
+										            <a4j:actionparam name="selected"
+										            	value="#{row}" assignTo="#{sms.selected}"
+										            	actionListener="#{sms.removeFromList}" />
+												</a4j:commandButton>
+											</c:if>
+								        </rich:dataList>
+							        </aon:div>
+								</aon:div>
+							</a4j:region>
+
+						</aon:panelGrid>
+					</aon:div>
+
+					<aon:div style="margin-left:1em;">
+						<aon:panel id="smsSummary">
+							<f:facet name="header">
+								<aon:outputText value="#{smsBundle.sms_summary}" />
+							</f:facet>
+							
+							<a4j:region>
+								<aon:div styleClass="aon-toolbar" >
+									<aon:outputLabel styleClass="aon-bold" value="#{bundle.aon_year}" />
+									<aon:inputText id="Summary_Year" value="#{sms.year}" size="2"
+											styleClass="aon-margin-left">
+										<f:validateLength maximum="4" />
+										<f:validateLongRange minimum="2000" maximum="2999" />
+									</aon:inputText>
+	
+									<aon:outputLabel styleClass="aon-bold aon-margin-left" value="#{bundle.aon_month}" />
+									<aon:selectOneMenu id="Summary_Month" value="#{sms.month}" 
+											styleClass="aon-margin-left aon-form-selectOneMenu-field">
+										<f:selectItems value="#{commonCollections.months}" />
+									</aon:selectOneMenu>
+	
+									<aon:commandButton id="Summary" value="" title="#{smsBundle.sms_filter}"
+										reRender="smsSummary"
+										styleClass="aon-margin-left aon-icon-commandButton aon-icon-advanced-search"
+										actionListener="#{sms.summary}"
+										accesskey="#{bundle.aon_key_save}" />
+								</aon:div>
+							</a4j:region>
+
+							<aon:panelGrid columns="2" width="100%;">
+								<aon:outputLabel value="#{smsBundle.sms_user_messages}:" />
+								<aon:outputText value="#{sms.userTotalSentMessages}" />
+
+								<aon:outputLabel value="#{smsBundle.sms_company_messages}:" />
+								<aon:outputText value="#{sms.companyTotalSentMessages}" />
+
+								<aon:outputLabel value="#{smsBundle.sms_unit_price}:" />
+								<aon:panelGroup>
+									<aon:outputText value="#{sms.companyMessageUnitPrice}" >
+											<f:convertNumber maxFractionDigits="2"/>
+									</aon:outputText>
+									<aon:outputLabel value=" #{smsBundle.sms_tarif}" />
+								</aon:panelGroup>
+
+								<aon:outputLabel value="#{smsBundle.sms_total_month}:" />
+								<aon:panelGroup>
+									<aon:outputText value="#{sms.companyTotalConsume}" >
+										<f:convertNumber maxFractionDigits="2"/>
+									</aon:outputText>
+									<aon:outputLabel value=" #{smsBundle.sms_tarif}" />
+								</aon:panelGroup>
+							</aon:panelGrid>
+						</aon:panel>
+						
+						<aon:panel>
+							
+							<f:facet name="header">
+								<aon:outputText value="#{smsBundle.sms_pricelist}" />
+							</f:facet>
+						
+							<aon:dataTable id="priceDataList" value="#{sms.priceList}" var="to">
+			
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{smsBundle.sms_messages_number}" />
+									</f:facet>
+									<aon:outputText value="#{to.filter} #{to.number}"/>
+								</aon:column>
+			
+			 					<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{smsBundle.sms_unit_price}" />
+									</f:facet>
+									<aon:outputText value="" rendered="#{to.price == 0}" />
+									<aon:outputText value="#{to.price}" rendered="#{to.price > 0}" >
+										<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+									</aon:outputText>
+									<aon:outputText value=" #{to.currency}" />
+								</aon:column>
+		 
+							</aon:dataTable>
+						</aon:panel>
+						
+					</aon:div>
+				</aon:panelGrid>
+				<aon:div>
+					<aon:selectBooleanCheckbox id="priceInfo" value="#{sms.allowSending}" reRender="sendSMS" />
+					<aon:outputText value="#{smsBundle.sms_priceinfo}" />
+				</aon:div>
+			</aon:div>
+   		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<c:if test="#{sms.allowUpdateRecipients}">
+			<ui:include src="/com/code/aon/ui/messaging/facelet/sms/contacts.xhtml" />
+		</c:if>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

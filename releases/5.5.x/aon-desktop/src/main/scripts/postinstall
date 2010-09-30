@@ -1,0 +1,23 @@
+#!/bin/sh
+
+. aondir-functions
+
+APP=aon-desktop
+
+if ! aondir_has_app $APP; then
+
+        aondir-addapp $APP &>/dev/null
+
+        aondir-addrole User $APP &>/dev/null
+        aondir-addrole Manager $APP &>/dev/null
+        aondir-addrole FAXSender $APP &>/dev/null
+        aondir-addrole SMSSender $APP &>/dev/null
+        aondir-addrole DocumentsVisible $APP &>/dev/null
+        aondir-addrole CorporativeDocumentsManager $APP &>/dev/null
+        aondir-addrole PredefinedDocumentsExecutable $APP &>/dev/null
+
+        aondir-addprofile Administrador $APP &>/dev/null
+        aondir-addprofile User $APP User DocumentsVisible &>/dev/null
+
+fi
+

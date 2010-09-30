@@ -1,0 +1,23 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="show_sql">false</property>
+
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+
+		<!-- Mapping files -->
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+
+	</session-factory>
+
+</hibernate-configuration>

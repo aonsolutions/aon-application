@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:form id="userNotExists">
+
+		<aon:panelGroup id="userNotExistsWindow"
+			styleClass="aon-popupWindow">
+
+			<rich:modalPanel id="userNotExistsModalPanel"
+				rendered="#{securityUser.showUserNotExistsWindow}"
+				showWhenRendered="true" minWidth="400" width="400" height="120">
+
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{appBundle.aon_application_title}" />
+					</aon:div>
+				</f:facet>
+
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div styleClass="aon-popupWindow-content-internal">
+
+						<aon:div styleClass="aon-message-big aon-icon-big-info">
+							<aon:outputText value="#{appBundle.user_user_not_exist}" />
+						</aon:div>
+
+						<aon:div styleClass="aon-text-center">
+							<aon:commandButton value="#{bundle.aon_close}"
+								actionListener="#{user.cancel}"
+								action="user_list"
+								styleClass="aon-commandButton">
+								<f:setPropertyActionListener
+									target="#{securityUser.showUserNotExistsWindow}"
+									value="#{false}" />
+								<rich:componentControl for="userNotExistsModalPanel"
+									event="onclick" disableDefault="true" operation="hide" />
+							</aon:commandButton>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+
+			</rich:modalPanel>
+		</aon:panelGroup>
+
+	</aon:form>
+
+</ui:composition>
