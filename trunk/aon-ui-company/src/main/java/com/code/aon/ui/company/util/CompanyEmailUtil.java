@@ -37,7 +37,7 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
@@ -80,7 +80,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 				Address from = new InternetAddress( mailAccount.getEmail(), getCompany().getName() );
 				this.sender = new EmailSender( from, mailAccount );							
 			} else {
-				String text = AonUtil.getMessage(WebMailConstants.BUNDLE_NAME, WebMailConstants.NOT_MAIL_ACCOUNT); 
+				String text = AonUtil.getMessage(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, user.getShortName() );
 				throw new AbortProcessingException( message );
 			}
