@@ -21,24 +21,20 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.IConfidentialable;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 
-/**
- * Entity class for representing an account.
- * 
- * @author Consulting & Development. ecastellano - 22/01/2007
- * 
- */
 @Entity
 @Table(name = "amortization")
-public class Amortization implements ITransferObject {
+public class Amortization implements ITransferObject,IConfidentialable {
 
 	private static final long serialVersionUID = 7370145682918674752L;
 
@@ -55,6 +51,7 @@ public class Amortization implements ITransferObject {
     private Account accumulatedAccount;
     private Account allocationAccount;
     private double percentage;
+    private SecurityLevel securityLevel;
 	
 	private List<AmortizationDetail> details;
 	
@@ -196,6 +193,25 @@ public class Amortization implements ITransferObject {
 		this.percentage = percentage;
 	}
 
+    @Column(name = "security_level")
+    public SecurityLevel getSecurityLevel() {
+        return securityLevel;
+    }
+    public void setSecurityLevel(SecurityLevel securityLevel) {
+        this.securityLevel = securityLevel;
+    }
+    
+	@Transient
+	@Override
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+	@Transient
+	@Override
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}
+
 	@Transient
     public int getYears() {
 		if (percentage!= 0) {
@@ -275,6 +291,15 @@ public class Amortization implements ITransferObject {
 			.append(this.getAmount(), o.getAmount())
 			.append(this.getDescription(), o.getDescription())
 			.append(this.getInitialDate(), o.getInitialDate())
+			.append(this.getDeadline(), o.getDeadline())
+			.append(this.getFeePeriod(), o.getFeePeriod())
+			.append(this.getSaleAmount(), o.getSaleAmount())
+			.append(this.getComments(), o.getComments())
+			.append(this.getFixedAssetAccount(), o.getFixedAssetAccount())
+			.append(this.getAccumulatedAccount(), o.getAccumulatedAccount())
+			.append(this.getAllocationAccount(), o.getAllocationAccount())
+			.append(this.getPercentage(), o.getPercentage())
+			.append(this.getSecurityLevel(), o.getSecurityLevel())
 			.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());
@@ -288,16 +313,21 @@ public class Amortization implements ITransferObject {
 			.append(this.getAmount())
 			.append(this.getDescription())
 			.append(this.getInitialDate())
+			.append(this.getDeadline())
+			.append(this.getFeePeriod())
+			.append(this.getSaleAmount())
+			.append(this.getComments())
+			.append(this.getFixedAssetAccount())
+			.append(this.getAccumulatedAccount())
+			.append(this.getAllocationAccount())
+			.append(this.getPercentage())
+			.append(this.getSecurityLevel())
 			.toHashCode();
 	}
 	
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this)
-		.append("id",this.getId())
-		.append("description",this.getDescription())
-		.append("amortizationType",this.getAmortizationType())
-		.append("initialDate",this.getInitialDate()).toString();
+		return new PojoToStringBuilder(this).toString();
 	}
 
 }

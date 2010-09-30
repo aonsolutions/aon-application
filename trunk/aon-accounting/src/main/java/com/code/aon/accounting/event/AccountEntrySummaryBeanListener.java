@@ -32,7 +32,7 @@ public class AccountEntrySummaryBeanListener extends ManagerBeanListenerAdapter 
     @SuppressWarnings("unchecked")
     public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
         AccountEntry accountEntry = (AccountEntry)evt.getTo();
-		if (accountEntry.isDateDirty()) {
+		if (accountEntry.mustRegenerateSummaryOnUpdate()) {
 	        IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 	        Criteria criteria = new Criteria();
 	        criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());

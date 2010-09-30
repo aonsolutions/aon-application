@@ -5,6 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -79,13 +80,23 @@
 							value="#{accountingBundle.accounting_balance_sheet_show_accounts}" />
 					</aon:div>
 
-					<aon:outputLabel for="balanceSheet_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu id="balanceSheet_securityLevel"
-						value="#{balanceSheet.parameters.securityLevel}">
-						<f:selectItem itemValue="" itemLabel=" " />
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Show_Previous_Period"
+							value="#{balanceSheet.parameters.previousPeriodVisible}"/>
+						<aon:outputLabel for="Show_Previous_Period"
+							value="#{accountingBundle.accounting_show_previous_period}" />
+					</aon:div>
+
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel for="balanceSheet_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneRadio id="balanceSheet_securityLevel"
+							value="#{balanceSheet.parameters.securityLevel}">
+							<f:selectItems value="#{commonCollections.confidentialValues}" />
+							<f:selectItem itemValue="" itemLabel="#{bundle.aon_all}" />
+						</aon:selectOneRadio>
+					</c:if>
 
 					<aon:outputText value="&#160;" />
 

@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -29,6 +30,17 @@
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Amortization_description" size="50"
 						valueChangeListener="#{amortization.addExpression}" />
+
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel for="Amortization_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneRadio id="Amortization_securityLevel"
+							converter="aon.EnumConverter"
+							valueChangeListener="#{amortization.addEqualExpression}">
+							<f:selectItems value="#{commonCollections.confidentialValues}" />
+							<f:selectItem value="#{null}" itemLabel="#{bundle.aon_all}"/>
+						</aon:selectOneRadio>
+					</c:if>
 
 					<aon:outputLabel for="Amortization_comment"
 						value="#{bundle.aon_comment}" />

@@ -73,6 +73,19 @@
 							value="#{fbatch.to.id}"
 							disabled="true" size="10" />
 
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:selectBooleanCheckbox id="FinanceBatch_securityLevel"
+							    styleClass="aon-margin-left"
+								value="#{fbatch.to.confidential}"
+								rendered="#{fbatch.new}" />
+							<aon:outputText styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_confidential}"
+								rendered="#{fbatch.new}" />
+							<aon:outputText styleClass="aon-margin-left aon-icon aon-icon-confidential" 
+								value="&#160;" title="#{bundle.aon_confidential}"
+								rendered="#{!fbatch.new and fbatch.to.confidential}" />
+						</c:if>
+
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{fbatch.to.financeBatchStatus}" />
 						<c:if test="#{aonRole.accountingOperator and fbatch.recorded}">

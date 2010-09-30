@@ -383,6 +383,12 @@ public interface IAccountingAlias {
 	*/
 	String  AMORTIZATION_SALE_AMOUNT = AMORTIZATION_ENTRY.getAliasNames()[12];
 
+	/** 
+	* Alias value: Amortization_securityLevel
+	* Hibernate value: Amortization.securityLevel
+	*/
+	String  AMORTIZATION_SECURITY_LEVEL = AMORTIZATION_ENTRY.getAliasNames()[13];
+
 
 
 	/** 

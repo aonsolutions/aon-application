@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"	
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -66,14 +67,16 @@
 					<aon:inputText id="Account_id" value="#{ledgerReport.account}"
 						size="14" />
 					
- 					<aon:outputLabel
-						for="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu value="#{ledgerReport.securityLevel}" 
-						id="AccountEntryDetail_accountEntry_securityLevel">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					<c:if test="#{aonRole.confidentiality}">
+	 					<aon:outputLabel
+							for="AccountEntryDetail_accountEntry_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneRadio value="#{ledgerReport.securityLevel}" 
+							id="AccountEntryDetail_accountEntry_securityLevel">
+							<f:selectItems value="#{commonCollections.confidentialValues}" />
+							<f:selectItem itemValue="" itemLabel="#{bundle.aon_all} " />
+						</aon:selectOneRadio>
+					</c:if>
 					
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_order"

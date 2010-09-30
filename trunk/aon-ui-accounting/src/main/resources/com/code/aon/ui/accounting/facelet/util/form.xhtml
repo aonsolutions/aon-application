@@ -33,7 +33,8 @@
 			</ui:decorate>
 			
 		<aon:div>
-			<aon:panelGrid columns="2" style="width:90%; margin:10px auto;">
+			<aon:panelGrid columns="2" style="width:90%; margin:10px auto;"
+				columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
@@ -44,14 +45,16 @@
 						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 					</aon:selectOneMenu>
 					
-					<aon:outputLabel
-						for="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu
-						id="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{accountRegenerator.securityLevel}">
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel
+							for="AccountEntryDetail_accountEntry_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneMenu
+							id="AccountEntryDetail_accountEntry_securityLevel"
+							value="#{accountRegenerator.securityLevel}">
+							<f:selectItems value="#{commonCollections.confidentialValues}" />
+						</aon:selectOneMenu>
+					</c:if>
 	
 				<aon:outputText value="&#160;" />
 				<aon:outputText value="&#160;" />
@@ -59,20 +62,29 @@
 				<aon:outputText value="Procesos" />
 				<aon:div>
 					<aon:div>
-						<aon:selectBooleanCheckbox value="#{accountRegenerator.summary}" />
-						<aon:outputText value="#{accountingBundle.accounting_regenerate_summary_module}" />
-					</aon:div>
-					<aon:div>
 						<aon:selectBooleanCheckbox value="#{accountRegenerator.journal}" />
 						<aon:outputText value="#{accountingBundle.accounting_regenerate_journal_counter_module}" />
+					</aon:div>
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{accountRegenerator.summary}" />
+						<aon:outputText value="#{accountingBundle.accounting_regenerate_summary_module}" />
 					</aon:div>
 					<aon:div>
 						<aon:selectBooleanCheckbox value="#{accountRegenerator.helper}" />
 						<aon:outputText value="#{accountingBundle.accounting_regenerate_helper_module}" />
 					</aon:div>
-					<aon:div>
-						<aon:selectBooleanCheckbox value="#{accountRegenerator.vat}" />
-						<aon:outputText value="#{accountingBundle.accounting_regenerate_vat_module}" />
+				</aon:div>
+
+				<aon:outputText value="&#160;" />
+				<aon:div id="vatContainer">
+					<aon:selectBooleanCheckbox value="#{accountRegenerator.vat}">
+						<a4j:support event="onchange" reRender="vatContainer"/>
+					</aon:selectBooleanCheckbox>
+					<aon:outputText value="#{accountingBundle.accounting_regenerate_vat_module}" />
+					<aon:div rendered="#{accountRegenerator.vat}">
+						<aon:outputText 
+							value="#{accountingBundle.accounting_regenerate_vat_warning}"
+							style="color:red;"/>					
 					</aon:div>
 				</aon:div>
 			</aon:panelGrid>

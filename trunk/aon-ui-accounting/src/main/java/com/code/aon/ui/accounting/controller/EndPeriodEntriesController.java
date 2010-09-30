@@ -295,7 +295,7 @@ public class EndPeriodEntriesController {
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
 				this.navigationKey = "accountEntry_form";
-				List list = getUnbalancedAccounts(getPeriod(), AccountEntryType.CLOSING);
+				List list = getUnbalancedAccounts(getPeriod(), AccountEntryType.CLOSING, getSecurityLevel());
 				AccountEntry entry = saveClosingEntry(list);
 
 				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
@@ -380,7 +380,7 @@ public class EndPeriodEntriesController {
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
 				this.navigationKey = "accountEntry_form";
-				List list = getUnbalancedAccounts(getPeriod(), AccountEntryType.OPERATING);
+				List list = getUnbalancedAccounts(getPeriod(), AccountEntryType.OPERATING,getSecurityLevel());
 				AccountEntry entry = saveOperatingEntry(list);
 
 				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
@@ -496,7 +496,7 @@ public class EndPeriodEntriesController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List getUnbalancedAccounts(Period period, AccountEntryType accountEntryType) {
+	private List getUnbalancedAccounts(Period period, AccountEntryType accountEntryType, SecurityLevel securityLevel) {
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		Session session = HibernateUtil.getSession(sessionName);
 		StringWriter sw = new StringWriter();
@@ -506,6 +506,12 @@ public class EndPeriodEntriesController {
 		if (accountEntryType == AccountEntryType.OPERATING) {
 			sw.append(" AND (account.id LIKE '6%' OR account.id LIKE '7%')");
 		}
+		if (securityLevel == null) {
+			securityLevel = SecurityLevel.OFFICIAL;
+		}
+		sw.append(" AND securityLevel =");
+		sw.append(Integer.toString(securityLevel.ordinal()));
+		
 		sw.append(" GROUP BY account.id HAVING SUM(debit) != SUM(credit)");
 		Query query = session.createQuery(sw.toString());
 		return query.list();

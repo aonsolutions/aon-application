@@ -232,7 +232,11 @@ public class AccountingCollectionsController {
 			AccountEntryType[] aeTypes = AccountEntryType.values();
 			for (int i = 0; i < aeTypes.length; i++) {
 				AccountEntryType type = aeTypes[i];
-				if (type != AccountEntryType.LEASING_FEE && type != AccountEntryType.LEASING) {
+				if (type != AccountEntryType.LEASING_FEE && type != AccountEntryType.LEASING
+					// STOCK_VARIATION no se usa.
+					&& type != AccountEntryType.STOCK_VARIATION 
+					// INVESTMENT_INVOICE no se usa.
+					&& type != AccountEntryType.INVESTMENT_INVOICE ) {
 					String name = type.getName(locale);
 					SelectItem item = new SelectItem(type, name);
 					accountEntryTypes.add(item);	

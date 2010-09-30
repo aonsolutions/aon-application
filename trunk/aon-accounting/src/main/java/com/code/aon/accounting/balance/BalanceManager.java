@@ -97,8 +97,11 @@ public class BalanceManager {
 
 	private void resolveTable(SummaryProviderParameters parameters,Balance balance) throws ManagerBeanException {
 		try {
-			SummaryProviderParameters previous = parameters.clone();
-			changeParameters(previous);
+			SummaryProviderParameters previous = null;
+			if (parameters.isPreviousPeriodVisible()) {
+				previous = parameters.clone();
+				changeParameters(previous);
+			}
 			for (BalanceItem item: list) {
 				if (!item.isResolved()) {
 					resolveItem(item,parameters,previous);
@@ -189,21 +192,29 @@ public class BalanceManager {
 		Double pPreviousAmount = new Double(0.0);
 		if (positiveExp.length() > 0) {
 			parameters.setAccountExpression(positiveExp.toString());
-			previous.setAccountExpression(positiveExp.toString());
+			if (parameters.isPreviousPeriodVisible()) {
+				previous.setAccountExpression(positiveExp.toString());	
+			}
 			pAmount = getAccountsAmount(parameters,bd.isCreditNature());
-			pPreviousAmount = getAccountsAmount(previous,bd.isCreditNature());
+			if (parameters.isPreviousPeriodVisible()) {
+				pPreviousAmount = getAccountsAmount(previous,bd.isCreditNature());
+			}
 		}
 		if ( conditionalPositiveExp.size() > 0 ) {
 			for (String exp: conditionalPositiveExp ) {
 				parameters.setAccountExpression(exp);
-				previous.setAccountExpression(exp);
+				if (parameters.isPreviousPeriodVisible()) {
+					previous.setAccountExpression(exp);
+				}
 				Double a = getAccountsAmount(parameters,bd.isCreditNature());
 				if (bd.isCreditNature() && a > 0 ) {
 					pAmount = CommonUtil.round(pAmount + a);
 				}
-				Double p = getAccountsAmount(previous,bd.isCreditNature());
-				if (bd.isCreditNature() && p > 0 ) { 
-					pPreviousAmount = CommonUtil.round(pPreviousAmount + p);
+				if (parameters.isPreviousPeriodVisible()) {
+					Double p = getAccountsAmount(previous,bd.isCreditNature());
+					if (bd.isCreditNature() && p > 0 ) { 
+						pPreviousAmount = CommonUtil.round(pPreviousAmount + p);
+					}
 				}
 			}
 		}
@@ -211,21 +222,29 @@ public class BalanceManager {
 		Double nPreviousAmount = new Double(0.0);
 		if (negativeExp.length() > 0) {
 			parameters.setAccountExpression(negativeExp.toString());
-			previous.setAccountExpression(negativeExp.toString());
+			if (parameters.isPreviousPeriodVisible()) {
+				previous.setAccountExpression(negativeExp.toString());
+			}
 			nAmount = getAccountsAmount(parameters,!bd.isCreditNature());
-			nPreviousAmount = getAccountsAmount(previous,!bd.isCreditNature());
+			if (parameters.isPreviousPeriodVisible()) {
+				nPreviousAmount = getAccountsAmount(previous,!bd.isCreditNature());
+			}
 		}
 		if ( conditionalNegativeExp.size() > 0 ) {
 			for (String exp: conditionalNegativeExp ) {
 				parameters.setAccountExpression(exp);
-				previous.setAccountExpression(exp);
+				if (parameters.isPreviousPeriodVisible()) {
+					previous.setAccountExpression(exp);
+				}
 				Double a = getAccountsAmount(parameters,!bd.isCreditNature());
 				if (!bd.isCreditNature() && a > 0 ) {
 					nAmount = CommonUtil.round(nAmount + a);
 				}
-				Double p = getAccountsAmount(previous,!bd.isCreditNature());
-				if (!bd.isCreditNature() && p > 0 ) { 
-					nPreviousAmount = CommonUtil.round(nPreviousAmount + p);
+				if (parameters.isPreviousPeriodVisible()) {
+					Double p = getAccountsAmount(previous,!bd.isCreditNature());
+					if (!bd.isCreditNature() && p > 0 ) { 
+						nPreviousAmount = CommonUtil.round(nPreviousAmount + p);
+					}
 				}
 			}
 		}

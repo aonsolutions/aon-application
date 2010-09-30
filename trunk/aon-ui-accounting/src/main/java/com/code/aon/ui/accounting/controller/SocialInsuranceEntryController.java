@@ -6,10 +6,10 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,6 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.AccountEntryLink;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.SocialInsuranceEntry;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -50,7 +49,8 @@ public class SocialInsuranceEntryController {
 	private AccountingUtil accountingUtil;
 	private AccountBridgeUtil accountBridgeUtil;
 	private Balance socialInsuranceBalance;
-	private List<AccountEntryDetail> socialInsuranceDetail;
+	private List<AccountEntryDetailExtended> socialInsuranceDetail;
+	private DataModel socialInsuranceDetailModel;
 	private Account socialInsuranceAccount;
 
 	private AccountingUtil getAccountingUtil() {
@@ -93,6 +93,7 @@ public class SocialInsuranceEntryController {
 			getEntry().setYear(AccountingPeriodUtil.getDefaultPeriod() == null ? null : AccountingPeriodUtil.getDefaultPeriod().getId());
 			setSocialInsuranceBalance(null);
 			setSocialInsuranceDetail(null);
+			setSocialInsuranceDetailModel(null);
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -255,67 +256,61 @@ public class SocialInsuranceEntryController {
 		return a;
 	}
 
-	public void onChangeMonth(ValueChangeEvent event) {
+	public void onChangeMonth(ActionEvent event) {
 		setSocialInsuranceBalance(null);
 		setSocialInsuranceDetail(null);
+		setSocialInsuranceDetailModel(null);
+		initializeDates();
 	}
 
-	public void onChangePeriod(ValueChangeEvent event) {
+	public void onChangePeriod(ActionEvent event) {
 		setSocialInsuranceBalance(null);
 		setSocialInsuranceDetail(null);
+		setSocialInsuranceDetailModel(null);
+		initializeDates();
+	}
+
+	private void initializeDates() {
+		int year = Integer.parseInt(getEntry().getYear());
+		getEntry().setFromDate( CommonUtil.getDate(year, getEntry().getMonth().getValue(), 1));
+		int days = CommonUtil.daysInMonth(getEntry().getFromDate());
+		getEntry().setToDate( CommonUtil.getDate(year, getEntry().getMonth().getValue(), days));
 	}
 
 	public Balance getSocialInsuranceBalance() {
 		try {
 			if (socialInsuranceBalance == null && getEntry().getYear() != null && getEntry().getMonth() != null) {
-				int year = Integer.parseInt(getEntry().getYear());
-				Date fromDate = CommonUtil.getDate(year, getEntry().getMonth().getValue(), 1);
-				int days = CommonUtil.daysInMonth(fromDate);
-				Date toDate = CommonUtil.getDate(year, getEntry().getMonth().getValue(), days);
-
 				IManagerBean bean = BeanManager.getManagerBean(AccountEntryDetail.class);
-				IManagerBean linkBean = BeanManager.getManagerBean(AccountEntryLink.class);
 				String dateAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
 				String typeAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE);
 				String accountAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
-				String accountEntryFromAlias = linkBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_LINK_ENTRY_FROM_ID);
+				String securityLevelAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL);
 				Criteria c = new Criteria();
-				c.addBetweenExpression(dateAlias, fromDate, toDate);
+				c.addBetweenExpression(dateAlias, getEntry().getFromDate(), getEntry().getToDate());
 				c.addEqualExpression(accountAlias, getSocialInsuranceAccount().getId());
 				c.addExpression(ExpressionUtilities.getEqualExpression(typeAlias, AccountEntryType.SALARY));
+				if (!AonUtil.getRoleManager().isConfidentiality()) {
+					c.addEqualExpression(securityLevelAlias, SecurityLevel.OFFICIAL);
+				} else {
+					c.addEqualExpression(securityLevelAlias, getEntry().getSecurityLevel());	
+				}
 				Balance balance = new Balance();
 				balance.setAccount(getSocialInsuranceAccount().getId());
 				balance.setDescription(getSocialInsuranceAccount().getDescription());
-				balance.setFromDate(fromDate);
-				balance.setToDate(toDate);
+				balance.setFromDate(getEntry().getFromDate());
+				balance.setToDate(getEntry().getToDate());
 				List<ITransferObject> list = bean.getList(c);
-				socialInsuranceDetail = new LinkedList<AccountEntryDetail>();
+				setSocialInsuranceDetail(new LinkedList<AccountEntryDetailExtended>());
 				for (ITransferObject to : list) {
 					AccountEntryDetail detail = (AccountEntryDetail) to;
-					boolean add = true;
-					if (detail.getAccountEntry().getType() == AccountEntryType.SOCIAL_INSURANCE) {
-						// Si existe un apunte de seguridad social en el
-						// periodo, es ncesario saber si
-						// el apunte de ajuste generado por él, es del mismo
-						// periodo, para tenerlo en
-						// cuenta.
-						Criteria c1 = new Criteria();
-						c1.addEqualExpression(accountEntryFromAlias, detail.getAccountEntry().getId());
-						List<ITransferObject> links = linkBean.getList(c1);
-						if (links != null && links.size() > 0) {
-							AccountEntryLink link = (AccountEntryLink) links.get(0);
-							AccountEntry linked = link.getEntryTo();
-							Date date = linked.getEntryDate();
-							add = ((DateUtils.isSameDay(fromDate, date) || fromDate.before(date)) 
-								&& (DateUtils.isSameDay(toDate, date) || toDate.after(date)));
-						}
-					}
-					if (add) {
-						balance.addBalance(detail);
-						socialInsuranceDetail.add(detail);
-					}
+					AccountEntryDetailExtended ex = new AccountEntryDetailExtended();
+					ex.setDisabled(false);
+					ex.setDetail(detail);
+					balance.addBalance(detail);
+					socialInsuranceDetail.add(ex);
 				}
 				setSocialInsuranceBalance(balance);
+				setSocialInsuranceDetailModel(new ListDataModel(getSocialInsuranceDetail()));
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible obtener el saldo de la cuenta.";
@@ -330,11 +325,53 @@ public class SocialInsuranceEntryController {
 		this.socialInsuranceBalance = balance;
 	}
 
-	public List<AccountEntryDetail> getSocialInsuranceDetail() {
+	public List<AccountEntryDetailExtended> getSocialInsuranceDetail() {
 		return socialInsuranceDetail;
 	}
 
-	public void setSocialInsuranceDetail(List<AccountEntryDetail> socialInsuranceDetail) {
+	public void setSocialInsuranceDetail(List<AccountEntryDetailExtended> socialInsuranceDetail) {
 		this.socialInsuranceDetail = socialInsuranceDetail;
 	}
+	public DataModel getSocialInsuranceDetailModel() {
+		return this.socialInsuranceDetailModel; 
+	}
+	public void setSocialInsuranceDetailModel(DataModel socialInsuranceDetailModel) {
+		this.socialInsuranceDetailModel = socialInsuranceDetailModel;
+	}
+	
+	public void onResetBalance(ActionEvent event) {
+		setSocialInsuranceBalance(null);
+		setSocialInsuranceDetail(null);
+		setSocialInsuranceDetailModel(null);
+	}
+	
+	public void onDisable(ActionEvent event) {
+		AccountEntryDetailExtended e = (AccountEntryDetailExtended) getSocialInsuranceDetailModel().getRowData();
+		if (e.isDisabled()) {
+			getSocialInsuranceBalance().substractBalance(e.getDetail());
+		} else {
+			getSocialInsuranceBalance().addBalance(e.getDetail());
+		}
+		
+	}
+	
+	public class AccountEntryDetailExtended {
+		private AccountEntryDetail detail;
+		private boolean disabled;
+		
+		public AccountEntryDetail getDetail() {
+			return detail;
+		}
+		public void setDetail(AccountEntryDetail detail) {
+			this.detail = detail;
+		}
+		public boolean isDisabled() {
+			return disabled;
+		}
+		public void setDisabled(boolean disabled) {
+			this.disabled = disabled;
+		}
+	}
 }
+
+

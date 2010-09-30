@@ -19,7 +19,6 @@ import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 
 public class AmortizationManager {
@@ -135,7 +134,7 @@ public class AmortizationManager {
 		AccountEntry entry = new AccountEntry();
 		entry.setAccountPeriod(period.getId());
 		entry.setEntryDate(accountEntryDate);
-		entry.setSecurityLevel(SecurityLevel.OFFICIAL);
+		entry.setSecurityLevel( a.getSecurityLevel() );
 		entry.setType(AccountEntryType.AMORTIZATION);
 		entry = (AccountEntry) accountEntryBean.insert(entry);
 		

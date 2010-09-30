@@ -22,6 +22,7 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -106,6 +107,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 			}
 			p.setBudgeted(isBudgeted());
 			p.setLowerLevelVisible(false);
+			p.setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 			boolean excludeOperating = false;
 			if (p.getPeriod() != null) {
 				try {

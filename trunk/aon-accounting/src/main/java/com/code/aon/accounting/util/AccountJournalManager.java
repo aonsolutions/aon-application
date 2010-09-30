@@ -87,8 +87,12 @@ public class AccountJournalManager {
 		        		entry.setJournal(journal);	
 		        		mustAdd = true;
 		        	}
-		        	entry.setDateDirty(false);
-			        bean.update(entry);    	
+		        	// Como sólo se modifica el número de diario, no tiene sentido recalcular los acumulados.
+		        	entry.setRegenerateSummaryOnUpdate(false);
+		        	
+			        bean.update(entry);
+			        
+			        entry.setRegenerateSummaryOnUpdate(true);
 		        	progressionBean.setProgressionCurrentValue((long) ( i * 100 / count));
 		        	i++;
 		        	if (mustAdd) {

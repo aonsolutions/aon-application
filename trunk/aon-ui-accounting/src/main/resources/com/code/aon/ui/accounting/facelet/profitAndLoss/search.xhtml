@@ -5,6 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -71,15 +72,17 @@
 
 					</aon:panelGrid>
 
-					<aon:outputLabel
-						for="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu
-						id="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{profitAndLossReport.parameters.securityLevel}">
-						<f:selectItem itemValue="" itemLabel=" " />
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel
+							for="AccountEntryDetail_accountEntry_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneRadio
+							id="AccountEntryDetail_accountEntry_securityLevel"
+							value="#{profitAndLossReport.parameters.securityLevel}">
+							<f:selectItems value="#{commonCollections.confidentialValues}" />
+							<f:selectItem itemValue="" itemLabel="#{bundle.aon_all}" />
+						</aon:selectOneRadio>
+					</c:if>
 
 					<aon:outputText value="&#160;" />
 					<aon:div>

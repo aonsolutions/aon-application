@@ -24,14 +24,12 @@ import org.hibernate.annotations.Index;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 
-/**
- * TransferObject that represents an AccountEntry.
- */
 @Entity
 @Table(name = "account_entry")
-public class AccountEntry implements ITransferObject {
+public class AccountEntry implements ITransferObject, IConfidentialable {
 	
 	private static final long serialVersionUID = -3297371099219203320L;
 
@@ -44,7 +42,7 @@ public class AccountEntry implements ITransferObject {
 	private SecurityLevel securityLevel;
 	private Set<AccountEntryDetail> detail = new HashSet<AccountEntryDetail>();
 	
-	private boolean dateDirty = false;
+	private boolean regenerateSummaryOnUpdate = true;
 	
 	@Id
 	@GeneratedValue
@@ -96,7 +94,18 @@ public class AccountEntry implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+	@Transient
+	@Override
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
 
+	@Transient
+	@Override
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}
+	
 	@Column(name="comments")
 	@Lob
 	public String getComments() {
@@ -115,11 +124,11 @@ public class AccountEntry implements ITransferObject {
 	}
 	
     @Transient
-    public boolean isDateDirty() {
-		return dateDirty;
+    public boolean mustRegenerateSummaryOnUpdate() {
+		return regenerateSummaryOnUpdate;
 	}
-	public void setDateDirty(boolean dateDirty) {
-		this.dateDirty = dateDirty;
+	public void setRegenerateSummaryOnUpdate(boolean regenerateSummaryOnUpdate) {
+		this.regenerateSummaryOnUpdate = regenerateSummaryOnUpdate;
 	}
 
 	@Override

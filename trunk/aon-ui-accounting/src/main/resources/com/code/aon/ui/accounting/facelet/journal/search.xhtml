@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -61,14 +62,16 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:panelGrid>
 
-					<aon:outputLabel
-						for="AccountEntryDetail_accountEntry_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu value="#{journalReport.securityLevel}" 
-						id="AccountEntryDetail_accountEntry_securityLevel">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel
+							for="AccountEntryDetail_accountEntry_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneMenu value="#{journalReport.securityLevel}" 
+							id="AccountEntryDetail_accountEntry_securityLevel">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{commonCollections.confidentialValues}" />
+						</aon:selectOneMenu>
+					</c:if>
 
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_journal"

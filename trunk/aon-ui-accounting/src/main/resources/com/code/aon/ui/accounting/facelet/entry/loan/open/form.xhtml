@@ -4,6 +4,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -37,11 +38,22 @@
 
 					<aon:outputLabel for="AccountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu id="AccountEntry_accountPeriod"
-						value="#{loanEntry.period}">
-						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
-						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:selectOneMenu id="AccountEntry_accountPeriod"
+							value="#{loanEntry.period}">
+							<f:selectItems
+								value="#{accountingCollections.enabledAccountPeriods}" />
+							<a4j:support event="onchange" ajaxSingle="true"
+								reRender="AccountEntry_accountPeriod" />
+						</aon:selectOneMenu>
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:selectBooleanCheckbox id="Account_securityLevel"
+								style="margin-left: 30px;"
+								value="#{loanEntry.loan.confidential}" />
+							<aon:outputLabel for="Account_securityLevel"
+								value="#{bundle.aon_confidential}" />
+						</c:if>
+					</aon:div>
 
 					<aon:outputLabel for="Account_date"
 						value="#{bundle.aon_date}" />
@@ -92,13 +104,6 @@
 						focus="Account_amount">
 						<f:selectItems value="#{companyCollections.companyBanks}" />
 					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Account_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneRadio id="Account_securityLevel"
-						value="#{loanEntry.loan.securityLevel}">
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Account_amount"
 						value="#{bundle.aon_amount}" />

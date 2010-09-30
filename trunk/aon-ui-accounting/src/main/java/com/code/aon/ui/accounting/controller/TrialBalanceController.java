@@ -24,6 +24,7 @@ import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -77,6 +78,7 @@ public class TrialBalanceController implements ICollectionProvider {
 			p.setAccountExpression(null);
 			p.setLowerLevelVisible(false);
 			p.setNoTouchedAccountVisible(false);
+			p.setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 			boolean excludeClosing = false;
 			if (p.getPeriod() != null) {
 				try {

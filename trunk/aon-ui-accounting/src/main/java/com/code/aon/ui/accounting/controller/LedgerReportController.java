@@ -105,7 +105,7 @@ public class LedgerReportController extends BasicController {
 		setFromDate(null);
 		setToDate(null);
 		setDate(new Date());
-		setSecurityLevel(null);
+		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 		setAccount(null);
 		previousAccountEntryDetail = null;
 		previousAccount = null;

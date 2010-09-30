@@ -83,7 +83,7 @@ public class PeriodAmortizationController extends BasicController {
 			Amortization a = detail.getAmortization();
 
 			Balance balance = getAccountingUtil().getPeriodBalance(period.getInitiationDate(),
-					period.getDeadline(), a.getAccumulatedAccount().getId(), false, false);
+					period.getDeadline(), a.getAccumulatedAccount().getId(),null, false, false);
 			double accumulated = balance.getCreditBalance();
 			double pending = CommonUtil.round(a.getAmount() - accumulated
 					- (detail.isScored() ? 0 : detail.getAllocation()));

@@ -37,7 +37,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -250,6 +249,8 @@ public class FBatchController extends BasicController implements ICollectionProv
                     }
                 }
             }
+        	criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), to.getSecurityLevel());	
+        	
             criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
             criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
             criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
@@ -434,7 +435,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         recordingTo.setDate((getRecordDate()!=null) ? getRecordDate() : fbatch.getIssueDate());
         recordingTo.setPaymentAccount((fbatch.getRegistryBank()!= null)?getAccountBridgeUtil().obtainRBankAccount(fbatch.getRegistryBank()):getAccountingUtil().obtainCashAccount());
         recordingTo.setFBatchDetailList(fbatchDetailList);
-        recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
+        recordingTo.setSecurityLevel(fbatch.getSecurityLevel());
 
         AccountEntryFinanceWriter accountEntryWriter = new AccountEntryFinanceWriter();
         AccountEntry entry = accountEntryWriter.recordFBatchDetails(recordingTo, fbatch);

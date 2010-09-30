@@ -71,6 +71,8 @@ public class SummaryProviderParameters implements Cloneable{
 	private boolean excludeClosingEntry;
 	
 	private boolean excludeBalancedAccounts;
+	
+	private boolean previousPeriodVisible;
 
 	public SummaryProviderParameters() {
 		setAccountExpression(null);
@@ -92,6 +94,7 @@ public class SummaryProviderParameters implements Cloneable{
 		setExcludeOperatingEntry(false);
 		setExcludeClosingEntry(false);
 		setExcludeBalancedAccounts(false);
+		setPreviousPeriodVisible(true);
 	}
 
 	public String getAccountExpression() {
@@ -239,9 +242,15 @@ public class SummaryProviderParameters implements Cloneable{
 	public boolean isExcludeBalancedAccounts() {
 		return excludeBalancedAccounts;
 	}
-
 	public void setExcludeBalancedAccounts(boolean excludeBalancedAccounts) {
 		this.excludeBalancedAccounts = excludeBalancedAccounts;
+	}
+
+	public boolean isPreviousPeriodVisible() {
+		return previousPeriodVisible;
+	}
+	public void setPreviousPeriodVisible(boolean previousPeriodVisible) {
+		this.previousPeriodVisible = previousPeriodVisible;
 	}
 
 	@Override
@@ -260,6 +269,7 @@ public class SummaryProviderParameters implements Cloneable{
 		cloned.setExcludeOperatingEntry(isExcludeOperatingEntry());
 		cloned.setExcludeClosingEntry(isExcludeClosingEntry());
 		cloned.setExcludeBalancedAccounts(isExcludeBalancedAccounts());
+		cloned.setPreviousPeriodVisible(isPreviousPeriodVisible());
 		cloned.setNoTouchedAccountVisible(isNoTouchedAccountVisible());
 		cloned.setPeriod(getPeriod());
 		cloned.setRowsPerPage(getRowsPerPage());

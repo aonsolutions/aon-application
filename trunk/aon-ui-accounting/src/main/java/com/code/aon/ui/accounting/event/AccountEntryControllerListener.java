@@ -9,6 +9,7 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.controller.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
@@ -21,9 +22,9 @@ public class AccountEntryControllerListener extends ControllerAdapter {
     private int index;
     private Date lastDate;
     private String lastPeriod;
+    private SecurityLevel lastSecurityLevel;
     
-
-    public String getLastPeriod() {
+	public String getLastPeriod() {
 		return lastPeriod;
 	}
 	public void setLastPeriod(String lastPeriod) {
@@ -39,6 +40,15 @@ public class AccountEntryControllerListener extends ControllerAdapter {
 	public void setLastDate(Date lastDate) {
 		this.lastDate = lastDate;
 	}
+    public SecurityLevel getLastSecurityLevel() {
+    	if (lastSecurityLevel == null) {
+    		lastSecurityLevel = SecurityLevel.OFFICIAL;
+    	}
+		return lastSecurityLevel;
+	}
+	public void setLastSecurityLevel(SecurityLevel lastSecurityLevel) {
+		this.lastSecurityLevel = lastSecurityLevel;
+	}
 
 
 	@Override
@@ -49,6 +59,7 @@ public class AccountEntryControllerListener extends ControllerAdapter {
 	        to.setType(AccountEntryType.MANUAL);
 	        to.setEntryDate(getLastDate());
 	        to.setAccountPeriod(getLastPeriod());
+	        to.setSecurityLevel(getLastSecurityLevel());
 	        if (to.getAccountPeriod() == null) {
 		        Period period = AccountingPeriodUtil.getDefaultPeriod();
 		        if (period != null) {
@@ -98,6 +109,7 @@ public class AccountEntryControllerListener extends ControllerAdapter {
         	AccountEntry entry = (AccountEntry)event.getController().getTo();
         	setLastDate(entry.getEntryDate());
         	setLastPeriod(entry.getAccountPeriod());
+        	setLastSecurityLevel(entry.getSecurityLevel());
             Integer id = entry.getId();
             IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
             Criteria criteria = new Criteria();

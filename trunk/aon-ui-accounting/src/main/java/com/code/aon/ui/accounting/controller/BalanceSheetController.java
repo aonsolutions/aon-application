@@ -83,6 +83,7 @@ public class BalanceSheetController implements ICollectionProvider {
 		parameters.setRowsPerPage(20);
 		parameters.setAccountLevel(5);
 		parameters.setBudgeted(false);
+		parameters.setPreviousPeriodVisible(true);
 	}
 
 	public void onBalance(ActionEvent event) {

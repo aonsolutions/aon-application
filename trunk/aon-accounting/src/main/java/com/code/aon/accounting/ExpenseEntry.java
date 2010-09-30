@@ -5,6 +5,7 @@ import java.util.Date;
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.registry.RegistryBank;
 
 public class ExpenseEntry implements ITransferObject {
@@ -14,10 +15,12 @@ public class ExpenseEntry implements ITransferObject {
 	private Period period;
 	private Date date;
 	private RegistryBank registryBank;
+	private PayMethodTypeDetail payMethodTypeDetail;
 	private String concept;
 	private Account account;
 	private double amount;
 	private SecurityLevel securityLevel;
+	private int deposit;
 
 	public Period getPeriod() {
 		return period;
@@ -38,6 +41,13 @@ public class ExpenseEntry implements ITransferObject {
 	}
 	public void setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
+	}
+
+	public PayMethodTypeDetail getPayMethodTypeDetail() {
+		return payMethodTypeDetail;
+	}
+	public void setPayMethodTypeDetail(PayMethodTypeDetail payMethodTypeDetail) {
+		this.payMethodTypeDetail = payMethodTypeDetail;
 	}
 
 	public String getConcept() {
@@ -67,5 +77,18 @@ public class ExpenseEntry implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+	public boolean isConfidential() {
+		return getSecurityLevel() == SecurityLevel.CONFIDENTIAL;
+	}
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL );
+	}
 
+	public int getDeposit() {
+		return deposit;
+	}
+	public void setDeposit(int deposit) {
+		this.deposit = deposit;
+	}
+	
 }

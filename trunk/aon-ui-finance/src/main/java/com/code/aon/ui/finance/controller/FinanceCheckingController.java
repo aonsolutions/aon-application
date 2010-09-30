@@ -4,12 +4,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -22,12 +19,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.BillingPeriod;
-import com.code.aon.finance.enumeration.CreditorStatus;
-import com.code.aon.finance.enumeration.FinanceBatchStatus;
-import com.code.aon.finance.enumeration.FinanceBatchType;
-import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -136,6 +127,7 @@ public class FinanceCheckingController {
 				"finance_invoice_checking_module_wrong_finance"));
 	}
 
+	@SuppressWarnings("unchecked")
 	public void onNoFinanceList(ActionEvent e) {
 
 		String dateCriteria = "";

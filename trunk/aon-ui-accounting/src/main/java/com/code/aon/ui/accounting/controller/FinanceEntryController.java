@@ -174,9 +174,14 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+	}
+	public boolean isConfidential() {
+		return getSecurityLevel() == SecurityLevel.CONFIDENTIAL;
+	}
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL );
 	}
 
 	public String getConcept() {
@@ -208,8 +213,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	public void setFinances(DataModel finances) {
 		this.finances = finances;
 	}
-
-
+	
 	public void onReset(ActionEvent event) {
 		try {
 			reset();
@@ -263,8 +267,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		return total;
 	}
 
-	public void onTypeChanged(ValueChangeEvent event) {
-		Boolean payment = (Boolean)event.getNewValue();
+	public void onTypeChanged(ActionEvent event) {
+		Boolean payment = getPayment();
 		if (payment != null) {
 			loadAvailableFinances(payment.booleanValue());
 		}
@@ -281,6 +285,11 @@ public class FinanceEntryController implements ISpecialAccountEntry{
             Expression pendingExpr = ExpressionUtilities.getEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
             Expression returnedExpr = ExpressionUtilities.getEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
             criteria.addExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));
+            if (AonUtil.getRoleManager().isConfidentiality()) {
+            	criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), getSecurityLevel() );	
+            } else {
+            	criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL );
+            }
             Expression existingLinesIdsExpr = obtainExistingLinesIds(financeBean);
             if (existingLinesIdsExpr != null) {
                 criteria.addExpression(obtainExistingLinesIds(financeBean));
@@ -729,5 +738,4 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	public Map<String, Ordering> getOrder() {
 		return order;
 	}
-	
 }

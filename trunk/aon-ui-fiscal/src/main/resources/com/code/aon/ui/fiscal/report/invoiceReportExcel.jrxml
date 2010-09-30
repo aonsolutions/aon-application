@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="3.0"/>
-	<property name="ireport.x" value="3298"/>
+	<property name="ireport.x" value="2350"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -365,7 +365,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="7" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice}.getTaxType().getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice}.getTaxType().getName($P{REPORT_LOCALE}) + ($F{invoice}.isSurcharge()?"(RE)":"")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-20" x="860" y="0" width="114" height="11"/>
