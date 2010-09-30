@@ -5,7 +5,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:div id="appUserDiv" >
+	<aon:div id="#{controller.beanName}Div" >
+		<ui:param name="innerToolbar" value="#{true}" />	
 		<c:if test="#{controller.to == null}">
 			<ui:include src="/com/code/aon/ui/manager/facelet/appUser/list.xhtml" />
 		</c:if>

@@ -5,23 +5,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-		<ui:param name="toolbarID" value="profileToolbar" />
-		<ui:param name="innerToolbar" value="#{true}" />
-		<ui:param name="skipToolbarDescription" value="true" />
+	<ui:include src="/com/code/aon/ui/webmail/facelet/util/formInnerToolbar.xhtml" >
 		<ui:param name="skipSearchButton" value="#{true}" />
-		
-		<aon:methodParam name="saveAction" value="" />
-		<ui:param name="saveButtonReRender" value="profilesDiv" />
-		<aon:methodParam name="cancelAction" value="" />
-		<ui:param name="cancelButtonReRender" value="profilesDiv" />
-		<aon:methodParam name="removeAction" value="" />
-		<ui:param name="removeButtonReRender" value="profilesDiv" />
-		<aon:methodParam name="resetAction" value="" />
-		<ui:param name="resetButtonReRender" value="profilesDiv" />
-		<aon:methodParam name="backAction" value="" />
-		<ui:param name="backButtonReRender" value="profilesDiv" />		
-	</ui:include>
+	</ui:include>	
 
 	<aon:div styleClass="aon-scroll-area">
 

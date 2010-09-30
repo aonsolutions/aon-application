@@ -34,6 +34,16 @@ public class DomainUserController extends LdapBasicController implements IManage
 	private String confirmPassword;
 	
 	private boolean webmail;
+	
+	private String selectedTab;
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}	
 
 	@SuppressWarnings("unchecked")
 	public List<DomainUser> getUsers() throws ManagerBeanException {
