@@ -18,7 +18,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
 
@@ -53,7 +53,7 @@ public class EmailParentController {
 				Address from = new InternetAddress(username, username);
 				this.sender = new EmailSender( from, mailAccount );							
 			} else {
-				String text = AonUtil.getMessage(WebMailConstants.BUNDLE_NAME, WebMailConstants.NOT_MAIL_ACCOUNT); 
+				String text = AonUtil.getMessage(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, login );
 				throw new AbortProcessingException( message );
 			}
