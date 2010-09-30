@@ -22,6 +22,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
@@ -36,6 +37,7 @@ public class ExpenseEntryController {
 	private String navigationKey;
 	private AccountingUtil accountingUtil;
 	private AccountBridgeUtil accountBridgeUtil;
+	private int payMethodTypeDetailsSize; 
 	
 	private AccountingUtil getAccountingUtil() {
 		if (accountingUtil == null) {
@@ -68,6 +70,8 @@ public class ExpenseEntryController {
 	
 	private void reset() throws ManagerBeanException {
 		this.entry = initializeentry();
+		IManagerBean payMethodTypeDetailBean = BeanManager.getManagerBean(PayMethodTypeDetail.class);
+		payMethodTypeDetailsSize = payMethodTypeDetailBean.getCount(null);
 	}
 	
 	private ExpenseEntry initializeentry() throws ManagerBeanException {
@@ -130,29 +134,35 @@ public class ExpenseEntryController {
 	
 	private void insertEntryDetails(AccountEntry entry) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-		Account bankAccount = null;
-		if (getEntry().getRegistryBank() != null && getEntry().getRegistryBank().getId() != null) {
-			bankAccount = getAccountBridgeUtil().obtainRBankAccount(getEntry().getRegistryBank());
-		} else {
-			bankAccount = getAccountingUtil().obtainCashAccount();
-		}
+		Account balancingAccount = obtainPaymentAccount();
 		// Primer apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccount(getEntry().getAccount());
 		detail.setAccountEntry(entry);
-		detail.setBalancingAccount(bankAccount);
+		detail.setBalancingAccount(balancingAccount);
 		detail.setConcept(getEntry().getConcept());
 		detail.setDebit(getEntry().getAmount());
 		accountEntryDetailBean.insert(detail);
 		// Segundo apunte
 		detail = new AccountEntryDetail();
-		detail.setAccount(bankAccount);
+		detail.setAccount(balancingAccount);
 		detail.setAccountEntry(entry);
 		detail.setBalancingAccount(getEntry().getAccount());
 		detail.setConcept(getEntry().getConcept());
 		detail.setCredit(getEntry().getAmount());
 		accountEntryDetailBean.insert(detail);
 	}
+	
+	private Account obtainPaymentAccount() throws ManagerBeanException {
+		Account account = null;
+		if (getEntry().getDeposit() == 0 && getEntry().getRegistryBank() != null) {
+			account = getAccountBridgeUtil().obtainRBankAccount(getEntry().getRegistryBank());
+		} else if (getEntry().getDeposit() == 1 && getEntry().getPayMethodTypeDetail() != null) {
+			account = getAccountBridgeUtil().obtainPayMethodTypeDetailAccount(getEntry().getPayMethodTypeDetail());
+		}
+		return (account!=null) ? account : getAccountingUtil().obtainCashAccount();
+	}
+
 	
 	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
 		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
@@ -162,6 +172,10 @@ public class ExpenseEntryController {
 		entryController.onSearch(null);
 		entryController.getModel().setRowIndex(0);
 		entryController.onSelect(null);
+	}
+
+	public int getPayMethodTypeDetailsSize() throws ManagerBeanException {
+		return payMethodTypeDetailsSize;
 	}
 
 }
