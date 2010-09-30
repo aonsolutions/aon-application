@@ -15,6 +15,7 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -151,7 +152,7 @@ public class AccountEntryDetailController extends LinesController {
 		spp.setPeriod(period);
 		spp.setFromDate(period.getInitiationDate());
 		spp.setToDate(period.getDeadline());
-		spp.setSecurityLevel(detail.getAccountEntry().getSecurityLevel());
+		spp.setSecurityLevel(AonUtil.getRoleManager().isAccountingOperator()?null:SecurityLevel.OFFICIAL);
 		c.setParams(spp);
 		c.setBackAction("accountEntry_form");
 
