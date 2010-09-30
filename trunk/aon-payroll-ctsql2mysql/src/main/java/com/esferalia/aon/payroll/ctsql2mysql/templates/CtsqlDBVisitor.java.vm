@@ -25,6 +25,12 @@ public interface CtsqlDBVisitor {
 	public boolean visit ( CtsqlDB ctsqlDB ) throws SQLException;
 	
 #foreach($table in $tables)
+
 	public boolean visit$table($table $table.name)throws SQLException;
+
+#foreach ($child in $table.childs)
+	public boolean visit${child.table}($child.table $child.table.name, $table $table.name)throws SQLException;
+
+#end	
 #end
 }

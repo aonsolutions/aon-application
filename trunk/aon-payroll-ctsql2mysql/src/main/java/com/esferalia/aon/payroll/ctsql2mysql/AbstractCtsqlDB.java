@@ -99,7 +99,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Action_denied action_denied = new Action_denied(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAction_denied(action_denied);
+					resume = ctsqlDBVisitor.visitAction_denied(action_denied, this);
 				}
 			}
 			finally {
@@ -307,7 +307,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprnif emprnif = new Emprnif(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprnif(emprnif);
+					resume = ctsqlDBVisitor.visitEmprnif(emprnif, this);
 				}
 			}
 			finally {
@@ -330,7 +330,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Impr11x impr11x = new Impr11x(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitImpr11x(impr11x);
+					resume = ctsqlDBVisitor.visitImpr11x(impr11x, this);
 				}
 			}
 			finally {
@@ -353,7 +353,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Impr190 impr190 = new Impr190(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitImpr190(impr190);
+					resume = ctsqlDBVisitor.visitImpr190(impr190, this);
 				}
 			}
 			finally {
@@ -491,7 +491,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Session session = new Session(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitSession(session);
+					resume = ctsqlDBVisitor.visitSession(session, this);
 				}
 			}
 			finally {
@@ -514,7 +514,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Action action = new Action(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAction(action);
+					resume = ctsqlDBVisitor.visitAction(action, this);
 				}
 			}
 			finally {
@@ -643,7 +643,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linautom linautom = new Linautom(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinautom(linautom);
+					resume = ctsqlDBVisitor.visitLinautom(linautom, this);
 				}
 			}
 			finally {
@@ -1025,7 +1025,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Autbases autbases = new Autbases(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAutbases(autbases);
+					resume = ctsqlDBVisitor.visitAutbases(autbases, this);
 				}
 			}
 			finally {
@@ -1181,7 +1181,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linbasec linbasec = new Linbasec(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinbasec(linbasec);
+					resume = ctsqlDBVisitor.visitLinbasec(linbasec, this);
 				}
 			}
 			finally {
@@ -1204,7 +1204,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Categoria categoria = new Categoria(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCategoria(categoria);
+					resume = ctsqlDBVisitor.visitCategoria(categoria, this);
 				}
 			}
 			finally {
@@ -1227,7 +1227,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -1250,7 +1250,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -1273,7 +1273,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Costes costes = new Costes(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCostes(costes);
+					resume = ctsqlDBVisitor.visitCostes(costes, this);
 				}
 			}
 			finally {
@@ -2630,7 +2630,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprnif emprnif = new Emprnif(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprnif(emprnif);
+					resume = ctsqlDBVisitor.visitEmprnif(emprnif, this);
 				}
 			}
 			finally {
@@ -2653,7 +2653,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Domicilio domicilio = new Domicilio(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitDomicilio(domicilio);
+					resume = ctsqlDBVisitor.visitDomicilio(domicilio, this);
 				}
 			}
 			finally {
@@ -2676,7 +2676,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprdom emprdom = new Emprdom(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprdom(emprdom);
+					resume = ctsqlDBVisitor.visitEmprdom(emprdom, this);
 				}
 			}
 			finally {
@@ -2699,7 +2699,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprban emprban = new Emprban(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprban(emprban);
+					resume = ctsqlDBVisitor.visitEmprban(emprban, this);
 				}
 			}
 			finally {
@@ -2722,7 +2722,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprlban emprlban = new Emprlban(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprlban(emprlban);
+					resume = ctsqlDBVisitor.visitEmprlban(emprlban, this);
 				}
 			}
 			finally {
@@ -2745,7 +2745,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Avisos avisos = new Avisos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAvisos(avisos);
+					resume = ctsqlDBVisitor.visitAvisos(avisos, this);
 				}
 			}
 			finally {
@@ -2768,7 +2768,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Variaciones variaciones = new Variaciones(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitVariaciones(variaciones);
+					resume = ctsqlDBVisitor.visitVariaciones(variaciones, this);
 				}
 			}
 			finally {
@@ -2791,7 +2791,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Regidocu regidocu = new Regidocu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitRegidocu(regidocu);
+					resume = ctsqlDBVisitor.visitRegidocu(regidocu, this);
 				}
 			}
 			finally {
@@ -2858,7 +2858,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lincnae lincnae = new Lincnae(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLincnae(lincnae);
+					resume = ctsqlDBVisitor.visitLincnae(lincnae, this);
 				}
 			}
 			finally {
@@ -2925,7 +2925,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lincnae2009 lincnae2009 = new Lincnae2009(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLincnae2009(lincnae2009);
+					resume = ctsqlDBVisitor.visitLincnae2009(lincnae2009, this);
 				}
 			}
 			finally {
@@ -2992,7 +2992,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -3104,7 +3104,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Pagaext pagaext = new Pagaext(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPagaext(pagaext);
+					resume = ctsqlDBVisitor.visitPagaext(pagaext, this);
 				}
 			}
 			finally {
@@ -3128,7 +3128,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Percniv percniv = new Percniv(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPercniv(percniv);
+					resume = ctsqlDBVisitor.visitPercniv(percniv, this);
 				}
 			}
 			finally {
@@ -3151,7 +3151,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nominaex nominaex = new Nominaex(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNominaex(nominaex);
+					resume = ctsqlDBVisitor.visitNominaex(nominaex, this);
 				}
 			}
 			finally {
@@ -3175,7 +3175,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Percep percep = new Percep(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPercep(percep);
+					resume = ctsqlDBVisitor.visitPercep(percep, this);
 				}
 			}
 			finally {
@@ -3198,7 +3198,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finipext finipext = new Finipext(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinipext(finipext);
+					resume = ctsqlDBVisitor.visitFinipext(finipext, this);
 				}
 			}
 			finally {
@@ -3221,7 +3221,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finipextdf finipextdf = new Finipextdf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinipextdf(finipextdf);
+					resume = ctsqlDBVisitor.visitFinipextdf(finipextdf, this);
 				}
 			}
 			finally {
@@ -3244,7 +3244,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finipextnu finipextnu = new Finipextnu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinipextnu(finipextnu);
+					resume = ctsqlDBVisitor.visitFinipextnu(finipextnu, this);
 				}
 			}
 			finally {
@@ -3267,7 +3267,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linplus linplus = new Linplus(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinplus(linplus);
+					resume = ctsqlDBVisitor.visitLinplus(linplus, this);
 				}
 			}
 			finally {
@@ -3532,7 +3532,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lincomun lincomun = new Lincomun(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLincomun(lincomun);
+					resume = ctsqlDBVisitor.visitLincomun(lincomun, this);
 				}
 			}
 			finally {
@@ -3599,7 +3599,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Provincia provincia = new Provincia(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitProvincia(provincia);
+					resume = ctsqlDBVisitor.visitProvincia(provincia, this);
 				}
 			}
 			finally {
@@ -3719,7 +3719,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Pagaext pagaext = new Pagaext(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPagaext(pagaext);
+					resume = ctsqlDBVisitor.visitPagaext(pagaext, this);
 				}
 			}
 			finally {
@@ -3742,7 +3742,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nivel nivel = new Nivel(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNivel(nivel);
+					resume = ctsqlDBVisitor.visitNivel(nivel, this);
 				}
 			}
 			finally {
@@ -3765,7 +3765,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Categoria categoria = new Categoria(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCategoria(categoria);
+					resume = ctsqlDBVisitor.visitCategoria(categoria, this);
 				}
 			}
 			finally {
@@ -3788,7 +3788,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Percniv percniv = new Percniv(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPercniv(percniv);
+					resume = ctsqlDBVisitor.visitPercniv(percniv, this);
 				}
 			}
 			finally {
@@ -3811,7 +3811,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Empract empract = new Empract(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmpract(empract);
+					resume = ctsqlDBVisitor.visitEmpract(empract, this);
 				}
 			}
 			finally {
@@ -3834,7 +3834,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprctra emprctra = new Emprctra(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprctra(emprctra);
+					resume = ctsqlDBVisitor.visitEmprctra(emprctra, this);
 				}
 			}
 			finally {
@@ -3857,7 +3857,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -4339,7 +4339,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lcomunica lcomunica = new Lcomunica(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLcomunica(lcomunica);
+					resume = ctsqlDBVisitor.visitLcomunica(lcomunica, this);
 				}
 			}
 			finally {
@@ -4363,7 +4363,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lbonifica lbonifica = new Lbonifica(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLbonifica(lbonifica);
+					resume = ctsqlDBVisitor.visitLbonifica(lbonifica, this);
 				}
 			}
 			finally {
@@ -5720,7 +5720,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Cliente cliente = new Cliente(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCliente(cliente);
+					resume = ctsqlDBVisitor.visitCliente(cliente, this);
 				}
 			}
 			finally {
@@ -5850,7 +5850,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lin_divisa lin_divisa = new Lin_divisa(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLin_divisa(lin_divisa);
+					resume = ctsqlDBVisitor.visitLin_divisa(lin_divisa, this);
 				}
 			}
 			finally {
@@ -5873,7 +5873,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nominaexdf nominaexdf = new Nominaexdf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNominaexdf(nominaexdf);
+					resume = ctsqlDBVisitor.visitNominaexdf(nominaexdf, this);
 				}
 			}
 			finally {
@@ -5896,7 +5896,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nominaex nominaex = new Nominaex(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNominaex(nominaex);
+					resume = ctsqlDBVisitor.visitNominaex(nominaex, this);
 				}
 			}
 			finally {
@@ -5919,7 +5919,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Cliente cliente = new Cliente(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCliente(cliente);
+					resume = ctsqlDBVisitor.visitCliente(cliente, this);
 				}
 			}
 			finally {
@@ -5942,7 +5942,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprnif emprnif = new Emprnif(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprnif(emprnif);
+					resume = ctsqlDBVisitor.visitEmprnif(emprnif, this);
 				}
 			}
 			finally {
@@ -5965,7 +5965,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nomina nomina = new Nomina(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNomina(nomina);
+					resume = ctsqlDBVisitor.visitNomina(nomina, this);
 				}
 			}
 			finally {
@@ -5988,7 +5988,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finiquito finiquito = new Finiquito(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFiniquito(finiquito);
+					resume = ctsqlDBVisitor.visitFiniquito(finiquito, this);
 				}
 			}
 			finally {
@@ -6011,7 +6011,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finiquitodf finiquitodf = new Finiquitodf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFiniquitodf(finiquitodf);
+					resume = ctsqlDBVisitor.visitFiniquitodf(finiquitodf, this);
 				}
 			}
 			finally {
@@ -6034,7 +6034,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finiquitonu finiquitonu = new Finiquitonu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFiniquitonu(finiquitonu);
+					resume = ctsqlDBVisitor.visitFiniquitonu(finiquitonu, this);
 				}
 			}
 			finally {
@@ -6057,7 +6057,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Impr11x impr11x = new Impr11x(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitImpr11x(impr11x);
+					resume = ctsqlDBVisitor.visitImpr11x(impr11x, this);
 				}
 			}
 			finally {
@@ -6080,7 +6080,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Impr190 impr190 = new Impr190(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitImpr190(impr190);
+					resume = ctsqlDBVisitor.visitImpr190(impr190, this);
 				}
 			}
 			finally {
@@ -6103,7 +6103,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nominadf nominadf = new Nominadf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNominadf(nominadf);
+					resume = ctsqlDBVisitor.visitNominadf(nominadf, this);
 				}
 			}
 			finally {
@@ -6314,7 +6314,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprctra emprctra = new Emprctra(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprctra(emprctra);
+					resume = ctsqlDBVisitor.visitEmprctra(emprctra, this);
 				}
 			}
 			finally {
@@ -6337,7 +6337,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprdom emprdom = new Emprdom(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprdom(emprdom);
+					resume = ctsqlDBVisitor.visitEmprdom(emprdom, this);
 				}
 			}
 			finally {
@@ -6360,7 +6360,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprper emprper = new Emprper(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprper(emprper);
+					resume = ctsqlDBVisitor.visitEmprper(emprper, this);
 				}
 			}
 			finally {
@@ -6383,7 +6383,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Variaciones variaciones = new Variaciones(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitVariaciones(variaciones);
+					resume = ctsqlDBVisitor.visitVariaciones(variaciones, this);
 				}
 			}
 			finally {
@@ -6406,7 +6406,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Prestaciones prestaciones = new Prestaciones(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPrestaciones(prestaciones);
+					resume = ctsqlDBVisitor.visitPrestaciones(prestaciones, this);
 				}
 			}
 			finally {
@@ -6429,7 +6429,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -6487,7 +6487,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linelem linelem = new Linelem(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinelem(linelem);
+					resume = ctsqlDBVisitor.visitLinelem(linelem, this);
 				}
 			}
 			finally {
@@ -6554,7 +6554,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linirpf linirpf = new Linirpf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinirpf(linirpf);
+					resume = ctsqlDBVisitor.visitLinirpf(linirpf, this);
 				}
 			}
 			finally {
@@ -6989,7 +6989,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprctra emprctra = new Emprctra(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprctra(emprctra);
+					resume = ctsqlDBVisitor.visitEmprctra(emprctra, this);
 				}
 			}
 			finally {
@@ -7012,7 +7012,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprccc emprccc = new Emprccc(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprccc(emprccc);
+					resume = ctsqlDBVisitor.visitEmprccc(emprccc, this);
 				}
 			}
 			finally {
@@ -7035,7 +7035,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprccos emprccos = new Emprccos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprccos(emprccos);
+					resume = ctsqlDBVisitor.visitEmprccos(emprccos, this);
 				}
 			}
 			finally {
@@ -7058,7 +7058,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprdom emprdom = new Emprdom(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprdom(emprdom);
+					resume = ctsqlDBVisitor.visitEmprdom(emprdom, this);
 				}
 			}
 			finally {
@@ -7081,7 +7081,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprlban emprlban = new Emprlban(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprlban(emprlban);
+					resume = ctsqlDBVisitor.visitEmprlban(emprlban, this);
 				}
 			}
 			finally {
@@ -7104,7 +7104,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprper emprper = new Emprper(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprper(emprper);
+					resume = ctsqlDBVisitor.visitEmprper(emprper, this);
 				}
 			}
 			finally {
@@ -7127,7 +7127,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Avisos avisos = new Avisos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAvisos(avisos);
+					resume = ctsqlDBVisitor.visitAvisos(avisos, this);
 				}
 			}
 			finally {
@@ -7150,7 +7150,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Variaciones variaciones = new Variaciones(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitVariaciones(variaciones);
+					resume = ctsqlDBVisitor.visitVariaciones(variaciones, this);
 				}
 			}
 			finally {
@@ -7173,7 +7173,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Regidocu regidocu = new Regidocu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitRegidocu(regidocu);
+					resume = ctsqlDBVisitor.visitRegidocu(regidocu, this);
 				}
 			}
 			finally {
@@ -7196,7 +7196,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -7290,7 +7290,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprlban emprlban = new Emprlban(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprlban(emprlban);
+					resume = ctsqlDBVisitor.visitEmprlban(emprlban, this);
 				}
 			}
 			finally {
@@ -7394,7 +7394,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprper emprper = new Emprper(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprper(emprper);
+					resume = ctsqlDBVisitor.visitEmprper(emprper, this);
 				}
 			}
 			finally {
@@ -7461,7 +7461,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprper emprper = new Emprper(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprper(emprper);
+					resume = ctsqlDBVisitor.visitEmprper(emprper, this);
 				}
 			}
 			finally {
@@ -8217,7 +8217,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Empract empract = new Empract(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmpract(empract);
+					resume = ctsqlDBVisitor.visitEmpract(empract, this);
 				}
 			}
 			finally {
@@ -8240,7 +8240,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprctra emprctra = new Emprctra(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprctra(emprctra);
+					resume = ctsqlDBVisitor.visitEmprctra(emprctra, this);
 				}
 			}
 			finally {
@@ -8263,7 +8263,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprdom emprdom = new Emprdom(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprdom(emprdom);
+					resume = ctsqlDBVisitor.visitEmprdom(emprdom, this);
 				}
 			}
 			finally {
@@ -8286,7 +8286,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprlban emprlban = new Emprlban(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprlban(emprlban);
+					resume = ctsqlDBVisitor.visitEmprlban(emprlban, this);
 				}
 			}
 			finally {
@@ -8309,7 +8309,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprper emprper = new Emprper(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprper(emprper);
+					resume = ctsqlDBVisitor.visitEmprper(emprper, this);
 				}
 			}
 			finally {
@@ -8332,7 +8332,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Otrperc otrperc = new Otrperc(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitOtrperc(otrperc);
+					resume = ctsqlDBVisitor.visitOtrperc(otrperc, this);
 				}
 			}
 			finally {
@@ -8355,7 +8355,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Avisos avisos = new Avisos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAvisos(avisos);
+					resume = ctsqlDBVisitor.visitAvisos(avisos, this);
 				}
 			}
 			finally {
@@ -8378,7 +8378,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Impr11x impr11x = new Impr11x(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitImpr11x(impr11x);
+					resume = ctsqlDBVisitor.visitImpr11x(impr11x, this);
 				}
 			}
 			finally {
@@ -8403,7 +8403,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Impr190 impr190 = new Impr190(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitImpr190(impr190);
+					resume = ctsqlDBVisitor.visitImpr190(impr190, this);
 				}
 			}
 			finally {
@@ -8426,7 +8426,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Variaciones variaciones = new Variaciones(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitVariaciones(variaciones);
+					resume = ctsqlDBVisitor.visitVariaciones(variaciones, this);
 				}
 			}
 			finally {
@@ -8449,7 +8449,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Regidocu regidocu = new Regidocu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitRegidocu(regidocu);
+					resume = ctsqlDBVisitor.visitRegidocu(regidocu, this);
 				}
 			}
 			finally {
@@ -8472,7 +8472,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Rem_cert_empr rem_cert_empr = new Rem_cert_empr(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitRem_cert_empr(rem_cert_empr);
+					resume = ctsqlDBVisitor.visitRem_cert_empr(rem_cert_empr, this);
 				}
 			}
 			finally {
@@ -8692,7 +8692,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -8715,7 +8715,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Percep percep = new Percep(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPercep(percep);
+					resume = ctsqlDBVisitor.visitPercep(percep, this);
 				}
 			}
 			finally {
@@ -8738,7 +8738,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Bonifica bonifica = new Bonifica(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitBonifica(bonifica);
+					resume = ctsqlDBVisitor.visitBonifica(bonifica, this);
 				}
 			}
 			finally {
@@ -8761,7 +8761,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Avisos avisos = new Avisos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAvisos(avisos);
+					resume = ctsqlDBVisitor.visitAvisos(avisos, this);
 				}
 			}
 			finally {
@@ -8784,7 +8784,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nomina nomina = new Nomina(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNomina(nomina);
+					resume = ctsqlDBVisitor.visitNomina(nomina, this);
 				}
 			}
 			finally {
@@ -8807,7 +8807,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabinci trabinci = new Trabinci(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabinci(trabinci);
+					resume = ctsqlDBVisitor.visitTrabinci(trabinci, this);
 				}
 			}
 			finally {
@@ -8830,7 +8830,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nominait nominait = new Nominait(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNominait(nominait);
+					resume = ctsqlDBVisitor.visitNominait(nominait, this);
 				}
 			}
 			finally {
@@ -8853,7 +8853,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabdto trabdto = new Trabdto(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabdto(trabdto);
+					resume = ctsqlDBVisitor.visitTrabdto(trabdto, this);
 				}
 			}
 			finally {
@@ -8876,7 +8876,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Parteit parteit = new Parteit(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitParteit(parteit);
+					resume = ctsqlDBVisitor.visitParteit(parteit, this);
 				}
 			}
 			finally {
@@ -8899,7 +8899,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Parteitnu parteitnu = new Parteitnu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitParteitnu(parteitnu);
+					resume = ctsqlDBVisitor.visitParteitnu(parteitnu, this);
 				}
 			}
 			finally {
@@ -8922,7 +8922,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nominaitnu nominaitnu = new Nominaitnu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNominaitnu(nominaitnu);
+					resume = ctsqlDBVisitor.visitNominaitnu(nominaitnu, this);
 				}
 			}
 			finally {
@@ -8945,7 +8945,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finiquito finiquito = new Finiquito(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFiniquito(finiquito);
+					resume = ctsqlDBVisitor.visitFiniquito(finiquito, this);
 				}
 			}
 			finally {
@@ -8968,7 +8968,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finiquitodf finiquitodf = new Finiquitodf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFiniquitodf(finiquitodf);
+					resume = ctsqlDBVisitor.visitFiniquitodf(finiquitodf, this);
 				}
 			}
 			finally {
@@ -8991,7 +8991,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finiquitonu finiquitonu = new Finiquitonu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFiniquitonu(finiquitonu);
+					resume = ctsqlDBVisitor.visitFiniquitonu(finiquitonu, this);
 				}
 			}
 			finally {
@@ -9014,7 +9014,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Comunica comunica = new Comunica(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitComunica(comunica);
+					resume = ctsqlDBVisitor.visitComunica(comunica, this);
 				}
 			}
 			finally {
@@ -9037,7 +9037,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Calculo calculo = new Calculo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCalculo(calculo);
+					resume = ctsqlDBVisitor.visitCalculo(calculo, this);
 				}
 			}
 			finally {
@@ -9060,7 +9060,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nominadf nominadf = new Nominadf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNominadf(nominadf);
+					resume = ctsqlDBVisitor.visitNominadf(nominadf, this);
 				}
 			}
 			finally {
@@ -9083,7 +9083,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Embargo embargo = new Embargo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmbargo(embargo);
+					resume = ctsqlDBVisitor.visitEmbargo(embargo, this);
 				}
 			}
 			finally {
@@ -9106,7 +9106,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nominaex nominaex = new Nominaex(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNominaex(nominaex);
+					resume = ctsqlDBVisitor.visitNominaex(nominaex, this);
 				}
 			}
 			finally {
@@ -9129,7 +9129,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Regidocu regidocu = new Regidocu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitRegidocu(regidocu);
+					resume = ctsqlDBVisitor.visitRegidocu(regidocu, this);
 				}
 			}
 			finally {
@@ -9152,7 +9152,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Prcdivtrab prcdivtrab = new Prcdivtrab(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPrcdivtrab(prcdivtrab);
+					resume = ctsqlDBVisitor.visitPrcdivtrab(prcdivtrab, this);
 				}
 			}
 			finally {
@@ -9175,7 +9175,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Remesa_parte_it remesa_parte_it = new Remesa_parte_it(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitRemesa_parte_it(remesa_parte_it);
+					resume = ctsqlDBVisitor.visitRemesa_parte_it(remesa_parte_it, this);
 				}
 			}
 			finally {
@@ -9198,7 +9198,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Rem_cert_empr_det rem_cert_empr_det = new Rem_cert_empr_det(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitRem_cert_empr_det(rem_cert_empr_det);
+					resume = ctsqlDBVisitor.visitRem_cert_empr_det(rem_cert_empr_det, this);
 				}
 			}
 			finally {
@@ -9256,7 +9256,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Sucursal sucursal = new Sucursal(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitSucursal(sucursal);
+					resume = ctsqlDBVisitor.visitSucursal(sucursal, this);
 				}
 			}
 			finally {
@@ -9279,7 +9279,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprban emprban = new Emprban(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprban(emprban);
+					resume = ctsqlDBVisitor.visitEmprban(emprban, this);
 				}
 			}
 			finally {
@@ -9302,7 +9302,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -9325,7 +9325,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -9348,7 +9348,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Autonomos autonomos = new Autonomos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAutonomos(autonomos);
+					resume = ctsqlDBVisitor.visitAutonomos(autonomos, this);
 				}
 			}
 			finally {
@@ -9406,7 +9406,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linepigr linepigr = new Linepigr(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinepigr(linepigr);
+					resume = ctsqlDBVisitor.visitLinepigr(linepigr, this);
 				}
 			}
 			finally {
@@ -9429,7 +9429,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Categoria categoria = new Categoria(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCategoria(categoria);
+					resume = ctsqlDBVisitor.visitCategoria(categoria, this);
 				}
 			}
 			finally {
@@ -9452,7 +9452,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -9475,7 +9475,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -9498,7 +9498,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Costes costes = new Costes(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCostes(costes);
+					resume = ctsqlDBVisitor.visitCostes(costes, this);
 				}
 			}
 			finally {
@@ -10410,7 +10410,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finipext finipext = new Finipext(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinipext(finipext);
+					resume = ctsqlDBVisitor.visitFinipext(finipext, this);
 				}
 			}
 			finally {
@@ -10433,7 +10433,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finindem finindem = new Finindem(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinindem(finindem);
+					resume = ctsqlDBVisitor.visitFinindem(finindem, this);
 				}
 			}
 			finally {
@@ -10456,7 +10456,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finidto finidto = new Finidto(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinidto(finidto);
+					resume = ctsqlDBVisitor.visitFinidto(finidto, this);
 				}
 			}
 			finally {
@@ -10748,7 +10748,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finipextdf finipextdf = new Finipextdf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinipextdf(finipextdf);
+					resume = ctsqlDBVisitor.visitFinipextdf(finipextdf, this);
 				}
 			}
 			finally {
@@ -10771,7 +10771,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finindemdf finindemdf = new Finindemdf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinindemdf(finindemdf);
+					resume = ctsqlDBVisitor.visitFinindemdf(finindemdf, this);
 				}
 			}
 			finally {
@@ -10794,7 +10794,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finidtodf finidtodf = new Finidtodf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinidtodf(finidtodf);
+					resume = ctsqlDBVisitor.visitFinidtodf(finidtodf, this);
 				}
 			}
 			finally {
@@ -11086,7 +11086,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finipextnu finipextnu = new Finipextnu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinipextnu(finipextnu);
+					resume = ctsqlDBVisitor.visitFinipextnu(finipextnu, this);
 				}
 			}
 			finally {
@@ -11109,7 +11109,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finindemnu finindemnu = new Finindemnu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinindemnu(finindemnu);
+					resume = ctsqlDBVisitor.visitFinindemnu(finindemnu, this);
 				}
 			}
 			finally {
@@ -11132,7 +11132,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Finidtonu finidtonu = new Finidtonu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitFinidtonu(finidtonu);
+					resume = ctsqlDBVisitor.visitFinidtonu(finidtonu, this);
 				}
 			}
 			finally {
@@ -12050,7 +12050,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httbonificacion httbonificacion = new Httbonificacion(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttbonificacion(httbonificacion);
+					resume = ctsqlDBVisitor.visitHttbonificacion(httbonificacion, this);
 				}
 			}
 			finally {
@@ -12073,7 +12073,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httaviso httaviso = new Httaviso(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttaviso(httaviso);
+					resume = ctsqlDBVisitor.visitHttaviso(httaviso, this);
 				}
 			}
 			finally {
@@ -12096,7 +12096,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httcomplemento httcomplemento = new Httcomplemento(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttcomplemento(httcomplemento);
+					resume = ctsqlDBVisitor.visitHttcomplemento(httcomplemento, this);
 				}
 			}
 			finally {
@@ -12119,7 +12119,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httincidencia httincidencia = new Httincidencia(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttincidencia(httincidencia);
+					resume = ctsqlDBVisitor.visitHttincidencia(httincidencia, this);
 				}
 			}
 			finally {
@@ -12716,7 +12716,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lin190 lin190 = new Lin190(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLin190(lin190);
+					resume = ctsqlDBVisitor.visitLin190(lin190, this);
 				}
 			}
 			finally {
@@ -15590,7 +15590,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprccc emprccc = new Emprccc(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprccc(emprccc);
+					resume = ctsqlDBVisitor.visitEmprccc(emprccc, this);
 				}
 			}
 			finally {
@@ -15613,7 +15613,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linmutua linmutua = new Linmutua(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinmutua(linmutua);
+					resume = ctsqlDBVisitor.visitLinmutua(linmutua, this);
 				}
 			}
 			finally {
@@ -15636,7 +15636,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Autonomos autonomos = new Autonomos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAutonomos(autonomos);
+					resume = ctsqlDBVisitor.visitAutonomos(autonomos, this);
 				}
 			}
 			finally {
@@ -15694,7 +15694,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Persona persona = new Persona(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPersona(persona);
+					resume = ctsqlDBVisitor.visitPersona(persona, this);
 				}
 			}
 			finally {
@@ -15753,7 +15753,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Percniv percniv = new Percniv(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPercniv(percniv);
+					resume = ctsqlDBVisitor.visitPercniv(percniv, this);
 				}
 			}
 			finally {
@@ -17075,7 +17075,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nomdto nomdto = new Nomdto(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNomdto(nomdto);
+					resume = ctsqlDBVisitor.visitNomdto(nomdto, this);
 				}
 			}
 			finally {
@@ -17098,7 +17098,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nominadev nominadev = new Nominadev(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNominadev(nominadev);
+					resume = ctsqlDBVisitor.visitNominadev(nominadev, this);
 				}
 			}
 			finally {
@@ -17121,7 +17121,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Prcdivnom prcdivnom = new Prcdivnom(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPrcdivnom(prcdivnom);
+					resume = ctsqlDBVisitor.visitPrcdivnom(prcdivnom, this);
 				}
 			}
 			finally {
@@ -18096,7 +18096,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nomdfdev nomdfdev = new Nomdfdev(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNomdfdev(nomdfdev);
+					resume = ctsqlDBVisitor.visitNomdfdev(nomdfdev, this);
 				}
 			}
 			finally {
@@ -18119,7 +18119,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nomdfdto nomdfdto = new Nomdfdto(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNomdfdto(nomdfdto);
+					resume = ctsqlDBVisitor.visitNomdfdto(nomdfdto, this);
 				}
 			}
 			finally {
@@ -18430,7 +18430,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nomdtoex nomdtoex = new Nomdtoex(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNomdtoex(nomdtoex);
+					resume = ctsqlDBVisitor.visitNomdtoex(nomdtoex, this);
 				}
 			}
 			finally {
@@ -18750,7 +18750,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Nomdfdtoex nomdfdtoex = new Nomdfdtoex(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitNomdfdtoex(nomdfdtoex);
+					resume = ctsqlDBVisitor.visitNomdfdtoex(nomdfdtoex, this);
 				}
 			}
 			finally {
@@ -24447,7 +24447,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linocupacion linocupacion = new Linocupacion(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinocupacion(linocupacion);
+					resume = ctsqlDBVisitor.visitLinocupacion(linocupacion, this);
 				}
 			}
 			finally {
@@ -24978,7 +24978,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Comunidad comunidad = new Comunidad(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitComunidad(comunidad);
+					resume = ctsqlDBVisitor.visitComunidad(comunidad, this);
 				}
 			}
 			finally {
@@ -25001,7 +25001,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Cliente cliente = new Cliente(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCliente(cliente);
+					resume = ctsqlDBVisitor.visitCliente(cliente, this);
 				}
 			}
 			finally {
@@ -25025,7 +25025,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprnif emprnif = new Emprnif(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprnif(emprnif);
+					resume = ctsqlDBVisitor.visitEmprnif(emprnif, this);
 				}
 			}
 			finally {
@@ -25049,7 +25049,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Persona persona = new Persona(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPersona(persona);
+					resume = ctsqlDBVisitor.visitPersona(persona, this);
 				}
 			}
 			finally {
@@ -25072,7 +25072,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -25409,7 +25409,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Parteconf parteconf = new Parteconf(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitParteconf(parteconf);
+					resume = ctsqlDBVisitor.visitParteconf(parteconf, this);
 				}
 			}
 			finally {
@@ -25879,7 +25879,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linpercepcion linpercepcion = new Linpercepcion(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinpercepcion(linpercepcion);
+					resume = ctsqlDBVisitor.visitLinpercepcion(linpercepcion, this);
 				}
 			}
 			finally {
@@ -26583,7 +26583,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprper emprper = new Emprper(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprper(emprper);
+					resume = ctsqlDBVisitor.visitEmprper(emprper, this);
 				}
 			}
 			finally {
@@ -26606,7 +26606,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Otrperc otrperc = new Otrperc(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitOtrperc(otrperc);
+					resume = ctsqlDBVisitor.visitOtrperc(otrperc, this);
 				}
 			}
 			finally {
@@ -26629,7 +26629,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lintc2 lintc2 = new Lintc2(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLintc2(lintc2);
+					resume = ctsqlDBVisitor.visitLintc2(lintc2, this);
 				}
 			}
 			finally {
@@ -26652,7 +26652,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Autonomos autonomos = new Autonomos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAutonomos(autonomos);
+					resume = ctsqlDBVisitor.visitAutonomos(autonomos, this);
 				}
 			}
 			finally {
@@ -26710,7 +26710,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linplus linplus = new Linplus(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinplus(linplus);
+					resume = ctsqlDBVisitor.visitLinplus(linplus, this);
 				}
 			}
 			finally {
@@ -26777,7 +26777,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linporco linporco = new Linporco(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinporco(linporco);
+					resume = ctsqlDBVisitor.visitLinporco(linporco, this);
 				}
 			}
 			finally {
@@ -26800,7 +26800,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Tipocont tipocont = new Tipocont(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTipocont(tipocont);
+					resume = ctsqlDBVisitor.visitTipocont(tipocont, this);
 				}
 			}
 			finally {
@@ -26823,7 +26823,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -26846,7 +26846,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Costes costes = new Costes(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCostes(costes);
+					resume = ctsqlDBVisitor.visitCostes(costes, this);
 				}
 			}
 			finally {
@@ -27019,7 +27019,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linprestacion linprestacion = new Linprestacion(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinprestacion(linprestacion);
+					resume = ctsqlDBVisitor.visitLinprestacion(linprestacion, this);
 				}
 			}
 			finally {
@@ -27174,7 +27174,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Delegacion delegacion = new Delegacion(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitDelegacion(delegacion);
+					resume = ctsqlDBVisitor.visitDelegacion(delegacion, this);
 				}
 			}
 			finally {
@@ -27197,7 +27197,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Cliente cliente = new Cliente(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCliente(cliente);
+					resume = ctsqlDBVisitor.visitCliente(cliente, this);
 				}
 			}
 			finally {
@@ -27220,7 +27220,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Domicilio domicilio = new Domicilio(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitDomicilio(domicilio);
+					resume = ctsqlDBVisitor.visitDomicilio(domicilio, this);
 				}
 			}
 			finally {
@@ -27244,7 +27244,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Persona persona = new Persona(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPersona(persona);
+					resume = ctsqlDBVisitor.visitPersona(persona, this);
 				}
 			}
 			finally {
@@ -27267,7 +27267,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Impr11x impr11x = new Impr11x(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitImpr11x(impr11x);
+					resume = ctsqlDBVisitor.visitImpr11x(impr11x, this);
 				}
 			}
 			finally {
@@ -27290,7 +27290,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Impr190 impr190 = new Impr190(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitImpr190(impr190);
+					resume = ctsqlDBVisitor.visitImpr190(impr190, this);
 				}
 			}
 			finally {
@@ -27313,7 +27313,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Opfile opfile = new Opfile(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitOpfile(opfile);
+					resume = ctsqlDBVisitor.visitOpfile(opfile, this);
 				}
 			}
 			finally {
@@ -27337,7 +27337,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -27360,7 +27360,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Autonomos autonomos = new Autonomos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAutonomos(autonomos);
+					resume = ctsqlDBVisitor.visitAutonomos(autonomos, this);
 				}
 			}
 			finally {
@@ -27721,7 +27721,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Remesa_parte_it remesa_parte_it = new Remesa_parte_it(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitRemesa_parte_it(remesa_parte_it);
+					resume = ctsqlDBVisitor.visitRemesa_parte_it(remesa_parte_it, this);
 				}
 			}
 			finally {
@@ -28289,7 +28289,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Action_entry action_entry = new Action_entry(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAction_entry(action_entry);
+					resume = ctsqlDBVisitor.visitAction_entry(action_entry, this);
 				}
 			}
 			finally {
@@ -28410,7 +28410,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprban emprban = new Emprban(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprban(emprban);
+					resume = ctsqlDBVisitor.visitEmprban(emprban, this);
 				}
 			}
 			finally {
@@ -28434,7 +28434,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -28458,7 +28458,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -28482,7 +28482,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Autonomos autonomos = new Autonomos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAutonomos(autonomos);
+					resume = ctsqlDBVisitor.visitAutonomos(autonomos, this);
 				}
 			}
 			finally {
@@ -29556,7 +29556,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lintc2epi lintc2epi = new Lintc2epi(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLintc2epi(lintc2epi);
+					resume = ctsqlDBVisitor.visitLintc2epi(lintc2epi, this);
 				}
 			}
 			finally {
@@ -29579,7 +29579,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Lintc2 lintc2 = new Lintc2(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLintc2(lintc2);
+					resume = ctsqlDBVisitor.visitLintc2(lintc2, this);
 				}
 			}
 			finally {
@@ -29637,7 +29637,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -29767,7 +29767,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Bonifica bonifica = new Bonifica(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitBonifica(bonifica);
+					resume = ctsqlDBVisitor.visitBonifica(bonifica, this);
 				}
 			}
 			finally {
@@ -29843,7 +29843,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -29866,7 +29866,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -29924,7 +29924,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Cliente cliente = new Cliente(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCliente(cliente);
+					resume = ctsqlDBVisitor.visitCliente(cliente, this);
 				}
 			}
 			finally {
@@ -29948,7 +29948,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprnif emprnif = new Emprnif(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprnif(emprnif);
+					resume = ctsqlDBVisitor.visitEmprnif(emprnif, this);
 				}
 			}
 			finally {
@@ -29971,7 +29971,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Persona persona = new Persona(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPersona(persona);
+					resume = ctsqlDBVisitor.visitPersona(persona, this);
 				}
 			}
 			finally {
@@ -29994,7 +29994,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Comunica comunica = new Comunica(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitComunica(comunica);
+					resume = ctsqlDBVisitor.visitComunica(comunica, this);
 				}
 			}
 			finally {
@@ -30017,7 +30017,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -30075,7 +30075,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Cliente cliente = new Cliente(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCliente(cliente);
+					resume = ctsqlDBVisitor.visitCliente(cliente, this);
 				}
 			}
 			finally {
@@ -30098,7 +30098,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Emprnif emprnif = new Emprnif(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitEmprnif(emprnif);
+					resume = ctsqlDBVisitor.visitEmprnif(emprnif, this);
 				}
 			}
 			finally {
@@ -30174,7 +30174,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabinci trabinci = new Trabinci(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabinci(trabinci);
+					resume = ctsqlDBVisitor.visitTrabinci(trabinci, this);
 				}
 			}
 			finally {
@@ -30374,7 +30374,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Trabajo trabajo = new Trabajo(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitTrabajo(trabajo);
+					resume = ctsqlDBVisitor.visitTrabajo(trabajo, this);
 				}
 			}
 			finally {
@@ -30397,7 +30397,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -30490,7 +30490,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Delegacion delegacion = new Delegacion(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitDelegacion(delegacion);
+					resume = ctsqlDBVisitor.visitDelegacion(delegacion, this);
 				}
 			}
 			finally {
@@ -30513,7 +30513,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Cliente cliente = new Cliente(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitCliente(cliente);
+					resume = ctsqlDBVisitor.visitCliente(cliente, this);
 				}
 			}
 			finally {
@@ -30536,7 +30536,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Domicilio domicilio = new Domicilio(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitDomicilio(domicilio);
+					resume = ctsqlDBVisitor.visitDomicilio(domicilio, this);
 				}
 			}
 			finally {
@@ -30559,7 +30559,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Persona persona = new Persona(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitPersona(persona);
+					resume = ctsqlDBVisitor.visitPersona(persona, this);
 				}
 			}
 			finally {
@@ -30582,7 +30582,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Opfile opfile = new Opfile(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitOpfile(opfile);
+					resume = ctsqlDBVisitor.visitOpfile(opfile, this);
 				}
 			}
 			finally {
@@ -30605,7 +30605,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Httrabajador httrabajador = new Httrabajador(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador);
+					resume = ctsqlDBVisitor.visitHttrabajador(httrabajador, this);
 				}
 			}
 			finally {
@@ -30628,7 +30628,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Autonomos autonomos = new Autonomos(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAutonomos(autonomos);
+					resume = ctsqlDBVisitor.visitAutonomos(autonomos, this);
 				}
 			}
 			finally {
@@ -30686,7 +30686,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Regidocu regidocu = new Regidocu(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitRegidocu(regidocu);
+					resume = ctsqlDBVisitor.visitRegidocu(regidocu, this);
 				}
 			}
 			finally {
@@ -31720,7 +31720,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Session session = new Session(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitSession(session);
+					resume = ctsqlDBVisitor.visitSession(session, this);
 				}
 			}
 			finally {
@@ -31743,7 +31743,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Action_favorite action_favorite = new Action_favorite(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAction_favorite(action_favorite);
+					resume = ctsqlDBVisitor.visitAction_favorite(action_favorite, this);
 				}
 			}
 			finally {
@@ -31766,7 +31766,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Action_denied action_denied = new Action_denied(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitAction_denied(action_denied);
+					resume = ctsqlDBVisitor.visitAction_denied(action_denied, this);
 				}
 			}
 			finally {
@@ -31824,7 +31824,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				Linvariables linvariables = new Linvariables(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visitLinvariables(linvariables);
+					resume = ctsqlDBVisitor.visitLinvariables(linvariables, this);
 				}
 			}
 			finally {
