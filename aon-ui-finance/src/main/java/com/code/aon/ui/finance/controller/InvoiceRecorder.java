@@ -231,12 +231,11 @@ public class InvoiceRecorder implements ITransferObject {
 					criteria = new Criteria();
 					criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
 					criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
-					List<ITransferObject> accounts = productAccountBean.getList(criteria);
-					if (accounts == null || accounts.size() == 0) {
+					int size = productAccountBean.getCount(criteria);
+					if (size == 0) {
 						wrong = true;
 						addMessage("El gasto: \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");			
 					} else {
-						ProductAccount acc = (ProductAccount) accounts.get(0);
 						Criteria c = new Criteria();
 						c.addEqualExpression(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID), getAccount().getId());
 						c.addOrder(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER), false);

@@ -19,6 +19,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.slf4j.Logger;
@@ -28,6 +30,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.IConfidentialable;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
@@ -42,61 +47,31 @@ import com.code.aon.registry.RegistryBank;
  */
 @Entity
 @Table(name = "fbatch")
-public class FinanceBatch implements ITransferObject {
+public class FinanceBatch implements ITransferObject,IConfidentialable {
 	
 	private static final long serialVersionUID = 804673961013565165L;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceBatch.class.getName());
 
-    /** The id. */
     private Integer id;
-
-    /** The description. */
     private String description;
-    
-    /** The issue date. */
     private Date issueDate;
-    
-    /** The finance batch type. */
     private FinanceBatchType financeBatchType;
-
-    /** The finance batch status. */
     private FinanceBatchStatus financeBatchStatus;
-
-    /** The registry bank. */
     private RegistryBank registryBank;
-    
-    /** The payment. */
     private boolean payment;
-
-    /** The detail of this financeBatch. */
+    private SecurityLevel securityLevel;
 	private Set<FinanceBatchDetail> lines = new HashSet<FinanceBatchDetail>();
 
-    /**
-     * Gets the id.
-     * 
-     * @return the id
-     */
     @Id
     @GeneratedValue
     public Integer getId() {
         return id;
     }
-
-    /**
-     * Sets the id.
-     * 
-     * @param id the id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
     
-	/**
-	 * Gets the registry bank.
-	 * 
-	 * @return the registry bank
-	 */
     @ManyToOne
     @JoinColumn(name="rbank")
     @ForeignKey(name="FK_FBATCH_RBANK")
@@ -104,127 +79,75 @@ public class FinanceBatch implements ITransferObject {
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
-
-	/**
-	 * Sets the registry bank.
-	 * 
-	 * @param registryBank the registry bank
-	 */
 	public void setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
 	}
-
-	/**
-	 * Gets the description.
-	 * 
-	 * @return the description
-	 */
+	
 	@Column(length=32)
 	public String getDescription() {
 		return description;
 	}
-
-	/**
-	 * Sets the description.
-	 * 
-	 * @param description the description
-	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	/**
-	 * Gets the finance batch status.
-	 * 
-	 * @return the finance batch status
-	 */
 	@Column(name = "status")
 	public FinanceBatchStatus getFinanceBatchStatus() {
 		return financeBatchStatus;
 	}
-
-	/**
-	 * Sets the finance batch status.
-	 * 
-	 * @param financeBatchStatus the finance batch status
-	 */
 	public void setFinanceBatchStatus(FinanceBatchStatus financeBatchStatus) {
 		this.financeBatchStatus = financeBatchStatus;
 	}
 
-	/**
-	 * Gets the finance batch type.
-	 * 
-	 * @return the finance batch type
-	 */
 	@Column(name = "type")
 	public FinanceBatchType getFinanceBatchType() {
 		return financeBatchType;
 	}
-
-	/**
-	 * Sets the finance batch type.
-	 * 
-	 * @param financeBatchType the finance batch type
-	 */
 	public void setFinanceBatchType(FinanceBatchType financeBatchType) {
 		this.financeBatchType = financeBatchType;
 	}
 
-	/**
-	 * Gets the issue date.
-	 * 
-	 * @return the issue date
-	 */
 	@Column(name="issue_date")
 	@Temporal(TemporalType.DATE)
 	public Date getIssueDate() {
 		return issueDate;
 	}
-
-	/**
-	 * Sets the issue date.
-	 * 
-	 * @param issueDate the issue date
-	 */
 	public void setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 	}
 
-    /**
-     * Checks if is payment.
-     * 
-     * @return true, if is payment
-     */
     @Column(nullable = false)
 	public boolean isPayment() {
 		return payment;
 	}
-
-	/**
-	 * Sets the payment.
-	 * 
-	 * @param payment the payment
-	 */
 	public void setPayment(boolean payment) {
 		this.payment = payment;
 	}
 	
-	/**
-	 * Gets the lines.
-	 * 
-	 * @return the lines
-	 */
-	@OneToMany(mappedBy = "financeBatch", cascade={CascadeType.REMOVE})
+    @Column(name = "security_level")
+    public SecurityLevel getSecurityLevel() {
+        return securityLevel;
+    }
+    public void setSecurityLevel(SecurityLevel securityLevel) {
+        this.securityLevel = securityLevel;
+    }
+    
+	@Transient
+	@Override
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+	@Transient
+	@Override
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}
+
+	
+    @OneToMany(mappedBy = "financeBatch", cascade={CascadeType.REMOVE})
 	public Set<FinanceBatchDetail> getLines() {
 		return this.lines;
 	}
-
-	/**
-	 * Sets the lines.
-	 * 
-	 * @param lines the lines
-	 */
 	public void setLines( Set<FinanceBatchDetail> lines ) {
 		this.lines = lines;
 	}
@@ -247,24 +170,41 @@ public class FinanceBatch implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final FinanceBatch o = (FinanceBatch) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description,o.description)
+				.append(this.issueDate,o.issueDate)		
+				.append(this.financeBatchType,o.financeBatchType)
+				.append(this.financeBatchStatus,o.financeBatchStatus)		
+				.append(this.registryBank,o.registryBank)		
+				.append(this.payment,o.payment)		
+				.append(this.securityLevel,o.securityLevel)
+				.isEquals();
 		}
-		if (obj instanceof FinanceBatch) {
-			FinanceBatch o = (FinanceBatch) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.description)
+			.append(this.issueDate)		
+			.append(this.financeBatchType)
+			.append(this.financeBatchStatus)		
+			.append(this.registryBank)		
+			.append(this.payment)		
+			.append(this.securityLevel)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

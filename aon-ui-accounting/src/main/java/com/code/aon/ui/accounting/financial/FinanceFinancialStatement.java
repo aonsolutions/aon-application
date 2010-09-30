@@ -11,6 +11,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -20,6 +21,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.util.AonUtil;
 
 public class FinanceFinancialStatement extends AbstractFinancialStatement {
 
@@ -37,6 +39,15 @@ public class FinanceFinancialStatement extends AbstractFinancialStatement {
 						financeBean.getFieldName(IFinanceAlias.FINANCE_PAYMENT), false);
 				criteria.addEqualExpression(financeBean
 						.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+				if (!AonUtil.getRoleManager().isConfidentiality()) {
+					criteria.addEqualExpression(financeBean
+							.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+				} else {
+					if (params.getSecurityLevel() != null) {
+						criteria.addEqualExpression(financeBean
+								.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), params.getSecurityLevel());
+					}
+				}
 				criteria.addGreaterThanOrEqualExpression(financeBean
 						.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), params
 						.getExcludeFinanceDate());
@@ -87,6 +98,15 @@ public class FinanceFinancialStatement extends AbstractFinancialStatement {
 						financeBean.getFieldName(IFinanceAlias.FINANCE_PAYMENT), true);
 				criteria.addEqualExpression(financeBean
 						.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+				if (!AonUtil.getRoleManager().isConfidentiality()) {
+					criteria.addEqualExpression(financeBean
+							.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+				} else {
+					if (params.getSecurityLevel() != null) {
+						criteria.addEqualExpression(financeBean
+								.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), params.getSecurityLevel());
+					}
+				}
 				criteria.addGreaterThanOrEqualExpression(financeBean
 						.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), params
 						.getExcludeFinanceDate());
@@ -118,7 +138,7 @@ public class FinanceFinancialStatement extends AbstractFinancialStatement {
 				for (ITransferObject to : accountBean.getList(criteria)) {
 					Account account = (Account) to;
 					Balance balance = getAccountingUtil().getPeriodBalance(period.getInitiationDate(), period
-							.getDeadline(), account.getId(), false, false);
+							.getDeadline(), account.getId(), params.getSecurityLevel(),false, false);
 					amount = CommonUtil.round(amount + balance.getCredit() - balance.getDebit());
 				}
 				if (amount != 0) {

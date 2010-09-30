@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -28,29 +29,29 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 				Period period = getAccountingUtil().getPeriod(params.getFinancialDate());
 
 				//470*  -> HP, deudora por diversos conceptos
-				addStatement(period.getInitiationDate(), period.getDeadline(), "470", false);
+				addStatement(period.getInitiationDate(), period.getDeadline(), params.getSecurityLevel(), "470", false);
 				//471*  -> SS Deudora
-				addStatement(period.getInitiationDate(), period.getDeadline(), "471", false);
+				addStatement(period.getInitiationDate(), period.getDeadline(), params.getSecurityLevel(), "471", false);
 				//472*  -> HP, IVA Soportado
-				addStatement(period.getInitiationDate(), period.getDeadline(), "472", false);
+				addStatement(period.getInitiationDate(), period.getDeadline(), params.getSecurityLevel(), "472", false);
 				//4750* -> HP, Acreedor por IVA
-				addStatement(period.getInitiationDate(), period.getDeadline(), "4750", true);
+				addStatement(period.getInitiationDate(), period.getDeadline(), params.getSecurityLevel(), "4750", true);
 				//4751* -> HP, Acreedor por Retenciones
-				addStatement(period.getInitiationDate(), period.getDeadline(), "4751", true);
+				addStatement(period.getInitiationDate(), period.getDeadline(), params.getSecurityLevel(), "4751", true);
 				//4752* -> HP, Acreedor por Imp. Sociedades
-				addStatement(period.getInitiationDate(), period.getDeadline(), "4752", true);
+				addStatement(period.getInitiationDate(), period.getDeadline(), params.getSecurityLevel(), "4752", true);
 
 				//476*  -> SS Acreedora (-1 mes)
 				Calendar c = Calendar.getInstance();
 				c.setTime(params.getFinancialDate());
 				c.set(Calendar.DAY_OF_MONTH, 1);
 				c.add(Calendar.DAY_OF_MONTH, -1);
-				FinancialStatement fs = addStatement(period.getInitiationDate(), c.getTime(), "476", true);
+				FinancialStatement fs = addStatement(period.getInitiationDate(), c.getTime(), params.getSecurityLevel(), "476", true);
 				Month m = Month.getMonthByValue( c.get(Calendar.MONTH));
 				fs.setDescription(fs.getDescription() + " (hasta "  + m.getName(AonUtil.getCurrentLocale())+ ")");
 
 				//477*  -> HP, IVA Repercutido
-				addStatement(period.getInitiationDate(), period.getDeadline(), "477", true);
+				addStatement(period.getInitiationDate(), period.getDeadline(), params.getSecurityLevel(), "477", true);
 			}
 		} catch (ExpressionException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
@@ -67,7 +68,7 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 		return CommonUtil.round(getTotal() * -1);
 	}
 
-	private FinancialStatement addStatement(Date fromDate, Date toDate, String prefix, boolean addition) throws ManagerBeanException, ExpressionException {
+	private FinancialStatement addStatement(Date fromDate, Date toDate, SecurityLevel securityLevel,String prefix, boolean addition) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), prefix + "*");
@@ -77,7 +78,7 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 		double subtotal = 0;
 		for (ITransferObject to: accountBean.getList(criteria)) {
 			Account account = (Account) to;
-			Balance balance = getAccountingUtil().getPeriodBalance(fromDate, toDate, account.getId(), false, false);
+			Balance balance = getAccountingUtil().getPeriodBalance(fromDate, toDate, account.getId(),securityLevel,false, false);
 			amount = CommonUtil.round(balance.getCredit() - balance.getDebit());
 			subtotal = CommonUtil.round(subtotal + amount) ; 	  
 		}

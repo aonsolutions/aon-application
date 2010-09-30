@@ -8,9 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
@@ -120,10 +117,18 @@ public class InvoiceReportController {
 				inv.setDeductibleQuota(rs.getDouble(16));
 				inv.setTaxableBase(rs.getDouble(17));
 				inv.setQuota(rs.getDouble(18));
-				// TODO duplicar en caso de RE
-				double surchargePercent = rs.getDouble(13);
-				double surchargeQuota = rs.getDouble(19);
+				inv.setSurcharge(false);
 				invoices.add(inv);
+				double surchargePercent = rs.getDouble(13);
+				if (surchargePercent > 0) {
+					double surchargeQuota = rs.getDouble(19);
+					InvoiceReport cloned = inv.clone();
+					cloned.setSurcharge(true);
+					cloned.setPercentage(surchargePercent);
+					cloned.setQuota(surchargeQuota);
+					cloned.setDeductibleQuota(surchargeQuota);
+					invoices.add(cloned);
+				}
 			}
 			return invoices;
 		} catch (SQLException e) {

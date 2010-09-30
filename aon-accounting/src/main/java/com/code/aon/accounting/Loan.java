@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.registry.RegistryBank;
 
@@ -29,7 +31,7 @@ import com.code.aon.registry.RegistryBank;
  */
 @Entity
 @Table(name="loan")
-public class Loan implements ITransferObject {
+public class Loan implements ITransferObject, IConfidentialable {
 
 	private static final long serialVersionUID = 6332808498569171281L;
 
@@ -47,7 +49,12 @@ public class Loan implements ITransferObject {
 	private Integer recurrence;
 	private Integer payDay;
 	private LoanStatus status;
-
+	
+	public Loan() {
+		setSecurityLevel(SecurityLevel.OFFICIAL);
+		setStatus(LoanStatus.ACTIVE);
+	}
+	
 	@Id
 	@Column(nullable=false)
 	@GeneratedValue
@@ -133,6 +140,17 @@ public class Loan implements ITransferObject {
 
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+	}
+	@Transient
+	@Override
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+
+	@Transient
+	@Override
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 	
 	

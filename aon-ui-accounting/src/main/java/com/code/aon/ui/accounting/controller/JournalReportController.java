@@ -93,7 +93,7 @@ public class JournalReportController extends BasicController {
 		setFromDate(null);
 		setToDate(null);
 		setDate(new Date());
-		setSecurityLevel(null);
+		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 		setJournal(false);
 		previousAccountEntry = null;
 		previousAccountEntryDetail = null;

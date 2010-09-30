@@ -35,7 +35,7 @@ public class CashFinancialStatement extends  AbstractFinancialStatement {
 					fs.setDescription(account.getDescription());
 					fs.setAddition(true);
 					Balance balance = getAccountingUtil().getPeriodBalance(period.getInitiationDate(), period
-							.getDeadline(), account.getId(), false, false);
+							.getDeadline(), account.getId(),params.getSecurityLevel(), false, false);
 					double amount = CommonUtil.round(balance.getDebit() - balance.getCredit());
 					fs.setAmount(amount);
 					setTotal( CommonUtil.round( getTotal() + amount));

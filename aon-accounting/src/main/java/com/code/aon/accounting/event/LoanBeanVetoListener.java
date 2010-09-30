@@ -1,6 +1,7 @@
 package com.code.aon.accounting.event;
 
 import com.code.aon.accounting.Loan;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
@@ -22,14 +23,16 @@ public class LoanBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     }
 
 	private void check(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException{
+		Loan loan = (Loan) evt.getTo();
 		try {
-			Loan loan = (Loan) evt.getTo();
 			Integer.parseInt( loan.getTerm() );
 		} catch (NumberFormatException e) {
 			String msg = "El plazo de la operación no es un valor numérico válido";
 			throw new ManagerBeanVetoListenerException(msg);
 		}
-		
+		if (loan.getSecurityLevel() == null) {
+			loan.setSecurityLevel(SecurityLevel.OFFICIAL);
+		}
 	}
 	
 }

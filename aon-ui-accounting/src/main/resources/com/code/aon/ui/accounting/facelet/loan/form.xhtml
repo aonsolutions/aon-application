@@ -23,9 +23,19 @@
 				
 					<aon:outputLabel for="Loan_id"
 						value="#{bundle.aon_id}" />
-					<aon:inputText id="Loan_id"
-						disabled="true"
-						value="#{loan.to.id}" size="5" />
+					<aon:div>
+						<aon:inputText id="Loan_id"
+							disabled="true"
+							value="#{loan.to.id}" size="5" />
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:selectBooleanCheckbox id="Loan_securityLevel"
+								styleClass="aon-margin-left"
+								value="#{loan.to.confidential}"/>
+							<aon:outputLabel for="Loan_securityLevel" 
+								styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_confidential}" />
+						</c:if>
+					</aon:div>
 
 					<aon:outputLabel for="Loan_description"
 						value="#{bundle.aon_description}" />
@@ -100,13 +110,6 @@
 						<f:validateDoubleRange />
 					</aon:inputText>
 
-					<aon:outputLabel for="Loan_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneRadio id="Loan_securityLevel"
-						value="#{loan.to.securityLevel}">
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneRadio>
-					
 					<aon:outputLabel for="Loan_status"
 						value="#{bundle.aon_status}" />
 					<aon:selectOneRadio id="Loan_status"

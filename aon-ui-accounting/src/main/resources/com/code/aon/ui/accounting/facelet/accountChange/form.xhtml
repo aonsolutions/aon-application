@@ -6,6 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -98,15 +99,14 @@
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}" />
 
-							<aon:outputLabel
-								for="AccountEntryDetail_accountEntry_securityLevel"
-								value="#{bundle.aon_security_level}" />
-							<aon:selectOneMenu
-								id="AccountEntryDetail_accountEntry_securityLevel"
-								value="#{accountChange.securityLevel}">
-								<f:selectItem itemValue="" itemLabel=" " />
-								<f:selectItems value="#{commonCollections.securityLevels}" />
-							</aon:selectOneMenu>
+							<c:if test="#{aonRole.confidentiality}">
+								<aon:outputLabel for="AccountEntryDetail_accountEntry_securityLevel"
+										value="#{bundle.aon_confidential}" />
+								<aon:selectOneRadio id="AccountEntryDetail_accountEntry_securityLevel"
+									value="#{accountChange.securityLevel}">
+									<f:selectItems value="#{commonCollections.confidentialValues}" />
+								</aon:selectOneRadio>				
+							</c:if>
 
 							<aon:outputLabel for="AccountEntryDetail_accountEntry_concept"
 								value="#{bundle.aon_concept}" />

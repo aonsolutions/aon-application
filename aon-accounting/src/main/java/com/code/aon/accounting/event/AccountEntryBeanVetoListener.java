@@ -68,6 +68,15 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 	@Override
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		try {
+			/*
+			 *  Gestión del estado del ejercicio. Los estados son
+			 *  	1) ACTIVE 
+			 *  	2) OPENING 
+			 *  	3) OPERATING 
+			 *  	4) CLOSED.
+			 *  Al borrar un apunte de apertura, cierre o explotación se comprueba si existen los 
+			 *  correspondientes apuntes para poner el estado del ejercicio correspondiente.
+			 */
 			AccountEntry to = (AccountEntry)evt.getTo();
 			if (to.getType() == AccountEntryType.OPENING || 
 				to.getType() == AccountEntryType.OPERATING || 
@@ -76,21 +85,42 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 				Period period = (Period) periodBean.get(to.getAccountPeriod());
 				AccountingUtil au = new AccountingUtil();
 				if (to.getType() == AccountEntryType.OPENING) {
-					period.setStatus(AccountPeriodStatus.ACTIVE);
-				} else if (to.getType() == AccountEntryType.OPERATING) {
-					if (au.existsEntry(period, AccountEntryType.OPENING, to.getSecurityLevel())) {
-						period.setStatus(AccountPeriodStatus.OPENING);	
+					if (au.existsEntry(period, AccountEntryType.OPENING, null, to.getId())) {
+						// Si después de borrar apertura, existe otro apertura, se mantiene el estado.
+						period.setStatus(AccountPeriodStatus.OPENING);
 					} else {
+						// Si después de borrar apertura, no existe otro apertura.
 						period.setStatus(AccountPeriodStatus.ACTIVE);	
 					}
-				} else if (to.getType() == AccountEntryType.CLOSING) {
-					if (au.existsEntry(period, AccountEntryType.OPERATING, to.getSecurityLevel())) {
-						period.setStatus(AccountPeriodStatus.OPERATING);	
+				} else if (to.getType() == AccountEntryType.OPERATING) {
+					if (au.existsEntry(period, AccountEntryType.OPERATING, null, to.getId())) {
+						// Si después de borrar explotación, existe otro explotación, se mantiene el estado.
+						period.setStatus(AccountPeriodStatus.OPERATING);
 					} else {
-						if (au.existsEntry(period, AccountEntryType.OPENING, to.getSecurityLevel())) {
-							period.setStatus(AccountPeriodStatus.OPENING);
+						if (au.existsEntry(period, AccountEntryType.OPENING, null)) {
+							// Si después de borrar explotación, existe apertura.
+							period.setStatus(AccountPeriodStatus.OPENING);	
 						} else {
+							// Si después de borrar explotación, no existe apertura.
 							period.setStatus(AccountPeriodStatus.ACTIVE);	
+						}
+					}
+				} else if (to.getType() == AccountEntryType.CLOSING) {
+					if (au.existsEntry(period, AccountEntryType.CLOSING, null, to.getId())) {
+						// Si después de borrar cierre, existe otro cierre, se mantiene el estado.
+						period.setStatus(AccountPeriodStatus.CLOSED);	
+					} else {
+						if (au.existsEntry(period, AccountEntryType.OPERATING, null)) {
+							// Si después de borrar cierre, existe otro explotación.
+							period.setStatus(AccountPeriodStatus.OPERATING);	
+						} else {
+							if (au.existsEntry(period, AccountEntryType.OPENING, null)) {
+								// Si después de borrar cierre, no existe explotación y sí apertura.
+								period.setStatus(AccountPeriodStatus.OPENING);
+							} else {
+								// Si después de borrar cierre, no existe explotación ni apertura.
+								period.setStatus(AccountPeriodStatus.ACTIVE);	
+							}
 						}
 					}
 				}

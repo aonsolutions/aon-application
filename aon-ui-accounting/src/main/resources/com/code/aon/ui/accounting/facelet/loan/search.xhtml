@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -63,14 +64,16 @@
 					<aon:inputText id="Loan_expenses" size="15"
 						valueChangeListener="#{loan.addExpression}" />
 
-					<aon:outputLabel for="Loan_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu id="Loan_securityLevel"
-						converter="aon.EnumConverter"
-						valueChangeListener="#{loan.addEqualExpression}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel for="Loan_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneRadio id="Loan_securityLevel"
+							converter="aon.EnumConverter"
+							valueChangeListener="#{loan.addEqualExpression}">
+							<f:selectItems value="#{commonCollections.confidentialValues}" />
+							<f:selectItem  value="#{null}" itemLabel="#{bundle.aon_all}"/>
+						</aon:selectOneRadio>
+					</c:if>
 					
 					<aon:outputLabel for="Loan_status"
 						value="#{bundle.aon_status}" />

@@ -33,7 +33,7 @@ public class InvoiceEntryHeader implements ITransferObject {
 	private Account account;
 	private Account retentionAccount;
 	private SecurityLevel securityLevel;
-	
+   
 	private Integer accountEntryId;
 
 	private Double taxableBase;
@@ -141,6 +141,13 @@ public class InvoiceEntryHeader implements ITransferObject {
 	}
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+	}
+
+	public boolean isConfidential() {
+		return getSecurityLevel() == SecurityLevel.CONFIDENTIAL;
+	}
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL );
 	}
 
 	public boolean isInvestment() {

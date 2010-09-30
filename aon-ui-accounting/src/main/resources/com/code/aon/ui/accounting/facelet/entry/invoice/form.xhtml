@@ -6,6 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -78,7 +79,7 @@
 
 					<aon:panelGrid id="invoiceTables1" columns="4" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-100
-							,aon-panelGrid-even aon-width-300
+							,aon-panelGrid-even aon-width-400
 							,aon-panelGrid-odd aon-width-100
 							,aon-panelGrid-even aon-width-auto">
 
@@ -164,11 +165,16 @@
 								<f:selectItems
 									value="#{accountingCollections.enabledAccountPeriods}" />
 							</aon:selectOneMenu>
-							<aon:selectOneRadio id="AccountEntry_securityLevel"
-								style="display:inline;" disabled="#{invoiceEntry.newDetail}"
-								value="#{invoiceEntry.header.securityLevel}">
-								<f:selectItems value="#{commonCollections.securityLevels}" />
-							</aon:selectOneRadio>
+							
+							<c:if test="#{aonRole.confidentiality}">
+								<aon:div>
+									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
+										value="#{invoiceEntry.header.confidential}"
+										disabled="#{invoiceEntry.newDetail}"/>
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}" />
+								</aon:div>
+							</c:if>
 						</h:panelGrid>
 
 						<aon:outputLabel for="Account_date" value="#{bundle.aon_date}" />

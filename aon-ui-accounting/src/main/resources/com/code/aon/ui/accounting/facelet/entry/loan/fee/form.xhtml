@@ -15,7 +15,8 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-
+		
+				<ui:param name="toolbarID" value="toolbarID" />
 				<ui:param name="toolbarTitle"
 					value="#{accountingBundle.accounting_loan_fee_entry_module}" />
 				<ui:param name="toolbarDescription"
@@ -28,6 +29,7 @@
 						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						actionListener="#{loanFeeEntry.onAccept}" action="#{loanFeeEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						disabled="#{loanFeeEntry.entry.loan == null or loanFeeEntry.entry.loan.id == null or loanFeeEntry.relatedAccount == null or loanFeeEntry.relatedAccount.id == null}"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false" />
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
@@ -60,7 +62,7 @@
 					<aon:outputLabel for="Loan_Lookup_id"
 						value="#{accountingBundle.accounting_loan}" />
 					<aon:selectOneMenu id="Loan_Lookup_id" required="true"
-						reRender="loanContainer" ajaxSingle="true"
+						reRender="loanContainer,toolbarID" ajaxSingle="true"
 						value="#{loanFeeEntry.entry.loan}">
 						<f:selectItem itemValue="" itemLabel="-" />
 						<f:selectItems value="#{accountingCollections.activeLoans}" />
@@ -116,73 +118,88 @@
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:inputText>
 				</aon:panelGrid>
-
+ 
 				<aon:div id="loanContainer" style="margin-top: 10px;width: 70%;">
-					<aon:panelCollapsible label="#{accountingBundle.accounting_loan_data}" 
-						rendered="#{loanFeeEntry.entry.loan != null and loanFeeEntry.entry.loan.id != null}">
-						<aon:panelGrid columns="2" style="width: 100%; text-align: left;"
-							columnClasses="aon-panelGrid-odd aon-width-150
-								,aon-panelGrid-even aon-width-auto">
-							<aon:outputText value="#{bundle.aon_date}" />
-							<aon:outputText value="#{loanFeeEntry.entry.loan.loanDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-
-							<aon:outputText value="#{bundle.aon_description}" />
-							<aon:outputText value="#{loanFeeEntry.entry.loan.description}" />
-
-							<aon:outputText value="#{accountBundle.account_account}" />
-							<h:commandLink immediate="#{true}"
-								styleClass="aon-dataTable-link"
-								actionListener="#{loanFeeEntry.onAccountStatement}"
-								title="#{accountingBundle.accounting_statement_module}"
-								action="account_statement_list">
-									<aon:outputText value="#{loanFeeEntry.relatedAccount.fullDescription}" />
-							</h:commandLink>
-
-							<aon:outputText value="#{accountingBundle.accounting_term}" />
-							<aon:outputText
-								value="#{loanFeeEntry.entry.loan.term} #{accountingBundle.accounting_term_months}" />
-
-							<aon:outputText value="#{accountingBundle.accounting_interest}" />
-							<aon:outputText value="#{loanFeeEntry.entry.loan.interest}" />
-
-							<aon:outputText value="#{accountingBundle.accounting_review}" />
-							<aon:outputText value="#{loanFeeEntry.entry.loan.review}" />
-
-							<aon:outputText value="#{configBundle.config_bank}" />
-							<aon:outputText
-								value="#{loanFeeEntry.entry.loan.registryBank.fullName}" />
-
-							<aon:outputText value="#{bundle.aon_amount}" />
-							<aon:outputText
-								value="#{loanFeeEntry.entry.loan.amount}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-
-							<aon:outputText value="#{accountingBundle.accounting_expenses}" />
-							<aon:outputText value="#{loanFeeEntry.entry.loan.expenses}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-
-							<aon:outputText value="#{accountingBundle.accounting_fee_amount}" />
-							<aon:outputText id="loanFeeAmount" value="#{loanFeeEntry.entry.loan.feeAmount}"
-								style="color:#{loanFeeEntry.entry.sameAmount?'black;':'red;'}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-
-							<aon:outputText value="#{accountingBundle.accounting_outstanding_balance}" />
-							<aon:outputText value="#{loanFeeEntry.outstandingBalance}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-
-							<aon:outputText value="#{bundle.aon_security_level}" />
-							<aon:outputText value="#{loanFeeEntry.entry.loan.securityLevel}" />
-
-						</aon:panelGrid>
-					</aon:panelCollapsible>
+					<c:if test="#{loanFeeEntry.entry.loan != null}">
+						<aon:panelCollapsible label="#{accountingBundle.accounting_loan_data}">
+							<aon:panelGrid columns="2" style="width: 100%; text-align: left;"
+								columnClasses="aon-panelGrid-odd aon-width-150
+									,aon-panelGrid-even aon-width-auto">
+								<aon:outputText value="#{bundle.aon_date}" />
+								<aon:div>
+									<aon:outputText value="#{loanFeeEntry.entry.loan.loanDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>
+	
+									<c:if test="#{aonRole.confidentiality and loanFeeEntry.entry.loan.confidential}">
+										<aon:outputText styleClass="aon-icon aon-icon-confidential"
+											style="margin-left: 30px;" 
+											title="#{bundle.aon_confidential}"/>
+										<aon:outputText styleClass="aon-italic aon-margin-right"
+											value="#{bundle.aon_confidential}" />
+									</c:if>
+								</aon:div>
+								
+	
+								<aon:outputText value="#{bundle.aon_description}" />
+								<aon:outputText value="#{loanFeeEntry.entry.loan.description}" />
+	
+								<aon:outputText value="#{accountBundle.account_account}" />
+								<aon:div>
+									<h:commandLink immediate="#{true}"
+										styleClass="aon-dataTable-link"
+										rendered="#{loanFeeEntry.relatedAccount != null and loanFeeEntry.relatedAccount.id != null}"
+										actionListener="#{loanFeeEntry.onAccountStatement}"
+										title="#{accountingBundle.accounting_statement_module}"
+										action="account_statement_list">
+											<aon:outputText value="#{loanFeeEntry.relatedAccount.fullDescription}" />
+									</h:commandLink>
+									<aon:outputText value="Prestamo sin cuenta contable asignada"
+										style="color:red; font-weight: bold;" 
+										rendered="#{loanFeeEntry.relatedAccount == null and loanFeeEntry.relatedAccount.id == null}"/>
+								</aon:div>
+	
+								<aon:outputText value="#{accountingBundle.accounting_term}" />
+								<aon:outputText
+									value="#{loanFeeEntry.entry.loan.term} #{accountingBundle.accounting_term_months}" />
+	
+								<aon:outputText value="#{accountingBundle.accounting_interest}" />
+								<aon:outputText value="#{loanFeeEntry.entry.loan.interest}" />
+	
+								<aon:outputText value="#{accountingBundle.accounting_review}" />
+								<aon:outputText value="#{loanFeeEntry.entry.loan.review}" />
+	
+								<aon:outputText value="#{configBundle.config_bank}" />
+								<aon:outputText
+									value="#{loanFeeEntry.entry.loan.registryBank.fullName}" />
+	
+								<aon:outputText value="#{bundle.aon_amount}" />
+								<aon:outputText
+									value="#{loanFeeEntry.entry.loan.amount}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+	
+								<aon:outputText value="#{accountingBundle.accounting_expenses}" />
+								<aon:outputText value="#{loanFeeEntry.entry.loan.expenses}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+	
+								<aon:outputText value="#{accountingBundle.accounting_fee_amount}" />
+								<aon:outputText id="loanFeeAmount" value="#{loanFeeEntry.entry.loan.feeAmount}"
+									style="color:#{loanFeeEntry.entry.sameAmount?'black;':'red;'}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+	
+								<aon:outputText value="#{accountingBundle.accounting_outstanding_balance}" />
+								<aon:outputText value="#{loanFeeEntry.outstandingBalance}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:panelGrid>
+						</aon:panelCollapsible>
+					</c:if>
 				</aon:div>
+
 			</aon:div>
 		</aon:form>
 	</ui:define>

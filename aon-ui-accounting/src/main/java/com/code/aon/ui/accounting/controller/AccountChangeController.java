@@ -32,6 +32,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AccountChangeController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryDetail.class.getName());
+
 	private Account initAccount;
 	private Account balancingAccount;
 	private Account finalAccount;
@@ -42,9 +44,77 @@ public class AccountChangeController {
 	private String debit;
 	private String credit;
 	private SecurityLevel securityLevel;
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryDetail.class.getName());
 	
-	
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public Period getPeriod() {
+		return period;
+	}
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
+	public Account getInitAccount() {
+		return initAccount;
+	}
+	public void setInitAccount(Account initAccount) {
+		this.initAccount = initAccount;
+	}
+
+	public Account getBalancingAccount() {
+		return balancingAccount;
+	}
+	public void setBalancingAccount(Account balancingAccount) {
+		this.balancingAccount = balancingAccount;
+	}
+
+	public Account getFinalAccount() {
+		return finalAccount;
+	}
+	public void setFinalAccount(Account finalAccount) {
+		this.finalAccount = finalAccount;
+	}
+
+	public String getConcept() {
+		return concept;
+	}
+	public void setConcept(String concept) {
+		this.concept = concept;
+	}
+
+	public String getDebit() {
+		return debit;
+	}
+	public void setDebit(String debit) {
+		this.debit = debit;
+	}
+
+	public String getCredit() {
+		return credit;
+	}
+	public void setCredit(String credit) {
+		this.credit = credit;
+	}
+
 	public void onReset(ActionEvent e){
 		setInitAccount(null);
 		setBalancingAccount(null);
@@ -52,7 +122,7 @@ public class AccountChangeController {
 		setFromDate(null);
 		setToDate(null);
 		setPeriod(null);
-		setSecurityLevel(null);
+		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);	
 		setConcept(null);
 		setDebit(null);
 		setCredit(null);
@@ -88,10 +158,10 @@ public class AccountChangeController {
 				String debitAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT);
 				String creditAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT);
 
+				// Cambio de cuenta contable en apuntes.
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(accountInit, initAccount.getId());
 				criteria.addEqualExpression(accperiod, period.getId());
-
 				if (fromDate != null) {
 					criteria.addGreaterThanOrEqualExpression(date, fromDate);
 				}
@@ -120,10 +190,11 @@ public class AccountChangeController {
 					acc.setAccount(finalAccount);
 					bean.update(acc);
 					count++;
-
+					
 					removeRelatedInvoiceAccounts(acc.getAccountEntry());
 				}
 
+				// Cambio de contrapartida en apuntes.
 				criteria = new Criteria();
 				criteria.addEqualExpression(accountBalancing, initAccount.getId());
 				criteria.addEqualExpression(accperiod, period.getId());
@@ -211,90 +282,6 @@ public class AccountChangeController {
 				invoiceTaxAccBean.update(invoiceTaxAcc);
 			}
 		}
-	}
-
-	public SecurityLevel getSecurityLevel() {
-		return securityLevel;
-	}
-
-	public void setSecurityLevel(SecurityLevel securityLevel) {
-		this.securityLevel = securityLevel;
-	}
-
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	public Period getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(Period period) {
-		this.period = period;
-	}
-
-	public Account getInitAccount() {
-		return initAccount;
-	}
-
-	public void setInitAccount(Account initAccount) {
-		this.initAccount = initAccount;
-	}
-
-	public Account getBalancingAccount() {
-		return balancingAccount;
-	}
-
-	public void setBalancingAccount(Account balancingAccount) {
-		this.balancingAccount = balancingAccount;
-	}
-
-	public Account getFinalAccount() {
-		return finalAccount;
-	}
-
-	public void setFinalAccount(Account finalAccount) {
-		this.finalAccount = finalAccount;
-	}
-	public String getConcept() {
-		return concept;
-	}
-
-
-	public void setConcept(String concept) {
-		this.concept = concept;
-	}
-
-
-	public String getDebit() {
-		return debit;
-	}
-
-
-	public void setDebit(String debit) {
-		this.debit = debit;
-	}
-
-
-	public String getCredit() {
-		return credit;
-	}
-
-
-	public void setCredit(String credit) {
-		this.credit = credit;
 	}
 
 }

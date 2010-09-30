@@ -54,7 +54,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.SecurityInfo;
 
@@ -482,7 +482,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	private void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, IOException {
 		Invoice invoice = getInvoice();
-		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
 		IAttachment attach = getInvoiceData(invoice);
 		emailController.initMessageController(messageController, invoice, attach, facturae);

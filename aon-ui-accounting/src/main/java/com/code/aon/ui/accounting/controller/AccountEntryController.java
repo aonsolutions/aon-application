@@ -18,6 +18,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -37,6 +38,7 @@ public class AccountEntryController extends BasicController {
 	private String backAction;
 	
 	private boolean updatable;
+	private boolean updatableViaWizard;
 	private boolean aonInvoice;
 //	private String documentNumber;
 	
@@ -55,7 +57,8 @@ public class AccountEntryController extends BasicController {
 			// Wizard de cobros y pagos.
 			controllerManager.register(AccountEntryType.PAYMENT, "financeEntry");
 			controllerManager.register(AccountEntryType.COLLECTION, "financeEntry");
-			// Wizard de Cuotas de prï¿½stamos.			
+			// Wizard de Cuotas de préstamos.	
+			//¿??¿¿?¿?¿?¿¿??¿
 			controllerManager.register(AccountEntryType.LOAN_FEE, "loanFeeEntry");
 		}
 		return controllerManager;
@@ -67,6 +70,13 @@ public class AccountEntryController extends BasicController {
 	public void setUpdatable(boolean updatable) {
 		this.updatable = updatable;
 	}
+    public boolean isUpdatableViaWizard() {
+		return updatableViaWizard;
+	}
+	public void setUpdatableViaWizard(boolean updatableViaWizard) {
+		this.updatableViaWizard = updatableViaWizard;
+	}
+	
 	public boolean isAonInvoice() {
 		return aonInvoice;
 	}
@@ -74,19 +84,12 @@ public class AccountEntryController extends BasicController {
 		this.aonInvoice = aonInvoice;
 	}
 	
-//	public String getDocumentNumber() {
-//		return documentNumber;
-//	}
-//	public void setDocumentNumber(String documentNumber) {
-//		this.documentNumber = documentNumber;
-//	}
-	
 	public void calculateUpdatableFlag() {
+		AccountEntry entry = (AccountEntry) this.getTo();
+    	AccountEntryType type = entry.getType();
 		setAonInvoice(false);
-//		setDocumentNumber(null);
 		boolean flag = false;
 		try {
-			AccountEntry entry = (AccountEntry) this.getTo();
 			flag = isManual();
 			if (!flag && isInvoice()) {
 				flag = !isAccountInvoice(entry);
@@ -98,8 +101,13 @@ public class AccountEntryController extends BasicController {
             flag = false;
 		}
 		setUpdatable(flag);
+		setUpdatableViaWizard(type == AccountEntryType.COLLECTION || type == AccountEntryType.PAYMENT || isAccountInvoice());
 	}
 	
+	private boolean isAccountInvoice() {
+		return (isInvoice() && !isAonInvoice());
+	}
+
 	public boolean isInvoice() {
 		AccountEntry entry = (AccountEntry) this.getTo();
 		return (entry != null && (entry.getType() == AccountEntryType.SALES_INVOICE
@@ -162,11 +170,13 @@ public class AccountEntryController extends BasicController {
         return (type == AccountEntryType.OPENING 
         		|| type == AccountEntryType.OPERATING 
         		|| type == AccountEntryType.CLOSING);
-    	
     }
-
+    
 	@Override
 	public void onEditSearch(ActionEvent event) {
+		if (isNew()) {
+			super.onCancel(event);	
+		}
 		super.onEditSearch(event);
 		setBackAction(null);
 	}
@@ -177,8 +187,15 @@ public class AccountEntryController extends BasicController {
         if (model.getRowCount() > 0) {
             model.setRowIndex(0);
             super.onSelect(null);
+        } else {
+			AonUtil.addInfoMessage( AonUtil.getMessage("aon_search_no_results") );
         }
     }
+
+    @Override
+	public void onRemove(ActionEvent event) {
+		remove(event);
+	}
 
     public void onSelectEntry(ActionEvent event)  {
     	try {
@@ -192,7 +209,12 @@ public class AccountEntryController extends BasicController {
     		throw new AbortProcessingException(e.getMessage(),e);
     	}
 	}
-	
+    public void onChangeSecurityLevel(ActionEvent event)  {
+   		AccountEntry entry = (AccountEntry) getTo();
+		entry.setSecurityLevel(entry.getSecurityLevel()==SecurityLevel.OFFICIAL?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL);
+		accept(event);
+    }
+    
 	public String getBackAction() {
 		return backAction;
 	}
@@ -202,9 +224,9 @@ public class AccountEntryController extends BasicController {
 	}
 
 	public boolean isStatementAvailable() {
-		// Si se ha accedido al manto. de apuntes desde el extracto, se desahilita 
-		// la opciï¿½n de ir al extracto desde las lï¿½neas de apuntes, porque se  
-		// cambiarï¿½a el contenido del controlador del extracto. 
+		// Si se ha accedido al manto. de apuntes desde el extracto, se deshabilita 
+		// la opción de ir al extracto desde las líneas de apuntes, porque se  
+		// cambiaría el contenido del controlador del extracto. 
 		return getBackAction() == null || !("account_statement_list".equals(getBackAction()) );
 	}
 
@@ -216,9 +238,9 @@ public class AccountEntryController extends BasicController {
 	
 	public String searchAction() {
 		try {
-			return (getModel().getRowCount() > 0 )?"accountEntry_form":"accountEntry_list";
+			return (getModel().getRowCount() > 0 )?"accountEntry_form":"accountEntry_search";
 		} catch (ManagerBeanException e) {
-			String msg = "No se pudo realizar la bï¿½squeda.";
+			String msg = "No se pudo realizar la búsqueda.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}

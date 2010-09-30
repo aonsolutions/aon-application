@@ -34,7 +34,7 @@ public class AccountEntrySummaryBeanVetoListener extends ManagerBeanVetoListener
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		try {
 			AccountEntry accountEntry = (AccountEntry) evt.getTo();
-			if (accountEntry.isDateDirty()) {
+			if (accountEntry.mustRegenerateSummaryOnUpdate()) {
 				IManagerBean accountEntryDetailBean = BeanManager
 						.getManagerBean(AccountEntryDetail.class);
 				Criteria criteria = new Criteria();

@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -41,11 +42,21 @@
 
 					<aon:outputLabel for="AccountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu id="AccountEntry_accountPeriod"
-						value="#{salaryEntry.entry.period}">
-						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
-						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod" focus="date"/>
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:selectOneMenu id="AccountEntry_accountPeriod"
+							value="#{salaryEntry.entry.period}">
+							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
+							<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod" focus="date"/>
+						</aon:selectOneMenu>
+
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:selectBooleanCheckbox id="AccountEntry_securityLevel"
+								styleClass="aon-margin-left"
+								value="#{salaryEntry.entry.confidential}"/>
+							<aon:outputText styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_confidential}" />
+						</c:if>
+					</aon:div>
 
 					<aon:outputLabel for="date" value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="date" required="true"
@@ -72,13 +83,6 @@
 						buttonDisabledStyle="display:none;"
 						buttonInactiveStyle="display:none;"
 						buttonStyle="display:none;"/>
-
-					<aon:outputLabel for="AccountEntry_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneRadio id="AccountEntry_securityLevel"
-						value="#{salaryEntry.entry.securityLevel}">
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Account_gross_salary"
 						value="#{accountingBundle.accounting_gross_salary}" />

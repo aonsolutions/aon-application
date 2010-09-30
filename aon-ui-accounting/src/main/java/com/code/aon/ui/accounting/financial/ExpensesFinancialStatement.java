@@ -18,6 +18,7 @@ public class ExpensesFinancialStatement extends AbstractFinancialStatement {
 			SummaryProviderParameters spp = new SummaryProviderParameters();
 			spp.setFromDate(params.getIncludeExpensesDate());
 			spp.setToDate(params.getFinancialDate());
+			spp.setSecurityLevel(params.getSecurityLevel());
 			pc.setParameters(spp);
 			pc.loadCollection();
 			for (ProfitAndLossComparison to : pc.getList()) {

@@ -11,6 +11,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used to get Collections related with clasess in <code>com.code.aon.common</code>.
@@ -20,6 +21,7 @@ public class CommonCollections {
 	
 	private Map<Locale,List<SelectItem>> months = new HashMap<Locale,List<SelectItem>>();  
 	private Map<Locale,List<SelectItem>> levels = new HashMap<Locale,List<SelectItem>>();
+	private Map<Locale,List<SelectItem>> confidentialValues = new HashMap<Locale,List<SelectItem>>();
 	
 	/**
      * Get year months.
@@ -59,4 +61,19 @@ public class CommonCollections {
 		return levels.get(locale);
 	}
 
+	/**
+	 * @return List<SelectItem>
+	 */
+	public List<SelectItem> getConfidentialValues() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		if (confidentialValues.get(locale) == null) {
+			List<SelectItem> confidentialList = new LinkedList<SelectItem>();
+			SelectItem item = new SelectItem(SecurityLevel.CONFIDENTIAL, AonUtil.getMessage("aon_yes"));
+			confidentialList.add(item);
+			item = new SelectItem(SecurityLevel.OFFICIAL, AonUtil.getMessage("aon_no"));
+			confidentialList.add(item);
+			confidentialValues.put(locale,confidentialList);			
+		}
+		return confidentialValues.get(locale);
+	}
 }

@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -39,12 +40,23 @@
 
 					<aon:outputLabel for="AccountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu id="AccountEntry_accountPeriod"
-						value="#{expenseEntry.entry.period}">
-						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
-						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
-					</aon:selectOneMenu>
-					
+					<aon:div>
+						<aon:selectOneMenu id="AccountEntry_accountPeriod"
+							value="#{expenseEntry.entry.period}">
+							<f:selectItems
+								value="#{accountingCollections.enabledAccountPeriods}" />
+							<a4j:support event="onchange" ajaxSingle="true"
+								reRender="AccountEntry_accountPeriod" />
+						</aon:selectOneMenu>
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:selectBooleanCheckbox id="AccountEntry_securityLevel"
+								styleClass="aon-margin-left"
+								value="#{expenseEntry.entry.confidential}"/>
+							<aon:outputText styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_confidential}" />
+						</c:if>
+					</aon:div>
+
 					<aon:outputLabel for="AccountEntry_date"
 						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="AccountEntry_date" required="true"
@@ -52,12 +64,32 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 
+					<aon:outputLabel for="AccountEntry_deposit"
+						value="#{accountingBundle.accounting_deposit}" />
+					<aon:selectOneRadio id="AccountEntry_deposit"
+						style="display:inline;" ajaxSingle="true"
+						value="#{expenseEntry.entry.deposit}"
+						reRender="entryContainer">
+						<f:selectItem itemLabel="#{configBundle.config_bank}" itemValue="0" />
+						<f:selectItem itemLabel="#{accountingBundle.accounting_cash}" itemValue="1" />
+					</aon:selectOneRadio>
+
 					<aon:outputLabel for="AccountEntry_registryBank"
-						value="#{configBundle.config_bank}" />
+						value="#{configBundle.config_bank}"
+						rendered="#{expenseEntry.entry.deposit == 0}" />
 					<aon:selectOneMenu id="AccountEntry_registryBank"
-						value="#{expenseEntry.entry.registryBank}">
-						<f:selectItem itemLabel="#{accountingBundle.accounting_def_cash_acc}" value="#{null}" />
+						value="#{expenseEntry.entry.registryBank}"
+						rendered="#{expenseEntry.entry.deposit == 0}">
 						<f:selectItems value="#{companyCollections.companyBanks}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="AccountEntry_payMethodTypeDetail"
+						value="#{financeBundle.finance_cash}"
+						rendered="#{expenseEntry.entry.deposit == 1 and expenseEntry.payMethodTypeDetailsSize > 0}" />
+					<aon:selectOneMenu id="AccountEntry_payMethodTypeDetail"
+						value="#{expenseEntry.entry.payMethodTypeDetail}"
+						rendered="#{expenseEntry.entry.deposit == 1 and expenseEntry.payMethodTypeDetailsSize > 0}">
+						<f:selectItems value="#{configCollections.payMethodTypeDetails}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="AccountEntry_concept"
@@ -79,13 +111,6 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{accountCollections.expensesAccounts}" />
 					</aon:selectOneMenu>
-
-					<aon:outputLabel for="AccountEntry_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneRadio id="AccountEntry_securityLevel"
-						value="#{expenseEntry.entry.securityLevel}">
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneRadio>
 
 					<aon:outputLabel for="AccountEntry_amount"
 						value="#{bundle.aon_amount}" />

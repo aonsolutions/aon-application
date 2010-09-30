@@ -148,8 +148,8 @@ public class FinanceTrackingEntryController {
 		return types;
 	}
 
-	public void onTypeChanged(ValueChangeEvent event) {
-		Boolean payment = (Boolean)event.getNewValue();
+	public void onTypeChanged(ActionEvent event) {
+		Boolean payment = getPayment();
 		if (payment != null) {
 			loadAvailableFinances(payment.booleanValue());
 		}
@@ -165,6 +165,11 @@ public class FinanceTrackingEntryController {
             Expression returnedExp = ExpressionUtilities.getEqualExpression(ftType, FinanceTrackingType.RETURNED); 
             criteria.addExpression(ExpressionUtilities.getOrExpression(paidExp, returnedExp));
             criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), false);
+            if (!AonUtil.getRoleManager().isConfidentiality()) {
+            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL );	
+            } else {
+            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_SECURITY_LEVEL), getSecurityLevel() );
+            }
             criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE));
             criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE));
             this.finances = new ListDataModel(financeTrackingBean.getList(criteria));

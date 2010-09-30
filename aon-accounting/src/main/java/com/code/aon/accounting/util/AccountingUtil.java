@@ -26,7 +26,9 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 
 public class AccountingUtil {
 
@@ -115,37 +117,37 @@ public class AccountingUtil {
 		return period;
 	}
 
-	public Balance getOpeningEntryBalance(Date date, String accountId) throws ManagerBeanException {
-		return getAccountEntryBalance(date, accountId, AccountEntryType.OPENING);
+	public Balance getOpeningEntryBalance(Date date, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
+		return getAccountEntryBalance(date, accountId, AccountEntryType.OPENING,securityLevel);
 	}
-	public Balance getOpeningEntryBalance(Period period, String accountId) throws ManagerBeanException {
+	public Balance getOpeningEntryBalance(Period period, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
 		if (period == null) {
 			throw new IllegalArgumentException("period param must not be null.");
 		}
-		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.OPENING);
+		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.OPENING,securityLevel);
 	}
 
-	public Balance getOperatingEntryBalance(Date date, String accountId) throws ManagerBeanException {
-		return getAccountEntryBalance(date, accountId, AccountEntryType.OPERATING);
+	public Balance getOperatingEntryBalance(Date date, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
+		return getAccountEntryBalance(date, accountId, AccountEntryType.OPERATING,securityLevel);
 	}
-	public Balance getOperatingEntryBalance(Period period, String accountId) throws ManagerBeanException {
+	public Balance getOperatingEntryBalance(Period period, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
 		if (period == null) {
 			throw new IllegalArgumentException("period param must not be null.");
 		}
-		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.OPERATING);
+		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.OPERATING,securityLevel);
 	}
 
-	public Balance getClosingEntryBalance(Date date, String accountId) throws ManagerBeanException {
-		return getAccountEntryBalance(date, accountId, AccountEntryType.CLOSING);
+	public Balance getClosingEntryBalance(Date date, String accountId,SecurityLevel securityLevel) throws ManagerBeanException {
+		return getAccountEntryBalance(date, accountId, AccountEntryType.CLOSING,securityLevel);
 	}
-	public Balance getClosingEntryBalance(Period period, String accountId) throws ManagerBeanException {
+	public Balance getClosingEntryBalance(Period period, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
 		if (period == null) {
 			throw new IllegalArgumentException("period param must not be null.");
 		}
-		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.CLOSING);
+		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.CLOSING,securityLevel);
 	}
 
-	public Balance getAccountEntryBalance(Date date, String accountId, AccountEntryType type)
+	public Balance getAccountEntryBalance(Date date, String accountId, AccountEntryType type,SecurityLevel securityLevel)
 			throws ManagerBeanException {
 		if (date == null) {
 			throw new IllegalArgumentException("date param must not be null.");
@@ -162,6 +164,7 @@ public class AccountingUtil {
 		c.addLessThanOrEqualExpression(alias, date);
 		c.addOrder(alias, false);
 		c.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE), type);
+		c.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
 		List<ITransferObject> list = entryBean.getList(c);
 		if (list.size() == 0) {
 			return null;
@@ -198,13 +201,14 @@ public class AccountingUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Balance getPeriodBalance(Date fromDate, Date toDate, String accountId,
+	public Balance getPeriodBalance(Date fromDate, Date toDate, String accountId, SecurityLevel securityLevel,
 			boolean excludeOpeningEntry, boolean excludeClosingEntry) throws ManagerBeanException {
 		IManagerBean sumBean = BeanManager.getManagerBean(AccountSummary.class);
 		String dateAlias = sumBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ENTRY_DATE);
 		String accountAlias = sumBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ACCOUNT_ID);
 		String debitAlias = sumBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_DEBIT);
 		String creditAlias = sumBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_CREDIT);
+		String securityLevelAlias = sumBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_SECURITY_LEVEL);
 		ProjectionList pl = new ProjectionList();
 		pl.add(Projection.sum(debitAlias));
 		pl.add(Projection.sum(creditAlias));
@@ -215,6 +219,9 @@ public class AccountingUtil {
 		}
 		if (toDate != null) {
 			c.addLessThanOrEqualExpression(dateAlias, toDate);
+		}
+		if (securityLevel != null) {
+			c.addEqualExpression(securityLevelAlias,securityLevel);
 		}
 		List list = sumBean.getList(pl, c);
 		if (list.size() == 0) {
@@ -229,10 +236,10 @@ public class AccountingUtil {
 		balance.setDebit(debit);
 		balance.setCredit(credit);
 		if (excludeOpeningEntry) {
-			substractAmounts(balance, fromDate, accountId, AccountEntryType.OPENING);
+			substractAmounts(balance, fromDate, accountId, securityLevel, AccountEntryType.OPENING);
 		}
 		if (excludeClosingEntry) {
-			substractAmounts(balance, toDate, accountId, AccountEntryType.CLOSING);
+			substractAmounts(balance, toDate, accountId, securityLevel, AccountEntryType.CLOSING);
 		}
 		double bal = CommonUtil.round(debit - credit);
 		if (bal > 0) {
@@ -243,9 +250,9 @@ public class AccountingUtil {
 		return balance;
 	}
 
-	private void substractAmounts(Balance balance, Date fromDate, String accountId,
+	private void substractAmounts(Balance balance, Date fromDate, String accountId,SecurityLevel securityLevel,
 			AccountEntryType type) throws ManagerBeanException {
-		Balance openingBalance = getAccountEntryBalance(fromDate, accountId, type);
+		Balance openingBalance = getAccountEntryBalance(fromDate, accountId, type, securityLevel);
 		if (openingBalance != null) {
 			boolean inRange = false;
 			if (fromDate != null) {
@@ -260,6 +267,7 @@ public class AccountingUtil {
 	}
 
 	@SuppressWarnings("unchecked")
+	// TODO ¿?
 	public AccountEntryDetail getEntryDetailFromAccountPattern(AccountEntry entry, String accountPattern) throws ManagerBeanException{
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -272,21 +280,30 @@ public class AccountingUtil {
 			throw new ManagerBeanException(e.getMessage(),e);
 		}
 	}
-	
 	public boolean existsEntry(Period period, AccountEntryType accountEntryType,
-			SecurityLevel securityLevel) throws ManagerBeanException {
+			SecurityLevel securityLevel, Integer accountEntryId) throws ManagerBeanException {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(entryBean
 				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
 		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
 				accountEntryType);
+		if (accountEntryId != null) {
+			Expression exp = ExpressionUtilities.getNotEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID),accountEntryId);
+			criteria.addExpression(exp);
+		}
 		if (securityLevel != null) {
 			criteria.addEqualExpression(entryBean
 					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
 		}
 		List<ITransferObject> list = entryBean.getList(criteria);
 		return (list.size() > 0);
+	}
+	
+	public boolean existsEntry(Period period, AccountEntryType accountEntryType,
+			SecurityLevel securityLevel) throws ManagerBeanException {
+		return existsEntry(period, accountEntryType, securityLevel,null);
+		
 	}
 
 }

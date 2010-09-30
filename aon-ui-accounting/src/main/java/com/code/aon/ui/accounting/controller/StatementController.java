@@ -180,14 +180,14 @@ public class StatementController extends BasicController {
 		Date from = null;
 		if (params.getFromDate() != null) {
 			from = params.getFromDate();
-			setOpeningEntry(utils.getOpeningEntryBalance(from, account.getId()));
+			setOpeningEntry(utils.getOpeningEntryBalance(from, account.getId(),params.getSecurityLevel()));
 		}
 		
 		if (isOpeningEntryPresent()) {
 			if (!DateUtils.isSameDay(getOpeningEntry().getFromDate(), params.getFromDate())) {
 				Date to = DateUtils.addDays(getParams().getFromDate(), -1);
 				setFromOpeningEntry(utils.getPeriodBalance(getOpeningEntry().getFromDate(), to,
-						account.getId(),true,getParams().isExcludeClosingEntry()));
+						account.getId(),params.getSecurityLevel(),true,getParams().isExcludeClosingEntry()));
 				getFromOpeningEntry().addBalance(getOpeningEntry());
 			}
 		} else {
@@ -195,12 +195,12 @@ public class StatementController extends BasicController {
 				if (!DateUtils.isSameDay(from, params.getPeriod().getInitiationDate())) {
 					from = params.getPeriod().getInitiationDate();
 					Date to = DateUtils.addDays(getParams().getFromDate(), -1);
-					setFromOpeningEntry(utils.getPeriodBalance(from, to, account.getId(),true,getParams().isExcludeClosingEntry()));
+					setFromOpeningEntry(utils.getPeriodBalance(from, to, account.getId(),params.getSecurityLevel(),true,getParams().isExcludeClosingEntry()));
 				}
 			} 
 		}
 		setPeriodBalance(utils.getPeriodBalance(params.getFromDate(), params.getToDate(), account
-				.getId(),true,getParams().isExcludeClosingEntry()));
+				.getId(),params.getSecurityLevel(),true,getParams().isExcludeClosingEntry()));
 		if (isFromOpeningEntryPresent()) {
 			getPeriodBalance().addBalance(getFromOpeningEntry());
 		} else if (isOpeningEntryPresent()) {

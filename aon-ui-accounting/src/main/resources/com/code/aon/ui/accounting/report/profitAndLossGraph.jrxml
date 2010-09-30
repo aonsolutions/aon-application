@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="profitAndLossGraph" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -66,9 +69,15 @@
 			<pie3DChart>
 				<chart isShowLegend="false" evaluationTime="Page">
 					<reportElement key="element-1" x="14" y="43" width="533" height="303"/>
-					<chartTitle/>
-					<chartSubtitle/>
-					<chartLegend/>
+					<chartTitle>
+						<font fontName="DejaVu Sans"/>
+					</chartTitle>
+					<chartSubtitle>
+						<font fontName="DejaVu Sans"/>
+					</chartSubtitle>
+					<chartLegend>
+						<font fontName="DejaVu Sans"/>
+					</chartLegend>
 				</chart>
 				<pieDataset maxCount="10">
 					<keyExpression><![CDATA[$F{id}]]></keyExpression>
@@ -77,7 +86,9 @@
 				</pieDataset>
 				<pie3DPlot depthFactor="0.2" isCircular="false" labelFormat="{0} ({2})">
 					<plot backcolor="#FFFFFF" orientation="Horizontal" backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="0.0"/>
-					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF">
+						<font fontName="DejaVu Sans" size="7"/>
+					</itemLabel>
 				</pie3DPlot>
 			</pie3DChart>
 			<textField pattern="" isBlankWhenNull="true">

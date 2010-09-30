@@ -318,6 +318,12 @@ public interface IFinanceAlias {
 	*/
 	String  FINANCE_BATCH_REGISTRY_BANK_ID = FINANCE_BATCH_ENTRY.getAliasNames()[6];
 
+	/** 
+	* Alias value: FinanceBatch_securityLevel
+	* Hibernate value: FinanceBatch.securityLevel
+	*/
+	String  FINANCE_BATCH_SECURITY_LEVEL = FINANCE_BATCH_ENTRY.getAliasNames()[7];
+
 
 
 	/** 
@@ -362,28 +368,34 @@ public interface IFinanceAlias {
 	String  FINANCE_BATCH_DETAIL_FINANCE_BATCH_ISSUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: FinanceBatchDetail_financeBatch_securityLevel
+	* Hibernate value: FinanceBatchDetail.financeBatch.securityLevel
+	*/
+	String  FINANCE_BATCH_DETAIL_FINANCE_BATCH_SECURITY_LEVEL = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: FinanceBatchDetail_finance_invoice_series
 	* Hibernate value: FinanceBatchDetail.finance.invoice.series
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[6];
+	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: FinanceBatchDetail_finance_invoice_number
 	* Hibernate value: FinanceBatchDetail.finance.invoice.number
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[7];
+	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: FinanceBatchDetail_finance_invoice_referenceCode
 	* Hibernate value: FinanceBatchDetail.finance.invoice.referenceCode
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_REFERENCE_CODE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[8];
+	String  FINANCE_BATCH_DETAIL_FINANCE_INVOICE_REFERENCE_CODE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: FinanceBatchDetail_finance_dueDate
 	* Hibernate value: FinanceBatchDetail.finance.dueDate
 	*/
-	String  FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[9];
+	String  FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE = FINANCE_BATCH_DETAIL_ENTRY.getAliasNames()[10];
 
 
 

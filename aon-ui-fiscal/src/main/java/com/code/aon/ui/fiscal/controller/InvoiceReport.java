@@ -185,5 +185,28 @@ public class InvoiceReport {
 		}
 		return STANDARD;
 	}
-	
+
+	public InvoiceReport clone() {
+		InvoiceReport cloned = new InvoiceReport();
+		cloned.setInvoiceType(getInvoiceType());
+		cloned.setTransaction(getTransaction());
+		cloned.setInvestment(isInvestment());
+		cloned.setTaxDate(getTaxDate());
+		cloned.setIssueDate(getIssueDate());
+		cloned.setReferenceCode(getReferenceCode());
+		cloned.setSeries(getSeries());
+		cloned.setNumber(getNumber());
+		cloned.setRegistryDocument(getRegistryDocument());
+		cloned.setRegistryName(getRegistryName());
+		cloned.setTaxType(getTaxType());
+		cloned.setSurcharge(isSurcharge());
+		cloned.setVatDeductionType(getVatDeductionType());
+		cloned.setWithholdingType(getWithholdingType());
+		cloned.setTaxableBase(getTaxableBase());
+		cloned.setPercentage(getPercentage());
+		cloned.setQuota(getQuota());
+		cloned.setDeductibleQuota(getDeductibleQuota());
+		return cloned;
+		
+	}
 }

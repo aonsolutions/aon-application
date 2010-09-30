@@ -24,7 +24,8 @@ public class SocialInsuranceEntry implements ITransferObject{
 	private boolean paymentAdjustable;
 	private Month month;
 	private String year;
-	private AccountEntryLink adjustEntryLink;
+	private Date fromDate;
+	private Date toDate;
 
 	public Period getPeriod() {
 		return period;
@@ -87,6 +88,12 @@ public class SocialInsuranceEntry implements ITransferObject{
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+	public boolean isConfidential() {
+		return getSecurityLevel() == SecurityLevel.CONFIDENTIAL;
+	}
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL );
+	}
 
 	public boolean isPaymentAdjustable() {
 		return paymentAdjustable;
@@ -108,11 +115,17 @@ public class SocialInsuranceEntry implements ITransferObject{
 	public void setYear(String year) {
 		this.year = year;
 	}
-
-	public AccountEntryLink getAdjustEntryLink() {
-		return adjustEntryLink;
+	public Date getFromDate() {
+		return fromDate;
 	}
-	public void setAdjustEntryLink(AccountEntryLink adjustEntryLink) {
-		this.adjustEntryLink = adjustEntryLink;
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
 	}
+	public Date getToDate() {
+		return toDate;
+	}
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+	
 }

@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -35,8 +36,17 @@
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-200,aon-panelGrid-odd aon-width-150,aon-panelGrid-even">
 
 					<aon:outputLabel for="Amortization_id" value="#{bundle.aon_id}" />
+					<aon:div>
 					<aon:inputText id="Amortization_id" value="#{amortization.to.id}"
 						size="5" disabled="true" />
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:selectBooleanCheckbox id="Amortization_securityLevel"
+								styleClass="aon-margin-left"
+								value="#{amortization.to.confidential}"/>
+							<aon:outputLabel for="Amortization" 
+								value="#{bundle.aon_confidential}" />
+						</c:if>
+					</aon:div>
 
 					<aon:outputLabel for="Amortization_description"
 						value="#{bundle.aon_description}" />

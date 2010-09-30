@@ -112,6 +112,18 @@ public class Balance implements Serializable {
 			setCreditBalance(CommonUtil.round(b*(-1)));
 		}
 	}
+	public void substractBalance( AccountEntryDetail detail) {
+		setDebit( CommonUtil.round(getDebit() - detail.getDebit()) );
+		setCredit( CommonUtil.round(getCredit() - detail.getCredit()) );
+		double b = CommonUtil.round(getDebit() - getCredit());
+		if ( b > 0 ) {
+			setUnpaidBalance(b);
+			setCreditBalance(0);
+		} else {
+			setUnpaidBalance(0);
+			setCreditBalance(CommonUtil.round(b*(-1)));
+		}
+	}
 
 	public String getBalancingAccount() {
 		return balancingAccount;
