@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+		<ui:param name="toolbarID" value="aonToolbarAux" />
+		<ui:param name="toolbarTitle"
+			value="#{accountingBundle.accounting_new_entry}" />
+		<ui:param name="skipToolbarDescription" value="true" />
+
+		<ui:define name="additionalToolbarContent">
+			<aon:commandButton
+				value="#{accountingBundle.accounting_new_invoice_entry}"
+				accesskey="X" title="Alt+X+[May]"
+				actionListener="#{invoiceEntry.onReset}"
+				action="account_invoice_entry" 
+				styleClass="aon-finding-toolbar-item aon-icon-lookup" />
+			<aon:commandButton
+				value="#{accountingBundle.accounting_new_expense_entry}"
+				accesskey="W" title="Alt+W+[May]"
+				actionListener="#{expenseEntry.onReset}"
+				action="account_expense_entry" 
+				styleClass="aon-finding-toolbar-item aon-icon-lookup" />
+			<aon:commandButton
+				value="#{accountingBundle.accounting_new_finance_entry}"
+				accesskey="R" title="Alt+R+[May]"
+				actionListener="#{financeEntry.onReset}"
+				action="account_finance_entry" 
+				styleClass="aon-finding-toolbar-item aon-icon-lookup" />
+			<aon:commandButton
+				value="#{accountingBundle.accounting_new_finance_tracking_entry}"
+				accesskey="Y" title="Alt+Y+[May]"
+				actionListener="#{financeTrackingEntry.onReset}"
+				action="account_finance_tracking_entry"
+				styleClass="aon-finding-toolbar-item aon-icon-lookup" />
+			<aon:commandButton
+				value="#{accountingBundle.accounting_new_salary_entry}"
+				accesskey="J" title="Alt+J+[May]"
+				actionListener="#{salaryEntry.onReset}"
+				action="account_salary_entry"
+				styleClass="aon-finding-toolbar-item aon-icon-lookup" />
+			<aon:commandButton
+				value="#{accountingBundle.accounting_new_social_insurance_entry}"
+				accesskey="K" title="Alt+K+[May]"
+				actionListener="#{socialInsuranceEntry.onReset}"
+				action="account_social_insurance_entry" 
+				styleClass="aon-finding-toolbar-item aon-icon-lookup" />
+				
+		</ui:define>
+	</ui:decorate>
+
+
+</ui:composition>
