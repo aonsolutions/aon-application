@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-payroll-ctsql2mysql</artifactId>
-	<version>5.4.0-SNAPSHOT</version>
+	<version>5.5.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>aon-payroll-ctsql2mysql</name>
@@ -152,6 +152,7 @@
 							<requires>
 								<require>slf4j</require>
 								<require>jakarta-commons-cli</require>
+								<require>jakarta-commons-logging</require>
 								<require>mysql-connector-java</require>
 							</requires>
 							<mappings>
@@ -159,10 +160,13 @@
 								<mapping>
 									<directory>/usr/share/java</directory>
 									<dependency>
-										<include>com.code.aon:aon.registry</include>
-										<include>com.code.aon:aon.company</include>
-										<include>com.code.aon:aon.customer</include>
-										<include>com.transtools:ctsql-jdbc</include>
+										<includes>
+											<include>com.code.aon:aon.common</include>
+											<include>com.code.aon:aon.registry</include>
+											<include>com.code.aon:aon.company</include>
+											<include>com.code.aon:aon.customer</include>
+											<include>com.transtools:ctsql-jdbc:2.2.3.6</include>
+										</includes>
 									</dependency>
 									<sources>
 										<source>
@@ -175,7 +179,37 @@
 											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
 											<destination>${project.artifactId}.jar</destination>
 										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.common-${project.version}.jar</location>
+											<destination>aon-common.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.registry-${project.version}.jar</location>
+											<destination>aon-registry.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.company-${project.version}.jar</location>
+											<destination>aon-company.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.customer-${project.version}.jar</location>
+											<destination>aon-customer.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/ctsql-jdbc-2.2.3.6.jar</location>
+											<destination>ctsql-jdbc.jar</destination>
+										</softlinkSource>
 									</sources>
+								</mapping>
+
+								<mapping>
+									<sources>
+										<source>
+											<location>src/main/scripts</location>
+										</source>
+									</sources>
+									<filemode>755</filemode>
+									<directory>/usr/bin</directory>
 								</mapping>
 
 							</mappings>
