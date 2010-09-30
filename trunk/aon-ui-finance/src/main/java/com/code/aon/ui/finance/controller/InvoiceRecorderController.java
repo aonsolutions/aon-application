@@ -69,7 +69,7 @@ public class InvoiceRecorderController extends BasicController {
 				String msg = "Unable to rollback transaction!";
 				LOGGER.error(msg, e);
 			}
-			String msg = "Error recurparando facturas";
+			String msg = "Error recuperando facturas";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
