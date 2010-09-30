@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.5.0-SNAPSHOT</version>
+		<version>5.5.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.publisher</artifactId>
-	<version>5.5.0-SNAPSHOT</version>
+	<version>5.5.0</version>
 	<description>AON UI PUBLISHER</description>
 	<name>AON UI PUBLISHER</name>
 	<dependencies>
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
-			<version>1.9.0</version>
+			<version>5.5.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
