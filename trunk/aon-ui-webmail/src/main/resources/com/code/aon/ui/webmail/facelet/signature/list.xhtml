@@ -8,8 +8,10 @@
 
 	<ui:define name="content">
 
-		<aon:form id="list">
-			<ui:include src="/com/code/aon/ui/webmail/facelet/signature/listContent.xhtml" />
+		<aon:form id="signatureList">
+			<ui:include src="/com/code/aon/ui/webmail/facelet/signature/listContent.xhtml" >
+				<ui:param name="controller" value="#{signature}" />
+			</ui:include>
 		</aon:form>
 
 	</ui:define>

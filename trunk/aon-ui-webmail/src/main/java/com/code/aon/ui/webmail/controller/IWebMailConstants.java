@@ -36,6 +36,11 @@ public interface IWebMailConstants {
 	String BEAN_MULTISELECTIONEMAIL = "multiSelectionEmailBean";
 	String BEAN_SPAM = "spam";
 	String BEAN_LOGGED_USER = "loggedUser";
+
+	// ************************************************************
+	// CONFIG
+	// ************************************************************
+	String CONNECT_PROPERTY = "connect";
 	
 	// ************************************************************
 	// LDAP
@@ -57,5 +62,6 @@ public interface IWebMailConstants {
 	String NOT_MAIL_ACCOUNT = "webmail_not_mail_account";
 	String SIGNATURE_DUPLICATED = "webmail_signature_duplicated";
 	String SIGNATURE_USED = "webmail_signature_used";	
+	String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
 
 }

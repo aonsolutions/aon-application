@@ -56,6 +56,12 @@ public class SignatureController extends LdapBasicController implements IWebMail
 		AuthPrincipal auth = Utils.getAuthPrincipal();
 		updateBaseDN(auth.getDomain(), auth.getShortName());
 	}
+	
+
+	private void updateBaseDN( String domain, String user )  {
+		Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
+		getLdapDAO().setBaseDN( baseDN );			
+	}	
 
 	public List<SelectItem> getSignatures() {
 		return signatures;
@@ -106,11 +112,6 @@ public class SignatureController extends LdapBasicController implements IWebMail
 			return false;
 		}
 		return true;
-	}
-
-	private void updateBaseDN( String domain, String user )  {
-		Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
-		getLdapDAO().setBaseDN( baseDN );			
 	}
 	
 	@Override

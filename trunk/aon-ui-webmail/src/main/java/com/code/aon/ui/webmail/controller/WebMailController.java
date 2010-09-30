@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
@@ -12,6 +13,7 @@ import javax.mail.Quota;
 import javax.naming.Name;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
@@ -227,5 +230,17 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		}
 		return null;
 	}
+	
+	public static boolean isConnected() {
+		ConfigurationController cc = AonUtil.getConfigurationController();
+		if ( cc.getBean() != null ) {
+			Map<String,Object> map = cc.getBean().get(BEAN_WEBMAIL);
+			if ( map != null ) {
+				Object value = map.get(CONNECT_PROPERTY);
+				return BooleanUtils.toBoolean(value.toString());
+			}			
+		}
+		return false;
+	}	
 	
 }

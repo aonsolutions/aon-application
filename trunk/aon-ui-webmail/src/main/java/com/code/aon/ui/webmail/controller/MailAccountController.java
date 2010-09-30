@@ -3,10 +3,7 @@ package com.code.aon.ui.webmail.controller;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -18,28 +15,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.common.BasicManagerBean;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.WebmailUtil;
-import com.code.aon.webmail.bean.BundleConstants;
 
-public class MailAccountController extends BasicController implements IWebMailConstants {
-
-	private static final String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
+public class MailAccountController extends LdapBasicController implements IWebMailConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(MailAccountController.class);
-	
-	private LdapDAO dao;	
-	
-	private BasicManagerBean ldapManagerBean;
 	
 	private Name accountId;
 	
@@ -48,62 +33,27 @@ public class MailAccountController extends BasicController implements IWebMailCo
 	private List<SelectItem> mailAccounts;
 	
 	@Override
-	public IManagerBean getManagerBean() throws ManagerBeanException {
-		if (this.ldapManagerBean == null) {
-			AuthPrincipal auth = Utils.getAuthPrincipal();
-			this.dao = WebmailUtil.getMailAccountDAO(auth.getDomain(), auth.getShortName());
-			this.ldapManagerBean = new BasicManagerBean(dao);
-		}
-		return this.ldapManagerBean;
-	}	
-	
-	private void addMessageExpression( String messageId ) {
-		Locale locale = AonUtil.getCurrentLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(BundleConstants.RESOURCE_BUNDLE, locale);
-		addMessage( bundle.getString(messageId) );
+	public void updateBaseDN(Name parent) {
+		String user = NameResolver.getFirstValue(parent);
+		String domain = NameResolver.getValue(parent, 2);
+		updateBaseDN(domain, user);
 	}
 	
 	@Override
-	public void accept(ActionEvent event) {		
-		try {
-			Name currentId = this.dao.calculateDN(getTo());
-			if ( isNew() ) {
-				if ( dao.exists(currentId) ) {
-					addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
-		            return;
-				}			
-			} else {
-				Name oldId = (Name) this.savedToId;				
-				if (! oldId.equals(currentId) ) {
-					if ( dao.exists(currentId) ) {
-						addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
-						return;
-					}			
-					getManagerBean().setId( getTo(), oldId );
-					getManagerBean().remove( getTo() );
-					getManagerBean().setId( getTo(), null );
-					setNew(true);
-				}
-			}
-		} catch (ManagerBeanException e) {
-	        LOGGER.error(">>>> accept", e);
-	        addMessage(e.getMessage());
-	        throw new AbortProcessingException(e.getMessage(), e);	        
-		} catch (DAOException e) {
-			LOGGER.error(">>>> accept", e);
-	        addMessage(e.getMessage());
-	        throw new AbortProcessingException(e.getMessage(), e);	        
-		}				
-		resetSignature();
-		super.accept(event);
+	protected void initDAO() {
+		AuthPrincipal auth = Utils.getAuthPrincipal();
+		updateBaseDN(auth.getDomain(), auth.getShortName());
 	}
 	
-	private void resetSignature() {
-		MailAccount ma = (MailAccount) getTo();
-		if ( (ma.getSignature() != null) && (ma.getSignature().getId() == null) ) {
-			ma.setSignature(null);
-		}
-	}
+
+	private void updateBaseDN( String domain, String user )  {
+		Name baseDN = NameResolver.getUserAccountsDN(domain, user);
+		getLdapDAO().setBaseDN( baseDN );			
+	}	
+	
+	protected String getDuplicatedMessage( String name ) {
+		return AonUtil.getMessage(BUNDLE_NAME, MAIL_ACCOUNT_DUPLICATED, name);
+	}		
 	
 	private void resetFolderController() {
 		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_FOLDER);
@@ -191,11 +141,13 @@ public class MailAccountController extends BasicController implements IWebMailCo
 	}
 
 	public void updateCurrentMailAccount() {
-		WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		if ( webmail.isLogged() ) {
-			this.accountId = webmail.getServer().getAccount().getId();			
-		} else {
-			this.accountId = null;
+		if ( WebMailController.isConnected() ) {
+			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+			if ( webmail.isLogged() ) {
+				this.accountId = webmail.getServer().getAccount().getId();			
+			} else {
+				this.accountId = null;
+			}
 		}
 	}
 	
@@ -242,9 +194,11 @@ public class MailAccountController extends BasicController implements IWebMailCo
 		if ( account.isDefault() ) {
 			return false;
 		}
-		WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		if ( webmail.isLogged() ) {
-			return ! this.accountId.equals(account.getId());
+		if ( WebMailController.isConnected() ) {
+			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+			if ( webmail.isLogged() ) {
+				return ! this.accountId.equals(account.getId());
+			}
 		}
 		return true;
 	}

@@ -5,26 +5,17 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-		<ui:param name="controller" value="#{signature}" />
+	<ui:include src="/com/code/aon/ui/webmail/facelet/util/listInnerToolbar.xhtml" >
+		<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_signature}" />
 		<ui:param name="skipSearchButton" value="#{true}" />
-		
-		<c:if test="#{!innerToolbar}" >
-			<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_signature}" />
-		</c:if>
-		<c:if test="#{innerToolbar}" >
-			<ui:param name="toolbarID" value="#{controller.beanName}Toolbar" />	
-			<ui:param name="skipToolbarDescription" value="true" />
-			<aon:methodParam name="resetAction" value="" />
-			<ui:param name="resetButtonReRender" value="#{controller.beanName}Div" />						
-		</c:if>
 	</ui:include>
 
 	<!--  aon-region-body -->
 	<aon:div styleClass="aon-scroll-area">
-
+		<c:if test="#{innerToolbar}" >
+			<aon:methodParam name="rowSelectorAction" default="" />
+		</c:if>				
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-			<ui:param name="controller" value="#{signature}" />
 			<ui:define name="columns">
 
 				<aon:column styleClass="aon-editDataTable-textColumn">
