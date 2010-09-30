@@ -43,6 +43,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Persona;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Provincia;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipovia;
@@ -130,6 +131,9 @@ public class MysqlDB extends AbstractMysqlDB{
 	
 	private HashMap<String, Integer> cnaes = 
 		new HashMap<String, Integer>();
+
+	private HashMap<Integer, Integer> persons = 
+		new HashMap<Integer, Integer>();
 
 	private HashMap<String, Integer> geozones = 
 		new HashMap<String, Integer>();
@@ -295,10 +299,14 @@ public class MysqlDB extends AbstractMysqlDB{
 				enum2short(Gender.MALE) :
 				enum2short(Gender.FEMALE);	
 		
+				
+		String apellido = String.format("%s %s", 
+				persona.getDescripcion(),
+				persona.getApellido2());
 		
 		Integer registry = insertRegistry(persona.getNumdoc(), 
 				persona.getNombre(), 
-				persona.getApellido2(), 
+				apellido, 
 				persona.getAlias(), 
 				enum2short(RegistryType.NATURAL));
 		
@@ -332,6 +340,8 @@ public class MysqlDB extends AbstractMysqlDB{
 		
 		if ( persona.getEmail() != null )
 			insertEmail(registry, persona.getEmail()) ;
+		
+		persons.put(persona.getCdg(), registry);
 		
 		return true;
 	}
@@ -378,9 +388,11 @@ public class MysqlDB extends AbstractMysqlDB{
 
 	@Override
 	public boolean visitCliente(Cliente cliente, Delegacion delegacion) throws SQLException {
-	
+
+
 		cliente.visitEmprnif(this); 
 		cliente.visitDomicilio(this);
+		
 
 		return true;
 	}
@@ -483,13 +495,14 @@ public class MysqlDB extends AbstractMysqlDB{
 				raddress, 
 				null, 				// TODO:  Concierto Económico del Centro de Trabajo
 				true);
+
 		
 		return true;
 	}
 	
 	
 	@Override
-	public boolean visitEmpract(Empract empract) throws SQLException {
+	public boolean visitEmpract(Empract empract, Emprnif emprnif) throws SQLException {
 		
 		if ( empract.getCnae() == null )
 			return true;
@@ -519,8 +532,10 @@ public class MysqlDB extends AbstractMysqlDB{
 		// TODO : ¿ Cómo elegimos el tipo de atividad ?
 		
 		empract.visitEmprccc(this);
+		empract.visitEmprper(this);
 		
 		this.enterpriseActivityId = null;
+		
 		
 		
 		return true;
@@ -529,7 +544,7 @@ public class MysqlDB extends AbstractMysqlDB{
 	
 	
 	@Override
-	public boolean visitEmprccc(Emprccc emprccc) throws SQLException {
+	public boolean visitEmprccc(Emprccc emprccc, Empract empract) throws SQLException {
 		
 		String ccc = emprccc.getDescripcion();
 		
@@ -567,16 +582,41 @@ public class MysqlDB extends AbstractMysqlDB{
 	}
 	
 	
-
+	@Override
+	public boolean visitEmprper(Emprper emprper, Empract empract)
+			throws SQLException {
+		
+		Integer person = persons.get(emprper.getCdg());
+		
+		if ( person != null ){
+			LOGGER.error("En el contrato {}, la persona {} no existe.", 
+					emprper.getCodact(), 
+					emprper.getCdg());
+		}
+		
+		/*
+		insertContract(person, 
+				workplace, 
+				ccc, 
+				type, 
+				emprper.getFecalt(), 
+				emprper.getFecbaj());
+		**/
+		
+		return true;
+	}
+	
 	public void writeAll(CtsqlDB ctsqlReader) throws SQLException {
 		// Auxiliars 
 		ctsqlReader.visitCnae(this);
 		ctsqlReader.visitTipovia(this);
 		ctsqlReader.visitProvincia(this);
 		
-		//ctsqlReader.visitPersona(this);
-		
+		ctsqlReader.visitPersona(this);
+
 		ctsqlReader.visitDelegacion(this);
+
+		
 	}
 	
 	
