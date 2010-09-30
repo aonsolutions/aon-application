@@ -74,6 +74,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.webmail.Signature</value>
 		</managed-property>
@@ -122,6 +126,10 @@
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.webmail.MailAccount</value>

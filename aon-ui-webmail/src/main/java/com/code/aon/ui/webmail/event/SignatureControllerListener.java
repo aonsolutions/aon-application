@@ -13,11 +13,13 @@ public class SignatureControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		Signature signature = (Signature) event.getController().getTo(); 
-		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-		MailAccount account = wmc.getServer().getAccount();
-		if ( signature.getId().equals(account.getSignature().getId()) ) {
-			account.setSignature(signature);
+		if ( WebMailController.isConnected() ) {		
+			Signature signature = (Signature) event.getController().getTo(); 
+			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
+			MailAccount account = wmc.getServer().getAccount();
+			if ( signature.getId().equals(account.getSignature().getId()) ) {
+				account.setSignature(signature);
+			}
 		}
 	}
 	
