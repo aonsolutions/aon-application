@@ -60,6 +60,12 @@ public class SalaryEntry implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+	public boolean isConfidential() {
+		return getSecurityLevel() == SecurityLevel.CONFIDENTIAL;
+	}
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL );
+	}
 
 	public double getGrossSalary() {
 		return grossSalary;
