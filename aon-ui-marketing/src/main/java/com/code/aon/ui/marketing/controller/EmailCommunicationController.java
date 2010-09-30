@@ -23,7 +23,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.bean.AonMessage;
@@ -76,11 +76,11 @@ public class EmailCommunicationController implements IMarketingConstants {
 	private boolean sendEmail( List<String> emails ) {
 		boolean result = true;
 		try {
-			MessageController messageController = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+			MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			String recipientsTo = StringUtils.join(emails, ",");
 			messageController.setRecipientsTo(recipientsTo);
 	    	AonMessage aonMessage = messageController.compoundMessage();
-	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
+	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
 	    	AonServer server = webMailController.getServer();
 	   		server.sendMessage(aonMessage);
 		} catch ( Throwable th ) {
