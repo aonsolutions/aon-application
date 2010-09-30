@@ -7,6 +7,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.manager.controller.DomainUserController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailAccountController;
 import com.code.aon.ui.webmail.controller.SignatureController;
 
 public class DomainUserControllerListener extends ControllerAdapter {
@@ -26,6 +27,9 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		SignatureController sc = (SignatureController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE);
 		sc.updateBaseDN(user.getId());
 		sc.onSearch(null);
+		MailAccountController mac = (MailAccountController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_ACCOUNT);
+		mac.updateBaseDN(user.getId());
+		mac.onSearch(null);
 	}	
 
 }
