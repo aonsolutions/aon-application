@@ -70,7 +70,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.SecurityInfo;
 
@@ -626,7 +626,7 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	public void sendOfferByEmail( SecurityInfo securyInfo ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
 		emailUtil.initMessageController(messageController, getOffer());
 		messageController.setShowNewMessageWindow(true);
