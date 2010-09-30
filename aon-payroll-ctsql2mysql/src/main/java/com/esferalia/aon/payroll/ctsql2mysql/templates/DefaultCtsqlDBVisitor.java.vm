@@ -31,6 +31,14 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public boolean visit$table($table $table.name)
 	throws SQLException{
 		return true;
-	};
+	}
+
+#foreach ($child in $table.childs)
+	public boolean visit${child.table}($child.table $child.table.name, $table $table.name)
+	throws SQLException {
+		return true;
+	}
+
+#end	
 #end
 }

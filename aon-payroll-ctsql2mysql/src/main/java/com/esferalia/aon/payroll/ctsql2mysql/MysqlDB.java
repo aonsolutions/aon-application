@@ -35,6 +35,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cliente;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cnae;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Domicilio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empract;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
@@ -121,14 +122,9 @@ public class MysqlDB extends AbstractMysqlDB{
 	// State related members 
 	private Integer 	scopeId;				// 'scope' id where we are in 
 	
-	private Cliente		cliente;				// 
-	private Integer 	customerId;				// 'registry' id of customer where we are in
-	
 	private Integer 	enterpriseId;			// 'registry' id of enterprise where we are in
 	private Integer 	enterpriseActivityId;
 
-	private Integer 	raddress;
-	private Domicilio 	domicilio;
 	// --------------------------------------------------------------
 	
 	
@@ -381,45 +377,30 @@ public class MysqlDB extends AbstractMysqlDB{
 	}
 
 	@Override
-	public boolean visitCliente(Cliente cliente) throws SQLException {
-		String 	alias 		=  cliente.getAlias();
-		String 	name 		= cliente.getDescripcion();
-		String 	document 	= cliente.getNumdoc();
+	public boolean visitCliente(Cliente cliente, Delegacion delegacion) throws SQLException {
 	
-		Integer registry = insertRegistry(document, 
-					name, 
-					null, 
-					alias, 
-					enum2short(RegistryType.LEGAL));
-		
-		insertRaddress(registry, 
-				enum2short(AddressType.MAIN), 
-				null, 
-				streetTypes.get(cliente.getTipovia()), 
-				cliente.getNomvia(), 
-				cliente.getNumero(), 
-				cliente.getOtrdir(), 
-				cliente.getCodpos(), 
-				cliente.getLocalidad(), 
-				geozones.get (cliente.getProvincia()));
-		
-		if ( cliente.getTelefono() != null )
-			insertTelephone (registry, cliente.getTelefono() );
-		if ( cliente.getTelefono2() != null )
-			insertTelephone (registry, cliente.getTelefono2() );
-		if ( cliente.getTelefono3() != null )
-			insertTelephone (registry, cliente.getTelefono3() );
-		
-		if ( cliente.getFax() != null )
-			insertFax (registry, cliente.getFax() );
+		cliente.visitEmprnif(this); 
+		cliente.visitDomicilio(this);
 
-		if ( cliente.getEmail() != null )
-			insertEmail(registry, cliente.getEmail() );
+		return true;
+	}
+	
+	@Override
+	public boolean visitEmprnif(Emprnif emprnif, Cliente cliente) throws SQLException {
+		// TODO: ¿ Donde meto los datos de emprnif ?
 		
+		Integer registry ;
+		
+		registry = insertRegistry(emprnif.getNumdoc(), 
+				emprnif.getDescripcion(), 
+				null,							// enterprise hasn't surname 
+				emprnif.getAlias(), 	
+				enum2short(RegistryType.LEGAL));
+
 		Short status = "N".equals(cliente.getInactivo()) ? 
 				enum2short(CustomerStatus.ACTIVE) :
 				enum2short(CustomerStatus.INACTIVE);
-		
+
 		insertCustomer(registry, 
 				null, 
 				false, 
@@ -432,56 +413,6 @@ public class MysqlDB extends AbstractMysqlDB{
 				false, 
 				true, 
 				true);
-
-		this.cliente = cliente;
-		this.customerId = registry;
-		
-		cliente.visitEmprnif(this); 
-
-		cliente.visitDomicilio(this);
-		
-		this.cliente = null;
-		this.customerId = null;
-
-		return true;
-	}
-	
-	@Override
-	public boolean visitEmprnif(Emprnif emprnif) throws SQLException {
-		// TODO: ¿ Donde meto los datos de emprnif ?
-		
-		Integer registry ;
-		
-		if ( cliente.getCdg() != emprnif.getCdg() )
-		{
-			registry = insertRegistry(emprnif.getNumdoc(), 
-					emprnif.getDescripcion(), 
-					null,							// enterprise hasn't surname 
-					emprnif.getAlias(), 	
-					enum2short(RegistryType.LEGAL));
-
-			Short status = "N".equals(cliente.getInactivo()) ? 
-					enum2short(CustomerStatus.ACTIVE) :
-					enum2short(CustomerStatus.INACTIVE);
-
-			insertCustomer(registry, 
-					null, 
-					false, 
-					false, 
-					false, 
-					null, 
-					status, 
-					null, 
-					scopeId, 
-					false, 
-					true, 
-					true);
-		}
-		else {
-			
-			registry = customerId;
-		}
-		
 		
 		insertEnterprise(registry, 
 					this.scopeId);
@@ -495,49 +426,17 @@ public class MysqlDB extends AbstractMysqlDB{
 		return true;
 	}
 	
-	private int insertDomicilio(Domicilio domicilio) throws SQLException {
-		int raddress = insertRaddress(this.customerId, 
-				enum2short ( AddressType.DELEGATION ), 
-				null, 
-				streetTypes.get(domicilio.getTipovia()), 
-				domicilio.getNomvia(), 
-				domicilio.getNumero(), 
-				domicilio.getOtrdir(), 
-				domicilio.getCodpos(), 
-				domicilio.getLocalidad(), 
-				geozones.get(domicilio.getProvincia()));
-		
-		if ( domicilio.getTelefono() != null )
-			insertTelephone (this.customerId, domicilio.getTelefono() );
-		if ( domicilio.getTelefono2() != null )
-			insertTelephone (this.customerId, domicilio.getTelefono2() );
-		if ( domicilio.getTelefono3() != null )
-			insertTelephone (this.customerId, domicilio.getTelefono3() );
-
-		if ( domicilio.getFax() != null )
-			insertFax(this.customerId, domicilio.getFax() );
-		
-		return raddress;
-	}
 	
 	@Override
-	public boolean visitDomicilio(Domicilio domicilio) throws SQLException {
-		
-		int raddress = insertDomicilio(domicilio);
-
-		this.raddress = raddress;
-		this.domicilio = domicilio;
+	public boolean visitDomicilio(Domicilio domicilio, Cliente cliente) throws SQLException {
 		
 		domicilio.visitEmprctra(this);
-		
-		this.domicilio = null;
-		this.raddress = null;
 
 		return true;
 	}
 	
 	@Override
-	public boolean visitEmprctra(Emprctra emprctra) throws SQLException {
+	public boolean visitEmprctra(Emprctra emprctra, Domicilio domicilio) throws SQLException {
 		
 		Integer enterprise = enterprises.get(emprctra.getCdg());
 		
@@ -551,14 +450,27 @@ public class MysqlDB extends AbstractMysqlDB{
 			return true;
 		}
 		
-		int raddress ;
 
-		if ( this.customerId != enterprise) {
-			raddress = insertDomicilio(domicilio);
-		}
-		else {
-			raddress = this.raddress;
-		}
+		int raddress = insertRaddress(enterprise, 
+				enum2short ( AddressType.DELEGATION ), 
+				null, 
+				streetTypes.get(domicilio.getTipovia()), 
+				domicilio.getNomvia(), 
+				domicilio.getNumero(), 
+				domicilio.getOtrdir(), 
+				domicilio.getCodpos(), 
+				domicilio.getLocalidad(), 
+				geozones.get(domicilio.getProvincia()));
+		
+		if ( domicilio.getTelefono() != null )
+			insertTelephone (enterprise, domicilio.getTelefono() );
+		if ( domicilio.getTelefono2() != null )
+			insertTelephone (enterprise, domicilio.getTelefono2() );
+		if ( domicilio.getTelefono3() != null )
+			insertTelephone (enterprise, domicilio.getTelefono3() );
+
+		if ( domicilio.getFax() != null )
+			insertFax(enterprise, domicilio.getFax() );
 
 		String workplaceDescrp = domicilio.getAclaracion();
 		if ( workplaceDescrp == null ){
@@ -619,7 +531,21 @@ public class MysqlDB extends AbstractMysqlDB{
 	@Override
 	public boolean visitEmprccc(Emprccc emprccc) throws SQLException {
 		
-		/**
+		String ccc = emprccc.getDescripcion();
+		
+		if ( ccc == null ){
+			LOGGER.error("CCC nulo en empreccc '{}'", emprccc.getCdg() );
+			return true;
+		}
+		
+		String provincia = ccc.substring(0, 2) ;
+		
+		Integer geozone = geozones.get(provincia);
+		if ( geozone == null ) {
+			LOGGER.error("La provincia {} del CCC {}, no está registarda", provincia, ccc );
+			return true;
+		}
+
 		Short type = null ;
 		String tipccc = emprccc.getTipccc();
 		if ( "P".equals(tipccc))
@@ -631,10 +557,10 @@ public class MysqlDB extends AbstractMysqlDB{
 		if ( "S".equals(tipccc))
 			type = enum2short(CCCType.ASSIMILATEDS);
 		
-		insertEnterprise_ccc(emprccc.getDescripcion(), 
+		insertEnterprise_ccc(ccc, 
 				type, 
 				enterpriseActivityId, 
-				null);*/ 
+				geozone);
 		// TODO: Hay que añadir el geozone, a enterprise_ccc
 		
 		return true;

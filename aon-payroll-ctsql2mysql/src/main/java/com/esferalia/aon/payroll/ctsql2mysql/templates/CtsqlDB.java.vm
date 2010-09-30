@@ -89,7 +89,7 @@ public class AbstractCtsqlDB {
 				rs = stmt.executeQuery();
 				${child.table} ${child.table.name} = new ${child.table}(rs); 
 				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visit${child.table}(${child.table.name});
+					resume = ctsqlDBVisitor.visit${child.table}(${child.table.name}, this);
 				}
 			}
 			finally {
