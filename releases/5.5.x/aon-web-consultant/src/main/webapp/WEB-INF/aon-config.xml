@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
 	xmlns="http://www.esferalia.com/config" >
 
 	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
@@ -90,5 +89,11 @@
  			showCategoryGroup="false"
  		/>
 	</product:config>
+
+	<webmail:config version="1.1" xmlns:webmail="http://www.esferalia.com/webmail" >
+		<webmail:webmail
+			connect="true"
+		/>
+	</webmail:config>	
 
 </config>

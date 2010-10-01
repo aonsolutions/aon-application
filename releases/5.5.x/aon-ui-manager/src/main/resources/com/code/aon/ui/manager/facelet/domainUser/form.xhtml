@@ -67,7 +67,10 @@
                     </aon:panelTab>
 
 					<aon:panelTab name="contacts" rendered="#{domainUser.webmail}"
-						label="#{webmailBundle.webmail_email}">
+						label="#{webmailBundle.webmail_email}">						
+						<ui:include src="/com/code/aon/ui/webmail/facelet/contact/grid.xhtml" >
+							<ui:param name="controller" value="#{contact}" />
+						</ui:include>						
                     </aon:panelTab>
 
 					<aon:panelTab name="signature" rendered="#{domainUser.webmail}"

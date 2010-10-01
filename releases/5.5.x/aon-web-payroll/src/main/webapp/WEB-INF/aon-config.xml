@@ -24,4 +24,10 @@
 		/>
 	</company:config>
 	
+	<webmail:config version="1.1" xmlns:webmail="http://www.esferalia.com/webmail" >
+		<webmail:webmail
+			connect="true"
+		/>
+	</webmail:config>		
+	
 </config>

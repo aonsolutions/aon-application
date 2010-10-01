@@ -240,7 +240,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 				return BooleanUtils.toBoolean(value.toString());
 			}			
 		}
-		return false;
+		return true;
 	}	
 	
 }
