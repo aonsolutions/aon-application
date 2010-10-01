@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,13 +152,8 @@ public class Entry implements ILdapConstants, IAonObjectClasses {
 		return GENERALIZED_TIME_FORMAT.format( value );
 	}
 
-	public static Date convertToBoolean( String value ) {
-		try {
-			return GENERALIZED_TIME_FORMAT.parse( value.toString() );
-		} catch (ParseException e) {
-			LOGGER.debug( e.getMessage(), e );
-		}
-		return null;		
+	public static Boolean convertToBoolean( String value ) {
+		return StringUtils.equals( TRUE_VALUE, value);		
 	}
 
 	public static String convertToString( Boolean value ) {

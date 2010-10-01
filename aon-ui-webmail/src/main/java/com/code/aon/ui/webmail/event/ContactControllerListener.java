@@ -55,7 +55,7 @@ public class ContactControllerListener extends ControllerAdapter implements IWeb
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		ContactController controller = (ContactController) event.getController();
-		LdapDAO contactDAO = controller.getContactDAO();
+		LdapDAO contactDAO = controller.getLdapDAO();
 		try {
 			Name currentId = contactDAO.calculateDN(controller.getTo());
 			if ( contactDAO.exists(currentId) ) {

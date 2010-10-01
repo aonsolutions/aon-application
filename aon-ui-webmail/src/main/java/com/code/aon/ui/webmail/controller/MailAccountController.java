@@ -51,6 +51,7 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		getLdapDAO().setBaseDN( baseDN );			
 	}	
 	
+	@Override
 	protected String getDuplicatedMessage( String name ) {
 		return AonUtil.getMessage(BUNDLE_NAME, MAIL_ACCOUNT_DUPLICATED, name);
 	}		
