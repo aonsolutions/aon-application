@@ -40,11 +40,13 @@ public class MailAccountControllerListener extends ControllerAdapter {
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		MailAccount mailAccount = (MailAccount) event.getController().getTo(); 
 		updateSignature( mailAccount );
-		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-		if ( mailAccount.getId().equals(wmc.getServer().getAccount().getId()) ) {
-			wmc.getServer().setAccount(mailAccount);
+		updateMailAccountList(event);
+		if ( WebMailController.isConnected() ) {
+			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
+			if ( mailAccount.getId().equals(wmc.getServer().getAccount().getId()) ) {
+				wmc.getServer().setAccount(mailAccount);
+			}
 		}
-		updateMailAccountList(event);		
 	}
 
 	private void updateSignatureList() throws ControllerListenerException {
@@ -66,13 +68,14 @@ public class MailAccountControllerListener extends ControllerAdapter {
 	}
 	
 	private void updateSignature( MailAccount mailAccount ) throws ControllerListenerException {
-		if ( mailAccount.getSignature() != null ) {
+		Signature signature = mailAccount.getSignature();
+		if ( (signature != null) && (signature.getId() != null) ) {
 			SignatureController signatureController = (SignatureController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE);
 			try {
-				Name id = mailAccount.getSignature().getId();			
-				Signature signature = (Signature) signatureController.getManagerBean().get( id );
-				if ( signature != null ) {
-					mailAccount.setSignature(signature);
+				Name id = signature.getId();			
+				Signature newSignature = (Signature) signatureController.getManagerBean().get( id );
+				if ( newSignature != null ) {
+					mailAccount.setSignature(newSignature);
 				}
 			} catch (ManagerBeanException e) {
 				throw new ControllerListenerException( e.getMessage(), e );
