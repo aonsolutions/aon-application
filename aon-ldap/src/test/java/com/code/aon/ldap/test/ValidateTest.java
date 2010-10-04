@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.naming.Name;
 
@@ -365,9 +366,14 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 	
 	@Test
     public void testDomain() {
-		Name domainName = NameResolver.getDomainDN(TEST_DOMAIN);
-		Entry domain = ldap.get(domainName, DOMAIN, COMMON_NAME_ATTRIBUTE);
-		testDomain(domain);				
+		Name domainsDN = NameResolver.getDomainsDN();
+		List<Entry> domains =  getList(domainsDN, DOMAIN);
+		
+		Random random = new Random();
+		int domainIndex = random.nextInt(domains.size());
+		Entry domain = domains.get(domainIndex);
+
+		testDomain(domain);
 	}
 
 	public static junit.framework.Test suite() {
