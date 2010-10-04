@@ -38,22 +38,6 @@
     </navigation-case>
   </navigation-rule>
 
-  <!-- ================================================= GENERIC PAGE -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>generic_page_list</from-outcome>
-      <to-view-id>/facelet/content/generic_page/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>generic_page_form</from-outcome>
-      <to-view-id>/facelet/content/generic_page/form.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>generic_page_search</from-outcome>
-      <to-view-id>/facelet/content/generic_page/search.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
   <!-- ========================================================= MENU -->
   <navigation-rule>
     <navigation-case>
@@ -63,34 +47,6 @@
     <navigation-case>
       <from-outcome>menu_form</from-outcome>
       <to-view-id>/facelet/content/menu/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
-  <!-- ================================================= LINK -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>link_category_list</from-outcome>
-      <to-view-id>/facelet/content/link_category/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>link_category_form</from-outcome>
-      <to-view-id>/facelet/content/link_category/form.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>link_category_search</from-outcome>
-      <to-view-id>/facelet/content/link_category/search.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>link_list</from-outcome>
-      <to-view-id>/facelet/content/link_category/link/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>link_form</from-outcome>
-      <to-view-id>/facelet/content/link_category/link/form.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>link_search</from-outcome>
-      <to-view-id>/facelet/content/link_category/link/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -207,34 +163,6 @@
     </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= DOWNLOAD -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>download_category_list</from-outcome>
-      <to-view-id>/facelet/content/download_category/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>download_category_form</from-outcome>
-      <to-view-id>/facelet/content/download_category/form.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>download_category_search</from-outcome>
-      <to-view-id>/facelet/content/download_category/search.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>download_list</from-outcome>
-      <to-view-id>/facelet/content/download_category/download/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>download_form</from-outcome>
-      <to-view-id>/facelet/content/download_category/download/form.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>download_search</from-outcome>
-      <to-view-id>/facelet/content/download_category/download/search.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-  
   <!-- ================================================= ALBUM -->
   <navigation-rule>
     <navigation-case>
@@ -296,22 +224,6 @@
     <navigation-case>
       <from-outcome>section_form</from-outcome>
       <to-view-id>/facelet/content/section/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
-  <!-- ===================================================== MODULAR PAGE -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>modular_page_list</from-outcome>
-      <to-view-id>/facelet/content/modular_page/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>modular_page_form</from-outcome>
-      <to-view-id>/facelet/content/modular_page/form.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>modular_page_search</from-outcome>
-      <to-view-id>/facelet/content/modular_page/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
 
