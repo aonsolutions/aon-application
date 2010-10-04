@@ -90,8 +90,8 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 			entry.put( COMMON_NAME_ATTRIBUTE, "Deletable" );
 			entry.put( SURNAME_ATTRIBUTE, "Deletable" );
 			entry.put( HOME_DIRECTORY_ATTRIBUTE, "/home/deletable" );
-			entry.put( GROUP_ID_NUMBER_ATTRIBUTE, 100 );
-			entry.put( USER_ID_NUMBER_ATTRIBUTE, 100 );
+			entry.put( GROUP_ID_NUMBER_ATTRIBUTE, "100" );
+			entry.put( USER_ID_NUMBER_ATTRIBUTE, "100" );
 			entry.put( DESCRIPTION_ATTRIBUTE, "descripcion" );
 			entry.put( ACTIVE_ATTRIBUTE, "TRUE" );
 			session.add(entry);
