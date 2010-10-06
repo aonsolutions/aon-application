@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +9,6 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
-import java.util.Stack;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -46,7 +46,9 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Persona;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Provincia;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipcotc2;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipovia;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabajo;
 
 
 /********************************************************************
@@ -90,6 +92,7 @@ public class MysqlDB extends AbstractMysqlDB{
 				
 			}
 		};
+		
 
 	final static HashMap<String, Short> MARITAL_STATUS= 
 		new HashMap<String, Short>() {
@@ -141,9 +144,16 @@ public class MysqlDB extends AbstractMysqlDB{
 	private HashMap<String, Short> streetTypes = 
 		new HashMap<String, Short>();
 	
+	private HashMap<Integer, Integer> raddresses = 
+		new HashMap<Integer, Integer>();
+
 	private HashMap<Integer, Integer> enterprises = 
 		new HashMap<Integer, Integer>();
 	
+	private HashMap<String, Integer> cccs= 
+		new HashMap<String, Integer>();
+
+
 	// --------------------------------------------------------------
 	
 	public MysqlDB(Connection mysqlConnection) throws SQLException {
@@ -293,7 +303,7 @@ public class MysqlDB extends AbstractMysqlDB{
 	}
 	
 	@Override
-	public boolean visitPersona(Persona persona) throws SQLException {
+	public boolean visitPersona(Persona persona) throws SQLException { 
 		
 		Short gender = "V".equals(persona.getSexo()) ?
 				enum2short(Gender.MALE) :
@@ -326,7 +336,7 @@ public class MysqlDB extends AbstractMysqlDB{
 		
 		insertRaddress(registry, 
 				enum2short(AddressType.MAIN), 
-				null, 
+				null, 									//TODO: raddress 'recipient'
 				streetTypes.get(persona.getTipovia()), 
 				persona.getNomvia(), 
 				persona.getNumero(), 
@@ -388,12 +398,8 @@ public class MysqlDB extends AbstractMysqlDB{
 
 	@Override
 	public boolean visitCliente(Cliente cliente, Delegacion delegacion) throws SQLException {
-
-
 		cliente.visitEmprnif(this); 
 		cliente.visitDomicilio(this);
-		
-
 		return true;
 	}
 	
@@ -442,60 +448,75 @@ public class MysqlDB extends AbstractMysqlDB{
 	@Override
 	public boolean visitDomicilio(Domicilio domicilio, Cliente cliente) throws SQLException {
 		
-		domicilio.visitEmprctra(this);
+		domicilio.visitEmprdom(this);
 
 		return true;
 	}
 	
 	@Override
-	public boolean visitEmprctra(Emprctra emprctra, Domicilio domicilio) throws SQLException {
+	public boolean visitEmprdom(Emprdom emprdom, Domicilio domicilio) throws SQLException {
 		
-		Integer enterprise = enterprises.get(emprctra.getCdg());
+		Integer enterprise = enterprises.get(emprdom.getCodemp());
 		
 		if ( enterprise == null )
 		{
-			LOGGER.error("Centro de trabajo '{}-{}-{}' no asociado a ninguna empresa.", 
+			LOGGER.error("Domicilio '{}-{}-{}' no asociado a ninguna empresa.", 
 					new Integer [] {
-					emprctra.getCdg(),
-					emprctra.getCodact(),
-					emprctra.getDomicilio()});
+					emprdom.getCdg(),
+					emprdom.getCodemp(),
+					emprdom.getCodcli()});
 			return true;
 		}
 		
-
-		int raddress = insertRaddress(enterprise, 
-				enum2short ( AddressType.DELEGATION ), 
-				null, 
-				streetTypes.get(domicilio.getTipovia()), 
-				domicilio.getNomvia(), 
-				domicilio.getNumero(), 
-				domicilio.getOtrdir(), 
-				domicilio.getCodpos(), 
-				domicilio.getLocalidad(), 
-				geozones.get(domicilio.getProvincia()));
+		Integer raddress = raddresses.get(emprdom.getCdg());
 		
-		if ( domicilio.getTelefono() != null )
-			insertTelephone (enterprise, domicilio.getTelefono() );
-		if ( domicilio.getTelefono2() != null )
-			insertTelephone (enterprise, domicilio.getTelefono2() );
-		if ( domicilio.getTelefono3() != null )
-			insertTelephone (enterprise, domicilio.getTelefono3() );
+		if ( raddress == null ) {
 
-		if ( domicilio.getFax() != null )
-			insertFax(enterprise, domicilio.getFax() );
+			raddress = insertRaddress(enterprise, 
+					enum2short ( AddressType.DELEGATION ), 
+					null, 
+					streetTypes.get(domicilio.getTipovia()), 
+					domicilio.getNomvia(), 
+					domicilio.getNumero(), 
+					domicilio.getOtrdir(), 
+					domicilio.getCodpos(), 
+					domicilio.getLocalidad(), 
+					geozones.get(domicilio.getProvincia()));
+			
+			if ( domicilio.getTelefono() != null )
+				insertTelephone (enterprise, domicilio.getTelefono() );
+			if ( domicilio.getTelefono2() != null )
+				insertTelephone (enterprise, domicilio.getTelefono2() );
+			if ( domicilio.getTelefono3() != null )
+				insertTelephone (enterprise, domicilio.getTelefono3() );
+	
+			if ( domicilio.getFax() != null )
+				insertFax(enterprise, domicilio.getFax() );
 
-		String workplaceDescrp = domicilio.getAclaracion();
-		if ( workplaceDescrp == null ){
-			// TODO: ¿ Porque es la descripción del centro de trabajo no 'nula' ?
-			workplaceDescrp = domicilio.getNomvia(); 
+			raddresses.put(domicilio.getCdg(), raddress);
 		}
 
-		insertWorkplace(enterprise, 
-				workplaceDescrp, 
-				raddress, 
-				null, 				// TODO:  Concierto Económico del Centro de Trabajo
-				true);
+		// emprdom.tipdom available values
+		// -------------------------------
+		// A : Todos
+		// T : Centro de trabajo
+		// S : Social
+		// ...
+		// O : Otros
+		if ( "T".equals(emprdom.getTipdom()) ){ 
 
+			String workplaceDescrp = domicilio.getAclaracion();
+			if ( workplaceDescrp == null ){
+				// TODO: ¿ Ddescripción no 'nula' ?
+				workplaceDescrp = domicilio.getNomvia(); 
+			}
+	
+			insertWorkplace(enterprise, 
+					workplaceDescrp, 
+					raddress, 
+					null,				// TODO:  Concierto Económico del Centro de Trabajo
+					true);
+		}
 		
 		return true;
 	}
@@ -572,10 +593,13 @@ public class MysqlDB extends AbstractMysqlDB{
 		if ( "S".equals(tipccc))
 			type = enum2short(CCCType.ASSIMILATEDS);
 		
-		insertEnterprise_ccc(ccc, 
+		Integer cccId = insertEnterprise_ccc(ccc, 
 				type, 
 				enterpriseActivityId, 
 				geozone);
+		
+		cccs.put(ccc, cccId );
+		
 		// TODO: Hay que añadir el geozone, a enterprise_ccc
 		
 		return true;
@@ -586,25 +610,32 @@ public class MysqlDB extends AbstractMysqlDB{
 	public boolean visitEmprper(Emprper emprper, Empract empract)
 			throws SQLException {
 		
-		Integer person = persons.get(emprper.getCdg());
-		
-		if ( person != null ){
-			LOGGER.error("En el contrato {}, la persona {} no existe.", 
-					emprper.getCodact(), 
-					emprper.getCdg());
-		}
-		
-		/*
-		insertContract(person, 
-				workplace, 
-				ccc, 
-				type, 
-				emprper.getFecalt(), 
-				emprper.getFecbaj());
-		**/
+		emprper.visitTrabajo(this);
 		
 		return true;
 	}
+	
+	@Override
+	public boolean visitTrabajo(Trabajo trabajo, Emprper emprper)
+			throws SQLException {
+		Integer person = persons.get(emprper.getCodper());
+		
+		if ( person == null ){
+			LOGGER.error("En el contrato {}, la persona {} no existe.", 
+					emprper.getCodact(), 
+					emprper.getCdg());
+			return true;
+		}
+		
+		String codTc2 = trabajo.getCodtc2();
+		String codCont = trabajo.getCodcont();
+		String colectivo = trabajo.getColectivo();
+		
+		
+		
+		return true;
+	}
+	
 	
 	public void writeAll(CtsqlDB ctsqlReader) throws SQLException {
 		// Auxiliars 
@@ -615,9 +646,9 @@ public class MysqlDB extends AbstractMysqlDB{
 		ctsqlReader.visitPersona(this);
 
 		ctsqlReader.visitDelegacion(this);
-
-		
 	}
+	
+	
 	
 	
 	public static void main(String[] args) throws ClassNotFoundException, ParseErrorException, MethodInvocationException, ResourceNotFoundException, SQLException, IOException {
