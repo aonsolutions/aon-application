@@ -2,6 +2,7 @@ package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.ID_DUPLICATED;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.ID_USED;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.INVALID_NAME;
 
 import javax.faces.application.FacesMessage;
@@ -124,7 +125,7 @@ public abstract class LdapBasicController extends BasicController {
 		} catch (ManagerBeanException e) {
 	        LOGGER.error(">>>> accept", e );
 	        addMessage(e.getMessage());
-	        throw new AbortProcessingException(e.getMessage(), e);	        
+	        throw new AbortProcessingException(e.getMessage(), e);	               
 		} catch (DAOException e) {
 	        LOGGER.error(">>>> accept ", e );
 	        addMessage(e.getMessage());
@@ -134,6 +135,26 @@ public abstract class LdapBasicController extends BasicController {
 		if ( idChanged ) {
 			afterIdChanged( oldId, (ILdapTransferObject) getTo() );
 		}
+	}	
+	
+	@Override
+	public void onRemove(ActionEvent event) {
+		try {
+			ILdapTransferObject to = (ILdapTransferObject) getTo();
+			if ( isUsed(to) ) {
+				AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, ID_USED );
+				return;
+			}
+		} catch (Throwable e) {
+	        LOGGER.error(">>>> onRemove", e );
+	        addMessage(e.getMessage());
+	        throw new AbortProcessingException(e.getMessage(), e);	        
+		}			
+		super.onRemove(event);
+	}	
+	
+	protected boolean isUsed( ILdapTransferObject to ) throws ManagerBeanException {
+		return false;
 	}	
 	
 	protected void afterIdChanged( Name oldId, ILdapTransferObject to ) {

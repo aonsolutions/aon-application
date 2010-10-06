@@ -10,9 +10,13 @@ import javax.naming.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
+import com.code.aon.manager.dao.IManagerAlias;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
@@ -66,7 +70,17 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		this.createDB = createDB;
 	}
 
-	
+	@Override
+	protected boolean isUsed(ILdapTransferObject to) throws ManagerBeanException {
+		IController controller = (IController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
+		IManagerBean bean = controller.getManagerBean();
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName(IManagerAlias.DOMAIN_APPLICATION_DATA_SOURCE);
+		criteria.addEqualExpression(alias, to.getId());
+		int count = bean.getCount(criteria);
+		return ( count > 0 );
+	}
+
 	public Converter getConverter() {
 		if ( converter == null ) {
 			IController controller = (IController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);

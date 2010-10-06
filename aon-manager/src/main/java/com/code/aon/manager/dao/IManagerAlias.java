@@ -53,6 +53,7 @@ public interface IManagerAlias {
 	* Hibernate value: Domain.status
 	*/
 	String  DOMAIN_STATUS = "Domain_status";
+	
 	/** 
 	* Alias value: Domain_dnsManagement
 	* Hibernate value: Domain.dnsManagement
@@ -150,4 +151,30 @@ public interface IManagerAlias {
 	* Hibernate value: DBConnnection.userPassword
 	*/
 	String  DB_CONNECTION_USER_PASSWORD = "DBConnnection_userPassword";
+
+	
+	/** 
+	* Alias value: DomainApplication_id
+	* Hibernate value: DomainApplication.id
+	*/
+	String  DOMAIN_APPLICATION_ID = "DomainApplication_id";
+
+	/** 
+	* Alias value: DomainApplication_commonName
+	* Hibernate value: DomainApplication.commonName
+	*/
+	String  DOMAIN_APPLICATION_COMMON_NAME = "DomainApplication_commonName";
+
+	/** 
+	* Alias value: DomainApplication_dataSource
+	* Hibernate value: DomainApplication.dataSource
+	*/
+	String  DOMAIN_APPLICATION_DATA_SOURCE = "DomainApplication_dataSource";
+	
+	/** 
+	* Alias value: DomainApplication_status
+	* Hibernate value: DomainApplication.status
+	*/
+	String  DOMAIN_APPLICATION_STATUS = "DomainApplication_status";
+	
 }
