@@ -56,6 +56,7 @@ public interface IWebMailConstants {
 	
 	String ID_DUPLICATED = "ldap_id_duplicated";
 	String INVALID_NAME = "ldap_invalid_name";
+	String ID_USED = "ldap_id_used";
 	
 	String CONTACT_DUPLICATED = "webmail_contact_duplicated";
 	String CONTACT_USED = "webmail_contact_used";

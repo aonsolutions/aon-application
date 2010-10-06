@@ -58,6 +58,11 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		this.accessPolicy = accessPolicy;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<Domain> getDomains() throws ManagerBeanException {
+		return (List) getModel().getWrappedData();
+	}
+	
 	public Domain getDomain() {
 		return (Domain) getTo();
 	}

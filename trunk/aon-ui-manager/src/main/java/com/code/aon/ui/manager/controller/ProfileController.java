@@ -5,14 +5,27 @@ import java.util.List;
 
 import javax.naming.Name;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.dao.ldap.ILdapTransferObject;
+import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.ILdapConstants;
+import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.ldap.Scope;
 import com.code.aon.manager.BasicProfile;
+import com.code.aon.manager.Domain;
 import com.code.aon.manager.Role;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class ProfileController extends LdapBasicController implements IManagerConstants {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(ProfileController.class);
 	
 	@Override
 	public void updateBaseDN(Name parent) {
@@ -58,5 +71,33 @@ public class ProfileController extends LdapBasicController implements IManagerCo
 		}
 		profile.setRoles(roles);
 	}
+	
+	private boolean isUsed(Name profileId, String domain) {
+		BasicLdap ldap = new BasicLdap();
+		try {
+			Name dn = NameResolver.getDomainApplicationsDN(domain);
+			String objectClass = NameResolver.getObjectClass(IAonObjectClasses.DOMAIN_APPLICATION_USER);
+			String value = NameResolver.getEqualExpression(ILdapConstants.MEMBER_ATTRIBUTE, profileId.toString());
+			String filter = NameResolver.getAndExpression(objectClass, value);
+			List<Entry> list = ldap.getLdapSession().search(dn, filter, Scope.SUBTREE_SCOPE, ILdapConstants.MEMBER_ATTRIBUTE );
+			return list.size() > 0;
+		} catch ( LdapException e ) {
+			LOGGER.error( "Error in checking if its used" + profileId, e );
+		} finally {
+			ldap.closeSession();
+		}
+		return false;
+	}	
+	
+	@Override
+	protected boolean isUsed(ILdapTransferObject to) throws ManagerBeanException {
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		for( Domain domain : dc.getDomains() ) {
+			if ( isUsed(to.getId(), domain.getCommonName()) ) {
+				return true;
+			}
+		}
+		return false;
+	}	
 	
 }
