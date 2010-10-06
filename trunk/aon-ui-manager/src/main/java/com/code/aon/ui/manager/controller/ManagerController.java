@@ -1,11 +1,13 @@
 package com.code.aon.ui.manager.controller;
 
+import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -21,11 +23,16 @@ import com.code.aon.common.AonException;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.ui.manager.util.DBManager;
+import com.code.aon.ui.manager.util.PropertiesUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ManagerController implements IManagerConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ManagerController.class);
+	
+	private static final String DEFAULT_PROPERTIES = "/com/code/aon/ui/manager/default.config.properties";
+	
+	private static final File MANAGER_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-manager/config.properties" );	
 	
 	private final static String HOME = "home";
 	
@@ -47,10 +54,17 @@ public class ManagerController implements IManagerConstants {
 	
 	private SessionFactory sessionFactory;
 	
+	private Properties properties;
+	
 	public ManagerController() {
 		this.dbManager = new DBManager();
+		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
 	}
 	
+	public Properties getProperties() {
+		return properties;
+	}
+
 	public DBManager getDBManager() {
 		return dbManager;
 	}
