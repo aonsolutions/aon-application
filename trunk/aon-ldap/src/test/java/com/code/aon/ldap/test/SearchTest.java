@@ -2,6 +2,7 @@ package com.code.aon.ldap.test;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.naming.Name;
 
@@ -43,10 +44,24 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 		}
 	}
 	
+	private String getDomainCN() throws LdapException{
+		
+		Name 	domainsDN 	= NameResolver.getDomainsDN();
+		String 	filter 		= NameResolver.getObjectClass(DOMAIN);
+		
+		List<Entry> domains = session.search(domainsDN, filter);
+		
+		Random random = new Random();
+		int domainIndex = random.nextInt(domains.size());
+
+		Entry domain = domains.get(domainIndex);
+		return domain.getAsString(COMMON_NAME_ATTRIBUTE);
+	}
+	
 	@Test
     public void testSearch() {
 		try {
-			Name name = NameResolver.getDomainDN(ValidateTest.TEST_DOMAIN);
+			Name name = NameResolver.getDomainDN(getDomainCN());
 			List<Entry> list = session.search(name,NameResolver.getObjectClass(ACCESS_POLICY));
 			Assert.assertFalse( list.isEmpty() );
 		} catch (LdapException e) {
@@ -84,7 +99,7 @@ public class SearchTest implements IAonObjectClasses, ILdapConstants {
 	@Test
     public void testAttributes() {
 		try {
-			Name name = NameResolver.getUserDN(ValidateTest.TEST_DOMAIN, "deletable");
+			Name name = NameResolver.getUserDN(getDomainCN(), "deletetable");//NameResolver.getUserDN(ValidateTest.TEST_DOMAIN, "deletable");
 			Entry entry = new Entry(name);
 			entry.addObjectClasses(new String[]{TOP, PERSON, USER, POSIX_ACCOUNT});
 			entry.put( COMMON_NAME_ATTRIBUTE, "Deletable" );

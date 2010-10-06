@@ -31,8 +31,6 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 
 	public static final String AON_WEBMAIL = "aon-webmail";
 	
-	public static final String TEST_DOMAIN = "esferalia.com";
-
 	private final static Logger LOGGER = LoggerFactory.getLogger(ValidateTest.class);
 	
 	private static final String LDAP_PROPERTIES = "ldap.properties";
@@ -67,6 +65,8 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 	public static synchronized void runAfterAllTests() {
 		ldap.closeSession();
 	}
+	
+	
 	
 	private List<Entry> getList( Name dn, String objectClass, String... attributes ) {
 		List<Entry> list = null;
