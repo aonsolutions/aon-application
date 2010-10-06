@@ -448,18 +448,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param balancing_account Contrapartida del Apunte
 	 * @param debit Debe del Apunte
 	 * @param credit Haber del Apunte
+	 * @param document_number Numero de documento asociado
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_entry_detail( Integer account_entry,  Integer line,  String account,  String concept,  String balancing_account,  Double debit,  Double credit )
+	protected int insertAccount_entry_detail( Integer account_entry,  Integer line,  String account,  String concept,  String balancing_account,  Double debit,  Double credit,  String document_number )
 	throws SQLException {
 	
 		PreparedStatement stmt = 
 			mysqlConnection.prepareStatement(
-			"INSERT INTO account_entry_detail ( account_entry, line, account, concept, balancing_account, debit, credit) VALUES (  ?, ?, ?, ?, ?, ?, ?)", 
+			"INSERT INTO account_entry_detail ( account_entry, line, account, concept, balancing_account, debit, credit, document_number) VALUES (  ?, ?, ?, ?, ?, ?, ?, ?)", 
 			PreparedStatement.RETURN_GENERATED_KEYS);
 
-		String message = "INSERT INTO account_entry_detail ( account_entry, line, account, concept, balancing_account, debit, credit) VALUES (  '"+ account_entry +"', '"+ line +"', '"+ account +"', '"+ concept +"', '"+ balancing_account +"', '"+ debit +"', '"+ credit +"')";
+		String message = "INSERT INTO account_entry_detail ( account_entry, line, account, concept, balancing_account, debit, credit, document_number) VALUES (  '"+ account_entry +"', '"+ line +"', '"+ account +"', '"+ concept +"', '"+ balancing_account +"', '"+ debit +"', '"+ credit +"', '"+ document_number +"')";
 		LOGGER.debug(message);
 
 		if ( account_entry == null ) {
@@ -503,6 +504,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		}
 		else {
 			stmt.setDouble(7, credit);
+		}
+		if ( document_number == null ) {
+			stmt.setNull(8, 12);
+		}
+		else {
+			stmt.setString(8, document_number);
 		}
 
 		stmt.executeUpdate();
@@ -1392,18 +1399,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param accumulated_account Cuenta de Amortizacion acumulada
 	 * @param allocation_account Cuenta para la dotacion de la Amortizacion
 	 * @param percentage Porcentaje de Amortizacion
+	 * @param security_level Nivel de seguridad
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAmortization( String description,  Integer amortization_type,  Date initial_date,  Date deadline,  Double amount,  Short fee_period,  Double sale_amount,  InputStream comments,  String fixed_asset_account,  String accumulated_account,  String allocation_account,  Double percentage )
+	protected int insertAmortization( String description,  Integer amortization_type,  Date initial_date,  Date deadline,  Double amount,  Short fee_period,  Double sale_amount,  InputStream comments,  String fixed_asset_account,  String accumulated_account,  String allocation_account,  Double percentage,  Short security_level )
 	throws SQLException {
 	
 		PreparedStatement stmt = 
 			mysqlConnection.prepareStatement(
-			"INSERT INTO amortization ( description, amortization_type, initial_date, deadline, amount, fee_period, sale_amount, comments, fixed_asset_account, accumulated_account, allocation_account, percentage) VALUES (  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+			"INSERT INTO amortization ( description, amortization_type, initial_date, deadline, amount, fee_period, sale_amount, comments, fixed_asset_account, accumulated_account, allocation_account, percentage, security_level) VALUES (  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
 			PreparedStatement.RETURN_GENERATED_KEYS);
 
-		String message = "INSERT INTO amortization ( description, amortization_type, initial_date, deadline, amount, fee_period, sale_amount, comments, fixed_asset_account, accumulated_account, allocation_account, percentage) VALUES (  '"+ description +"', '"+ amortization_type +"', '"+ initial_date +"', '"+ deadline +"', '"+ amount +"', '"+ fee_period +"', '"+ sale_amount +"', '"+ comments +"', '"+ fixed_asset_account +"', '"+ accumulated_account +"', '"+ allocation_account +"', '"+ percentage +"')";
+		String message = "INSERT INTO amortization ( description, amortization_type, initial_date, deadline, amount, fee_period, sale_amount, comments, fixed_asset_account, accumulated_account, allocation_account, percentage, security_level) VALUES (  '"+ description +"', '"+ amortization_type +"', '"+ initial_date +"', '"+ deadline +"', '"+ amount +"', '"+ fee_period +"', '"+ sale_amount +"', '"+ comments +"', '"+ fixed_asset_account +"', '"+ accumulated_account +"', '"+ allocation_account +"', '"+ percentage +"', '"+ security_level +"')";
 		LOGGER.debug(message);
 
 		if ( description == null ) {
@@ -1477,6 +1485,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		}
 		else {
 			stmt.setDouble(12, percentage);
+		}
+		if ( security_level == null ) {
+			stmt.setNull(13, -6);
+		}
+		else {
+			stmt.setShort(13, security_level);
 		}
 
 		stmt.executeUpdate();
@@ -3765,21 +3779,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param person Identificador de la Persona
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param ccc Identificador de la Cuota de Cotizacion
-	 * @param type Identificador del Tipo de Contrato
 	 * @param start_date Fecha de inicio del Contrato
 	 * @param end_date Fecha de finalizacion del Contrato
+	 * @param contract_model Modalidad del contrato
+	 * @param contract_code CÃ³digo (TC2) del contrato
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract( Integer person,  Integer workplace,  Integer ccc,  Integer type,  Date start_date,  Date end_date )
+	protected int insertContract( Integer person,  Integer workplace,  Integer ccc,  Date start_date,  Date end_date,  Integer contract_model,  Integer contract_code )
 	throws SQLException {
 	
 		PreparedStatement stmt = 
 			mysqlConnection.prepareStatement(
-			"INSERT INTO contract ( person, workplace, ccc, type, start_date, end_date) VALUES (  ?, ?, ?, ?, ?, ?)", 
+			"INSERT INTO contract ( person, workplace, ccc, start_date, end_date, contract_model, contract_code) VALUES (  ?, ?, ?, ?, ?, ?, ?)", 
 			PreparedStatement.RETURN_GENERATED_KEYS);
 
-		String message = "INSERT INTO contract ( person, workplace, ccc, type, start_date, end_date) VALUES (  '"+ person +"', '"+ workplace +"', '"+ ccc +"', '"+ type +"', '"+ start_date +"', '"+ end_date +"')";
+		String message = "INSERT INTO contract ( person, workplace, ccc, start_date, end_date, contract_model, contract_code) VALUES (  '"+ person +"', '"+ workplace +"', '"+ ccc +"', '"+ start_date +"', '"+ end_date +"', '"+ contract_model +"', '"+ contract_code +"')";
 		LOGGER.debug(message);
 
 		if ( person == null ) {
@@ -3800,23 +3815,171 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		else {
 			stmt.setInt(3, ccc);
 		}
-		if ( type == null ) {
-			stmt.setNull(4, 4);
+		if ( start_date == null ) {
+			stmt.setNull(4, 91);
 		}
 		else {
-			stmt.setInt(4, type);
+			stmt.setDate(4, start_date);
 		}
-		if ( start_date == null ) {
+		if ( end_date == null ) {
 			stmt.setNull(5, 91);
 		}
 		else {
-			stmt.setDate(5, start_date);
+			stmt.setDate(5, end_date);
 		}
-		if ( end_date == null ) {
-			stmt.setNull(6, 91);
+		if ( contract_model == null ) {
+			stmt.setNull(6, 4);
 		}
 		else {
-			stmt.setDate(6, end_date);
+			stmt.setInt(6, contract_model);
+		}
+		if ( contract_code == null ) {
+			stmt.setNull(7, 4);
+		}
+		else {
+			stmt.setInt(7, contract_code);
+		}
+
+		stmt.executeUpdate();
+		
+		int 		generatedKey = 0;
+		ResultSet generatedKeys = stmt.getGeneratedKeys();
+		if ( generatedKeys.next() ){
+			generatedKey = generatedKeys.getInt(1);
+		}
+		stmt.close();
+		
+		return generatedKey;
+		
+	}
+		
+	
+	/**
+	 * Contract_code
+	 * @param code CÃ³digo (TC2) del contrato
+	 * @param description Descripcion del contrato
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertContract_code( String code,  String description )
+	throws SQLException {
+	
+		PreparedStatement stmt = 
+			mysqlConnection.prepareStatement(
+			"INSERT INTO contract_code ( code, description) VALUES (  ?, ?)", 
+			PreparedStatement.RETURN_GENERATED_KEYS);
+
+		String message = "INSERT INTO contract_code ( code, description) VALUES (  '"+ code +"', '"+ description +"')";
+		LOGGER.debug(message);
+
+		if ( code == null ) {
+			stmt.setNull(1, 12);
+		}
+		else {
+			stmt.setString(1, code);
+		}
+		if ( description == null ) {
+			stmt.setNull(2, 12);
+		}
+		else {
+			stmt.setString(2, description);
+		}
+
+		stmt.executeUpdate();
+		
+		int 		generatedKey = 0;
+		ResultSet generatedKeys = stmt.getGeneratedKeys();
+		if ( generatedKeys.next() ){
+			generatedKey = generatedKeys.getInt(1);
+		}
+		stmt.close();
+		
+		return generatedKey;
+		
+	}
+		
+	
+	/**
+	 * Contract_model
+	 * @param code Codigo del modelo
+	 * @param description Descripcion del modelo
+	 * @param document Impreso (.pdf) del modelo.
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertContract_model( String code,  String description,  InputStream document )
+	throws SQLException {
+	
+		PreparedStatement stmt = 
+			mysqlConnection.prepareStatement(
+			"INSERT INTO contract_model ( code, description, document) VALUES (  ?, ?, ?)", 
+			PreparedStatement.RETURN_GENERATED_KEYS);
+
+		String message = "INSERT INTO contract_model ( code, description, document) VALUES (  '"+ code +"', '"+ description +"', '"+ document +"')";
+		LOGGER.debug(message);
+
+		if ( code == null ) {
+			stmt.setNull(1, 12);
+		}
+		else {
+			stmt.setString(1, code);
+		}
+		if ( description == null ) {
+			stmt.setNull(2, 12);
+		}
+		else {
+			stmt.setString(2, description);
+		}
+		if ( document == null ) {
+			stmt.setNull(3, -4);
+		}
+		else {
+			stmt.setBinaryStream(3, document);
+		}
+
+		stmt.executeUpdate();
+		
+		int 		generatedKey = 0;
+		ResultSet generatedKeys = stmt.getGeneratedKeys();
+		if ( generatedKeys.next() ){
+			generatedKey = generatedKeys.getInt(1);
+		}
+		stmt.close();
+		
+		return generatedKey;
+		
+	}
+		
+	
+	/**
+	 * Contract_model_code
+	 * @param contract_model Modalidad del contrato
+	 * @param contract_code CÃ³digo (TC2) del contrato
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertContract_model_code( Integer contract_model,  Integer contract_code )
+	throws SQLException {
+	
+		PreparedStatement stmt = 
+			mysqlConnection.prepareStatement(
+			"INSERT INTO contract_model_code ( contract_model, contract_code) VALUES (  ?, ?)", 
+			PreparedStatement.RETURN_GENERATED_KEYS);
+
+		String message = "INSERT INTO contract_model_code ( contract_model, contract_code) VALUES (  '"+ contract_model +"', '"+ contract_code +"')";
+		LOGGER.debug(message);
+
+		if ( contract_model == null ) {
+			stmt.setNull(1, 4);
+		}
+		else {
+			stmt.setInt(1, contract_model);
+		}
+		if ( contract_code == null ) {
+			stmt.setNull(2, 4);
+		}
+		else {
+			stmt.setInt(2, contract_code);
 		}
 
 		stmt.executeUpdate();
@@ -3876,65 +4039,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		}
 		else {
 			stmt.setDouble(4, duration);
-		}
-
-		stmt.executeUpdate();
-		
-		int 		generatedKey = 0;
-		ResultSet generatedKeys = stmt.getGeneratedKeys();
-		if ( generatedKeys.next() ){
-			generatedKey = generatedKeys.getInt(1);
-		}
-		stmt.close();
-		
-		return generatedKey;
-		
-	}
-		
-	
-	/**
-	 * Contract_type
-	 * @param description Descripcion del Tipo de Contrato
-	 * @param duration Duracion
-	 * @param working_day Jornada Laboral
-	 * @param ccc_type Tipo de CCC
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertContract_type( String description,  Short duration,  Short working_day,  Short ccc_type )
-	throws SQLException {
-	
-		PreparedStatement stmt = 
-			mysqlConnection.prepareStatement(
-			"INSERT INTO contract_type ( description, duration, working_day, ccc_type) VALUES (  ?, ?, ?, ?)", 
-			PreparedStatement.RETURN_GENERATED_KEYS);
-
-		String message = "INSERT INTO contract_type ( description, duration, working_day, ccc_type) VALUES (  '"+ description +"', '"+ duration +"', '"+ working_day +"', '"+ ccc_type +"')";
-		LOGGER.debug(message);
-
-		if ( description == null ) {
-			stmt.setNull(1, 12);
-		}
-		else {
-			stmt.setString(1, description);
-		}
-		if ( duration == null ) {
-			stmt.setNull(2, -6);
-		}
-		else {
-			stmt.setShort(2, duration);
-		}
-		if ( working_day == null ) {
-			stmt.setNull(3, -6);
-		}
-		else {
-			stmt.setShort(3, working_day);
-		}
-		if ( ccc_type == null ) {
-			stmt.setNull(4, -6);
-		}
-		else {
-			stmt.setShort(4, ccc_type);
 		}
 
 		stmt.executeUpdate();
@@ -7143,18 +7247,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param status Estado de la Remesa
 	 * @param rbank Banco de la Compañia utilizado en la Remesa
 	 * @param payment Indica si es un pago o un cobro
+	 * @param security_level Nivel de seguridad
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFbatch( String description,  Date issue_date,  Short type,  Short status,  Integer rbank,  Boolean payment )
+	protected int insertFbatch( String description,  Date issue_date,  Short type,  Short status,  Integer rbank,  Boolean payment,  Short security_level )
 	throws SQLException {
 	
 		PreparedStatement stmt = 
 			mysqlConnection.prepareStatement(
-			"INSERT INTO fbatch ( description, issue_date, type, status, rbank, payment) VALUES (  ?, ?, ?, ?, ?, ?)", 
+			"INSERT INTO fbatch ( description, issue_date, type, status, rbank, payment, security_level) VALUES (  ?, ?, ?, ?, ?, ?, ?)", 
 			PreparedStatement.RETURN_GENERATED_KEYS);
 
-		String message = "INSERT INTO fbatch ( description, issue_date, type, status, rbank, payment) VALUES (  '"+ description +"', '"+ issue_date +"', '"+ type +"', '"+ status +"', '"+ rbank +"', '"+ payment +"')";
+		String message = "INSERT INTO fbatch ( description, issue_date, type, status, rbank, payment, security_level) VALUES (  '"+ description +"', '"+ issue_date +"', '"+ type +"', '"+ status +"', '"+ rbank +"', '"+ payment +"', '"+ security_level +"')";
 		LOGGER.debug(message);
 
 		if ( description == null ) {
@@ -7192,6 +7297,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		}
 		else {
 			stmt.setBoolean(6, payment);
+		}
+		if ( security_level == null ) {
+			stmt.setNull(7, -6);
+		}
+		else {
+			stmt.setShort(7, security_level);
 		}
 
 		stmt.executeUpdate();
@@ -7388,19 +7499,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param tracking_date Fecha de Seguimiento
 	 * @param type Tipo de Seguimiento
 	 * @param description Descripcion del Seguimiento
+	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
+	 * @param rbank Identificador de la Cuenta Bancaria de la Compaia
 	 * @param amount Importe del Seguimiento
+	 * @param recorded Indica si esta contabilizado o no
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFinance_tracking( Integer finance,  Date tracking_date,  Short type,  String description,  Double amount )
+	protected int insertFinance_tracking( Integer finance,  Date tracking_date,  Short type,  String description,  Integer pm_type_detail,  Integer rbank,  Double amount,  Boolean recorded )
 	throws SQLException {
 	
 		PreparedStatement stmt = 
 			mysqlConnection.prepareStatement(
-			"INSERT INTO finance_tracking ( finance, tracking_date, type, description, amount) VALUES (  ?, ?, ?, ?, ?)", 
+			"INSERT INTO finance_tracking ( finance, tracking_date, type, description, pm_type_detail, rbank, amount, recorded) VALUES (  ?, ?, ?, ?, ?, ?, ?, ?)", 
 			PreparedStatement.RETURN_GENERATED_KEYS);
 
-		String message = "INSERT INTO finance_tracking ( finance, tracking_date, type, description, amount) VALUES (  '"+ finance +"', '"+ tracking_date +"', '"+ type +"', '"+ description +"', '"+ amount +"')";
+		String message = "INSERT INTO finance_tracking ( finance, tracking_date, type, description, pm_type_detail, rbank, amount, recorded) VALUES (  '"+ finance +"', '"+ tracking_date +"', '"+ type +"', '"+ description +"', '"+ pm_type_detail +"', '"+ rbank +"', '"+ amount +"', '"+ recorded +"')";
 		LOGGER.debug(message);
 
 		if ( finance == null ) {
@@ -7427,11 +7541,29 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		else {
 			stmt.setString(4, description);
 		}
-		if ( amount == null ) {
-			stmt.setNull(5, 8);
+		if ( pm_type_detail == null ) {
+			stmt.setNull(5, 4);
 		}
 		else {
-			stmt.setDouble(5, amount);
+			stmt.setInt(5, pm_type_detail);
+		}
+		if ( rbank == null ) {
+			stmt.setNull(6, 4);
+		}
+		else {
+			stmt.setInt(6, rbank);
+		}
+		if ( amount == null ) {
+			stmt.setNull(7, 8);
+		}
+		else {
+			stmt.setDouble(7, amount);
+		}
+		if ( recorded == null ) {
+			stmt.setNull(8, -7);
+		}
+		else {
+			stmt.setBoolean(8, recorded);
 		}
 
 		stmt.executeUpdate();
@@ -11352,6 +11484,96 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		stmt.executeUpdate();
 		
 		stmt.close();
+		
+	}
+		
+	
+	/**
+	 * Pm_type_detail
+	 * @param type Tipo de Forma de Pago
+	 * @param description Descripcion del detalle
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertPm_type_detail( Short type,  String description )
+	throws SQLException {
+	
+		PreparedStatement stmt = 
+			mysqlConnection.prepareStatement(
+			"INSERT INTO pm_type_detail ( type, description) VALUES (  ?, ?)", 
+			PreparedStatement.RETURN_GENERATED_KEYS);
+
+		String message = "INSERT INTO pm_type_detail ( type, description) VALUES (  '"+ type +"', '"+ description +"')";
+		LOGGER.debug(message);
+
+		if ( type == null ) {
+			stmt.setNull(1, -6);
+		}
+		else {
+			stmt.setShort(1, type);
+		}
+		if ( description == null ) {
+			stmt.setNull(2, 12);
+		}
+		else {
+			stmt.setString(2, description);
+		}
+
+		stmt.executeUpdate();
+		
+		int 		generatedKey = 0;
+		ResultSet generatedKeys = stmt.getGeneratedKeys();
+		if ( generatedKeys.next() ){
+			generatedKey = generatedKeys.getInt(1);
+		}
+		stmt.close();
+		
+		return generatedKey;
+		
+	}
+		
+	
+	/**
+	 * Pm_type_detail_account
+	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
+	 * @param account Identificador de la Cuenta Contable
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertPm_type_detail_account( Integer pm_type_detail,  String account )
+	throws SQLException {
+	
+		PreparedStatement stmt = 
+			mysqlConnection.prepareStatement(
+			"INSERT INTO pm_type_detail_account ( pm_type_detail, account) VALUES (  ?, ?)", 
+			PreparedStatement.RETURN_GENERATED_KEYS);
+
+		String message = "INSERT INTO pm_type_detail_account ( pm_type_detail, account) VALUES (  '"+ pm_type_detail +"', '"+ account +"')";
+		LOGGER.debug(message);
+
+		if ( pm_type_detail == null ) {
+			stmt.setNull(1, 4);
+		}
+		else {
+			stmt.setInt(1, pm_type_detail);
+		}
+		if ( account == null ) {
+			stmt.setNull(2, 1);
+		}
+		else {
+			stmt.setString(2, account);
+		}
+
+		stmt.executeUpdate();
+		
+		int 		generatedKey = 0;
+		ResultSet generatedKeys = stmt.getGeneratedKeys();
+		if ( generatedKeys.next() ){
+			generatedKey = generatedKeys.getInt(1);
+		}
+		stmt.close();
+		
+		return generatedKey;
 		
 	}
 		
