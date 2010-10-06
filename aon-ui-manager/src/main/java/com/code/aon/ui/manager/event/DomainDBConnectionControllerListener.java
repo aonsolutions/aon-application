@@ -1,12 +1,15 @@
 package com.code.aon.ui.manager.event;
 
 import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
+import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -20,17 +23,23 @@ public class DomainDBConnectionControllerListener extends ControllerAdapter impl
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainDBConnectionControllerListener.class);
 	
+	private ManagerController getManager() {
+		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+	}
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		DBConnnection dbc = (DBConnnection) event.getController().getTo();
-		dbc.setCommonName("aon_master");
-		dbc.setDriverClassName("org.gjt.mm.mysql.Driver");
-		dbc.setUid("dbuser");
-		dbc.setUserPasswordString("serubd2000");
+		Properties properties = getManager().getProperties();
+		dbc.setCommonName( properties.getProperty(IManagerAlias.DB_CONNECTION_COMMON_NAME) );
+		dbc.setDriverClassName( properties.getProperty(IManagerAlias.DB_CONNECTION_DRIVER_CLASS_NAME) );
+		dbc.setUid( properties.getProperty(IManagerAlias.DB_CONNECTION_UID) );
+		dbc.setUserPasswordString( properties.getProperty(IManagerAlias.DB_CONNECTION_USER_PASSWORD) );
 		DomainController domainController = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		String domain = ((Domain) domainController.getTo()).getCommonName();
-		String url = "jdbc:mysql:replication://192.168.3.110,192.168.3.111,192.168.3.112:3306/" + domain + "?autoReconnect=true";
+		String text = properties.getProperty(IManagerAlias.DB_CONNECTION_LABELED_URI);
+		String url = MessageFormat.format( text, domain );
 		dbc.setLabeledURI(url);
 	}
 
@@ -40,7 +49,7 @@ public class DomainDBConnectionControllerListener extends ControllerAdapter impl
 		DomainDBConnectionController controller = (DomainDBConnectionController) event.getController();
 		if ( controller.isCreateDB() ) {
 			DBConnnection dbc = (DBConnnection) event.getController().getTo();
-			ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+			ManagerController manager = getManager();
 			try {
 				manager.createDB(dbc);
 			} catch (Throwable e) {
