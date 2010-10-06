@@ -9,6 +9,7 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,8 @@ import com.code.aon.ui.webmail.controller.LdapBasicController;
 public class DomainApplicationController extends LdapBasicController implements IManagerConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationController.class);
+	
+	private String[] APPLICATIONS_WITHOUT_DB = new String[] {AON_CMS, AON_PUBLISHER, AON_WEBMAIL};
 	
 	private String selectedTab;
 	
@@ -162,4 +165,8 @@ public class DomainApplicationController extends LdapBasicController implements 
 		return workgroups;
 	}    
     
+	public boolean isWithoutDB() {
+		return ArrayUtils.contains(APPLICATIONS_WITHOUT_DB, getDomainApplication().getCommonName());	
+	}
+	
 }

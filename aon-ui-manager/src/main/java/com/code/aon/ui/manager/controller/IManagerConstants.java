@@ -19,7 +19,13 @@ public interface IManagerConstants {
 	String WORK_GROUP_CONTROLLER_NAME = "workGroup";
 	String SCOPE_CONTROLLER_NAME = "scope";
 	String USER_WORK_GROUP_CONTROLLER_NAME = "userWorkgroup";
-	String USER_SCOPE_CONTROLLER_NAME = "userScope";	
+	String USER_SCOPE_CONTROLLER_NAME = "userScope";
+	
+	// Applications
+	
+	String AON_WEBMAIL = "aon-webmail";
+	String AON_CMS = "aon-cms";
+	String AON_PUBLISHER = "aon-publisher";
 	
 	// Messages
 	String DOMAIN_INVALID_NAME = "manager_domain_invalid_name";
@@ -27,6 +33,7 @@ public interface IManagerConstants {
 	String APPLICATION_INVALID_NAME = "manager_application_invalid_name";
 	String APPLICATION_DUPLICATED_NAME = "manager_application_duplicated_name";
 	String DB_DUPLICATED = "manager_db_duplicated";
+	String DB_NOT_EXIST = "manager_db_not_exist";
 	String NEW_PASSWORD_ERROR = "manager_new_passwd_error";
 
 }
