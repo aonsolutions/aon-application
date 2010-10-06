@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -19,12 +20,13 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:panelGrid columns="2" dir="true">
+				<aon:panelGrid id="domainApplicationGrid" columns="2">
 
 					<aon:outputLabel for="DomainApplication_commonName"
 						value="#{bundle.aon_name}" />
 					<aon:selectOneMenu id="DomainApplication_commonName"
-						rendered="#{domainApplication.new}" required="true" 
+						reRender="domainApplicationGrid"
+						rendered="#{domainApplication.new}" required="true"
 						value="#{domainApplication.to.commonName}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{domainApplication.availableApplications}" />
@@ -32,14 +34,17 @@
 					<aon:inputText id="DomainApplication_commonName-New"
 						size="80" disabled="true" rendered="#{!domainApplication.new}"
 						value="#{domainApplication.to.commonName}" />
-
-					<aon:outputLabel for="DomainApplication_dataSource"
-						value="#{managerBundle.manager_db_connection}" />
-					<aon:selectOneMenu id="DomainApplication_dataSource" 
-						value="#{domainApplication.to.dataSource.id}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{domainDBConnection.dataSources}" />
-					</aon:selectOneMenu>						
+					
+					<c:if test="#{!domainApplication.withoutDB}" >
+						<aon:outputLabel for="DomainApplication_dataSource"
+							value="#{managerBundle.manager_db_connection}" />
+						<aon:selectOneMenu id="DomainApplication_dataSource" required="true"
+							converter="#{domainDBConnection.converter}"
+							value="#{domainApplication.to.dataSource}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{domainDBConnection.dataSources}" />
+						</aon:selectOneMenu>
+					</c:if>						
 
 					<c:if test="#{manager.administrator}">
 						<aon:outputLabel for="DomainApplication_status"

@@ -104,7 +104,8 @@ public class DBManager {
 	    Connection connection = null;
 		try {
 			connection = getConnection(dbc);
-			this.versionManager.createDatabase(connection, dbc.getDBName());
+			String name = dbc.getDBName();
+			this.versionManager.createDatabase(connection, name);
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			DbUtils.rollbackAndCloseQuietly(connection);
@@ -114,5 +115,21 @@ public class DBManager {
 			DbUtils.commitAndCloseQuietly(connection);
 		}
 	}
-	
+
+	public void insertDefaults( DBConnnection dbc, String application ) throws AonException {
+	    Connection connection = null;
+		try {
+			connection = getConnection(dbc);
+			String name = dbc.getDBName();
+			this.versionManager.insertApplicationDefaults(connection, name, application);
+		} catch (Throwable th) {
+			LOGGER.error(th.getMessage(), th);
+			DbUtils.rollbackAndCloseQuietly(connection);
+			connection = null;
+			throw new AonException(th.getMessage(), th);
+		} finally {
+			DbUtils.commitAndCloseQuietly(connection);
+		}
+	}	
+
 }

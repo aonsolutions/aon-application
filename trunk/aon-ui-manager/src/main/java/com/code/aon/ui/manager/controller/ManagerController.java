@@ -119,8 +119,7 @@ public class ManagerController implements IManagerConstants {
 		return md5_passwd;
 	} 
 	
-
-	public void createDB( DBConnnection dbConnection ) throws AonException, SQLException {
+	public void createDB( DBConnnection dbConnection ) throws AonException {
 		if (! getDBManager().exists(dbConnection) ) {
 			getDBManager().createDB(dbConnection);
 		} else {
@@ -133,6 +132,14 @@ public class ManagerController implements IManagerConstants {
 			getDBManager().dropDB(dbConnection);
 		}
 	}		
+	
+	public void insertDefaults( DBConnnection dbConnection, String application ) throws AonException {
+		if ( getDBManager().exists(dbConnection) ) {
+			getDBManager().insertDefaults(dbConnection, application);
+		} else {
+			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DB_NOT_EXIST, dbConnection.getDBName());
+		}
+	}
 	
 	public List<SelectItem> getWorkGroupStatuses() {
 		if(workGroupStatuses == null){

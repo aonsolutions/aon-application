@@ -129,7 +129,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 
 	public boolean hasWebmail( DomainUser user ) {
 		String domain = NameResolver.getValue(user.getId(), 2);
-		Name dn = NameResolver.getDomainApplicationUserDN(domain, "aon-webmail", user.getUid());
+		Name dn = NameResolver.getDomainApplicationUserDN(domain, AON_WEBMAIL, user.getUid());
 		BasicLdap ldap = new BasicLdap();
 		return ldap.exists(dn, IAonObjectClasses.DOMAIN_APPLICATION_USER);
 	}

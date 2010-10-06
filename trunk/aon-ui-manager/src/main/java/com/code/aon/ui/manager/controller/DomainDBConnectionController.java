@@ -3,6 +3,7 @@ package com.code.aon.ui.manager.controller;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
@@ -12,15 +13,20 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.manager.converter.TransferObjectConverter;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 
-public class DomainDBConnectionController extends LdapBasicController {
+public class DomainDBConnectionController extends LdapBasicController implements IManagerConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainDBConnectionController.class);
 	
 	private List<SelectItem> dataSources;
 	
 	private boolean createDB;
+	
+	private Converter converter;
 	
 	public DomainDBConnectionController() {
 		this.createDB = true;
@@ -44,7 +50,7 @@ public class DomainDBConnectionController extends LdapBasicController {
 		try {
 			List<DBConnnection> list = (List) getManagerBean().getList(null);
 			for (DBConnnection dbc : list) {
-				SelectItem item = new SelectItem(dbc.getId(), dbc.getCommonName() );
+				SelectItem item = new SelectItem(dbc, dbc.getCommonName() );
 				this.dataSources.add(item);
 			}
 		} catch (ManagerBeanException e) {
@@ -59,5 +65,14 @@ public class DomainDBConnectionController extends LdapBasicController {
 	public void setCreateDB(boolean createDB) {
 		this.createDB = createDB;
 	}
+
+	
+	public Converter getConverter() {
+		if ( converter == null ) {
+			IController controller = (IController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+			this.converter = new TransferObjectConverter(controller);			
+		}
+		return converter;
+	}	
 	
 }
