@@ -7,7 +7,7 @@
 	template="/facelet/templates/aon.ui.main.xhtml">
 
 	<ui:define name="mainContent">
-		<a4j:include id="aonContent" viewId="/homepage.xhtml" ajaxRendered="false"/>
+		<a4j:include id="aonContent" viewId="#{manager.homeTemplate}" ajaxRendered="false"/>
 	</ui:define>	
   
 </ui:composition>

@@ -17,7 +17,7 @@
 		<aon:commandLink id="applications" 
 			action="aonApplication_list"
 			actionListener="#{aonApplication.onEditSearch}"
-			rendered="#{manager.administrator}"
+			rendered="#{manager.config.showApplications}"
 			title="#{managerBundle.manager_applications}"  
 			value="#{managerBundle.manager_applications}"
 			styleClass="aon-top-menu-item aon-icon-general">

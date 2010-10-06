@@ -19,9 +19,17 @@ import org.hibernate.cfg.AnnotationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.AonException;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.manager.DBConnnection;
+import com.code.aon.manager.Domain;
+import com.code.aon.manager.dao.IManagerAlias;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.DBManager;
 import com.code.aon.ui.manager.util.PropertiesUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -30,9 +38,11 @@ public class ManagerController implements IManagerConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ManagerController.class);
 	
-	private static final String DEFAULT_PROPERTIES = "/com/code/aon/ui/manager/default.config.properties";
+	public static final String PROPERTIES_PATH = "/com/code/aon/ui/manager/";
 	
-	private static final File MANAGER_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-manager/config.properties" );	
+	private static final String DEFAULT_PROPERTIES = PROPERTIES_PATH + "default.config.properties";
+	
+	private static final File MANAGER_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-manager/config.properties" );
 	
 	private final static String HOME = "home";
 	
@@ -44,7 +54,9 @@ public class ManagerController implements IManagerConstants {
 
 	private String _password;
 	
-	private boolean administrator;
+	private UserType userType;
+	
+	private String homeTemplate;
 	
 	private List<SelectItem> workGroupStatuses;
 	
@@ -56,25 +68,42 @@ public class ManagerController implements IManagerConstants {
 	
 	private Properties properties;
 	
+	private Properties config;
+	
 	public ManagerController() {
 		this.dbManager = new DBManager();
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
+		this.userType = calculateUserType();
+		init( this.userType );
 	}
+	
 	
 	public Properties getProperties() {
 		return properties;
+	}
+	
+	public Properties getConfig() {
+		return config;
 	}
 
 	public DBManager getDBManager() {
 		return dbManager;
 	}
 
-	public boolean isAdministrator() {
-		return administrator;
+	public UserType getUserType() {
+		return userType;
 	}
 	
-	public void setAdministrator(boolean administrator) {
-		this.administrator = administrator;
+	private void setUserType(UserType userType) {
+		this.userType = userType;
+	}
+
+	public boolean isAdministrator() {
+		return this.userType == UserType.ESFERALIA;
+	}
+	
+	public String getHomeTemplate() {
+		return homeTemplate;
 	}
 
 	public String getUser() {
@@ -100,7 +129,8 @@ public class ManagerController implements IManagerConstants {
 	public void onAccept(ActionEvent event) {
 		String crypted = hash(_password);
 		if (USER.equals(_user) && PASSWORD.equals(crypted)) {
-			setAdministrator(true);
+			setUserType(UserType.ESFERALIA);
+			init(userType);
 		} else {
 			String message = AonUtil.getMessage("securityBundle", "aon_login_err_0", _user);
 			AonUtil.addErrorMessage(message);
@@ -187,5 +217,80 @@ public class ManagerController implements IManagerConstants {
 		}
 		return sessionFactory;
 	}
+	
+	private String getDomainName() {
+		DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+		return domainResolver.getDomain();		
+	}
+	
+	private Domain getDomain( String name ) {
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
+		try {
+			IManagerBean bean = controller.getManagerBean();
+			Criteria criteria = new Criteria();
+			String alias = bean.getFieldName(IManagerAlias.DOMAIN_COMMON_NAME);
+			criteria.addEqualExpression(alias, name);
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				return (Domain) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		return null;
+	}
+	
+	private UserType calculateUserType() {
+		UserType type = UserType.NORMAL;
+		Domain domain = getDomain( getDomainName() );
+		if ( (domain != null) && domain.getDomainManagement() ) {
+			type = UserType.PARENT;
+		}
+		return type;
+	}
+	
+	private void initEsferaliaUser() {
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
+		try {
+			controller.clearCriteria();
+			controller.onSearch(null);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}				
+	}
+
+	private void initNormalUser() {
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
+		try {
+			Criteria criteria = controller.getCriteria();
+			String alias = controller.getFieldName(IManagerAlias.DOMAIN_COMMON_NAME);
+			criteria.addEqualExpression(alias, getDomainName());
+			controller.initializeModel();
+			controller.getModel().setRowIndex(0);
+			controller.onSelect(null);					
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}				
+	}
+
+	private void initParentUser() {
+		
+	}
+	
+	private void init( UserType type ) {
+		this.homeTemplate = type.getTemplate();
+		this.config = PropertiesUtil.loadProperties(type.getResource());
+		switch ( type ) {
+			case ESFERALIA:
+				initEsferaliaUser();
+				break;
+			case NORMAL:
+				initNormalUser();
+				break;
+			case PARENT:
+				initParentUser();
+				break;
+		}
+	}	
 	
 }
