@@ -765,7 +765,9 @@ color:#000;
 .aon-icon-comment-red{
 	background:transparent url(images/aon-icon/aon-comment-red.gif) scroll left center no-repeat;	
 }
-
+.aon-icon-go{
+	background:transparent url(images/aon-icon/aon-icon-go.png) scroll left center no-repeat;	
+}
 
 /******* GROUP  **********/
 #aon-content  .aon-form-group{
