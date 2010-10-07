@@ -64,6 +64,14 @@ public class DomainApplicationUser implements ILdapTransferObject {
 		this.id = id;
 	}
 
+	public String getAppplication() {
+		return NameResolver.getValue( getId(), 2 );
+	}
+
+	public String getDomain() {
+		return NameResolver.getValue( getId(), 4 );
+	}
+	
 	@RDN
 	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {

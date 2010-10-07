@@ -2,17 +2,33 @@ package com.code.aon.ui.manager.controller;
 
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.ILdapConstants.USER_PASSWORD_ATTRIBUTE;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_EMAIL;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_HOST;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_INCOMING_HOST;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_INCOMING_PORT;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_INCOMING_SSL;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_MAIL_USERNAME;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_OUTGOING_HOST;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_OUTGOING_PORT;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_OUTGOING_SSL;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_OUTGOING_VERIFICATION;
+import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_PROTOCOL;
+import static com.code.aon.webmail.dao.IWebMailAlias.SIGNATURE_SIGNATURE;
 
 import java.security.MessageDigest;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.naming.Name;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +41,12 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
+import com.code.aon.ui.webmail.controller.MailAccountController;
+import com.code.aon.ui.webmail.controller.SignatureController;
+import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.Signature;
 
 public class DomainUserController extends LdapBasicController implements IManagerConstants {
 
@@ -65,21 +86,69 @@ public class DomainUserController extends LdapBasicController implements IManage
 		getLdapDAO().setBaseDN(baseDN);
 	}
 
-	public void createUserWebmailDefaultData( DomainUser user ) {
+	private Signature addDefaultSignature( DomainUser user ) throws ManagerBeanException {
+		Signature signature = new Signature();
+		signature.setName( user.getDomain() );
+		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		String text = manager.getProperties().getProperty(SIGNATURE_SIGNATURE);
+		String content = MessageFormat.format( text, user.getFullName() );	
+		signature.setSignature(content);
+		SignatureController controller = (SignatureController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE);
+		controller.updateBaseDN(user.getId());
+		controller.getManagerBean().insert( signature );
+		return signature;
+	}
+
+	private void addDefaultMailAccount( DomainUser user, Signature signature ) throws ManagerBeanException {
+		MailAccount account = new MailAccount();
+		account.setName(NameResolver.DEFAULT_MAIL_ACCOUNT_NAME);
+		account.setPasswordString(user.getUid());
+		account.setSignature(signature);
+		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		Properties properties = manager.getProperties();
+		String email = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_EMAIL), user.getUid(), user.getDomain() );
+		account.setEmail(email);
+		String mailUsername = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_MAIL_USERNAME), user.getUid(), user.getDomain() );
+		account.setMailUsername(mailUsername);
+		String host = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_HOST), user.getDomain() );
+		account.setHost(host);		
+		account.setProtocol( properties.getProperty(MAIL_ACCOUNT_PROTOCOL) );
+		String incomingHost = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_INCOMING_HOST), user.getDomain() );
+		account.setIncomingHost(incomingHost);
+		int incomingPort = NumberUtils.toInt(properties.getProperty(MAIL_ACCOUNT_INCOMING_PORT));
+		account.setIncomingPort(incomingPort);
+		boolean incomingSsl = BooleanUtils.toBoolean(properties.getProperty(MAIL_ACCOUNT_INCOMING_SSL));
+		account.setIncomingSsl(incomingSsl);
+		String outgoingHost = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_OUTGOING_HOST), user.getDomain() );
+		account.setOutgoingHost(outgoingHost);
+		int outgoingPort = NumberUtils.toInt(properties.getProperty(MAIL_ACCOUNT_OUTGOING_PORT));
+		account.setOutgoingPort(outgoingPort);
+		boolean outgoingSsl = BooleanUtils.toBoolean(properties.getProperty(MAIL_ACCOUNT_OUTGOING_SSL));
+		account.setOutgoingSsl(outgoingSsl);
+		boolean outgoingVerification = BooleanUtils.toBoolean(properties.getProperty(MAIL_ACCOUNT_OUTGOING_VERIFICATION));
+		account.setOutgoingVerification(outgoingVerification);
+		MailAccountController controller = (MailAccountController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_ACCOUNT);
+		controller.updateBaseDN(user.getId());
+		controller.getManagerBean().insert( account );				
+	}
+	
+	public void createUserWebmailDefaultData( DomainUser user ) throws ManagerBeanException {
 		BasicLdap ldap = new BasicLdap();
 		String domain = user.getDomain();
 		Name addressBookDN = NameResolver.getUserAddressBookDN(domain, user.getUid());
 		if (! ldap.exists(addressBookDN, ORGANIZATIONAL_UNIT) ) {
 			ldap.addOrganizationUnit(addressBookDN);
 		}
-		Name accountsDN = NameResolver.getUserAccountsDN(domain, user.getUid());
-		if (! ldap.exists(accountsDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.addOrganizationUnit(accountsDN);
-		}
 		Name signaturesDN = NameResolver.getUserSignaturesDN(domain, user.getUid());
 		if (! ldap.exists(signaturesDN, ORGANIZATIONAL_UNIT) ) {
 			ldap.addOrganizationUnit(signaturesDN);
 		}
+		Signature signature = addDefaultSignature(user);
+		Name accountsDN = NameResolver.getUserAccountsDN(domain, user.getUid());
+		if (! ldap.exists(accountsDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(accountsDN);
+		}
+		addDefaultMailAccount(user, signature);
 	}
 	
 	public void onShowChangePasswordWindow( ActionEvent event ) {
