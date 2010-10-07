@@ -27,7 +27,7 @@
 
 	<ui:define name="beforeHelpMenuContent">	
 		<aon:menuItem id="advancedMode" action="advancedMode"
-			rendered="#{!manager.administrator}"
+			rendered="#{manager.config.showAdvancedMode}"
 			value="#{managerBundle.manager_advanced_mode}" />		
 	</ui:define>
 		

@@ -4,6 +4,7 @@ import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +30,8 @@ import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.DBManager;
 import com.code.aon.ui.manager.util.PropertiesUtil;
@@ -56,6 +59,8 @@ public class ManagerController implements IManagerConstants {
 	
 	private UserType userType;
 	
+	private Domain currentDomain;
+	
 	private String homeTemplate;
 	
 	private List<SelectItem> workGroupStatuses;
@@ -73,6 +78,7 @@ public class ManagerController implements IManagerConstants {
 	public ManagerController() {
 		this.dbManager = new DBManager();
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
+		this.currentDomain = calculateCurrentDomain();
 		this.userType = calculateUserType();
 		init( this.userType );
 	}
@@ -218,13 +224,10 @@ public class ManagerController implements IManagerConstants {
 		return sessionFactory;
 	}
 	
-	private String getDomainName() {
-		DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
-		return domainResolver.getDomain();		
-	}
-	
-	private Domain getDomain( String name ) {
+	private Domain calculateCurrentDomain() {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
+		DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+		String name = domainResolver.getDomain();		
 		try {
 			IManagerBean bean = controller.getManagerBean();
 			Criteria criteria = new Criteria();
@@ -242,16 +245,17 @@ public class ManagerController implements IManagerConstants {
 	
 	private UserType calculateUserType() {
 		UserType type = UserType.NORMAL;
-		Domain domain = getDomain( getDomainName() );
-		if ( (domain != null) && domain.getDomainManagement() ) {
+		if ( currentDomain.getDomainManagement() ) {
 			type = UserType.PARENT;
 		}
 		return type;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void initEsferaliaUser() {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
 		try {
+			controller.setInitExpressions(Collections.EMPTY_LIST);			
 			controller.clearCriteria();
 			controller.onSearch(null);
 		} catch (ManagerBeanException e) {
@@ -264,7 +268,7 @@ public class ManagerController implements IManagerConstants {
 		try {
 			Criteria criteria = controller.getCriteria();
 			String alias = controller.getFieldName(IManagerAlias.DOMAIN_COMMON_NAME);
-			criteria.addEqualExpression(alias, getDomainName());
+			criteria.addEqualExpression(alias, currentDomain.getCommonName());
 			controller.initializeModel();
 			controller.getModel().setRowIndex(0);
 			controller.onSelect(null);					
@@ -274,7 +278,20 @@ public class ManagerController implements IManagerConstants {
 	}
 
 	private void initParentUser() {
-		
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
+		try {
+			List<Expression> initExpressions = new LinkedList<Expression>();
+			String cn = controller.getFieldName(IManagerAlias.DOMAIN_COMMON_NAME);
+			Expression expr1 = ExpressionUtilities.getEqualExpression(cn, currentDomain.getCommonName());
+			String parent = controller.getFieldName(IManagerAlias.DOMAIN_PARENT_DOMAIN);
+			Expression expr2 = ExpressionUtilities.getEqualExpression(parent, currentDomain.getId());
+			initExpressions.add( ExpressionUtilities.getOrExpression(expr1, expr2) );
+			controller.setInitExpressions(initExpressions);
+			controller.clearCriteria(); 
+			controller.onSearch(null);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}			
 	}
 	
 	private void init( UserType type ) {
