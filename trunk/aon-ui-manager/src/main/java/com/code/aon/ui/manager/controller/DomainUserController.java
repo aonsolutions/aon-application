@@ -5,6 +5,7 @@ import static com.code.aon.ldap.ILdapConstants.USER_PASSWORD_ATTRIBUTE;
 
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -21,6 +22,7 @@ import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
@@ -65,7 +67,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 
 	public void createUserWebmailDefaultData( DomainUser user ) {
 		BasicLdap ldap = new BasicLdap();
-		String domain = NameResolver.getValue(user.getId(), 2);
+		String domain = user.getDomain();
 		Name addressBookDN = NameResolver.getUserAddressBookDN(domain, user.getUid());
 		if (! ldap.exists(addressBookDN, ORGANIZATIONAL_UNIT) ) {
 			ldap.addOrganizationUnit(addressBookDN);
@@ -147,7 +149,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 
 	public boolean hasWebmail( DomainUser user ) {
-		String domain = NameResolver.getValue(user.getId(), 2);
+		String domain = user.getDomain();
 		Name dn = NameResolver.getDomainApplicationUserDN(domain, AON_WEBMAIL, user.getUid());
 		BasicLdap ldap = new BasicLdap();
 		return ldap.exists(dn, IAonObjectClasses.DOMAIN_APPLICATION_USER);
@@ -160,5 +162,28 @@ public class DomainUserController extends LdapBasicController implements IManage
 	public void setWebmail(boolean webmail) {
 		this.webmail = webmail;
 	}	
+
+	public void registerUserInApplication( DomainUser user, String application, String profile ) throws ManagerBeanException {
+		BasicLdap ldap = new BasicLdap();
+		Name applicationDN = NameResolver.getApplicationDN(application);
+		if (! ldap.exists(applicationDN, IAonObjectClasses.APPLICATION) ) {
+			LOGGER.error( "Application doesn't exist: " + applicationDN );
+			return;
+		}
+		Name profileDN = NameResolver.getApplicationProfileDN(application, profile);
+		if (! ldap.exists(profileDN, IAonObjectClasses.PROFILE) ) {
+			LOGGER.error( "Profile doesn't exist: " + profileDN );
+			return;
+		}
+		DomainApplicationUser dau = new DomainApplicationUser();
+		dau.setCommonName( user.getUid() );
+		List<Name> profiles = new LinkedList<Name>();
+		profiles.add( profileDN );
+		dau.setProfiles( profiles );
+		Name domainApplicationDN = NameResolver.getDomainApplicationDN(user.getDomain(), application);
+		DomainApplicationUserController dauc = (DomainApplicationUserController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_USER_CONTROLLER_NAME);
+		dauc.updateBaseDN(domainApplicationDN);
+		dauc.getManagerBean().insert( dau );
+	}
 	
 }

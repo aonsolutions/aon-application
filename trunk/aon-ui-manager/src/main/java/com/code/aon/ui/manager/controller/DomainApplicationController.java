@@ -97,8 +97,8 @@ public class DomainApplicationController extends LdapBasicController implements 
 	
 	public void createOrganizationalUnits( DomainApplication da ) {
 		BasicLdap ldap = new BasicLdap();
-		String domainName = NameResolver.getValue(da.getId(), 2);
-		String application = NameResolver.getValue(da.getId(), 0);
+		String domainName = da.getDomain();
+		String application = da.getCommonName();
 		Name profilesDN = NameResolver.getDomainApplicationProfilesDN(domainName, application);
 		if (! ldap.exists(profilesDN, ORGANIZATIONAL_UNIT) ) {
 			ldap.addOrganizationUnit(profilesDN);
@@ -119,7 +119,7 @@ public class DomainApplicationController extends LdapBasicController implements 
         List<SelectItem> list = new ArrayList<SelectItem>();
         try {
         	DomainApplication da = getDomainApplication();
-        	Name applicationDN = NameResolver.getApplicationDN(NameResolver.getValue(da.getId(), 0));
+        	Name applicationDN = NameResolver.getApplicationDN(da.getCommonName());
         	ProfileController pController = (ProfileController) AonUtil.getRegisteredBean(PROFILE_CONTROLLER_NAME);      	
         	for( BasicProfile profile : pController.getProfiles(applicationDN)) {
 			    SelectItem item = new SelectItem( profile.getId(), profile.getCommonName() );
