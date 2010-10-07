@@ -182,13 +182,25 @@ public class NameResolver implements ILdapConstants {
 	}
 
 	public static Name getUserDefaultAccount( String domain, String user ) {
-		return getName( cn(DEFAULT_MAIL_ACCOUNT_NAME), getUserAccountsDN(domain, user) );
+		return getUserMailAccountDN(domain, user, DEFAULT_MAIL_ACCOUNT_NAME);
+	}
+
+	public static Name getUserMailAccountDN( String domain, String user, String mailAccount ) {
+		return getName( cn(mailAccount), getUserAccountsDN(domain, user) );
 	}
 	
 	public static Name getUserSignaturesDN( String domain, String user ) {
 		return getName( ou(SIGNATURES), getUserDN(domain, user) );
 	}
 
+	public static Name getUserSignatureDN( String domain, String user, String signature ) {
+		return getName( cn(signature), getUserSignaturesDN(domain, user) );
+	}	
+
+	public static Name getUserDefaultSignature( String domain, String user ) {
+		return getUserSignatureDN(domain, user, domain);
+	}	
+	
 	public static Name getUserAddressBookDN( String domain, String user ) {
 		return getName( ou(ADDRESS_BOOK), getUserDN(domain, user) );
 	}
