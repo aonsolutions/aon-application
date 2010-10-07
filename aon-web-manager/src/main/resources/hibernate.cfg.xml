@@ -12,12 +12,21 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- Mapping files -->
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
+		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.UserWorkGroup"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
-
+		
 	</session-factory>
 
 </hibernate-configuration>

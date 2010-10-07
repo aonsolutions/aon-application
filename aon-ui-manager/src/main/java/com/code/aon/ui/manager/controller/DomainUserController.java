@@ -33,13 +33,26 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Scope;
+import com.code.aon.config.User;
+import com.code.aon.config.UserScope;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.manager.DBConnnection;
+import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.manager.ManagerBeanWrapper;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
@@ -61,6 +74,8 @@ public class DomainUserController extends LdapBasicController implements IManage
 	private boolean webmail;
 	
 	private String selectedTab;
+	
+	private ManagerBeanWrapper userWrapper;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -85,7 +100,14 @@ public class DomainUserController extends LdapBasicController implements IManage
 		Name baseDN = NameResolver.getUsersDN(domain);
 		getLdapDAO().setBaseDN(baseDN);
 	}
-
+	
+	public IManagerBean getBDUserManagerBean() {
+		if ( this.userWrapper == null ) {
+			this.userWrapper = new ManagerBeanWrapper(User.class);	
+		}
+		return this.userWrapper.getManagerBean();
+	}
+	
 	private Signature addDefaultSignature( DomainUser user ) throws ManagerBeanException {
 		Signature signature = new Signature();
 		signature.setName( user.getDomain() );
@@ -255,4 +277,54 @@ public class DomainUserController extends LdapBasicController implements IManage
 		dauc.getManagerBean().insert( dau );
 	}
 	
+	private void registerScope( String userName, String scopeName ) throws ManagerBeanException {
+		DBBasicController scopeController = (DBBasicController) AonUtil.getRegisteredBean(SCOPE_CONTROLLER_NAME);
+		Criteria scopeCriteria = new Criteria();
+		scopeCriteria.addEqualExpression(scopeController.getFieldName(IConfigAlias.SCOPE_DESCRIPTION), scopeName);
+		List<ITransferObject> scopes = scopeController.getManagerBean().getList(scopeCriteria);
+		if (! scopes.isEmpty() ) {
+			Scope scope = (Scope) scopes.get(0);
+			IManagerBean userBean = getBDUserManagerBean();
+			Criteria userCriteria = new Criteria();
+			userCriteria.addEqualExpression(userBean.getFieldName(IConfigAlias.USER_LOGIN), userName);
+			List<ITransferObject> users = userBean.getList(userCriteria);
+			if (! users.isEmpty() ) {
+				User user = (User) users.get(0);
+				UserScope userScope = new UserScope();
+				userScope.setScope(scope);
+				userScope.setUser(user);
+				IController userScopeController = FormUtil.getController(USER_SCOPE_CONTROLLER_NAME);
+				userScopeController.getManagerBean().insert(userScope);
+			}
+		}
+	}
+
+	public void registerScope( DomainUser user, String scope ) throws ManagerBeanException {
+		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+		for (DBConnnection dbc : ddbc.getDBConnnections()) {
+			if ( manager.changeDbConnection(dbc) ) {
+				if ( manager.getDBManager().existsTable(dbc, "scope") ) {
+					try {
+						registerScope(user.getUid(), scope);	
+					} catch ( Throwable th ) {
+						LOGGER.error( "Error registering " + scope + " for user " + user + " in " + dbc, th );
+					}
+				}					
+			}
+		}
+	}
+	
+	public void removeDomainApplicationsUser( DomainUser user ) throws ManagerBeanException, LdapException {
+		BasicLdap ldap = new BasicLdap();
+		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
+		String domain = user.getDomain();
+		for (DomainApplication application : dac.getDomainApplications()) {
+			Name dauDN = NameResolver.getDomainApplicationUserDN(domain, application.getCommonName(), user.getUid());
+			if ( ldap.exists(dauDN, IAonObjectClasses.DOMAIN_APPLICATION_USER) ) {
+				ldap.delete(dauDN);
+			}
+		}
+	}
+		
 }

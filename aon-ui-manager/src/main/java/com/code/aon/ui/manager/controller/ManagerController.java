@@ -211,14 +211,16 @@ public class ManagerController implements IManagerConstants {
 		return workGroupStatuses;
 	}	
 	
-	public void changeDbConnection(DBConnnection dbc) {
+	public boolean changeDbConnection(DBConnnection dbc) {
 		if (! ObjectUtils.equals(dbConnection, dbc) ) {
 			this.dbConnection = dbc;	
 			if ( this.sessionFactory != null ) {
 				this.sessionFactory.close();
 				this.sessionFactory = null;				
 			}
+			return true;
 		}
+		return false;
 	}
 
 	public SessionFactory getSessionFactory() {

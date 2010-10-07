@@ -13,12 +13,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.manager.ManagerBeanWrapper;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
@@ -26,8 +26,6 @@ import com.code.aon.ui.webmail.controller.LdapBasicController;
 public class DomainApplicationUserController extends LdapBasicController implements IManagerConstants {
 	
 	private User user;
-	
-	private ManagerBeanWrapper userWrapper;
 	
 	private Converter scopeConverter;
 	
@@ -110,21 +108,16 @@ public class DomainApplicationUserController extends LdapBasicController impleme
 		return user;
 	}
 	
-	private IManagerBean getBDUserManagerBean() {
-		if ( this.userWrapper == null ) {
-			this.userWrapper = new ManagerBeanWrapper(User.class);	
-		}
-		return this.userWrapper.getManagerBean();
-	}
-	
 	public void updateDBUser() throws ManagerBeanException {
 		 DomainApplicationUser dau = getDomainApplicationUser();
+		 DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
+		 IManagerBean bean = duc.getBDUserManagerBean();
 		 Criteria criteria = new Criteria();
-		 criteria.addEqualExpression("User.login", dau.getCommonName());
-		 List<ITransferObject> list = getBDUserManagerBean().getList(criteria);
+		 criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), dau.getCommonName());
+		 List<ITransferObject> list = bean.getList(criteria);
 		 if ( list.isEmpty() ) {
 			 this.user = initDBUser(dau);
-			 getBDUserManagerBean().insert(this.user);
+			 bean.insert(this.user);
 		 } else {
 			 this.user = (User) list.get(0);
 		 }
