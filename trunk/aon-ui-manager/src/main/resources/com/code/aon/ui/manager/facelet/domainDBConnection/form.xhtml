@@ -34,7 +34,7 @@
 					<aon:inputText id="DBConnnection_labeledURI" required="true"
 						size="120" value="#{domainDBConnection.to.labeledURI}" />
 
-					<c:if test="#{manager.administrator}" >
+					<c:if test="#{manager.config.showDBConnectionDetails}" >
 						<aon:outputLabel for="DBConnnection_driverClassName"
 							value="#{managerBundle.manager_db_connection_driverClassName}" />
 						<aon:inputText id="DBConnnection_driverClassName" required="true"

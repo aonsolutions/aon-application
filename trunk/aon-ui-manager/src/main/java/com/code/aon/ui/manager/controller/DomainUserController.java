@@ -4,6 +4,7 @@ import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.ILdapConstants.USER_PASSWORD_ATTRIBUTE;
 
 import java.security.MessageDigest;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -11,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,16 +86,26 @@ public class DomainUserController extends LdapBasicController implements IManage
 		setConfirmPassword(null);
 	}
 
+	private String getSHAPassword( String value ) {
+		String shaPassword = null;
+		try {
+			byte[] hash = MessageDigest.getInstance("SHA").digest(value.getBytes());
+			shaPassword = "{SHA}" + Util.encodeBase64(hash);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}        		
+		return shaPassword;
+	}
+	
 	public void onChangePassword( ActionEvent event ) {
 		if (! StringUtils.equals(newPassword, confirmPassword)) {
 			String message = AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, NEW_PASSWORD_ERROR );
 			throw new AbortProcessingException( message );
 		}		
-		DomainUser user = (DomainUser) getTo();
+		DomainUser user = getDomainUser();
 		BasicLdap ldap = new BasicLdap();
 		try {
-	        byte[] hash = MessageDigest.getInstance("SHA").digest(newPassword.getBytes());
-	        String passwordHash = "{SHA}" + Util.encodeBase64(hash);		
+	        String passwordHash = getSHAPassword(newPassword);
 			ldap.getLdapSession().replaceAttribute(user.getId(), USER_PASSWORD_ATTRIBUTE, passwordHash);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
@@ -102,6 +114,13 @@ public class DomainUserController extends LdapBasicController implements IManage
 			ldap.closeSession();
 		}
 	}
+	
+	public void onResetPassword( ActionEvent event ) {
+		DomainUser user = getDomainUser();
+		user.setPasswordExpirationTimestamp( DateUtils.addDays(new Date(), -1) );
+		String newPassword = getSHAPassword(user.getUid());
+		user.setPasswordString( newPassword );
+	}	
 	
 	public boolean isShowChangePasswordWindow() {
 		return showChangePasswordWindow;
