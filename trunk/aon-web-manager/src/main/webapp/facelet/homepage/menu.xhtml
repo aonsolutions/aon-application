@@ -9,14 +9,12 @@
 				
 		<aon:commandLink id="domains" 
 			action="domain_list"
-			actionListener="#{domain.onEditSearch}"
 			title="#{managerBundle.manager_domains}"  
 			value="#{managerBundle.manager_domains}"
 			styleClass="aon-top-menu-item aon-icon-config">
 		</aon:commandLink>
 		<aon:commandLink id="applications" 
 			action="aonApplication_list"
-			actionListener="#{aonApplication.onEditSearch}"
 			rendered="#{manager.config.showApplications}"
 			title="#{managerBundle.manager_applications}"  
 			value="#{managerBundle.manager_applications}"

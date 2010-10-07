@@ -44,6 +44,11 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		updateDataSources();
 	}	
 	
+	@SuppressWarnings("unchecked")
+	public List<DBConnnection> getDBConnnections() throws ManagerBeanException {
+		return (List) getModel().getWrappedData();
+	}	
+	
 	public List<SelectItem> getDataSources() {
 		return this.dataSources;
 	}

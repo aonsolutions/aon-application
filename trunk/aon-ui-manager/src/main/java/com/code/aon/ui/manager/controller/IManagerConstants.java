@@ -28,6 +28,7 @@ public interface IManagerConstants {
 	String AON_PUBLISHER = "aon-publisher";
 	
 	String USUARIO_PROFILE = "Usuario";
+	String GENERAL_SCOPE = "GENERAL";
 	
 	// Messages
 	String DOMAIN_INVALID_NAME = "manager_domain_invalid_name";

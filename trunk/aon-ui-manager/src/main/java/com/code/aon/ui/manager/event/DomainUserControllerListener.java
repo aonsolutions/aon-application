@@ -46,6 +46,7 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 			duc.createUserWebmailDefaultData(user);
 			duc.registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
 			duc.setWebmail(true);
+			duc.registerScope(user, GENERAL_SCOPE);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -58,6 +59,12 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();
 		DomainUser user = duc.getDomainUser();
+		try {
+			duc.removeDomainApplicationsUser(user);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
 		getManager().getLogger().domainUserdRemoved(user);
 	}
 
