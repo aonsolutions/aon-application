@@ -43,7 +43,9 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 		DomainUser user = duc.getDomainUser();
 		try {		
 			duc.registerUserInApplication(user, AON_DESKTOP, USUARIO_PROFILE);
+			duc.createUserWebmailDefaultData(user);
 			duc.registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
+			duc.setWebmail(true);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
