@@ -23,6 +23,7 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.dao.ldap.util.IPerson;
+import com.code.aon.ldap.NameResolver;
 
 @EntryObject(mainObjectClass=USER, objectClasses={TOP, POSIX_ACCOUNT, PERSON, ORGANIZATIONAL_PERSON, INET_ORG_PERSON, AMAVIS_ACCOUNT})
 public class DomainUser implements IPerson {
@@ -110,6 +111,10 @@ public class DomainUser implements IPerson {
 		this.id = id;
 	}	
 
+	public String getDomain() {
+		return NameResolver.getValue( getId(), 2 );
+	}
+	
 	@RDN
 	@Attribute(name=USER_ID_ATTRIBUTE, length=256, nullable=false)
 	public String getUid() {

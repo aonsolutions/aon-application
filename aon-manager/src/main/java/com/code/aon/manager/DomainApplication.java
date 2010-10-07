@@ -20,6 +20,7 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.NameResolver;
 
 @EntryObject(mainObjectClass=DOMAIN_APPLICATION, objectClasses={TOP})
 public class DomainApplication implements ILdapTransferObject, Cloneable {
@@ -47,6 +48,10 @@ public class DomainApplication implements ILdapTransferObject, Cloneable {
 
 	public void setId(Name id) {
 		this.id = id;
+	}
+	
+	public String getDomain() {
+		return NameResolver.getValue( getId(), 2 );
 	}
 	
 	@RDN

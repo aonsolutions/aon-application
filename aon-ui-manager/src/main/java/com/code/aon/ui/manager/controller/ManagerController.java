@@ -34,6 +34,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.DBManager;
+import com.code.aon.ui.manager.util.ManagerLogger;
 import com.code.aon.ui.manager.util.PropertiesUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -75,14 +76,16 @@ public class ManagerController implements IManagerConstants {
 	
 	private Properties config;
 	
+	private ManagerLogger logger;
+	
 	public ManagerController() {
 		this.dbManager = new DBManager();
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
 		this.currentDomain = calculateCurrentDomain();
 		this.userType = calculateUserType();
 		init( this.userType );
+		this.logger = new ManagerLogger( this.properties.getProperty(NOTIFICATION_EMAIL) );
 	}
-	
 	
 	public Properties getProperties() {
 		return properties;
@@ -90,6 +93,10 @@ public class ManagerController implements IManagerConstants {
 	
 	public Properties getConfig() {
 		return config;
+	}
+	
+	public ManagerLogger getLogger() {
+		return logger;
 	}
 
 	public DBManager getDBManager() {

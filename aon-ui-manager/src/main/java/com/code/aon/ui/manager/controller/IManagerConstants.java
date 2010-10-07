@@ -22,10 +22,12 @@ public interface IManagerConstants {
 	String USER_SCOPE_CONTROLLER_NAME = "userScope";
 	
 	// Applications
-	
+	String AON_DESKTOP = "aon-desktop";
 	String AON_WEBMAIL = "aon-webmail";
 	String AON_CMS = "aon-cms";
 	String AON_PUBLISHER = "aon-publisher";
+	
+	String USUARIO_PROFILE = "Usuario";
 	
 	// Messages
 	String DOMAIN_INVALID_NAME = "manager_domain_invalid_name";
@@ -36,4 +38,8 @@ public interface IManagerConstants {
 	String DB_NOT_EXIST = "manager_db_not_exist";
 	String NEW_PASSWORD_ERROR = "manager_new_passwd_error";
 
+	// Properties
+	
+	String NOTIFICATION_EMAIL = "notification_email";
+	
 }
