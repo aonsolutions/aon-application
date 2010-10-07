@@ -205,7 +205,7 @@ public class InvoiceRecorder implements ITransferObject {
 			} else if (type == InvoiceType.EXPENSES) {
 				setAccount( getAccountBridgeUtil().getCreditorAccount(getInvoice().getRegistry()));	
 			}
-			if (invoice.getType() == InvoiceType.EXPENSES || invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
+			if (getAccount() != null &&  (invoice.getType() == InvoiceType.EXPENSES || invoice.getType() == InvoiceType.UNDEDUCTIBLE)) {
 				checkExpenseAccount();
 			}
 		} catch (ManagerBeanException ex) {
@@ -231,11 +231,12 @@ public class InvoiceRecorder implements ITransferObject {
 					criteria = new Criteria();
 					criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
 					criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
-					int size = productAccountBean.getCount(criteria);
-					if (size == 0) {
+					List<ITransferObject> expenseAccountList = productAccountBean.getList(criteria);
+					if (expenseAccountList == null || expenseAccountList.size() == 0) {
 						wrong = true;
 						addMessage("El gasto: \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");			
 					} else {
+						ProductAccount expenseAccount = (ProductAccount) expenseAccountList.get(0);
 						Criteria c = new Criteria();
 						c.addEqualExpression(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID), getAccount().getId());
 						c.addOrder(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER), false);
@@ -244,11 +245,11 @@ public class InvoiceRecorder implements ITransferObject {
 						boolean used = false;
 						for (ITransferObject aht: ahs) {
 							AccountHelper ah = (AccountHelper) aht;
-							if (first == null && ah.getBalancingAccount().getFullDescription().startsWith("6") ) {
+							if (first == null && ah.getBalancingAccount().getId().startsWith("6") ) {
 								first = ah;
 							}
 							Account balancingAccount = ah.getBalancingAccount();
-							if (balancingAccount.equals(getAccount()) ) {
+							if (balancingAccount.equals(expenseAccount.getAccount()) ) {
 								used = true;
 								break;
 							}
