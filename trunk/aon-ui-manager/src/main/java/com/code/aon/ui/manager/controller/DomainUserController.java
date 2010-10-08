@@ -254,7 +254,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		this.webmail = webmail;
 	}	
 
-	public void registerUserInApplication( DomainUser user, String application, String profile ) throws ManagerBeanException {
+	public void registerUserInApplication( DomainUser user, String application, String profile ) throws ManagerBeanException, LdapException {
 		BasicLdap ldap = new BasicLdap();
 		Name applicationDN = NameResolver.getApplicationDN(application);
 		if (! ldap.exists(applicationDN, IAonObjectClasses.APPLICATION) ) {
@@ -269,7 +269,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		DomainApplicationUser dau = new DomainApplicationUser();
 		dau.setCommonName( user.getUid() );
 		List<Name> profiles = new LinkedList<Name>();
-		profiles.add( profileDN );
+		profiles.add( ldap.getLdapSession().getFullDN(profileDN)  );
 		dau.setProfiles( profiles );
 		Name domainApplicationDN = NameResolver.getDomainApplicationDN(user.getDomain(), application);
 		DomainApplicationUserController dauc = (DomainApplicationUserController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_USER_CONTROLLER_NAME);
@@ -284,18 +284,8 @@ public class DomainUserController extends LdapBasicController implements IManage
 		List<ITransferObject> scopes = scopeController.getManagerBean().getList(scopeCriteria);
 		if (! scopes.isEmpty() ) {
 			Scope scope = (Scope) scopes.get(0);
-			IManagerBean userBean = getBDUserManagerBean();
-			Criteria userCriteria = new Criteria();
-			userCriteria.addEqualExpression(userBean.getFieldName(IConfigAlias.USER_LOGIN), userName);
-			List<ITransferObject> users = userBean.getList(userCriteria);
-			if (! users.isEmpty() ) {
-				User user = (User) users.get(0);
-				UserScope userScope = new UserScope();
-				userScope.setScope(scope);
-				userScope.setUser(user);
-				IController userScopeController = FormUtil.getController(USER_SCOPE_CONTROLLER_NAME);
-				userScopeController.getManagerBean().insert(userScope);
-			}
+			User user = ensureDBUser( userName );
+			ensureDBUserScope(user, scope);
 		}
 	}
 
@@ -326,5 +316,53 @@ public class DomainUserController extends LdapBasicController implements IManage
 			}
 		}
 	}
-		
+
+	private User initDBUser( String uid ) throws ManagerBeanException {
+		User user = new User();
+		user.setLogin(uid);
+		user.setValidate(true);
+		user.setAvailable(true);
+		user.setStatus(0);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression("uid", uid);
+		List<ITransferObject> list = getManagerBean().getList(criteria);
+		if (! list.isEmpty() ) {
+			DomainUser domainUser = (DomainUser) list.get(0);
+			user.setName( domainUser.getFullName() );
+		}
+		if ( StringUtils.isEmpty(user.getName()) ) {
+			user.setName(uid);
+		}
+		return user;
+	}
+	
+	public User ensureDBUser( String uid ) throws ManagerBeanException {
+		User user = null;
+		IManagerBean bean = getBDUserManagerBean();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), uid);
+		List<ITransferObject> list = bean.getList(criteria);
+		if ( list.isEmpty() ) {
+			user = initDBUser(uid);
+			bean.insert(user);
+		} else {
+			user = (User) list.get(0);
+		}
+		return user;
+	}	
+
+	public void ensureDBUserScope( User user, Scope scope ) throws ManagerBeanException {	
+		IController userScopeController = FormUtil.getController(USER_SCOPE_CONTROLLER_NAME);
+		IManagerBean bean = userScopeController.getManagerBean();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_SCOPE_SCOPE_ID), scope.getId());
+		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), user.getId());
+		if ( bean.getCount(criteria) == 0 ) {
+			UserScope userScope = new UserScope();
+			userScope.setScope(scope);
+			userScope.setUser(user);
+			bean.insert(userScope);
+		}
+	}	
+	
 }
