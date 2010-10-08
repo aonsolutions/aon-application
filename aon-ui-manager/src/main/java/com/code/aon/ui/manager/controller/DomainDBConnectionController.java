@@ -1,7 +1,9 @@
 package com.code.aon.ui.manager.controller;
 
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
@@ -93,5 +95,17 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		}
 		return converter;
 	}	
+	
+	public void init( DBConnnection dbc, String name ) {
+		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		Properties properties = manager.getProperties();
+		dbc.setCommonName( properties.getProperty(IManagerAlias.DB_CONNECTION_COMMON_NAME) );
+		dbc.setDriverClassName( properties.getProperty(IManagerAlias.DB_CONNECTION_DRIVER_CLASS_NAME) );
+		dbc.setUid( properties.getProperty(IManagerAlias.DB_CONNECTION_UID) );
+		dbc.setUserPasswordString( properties.getProperty(IManagerAlias.DB_CONNECTION_USER_PASSWORD) );
+		String text = properties.getProperty(IManagerAlias.DB_CONNECTION_LABELED_URI);
+		String url = MessageFormat.format( text, name );
+		dbc.setLabeledURI(url);			
+	}
 	
 }

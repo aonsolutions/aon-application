@@ -15,18 +15,31 @@ import com.code.aon.ui.manager.controller.DomainApplicationController;
 import com.code.aon.ui.manager.controller.DomainApplicationUserController;
 import com.code.aon.ui.manager.controller.DomainUserController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
+import com.code.aon.ui.manager.controller.ManagerController;
 import com.code.aon.ui.util.AonUtil;
 
 public class DomainApplicationUserControllerListener extends ControllerAdapter implements IManagerConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationUserControllerListener.class);
+
+	private ManagerController getManager() {
+		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+	}
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		update(event);		
+		DomainApplicationUser user = (DomainApplicationUser) event.getController().getTo();		
+		getManager().getLogger().domainApplicationUserAddded(user);
 	}
 
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainApplicationUser user = (DomainApplicationUser) event.getController().getTo();		
+		getManager().getLogger().domainApplicationUserRemoved(user);
+	}
+	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {

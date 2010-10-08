@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -110,6 +111,10 @@ public class ManagerController implements IManagerConstants {
 	private void setUserType(UserType userType) {
 		this.userType = userType;
 	}
+	
+	public Domain getCurrentDomain() {
+		return currentDomain;
+	}
 
 	public boolean isAdministrator() {
 		return this.userType == UserType.ESFERALIA;
@@ -176,9 +181,19 @@ public class ManagerController implements IManagerConstants {
 		return md5_passwd;
 	} 
 	
-	public void createDB( DBConnnection dbConnection ) throws AonException {
+	public void createDB( DBConnnection dbConnection ) {
 		if (! getDBManager().exists(dbConnection) ) {
-			getDBManager().createDB(dbConnection);
+			try {
+				getDBManager().createDB(dbConnection);
+			} catch (AonException e) {
+				LOGGER.error(e.getMessage(), e);
+				try {
+					removeDB(dbConnection);
+				} catch ( SQLException sqle ) {
+					LOGGER.error(sqle.getMessage(), sqle);
+				}
+				throw new AbortProcessingException( e.getMessage(), e );
+			}
 		} else {
 			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DB_DUPLICATED, dbConnection.getDBName());
 		}

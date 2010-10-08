@@ -293,15 +293,14 @@ public class DomainUserController extends LdapBasicController implements IManage
 		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		for (DBConnnection dbc : ddbc.getDBConnnections()) {
-			if ( manager.changeDbConnection(dbc) ) {
-				if ( manager.getDBManager().existsTable(dbc, "scope") ) {
-					try {
-						registerScope(user.getUid(), scope);	
-					} catch ( Throwable th ) {
-						LOGGER.error( "Error registering " + scope + " for user " + user + " in " + dbc, th );
-					}
-				}					
-			}
+			manager.changeDbConnection(dbc);
+			if ( manager.getDBManager().existsTable(dbc, "scope") ) {
+				try {
+					registerScope(user.getUid(), scope);	
+				} catch ( Throwable th ) {
+					LOGGER.error( "Error registering " + scope + " for user " + user + " in " + dbc, th );
+				}
+			}					
 		}
 	}
 	

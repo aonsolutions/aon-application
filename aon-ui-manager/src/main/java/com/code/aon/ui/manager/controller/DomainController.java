@@ -21,7 +21,9 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.AccessPolicy;
+import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
+import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.enumeration.AccessPolicyType;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
@@ -66,7 +68,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	public Domain getDomain() {
 		return (Domain) getTo();
 	}
-	
+
 	protected String getInvalidMessage( String name ) {
 		return AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME, name);
 	}
@@ -144,5 +146,24 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 			ldap.addOrganizationUnit(usersDN);
 		}
 	}	
+
+	public DBConnnection createAndRegister( Domain domain ) throws ManagerBeanException {
+		DBConnnection dbc = new DBConnnection();
+		DomainDBConnectionController ddbcc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+		ddbcc.init( dbc, domain.getCommonName() );
+		ddbcc.getManagerBean().insert(dbc);
+		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		manager.createDB(dbc);
+		return dbc;
+	}
+	
+	public void registerApplication( String name, DBConnnection dataSource ) throws ManagerBeanException {
+		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
+		DomainApplication application = new DomainApplication();
+		application.setCommonName(name);
+		application.setDataSource(dataSource);
+		dac.getManagerBean().insert(application);
+		dac.createOrganizationalUnits(application);
+	}
 	
 }
