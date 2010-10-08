@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -12,6 +13,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.manager.controller.DBBasicController;
 import com.code.aon.ui.manager.controller.DomainApplicationController;
 import com.code.aon.ui.manager.controller.DomainApplicationUserController;
+import com.code.aon.ui.manager.controller.DomainUserController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.util.AonUtil;
 
@@ -19,33 +21,27 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter i
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationUserControllerListener.class);
 	
-	private boolean hasDB() {
-		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
-		return dac.isAonDB();
-	}
-	
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		if ( hasDB() ) {
-			DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
-			try {		
-				dauc.updateDBUser();
-				updateLines( dauc.getDomainApplicationUser() );
-			} catch (ManagerBeanException e) {
-				LOGGER.error(e.getMessage(), e);
-				throw new ControllerListenerException( e.getMessage(), e );
-			}
-		}
+		update(event);		
 	}
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		if ( hasDB() ) {
+		update(event);
+	}
+
+	private void update( ControllerEvent event ) throws ControllerListenerException {
+		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
+		if ( dac.isAonDB() ) {
 			DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
+			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
+			DomainApplicationUser dau = dauc.getDomainApplicationUser();
 			try {		
-				dauc.updateDBUser();
+				User user = duc.ensureDBUser( dau.getCommonName() );
+				dauc.setUser(user);
 				updateLines( dauc.getDomainApplicationUser() );
 			} catch (ManagerBeanException e) {
 				LOGGER.error(e.getMessage(), e);

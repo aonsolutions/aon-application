@@ -9,15 +9,11 @@ import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
@@ -43,6 +39,10 @@ public class DomainApplicationUserController extends LdapBasicController impleme
 	
 	public User getUser() {
 		return user;
+	}
+	
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -86,41 +86,6 @@ public class DomainApplicationUserController extends LdapBasicController impleme
 			this.workgroupConverter = new TransferObjectConverter(wgController);			
 		}
 		return workgroupConverter;
-	}
-
-	private User initDBUser( DomainApplicationUser dau ) throws ManagerBeanException {
-		User user = new User();
-		user.setLogin(dau.getCommonName());
-		user.setValidate(true);
-		user.setAvailable(true);
-		user.setStatus(0);
-		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression("uid", dau.getCommonName());
-		List<ITransferObject> list = duc.getManagerBean().getList(criteria);
-		if (! list.isEmpty() ) {
-			DomainUser domainUser = (DomainUser) list.get(0);
-			user.setName( domainUser.getFullName() );
-		}
-		if ( StringUtils.isEmpty(user.getName()) ) {
-			user.setName(dau.getCommonName());
-		}
-		return user;
-	}
-	
-	public void updateDBUser() throws ManagerBeanException {
-		 DomainApplicationUser dau = getDomainApplicationUser();
-		 DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
-		 IManagerBean bean = duc.getBDUserManagerBean();
-		 Criteria criteria = new Criteria();
-		 criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), dau.getCommonName());
-		 List<ITransferObject> list = bean.getList(criteria);
-		 if ( list.isEmpty() ) {
-			 this.user = initDBUser(dau);
-			 bean.insert(this.user);
-		 } else {
-			 this.user = (User) list.get(0);
-		 }
 	}
 	
 }
