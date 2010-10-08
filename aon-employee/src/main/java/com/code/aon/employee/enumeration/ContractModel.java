@@ -6,7 +6,6 @@ package com.code.aon.employee.enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.hibernate.engine.query.OrdinalParameterDescriptor;
 
 import com.code.aon.common.enumeration.IResourceable;
 
@@ -40,7 +39,6 @@ public enum ContractModel implements IResourceable {
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_contract_model_";
-    
     
 	@Override
 	public String getName(Locale locale) {
