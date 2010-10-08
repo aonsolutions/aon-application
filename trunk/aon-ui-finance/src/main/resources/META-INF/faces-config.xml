@@ -1033,15 +1033,6 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************ FEE INVOICING ************* -->
-	<managed-bean>
-		<managed-bean-name>feeInvoicing</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.FeeInvoicingController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 	<!-- ************ FEE CHECKING PRINTER ************* -->
 	<managed-bean>
 		<managed-bean-name>feeCheckingPrinter</managed-bean-name>
@@ -1096,6 +1087,23 @@
 			com.code.aon.ui.finance.controller.PreInvoicingController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>preInvoicing</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ FEE INVOICING ************* -->
+	<managed-bean>
+		<managed-bean-name>feeInvoicing</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.FeeInvoicingController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>feeInvoicing</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************ DELIVERY INVOICING ************* -->
@@ -1105,6 +1113,10 @@
 			com.code.aon.ui.finance.controller.DeliveryInvoicingController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>deliveryInvoicing</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************* INVOICE SIGNER ***************** -->
