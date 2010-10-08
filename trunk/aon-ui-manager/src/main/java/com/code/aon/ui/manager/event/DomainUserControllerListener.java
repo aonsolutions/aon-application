@@ -50,7 +50,7 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
-		getManager().getLogger().domainUserdAddded(user);
+		getManager().getLogger().domainUserAddded(user);
 	}
 
 	@Override

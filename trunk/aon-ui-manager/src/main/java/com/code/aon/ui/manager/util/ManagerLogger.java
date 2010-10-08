@@ -13,7 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.NameResolver;
+import com.code.aon.manager.Domain;
+import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
@@ -62,16 +63,33 @@ public class ManagerLogger {
 		return sb.toString();
 	}
 	
-	public void domainUserdAddded( DomainUser domainUser ) {
-		String domain = NameResolver.getValue( domainUser.getId(), 2 );
-		String subject = "NEW: User " + domainUser.getName() + " in Domain " + domain;
+	public void domainAddded( Domain domain ) {
+		String subject = "NEW: Domain " + domain.getCommonName();
 		sendEmail( subject, getContent() );
 	}
 
-	public void domainUserdRemoved( DomainUser domainUser ) {
-		String domain = NameResolver.getValue( domainUser.getId(), 2 );
-		String subject = "REMOVED: User " + domainUser.getName() + " in Domain " + domain;
+	public void domainRemoved( Domain domain ) {
+		String subject = "REMOVED: Domain " + domain.getCommonName();
+		sendEmail( subject, getContent() );
+	}	
+	
+	public void domainUserAddded( DomainUser user ) {
+		String subject = "NEW: User " + user.getName() + " in Domain " + user.getDomain();
 		sendEmail( subject, getContent() );
 	}
-	
+
+	public void domainUserdRemoved( DomainUser user ) {
+		String subject = "REMOVED: User " + user.getName() + " in Domain " + user.getDomain();
+		sendEmail( subject, getContent() );
+	}
+
+	public void domainApplicationUserAddded( DomainApplicationUser user ) {
+		String subject = "NEW: User " + user.getCommonName() + " in Application " + user.getAppplication() + " in Domain " + user.getDomain();
+		sendEmail( subject, getContent() );
+	}
+
+	public void domainApplicationUserRemoved( DomainApplicationUser user ) {
+		String subject = "REMOVED: User " + user.getCommonName() + " in Application " + user.getAppplication() + " in Domain " + user.getDomain();
+		sendEmail( subject, getContent() );
+	}	
 }
