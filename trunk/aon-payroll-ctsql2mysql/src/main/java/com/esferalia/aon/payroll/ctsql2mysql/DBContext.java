@@ -172,6 +172,7 @@ public class DBContext extends VelocityContext{
 		
 		private void initColumns() throws SQLException{
 			this.columns = new ArrayList<Column>();
+			
 			ResultSet rs = dbMetaData.getColumns(null, null, name, null);
 			while  (rs.next() ){
 				Column column = new Column(rs);
@@ -227,6 +228,28 @@ public class DBContext extends VelocityContext{
 			return foreignKeys.toArray(new ForeignKey[]{});
 		}
 	
+		public ForeignKey [] getParents() throws SQLException {
+			ArrayList<ForeignKey> foreignKeys = 
+				new ArrayList<ForeignKey>();
+			ResultSet rs = 
+				dbMetaData.getImportedKeys(null,null, name);
+			ForeignKey foreignKey = null;
+			String previousTable = null;
+			while ( rs.next() )
+			{
+				String fkName = rs.getString("FK_NAME");
+				String fkTable = rs.getString("FKTABLE_NAME");
+				if ( ! fkTable.equals(previousTable) ) {
+					foreignKey = new ForeignKey(fkName, fkTable);
+					foreignKeys.add(foreignKey);
+					previousTable = fkTable;
+				}
+				foreignKey.addFkColumn(fkName, rs.getString("FKCOLUMN_NAME"));
+				foreignKey.addPkColumn(this.name, rs.getString("PKCOLUMN_NAME"));
+			}
+			rs.close();
+			return foreignKeys.toArray(new ForeignKey[]{});
+		}
 	}
 
 	public class ForeignKey {

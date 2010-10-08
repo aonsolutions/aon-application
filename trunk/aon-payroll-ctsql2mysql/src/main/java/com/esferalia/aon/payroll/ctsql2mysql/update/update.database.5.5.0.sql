@@ -15,7 +15,7 @@ CREATE TABLE `contract_type` (
   `code` int(4) NOT NULL COMMENT 'Código del contrato',
   `model` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Modelo',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `collective` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Colectivo',
+  `conditions` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Condiciones',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de cotrato';
 

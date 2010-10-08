@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,14 +38,11 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Domicilio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empract;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Persona;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Provincia;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipcotc2;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipovia;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabajo;
 
@@ -627,11 +623,7 @@ public class MysqlDB extends AbstractMysqlDB{
 			return true;
 		}
 		
-		String codTc2 = trabajo.getCodtc2();
-		String codCont = trabajo.getCodcont();
-		String colectivo = trabajo.getColectivo();
-		
-		
+
 		
 		return true;
 	}
