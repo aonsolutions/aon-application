@@ -55,7 +55,7 @@ public class PropertiesUtil {
 	
 	public static Properties getProperties( File file, String resource ) {
 		Properties properties = loadProperties(resource);
-		loadProperties(file);
+		properties.putAll(loadProperties(file));
 		return properties;
 	}	
 	
