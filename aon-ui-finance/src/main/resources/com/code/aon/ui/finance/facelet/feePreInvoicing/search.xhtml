@@ -12,16 +12,16 @@
 	<ui:define name="content">
 		<aon:form id="preInvoicingForm">
 			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{financeBundle.finance_pre_invoicing_module}" />
-				<ui:param name="controller" value="#{preInvoicing}" />
-				<ui:param name="skipResetButton" value="true" />
-				<ui:param name="resetAction" value="" />
-				<ui:param name="skipBackButton" value="true" />
-				<ui:param name="backAction" value="" />
-				
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="preInvoicingToolbar" />
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_pre_invoicing_module}" />
+				<ui:param name="toolbarDescription"	value="#{bundle.aon_search}" />
+
 				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="preInvoicing-clear"
+						value="#{bundle.aon_clear}"
+						type="reset" ajaxSingle="true"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 					<aon:htmlCommandLink id="preInvoicing-report"
 						value="#{bundle.aon_listing}" target="_blank"
 						actionListener="#{preInvoicing.onReport}"
