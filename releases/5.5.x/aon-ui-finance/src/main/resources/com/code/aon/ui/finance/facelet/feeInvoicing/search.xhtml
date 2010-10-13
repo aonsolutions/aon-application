@@ -11,18 +11,17 @@
 
 	<ui:define name="content">
 		<aon:form id="feeInvoicingForm">
-
 			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{financeBundle.finance_fee_invoicing_module}" />
-				<ui:param name="controller" value="#{feeInvoicing}" />
-				<ui:param name="skipResetButton" value="true" />
-				<ui:param name="resetAction" value="" />
-				<ui:param name="skipBackButton" value="true" />
-				<ui:param name="backAction" value="" />
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="feeInvoicingToolbar" />
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_fee_invoicing_module}" />
+				<ui:param name="toolbarDescription"	value="#{bundle.aon_search}" />
 
 				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="feeInvoicing-clear"
+						value="#{bundle.aon_clear}"
+						type="reset" ajaxSingle="true"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 					<aon:commandButton id="feeInvoicing"
 						value="#{financeBundle.finance_invoicing}"
 						actionListener="#{feeInvoicing.onShowPanel}"
