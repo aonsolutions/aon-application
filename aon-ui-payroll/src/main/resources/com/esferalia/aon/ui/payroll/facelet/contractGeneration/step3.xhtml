@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{payrollBundle.contractGeneration_step3}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+
+<!--  
+-->
+		<aon:div id="contractDetail">
+		<aon:div styleClass="aon-toolbar">
+			<aon:commandButton id="contractDetail-save"
+				value="#{bundle.aon_save}"
+				reRender="contractDetail"
+				actionListener="#{contractGenerationWizard.onContractSave}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				accesskey="#{bundle.aon_key_save}">
+				<rich:componentControl for="contractDetailModalPanel"
+					event="onclick" operation="hide"/>																					
+				<f:setPropertyActionListener
+					target="#{contractGenerationWizard.showContractDetailWindow}"
+					value="#{false}" />
+			</aon:commandButton>
+			<aon:commandButton id="contractDetail-prev"
+				value="#{payrollBundle.payroll_back}"
+				reRender="contractDetail"
+				rendered="#{contractGenerationWizard.lastModalPage}"
+				actionListener="#{contractGenerationWizard.onFirstModalPage}"
+				styleClass="aon-finding-toolbar-item aon-icon-previous" />
+			<aon:commandButton id="contractDetail-next"
+				value="#{payrollBundle.payroll_forward}"
+				reRender="contractDetail"
+				rendered="#{!contractGenerationWizard.lastModalPage}"
+				actionListener="#{contractGenerationWizard.onChangeModalPage}"
+				styleClass="aon-finding-toolbar-item aon-icon-next" />
+		</aon:div>
+		<aon:div styleClass="aon-text-center">
+			<aon:div styleClass="contractModalContent"
+				style="position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; background: grey url(#{contractGenerationWizard.contractPage}.contractImage?model=#{contractGenerationWizard.model}) top left no-repeat; border:#ffffff 1px solid; height:842px; width:595px;">
+				
+				<c:forEach items="#{contractGenerationWizard.contractFields}" var="field" >
+					<c:if test="#{field.text}">
+						<aon:inputText 
+							title="#{field.label}"
+							rendered="#{field.page==contractGenerationWizard.contractPage}"
+							style="background-color:blue; border:none; position:absolute; bottom:#{field.bottomCoordinates}px; left:#{field.leftCoordinates}px;width:#{field.width}px; "
+							value="#{field.value}" size="#{field.width}"
+							maxlength="16" />
+					</c:if>
+					<c:if test="#{field.check}">
+						<aon:selectBooleanCheckbox 
+							title="#{field.label}"
+							rendered="#{field.page==contractGenerationWizard.contractPage}"
+							style="background-color:transparent; border:none; position:absolute; bottom:#{field.bottomCoordinates}px; left:#{field.leftCoordinates}px;"
+							value="#{field.booleanValue}" >
+						</aon:selectBooleanCheckbox>
+					</c:if>
+				</c:forEach>
+	
+			</aon:div>
+		</aon:div>
+		</aon:div>
+		
+	</ui:define>
+	<ui:define name="after_form">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/contractModal.xhtml" >
+<!--  
+			<ui:param name="signButtonreRender" value="undeductibleInvoiceForm,showNewMessageWindow" />
+			<aon:methodParam name="signActionListener" value="#{undeductibleInvoiceSigner.onSign}" type="actionListener" />
+-->
+		</ui:include>
+	</ui:define>
+
+</ui:composition>
