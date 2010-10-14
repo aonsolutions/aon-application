@@ -117,9 +117,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 #end
 		
 	}
-		
-	
-
 
 #end
 
