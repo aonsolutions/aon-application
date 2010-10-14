@@ -39,7 +39,6 @@ public class Ctsql2MysqlTest
      * Rigourous Test :-)
      * @throws SQLException 
      * @throws ClassNotFoundException 
-     */
     public void testCtsql2Mysql() throws SQLException, ClassNotFoundException
     {
     	String args [] = {
@@ -49,5 +48,6 @@ public class Ctsql2MysqlTest
     	} ;
     	Ctsql2Mysql.main(args);
     }
+     */
     
 }
