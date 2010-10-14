@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -13,22 +14,27 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.IConfidentialable;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.fiscal.enumeration.VatPeriod;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
-import com.code.aon.fiscal.enumeration.VatTaxType;
 
 @Entity
 @Table(name = "fs_vat")
-public class VatTax implements ITransferObject {
+public class VatTax implements ITransferObject, IConfidentialable {
 	
 	private static final long serialVersionUID = 5692053383866684819L;
 
     private Integer id;
 	private Integer year;
 	private VatPeriod period;
-	private VatTaxType type;
 	private String comments;
 	private VatTaxStatus status;
+	private SecurityLevel securityLevel;
+	private boolean complementary;
+	private boolean replacement;
+	private boolean taxRefundRegistry;
+	private Integer number;
 	
     @Id
     @GeneratedValue
@@ -46,21 +52,17 @@ public class VatTax implements ITransferObject {
     public void setYear(Integer year) {
         this.year = year;
     }
-
+    @Transient
+    public boolean isAnual() {
+    	return (getPeriod() == VatPeriod.YEAR);
+    }
+    
     @Column(name = "period")
     public VatPeriod getPeriod() {
         return period;
     }
     public void setPeriod(VatPeriod period) {
         this.period = period;
-    }
-
-    @Column(name = "type")
-    public VatTaxType getType() {
-        return type;
-    }
-    public void setType(VatTaxType type) {
-        this.type = type;
     }
 
     @Column(name="comments")
@@ -79,7 +81,66 @@ public class VatTax implements ITransferObject {
     public void setStatus(VatTaxStatus status) {
         this.status = status;
     }
-    
+
+	@Column(name="security_level")
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
+	}
+
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}
+
+	@Column(name="complementary")
+	public boolean isComplementary() {
+		return complementary;
+	}
+	public void setComplementary(boolean complementary) {
+		this.complementary = complementary;
+	}
+
+	@Column(name="replacement")
+	public boolean isReplacement() {
+		return replacement;
+	}
+	public void setReplacement(boolean replacement) {
+		this.replacement = replacement;
+	}
+	
+	@Transient
+	public boolean isExtraDeclaration() {
+		return (isComplementary() || isReplacement() );
+	}
+
+	@Column(name="tax_refund_registry")
+	public boolean isTaxRefundRegistry() {
+		return taxRefundRegistry;
+	}
+	public void setTaxRefundRegistry(boolean taxRefundRegistry) {
+		this.taxRefundRegistry = taxRefundRegistry;
+	}
+	
+    @Column(name = "number")
+    public Integer getNumber() {
+        return number;
+    }
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    @Transient
+	public boolean isFinished() {
+		return getStatus() == VatTaxStatus.FINISHED;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -90,9 +151,13 @@ public class VatTax implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.year, o.year)			
 				.append(this.period, o.period)
-				.append(this.type, o.type)				
 				.append(this.comments, o.comments)			
 				.append(this.status, o.status)
+				.append(this.securityLevel, o.securityLevel)
+				.append(this.complementary, o.complementary)
+				.append(this.replacement, o.replacement)
+				.append(this.taxRefundRegistry, o.taxRefundRegistry)
+				.append(this.number, o.number)				
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -104,9 +169,13 @@ public class VatTax implements ITransferObject {
 			.append(id)		
 			.append(this.year)			
 			.append(this.period)
-			.append(this.type)				
 			.append(this.comments)			
 			.append(this.status)
+			.append(this.securityLevel)
+			.append(this.complementary)
+			.append(this.replacement)
+			.append(this.taxRefundRegistry)
+			.append(this.number)				
 			.toHashCode();
 	}	
 

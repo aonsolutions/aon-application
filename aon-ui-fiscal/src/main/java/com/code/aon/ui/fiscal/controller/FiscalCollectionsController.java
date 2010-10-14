@@ -7,10 +7,13 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.fiscal.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.Model347ReportOrder;
 import com.code.aon.fiscal.enumeration.Model347Type;
 import com.code.aon.fiscal.enumeration.VatPeriod;
 import com.code.aon.fiscal.enumeration.VatReportOrder;
+import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
+import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
 
 /**
@@ -21,11 +24,54 @@ import com.code.aon.fiscal.enumeration.VatType;
  */
 public class FiscalCollectionsController {
 
+	private List<SelectItem> vatTaxStatuses;
+	private List<SelectItem> vatTaxDeclarationStatuses;
+	private List<SelectItem> administrations;
+
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> vatOrders;
 	private List<SelectItem> vatPeriods;
 	private List<SelectItem> model347Orders;
 	private List<SelectItem> model347Types;
+
+	public List<SelectItem> getVatTaxStatuses() {
+		if (vatTaxStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			vatTaxStatuses = new LinkedList<SelectItem>();
+			for (VatTaxStatus status:VatTaxStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				vatTaxStatuses.add(item);
+			}
+		}
+		return vatTaxStatuses;
+	}
+
+	public List<SelectItem> getVatTaxDeclarationStatuses() {
+		if (vatTaxDeclarationStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			vatTaxDeclarationStatuses = new LinkedList<SelectItem>();
+			for (VatTaxDeclarationStatus declarationStatus:VatTaxDeclarationStatus.values()) {
+				String name = declarationStatus.getName(locale);
+				SelectItem item = new SelectItem(declarationStatus, name);
+				vatTaxDeclarationStatuses.add(item);
+			}
+		}
+		return vatTaxDeclarationStatuses;
+	}
+
+	public List<SelectItem> getAdministrations() {
+		if (administrations == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			administrations = new LinkedList<SelectItem>();
+			for (Administration administration:Administration.values()) {
+				String name = administration.getName(locale);
+				SelectItem item = new SelectItem(administration, name);
+				administrations.add(item);
+			}
+		}
+		return administrations;
+	}
 
 	public List<SelectItem> getVatTypes() {
 		if (vatTypes == null) {
