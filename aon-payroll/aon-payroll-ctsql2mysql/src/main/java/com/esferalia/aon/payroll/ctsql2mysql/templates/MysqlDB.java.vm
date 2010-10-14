@@ -120,37 +120,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 	
 
-#if($table.isAutoIncrement())		
-	private HashMap<Integer, Integer> ${table.name}Ids = 
-		new HashMap<Integer, Integer>();
-	/**
-	 * $table
-#foreach ($column in $table.columns)
-	 * @param $column.name $column.remarks
-#end
-	 * @throws SQLException
-	*/
-	protected int insert${table}OldIds(#foreach ($column in $table.columns)
- $column.javaClass #if($column.isAutoIncrement())oldId#{else}${column.name}#end #if( $velocityHasNext ),#end 
-#end)
-	throws SQLException {
-		
-		Integer newId = this.${table.name}Ids.get(oldId);
-		
-		if ( newId != null ) 
-			return newId;
-
-#foreach ($parent in $table.parents)
-		${parent.table.name}Ids.get(null);
-#end		
-		newId = this.insert$table(#foreach ($column in $table.columns)
-#if (!$column.isAutoIncrement()) $column.name#if( $velocityHasNext ),#end #end
-#end);
-		${table.name}Ids.put(oldId,newId);
-		
-		return newId;
-	}
-#end
 
 #end
 
