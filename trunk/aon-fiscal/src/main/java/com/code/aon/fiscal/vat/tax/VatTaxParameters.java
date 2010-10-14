@@ -1,23 +1,32 @@
-package com.code.aon.fiscal.model303;
+package com.code.aon.fiscal.vat.tax;
 
 import java.util.Date;
 
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.enumeration.VatPeriod;
 
-public class Model303Parameters {
+public class VatTaxParameters {
 
 	private Date date;
 	private Integer year;
 	private Date fromDate;
 	private Date toDate;
 	private VatPeriod vatPeriod;
+	private VatTax	vatTax;
 	private SecurityLevel securityLevel;
 
-	public Model303Parameters() {
+	public VatTaxParameters() {
 		setFromDate(null);
 		setToDate(null);
 		setDate(new Date());
+	}
+
+	public VatTax getVatTax() {
+		return vatTax;
+	}
+	public void setVatTax(VatTax vatTax) {
+		this.vatTax = vatTax;
 	}
 
 	public Date getFromDate() {

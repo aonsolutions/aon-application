@@ -13,11 +13,6 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum VatPeriod implements IResourceable {
 	
-	YEAR(0,11),
-	T1(0,2),
-	T2(3,5),
-	T3(6,8),
-	T4(9,11),
 	M01(0,0),
 	M02(1,1),
 	M03(2,2),
@@ -29,7 +24,12 @@ public enum VatPeriod implements IResourceable {
 	M09(8,8),
 	M10(9,9),
 	M11(10,10),
-	M12(11,11);
+	M12(11,11),
+	T1(0,2),	//12
+	T2(3,5),	//13
+	T3(6,8),	//14
+	T4(9,11),	//15
+	YEAR(0,11); //16
 
 	private int startMonth;
 	private int dueMonth;
