@@ -31,7 +31,6 @@
 	<module>aon-asset</module>
 	<module>aon-audit</module>
 	<module>aon-campaign</module>
-	<module>aon-cms</module>
 	<module>aon-commercial</module>
 	<module>aon-common</module>
 	<module>aon-common-ldap</module>
@@ -42,7 +41,6 @@
 	<module>aon-customer</module>
 	<module>aon-db-manager</module>
 	<module>aon-desktop</module>
-	<module>aon-ebackoffice</module>
 	<module>aon-facturae</module>
 	<module>aon-file-bank</module>
 	<module>aon-file-format</module>
@@ -52,8 +50,6 @@
 	<module>aon-finance-bridge</module>
 	<module>aon-geozone</module>
 	<module>aon-groupware</module>
-	<module>aon-infoweb</module>
-	<module>aon-infoweb-templates</module>
 	<module>aon-ldap</module>
 	<module>aon-marketing</module>
 	<module>aon-messaging</module>
@@ -80,6 +76,12 @@
 	<module>aon-calendar</module>
 	<module>aon-employee</module>
 
+	<!--module>aon-cms</module>
+	<module>aon-infoweb</module>
+	<module>aon-infoweb-templates</module>
+	<module>aon-ebackoffice</module-->
+
+
 	<module>aon-ui-account</module>
 	<module>aon-ui-account-bridge</module>
 	<module>aon-ui-accounting</module>
@@ -92,13 +94,10 @@
 	<module>aon-ui-config</module>
 	<module>aon-ui-customer</module>
 	<module>aon-ui-db-manager</module>
-	<module>aon-ui-ebackoffice</module>
-	<module>aon-ui-ecommerce</module>
 	<module>aon-ui-finance</module>
 	<module>aon-ui-form</module>
 	<module>aon-ui-geozone</module>
 	<module>aon-ui-groupware</module>
-	<module>aon-ui-infoweb</module>
 	<module>aon-ui-mailing</module>
 	<module>aon-ui-marketing</module>
 	<module>aon-ui-messaging</module>
@@ -114,34 +113,39 @@
 	<module>aon-ui-stat</module>
 	<module>aon-ui-supplier</module>
 	<module>aon-ui-warehouse</module>
-	<module>aon-ui-webmail</module>
-	<module>aon-ui-cms</module>
 	<module>aon-ui-dbutils</module>
-	<module>aon-ui-publisher</module>
 	<module>aon-ui-fiscal</module>
 	<module>aon-ui-calendar</module>
 	<module>aon-ui-employee</module>
+
+	<!--module>aon-ui-publisher</module>
+	<module>aon-ui-cms</module>
 	<module>aon-ui-manager</module>
+	<module>aon-ui-infoweb</module>
+	<module>aon-ui-ebackoffice</module>
+	<module>aon-ui-webmail</module>
+	<module>aon-ui-ecommerce</module-->
 
 	<module>aon-web-account</module>
 	<module>aon-web-asset</module>
-	<module>aon-web-cms</module>
 	<module>aon-web-commercial</module>
 	<module>aon-web-communicator</module>
 	<module>aon-web-consultant</module>
-	<module>aon-web-ebackoffice</module>
-	<module>aon-web-ecommerce</module>
 	<module>aon-web-enterprise</module>
 	<module>aon-web-finance</module>
-	<module>aon-web-infoweb</module>
-	<module>aon-webmail</module>
 	<module>aon-web-payroll</module>
 	<module>aon-web-mbpayroll</module>
 	<module>aon-web-smb</module>
 	<module>aon-web-task</module>
+	
+	<!--module>aon-web-cms</module>
+	<module>aon-web-infoweb</module>
+	<module>aon-webmail</module>
 	<module>aon-web-webmail</module>
 	<module>aon-web-publisher</module>
 	<module>aon-web-manager</module>
+	<module>aon-web-ebackoffice</module>
+	<module>aon-web-ecommerce</module-->
   
 	<module>aon-payroll-ctsql2mysql</module>
 	
