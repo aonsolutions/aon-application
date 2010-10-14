@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="reportsMenu">
+		
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<h:panelGrid styleClass="aon-width-all" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300">
+
+					<aon:panelGrid id="group_budget"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-offer aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.account_budget}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="accountBudget" 
+									action="accountBudget_search" actionListener="#{accountBudget.onEditSearch}"
+									value="#{accountingBundle.accounting_account_budget_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="budgetedProfitAndLossReport" 
+									action="budgeted_profit_and_loss_search" actionListener="#{budgetedProfitAndLossReport.onEditSearch}"
+									value="#{accountingBundle.accounting_budgeted_balance_sheet_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="budgetedProfitAndLossComparison" 
+									action="compared_budgeted_profit_and_loss_search" actionListener="#{budgetedProfitAndLossComparison.onEditSearch}"
+									value="#{accountingBundle.accounting_compared_budgeted_balance_sheet_module}" />
+							</aon:div>
+						</aon:div>
+					</aon:panelGrid>
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

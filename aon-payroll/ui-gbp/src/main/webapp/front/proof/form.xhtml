@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/front/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="frontProofForm">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="gridToolbar" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.gbp_proof_of_payment}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bundle.aon_editing}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="#{true}" action="front_proof_list"
+							actionListener="#{frontProof.onCancel}"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="true" action="front_proof_search"
+							actionListener="#{frontProof.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<t:commandButton id="proof" value="#{appBundle.gbp_print}"
+							immediate="true" action="front_proof_search" forceId="true"
+							onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/front/report/preferences.sjsf');return false;"
+							styleClass="aon-finding-toolbar-item aon-icon-printer"
+							accesskey="#{bundle.aon_key_print}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="frontProofGrid" columns="2" dir="true">
+
+					<aon:outputLabel for="ProFormaInvoice_campaign_code"
+						value="#{appBundle.gbp_proforma_invoice_campaign_code}" />
+					<aon:inputText id="ProFormaInvoice_campaign_code"
+						size="16" maxlength="16"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{frontProof.to.campaign.code}" />
+
+					<aon:outputLabel for="ProFormaInvoice_number"
+						value="#{appBundle.gbp_proforma_invoice_number}" />
+					<aon:inputText id="ProFormaInvoice_number" 
+						size="16" maxlength="16"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{frontProof.to.number}" />
+
+					<aon:outputLabel for="ProFormaInvoice_invoiceDate"
+						value="#{appBundle.gbp_proforma_invoice_invoice_date}" />
+					<aon:inputText id="ProFormaInvoice_invoiceDate" 
+						size="16" maxlength="16"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{frontProof.to.invoiceDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:inputText>	
+
+					<aon:outputLabel for="ProFormaInvoice_amount"
+						value="#{appBundle.gbp_proforma_invoice_amount}" />
+					<aon:inputText id="ProFormaInvoice_amount" 
+						size="16" maxlength="16"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{frontProof.to.amount}" />
+
+					<aon:outputLabel for="ProFormaInvoice_status"
+						value="#{appBundle.gbp_proforma_invoice_status}" />
+					<aon:selectOneMenu id="ProFormaInvoice_status"
+						value="#{frontProof.to.status}" disabled="true">
+						<f:selectItems value="#{GBPCollections.proformaInvoiceStatus}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ProFormaInvoice_paymentTerm"
+						value="#{appBundle.gbp_proforma_invoice_payment_term}" />
+					<aon:inputText id="ProFormaInvoice_paymentTerm" 
+						size="3" maxlength="3"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{frontProof.to.paymentTerm}" />
+
+					<aon:outputLabel for="ProFormaInvoice_paymentDate"
+						value="#{appBundle.gbp_proforma_invoice_payment_date}" />
+					<aon:inputText id="ProFormaInvoice_paymentDate" 
+						size="16" maxlength="16"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{frontProof.to.paymentDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:inputText>	
+
+				</aon:panelGrid>
+
+			</aon:div>
+		</aon:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

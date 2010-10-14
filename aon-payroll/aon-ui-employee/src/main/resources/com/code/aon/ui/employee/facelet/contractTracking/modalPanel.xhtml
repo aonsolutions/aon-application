@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showMultipleTrackingWindow">
+		<c:if test="#{contractTracking.showMultipleTrackingWindow}">
+			<rich:modalPanel id="multipleTrackingModalPanel" 
+				rendered="#{contractTracking.showMultipleTrackingWindow}" showWhenRendered="true"
+				minWidth="380" minHeight="360" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{employeeBundle.employee_multiple_tracking}" />
+					</aon:div>
+				</f:facet>
+				
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showMultipleTrackingWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contractTracking.showMultipleTrackingWindow}" value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				
+				<aon:form id="passwordForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							
+							<aon:div styleClass="aon-toolbar">
+								<aon:commandButton id="contractTracking-accept"
+									value="#{bundle.aon_accept}"
+									actionListener="#{contractTracking.onAcceptMultipleTracking}"
+									action="contractTracking_form"
+									styleClass="aon-finding-toolbar-item aon-icon-accept">
+									<rich:componentControl for="multipleTrackingModalPanel"
+										event="onclick" reRender="contractTypeForm" operation="hide"/>																					
+									<f:setPropertyActionListener 
+										target="#{contractTracking.showMultipleTrackingWindow}"
+										value="#{false}" />
+								</aon:commandButton>
+								<aon:commandButton id="contractTracking-cancel"
+									value="#{bundle.aon_cancel}"
+									reRender="showMultipleTrackingWindow"
+									immediate="true"
+									styleClass="aon-finding-toolbar-item aon-icon-cancel">
+									<f:setPropertyActionListener
+										target="#{contractTracking.showMultipleTrackingWindow}"
+										value="#{false}" />
+								</aon:commandButton>
+							</aon:div>
+						
+							
+							<aon:panelGrid columns="2" id="ContractTrackingData">
+								<aon:outputLabel for="ContractTracking_startDate" value="#{bundle.aon_start_date}" />
+								<aon:selectInputDate id="ContractTracking_startDate" 
+									value="#{contractTracking.startDate}" required="true"
+									inputSize="10" renderAsPopup="true" enableManualInput="true"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}">
+								</aon:selectInputDate>
+								
+								<aon:outputLabel for="ContractTracking_endDate" value="#{bundle.aon_end_date}" />
+								<aon:selectInputDate id="ContractTracking_endDate" 
+									value="#{contractTracking.endDate}" required="true"
+									inputSize="10" renderAsPopup="true" enableManualInput="true"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}">
+								</aon:selectInputDate>
+								
+								<aon:outputLabel for="ContractTracking_type" value="#{bundle.aon_type}" />
+								<aon:selectOneMenu id="ContractTracking_type" required="true"
+									value="#{contractTracking.track.type}" >
+									<f:selectItems value="#{employeeCollections.contractTrackingTypes}" />
+								</aon:selectOneMenu>
+<!--  
+								<aon:outputLabel for="ContractTracking_fullTime" value="#{employeeBundle.employee_contractTracking_fullTime}" />
+								<aon:selectBooleanCheckbox id="ContractTracking_fullTime"
+									value="#{contractTracking.fullTime}" >
+									<a4j:support event="onclick" reRender="ContractTrackingData"
+										actionListener="#{contractTracking.onSelectFullTime}" />
+								</aon:selectBooleanCheckbox>
+-->								
+			
+								<aon:outputLabel for="ContractTracking_duration" 
+									value="#{employeeBundle.employee_contractTracking_duration}" />
+								<aon:inputText id="ContractTracking_duration" required="true"
+									disabled="#{contractTracking.fullTime}"
+									size="2" maxlength="2"
+									value="#{contractTracking.track.duration}" />
+							</aon:panelGrid>					
+
+						</aon:div>
+					</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

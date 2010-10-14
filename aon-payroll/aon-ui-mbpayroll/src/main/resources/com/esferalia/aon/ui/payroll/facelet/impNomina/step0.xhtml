@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+	
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				
+				<ui:define name="searchContent">
+					<ui:param name="skipSearchButton" value="true" />
+
+					<aon:outputLabel for="anio" value="Anio" />
+					<aon:inputText id="anio" size="5" maxlength="4"
+						value="#{impNominaWizard.params.year}">
+					</aon:inputText>
+
+					<aon:outputLabel for="mes" value="Mes" />
+					<aon:selectOneMenu id="mes" value="#{impNominaWizard.params.month}">
+						<f:selectItems value="#{commonCollections.months}"/>
+					</aon:selectOneMenu>
+
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-search-commandButton-left">
+						<aon:div styleClass="aon-search-commandButton-right">
+							<aon:commandButton id="SearchButton"   
+								value="#{bundle.aon_search}"
+								action="impNominaWizard_step1"
+								actionListener="#{impNominaWizard.onSearch}"
+								accesskey="#{bundle.aon_key_search}" />
+						</aon:div>
+					</aon:div>
+				</ui:define>
+				
+			</ui:decorate>
+		</aon:form>		
+	</ui:define>
+</ui:composition>

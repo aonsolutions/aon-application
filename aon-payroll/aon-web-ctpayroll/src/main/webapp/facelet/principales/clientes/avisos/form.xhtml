@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+	
+      
+		<aon:form id="avisosForm">
+		
+		 		<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_aviso}" />
+				<ui:param name="controller" value="#{aviso}"/>
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+				<aon:methodParam name="backAction" value="cliente_form"/>	
+			</ui:include>
+		  <aon:div id="datos2" styleClass="aon-scroll-area">		
+				<aon:div>		
+				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+				  
+			
+			 			 <aon:outputLabel  for="Cliente_cdg" 
+						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText disabled="true" id="Cliente_cdg"
+							lookup="#{clienteLookup}"
+							reRender="Cliente_description"
+							value="#{aviso.to.cliente.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton  disabled="true" id="Cliente_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_clientes}"
+							selectReRender="Cliente_cdg,Cliente_description"
+							lookup="#{clienteLookup}" minHeight="440"
+							property="#{aviso.to.cliente}">
+						</aon:lookupButton>
+						<aon:inputText  id="Cliente_description"
+							value="#{(aviso.to.cliente.descripcion!=null)?(aviso.to.cliente.descripcion):('')}"   
+							size="60" disabled="true" />
+					</aon:div>
+				  	
+						
+				
+	     	</aon:panelGrid>	
+	     		
+	     		</aon:div>		
+	     		
+				<aon:editDataTable id="avisoData" value="#{aviso.model}" 
+			var="to" rows="10"	columnClasses="aon-editDataTable-iconColumn
+				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
+				, aon-editDataTable-buttonsColumn">
+					
+			<aon:rowSelector toggleOnClick="#{aviso.to == null}" actionListener="#{aviso.onSelect}" />
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{aviso.onReset}" value=""
+							rendered="#{!aviso.new}"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+					
+				</f:facet>
+			</aon:column>
+
+
+
+			
+			
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_principales_aviso_cdg}" />
+				</f:facet>
+				<aon:outputText value="#{to.cdg}" rendered="#{to!=aviso.to}" >
+					
+				</aon:outputText>
+				<aon:inputText disabled="true" id="pcttra_edit" styleClass="aon-form-input-text"
+					rendered="#{to==aviso.to}" 
+					value="#{aviso.to.cdg}" maxlength="8" size="10"
+					 />
+				<f:facet name="footer">
+					<aon:inputText disabled="true" id="pcttra_new" styleClass="aon-form-input-text"  
+						rendered="#{aviso.new}" 
+						value="#{aviso.to.cdg}" maxlength="8" size="10"
+					 />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_principales_aviso_desc}" />
+				</f:facet>
+				<aon:outputText value="#{to.descripcion}" rendered="#{to!=aviso.to}" >
+					
+				</aon:outputText>
+				<aon:inputText styleClass="aon-form-input-text"
+					rendered="#{to==aviso.to}" 
+					value="#{aviso.to.descripcion}" maxlength="30" size="30" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"  
+						rendered="#{aviso.new}" 
+						value="#{aviso.to.descripcion}" maxlength="30" size="10"/>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_principales_aviso_fecha}" />
+				</f:facet>
+				<aon:outputText value="#{to.fecha}" rendered="#{to!=aviso.to}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate value="#{aviso.to.fecha}"
+					rendered="#{to==aviso.to}" disabled="#{to==aviso.to}"
+					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+				<f:facet name="footer">
+					<aon:selectInputDate value="#{aviso.to.fecha}"
+						rendered="#{aviso.new}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+				</f:facet>
+			</aon:column>
+
+			
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div>
+					<f:verbatim rendered="#{to!=aviso.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]" 
+						rendered="#{to==aviso.to}"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						actionListener="#{aviso.onAccept}"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==aviso.to}"
+						actionListener="#{aviso.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:confirmButton id="remove-Porcentaje" title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						rendered="#{to==aviso.to}"
+						confirmTitle="#{bundle.aon_confirm_title}" 
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{aviso.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />								
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<f:verbatim rendered="#{!aviso.new}">&#160;</f:verbatim>
+						<aon:commandButton title="[#{bundle.aon_accept}]" 
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							rendered="#{aviso.new}"
+							actionListener="#{aviso.onAccept}"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:confirmButton id="cancel-Porcentaje" title="[#{bundle.aon_cancel}]"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{aviso.new}"
+							confirmTitle="#{bundle.aon_confirm_title}" 
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{aviso.onCancel}" immediate="true"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+			
+		</aon:editDataTable>
+					<aon:dataScroller2 for="avisoData" showNote="true" />
+	         </aon:div> 
+	         
+			 
+		
+		</aon:form>
+       <aon:lookupButtonPopup lookup="#{clienteLookup}" />	
+	
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

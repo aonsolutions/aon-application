@@ -1,0 +1,163 @@
+package com.esferalia.aon.payroll.ctsql2mysql;
+
+import java.util.HashMap;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import java.io.InputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+/********************************************************************
+* Copyright (c) 2010, esferalia NETWORKS S.A
+*
+* The copyright of the computer program herein is the property 
+* of esferalia NETWORKS.
+*********************************************************************
+* The program may be used and/or copied only with the written 
+* permission of esferalia NETWORKS, or in accordance with the 
+* terms and conditions stipulated in the agreement contract 
+* under which the program has been supplied.
+*********************************************************************
+*/
+
+public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
+
+	final static Logger LOGGER = 
+		LoggerFactory.getLogger(AbstractMysqlDB.class);
+	
+	protected Connection mysqlConnection;
+
+#foreach($table in $tables)
+	/**
+	 * $table
+#foreach ($column in $table.columns)
+#if (!$column.isAutoIncrement())	
+	 * @param $column.name $column.remarks
+#end
+#end
+#if($table.isAutoIncrement())
+	 * @returns auto-generated key
+#end
+	 * @throws SQLException
+	*/
+	protected #if($table.isAutoIncrement())int#{else}void#end insert$table(#foreach ($column in $table.columns)
+#if (!$column.isAutoIncrement()) $column.javaClass $column.name#if( $velocityHasNext ),#end #end
+#end)
+	throws SQLException {
+	
+		PreparedStatement stmt = 
+			mysqlConnection.prepareStatement(
+			"INSERT INTO $table.name (#foreach ($column in $table.columns)
+#if ( ! $column.isAutoIncrement() )
+ $column.name#if( $velocityHasNext ),#end
+#end
+#end
+) VALUES (#foreach ($column in $table.columns)
+ #if (!$column.isAutoIncrement() )?#if( $velocityHasNext ),#end#end
+#end
+)", 
+			PreparedStatement.RETURN_GENERATED_KEYS);
+
+		String message = "INSERT INTO $table.name (#foreach ($column in $table.columns)
+#if ( ! $column.isAutoIncrement() )
+ $column.name#if( $velocityHasNext ),#end
+#end
+#end
+) VALUES (#foreach ($column in $table.columns)
+ #if (!$column.isAutoIncrement() )'"+ $column.name +"'#if( $velocityHasNext ),#end#end
+#end
+)";
+		LOGGER.debug(message);
+
+#set($parameterIndex = 0)
+#foreach ($column in $table.columns)
+#if ( ! $column.isAutoIncrement() )
+#set($parameterIndex = $parameterIndex + 1)
+		if ( $column.name == null ) {
+			stmt.setNull($parameterIndex, $column.type);
+		}
+		else {
+#if ($column.javaClass.equals("Integer"))
+			stmt.setInt($parameterIndex, $column.name);
+#elseif ($column.type == -4 )
+			stmt.setBinaryStream($parameterIndex, $column.name);
+#elseif ($column.type == -1 )
+			stmt.setAsciiStream($parameterIndex, $column.name);
+#elseif ($column.type == -16 )
+			stmt.setCharacterStream($parameterIndex, $column.name);
+#else
+			stmt.set${column.javaClass}($parameterIndex, $column.name);
+#end
+		}
+#end
+#end			
+
+		stmt.executeUpdate();
+		
+#if($table.isAutoIncrement())		
+		int 		generatedKey = 0;
+		ResultSet generatedKeys = stmt.getGeneratedKeys();
+		if ( generatedKeys.next() ){
+			generatedKey = generatedKeys.getInt(1);
+		}
+		stmt.close();
+		
+		return generatedKey;
+#else
+		stmt.close();
+#end
+		
+	}
+		
+	
+
+#if($table.isAutoIncrement())		
+	private HashMap<Integer, Integer> ${table.name}Ids = 
+		new HashMap<Integer, Integer>();
+	/**
+	 * $table
+#foreach ($column in $table.columns)
+	 * @param $column.name $column.remarks
+#end
+	 * @throws SQLException
+	*/
+	protected int insert${table}OldIds(#foreach ($column in $table.columns)
+ $column.javaClass #if($column.isAutoIncrement())oldId#{else}${column.name}#end #if( $velocityHasNext ),#end 
+#end)
+	throws SQLException {
+		
+		Integer newId = this.${table.name}Ids.get(oldId);
+		
+		if ( newId != null ) 
+			return newId;
+
+#foreach ($parent in $table.parents)
+		${parent.table.name}Ids.get(null);
+#end		
+		newId = this.insert$table(#foreach ($column in $table.columns)
+#if (!$column.isAutoIncrement()) $column.name#if( $velocityHasNext ),#end #end
+#end);
+		${table.name}Ids.put(oldId,newId);
+		
+		return newId;
+	}
+#end
+
+#end
+
+	public AbstractMysqlDB( Connection mysqlConnection) {
+		this.mysqlConnection = mysqlConnection;
+	}
+
+}		
+	
+	

@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{fiscalBundle.fiscal_model_303_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{model303.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="model303_list" />
+
+					<aon:outputLabel for="Vat_period"
+						value="#{financeBundle.finance_vat_period}" />
+					<aon:panelGrid columns="2">
+						<aon:inputText id="Vat_Year" 
+							value="#{model303.params.year}" size="5"
+							valueChangeListener="#{model303.onYearChanged}"
+							focus="Vat_period"
+							maxlength="4" />
+
+						<aon:selectOneMenu id="Vat_period"
+							valueChangeListener="#{model303.onVatPeriodChanged}"
+							value="#{model303.params.vatPeriod}">
+							<f:selectItems value="#{fiscalCollections.vatPeriods}" />
+						</aon:selectOneMenu>
+					</aon:panelGrid>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

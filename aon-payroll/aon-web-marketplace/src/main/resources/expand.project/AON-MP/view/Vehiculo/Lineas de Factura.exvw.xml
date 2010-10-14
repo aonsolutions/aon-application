@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Lineas de Factura" label="Lineas de Factura" sqlSentence="SELECT line, product.code, product.name, invoice_detail.quantity, invoice_detail.price&#xd;&#xa;  FROM invoice_detail, product, item&#xd;&#xa; WHERE invoice_detail.invoice = ?&#xd;&#xa;   AND invoice_detail.item = item.id&#xd;&#xa;   AND item.product = product.id&#xd;&#xa;ORDER BY line&#xd;&#xa;">
+    <parameters>
+        <parameter name="invoice_id" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="line" columnId="line" label="LINEA"
+            tableId="invoice_detail" type="INTEGER"/>
+        <result accessName="code" columnId="code" label="CODIGO"
+            tableId="product" type="STRING"/>
+        <result accessName="name" columnId="name" label="ARTICULO"
+            tableId="product" type="STRING"/>
+        <result accessName="quantity" columnId="quantity"
+            label="CANTIDAD" tableId="invoice_detail" type="DOUBLE"/>
+        <result accessName="price" columnId="price" label="PRECIO"
+            tableId="invoice_detail" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>
