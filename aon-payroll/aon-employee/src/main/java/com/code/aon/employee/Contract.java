@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -22,6 +23,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.employee.enumeration.ContractStatus;
 import com.code.aon.person.Person;
 
 /**
@@ -69,7 +71,12 @@ public class Contract implements ITransferObject {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column( name = "end_date" )
-    private Date endDate;		
+    private Date endDate;	
+	
+	@Lob
+	private byte[] pdf;
+
+	private ContractStatus status;
 
 	/**
 	 * Gets the id.
@@ -196,6 +203,20 @@ public class Contract implements ITransferObject {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}	
+	
+	public byte[] getPdf() {
+		return pdf;
+	}
+	public void setPdf(byte[] pdf) {
+		this.pdf = pdf;
+	}
+	
+	public ContractStatus getStatus() {
+		return status;
+	}
+	public void setStatus(ContractStatus status) {
+		this.status = status;
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
