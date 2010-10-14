@@ -75,11 +75,11 @@
 	<module>aon-manager</module>
 	<module>aon-calendar</module>
 	<module>aon-employee</module>
-
-	<!--module>aon-cms</module>
+	<module>aon-cms</module>
 	<module>aon-infoweb</module>
 	<module>aon-infoweb-templates</module>
-	<module>aon-ebackoffice</module-->
+	<module>aon-ebackoffice</module>
+	<module>aon-payroll</module>
 
 
 	<module>aon-ui-account</module>
@@ -117,14 +117,14 @@
 	<module>aon-ui-fiscal</module>
 	<module>aon-ui-calendar</module>
 	<module>aon-ui-employee</module>
-
-	<!--module>aon-ui-publisher</module>
+	<module>aon-ui-publisher</module>
 	<module>aon-ui-cms</module>
 	<module>aon-ui-manager</module>
 	<module>aon-ui-infoweb</module>
 	<module>aon-ui-ebackoffice</module>
 	<module>aon-ui-webmail</module>
-	<module>aon-ui-ecommerce</module-->
+	<module>aon-ui-ecommerce</module>
+	<module>aon-ui-payroll</module>
 
 	<module>aon-web-account</module>
 	<module>aon-web-asset</module>
@@ -136,16 +136,15 @@
 	<module>aon-web-payroll</module>
 	<module>aon-web-mbpayroll</module>
 	<module>aon-web-smb</module>
-	<module>aon-web-task</module>
-	
-	<!--module>aon-web-cms</module>
+	<module>aon-web-task</module>	
+	<module>aon-web-cms</module>
 	<module>aon-web-infoweb</module>
 	<module>aon-webmail</module>
 	<module>aon-web-webmail</module>
 	<module>aon-web-publisher</module>
 	<module>aon-web-manager</module>
 	<module>aon-web-ebackoffice</module>
-	<module>aon-web-ecommerce</module-->
+	<module>aon-web-ecommerce</module>
   
 	<module>aon-payroll-ctsql2mysql</module>
 	
