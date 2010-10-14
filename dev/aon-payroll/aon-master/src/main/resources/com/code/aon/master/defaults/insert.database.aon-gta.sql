@@ -1,0 +1,211 @@
+
+USE `aon_master`;
+
+SET FOREIGN_KEY_CHECKS=0;
+
+#
+# Data for the `warehouse` table  (LIMIT 0,500)
+#
+
+INSERT IGNORE INTO `warehouse` (`id`, `name`) VALUES 
+  (1,'PRINCIPAL');
+
+COMMIT;
+
+#
+# Data for the `make` table  (LIMIT 0,500)
+#
+
+INSERT IGNORE INTO `make` (`id`, `name`) VALUES 
+  (1,'ALFA ROMEO'),
+  (2,'ASTON MARTIN'),
+  (3,'AUDI'),
+  (4,'BENTLEY'),
+  (5,'BMW'),
+  (6,'BUGATTI'),
+  (7,'CADILLAC'),
+  (8,'CHEVROLET'),
+  (9,'CHRYSLER'),
+  (10,'CITROËN'),
+  (11,'DACIA'),
+  (12,'DAEWOO'),
+  (13,'DAIHATSU'),
+  (14,'DODGE'),
+  (15,'FERRARI'),
+  (16,'FIAT'),
+  (17,'FORD'),
+  (18,'GM'),
+  (19,'HONDA'),
+  (20,'HUMMER'),
+  (21,'HYUNDAI'),
+  (22,'INFINITI'),
+  (23,'ISUZU'),
+  (24,'JAGUAR'),
+  (25,'JEEP'),
+  (26,'KIA'),
+  (27,'LAMBORGHINI'),
+  (28,'LANCIA'),
+  (29,'LAND ROVER'),
+  (30,'LEXUS'),
+  (31,'LOTUS'),
+  (32,'MASERATI'),
+  (33,'MAYBACH'),
+  (34,'MAZDA'),
+  (35,'MERCEDES'),
+  (36,'MG'),
+  (37,'ROVER'),
+  (38,'MINI'),
+  (39,'MITSUBISHI'),
+  (40,'MORGAN'),
+  (41,'NISSAN'),
+  (42,'OPEL'),
+  (43,'PEUGEOT'),
+  (44,'PONTIAC'),
+  (45,'PORSCHE'),
+  (46,'RENAULT'),
+  (47,'ROLLS-ROYCE'),
+  (48,'SAAB'),
+  (49,'SANTANA'),
+  (50,'SEAT'),
+  (51,'SKODA'),
+  (52,'SMART'),
+  (53,'SSANGYONG'),
+  (54,'SUBARU'),
+  (55,'SUZUKI'),
+  (56,'TATA'),
+  (57,'TOYOTA'),
+  (58,'VOLKSWAGEN'),
+  (59,'VOLVO');
+
+COMMIT;
+
+#
+# Data for the `model` table  (LIMIT 0,500)
+#
+
+INSERT IGNORE INTO `model` (`id`, `make`, `name`) VALUES 
+  (1,3,'TT'),
+  (2,3,'A3'),
+  (3,3,'A4'),
+  (4,3,'A6'),
+  (5,3,'A8'),
+  (6,5,'Serie1'),
+  (7,5,'Serie3'),
+  (8,5,'Serie5'),
+  (9,5,'Serie7'),
+  (10,5,'Z4'),
+  (11,5,'X3'),
+  (12,5,'X5'),
+  (13,10,'C1'),
+  (14,10,'C2'),
+  (15,10,'C3'),
+  (16,10,'C4'),
+  (17,10,'C5'),
+  (18,10,'C6'),
+  (19,10,'C8'),
+  (20,10,'Xsara'),
+  (21,10,'Berlingo'),
+  (22,16,'Seicento'),
+  (23,16,'Punto'),
+  (24,16,'Panda'),
+  (25,16,'Ulysse'),
+  (26,16,'Multipla'),
+  (27,16,'Croma'),
+  (28,16,'Stilo'),
+  (29,17,'Ka'),
+  (30,17,'Fiesta'),
+  (31,17,'Focus'),
+  (32,17,'Mondeo'),
+  (33,17,'Fusion'),
+  (34,17,'C-Max'),
+  (35,17,'S-Max'),
+  (36,17,'Galaxy'),
+  (37,17,'Combi'),
+  (38,17,'Ranger'),
+  (39,19,'Civic'),
+  (40,19,'Accord'),
+  (41,19,'Legend'),
+  (42,19,'Jazz'),
+  (43,19,'FR-V'),
+  (44,19,'S2000'),
+  (45,19,'CR-V'),
+  (46,21,'Getz'),
+  (47,21,'Accent'),
+  (48,21,'Elantra'),
+  (49,21,'Sonata'),
+  (50,21,'XG'),
+  (51,21,'Atos'),
+  (52,21,'Matrix'),
+  (53,21,'Trajet'),
+  (54,21,'H1'),
+  (55,28,'Ypsilon'),
+  (56,28,'Libra'),
+  (57,28,'Tesis'),
+  (58,28,'Musa'),
+  (59,28,'Phedra'),
+  (60,42,'Corsa'),
+  (61,42,'Nuevo Corsa'),
+  (62,42,'Astra'),
+  (63,42,'Vectra'),
+  (64,42,'Signum'),
+  (65,42,'Agila'),
+  (66,42,'Meriva'),
+  (67,42,'Zafira'),
+  (68,43,'107'),
+  (69,43,'206'),
+  (70,43,'207'),
+  (71,43,'307'),
+  (72,43,'407'),
+  (73,43,'607'),
+  (74,43,'1007'),
+  (75,43,'807'),
+  (76,46,'Clio'),
+  (77,46,'Megane'),
+  (78,46,'Laguna'),
+  (79,46,'Vel Satis'),
+  (80,46,'Twingo'),
+  (81,46,'Modus'),
+  (82,46,'Scenic'),
+  (83,46,'Space'),
+  (84,46,'Coupe'),
+  (85,50,'Ibiza'),
+  (86,50,'Leon'),
+  (87,50,'Toledo'),
+  (88,50,'Cordoba'),
+  (89,50,'Altea'),
+  (90,50,'Alhanbra'),
+  (91,58,'New Beetle'),
+  (92,58,'Fox'),
+  (93,58,'Polo'),
+  (94,58,'Golf'),
+  (95,58,'Jetta'),
+  (96,58,'Passat'),
+  (97,58,'Phaeton'),
+  (98,57,'Aygo'),
+  (99,57,'Yaris'),
+  (100,57,'Corolla'),
+  (101,57,'Avensis'),
+  (102,57,'Prius'),
+  (103,57,'Land Cruiser'),
+  (104,57,'RAV4'),
+  (105,57,'Hilus'),
+  (106,59,'S40'),
+  (107,59,'S60'),
+  (108,59,'S80'),
+  (109,59,'V50'),
+  (110,59,'V70'),
+  (111,59,'C70'),
+  (112,59,'XC90');
+
+COMMIT;
+
+#
+# Data for the `app_param` table  (LIMIT 0,500)
+#
+
+INSERT INTO `app_param` (`name`, `value`) VALUES 
+  ('AON_TAS_PRIVATE_CODE_REQUIRED','false');
+
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS=1;

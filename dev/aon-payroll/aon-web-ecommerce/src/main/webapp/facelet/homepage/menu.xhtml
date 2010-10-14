@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
+		<aon:form>
+			<aon:menuBar id="mainMenu">
+				<aon:commandLink id="shoppingCart" 
+					value="catalogue -i18n-"
+					action="shop_form" immediate="true"
+					styleClass="aon-top-menu-item" >
+					<aon:actionListener method="#{shopItems.onSearch}" />
+				</aon:commandLink>
+
+<!--  
+				<aon:commandLink id="item" 
+					action="item_search" actionListener="#{item.onEditSearch}"
+					value="#{productBundle.product_module}" 
+					styleClass="aon-top-menu-item" />
+			
+				<aon:commandLink id="products"
+					value="#{appBundle.menu_products}"
+					action="menu_products" immediate="true"
+					styleClass="aon-top-menu-item" />
+				
+				<aon:commandLink id="commercial"
+					value="#{appBundle.menu_commercial}"
+					action="menu_commercial" immediate="true"
+					styleClass="aon-top-menu-item" />
+-->					
+
+			</aon:menuBar>
+		</aon:form>
+	</c:if>
+ </ui:composition>

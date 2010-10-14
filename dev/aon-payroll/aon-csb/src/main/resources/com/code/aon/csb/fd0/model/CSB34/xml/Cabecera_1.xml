@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Registro Cabecera Primero -->
+<register name="Cabecera_1">
+
+ <field name="inicial" value="0356" format="AlphaNumeric" pattern="X(4)" />
+ <field name="nif" value="bean" bean="MASTER_PERSON" property="code" format="Nif" pattern="X(10)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(12)" />
+ <field name="numero_dato" value="001" format="AlphaNumeric" pattern="X(3)" />
+ <field name="fecha_soporte" value="bean" bean="MASTER" property="sendDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="fecha" value="bean" bean="MASTER" property="orderDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="ccc" value="bean" bean="MASTER_ACCOUNT" property="ccc" format="CCC" pattern="ESC" />
+ <field name="detalle_cargo" value="bean" bean="MASTER" property="detail" format="AlphaNumeric" pattern="X(1)" />
+ <field name="gastos" value="bean" bean="MASTER" property="costs" format="AlphaNumeric" pattern="X(1)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(2)" />
+ <field name="ccc" value="bean" bean="MASTER_ACCOUNT" property="ccc" format="CCC" pattern="D" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(7)" />
+
+</register>

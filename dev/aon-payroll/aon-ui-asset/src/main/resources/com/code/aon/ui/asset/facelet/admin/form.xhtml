@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="activityForm">
+<!--  
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{assetBundle.asset_asset_module}" />
+				<ui:param name="controller" value="#{asset}" />
+				
+				<aon:valueParam name="skipSearchButton" default="#{true}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="assetTable" columns="2" width="100%">
+					<aon:outputLabel value="#{assetBundle.asset_asset_name}" />
+					<aon:inputText id="asset_name" value="#{asset.to.name}" 
+						size="8" required="#{true}">
+						<f:validateLength maximum="10" />
+					</aon:inputText>
+
+					<aon:outputLabel value="#{bundle.aon_description}" />
+					<aon:inputText id="asset_description" value="#{asset.to.description}" 
+						size="70" required="#{true}">
+						<f:validateLength maximum="64" />
+					</aon:inputText>
+				</aon:panelGrid>
+
+				<aon:panel id="assetRequestData" rendered="#{!asset.new}">
+					<f:facet name="header">
+						<aon:outputLabel value="#{assetBundle.asset_asset_requests}" />
+					</f:facet>
+					<aon:div styleClass="aon-scroll-area">
+						<aon:div styleClass="aon-panelGrid-search">
+							<aon:panelGrid id="id" columns="6">
+								<ui:insert name="searchContent" />
+									<aon:outputLabel value="#{assetBundle.asset_asset_fromDate}" />
+									<aon:selectInputDate renderAsPopup="true"
+										rendered="#{to==activityBasic.to}"
+										popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+										value="#{activityLines.fromDateFilter}" enableManualInput="true" />
+			
+									<aon:outputLabel value="#{assetBundle.asset_asset_toDate}" />
+									<aon:selectInputDate renderAsPopup="true"
+										rendered="#{to==activityBasic.to}"
+										popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+										value="#{activityLines.toDateFilter}" enableManualInput="true" />
+								
+									<aon:outputLabel value="&#160;" />
+									<aon:div>
+										<aon:commandButton 
+											value="#{assetBundle.asset_asset_filter}"
+											reRender="assetRequestData"
+											actionListener="#{activityLines.onSearch}"
+											styleClass="aon-search-lookup-button"
+											accesskey="#{bundle.aon_key_search}" />
+									</aon:div>
+							</aon:panelGrid>
+						</aon:div>
+					</aon:div>
+					
+					<ui:include src="grid.xhtml" />
+				</aon:panel>
+				
+			</aon:div>
+-->
+		</aon:form>
+	</ui:define>
+</ui:composition>

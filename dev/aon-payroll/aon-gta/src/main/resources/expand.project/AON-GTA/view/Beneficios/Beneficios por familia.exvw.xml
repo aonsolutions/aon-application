@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Beneficios por familia" sqlSentence="SELECT&#xd;&#xa;      @ini:=(SELECT SUM(inventory_detail.cost)&#xd;&#xa;         FROM inventory, inventory_detail, item, product, pcategory&#xd;&#xa;        WHERE item.product = product.id&#xd;&#xa;          AND product.category = pcategory.id&#xd;&#xa;          AND inventory_detail.item = item.id&#xd;&#xa;          AND inventory.id = inventory_detail.inventory&#xd;&#xa;          AND pcategory.id = ?&#xd;&#xa;          AND inventory.inventory_date = ?) AS inicial,&#xd;&#xa;      @com:=(SELECT SUM(invoice_detail.taxable_base)&#xd;&#xa;         FROM invoice_detail, invoice, item, product, pcategory&#xd;&#xa;        WHERE item.product = product.id&#xd;&#xa;          AND product.category = pcategory.id&#xd;&#xa;          AND invoice_detail.item = item.id&#xd;&#xa;          AND invoice_detail.invoice = invoice.id&#xd;&#xa;&#x9;  AND invoice.type = 0&#xd;&#xa;          AND pcategory.id = ?&#xd;&#xa;          AND invoice.issue_date BETWEEN ? AND ?) AS compras,&#xd;&#xa;      @ven:=(SELECT SUM(invoice_detail.taxable_base)&#xd;&#xa;         FROM invoice_detail, invoice, item, product, pcategory&#xd;&#xa;        WHERE item.product = product.id&#xd;&#xa;          AND product.category = pcategory.id&#xd;&#xa;          AND invoice_detail.item = item.id&#xd;&#xa;          AND invoice_detail.invoice = invoice.id&#xd;&#xa;&#x9;  AND invoice.type = 1&#xd;&#xa;          AND pcategory.id = ?&#xd;&#xa;          AND invoice.issue_date BETWEEN ? AND ?) AS ventas,&#xd;&#xa;      @fin:=(SELECT SUM(inventory_detail.cost)&#xd;&#xa;         FROM inventory, inventory_detail, item, product, pcategory&#xd;&#xa;        WHERE item.product = product.id&#xd;&#xa;          AND product.category = pcategory.id&#xd;&#xa;          AND inventory_detail.item = item.id&#xd;&#xa;          AND inventory.id = inventory_detail.inventory&#xd;&#xa;          AND pcategory.id = ?&#xd;&#xa;          AND inventory.inventory_date = ?) AS final,&#xd;&#xa;      @ben:=(@ini + @ven - @fin - @com) AS beneficio,&#xd;&#xa;     ((@ben / @com) * 100) AS sobre_compras,&#xd;&#xa;      ((@ben / @ven) * 100) AS sobre_ventas&#xd;&#xa;">
+    <parameters>
+        <parameter columnReference="data/pcategory.exdm.xml/id" label=""
+            name="pcategory1" type="INTEGER"/>
+        <parameter columnReference="data/invoice.exdm.xml/issue_date"
+            label="" name="iniDate" type="DATE"/>
+        <parameter columnReference="data/pcategory.exdm.xml/id" label=""
+            name="pcategory2" type="INTEGER"/>
+        <parameter columnReference="data/invoice.exdm.xml/issue_date"
+            label="" name="iniDate" type="DATE"/>
+        <parameter columnReference="data/invoice.exdm.xml/issue_date"
+            label="" name="endDate" type="DATE"/>
+        <parameter columnReference="data/pcategory.exdm.xml/id" label=""
+            name="pcategory3" type="INTEGER"/>
+        <parameter name="iniDate" type="DATE"/>
+        <parameter columnReference="data/invoice.exdm.xml/issue_date"
+            label="" name="endDate" type="DATE"/>
+        <parameter columnReference="data/pcategory.exdm.xml/id" label=""
+            name="pcategory4" type="INTEGER"/>
+        <parameter name="endDate" type="DATE"/>
+    </parameters>
+    <results>
+        <result accessName="inicial" columnId="" label="Inicial" type="DOUBLE"/>
+        <result accessName="compras" columnId="" label="Compras" type="DOUBLE"/>
+        <result accessName="ventas" columnId="" label="Ventas" type="DOUBLE"/>
+        <result accessName="final" columnId="" label="Final" type="DOUBLE"/>
+        <result accessName="beneficio" columnId="" label="Beneficio" type="DOUBLE"/>
+        <result accessName="sobre_compras" columnId="" label="%Compras" type="DOUBLE"/>
+        <result accessName="sobre_ventas" columnId="" label="%Ventas" type="DOUBLE"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/inventory.exdm.xml"/>
+        <dataModelReference id="data/inventory_detail.exdm.xml"/>
+        <dataModelReference id="data/invoice.exdm.xml"/>
+        <dataModelReference id="data/invoice_detail.exdm.xml"/>
+        <dataModelReference id="data/item.exdm.xml"/>
+        <dataModelReference id="data/pcategory.exdm.xml"/>
+        <dataModelReference id="data/product.exdm.xml"/>
+    </dataModelReferences>
+</view>

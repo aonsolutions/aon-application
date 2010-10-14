@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="corporateIdentityAttachSearch">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_corporate_identity}" />
+				<ui:param name="controller" value="#{corporateIdentityAttach}" />
+				<ui:param name="skipResetButton" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{corporateIdentityAttach}" />
+				<ui:define name="searchContent">
+
+					<aon:outputLabel for="RegistryAttachment_description"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="RegistryAttachment_description" size="80"
+						valueChangeListener="#{controller.addExpression}" />
+					
+					<aon:outputLabel for="RegistryAttachment_category_id"
+						value="#{registryBundle.registry_category}" />
+					<aon:selectOneMenu id="RegistryAttachment_category_id"
+						value="#{registryCollections.category}"
+						valueChangeListener="#{controller.addIdEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{registryCollections.categories}" />
+					</aon:selectOneMenu>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

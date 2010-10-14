@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{commissionItem}" />
+		<ui:param name="columnClasses"
+			value="aon-editDataTable-textColumn,
+					aon-editDataTable-numberColumn aon-width-100,
+					aon-editDataTable-numberColumn aon-width-80,
+					aon-editDataTable-numberColumn aon-width-80" />
+		<ui:define name="columns">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{productBundle.product_item}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
+					rendered="#{formList}" />
+				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+					<aon:lookupInputText id="CommissionItem_item_product_code" value="#{commissionItem.to.item.product.code}"
+						lookup="#{itemLookup}" reRender="CommissionItem_item_product_name"
+						lookupChangeListener="#{commissionItem.itemData}" onblur="toUpperCase(this);"
+						required="true" size="10">
+						<aon:joinProperty alias="Item_product_code" value="#{commissionItem.to.item.product.code}" />
+					</aon:lookupInputText>
+					<aon:lookupButton
+						windowTitle="#{productBundle.product_item_selection}" actionType="search"
+						property="#{commissionItem.to.item}"	selectReRender="#{dataTableId}"
+						lookup="#{itemLookup}" minHeight="460" minWidth="650"
+						lookupChangeListener="#{commissionItem.itemData}">
+					</aon:lookupButton>
+					<aon:inputText id="CommissionItem_item_product_name" 
+						value="#{(commissionItem.to.item.product.name!=null)?(commissionItem.to.item.product.name):('')}"
+						disabled="true" size="60" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+						<aon:lookupInputText id="CommissionItem_item_product_code-New" value="#{commissionItem.to.item.product.code}"
+							lookup="#{itemLookup}" reRender="CommissionItem_item_product_name-New"
+							lookupChangeListener="#{commissionItem.itemData}" onblur="toUpperCase(this);"
+							required="true" size="10">
+							<aon:joinProperty alias="Item_product_code" value="#{commissionItem.to.item.product.code}" />
+						</aon:lookupInputText>
+						<aon:lookupButton
+							windowTitle="#{productBundle.product_item_selection}" actionType="search"
+							property="#{commissionItem.to.item}" selectReRender="#{dataTableId}"
+							lookup="#{itemLookup}" minHeight="460" minWidth="650"
+							lookupChangeListener="#{commissionItem.itemData}">
+						</aon:lookupButton>
+						<aon:inputText id="CommissionItem_item_product_name-New" 
+							value="#{(commissionItem.to.item.product.name!=null)?(commissionItem.to.item.product.name):('')}"
+							disabled="true" size="60" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
+				</f:facet>
+				<aon:outputText value="#{to.quantity}"
+					rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+				</aon:outputText>
+				<aon:inputText value="#{commissionItem.to.quantity}" 
+					rendered="#{formEdit}" required="#{true}" size="7">
+					<f:validateDoubleRange />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText value="#{commissionItem.to.quantity}"
+						rendered="#{formNew}" required="#{true}" size="7">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+
+<!-- 
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_amount}" />
+				</f:facet>
+				<aon:outputText value="#{to.amount}"
+					rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText value="#{commissionItem.to.amount}"
+					rendered="#{formEdit}" required="#{true}" size="7">
+					<f:validateDoubleRange />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText value="#{commissionItem.to.amount}"
+						rendered="#{formNew}" required="#{true}" size="7">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+ -->
+ 
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="% #{commercialBundle.commercial_commission}" />
+				</f:facet>
+				<aon:outputText value="#{to.rate}" 
+					rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText value="#{commissionItem.to.rate}"
+					rendered="#{formEdit}" required="#{true}" size="7">
+					<f:validateDoubleRange />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText value="#{commissionItem.to.rate}"
+						rendered="#{formNew}" required="#{true}" size="7">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+</ui:composition>

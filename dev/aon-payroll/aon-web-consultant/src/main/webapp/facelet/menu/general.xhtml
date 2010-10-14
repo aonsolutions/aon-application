@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panelGrid id="group_general_#{category}"
+		styleClass="aon-width-all" columnClasses="aon-padding"
+		headerClass="aon-direct-access-panel aon-icon-general">
+		<f:facet name="header">
+			<aon:outputText value="#{appBundle.menu_general}" />
+		</f:facet>
+		<aon:div styleClass="aon-direct-access-list">
+			<ui:insert name="beforeContent"/>
+			<c:if test="#{aonRole.config}">
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="productCategory-#{category}" 
+						action="productCategory"
+						value="#{productBundle.product_category_module}" />
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="segment-#{category}" 
+						action="segment_form" 
+						value="#{registryBundle.registry_segment_module}" />
+				</aon:div>
+				<aon:div styleClass="aon-direct-access-list-element">
+					<aon:commandLink id="geotreeParent-#{category}" 
+						action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
+						value="#{geozoneBundle.geozone_module}" />
+				</aon:div>
+			</c:if>
+		</aon:div>
+	</aon:panelGrid>
+
+</ui:composition>

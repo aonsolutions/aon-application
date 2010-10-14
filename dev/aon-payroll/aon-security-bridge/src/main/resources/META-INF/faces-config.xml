@@ -1,0 +1,36 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.bridge.i18n.messages</base-name>
+			<var>securityBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!-- ***************** LOGGED USER ******************** --> 
+	<managed-bean>
+		<managed-bean-name>loggedUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ***************** FAILED LOGIN ******************** --> 
+	<managed-bean>
+		<managed-bean-name>failedLogin</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.bridge.session.FailedLogin
+		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ***************** DOMAIN RESOLVER ******************** --> 
+	<managed-bean>
+		<managed-bean-name>domainResolver</managed-bean-name>
+		<managed-bean-class>com.code.aon.bridge.session.DomainResolver</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+</faces-config>

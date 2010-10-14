@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fBatchList" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="19"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
+	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="logoImageFile" class="java.io.InputStream"/>
+	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
+	<field name="financeBatch" class="com.code.aon.finance.FinanceBatch"/>
+	<field name="regs" class="java.lang.Integer"/>
+	<field name="total" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" mode="Opaque" x="491" y="27" width="63" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="3" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" mode="Transparent" x="4" y="4" width="430" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{fbatch_list}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-17" x="4" y="27" width="430" height="20"/>
+				<box topPadding="3" leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" mode="Opaque" x="438" y="27" width="53" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box topPadding="3" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean($P{printHeaders}.booleanValue() || (!$P{printHeaders}.booleanValue() && $V{PAGE_NUMBER}.intValue()==1))]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-4" mode="Opaque" x="39" y="0" width="154" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_description}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-5" mode="Opaque" x="193" y="0" width="61" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-6" mode="Opaque" x="254" y="0" width="103" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_bank}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-7" mode="Opaque" x="502" y="0" width="50" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_amount}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-20" mode="Opaque" x="0" y="0" width="39" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_code}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-22" mode="Opaque" x="452" y="0" width="50" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_regs}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-24" mode="Opaque" x="357" y="0" width="95" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_bank_account}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-9" x="502" y="0" width="50" height="14"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-10" x="254" y="0" width="103" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{financeBatch}.getRegistryBank().getBank().getName()]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-11" x="193" y="0" width="61" height="14"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{financeBatch}.getIssueDate()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-12" x="39" y="0" width="154" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{financeBatch}.getDescription()]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-21" x="0" y="0" width="39" height="14"/>
+				<box leftPadding="5" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{financeBatch}.getId()]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-23" x="452" y="0" width="50" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{regs}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-25" x="357" y="0" width="95" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{financeBatch}.getRegistryBank().getBankAccount().toString()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-16" x="0" y="0" width="540" height="20"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-15" x="540" y="0" width="15" height="20"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
