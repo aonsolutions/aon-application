@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{payrollBundle.contractGeneration_step3}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+
+		<aon:div styleClass="aon-text-center">
+			<aon:div styleClass="aon-text-center" style="font-size: 1.5em;margin-top: 20px; ">
+				
+				<aon:outputText 
+					value="Opciones de contrato" />
+<!--  
+				<aon:outputText 
+					value="#{payrollBundle.payroll_remesa_disk_ok}" />
+				<aon:outputText rendered="#{contractGenerationWizard.diskOk}"
+					value="#{payrollBundle.payroll_remesa_disk_ok}" />
+				<aon:outputText rendered="#{!contractGenerationWizard.diskOk}"
+					value="#{payrollBundle.payroll_remesa_disk_ko}" />
+-->	
+			</aon:div>
+			
+			<rich:separator lineType="solid" style="margin-top: 20px; margin-bottom: 20px;"/>
+
+<!--  
+			<h:commandLink target="_blank"
+				title="#{certificateFileGenerationWizard.diskOk?(payrollBundle.download_zip):(payrollBundle.download_error)}"
+				value="#{certificateFileGenerationWizard.diskOk?(payrollBundle.download_zip):(payrollBundle.download_error)}"
+				style="border-width: 0px 0px 0px 0px;"
+				actionListener="#{certificateFileGenerationWizard.onDownloadZip}"
+				rendered="#{certificateFileGenerationWizard.fileOutput!=null}"
+				styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+-->
+				
+				
+<!--  
+			<aon:commandButton 
+				reRender="showContractDetailWindow"
+				actionListener="#{contractGenerationWizard.onContractDetailShow}"
+				styleClass="aon-finding-toolbar-item aon-icon-edit"
+				value="#{payrollBundle.contract_detail_data}" >
+				<f:setPropertyActionListener target="#{contractGenerationWizard.showContractDetailWindow}"
+					value="#{true}" />								
+			</aon:commandButton>
+-->				
+			<h:commandLink target="_blank" 
+				actionListener="#{contractGenerationWizard.onDownloadContract}"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf"
+				value="CONTRATO i18n" />
+			<h:commandLink target="_blank" action="#{report.onExecute}"
+				title="COPIA BASICA i18n"
+				value="COPIA BASICA i18n"
+				style="border-width: 0px 0px 0px 0px;"
+				styleClass="aon-finding-toolbar-item aon-icon-mail-save" >
+				<f:param name="reportKey" value="contractBasicCopyReport" />
+			</h:commandLink>
+				
+				
+<!--  
+			<aon:htmlCommandLink id="basicCopy-report"
+				value="COPIA BASICA" target="_blank" action="#{report.onExecute}"
+				rendered="#{!contractGenerationWizard.nextAvailable}"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf"
+				accesskey="#{bundle.aon_key_print}">
+				<f:param name="reportKey" value="contractBasicCopyReport" />
+			</aon:htmlCommandLink>
+-->				
+
+		</aon:div>
+	</ui:define>
+
+</ui:composition>
