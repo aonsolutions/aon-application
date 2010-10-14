@@ -116,7 +116,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		stmt.close();
 #end
 	}
-
 #end
 
 	public AbstractMysqlDB( Connection mysqlConnection) {
