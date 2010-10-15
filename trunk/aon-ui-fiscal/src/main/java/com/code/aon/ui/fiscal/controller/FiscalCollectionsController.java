@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.file.tax.model.MOD340.MOD340Format;
 import com.code.aon.fiscal.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.Model347ReportOrder;
 import com.code.aon.fiscal.enumeration.Model347Type;
@@ -33,6 +34,7 @@ public class FiscalCollectionsController {
 	private List<SelectItem> vatPeriods;
 	private List<SelectItem> model347Orders;
 	private List<SelectItem> model347Types;
+	private List<SelectItem> mod340Formats;
 
 	public List<SelectItem> getVatTaxStatuses() {
 		if (vatTaxStatuses == null) {
@@ -137,5 +139,18 @@ public class FiscalCollectionsController {
 		}
 		return model347Types;
 	}
+	
+	public List<SelectItem> getMod340Formats() {
+		if (mod340Formats == null) {
+			mod340Formats = new LinkedList<SelectItem>();
+			for (MOD340Format format:MOD340Format.values()) {
+				String name = format.getDescription();
+				SelectItem item = new SelectItem(format, name);
+				mod340Formats.add(item);
+			}
+		}
+		return mod340Formats;
+	}
+	
 	
 }
