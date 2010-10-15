@@ -34,6 +34,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.company</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.employee</artifactId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
@@ -47,6 +53,12 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.report</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -90,40 +102,15 @@
 		    <version>1.0.5</version>
 		</dependency>
 
-<!--  
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>fop</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>iText</artifactId>
-			<version>5.0.4</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>5.0.4</version>
-			<scope>compile</scope>
-		</dependency>
--->
+                <dependency>
+                        <groupId>com.lowagie</groupId>
+                        <artifactId>itext</artifactId>
+                        <version>2.1.7</version>
+                </dependency>
 
 
 		
 	</dependencies>
 
 
-<!--  
-	<repositories>
-		<repository>
-			<id>itextpdf.com</id>
-			<name>Maven Repository for iText</name>
-			<url>http://maven.itextpdf.com/</url>
-		</repository>
-	</repositories>
--->	
 </project>
