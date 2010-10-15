@@ -43,6 +43,13 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- **************** ACCOUNTING BOOK ************************** -->
+	<managed-bean>
+		<managed-bean-name>accountingBook</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.AccountingBookController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	<!-- **************** ACCOUNT BUDGET ************************** -->
 	<managed-bean>
 		<managed-bean-name>accountBudget</managed-bean-name>
@@ -1005,6 +1012,14 @@
 	<!--  ****************************************** -->
 	<!--  ******** Navigation Rules **************** -->
 	<!--  ****************************************** -->
+
+	<!-- **************** ACCOUNT BOOK ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>accountingBook_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/book/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 	<!-- **************** ACCOUNT BUDGET ************************** -->
 	<navigation-rule>
