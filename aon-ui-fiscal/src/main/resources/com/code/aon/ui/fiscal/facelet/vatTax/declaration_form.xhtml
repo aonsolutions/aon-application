@@ -31,9 +31,17 @@
 				<aon:outputLabel for="VatTaxDeclaration_wihout_activity" styleClass="aon-italic"
 					value="#{fiscalBundle.fiscal_wihout_activity}" />
 			</aon:div>
-			<aon:selectOneMenu id="VatTax_Declaration_status" value="#{vatTaxDeclaration.to.status}" required="true">
-				<f:selectItems value="#{fiscalCollections.vatTaxDeclarationStatuses}" />
-			</aon:selectOneMenu>
+			<aon:div styleClass="aon-text-left">
+				<aon:selectOneMenu id="VatTax_Declaration_status" value="#{vatTaxDeclaration.to.status}" required="true">
+					<f:selectItems value="#{fiscalCollections.vatTaxDeclarationStatuses}" />
+				</aon:selectOneMenu>
+				<aon:htmlCommandLink target="_blank"
+					title="#{financeBundle.finance_download_disk}"
+					value="#{financeBundle.finance_download_disk}"
+					style="border-width: 0px 0px 0px 0px;"
+					actionListener="#{vatTaxDeclaration.downloadDisk}" 
+					styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+			</aon:div>			
 
 			<aon:outputLabel for="VatTaxDeclaration_administration"
 				value="#{fiscalBundle.fiscal_administration}" />
