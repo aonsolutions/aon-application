@@ -73,8 +73,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<doCheck>true</doCheck>
-					<doUpdate>true</doUpdate>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -152,11 +152,9 @@
 											</excludes>
 										</source>
 									</sources>
-									<!-- 
 									<filemode>755</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
-									-->
 									<directory>/usr/share/aon-master/bin</directory>
 								</mapping>
 
