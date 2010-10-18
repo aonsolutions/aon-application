@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class Main {
+public class Up2DateDB {
 
 	private static class Arguments
 	{
@@ -53,7 +53,7 @@ public class Main {
 	private static void printUsage(String[] args)
 	{
 		System.err.printf("Usage : %s url user password driver \r\n", 
-				Main.class.getName());
+				Up2DateDB.class.getName());
 	}
 
 	private static Arguments parseArgs(String[] args)
