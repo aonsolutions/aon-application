@@ -31,9 +31,7 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
-					</aon:panelGroup>
 
-					<aon:panelGroup>
 						<c:if test="#{aonRole.accountingOperator}">
 							<aon:panelGrid id="group_utilities_utilities"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -65,6 +63,40 @@
 											value="#{financeBundle.finance_undeductible_invoice_recording_module}"
 											actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
 											action="undeductibleInvoiceRecorder_search" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+					</aon:panelGroup>
+
+					<aon:panelGroup>
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:panelGrid id="group_utilities_account" styleClass="aon-width-all"
+								columnClasses="aon-padding"
+								headerClass="aon-icon-master aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{accountBundle.account_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="customerAccountChecker"
+											action="customerAccountChecker_search"
+											actionListener="#{customerAccountChecker.onEditSearch}"
+											value="#{accountBridgeBundle.account_customer_checker_module}" />
+									</aon:div>
+
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="supplierAccountChecker"
+											action="supplierAccountChecker_search"
+											actionListener="#{supplierAccountChecker.onEditSearch}"
+											value="#{accountBridgeBundle.account_supplier_checker_module}" />
+									</aon:div>
+
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="creditorAccountChecker"
+											action="creditorAccountChecker_search"
+											actionListener="#{creditorAccountChecker.onEditSearch}"
+											value="#{accountBridgeBundle.account_creditor_checker_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

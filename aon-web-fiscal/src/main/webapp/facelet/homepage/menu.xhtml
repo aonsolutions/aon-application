@@ -18,6 +18,18 @@
 				value="#{appBundle.menu_expenses}"
 				action="menu_expenses" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-expenses" />
+		</c:if>
+		<c:if test="#{aonRole.accountingOperator}">
+			<aon:commandLink id="account"
+				value="#{appBundle.menu_account}"
+				action="menu_account" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-accounting" />
+			<aon:commandLink id="fiscal"
+				value="#{appBundle.menu_fiscal}"
+				action="menu_fiscal" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-treasury" />
+		</c:if>
+		<c:if test="#{aonRole.accountingOperator or aonRole.financeOperator}">
 			<aon:commandLink id="utilities"
 				value="#{appBundle.menu_utilities}"
 				action="menu_utilities" immediate="true"
