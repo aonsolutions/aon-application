@@ -108,6 +108,11 @@
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
 
+		<!-- AON-FISCAL Mapping files -->	
+		<mapping class="com.code.aon.fiscal.VatTax"/>
+		<mapping class="com.code.aon.fiscal.VatTaxDeclaration"/>
+		<mapping class="com.code.aon.fiscal.VatTaxDetail"/>
+		
 		<!-- AON-FINANCE Mapping files -->	
 		<mapping class="com.code.aon.finance.Creditor"/>
 		<mapping class="com.code.aon.finance.CustomerFee"/>
