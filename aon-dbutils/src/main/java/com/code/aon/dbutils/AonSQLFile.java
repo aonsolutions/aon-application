@@ -72,9 +72,10 @@ public class AonSQLFile {
 	}
 	
 	private boolean isDataBaseStatement( String statement ) {
+		String statementUpper = statement.toUpperCase();
 		return (dbName != null) &&
-			( StringUtils.startsWithIgnoreCase(statement, USE_STATEMENT) ||
-			StringUtils.startsWithIgnoreCase(statement, CREATE_DATABASE_STATEMENT) );
+			( statementUpper.startsWith(USE_STATEMENT) ||
+			statementUpper.startsWith(CREATE_DATABASE_STATEMENT) );
 	}
 
 	public String getStatement() throws AonSQLException {
