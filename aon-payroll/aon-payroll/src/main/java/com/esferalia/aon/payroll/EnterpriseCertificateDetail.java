@@ -71,7 +71,7 @@ public class EnterpriseCertificateDetail implements ITransferObject {
 		this.expireDate = expireDate;
 	}
 	
-	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.CausaSuspension") })
+//	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.CausaSuspension") })
 	@Column(name = "suspension_cause", length = 2, nullable = false)
 	public CausaSuspension getSuspensionCause() {
 		return suspensionCause;
