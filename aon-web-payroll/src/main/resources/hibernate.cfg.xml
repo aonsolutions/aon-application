@@ -98,6 +98,12 @@
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
 
+		<!-- AON-PAYROLL Mapping files -->	
+		<mapping class="com.esferalia.aon.payroll.ContractBatch"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificate"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificateDetail"/>
+
 	</session-factory>
 
 </hibernate-configuration>
