@@ -68,4 +68,14 @@
 		</params>
 	</report>
 	
+	<!--  *********  Declaracion de IVA ********* -->
+	<report id="rentingReport" description="Declaracion de IRPF 115">
+		<template path="/com/code/aon/ui/fiscal/report/renting.jasper"/>
+		<bean key="com.code.aon.fiscal.Renting" />
+		<collection provider="#{renting}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
 </report-config>

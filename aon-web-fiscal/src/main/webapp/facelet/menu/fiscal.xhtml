@@ -26,7 +26,7 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="vat_report" 
+								<aon:commandLink id="fiscal_vat_report" 
 									action="vat_report_search" actionListener="#{vatReport.onReset}"
 									value="#{financeBundle.finance_vat_report_module}" />
 							</aon:div>
@@ -59,11 +59,11 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
-<!-- 
-								<aon:commandLink id="vat_report" 
-									action="vat_report_search" actionListener="#{vatReport.onReset}"
-									value="#{financeBundle.finance_vat_report_module}" />
- -->
+
+								<aon:commandLink id="renting" 
+									action="renting_search" actionListener="#{renting.onEditSearch}"
+									value="#{fiscalBundle.fiscal_renting_module}" />
+
 							</aon:div>
 						</aon:div>
 					</aon:panelGrid>

@@ -7,19 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
-import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.config.enumeration.VatDeductionType;
-import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD340.IMOD340Provider;
 import com.code.aon.file.tax.model.MOD340.MOD340;
@@ -32,13 +24,11 @@ import com.code.aon.file.tax.model.MOD340.data.IssuedInvoice;
 import com.code.aon.file.tax.model.MOD340.data.ReceivedInvoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.util.FinanceUtil;
-import com.code.aon.fiscal.enumeration.VatPeriod;
 import com.code.aon.fiscal.model340.Model340Parameters;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.fiscal.controller.InvoiceReport;
 import com.code.aon.ui.util.AonUtil;
 
 public class MOD340Writer implements IMOD340Provider, IFinanceConstants{

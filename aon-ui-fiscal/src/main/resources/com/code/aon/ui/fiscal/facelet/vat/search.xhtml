@@ -45,10 +45,10 @@
 							maxlength="4" />
 
 						<aon:selectOneMenu id="Vat_period"
-							valueChangeListener="#{vatReport.onVatPeriodChanged}"
+							valueChangeListener="#{vatReport.onPeriodChanged}"
 							reRender="entryDate-From,entryDate-To"
-							value="#{vatReport.vatPeriod}">
-							<f:selectItems value="#{fiscalCollections.vatPeriods}" />
+							value="#{vatReport.period}">
+							<f:selectItems value="#{fiscalCollections.periods}" />
 						</aon:selectOneMenu>
 					</aon:panelGrid>
 

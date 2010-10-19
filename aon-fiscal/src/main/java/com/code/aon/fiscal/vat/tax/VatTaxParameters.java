@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.fiscal.VatTax;
-import com.code.aon.fiscal.enumeration.VatPeriod;
+import com.code.aon.fiscal.enumeration.Period;
 
 public class VatTaxParameters {
 
@@ -12,7 +12,7 @@ public class VatTaxParameters {
 	private Integer year;
 	private Date fromDate;
 	private Date toDate;
-	private VatPeriod vatPeriod;
+	private Period period;
 	private VatTax	vatTax;
 	private SecurityLevel securityLevel;
 
@@ -57,11 +57,11 @@ public class VatTaxParameters {
 		this.date = date;
 	}
 
-	public VatPeriod getVatPeriod() {
-		return vatPeriod;
+	public Period getPeriod() {
+		return period;
 	}
-	public void setVatPeriod(VatPeriod vatPeriod) {
-		this.vatPeriod = vatPeriod;
+	public void setPeriod(Period period) {
+		this.period = period;
 	}
 
 	public SecurityLevel getSecurityLevel() {

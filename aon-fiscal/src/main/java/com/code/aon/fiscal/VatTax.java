@@ -1,5 +1,6 @@
 package com.code.aon.fiscal;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +17,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.fiscal.enumeration.VatPeriod;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 
 @Entity
@@ -27,7 +28,7 @@ public class VatTax implements ITransferObject, IConfidentialable {
 
     private Integer id;
 	private Integer year;
-	private VatPeriod period;
+	private Period period;
 	private String comments;
 	private VatTaxStatus status;
 	private SecurityLevel securityLevel;
@@ -54,14 +55,14 @@ public class VatTax implements ITransferObject, IConfidentialable {
     }
     @Transient
     public boolean isAnual() {
-    	return (getPeriod() == VatPeriod.YEAR);
+    	return (getPeriod() == Period.YEAR);
     }
     
     @Column(name = "period")
-    public VatPeriod getPeriod() {
+    public Period getPeriod() {
         return period;
     }
-    public void setPeriod(VatPeriod period) {
+    public void setPeriod(Period period) {
         this.period = period;
     }
 

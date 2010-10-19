@@ -52,6 +52,45 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** RENTING *************** -->
+	<managed-bean>
+		<managed-bean-name>renting</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.RentingController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.fiscal.Renting</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>renting</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Renting_year desc,Renting_period desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{rentingControllerListener}</value>
+<!-- 
+				<value>#{vatTaxDeclarationListener}</value>
+ -->
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>rentingControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.event.RentingControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************** VAT TAX  *************** -->
 	<managed-bean>
 		<managed-bean-name>vatTax</managed-bean-name>
@@ -216,6 +255,22 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== RENTING ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>renting_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/renting/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>renting_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/renting/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>renting_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/renting/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 	<!-- =================== VAT TAX ================= -->
 	<navigation-rule>
 		<navigation-case>

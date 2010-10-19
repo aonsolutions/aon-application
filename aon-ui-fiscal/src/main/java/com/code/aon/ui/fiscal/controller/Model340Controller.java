@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
-import com.code.aon.fiscal.enumeration.VatPeriod;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model340.Model340Parameters;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.fiscal.file.MOD340Writer;
@@ -47,7 +47,7 @@ public class Model340Controller implements IFinanceMessages {
 		c.setTime(new Date());
 		getParams().setDate(c.getTime());
 		getParams().setYear(c.get(Calendar.YEAR));
-		getParams().setPeriod( VatPeriod.getQuarterlyVatPeriod( c.get(Calendar.MONTH )) );
+		getParams().setPeriod( Period.getQuarterlyPeriod( c.get(Calendar.MONTH )) );
 		getParams().setFromDate(getParams().getPeriod().getStartDate(getParams().getYear()));	
 		getParams().setToDate(getParams().getPeriod().getDueDate(getParams().getYear()));
 		getParams().setSecurityLevel(null);
@@ -56,7 +56,7 @@ public class Model340Controller implements IFinanceMessages {
 	
 	public void onCreateDisk(ActionEvent event)  {
 		try {
-			VatPeriod period = getParams().getPeriod();
+			Period period = getParams().getPeriod();
 			getParams().setFromDate(period.getStartDate(getParams().getYear()));	
 			getParams().setToDate(period.getDueDate(getParams().getYear()));
 			MOD340Writer mod340Writer = new MOD340Writer(getParams(), getFormat());
