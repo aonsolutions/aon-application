@@ -15,6 +15,15 @@
 		<servlet-name>ResourceServlet</servlet-name>
 		<url-pattern>/aonResource/*</url-pattern>
 	</servlet-mapping>
+	<!-- Contract Image Servlet -->
+	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>com.esferalia.aon.ui.payroll.servlet.ImageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>*.contractImage</url-pattern>
+	</servlet-mapping>
 
 	<!-- JSF STANDARD CONFIGURATION -->
     <context-param>
@@ -259,7 +268,7 @@
            com.code.aon.ui.common.listener.BeanRegisterContextListener
        </listener-class>
     </listener>
-
+    
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
 		<listener-class>
