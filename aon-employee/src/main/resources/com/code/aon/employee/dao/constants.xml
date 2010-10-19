@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.employee.Contract">
-		<alias names="ccc_id,contractType_id,endDate,id,person_id,person_registry_document,person_registry_name,person_registry_surname,startDate,workPlace_id,workPlace_enterprise_id,workPlace_enterprise_registry_name"/>
-		<hibernate names="ccc.id,contractType.id,endDate,id,person.id,person.registry.document,person.registry.name,person.registry.surname,startDate,workPlace.id,workPlace.enterprise.id,workPlace.enterprise.registry.name"/>
+		<alias names="ccc_id,contractType_id,endDate,id,person_id,person_registry_document,person_registry_name,person_registry_surname,startDate,status,workPlace_id,workPlace_enterprise_id,workPlace_enterprise_registry_name"/>
+		<hibernate names="ccc.id,contractType.id,endDate,id,person.id,person.registry.document,person.registry.name,person.registry.surname,startDate,status,workPlace.id,workPlace.enterprise.id,workPlace.enterprise.registry.name"/>
 	</bean>
 </dao>
