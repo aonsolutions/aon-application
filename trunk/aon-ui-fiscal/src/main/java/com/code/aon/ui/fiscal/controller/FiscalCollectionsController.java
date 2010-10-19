@@ -11,7 +11,8 @@ import com.code.aon.file.tax.model.MOD340.MOD340Format;
 import com.code.aon.fiscal.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.Model347ReportOrder;
 import com.code.aon.fiscal.enumeration.Model347Type;
-import com.code.aon.fiscal.enumeration.VatPeriod;
+import com.code.aon.fiscal.enumeration.Period;
+import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.enumeration.VatReportOrder;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
@@ -25,16 +26,30 @@ import com.code.aon.fiscal.enumeration.VatType;
  */
 public class FiscalCollectionsController {
 
+	private List<SelectItem> rentingStatuses;
 	private List<SelectItem> vatTaxStatuses;
 	private List<SelectItem> vatTaxDeclarationStatuses;
 	private List<SelectItem> administrations;
 
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> vatOrders;
-	private List<SelectItem> vatPeriods;
+	private List<SelectItem> periods;
 	private List<SelectItem> model347Orders;
 	private List<SelectItem> model347Types;
 	private List<SelectItem> mod340Formats;
+
+	public List<SelectItem> getRentingStatuses() {
+		if (rentingStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			rentingStatuses = new LinkedList<SelectItem>();
+			for (RentingStatus status:RentingStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				rentingStatuses.add(item);
+			}
+		}
+		return rentingStatuses;
+	}
 
 	public List<SelectItem> getVatTaxStatuses() {
 		if (vatTaxStatuses == null) {
@@ -101,17 +116,17 @@ public class FiscalCollectionsController {
 		return vatOrders;
 	}
 
-	public List<SelectItem> getVatPeriods() {
-		if (vatPeriods == null) {
+	public List<SelectItem> getPeriods() {
+		if (periods == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatPeriods = new LinkedList<SelectItem>();
-			for (VatPeriod period:VatPeriod.values()) {
+			periods = new LinkedList<SelectItem>();
+			for (Period period:Period.values()) {
 				String name = period.getName(locale);
 				SelectItem item = new SelectItem(period, name);
-				vatPeriods.add(item);
+				periods.add(item);
 			}
 		}
-		return vatPeriods;
+		return periods;
 	}
 
 	public List<SelectItem> getModel347ReportOrders() {

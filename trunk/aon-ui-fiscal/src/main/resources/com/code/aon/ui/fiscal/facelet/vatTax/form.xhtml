@@ -69,7 +69,7 @@
 						value="#{financeBundle.finance_vat_period}" />
 					<aon:selectOneMenu id="VatTax_period" value="#{vatTax.to.period}"
 						required="true" disabled="#{vatTax.to.finished}">
-						<f:selectItems value="#{fiscalCollections.vatPeriods}" />
+						<f:selectItems value="#{fiscalCollections.periods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputText value="#{bundle.aon_status}" />

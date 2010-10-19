@@ -23,7 +23,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.dao.IFiscalAlias;
-import com.code.aon.fiscal.enumeration.VatPeriod;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
@@ -37,7 +37,7 @@ public class VatTaxCollectionProvider {
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		c.set(Calendar.MONTH, 0);
 		Date dateFrom = c.getTime();	
-		Date dateTo = params.getVatPeriod().getDueDate(params.getYear());
+		Date dateTo = params.getPeriod().getDueDate(params.getYear());
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		VatTaxColumn column = VatTaxColumn.ACUMULADO; 
@@ -237,7 +237,7 @@ public class VatTaxCollectionProvider {
 		VatTax vatTax = params.getVatTax();
 		// Primera declaración del ejercicio, si no es complementaria, 
 		// no se debe tener en cuenta lo almacenado en ese periodo.
-		if ((vatTax.getPeriod() == VatPeriod.M01 || vatTax.getPeriod() == VatPeriod.T1) && !vatTax.isComplementary()) {
+		if ((vatTax.getPeriod() == Period.M01 || vatTax.getPeriod() == Period.T1) && !vatTax.isComplementary()) {
 			return;  
 		}
 		IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
@@ -245,22 +245,22 @@ public class VatTaxCollectionProvider {
 		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), params.getYear());
 		String periodAlias = bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD);
 
-		int i = params.getVatPeriod().ordinal(); 
+		int i = params.getPeriod().ordinal(); 
 		if (i == 0 ) {
-			criteria.addEqualExpression(periodAlias, VatPeriod.M01);  // ENERO y COMPLENTARIA
+			criteria.addEqualExpression(periodAlias, Period.M01);  // ENERO y COMPLENTARIA
 		}
 		if (i == 12 ) {
-			criteria.addEqualExpression(periodAlias, VatPeriod.T1); // 1 TRIMESTRE y COMPLENTARIA
+			criteria.addEqualExpression(periodAlias, Period.T1); // 1 TRIMESTRE y COMPLENTARIA
 		}
 		if (i >0 && i<12) {
-			criteria.addBetweenExpression(periodAlias, VatPeriod.M01, VatPeriod.values()[params.getVatPeriod().ordinal() -1 ]);
+			criteria.addBetweenExpression(periodAlias, Period.M01, Period.values()[params.getPeriod().ordinal() -1 ]);
 		}
 		if (i >12 && i<16) {
-			criteria.addBetweenExpression(periodAlias, VatPeriod.T1, VatPeriod.values()[params.getVatPeriod().ordinal() -1 ]);
+			criteria.addBetweenExpression(periodAlias, Period.T1, Period.values()[params.getPeriod().ordinal() -1 ]);
 		}
-		// Si params.getVatPeriod() == VatPeriod.YEAR Se saca todo lo del ejercicio, o sea, no se añaden filtros.
-		if (vatTax.isExtraDeclaration() && params.getVatPeriod() == VatPeriod.YEAR) {
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(periodAlias, VatPeriod.YEAR));
+		// Si params.getPeriod() == Period.YEAR Se saca todo lo del ejercicio, o sea, no se añaden filtros.
+		if (vatTax.isExtraDeclaration() && params.getPeriod() == Period.YEAR) {
+			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(periodAlias, Period.YEAR));
 		}
 		
 		List<ITransferObject> list = bean.getList(criteria);

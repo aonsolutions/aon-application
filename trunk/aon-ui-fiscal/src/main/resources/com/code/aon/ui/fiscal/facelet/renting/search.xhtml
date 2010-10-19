@@ -7,37 +7,37 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="vatTaxForm" styleClass="aon-form">
+		<aon:form id="rentingForm" styleClass="aon-form">
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_vat_tax_module}" />
-				<ui:param name="controller" value="#{vatTax}" />
+				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_renting_module}" />
+				<ui:param name="controller" value="#{renting}" />
 			</ui:include>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{vatTax}" />
+				<ui:param name="controller" value="#{renting}" />
 
 				<ui:define name="searchContent">
-					<aon:outputLabel for="VatTax_year" value="#{bundle.aon_year}" />
-					<aon:inputText id="VatTax_year" size="5"
-						valueChangeListener="#{vatTax.addExpression}" />
+					<aon:outputLabel for="Renting_year" value="#{bundle.aon_year}" />
+					<aon:inputText id="Renting_year" size="5"
+						valueChangeListener="#{renting.addExpression}" />
 
-					<aon:outputLabel for="VatTax_period"
-						value="#{financeBundle.finance_vat_period}" />
-					<aon:selectOneMenu id="VatTax_period"
+					<aon:outputLabel for="Renting_period"
+						value="#{fiscalBundle.fiscal_period}" />
+					<aon:selectOneMenu id="Renting_period"
 						valueChangeListener="#{controller.addEqualExpression}"
 						converter="aon.EnumConverter">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{fiscalCollections.periods}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="VatTax_status"
+					<aon:outputLabel for="Renting_status"
 						value="#{bundle.aon_status}" />
-					<aon:selectOneRadio id="VatTax_status"
+					<aon:selectOneRadio id="Renting_status"
 						valueChangeListener="#{controller.addEqualExpression}"
 						converter="aon.EnumConverter">
 						<f:selectItem value="#{null}" itemLabel="#{bundle.aon_all}" />
-						<f:selectItems value="#{fiscalCollections.vatTaxStatuses}" />
+						<f:selectItems value="#{fiscalCollections.rentingStatuses}" />
 					</aon:selectOneRadio>
 				</ui:define>
 				
