@@ -36,6 +36,15 @@
 							actionListener="#{contractGenerationWizard.onNext}"
 							rendered="#{contractGenerationWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-next" />
+<!--  
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}"
+							action="#{contractGenerationWizard.next}"
+							actionListener="#{contractGenerationWizard.onSave}"
+							onclick="if (!confirm('#{bundle.aon_save}?')) { return false;}"
+							rendered="#{contractGenerationWizard.last}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />
+-->
 						<aon:commandButton id="end"
 							value="#{payrollBundle.payroll_finalice}"
 							action="#{contractGenerationWizard.next}"

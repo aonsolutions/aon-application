@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.employee.enumeration.ContractModel;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
+import com.esferalia.aon.payroll.enumeration.CausaSuspension;
 import com.esferalia.aon.payroll.core.enumeration.FileStatus;
 //import com.esferalia.aon.payroll.enumeration.ContractModel;
 
@@ -20,6 +21,7 @@ public class PayrollCollections implements Serializable {
 	private List<SelectItem> contractModels;
 	private List<SelectItem> workTimes;
 	private List<SelectItem> fileStatus;
+	private List<SelectItem> causaSuspension;
 
 	public List<SelectItem> getContractModels() {
 		if (contractModels == null) {
@@ -69,6 +71,20 @@ public class PayrollCollections implements Serializable {
 			}
 		}
 		return fileStatus;
+	}
+	
+	public List<SelectItem> getCausaSuspension() {
+		if (causaSuspension == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			causaSuspension = new LinkedList<SelectItem>();
+			CausaSuspension[] causas = CausaSuspension.values();
+			for (CausaSuspension c : causas) {
+				String name = c.getFullName(locale);
+				SelectItem item = new SelectItem(c, name);
+				causaSuspension.add(item);
+			}
+		}
+		return causaSuspension;
 	}
 	
 	

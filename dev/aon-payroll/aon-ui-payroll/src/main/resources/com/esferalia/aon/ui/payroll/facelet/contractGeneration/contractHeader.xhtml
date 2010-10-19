@@ -14,19 +14,19 @@
 		</f:facet>
 		<aon:panelGrid columns="4" dir="true" width="100%">
 
-			<aon:outputText value="#{bundle.aon_company_document}" />
-			<aon:outputText
-				value="#{contractGenerationWizard.contract.workPlace.enterprise.registry.document}" />
 			<aon:outputText value="#{payrollBundle.payroll_empresa}" />
 			<aon:outputText
 				value="#{contractGenerationWizard.contract.workPlace.enterprise.registry.name}" />
-
 			<aon:outputText value="#{bundle.aon_company_document}" />
 			<aon:outputText
-				value="#{contractGenerationWizard.contract.person.registry.document}" />
+				value="#{contractGenerationWizard.contract.workPlace.enterprise.registry.document}" />
+
 			<aon:outputText value="#{bundle.aon_company_name}" />
 			<aon:outputText
 				value="#{contractGenerationWizard.contract.person.registry.fullName}" />
+			<aon:outputText value="#{bundle.aon_company_document}" />
+			<aon:outputText
+				value="#{contractGenerationWizard.contract.person.registry.document}" />
 <!--  
 			<aon:outputText value="#{payrollBundle.payroll_fecha}" />
 			<aon:outputText value="#{certificateFileGenerationWizard.batch.date}" >
