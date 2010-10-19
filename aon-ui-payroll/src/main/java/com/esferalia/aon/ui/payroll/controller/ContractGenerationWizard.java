@@ -75,7 +75,23 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	private Integer contractPage;
 	private ContractModel model;
 	private int numberOfContractPages;
+	private URL contractModelUrl;
 
+	
+	public URL getContractModelUrl() {
+		return contractModelUrl;
+	}
+	public void setContractModelUrl(URL contractModelUrl) {
+		this.contractModelUrl = contractModelUrl;
+	}
+	private URL getContractModelUrl(String file) throws IOException {
+		if(getContractModelUrl()==null){
+			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+			URL[] urls = Classpath.search(cl, MODEL_PATH, file);
+			contractModelUrl = urls[0];
+		}
+		return contractModelUrl;
+	}
 	public boolean isEnterpriseListEnabled() {
 		return enterpriseListEnabled;
 	}
@@ -108,6 +124,12 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	}
 	public void setContractPage(Integer contractPage) {
 		this.contractPage = contractPage;
+	}
+	public int getNumberOfContractPages() {
+		return numberOfContractPages;
+	}
+	public void setNumberOfContractPages(int numberOfContractPages) {
+		this.numberOfContractPages = numberOfContractPages;
 	}
 	public ContractModel getModel() {
 		return model;
@@ -150,13 +172,15 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
 			onValidate(event);
+			setContractModelUrl(null);
 			setContractFields(null);
 			onContractDetailShow(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {
+			onContractGenerate(event);
+			onFinish(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 4) {
-			onFinish(event);
 		} 
 //		else if (getCurrentStep() == 5) {
 //			onFinish(event);
@@ -213,14 +237,23 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	}
 	public void onSelectEnterprise(ActionEvent event) {
 		EnterpriseController enterpriseC = (EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER);
+		enterpriseC.onSelect(event);
+		
+		getContract().setCcc(enterpriseC.getCCC());
+
+		
 		LinesController workplaceC = (LinesController)AonUtil.getRegisteredBean("enterpriseWorkplace");
-		LinesController activityC = (LinesController)AonUtil.getRegisteredBean("enterpriseActivity");
-		LinesController cccC = (LinesController)AonUtil.getRegisteredBean("enterpriseCCC");
+//		LinesController activityC = (LinesController)AonUtil.getRegisteredBean("enterpriseActivity");
+//		LinesController cccC = (LinesController)AonUtil.getRegisteredBean("enterpriseCCC");
 
 		workplaceC.onSearch(null);
 		workplaceC.onSelectFirst(null);
 		WorkPlace w = (WorkPlace)workplaceC.getTo();
 		getContract().setWorkPlace(w);
+		
+//		getContract().setCcc(((EnterpriseController)workplaceC.getMasterController()).getCCC());
+		
+		
 //		try {
 //			
 ////			EnterpriseActivity ea;
@@ -244,6 +277,10 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		}
 		setPersonListEnabled(false);
 //		setContractFields(null);
+		
+		
+		onSearchContract(event);
+		
 		setCurrentStep(2);
 	}
 
@@ -284,7 +321,6 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			if(!list.isEmpty()){
 				setContract((Contract)list.get(0));
 			}
-			
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -299,10 +335,20 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		getContract().setStatus(ContractStatus.PROCESSED);
 		accept();
 	}
-	
-	public void onSaveProcess(ActionEvent event) {
+	public void onSave(ActionEvent event) {
 		getContract().setStatus(ContractStatus.PENDING);
 		accept();
+	}
+	public void onContractGenerate( ActionEvent event ) {
+		try {
+			buildPdf();
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new AbortProcessingException(e);
+		} catch (DocumentException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new AbortProcessingException(e);
+		}
 	}
 
 	public void onNewPersonShow( ActionEvent event ) {
@@ -327,17 +373,6 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
-	public void onContractSave( ActionEvent event ) {
-		try {
-			buildPdf();
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new AbortProcessingException(e);
-		} catch (DocumentException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new AbortProcessingException(e);
-		}
-	}
 	
 	public void onDownloadContract( ActionEvent event ) {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -359,32 +394,27 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		context.responseComplete();
 	}
 	
-	public void onChangeModalPage( ActionEvent event ) {
+	public void onChangeContractPage( ActionEvent event ) {
 		setContractPage(getContractPage()+1);
 	}
-	public void onFirstModalPage( ActionEvent event ) {
+	public void onFirstContractPage( ActionEvent event ) {
 		setContractPage(1);
 	}
-	public boolean isLastModalPage() {
+	public boolean isLastContractPage() {
 		return getContractPage().equals(numberOfContractPages);
 	}
 	
-//	private void pdfDigester() {
-//		
-//	}
-	
 	@SuppressWarnings("unchecked")
 	private void readPdfFields() throws IOException{
-		String file = model+".pdf"; 
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		URL[] urls = Classpath.search(cl, MODEL_PATH, file);
-		PdfReader reader = new PdfReader(urls[0]);
+		PdfReader reader;
+		if(getContract().getPdf()==null){
+			reader = new PdfReader(getContractModelUrl(model+".pdf"));
+		} else {
+			reader = new PdfReader(getContract().getPdf()); 
+		}
 		numberOfContractPages = reader.getNumberOfPages();
 		AcroFields form = reader.getAcroFields();
 		HashMap fields = form.getFields();
-
-//		form.getAppearanceStates("Verif1");
-		
 		String key;
 		ContractField field;
 		for (Iterator it = fields.keySet().iterator(); it.hasNext();) {
@@ -392,8 +422,10 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			field = new ContractField();
 			if(form.getFieldType(key)==AcroFields.FIELD_TYPE_CHECKBOX){
 					field.setType(AcroFields.FIELD_TYPE_CHECKBOX);
+					field.setValue(form.getField(key).equals(form.getAppearanceStates(key)[0])?"true":"false");
 			} else if(form.getFieldType(key)==AcroFields.FIELD_TYPE_TEXT){
-					field.setType(AcroFields.FIELD_TYPE_TEXT);;
+					field.setType(AcroFields.FIELD_TYPE_TEXT);
+					field.setValue(form.getField(key));
 			} else {
 				field.setType(AcroFields.FIELD_TYPE_NONE);;
 			}
@@ -649,12 +681,9 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			}
 		}
 	}
-
+	
 	private void buildPdf() throws IOException, DocumentException {
-		String file = model+".pdf"; 
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		URL[] urls = Classpath.search(cl, MODEL_PATH, file);
-		PdfReader reader = new PdfReader(urls[0]);
+		PdfReader reader = new PdfReader(getContractModelUrl(model+".pdf"));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
 		PdfStamper stamp = new PdfStamper(reader, baos);
 	    AcroFields form = stamp.getAcroFields();
@@ -669,7 +698,8 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 				form.setField(field.getLabel(), field.getValue());
 			}
 		}
-	    stamp.setFormFlattening(true);
+//	    stamp.setFormFlattening(true);
+	    stamp.setFormFlattening(false);
 	    stamp.close();
 	    reader.close();
 	    getContract().setPdf(baos.toByteArray());
@@ -677,7 +707,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	
 	private void accept(){
 		try {
-			BeanManager.getManagerBean(Contract.class).insertOrUpdate(getContract());
+			setContract((Contract)BeanManager.getManagerBean(Contract.class).insertOrUpdate(getContract()));
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
