@@ -62,32 +62,20 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>menu_sales</from-outcome>
-			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_purchase</from-outcome>
-			<to-view-id>/facelet/menu/purchase.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_expenses</from-outcome>
-			<to-view-id>/facelet/menu/expenses.xhtml</to-view-id> 
+			<from-outcome>menu_management</from-outcome>
+			<to-view-id>/facelet/menu/management.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_fiscal</from-outcome>
 			<to-view-id>/facelet/menu/fiscal.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>menu_account</from-outcome>
-			<to-view-id>/facelet/menu/account.xhtml</to-view-id> 
+			<from-outcome>menu_accounting</from-outcome>
+			<to-view-id>/facelet/menu/accounting.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_config</from-outcome>
 			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_utilities</from-outcome>
-			<to-view-id>/facelet/menu/utilities.xhtml</to-view-id> 
 		</navigation-case>
 	</navigation-rule>
 	

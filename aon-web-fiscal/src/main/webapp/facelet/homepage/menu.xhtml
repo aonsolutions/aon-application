@@ -6,34 +6,20 @@
 
 	<ui:define name="menuContent">
 		<c:if test="#{aonRole.financeOperator}">
-			<aon:commandLink id="sales"
-				value="#{appBundle.menu_sales}"
-				action="menu_sales" immediate="true"
+			<aon:commandLink id="management"
+				value="#{appBundle.menu_management}"
+				action="menu_management" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-sales" />
-			<aon:commandLink id="purchase"
-				value="#{appBundle.menu_purchase}"
-				action="menu_purchase" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-purchase" />
-			<aon:commandLink id="expenses"
-				value="#{appBundle.menu_expenses}"
-				action="menu_expenses" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-expenses" />
 		</c:if>
 		<c:if test="#{aonRole.accountingOperator}">
-			<aon:commandLink id="account"
-				value="#{appBundle.menu_account}"
-				action="menu_account" immediate="true"
+			<aon:commandLink id="accounting"
+				value="#{appBundle.menu_accounting}"
+				action="menu_accounting" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-accounting" />
 			<aon:commandLink id="fiscal"
 				value="#{appBundle.menu_fiscal}"
 				action="menu_fiscal" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-treasury" />
-		</c:if>
-		<c:if test="#{aonRole.accountingOperator or aonRole.financeOperator}">
-			<aon:commandLink id="utilities"
-				value="#{appBundle.menu_utilities}"
-				action="menu_utilities" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-utilities" />
 		</c:if>
 		<c:if test="#{aonRole.config}">
 			<aon:commandLink id="config"
