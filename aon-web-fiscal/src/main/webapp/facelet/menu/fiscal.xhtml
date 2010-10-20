@@ -68,7 +68,9 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="annualReport_report" 
+									<aon:commandLink id="annualReport_report"
+										action="annualReport_search"
+										actionListener="#{annualReport.onEditSearch}"
 										value="#{fiscalBundle.fiscal_annual_report}" />
 								</aon:div>
 	

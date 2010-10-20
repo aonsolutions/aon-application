@@ -18,7 +18,6 @@
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.accounting.AccountBudget"/>
 		<mapping class="com.code.aon.accounting.AccountBudgetDetail"/>
-		<mapping class="com.code.aon.accounting.AutoConcept"/>
 		<mapping class="com.code.aon.accounting.AccountEntry"/>
 		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
 		<mapping class="com.code.aon.accounting.AccountEntryLink"/>
@@ -27,10 +26,13 @@
 		<mapping class="com.code.aon.accounting.Amortization"/>
 		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
 		<mapping class="com.code.aon.accounting.AmortizationType"/>
-		<mapping class="com.code.aon.accounting.Loan"/>
-		<mapping class="com.code.aon.accounting.Period"/>
+		<mapping class="com.code.aon.accounting.AnnualReport"/>
+		<mapping class="com.code.aon.accounting.AnnualReportDetail"/>
+		<mapping class="com.code.aon.accounting.AutoConcept"/>
 		<mapping class="com.code.aon.accounting.Balance"/>
 		<mapping class="com.code.aon.accounting.BalanceDetail"/>
+		<mapping class="com.code.aon.accounting.Loan"/>
+		<mapping class="com.code.aon.accounting.Period"/>
 
 		
 		<!-- ACCOUNT -->
