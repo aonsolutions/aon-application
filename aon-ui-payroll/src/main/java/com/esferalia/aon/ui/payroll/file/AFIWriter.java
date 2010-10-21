@@ -8,17 +8,12 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.employee.Contract;
-import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.file.payroll.afi.AFI;
@@ -144,7 +139,7 @@ public class AFIWriter {
 	private FAB createFABRecord(Contract contract) throws PayrollException {
 		FAB fab = new FAB();
 		fab.setAccion("MA ");
-		fab.setFechaReal(dateFormatter.format(contract.getStartDate()));
+		fab.setFechaReal(Integer.parseInt(dateFormatter.format(contract.getStartDate())));
 		/*
 		Acciones a nivel de Trabajador Se cumplimentan en el segmento FAB
 		MA Alta sucesiva
@@ -198,14 +193,6 @@ public class AFIWriter {
 	
 	private List<Contract> getContracts(Enterprise enterprise, List<Contract> contractList) throws ManagerBeanException{
 		List<Contract> list = new LinkedList<Contract>();
-//		IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-//		Criteria criteria = new Criteria();
-//		criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), enterprise.getId());
-//		Contract contract;
-//		for(ITransferObject to: bean.getList(criteria)){
-//			contract = (Contract)to;
-//			list.add(contract);
-//		}
 		for(Contract c: contractList){
 			if(c.getWorkPlace().getEnterprise().equals(enterprise)){
 				list.add(c);
