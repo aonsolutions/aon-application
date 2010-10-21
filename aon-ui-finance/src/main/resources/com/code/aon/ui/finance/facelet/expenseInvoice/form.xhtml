@@ -136,7 +136,7 @@
 						</aon:selectInputDate>
 						<c:if test="#{aonRole.accountingOperator}">
 							<aon:outputLabel for="Invoice_taxDate"
-								styleClass="aon-form-date-label" style="margin-right: 5px;"
+								styleClass="aon-form-date-label aon-margin-right"
 								value="#{financeBundle.finance_tax_date}" />
 							<aon:selectInputDate size="8" id="Invoice_taxDate"
 								disabled="#{expenseInvoice.readOnly}"
