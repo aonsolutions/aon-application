@@ -46,8 +46,10 @@ public class ContractBatchWizard {
 	private static final String[] STEPS = {
 			"contractBatchWizard_step0",
 			"contractBatchWizard_step1",
-			"contractBatchWizard_step2" };
+			"contractBatchWizard_step2",
+			"contractBatchWizard_step3" };
 	private DataModel model;
+	private ContractBatch batch;
 	private AFIWriter afiWriter;
 	private FileOutput fileOutput;
 	
@@ -59,6 +61,13 @@ public class ContractBatchWizard {
 	}
 	public void setModel(DataModel model) {
 		this.model = model;
+	}
+
+	public ContractBatch getBatch() {
+		return batch;
+	}
+	public void setBatch(ContractBatch batch) {
+		this.batch = batch;
 	}
 	
 	private AFIWriter getAFIWriter() {
@@ -109,15 +118,14 @@ public class ContractBatchWizard {
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
 			onValidate(event);
-			onDiskGenerate(event);
 			save();
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
+			onDiskGenerate(event);
+			setCurrentStep(getCurrentStep() + 1);
+		} else if (getCurrentStep() == 3) {
 			onFinish(event);
 		} 
-//		else if (getCurrentStep() == 3) {
-//			setCurrentStep(getCurrentStep() + 1);
-//		} 
 	}
 
 	public void onPrevious(ActionEvent event) {
@@ -137,7 +145,7 @@ public class ContractBatchWizard {
 	}
 
 	public boolean isNextAvailable() {
-		return (getCurrentStep() < 2);
+		return (getCurrentStep() < 3);
 	}
 	
 	public boolean isLast() {
@@ -157,11 +165,24 @@ public class ContractBatchWizard {
 	}
 
 	private void onValidate(ActionEvent event) {
-		
+		if(!isAnySelected()){
+			String msg = "Debe seleccionar algun contrato";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private boolean isAnySelected() {
+		for(RemesableContract r: (List<RemesableContract>) getModel().getWrappedData()){
+			if(r.isSelected()){
+				return true;
+			}
+		}
+		return false;
+	}
 	private void onFinish(ActionEvent event) {
-		
+		onStart(event);
 	}
 	
 	private void onContractSelect(ActionEvent event) {
@@ -203,10 +224,10 @@ public class ContractBatchWizard {
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
-				ContractBatch batch = new ContractBatch();
 				ContractBatchDetail batchDetail;
-				batch.setDate(new Date());
-				batch = (ContractBatch)BeanManager.getManagerBean(ContractBatch.class).insert(batch);
+				setBatch(new ContractBatch());
+				getBatch().setDate(new Date());
+				setBatch((ContractBatch)BeanManager.getManagerBean(ContractBatch.class).insert(getBatch()));
 				list = (List<RemesableContract>) getModel().getWrappedData();
 				for (RemesableContract r: list){
 					if (r.isSelected()) {
@@ -242,20 +263,14 @@ public class ContractBatchWizard {
 	@SuppressWarnings("unchecked")
 	public void onDiskGenerate(ActionEvent event) {
 		try {
-			String loggedUser = AonUtil.getRemoteUser();
-			loggedUser = StringUtils.substringBefore(loggedUser, "@");
-//			List<IRemesaParteIT> list = getParteITDAO().getRemesaParteITList(getRemesaINSS());
-//			setFileOutput(getFDIWriter().createFDI(list, loggedUser));
-//			List<RemesableContract> list = (List<RemesableContract>) getModel().getWrappedData();
-			
+//			String loggedUser = AonUtil.getRemoteUser();
+//			loggedUser = StringUtils.substringBefore(loggedUser, "@");
 			List<Contract> list = new LinkedList<Contract>();
-			
 			for(RemesableContract r: (List<RemesableContract>) getModel().getWrappedData()){
 				if(r.isSelected()){
 					list.add(r.getContract());
 				}
 			}
-			
 //			setFileOutput(getAFIWriter().createAFI(list, loggedUser));
 			setFileOutput(getAFIWriter().createAFI(list));
 			if (getFileOutput() != null) {
