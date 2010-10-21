@@ -14,24 +14,39 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		<aon:div styleClass="aon-text-center">
-			<aon:div styleClass="aon-text-center" style="font-size: 1.5em;margin-top: 20px; ">
-				<aon:outputText rendered="#{contractBatchWizard.diskOk}"
-					value="#{payrollBundle.payroll_remesa_disk_ok}" />
-				<aon:outputText rendered="#{!contractBatchWizard.diskOk}"
-					value="#{payrollBundle.payroll_remesa_disk_ko}" />
-			</aon:div>
+	
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="Remesa i18n"/>
+			</f:facet>
+
+			<aon:panelGrid columns="4" dir="true" width="100%">
+				<aon:outputText value="#{bundle.aon_id}" />
+				<aon:outputText
+					value="#{contractBatchWizard.batch.id}" />
+	
+				<aon:outputText value="#{bundle.aon_date}" />
+				<aon:outputText value="#{contractBatchWizard.batch.date}">
+					<f:convertDateTime type="date"
+						pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+		
+			</aon:panelGrid>
+		</aon:panel>
+		
+		<aon:dataTable id="contractData" value="#{contractBatchWizard.model}"
+			var="to" rows="20" rendered="#{contractBatchWizard.model.rowCount > 0}"
+			columnClasses="
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-dateColumn,
+			aon-editDataTable-textColumn aon-width-250">
 			
-			<rich:separator lineType="solid" style="margin-top: 20px; margin-bottom: 20px;"/>
-			
-			<h:commandLink target="_blank"
-				title="#{contractBatchWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				value="#{contractBatchWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
-				style="border-width: 0px 0px 0px 0px;"
-				actionListener="#{contractBatchWizard.onDownloadDisk}"
-				rendered="#{contractBatchWizard.fileOutput!=null}"
-				styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
-		</aon:div>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractBatch/columns.xhtml" />
+	
+		</aon:dataTable>
 	
 	</ui:define>
 
