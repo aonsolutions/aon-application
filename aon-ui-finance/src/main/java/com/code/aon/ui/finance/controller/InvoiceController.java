@@ -73,6 +73,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private FinanceEmailUtil emailController;
 	private String backAction;
 
+	public InvoiceController() {
+		this.emailController = new FinanceEmailUtil();
+	}
+
+	public Invoice getInvoice() {
+		return (Invoice)getTo();
+	}
+	
 	public String getInvoiceAddressControllerName() {
 		return invoiceAddressControllerName;
 	}
@@ -97,10 +105,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.invoiceFinanceControllerName = invoiceFinanceControllerName;
 	}
 
-	public Invoice getInvoice() {
-		return (Invoice)getTo();
-	}
-	
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
@@ -175,6 +179,50 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			city = invoiceAddress.getCity();
 		}
 		return city;
+	}
+
+	public boolean isShowInvoiceAddressWindow() {
+		return showInvoiceAddressWindow;
+	}
+
+	public void setShowInvoiceAddressWindow(boolean value) {
+		this.showInvoiceAddressWindow = value;
+	}
+
+	public void onInvoiceAddressShow( ActionEvent event ) {
+		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);
+		ITransferObject to = addressController.getTo();
+		if ( to == null ) {
+			addressController.onReset(event);
+		}
+	}
+
+	public String getBackAction() {
+		return backAction;
+	}
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
+	}
+	
+	public String backAction() {
+		String action = backAction;
+		if (StringUtils.isEmpty(action)) {
+			action = getBeanName() + "_list";
+		}
+		setBackAction(null); 
+		return action;
+	}
+	
+	public void onDateChanged(ActionEvent event) {
+		getInvoice().setTaxDate(getInvoice().getIssueDate());
+	}
+
+	public boolean isTaxDateEquals() {
+		Invoice invoice = getInvoice();
+		if (invoice != null) {
+			return ObjectUtils.equals(invoice.getIssueDate(), invoice.getTaxDate());
+		}
+		return true;
 	}
 
 	public double getTaxableBase(){
@@ -388,22 +436,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
     	return null;
 	}
 	
-	public boolean isShowInvoiceAddressWindow() {
-		return showInvoiceAddressWindow;
-	}
-
-	public void setShowInvoiceAddressWindow(boolean value) {
-		this.showInvoiceAddressWindow = value;
-	}
-
-	public void onInvoiceAddressShow( ActionEvent event ) {
-		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);
-		ITransferObject to = addressController.getTo();
-		if ( to == null ) {
-			addressController.onReset(event);
-		}
-	}
-
 	@Override
 	public IManagerBean getAttachmentBean() {
 		try {
@@ -490,44 +522,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		messageController.setSecurityInfo( securyInfo );
 	}
 	
-	public String getBackAction() {
-		return backAction;
-	}
-	public void setBackAction(String backAction) {
-		this.backAction = backAction;
-	}
-	
-	public String backAction() {
-		String b = backAction;
-		if (b == null) {
-			b =  getBeanName() + "_list";
-		}
-		setBackAction(null); 
-		return b;
-	}
-	
-	public void onSelectTo(ActionEvent event) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		String alias = getIdAlias();
-		criteria.addEqualExpression(this.getManagerBean().getFieldName(alias),getManagerBean().getId( getTo() ));
-		this.setCriteria(criteria);
-		this.onSearch(event);
-		this.onSelectFirst(event);
-	}
-	
-	public InvoiceController() {
-		this.emailController = new FinanceEmailUtil();
+	public void onLoadInvoice(ActionEvent event, Invoice invoice, String backAction) throws ManagerBeanException {
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
+
+		setBackAction(backAction);
 	}
 
-	public void onDateChanged(ActionEvent event) {
-		getInvoice().setTaxDate( getInvoice().getIssueDate() );
-	}
-	public boolean isTaxDateEquals() {
-		Invoice invoice = getInvoice();
-		if (invoice != null) {
-			return ObjectUtils.equals(invoice.getIssueDate(), invoice.getTaxDate());
-		}
-		return true;
-	}
-	
 }
