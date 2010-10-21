@@ -21,7 +21,7 @@
 						styleClass="aon-width-all" columnClasses="aon-padding"
 						headerClass="aon-icon-master aon-direct-access-panel">
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.certificate_menu_group}" />
+							<aon:outputText value="#{appBundle.employee_menu_group}" />
 						</f:facet>					
 						<aon:div styleClass="aon-direct-access-list">
 
@@ -92,6 +92,20 @@
 									action="contractBatchWizard_step0"
 									actionListener="#{contractBatchWizard.onStart}"
 									value="#{payrollBundle.contractBatchWizard_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="itBatchWizard" 
+									action="contractBatchWizard_step0"
+									disabled="true"
+									actionListener="#{contractBatchWizard.onStart}"
+									value="#{payrollBundle.itBatchWizard_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="fanBatchWizard" 
+									action="contractBatchWizard_step0"
+									disabled="true"
+									actionListener="#{contractBatchWizard.onStart}"
+									value="#{payrollBundle.fanBatchWizard_module}" />
 							</aon:div>
 								
 						</aon:div>
