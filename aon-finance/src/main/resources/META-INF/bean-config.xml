@@ -34,6 +34,13 @@
 	</bean>
 	
 	<bean description="">
+		<pojo>com.code.aon.finance.FinanceBatch</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.FinanceBatchBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
 		<pojo>com.code.aon.finance.FinanceBatchDetail</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.finance.event.FinanceBatchDetailBeanVetoListener</vetoListener>

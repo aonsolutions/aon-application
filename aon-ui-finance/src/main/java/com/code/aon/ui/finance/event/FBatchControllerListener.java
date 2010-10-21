@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
@@ -32,6 +33,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 		fBatch.setPayment(false);
 		fBatch.setIssueDate(new Date());
 		fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
+		fBatch.setSecurityLevel(SecurityLevel.OFFICIAL);
 	}
 	
 	@Override
