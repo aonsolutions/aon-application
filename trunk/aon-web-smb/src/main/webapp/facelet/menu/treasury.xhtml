@@ -62,13 +62,13 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_utilities}" />
 						</f:facet>
-						<aon:div styleClass="aon-direct-access-list-element">
-							<aon:commandLink id="financeTrackingEntry"
-								action="account_finance_tracking_entry"
-								actionListener="#{financeTrackingEntry.onReset}"
-								value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
-						</aon:div>
 						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="financeTrackingEntry"
+									action="account_finance_tracking_entry"
+									actionListener="#{financeTrackingEntry.onReset}"
+									value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
+							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="checks" action="util_checking"
 									value="#{financeBundle.finance_checking_module}" />
