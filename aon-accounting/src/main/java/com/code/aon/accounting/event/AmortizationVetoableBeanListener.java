@@ -18,6 +18,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
@@ -53,6 +54,9 @@ public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAda
 			account.setId(util.obtainNextAccountId(at.getAllocationAccount().getId()));
 			account.setDescription("Amortización " + to.getDescription());
 			to.setAllocationAccount((Account) accountBean.insert(account));
+			if (to.getSecurityLevel() == null) {
+				to.setSecurityLevel( SecurityLevel.OFFICIAL );
+			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
