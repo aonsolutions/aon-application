@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.entry;
 
 import java.util.Date;
 
@@ -12,12 +12,9 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.DefaultAccounts;
-import com.code.aon.accounting.Loan;
-import com.code.aon.accounting.Period;
+import com.code.aon.accounting.ExpenseEntry;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,29 +22,30 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class LoanEntryController  {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(LoanEntryController.class.getName()); 
+public class ExpenseEntryController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExpenseEntryController.class.getName()); 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
-	
-	private Period period;
-	private Loan loan;
+
+	private ExpenseEntry entry;
 	private String navigationKey;
 	private AccountingUtil accountingUtil;
 	private AccountBridgeUtil accountBridgeUtil;
-
+	private int payMethodTypeDetailsSize; 
+	
 	private AccountingUtil getAccountingUtil() {
 		if (accountingUtil == null) {
 			accountingUtil = new AccountingUtil();
 		}
 		return accountingUtil;
 	}
+
 	private AccountBridgeUtil getAccountBridgeUtil() {
 		if (accountBridgeUtil == null) {
 			accountBridgeUtil = new AccountBridgeUtil();
@@ -55,22 +53,13 @@ public class LoanEntryController  {
 		return accountBridgeUtil;
 	}
 
-	public Period getPeriod() {
-		return period;
+	public ExpenseEntry getEntry() {
+		return entry;
 	}
-
-	public void setPeriod(Period period) {
-		this.period = period;
+	public void setHeader(ExpenseEntry entry) {
+		this.entry = entry;
 	}
-
-	public Loan getLoan() {
-		return loan;
-	}
-
-	public void setLoan(Loan loan) {
-		this.loan = loan;
-	}
-
+	
 	public void onReset(ActionEvent event){
 		try {
 			reset();
@@ -80,24 +69,25 @@ public class LoanEntryController  {
 	}
 	
 	private void reset() throws ManagerBeanException {
-		this.period = AccountingPeriodUtil.getDefaultPeriod();
-		this.loan = initializeLoan();
+		this.entry = initializeentry();
+		IManagerBean payMethodTypeDetailBean = BeanManager.getManagerBean(PayMethodTypeDetail.class);
+		payMethodTypeDetailsSize = payMethodTypeDetailBean.getCount(null);
 	}
 	
-	private Loan initializeLoan() {
-		Loan loan = new Loan();
-		loan.setLoanDate(new Date());
-		loan.setSecurityLevel(SecurityLevel.OFFICIAL);
-		loan.setFeeAmount(0.0);
-		loan.setStatus(LoanStatus.ACTIVE);
-		return loan;
+	private ExpenseEntry initializeentry() throws ManagerBeanException {
+		ExpenseEntry entry = new ExpenseEntry();
+		entry.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
+		entry.setDate(new Date());
+		entry.setAccount(null);
+		entry.setSecurityLevel(SecurityLevel.OFFICIAL);
+		return entry;
 	}
-
+	
 	public String accept(){
 		return navigationKey; 	
 	}
 
-	public void onAccept(ActionEvent event) {
+	public void onAccept(ActionEvent event){
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -111,13 +101,11 @@ public class LoanEntryController  {
 				this.navigationKey = "accountEntry_form";
 				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = new AccountEntry();
-				entry.setEntryDate(getLoan().getLoanDate());
-				entry.setAccountPeriod(getPeriod().getId());
-				entry.setType(AccountEntryType.LOAN);
-				entry.setSecurityLevel(getLoan().getSecurityLevel());
-				IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
-				loanBean.insert(getLoan());
-				entry = (AccountEntry)entryBean.insert(entry);
+				entry.setEntryDate(getEntry().getDate());
+				entry.setAccountPeriod(getEntry().getPeriod().getId());
+				entry.setType(AccountEntryType.EXPENSES);
+				entry.setSecurityLevel(getEntry().getSecurityLevel());
+				entry = (AccountEntry) entryBean.insert(entry);
 				insertEntryDetails(entry);
 				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
@@ -146,33 +134,35 @@ public class LoanEntryController  {
 	
 	private void insertEntryDetails(AccountEntry entry) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-		// Primer Apunte
+		Account balancingAccount = obtainPaymentAccount();
+		// Primer apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
-		Account loanAccount = getAccountBridgeUtil().obtainLoanAccount(getLoan());
-		Account rBankAccount = getAccountBridgeUtil().obtainRBankAccount(getLoan().getRegistryBank());
-		detail.setAccount(loanAccount);
+		detail.setAccount(getEntry().getAccount());
 		detail.setAccountEntry(entry);
-		detail.setConcept(getLoan().getDescription());
-		detail.setCredit(getLoan().getAmount());
-		detail.setBalancingAccount(rBankAccount);
+		detail.setBalancingAccount(balancingAccount);
+		detail.setConcept(getEntry().getConcept());
+		detail.setDebit(getEntry().getAmount());
 		accountEntryDetailBean.insert(detail);
-		// Segundo Apunte
+		// Segundo apunte
 		detail = new AccountEntryDetail();
-		detail.setAccount(rBankAccount);
+		detail.setAccount(balancingAccount);
 		detail.setAccountEntry(entry);
-		detail.setConcept(getLoan().getDescription());
-		detail.setDebit(getLoan().getAmount() - getLoan().getExpenses());
-		detail.setBalancingAccount(loanAccount);
-		accountEntryDetailBean.insert(detail);
-		// Tercer Apunte
-		detail = new AccountEntryDetail();
-		detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT));;
-		detail.setAccountEntry(entry);
-		detail.setConcept(getLoan().getDescription());
-		detail.setDebit(getLoan().getExpenses());
-		detail.setBalancingAccount(loanAccount);
+		detail.setBalancingAccount(getEntry().getAccount());
+		detail.setConcept(getEntry().getConcept());
+		detail.setCredit(getEntry().getAmount());
 		accountEntryDetailBean.insert(detail);
 	}
+	
+	private Account obtainPaymentAccount() throws ManagerBeanException {
+		Account account = null;
+		if (getEntry().getDeposit() == 0 && getEntry().getRegistryBank() != null) {
+			account = getAccountBridgeUtil().obtainRBankAccount(getEntry().getRegistryBank());
+		} else if (getEntry().getDeposit() == 1 && getEntry().getPayMethodTypeDetail() != null) {
+			account = getAccountBridgeUtil().obtainPayMethodTypeDetailAccount(getEntry().getPayMethodTypeDetail());
+		}
+		return (account!=null) ? account : getAccountingUtil().obtainCashAccount();
+	}
+
 	
 	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
 		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
@@ -184,5 +174,8 @@ public class LoanEntryController  {
 		entryController.onSelect(null);
 	}
 
-	
+	public int getPayMethodTypeDetailsSize() throws ManagerBeanException {
+		return payMethodTypeDetailsSize;
+	}
+
 }

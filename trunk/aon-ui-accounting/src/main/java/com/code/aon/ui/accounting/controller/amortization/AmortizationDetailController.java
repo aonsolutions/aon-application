@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.amortization;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;

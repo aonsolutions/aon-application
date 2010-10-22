@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.entry;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.ManagerBeanException;

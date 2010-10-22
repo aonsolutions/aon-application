@@ -1,11 +1,9 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.report;
 
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
@@ -13,13 +11,13 @@ import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class LedgerReportController extends BasicController {
+public class JournalReportController extends BasicController {
 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
@@ -27,10 +25,9 @@ public class LedgerReportController extends BasicController {
 	private Date fromDate;
 	private Date toDate;
 	private Date date;
-	private String order;
-	private String account;
+	private boolean journal;
 	private Integer previousAccountEntryDetail;
-	private String previousAccount;
+	private Integer previousAccountEntry;
 	private boolean currentValue = true;
 	private boolean odd = true;
 	private SecurityLevel securityLevel;
@@ -67,13 +64,6 @@ public class LedgerReportController extends BasicController {
 		this.date = date;
 	}
 
-	public String getOrder() {
-		return order;
-	}
-	public void setOrder(String order) {
-		this.order = order;
-	}
-
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -82,18 +72,17 @@ public class LedgerReportController extends BasicController {
 		this.securityLevel = securityLevel;
 	}
 
-	public String getAccount() {
-		return account;
-	}
-
-	public void setAccount(String account) {
-		this.account = account;
-	}
-
-
 	public void onReset(ActionEvent event) {
 		initialize();
 		super.onReset(event);
+	}
+
+	public boolean isJournal() {
+		return journal;
+	}
+
+	public void setJournal(boolean journal) {
+		this.journal = journal;
 	}
 
 	private void initialize() {
@@ -106,9 +95,9 @@ public class LedgerReportController extends BasicController {
 		setToDate(null);
 		setDate(new Date());
 		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
-		setAccount(null);
+		setJournal(false);
+		previousAccountEntry = null;
 		previousAccountEntryDetail = null;
-		previousAccount = null;
 		odd = true;
 	}
 
@@ -142,33 +131,20 @@ public class LedgerReportController extends BasicController {
 				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL),
 						getSecurityLevel());
 			}
-			if (!StringUtils.isBlank(getAccount())) {
-				criteria.addExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), getAccount());
-			}
-			getCriteria().addOrder(
-					getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID));
-			if ("1".equals(getOrder()) ) {
-				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE));
-				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
-			} else if ("2".equals(getOrder()) ) {
-				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+			if (isJournal()) {
+				getCriteria().addOrder(
+						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
 			} else {
-				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
+				getCriteria().addOrder(
+						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
 			}
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
-		} catch (ExpressionException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 
-	public boolean isJournalOrdered() {
-		return ("3".equals(getOrder()) );
-	}
-	
 	public boolean isOdd() {
 		return odd;
 	}
@@ -178,13 +154,13 @@ public class LedgerReportController extends BasicController {
 			AccountEntryDetail acd = (AccountEntryDetail) getModel().getRowData();
 			if (previousAccountEntryDetail == null || !previousAccountEntryDetail.equals(acd.getId())) {
 				previousAccountEntryDetail = acd.getId();
-				String current = acd.getAccount().getId();
-				if (previousAccount == null) {
-					previousAccount = current;
+				Integer current = acd.getAccountEntry().getId();
+				if (previousAccountEntry == null) {
+					previousAccountEntry = current;
 					currentValue = true;
 				} else {
-					if (!previousAccount.equals(current)) {
-						previousAccount = current;
+					if (!previousAccountEntry.equals(current)) {
+						previousAccountEntry = current;
 						odd = !odd;
 						currentValue = true;
 					} else {
@@ -213,7 +189,7 @@ public class LedgerReportController extends BasicController {
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
 			entryController.onSelect(null);
-			entryController.setBackAction("ledger_list");
+			entryController.setBackAction("journal_list");
 		} catch (ManagerBeanException e) {
 			String msg = "Error al cargar el apunte.";
 			AonUtil.addErrorMessage(msg);

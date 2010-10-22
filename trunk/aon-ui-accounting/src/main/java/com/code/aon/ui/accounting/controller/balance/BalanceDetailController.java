@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.balance;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.entry;
 
 import java.util.Date;
 import java.util.LinkedList;

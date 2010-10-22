@@ -47,7 +47,7 @@
 	<managed-bean>
 		<managed-bean-name>accountingBook</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountingBookController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.AccountingBookController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<!-- **************** ACCOUNT BUDGET ************************** -->
@@ -162,7 +162,7 @@
 	<!-- **************** ANNUAL REPORT ************************** -->
 	<managed-bean>
 		<managed-bean-name>annualReport</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.AnnualReportController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.AnnualReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -209,7 +209,7 @@
 	<managed-bean>
 		<managed-bean-name>annualReportDetail</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AnnualReportDetailController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.AnnualReportDetailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -272,7 +272,7 @@
 	<!-- **************** BALANCE************************** -->
 	<managed-bean>
 		<managed-bean-name>balance</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.BalanceController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -319,7 +319,7 @@
 	<managed-bean>
 		<managed-bean-name>balanceDetail</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.BalanceDetailController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.balance.BalanceDetailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -364,7 +364,7 @@
 		<managed-bean>
 		<managed-bean-name>balanceSheet</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.BalanceSheetController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.balance.BalanceSheetController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
@@ -372,14 +372,14 @@
 	<managed-bean>
 		<managed-bean-name>balanceExporter</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.BalanceExporter</managed-bean-class>
+			com.code.aon.ui.accounting.controller.balance.BalanceExporter</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<!--  ********* BALANCE IMPORTER  ***************** -->
 	<managed-bean>
 		<managed-bean-name>balanceImporter</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.BalanceImporter</managed-bean-class>
+			com.code.aon.ui.accounting.controller.balance.BalanceImporter</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -387,7 +387,7 @@
 	<managed-bean>
 		<managed-bean-name>amortization</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AmortizationController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.amortization.AmortizationController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -446,7 +446,7 @@
 	<managed-bean>
 		<managed-bean-name>amortizationDetail</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AmortizationDetailController
+			com.code.aon.ui.accounting.controller.amortization.AmortizationDetailController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -498,7 +498,7 @@
 	<managed-bean>
 		<managed-bean-name>periodAmortization</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.PeriodAmortizationController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.amortization.PeriodAmortizationController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -521,7 +521,7 @@
 	<!-- **************** AMORTIZATION TYPE ************************** -->
 	<managed-bean>
 		<managed-bean-name>amortizationType</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.AmortizationTypeController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.amortization.AmortizationTypeController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -541,14 +541,14 @@
 	<managed-bean>
 		<managed-bean-name>amortizationTypeExporter</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AmortizationTypeExporter</managed-bean-class>
+			com.code.aon.ui.accounting.controller.amortization.AmortizationTypeExporter</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<!--  ********* AMORTIZATION IMPORTER  ***************** -->
 	<managed-bean>
 		<managed-bean-name>amortizationTypeImporter</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AmortizationTypeImporter</managed-bean-class>
+			com.code.aon.ui.accounting.controller.amortization.AmortizationTypeImporter</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -556,7 +556,7 @@
 	<managed-bean>
 		<managed-bean-name>endPeriodEntries</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.EndPeriodEntriesController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.EndPeriodEntriesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -599,7 +599,7 @@
 	<managed-bean>
 		<managed-bean-name>accountEntry</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountEntryController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.AccountEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -652,7 +652,7 @@
 	<managed-bean>
 		<managed-bean-name>accountEntryDetail</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountEntryDetailController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.AccountEntryDetailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -722,7 +722,7 @@
 	<managed-bean>
 		<managed-bean-name>invoiceEntry</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.InvoiceEntryController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.InvoiceEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -730,7 +730,7 @@
 	<managed-bean>
 		<managed-bean-name>financeEntry</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.FinanceEntryController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.FinanceEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -738,7 +738,7 @@
 	<managed-bean>
 		<managed-bean-name>financeTrackingEntry</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.FinanceTrackingEntryController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.FinanceTrackingEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -746,7 +746,7 @@
 	<managed-bean>
 		<managed-bean-name>expenseEntry</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.ExpenseEntryController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.ExpenseEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -754,7 +754,7 @@
 	<managed-bean>
 		<managed-bean-name>salaryEntry</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.SalaryEntryController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.SalaryEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -762,7 +762,7 @@
 	<managed-bean>
 		<managed-bean-name>socialInsuranceEntry</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.SocialInsuranceEntryController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.SocialInsuranceEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -770,7 +770,7 @@
 	<managed-bean>
 		<managed-bean-name>loanEntry</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.LoanEntryController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.LoanEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -778,7 +778,7 @@
 	<managed-bean>
 		<managed-bean-name>loanFeeEntry</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.LoanFeeEntryController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.LoanFeeEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -786,7 +786,7 @@
 	<managed-bean>
 		<managed-bean-name>journalReport</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.JournalReportController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.JournalReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -802,7 +802,7 @@
 	<managed-bean>
 		<managed-bean-name>ledgerReport</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.LedgerReportController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.LedgerReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -818,7 +818,7 @@
 	<managed-bean>
 		<managed-bean-name>profitAndLossReport</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.ProfitAndLossReportController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.ProfitAndLossReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>budgeted</property-name>
@@ -830,7 +830,7 @@
 	<managed-bean>
 		<managed-bean-name>budgetedProfitAndLossReport</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.ProfitAndLossReportController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.ProfitAndLossReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>budgeted</property-name>
@@ -842,7 +842,7 @@
 	<managed-bean>
 		<managed-bean-name>budgetedProfitAndLossComparison</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.ProfitAndLossComparisonController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.ProfitAndLossComparisonController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<!--
 			<managed-property> <property-name>budgetedComparison</property-name>
@@ -854,7 +854,7 @@
 	<managed-bean>
 		<managed-bean-name>profitAndLossMonthly</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.ProfitAndLossMonthlyReportController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.ProfitAndLossMonthlyReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -866,16 +866,12 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ********** ACCOUNT LEVEL CHANGE CONTROLLER ********* -->
+	<!-- ********** VAT REGENERATOR CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountLevelChange</managed-bean-name>
+		<managed-bean-name>vatRegenerator</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountLevelChangeController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.VatRegeneratorController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
 	</managed-bean>
 
 	<!--  *************** ACCOUNT APP PARAMS ***************** -->
@@ -977,7 +973,7 @@
 	<managed-bean>
 		<managed-bean-name>trialBalance</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.TrialBalanceController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.TrialBalanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -985,7 +981,7 @@
 	<managed-bean>
 		<managed-bean-name>statement</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.StatementController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.StatementController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1094,7 +1090,7 @@
 	<managed-bean>
 		<managed-bean-name>financialStatement</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.FinancialStatementController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.FinancialStatementController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -1393,10 +1389,19 @@
 		<navigation-case>
 			<from-outcome>regenerateAccount</from-outcome>
 			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/util/form.xhtml</to-view-id>
+				/com/code/aon/ui/accounting/facelet/util/regenerateAccount.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- **************** REGENERATE VAT SUMMARY ********************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>regenerateVat</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/util/regenerateVat.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 	<!-- **************** ACCOUNT LEVEL CHANGE ********************* -->
 	<navigation-rule>
 		<navigation-case>
