@@ -6,7 +6,7 @@ import com.code.aon.accounting.ProfitAndLossComparison;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.ui.accounting.controller.ProfitAndLossComparisonController;
+import com.code.aon.ui.accounting.controller.report.ProfitAndLossComparisonController;
 
 public class ExpensesFinancialStatement extends AbstractFinancialStatement {
 

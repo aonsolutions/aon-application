@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.amortization;
 
 import com.code.aon.ui.form.BasicController;
 

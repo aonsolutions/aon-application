@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.amortization;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

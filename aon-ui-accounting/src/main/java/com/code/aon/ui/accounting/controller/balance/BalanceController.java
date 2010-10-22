@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.balance;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;

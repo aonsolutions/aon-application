@@ -1,9 +1,11 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.report;
 
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
@@ -11,12 +13,14 @@ import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class JournalReportController extends BasicController {
+public class LedgerReportController extends BasicController {
 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
@@ -24,9 +28,10 @@ public class JournalReportController extends BasicController {
 	private Date fromDate;
 	private Date toDate;
 	private Date date;
-	private boolean journal;
+	private String order;
+	private String account;
 	private Integer previousAccountEntryDetail;
-	private Integer previousAccountEntry;
+	private String previousAccount;
 	private boolean currentValue = true;
 	private boolean odd = true;
 	private SecurityLevel securityLevel;
@@ -63,6 +68,13 @@ public class JournalReportController extends BasicController {
 		this.date = date;
 	}
 
+	public String getOrder() {
+		return order;
+	}
+	public void setOrder(String order) {
+		this.order = order;
+	}
+
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -71,17 +83,18 @@ public class JournalReportController extends BasicController {
 		this.securityLevel = securityLevel;
 	}
 
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+
 	public void onReset(ActionEvent event) {
 		initialize();
 		super.onReset(event);
-	}
-
-	public boolean isJournal() {
-		return journal;
-	}
-
-	public void setJournal(boolean journal) {
-		this.journal = journal;
 	}
 
 	private void initialize() {
@@ -94,9 +107,9 @@ public class JournalReportController extends BasicController {
 		setToDate(null);
 		setDate(new Date());
 		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
-		setJournal(false);
-		previousAccountEntry = null;
+		setAccount(null);
 		previousAccountEntryDetail = null;
+		previousAccount = null;
 		odd = true;
 	}
 
@@ -130,20 +143,33 @@ public class JournalReportController extends BasicController {
 				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL),
 						getSecurityLevel());
 			}
-			if (isJournal()) {
-				getCriteria().addOrder(
-						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
+			if (!StringUtils.isBlank(getAccount())) {
+				criteria.addExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), getAccount());
+			}
+			getCriteria().addOrder(
+					getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID));
+			if ("1".equals(getOrder()) ) {
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE));
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+			} else if ("2".equals(getOrder()) ) {
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
 			} else {
-				getCriteria().addOrder(
-						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
 			}
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
+		} catch (ExpressionException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 
+	public boolean isJournalOrdered() {
+		return ("3".equals(getOrder()) );
+	}
+	
 	public boolean isOdd() {
 		return odd;
 	}
@@ -153,13 +179,13 @@ public class JournalReportController extends BasicController {
 			AccountEntryDetail acd = (AccountEntryDetail) getModel().getRowData();
 			if (previousAccountEntryDetail == null || !previousAccountEntryDetail.equals(acd.getId())) {
 				previousAccountEntryDetail = acd.getId();
-				Integer current = acd.getAccountEntry().getId();
-				if (previousAccountEntry == null) {
-					previousAccountEntry = current;
+				String current = acd.getAccount().getId();
+				if (previousAccount == null) {
+					previousAccount = current;
 					currentValue = true;
 				} else {
-					if (!previousAccountEntry.equals(current)) {
-						previousAccountEntry = current;
+					if (!previousAccount.equals(current)) {
+						previousAccount = current;
 						odd = !odd;
 						currentValue = true;
 					} else {
@@ -188,7 +214,7 @@ public class JournalReportController extends BasicController {
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
 			entryController.onSelect(null);
-			entryController.setBackAction("journal_list");
+			entryController.setBackAction("ledger_list");
 		} catch (ManagerBeanException e) {
 			String msg = "Error al cargar el apunte.";
 			AonUtil.addErrorMessage(msg);

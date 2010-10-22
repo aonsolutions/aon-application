@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.controller.entry;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -79,6 +79,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.account.controller.AccountCollectionsController;
+import com.code.aon.ui.accounting.controller.AccountAppParamsController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;

@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -16,7 +15,6 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.IProgression;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -94,7 +92,7 @@ public class AccountSummaryManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void regenerateAccountSummary(Period accountPeriod, IProgression progressionBean) throws ManagerBeanException {
+	public void regenerateAccountSummary(Period accountPeriod) throws ManagerBeanException {
 		deleteAccountSummary(accountPeriod);
 
 		String select = "select entryDetail.account, entry.securityLevel, entry.entryDate, " +
@@ -121,7 +119,6 @@ public class AccountSummaryManager {
         	accountSummary.setCredit(CommonUtil.round(((Double)obj[4]).doubleValue(),2));
         	addAccountSummary(accountSummary);
         	i++;    	
-        	progressionBean.setProgressionCurrentValue((long) ( i * 100 / count));
         }
 	}
 
