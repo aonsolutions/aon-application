@@ -3,7 +3,7 @@
 <digester-rules>
 
 	<object-create-rule pattern="*/balances"
-		classname="com.code.aon.ui.accounting.controller.BalanceImporterManager" />
+		classname="com.code.aon.ui.accounting.controller.balance.BalanceImporterManager" />
 
 	<pattern value="*/balances/balance">
 		<object-create-rule classname="com.code.aon.accounting.Balance" />
