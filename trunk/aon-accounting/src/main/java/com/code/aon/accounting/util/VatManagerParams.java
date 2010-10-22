@@ -16,6 +16,9 @@ public class VatManagerParams {
 	private Series series;
 	private Integer firstNumber;
 
+	private boolean valid;
+	private int count;
+	
 	public Period getPeriod() {
 		return period;
 	}
@@ -70,6 +73,20 @@ public class VatManagerParams {
 	}
 	public void setFirstNumber(Integer firstNumber) {
 		this.firstNumber = firstNumber;
+	}
+	
+	public int getCount() {
+		return count;
+	}
+	public void setCount(int count) {
+		this.count = count;
+	}
+	
+	public boolean isValid() {
+		return valid;
+	}
+	public void setValid(boolean valid) {
+		this.valid = valid;
 	}
 	
 }

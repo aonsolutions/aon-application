@@ -20,15 +20,39 @@
 					value="#{accountingBundle.accounting_regenerate_vat_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="execute" value="#{accountingBundle.accounting_execute}"
+					<aon:commandButton id="clean" value="#{bundle.aon_clear}"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber"
+						immediate="true"
+						actionListener="#{vatRegenerator.onEditSearch}" />
+					<aon:commandButton id="validate" value="#{accountingBundle.accounting_validate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')"
-						actionListener="#{vatRegenerator.regenerateAccount}" />
+						actionListener="#{vatRegenerator.validate}" />
+					<aon:commandButton id="execute" value="#{accountingBundle.accounting_execute}"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh"
+						rendered="#{vatRegenerator.params.valid}"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')"
+						actionListener="#{vatRegenerator.regenerate}" />
 				</ui:define>
 			</ui:decorate>
 
-			<aon:div>
+			<aon:div style="width:100%;"> 
+				<aon:div styleClass="aon-margin-top aon-border aon-text-center" style="width:90%; margin:10px auto;"
+					rendered="#{vatRegenerator.validated}">
+
+					<aon:div>
+						<aon:outputText value="#{accountingBundle.account_invoice_update}" />
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="#{vatRegenerator.params.count}" styleClass="aon-weight-bold"/>
+					</aon:div>
+					<aon:div rendered="#{!vatRegenerator.params.valid}">
+						<aon:outputText style="color:red;" styleClass="aon-weight-bold aon-margin-top" 
+							value="#{accountingBundle.account_invoice_update_error}" />
+					</aon:div>
+				</aon:div>				
+
 				<aon:panelGrid columns="2" style="width:90%; margin:10px auto;"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 
@@ -36,6 +60,7 @@
 						for="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu
+						disabled="#{vatRegenerator.validated}"
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{vatRegenerator.params.period}">
 						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
@@ -47,31 +72,35 @@
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneMenu
 							id="AccountEntryDetail_accountEntry_securityLevel"
+							disabled="#{vatRegenerator.validated}"
 							value="#{vatRegenerator.params.securityLevel}">
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 						</aon:selectOneMenu>
 					</c:if>
 
-					<aon:outputLabel for="entryDate-From"
-						value="#{financeBundle.finance_invoice_order}" />
+					<aon:outputText value="#{financeBundle.finance_invoice_order}" />
 					<aon:panelGrid columns="3">
 						<aon:div>
 							<aon:selectOneMenu id="from_series"
+								disabled="#{vatRegenerator.validated}"
 								value="#{vatRegenerator.params.fromSeries}">
 								<f:selectItem itemLabel="-" value="#{null}" />
 								<f:selectItems value="#{configCollections.series}" />
 							</aon:selectOneMenu>
 							<aon:inputText id="From_Number" value="#{vatRegenerator.params.fromNumber}" size="10"
+								disabled="#{vatRegenerator.validated}"
 								style="margin-left: 0.5em;"/>
 						</aon:div>
 						<aon:outputLabel for="entryDate-To" value="#{bundle.aon_date_to}" />
 						<aon:div>
 							<aon:selectOneMenu id="to_series"
+								disabled="#{vatRegenerator.validated}"
 								value="#{vatRegenerator.params.toSeries}">
 								<f:selectItem itemLabel="-" value="#{null}" />
 								<f:selectItems value="#{configCollections.series}" />
 							</aon:selectOneMenu>
 							<aon:inputText id="To_Number" value="#{vatRegenerator.params.toNumber}" size="10"
+								disabled="#{vatRegenerator.validated}"
 								style="margin-left: 0.5em;"/>
 						</aon:div>
 					</aon:panelGrid>
@@ -88,6 +117,7 @@
 					<aon:outputLabel for="AccountEntryDetail_input_series"
 						value="#{accountingBundle.account_invoices_series}" />
 					<aon:selectOneMenu id="AccountEntryDetail_input_series"
+						disabled="#{vatRegenerator.validated}"
 						value="#{vatRegenerator.params.series}">
 						<f:selectItems value="#{configCollections.series}" />
 					</aon:selectOneMenu>
@@ -95,6 +125,7 @@
 					<aon:outputLabel for="AccountEntryDetail_first_number"
 						value="#{accountingBundle.account_first_number}" />
 					<aon:inputText id="AccountEntryDetail_first_number" size="10" required="true"
+						disabled="#{vatRegenerator.validated}"
 						value="#{vatRegenerator.params.firstNumber}" />
 				</aon:panelGrid>
 			</aon:div>
