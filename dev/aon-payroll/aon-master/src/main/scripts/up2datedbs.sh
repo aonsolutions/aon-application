@@ -30,7 +30,7 @@ CLASSPATH=$CLASSPATH:/usr/share/java/commons-logging.jar:/usr/share/java/commons
 
 ERR=1
 
-aondir_db_connections | while read db_connection; do
+for db_connection in `aondir_db_connections`; do
 
         URL=$(perl -e 'if ("'$db_connection'"=~ /([^?]*)/) { print "$1\n" }');
         DB=$(perl -e 'if ("'$db_connection'"=~ /jdbc:[^\/]*\/\/[^\/]*\/([^?]*)/) { print "$1\n" }');
@@ -40,7 +40,6 @@ aondir_db_connections | while read db_connection; do
         [ $? -eq 0 ] && echo -e "\\033[1;32mOK\\033[0;39m" || echo -e "\\033[1;31mERROR $ERR\\033[0;39m";
 done
 
-exit $ERR;
 
 
 
