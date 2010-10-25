@@ -14,7 +14,8 @@ public class VatTaxControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		VatTaxController c = (VatTaxController) event.getController();		
 		VatTax vatTax = (VatTax) c.getTo();
-		vatTax.setYear( c.getFiscalParams().getDefaultYear() );
+		String defYear = c.getFiscalParams().getDefaultYear();
+		vatTax.setYear( defYear==null?null:Integer.parseInt(defYear) );
 		vatTax.setStatus( VatTaxStatus.PENDING);
 		vatTax.setComplementary(false);
 		vatTax.setReplacement(false);
