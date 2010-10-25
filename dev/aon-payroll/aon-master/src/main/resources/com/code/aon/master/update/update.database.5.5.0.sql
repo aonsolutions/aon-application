@@ -54,7 +54,6 @@ CREATE TABLE `contract_concept` (
 ALTER TABLE `enterprise_activity`
 MODIFY `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa';
 
-
 CREATE TABLE `contract_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la remesa de contratos',
   `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
@@ -78,6 +77,29 @@ CREATE TABLE `contract_batch_detail` (
 ) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de contratos';
 
 
+CREATE TABLE `enterprise_certificate` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del certificado de empresa de la remesa',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador unico de la empresa',
+  `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
+  `status` int(4) default NULL COMMENT 'Estado del certificado correspondiente a la ultima respuesta',
+  `sign` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Estado del certificado correspondiente a la ultima respuesta',
+  PRIMARY KEY  (`id`),
+  KEY `enterprise` (`enterprise`),
+  CONSTRAINT `enterprise_certificate_fk_1` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de certificados de empresa';
+
+CREATE TABLE `enterprise_certificate_detail` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del certificado de empresa de la remesa',
+  `enterprise_certificate` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa',
+  `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato de empleado',
+  `expire_date` date default NULL COMMENT 'Fecha de baja del empleado',
+  `suspension_cause` varchar(2) collate latin1_spanish_ci NOT NULL COMMENT 'Causa de la suspension del empleado',
+  PRIMARY KEY  (`id`),
+  KEY `enterprise_certificate` (`enterprise_certificate`),
+  KEY `contract` (`contract`),
+  CONSTRAINT `enterprise_certificate_detail_fk_1` FOREIGN KEY (`enterprise_certificate`) REFERENCES `enterprise_certificate` (`id`),
+  CONSTRAINT `enterprise_certificate_detail_fk_2` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de certificados de empresa';
 
 INSERT INTO `cnae` ( id, code, title ) 
 VALUES 
