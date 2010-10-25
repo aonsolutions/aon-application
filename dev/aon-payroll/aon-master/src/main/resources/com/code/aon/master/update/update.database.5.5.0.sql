@@ -13,6 +13,7 @@ DROP TABLE `contract_type`;
 DROP TABLE `contract_tracking`;
 
 ALTER TABLE `contract` 	ADD COLUMN `document` mediumblob COMMENT 'Impreso (.pdf) del comtrato.';
+ALTER TABLE contract ADD `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de notificacion del contrato';
 
 CREATE TABLE `contract_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -52,6 +53,30 @@ CREATE TABLE `contract_concept` (
 
 ALTER TABLE `enterprise_activity`
 MODIFY `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa';
+
+
+CREATE TABLE `contract_batch` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la remesa de contratos',
+  `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
+  `red_notify_date` date default NULL COMMENT 'Fecha de notificacion al sistema red',
+  `red_notify_id` date default NULL COMMENT 'Identificador de la notificacion',
+  `red_response_date` date default NULL COMMENT 'Fecha de respuesta del sistema red',
+  `red_response_id` date default NULL COMMENT 'Identificador de la respuesta',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de contratos';
+
+
+CREATE TABLE `contract_batch_detail` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del detalle de la remesa',
+  `contract_batch` int(4) NOT NULL COMMENT 'Identificador unico de la remesa de contratos',
+  `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato',
+  PRIMARY KEY  (`id`),
+  KEY `contract_batch` (`contract_batch`),
+  KEY `contract` (`contract`),
+  CONSTRAINT `contract_batch_detail_fk_1` FOREIGN KEY (`contract_batch`) REFERENCES `contract_batch` (`id`),
+  CONSTRAINT `contract_batch_detail_fk_2` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de contratos';
+
 
 
 INSERT INTO `cnae` ( id, code, title ) 
