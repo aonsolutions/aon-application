@@ -86,7 +86,7 @@ public class AccountEntryController extends BasicController {
 	
 	public void calculateUpdatableFlag() {
 		AccountEntry entry = (AccountEntry) this.getTo();
-    	AccountEntryType type = entry.getType();
+		AccountEntryType type = entry.getType();
 		setAonInvoice(false);
 		boolean flag = false;
 		try {
