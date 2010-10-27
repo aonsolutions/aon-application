@@ -38,9 +38,11 @@ public class ContractBuilder {
 	private int zoomFactor;
 	private static final double FACTOR_1X = 1.2;
 	private static final double FACTOR_2X = 1.4;
+	private static final double FACTOR_3X = 1.6;
+	private static final double FACTOR_4X = 1.8;
 	
 	private ContractBuilder(){
-//		setZoomFactor(1);
+//		setZoomFactor(2);
 	}
 	
 	public static ContractBuilder getInstance(){
@@ -51,7 +53,7 @@ public class ContractBuilder {
 	}
 	
 	public Integer getContractWidth() {
-		return getFactorizedValue(contractWidth, getZoomFactor());
+		return getFactorizedValue(contractWidth);
 	}
 	
 	public void setContractWidth(Integer contractWidth) {
@@ -59,20 +61,24 @@ public class ContractBuilder {
 	}
 	
 	public Integer getContractHeight() {
-		return getFactorizedValue(contractHeight, getZoomFactor());
+		return getFactorizedValue(contractHeight);
 	}
 	
 	public void setContractHeight(Integer contractHeight) {
 		this.contractHeight = contractHeight;
 	}
 	
-	public int getFactorizedValue(double value, int zoom){
-		if(zoom==0){
+	public int getFactorizedValue(double value){
+		if(getZoomFactor()==0){
 			return (int)value;
-		} else if(zoom==1){
+		} else if(getZoomFactor()==1){
 			return (int)(value*FACTOR_1X);
-		} else if(zoom==2){
+		} else if(getZoomFactor()==2){
 			return (int)(value*FACTOR_2X);
+		} else if(getZoomFactor()==3){
+			return (int)(value*FACTOR_3X);
+		} else if(getZoomFactor()==4){
+			return (int)(value*FACTOR_4X);
 		}
 		return (int)value;
 	}
@@ -169,21 +175,9 @@ public class ContractBuilder {
 		reader.close();
 	}
 	
-//	public void regenerateFieldCoordinates()  {
-//		for (ContractField f: getContractFields()) {
-//			f.setBottomCoordinates(getBottomCoordinates(getFactorizedValue(f.getBottomCoordinates(), getZoomFactor())));
-//			f.setLeftCoordinates(getLeftCoordinates(form, key));
-//			
-//			
-//		}
-//	}
-	
-	
 	public void loadDefaultFields(Contract contract) throws ManagerBeanException {
 		RegistryDirStaffLinesController rDirStaff = (RegistryDirStaffLinesController)AonUtil.getRegisteredBean(ENTERPRISE_DIR_STAFF_CONTROLLER);
-//		Criteria criteria = rDirStaff.getCriteria();
 		rDirStaff.getCriteria().addGreaterThanOrEqualExpression(rDirStaff.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE), contract.getStartDate());
-//		rDirStaff.setCriteria(criteria);
 		rDirStaff.onSearch(null);
 		if(rDirStaff.getModel().getRowCount()<=0){
 			String msg = "La empresa no tiene el representante definido";
@@ -204,7 +198,6 @@ public class ContractBuilder {
 		RegistryDirStaff dir = (RegistryDirStaff)rDirStaff.getTo();
 		rDirStaff.clearCriteria();
 		for(ContractField field: getContractFields()){
-//			try{
 			if(field.getLabel().equals("Texto1")){
 				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
 			}
@@ -426,9 +419,6 @@ public class ContractBuilder {
 			if(field.getLabel().equals("Cifra44")){
 //				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
 			}
-//			} catch(NullPointerException e){
-//				
-//			}
 		}
 	}
 	
@@ -452,7 +442,6 @@ public class ContractBuilder {
 	    stamp.setFormFlattening(false);
 	    stamp.close();
 	    reader.close();
-//	    contract.setPdf(baos.toByteArray());
 	    return baos.toByteArray();
 	}
 	
@@ -460,25 +449,14 @@ public class ContractBuilder {
 	 * [page, llx, lly, urx, ury]
 	 */
 	private String getBottomCoordinates(AcroFields form, String key){
-//		getFactorizedValue(form.getFieldPositions(key)[2], getZoomFactor());
-		
-		
-//		return Float.toString(form.getFieldPositions(key)[2]-5);
-		return Float.toString(getFactorizedValue(form.getFieldPositions(key)[2], getZoomFactor()));
+		return Float.toString(getFactorizedValue(form.getFieldPositions(key)[2]));
 	}
 	private String getLeftCoordinates(AcroFields form, String key){
-		
-		
-//		return Float.toString(form.getFieldPositions(key)[1]-5);
-		return Float.toString(getFactorizedValue(form.getFieldPositions(key)[1], getZoomFactor()));
+		return Float.toString(getFactorizedValue(form.getFieldPositions(key)[1]));
 	}
 	private String getInputTextWidth(AcroFields form, String key){
-//		form.getFieldItem(key).
-//		return Integer.toString(form.getFieldItem(key).size());
 		Float f = form.getFieldPositions(key)[3]-form.getFieldPositions(key)[1];
-		return String.valueOf(f.intValue());
-		
-//		return Float.toString();
+		return String.valueOf(getFactorizedValue(f.intValue()));
 	}
 	private String getInputTextHeight(AcroFields form, String key){
 		return Float.toString(form.getFieldPositions(key)[4]-form.getFieldPositions(key)[2]);

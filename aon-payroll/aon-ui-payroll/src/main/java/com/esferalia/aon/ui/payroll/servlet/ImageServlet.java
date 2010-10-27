@@ -28,9 +28,9 @@ public class ImageServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String model = request.getParameter("model");
-		String zoom = request.getParameter("zoom");
-		String width = request.getParameter("width");
-		String height = request.getParameter("height");
+//		Integer zoom = Integer.parseInt(request.getParameter("zoom"));
+		Integer width = Integer.parseInt(request.getParameter("width"));
+		Integer height = Integer.parseInt(request.getParameter("height"));
 		if (StringUtils.isEmpty(model)) {
 			throw new IllegalArgumentException("Modelo vacio");
 		}
@@ -39,23 +39,11 @@ public class ImageServlet extends HttpServlet {
 		if(StringUtils.isEmpty(page)){
 			throw new IllegalArgumentException("Pagina de contrato desconocida");
 		}
-//		String pFile = "C:\\TMP\\a.pdf"; 
-//		this.getClass().getResourceAsStream( "/com/code/aon/ui/payroll/logo.jpg" );
-//		this.getClass().getResource( pFile ).getContent();
-//		String pFile = "com/esferalia/aon/ui/payroll/contractModel/"+model+".pdf"; 
-		
-//		String pFile = "/TMP/"+model+".pdf"; 
 		final String SCHEMA = model+".pdf"; 
-		
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		URL[] urls = Classpath.search(cl, "com/esferalia/aon/ui/payroll/contractModel/", SCHEMA);
-		
-//		List<BufferedImage> pics = PdfToImage.create(urls[0],Integer.parseInt(zoom), Integer.parseInt(width), Integer.parseInt(height));
-		BufferedImage pic = PdfToImage.create(urls[0], Integer.parseInt(page), Integer.parseInt(zoom), Integer.parseInt(width), Integer.parseInt(height));
-		pic = ImageUtil.scale(pic, Integer.parseInt(width), Integer.parseInt(height));
-		
-//		List<BufferedImage> pics = PdfToImage.create(pFile);
-//		BufferedImage pic = pics.get(Integer.parseInt(page)-1);
+		BufferedImage pic = PdfToImage.create(urls[0], Integer.parseInt(page), width.intValue(), height.intValue());
+//		pic = ImageUtil.scale(pic, width, height);
 		byte[] buffer = ImageUtil.getImage(pic,MimeType.MIME_PNG.getExtension());
 		InputStream in = new ByteArrayInputStream(buffer);
 		int bytes = in.read(buffer);

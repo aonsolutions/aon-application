@@ -65,7 +65,7 @@ public class ContractField {
 	}
 	public String getScaledBottomCoordinates() {
 		ContractBuilder builder = ContractBuilder.getInstance();
-		return String.valueOf(builder.getFactorizedValue(Double.parseDouble(bottomCoordinates), builder.getZoomFactor()));
+		return String.valueOf(builder.getFactorizedValue(Double.parseDouble(bottomCoordinates)));
 	}
 	public void setBottomCoordinates(String bottomCoordinates) {
 		this.bottomCoordinates = bottomCoordinates;
@@ -75,13 +75,17 @@ public class ContractField {
 	}
 	public String getScaledLeftCoordinates() {
 		ContractBuilder builder = ContractBuilder.getInstance();
-		return String.valueOf(builder.getFactorizedValue(Double.parseDouble(leftCoordinates), builder.getZoomFactor()));
+		return String.valueOf(builder.getFactorizedValue(Double.parseDouble(leftCoordinates)));
 	}
 	public void setLeftCoordinates(String leftCoordinates) {
 		this.leftCoordinates = leftCoordinates;
 	}
 	public String getWidth() {
 		return width;
+	}
+	public String getScaledWidth() {
+		ContractBuilder builder = ContractBuilder.getInstance();
+		return String.valueOf(builder.getFactorizedValue(Double.parseDouble(width)));
 	}
 	public void setWidth(String width) {
 		this.width = width;
