@@ -76,7 +76,7 @@
 					</aon:div>
 					<aon:div>
 					
-						<rich:inputNumberSlider maxValue="2" step="1"
+						<rich:inputNumberSlider maxValue="4" step="1"
 							value="#{contractGenerationWizard.contractBuilder.zoomFactor}"
 							showArrows="true" width="200"  
 							enableManualInput="false" showBoundaryValues="false"
@@ -101,7 +101,7 @@
 							<aon:inputText 
 								title="#{field.label}"
 								rendered="#{field.page==contractGenerationWizard.contractBuilder.contractPage}"
-								style="background-color:#E0ECF8; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates}px; left:#{field.scaledLeftCoordinates}px;width:#{field.width}px; "
+								style="background-color:#E0ECF8; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates}px; left:#{field.scaledLeftCoordinates}px;width:#{field.scaledWidth}px; "
 								value="#{field.value}" size="#{field.width}"
 								maxlength="16" />
 						</c:if>

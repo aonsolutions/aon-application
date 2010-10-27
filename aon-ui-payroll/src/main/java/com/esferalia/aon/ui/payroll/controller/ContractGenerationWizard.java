@@ -7,11 +7,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -28,7 +31,10 @@ import com.code.aon.employee.Contract;
 import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractModel;
+import com.code.aon.employee.enumeration.ContractOption;
 import com.code.aon.employee.enumeration.ContractStatus;
+import com.code.aon.employee.enumeration.ContractType;
+import com.code.aon.employee.enumeration.ContractWorkingDay;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
@@ -60,16 +66,26 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	private boolean showContractDetailWindow;
 	private boolean showNewPersonWindow;
 	private ContractBuilder contractBuilder;
+	private ContractOption contractOption;
+	private ContractType contractType;
 	private ContractModel model;
 	private ContractCode code;
 	private String imageUrl;
+	private ContractWorkingDay workingDay;
+	
+	public ContractWorkingDay getWorkingDay() {
+		return workingDay;
+	}
+	public void setWorkingDay(ContractWorkingDay workingDay) {
+		this.workingDay = workingDay;
+	}
 	
 	public String getImageUrl() {
 //		#{contractGenerationWizard.contractBuilder.contractPage}.contractImage?model=#{contractGenerationWizard.model}\&zoom=#{contractGenerationWizard.contractBuilder.zoomFactor}
 		imageUrl = getContractBuilder().getContractPage().toString();
 		imageUrl += ".contractImage";
 		imageUrl += "?model="+getModel();
-		imageUrl += "&zoom="+getContractBuilder().getZoomFactor();
+//		imageUrl += "&zoom="+getContractBuilder().getZoomFactor();
 		imageUrl += "&width="+getContractBuilder().getContractWidth();
 		imageUrl += "&height="+getContractBuilder().getContractHeight();
 		return imageUrl;
@@ -116,7 +132,47 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public void setCode(ContractCode code) {
 		this.code = code;
 	}
-
+	public List<SelectItem> getContractCodes() {
+		List<SelectItem> list=null;
+		list = new LinkedList<SelectItem>();
+		if(getContractType()!=null){
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			for (ContractCode c : getContractType().getCodes()) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				list.add(item);
+			}
+		}
+		return list;
+	}
+	public ContractOption getContractOption() {
+		return contractOption;
+	}
+	public void setContractOption(ContractOption contractOption) {
+		this.contractOption = contractOption;
+	}
+	public ContractType getContractType() {
+		return contractType;
+	}
+	public void setContractType(ContractType contractType) {
+		this.contractType = contractType;
+		if(contractType!=null){
+			setModel(contractType.getModel());
+		}
+	}
+	public List<SelectItem> getContractTypes() {
+		List<SelectItem> list;
+		list = new LinkedList<SelectItem>();
+		if(getContractOption()!=null){
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			for (ContractType t : getContractOption().getTypes()) {
+				String name = t.getName(locale);
+				SelectItem item = new SelectItem(t, name);
+				list.add(item);
+			}
+		}
+		return list;
+	}
 	public boolean isShowContractDetailWindow() {
 		return showContractDetailWindow;
 	}
@@ -280,7 +336,21 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	}
 	
 	private void onValidate(ActionEvent event) {
-		
+		if(getContractOption()==null){
+			String msg = "Debe seleccionar la modalidad de contrato";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException();
+		}
+		if(getContractType()==null){
+			String msg = "Debe seleccionar el tipo de contrato";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException();
+		}
+		if(getContractType().getCodes().length>0 && getCode()==null){
+			String msg = "Debe seleccionar el tiempo de la jornada";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException();
+		}
 	}
 	
 	private void onFinish(ActionEvent event) {

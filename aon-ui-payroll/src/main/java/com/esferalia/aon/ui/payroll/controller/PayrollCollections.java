@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractModel;
+import com.code.aon.employee.enumeration.ContractOption;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.CausaSuspension;
 import com.esferalia.aon.payroll.core.enumeration.FileStatus;
@@ -20,10 +21,25 @@ public class PayrollCollections implements Serializable {
 	
 	private List<SelectItem> contractCodes;
 	private List<SelectItem> contractModels;
+	private List<SelectItem> contractOptions;
 	private List<SelectItem> workTimes;
 	private List<SelectItem> fileStatus;
 	private List<SelectItem> causaSuspension;
 
+	public List<SelectItem> getContractOptions() {
+		if (contractOptions == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			contractOptions = new LinkedList<SelectItem>();
+			ContractOption[] options = ContractOption.values();
+			for (ContractOption o : options) {
+				String name = o.getName(locale);
+				SelectItem item = new SelectItem(o, name);
+				contractOptions.add(item);
+			}
+		}
+		return contractOptions;
+	}
+	
 	public List<SelectItem> getContractCodes() {
 		if (contractCodes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
@@ -31,12 +47,7 @@ public class PayrollCollections implements Serializable {
 			contractCodes = new LinkedList<SelectItem>();
 			ContractCode[] codes = ContractCode.values();
 			for (ContractCode cc : codes) {
-				String name = cc.getName(locale)+" - ";
-				if(cc.getName(locale).length()>70){
-					name += cc.getName(locale).substring(0, 70)+"...";
-				} else {
-					name += cc.getName(locale);
-				}
+				String name = cc.getName(locale);
 				SelectItem item = new SelectItem(cc, name);
 				contractCodes.add(item);
 			}
@@ -58,9 +69,7 @@ public class PayrollCollections implements Serializable {
 					name += cm.getDescription(locale);
 				}
 				SelectItem item = new SelectItem(cm, name);
-//				if(cm.getName(locale).equals("PE170") || cm.getName(locale).equals("PE177")){
-					contractModels.add(item);
-//				}
+				contractModels.add(item);
 			}
 		}
 		return contractModels;
