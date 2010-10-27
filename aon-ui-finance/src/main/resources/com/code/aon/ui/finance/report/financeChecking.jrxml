@@ -76,15 +76,10 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="144" splitType="Stretch">
-			<subreport isUsingCache="false">
-				<reportElement key="subreport-1" x="0" y="17" width="535" height="29" isPrintWhenDetailOverflows="true"/>
-				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{noPaymethodList})]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("financeCheckingDetail")]]></subreportExpression>
-			</subreport>
+		<band height="50" splitType="Stretch">
+			<printWhenExpression><![CDATA[new Boolean($F{noPaymethodList}.size() > 0)]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-15" x="0" y="0" width="445" height="17">
+				<reportElement key="textField-15" positionType="Float" isPrintRepeatedValues="false" x="0" y="0" width="445" height="17">
 					<printWhenExpression><![CDATA[new Boolean($F{noPaymethodList}.size() > 0)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -98,8 +93,19 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_checking_no_pay_method}]]></textFieldExpression>
 			</textField>
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement key="subreport-1" positionType="Float" isPrintRepeatedValues="false" x="0" y="17" width="535" height="29" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[new Boolean($F{noPaymethodList}.size() > 0)]]></printWhenExpression>
+				</reportElement>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{noPaymethodList})]]></dataSourceExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("financeCheckingDetail")]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[new Boolean($F{negotiableNoBankAccountList}.size() > 0)]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-16" positionType="Float" x="0" y="49" width="445" height="17">
+				<reportElement key="textField-16" positionType="Float" isPrintRepeatedValues="false" x="0" y="0" width="445" height="17">
 					<printWhenExpression><![CDATA[new Boolean($F{negotiableNoBankAccountList}.size() > 0)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -113,14 +119,19 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_checking_negotiable_no_bank}]]></textFieldExpression>
 			</textField>
-			<subreport isUsingCache="false">
-				<reportElement key="subreport-2" positionType="Float" x="0" y="66" width="535" height="29" isPrintWhenDetailOverflows="true"/>
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement key="subreport-2" positionType="Float" isPrintRepeatedValues="false" x="0" y="17" width="535" height="29" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[new Boolean($F{negotiableNoBankAccountList}.size() > 0)]]></printWhenExpression>
+				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{negotiableNoBankAccountList})]]></dataSourceExpression>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("financeCheckingDetail")]]></subreportExpression>
 			</subreport>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[new Boolean($F{noNegotiableBankAccountList}.size() > 0)]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-17" positionType="Float" x="0" y="98" width="445" height="17">
+				<reportElement key="textField-17" positionType="Float" isPrintRepeatedValues="false" x="0" y="0" width="445" height="17">
 					<printWhenExpression><![CDATA[new Boolean($F{noNegotiableBankAccountList}.size() > 0)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -134,8 +145,10 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_checking_bank_no_negotiable}]]></textFieldExpression>
 			</textField>
-			<subreport isUsingCache="false">
-				<reportElement key="subreport-3" positionType="Float" x="0" y="115" width="535" height="29" isPrintWhenDetailOverflows="true"/>
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement key="subreport-3" positionType="Float" isPrintRepeatedValues="false" x="0" y="17" width="535" height="29" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[new Boolean($F{noNegotiableBankAccountList}.size() > 0)]]></printWhenExpression>
+				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{noNegotiableBankAccountList})]]></dataSourceExpression>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("financeCheckingDetail")]]></subreportExpression>

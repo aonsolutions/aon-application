@@ -16,7 +16,7 @@ import com.code.aon.finance.print.CheckingTo;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 
-public class FeeCheckingPrinter implements ICollectionProvider, IFinanceConstants {
+public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFinanceConstants {
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -40,11 +40,9 @@ public class FeeCheckingPrinter implements ICollectionProvider, IFinanceConstant
 	private List<ITransferObject> obtainNoPaymethodList() {
 		String select = "SELECT customer " +
 						"FROM Customer customer " +
-						"WHERE customer.id NOT IN(" +
-							"SELECT rPayMethod.registry.id " +
-							"FROM RegistryPayMethod rPayMethod) " +
+						"WHERE customer.id NOT IN (SELECT rPayMethod.registry.id FROM RegistryPayMethod rPayMethod) " +
 						obtainPrintCondition() +
-						"ORDER BY customer.registry.surname, customer.registry.name";
+						"ORDER BY customer.registry.name, customer.registry.surname";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -56,11 +54,9 @@ public class FeeCheckingPrinter implements ICollectionProvider, IFinanceConstant
 						"FROM Customer customer, RegistryPayMethod rPayMethod " +
 						"WHERE customer.id = rPayMethod.registry.id " +
 						"AND rPayMethod.payment.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " + 
-						"AND customer.id NOT IN(" +
-							"SELECT rBank.registry.id " +
-							"FROM RegistryBank rBank) " +
+						"AND customer.id NOT IN (SELECT rBank.registry.id FROM RegistryBank rBank) " +
 						obtainPrintCondition() +
-						"ORDER BY customer.registry.surname, customer.registry.name";
+						"ORDER BY customer.registry.name, customer.registry.surname";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -74,7 +70,7 @@ public class FeeCheckingPrinter implements ICollectionProvider, IFinanceConstant
 						"AND customer.id = rPayMethod.registry.id " +
 						"AND rPayMethod.payment.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
 						obtainPrintCondition() +
-						"ORDER BY customer.registry.surname, customer.registry.name";
+						"ORDER BY customer.registry.name, customer.registry.surname";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();

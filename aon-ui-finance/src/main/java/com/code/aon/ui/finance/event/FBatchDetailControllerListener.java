@@ -16,8 +16,7 @@ public class FBatchDetailControllerListener extends ControllerAdapter {
 		try {
 			Criteria criteria = controller.getCriteria();
 	        criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE));
-	        criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES));
-	        criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER));
+	        criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_CONCEPT));
 	        controller.setCriteria(criteria);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);

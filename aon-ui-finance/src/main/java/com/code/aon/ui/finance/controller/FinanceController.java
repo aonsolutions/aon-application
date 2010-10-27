@@ -32,10 +32,12 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -50,10 +52,6 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
-/**
- * Controller used in the finance maintenance.
- * 
- */
 public class FinanceController extends BasicController implements IFinanceConstants {
 
 	private Company company;
@@ -76,6 +74,8 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	private List<SelectItem> payMethodTypeDetailList;
 	private List<?> orderedList;
 	private Double totalFinanceAmount;
+	private String invoiceViewer;
+	private boolean purchase;
 	private ArrayList<Finance> checks= new ArrayList<Finance>();
 
 	public Company getCompany() {
@@ -224,11 +224,43 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.totalFinanceAmount = totalFinanceAmount;
 	}
 
+	public String getInvoiceViewer() {
+		return invoiceViewer;
+	}
+
+	public void setInvoiceViewer(String invoiceViewer) {
+		this.invoiceViewer = invoiceViewer;
+	}
+
+	public boolean isPurchase() {
+		return purchase;
+	}
+
+	public void setPurchase(boolean purchase) {
+		this.purchase = purchase;
+	}
+
+	public void registryData(LookupChangeEvent event) throws ManagerBeanException {
+		Finance finance = (Finance)getTo();
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			IRegistry registry = (IRegistry)event.getNewValue();
+			finance.setRegistry(registry.getRegistry());
+			finance.setRegistryName(registry.getRegistry().getFullName());
+			finance.setRegistryDocument(registry.getRegistry().getDocument());
+		}
+	}
+
+	public void onPaymentTypeChanged(ValueChangeEvent event) {
+		((Finance)getTo()).setRegistry(new Registry());
+		((Finance)getTo()).setRegistryName(null);
+		((Finance)getTo()).setRegistryDocument(null);
+	}
+
 	public void onPayMethodChanged(ValueChangeEvent event) {
 		PayMethod oldPay = (PayMethod) event.getOldValue();
 		PayMethod newPay = (PayMethod) event.getNewValue();
 		if (oldPay == null || newPay == null || oldPay.getType() != newPay.getType()) {
-			Finance finance = (Finance) getTo();
+			Finance finance = (Finance)getTo();
 			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
 
@@ -237,7 +269,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	}
 
 	public void onBankChanged(LookupChangeEvent event) {
-		Finance finance = (Finance) getTo();
+		Finance finance = (Finance)getTo();
 		finance.setBankAccount(new BankAccount());
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Bank bank = (Bank) event.getNewValue();
@@ -246,7 +278,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	}
 	
 	public void onRegistryBankChanged(ValueChangeEvent event) {
-		Finance finance = (Finance) getTo();
+		Finance finance = (Finance)getTo();
 		if (event.getNewValue() != null) {
 			RegistryBank rb = (RegistryBank) event.getNewValue();
 			finance.setBank(rb.getBank());
@@ -258,7 +290,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	}
 
 	public List<SelectItem> getBanks() throws ManagerBeanException {
-		Finance finance = (Finance) getTo();
+		Finance finance = (Finance)getTo();
 		if (finance != null && finance.getPayMethod() != null) {
 			PayMethod pm = finance.getPayMethod();
 			if ((!isPayment() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (isPayment() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
@@ -294,12 +326,12 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	}
 
 	public void onFinancePaymentShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		Finance finance = (Finance) getTo();
+		Finance finance = (Finance)getTo();
 		if (finance.getPayMethod() == null || finance.getPayMethod().getId() == null) {
 			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR);
 			throw new AbortProcessingException();
 		} 
-		super.accept();
+		super.accept(null);
 
 		setPaymentDate(finance.getDueDate());
 		setPaymentAmount(finance.getTotalAmount());
@@ -336,7 +368,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	}
 
 	public void onFinanceReturnShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		Finance finance = (Finance) getTo();
+		Finance finance = (Finance)getTo();
 		setReturnDate(new Date());
 		setReturnExpenses(finance.getExpenses());
 		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS || finance.getPayMethod().getType() == PayMethodType.OTHER) {
@@ -411,7 +443,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 			FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 		}
 		finance.setFinanceStatus(FinanceStatus.PAID);
-		getManagerBean().update(finance);
+		super.accept(null);
 
 		AccountEntry entry = null;
 		String message = null;
@@ -439,7 +471,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		Finance finance = (Finance)this.getTo();
 		finance.setExpenses(getReturnExpenses());
 		finance.setFinanceStatus(FinanceStatus.RETURNED);
-		getManagerBean().update(finance);
+		super.accept(null);
 		returnFinanceBatchDetail(finance);
 
 		AccountEntry entry = null;
@@ -478,7 +510,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	public void onSettleFinance(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)this.getTo();
 		finance.setFinanceStatus(FinanceStatus.SETTLED);
-		getManagerBean().update(finance);
+		super.accept(null);
 
 		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_SETTLED);
 		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.SETTLED, message);
@@ -553,15 +585,16 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
 		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 	
 	public void onOrderFinanceListByRegistry(ActionEvent event) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_REGISTRY_NAME));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 	
@@ -569,7 +602,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
 		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 	
@@ -577,7 +610,8 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
 		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_ID));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 	
@@ -585,18 +619,41 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
 		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_BANK_ID));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 
 	public void onShowInvoice(ActionEvent event) throws ManagerBeanException {
 		Finance to = (Finance)this.getTo();
-		if (to != null) {
+		if (!to.isEmptyInvoice()) {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), to.getInvoice().getId());
 			FormUtil.getController(IFinanceConstants.INVOICE_PRINTER_CONTROLLER).setCriteria(criteria);
 		}
+	}
+
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		Finance finance = (Finance)this.getTo();
+		InvoiceType type = finance.getInvoice().getType();
+		String invoiceControllerName = "";
+		if (type == InvoiceType.SALES) {
+			invoiceControllerName = IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(IFinanceConstants.SALE_INVOICE_FORM_NAME);
+		} else if (type == InvoiceType.PURCHASE) {
+			invoiceControllerName = IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(IFinanceConstants.PURCHASE_INVOICE_FORM_NAME);
+		} else if (type == InvoiceType.EXPENSES) {
+			invoiceControllerName = IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(IFinanceConstants.EXPENSE_INVOICE_FORM_NAME);
+		} else if (type == InvoiceType.UNDEDUCTIBLE) {
+			invoiceControllerName = IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME);
+		}
+
+		InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
+		invoiceController.onLoadInvoice(event, finance.getInvoice(), IFinanceConstants.FINANCE_FORM_NAME);
 	}
 
 }
