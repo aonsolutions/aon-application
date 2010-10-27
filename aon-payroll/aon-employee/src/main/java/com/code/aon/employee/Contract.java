@@ -59,11 +59,11 @@ public class Contract implements ITransferObject {
 	@Index(name = "IDX_CONTRACT_CCC")
 	private EnterpriseCCC ccc;
 	
-	@ManyToOne
-    @JoinColumn( name="type", nullable = false )	
-	@ForeignKey(name = "FK_CONTRACT_TYPE")
-	@Index(name = "IDX_CONTRACT_TYPE")
-	private ContractType contractType;
+//	@ManyToOne
+//    @JoinColumn( name="type", nullable = false )	
+//	@ForeignKey(name = "FK_CONTRACT_TYPE")
+//	@Index(name = "IDX_CONTRACT_TYPE")
+//	private ContractType contractType;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column( name = "start_date", nullable = false )
@@ -74,7 +74,7 @@ public class Contract implements ITransferObject {
     private Date endDate;	
 	
 	@Lob
-	private byte[] pdf;
+	private byte[] document;
 
 	private ContractStatus status;
 
@@ -150,23 +150,23 @@ public class Contract implements ITransferObject {
 		this.ccc = ccc;
 	}
 	
-	/**
-	 * Gets the contract type.
-	 * 
-	 * @return the contract type
-	 */
-	public ContractType getContractType() {
-		return contractType;
-	}
-
-	/**
-	 * Sets the contract type.
-	 * 
-	 * @param contractType the new contract type
-	 */
-	public void setContractType(ContractType contractType) {
-		this.contractType = contractType;
-	}
+//	/**
+//	 * Gets the contract type.
+//	 * 
+//	 * @return the contract type
+//	 */
+//	public ContractType getContractType() {
+//		return contractType;
+//	}
+//
+//	/**
+//	 * Sets the contract type.
+//	 * 
+//	 * @param contractType the new contract type
+//	 */
+//	public void setContractType(ContractType contractType) {
+//		this.contractType = contractType;
+//	}
 
 	/**
 	 * Gets the start date.
@@ -204,11 +204,11 @@ public class Contract implements ITransferObject {
 		this.endDate = endDate;
 	}	
 	
-	public byte[] getPdf() {
-		return pdf;
+	public byte[] getDocument() {
+		return document;
 	}
-	public void setPdf(byte[] pdf) {
-		this.pdf = pdf;
+	public void setDocument(byte[] document) {
+		this.document = document;
 	}
 	
 	public ContractStatus getStatus() {
@@ -230,8 +230,8 @@ public class Contract implements ITransferObject {
 				.append(this.endDate, o.endDate)
 				.append(this.person, o.person)			
 				.append(this.startDate, o.startDate)
-				.append(this.contractType, o.contractType)
 				.append(this.workPlace, o.workPlace)
+				.append(this.status, o.status)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -245,8 +245,8 @@ public class Contract implements ITransferObject {
 			.append(id)
 			.append(person)
 			.append(startDate)
-			.append(contractType)
 			.append(workPlace)
+			.append(status)
 			.toHashCode();
 	}
 
