@@ -36,10 +36,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.FinanceBatch</value>
 		</managed-property>
@@ -98,10 +94,6 @@
 		<managed-bean-class>com.code.aon.ui.finance.controller.FBatchDetailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.FinanceBatchDetail</value>
 		</managed-property>
@@ -119,7 +111,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>FinanceBatchDetail_finance_dueDate,FinanceBatchDetail_finance_invoice_referenceCode</value>
+			<value>FinanceBatchDetail_finance_dueDate,FinanceBatchDetail_finance_concept</value>
 		</managed-property>	
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -166,10 +158,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Finance</value>
 		</managed-property>
@@ -179,7 +167,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Finance_dueDate,Finance_invoice_referenceCode</value>
+			<value>Finance_dueDate,Finance_invoice_referenceCode,Finance_concept</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -187,25 +175,36 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{financeControllerListener}</value>
 				<value>#{financeSearch}</value>
+				<value>#{financeScopeListener}</value>
+				<value>#{financeControllerListener}</value>
 				<value>#{financeTrackingListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>financeControllerListener</managed-bean-name>
+		<managed-bean-name>financeSearch</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinanceControllerListener
+			com.code.aon.ui.finance.event.FinanceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
 	<managed-bean>
-		<managed-bean-name>financeSearch</managed-bean-name>
+		<managed-bean-name>financeScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Finance_scope_id</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>financeControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinanceSearchListener
+			com.code.aon.ui.finance.event.FinanceControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
@@ -236,10 +235,6 @@
 		<managed-bean-name>financeTracking</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.finance.controller.FinanceTrackingController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.FinanceTracking</value>
@@ -288,10 +283,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Finance</value>
 		</managed-property>
@@ -329,10 +320,6 @@
 			com.code.aon.ui.finance.controller.CreditorController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Creditor</value>
@@ -737,10 +724,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoicingGroup</value>
 		</managed-property>
@@ -807,10 +790,6 @@
 		<managed-bean-name>invoicingGroupDetail</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoicingGroupDetail</value>
@@ -943,6 +922,15 @@
 		</managed-property>		
 	</managed-bean>
 
+	<!-- ************ FINANCE PRINTER ************* -->
+	<managed-bean>
+		<managed-bean-name>financePrint</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.util.print.FinancePrinter
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************ FINANCE CHECKING PRINTER ************* -->
 	<managed-bean>
 		<managed-bean-name>financeCheckingPrinter</managed-bean-name>
@@ -952,11 +940,11 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************ FINANCE PRINTER ************* -->
+	<!-- ************ CUSTOMER FINANCE CHECKING PRINTER ************* -->
 	<managed-bean>
-		<managed-bean-name>financePrint</managed-bean-name>
+		<managed-bean-name>customerFinanceCheckingPrinter</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.util.print.FinancePrinter
+			com.code.aon.ui.finance.util.print.CustomerFinanceCheckingPrinter
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -1031,15 +1019,6 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-	</managed-bean>
-
-	<!-- ************ FEE CHECKING PRINTER ************* -->
-	<managed-bean>
-		<managed-bean-name>feeCheckingPrinter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.util.print.FeeCheckingPrinter
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************ FEE PRINTER ************* -->
@@ -2767,6 +2746,23 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ************ INVOICE TAX ************* -->
+	<managed-bean>
+		<managed-bean-name>invoiceTax</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.InvoiceTax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>invocieTax</value>
+		</managed-property>				
+	</managed-bean>
+	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
 	<!-- ========================================================== -->
@@ -2816,23 +2812,6 @@
 		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
-	
-		<!-- ************ INVOICE TAX ************* -->
-	<managed-bean>
-		<managed-bean-name>invoiceTax</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.InvoiceTax</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>invocieTax</value>
-		</managed-property>				
-	</managed-bean>
 	
 
   <!-- =================== CREDITOR ================= -->

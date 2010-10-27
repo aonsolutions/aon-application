@@ -26,7 +26,7 @@
 						<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
 						<ui:param name="skipRemoveButton" value="#{invoiceController.readOnly and controller.model.rowCount > 1}" />
 						<ui:param name="skipLineEdition" value="#{!financeController.modelToEditable}" />
-						<ui:param name="removeButtonReRender" value="menuExt" />
+						<ui:param name="removeButtonReRender" value="menuExt,invoiceReferenceCodeDiv" />
 	
 						<ui:define name="columns">
 	
@@ -129,7 +129,7 @@
 											rendered="#{financeController.bankCreationEnabled}"
 											ajaxSingle="true"
 											actionListener="#{financeController.onAddRBank}"
-											onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{financeController.to.invoice.registryName}?')) return false;"	
+											onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{financeController.to.registryName}?')) return false;"	
 											styleClass="aon-editDataTable-button aon-lookupButton-new" />
 									</aon:panelGroup>
 									<aon:div style="font-size:0.9em;" styleClass="aon-italic">
@@ -189,7 +189,7 @@
 												rendered="#{financeController.bankCreationEnabled}"
 												ajaxSingle="true"
 												actionListener="#{financeController.onAddRBank}"
-												onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{financeController.to.invoice.registryName}?')) return false;"	
+												onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{financeController.to.registryName}?')) return false;"	
 												styleClass="aon-editDataTable-button aon-lookupButton-new" />
 										</aon:panelGroup>
 										<aon:div style="font-size:0.9em;" styleClass="aon-italic">

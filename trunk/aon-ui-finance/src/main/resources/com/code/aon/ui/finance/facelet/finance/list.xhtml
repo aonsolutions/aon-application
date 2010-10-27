@@ -15,7 +15,6 @@
 				<ui:param name="toolbarTitle"
 					value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
-				<ui:param name="skipResetButton" value="true" />
 
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="financeList-excel-report"
@@ -40,7 +39,6 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="financeListByAccount" />
 					</aon:htmlCommandLink>
-
 					<aon:htmlCommandLink id="financeListByDate-report"
 						value="#{financeBundle.finance_list_by_date}"
 						target="_blank" action="#{report.onExecute}"
@@ -49,7 +47,6 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="financeListByDate" />
 					</aon:htmlCommandLink>
-
 					<aon:htmlCommandLink id="financeListByPayment-report"
 						value="#{financeBundle.finance_list_by_paymethod}"
 						target="_blank" action="#{report.onExecute}"
@@ -99,37 +96,37 @@
 							</aon:outputText>
 						</aon:column>
 		
-						<aon:column alias="Finance.invoice.referenceCode"
+						<aon:column alias="Finance.invoice&lt;referenceCode"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{financeBundle.finance_invoice}" />
 							</f:facet>
-							<aon:outputText value="#{to.invoice.referenceCode}" />
+							<aon:outputText value="#{to.referenceCode}" />
 						</aon:column>
 	
-						<aon:column alias="Finance.invoice.series,Finance.invoice.number"
+						<aon:column alias="Finance.concept"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
 							</f:facet>
-							<h:outputText value="#{to.invoice.documentNumber}" />
+							<h:outputText value="#{to.concept}" />
 						</aon:column>
 
-						<aon:column alias="Finance.invoice.registryName"
+						<aon:column alias="Finance.registryName"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
 							</f:facet>
-							<aon:outputText value="#{to.invoice.registryName}" />
+							<aon:outputText value="#{to.registryName}" />
 						</aon:column>
 	
-						<aon:column alias="Finance.invoice.registryDocument"
+						<aon:column alias="Finance.registryDocument"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_company_document}" />
 							</f:facet>
-							<aon:outputText value="#{to.invoice.registryDocument}" />
+							<aon:outputText value="#{to.registryDocument}" />
 						</aon:column>
 	
 						<aon:column alias="Finance.financeStatus"
@@ -138,9 +135,9 @@
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
 							<aon:outputText value="#{to.financeStatus}" />
-								<f:facet name="footer">
+							<f:facet name="footer">
 								<aon:outputText value="#{financeBundle.finance_total_amount}" />
-								</f:facet>
+							</f:facet>
 						</aon:column>
 	
 						<aon:column alias="Finance.payMethod.name"
@@ -158,7 +155,6 @@
 							<aon:outputText value="#{to.totalAmount}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							
 							<f:facet name="footer">
 								<aon:div style="float:right">
 									<aon:outputText style="text-align:right" value="#{finance.totalFinanceAmount}" >

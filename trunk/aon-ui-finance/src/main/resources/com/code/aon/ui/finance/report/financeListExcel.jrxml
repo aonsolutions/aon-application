@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.2100000000000006"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="209"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -12,8 +12,11 @@
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="payment" class="java.lang.Boolean" isForPrompting="false"/>
-	<field name="invoice" class="com.code.aon.finance.Invoice"/>
 	<field name="dueDate" class="java.util.Date"/>
+	<field name="referenceCode" class="java.lang.String"/>
+	<field name="documentNumber" class="java.lang.String"/>
+	<field name="registry" class="com.code.aon.registry.Registry"/>
+	<field name="registryName" class="java.lang.String"/>
 	<field name="financeStatus" class="com.code.aon.finance.enumeration.FinanceStatus"/>
 	<field name="amount" class="java.lang.Double"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
@@ -217,7 +220,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice}.getReferenceCode()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{referenceCode}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-9" x="877" y="0" width="75" height="12"/>
@@ -257,7 +260,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice}.getRegistry().getId()+ " " + $F{invoice}.getRegistryName()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{registry}.getId()+ " " + $F{registryName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-16" x="709" y="0" width="95" height="12"/>
@@ -277,7 +280,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice}.getDocumentNumber()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{documentNumber}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-16" x="804" y="0" width="73" height="12"/>

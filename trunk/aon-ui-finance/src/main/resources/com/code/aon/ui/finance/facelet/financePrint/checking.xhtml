@@ -15,18 +15,18 @@
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_checking_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
-					<aon:htmlCommandLink id="customeFeeChecking-excel-report"
+					<aon:htmlCommandLink id="customerFinanceChecking-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-						<f:param name="reportKey" value="customeFeeChecking" />
+						<f:param name="reportKey" value="customerFinanceChecking" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
-					<aon:htmlCommandLink id="customeFeeChecking-report"
+					<aon:htmlCommandLink id="customerFinanceChecking-report"
 						value="#{customerBundle.customer_module}" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="customeFeeChecking" />
+						<f:param name="reportKey" value="customerFinanceChecking" />
 					</aon:htmlCommandLink>
 
 					<aon:htmlCommandLink id="financeChecking-excel-report"

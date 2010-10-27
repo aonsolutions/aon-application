@@ -56,9 +56,9 @@ public class InvoiceFinanceController extends LinesController {
 
 	@SuppressWarnings("unchecked")
 	public boolean isAllPending() throws ManagerBeanException{
-		Iterator iter = ((List)this.getModel().getWrappedData()).iterator();
-		while(iter.hasNext()){
-			Finance finance = (Finance)iter.next();
+		Iterator iterator = ((List)this.getModel().getWrappedData()).iterator();
+		while(iterator.hasNext()){
+			Finance finance = (Finance)iterator.next();
 			if(FinanceStatus.PENDING != finance.getFinanceStatus()){
 				return false;
 			}
