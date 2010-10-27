@@ -6,6 +6,8 @@ import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.config.enumeration.VatDeductionType;
+import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryDocument;
@@ -32,6 +34,8 @@ public class InvoiceEntryHeader implements ITransferObject {
     private boolean withholding;
 	private Account account;
 	private Account retentionAccount;
+	private VatDeductionType vatDeductionType;
+	private WithholdingType withholdingType;
 	private SecurityLevel securityLevel;
    
 	private Integer accountEntryId;
@@ -134,6 +138,20 @@ public class InvoiceEntryHeader implements ITransferObject {
 	}
 	public void setRetentionAccount(Account retentionAccount) {
 		this.retentionAccount = retentionAccount;
+	}
+
+	public VatDeductionType getVatDeductionType() {
+		return vatDeductionType;
+	}
+	public void setVatDeductionType(VatDeductionType vatDeductionType) {
+		this.vatDeductionType = vatDeductionType;
+	}
+
+	public WithholdingType getWithholdingType() {
+		return withholdingType;
+	}
+	public void setWithholdingType(WithholdingType withholdingType) {
+		this.withholdingType = withholdingType;
 	}
 
 	public SecurityLevel getSecurityLevel() {

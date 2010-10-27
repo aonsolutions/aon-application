@@ -17,12 +17,15 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -33,12 +36,6 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 
-/**
- * Transfer Object that represents a customer fee.
- * 
- * @author Consulting & Development. Inigo Gayarre - 7-sep-2005
- * @since 1.0
- */
 @Entity
 @Table(name="customer_fee")
 public class CustomerFee implements ITransferObject, ICalculable, IConfidentialable {
@@ -197,7 +194,6 @@ public class CustomerFee implements ITransferObject, ICalculable, IConfidentiala
     	}
     	return Month.JANUARY;
 	}
-
 	@Transient
 	public void setBillingDateMonth(Month month) {
 		Calendar calendar = new GregorianCalendar();
@@ -215,7 +211,6 @@ public class CustomerFee implements ITransferObject, ICalculable, IConfidentiala
 		}
 		return calendar.get(Calendar.YEAR);
 	}
-
 	@Transient
 	public void setBillingDateYear(int billingDateYear) {
 		Calendar calendar = new GregorianCalendar();
@@ -233,31 +228,59 @@ public class CustomerFee implements ITransferObject, ICalculable, IConfidentiala
 	public boolean isConfidential() {
 		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
 	}
-
 	@Transient
 	public void setConfidential(boolean confidential) {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final CustomerFee o = (CustomerFee) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.billingDate,o.billingDate)
+			.append(this.customer,o.customer)
+			.append(this.description,o.description)
+			.append(this.discountExpression,o.discountExpression)
+			.append(this.finalDate,o.finalDate)
+			.append(this.initialDate,o.initialDate)
+			.append(this.item,o.item)
+			.append(this.line,o.line)
+			.append(this.quantity,o.quantity)
+			.append(this.period,o.period)
+			.append(this.price,o.price)
+			.append(this.securityLevel,o.securityLevel)
+			.append(this.workPlace,o.workPlace)
+			.isEquals();
 		}
-		if (obj instanceof CustomerFee) {
-			CustomerFee o = (CustomerFee) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.billingDate)
+			.append(this.customer)
+			.append(this.description)
+			.append(this.discountExpression)
+			.append(this.finalDate)
+			.append(this.initialDate)
+			.append(this.item)
+			.append(this.line)
+			.append(this.quantity)
+			.append(this.period)
+			.append(this.price)
+			.append(this.securityLevel)
+			.append(this.workPlace)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

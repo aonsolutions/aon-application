@@ -9,10 +9,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.IAddress;
 
@@ -23,17 +26,11 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 	private static final long serialVersionUID = 1873769542411802117L;
 
 	private Integer id;
-	
 	private Invoice invoice;
-	
 	private String address;
-	
 	private String address2;
-	
 	private String zip;
-	
 	private String city;
-	
 	private GeoZone geozone;
 
 	@Id
@@ -42,7 +39,6 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -54,7 +50,6 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 	public Invoice getInvoice() {
 		return invoice;
 	}
-
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
 	}
@@ -63,7 +58,6 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 	public String getAddress() {
 		return address;
 	}
-
 	public void setAddress(String address) {
 		this.address = address;
 	}
@@ -72,7 +66,6 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 	public String getAddress2() {
 		return address2;
 	}
-
 	public void setAddress2(String address2) {
 		this.address2 = address2;
 	}
@@ -81,7 +74,6 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 	public String getZip() {
 		return zip;
 	}
-
 	public void setZip(String zip) {
 		this.zip = zip;
 	}
@@ -90,7 +82,6 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 	public String getCity() {
 		return city;
 	}
-
 	public void setCity(String city) {
 		this.city = city;
 	}
@@ -102,31 +93,44 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 	public GeoZone getGeozone() {
 		return geozone;
 	}
-
 	public void setGeozone(GeoZone geozone) {
 		this.geozone = geozone;
 	}
 
-	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final InvoiceAddress o = (InvoiceAddress) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.address,o.address)
+			.append(this.address2,o.address2)
+			.append(this.city,o.city)
+			.append(this.geozone,o.geozone)
+			.append(this.invoice,o.invoice)
+			.append(this.zip,o.zip)
+			.isEquals();
 		}
-		if (obj instanceof InvoiceAddress) {
-			InvoiceAddress o = (InvoiceAddress) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.address)
+			.append(this.address2)
+			.append(this.city)
+			.append(this.geozone)
+			.append(this.invoice)
+			.append(this.zip)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

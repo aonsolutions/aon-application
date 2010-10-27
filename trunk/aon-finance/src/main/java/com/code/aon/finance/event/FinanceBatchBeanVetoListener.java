@@ -9,7 +9,7 @@ import com.code.aon.finance.FinanceBatch;
 public class FinanceBatchBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 	@Override
-	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		FinanceBatch fBatch = (FinanceBatch)evt.getTo();
 		if (fBatch.getSecurityLevel() == null) {
 			fBatch.setSecurityLevel(SecurityLevel.OFFICIAL);
