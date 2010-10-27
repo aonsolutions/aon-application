@@ -162,7 +162,7 @@ public enum ContractType implements IResourceable {
 			ContractCode.C150, ContractCode.C250, 
 			ContractCode.C350),
 	
-	PE213_T0Y_FURNITURE(ContractModel.PE213, 
+	PE213_TOY_FURNITURE(ContractModel.PE213, 
 			ContractCode.C150, ContractCode.C250, 
 			ContractCode.C350),
 					

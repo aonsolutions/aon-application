@@ -10,7 +10,7 @@ public enum ContractOption implements IResourceable {
 	INDEFINITE(ContractType.PE170),
 	BONUS_INDEFINITE(ContractType.PE221_16_30, 
 			ContractType.PE221_GT_45, ContractType.PE181, 
-			ContractType.PE213_SHOE, ContractType.PE213_T0Y_FURNITURE, 
+			ContractType.PE213_SHOE, ContractType.PE213_TOY_FURNITURE, 
 			ContractType.PE183, ContractType.PE185),
 	BONUS_INDEFINITE_TEMPORAL(ContractType.PE174_EXCLUSION, 
 			ContractType.PE174_VIOLENCE, ContractType.PE202, 
@@ -55,7 +55,7 @@ public enum ContractOption implements IResourceable {
 		return bundle.getString(MSG_KEY_PREFIX + toString());
 	}
 	
-	public ContractType[] getType(){
+	public ContractType[] getTypes(){
 		return type;
 	}
 	
