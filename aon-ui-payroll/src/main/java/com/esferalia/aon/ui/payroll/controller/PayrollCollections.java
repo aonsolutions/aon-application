@@ -8,25 +8,46 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractModel;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.CausaSuspension;
 import com.esferalia.aon.payroll.core.enumeration.FileStatus;
-//import com.esferalia.aon.payroll.enumeration.ContractModel;
 
 public class PayrollCollections implements Serializable {
 
 	private static final long serialVersionUID = -3593518156071895968L;
 	
+	private List<SelectItem> contractCodes;
 	private List<SelectItem> contractModels;
 	private List<SelectItem> workTimes;
 	private List<SelectItem> fileStatus;
 	private List<SelectItem> causaSuspension;
 
+	public List<SelectItem> getContractCodes() {
+		if (contractCodes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+					.getLocale();
+			contractCodes = new LinkedList<SelectItem>();
+			ContractCode[] codes = ContractCode.values();
+			for (ContractCode cc : codes) {
+				String name = cc.getName(locale)+" - ";
+				if(cc.getName(locale).length()>70){
+					name += cc.getName(locale).substring(0, 70)+"...";
+				} else {
+					name += cc.getName(locale);
+				}
+				SelectItem item = new SelectItem(cc, name);
+				contractCodes.add(item);
+			}
+		}
+		return contractCodes;
+	}
+	
 	public List<SelectItem> getContractModels() {
 		if (contractModels == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-					.getLocale();
+			.getLocale();
 			contractModels = new LinkedList<SelectItem>();
 			ContractModel[] models = ContractModel.values();
 			for (ContractModel cm : models) {
@@ -37,8 +58,9 @@ public class PayrollCollections implements Serializable {
 					name += cm.getDescription(locale);
 				}
 				SelectItem item = new SelectItem(cm, name);
-				if(cm.getName(locale).equals("PE170") || cm.getName(locale).equals("PE177"))
-				contractModels.add(item);
+//				if(cm.getName(locale).equals("PE170") || cm.getName(locale).equals("PE177")){
+					contractModels.add(item);
+//				}
 			}
 		}
 		return contractModels;

@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.utils;
 
 import org.apache.commons.lang.ObjectUtils;
 
@@ -16,7 +16,15 @@ public class ContractField {
 	private String leftCoordinates;
 	private String width;
 	private String height;
+	private int zoomFactor;
 	
+	public int getZoomFactor() {
+		return zoomFactor;
+	}
+	
+	public void setZoomFactor(int zoomFactor) {
+		this.zoomFactor = zoomFactor;
+	}
 	public Integer getType() {
 		return type;
 	}
@@ -46,22 +54,28 @@ public class ContractField {
 		this.value = value;
 	}
 	public boolean getBooleanValue() {
-//		return ObjectUtils.equals(TRUE_VALUE,value);
 		return ObjectUtils.equals(TRUE_VALUE,value);
 	}
 	public void setBooleanValue(boolean value) {
-//		setValue( Boolean.toString( value ));
 		setValue( value?TRUE_VALUE:FALSE_VALUE );
 	}
 	
 	public String getBottomCoordinates() {
 		return bottomCoordinates;
 	}
+	public String getScaledBottomCoordinates() {
+		ContractBuilder builder = ContractBuilder.getInstance();
+		return String.valueOf(builder.getFactorizedValue(Double.parseDouble(bottomCoordinates), builder.getZoomFactor()));
+	}
 	public void setBottomCoordinates(String bottomCoordinates) {
 		this.bottomCoordinates = bottomCoordinates;
 	}
 	public String getLeftCoordinates() {
 		return leftCoordinates;
+	}
+	public String getScaledLeftCoordinates() {
+		ContractBuilder builder = ContractBuilder.getInstance();
+		return String.valueOf(builder.getFactorizedValue(Double.parseDouble(leftCoordinates), builder.getZoomFactor()));
 	}
 	public void setLeftCoordinates(String leftCoordinates) {
 		this.leftCoordinates = leftCoordinates;
