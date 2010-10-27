@@ -20,10 +20,9 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 				<ui:param name="controller" value="#{tax}" />
 				<ui:param name="columnClasses" 
-					value="aon-editDataTable-text, aon-editDataTable-text,
-					aon-editDataTable-text, aon-editDataTable-text,
-					aon-editDataTable-text, aon-editDataTable-text,
-					aon-editDataTable-text" />
+					value="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+					aon-editDataTable-textColumn, aon-editDataTable-numberColumn,
+					aon-editDataTable-numberColumn" />
 				<ui:define name="columns">
 					<aon:column>
 						<f:facet name="header">
@@ -34,9 +33,14 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_type}" />
+							<aon:outputLabel value="#{configBundle.config_tax}" />
 						</f:facet>
-						<aon:outputText value="#{to.type}" />
+						<aon:div>
+							<aon:outputText value="#{to.type}" />
+							<aon:outputText value=" - " rendered="#{to.vat or to.retention}" />
+							<aon:outputText value="#{to.vatDeductionType}" rendered="#{to.vat}" />
+							<aon:outputText value="#{to.withholdingType}" rendered="#{to.retention}" />
+						</aon:div>
 					</aon:column>
 
 					<aon:column>
@@ -62,50 +66,6 @@
 						</f:facet>
 						<aon:outputText value="#{to.surcharge}" />
 					</aon:column>
-
-					<c:if test="#{aonRole.accountingOperator}">
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputLabel value="#{configBundle.config_tax_sales_account}" />
-							</f:facet>
-							<aon:outputText value="#{to.salesAccount}" />
-							<ui:include
-								src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-								<ui:param name="wizard" value="#{accountWizard}" />
-								<ui:param name="id" value="Tax_salesAccount" />
-								<ui:param name="required" value="#{false}" />
-								<ui:param name="size" value="12" />
-								<ui:param name="maxlength" value="12" />
-								<ui:param name="renderDescription" value="#{false}" />
-								<ui:param name="renderedAttr" value="#{formEdit}" />
-								<ui:param name="disabled" value="#{false}" />
-								<ui:param name="reRenderAttr" value="none" />
-								<ui:param name="entity" value="#{tax.to.salesAccount}" />
-								<ui:param name="ELExpression" value="tax.to.salesAccount" />
-							</ui:include>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputLabel value="#{configBundle.config_tax_purchase_account}" />
-							</f:facet>
-							<aon:outputText value="#{to.purchaseAccount}" />
-							<ui:include
-								src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-								<ui:param name="wizard" value="#{accountWizard}" />
-								<ui:param name="id" value="Tax_purchaseAccount" />
-								<ui:param name="required" value="#{false}" />
-								<ui:param name="size" value="12" />
-								<ui:param name="maxlength" value="12" />
-								<ui:param name="renderDescription" value="#{false}" />
-								<ui:param name="renderedAttr" value="#{formEdit}" />
-								<ui:param name="disabled" value="#{false}" />
-								<ui:param name="reRenderAttr" value="none" />
-								<ui:param name="entity" value="#{tax.to.purchaseAccount}" />
-								<ui:param name="ELExpression" value="tax.to.purchaseAccount" />
-							</ui:include>
-						</aon:column>
-					</c:if>
 
 				</ui:define>
 			</ui:decorate>
