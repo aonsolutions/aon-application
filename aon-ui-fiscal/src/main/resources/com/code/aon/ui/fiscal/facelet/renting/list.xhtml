@@ -35,13 +35,11 @@
 							<aon:outputText value="#{to.period}" />
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn aon-text-center aon-width-50">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_complementary_abbr}" />
+								<aon:outputText value="#{fiscalBundle.fiscal_administration}" />
 							</f:facet>
-							<aon:div styleClass="#{to.complementary?'aon-icon-checked':'aon-icon-check'}">
-								<aon:outputText value="&#160;" />
-							</aon:div>
+							<aon:outputText value="#{to.administration}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-text-center aon-width-50">

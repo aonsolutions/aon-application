@@ -3,7 +3,6 @@ package com.code.aon.ui.fiscal.controller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -17,7 +16,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.fiscal.Renting;
-import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.renting.RentingProvider;
@@ -106,6 +104,11 @@ public class RentingController extends BasicController {
 			throw new AbortProcessingException( e );
 		}
 		
+	}
+
+	public void initializeRentingDetail() throws ManagerBeanException {
+		Renting renting = (Renting) getTo();
+		getProvider().initializeRentingDetail(renting);
 	}
 	
 }

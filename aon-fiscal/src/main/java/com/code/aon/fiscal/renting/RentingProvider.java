@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.common.BeanManager;
@@ -15,12 +16,79 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.Renting;
+import com.code.aon.fiscal.RentingDetail;
 import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
+import com.code.aon.fiscal.enumeration.RentingDetailKind;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 
 public class RentingProvider {
+
+	public void initializeRentingDetail(Renting renting) throws ManagerBeanException {
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.YEAR, renting.getYear());
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		c.set(Calendar.MONTH, 0);
+		Date dateFrom = c.getTime();	
+		Date dateTo = renting.getPeriod().getDueDate(renting.getYear());
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RentingDetail.class);
+			StringWriter stmt = new StringWriter();
+			stmt.append("SELECT i.type,it.percentage,i.rdocument,i.rname,");
+			stmt.append(" SUM( id.taxable_base),");
+			stmt.append(" SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) RET ");
+			stmt.append(" FROM invoice_tax it ");
+			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
+			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
+			stmt.append(" WHERE i.type != 1 "); // No Ventas
+			stmt.append(" AND it.tax_type = 2"); // IRPF
+			stmt.append(" AND it.withholding_type = 1"); // IRPF de alquileres
+			stmt.append(" AND i.tax_date >= ?");
+			stmt.append(" AND i.tax_date <= ?");
+			stmt.append(" GROUP BY i.type,it.percentage,i.rdocument,i.rname");
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
+					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			int i = 0;
+			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
+			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
+			rs = ps.executeQuery();
+			List<RentingDetail> details = new LinkedList<RentingDetail>();
+			while (rs.next()) {
+				RentingDetail detail = new RentingDetail();
+				detail.setRenting(renting);
+				detail.setPaidReturns(rs.getDouble(5));
+				detail.setAccountDeposit(rs.getDouble(6));
+				detail.setPercent(rs.getDouble(2));
+				detail.setDocument( rs.getString(3) );
+				detail.setName( rs.getString(4) );
+				detail.setType(RentingDetailKind.MONEY);
+				detail.setAccrualPeriod(renting.getYear());
+				details.add(detail);
+			}
+			for (RentingDetail detail: details) {
+				bean.insert(detail);				
+			}
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
 
 	public Renting initializeRenting(Renting renting) throws ManagerBeanException {
 		Calendar c = Calendar.getInstance();
@@ -33,7 +101,7 @@ public class RentingProvider {
 		ResultSet rs = null;
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT i.type,it.percentage,i.rdocument,i.rname,");
+			stmt.append("SELECT i.type,it.percentage,rdocument,i.rname,");
 			stmt.append(" SUM( id.taxable_base),");
 			stmt.append(" SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) RET ");
 			stmt.append(" FROM invoice_tax it ");
@@ -88,6 +156,7 @@ public class RentingProvider {
 		IManagerBean bean = BeanManager.getManagerBean(Renting.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_YEAR), renting.getYear());
+		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_ADMINISTRATION), renting.getAdministration());
 		String periodAlias = bean.getFieldName(IFiscalAlias.RENTING_PERIOD);
 
 		int i = renting.getPeriod().ordinal(); 
@@ -119,6 +188,7 @@ public class RentingProvider {
 			renting.setAccountDepositDeclared( CommonUtil.round( renting.getAccountDepositDeclared() + prev.getAccountDeposit() ));
 		}
 	}
+
 
 	
 }
