@@ -9,17 +9,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
 
-/**
- * Transfer Object that represents an InvoiceTax.
- */
 @Entity
 @Table(name="invoice_tax")
 public class InvoiceTax implements ITransferObject {
@@ -121,26 +121,46 @@ public class InvoiceTax implements ITransferObject {
         this.deductibleQuota = deductibleQuota;
     }
 
-    @Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final InvoiceTax o = (InvoiceTax) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.invoiceDetail,o.invoiceDetail)
+			.append(this.deductibleQuota,o.deductibleQuota)
+			.append(this.quota,o.quota)
+			.append(this.percentage,o.percentage)
+			.append(this.surcharge,o.surcharge)
+			.append(this.surchargeQuota,o.surchargeQuota)
+			.append(this.taxType,o.taxType)
+			.append(this.vatDeductionType,o.vatDeductionType)
+			.append(this.withholdingType,o.withholdingType)
+			.isEquals();
 		}
-		if (obj instanceof InvoiceTax) {
-			InvoiceTax o = (InvoiceTax) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.invoiceDetail)
+			.append(this.deductibleQuota)
+			.append(this.quota)
+			.append(this.percentage)
+			.append(this.surcharge)
+			.append(this.surchargeQuota)
+			.append(this.taxType)
+			.append(this.vatDeductionType)
+			.append(this.withholdingType)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

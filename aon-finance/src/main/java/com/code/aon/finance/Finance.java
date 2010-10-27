@@ -15,381 +15,280 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.Scope;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.registry.Registry;
 
-/**
- * Transfer Object that represents a Finance.
- * 
- * @author jurkiri
- */
 @Entity
 @Table(name = "finance")
-public class Finance implements ITransferObject, IBankAccountContainer, IConfidentialable {
+public class Finance implements ITransferObject, IBankAccountContainer, IConfidentialable, IScopable {
 	
 	private static final long serialVersionUID = 8289553641190577845L;
 
-	/** The id. */
 	private Integer id;
-	
-	/** The payment. */
 	private boolean payment;
-	
-	/** The registry. */
 	private Registry registry;
-	
-	/** The amount. */
+    private String registryName;
+    private String registryDocument;
 	private double amount;
-	
-	/** The expenses. */
 	private double expenses;
-	
-	/** The concept. */
 	private String concept;
-	
-	/** The invoice. */
 	private Invoice invoice;
-	
-	/** The due date. */
 	private Date dueDate;
-	
-	/** The pay method. */
 	private PayMethod payMethod;
-	
-	/** The bank. */
 	private Bank bank;
-	
-	/** The bank account. */
 	private BankAccount bankAccount;
-	
-	/** The finance status. */
 	private FinanceStatus financeStatus;
-	
-	/** The security level. */
 	private SecurityLevel securityLevel;
-	
+    private Scope scope;
 
-	/**
-	 * The Constructor. Sets TODAY to dueDate.
-	 */
 	public Finance() {
 		this.dueDate = new Date();
 	}
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
 	@Id
 	@GeneratedValue
 	public Integer getId() {
 		return id;
 	}
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param primaryKey the primary key
-	 * @param id the id
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 	
-	/**
-	 * Gets the amount.
-	 * 
-	 * @return the amount
-	 */
+	@Column(nullable = false)
+	public boolean isPayment() {
+		return payment;
+	}
+	public void setPayment(boolean payment) {
+		this.payment = payment;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="registry", nullable=false)
+    @ForeignKey(name="FK_FINANCE_REGISTRY")
+    @Index(name="IDX_FINANCE_REGISTRY")
+	public Registry getRegistry() {
+		return registry;
+	}
+	public void setRegistry(Registry registry) {
+		this.registry = registry;
+	}
+
+    @Column(name="rname", length=128)
+    public String getRegistryName() {
+		return registryName;
+	}
+	public void setRegistryName(String registryName) {
+		this.registryName = registryName;
+	}
+
+	@Column(name="rdocument", length=16)
+    public String getRegistryDocument() {
+		return registryDocument;
+	}
+	public void setRegistryDocument(String registryDocument) {
+		this.registryDocument = registryDocument;
+	}
+
 	@Column(nullable=true)
 	public double getAmount() {
 		return amount;
 	}
-
-	/**
-	 * Sets the amount.
-	 * 
-	 * @param amount the amount
-	 */
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 
-	/**
-	 * Gets the expenses.
-	 * 
-	 * @return the expenses
-	 */
 	@Column(nullable=true,precision=15,scale=3)
 	public double getExpenses() {
 		return expenses;
 	}
-
-	/**
-	 * Sets the expenses.
-	 * 
-	 * @param expenses the expenses
-	 */
 	public void setExpenses(double expenses) {
 		this.expenses = expenses;
 	}
 
-	/**
-	 * Gets the bank.
-	 * 
-	 * @return the bank
-	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="bank")
-    @ForeignKey(name="FK_FINANCE_BANK")
-    @Index(name="IDX_FINANCE_BANK")        
-	public Bank getBank() {
-		return bank;
-	}
-
-	/**
-	 * Sets the bank.
-	 * 
-	 * @param bank the bank
-	 */
-	public void setBank(Bank bank) {
-		this.bank = bank;
-	}
-
-	/**
-	 * Gets the bank account.
-	 * 
-	 * @return the bank account
-	 */
-	@Column(name="bank_account", length=30)
-	@Type(type="com.code.aon.config.hibernate.BankAccountType")
-	public BankAccount getBankAccount() {
-		return bankAccount;
-	}
-
-	/**
-	 * Sets the bank account.
-	 * 
-	 * @param bankAccount the bank account
-	 */
-	public void setBankAccount(BankAccount bankAccount) {
-		this.bankAccount = bankAccount;
-	}
-
-	/**
-	 * Gets the concept.
-	 * 
-	 * @return the concept
-	 */
-	@Column(length=64)
+	@Column(length=32)
 	public String getConcept() {
 		return concept;
 	}
-
-	/**
-	 * Sets the concept.
-	 * 
-	 * @param concept the concept
-	 */
 	public void setConcept(String concept) {
 		this.concept = concept;
 	}
 
-	/**
-	 * Gets the due date.
-	 * 
-	 * @return the due date
-	 */
-	@Column(name="due_date")
-	@Temporal(TemporalType.DATE)
-	@Index(name="IDX_FINANCE_DUE_DATE")
-	public Date getDueDate() {
-		return dueDate;
-	}
-
-	/**
-	 * Sets the due date.
-	 * 
-	 * @param dueDate the due date
-	 */
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
-
-	/**
-	 * Gets the finance status.
-	 * 
-	 * @return the finance status
-	 */
-	@Column(name = "status")
-	public FinanceStatus getFinanceStatus() {
-		return financeStatus;
-	}
-
-	/**
-	 * Sets the finance status.
-	 * 
-	 * @param financeStatus the finance status
-	 */
-	public void setFinanceStatus(FinanceStatus financeStatus) {
-		this.financeStatus = financeStatus;
-	}
-
-	/**
-	 * Gets the invoice.
-	 * 
-	 * @return the invoice
-	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
     @JoinColumn(name="invoice")
     @ForeignKey(name="FK_FINANCE_INVOICE")
     @Index(name="IDX_FINANCE_INVOICE")            
 	public Invoice getInvoice() {
 		return invoice;
 	}
-
-	/**
-	 * Sets the invoice.
-	 * 
-	 * @param invoice the invoice
-	 */
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
 	}
 	
-	/**
-	 * Checks if is payment.
-	 * 
-	 * @return true, if is payment
-	 */
-	@Column(nullable = false)
-	public boolean isPayment() {
-		return payment;
+	@Column(name="due_date")
+	@Temporal(TemporalType.DATE)
+	@Index(name="IDX_FINANCE_DUE_DATE")
+	public Date getDueDate() {
+		return dueDate;
+	}
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
 	}
 
-	/**
-	 * Sets the payment.
-	 * 
-	 * @param payment the payment
-	 */
-	public void setPayment(boolean payment) {
-		this.payment = payment;
-	}
-
-	/**
-	 * Gets the pay method.
-	 * 
-	 * @return the pay method
-	 */
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
     @JoinColumn(name="pay_method")
     @ForeignKey(name="FK_FINANCE_PAY_METHOD")
     @Index(name="IDX_FINANCE_PAY_METHOD")    
 	public PayMethod getPayMethod() {
 		return payMethod;
 	}
-
-	/**
-	 * Sets the pay method.
-	 * 
-	 * @param payMethod the pay method
-	 */
 	public void setPayMethod(PayMethod payMethod) {
 		this.payMethod = payMethod;
 	}
 
-	/**
-	 * Gets the registry.
-	 * 
-	 * @return the registry
-	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="registry")
-    @ForeignKey(name="FK_FINANCE_REGISTRY")
-    @Index(name="IDX_FINANCE_REGISTRY")
-	public Registry getRegistry() {
-		return registry;
+	@ManyToOne
+    @JoinColumn(name="bank")
+    @ForeignKey(name="FK_FINANCE_BANK")
+    @Index(name="IDX_FINANCE_BANK")        
+	public Bank getBank() {
+		return bank;
+	}
+	public void setBank(Bank bank) {
+		this.bank = bank;
 	}
 
-	/**
-	 * Sets the registry.
-	 * 
-	 * @param registry the registry
-	 */
-	public void setRegistry(Registry registry) {
-		this.registry = registry;
+	@Column(name="bank_account", length=30)
+	@Type(type="com.code.aon.config.hibernate.BankAccountType")
+	public BankAccount getBankAccount() {
+		return bankAccount;
+	}
+	public void setBankAccount(BankAccount bankAccount) {
+		this.bankAccount = bankAccount;
 	}
 
-	/**
-	 * Gets the security level.
-	 * 
-	 * @return the security level
-	 */
+	@Column(name = "status")
+	public FinanceStatus getFinanceStatus() {
+		return financeStatus;
+	}
+	public void setFinanceStatus(FinanceStatus financeStatus) {
+		this.financeStatus = financeStatus;
+	}
+
 	@Column(name = "security_level")
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-
-	/**
-	 * Sets the security level.
-	 * 
-	 * @param securityLevel the security level
-	 */
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="scope", nullable = false)
+    @ForeignKey(name="FK_FINANCE_SCOPE")
+    @Index(name="IDX_FINANCE_SCOPE") 
+    public Scope getScope() {
+        return scope;
+    }
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
+
+	@Transient
+	public double getTotalAmount(){
+		return getAmount() + getExpenses();
 	}
 	
 	@Transient
 	public boolean isConfidential() {
 		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
 	}
-
 	@Transient
 	public void setConfidential(boolean confidential) {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
-	/**
-	 * Gets the total amount.
-	 * 
-	 * @return the total amount
-	 */
 	@Transient
-	public double getTotalAmount(){
-		return getAmount() + getExpenses();
+	public boolean isEmptyInvoice() {
+		return (getInvoice() == null || getInvoice().getId() == null);
 	}
-	
+
+	@Transient
+	public String getReferenceCode() {
+		return (!isEmptyInvoice()) ? getInvoice().getReferenceCode() : null;
+	}
+
+	@Transient
+	public String getDocumentNumber() {
+		return (!isEmptyInvoice()) ? getInvoice().getDocumentNumber() : getConcept();
+	}
+
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Finance o = (Finance) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.amount,o.amount)
+			.append(this.bank,o.bank)
+			.append(this.bankAccount,o.bankAccount)
+			.append(this.concept,o.concept)
+			.append(this.dueDate,o.dueDate)
+			.append(this.expenses,o.expenses)
+			.append(this.financeStatus,o.financeStatus)
+			.append(this.invoice,o.invoice)
+			.append(this.payment,o.payment)
+			.append(this.payMethod,o.payMethod)
+			.append(this.registry,o.registry)
+			.append(this.registryDocument,o.registryDocument)
+			.append(this.registryName,o.registryName)
+			.append(this.securityLevel,o.securityLevel)
+			.append(this.scope,o.scope)
+			.isEquals();
 		}
-		if (obj instanceof Finance) {
-			Finance o = (Finance) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.amount)
+			.append(this.bank)
+			.append(this.bankAccount)
+			.append(this.concept)
+			.append(this.dueDate)
+			.append(this.expenses)
+			.append(this.financeStatus)
+			.append(this.invoice)
+			.append(this.payment)
+			.append(this.payMethod)
+			.append(this.registry)
+			.append(this.registryDocument)
+			.append(this.registryName)
+			.append(this.securityLevel)
+			.append(this.scope)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }
