@@ -18,6 +18,34 @@
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/contractHeader.xhtml" />
 	
 		<aon:panelGrid columns="2" style="width: 50%;" >
+			<aon:outputLabel for="contractOption"
+				value="#{payrollBundle.contract_contract_option}" />
+			<aon:selectOneMenu id="contractOption"
+				value="#{contractGenerationWizard.contractOption}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.contractOptions}" />
+				<a4j:support event="onchange" reRender="contractType, contractCode" />
+			</aon:selectOneMenu>
+
+			<aon:outputLabel for="contractType"
+				value="#{payrollBundle.contract_contract_type}" />
+			<aon:selectOneMenu id="contractType"
+				disabled="#{contractGenerationWizard.contractOption==null}"
+				value="#{contractGenerationWizard.contractType}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contractGenerationWizard.contractTypes}" />
+				<a4j:support event="onchange" reRender="contractCode" />
+			</aon:selectOneMenu>
+
+			<aon:outputLabel for="contractCode"
+				value="#{payrollBundle.contract_work_time}" />
+			<aon:selectOneMenu id="contractCode"
+				disabled="#{contractGenerationWizard.contractType.codes==null}"
+				value="#{contractGenerationWizard.code}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contractGenerationWizard.contractCodes}" />
+			</aon:selectOneMenu>
+<!--  
 			<aon:outputLabel for="contractModel"
 				value="#{payrollBundle.contract_contract_model}" />
 			<aon:selectOneMenu id="contractModel"
@@ -31,6 +59,7 @@
 				value="#{contractGenerationWizard.code}" >
 				<f:selectItems value="#{payrollCollections.contractCodes}" />
 			</aon:selectOneMenu>
+-->
 
 <!--  
 			<aon:outputLabel for="ContractType_id"
@@ -53,7 +82,7 @@
 			<aon:outputLabel for="workTime"
 				value="#{payrollBundle.contract_work_time}" />
 			<aon:selectOneRadio id="workTime"
-				value="#{contractGenerationWizard.contract.contractType.workingDay}" >
+				value="#{contractGenerationWizard.workingDay}" >
 				<f:selectItems value="#{payrollCollections.workTimes}" />
 			</aon:selectOneRadio>
 -->			
