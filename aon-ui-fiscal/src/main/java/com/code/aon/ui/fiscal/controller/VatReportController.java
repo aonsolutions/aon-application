@@ -1,5 +1,6 @@
 package com.code.aon.ui.fiscal.controller;
 
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -22,8 +23,8 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.Period;
-import com.code.aon.fiscal.enumeration.VatReportOrder;
 import com.code.aon.fiscal.enumeration.VatReportType;
 import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.fiscal.vat.Vat;
@@ -61,7 +62,7 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	private Integer year;
 	private Period period;
 
-	private VatReportOrder order;
+	private InvoiceReportOrder order;
 	private SecurityLevel securityLevel;
 	private Map<VatType,VatTypeBreakdown> summary;
 	private DataModel model;
@@ -130,10 +131,10 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		this.toNumber = toNumber;
 	}
 
-	public VatReportOrder getOrder() {
+	public InvoiceReportOrder getOrder() {
 		return order;
 	}
-	public void setOrder(VatReportOrder order) {
+	public void setOrder(InvoiceReportOrder order) {
 		this.order = order;
 	}
 
