@@ -24,7 +24,15 @@
 				value="#{contractGenerationWizard.model}" >
 				<f:selectItems value="#{payrollCollections.contractModels}" />
 			</aon:selectOneMenu>
-			
+
+			<aon:outputLabel for="contractCode"
+				value="#{payrollBundle.contract_contract_code}" />
+			<aon:selectOneMenu id="contractCode"
+				value="#{contractGenerationWizard.code}" >
+				<f:selectItems value="#{payrollCollections.contractCodes}" />
+			</aon:selectOneMenu>
+
+<!--  
 			<aon:outputLabel for="ContractType_id"
 				value="#{employeeBundle.employee_contractType}" />
 			<aon:div styleClass="aon-lookup">
@@ -48,6 +56,7 @@
 				value="#{contractGenerationWizard.contract.contractType.workingDay}" >
 				<f:selectItems value="#{payrollCollections.workTimes}" />
 			</aon:selectOneRadio>
+-->			
 			
 			<aon:outputLabel for="startDate"
 				value="#{payrollBundle.contract_start_date}" />

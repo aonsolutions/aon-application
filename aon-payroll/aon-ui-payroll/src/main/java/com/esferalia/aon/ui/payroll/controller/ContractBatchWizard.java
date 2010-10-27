@@ -17,7 +17,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,9 +117,9 @@ public class ContractBatchWizard {
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
 			onValidate(event);
-			save();
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
+			save();
 			onDiskGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {

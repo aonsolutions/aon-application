@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,6 +28,9 @@ public class ImageServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String model = request.getParameter("model");
+		String zoom = request.getParameter("zoom");
+		String width = request.getParameter("width");
+		String height = request.getParameter("height");
 		if (StringUtils.isEmpty(model)) {
 			throw new IllegalArgumentException("Modelo vacio");
 		}
@@ -48,9 +50,12 @@ public class ImageServlet extends HttpServlet {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		URL[] urls = Classpath.search(cl, "com/esferalia/aon/ui/payroll/contractModel/", SCHEMA);
 		
-		List<BufferedImage> pics = PdfToImage.create(urls[0]);
+//		List<BufferedImage> pics = PdfToImage.create(urls[0],Integer.parseInt(zoom), Integer.parseInt(width), Integer.parseInt(height));
+		BufferedImage pic = PdfToImage.create(urls[0], Integer.parseInt(page), Integer.parseInt(zoom), Integer.parseInt(width), Integer.parseInt(height));
+		pic = ImageUtil.scale(pic, Integer.parseInt(width), Integer.parseInt(height));
+		
 //		List<BufferedImage> pics = PdfToImage.create(pFile);
-		BufferedImage pic = pics.get(Integer.parseInt(page)-1);
+//		BufferedImage pic = pics.get(Integer.parseInt(page)-1);
 		byte[] buffer = ImageUtil.getImage(pic,MimeType.MIME_PNG.getExtension());
 		InputStream in = new ByteArrayInputStream(buffer);
 		int bytes = in.read(buffer);
@@ -59,7 +64,7 @@ public class ImageServlet extends HttpServlet {
 			bytes = in.read(buffer);
 		}
 		in.close();
-		response.setContentType(MimeType.MIME_JPEG.getName()); // Formato de la imagen
+		response.setContentType(MimeType.MIME_PNG.getName()); // Formato de la imagen
 		response.flushBuffer();
 	}
 
