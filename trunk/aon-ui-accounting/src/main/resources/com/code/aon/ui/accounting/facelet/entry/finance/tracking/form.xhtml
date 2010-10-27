@@ -88,30 +88,6 @@
 						rendered="#{financeTrackingEntry.payment != null}"
 						columnClasses="aon-panelGrid-odd aon-width-150
 									  ,aon-panelGrid-even aon-width-auto">
-<!-- 
-						<aon:outputLabel for="AccountEntry_type"
-							value="#{bundle.aon_type}" />
-						<aon:selectOneMenu id="AccountEntry_type"
-							value="#{financeTrackingEntry.payment}" disabled="#{financeTrackingEntry.payment != null}">
-							<a4j:support event="onchange"
-						  		actionListener="#{financeTrackingEntry.onTypeChanged}"
-						  		reRender="AccountEntry_type,financePanelTabSet"/>
-							<f:selectItem itemLabel="" value="#{null}" />
-							<f:selectItem itemLabel="#{accountingBundle.accounting_collection}" itemValue="#{false}" />
-							<f:selectItem itemLabel="#{accountingBundle.accounting_payment}" itemValue="#{true}" />
-						</aon:selectOneMenu>
-
-						<c:if test="#{aonRole.confidentiality}">
-							<aon:outputLabel for="AccountEntry_securityLevel"
-									value="#{bundle.aon_confidential}" />
-							<aon:selectOneRadio id="AccountEntry_securityLevel"
-								style="display:inline;"
-								value="#{financeTrackingEntry.securityLevel}">
-								<f:selectItems value="#{commonCollections.confidentialValues}" />
-							</aon:selectOneRadio>
-						</c:if>
-
- -->
 					<aon:outputLabel for="AccountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="AccountEntry_accountPeriod"
@@ -121,6 +97,7 @@
 					</aon:selectOneMenu>
 
 				</aon:panelGrid>
+
 				<aon:div id="financePanelTabSet">
 					<aon:panelTabSet rendered="#{financeTrackingEntry.payment != null}">
 

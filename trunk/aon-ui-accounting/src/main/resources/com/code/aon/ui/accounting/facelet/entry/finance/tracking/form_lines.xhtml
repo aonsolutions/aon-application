@@ -4,7 +4,6 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:div styleClass="aon-toolbar" rendered="#{financeTrackingEntry.lines.rowCount > 0}">
@@ -33,7 +32,7 @@
 	<aon:div id="lineDataDiv">
 		<aon:dataTable id="lineData" value="#{financeTrackingEntry.lines}" sortMode="multi"
 			var="to" rows="20" rendered="#{financeTrackingEntry.lines.rowCount > 0}"
-			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">				
 			
@@ -46,23 +45,10 @@
 					valueChangeListener="#{financeTrackingEntry.rowSelectedLines}"/>	
 			</aon:column>
 
-			<aon:column>
+			<aon:column sortBy="#{to.trackingDate}"
+				sortOrder="#{financeTrackingEntry.order['FinanceTracking_trackingDate']}">
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice}" />
-				</f:facet>
-				<aon:outputText value="#{to.finance.invoice.referenceCode}" />
-			</aon:column>
-			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.finance.invoice.registryName}" />
-			</aon:column>
-	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_finance_date}" />
+					<aon:outputText value="#{bundle.aon_date}" />
 				</f:facet>
 				<aon:outputText value="#{to.trackingDate}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -70,7 +56,40 @@
 				</aon:outputText>
 			</aon:column>
 	
-			<aon:column>
+			<aon:column sortBy="#{to.finance.referenceCode}"
+				sortOrder="#{financeTrackingEntry.order['FinanceTracking_finance_invoice_referenceCode']}">
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.referenceCode}" />
+			</aon:column>
+			
+			<aon:column sortBy="#{to.finance.concept}"
+				sortOrder="#{financeTrackingEntry.order['FinanceTracking_finance_concept']}">
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+				</f:facet>
+				<h:outputText value="#{to.finance.concept}" />
+			</aon:column>
+
+			<aon:column sortBy="#{to.finance.registryName}"
+				sortOrder="#{financeTrackingEntry.order['FinanceTracking_finance_registryName']}">
+				<f:facet name="header">
+					<aon:outputText value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.registryName}" />
+			</aon:column>
+	
+			<aon:column sortBy="#{to.type}"
+				sortOrder="#{financeTrackingEntry.order['FinanceTracking_type']}">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.type}"/>
+			</aon:column>
+	
+			<aon:column sortBy="#{to.finance.payMethod.name}"
+				sortOrder="#{financeTrackingEntry.order['FinanceTracking_finance_payMethod_name']}">
 				<f:facet name="header">
 					<aon:outputText value="#{configBundle.config_pay_method}" />
 				</f:facet>
@@ -85,14 +104,8 @@
 				<aon:outputText value="#{to.payMethodTypeDetail.description}" rendered="#{to.payMethodTypeDetail != null}"/>
 			</aon:column>
 	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_type}" />
-				</f:facet>
-				<aon:outputText value="#{to.type}"/>
-			</aon:column>
-	
-			<aon:column>
+			<aon:column sortBy="#{to.finance.totalAmount}"
+				sortOrder="#{financeTrackingEntry.order['FinanceTracking_finance_totalAmount']}">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_amount}" />
 				</f:facet>

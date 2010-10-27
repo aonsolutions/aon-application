@@ -412,16 +412,27 @@
 								value="#{accountCollections.chargedRetentionAccounts}" />
 						</aon:selectOneMenu>
 
-						<aon:outputLabel for="Invoice_paid_retention_account"
-							rendered="#{invoiceEntry.header.withholding and invoiceEntry.sales}"
-							value="#{accountingBundle.accounting_retention_account}" />
-						<aon:selectOneMenu id="Invoice_paid_retention_account"
-							rendered="#{invoiceEntry.header.withholding and invoiceEntry.sales}"
-							value="#{invoiceEntry.header.retentionAccount}">
-							<f:selectItems
-								value="#{accountCollections.paidRetentionAccounts}" />
-						</aon:selectOneMenu>
+						<aon:div>
+							<aon:outputLabel for="Invoice_paid_retention_account"
+								rendered="#{invoiceEntry.header.withholding and invoiceEntry.sales}"
+								value="#{accountingBundle.accounting_retention_account}" />
+							<aon:selectOneMenu id="Invoice_paid_retention_account"
+								rendered="#{invoiceEntry.header.withholding and invoiceEntry.sales}"
+								value="#{invoiceEntry.header.retentionAccount}">
+								<f:selectItems
+									value="#{accountCollections.paidRetentionAccounts}" />
+							</aon:selectOneMenu>
 
+							<aon:outputLabel for="Account_invoiceWithholdingType"
+								styleClass="aon-form-date-label" style="margin-right: 5px;"
+								value="#{configBundle.config_company_name}" />
+							<aon:selectOneMenu id="Account_invoiceWithholdingType"
+								disabled="#{invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.withholdingType}">
+								<f:selectItems
+									value="#{configCollections.withholdingTypes}" />
+							</aon:selectOneMenu>
+						</aon:div>
 					</aon:panelGrid>
 					<aon:div id="InvoiceWizard" styleClass="aon-panelGrid-search">
 						<aon:panelGrid columns="11" style="width: 100%;"
