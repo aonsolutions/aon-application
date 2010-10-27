@@ -29,6 +29,10 @@
 									<aon:commandLink id="checks" action="util_checking"
 										value="#{financeBundle.finance_checking_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="checks2" action="invoice_checking"
+										value="#{financeBundle.finance_invoice_checking_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -65,6 +69,12 @@
 											value="#{financeBundle.finance_undeductible_invoice_recording_module}"
 											actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
 											action="undeductibleInvoiceRecorder_search" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="financeTrackingEntry"
+											action="account_finance_tracking_entry"
+											actionListener="#{financeTrackingEntry.onReset}"
+											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
