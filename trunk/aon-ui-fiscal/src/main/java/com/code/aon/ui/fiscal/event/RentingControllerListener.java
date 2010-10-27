@@ -16,6 +16,7 @@ public class RentingControllerListener extends ControllerAdapter {
 		Renting renting = (Renting) c.getTo();
 		String defYear = c.getFiscalParams().getDefaultYear();
 		renting.setYear( defYear==null?null:Integer.parseInt(defYear) );
+		renting.setAdministration( c.getFiscalParams().getDefaultAdministration());
 		renting.setStatus( RentingStatus.PENDING);
 		renting.setComplementary(false);
 		renting.setReplacement(false);
@@ -32,4 +33,13 @@ public class RentingControllerListener extends ControllerAdapter {
 		}
 	}
 
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		try {
+			RentingController c = (RentingController) event.getController();
+			c.initializeRentingDetail( );
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(),e);
+		}
+	}
 }
