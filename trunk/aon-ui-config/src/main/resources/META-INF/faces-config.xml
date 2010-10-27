@@ -301,11 +301,15 @@
 			<value>tax</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Tax_type,Tax_vatDeductionType,Tax_withholdingType,Tax_percentage desc,Tax_name</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{taxControllerListener}</value>
 				<value>#{taxDetailListener}</value>
-				<value>#{taxValidatorListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -342,8 +346,8 @@
 	
 	<!-- ********* TAX VALIDATOR LISTENER ************** -->
 	<managed-bean>
-		<managed-bean-name>taxValidatorListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.TaxValidationListener</managed-bean-class>
+		<managed-bean-name>taxControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.TaxControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
@@ -507,11 +511,6 @@
 			<description>SERIES NAVIGATION</description>
 			<from-outcome>series</from-outcome>
 			<to-view-id>/com/code/aon/ui/config/facelet/series/grid.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<description>TAX NAVIGATION</description>
-			<from-outcome>tax</from-outcome>
-			<to-view-id>/com/code/aon/ui/config/facelet/tax/grid.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<description>TAX LIST NAVIGATION</description>
