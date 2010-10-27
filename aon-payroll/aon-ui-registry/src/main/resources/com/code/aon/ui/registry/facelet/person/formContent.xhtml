@@ -9,6 +9,15 @@
 	<ui:include
 		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
 
+	<aon:outputLabel for="Person_birthDate"
+		value="#{registryBundle.registry_person_birthDate}" />
+	<aon:selectInputDate id="Person_birthDate" 
+		value="#{controller.to.birthDate}"
+		inputSize="10" renderAsPopup="true" enableManualInput="true"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}">
+	</aon:selectInputDate>
+
 	<aon:outputLabel for="Person_socialSecurityNumber"
 		value="#{registryBundle.registry_person_nss}" />
 	<aon:inputText id="Person_socialSecurityNumber"
