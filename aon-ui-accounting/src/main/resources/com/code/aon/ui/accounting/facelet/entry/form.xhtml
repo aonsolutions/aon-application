@@ -77,7 +77,7 @@
 							accesskey="Q" title="#{bundle.aon_update} Alt+Q"
 							action="#{accountEntry.onNavigate}"
 							actionListener="#{accountEntry.onSelectEntry}"
-							rendered="#{accountEntry.updatableViaWizard}"
+							rendered="#{!accountEntry.new and accountEntry.updatableViaWizard}"
 							styleClass="aon-finding-toolbar-item aon-icon-refresh"
 							immediate="true" />
 	

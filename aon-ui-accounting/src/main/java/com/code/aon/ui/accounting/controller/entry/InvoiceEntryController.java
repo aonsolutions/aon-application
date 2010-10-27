@@ -57,6 +57,8 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.enumeration.VatDeductionType;
+import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
@@ -350,6 +352,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		Period period = (header != null && getHeader().getPeriod() != null) ? getHeader().getPeriod() : AccountingPeriodUtil.getDefaultPeriod();
 		Date date = (header != null && getHeader().getDate() != null) ? getHeader().getDate() : new Date();
 		Date taxDate = (header != null && getHeader().getTaxDate() != null) ? getHeader().getTaxDate() : new Date();
+		VatDeductionType vatDeductionType = (header != null && getHeader().getVatDeductionType() != null) ? getHeader().getVatDeductionType() : VatDeductionType.WITH_RIGHT;
+		WithholdingType withholdingType = (header != null && getHeader().getWithholdingType() != null) ? getHeader().getWithholdingType() : WithholdingType.PROFESSIONAL;
 		SecurityLevel securityLevel = (header != null && getHeader().getSecurityLevel() != null) ? getHeader().getSecurityLevel() : SecurityLevel.OFFICIAL;
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_INVOICE_SERIES);
@@ -406,6 +410,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		getHeader().setTaxPercent(taxPercent);
 		getHeader().setSurchargePercent(surPercent);
 		getHeader().setRetPercent(retPercent);
+		getHeader().setVatDeductionType(vatDeductionType);
+		getHeader().setWithholdingType(withholdingType);
 		getHeader().setSecurityLevel(securityLevel);
 		getHeader().setRegistry(new Registry());
 		getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
@@ -810,7 +816,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private void updateInvoiceEntry(String sessionName, double invoiceTotal) throws ManagerBeanException {
-			//deleteFinances(getAccountEntryInvoice().getInvoice());
 			deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
 			deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
 
@@ -1191,6 +1196,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			Finance finance = iter.next();
 			finance.setInvoice(invoice);
 			finance.setRegistry(invoice.getRegistry());
+			finance.setRegistryName(invoice.getRegistryName());
+			finance.setRegistryDocument(invoice.getRegistryDocument());
 			if (finance.getId() == null) {
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}
