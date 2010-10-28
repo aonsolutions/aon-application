@@ -1,4 +1,4 @@
-package com.code.aon.file.tax.model.MOD115;
+package com.code.aon.file.tax.model.MOD303;
 
 
 import java.io.FileNotFoundException;
@@ -11,16 +11,16 @@ import java.util.Map;
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD115.check.CheckDeclaration;
-import com.code.aon.file.tax.model.MOD115.data.Declaration;
+import com.code.aon.file.tax.model.MOD303.check.CheckDeclaration;
+import com.code.aon.file.tax.model.MOD303.data.Declaration;
 
-public class MOD115 extends AbstractFileFiller{
+public class MOD303 extends AbstractFileFiller{
 
 	private static String DECLARATION = "DECLARATION";
 	
 	private Declaration declaration;
 	
-	public MOD115(Declaration declaration, MOD115Format format,String filePath) throws FileNotFoundException, UnsupportedEncodingException {
+	public MOD303(Declaration declaration, MOD303Format format,String filePath) throws FileNotFoundException, UnsupportedEncodingException {
 		super(filePath);
 		if (declaration == null)  {
 			throw new IllegalArgumentException("Declaration can not be null!");
@@ -31,14 +31,14 @@ public class MOD115 extends AbstractFileFiller{
 		
 		this.declaration = declaration;
 		
-		InputStream input = MOD115.class.getResourceAsStream(format.getDeclarationMetadataResource());
+		InputStream input = MOD303.class.getResourceAsStream(format.getDeclarationMetadataResource());
 		DiskRegisterLoader.load(input, manager);
 	}
 
 	public ArrayList<Exception> create() {
 		try{
 			Map<String,Object> properties = new HashMap<String,Object>();
-			properties.put(MOD115.DECLARATION, declaration);
+			properties.put(MOD303.DECLARATION, declaration);
 			
 			if (CheckDeclaration.parse(declaration,exceptions)==false) {
 				throw new Fd0Exception( "ABORTED: ",declaration.toString());

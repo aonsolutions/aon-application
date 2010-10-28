@@ -1,13 +1,10 @@
 package com.code.aon.ui.fiscal.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -16,18 +13,13 @@ import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.company.Company;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD115.MOD115Format;
 import com.code.aon.fiscal.Renting;
-import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.renting.RentingProvider;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.fiscal.file.MOD115Writer;
-import com.code.aon.ui.fiscal.file.MOD347Writer;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -35,16 +27,7 @@ public class RentingController extends BasicController {
 
 	private RentingProvider provider;
 	private FiscalParametersController fiscalParams;
-	private Company company;
 	private FileOutput fileOutput;
-
-	private Company getCompany() {
-		if (company == null) {
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			this.company = companyController.obtainCompany(); 
-		}
-		return company;
-	}
 
 	public RentingProvider getProvider() {
 		if (provider == null) {
