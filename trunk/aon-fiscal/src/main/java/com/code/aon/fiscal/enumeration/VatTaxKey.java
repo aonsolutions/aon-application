@@ -11,12 +11,14 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum VatTaxKey implements IResourceable {
 
+	// key,detailed,percentVisible,deductibleQuotaVisible,subtotal,total
+	
 	// A1=REGIMEN GENERAL
 	A1("A1", true, true, true, false, false),
 	// A2=RECARGO EQUIVALENCIA
 	A2("A2", true, true, true, false, false),
 	// A3=ADQUISIONES INTRACOMUNITARIAS
-	A3("A3", false, false, false, true, false),
+	A3("A3", true, true, false, false, false),
 	// A4=INVERSION DE SUJETO PASIVO
 	A4("A4", false, false, false, true, false),
 	// A5=MODIFICACION BASES Y CUOTAS

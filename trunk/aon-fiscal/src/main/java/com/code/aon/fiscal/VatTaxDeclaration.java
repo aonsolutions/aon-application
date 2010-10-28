@@ -229,6 +229,10 @@ public class VatTaxDeclaration implements ITransferObject {
     }
 
     @Transient
+    public boolean isGenerated() {
+    	return (this.status == VatTaxDeclarationStatus.GENERATED);
+    }
+    @Transient
 	public double getDifference() {
 		return CommonUtil.round( getQuota() - getPreviousYearCompensateQuota() );
 	}
