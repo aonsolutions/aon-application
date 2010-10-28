@@ -1162,6 +1162,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		invoiceTax.setSurcharge(detail.getSurchargePercent());
 		invoiceTax.setSurchargeQuota(detail.getSurchargeQuota());
 		invoiceTax.setTaxType(TaxType.VAT);
+		invoiceTax.setVatDeductionType(getHeader().getVatDeductionType());
 		invoiceTaxBean.insert(invoiceTax);
 		
 		if (detail.getRetentionPercent() > 0) {
@@ -1171,6 +1172,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			invoiceTax.setQuota(detail.getRetentionQuota());
 			invoiceTax.setSurcharge(0);
 			invoiceTax.setTaxType(TaxType.RETENTION);
+			invoiceTax.setWithholdingType(getHeader().getWithholdingType());
 			invoiceTaxBean.insert(invoiceTax);
 		}
 	}
@@ -1595,6 +1597,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 						if (invoiceTax.getSurcharge() > 0 && invoiceTax.getSurchargeQuota() == 0) {
 							detail.setSurchargeQuota( CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceTax.getSurcharge() / 100, 2));
 						}
+						getHeader().setVatDeductionType(invoiceTax.getVatDeductionType());
 					} else if(invoiceTax.getTaxType().equals(TaxType.RETENTION)){
 						detail.setRetentionPercent(invoiceTax.getPercentage());
 						detail.setRetentionQuota(invoiceTax.getQuota());
@@ -1602,6 +1605,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 						if (invoiceTax.getPercentage() > 0 && invoiceTax.getQuota() == 0) {
 							detail.setVatQuota(CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceTax.getPercentage() / 100, 2));
 						}
+						getHeader().setWithholdingType(invoiceTax.getWithholdingType());
 					}
 				}
 
