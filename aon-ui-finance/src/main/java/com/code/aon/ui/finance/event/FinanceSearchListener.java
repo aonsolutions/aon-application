@@ -26,15 +26,10 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 	
 	private Customer customer;
-
 	private Supplier supplier;
-
 	private Creditor creditor;
-
 	private RegistryBank registryBank;
-
 	private FinanceStatus[] financeStatuses;
-	
 	private List<PayMethod> payMethods;
 	
 	public Customer getCustomer() {

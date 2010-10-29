@@ -28,17 +28,11 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 	
 	private String defaultType;
-	
 	private String defaultStatus;
-
 	private Registry registry;
-	
     private Item item;
-
 	private Bank bank;
-    
 	private FinanceStatus[] financeStatuses;
-	
 	private List<PayMethod> payMethods;
 	
 	public String getDefaultType() {
