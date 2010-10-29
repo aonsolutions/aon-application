@@ -19,6 +19,7 @@
 		<mapping class="com.code.aon.employee.Contract"/>
 		<mapping class="com.code.aon.employee.ContractTracking"/>
 		<mapping class="com.code.aon.employee.ContractType"/>
+		<mapping class="com.code.aon.employee.Salary"/>
 
 		<mapping class="com.code.aon.company.CNAE"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
