@@ -249,6 +249,13 @@
 			<value>AnnualReportDetail_sortKey</value>
 		</managed-property>
 	</managed-bean>
+	<!-- ****************  ANNUAL REPORT DETAIL ************************** -->
+	<managed-bean>
+		<managed-bean-name>annualReportLauncher</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.AnnualReportLauncher</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 
 	<!-- **************** LOAN ************************* -->
 	<managed-bean>
@@ -1145,6 +1152,14 @@
 			<to-view-id>/com/code/aon/ui/accounting/facelet/annualReport/preview.xhtml</to-view-id>
 		</navigation-case>
 		
+	</navigation-rule>
+
+	<!-- **************** ANNUAL REPORT LAUNCHER************************** -->
+	<navigation-rule>
+	    <navigation-case>
+			<from-outcome>annualReportLauncher_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/annualReportLauncher/search.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
 	<!-- **************** BALANCE ************************** -->
