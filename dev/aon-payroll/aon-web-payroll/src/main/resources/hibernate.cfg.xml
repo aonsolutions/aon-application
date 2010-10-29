@@ -94,6 +94,7 @@
 		<mapping class="com.code.aon.employee.Contract"/>
 		<mapping class="com.code.aon.employee.ContractTracking"/>		
 		<mapping class="com.code.aon.employee.ContractType"/>		
+		<mapping class="com.code.aon.employee.Salary"/>
 
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
