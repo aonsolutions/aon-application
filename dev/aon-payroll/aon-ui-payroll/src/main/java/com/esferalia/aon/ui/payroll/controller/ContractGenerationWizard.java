@@ -72,7 +72,11 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	private ContractCode code;
 	private String imageUrl;
 	private ContractWorkingDay workingDay;
+	private List<SelectItem> workplaces;
 	
+	public List<SelectItem> getWorkplaces() {
+		return workplaces;
+	}
 	public ContractWorkingDay getWorkingDay() {
 		return workingDay;
 	}
@@ -203,7 +207,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 1) {
 			// buscar si existe algun contrato con la empresa y la persona seleccionadas
-			onSearchContract(event);
+//			onSearchContract(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 2) {
 			onValidate(event);
@@ -264,6 +268,9 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		setContract(new Contract());
 //		getContract().setContractType(new ContractType());
 		getContract().setStartDate(new Date());
+		if(getContractBuilder()!=null){
+			getContractBuilder().setZoomFactor(0);
+		}
 		setCurrentStep(0);
 	}
 	
@@ -274,12 +281,21 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		EnterpriseController enterpriseC = (EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER);
 		enterpriseC.onSelect(event);
 		getContract().setCcc(enterpriseC.getCCC());
-		LinesController workplaceC = (LinesController)AonUtil.getRegisteredBean(ENTERPRISE_WORKPLACE_CONTROLLER);
-		workplaceC.onSearch(null);
-		workplaceC.onSelectFirst(null);
-		getContract().setWorkPlace((WorkPlace)workplaceC.getTo());
+		this.workplaces = loadWorkPlaces();
 		setEnterpriseListEnabled(false);
 		setCurrentStep(1);
+	}
+	
+	public List<SelectItem> loadWorkPlaces(){
+		LinesController wpc = (LinesController)AonUtil.getRegisteredBean(ENTERPRISE_WORKPLACE_CONTROLLER);
+		wpc.onSearch(null);
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for(ITransferObject to: wpc.getWrappedList()){
+			WorkPlace wp = (WorkPlace)to;
+			SelectItem item = new SelectItem(wp, wp.getDescription());
+			list.add(item);	
+		}
+		return list;
 	}
 	public void onSelectPerson(ActionEvent event) {
 		RegistryController person = (RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER);
@@ -325,7 +341,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_ID), getContract().getPerson().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getContract().getWorkPlace().getEnterprise().getId());
+//			criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getContract().getWorkPlace().getEnterprise().getId());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				setContract((Contract)list.get(0));
@@ -359,6 +375,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		accept();
 	}
 	public void onSave(ActionEvent event) {
+		onContractGenerate(event);
 		getContract().setStatus(ContractStatus.PENDING);
 		accept();
 	}

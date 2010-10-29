@@ -18,6 +18,14 @@
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/contractHeader.xhtml" />
 	
 		<aon:panelGrid columns="2" style="width: 50%;" >
+			<aon:outputLabel for="workplace"
+				value="#{companyBundle.company_workplace}" />
+			<aon:selectOneMenu id="workplace"
+				value="#{contractGenerationWizard.contract.workPlace}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contractGenerationWizard.workplaces}" />
+			</aon:selectOneMenu>
+
 			<aon:outputLabel for="contractOption"
 				value="#{payrollBundle.contract_contract_option}" />
 			<aon:selectOneMenu id="contractOption"
