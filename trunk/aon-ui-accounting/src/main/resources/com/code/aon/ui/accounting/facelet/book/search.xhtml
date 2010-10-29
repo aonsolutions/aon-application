@@ -101,8 +101,11 @@
 
 					<aon:outputText value="" />
 					<aon:div>
-						<aon:selectBooleanCheckbox id="annualReportEnabled" value="#{accountingBook.annualReportEnabled}" disabled="true"/>
+						<aon:selectBooleanCheckbox id="annualReportEnabled" value="#{accountingBook.annualReportEnabled}"/>
 						<aon:outputLabel for="annualReportEnabled" value="#{accountingBundle.accounting_annualReportEnabled}" />
+						<aon:selectOneMenu value="#{accountingBook.annualReport}">
+							<f:selectItems value="#{accountingCollections.annualReports}" />
+						</aon:selectOneMenu>
 					</aon:div>
 					
 					<aon:outputText value="" />
