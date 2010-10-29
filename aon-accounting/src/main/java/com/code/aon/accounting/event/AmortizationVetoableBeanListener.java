@@ -40,20 +40,27 @@ public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAda
 			AccountUtil util = new AccountUtil();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 
-			Account account = new Account();
-			account.setId(util.obtainNextAccountId(at.getFixedAssetAccount().getId()));
-			account.setDescription(to.getDescription());
-			to.setFixedAssetAccount((Account) accountBean.insert(account));
+			if (to.getFixedAssetAccount() == null) {
+				Account account = new Account();
+				account.setId(util.obtainNextAccountId(at.getFixedAssetAccount().getId()));
+				account.setDescription(to.getDescription());
+				to.setFixedAssetAccount((Account) accountBean.insert(account));
+			}
 
-			account = new Account();
-			account.setId(util.obtainNextAccountId(at.getAccumulatedAccount().getId()));
-			account.setDescription("Amortización Acumulada " + to.getDescription());
-			to.setAccumulatedAccount((Account) accountBean.insert(account));
+			if (to.getAccumulatedAccount() == null) {
+				Account account = new Account();
+				account.setId(util.obtainNextAccountId(at.getAccumulatedAccount().getId()));
+				account.setDescription("Amortización Acumulada " + to.getDescription());
+				to.setAccumulatedAccount((Account) accountBean.insert(account));
+			}
 
-			account = new Account();
-			account.setId(util.obtainNextAccountId(at.getAllocationAccount().getId()));
-			account.setDescription("Amortización " + to.getDescription());
-			to.setAllocationAccount((Account) accountBean.insert(account));
+			if (to.getAllocationAccount() == null) {
+				Account account = new Account();
+				account.setId(util.obtainNextAccountId(at.getAllocationAccount().getId()));
+				account.setDescription("Amortización " + to.getDescription());
+				to.setAllocationAccount((Account) accountBean.insert(account));
+			}
+
 			if (to.getSecurityLevel() == null) {
 				to.setSecurityLevel( SecurityLevel.OFFICIAL );
 			}
@@ -97,7 +104,9 @@ public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAda
 				a.getAllocationAccount().setDescription("Amortización " + a.getDescription());
 				accountBean.update(a.getAllocationAccount());
 			}
-			
+			if (a.getSecurityLevel() == null) {
+				a.setSecurityLevel( SecurityLevel.OFFICIAL );
+			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
