@@ -6,7 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-		xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -61,7 +61,7 @@
 					<aon:outputLabel for="Finance_concept" 
 						value="#{financeBundle.finance_invoice_document_number}" />
 					<aon:div> 
-						<h:panelGrid columns="2" columnClasses="aon-width-250,aon-width-auto">
+						<aon:panelGrid columns="2" columnClasses="aon-width-250,aon-width-auto">
 							<aon:div>
 								<aon:inputText id="Finance_concept"
 									value="#{finance.to.concept}" 
@@ -88,7 +88,7 @@
 								<aon:outputText styleClass="aon-margin-left"
 									value="#{finance.to.financeStatus}" />
 							</aon:div>
-						</h:panelGrid>
+						</aon:panelGrid>
 					</aon:div>
 
 					<aon:outputLabel value="#{financeBundle.finance_invoice}" />
@@ -332,16 +332,15 @@
 
 				</aon:panelGrid>
 					
-				<aon:div styleClass="aon-form-group" rendered="#{!finance.new}">
-					<aon:div styleClass="aon-form-group-title">
-						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="financeTrackingData" value="#{financeBundle.finance_tracking}" />
-						</aon:div>
-					</aon:div>
-					<aon:div styleClass="aon-scroll-area">
-					
-						<aon:dataTable id="financeTrackingData" value="#{financeTracking.model}"
-							var="to" rows="20" rendered="#{financeTracking.model.rowCount > 0}">
+				<c:if test="#{!finance.new}">
+					<aon:div styleClass="aon-padding-top">
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputLabel for="financeTrackingData" value="#{financeBundle.finance_tracking}" />
+							</f:facet>
+
+							<aon:dataTable id="financeTrackingData" value="#{financeTracking.model}"
+								var="to" rows="20" rendered="#{financeTracking.model.rowCount > 0}">
 
 								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
@@ -352,14 +351,14 @@
 											timeZone="#{timeZoneController.timeZoneId}" />
 									</aon:outputText>	
 								</aon:column>
-						
+
 								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{financeBundle.finance_tracking_action}" />
 									</f:facet>
 									<aon:outputText value="#{to.type}" />
 								</aon:column>
-						
+
 								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_description}" />
@@ -382,7 +381,7 @@
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>	
 								</aon:column>
-								
+
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-40 aon-nowrap">
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
@@ -409,11 +408,11 @@
 									</aon:div>
 								</aon:column>
 
-						</aon:dataTable>
-						
-						<aon:dataScroller2 for="financeTrackingData" showNote="true" />
+							</aon:dataTable>
+							<aon:dataScroller2 for="financeTrackingData" showNote="true" />
+						</aon:panel>
 					</aon:div>
-				</aon:div>
+				</c:if>
 			</aon:div>
  		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
