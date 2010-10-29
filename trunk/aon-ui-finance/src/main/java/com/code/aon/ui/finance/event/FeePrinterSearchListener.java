@@ -17,11 +17,8 @@ import com.code.aon.ui.form.event.ControllerSearchListener;
 public class FeePrinterSearchListener extends ControllerSearchListener {
 
 	private Item item;
-	
 	private Month billingDateMonth;
-	
 	private Integer billingDateYear;
-	
 	private Boolean anual;
 	
 	public Boolean getAnual() {
