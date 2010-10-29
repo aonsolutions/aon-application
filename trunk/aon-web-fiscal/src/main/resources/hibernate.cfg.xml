@@ -131,6 +131,7 @@
 		<mapping class="com.code.aon.finance.InvoiceTax"/>
 		<mapping class="com.code.aon.finance.InvoicingGroup"/>
 		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
+		<mapping class="com.code.aon.finance.BankStatement"/>
 
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
