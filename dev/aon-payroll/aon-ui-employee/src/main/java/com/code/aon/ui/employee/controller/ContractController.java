@@ -1,9 +1,15 @@
 package com.code.aon.ui.employee.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +18,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
+import com.code.aon.employee.Contract;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
@@ -101,5 +109,28 @@ public class ContractController extends BasicController {
 		}
     	return workPlaces;
     }	  	
+    
+    public void onDownloadContract( ActionEvent event ) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+		try {
+			Contract c = (Contract)this.getModel().getRowData();
+			byte[] buffer = c.getDocument();
+			InputStream in = new ByteArrayInputStream(buffer);
+			int bytes = in.read(buffer);
+			while (bytes != -1) {
+				response.getOutputStream().write(buffer, 0, bytes);
+				bytes = in.read(buffer);
+			}
+			in.close();
+			response.setContentType(MimeType.MIME_PDF.getName()); 
+			response.flushBuffer();
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		context.responseComplete();
+	}
 
 }
