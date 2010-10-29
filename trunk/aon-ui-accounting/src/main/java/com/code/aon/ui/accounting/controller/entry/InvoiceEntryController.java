@@ -816,33 +816,33 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private void updateInvoiceEntry(String sessionName, double invoiceTotal) throws ManagerBeanException {
-			deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
-			deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
+		deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
+		deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
 
-			AccountEntry entry = getAccountEntryInvoice().getAccountEntry();
-			Account account = fillAccountEntry(entry);
+		AccountEntry entry = getAccountEntryInvoice().getAccountEntry();
+		Account account = fillAccountEntry(entry);
 
-			Invoice invoice = insertOrUpdateInvoice(sessionName);
-			insertInvoiceDetails(invoice);
-			insertFinances(invoice,sessionName);
-			deleteRemovedFinances();
-			entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
-			entry = getWriter().insertOrUpdateAccountEntry(entry);
-			String concept = getHeader().getConcept();
-			if (StringUtils.isEmpty(concept)) {
-				concept = getWriter().obtainConcept(invoice, invoiceTotal);
-			} else {
-				concept = getWriter().obtainConcept(invoice, invoiceTotal) + " [" + concept;
-				concept = StringUtils.abbreviate(concept, 31);
-				concept += "]";
-			}
-			concept = StringUtils.abbreviate(concept, 32);
-			getHeader().setConcept(concept);
-			getWriter().insertEntryDetails(entry, account, getHeader().getConcept(),
-					invoice.getDocumentNumber(), invoiceTotal,
-					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
-					obtainBasesPerAccount(details),true);
-			getHeader().setAccountEntryId(entry.getId());
+		Invoice invoice = insertOrUpdateInvoice(sessionName);
+		insertInvoiceDetails(invoice);
+		insertFinances(invoice,sessionName);
+		deleteRemovedFinances();
+		entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
+		entry = getWriter().insertOrUpdateAccountEntry(entry);
+		String concept = getHeader().getConcept();
+		if (StringUtils.isEmpty(concept)) {
+			concept = getWriter().obtainConcept(invoice, invoiceTotal);
+		} else {
+			concept = getWriter().obtainConcept(invoice, invoiceTotal) + " [" + concept;
+			concept = StringUtils.abbreviate(concept, 31);
+			concept += "]";
+		}
+		concept = StringUtils.abbreviate(concept, 32);
+		getHeader().setConcept(concept);
+		getWriter().insertEntryDetails(entry, account, getHeader().getConcept(),
+				invoice.getDocumentNumber(), invoiceTotal,
+				obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
+				obtainBasesPerAccount(details),true);
+		getHeader().setAccountEntryId(entry.getId());
 	}
 
 	private void deleteRemovedFinances() throws ManagerBeanException {
@@ -855,28 +855,28 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private void generateInvoiceEntry(String sessionName, double invoiceTotal) throws ManagerBeanException {
-			AccountEntry entry = new AccountEntry();
-			Account account = fillAccountEntry(entry);
-			
-			Invoice invoice = insertOrUpdateInvoice(sessionName);
-			insertInvoiceDetails(invoice);
-			insertFinances(invoice,sessionName);
-			entry = getWriter().insertOrUpdateAccountEntry(entry);
-			setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
-			String concept = getHeader().getConcept();
-			if (StringUtils.isEmpty(concept)) {
-				concept = getWriter().obtainConcept(invoice, invoiceTotal);
-			} else {
-				concept = getWriter().obtainConcept(invoice, invoiceTotal) + " [" + concept;
-				concept = StringUtils.abbreviate(concept, 31);
-				concept += "]";
-			}
-			getHeader().setConcept(concept);
-			getWriter().insertEntryDetails(entry, account, getHeader().getConcept(),
-					invoice.getDocumentNumber(),invoiceTotal,
-					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
-					obtainBasesPerAccount(details),true);
-			getHeader().setAccountEntryId(entry.getId());
+		AccountEntry entry = new AccountEntry();
+		Account account = fillAccountEntry(entry);
+		
+		Invoice invoice = insertOrUpdateInvoice(sessionName);
+		insertInvoiceDetails(invoice);
+		insertFinances(invoice,sessionName);
+		entry = getWriter().insertOrUpdateAccountEntry(entry);
+		setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
+		String concept = getHeader().getConcept();
+		if (StringUtils.isEmpty(concept)) {
+			concept = getWriter().obtainConcept(invoice, invoiceTotal);
+		} else {
+			concept = getWriter().obtainConcept(invoice, invoiceTotal) + " [" + concept;
+			concept = StringUtils.abbreviate(concept, 31);
+			concept += "]";
+		}
+		getHeader().setConcept(concept);
+		getWriter().insertEntryDetails(entry, account, getHeader().getConcept(),
+				invoice.getDocumentNumber(),invoiceTotal,
+				obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
+				obtainBasesPerAccount(details),true);
+		getHeader().setAccountEntryId(entry.getId());
 	}
 
 	private Account fillAccountEntry(AccountEntry entry) throws ManagerBeanException {
@@ -1200,6 +1200,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			finance.setRegistry(invoice.getRegistry());
 			finance.setRegistryName(invoice.getRegistryName());
 			finance.setRegistryDocument(invoice.getRegistryDocument());
+			finance.setScope(invoice.getScope());
 			if (finance.getId() == null) {
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}
