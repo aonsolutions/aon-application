@@ -7,6 +7,8 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -60,7 +62,18 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		}
 		return vm;
 	}
-	
+
+	public boolean isSeriesActive() throws ManagerBeanException {
+		String seriesId = getInvoice().getSeries();
+		if (StringUtils.isEmpty(seriesId)) {
+			return true;
+		} else {
+			IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+			Series series = (Series)seriesBean.get(seriesId);
+			return (series != null && series.isActive());
+		}
+	}
+
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
 		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());

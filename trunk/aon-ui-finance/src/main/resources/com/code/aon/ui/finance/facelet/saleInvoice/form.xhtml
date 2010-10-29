@@ -101,12 +101,16 @@
 							<aon:div id="invoiceReferenceCodeDiv">
 								<aon:selectOneMenu id="Invoice_series"
 									value="#{saleInvoice.to.series}" 
-									rendered="#{!saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
+									rendered="#{saleInvoice.seriesActive and !saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
 									valueChangeListener="#{saleInvoice.onSeriesChanged}"
 									reRender="Invoice_number,Invoice_securityLevel">
 									<f:selectItem itemLabel=" " value="#{null}" />
 									<f:selectItems value="#{configCollections.seriesIds}" />
 								</aon:selectOneMenu>
+								<aon:inputText id="Invoice_series-input"
+									value="#{saleInvoice.to.series}" 
+									rendered="#{!saleInvoice.seriesActive and !saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
+									size="5" />
 								<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
 									value="#{saleInvoice.to.number}" 
 									rendered="#{!saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
