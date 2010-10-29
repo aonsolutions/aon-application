@@ -62,7 +62,7 @@ public class Salary implements ITransferObject {
 	@Column( nullable = false)
 	private Integer registration;
 	
-	@Column( nullable = false)
+	@Column(name = "total_days_hours",  nullable = false)
 	private Integer totalDaysHours;
 	
 	@Column(name = "total_payment", precision = 15, scale = 3, nullable = false)
