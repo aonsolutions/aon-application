@@ -23,12 +23,20 @@
 					<aon:rowSelector action="geotreeParent_form" 
 						actionListener="#{geotreeParent.onSelect}" />
 
-					<aon:column>
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.child.code}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
 							<aon:outputText value="#{geozoneBundle.geozone_country}" />
 						</f:facet>
 						<aon:outputText value="#{to.child.name}" />
 					</aon:column>
+
 				</aon:dataTable>
 				<aon:dataScroller2 for="geotreeParentDataList"
 					showNote="true" />

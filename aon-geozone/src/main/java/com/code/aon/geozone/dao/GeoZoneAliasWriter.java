@@ -19,11 +19,12 @@ public class GeoZoneAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-geozone/src/main/java/com/code/aon/geozone/dao/IGeoZoneAlias.java");
-		String[] classes = new String[2]; 
-		classes[0] = GeoTree.class.getName();
-		classes[1] = GeoZone.class.getName();
-		HibernateUtil.getSessionFactory();
+		File file = new File("/AON-TRUNK/aon-geozone/src/main/java/com/code/aon/geozone/dao/IGeoZoneAlias.java");
+		String[] classes = new String[]{ 
+			GeoTree.class.getName(),
+			GeoZone.class.getName()
+		};
+		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.geozone.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

@@ -67,16 +67,28 @@ public interface IGeoZoneAlias {
 	DAOConstantsEntry GEO_ZONE_ENTRY = DAOConstants.getDAOConstant(GeoZone.class);
 
 	/** 
+	* Alias value: GeoZone_code
+	* Hibernate value: GeoZone.code
+	*/
+	String  GEO_ZONE_CODE = GEO_ZONE_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: GeoZone_id
 	* Hibernate value: GeoZone.id
 	*/
-	String  GEO_ZONE_ID = GEO_ZONE_ENTRY.getAliasNames()[0];
+	String  GEO_ZONE_ID = GEO_ZONE_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: GeoZone_name
 	* Hibernate value: GeoZone.name
 	*/
-	String  GEO_ZONE_NAME = GEO_ZONE_ENTRY.getAliasNames()[1];
+	String  GEO_ZONE_NAME = GEO_ZONE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: GeoZone_system
+	* Hibernate value: GeoZone.system
+	*/
+	String  GEO_ZONE_SYSTEM = GEO_ZONE_ENTRY.getAliasNames()[3];
 
 
 }
