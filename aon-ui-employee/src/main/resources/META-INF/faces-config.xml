@@ -46,7 +46,9 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{contractSearch}</value>
 				<value>#{contractListener}</value>
+<!--  
 				<value>#{contractTrackingLinesListener}</value>
+-->
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -76,7 +78,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
-	
+
+<!--  
 	<managed-bean>
 		<managed-bean-name>contractTrackingLinesListener</managed-bean-name>
 		<managed-bean-class>
@@ -97,6 +100,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+-->	
 	
 	<!-- ************ CONTRACT TYPE ************** -->
 	<managed-bean>
@@ -120,8 +124,32 @@
 			<value>ContractType_description</value>
 		</managed-property>	
 	</managed-bean>
+	
+	<!-- ************ SALARY ************** -->
+	<managed-bean>
+		<managed-bean-name>salary</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.Salary</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>salary</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Salary_startDate</value>
+		</managed-property>	
+	</managed-bean>
 
 	<!--  **** CONTRACT TRACKING **** -->
+<!--  
 	<managed-bean>
 		<managed-bean-name>contractTracking</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.employee.controller.ContractTrackingController</managed-bean-class>
@@ -156,6 +184,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+-->
 	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
