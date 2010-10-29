@@ -15,13 +15,16 @@
 				<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
 				<ui:param name="controller" value="#{enterprise}" />
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="activities"
+<!--  
+-->
+					<aon:commandButton id="activities2"
 						rendered="#{!formNew}"
 						value="#{companyBundle.company_activity_module}"
 						action="enterpriseActivity_list" 
 						styleClass="aon-finding-toolbar-item aon-icon-task-assume" >
 					</aon:commandButton>
-					<aon:commandButton id="multiple_tracking"
+<!-- 
+					<aon:commandButton id="calendar"
 						value="#{calendarBundle.aon_calendar_menu}"
 						action="calendar_form" 
 						actionListener="#{calendar.onReset}"
@@ -32,6 +35,7 @@
 							value="#{enterprise.to.registry.id}" />
 						<aon:actionListener method="#{calendar.onInitialize}" />
 					</aon:commandButton>					
+-->
 				</ui:define>					
 			</ui:decorate>
 
@@ -55,6 +59,33 @@
 					</aon:panelGrid>
 
 					<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">
+						<aon:panelTab id="contract" label="#{employeeBundle.employee_contract_module}">
+							<ui:include	src="/com/code/aon/ui/employee/facelet/contract/listContent.xhtml" >
+								<ui:param name="skipSelectButton" value="true" />
+								<ui:param name="skipEnterpriseColumn" value="true" />
+							</ui:include>
+						</aon:panelTab>
+
+						<aon:panelTab id="activities" label="#{companyBundle.company_activity_module}">
+							<aon:div id="activitiesDiv">
+								<ui:include	src="/com/code/aon/ui/company/facelet/enterpriseActivity/listContent.xhtml" />
+								<aon:div id="detail_panel">
+									<aon:div styleClass="aon-form-group" rendered="#{!enterpriseActivity.new}">
+										<aon:div styleClass="aon-form-group-title">
+											<aon:div styleClass="aon-form-group-title-internal">
+												<aon:outputLabel for="enterpriseCCCData" value="#{companyBundle.company_enterprise_ccc}" />
+											</aon:div>
+										</aon:div>
+										
+										<ui:include	src="/com/code/aon/ui/company/facelet/enterpriseCCC/tab_grid.xhtml" >
+											<ui:param name="controller" value="#{enterpriseCCC}" />
+										</ui:include>
+									</aon:div>
+								</aon:div>
+						
+							</aon:div>
+						</aon:panelTab>
+						
 						<aon:panelTab id="workplace" label="#{companyBundle.company_workplace}">
 							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/list.xhtml" />
 						</aon:panelTab>
