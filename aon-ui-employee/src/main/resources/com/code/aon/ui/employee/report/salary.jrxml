@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="349"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="21"/>
+				<textElement textAlignment="Center">
+					<font isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE SALARIOS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="99" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="272" height="99"/>
+				<box >
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+			</frame>
+			<frame>
+				<reportElement x="283" y="0" width="272" height="99"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+			</frame>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="575">
+			<frame>
+				<reportElement x="0" y="48" width="555" height="522"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="5" y="5" width="414" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[I. DEVENGOS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="10" y="471" width="545" height="18"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[I. DEDUCCIONES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="10" y="42" width="409" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[1. Precepciones salariales]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="430" y="5" width="120" height="17"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[TOTALES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="69" width="308" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Salario base ...............................................................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="91" width="308" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Complementos Salariales]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="157" width="308" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Horas Extraordinarias ...............................................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="179" width="308" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Gratificaciones Extraordinarias ..............................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="201" width="308" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Salario en especie ...................................................................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="10" y="238" width="409" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[2. Precepciones no salariales]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="265" width="308" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Indemnizaciones o suplidos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="341" width="308" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Prestaciones e indemnizaciones de la Seguridad Social]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="385" width="308" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Indemnizaciones por traslados, suspensiones o despidos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="30" y="429" width="308" height="17"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Otras percepciones no salariales]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement x="0" y="11" width="555" height="27"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="5" y="0" width="130" height="27"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Periodo de liquidacion:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="429" y="0" width="56" height="27"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Total días:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="492" y="5" width="58" height="17"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement/>
+				</textField>
+				<staticText>
+					<reportElement x="152" y="0" width="19" height="27"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[del]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="197" y="0" width="19" height="27"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[de]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="260" y="0" width="17" height="27"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[al]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="302" y="0" width="17" height="27"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[de]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="360" y="0" width="17" height="27"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[de]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="128" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="10" width="555" height="118"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="5" y="5" width="545" height="30"/>
+					<textElement/>
+					<text><![CDATA[DETERMINACIÓN DE LAS BASES DECOTIZACIÓN A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACIÓN CONJUNTA Y DE LA BASE SUJETA A RETENCIÓN DE I.R.P.F]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
