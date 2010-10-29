@@ -13,6 +13,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.accounting.AnnualReport;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.BalanceType;
@@ -40,6 +41,7 @@ public class AccountingBookController {
 	private boolean patrimonyEnabled;
 	private Balance patrimonyBalance;
 	private boolean annualReportEnabled;
+	private AnnualReport annualReport;
 
 	public Period getPeriod() {
 		return period;
@@ -142,6 +144,13 @@ public class AccountingBookController {
 		this.annualReportEnabled = annualReportEnabled;
 	}
 
+	public AnnualReport getAnnualReport() {
+		return annualReport;
+	}
+	public void setAnnualReport(AnnualReport annualReport) {
+		this.annualReport = annualReport;
+	}
+
 	public List<SelectItem> getProfitAndLostBalances() throws ManagerBeanException {
 		AccountingCollectionsController c = (AccountingCollectionsController) AonUtil
 				.getRegisteredBean("accountingCollections");
@@ -171,11 +180,12 @@ public class AccountingBookController {
 		setProfitAndLostEnabled(true);
 		setSituationEnabled(true);
 		setPatrimonyEnabled(true);
-		setAnnualReportEnabled(false);
+		setAnnualReportEnabled(true);
 	}
 
 	public void onCreate(ActionEvent event) {
 		try {
+			check();
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ExternalContext ec = ctx.getExternalContext();
 			HttpServletResponse res = (HttpServletResponse) ec.getResponse();
@@ -216,7 +226,7 @@ public class AccountingBookController {
 				addPatrimony(zout);
 			}
 			if (isAnnualReportEnabled()) {
-				
+				addAnnualReport(zout);
 			}
 			zout.flush();
 			zout.finish();
@@ -228,9 +238,34 @@ public class AccountingBookController {
 		} catch (ReportException e) {
 			AonUtil.addErrorMessage("Error al ejecutar el listado");
 			throw new AbortProcessingException( e );
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Error al ejecutar el listado");
+			throw new AbortProcessingException( e );
 		}
 	}
 
+	private void check() {
+		boolean ok = true;
+		if (isProfitAndLostEnabled() && getProfitAndLostBalance() == null) {
+			AonUtil.addErrorMessage("Seleccione un Balance de Pérdidas y Ganacias.");
+			ok = false;
+		}
+		if (isSituationEnabled() && getSituationBalance() == null) {
+			AonUtil.addErrorMessage("Seleccione un Balance de Situación.");
+			ok = false;
+		}
+		if (isPatrimonyEnabled() && getPatrimonyBalance() == null) {
+			AonUtil.addErrorMessage("Seleccione un Balance de Patrimonio.");
+			ok = false;
+		}
+		if (isAnnualReportEnabled() && getAnnualReport() == null) {
+			AonUtil.addErrorMessage("Seleccione un modelo de Memoria Anual.");
+			ok = false;
+		}
+		if (!ok) {
+			throw new AbortProcessingException( "Compruebe los parámetros." );
+		}
+	}
 	private void addJournal(ZipOutputStream zout) throws ReportException, IOException{
 		ZipEntry ze = new ZipEntry("Diario.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
@@ -357,4 +392,16 @@ public class AccountingBookController {
 		manager.execute(zout, "officialBalance");
 		zout.closeEntry();
 	}
+
+	private void addAnnualReport(ZipOutputStream zout) throws IOException, ManagerBeanException {
+		ZipEntry ze = new ZipEntry("MemoriaAnual.pdf");
+	    zout.putNextEntry(ze);
+        AnnualReportLauncher c = (AnnualReportLauncher) AonUtil.getRegisteredBean("annualReportLauncher");
+        c.onReset(null);
+        c.setAnnualReport(getAnnualReport());
+        c.getParams().setPeriod(getPeriod());
+        c.pdf(zout);
+		zout.closeEntry();
+	}
+	
 }
