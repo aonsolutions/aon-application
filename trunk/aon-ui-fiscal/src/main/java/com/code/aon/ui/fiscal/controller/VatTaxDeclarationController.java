@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +22,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.tax.model.MOD303.MOD303Format;
-import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
@@ -196,7 +196,26 @@ public class VatTaxDeclarationController extends LinesController {
 	}
 	
 	private MOD303Format getFormat(VatTaxDeclaration vatTaxDeclaration) {
-		return MOD303Format.ALAVA_2010;  // TODO Identificar formato.
+		int year = vatTaxDeclaration.getVatTax().getYear();
+		if (year < 2010) {
+			String msg = "No se permite la generación de archivos para declaraciones anteriores al ejercicio 2010."; 
+			AonUtil.addErrorMessage(msg);
+			setFileOutput(null);
+			throw new AbortProcessingException(msg);
+		}
+		if (vatTaxDeclaration.getVatTax().isAnual()) {
+			String msg = "La generación de archivos para declaraciones anuales del ejercicio " + year + " no está aún implementada."; 
+			AonUtil.addErrorMessage(msg);
+			setFileOutput(null);
+			throw new AbortProcessingException(msg);
+		}
+		if (vatTaxDeclaration.getAdministration() != Administration.ALAVA) {
+			String msg = "La generación de archivos para la administracion "+ vatTaxDeclaration.getAdministration() +" no está aún implementada."; 
+			AonUtil.addErrorMessage(msg);
+			setFileOutput(null);
+			throw new AbortProcessingException(msg);
+		}
+		return MOD303Format.ALAVA_2010;
 	}
 
 	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
