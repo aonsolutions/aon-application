@@ -92,9 +92,12 @@
 		
 		<!-- AON-EMPLOYEE Mapping files -->
 		<mapping class="com.code.aon.employee.Contract"/>
+		<mapping class="com.code.aon.employee.ContractData"/>
 		<mapping class="com.code.aon.employee.ContractTracking"/>		
 		<mapping class="com.code.aon.employee.ContractType"/>		
 		<mapping class="com.code.aon.employee.Salary"/>
+		<mapping class="com.code.aon.employee.SalaryPayment"/>
+		<mapping class="com.code.aon.employee.SalaryDeduction"/>
 
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>

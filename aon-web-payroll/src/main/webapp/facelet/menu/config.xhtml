@@ -30,6 +30,14 @@
 									value="#{companyBundle.company_data_module}">
 								</aon:commandLink>
 							</aon:div>
+							<!--  
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="enterpriseTree" 
+									action="enterpriseTree_search" actionListener="#{enterprise.onEditSearch}"
+									value="#{companyBundle.company_enterpriseTree_module}">
+								</aon:commandLink>
+							</aon:div>				
+							-->
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="enterprise" 
 									action="enterprise_search" actionListener="#{enterprise.onEditSearch}"
@@ -48,6 +56,12 @@
 									value="#{employeeBundle.employee_contract_module}">
 								</aon:commandLink>
 							</aon:div>		
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="salary" 
+									disabled="true"
+									value="#{employeeBundle.employee_salary_module}">
+								</aon:commandLink>
+							</aon:div>				
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="contractType"
 									action="contractType" actionListener="#{contractType.onSearch}" 
