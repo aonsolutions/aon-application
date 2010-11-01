@@ -5,7 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+	template="/com/code/aon/ui/company/facelet/enterpriseTree/treeTemplate.xhtml">
 
 	<ui:define name="content">
 	
@@ -37,16 +37,112 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
+<!--  
 				<ui:include src="/com/code/aon/ui/employee/facelet/contract/formContent.xhtml" />
+-->
+				
+				<aon:panelGrid columns="4" style="width:100%">
+					<aon:outputLabel for="Enterprise_name"
+						value="#{employeeBundle.employee_enterprise}" />
+					<aon:outputText id="Enterprise_name" 
+						value="#{enterprise.to.registry.name}" />
+
+					<aon:outputLabel for="Workplace_name"
+						value="#{companyBundle.company_workplace}" />
+					<aon:outputText id="Workplace_name" 
+						value="#{enterpriseWorkplace.to.description}" />
+
+					<aon:outputLabel for="Person_name"
+						value="#{employeeBundle.employee_name}" />
+					<aon:outputText id="Person_name" 
+						value="#{contract.to.person.registry.fullName}" />
+
+					<aon:outputLabel for="Person_nss"
+						value="#{registryBundle.registry_person_nss}" />
+					<aon:outputText id="Person_nss" 
+						value="#{contract.to.person.socialSecurityNumber}" />
+				</aon:panelGrid>
 			</aon:div>
 			
-			<aon:div styleClass="aon-scroll-area">
-				<ui:include src="/com/code/aon/ui/employee/facelet/contract/listContent.xhtml" />
+			<c:if test="#{salary.to==null}">
+				<aon:div id="contract_panel">
+					<aon:div styleClass="aon-form-group" >
+						<aon:div styleClass="aon-form-group-title">
+							<aon:div styleClass="aon-form-group-title-internal">
+								<aon:outputText value="#{employeeBundle.employee_contract_module}" />
+							</aon:div>
+						</aon:div>
+						<ui:include src="/com/code/aon/ui/employee/facelet/contract/listContent.xhtml" >
+							<aon:methodParam name="rowSelectorAction" default="#" resolve="true" />
+							<aon:methodParam name="rowSelectorActionListener" default="#{enterpriseTree.onSelectContract}" type="actionListener" />
+	<!--  
+							<ui:param name="rowSelectorReRender" value="salary_panel" />
+	-->
+							<ui:param name="skipNameColumn" value="true" />
+							<ui:param name="skipNssColumn" value="true" />
+							<ui:param name="skipWorkPlaceColumn" value="true" />
+							<ui:param name="skipEnterpriseColumn" value="true" />
+						</ui:include>
+					</aon:div>
+				</aon:div>
+			</c:if>
+
+			<aon:div id="salary_panel">
+				<aon:div styleClass="aon-form-group" >
+					<c:if test="#{salary.to==null}">
+						<aon:div styleClass="aon-form-group-title">
+							<aon:div styleClass="aon-form-group-title-internal">
+								<aon:outputLabel value="#{employeeBundle.employee_salary_module}" />
+							</aon:div>
+						</aon:div>
+						<aon:methodParam name="rowSelectorAction" default="#" resolve="true" />
+						<ui:include src="/com/code/aon/ui/employee/facelet/salary/listContent.xhtml" >
+							<ui:param name="controller" value="#{salary}" />
+							<ui:param name="rows" value="13" />
+						</ui:include>
+					</c:if>
+					<c:if test="#{salary.to!=null}">
+<!--  
+						<aon:div styleClass="aon-form-group-title">
+							<aon:div styleClass="aon-form-group-title-internal">
+								<aon:outputLabel value="#{employeeBundle.employee_salary}" />
+							</aon:div>
+						</aon:div>
+-->
+						
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="#{employeeBundle.employee_salary}" />
+							</f:facet>
+						
+											
+							<aon:methodParam name="rowSelectorAction" default="#" resolve="true" />
+							<ui:include src="/com/code/aon/ui/employee/facelet/salary/formContent.xhtml" >
+								<ui:param name="controller" value="#{salary}" />
+							</ui:include>
+							<aon:div styleClass="aon-scroll-area">
+								<aon:div styleClass="aon-form-group-title">
+									<aon:div styleClass="aon-form-group-title-internal">
+										<aon:outputText value="#{employeeBundle.employee_salary_payment}" />
+									</aon:div>
+								</aon:div>
+								<ui:include src="/com/code/aon/ui/employee/facelet/salaryPayment/gridContent.xhtml" >
+									<ui:param name="controller" value="#{salaryPayment}" />
+								</ui:include>
+								<aon:div styleClass="aon-form-group-title">
+									<aon:div styleClass="aon-form-group-title-internal">
+										<aon:outputText value="#{employeeBundle.employee_salary_deduction}" />
+									</aon:div>
+								</aon:div>
+								<ui:include src="/com/code/aon/ui/employee/facelet/salaryDeduction/gridContent.xhtml" >
+									<ui:param name="controller" value="#{salaryDeduction}" />
+								</ui:include>
+							</aon:div>
+						</aon:panel>
+					</c:if>
+				</aon:div>
 			</aon:div>
 			
-			<aon:div styleClass="aon-scroll-area">
-				<ui:include src="/com/code/aon/ui/employee/facelet/salary/listContent.xhtml" />
-			</aon:div>
 		</aon:form>
 	</ui:define>
 </ui:composition>

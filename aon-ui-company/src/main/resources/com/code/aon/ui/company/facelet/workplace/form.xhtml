@@ -5,7 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+	template="/com/code/aon/ui/company/facelet/enterpriseTree/treeTemplate.xhtml">
 
 	<ui:define name="content">
 	
@@ -18,6 +18,10 @@
 				<ui:param name="toolbarTitle" value="#{companyBundle.company_workplace}" />
 				<ui:param name="controller" value="#{enterpriseWorkplace}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
+				
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="multiple_tracking"
@@ -35,8 +39,18 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="2" >
+				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;" >
+					
+					<aon:outputLabel for="Enterprise_name"
+						value="#{employeeBundle.employee_enterprise}" />
+					<aon:outputText id="Enterprise_name" 
+						value="#{enterprise.to.registry.name}" />
 
+					<aon:outputLabel for="Workplace_name"
+						value="#{companyBundle.company_workplace}" />
+					<aon:outputText id="Workplace_name" 
+						value="#{enterpriseWorkplace.to.description}" />
+					<!--  
 					<aon:outputLabel for="WorkPlace_description"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="WorkPlace_description" size="64"
@@ -57,6 +71,7 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{companyCollections.economicAgreements}" />
 					</aon:selectOneMenu>					
+					-->
 
 				</aon:panelGrid>
 				
@@ -70,8 +85,10 @@
 							</aon:div>
 							
 							<aon:methodParam name="rowSelectorAction" value="contractView_form" />
+							<aon:methodParam name="rowSelectorActionListener" default="#{enterpriseTree.onSelectContract}" type="actionListener" />
 							<ui:include src="/com/code/aon/ui/employee/facelet/contract/listContent.xhtml" >
-								<ui:param name="skipEnterpriseColumn" value="#{true}" />
+								<ui:param name="skipWorkPlaceColumn" value="true" />
+								<ui:param name="skipEnterpriseColumn" value="true" />
 							</ui:include>						
 	
 						</aon:div>
