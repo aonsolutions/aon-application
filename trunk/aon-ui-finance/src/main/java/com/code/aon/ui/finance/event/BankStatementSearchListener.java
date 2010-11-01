@@ -51,12 +51,16 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
+		initData();
+	}
+
+	public void initData() throws ManagerBeanException {
 		setFromDate(null);
 		setToDate(null);
 		setDescription(null);
 		setAmount(null);
 	}
-	
+
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getFromDate() != null) {
@@ -71,6 +75,8 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		if (StringUtils.isNotEmpty(getAmount())) {
 			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), getAmount());			
 		}
+		criteria.addOrder(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID));
+		criteria.addOrder(getFieldName(IFinanceAlias.BANK_STATEMENT_OPERATION_DATE));
 	}
 
 }

@@ -52,6 +52,7 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="bankStatement"
 									value="#{financeBundle.finance_bank_statement_module}"
+									rendered="#{bankStatement.availableRegistryBanks > 0}"
 									actionListener="#{bankStatement.onEditSearch}"
 									action="bankStatement_search" />
 							</aon:div>
