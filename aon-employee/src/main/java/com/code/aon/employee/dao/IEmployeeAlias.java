@@ -3,8 +3,12 @@ package com.code.aon.employee.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.employee.Contract;
+import com.code.aon.employee.ContractData;
 import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
+import com.code.aon.employee.Salary;
+import com.code.aon.employee.SalaryPayment;
+import com.code.aon.employee.SalaryDeduction;
 
 /** 
 * Interface for holding entity properties constants.
@@ -99,6 +103,55 @@ public interface IEmployeeAlias {
 
 
 	/** 
+	* DAOConstantsEntry for ContractData entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_DATA_ENTRY = DAOConstants.getDAOConstant(ContractData.class);
+
+	/** 
+	* Alias value: ContractData_code
+	* Hibernate value: ContractData.code
+	*/
+	String  CONTRACT_DATA_CODE = CONTRACT_DATA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractData_conditions
+	* Hibernate value: ContractData.conditions
+	*/
+	String  CONTRACT_DATA_CONDITIONS = CONTRACT_DATA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractData_contract_id
+	* Hibernate value: ContractData.contract.id
+	*/
+	String  CONTRACT_DATA_CONTRACT_ID = CONTRACT_DATA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractData_description
+	* Hibernate value: ContractData.description
+	*/
+	String  CONTRACT_DATA_DESCRIPTION = CONTRACT_DATA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractData_endDate
+	* Hibernate value: ContractData.endDate
+	*/
+	String  CONTRACT_DATA_END_DATE = CONTRACT_DATA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractData_id
+	* Hibernate value: ContractData.id
+	*/
+	String  CONTRACT_DATA_ID = CONTRACT_DATA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContractData_startDate
+	* Hibernate value: ContractData.startDate
+	*/
+	String  CONTRACT_DATA_START_DATE = CONTRACT_DATA_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
 	* DAOConstantsEntry for ContractTracking entity.
 	*/ 
 	DAOConstantsEntry CONTRACT_TRACKING_ENTRY = DAOConstants.getDAOConstant(ContractTracking.class);
@@ -169,6 +222,219 @@ public interface IEmployeeAlias {
 	* Hibernate value: ContractType.workingDay
 	*/
 	String  CONTRACT_TYPE_WORKING_DAY = CONTRACT_TYPE_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for Salary entity.
+	*/ 
+	DAOConstantsEntry SALARY_ENTRY = DAOConstants.getDAOConstant(Salary.class);
+
+	/** 
+	* Alias value: Salary_address
+	* Hibernate value: Salary.address
+	*/
+	String  SALARY_ADDRESS = SALARY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Salary_broadcastDate
+	* Hibernate value: Salary.broadcastDate
+	*/
+	String  SALARY_BROADCAST_DATE = SALARY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Salary_category
+	* Hibernate value: Salary.category
+	*/
+	String  SALARY_CATEGORY = SALARY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Salary_commonBase
+	* Hibernate value: Salary.commonBase
+	*/
+	String  SALARY_COMMON_BASE = SALARY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Salary_contract_id
+	* Hibernate value: Salary.contract.id
+	*/
+	String  SALARY_CONTRACT_ID = SALARY_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Salary_employee
+	* Hibernate value: Salary.employee
+	*/
+	String  SALARY_EMPLOYEE = SALARY_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Salary_endDate
+	* Hibernate value: Salary.endDate
+	*/
+	String  SALARY_END_DATE = SALARY_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Salary_extraPayProration
+	* Hibernate value: Salary.extraPayProration
+	*/
+	String  SALARY_EXTRA_PAY_PRORATION = SALARY_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Salary_id
+	* Hibernate value: Salary.id
+	*/
+	String  SALARY_ID = SALARY_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Salary_irpfBase
+	* Hibernate value: Salary.irpfBase
+	*/
+	String  SALARY_IRPF_BASE = SALARY_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Salary_overtimeBase
+	* Hibernate value: Salary.overtimeBase
+	*/
+	String  SALARY_OVERTIME_BASE = SALARY_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Salary_professionalBase
+	* Hibernate value: Salary.professionalBase
+	*/
+	String  SALARY_PROFESSIONAL_BASE = SALARY_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Salary_registration
+	* Hibernate value: Salary.registration
+	*/
+	String  SALARY_REGISTRATION = SALARY_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Salary_remuneration
+	* Hibernate value: Salary.remuneration
+	*/
+	String  SALARY_REMUNERATION = SALARY_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Salary_startDate
+	* Hibernate value: Salary.startDate
+	*/
+	String  SALARY_START_DATE = SALARY_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Salary_total
+	* Hibernate value: Salary.total
+	*/
+	String  SALARY_TOTAL = SALARY_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Salary_totalDaysHours
+	* Hibernate value: Salary.totalDaysHours
+	*/
+	String  SALARY_TOTAL_DAYS_HOURS = SALARY_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Salary_totalDeduction
+	* Hibernate value: Salary.totalDeduction
+	*/
+	String  SALARY_TOTAL_DEDUCTION = SALARY_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Salary_totalLiquid
+	* Hibernate value: Salary.totalLiquid
+	*/
+	String  SALARY_TOTAL_LIQUID = SALARY_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Salary_totalPayment
+	* Hibernate value: Salary.totalPayment
+	*/
+	String  SALARY_TOTAL_PAYMENT = SALARY_ENTRY.getAliasNames()[19];
+
+
+
+	/** 
+	* DAOConstantsEntry for SalaryPayment entity.
+	*/ 
+	DAOConstantsEntry SALARY_PAYMENT_ENTRY = DAOConstants.getDAOConstant(SalaryPayment.class);
+
+	/** 
+	* Alias value: SalaryPayment_amount
+	* Hibernate value: SalaryPayment.amount
+	*/
+	String  SALARY_PAYMENT_AMOUNT = SALARY_PAYMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SalaryPayment_description
+	* Hibernate value: SalaryPayment.description
+	*/
+	String  SALARY_PAYMENT_DESCRIPTION = SALARY_PAYMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SalaryPayment_function
+	* Hibernate value: SalaryPayment.function
+	*/
+	String  SALARY_PAYMENT_FUNCTION = SALARY_PAYMENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SalaryPayment_id
+	* Hibernate value: SalaryPayment.id
+	*/
+	String  SALARY_PAYMENT_ID = SALARY_PAYMENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SalaryPayment_salary_id
+	* Hibernate value: SalaryPayment.salary.id
+	*/
+	String  SALARY_PAYMENT_SALARY_ID = SALARY_PAYMENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SalaryPayment_type
+	* Hibernate value: SalaryPayment.type
+	*/
+	String  SALARY_PAYMENT_TYPE = SALARY_PAYMENT_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for SalaryDeduction entity.
+	*/ 
+	DAOConstantsEntry SALARY_DEDUCTION_ENTRY = DAOConstants.getDAOConstant(SalaryDeduction.class);
+
+	/** 
+	* Alias value: SalaryDeduction_amount
+	* Hibernate value: SalaryDeduction.amount
+	*/
+	String  SALARY_DEDUCTION_AMOUNT = SALARY_DEDUCTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SalaryDeduction_description
+	* Hibernate value: SalaryDeduction.description
+	*/
+	String  SALARY_DEDUCTION_DESCRIPTION = SALARY_DEDUCTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SalaryDeduction_function
+	* Hibernate value: SalaryDeduction.function
+	*/
+	String  SALARY_DEDUCTION_FUNCTION = SALARY_DEDUCTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SalaryDeduction_id
+	* Hibernate value: SalaryDeduction.id
+	*/
+	String  SALARY_DEDUCTION_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SalaryDeduction_salary_id
+	* Hibernate value: SalaryDeduction.salary.id
+	*/
+	String  SALARY_DEDUCTION_SALARY_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SalaryDeduction_type
+	* Hibernate value: SalaryDeduction.type
+	*/
+	String  SALARY_DEDUCTION_TYPE = SALARY_DEDUCTION_ENTRY.getAliasNames()[5];
 
 
 }
