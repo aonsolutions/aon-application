@@ -12,7 +12,7 @@ import com.code.aon.common.enumeration.IResourceable;
  * @author rtrepiana
  *
  */
-public enum SalaryPayment implements IResourceable {
+public enum SalaryPaymentType implements IResourceable {
 
 	
 	BASE_SALARY,
