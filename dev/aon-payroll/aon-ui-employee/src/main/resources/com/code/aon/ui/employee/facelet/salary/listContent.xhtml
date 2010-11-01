@@ -6,10 +6,68 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 
+<!--  
 	<aon:dataTable id="salaryDataList"
-		value="#{salary.model}" rows="20" var="to"
-		rendered="#{salary.model.rowCount > 0}">
+		value="#{salary.model}" rows="13" var="to"
+		rendered="#{salary.model.rowCount > 0}"  >
+-->
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 		
+		<ui:define name="columns">
+		
+			<aon:column alias="Salary.startDate"
+				styleClass="aon-editDataTable-dateColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_start_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.startDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+			</aon:column>
+			
+			<aon:column alias="Salary.endDate"
+				styleClass="aon-editDataTable-dateColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_end_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.endDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+			</aon:column>
+		
+			<aon:column alias="Salary.totalPayment"
+				styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{employeeBundle.employee_salary_totalPayment}" />
+				</f:facet>
+				<aon:outputText value="#{to.totalPayment}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:column>
+		
+			<aon:column alias="Salary.totalDeduction"
+				styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{employeeBundle.employee_salary_totalDeduction}" />
+				</f:facet>
+				<aon:outputText value="#{to.totalDeduction}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:column>
+		
+			<aon:column alias="Salary.totalLiquid"
+				styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{employeeBundle.employee_salary_totalLiquid}" />
+				</f:facet>
+				<aon:outputText value="#{to.totalLiquid}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:column>
+<!--  
 			<aon:column
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
@@ -19,7 +77,6 @@
 					<aon:outputText value="#{to.id}"/>
 				</aon:div>
 			</aon:column>
-<!--  
 
 			<aon:column alias="Contract.endDate"
 				styleClass="aon-editDataTable-textColumn">
@@ -66,9 +123,12 @@
 					value="&#160;" />
 			</aon:column>
 -->			
-			
+
+<!--  
 	</aon:dataTable>
 	<aon:dataScroller2 for="salaryDataList" showNote="true" />
-
+-->			
+		</ui:define>
+	</ui:decorate>
 
 </ui:composition>

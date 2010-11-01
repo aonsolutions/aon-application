@@ -6,27 +6,52 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 
-<!--  
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 		<ui:param name="controller" value="#{contract}" />
 		<ui:define name="columns">
--->
+<!--  
 	<aon:dataTable id="contractDataList"
 		value="#{contract.model}" rows="20" var="to"
 		rendered="#{contract.model.rowCount > 0}">
+-->
 		
-			<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
-				styleClass="aon-editDataTable-textColumn">
+			<c:if test="#{!skipNameColumn}">
+				<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{registryBundle.registry_person}" />
+					</f:facet>
+					<aon:div styleClass="aon-nowrap">
+						<aon:outputText value="#{to.person.registry.fullName}"/>
+					</aon:div>
+				</aon:column>
+			</c:if>
+		
+			<c:if test="#{!skipNssColumn}">
+				<aon:column alias="Contract.person.socialSecurityNumber"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{registryBundle.registry_person_nss}" />
+					</f:facet>
+					<aon:div styleClass="aon-nowrap">
+						<aon:outputText value="#{to.person.socialSecurityNumber}"/>
+					</aon:div>
+				</aon:column>
+			</c:if>
+
+			<aon:column alias="Contract.startDate"
+				styleClass="aon-editDataTable-dateColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{registryBundle.registry_person}" />
+					<aon:outputText value="#{bundle.aon_start_date}" />
 				</f:facet>
-				<aon:div styleClass="aon-nowrap">
-					<aon:outputText value="#{to.person.registry.fullName}"/>
-				</aon:div>
+				<aon:outputText value="#{to.startDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
 			</aon:column>
 
 			<aon:column alias="Contract.endDate"
-				styleClass="aon-editDataTable-textColumn">
+				styleClass="aon-editDataTable-dateColumn">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_end_date}" />
 				</f:facet>
@@ -36,15 +61,17 @@
 				</aon:outputText>		
 			</aon:column>
 		
-			<aon:column alias="Contract.workPlace.description"
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{companyBundle.company_workplace}" />
-				</f:facet>
-				<aon:div styleClass="aon-nowrap">
-					<aon:outputText value="#{to.workPlace.description}"/>
-				</aon:div>
-			</aon:column>
+			<c:if test="#{!skipWorkPlaceColumn}">		
+				<aon:column alias="Contract.workPlace.description"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{companyBundle.company_workplace}" />
+					</f:facet>
+					<aon:div styleClass="aon-nowrap">
+						<aon:outputText value="#{to.workPlace.description}"/>
+					</aon:div>
+				</aon:column>
+			</c:if>
 		
 			<c:if test="#{!skipEnterpriseColumn}">		
 				<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
@@ -54,6 +81,18 @@
 					</f:facet>
 					<aon:div styleClass="aon-nowrap">
 						<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}"/>
+					</aon:div>
+				</aon:column>
+			</c:if>
+		
+			<c:if test="#{!skipModelColumn}">		
+				<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{employeeBundle.employee_contract_model}" />
+					</f:facet>
+					<aon:div styleClass="aon-nowrap">
+						<aon:outputText value="#{to.type}" alt="#{to.type}"/>
 					</aon:div>
 				</aon:column>
 			</c:if>
@@ -103,12 +142,12 @@
 					styleClass="aon-editDataTable-button aon-icon-pdf"
 					value="&#160;" />
 			</aon:column>
+<!--  
 	</aon:dataTable>
 	<aon:dataScroller2 for="contractDataList" showNote="true" />
+-->	
 
-<!--  
 		</ui:define>
 	</ui:decorate>
--->	
 
 </ui:composition>

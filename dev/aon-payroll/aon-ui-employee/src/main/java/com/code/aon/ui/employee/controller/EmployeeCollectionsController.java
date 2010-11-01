@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.employee.enumeration.ContractDuration;
 import com.code.aon.employee.enumeration.ContractTrackingType;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
+import com.code.aon.employee.enumeration.SalaryPaymentType;
 
 public class EmployeeCollectionsController {
 
@@ -18,6 +19,21 @@ public class EmployeeCollectionsController {
 	private List<SelectItem> contractWorkingDays;
 	
 	private List<SelectItem> contractTrackingTypes;
+	
+	private List<SelectItem> salaryPaymentTypes;
+	
+	public List<SelectItem> getSalaryPaymentTypes() {
+		if (salaryPaymentTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			salaryPaymentTypes = new LinkedList<SelectItem>();
+			for( SalaryPaymentType salaryPaymentType : SalaryPaymentType.values() ) {
+				String name = salaryPaymentType.getName(locale);
+				SelectItem item = new SelectItem(salaryPaymentType, name);
+				salaryPaymentTypes.add(item);			
+			}
+		}
+		return salaryPaymentTypes;
+	}
 	
 	public List<SelectItem> getContractDurations() {
 		if (contractDurations == null) {
