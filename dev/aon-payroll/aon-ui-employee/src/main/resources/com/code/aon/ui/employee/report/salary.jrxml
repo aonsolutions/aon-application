@@ -519,7 +519,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$P{salary}.getTotalDaysHours()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{salary}.getTotalDaysHours()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="152" y="0" width="19" height="20"/>
