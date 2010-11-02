@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="company::#com#code#aon#ui#company#facelet#company#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/company/facelet/company/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#company#form.xhtml"
+    TITLE="company" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="companyImages::#com#code#aon#ui#company#facelet#companyImages#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/company/facelet/companyImages/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#companyImages#form.xhtml"
+    TITLE="companyImages" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::1" SHAPE="32,273,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="enterprise_form::#com#code#aon#ui#company#facelet#enterprise#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/company/facelet/enterprise/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#enterprise#form.xhtml"
+    TITLE="enterprise_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="enterprise_list::#com#code#aon#ui#company#facelet#enterprise#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/company/facelet/enterprise/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#enterprise#list.xhtml"
+    TITLE="enterprise_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="enterprise_search::#com#code#aon#ui#company#facelet#enterprise#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/company/facelet/enterprise/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#enterprise#search.xhtml"
+    TITLE="enterprise_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::2" SHAPE="32,673,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::2" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="workplace::#com#code#aon#ui#company#facelet#workplace#grid.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/company/facelet/workplace/grid.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#workplace#grid.xhtml"
+    TITLE="workplace" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="enterpriseWorkplace_form::#com#code#aon#ui#company#facelet#workplace#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/company/facelet/workplace/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#workplace#form.xhtml"
+    TITLE="enterpriseWorkplace_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="contractView_form::#com#code#aon#ui#company#facelet#workplace#contractView.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/company/facelet/workplace/contractView.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#workplace#contractView.xhtml"
+    TITLE="contractView_form" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::3" SHAPE="32,1073,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::3" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="enterpriseActivity_form::#com#code#aon#ui#company#facelet#enterpriseActivity#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/company/facelet/enterpriseActivity/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#enterpriseActivity#form.xhtml"
+    TITLE="enterpriseActivity_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="enterpriseActivity_list::#com#code#aon#ui#company#facelet#enterpriseActivity#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/company/facelet/enterpriseActivity/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#enterpriseActivity#list.xhtml"
+    TITLE="enterpriseActivity_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::4" SHAPE="32,1329,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::4" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="cnae::#com#code#aon#ui#company#facelet#cnae#grid.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/company/facelet/cnae/grid.xhtml"
+    TARGET="rules:#com#code#aon#ui#company#facelet#cnae#grid.xhtml"
+    TITLE="cnae" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#enterprise#search.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/enterprise/search.xhtml"
+  SHAPE="272,577,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#workplace#form.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/workplace/form.xhtml"
+  SHAPE="272,865,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#enterprise#form.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/enterprise/form.xhtml"
+  SHAPE="272,289,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#cnae#grid.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/cnae/grid.xhtml"
+  SHAPE="240,1345,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#enterpriseActivity#list.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/enterpriseActivity/list.xhtml"
+  SHAPE="256,1233,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#company#form.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/company/form.xhtml"
+  SHAPE="256,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#enterprise#list.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/enterprise/list.xhtml"
+  SHAPE="272,465,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#enterpriseActivity#form.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/enterpriseActivity/form.xhtml"
+  SHAPE="256,1089,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#workplace#contractView.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/workplace/contractView.xhtml"
+  SHAPE="272,977,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#workplace#grid.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/workplace/grid.xhtml"
+  SHAPE="272,689,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#company#facelet#companyImages#form.xhtml"
+  PATH="/com/code/aon/ui/company/facelet/companyImages/form.xhtml"
+  SHAPE="256,177,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

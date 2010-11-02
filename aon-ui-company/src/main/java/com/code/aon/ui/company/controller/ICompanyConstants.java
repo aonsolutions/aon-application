@@ -57,6 +57,10 @@ public interface ICompanyConstants {
 	String ENTERPRISE_ACTIVITY_CONTROLLER_NAME = "enterpriseActivity";
 	
 	String EMPLOYEE_CONTROLLER_NAME = "employee";	
+	
+	String CONTRACT_CONTROLLER_NAME = "contract";	
+	
+	String SALARY_CONTROLLER_NAME = "salary";	
 
 	// ************************************************************
 	// CONFIGURATION

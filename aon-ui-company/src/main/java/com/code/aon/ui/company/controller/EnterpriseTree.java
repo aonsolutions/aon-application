@@ -1,6 +1,7 @@
 package com.code.aon.ui.company.controller;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -24,7 +25,10 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.employee.Contract;
 import com.code.aon.employee.dao.IEmployeeAlias;
+import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.util.EnterpriseTreeData;
 import com.code.aon.ui.company.util.EnterpriseTreeType;
 import com.code.aon.ui.form.FormUtil;
@@ -75,15 +79,21 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
 		Criteria criteria = new Criteria();
+		String endDate = bean.getFieldName(IEmployeeAlias.CONTRACT_END_DATE);
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
+		Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		String workPlaceId = bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ID);
 		criteria.addEqualExpression(workPlaceId, workPlace.getId());
+		criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_SURNAME));
+		criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_NAME));
 		for( ITransferObject to : bean.getList(criteria) ) {
 			Contract contract = (Contract) to;
 			TreeNodeImpl<EnterpriseTreeData> contractNode = new TreeNodeImpl<EnterpriseTreeData>();
 			EnterpriseTreeData etd = getTreeData(contract);
 			contractNode.setData(etd);
 			workPlaceNode.addChild( etd.getType().toString() + etd.getId(), contractNode );
-		}		
+		}	
 	}		
 	
 	private void loadWorkPlaces( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
@@ -115,6 +125,26 @@ public class EnterpriseTree implements ICompanyConstants {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
 		}
 		currentNode = etd;
+		
+		
+		try {
+			IController cController = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
+			Criteria criteria = new Criteria();
+			String endDate = cController.getFieldName(IEmployeeAlias.CONTRACT_END_DATE);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			String erp = cController.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+			criteria.addEqualExpression(erp, enterprise.getId());
+			criteria.addOrder(cController.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_SURNAME));
+			criteria.addOrder(cController.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_NAME));
+			cController.setCriteria(criteria);
+			cController.initializeModel();
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error loading contracts for " + enterprise, e );
+		}
+		
+		
 	}
 
 	public Boolean adviseNodeSelected(UITree tree) {
@@ -140,20 +170,44 @@ public class EnterpriseTree implements ICompanyConstants {
 		currentNode = (EnterpriseTreeData) tree.getRowData();
 	}
 	
-	public void onSelectWorkPlace( ActionEvent event ) {
+	public void onSelectTreeEnterprise( ActionEvent event ) {
+		try {
+			selectNode(event, ENTERPRISE_CONTROLLER_NAME, currentNode.getId());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectEnterprise exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	public void onSelectTreeWorkPlace( ActionEvent event ) {
 		try {
 			selectNode(event, ENTERPRISE_WORK_PLACE_CONTROLLER_NAME, currentNode.getId());
-			selectContracts(currentNode.getId());
+			selectTreeContracts(currentNode.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectWorkPlace exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-
+	
+	public void onSelectTreeContract( ActionEvent event ) {
+		try {
+			selectTreeContracts(event, currentNode.getId());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectContract exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}	
+	
 	public void onSelectContract( ActionEvent event ) {
 		try {
-			selectContract(event, currentNode.getId());
+			IController controller = (IController)AonUtil.getRegisteredBean(CONTRACT_CONTROLLER_NAME);
+			Contract c = (Contract)controller.getModel().getRowData();
+			EnterpriseTreeData data = new EnterpriseTreeData(c.getId(), c.getPerson().getRegistry().getFullName(), EnterpriseTreeType.CONTRACT);
+			setCurrentNode(data);
+			selectTreeContracts(event, currentNode.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectContract exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -177,13 +231,15 @@ public class EnterpriseTree implements ICompanyConstants {
 		controller.onSelect(event);			
 	}	
 	
-	private void selectContract( ActionEvent event, Integer id ) throws ManagerBeanException {
+	private void selectTreeContracts( ActionEvent event, Integer id ) throws ManagerBeanException {
 		IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
 		try {
 			Contract contract = (Contract) controller.getManagerBean().get(currentNode.getId());
 			LinesController wpController = (LinesController) AonUtil.getRegisteredBean(ENTERPRISE_WORK_PLACE_CONTROLLER_NAME);
 			wpController.select(event, contract.getWorkPlace());
-			selectContracts( contract.getWorkPlace().getId() );
+			selectTreeContracts( contract.getWorkPlace().getId() );
+			selectContracts(contract.getPerson());
+			selectSalaries(contract);
 			selectNode(event, CONTRACT_CONTROLLER_NAME, id);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectActivity exception: ",e);
@@ -192,19 +248,70 @@ public class EnterpriseTree implements ICompanyConstants {
 		}		
 	}
 	
-	public void selectContracts( Integer id ) {
+	public void selectTreeContracts( Integer id ) {
 		try {
 			IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
 			controller.clearCriteria();
 			Criteria criteria = controller.getCriteria();
 			String wpAlias = controller.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ID);
 			criteria.addEqualExpression(wpAlias, id);
+			String endDate = controller.getFieldName(IEmployeeAlias.CONTRACT_END_DATE);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			criteria.addOrder(controller.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_SURNAME));
+			criteria.addOrder(controller.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_NAME));
 			controller.initializeModel();
+			
+//			Criteria criteria = new Criteria();
+//			String erp = cController.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+//			criteria.addEqualExpression(erp, enterprise.getId());
+			
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> selectContracts exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
+	}
+	
+	public void selectContracts( Person person ) {
+		try {
+			IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
+			controller.clearCriteria();
+			Criteria criteria = controller.getCriteria();
+			String personAlias = controller.getFieldName(IEmployeeAlias.CONTRACT_PERSON_ID);
+			criteria.addEqualExpression(personAlias, person.getId());
+			String endDate = controller.getFieldName(IEmployeeAlias.CONTRACT_END_DATE);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			controller.initializeModel();
+			initializeSalaries();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> selectContracts exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}		
+	}
+	
+	public void selectSalaries( Contract contract) {
+		try {
+			IController controller = FormUtil.getController(SALARY_CONTROLLER_NAME);
+			controller.clearCriteria();
+			Criteria criteria = controller.getCriteria();
+			String contractAlias = controller.getFieldName(IEmployeeAlias.SALARY_CONTRACT_ID);
+			criteria.addEqualExpression(contractAlias, contract.getId());
+			controller.initializeModel();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> selectSalaries exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}		
+	}
+	
+	private void initializeSalaries(){
+		IController controller = FormUtil.getController(SALARY_CONTROLLER_NAME);
+		controller.onCancel(null);
 	}
 	
 }
