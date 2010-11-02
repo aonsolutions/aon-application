@@ -19,12 +19,12 @@
 					value="#{to.type}" />
 				<aon:selectOneMenu id="SalaryPayment_type" 
 					value="#{controller.to.type}" rendered="#{formEdit}">
-					<f:selectItems value="#{employeeCollections.salaryPaymentTypes}" />
+					<f:selectItems value="#{employeeCollections.paymentTypes}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="SalaryPayment_type-New" 
 						value="#{controller.to.type}" rendered="#{formNew}">
-						<f:selectItems value="#{employeeCollections.salaryPaymentTypes}" />
+						<f:selectItems value="#{employeeCollections.paymentTypes}" />
 					</aon:selectOneMenu>
 				</f:facet>		
 			</aon:column>
