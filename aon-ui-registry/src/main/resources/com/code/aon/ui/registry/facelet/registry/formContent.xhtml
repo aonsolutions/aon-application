@@ -36,7 +36,8 @@
 	<aon:outputLabel for="Registry_name"
 		value="#{bundle.aon_company_name}" />
 	<aon:inputText id="Registry_name" maxlength="64"
-		value="#{controller.to.registry.name}" size="64">
+		value="#{controller.to.registry.name}" size="64"
+		required="true">
 		<f:validateLength minimum="1" maximum="64" />
 	</aon:inputText>
 
