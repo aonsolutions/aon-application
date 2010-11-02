@@ -106,6 +106,7 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		PayMethod newPay = (PayMethod) event.getNewValue();
 		if (oldPay == null || newPay == null || oldPay.getType() != newPay.getType()) {
 			resetRegistryBank();
+			this.registryPayMethod.setNumberOfPayments(1);
 		}
 	}
 	
