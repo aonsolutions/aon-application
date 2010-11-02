@@ -20,7 +20,7 @@ public class WorkPlaceControllerListener extends ControllerAdapter {
 		WorkPlace workPlace = (WorkPlace) event.getController().getTo();
 		EnterpriseTree tree = getTreeController();
 		tree.setCurrentNode(tree.getTreeData(workPlace));
-		tree.selectContracts(workPlace.getId());
+		tree.selectTreeContracts(workPlace.getId());
 	}
 	
 	@Override
