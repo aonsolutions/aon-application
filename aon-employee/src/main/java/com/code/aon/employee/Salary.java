@@ -322,5 +322,9 @@ public class Salary implements ITransferObject {
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
 	}
+	
+	public Salary getSalary(){
+		return this;
+	}
 
 }
