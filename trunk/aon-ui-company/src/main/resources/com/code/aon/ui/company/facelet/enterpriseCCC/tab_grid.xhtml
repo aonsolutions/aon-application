@@ -8,14 +8,9 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-<!--  
-		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="showDataTable" value="#{(!enterpriseActivity.new)} " />
-		<ui:param name="showDataTable" value="#{(!controller.masterController.new) or (controller.masterController.to!=null)} " />
--->
 		<ui:define name="columns">
 		
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-170">
 				<f:facet name="header">
 					<aon:outputLabel for="EnterpriseCCC_ccc" value="#{bundle.aon_value}" />
 				</f:facet>
@@ -48,7 +43,7 @@
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-170">
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" />
 				</f:facet>
