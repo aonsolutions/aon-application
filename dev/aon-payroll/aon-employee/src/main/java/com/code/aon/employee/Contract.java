@@ -1,7 +1,7 @@
 package com.code.aon.employee;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,22 +20,14 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.employee.dao.IEmployeeAlias;
+import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractStatus;
 import com.code.aon.person.Person;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 
 /**
  * Transfer Object that represents the contract.
@@ -47,7 +39,7 @@ public class Contract implements ITransferObject {
 
 	private static final long serialVersionUID = -2662643961209110809L;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(Contract.class.getName());
+//	private static final Logger LOGGER = LoggerFactory.getLogger(Contract.class.getName());
 	
 	@Id
 	@GeneratedValue
@@ -208,25 +200,15 @@ public class Contract implements ITransferObject {
 	}
 	
 	@Transient
+	public String getCode(){
+	
+		return ContractCode.C100.toString();
+	}
+	
+	@Transient
 	public String getType(){
-//		try {
-//		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-//		Criteria c = new Criteria();
-//		c.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_CONTRACT_ID), getId());
-//		String endDate = bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_END_DATE);
-//		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
-//		Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
-//		c.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-//		List<ITransferObject> list = bean.getList(c);
-//		if(list.isEmpty()){
-//			return "no";
-//		}
-//		ContractData data = (ContractData)bean.getList(c).get(0);
-//		data.getCode().getName(null);
-//		} catch (ManagerBeanException e) {
-//			LOGGER.error("Error obtaining contract data", e);
-//		}
-		return null;
+		
+		return ContractCode.C100.getName(Locale.getDefault());
 	}
 	
 	@Override

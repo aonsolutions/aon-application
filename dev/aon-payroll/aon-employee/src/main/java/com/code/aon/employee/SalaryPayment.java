@@ -16,7 +16,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.employee.enumeration.SalaryPaymentType;
+import com.code.aon.employee.enumeration.PaymentType;
 
 /**
  * Transfer Object that represents the salary payment.
@@ -39,7 +39,7 @@ public class SalaryPayment implements ITransferObject {
 	@Index(name = "FK_DEDUCTION_SALARY")
 	private Salary salary;
 
-	private SalaryPaymentType type;
+	private PaymentType type;
 	
 	@Column(length = 64)
 	private String description;
@@ -68,11 +68,11 @@ public class SalaryPayment implements ITransferObject {
 		this.salary = salary;
 	}
 	
-	public SalaryPaymentType getType() {
+	public PaymentType getType() {
 		return type;
 	}
 	
-	public void setType(SalaryPaymentType type) {
+	public void setType(PaymentType type) {
 		this.type = type;
 	}
 	
