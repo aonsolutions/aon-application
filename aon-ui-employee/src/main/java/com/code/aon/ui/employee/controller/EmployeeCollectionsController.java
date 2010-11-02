@@ -10,29 +10,41 @@ import javax.faces.model.SelectItem;
 import com.code.aon.employee.enumeration.ContractDuration;
 import com.code.aon.employee.enumeration.ContractTrackingType;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
-import com.code.aon.employee.enumeration.SalaryPaymentType;
+import com.code.aon.employee.enumeration.PaymentType;
+import com.code.aon.employee.enumeration.DeductionType;
 
 public class EmployeeCollectionsController {
 
 	private List<SelectItem> contractDurations;
-	
 	private List<SelectItem> contractWorkingDays;
-	
 	private List<SelectItem> contractTrackingTypes;
+	private List<SelectItem> paymentTypes;
+	private List<SelectItem> deductionTypes;
 	
-	private List<SelectItem> salaryPaymentTypes;
-	
-	public List<SelectItem> getSalaryPaymentTypes() {
-		if (salaryPaymentTypes == null) {
+	public List<SelectItem> getPaymentTypes() {
+		if (paymentTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			salaryPaymentTypes = new LinkedList<SelectItem>();
-			for( SalaryPaymentType salaryPaymentType : SalaryPaymentType.values() ) {
-				String name = salaryPaymentType.getName(locale);
-				SelectItem item = new SelectItem(salaryPaymentType, name);
-				salaryPaymentTypes.add(item);			
+			paymentTypes = new LinkedList<SelectItem>();
+			for( PaymentType paymentType : PaymentType.values() ) {
+				String name = paymentType.getName(locale);
+				SelectItem item = new SelectItem(paymentType, name);
+				paymentTypes.add(item);			
 			}
 		}
-		return salaryPaymentTypes;
+		return paymentTypes;
+	}
+	
+	public List<SelectItem> getDeductionTypes() {
+		if (deductionTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			deductionTypes = new LinkedList<SelectItem>();
+			for( DeductionType deductionType : DeductionType.values() ) {
+				String name = deductionType.getName(locale);
+				SelectItem item = new SelectItem(deductionType, name);
+				deductionTypes.add(item);			
+			}
+		}
+		return deductionTypes;
 	}
 	
 	public List<SelectItem> getContractDurations() {
