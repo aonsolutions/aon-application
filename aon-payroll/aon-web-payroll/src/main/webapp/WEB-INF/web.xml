@@ -206,6 +206,10 @@
 		<param-value>../aon-desktop/richFaces3.3.3.Final/</param-value>
 	</context-param>
 	-->
+	<context-param>
+		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
+		<param-value>richFaces3.3.3.Final/</param-value>
+	</context-param>
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
