@@ -1,10 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="45">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="0"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
+	<style name="complements_TABLE">
+		<box>
+			<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="complements_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="complements_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="complements_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 2"/>
 	<parameter name="salary" class="com.code.aon.employee.Salary" isForPrompting="false"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -13,7 +37,7 @@
 		<band height="21" splitType="Stretch">
 			<staticText>
 				<reportElement positionType="Float" x="0" y="0" width="555" height="21"/>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="11" isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE SALARIOS]]></text>
@@ -159,13 +183,10 @@
 			</frame>
 		</band>
 	</pageHeader>
-	<columnHeader>
-		<band splitType="Stretch"/>
-	</columnHeader>
 	<detail>
-		<band height="567">
+		<band height="536">
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="31" width="555" height="530"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="31" width="555" height="500"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -188,116 +209,140 @@
 					<text><![CDATA[TOTALES]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="10" y="26" width="403" height="11"/>
+					<reportElement x="10" y="23" width="403" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[1. Precepciones salariales]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="43" width="247" height="11"/>
-					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[Salario base ..................................................................................................]]></text>
+					<reportElement x="30" y="39" width="247" height="11"/>
+					<box>
+						<pen lineWidth="0.0" lineStyle="Dotted"/>
+						<topPen lineWidth="0.0" lineStyle="Solid"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[Salario base ......................................................................................................]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="277" y="43" width="136" height="11"/>
+					<reportElement x="277" y="39" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="30" y="55" width="247" height="11"/>
+					<reportElement x="30" y="51" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Complementos Salariales]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="91" width="247" height="11"/>
+					<reportElement x="30" y="87" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[Horas Extraordinarias .....................................................................................]]></text>
+					<text><![CDATA[Horas Extraordinarias ........................................................................................]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="277" y="91" width="136" height="11"/>
+					<reportElement x="277" y="87" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="30" y="103" width="247" height="11"/>
+					<reportElement x="30" y="99" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[Gratificaciones Extraordinarias ...............................................................................]]></text>
+					<text><![CDATA[Gratificaciones Extraordinarias]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="277" y="103" width="136" height="11"/>
+					<reportElement x="277" y="99" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="30" y="115" width="247" height="11"/>
+					<reportElement x="30" y="111" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[Salario en especie .........................................................]]></text>
+					<text><![CDATA[Salario en especie]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="277" y="115" width="136" height="11"/>
+					<reportElement x="277" y="111" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="10" y="132" width="409" height="11"/>
+					<reportElement x="10" y="128" width="409" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[2. Precepciones no salariales]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="149" width="247" height="11"/>
+					<reportElement x="30" y="144" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Indemnizaciones o suplidos]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="173" width="247" height="11"/>
+					<reportElement x="30" y="168" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Prestaciones e indemnizaciones de la Seguridad Social]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="197" width="247" height="11"/>
+					<reportElement x="30" y="192" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Indemnizaciones por traslados, suspensiones o despidos]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="221" width="247" height="11"/>
+					<reportElement x="30" y="216" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Otras percepciones no salariales]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="10" y="238" width="403" height="11"/>
+					<reportElement x="10" y="232" width="403" height="11"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[A.TOTAL DEVENGADO]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="414" y="238" width="136" height="11"/>
+					<reportElement x="414" y="232" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getTotalPayment()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="5" y="260" width="408" height="11"/>
+					<reportElement x="5" y="253" width="408" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[I. DEDUCCIONES]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="20" y="282" width="530" height="11"/>
+					<reportElement x="20" y="271" width="530" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[1. Aportación del trabajador a las cotizaciones de la Seguridad Social  y conceptos de recaudación conjunta ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="298" width="247" height="11"/>
+					<reportElement x="30" y="286" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Contingencias comunes]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="277" y="286" width="67" height="11"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="345" y="286" width="67" height="11"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="30" y="298" width="247" height="11"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Desempleo]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="277" y="298" width="67" height="11"/>
@@ -312,7 +357,7 @@
 				<staticText>
 					<reportElement x="30" y="310" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[Desempleo]]></text>
+					<text><![CDATA[Formación Profesional]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="277" y="310" width="67" height="11"/>
@@ -327,27 +372,27 @@
 				<staticText>
 					<reportElement x="30" y="322" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[Formación Profesional]]></text>
-				</staticText>
-				<textField>
-					<reportElement x="277" y="322" width="67" height="11"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="345" y="322" width="67" height="11"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="30" y="334" width="247" height="11"/>
-					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Horas extraordinarias]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="43" y="346" width="234" height="11"/>
+					<reportElement x="43" y="334" width="234" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Fuerza mayor o estructurales]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="277" y="334" width="67" height="11"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="345" y="334" width="67" height="11"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="43" y="346" width="234" height="11"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[No estructurales]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="277" y="346" width="67" height="11"/>
@@ -360,64 +405,63 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="43" y="358" width="234" height="11"/>
-					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[No estructurales]]></text>
-				</staticText>
-				<textField>
-					<reportElement x="277" y="358" width="67" height="11"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="345" y="358" width="67" height="11"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="30" y="370" width="247" height="11"/>
+					<reportElement x="30" y="358" width="247" height="11"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[TOTAL APORTACIONES]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="277" y="370" width="136" height="11"/>
+					<reportElement x="277" y="358" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="20" y="386" width="257" height="11"/>
+					<reportElement x="20" y="373" width="257" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[2. Impuesto sobre la renta de las personas físicas]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="277" y="386" width="67" height="11"/>
+					<reportElement x="277" y="373" width="67" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="345" y="386" width="67" height="11"/>
+					<reportElement x="345" y="373" width="67" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="20" y="402" width="257" height="11"/>
+					<reportElement x="20" y="388" width="257" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[3. Anticipos]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="277" y="402" width="136" height="11"/>
+					<reportElement x="277" y="388" width="136" height="11"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="403" width="257" height="11"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[4. Valor de los productos recibidos en especie]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="277" y="403" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
@@ -428,7 +472,7 @@
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[4. Valor de los productos recibidos en especie]]></text>
+					<text><![CDATA[5. Otras deducciones]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="277" y="418" width="136" height="11"/>
@@ -438,57 +482,67 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="20" y="434" width="257" height="11"/>
-					<textElement verticalAlignment="Middle">
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[5. Otras deducciones]]></text>
-				</staticText>
-				<textField>
-					<reportElement x="277" y="434" width="136" height="11"/>
-					<textElement textAlignment="Right">
-						<font isBold="true"/>
-					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="10" y="450" width="403" height="11"/>
+					<reportElement x="10" y="433" width="403" height="11"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[B.TOTAL A DEDUCCIR]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="414" y="450" width="136" height="11"/>
+					<reportElement x="414" y="433" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getTotalDeduction()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="10" y="466" width="403" height="11"/>
+					<reportElement x="10" y="448" width="403" height="11"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[LIQUIDO TOTAL A PERCIBIR (A-B)]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="414" y="466" width="136" height="11"/>
+					<reportElement x="414" y="448" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getTotalLiquid()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="40" y="481" width="112" height="11"/>
+					<reportElement x="40" y="462" width="112" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Firma y sello de la empresa]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="378" y="481" width="35" height="11"/>
+					<reportElement x="378" y="462" width="35" height="11"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
 					<text><![CDATA[RECIBI]]></text>
 				</staticText>
+				<componentElement>
+					<reportElement key="complements" style="complements_TABLE" x="30" y="63" width="383" height="11"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="Table Dataset 2">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="247">
+							<jr:detailCell style="complements_TD" height="11" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="247" height="11"/>
+									<textElement verticalAlignment="Middle"/>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="136">
+							<jr:detailCell style="complements_TD" height="11" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="136" height="11"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
 			</frame>
 			<frame>
 				<reportElement x="0" y="6" width="555" height="20"/>
@@ -519,7 +573,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{salary}.getTotalDaysHours()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$P{salary}.getTotalDaysHours()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="152" y="0" width="19" height="20"/>
@@ -549,13 +603,10 @@
 			</frame>
 		</band>
 	</detail>
-	<columnFooter>
-		<band splitType="Stretch"/>
-	</columnFooter>
 	<pageFooter>
-		<band height="141" splitType="Stretch">
+		<band height="136" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="0" width="555" height="141"/>
+				<reportElement x="0" y="0" width="555" height="136"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -578,76 +629,76 @@
 					<text><![CDATA[1. Base de cotización por contingencias comunes]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="43" width="247" height="11"/>
+					<reportElement x="30" y="42" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Remuneración mensual]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="277" y="43" width="136" height="11"/>
+					<reportElement x="277" y="42" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getRenumeration()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getRemuneration()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="30" y="55" width="247" height="11"/>
+					<reportElement x="30" y="54" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Prorrata de pagas extraordinarias]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="277" y="55" width="136" height="11"/>
+					<reportElement x="277" y="54" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getExtraPayProration()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="30" y="67" width="382" height="11"/>
+					<reportElement x="30" y="66" width="382" height="11"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[TOTAL]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="414" y="67" width="136" height="11"/>
+					<reportElement x="414" y="66" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getBaseCommon()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getCommonBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="20" y="82" width="393" height="24"/>
+					<reportElement x="20" y="80" width="393" height="24"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[2. Base de cotización por contingencias profesionales (AT y EP) y conceptos de recaudación conjunta (desempleo, formación profesional, Fondo de Garantía Salarial)]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="414" y="95" width="136" height="11"/>
+					<reportElement x="414" y="93" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getProfessionalBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="20" y="107" width="393" height="11"/>
+					<reportElement x="20" y="105" width="393" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[3. Base de cotización adicional por horas extraordinarias]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="414" y="107" width="136" height="11"/>
+					<reportElement x="414" y="105" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$P{salary}.getOvertimeBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="20" y="123" width="393" height="11"/>
+					<reportElement x="20" y="120" width="393" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[4. Base sujeta a retención del I.R.P.F]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="414" y="123" width="136" height="11"/>
+					<reportElement x="414" y="120" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
