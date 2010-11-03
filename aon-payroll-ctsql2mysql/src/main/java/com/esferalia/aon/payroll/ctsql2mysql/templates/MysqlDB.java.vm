@@ -1,7 +1,5 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
-import java.util.HashMap;
-
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -37,6 +35,29 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	protected Connection mysqlConnection;
 
 #foreach($table in $tables)
+	
+	private PreparedStatement ${table.name}Stmt;
+	
+	private void init${table}Stmt()
+	throws SQLException {
+		this.${table.name}Stmt = 
+			mysqlConnection.prepareStatement(
+			"INSERT INTO $table.name (#foreach ($column in $table.columns)
+#if ( ! $column.isAutoIncrement() )
+ $column.name#if( $velocityHasNext ),#end
+#end
+#end
+) VALUES (#foreach ($column in $table.columns)
+ #if (!$column.isAutoIncrement() )?#if( $velocityHasNext ),#end#end
+#end
+)", 
+			PreparedStatement.RETURN_GENERATED_KEYS);
+	}
+
+	private void close${table}Stmt()
+	throws SQLException {
+		${table.name}Stmt.close();
+	}	
 	/**
 	 * $table
 #foreach ($column in $table.columns)
@@ -49,78 +70,66 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 #end
 	 * @throws SQLException
 	*/
+#set($colCount = 0)
 	protected #if($table.isAutoIncrement())int#{else}void#end insert$table(#foreach ($column in $table.columns)
-#if (!$column.isAutoIncrement()) $column.javaClass $column.name#if( $velocityHasNext ),#end #end
+#if (!$column.isAutoIncrement())#if( $colCount > 0 ), #end$column.javaClass $column.name #set($colCount = $colCount + 1)#end
 #end)
 	throws SQLException {
 	
-		PreparedStatement stmt = 
-			mysqlConnection.prepareStatement(
-			"INSERT INTO $table.name (#foreach ($column in $table.columns)
-#if ( ! $column.isAutoIncrement() )
- $column.name#if( $velocityHasNext ),#end
-#end
-#end
-) VALUES (#foreach ($column in $table.columns)
- #if (!$column.isAutoIncrement() )?#if( $velocityHasNext ),#end#end
-#end
-)", 
-			PreparedStatement.RETURN_GENERATED_KEYS);
-
-		String message = "INSERT INTO $table.name (#foreach ($column in $table.columns)
-#if ( ! $column.isAutoIncrement() )
- $column.name#if( $velocityHasNext ),#end
-#end
-#end
-) VALUES (#foreach ($column in $table.columns)
- #if (!$column.isAutoIncrement() )'"+ $column.name +"'#if( $velocityHasNext ),#end#end
-#end
-)";
-		LOGGER.debug(message);
-
 #set($parameterIndex = 0)
 #foreach ($column in $table.columns)
 #if ( ! $column.isAutoIncrement() )
 #set($parameterIndex = $parameterIndex + 1)
 		if ( $column.name == null ) {
-			stmt.setNull($parameterIndex, $column.type);
+			this.${table.name}Stmt.setNull($parameterIndex, $column.type);
 		}
 		else {
 #if ($column.javaClass.equals("Integer"))
-			stmt.setInt($parameterIndex, $column.name);
+			this.${table.name}Stmt.setInt($parameterIndex, $column.name);
 #elseif ($column.type == -4 )
-			stmt.setBinaryStream($parameterIndex, $column.name);
+			this.${table.name}Stmt.setBinaryStream($parameterIndex, $column.name);
 #elseif ($column.type == -1 )
-			stmt.setAsciiStream($parameterIndex, $column.name);
+			this.${table.name}Stmt.setAsciiStream($parameterIndex, $column.name);
 #elseif ($column.type == -16 )
-			stmt.setCharacterStream($parameterIndex, $column.name);
+			this.${table.name}Stmt.setCharacterStream($parameterIndex, $column.name);
 #else
-			stmt.set${column.javaClass}($parameterIndex, $column.name);
+			this.${table.name}Stmt.set${column.javaClass}($parameterIndex, $column.name);
 #end
 		}
 #end
 #end			
 
-		stmt.executeUpdate();
+		this.${table.name}Stmt.executeUpdate();
 		
 #if($table.isAutoIncrement())		
-		int 		generatedKey = 0;
-		ResultSet generatedKeys = stmt.getGeneratedKeys();
+		int generatedKey = 0;
+		ResultSet generatedKeys = this.${table.name}Stmt.getGeneratedKeys();
 		if ( generatedKeys.next() ){
 			generatedKey = generatedKeys.getInt(1);
 		}
-		stmt.close();
-		
+		generatedKeys.close();
 		return generatedKey;
-#else
-		stmt.close();
 #end
 	}
 #end
 
-	public AbstractMysqlDB( Connection mysqlConnection) {
+	public AbstractMysqlDB( Connection mysqlConnection) 
+	throws SQLException {
 		this.mysqlConnection = mysqlConnection;
+#foreach($table in $tables)
+		init${table}Stmt();
+#end
 	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+#foreach($table in $tables)
+		close${table}Stmt();
+#end
+		super.finalize();
+	}
+	
+	
 
 }		
 	

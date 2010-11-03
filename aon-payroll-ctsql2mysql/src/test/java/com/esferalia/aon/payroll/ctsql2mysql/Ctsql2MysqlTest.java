@@ -39,15 +39,15 @@ public class Ctsql2MysqlTest
      * Rigourous Test :-)
      * @throws SQLException 
      * @throws ClassNotFoundException 
+     */
     public void testCtsql2Mysql() throws SQLException, ClassNotFoundException
     {
     	String args [] = {
-    			"-dryrun",
-    			"-mysqlurl", "jdbc:mysql://127.0.0.1:3306/rtrepiana-esferalia-com",
+//    			"-dryrun",
+    			"-mysqlurl", "jdbc:mysql://127.0.0.1:3306/payroll-esferalia-org",
     			"-ctsqlurl", "jdbc:ctsql://192.168.2.100:1101/empre055;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true"
     	} ;
     	Ctsql2Mysql.main(args);
     }
-     */
     
 }
