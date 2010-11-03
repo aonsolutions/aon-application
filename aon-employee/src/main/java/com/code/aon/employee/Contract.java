@@ -208,7 +208,7 @@ public class Contract implements ITransferObject {
 	@Transient
 	public String getType(){
 		
-		return ContractCode.C100.getName(Locale.getDefault());
+		return ContractCode.C100.getName(null);
 	}
 	
 	@Override
