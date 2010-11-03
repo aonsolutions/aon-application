@@ -64,16 +64,20 @@
 
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>menu_main</from-outcome>
+			<to-view-id>/facelet/menu/main.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_wizard</from-outcome>
+			<to-view-id>/facelet/menu/wizard.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>menu_config</from-outcome>
 			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_calendar</from-outcome>
 			<to-view-id>/facelet/menu/calendar.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_wizard</from-outcome>
-			<to-view-id>/facelet/menu/wizard.xhtml</to-view-id> 
 		</navigation-case>
 	</navigation-rule>
 	
