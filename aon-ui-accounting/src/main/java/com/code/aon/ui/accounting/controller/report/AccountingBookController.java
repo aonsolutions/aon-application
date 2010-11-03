@@ -441,9 +441,18 @@ public class AccountingBookController {
         t.setBalanceType(BalanceType.OPERATING);
         t.onReset(null);
         t.getParameters().setPeriod(getPeriod());
+        t.getParameters().setCoverVisible(true);
+        t.getParameters().setCounterVisible(true);
+        t.getParameters().setPageCounter(getGeneratedPages());
         t.setBalance(getProfitAndLostBalance());
         t.onBalance(null);
-		manager.execute(zout, "officialBalance");
+		String out = manager.execute(zout, "officialBalance");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
 	}
 
@@ -456,9 +465,18 @@ public class AccountingBookController {
         t.setBalanceType(BalanceType.CLOSING);
         t.onReset(null);
         t.getParameters().setPeriod(getPeriod());
+        t.getParameters().setCoverVisible(true);
+        t.getParameters().setCounterVisible(true);
+        t.getParameters().setPageCounter(getGeneratedPages());
         t.setBalance(getSituationBalance());
         t.onBalance(null);
-		manager.execute(zout, "officialBalance");
+		String out = manager.execute(zout, "officialBalance");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
 	}
 
@@ -471,9 +489,18 @@ public class AccountingBookController {
         t.setBalanceType(BalanceType.PATRIMONY);
         t.onReset(null);
         t.getParameters().setPeriod(getPeriod());
+        t.getParameters().setCoverVisible(true);
+        t.getParameters().setCounterVisible(true);
+        t.getParameters().setPageCounter(getGeneratedPages());
         t.setBalance(getPatrimonyBalance());
         t.onBalance(null);
-		manager.execute(zout, "officialBalance");
+		String out = manager.execute(zout, "officialBalance");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
 	}
 

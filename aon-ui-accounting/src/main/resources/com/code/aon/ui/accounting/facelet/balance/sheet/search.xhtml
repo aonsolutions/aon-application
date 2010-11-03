@@ -99,6 +99,27 @@
 					</c:if>
 
 					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_show_cover"
+							value="#{balanceSheet.parameters.coverVisible}" />
+						<aon:outputLabel for="Account_show_cover"
+							value="#{accountingBundle.accounting_show_cover}" />
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_continue_counter"
+							reRender="Account_page_counter"
+							value="#{balanceSheet.parameters.counterVisible}" />
+						<aon:outputLabel for="Account_continue_counter"
+							value="#{accountingBundle.accounting_continue_counter}" />
+						<aon:inputText id="Account_page_counter"
+							styleClass="aon-margin-left"
+							disabled="#{!balanceSheet.parameters.counterVisible}"
+							value="#{balanceSheet.parameters.pageCounter}" size="6"/>
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
 
 					<aon:commandButton
 						value="#{accountingBundle.accounting_balance_sheet_show}"
