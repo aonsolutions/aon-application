@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="30"/>
-	<property name="ireport.y" value="470"/>
+	<property name="ireport.y" value="837"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -22,15 +22,6 @@
 	<field name="detail" class="com.code.aon.accounting.BalanceDetail"/>
 	<field name="title" class="java.lang.Boolean"/>
 	<field name="accounts" class="java.lang.String"/>
-	<group name="reportGroup">
-		<groupExpression><![CDATA[]]></groupExpression>
-		<groupHeader>
-			<band splitType="Stretch"/>
-		</groupHeader>
-		<groupFooter>
-			<band height="15" splitType="Stretch"/>
-		</groupFooter>
-	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -51,7 +42,7 @@
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-28" x="10" y="265" width="535" height="83">
-					<printWhenExpression><![CDATA[ $P{params}.getPeriod() != null &&  $P{params}.getPeriod().getId() != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{params}.getPeriod() != null &&  $P{params}.getPeriod().getId() != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -192,7 +183,7 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="34" splitType="Stretch">
+		<band height="26" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-13" x="0" y="2" width="317" height="17"/>
