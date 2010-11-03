@@ -192,6 +192,7 @@ public class AccountingBookController {
 		setSituationEnabled(true);
 		setPatrimonyEnabled(true);
 		setAnnualReportEnabled(true);
+		setGeneratedPages(0);
 	}
 
 	public void onCreate(ActionEvent event) {
