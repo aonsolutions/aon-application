@@ -24,12 +24,12 @@ import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.ui.employee.file.CertificateWriter;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.EnterpriseCertificate;
 import com.esferalia.aon.payroll.EnterpriseCertificateDetail;
 import com.esferalia.aon.payroll.PayrollException;
 import com.esferalia.aon.payroll.core.enumeration.FileStatus;
-import com.esferalia.aon.ui.payroll.file.CertificateWriter;
 
 public class CertificateFileGenerationWizard implements Serializable {
 
