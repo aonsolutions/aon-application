@@ -245,6 +245,9 @@ public class ReportManager {
 			report.setCustomParams(null);
 			HibernateUtil.commitTransaction(sessionFactoryName);
 			HibernateUtil.closeSession(sessionFactoryName);
+			if (out == null) {
+				out = Integer.toString(report.getGeneratedPages());
+			}
 			return out;
 		} catch (Throwable t) {
 			LOGGER.error(t.getMessage(), t);

@@ -17,7 +17,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class JournalReportController extends BasicController {
+public class JournalReportController extends BasicController implements IAccountingBookItem {
 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
@@ -30,12 +30,14 @@ public class JournalReportController extends BasicController {
 	private Integer previousAccountEntry;
 	private boolean currentValue = true;
 	private boolean odd = true;
+	private boolean coverVisible = false;
+	private boolean counterVisible = false;
+	private int pageCounter = 0;
 	private SecurityLevel securityLevel;
 
 	public Period getPeriod() {
 		return period;
 	}
-
 	public void setPeriod(Period period) {
 		this.period = period;
 	}
@@ -43,7 +45,6 @@ public class JournalReportController extends BasicController {
 	public Date getFromDate() {
 		return fromDate;
 	}
-
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
@@ -51,7 +52,6 @@ public class JournalReportController extends BasicController {
 	public Date getToDate() {
 		return toDate;
 	}
-
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
@@ -59,7 +59,6 @@ public class JournalReportController extends BasicController {
 	public Date getDate() {
 		return date;
 	}
-
 	public void setDate(Date date) {
 		this.date = date;
 	}
@@ -67,9 +66,30 @@ public class JournalReportController extends BasicController {
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+	}
+	
+	
+	public boolean isCoverVisible() {
+		return coverVisible;
+	}
+	public void setCoverVisible(boolean coverVisible) {
+		this.coverVisible = coverVisible;
+	}
+
+	public boolean isCounterVisible() {
+		return counterVisible;
+	}
+	public void setCounterVisible(boolean counterVisible) {
+		this.counterVisible = counterVisible;
+	}
+
+	public int getPageCounter() {
+		return pageCounter;
+	}
+	public void setPageCounter(int pageCounter) {
+		this.pageCounter = pageCounter;
 	}
 
 	public void onReset(ActionEvent event) {
@@ -96,6 +116,9 @@ public class JournalReportController extends BasicController {
 		setDate(new Date());
 		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 		setJournal(false);
+		setPageCounter(0);
+		setCounterVisible(false);
+		setCoverVisible(false);
 		previousAccountEntry = null;
 		previousAccountEntryDetail = null;
 		odd = true;
