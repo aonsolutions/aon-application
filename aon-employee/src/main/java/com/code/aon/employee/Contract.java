@@ -1,7 +1,6 @@
 package com.code.aon.employee;
 
 import java.util.Date;
-import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -208,7 +207,8 @@ public class Contract implements ITransferObject {
 	@Transient
 	public String getType(){
 		
-		return ContractCode.C100.getName(Locale.getDefault());
+//		return ContractCode.C100.getName(Locale.getDefault());
+		return ContractCode.C100.toString();
 	}
 	
 	@Override
