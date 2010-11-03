@@ -87,3 +87,16 @@
 	color: #285E9C; 
 	text-decoration: underline;
 }
+
+.aon-icon-winsuite{
+	background:transparent url(./images/aon-icon-winsuite.png) no-repeat scroll center left;
+	/*
+	padding-left: 18px;
+	*/	
+}
+.aon-icon-redtrabaja{
+	background:transparent url(./images/aon-icon-redtrabaja.png) no-repeat scroll center left;
+	/*
+	padding-left: 18px;
+	*/	
+}
