@@ -45,24 +45,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	<!-- ************ Proceso de creacion de contratos **************** -->
-	<managed-bean>
-		<managed-bean-name>contractGenerationWizard</managed-bean-name>
-		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.ContractGenerationWizard
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- ************ Proceso de creacion del fichero AFI **************** -->
-	<managed-bean>
-		<managed-bean-name>contractBatchWizard</managed-bean-name>
-		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.ContractBatchWizard
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 
 	<!-- =================== ParteIT Wizard Management========================== -->
 
@@ -100,50 +82,5 @@
 	    </navigation-case>
 	</navigation-rule>
 
-	<navigation-rule id="contractGenerationWizard">
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step0</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step0.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step1</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step1.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step2</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step2.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step3</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step3.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step4</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step4.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step5</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step5.xhtml</to-view-id>
-	    </navigation-case>
-	</navigation-rule>
-
-	<navigation-rule id="contractBatchWizard">
-	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step0</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step0.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step1</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step1.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step2</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step2.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step3</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step3.xhtml</to-view-id>
-	    </navigation-case>
-	</navigation-rule>
 
 </faces-config>
