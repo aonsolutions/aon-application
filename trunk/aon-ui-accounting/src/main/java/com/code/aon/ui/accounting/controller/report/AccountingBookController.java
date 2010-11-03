@@ -307,7 +307,7 @@ public class AccountingBookController {
 			i = Integer.parseInt(out);
 		} catch (NumberFormatException e) {
 		}
-		setGeneratedPages(i);
+		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
 	}
 
@@ -331,7 +331,7 @@ public class AccountingBookController {
 			i = Integer.parseInt(out);
 		} catch (NumberFormatException e) {
 		}
-		setGeneratedPages(i);
+		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
 	}
 
@@ -347,8 +347,17 @@ public class AccountingBookController {
         c.add(Calendar.MONTH, 3);
         c.add(Calendar.DAY_OF_MONTH, -1);
         t.getParameters().setToDate(c.getTime());
+        t.getParameters().setCoverVisible(true);
+        t.getParameters().setCounterVisible(true);
+        t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
-		manager.execute(zout, "trialBalance");
+		String out = manager.execute(zout, "trialBalance");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
 	}
 	private void addTrial2Quarter(ZipOutputStream zout,int index) throws IOException, ReportException {
@@ -363,8 +372,17 @@ public class AccountingBookController {
         c.add(Calendar.MONTH, 6);
         c.add(Calendar.DAY_OF_MONTH, -1);
         t.getParameters().setToDate(c.getTime());
+        t.getParameters().setCoverVisible(true);
+        t.getParameters().setCounterVisible(true);
+        t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
-		manager.execute(zout, "trialBalance");
+		String out = manager.execute(zout, "trialBalance");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
 	}
 	private void addTrial3Quarter(ZipOutputStream zout,int index) throws ReportException, IOException {
@@ -379,8 +397,17 @@ public class AccountingBookController {
         c.add(Calendar.MONTH, 9);
         c.add(Calendar.DAY_OF_MONTH, -1);
         t.getParameters().setToDate(c.getTime());
+        t.getParameters().setCoverVisible(true);
+        t.getParameters().setCounterVisible(true);
+        t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
-		manager.execute(zout, "trialBalance");
+		String out = manager.execute(zout, "trialBalance");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
 	}
 	private void addTrial4Quarter(ZipOutputStream zout,int index) throws ReportException, IOException {
@@ -391,8 +418,17 @@ public class AccountingBookController {
         TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("trialBalance");
         t.getParameters().setFromDate(getPeriod().getInitiationDate());
         t.getParameters().setToDate(getPeriod().getDeadline());
+        t.getParameters().setCoverVisible(true);
+        t.getParameters().setCounterVisible(true);
+        t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
-		manager.execute(zout, "trialBalance");
+		String out = manager.execute(zout, "trialBalance");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
 	}
 
