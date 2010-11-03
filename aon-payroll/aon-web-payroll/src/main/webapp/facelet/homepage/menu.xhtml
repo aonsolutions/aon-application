@@ -5,16 +5,24 @@
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
+		<aon:commandLink id="integral"
+			value="#{appBundle.menu_integral}"
+			action="enterprise_search" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-index" />
+		<aon:commandLink id="main"
+			value="#{appBundle.menu_main}"
+			action="menu_main" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-general" />
+		<aon:commandLink id="wizard"
+			value="#{appBundle.menu_wizard}"
+			action="menu_wizard" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-utilities" />
 		<c:if test="#{aonRole.config}">
 			<aon:commandLink id="config"
 				value="#{bundle.aon_configuration}"
 				action="menu_config" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-config" />
 		</c:if>
-			<aon:commandLink id="wizard"
-				value="#{appBundle.menu_wizard}"
-				action="menu_wizard" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-master" />
 			
 	</ui:define>
 	
