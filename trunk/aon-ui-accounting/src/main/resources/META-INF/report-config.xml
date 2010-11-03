@@ -209,6 +209,9 @@
 			<param id="date" value="#{journalReport.getDate}" />
 			<param id="period" value="#{journalReport.getPeriod}" />
 			<param id="journal" value="#{journalReport.isJournal}" />
+			<param id="showCover" value="#{journalReport.isCoverVisible}" />
+			<param id="showCounter" value="#{journalReport.isCounterVisible}" />
+			<param id="pageCounter" value="#{journalReport.getPageCounter}" />
 		</params>
 	</report>
 	<report id="journalBookXls" description="Listado Diario para Excel de Apuntes">
@@ -241,6 +244,9 @@
 			<param id="date" value="#{ledgerReport.getDate}" />
 			<param id="period" value="#{ledgerReport.getPeriod}" />
 			<param id="journalOrdered" value="#{ledgerReport.isJournalOrdered}" />
+			<param id="showCover" value="#{ledgerReport.isCoverVisible}" />
+			<param id="showCounter" value="#{ledgerReport.isCounterVisible}" />
+			<param id="pageCounter" value="#{ledgerReport.getPageCounter}" />
 		</params>
 	</report>
 
