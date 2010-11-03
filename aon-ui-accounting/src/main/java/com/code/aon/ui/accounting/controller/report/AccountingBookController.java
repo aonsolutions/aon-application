@@ -1,6 +1,8 @@
 package com.code.aon.ui.accounting.controller.report;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -42,6 +44,15 @@ public class AccountingBookController {
 	private Balance patrimonyBalance;
 	private boolean annualReportEnabled;
 	private AnnualReport annualReport;
+	
+	private int generatedPages = 0;
+
+	public int getGeneratedPages() {
+		return generatedPages;
+	}
+	public void setGeneratedPages(int generatedPages) {
+		this.generatedPages = generatedPages;
+	}
 
 	public Period getPeriod() {
 		return period;
@@ -194,39 +205,49 @@ public class AccountingBookController {
 			
 		    ZipOutputStream zout = new ZipOutputStream(res.getOutputStream());
 		    zout.setLevel(9);
-		    
+		    int index = 1;
 		    if (isCoverEnabled()) {
 				
 			}
 			if (isJournalEnabled()) {
-				addJournal(zout);
+				addJournal(zout,index);
+				++index;
 			}
 			if (isLedgerEnabled()) {
-				addLedger(zout);
+				addLedger(zout,index);
+				++index;
 			}
 			if (isTrial1QuarterEnabled()) {
-				addTrial1Quarter(zout);
+				addTrial1Quarter(zout,index);
+				++index;
 			}
 			if (isTrial2QuarterEnabled()) {
-				addTrial2Quarter(zout);
+				addTrial2Quarter(zout,index);
+				++index;
 			}
 			if (isTrial3QuarterEnabled()) {
-				addTrial3Quarter(zout);
+				addTrial3Quarter(zout,index);
+				++index;
 			}
 			if (isTrial4QuarterEnabled()) {
-				addTrial4Quarter(zout);
+				addTrial4Quarter(zout,index);
+				++index;
 			}
 			if (isProfitAndLostEnabled()) {
-				addProfitAndLost(zout);
+				addProfitAndLost(zout,index);
+				++index;
 			}
 			if (isSituationEnabled()) {
-				addSituation(zout);
+				addSituation(zout,index);
+				++index;
 			}
 			if (isPatrimonyEnabled()) {
-				addPatrimony(zout);
+				addPatrimony(zout,index);
+				++index;
 			}
 			if (isAnnualReportEnabled()) {
-				addAnnualReport(zout);
+				addAnnualReport(zout,index);
+				++index;
 			}
 			zout.flush();
 			zout.finish();
@@ -266,36 +287,57 @@ public class AccountingBookController {
 			throw new AbortProcessingException( "Compruebe los parámetros." );
 		}
 	}
-	private void addJournal(ZipOutputStream zout) throws ReportException, IOException{
-		ZipEntry ze = new ZipEntry("Diario.pdf");
+	private void addJournal(ZipOutputStream zout,int index) throws ReportException, IOException{
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-Diario.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
         JournalReportController t = (JournalReportController) AonUtil.getRegisteredBean("journalReport");
         t.onEditSearch(null);
         t.onReset(null);
+        t.setCoverVisible(true);
+        t.setCounterVisible(true);
+        t.setPageCounter(getGeneratedPages());
         t.setPeriod(getPeriod());
         t.setJournal(true);
         t.onSearch(null);
-		manager.execute(zout, "journalBook");
+		String out = manager.execute(zout, "journalBook");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(i);
 		zout.closeEntry();
 	}
 
-	private void addLedger(ZipOutputStream zout) throws ReportException, IOException{
-		ZipEntry ze = new ZipEntry("Mayores.pdf");
+	private void addLedger(ZipOutputStream zout,int index) throws ReportException, IOException{
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-Mayor.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
         LedgerReportController t = (LedgerReportController) AonUtil.getRegisteredBean("ledgerReport");
         t.onEditSearch(null);
         t.onReset(null);
+        t.setCoverVisible(true);
+        t.setCounterVisible(true);
+        t.setPageCounter(getGeneratedPages());
         t.setPeriod(getPeriod());
         t.setOrder("3");
         t.onSearch(null);
-		manager.execute(zout, "ledgerBook");
+		String out = manager.execute(zout, "ledgerBook");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(i);
 		zout.closeEntry();
 	}
 
-	private void addTrial1Quarter(ZipOutputStream zout) throws ReportException, IOException {
-		ZipEntry ze = new ZipEntry("BalanceSumasSaldos-01-03.pdf");
+	private void addTrial1Quarter(ZipOutputStream zout,int index) throws ReportException, IOException {
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-BalanceSumasSaldos-01-03.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
         TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("trialBalance");
@@ -309,8 +351,9 @@ public class AccountingBookController {
 		manager.execute(zout, "trialBalance");
 		zout.closeEntry();
 	}
-	private void addTrial2Quarter(ZipOutputStream zout) throws IOException, ReportException {
-		ZipEntry ze = new ZipEntry("BalanceSumasSaldos-01-06.pdf");
+	private void addTrial2Quarter(ZipOutputStream zout,int index) throws IOException, ReportException {
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-BalanceSumasSaldos-01-06.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
         TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("trialBalance");
@@ -324,8 +367,9 @@ public class AccountingBookController {
 		manager.execute(zout, "trialBalance");
 		zout.closeEntry();
 	}
-	private void addTrial3Quarter(ZipOutputStream zout) throws ReportException, IOException {
-		ZipEntry ze = new ZipEntry("BalanceSumasSaldos-01-09.pdf");
+	private void addTrial3Quarter(ZipOutputStream zout,int index) throws ReportException, IOException {
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-BalanceSumasSaldos-01-09.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
         TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("trialBalance");
@@ -339,8 +383,9 @@ public class AccountingBookController {
 		manager.execute(zout, "trialBalance");
 		zout.closeEntry();
 	}
-	private void addTrial4Quarter(ZipOutputStream zout) throws ReportException, IOException {
-		ZipEntry ze = new ZipEntry("BalanceSumasSaldos-01-12.pdf");
+	private void addTrial4Quarter(ZipOutputStream zout,int index) throws ReportException, IOException {
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-BalanceSumasSaldos-01-12.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
         TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("trialBalance");
@@ -351,8 +396,9 @@ public class AccountingBookController {
 		zout.closeEntry();
 	}
 
-	private void addProfitAndLost(ZipOutputStream zout) throws ReportException, IOException{
-		ZipEntry ze = new ZipEntry("BalancePerdidasGanancias.pdf");
+	private void addProfitAndLost(ZipOutputStream zout,int index) throws ReportException, IOException{
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-BalancePerdidasGanancias.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
         BalanceSheetController t = (BalanceSheetController) AonUtil.getRegisteredBean("balanceSheet");
@@ -365,8 +411,9 @@ public class AccountingBookController {
 		zout.closeEntry();
 	}
 
-	private void addSituation(ZipOutputStream zout) throws ReportException, IOException{
-		ZipEntry ze = new ZipEntry("BalanceSituacion.pdf");
+	private void addSituation(ZipOutputStream zout, int index) throws ReportException, IOException{
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-BalanceSituacion.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
         BalanceSheetController t = (BalanceSheetController) AonUtil.getRegisteredBean("balanceSheet");
@@ -379,8 +426,9 @@ public class AccountingBookController {
 		zout.closeEntry();
 	}
 
-	private void addPatrimony(ZipOutputStream zout) throws ReportException, IOException{
-		ZipEntry ze = new ZipEntry("BalancePatrimonio.pdf");
+	private void addPatrimony(ZipOutputStream zout, int index) throws ReportException, IOException{
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-BalancePatrimonio.pdf");
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
         BalanceSheetController t = (BalanceSheetController) AonUtil.getRegisteredBean("balanceSheet");
@@ -393,8 +441,9 @@ public class AccountingBookController {
 		zout.closeEntry();
 	}
 
-	private void addAnnualReport(ZipOutputStream zout) throws IOException, ManagerBeanException {
-		ZipEntry ze = new ZipEntry("MemoriaAnual.pdf");
+	private void addAnnualReport(ZipOutputStream zout,int index) throws IOException, ManagerBeanException {
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-MemoriaAnual.pdf");
 	    zout.putNextEntry(ze);
         AnnualReportLauncher c = (AnnualReportLauncher) AonUtil.getRegisteredBean("annualReportLauncher");
         c.onReset(null);

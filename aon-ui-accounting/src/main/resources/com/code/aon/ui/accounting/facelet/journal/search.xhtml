@@ -82,6 +82,28 @@
 						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_journal}" itemValue="#{true}" />
 					</aon:selectOneMenu>
 
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_show_cover"
+							value="#{journalReport.coverVisible}" />
+						<aon:outputLabel for="Account_show_cover"
+							value="#{accountingBundle.accounting_show_cover}" />
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Account_continue_counter"
+							reRender="Account_page_counter"
+							value="#{journalReport.counterVisible}" />
+						<aon:outputLabel for="Account_continue_counter"
+							value="#{accountingBundle.accounting_continue_counter}" />
+						<aon:inputText id="Account_page_counter"
+							styleClass="aon-margin-left"
+							disabled="#{!journalReport.counterVisible}"
+							value="#{journalReport.pageCounter}" size="6"/>
+					</aon:div>
+
+
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
