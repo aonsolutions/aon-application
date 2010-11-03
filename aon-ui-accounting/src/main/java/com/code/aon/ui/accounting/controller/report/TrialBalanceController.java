@@ -33,7 +33,7 @@ import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class TrialBalanceController implements ICollectionProvider {
+public class TrialBalanceController implements ICollectionProvider,IAccountingBookItem{
 
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TrialBalanceController.class);
@@ -101,6 +101,9 @@ public class TrialBalanceController implements ICollectionProvider {
 			p.setExcludeBalancedAccounts(false);
 			p.setRowsPerPage(20);
 			p.setAccountLevel(5);
+			p.setPageCounter(0);
+			p.setCounterVisible(false);
+			p.setCoverVisible(false);
 			setParameters(p);
 		}
 		return parameters;
@@ -110,6 +113,27 @@ public class TrialBalanceController implements ICollectionProvider {
 		this.parameters = parameters;
 	}
 
+
+	public boolean isCoverVisible() {
+		return getParameters().isCoverVisible();
+	}
+	public void setCoverVisible(boolean coverVisible) {
+		getParameters().setCoverVisible(coverVisible);
+	}
+
+	public boolean isCounterVisible() {
+		return getParameters().isCounterVisible();
+	}
+	public void setCounterVisible(boolean counterVisible) {
+		getParameters().setCounterVisible(counterVisible);
+	}
+
+	public int getPageCounter() {
+		return getParameters().getPageCounter();
+	}
+	public void setPageCounter(int pageCounter) {
+		getParameters().setPageCounter(pageCounter);
+	}
 
 	public void onReset(ActionEvent event) {
 		setBackAction(null);
