@@ -145,6 +145,9 @@ public class Ctsql2Mysql
             if ( !dryRun ) {
             	mysqlConnection.commit(); 
             }
+            
+            mysqlConnection.close();
+            ctsqlConnection.close();
     	
     	}
         catch( ParseException exp ) {
