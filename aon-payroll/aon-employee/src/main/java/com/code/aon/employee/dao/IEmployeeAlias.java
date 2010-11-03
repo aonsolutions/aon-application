@@ -3,6 +3,8 @@ package com.code.aon.employee.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.employee.Contract;
+import com.code.aon.employee.ContractBatch;
+import com.code.aon.employee.ContractBatchDetail;
 import com.code.aon.employee.ContractData;
 import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
@@ -99,6 +101,74 @@ public interface IEmployeeAlias {
 	* Hibernate value: Contract.workPlace.enterprise.registry.name
 	*/
 	String  CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME = CONTRACT_ENTRY.getAliasNames()[12];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractBatch entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_BATCH_ENTRY = DAOConstants.getDAOConstant(ContractBatch.class);
+
+	/** 
+	* Alias value: ContractBatch_date
+	* Hibernate value: ContractBatch.date
+	*/
+	String  CONTRACT_BATCH_DATE = CONTRACT_BATCH_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractBatch_id
+	* Hibernate value: ContractBatch.id
+	*/
+	String  CONTRACT_BATCH_ID = CONTRACT_BATCH_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractBatch_redNotifyDate
+	* Hibernate value: ContractBatch.redNotifyDate
+	*/
+	String  CONTRACT_BATCH_RED_NOTIFY_DATE = CONTRACT_BATCH_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractBatch_redNotifyId
+	* Hibernate value: ContractBatch.redNotifyId
+	*/
+	String  CONTRACT_BATCH_RED_NOTIFY_ID = CONTRACT_BATCH_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractBatch_redResponseDate
+	* Hibernate value: ContractBatch.redResponseDate
+	*/
+	String  CONTRACT_BATCH_RED_RESPONSE_DATE = CONTRACT_BATCH_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractBatch_redResponseId
+	* Hibernate value: ContractBatch.redResponseId
+	*/
+	String  CONTRACT_BATCH_RED_RESPONSE_ID = CONTRACT_BATCH_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractBatchDetail entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_BATCH_DETAIL_ENTRY = DAOConstants.getDAOConstant(ContractBatchDetail.class);
+
+	/** 
+	* Alias value: ContractBatchDetail_contractBatch_id
+	* Hibernate value: ContractBatchDetail.contractBatch.id
+	*/
+	String  CONTRACT_BATCH_DETAIL_CONTRACT_BATCH_ID = CONTRACT_BATCH_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractBatchDetail_contract_id
+	* Hibernate value: ContractBatchDetail.contract.id
+	*/
+	String  CONTRACT_BATCH_DETAIL_CONTRACT_ID = CONTRACT_BATCH_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractBatchDetail_id
+	* Hibernate value: ContractBatchDetail.id
+	*/
+	String  CONTRACT_BATCH_DETAIL_ID = CONTRACT_BATCH_DETAIL_ENTRY.getAliasNames()[2];
 
 
 
