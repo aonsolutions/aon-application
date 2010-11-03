@@ -29,87 +29,89 @@
 								<aon:commandLink id="contractGenerationWizard" 
 									action="contractGenerationWizard_step0"
 									actionListener="#{contractGenerationWizard.onStart}"
-									value="#{payrollBundle.contractGenerationWizard_module}" />
+									value="#{employeeBundle.employee_contractGenerationWizard_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="parteitGenerationWizard" 
-									action="certificateBatchGenerationWizard_step0"
 									disabled="true"
-									value="#{payrollBundle.parteitWizard_module}" />
+									action="certificateBatchGenerationWizard_step0"
+									value="#{employeeBundle.employee_parteitWizard_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="contractModificationWizard" 
-									action="certificateBatchGenerationWizard_step0"
 									disabled="true"
-									value="#{payrollBundle.contractModificationWizard_module}" />
+									action="certificateBatchGenerationWizard_step0"
+									value="#{employeeBundle.employee_contractModificationWizard_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="contractDegenerationWizard" 
-									action="certificateBatchGenerationWizard_step0"
 									disabled="true"
-									value="#{payrollBundle.contractSuspensionWizard_module}" />
+									action="certificateBatchGenerationWizard_step0"
+									value="#{employeeBundle.employee_contractSuspensionWizard_module}" />
 							</aon:div>
 							
 	
 						</aon:div>
 					</aon:panelGrid>
 
-					<aon:panelGrid id="certificate_wizard"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-master aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.certificate_menu_group}" />
-						</f:facet>					
-						<aon:div styleClass="aon-direct-access-list">
-
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="certificateBatchGenerationWizard" 
-									action="certificateBatchGenerationWizard_step0"
-									actionListener="#{certificateBatchGenerationWizard.onStart}"
-									value="#{payrollBundle.certificateBatchGenerationWizard_module}" />
-							</aon:div>
-							
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="certificateFileGenerationWizard" 
-									action="certificateFileGenerationWizard_step0"
-									actionListener="#{certificateFileGenerationWizard.onStart}"
-									value="#{payrollBundle.certificateFileGenerationWizard_module}" />
-							</aon:div>
+					<aon:panelGroup>
+						<aon:panelGrid id="certificate_wizard"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-master aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.certificate_menu_group}" />
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="certificateBatchGenerationWizard" 
+										action="certificateBatchGenerationWizard_step0"
+										actionListener="#{certificateBatchGenerationWizard.onStart}"
+										value="#{payrollBundle.certificateBatchGenerationWizard_module}" />
+								</aon:div>
 								
-						</aon:div>
-					</aon:panelGrid>
-					
-					<aon:panelGrid id="red_wizard"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-master aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.red_menu_group}" />
-						</f:facet>					
-						<aon:div styleClass="aon-direct-access-list">
-								
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="contractBatchWizard" 
-									action="contractBatchWizard_step0"
-									actionListener="#{contractBatchWizard.onStart}"
-									value="#{payrollBundle.contractBatchWizard_module}" />
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="certificateFileGenerationWizard" 
+										action="certificateFileGenerationWizard_step0"
+										actionListener="#{certificateFileGenerationWizard.onStart}"
+										value="#{payrollBundle.certificateFileGenerationWizard_module}" />
+								</aon:div>
+									
 							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="itBatchWizard" 
-									action="contractBatchWizard_step0"
-									disabled="true"
-									actionListener="#{contractBatchWizard.onStart}"
-									value="#{payrollBundle.itBatchWizard_module}" />
+						</aon:panelGrid>
+						
+						<aon:panelGrid id="red_wizard"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-master aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.red_menu_group}" />
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+									
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contractBatchWizard" 
+										action="contractBatchWizard_step0"
+										actionListener="#{contractBatchWizard.onStart}"
+										value="#{employeeBundle.employee_contractBatchWizard_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="itBatchWizard" 
+										action="contractBatchWizard_step0"
+										disabled="true"
+										actionListener="#{contractBatchWizard.onStart}"
+										value="#{employeeBundle.employee_itBatchWizard_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="fanBatchWizard" 
+										action="contractBatchWizard_step0"
+										disabled="true"
+										actionListener="#{contractBatchWizard.onStart}"
+										value="#{employeeBundle.employee_fanBatchWizard_module}" />
+								</aon:div>
+									
 							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="fanBatchWizard" 
-									action="contractBatchWizard_step0"
-									disabled="true"
-									actionListener="#{contractBatchWizard.onStart}"
-									value="#{payrollBundle.fanBatchWizard_module}" />
-							</aon:div>
-								
-						</aon:div>
-					</aon:panelGrid>
+						</aon:panelGrid>
+					</aon:panelGroup>
 
 				</h:panelGrid>
 			</aon:div>
