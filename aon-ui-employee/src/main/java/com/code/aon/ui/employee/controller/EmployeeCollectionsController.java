@@ -7,7 +7,10 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractDuration;
+import com.code.aon.employee.enumeration.ContractModel;
+import com.code.aon.employee.enumeration.ContractOption;
 import com.code.aon.employee.enumeration.ContractTrackingType;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
 import com.code.aon.employee.enumeration.PaymentType;
@@ -20,6 +23,10 @@ public class EmployeeCollectionsController {
 	private List<SelectItem> contractTrackingTypes;
 	private List<SelectItem> paymentTypes;
 	private List<SelectItem> deductionTypes;
+	
+	private List<SelectItem> contractCodes;
+	private List<SelectItem> contractModels;
+	private List<SelectItem> contractOptions;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -84,6 +91,55 @@ public class EmployeeCollectionsController {
 			}
 		}
 		return contractTrackingTypes;
+	}
+	
+	public List<SelectItem> getContractOptions() {
+		if (contractOptions == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			contractOptions = new LinkedList<SelectItem>();
+			ContractOption[] options = ContractOption.values();
+			for (ContractOption o : options) {
+				String name = o.getName(locale);
+				SelectItem item = new SelectItem(o, name);
+				contractOptions.add(item);
+			}
+		}
+		return contractOptions;
+	}
+	
+	public List<SelectItem> getContractCodes() {
+		if (contractCodes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+					.getLocale();
+			contractCodes = new LinkedList<SelectItem>();
+			ContractCode[] codes = ContractCode.values();
+			for (ContractCode cc : codes) {
+				String name = cc.getName(locale);
+				SelectItem item = new SelectItem(cc, name);
+				contractCodes.add(item);
+			}
+		}
+		return contractCodes;
+	}
+	
+	public List<SelectItem> getContractModels() {
+		if (contractModels == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+			.getLocale();
+			contractModels = new LinkedList<SelectItem>();
+			ContractModel[] models = ContractModel.values();
+			for (ContractModel cm : models) {
+				String name = cm.getName(locale)+" - ";
+				if(cm.getDescription(locale).length()>70){
+					name += cm.getDescription(locale).substring(0, 70)+"...";
+				} else {
+					name += cm.getDescription(locale);
+				}
+				SelectItem item = new SelectItem(cm, name);
+				contractModels.add(item);
+			}
+		}
+		return contractModels;
 	}
 	
 }
