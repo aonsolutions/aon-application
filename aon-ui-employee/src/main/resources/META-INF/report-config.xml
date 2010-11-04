@@ -32,6 +32,15 @@
 	</report>
 	
 	<!--  IMPRESION DE LA NOMINA -->
+	<report id="currentSalaryReport" description="Current Salary report ">
+		<template path="/com/code/aon/ui/employee/report/salary.jasper" />
+		<collection provider="#{salary}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.report" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
 	<report id="salaryReport" description="Salary report ">
 		<template path="/com/code/aon/ui/employee/report/salary.jasper" />
 		<bean key="com.code.aon.employee.Salary" />
@@ -40,7 +49,6 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="title" value="#{customer.getReportTitle}" />
 		</params>
 	</report>
 	
