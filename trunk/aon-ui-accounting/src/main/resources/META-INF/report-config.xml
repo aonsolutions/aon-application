@@ -6,6 +6,21 @@
 
 <report-config>
 
+	<!--  PORTADA DEPOSITO CUENTAS  -->
+	<report id="cover" description="PORTADA DEPOSITO CUENTAS">
+		<template path="/com/code/aon/ui/accounting/report/cover.jasper"/>
+		<bean key="com.code.aon.accounting.AccountEntryDetail" />
+		<collection provider="#{accountingBook}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="period" value="#{accountingBook.getPeriod}" />
+			<param id="title" value="#{accountingBook.getCoverTitle}" />
+			<param id="subTitle" value="#{accountingBook.getCoverSubTitle}" />
+			<param id="constitutionDate" value="#{accountingBook.getConstitutionDate}" />
+		</params>
+	</report>
+
 	<!--  **********************************************************
 						      ACCOUNTING
 		  ********************************************************** -->

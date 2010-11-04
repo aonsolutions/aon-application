@@ -31,8 +31,14 @@
 
 					<aon:outputText value="" />
 					<aon:div>
-						<aon:selectBooleanCheckbox id="coverEnabled" value="#{accountingBook.coverEnabled}" disabled="true"/>
+						<aon:selectBooleanCheckbox id="coverEnabled" value="#{accountingBook.coverEnabled}"/>
 						<aon:outputLabel for="coverEnabled" value="#{accountingBundle.accounting_coverEnabled}" />
+						<aon:div  styleClass="aon-margin-left">
+							<aon:inputText value="#{accountingBook.coverTitle}" size="70"/>
+							<aon:div>
+								<aon:inputText value="#{accountingBook.coverSubTitle}" size="70"/>
+							</aon:div>
+						</aon:div>
 					</aon:div>
 
 					<aon:outputText value="" />

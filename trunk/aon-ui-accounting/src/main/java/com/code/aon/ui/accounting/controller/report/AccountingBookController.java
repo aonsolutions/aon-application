@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -19,18 +22,21 @@ import com.code.aon.accounting.AnnualReport;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.BalanceType;
+import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.company.Company;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.controller.balance.BalanceSheetController;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.fiscal.controller.VatReportController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
-public class AccountingBookController {
+public class AccountingBookController implements ICollectionProvider{
 	private Period period;
 	private boolean coverEnabled;
 	private boolean journalEnabled;
@@ -50,8 +56,39 @@ public class AccountingBookController {
 	private Balance patrimonyBalance;
 	private boolean annualReportEnabled;
 	private AnnualReport annualReport;
-	
 	private int generatedPages = 0;
+	private String coverTitle;
+	private String coverSubTitle;
+	private Date constitutionDate;
+	
+	public Date getConstitutionDate() {
+		if (constitutionDate == null) {
+			CompanyController cc = (CompanyController) AonUtil.getRegisteredBean("company");
+			try {
+				constitutionDate = cc.getCompanyRecordData().getCreationDate();
+			} catch (ManagerBeanException e) {
+				
+			}
+		}
+		return constitutionDate;
+	}
+	public void setConstitutionDate(Date constitutionDate) {
+		this.constitutionDate = constitutionDate;
+	}
+	
+	public String getCoverTitle() {
+		return coverTitle;
+	}
+	public void setCoverTitle(String coverTitle) {
+		this.coverTitle = coverTitle;
+	}
+
+	public String getCoverSubTitle() {
+		return coverSubTitle;
+	}
+	public void setCoverSubTitle(String coverSubTitle) {
+		this.coverSubTitle = coverSubTitle;
+	}
 
 	public int getGeneratedPages() {
 		return generatedPages;
@@ -208,7 +245,7 @@ public class AccountingBookController {
 	}
 
 	public void onReset(ActionEvent event) {
-		setCoverEnabled(false);
+		setCoverEnabled(true);
 		setJournalEnabled(true);
 		setLedgerEnabled(true);
 		setTrial1QuarterEnabled(true);
@@ -223,6 +260,8 @@ public class AccountingBookController {
 		setPatrimonyEnabled(true);
 		setAnnualReportEnabled(true);
 		setGeneratedPages(0);
+		setCoverTitle("CUENTAS ANUALES");
+		setCoverSubTitle("PLAN GENERAL DE CONTABILIDAD DE PEQUEÑAS Y MEDIANAS EMPRESAS");
 	}
 
 	public void onCreate(ActionEvent event) {
@@ -238,7 +277,8 @@ public class AccountingBookController {
 		    zout.setLevel(9);
 		    int index = 1;
 		    if (isCoverEnabled()) {
-				
+				addCover(zout,index);
+				++index;
 			}
 			if (isJournalEnabled()) {
 				addJournal(zout,index);
@@ -330,6 +370,22 @@ public class AccountingBookController {
 			throw new AbortProcessingException( "Compruebe los parámetros." );
 		}
 	}
+
+	private void addCover(ZipOutputStream zout,int index) throws ReportException, IOException{
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-Portada.pdf");
+	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
+	    zout.putNextEntry(ze);
+		String out = manager.execute(zout, "cover");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
+		zout.closeEntry();
+	}
+
 	private void addJournal(ZipOutputStream zout,int index) throws ReportException, IOException{
 		NumberFormat formatter = new DecimalFormat("00");
 		ZipEntry ze = new ZipEntry(formatter.format(index) + "-Diario.pdf");
@@ -635,6 +691,23 @@ public class AccountingBookController {
         c.getParams().setPeriod(getPeriod());
         c.pdf(zout);
 		zout.closeEntry();
+	}
+
+	@Override
+	public Collection<?> getCollection() {
+		try {
+			return getCollection(false);
+		} catch (ManagerBeanException e) {
+			return null;
+		}
+	}
+	@Override
+	public Collection<?> getCollection(boolean forceRefresh) throws ManagerBeanException {
+		List<Company> list = new LinkedList<Company>();
+		CompanyController cc = (CompanyController) AonUtil.getRegisteredBean("company");
+		Company company = cc.obtainCompany();
+		list.add(company);
+		return list;
 	}
 	
 }
