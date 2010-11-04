@@ -6,7 +6,6 @@ package com.code.aon.employee.enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-
 import com.code.aon.common.enumeration.IResourceable;
 
 /**
