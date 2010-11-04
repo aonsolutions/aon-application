@@ -29,6 +29,7 @@ public class AccountImporter {
 	private static final Digester getDigester() {
 		if (DIGESTER == null) {
 			DIGESTER = DigesterLoader.createDigester(AccountImporter.class.getResource(RULES_FILE));
+			DIGESTER.setUseContextClassLoader(true);
 		}
 		return DIGESTER;
 	}
