@@ -11,12 +11,16 @@
 		<template path="/com/code/aon/ui/fiscal/report/vatBook.jasper"/>
 		<collection provider="#{vatReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="fromDate" value="#{vatReport.getFromDate}" />
 			<param id="toDate" value="#{vatReport.getToDate}" />
 			<param id="date" value="#{vatReport.getDate}" />
 			<param id="title" value="#{vatReport.getTitle}" />
+			<param id="period" value="#{vatReport.getAccountPeriod}" />
+			<param id="showCover" value="#{vatReport.isCoverVisible}" />
+			<param id="showCounter" value="#{vatReport.isCounterVisible}" />
+			<param id="pageCounter" value="#{vatReport.getPageCounter}" />
 		</params>
 	</report>
 	
