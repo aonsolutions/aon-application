@@ -1,8 +1,10 @@
 package com.code.aon.ui.company.controller;
 
+
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -34,8 +36,18 @@ public class EnterpriseController extends RegistryController implements ICompany
 	private boolean activityDirty;
 	
 	private boolean cccDirty;
+	
+	private boolean treeView;
 
-    public EnterpriseActivity getActivity() {
+    public boolean isTreeView() {
+		return treeView;
+	}
+
+	public void setTreeView(boolean treeView) {
+		this.treeView = treeView;
+	}
+
+	public EnterpriseActivity getActivity() {
 		return activity;
 	}
 
@@ -192,6 +204,14 @@ public class EnterpriseController extends RegistryController implements ICompany
 			geoZone = ((RegistryAddress) addresses.get(0)).getGeozone();
 		}
     	return geoZone;
+    }
+    
+    public void onTreeViewSelect(ActionEvent event){
+    	setTreeView(true);
+    }
+    
+    public void onBasicViewSelect(ActionEvent event){
+    	setTreeView(false);
     }
     
 }
