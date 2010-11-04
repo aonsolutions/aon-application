@@ -5,10 +5,19 @@
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
+<!--  
 		<aon:commandLink id="integral"
 			value="#{appBundle.menu_integral}"
 			action="enterprise_search" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-payroll" />
+-->
+		<aon:commandLink id="integral" 
+			action="enterprise_search" 
+			value="#{appBundle.menu_integral}"
+			styleClass="aon-top-menu-item aon-icon-payroll">
+			<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
+			<aon:actionListener method="#{enterprise.onEditSearch}" />
+		</aon:commandLink>
 		<aon:commandLink id="main"
 			value="#{appBundle.menu_main}"
 			action="menu_main" immediate="true"
