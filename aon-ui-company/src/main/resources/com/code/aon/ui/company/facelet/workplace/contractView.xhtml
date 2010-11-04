@@ -35,12 +35,11 @@
 					</aon:commandButton>
 				</ui:define>
 				<ui:define name="additionalToolbarContent">
-					<aon:htmlCommandLink id="profitAndLossMonthly-report"
-						rendered="#{salary.model!=null}"
+					<aon:htmlCommandLink id="currentSalary-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="NOMINA -i18n-"
 						action="#{report.onExecute}">
-						<f:param name="reportKey" value="salaryReport" />
+						<f:param name="reportKey" value="currentSalaryReport" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 				</ui:define>

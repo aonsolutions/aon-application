@@ -17,6 +17,9 @@
 			</ui:decorate>
 
 		<aon:div styleClass="aon-scroll-area">
+<!--  
+			<aon:methodParam name="rowSelectorAction" default="#{(enterprise.treeView)?'enterprise_treeForm':'enterprise_form'}" resolve="true" />
+-->			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 				<ui:param name="controller" value="#{enterprise}" />
 				<ui:define name="columns">
