@@ -73,6 +73,24 @@
 
 					<aon:outputText value="" />
 					<aon:div>
+						<aon:selectBooleanCheckbox id="outputVatEnabled" value="#{accountingBook.outputVatEnabled}" />
+						<aon:outputLabel for="outputVatEnabled" value="#{accountingBundle.accounting_output_vat}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="inputVatEnabled" value="#{accountingBook.inputVatEnabled}" />
+						<aon:outputLabel for="inputVatEnabled" value="#{accountingBundle.accounting_input_vat}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="investmentVatEnabled" value="#{accountingBook.investmentVatEnabled}" />
+						<aon:outputLabel for="investmentVatEnabled" value="#{accountingBundle.accounting_investment_vat}" />
+					</aon:div>
+					
+					<aon:outputText value="" />
+					<aon:div>
 						<aon:selectBooleanCheckbox id="profitAndLostEnabled" value="#{accountingBook.profitAndLostEnabled}" />
 						<aon:outputLabel for="profitAndLostEnabled" value="#{accountingBundle.accounting_profitAndLostEnabled}" />
 						<aon:selectOneMenu value="#{accountingBook.profitAndLostBalance}">

@@ -21,9 +21,12 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
+import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.controller.balance.BalanceSheetController;
+import com.code.aon.ui.fiscal.controller.VatReportController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -36,6 +39,9 @@ public class AccountingBookController {
 	private boolean trial2QuarterEnabled;
 	private boolean trial3QuarterEnabled;
 	private boolean trial4QuarterEnabled;
+	private boolean outputVatEnabled;
+	private boolean inputVatEnabled;
+	private boolean investmentVatEnabled;
 	private boolean profitAndLostEnabled;
 	private Balance profitAndLostBalance;
 	private boolean situationEnabled;
@@ -108,6 +114,27 @@ public class AccountingBookController {
 	}
 	public void setTrial4QuarterEnabled(boolean trial4QuarterEnabled) {
 		this.trial4QuarterEnabled = trial4QuarterEnabled;
+	}
+
+	public boolean isOutputVatEnabled() {
+		return outputVatEnabled;
+	}
+	public void setOutputVatEnabled(boolean outputVatEnabled) {
+		this.outputVatEnabled = outputVatEnabled;
+	}
+	
+	public boolean isInputVatEnabled() {
+		return inputVatEnabled;
+	}
+	public void setInputVatEnabled(boolean inputVatEnabled) {
+		this.inputVatEnabled = inputVatEnabled;
+	}
+
+	public boolean isInvestmentVatEnabled() {
+		return investmentVatEnabled;
+	}
+	public void setInvestmentVatEnabled(boolean investmentVatEnabled) {
+		this.investmentVatEnabled = investmentVatEnabled;
 	}
 
 	public boolean isProfitAndLostEnabled() {
@@ -188,6 +215,9 @@ public class AccountingBookController {
 		setTrial2QuarterEnabled(true);
 		setTrial3QuarterEnabled(true);
 		setTrial4QuarterEnabled(true);
+		setOutputVatEnabled(false);
+		setInputVatEnabled(false);
+		setInvestmentVatEnabled(false);
 		setProfitAndLostEnabled(true);
 		setSituationEnabled(true);
 		setPatrimonyEnabled(true);
@@ -232,6 +262,18 @@ public class AccountingBookController {
 			}
 			if (isTrial4QuarterEnabled()) {
 				addTrial4Quarter(zout,index);
+				++index;
+			}
+			if (isOutputVatEnabled()) {
+				addOutputVat(zout,index);
+				++index;
+			}
+			if (isInputVatEnabled()) {
+				addInputVat(zout,index);
+				++index;
+			}
+			if (isInvestmentVatEnabled()) {
+				addInvestmentVat(zout,index);
 				++index;
 			}
 			if (isProfitAndLostEnabled()) {
@@ -424,6 +466,84 @@ public class AccountingBookController {
         t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
 		String out = manager.execute(zout, "trialBalance");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
+		zout.closeEntry();
+	}
+
+	private void addOutputVat(ZipOutputStream zout,int index) throws ReportException, IOException {
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-Libro IVA Repercutido.pdf");
+	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
+	    zout.putNextEntry(ze);
+        VatReportController t = (VatReportController) AonUtil.getRegisteredBean("vatReport");
+        t.onReset(null);
+        t.setAccountPeriod(getPeriod());
+        t.setFromDate(getPeriod().getInitiationDate());
+        t.setToDate(getPeriod().getDeadline());
+        t.setCoverVisible(true);
+        t.setCounterVisible(true);
+        t.setVatType(VatType.OUTPUT);
+        t.setOrder( InvoiceReportOrder.INVOICE_ORDER_NUMBER);
+        t.setPageCounter(getGeneratedPages());
+        t.onAccountingBookDetail(null);
+		String out = manager.execute(zout, "vatBook");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
+		zout.closeEntry();
+	}
+
+	private void addInputVat(ZipOutputStream zout,int index) throws ReportException, IOException {
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-Libro IVA Soportado.pdf");
+	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
+	    zout.putNextEntry(ze);
+        VatReportController t = (VatReportController) AonUtil.getRegisteredBean("vatReport");
+        t.onReset(null);
+        t.setAccountPeriod(getPeriod());
+        t.setFromDate(getPeriod().getInitiationDate());
+        t.setToDate(getPeriod().getDeadline());
+        t.setCoverVisible(true);
+        t.setCounterVisible(true);
+        t.setVatType(VatType.INPUT);
+        t.setOrder( InvoiceReportOrder.INVOICE_ORDER_NUMBER);
+        t.setPageCounter(getGeneratedPages());
+        t.onAccountingBookDetail(null);
+		String out = manager.execute(zout, "vatBook");
+		int i = 0;
+		try {
+			i = Integer.parseInt(out);
+		} catch (NumberFormatException e) {
+		}
+		setGeneratedPages(getGeneratedPages() + i);
+		zout.closeEntry();
+	}
+
+	private void addInvestmentVat(ZipOutputStream zout,int index) throws ReportException, IOException {
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-Libro IVA Inversion.pdf");
+	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
+	    zout.putNextEntry(ze);
+        VatReportController t = (VatReportController) AonUtil.getRegisteredBean("vatReport");
+        t.onReset(null);
+        t.setAccountPeriod(getPeriod());
+        t.setFromDate(getPeriod().getInitiationDate());
+        t.setToDate(getPeriod().getDeadline());
+        t.setCoverVisible(true);
+        t.setCounterVisible(true);
+        t.setOrder( InvoiceReportOrder.INVOICE_ORDER_NUMBER);
+        t.setVatType(VatType.INVESTMENT);
+        t.setPageCounter(getGeneratedPages());
+        t.onAccountingBookDetail(null);
+		String out = manager.execute(zout, "vatBook");
 		int i = 0;
 		try {
 			i = Integer.parseInt(out);
