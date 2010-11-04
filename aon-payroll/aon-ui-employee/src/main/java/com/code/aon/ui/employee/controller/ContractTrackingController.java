@@ -7,9 +7,6 @@ import java.util.GregorianCalendar;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.employee.Contract;
@@ -19,7 +16,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ContractTrackingController extends LinesController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ContractTrackingController.class.getName());
+//	private static final Logger LOGGER = LoggerFactory.getLogger(ContractTrackingController.class.getName());
 
 	private ContractTracking track;
 	private boolean fullTime;
