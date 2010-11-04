@@ -27,13 +27,15 @@
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="salary" 
-									disabled="true"
+									action="salary_search" 
+									actionListener="#{salary.onEditSearch}"
 									value="#{employeeBundle.employee_salary_module}">
 								</aon:commandLink>
 							</aon:div>				
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="contract" 
-									action="contract_search" actionListener="#{contract.onEditSearch}"
+									action="contract_search" 
+									actionListener="#{contract.onEditSearch}"
 									value="#{employeeBundle.employee_contract_module}">
 								</aon:commandLink>
 							</aon:div>		
@@ -68,9 +70,10 @@
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="enterprise" 
-									disabled="true" 
-									action="contract_search" actionListener="#{contract.onEditSearch}"
-									value="Empresas -i18n-">
+									action="enterprise_search" 
+									value="#{companyBundle.company_enterprise_module}">
+									<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
+									<aon:actionListener method="#{enterprise.onEditSearch}" />
 								</aon:commandLink>
 							</aon:div>	
 							<aon:div styleClass="aon-direct-access-list-element">
