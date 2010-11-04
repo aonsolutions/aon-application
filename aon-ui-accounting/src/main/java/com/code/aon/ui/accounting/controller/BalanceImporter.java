@@ -31,6 +31,7 @@ public class BalanceImporter {
 	private static final Digester getDigester() {
 		if (DIGESTER == null) {
 			DIGESTER = DigesterLoader.createDigester(BalanceImporter.class.getResource(RULES_FILE));
+			DIGESTER.setUseContextClassLoader(true);
 		}
 		return DIGESTER;
 	}
@@ -87,7 +88,7 @@ public class BalanceImporter {
 			} catch (DAOException daoe) {
 
 			}
-			String msg = "Imposible realizar la importación de los balances";
+			String msg = "Imposible realizar la importaciï¿½n de los balances";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		} finally {

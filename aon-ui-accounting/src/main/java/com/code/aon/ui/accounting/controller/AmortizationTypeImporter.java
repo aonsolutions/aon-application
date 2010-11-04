@@ -29,6 +29,7 @@ public class AmortizationTypeImporter {
 	private static final Digester getDigester() {
 		if (DIGESTER == null) {
 			DIGESTER = DigesterLoader.createDigester(AmortizationTypeImporter.class.getResource(RULES_FILE));
+			DIGESTER.setUseContextClassLoader(true);
 		}
 		return DIGESTER;
 	}
@@ -69,7 +70,7 @@ public class AmortizationTypeImporter {
 			parse(in);
 			AonUtil.addInfoMessage("Proceso finalizado correctamente");
 		} catch (Exception e) {
-			String message = "Imposible realizar la importación de los tipos de amortización";
+			String message = "Imposible realizar la importaciï¿½n de los tipos de amortizaciï¿½n";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message, e);
 		}

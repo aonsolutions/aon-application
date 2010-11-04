@@ -29,6 +29,7 @@ public class AccountImporter {
 	private static final Digester getDigester() {
 		if (DIGESTER == null) {
 			DIGESTER = DigesterLoader.createDigester(AccountImporter.class.getResource(RULES_FILE));
+			DIGESTER.setUseContextClassLoader(true);
 		}
 		return DIGESTER;
 	}
@@ -69,7 +70,7 @@ public class AccountImporter {
 			parse(in);
 			AonUtil.addInfoMessage("Proceso finalizado correctamente");
 		} catch (Exception e) {
-			String message = "Imposible realizar la importación del Plan General Contable";
+			String message = "Imposible realizar la importaciï¿½n del Plan General Contable";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message, e);
 		}
