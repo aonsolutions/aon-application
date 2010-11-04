@@ -128,7 +128,7 @@
 	<!-- ************ SALARY ************** -->
 	<managed-bean>
 		<managed-bean-name>salary</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.employee.controller.SalaryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -150,11 +150,20 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{salarySearch}</value>
 				<value>#{salaryPaymentChildListener}</value>
 				<value>#{salaryDeductionChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>salarySearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.event.SalarySearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<!-- **** SALARY PAYMENT LISTENER **** -->
 	<managed-bean>
@@ -316,6 +325,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************ Parte IT Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>parteITWizard</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.controller.ParteITWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
 	<!-- ========================================================== -->
@@ -356,6 +374,22 @@
 		<navigation-case>
 			<from-outcome>contract_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/employee/facelet/contract/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+			
+	<!-- =================== Salary ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>salary_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/salary/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>salary_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/salary/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>salary_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/salary/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 	
@@ -428,6 +462,26 @@
 	    <navigation-case>
     	  	<from-outcome>contractBatchWizard_step3</from-outcome>
     		<to-view-id>/com/code/aon/ui/employee/facelet/contractBatch/step3.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== ParteIT Wizard Management========================== -->
+	<navigation-rule id="parteITWizard">
+	    <navigation-case>
+    	  	<from-outcome>parteITWizard_step0</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/parteIT/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>parteITWizard_step1</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/parteIT/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>parteITWizard_step2</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/parteIT/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>parteITWizard_step3</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/parteIT/step3.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	
