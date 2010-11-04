@@ -36,6 +36,19 @@
 						<aon:actionListener method="#{calendar.onInitialize}" />
 					</aon:commandButton>
 				</ui:define>
+				<ui:define name="additionalToolbarContent">
+					<aon:htmlCommandLink id="salary-report"
+						rendered="#{salary.model!=null}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="NOMINAS -i18n-"
+						action="#{report.onExecute}">
+<!--  
+						<aon:actionListener method="#{salary.onPrintLast}" />
+-->
+						<f:param name="reportKey" value="salaryReport" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+				</ui:define>
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
