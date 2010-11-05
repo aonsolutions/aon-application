@@ -5,12 +5,16 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.controller.AccountRegeneratorController;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.BasicController;
@@ -26,6 +30,7 @@ public class JournalReportController extends BasicController implements IAccount
 	private Date toDate;
 	private Date date;
 	private boolean journal;
+	private boolean journalCorrect;
 	private Integer previousAccountEntryDetail;
 	private Integer previousAccountEntry;
 	private boolean currentValue = true;
@@ -105,6 +110,13 @@ public class JournalReportController extends BasicController implements IAccount
 		this.journal = journal;
 	}
 
+	public boolean isJournalCorrect() {
+		return journalCorrect;
+	}
+	public void setJournalCorrect(boolean journalCorrect) {
+		this.journalCorrect = journalCorrect;
+	}
+
 	private void initialize() {
 		try {
 			setPeriod(AccountingPeriodUtil.getDefaultPeriod());
@@ -116,6 +128,7 @@ public class JournalReportController extends BasicController implements IAccount
 		setDate(new Date());
 		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 		setJournal(false);
+		setJournalCorrect(true);
 		setPageCounter(0);
 		setCounterVisible(false);
 		setCoverVisible(false);
@@ -154,12 +167,11 @@ public class JournalReportController extends BasicController implements IAccount
 				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL),
 						getSecurityLevel());
 			}
+			getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD));
 			if (isJournal()) {
-				getCriteria().addOrder(
-						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
 			} else {
-				getCriteria().addOrder(
-						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
 			}
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
@@ -218,5 +230,31 @@ public class JournalReportController extends BasicController implements IAccount
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+	
+	public void onChangeOrder(ActionEvent event) {
+		try {
+			if (journal) {
+				IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
+				Criteria c = new Criteria();
+				if (getPeriod() != null) {
+					c.addEqualExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getPeriod().getId());	
+				}
+				c.addNullExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_JOURNAL));
+				int count = bean.getCount(c);
+				setJournalCorrect(count==0);
+			}
+		} catch (ManagerBeanException e) {
+			// Nada, saldrá el listado con el número de diario a NULL.
+		}
+	}
+	public void onRegenerate(ActionEvent event) {
+		AccountRegeneratorController arc = (AccountRegeneratorController) AonUtil.getRegisteredBean("accountRegenerator");
+		arc.onEditSearch(event);
+		arc.setJournal(true);
+		arc.setPeriod(getPeriod());
+		arc.setSecurityLevel(null);
+		arc.regenerateAccount(event);
+		onChangeOrder(event);
 	}
 }
