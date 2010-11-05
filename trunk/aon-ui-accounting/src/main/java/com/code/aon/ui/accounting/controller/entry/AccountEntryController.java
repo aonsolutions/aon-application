@@ -12,13 +12,16 @@ import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -88,20 +91,34 @@ public class AccountEntryController extends BasicController {
 		AccountEntry entry = (AccountEntry) this.getTo();
 		AccountEntryType type = entry.getType();
 		setAonInvoice(false);
+		boolean periodActive = true;
 		boolean flag = false;
 		try {
-			flag = isManual();
-			if (!flag && isInvoice()) {
-				flag = !isAccountInvoice(entry);
+			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+			Period period = (Period) periodBean.get(entry.getAccountPeriod());
+			if (period == null) {
+				String msg = "No existe el ejercicio contable " + entry.getAccountPeriod();
+	            LOGGER.error(msg);
+	            AonUtil.addErrorMessage(msg);
+	            throw new AbortProcessingException(msg);
 			}
+			AccountPeriodStatus st = period.getStatus(); 
+            if (st == AccountPeriodStatus.INACTIVE || st == AccountPeriodStatus.CLOSED) {
+            	periodActive = false;
+            } else {
+    			flag = isManual();
+    			if (!flag && isInvoice()) {
+    				flag = !isAccountInvoice(entry);
+    			}
+            }
 		} catch (ManagerBeanException e) {
 			String msg = "Error al identificar la posibilidad de modificar el apunte";
             LOGGER.error(msg);
             AonUtil.addErrorMessage(msg);
             flag = false;
 		}
-		setUpdatable(flag);
-		setUpdatableViaWizard(type == AccountEntryType.COLLECTION || type == AccountEntryType.PAYMENT || isAccountInvoice());
+		setUpdatable(periodActive && flag);
+		setUpdatableViaWizard(periodActive && (type == AccountEntryType.COLLECTION || type == AccountEntryType.PAYMENT || isAccountInvoice()));
 	}
 	
 	private boolean isAccountInvoice() {
