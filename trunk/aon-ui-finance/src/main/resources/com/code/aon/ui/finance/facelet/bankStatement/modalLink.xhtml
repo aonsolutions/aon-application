@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showLinkWindow">
+		<c:if test="#{bankStatement.showLinkWindow}">
+			<rich:modalPanel id="linkModalPanel" minHeight="640"
+				minWidth="780" rendered="#{bankStatement.showLinkWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{financeBundle.finance_bank_statement_check}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showLinkWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{bankStatement.showLinkWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="linkForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="link-accept"
+										value="#{bundle.aon_accept}"
+										reRender="showLinkWindow"
+										actionListener="#{bankStatement.onAddLink}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="linkModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{bankStatement.showLinkWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="link-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showLinkWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{bankStatement.showLinkWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area">
+
+									<aon:panelTabSet id="linkTabSet" selectedTab="#{bankStatement.bankStatementLinkManager.selectedTab}">
+										<aon:panelTab id="financeLinkTab" label="#{financeBundle.finance_finances}">
+											<aon:dataTable id="financeData" value="#{bankStatement.bankStatementLinkManager.financeModel}"
+												var="to" rows="20" rendered="#{bankStatement.bankStatementLinkManager.financeModel.rowCount > 0}"
+												columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, 
+													aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+													aon-editDataTable-numberColumn">
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:selectBooleanCheckbox id="FinanceCheck"
+														value="#{bankStatement.bankStatementLinkManager.financeRowChecked}"
+														valueChangeListener="#{bankStatement.bankStatementLinkManager.financeRowSelected}"
+														ajaxSingle="true" />	
+		 										</aon:column>
+			
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_date}" />
+													</f:facet>
+													<aon:outputText value="#{to.dueDate}">
+														<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+															timeZone="#{timeZoneController.timeZoneId}" />
+													</aon:outputText>
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+													</f:facet>
+													<aon:outputText value="#{to.concept}" />
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText	value="#{bundle.aon_name}" />
+													</f:facet>
+													<aon:outputText value="#{to.registryName}">
+														<aon:abbreviateConverter maxWidth="50" />
+													</aon:outputText>
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_amount}" />
+													</f:facet>
+													<aon:outputText value="#{to.totalAmount}">
+														<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+													</aon:outputText>
+												</aon:column>
+
+											</aon:dataTable>
+					
+											<aon:dataScroller2 for="financeData" showNote="true" />
+										</aon:panelTab>
+
+										<aon:panelTab id="fBatchLinkTab" label="#{financeBundle.finance_batches}"
+											rendered="#{bankStatement.bankStatementLinkManager.fbatchSource}">
+											<aon:dataTable id="fBatchData" value="#{bankStatement.bankStatementLinkManager.fbatchModel}"
+												var="to" rows="20" rendered="#{bankStatement.bankStatementLinkManager.fbatchModel.rowCount > 0}"
+												columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, 
+													aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+													aon-editDataTable-numberColumn">
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:selectBooleanCheckbox id="FBatchCheck"
+														value="#{bankStatement.bankStatementLinkManager.fbatchRowChecked}"
+														valueChangeListener="#{bankStatement.bankStatementLinkManager.fbatchRowSelected}"
+														ajaxSingle="true" />	
+		 										</aon:column>
+			
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_date}" />
+													</f:facet>
+													<aon:outputText value="#{to.issueDate}">
+														<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+															timeZone="#{timeZoneController.timeZoneId}" />
+													</aon:outputText>
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_id}" />
+													</f:facet>
+													<aon:outputText value="#{to.id}" />
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText	value="#{bundle.aon_description}" />
+													</f:facet>
+													<aon:outputText value="#{to.description}">
+														<aon:abbreviateConverter maxWidth="50" />
+													</aon:outputText>
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_amount}" />
+													</f:facet>
+													<aon:outputText value="#{to.financeBatchTotalAmount}">
+														<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+													</aon:outputText>
+												</aon:column>
+
+											</aon:dataTable>
+					
+											<aon:dataScroller2 for="fBatchData" showNote="true" />
+										</aon:panelTab>
+									</aon:panelTabSet>
+
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

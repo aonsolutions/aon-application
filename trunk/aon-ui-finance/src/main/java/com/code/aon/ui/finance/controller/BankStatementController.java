@@ -1,48 +1,39 @@
 package com.code.aon.ui.finance.controller;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.faces.controller.AttachmentUtil;
-import com.code.aon.faces.controller.IAttachmentController;
 import com.code.aon.finance.BankStatement;
-import com.code.aon.finance.Invoice;
+import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceStatus;
-import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.FinanceBatchStatus;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -51,8 +42,6 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.event.BankStatementSearchListener;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.event.ControllerEvent;
-import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 public class BankStatementController extends BasicController {
@@ -62,6 +51,10 @@ public class BankStatementController extends BasicController {
 	private boolean showImportFileWindow;
 	private boolean aeb43;
 	private AonFile aonFile;
+	private boolean showLinkWindow;
+	private BankStatementLinkManager linkManager;
+	private Map<Integer, List<BankStatementLink>> links;
+	private Map<Integer, String> errors;
 
 	public RegistryBank getRegistryBank() {
 		return registryBank;
@@ -98,6 +91,38 @@ public class BankStatementController extends BasicController {
 		this.aonFile = aonFile;
 	}
 
+	public boolean isShowLinkWindow() {
+		return showLinkWindow;
+	}
+	public void setShowLinkWindow(boolean value) {
+		this.showLinkWindow = value;
+	}
+
+	public BankStatementLinkManager getBankStatementLinkManager() {
+		if (linkManager == null) {
+			linkManager = new BankStatementLinkManager(); 
+		}
+		return linkManager;
+	}
+
+	public void setBankStatementLinkManager(BankStatementLinkManager linkManager) {
+		this.linkManager = linkManager;
+	}
+
+	public Map<Integer, List<BankStatementLink>> getLinks() {
+		return links;
+	}
+	public void setLinks(Map<Integer, List<BankStatementLink>> links) {
+		this.links = links;
+	}
+
+	public Map<Integer, String> getErrors() {
+		return errors;
+	}
+	public void setErrors(Map<Integer, String> errors) {
+		this.errors = errors;
+	}
+
 	public int getAvailableRegistryBanks() throws ManagerBeanException {
 		String companyControllerName = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
 		CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyControllerName);
@@ -111,6 +136,21 @@ public class BankStatementController extends BasicController {
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	public void onChangeBank(ValueChangeEvent event) {
+		if (!isNew()) {
+			RegistryBank registryBank = (RegistryBank)event.getNewValue();
+			try {
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), registryBank.getId());
+				setCriteria(criteria);
+				onSearch(null);
+			} catch (ManagerBeanException e) {
+				addMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);
+			}
 		}
 	}
 
@@ -314,443 +354,213 @@ public class BankStatementController extends BasicController {
 		return calendar.getTime();
 	}
 
-	public void onChangeBank(ValueChangeEvent event) {
-		if (!isNew()) {
-			RegistryBank registryBank = (RegistryBank)event.getNewValue();
-			try {
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), registryBank.getId());
-				setCriteria(criteria);
-				onSearch(null);
-			} catch (ManagerBeanException e) {
-				addMessage(e.getMessage());
-				throw new AbortProcessingException(e.getMessage(), e);
-			}
+	public void onAddLinkShow(ActionEvent event) throws ManagerBeanException {
+		BankStatement to = (BankStatement)getModel().getRowData();
+		boolean payment = (to.getConcept() != StatementConcept.RETURNED) ? to.isPayment() : !to.isPayment();
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		if (to.getConcept() != StatementConcept.RETURNED) {
+			String statusAlias = financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS);
+			Expression pendingExpr = ExpressionUtilities.getEqualExpression(statusAlias, FinanceStatus.PENDING);
+			Expression returnedExpr = ExpressionUtilities.getEqualExpression(statusAlias, FinanceStatus.RETURNED);
+			criteria.addOrExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));
+		} else {
+			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
 		}
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
+		criteria.addLessThanOrEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getOperationDate());
+		criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), (to.getConcept() != StatementConcept.RETURNED));
+		criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_CONCEPT), (to.getConcept() != StatementConcept.RETURNED));
+		getBankStatementLinkManager().setCurrentStatement(to);
+		getBankStatementLinkManager().setFinanceListFiltered(financeBean.getList(criteria));
+		getBankStatementLinkManager().setFinanceModel(null);
+		getBankStatementLinkManager().clearCheckedFinance();
+
+		List<ITransferObject> fBatchList = new LinkedList<ITransferObject>();
+		if (to.getConcept() == StatementConcept.COLLECTION_BATCH) {
+			IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), getRegistryBank().getId());
+			criteria.addNotEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
+			criteria.addLessThanOrEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), to.getOperationDate());
+			criteria.addOrder(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE));
+			fBatchList = fBatchBean.getList(criteria);
+		}
+		getBankStatementLinkManager().setFbatchListFiltered(fBatchList);
+		getBankStatementLinkManager().setFbatchModel(null);
+		getBankStatementLinkManager().clearCheckedFbatch();
+
+		getBankStatementLinkManager().setSelectedTab((to.getConcept() == StatementConcept.COLLECTION_BATCH) ? "fBatchLinkTab" : "financeLinkTab");
 	}
 
-/*
-	private static final Logger LOGGER = LoggerFactory.getLogger(BankStatementController.class.getName());
+	public void onAddLink(ActionEvent event) throws ManagerBeanException {
+		BankStatement to = getBankStatementLinkManager().getCurrentStatement();
+		List<BankStatementLink> linkList = new LinkedList<BankStatementLink>();
 
-	private static final String SALE_VIEW_NAME = "saleInvoiceRecorder_list";
-	private static final String PURCHASE_VIEW_NAME = "purchaseInvoiceRecorder_list";
-	private static final String EXPENSE_VIEW_NAME = "expenseInvoiceRecorder_list";
-	private static final String UNDEDUCTIBLE_VIEW_NAME = "undeductibleInvoiceRecorder_list";
-	private String invoiceViewer;
-	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
+		for (Finance finance : getBankStatementLinkManager().getCheckedFinance()) {
+			getBankStatementLinkManager().getLinkedFinanceList().add(finance);
+			BankStatementLink link = new BankStatementLink();
+			link.setTo(finance);
+			link.setAmount(finance.getTotalAmount());
 
-	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+			linkList.add(link);
+		}
+
+		for (FinanceBatch fBatch : getBankStatementLinkManager().getCheckedFbatch()) {
+			getBankStatementLinkManager().getLinkedFbatchList().add(fBatch);
+			BankStatementLink link = new BankStatementLink();
+			link.setTo(fBatch);
+			link.setAmount(fBatch.getFinanceBatchTotalAmount());
+
+			linkList.add(link);
+		}
+
+		getLinks().put(to.getId(), linkList);
+	}
+
+	public void onCheckLinks(ActionEvent event) throws ManagerBeanException {
+		resetLinks();
+		resetErrors();
 		try {
-			HibernateUtil.setBeginTransaction(false);
-			HibernateUtil.setCloseSession(false);
-			List<ITransferObject> invoices = super.search(start, count);
-			List<ITransferObject> list = new LinkedList<ITransferObject>();
-			for (ITransferObject to : invoices) {
-				Invoice invoice = (Invoice) to;
-				InvoiceRecorder ir = new InvoiceRecorder();
-				ir.setInvoice(invoice);
-				// Se fuerza a calcular el total.
-				ir.getInvoiceTotal();
-				ir.setRefresh(true);
-				list.add(ir);
-			}
-			HibernateUtil.commitTransaction(sessionName);
-			return list;
-		} catch (Exception e) {
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException daoe) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
-			}
-			String msg = "Error recuperando facturas";
-			LOGGER.error(msg, e);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-		}
-	}
-
-	public AccountEntryInvoiceWriter getAccountEntryInvoiceWriter() {
-		if (accountEntryInvoiceWriter == null) {
-			accountEntryInvoiceWriter = new AccountEntryInvoiceWriter();
-		}
-		return accountEntryInvoiceWriter;
-	}
-
-	public String getInvoiceViewer() {
-		return invoiceViewer;
-	}
-
-	public void setInvoiceViewer(String invoiceViewer) {
-		this.invoiceViewer = invoiceViewer;
-	}
-
-	public void onCheckAll(ActionEvent event) throws ManagerBeanException {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setChecked(true);
-		}
-	}
-
-	public void onCheckNone(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setChecked(false);
-		}
-	}
-
-	public void onCheckBrokendown(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setChecked(ir.isShowTaxBreakDowns() ? true : ir.isChecked());
-		}
-	}
-
-	public void onCheckUnbrokendown(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setChecked(!ir.isShowTaxBreakDowns() ? true : ir.isChecked());
-		}
-	}
-
-	public void onCheckRight(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setChecked((ir.isRecordable() && !ir.isWarned()) ? true : ir.isChecked());
-		}
-	}
-
-	public void onCheckWarned(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setChecked((ir.isRecordable() && ir.isWarned()) ? true : ir.isChecked());
-		}
-	}
-
-	public void onCheckEntryVisible(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setChecked(ir.isShowAccountEntry() ? true : ir.isChecked());
-		}
-	}
-
-	public void onCheckEntryInvisible(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setChecked(!ir.isShowAccountEntry() ? true : ir.isChecked());
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<InvoiceRecorder> getCurrentList() {
-		try {
-			return (List<InvoiceRecorder>) getModel().getWrappedData();
-		} catch (ManagerBeanException e) {
-			String msg = "Error obtaining model! ";
-			LOGGER.error(msg, e);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public void onRecordSelected(ActionEvent event) {
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-		try {
-			HibernateUtil.setBeginTransaction(false);
-			HibernateUtil.setCloseSession(false);
-			for (InvoiceRecorder invoiceRecorder : getCurrentList()) {
-				if (invoiceRecorder.isRecordable() && invoiceRecorder.isChecked()) {
-					Invoice invoice = invoiceRecorder.getInvoice();
-					if (invoice.getStatus() == InvoiceStatus.PENDING) {
-						try {
-							HibernateUtil.beginTransaction(sessionName);
-							getAccountEntryInvoiceWriter().recordInvoice(invoice);
-							invoice.setStatus(InvoiceStatus.SCORED);
-							HibernateUtil.getSession(sessionName).merge(invoice);
-							HibernateUtil.getSession(sessionName).flush();
-							HibernateUtil.commitTransaction(sessionName);
-						} catch (Exception e) {
-							try {
-								HibernateUtil.rollbackTransaction(sessionName);
-							} catch (DAOException daoe) {
-								String msg = "Unable to rollback transaction!";
-								LOGGER.error(msg, e);
-							}
-							String msg = "Error recording invoice:  " + invoice.getReferenceCode();
-							LOGGER.error(msg, e);
-							AonUtil.addErrorMessage(msg);
-							throw new AbortProcessingException(msg);
-						} finally {
-							HibernateUtil.closeSession(sessionName);
-						}
+			List<ITransferObject> bankStatementList = getManagerBean().getList(getCriteria());
+			for (ITransferObject ito : bankStatementList) {
+				BankStatement to = (BankStatement)ito;
+				if (to.getStatus() != StatementStatus.RECORDED) {
+					if (hasFinanceLink(to.getConcept())) {
+						findFinance(to, FinanceStatus.PENDING);
+					} else if (to.getConcept() == StatementConcept.RETURNED) {
+						findFinance(to, FinanceStatus.PAID);
+					} else if (to.getConcept() == StatementConcept.COLLECTION_BATCH && !to.isPayment()) {
+						findFinanceBatch(to);
 					}
 				}
 			}
-			this.onSearch(null);
-		} finally {
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-		}
-	}
-
-	public String invoiceView() {
-		return getInvoiceViewer();
-	}
-
-	public void onShowAccountEntry(ActionEvent event) {
-		try {
-			InvoiceRecorder ir = (InvoiceRecorder) getModel().getRowData();
-			ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
-			ir.setShowAccountEntry(true);
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible previsualizar el apunte: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
 
-	public void onShowAllAccountEntry(ActionEvent event) {
-		try {
-			List<InvoiceRecorder> list = getCurrentList();
-			for (InvoiceRecorder ir : list) {
-				ir.setShowAccountEntry(true);
-				ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
+	public void resetLinks() {
+		setLinks(new HashMap<Integer, List<BankStatementLink>>());
+	}
+
+	public void resetErrors() {
+		setErrors(new HashMap<Integer, String>());
+	}
+
+	private boolean hasFinanceLink(StatementConcept concept) {
+		return (concept == StatementConcept.UNKNOWN || concept == StatementConcept.WITHDRAWAL || concept == StatementConcept.PAYMENT ||
+				 concept == StatementConcept.DEPOSIT || concept == StatementConcept.COLLECTION);
+	}
+
+	private boolean hasFinanceBatchLink(StatementConcept concept) {
+		return (concept == StatementConcept.COLLECTION_BATCH);
+	}
+
+	private void findFinance(BankStatement to, FinanceStatus status) throws ManagerBeanException, ExpressionException {
+		boolean payment = (status == FinanceStatus.PENDING) ? to.isPayment() : !to.isPayment();
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		if (status == FinanceStatus.PENDING) {
+			String statusAlias = financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS);
+			Expression pendingExpr = ExpressionUtilities.getEqualExpression(statusAlias, status);
+			Expression returnedExpr = ExpressionUtilities.getEqualExpression(statusAlias, FinanceStatus.RETURNED);
+			criteria.addOrExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));
+		} else {
+			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), status);
+		}
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), to.getAmount());
+		criteria.addLessThanOrEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getOperationDate());
+		int count = financeBean.getCount(criteria);
+		if (count == 1) {
+			for (ITransferObject ito : financeBean.getList(criteria)) {
+				Finance finance = (Finance)ito;
+				getBankStatementLinkManager().getLinkedFinanceList().add(finance);
+				BankStatementLink link = new BankStatementLink();
+				link.setTo(finance);
+				link.setAmount(to.getAmount());
+
+				List<BankStatementLink> linkList = new LinkedList<BankStatementLink>();
+				linkList.add(link);
+				getLinks().put(to.getId(), linkList);
 			}
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible previsualizar el apunte: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
+		} else if (count > 1) {
+			getErrors().put(to.getId(), "Se ha encontrado más de 1 Vencimiento con ese Importe");
+		} else {
+			getErrors().put(to.getId(), "No se ha encontrado ningún Vencimiento con ese Importe");
 		}
 	}
 
-	public void onHideAllAccountEntry(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setShowAccountEntry(false);
-		}
-	}
+	private void findFinanceBatch(BankStatement to) throws ManagerBeanException {
+		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), getRegistryBank().getId());
+		criteria.addNotEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
+		criteria.addLessThanOrEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), to.getOperationDate());
+		criteria.addOrder(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE));
+		BankStatementLink link = null;
+		int count = 0;
+		for (ITransferObject ito : fBatchBean.getList(criteria)) {
+			FinanceBatch fBatch = (FinanceBatch)ito;
+			if (fBatch.getFinanceBatchTotalAmount().doubleValue() == to.getAmount()) {
+				link = new BankStatementLink();
+				link.setTo(fBatch);
+				link.setAmount(to.getAmount());
 
-	public void onShowCheckedAccountEntry(ActionEvent event) {
-		try {
-			List<InvoiceRecorder> list = getCurrentList();
-			for (InvoiceRecorder ir : list) {
-				ir.setShowAccountEntry(ir.isChecked() ? true : ir.isShowAccountEntry());
-				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
-				}
+				++count;
 			}
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible previsualizar el apunte: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
+		}
+
+		if (count == 1) {
+			List<BankStatementLink> linkList = new LinkedList<BankStatementLink>();
+			linkList.add(link);
+			getLinks().put(to.getId(), linkList);
+		} else if (count > 1) {
+			getErrors().put(to.getId(), "Se ha encontrado más de 1 Remesa con ese Importe");
+		} else {
+			getErrors().put(to.getId(), "No se ha encontrado ninguna Remesa con ese Importe");
 		}
 	}
 
-	public void onShowUncheckedAccountEntry(ActionEvent event) {
+	public String getErrorMessage() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			return errors.get(to.getId());
+		}
+		return null;
+	}
+
+	public List<BankStatementLink> getBankStatementLinkList() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			return links.get(to.getId());
+		}
+		return null;
+	}
+
+	public void onShowBankStatementLink(ActionEvent event) {
 		try {
-			List<InvoiceRecorder> list = getCurrentList();
-			for (InvoiceRecorder ir : list) {
-				ir.setShowAccountEntry(!ir.isChecked() ? true : ir.isShowAccountEntry());
-				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
-				}
-			}
+			BankStatement to = (BankStatement)getModel().getRowData();
+			to.setShowBankStatementLink(true);
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible previsualizar el apunte: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
 
-	public void onShowCorrectAccountEntry(ActionEvent event) {
+	public void onHideBankStatementLink(ActionEvent event) {
 		try {
-			List<InvoiceRecorder> list = getCurrentList();
-			for (InvoiceRecorder ir : list) {
-				ir.setShowAccountEntry((ir.isRecordable() && !ir.isWarned()) ? true : ir.isShowAccountEntry());
-				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
-				}
-			}
+			BankStatement to = (BankStatement)getModel().getRowData();
+			to.setShowBankStatementLink(false);
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible previsualizar el apunte: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
 
-	public void onShowIncorrectAccountEntry(ActionEvent event) {
-		try {
-			List<InvoiceRecorder> list = getCurrentList();
-			for (InvoiceRecorder ir : list) {
-				ir.setShowAccountEntry((!ir.isRecordable()) ? true : ir.isShowAccountEntry());
-				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible previsualizar el apunte: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public void onShowWarnedAccountEntry(ActionEvent event) {
-		try {
-			List<InvoiceRecorder> list = getCurrentList();
-			for (InvoiceRecorder ir : list) {
-				ir.setShowAccountEntry((ir.isRecordable() && ir.isWarned()) ? true : ir.isShowAccountEntry());
-				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible previsualizar el apunte: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public void onHideAccountEntry(ActionEvent event) {
-		try {
-			InvoiceRecorder ir = (InvoiceRecorder) getModel().getRowData();
-			ir.setShowAccountEntry(false);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible ocultar la previsualización del apunte: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public void onShowTaxBreakDowns(ActionEvent event) {
-		try {
-			InvoiceRecorder ir = (InvoiceRecorder) getModel().getRowData();
-			ir.setShowTaxBreakDowns(true);
-			ir.getTaxBreakDowns();
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar el deglose de la factura: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public void onShowAllTaxBreakDowns(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setShowTaxBreakDowns(true);
-		}
-	}
-
-	public void onHideAllTaxBreakDowns(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setShowTaxBreakDowns(false);
-		}
-	}
-
-	public void onShowCheckedTaxBreakDowns(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setShowTaxBreakDowns(ir.isChecked() ? true : ir.isShowTaxBreakDowns());
-		}
-	}
-
-	public void onShowUncheckedTaxBreakDowns(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setShowTaxBreakDowns(!ir.isChecked() ? true : ir.isShowTaxBreakDowns());
-		}
-	}
-
-	public void onShowCorrectTaxBreakDowns(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setShowTaxBreakDowns((ir.isRecordable() && !ir.isWarned()) ? true : ir.isShowTaxBreakDowns());
-		}
-	}
-
-	public void onShowIncorrectTaxBreakDowns(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setShowTaxBreakDowns((!ir.isRecordable()) ? true : ir.isShowTaxBreakDowns());
-		}
-	}
-
-	public void onShowWarnedTaxBreakDowns(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setShowTaxBreakDowns((ir.isRecordable() && ir.isWarned()) ? true : ir.isShowTaxBreakDowns());
-		}
-	}
-
-	public void onHideTaxBreakDowns(ActionEvent event) {
-		try {
-			InvoiceRecorder ir = (InvoiceRecorder) getModel().getRowData();
-			ir.setShowTaxBreakDowns(false);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible ocultar el deglose de la factura: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public void onLoadInvoice(ActionEvent event) {
-		try {
-			InvoiceRecorder recordController = (InvoiceRecorder)getModel().getRowData();
-			InvoiceType type = recordController.getInvoice().getType();
-			String invoiceControllerName;
-			String currentViewName;
-			if (type == InvoiceType.SALES) {
-				invoiceControllerName = IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
-				setInvoiceViewer(IFinanceConstants.SALE_INVOICE_FORM_NAME);
-				currentViewName = SALE_VIEW_NAME;
-			} else if (type == InvoiceType.PURCHASE) {
-				invoiceControllerName = IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME;
-				setInvoiceViewer(IFinanceConstants.PURCHASE_INVOICE_FORM_NAME);
-				currentViewName = PURCHASE_VIEW_NAME;
-			} else if (type == InvoiceType.EXPENSES) {
-				invoiceControllerName = IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME;
-				setInvoiceViewer(IFinanceConstants.EXPENSE_INVOICE_FORM_NAME);
-				currentViewName = EXPENSE_VIEW_NAME;
-			} else if (type == InvoiceType.UNDEDUCTIBLE) {
-				invoiceControllerName = IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
-				setInvoiceViewer(IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME);
-				currentViewName = UNDEDUCTIBLE_VIEW_NAME;
-			} else {
-				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-				String msg = "No existe visor para el tipo de factura " + type.getName(locale);
-				LOGGER.warn(msg);
-				AonUtil.addWarningMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
-			recordController.setRefresh(true);
-
-			InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
-			invoiceController.onLoadInvoice(event, recordController.getInvoice(), currentViewName);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible cargar la factura: " + e.getMessage();
-			LOGGER.warn(msg, e);
-			AonUtil.addWarningMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-*/
 }

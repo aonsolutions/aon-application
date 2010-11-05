@@ -79,7 +79,7 @@
 												fileUploadListener="#{bankStatement.fileUploaded}"
 												maxFilesQuantity="1">
 												<f:facet name="label">
-													<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+													<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 												</f:facet>														
 												<a4j:support event="onuploadcomplete" reRender="BankStatement_fileName,importFileToolBar" />
 											</aon:fileUpload>
