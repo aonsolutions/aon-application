@@ -8,7 +8,6 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum StatementStatus implements IResourceable {
 
 	PENDING,
-	CHECKED,
 	RECORDED;
     
     /** Message file base path. */

@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -42,7 +43,10 @@ public class BankStatement implements ITransferObject {
     private String description;
     private StatementStatus status;
 
-    @Id
+	private boolean showBankStatementLink;
+	private boolean showAccountEntry;
+
+	@Id
     @GeneratedValue
     public Integer getId() {
         return id;
@@ -133,6 +137,22 @@ public class BankStatement implements ITransferObject {
 	}
 	public void setStatus(StatementStatus status) {
 		this.status = status;
+	}
+
+	@Transient
+	public boolean isShowBankStatementLink() {
+		return showBankStatementLink;
+	}
+	public void setShowBankStatementLink(boolean value) {
+		this.showBankStatementLink = value;
+	}
+
+	@Transient
+	public boolean isShowAccountEntry() {
+		return showAccountEntry;
+	}
+	public void setShowAccountEntry(boolean value) {
+		this.showAccountEntry = value;
 	}
 
 	@Override
