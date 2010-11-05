@@ -30,8 +30,6 @@ public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
 				FinanceBatch fBatch = (FinanceBatch)iter.next();
 				ReportFinanceBatch rFBatch = new ReportFinanceBatch();
 				rFBatch.setFinanceBatch(fBatch);
-				rFBatch.setRegs(fBatchController.getFinanceBatchTotalDetails(fBatch));
-				rFBatch.setTotal(fBatchController.getFinanceBatchTotalAmount(fBatch));
 				reportFBatchList.add(rFBatch);
 			}
 		} catch (ManagerBeanException e) {
@@ -42,8 +40,7 @@ public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Collection getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	
