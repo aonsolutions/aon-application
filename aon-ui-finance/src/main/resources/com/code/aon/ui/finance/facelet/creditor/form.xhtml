@@ -40,7 +40,7 @@
 	
 						<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.creditor.showAccount and !creditor.new}">
 							<aon:outputLabel for="Creditor_account" value="#{accountBundle.account_accounting}" />
-							<h:panelGrid columns="2" id="accountContainer">
+							<aon:panelGrid columns="2" id="accountContainer">
 								<ui:include
 									src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
 									<ui:param name="id" value="Creditor_account" />
@@ -69,7 +69,7 @@
 										actionListener="#{creditorAccount.onNewAccount}">
 									</aon:commandButton>
 								</aon:div>
-							</h:panelGrid>
+							</aon:panelGrid>
 						</c:if>
 					</aon:panelGrid>
 

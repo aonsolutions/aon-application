@@ -249,7 +249,7 @@
 						<aon:column alias="Invoice.referenceCode"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<h:outputText value="#{financeBundle.finance_invoice_number}" />
+								<aon:outputText value="#{financeBundle.finance_invoice_number}" />
 							</f:facet>
 							<aon:outputText value="#{to.invoice.referenceCode}" />
 						</aon:column>
@@ -346,7 +346,7 @@
 							<rich:subTable id="TaxBreakDownsSubTable"  value="#{to.taxBreakDowns}" rendered="#{to.showTaxBreakDowns}" var="taxBreakDown">
 								<aon:column colspan="12"
 									style="padding: 0px; border: none;background-color: #FBEDB6;">
-									<h:panelGrid columns="5" style="font-size: 0.9em; width: 100%;"
+									<aon:panelGrid columns="5" style="font-size: 0.9em; width: 100%;"
 										cellpadding="0" cellspacing="0" border="0"
 										columnClasses="aon-width-auto
 										 				,aon-width-40 aon-editDataTable-textColumn aon-form-date-label aon-noborder
@@ -396,7 +396,7 @@
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>
 										</aon:div>
-									</h:panelGrid>
+									</aon:panelGrid>
 								</aon:column>
 								<aon:column
 									style="padding: 0px; border: none;background-color: #FBEDB6;">

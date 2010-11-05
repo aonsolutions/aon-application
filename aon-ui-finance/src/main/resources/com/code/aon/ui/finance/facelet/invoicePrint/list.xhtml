@@ -66,10 +66,10 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_date}" />
 						</f:facet>
-						<h:outputText value="#{to.issueDate}">
+						<aon:outputText value="#{to.issueDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
-						</h:outputText>
+						</aon:outputText>
 					</aon:column>
 
 					<aon:column alias="Invoice.referenceCode"
@@ -77,7 +77,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{financeBundle.finance_invoice_number}" />
 						</f:facet>
-						<h:outputText value="#{to.referenceCode}" />
+						<aon:outputText value="#{to.referenceCode}" />
 					</aon:column>
 
 					<aon:column alias="Invoice.series, Invoice.number"
@@ -85,7 +85,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{financeBundle.finance_invoice_order}" />
 						</f:facet>
-						<h:outputText value="#{to.documentNumber}" />
+						<aon:outputText value="#{to.documentNumber}" />
 					</aon:column>
 
 					<aon:column alias="Invoice.registryName"
@@ -93,7 +93,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{customerBundle.customer_customer}" />
 						</f:facet>
-						<h:outputText value="#{to.registryName}" />
+						<aon:outputText value="#{to.registryName}" />
 					</aon:column>
 
 					<aon:column alias="Invoice.registryDocument"
@@ -101,7 +101,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_company_document}" />
 						</f:facet>
-						<h:outputText value="#{to.registryDocument}" />
+						<aon:outputText value="#{to.registryDocument}" />
 					</aon:column>
 
 					<aon:column alias="Invoice.status"
