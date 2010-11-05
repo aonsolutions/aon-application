@@ -3,6 +3,9 @@ package com.code.aon.accounting.event;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
@@ -13,6 +16,7 @@ import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
@@ -26,7 +30,24 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 
 	@Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		AccountEntry to = (AccountEntry)evt.getTo();
 		validateEntryDateInPeriod(evt);
+		
+        try {
+			String select = "select MAX(entry.journal) j" +
+							" from account_entry as entry " +
+							" where entry.account_period = '" + to.getAccountPeriod() + "'";
+			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+			SQLQuery query = session.createSQLQuery(select);
+	        Integer journal = (Integer) query.addScalar("j", Hibernate.INTEGER ).uniqueResult();
+	        if (journal == null ) {
+		        journal = 0;
+	        }
+	        to.setJournal(++journal);
+	    } catch (Exception e) {
+	    	// Nada, el numero de diario se graba a null y será necesario regenerar después.
+	    }
+		
     }
 	
 	@Override
