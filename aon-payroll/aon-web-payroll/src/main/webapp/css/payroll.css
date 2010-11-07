@@ -89,14 +89,11 @@
 }
 
 .aon-icon-winsuite{
-	background:transparent url(./images/aon-icon-winsuite.png) no-repeat scroll center left;
-	/*
-	padding-left: 18px;
-	*/	
+	background:transparent url(images/aon-icon-winsuite.png) no-repeat scroll center left;
 }
 .aon-icon-redtrabaja{
-	background:transparent url(./images/aon-icon-redtrabaja.png) no-repeat scroll center left;
-	/*
-	padding-left: 18px;
-	*/	
+	background:transparent url(images/aon-icon-redtrabaja.png) no-repeat scroll center left;
+}
+.aon-icon-pdf-disabled{
+	background:transparent url(images/aon-icon-pdf-disabled.png) no-repeat scroll center left;
 }
