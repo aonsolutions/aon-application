@@ -62,20 +62,18 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contractMode"
-										disabled="true" 
-										action="company" actionListener="#{company.onLoad}"
-										value="#{appBundle.contract_mode_module}">
+										action="contractOption_list" 
+										value="#{employeeBundle.contract_mode_module}">
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="cnae"
-										action="cnae" actionListener="#{cnae.onSearch}" 
+										action="cnae_list" actionListener="#{cnae.onSearch}" 
 										value="#{companyBundle.company_cnae_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="wayKind"
-										disabled="true" 
-										action="company" actionListener="#{company.onLoad}"
+										action="streetType_list"
 										value="#{appBundle.way_kind_module}">
 									</aon:commandLink>
 								</aon:div>
