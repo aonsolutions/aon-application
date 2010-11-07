@@ -56,6 +56,12 @@ public interface ICompanyConstants {
 	
 	String ENTERPRISE_ACTIVITY_CONTROLLER_NAME = "enterpriseActivity";
 	
+	String ENTERPRISE_ADDRESS_CONTROLLER_NAME = "enterpriseAddress";
+	
+	String ENTERPRISE_MEDIA_CONTROLLER_NAME = "enterpriseMedia";
+	
+	String ENTERPRISE_DIR_STAFF_CONTROLLER_NAME = "enterpriseDirStaff";
+	
 	String EMPLOYEE_CONTROLLER_NAME = "employee";	
 	
 	String CONTRACT_CONTROLLER_NAME = "contract";	
