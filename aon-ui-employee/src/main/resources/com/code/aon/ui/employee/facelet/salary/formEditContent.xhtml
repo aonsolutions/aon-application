@@ -7,44 +7,82 @@
 	xmlns:h="http://java.sun.com/jsf/html" >
 
 	<aon:div>
-		<aon:panelGrid columns="6" style="width:100%">
+		<aon:panelGrid columns="4" style="width:100%">
+			<aon:outputText value="#{employeeBundle.employee_name}" />
+			<aon:outputText 
+				value="#{controller.to.contract.person.registry.fullName}" />
+				
+			<aon:outputText value="#{companyBundle.company_enterprise}" />
+			<aon:outputText 
+				value="#{controller.to.contract.workPlace.enterprise.registry.fullName}" />
+		
 			<aon:outputText for="startDate" 
 				value="#{bundle.aon_start_date}" />
+<!--  
 			<aon:selectInputDate id="startDate"
 				value="#{controller.to.startDate}"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}"/>
+-->			
+			<aon:outputText value="#{controller.to.startDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
 			
 			<aon:outputLabel for="totalPayment" 
 				value="#{employeeBundle.employee_salary_totalPayment}" />
+<!--  
 			<aon:inputText id="totalPayment"
 				size="15"
 				value="#{controller.to.totalPayment}">
 				<f:validateDoubleRange />
 			</aon:inputText>
-	
-			<aon:outputLabel for="totalLiquid" 
-				value="#{employeeBundle.employee_salary_totalLiquid}" />
-			<aon:inputText id="totalLiquid"
-				size="15"
-				value="#{controller.to.totalLiquid}">
-				<f:validateDoubleRange />
-			</aon:inputText>
+-->
+			<aon:outputText value="#{controller.to.totalPayment}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
 			
 			<aon:outputText for="endDate" 
 				value="#{bundle.aon_end_date}" />
+<!--  
 			<aon:selectInputDate id="endDate"
 				value="#{controller.to.endDate}"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}"/>
-	
+-->
+			<aon:outputText value="#{controller.to.endDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+			
 			<aon:outputLabel for="totalDeduction" 
 				value="#{employeeBundle.employee_salary_totalDeduction}" />
+<!--  
 			<aon:inputText id="totalDeduction"
 				size="15"
 				value="#{controller.to.totalDeduction}">
 				<f:validateDoubleRange />
 			</aon:inputText>
+-->
+			<aon:outputText value="#{controller.to.totalDeduction}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+	
+			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" />
+				
+			<aon:outputLabel for="totalLiquid" 
+				value="#{employeeBundle.employee_salary_totalLiquid}" />
+<!--  
+			<aon:inputText id="totalLiquid"
+				size="15"
+				value="#{controller.to.totalLiquid}">
+				<f:validateDoubleRange />
+			</aon:inputText>
+-->			
+			<aon:outputText value="#{controller.to.totalLiquid}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
 		</aon:panelGrid>
 	</aon:div>
 

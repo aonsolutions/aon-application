@@ -13,11 +13,14 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salary_module}" />
 				<ui:param name="controller" value="#{salary}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+				<ui:param name="skipSaveButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="currentSalary-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="NOMINA -i18n-"
+						value="#{employeeBundle.employee_salary}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="currentSalaryReport" />
 						<f:param name="outputFormat" value="PDF" />
