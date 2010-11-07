@@ -485,4 +485,12 @@
 	    </navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Contract Tracking Management========================== -->
+	<navigation-rule id="contractTracking">
+	    <navigation-case>
+    	  	<from-outcome>contractOption_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/contractOption/list.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
 </faces-config>
