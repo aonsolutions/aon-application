@@ -137,9 +137,9 @@
 					<aon:outputText value="&#160;" />
 				</f:facet>
 				<h:commandLink target="_blank" 
-					rendered="#{to.document!=null}"
+					disabled="#{to.document==null}"
 					actionListener="#{contract.onDownloadContract}"
-					styleClass="aon-editDataTable-button aon-icon-pdf"
+					styleClass="aon-editDataTable-button #{(to.document!=null)?(aon-icon-pdf):(aon-icon-pdf-disabled)}"
 					value="&#160;" />
 			</aon:column>
 <!--  
