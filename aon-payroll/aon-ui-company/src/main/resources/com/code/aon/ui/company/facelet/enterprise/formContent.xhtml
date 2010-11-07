@@ -4,40 +4,160 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-
-	<ui:include
-		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+	
+	
+	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
+		<ui:param name="skipId" value="true"/>
+		<ui:define name="dataPanel">
 		
-	<aon:outputLabel for="Enterprise_scope_id" value="#{bundle.aon_scope}" />
-	<aon:selectOneMenu id="Enterprise_scope_id" value="#{controller.to.scope}">
-		<f:selectItems value="#{configCollections.currentUserScopes}" />
-	</aon:selectOneMenu>
+<!--  
+			<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+				<ui:param name="controllerLookupListener" value="#{enterpriseForm}"/>
+			</ui:include>
+-->		
+		
+			<aon:outputLabel for="RegistryAddress_address"
+				value="#{registryBundle.registry_address}" />
+			<aon:div>
+				<aon:selectOneMenu id="RegistryAddress_streetType"
+					value="#{controller.mainAddress.streetType}" >
+					<f:selectItems value="#{registryCollections.streetTypes}" />
+				</aon:selectOneMenu>
+				<aon:inputText id="RegistryAddress_address"
+					value="#{controller.mainAddress.address}"
+					style="display:block" 
+					required="true" size="40" />
+				<aon:inputText value="#{controller.mainAddress.address2}"
+					style="display:block" size="40" />
+				<aon:inputText value="#{controller.mainAddress.address3}"
+					style="display:block" size="40" />
+			</aon:div>
+			
+			<aon:outputLabel for="RegistryAddress_city" value="#{registryBundle.registry_city}" />
+			<aon:inputText id="RegistryAddress_city" 
+				value="#{controller.mainAddress.city}"
+				required="true" size="20" />
+			
+			<aon:outputLabel for="RegistryAddress_zip" value="#{registryBundle.registry_zip}" />
+			<aon:inputText id="RegistryAddress_zip" 
+				value="#{controller.mainAddress.zip}"
+				required="true" size="8" />
+				
+			<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" />
+			<aon:selectOneMenu id="RegistryAddress_geozone"
+				value="#{controller.mainAddress.geozone}" >
+				<f:selectItems value="#{geozoneCollections.geoTrees}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel for="Enterprise_telephone" 
+				value="#{controller.telephone.mediaType}" />
+			<aon:inputText id="Enterprise_telephone" 
+				value="#{controller.telephone.value}" size="40"
+				onblur="toLowerCase(this);" />
+			
+			<aon:outputLabel for="Enterprise_fax" 
+				value="#{controller.fax.mediaType}" />
+			<aon:inputText id="Enterprise_fax" 
+				value="#{controller.fax.value}" size="40"
+				onblur="toLowerCase(this);" />
+			
+			<aon:outputLabel for="Enterprise_email" 
+				value="#{controller.email.mediaType}" />
+			<aon:inputText id="Enterprise_email" 
+				value="#{controller.email.value}" size="40"
+				onblur="toLowerCase(this);" />
+			
+			<aon:outputLabel for="Enterprise_web" 
+				value="#{controller.web.mediaType}" />
+			<aon:inputText id="Enterprise_web" 
+				value="#{controller.web.value}" size="40"
+				onblur="toLowerCase(this);" />
+		</ui:define>
+		
+		<ui:define name="securityPanel">
+			<aon:outputLabel for="Registry_id" value="#{bundle.aon_id}" />
+			<aon:inputText id="Registry_id" value="#{controller.to.id}"
+				rendered="#{!controller.new}" size="15" disabled="true" />
+			<aon:outputText value="" rendered="#{controller.new}" />	
 
-	<aon:outputLabel for="Enterprise_cnae_id"
-		value="#{companyBundle.company_activity}" />
-	<aon:div styleClass="aon-lookup">
-		<aon:lookupInputText id="Enterprise_cnae_id"
-			lookup="#{cnaeLookup}" lookupChangeListener="#{enterprise.onCNAEChanged}"
-			reRender="Enterprise_cnae_detail" required="true"
-			value="#{enterprise.activity.cnae.id}" maxlength="5" size="5" />
-		<aon:lookupButton
-			windowTitle="#{companyBundle.company_cnae_selection}"
-			selectReRender="Enterprise_cnae_id,Enterprise_cnae_detail"
-			lookup="#{cnaeLookup}" lookupChangeListener="#{enterprise.onCNAEChanged}"
-			minHeight="460" minWidth="650" actionType="search"
-			property="#{enterprise.activity.cnae}">
-		</aon:lookupButton>
-		<aon:inputText id="Enterprise_cnae_detail" label="#{companyBundle.company_activity_description}"
-			value="#{enterprise.activity.description}" required="true"
-			valueChangeListener="#{controller.activityChanged}" maxlength="32" size="32" />							
-	</aon:div>			
-
-	<aon:outputLabel for="Enterprise_ccc"
-		value="#{companyBundle.company_enterprise_ccc}" />
-	<aon:inputText id="Enterprise_ccc"
-		value="#{controller.CCC.CCC}" required="true" 
-		valueChangeListener="#{controller.cccChanged}" maxlength="11" size="15" />
-
+			<aon:outputLabel for="Enterprise_scope_id" value="#{bundle.aon_scope}" />
+			<aon:selectOneMenu id="Enterprise_scope_id" value="#{controller.to.scope}">
+				<f:selectItems value="#{configCollections.currentUserScopes}" />
+			</aon:selectOneMenu>
+		</ui:define>
+		
+		<ui:define name="logoPanel">
+			<a4j:mediaOutput element="img" cacheable="false"
+				style="width: 100px;" value="#{company.aonFile.key}"
+				rendered="#{company.aonFile.size > 0}"
+				createContent="#{company.createCurrentLogoContent}">
+			</a4j:mediaOutput>
+			<aon:fileUpload id="attach_file"
+				disabled="true"
+				fileUploadListener="#{company.fileUploaded}" >
+				<f:facet name="label">
+					<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+				</f:facet>
+				<a4j:support event="onuploadcomplete" reRender="attachGrid" />
+			</aon:fileUpload>
+		</ui:define>
+		
+		<ui:define name="othersPanel">
+			<aon:outputLabel value="#{companyBundle.company_workplace}" />
+			<aon:div>
+				<aon:inputText id="WorkPlace_description" size="40"
+					maxlength="64" value="#{controller.workplace.description}"
+					required="true" />
+				<aon:selectOneMenu id="WorkPlace_address_id" required="true"
+					value="#{controller.workplace.address}" >
+					<f:selectItems value="#{enterprise.addresses}" />
+				</aon:selectOneMenu>
+				<aon:selectOneMenu id="WorkPlace_economicAgreement"
+					value="#{controller.workplace.economicAgreement}">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{companyCollections.economicAgreements}" />
+				</aon:selectOneMenu>
+			</aon:div>
+			
+			<aon:outputLabel for="Enterprise_cnae_id"
+				value="#{companyBundle.company_activity}" />
+			<aon:div styleClass="aon-lookup">
+				<aon:lookupInputText id="Enterprise_cnae_id"
+					lookup="#{cnaeLookup}" lookupChangeListener="#{enterprise.onCNAEChanged}"
+					reRender="Enterprise_cnae_detail" required="true"
+					value="#{enterprise.activity.cnae.id}" maxlength="5" size="5" />
+				<aon:lookupButton
+					windowTitle="#{companyBundle.company_cnae_selection}"
+					selectReRender="Enterprise_cnae_id,Enterprise_cnae_detail"
+					lookup="#{cnaeLookup}" lookupChangeListener="#{enterprise.onCNAEChanged}"
+					minHeight="460" minWidth="650" actionType="search"
+					property="#{enterprise.activity.cnae}">
+				</aon:lookupButton>
+				<aon:inputText id="Enterprise_cnae_detail" label="#{companyBundle.company_activity_description}"
+					value="#{enterprise.activity.description}" required="true"
+					valueChangeListener="#{controller.activityChanged}" maxlength="32" size="32" />							
+			</aon:div>			
+		
+			<aon:outputLabel for="Enterprise_ccc"
+				value="#{companyBundle.company_enterprise_ccc}" />
+			<aon:inputText id="Enterprise_ccc"
+				value="#{controller.CCC.CCC}" required="true" 
+				valueChangeListener="#{controller.cccChanged}" maxlength="11" size="15" />
+				
+			<aon:outputLabel value="#{registryBundle.registry_dir_staff_representative_labor}" />
+			<aon:div>
+				<aon:outputText value="#{bundle.aon_company_document}" />
+				<aon:inputText id="Registry_Lookup_document-Edit" size="16"
+					value="#{controller.dirStaff.document}" />
+				<aon:outputText value="#{bundle.aon_name}" />
+				<aon:inputText id="Registry_full_name-Edit" 
+					size="40" value="#{controller.dirStaff.name}" />
+			</aon:div>
+		</ui:define>
+		
+	</ui:decorate>
+	
 </ui:composition>
 

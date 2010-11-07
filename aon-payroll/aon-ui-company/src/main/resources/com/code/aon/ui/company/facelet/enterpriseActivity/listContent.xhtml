@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 		
+	<aon:methodParam name="rowSelectorAction" default="#" resolve="true" />
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 		<ui:param name="controller" value="#{enterpriseActivity}" />
 <!--  
@@ -14,8 +15,8 @@
 		<ui:param name="resetButtonReRender" value="activitiesDiv" />
 -->
 		<ui:define name="selectFooterContent">
-			<aon:outputText value="New Button" />
 <!--  
+			<aon:outputText value="New Button" />
 			<aon:div>
 				<aon:commandLink
 					id="#{enterpriseActivity}-reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"

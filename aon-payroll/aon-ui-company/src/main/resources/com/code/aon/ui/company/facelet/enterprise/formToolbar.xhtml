@@ -10,9 +10,9 @@
 		template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 		<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
 		<ui:param name="controller" value="#{enterprise}" />
-		<ui:param name="skipResetButton" value="true" />
-		<ui:param name="skipSaveButton" value="true" />
-		<ui:param name="skipRemoveButton" value="true" />
+		<ui:param name="skipResetButton" value="#{enterprise.treeView}?true:false" />
+		<ui:param name="skipSaveButton" value="#{enterprise.treeView}?true:false" />
+		<ui:param name="skipRemoveButton" value="#{enterprise.treeView}?true:false" />
 		<ui:define name="beforeSpinToolbarContent">
 <!--  
 					<aon:commandButton id="activities2"

@@ -1387,8 +1387,12 @@
 	<!-- =================== CNAE ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>cnae</from-outcome>
+			<from-outcome>cnae_grid</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/cnae/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>cnae_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/cnae/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 			
