@@ -111,6 +111,8 @@
 				<value>#{personForm}</value>
 				<value>#{personAddressListener}</value>
 				<value>#{personMediaListener}</value>
+				<value>#{personRBankChildListener}</value>
+				<value>#{personRPayMethodChildListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -255,6 +257,116 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- **** PERSON RBANK **** -->
+	<managed-bean>
+		<managed-bean-name>personRBankChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>personRbank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryBank_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>personRbank</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>personRbank</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>person</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener 
+				</value-class>
+				<value>#{bankAccountValidatorListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- **** PERSON RPAYMETHOD **** -->
+	<managed-bean>
+		<managed-bean-name>personRPayMethodChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>personRPayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryPayMethod_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>personRPayMethod</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryPayMethodController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryPayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>personRPayMethod</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>person</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
 		
 
 	<!-- ========================================================== -->
@@ -365,6 +477,14 @@
 		<navigation-case>
 			<from-outcome>person_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/registry/facelet/person/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+		
+	<!-- =================== Street Type ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>streetType_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/streetType/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 	

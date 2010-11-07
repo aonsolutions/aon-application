@@ -35,6 +35,13 @@
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryAddress_address" value="#{registryBundle.registry_address}" />
 				</f:facet>
+				<aon:outputText value="#{to.streetType}&#160;"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="RegistryAddress_streetType" rendered="#{formEdit}"
+					value="#{controller.to.streetType}" >
+					<f:selectItems value="#{registryCollections.streetTypes}" />
+				</aon:selectOneMenu>
+					
 				<aon:outputText value="#{to.address} #{to.address2} #{to.address3}"
 					rendered="#{formList}" />
 				<aon:inputText id="RegistryAddress_address"
@@ -47,6 +54,10 @@
 					style="display:block" rendered="#{formEdit}" size="40" />
 				<f:facet name="footer">
 					<aon:div>
+						<aon:selectOneMenu id="RegistryAddress_streetType-New" rendered="#{formNew}"
+							value="#{controller.to.streetType}" >
+							<f:selectItems value="#{registryCollections.streetTypes}" />
+						</aon:selectOneMenu>
 						<aon:inputText id="RegistryAddress_address-New"
 							value="#{controller.to.address}"
 							style="display:block" rendered="#{formNew}"
