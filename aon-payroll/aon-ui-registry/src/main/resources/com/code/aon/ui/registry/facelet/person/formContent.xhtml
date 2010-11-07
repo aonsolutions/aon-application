@@ -4,39 +4,122 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include
-		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
 
-	<aon:outputLabel for="Person_birthDate"
-		value="#{registryBundle.registry_person_birthDate}" />
-	<aon:selectInputDate id="Person_birthDate" 
-		value="#{controller.to.birthDate}"
-		inputSize="10" renderAsPopup="true" enableManualInput="true"
-		timeZone="#{timeZoneController.timeZone}"
-		popupDateFormat="#{bundle.aon_date_pattern}">
-	</aon:selectInputDate>
+	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
+		<ui:param name="skipId" value="true"/>
+		<ui:param name="skipRegistryType" value="true"/>
+		<ui:define name="dataPanel">
+			<aon:outputLabel for="Person_birthDate"
+				value="#{registryBundle.registry_person_birthDate}" />
+			<aon:selectInputDate id="Person_birthDate" 
+				value="#{controller.to.birthDate}"
+				inputSize="10" renderAsPopup="true" enableManualInput="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+			</aon:selectInputDate>
+		
+			<aon:outputLabel for="Person_socialSecurityNumber"
+				value="#{registryBundle.registry_person_nss}" />
+			<aon:inputText id="Person_socialSecurityNumber"
+				value="#{controller.to.socialSecurityNumber}"
+				size="32" maxlength="32" />
+		
+			<aon:outputLabel for="Person_gender"
+				value="#{registryBundle.registry_person_gender}" />
+			<aon:selectOneMenu id="Person_gender"
+				value="#{controller.to.gender}" requiered="true">
+				<f:selectItems value="#{registryCollections.genders}" />
+			</aon:selectOneMenu>
+						
+			<aon:outputLabel for="Person_maritalStatus"
+				value="#{registryBundle.registry_person_marital_status}" />
+			<aon:selectOneMenu id="Person_maritalStatus"
+				value="#{controller.to.maritalStatus}" requiered="true">
+				<f:selectItems value="#{registryCollections.maritalStatuses}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel value="#{bundle.aon_id}" />
+			<aon:outputText value="direccion" />
+		
+			<aon:outputLabel value="#{bundle.aon_id}" />
+			<aon:outputText value="contacto" />
+			
+		</ui:define>
+		<ui:define name="securityPanel">
+			<aon:outputLabel for="Registry_id" value="#{bundle.aon_id}" />
+			<aon:inputText id="Registry_id" value="#{controller.to.id}"
+				rendered="#{!controller.new}" size="15" disabled="true" />
+			<aon:outputText value="" rendered="#{controller.new}" />	
+		</ui:define>
+		<ui:define name="logoPanel">
+			<a4j:mediaOutput element="img" cacheable="false"
+				style="width: 100px;" value="#{company.aonFile.key}"
+				rendered="#{company.aonFile.size > 0}"
+				createContent="#{company.createCurrentLogoContent}">
+			</a4j:mediaOutput>
+			<aon:fileUpload id="attach_file"
+				disabled="true"
+				fileUploadListener="#{company.fileUploaded}" >
+				<f:facet name="label">
+					<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+				</f:facet>
+				<a4j:support event="onuploadcomplete" reRender="attachGrid" />
+			</aon:fileUpload>
+		</ui:define>
+		<ui:define name="othersPanel">
+			<aon:outputLabel value="#{bundle.aon_id}" />
+			<aon:outputText value="datos bancarios" />
+			
+			<aon:outputLabel value="#{bundle.aon_id}" />
+			<aon:outputText value="forma pago" />
+			
+		</ui:define>
+	</ui:decorate>
+<!--  
+	<aon:div>
+		<aon:panelGrid id="dataTable" columns="2" styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-odd aon-width-150,
+				aon-panelGrid-even aon-width-auto,
+				aon-panelGrid-odd aon-width-120,
+				aon-panelGrid-even aon-width-auto">
 
-	<aon:outputLabel for="Person_socialSecurityNumber"
-		value="#{registryBundle.registry_person_nss}" />
-	<aon:inputText id="Person_socialSecurityNumber"
-		value="#{controller.to.socialSecurityNumber}"
-		size="32" maxlength="32" />
-
-	<aon:outputLabel for="Person_gender"
-		value="#{registryBundle.registry_person_gender}" />
-	<aon:selectOneMenu id="Person_gender"
-		value="#{controller.to.gender}" requiered="true">
-		<f:selectItems value="#{registryCollections.genders}" />
-	</aon:selectOneMenu>
-				
-	<aon:outputLabel for="Person_maritalStatus"
-		value="#{registryBundle.registry_person_marital_status}" />
-	<aon:selectOneMenu id="Person_maritalStatus"
-		value="#{controller.to.maritalStatus}" requiered="true">
-		<f:selectItems value="#{registryCollections.maritalStatuses}" />
-	</aon:selectOneMenu>
+			<ui:include
+				src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+		
+			<aon:outputLabel for="Person_birthDate"
+				value="#{registryBundle.registry_person_birthDate}" />
+			<aon:selectInputDate id="Person_birthDate" 
+				value="#{controller.to.birthDate}"
+				inputSize="10" renderAsPopup="true" enableManualInput="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+			</aon:selectInputDate>
+		
+			<aon:outputLabel for="Person_socialSecurityNumber"
+				value="#{registryBundle.registry_person_nss}" />
+			<aon:inputText id="Person_socialSecurityNumber"
+				value="#{controller.to.socialSecurityNumber}"
+				size="32" maxlength="32" />
+		
+			<aon:outputLabel for="Person_gender"
+				value="#{registryBundle.registry_person_gender}" />
+			<aon:selectOneMenu id="Person_gender"
+				value="#{controller.to.gender}" requiered="true">
+				<f:selectItems value="#{registryCollections.genders}" />
+			</aon:selectOneMenu>
+						
+			<aon:outputLabel for="Person_maritalStatus"
+				value="#{registryBundle.registry_person_marital_status}" />
+			<aon:selectOneMenu id="Person_maritalStatus"
+				value="#{controller.to.maritalStatus}" requiered="true">
+				<f:selectItems value="#{registryCollections.maritalStatuses}" />
+			</aon:selectOneMenu>
+		</aon:panelGrid>
+	</aon:div>
+-->
 
 </ui:composition>
 
