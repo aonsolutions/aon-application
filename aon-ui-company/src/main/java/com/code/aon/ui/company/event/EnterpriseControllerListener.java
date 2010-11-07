@@ -29,6 +29,10 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
 			controller.initMainActiviy();			
+			controller.initMainAddress();			
+			controller.initMedias();			
+			controller.initMainWorkPlace();			
+			controller.initMainDirStaff();			
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -40,6 +44,10 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
 			controller.initMainActiviy();			
+			controller.initMainAddress();			
+			controller.initMedias();			
+			controller.initMainWorkPlace();			
+			controller.initMainDirStaff();			
 			Enterprise e = (Enterprise)controller.getTo();
 			BasicController contract = (BasicController) AonUtil.getRegisteredBean(ICompanyConstants.CONTRACT_CONTROLLER_NAME);
 			contract.clearCriteria();
@@ -50,6 +58,8 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		}
 		EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_TREE_CONTROLLER_NAME);
 		tree.loadTree();
+		BasicController enterpriseActivity = (BasicController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_ACTIVITY_CONTROLLER_NAME);
+		enterpriseActivity.onSelectFirst(null);
 	}
 
 	@Override
@@ -58,6 +68,10 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
 			controller.saveMainActivity();			
+			controller.saveMainAddress();			
+			controller.saveMedias();			
+			controller.saveMainWorkPlace();			
+			controller.saveMainDirStaff();			
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -85,6 +99,10 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
 			controller.saveMainActivity();			
+			controller.saveMainAddress();			
+			controller.saveMedias();			
+			controller.saveMainWorkPlace();			
+			controller.saveMainDirStaff();			
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
