@@ -13,8 +13,9 @@ import com.code.aon.employee.enumeration.ContractModel;
 import com.code.aon.employee.enumeration.ContractOption;
 import com.code.aon.employee.enumeration.ContractTrackingType;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
-import com.code.aon.employee.enumeration.PaymentType;
 import com.code.aon.employee.enumeration.DeductionType;
+import com.code.aon.employee.enumeration.PaymentType;
+import com.code.aon.registry.enumeration.StreetType;
 
 public class EmployeeCollectionsController {
 
@@ -27,6 +28,8 @@ public class EmployeeCollectionsController {
 	private List<SelectItem> contractCodes;
 	private List<SelectItem> contractModels;
 	private List<SelectItem> contractOptions;
+	
+	private List<SelectItem> streetTypes;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -129,17 +132,28 @@ public class EmployeeCollectionsController {
 			contractModels = new LinkedList<SelectItem>();
 			ContractModel[] models = ContractModel.values();
 			for (ContractModel cm : models) {
-				String name = cm.getName(locale)+" - ";
-				if(cm.getDescription(locale).length()>70){
-					name += cm.getDescription(locale).substring(0, 70)+"...";
-				} else {
-					name += cm.getDescription(locale);
-				}
+				String name = cm.getDescription(locale);
 				SelectItem item = new SelectItem(cm, name);
 				contractModels.add(item);
 			}
 		}
 		return contractModels;
 	}
+	
+	public List<SelectItem> getStreetTypes() {
+		if (streetTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+			.getLocale();
+			streetTypes = new LinkedList<SelectItem>();
+			StreetType[] models = StreetType.values();
+			for (StreetType cm : models) {
+				String name = cm.getName(locale);
+				SelectItem item = new SelectItem(cm, name);
+				streetTypes.add(item);
+			}
+		}
+		return streetTypes;
+	}
+	
 	
 }

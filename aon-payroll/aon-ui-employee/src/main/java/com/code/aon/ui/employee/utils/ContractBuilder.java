@@ -178,25 +178,28 @@ public class ContractBuilder implements IEmployeeConstants {
 		RegistryDirStaffLinesController rDirStaff = (RegistryDirStaffLinesController)AonUtil.getRegisteredBean(ENTERPRISE_DIR_STAFF_CONTROLLER);
 		rDirStaff.getCriteria().addGreaterThanOrEqualExpression(rDirStaff.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE), contract.getStartDate());
 		rDirStaff.onSearch(null);
+		RegistryDirStaff dir = null; 
 		if(rDirStaff.getModel().getRowCount()<=0){
 			String msg = "La empresa no tiene el representante definido";
 			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+//			throw new AbortProcessingException(msg);
+		} else {
+			rDirStaff.onSelectFirst(null);
+			dir = (RegistryDirStaff)rDirStaff.getTo();
+			rDirStaff.clearCriteria();
 		}
 		if(contract.getPerson().getRegistry().getDefaultAddress().getGeozone()==null){
 			String msg = "La persona no tiene el geozone definido";
 			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+//			throw new AbortProcessingException(msg);
 		}
 		if(contract.getPerson().getBirthDate()==null){
 			String msg = "La persona no tiene la fecha de nacimiento definida";
 			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+//			throw new AbortProcessingException(msg);
 		}
-		rDirStaff.onSelectFirst(null);
-		RegistryDirStaff dir = (RegistryDirStaff)rDirStaff.getTo();
-		rDirStaff.clearCriteria();
 		for(ContractField field: getContractFields()){
+			try{
 			if(field.getLabel().equals("Texto1")){
 				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
 			}
@@ -219,7 +222,6 @@ public class ContractBuilder implements IEmployeeConstants {
 				if(dir.isRepresentative()){
 					field.setValue("Representante");
 				}
-				
 			}
 			// nombre empresa
 			if(field.getLabel().equals("Texto5")){
@@ -418,6 +420,9 @@ public class ContractBuilder implements IEmployeeConstants {
 			if(field.getLabel().equals("Cifra44")){
 //				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
 			}
+		} catch(NullPointerException e){
+//			AonUtil.addErrorMessage("Existen campos nulos");
+		}
 		}
 	}
 	
