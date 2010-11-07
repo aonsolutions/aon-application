@@ -26,6 +26,7 @@ import com.code.aon.registry.Relationship;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -51,6 +52,8 @@ public class RegistryCollectionsController {
 	private List<SelectItem> registryAttachmentTypes;
 	
 	private List<SelectItem> noteTypes;
+	
+	private List<SelectItem> documentTypes;
 	
 	private RegistryBank rBank; // No Borrar. Euke.
 								// Se utiliza como selector 
@@ -80,14 +83,16 @@ public class RegistryCollectionsController {
      * @return the street types
      */
     public List<SelectItem> getStreetTypes() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-        for( StreetType type : StreetType.values() ) {
-            String name = type.getName(locale); 
-            SelectItem item = new SelectItem(type, name);
-            types.add( item );
-        }
-        return types;
+    	if ( streetTypes == null ) {
+	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	        streetTypes = new LinkedList<SelectItem>();
+	        for( StreetType type : StreetType.values() ) {
+	            String name = type.getName(locale); 
+	            SelectItem item = new SelectItem(type, name);
+	            streetTypes.add( item );
+	        }
+    	}
+        return streetTypes;
     }
 
     /**
@@ -200,6 +205,19 @@ public class RegistryCollectionsController {
 			}
 		}
 		return noteTypes;
+	}
+	
+	public List<SelectItem> getDocumentTypes() {
+		if ( documentTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			documentTypes = new LinkedList<SelectItem>();
+			for( DocumentType type : DocumentType.values() ) {
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					documentTypes.add(item);
+			}
+		}
+		return documentTypes;
 	}
 	
     @SuppressWarnings("unchecked")
