@@ -16,12 +16,20 @@
 
 			<aon:outputText value="#{companyBundle.company_enterprise}" />
 			<aon:outputText
-				value="#{contractGenerationWizard.contract.workPlace.enterprise.registry.name}" />
+				value="#{enterprise.to.registry.fullName}" />
+<!--  
+			<aon:outputText
+				value="#{contractGenerationWizard.contract.workPlace.enterprise.registry.fullName}" />
+-->
 			<aon:outputText value="#{bundle.aon_company_document}" />
 			<aon:outputText
+				value="#{enterprise.to.registry.document}" />
+<!--  
+			<aon:outputText
 				value="#{contractGenerationWizard.contract.workPlace.enterprise.registry.document}" />
+-->
 
-			<aon:outputText value="#{bundle.aon_company_name}" />
+			<aon:outputText value="#{registryBundle.registry_person}" />
 			<aon:outputText
 				value="#{contractGenerationWizard.contract.person.registry.fullName}" />
 			<aon:outputText value="#{bundle.aon_company_document}" />
