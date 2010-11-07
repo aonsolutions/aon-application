@@ -12,10 +12,11 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contract_module}" />
 				<ui:param name="controller" value="#{salary}" />
+				<ui:param name="skipResetButton" value="true" />
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="salary-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="NOMINAS -i18n-"
+						value="#{employeeBundle.employee_salary_module}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="salaryReport" />
 						<f:param name="outputFormat" value="PDF" />
@@ -24,14 +25,9 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-<!-- 
-				<aon:methodParam name="rowSelectorAction" default="#" resolve="true" />
--->  
 				<ui:include src="/com/code/aon/ui/employee/facelet/salary/listContent.xhtml" >
 					<ui:param name="controller" value="#{salary}" />
-<!--  
-					<ui:param name="rows" value="13" />
--->
+					<ui:param name="skipStartDateColumn" value="true" />
 				</ui:include>
 			</aon:div>
 			
