@@ -26,9 +26,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 
@@ -48,10 +50,13 @@ public class Registry implements ITransferObject {
 
 	private Integer id;
 	private String document;
+	private DocumentType documentType;
+//	private GeoZone documentGeozone;
 	private String name;
 	private String surname;
 	private String alias;
 	private RegistryType type;
+	private GeoZone geozone;
 	private Set<RegistryAddress> addresses = new HashSet<RegistryAddress>();
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();
 	private Set<RegistryPayMethod> payMethods = new HashSet<RegistryPayMethod>();
@@ -96,6 +101,22 @@ public class Registry implements ITransferObject {
 		return registryDocument.isValid();
 	}
 	
+	@Column(name="document_type")
+	public DocumentType getDocumentType() {
+		return documentType;
+	}
+	public void setDocumentType(DocumentType documentType) {
+		this.documentType = documentType;
+	}
+	
+//	@Column(name="document_geozone")
+//	public GeoZone getDocumentGeozone() {
+//		return documentGeozone;
+//	}
+//	public void setDocumentGeozone(GeoZone documentGeozone) {
+//		this.documentGeozone = documentGeozone;
+//	}
+
 	@Column(length=64)
 	public String getName() {
 		return name;
@@ -117,6 +138,13 @@ public class Registry implements ITransferObject {
 	}
 	public void setType(RegistryType type) {
 		this.type = type;
+	}
+
+	public GeoZone getGeozone() {
+		return geozone;
+	}
+	public void setGeozone(GeoZone geozone) {
+		this.geozone = geozone;
 	}
 
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})

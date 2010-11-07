@@ -39,6 +39,8 @@ public class RegistryDirStaff implements ITransferObject {
 	
 	private boolean representative;
 	
+	private boolean representativeLabor;
+	
 	private boolean director;
 	
 	private double percentShare;
@@ -108,6 +110,15 @@ public class RegistryDirStaff implements ITransferObject {
 		this.representative = representative;
 	}
 
+	@Column(name="representative_labor", nullable=false)
+	public boolean isRepresentativeLabor() {
+		return representativeLabor;
+	}
+	
+	public void setRepresentativeLabor(boolean representativeLabor) {
+		this.representativeLabor = representativeLabor;
+	}
+	
 	@Column(name="director", nullable=false)
 	public boolean isDirector() {
 		return director;
