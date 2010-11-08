@@ -87,6 +87,9 @@ public class Empresa implements ITransferObject, IEmpresa {
 	public String getNombreRepresentante() {
 		String linea = this.representante;
 		StringTokenizer tokens = new StringTokenizer(linea);
+		if(tokens.countTokens()<1){
+			return "";
+		}
 		return tokens.nextToken();
 	}
 	@Override
@@ -94,6 +97,9 @@ public class Empresa implements ITransferObject, IEmpresa {
 	public String getApellido1Representante() {
 		String linea = this.representante;
 		StringTokenizer tokens = new StringTokenizer(linea);
+		if(tokens.countTokens()<2){
+			return "";
+		}
 		tokens.nextToken();
 		return tokens.nextToken();
 	}
@@ -102,6 +108,9 @@ public class Empresa implements ITransferObject, IEmpresa {
 	public String getApellido2Representante() {
 		String linea = this.representante;
 		StringTokenizer tokens = new StringTokenizer(linea);
+		if(tokens.countTokens()<3){
+			return "";
+		}
 		tokens.nextToken();
 		tokens.nextToken();
 		return tokens.nextToken();
