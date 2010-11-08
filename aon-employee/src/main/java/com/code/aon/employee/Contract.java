@@ -75,6 +75,11 @@ public class Contract implements ITransferObject {
 	private byte[] document;
 
 	private ContractStatus status;
+	
+//	private Set<ContractPayment> payments = new HashSet<ContractPayment>();
+	
+//	private Set<ContractDeduction> deductions = new HashSet<ContractDeduction>();
+
 
 	/**
 	 * Gets the id.
@@ -197,6 +202,23 @@ public class Contract implements ITransferObject {
 	public void setStatus(ContractStatus status) {
 		this.status = status;
 	}
+	
+//	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
+//	public Set<ContractPayment> getPayments() {
+//		return this.payments;
+//	}
+//	public void setPayments( Set<ContractPayment> payments ) {
+//		this.payments = payments;
+//	}
+	
+//	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
+//	public Set<ContractDeduction> getDeductions() {
+//		return this.deductions;
+//	}
+//	public void setDeductions( Set<ContractDeduction> deductions ) {
+//		this.deductions = deductions;
+//	}
+	
 	
 	@Transient
 	public String getCode(){
