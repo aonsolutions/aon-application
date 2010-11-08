@@ -574,7 +574,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Enterprise_registry_surname,Enterprise_registry_name</value>
+			<value>Enterprise_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1259,7 +1259,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Enterprise_registry_surname,Enterprise_registry_name</value>
+			<value>Enterprise_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
