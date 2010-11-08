@@ -82,7 +82,7 @@
 												style="margin-left:1.1em;" rowKeyVar="row" >
 					           				<aon:outputText value="#{recipient}"/>
 					           				<c:if test="#{sms.allowUpdateRecipients}">
-												<a4j:commandButton id="removeFromList" value="" 
+												<a4j:commandButton id="removeFromList" value="&#160;" 
 													title="#{smsBundle.sms_removeFromlist}"
 													styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"													
 													reRender="SMS_recipient, recipientList"
@@ -121,7 +121,7 @@
 										<f:selectItems value="#{commonCollections.months}" />
 									</aon:selectOneMenu>
 	
-									<aon:commandButton id="Summary" value="" title="#{smsBundle.sms_filter}"
+									<aon:commandButton id="Summary" value="&#160;" title="#{smsBundle.sms_filter}"
 										reRender="smsSummary"
 										styleClass="aon-margin-left aon-icon-commandButton aon-icon-advanced-search"
 										actionListener="#{sms.summary}"
