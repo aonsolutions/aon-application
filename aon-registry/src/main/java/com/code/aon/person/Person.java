@@ -57,6 +57,10 @@ public class Person implements ITransferObject, IRegistry {
 	/** Social Security number */
 	private String socialSecurityNumber;
 
+	private String firstSurname;
+
+	private String secondSurname;
+
 	/**
 	 * Gets the id.
 	 * 
@@ -169,6 +173,24 @@ public class Person implements ITransferObject, IRegistry {
 		this.socialSecurityNumber = socialSecurityNumber;
 	}
 	
+	@Column(name="first_surname", length = 64)
+	public String getFirstSurname() {
+		return firstSurname;
+	}
+
+	public void setFirstSurname(String firstSurname) {
+		this.firstSurname = firstSurname;
+	}
+
+	@Column(name="second_surname", length = 64)
+	public String getSecondSurname() {
+		return secondSurname;
+	}
+
+	public void setSecondSurname(String secondSurname) {
+		this.secondSurname = secondSurname;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -182,6 +204,8 @@ public class Person implements ITransferObject, IRegistry {
 				.append(this.maritalStatus, o.maritalStatus)
 				.append(this.registry, o.registry)
 				.append(this.socialSecurityNumber, o.socialSecurityNumber)
+				.append(this.firstSurname, o.firstSurname)
+				.append(this.secondSurname, o.secondSurname)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -196,6 +220,8 @@ public class Person implements ITransferObject, IRegistry {
 			.append(maritalStatus)
 			.append(registry)
 			.append(socialSecurityNumber)
+			.append(firstSurname)
+			.append(secondSurname)
 			.toHashCode();
 	}
 

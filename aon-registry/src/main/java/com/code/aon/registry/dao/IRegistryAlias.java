@@ -148,28 +148,34 @@ public interface IRegistryAlias {
 	String  REGISTRY_DOCUMENT = REGISTRY_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: Registry_documentType
+	* Hibernate value: Registry.documentType
+	*/
+	String  REGISTRY_DOCUMENT_TYPE = REGISTRY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Registry_geozone
+	* Hibernate value: Registry.geozone
+	*/
+	String  REGISTRY_GEOZONE = REGISTRY_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: Registry_id
 	* Hibernate value: Registry.id
 	*/
-	String  REGISTRY_ID = REGISTRY_ENTRY.getAliasNames()[2];
+	String  REGISTRY_ID = REGISTRY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Registry_name
 	* Hibernate value: Registry.name
 	*/
-	String  REGISTRY_NAME = REGISTRY_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Registry_surname
-	* Hibernate value: Registry.surname
-	*/
-	String  REGISTRY_SURNAME = REGISTRY_ENTRY.getAliasNames()[4];
+	String  REGISTRY_NAME = REGISTRY_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Registry_type
 	* Hibernate value: Registry.type
 	*/
-	String  REGISTRY_TYPE = REGISTRY_ENTRY.getAliasNames()[5];
+	String  REGISTRY_TYPE = REGISTRY_ENTRY.getAliasNames()[6];
 
 
 
@@ -441,16 +447,22 @@ public interface IRegistryAlias {
 	String  REGISTRY_DIR_STAFF_REPRESENTATIVE = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[8];
 
 	/** 
+	* Alias value: RegistryDirStaff_representativeLabor
+	* Hibernate value: RegistryDirStaff.representativeLabor
+	*/
+	String  REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[9];
+
+	/** 
 	* Alias value: RegistryDirStaff_shareHolder
 	* Hibernate value: RegistryDirStaff.shareHolder
 	*/
-	String  REGISTRY_DIR_STAFF_SHARE_HOLDER = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[9];
+	String  REGISTRY_DIR_STAFF_SHARE_HOLDER = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: RegistryDirStaff_shareNumber
 	* Hibernate value: RegistryDirStaff.shareNumber
 	*/
-	String  REGISTRY_DIR_STAFF_SHARE_NUMBER = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[10];
+	String  REGISTRY_DIR_STAFF_SHARE_NUMBER = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[11];
 
 
 

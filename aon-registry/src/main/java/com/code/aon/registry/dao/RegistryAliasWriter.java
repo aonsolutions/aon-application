@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
-import com.code.aon.common.dao.DAOConstantsWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.person.Person;
 import com.code.aon.registry.Category;
@@ -34,7 +33,7 @@ public class RegistryAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-registry/src/main/java/com/code/aon/registry/dao/IRegistryAlias.java");
+		File file = new File("/AON-PAYROLL/aon-registry/src/main/java/com/code/aon/registry/dao/IRegistryAlias.java");
 		String[] classes = new String[] { 
 			Category.class.getName(),
 			RecordData.class.getName(),
