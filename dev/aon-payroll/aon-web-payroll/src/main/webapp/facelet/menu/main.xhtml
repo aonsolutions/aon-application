@@ -26,6 +26,13 @@
 						</f:facet>					
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="salaryDraft" 
+									action="salaryDraft_search" 
+									actionListener="#{contract.onEditSearch}"
+									value="#{employeeBundle.employee_salaryDraft_module}">
+								</aon:commandLink>
+							</aon:div>				
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="salary" 
 									action="salary_search" 
 									actionListener="#{salary.onEditSearch}"

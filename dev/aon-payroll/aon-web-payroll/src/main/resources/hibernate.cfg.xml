@@ -95,11 +95,13 @@
 		<mapping class="com.code.aon.employee.ContractBatch"/>
 		<mapping class="com.code.aon.employee.ContractBatchDetail"/>
 		<mapping class="com.code.aon.employee.ContractData"/>
+		<mapping class="com.code.aon.employee.ContractDeduction"/>
+		<mapping class="com.code.aon.employee.ContractPayment"/>
 		<mapping class="com.code.aon.employee.ContractTracking"/>		
 		<mapping class="com.code.aon.employee.ContractType"/>		
 		<mapping class="com.code.aon.employee.Salary"/>
-		<mapping class="com.code.aon.employee.SalaryPayment"/>
 		<mapping class="com.code.aon.employee.SalaryDeduction"/>
+		<mapping class="com.code.aon.employee.SalaryPayment"/>
 
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
