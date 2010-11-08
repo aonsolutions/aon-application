@@ -52,12 +52,14 @@
 						<f:validateLength minimum="1" maximum="64" />
 					</aon:inputText>
 				
-					<aon:outputLabel for="Registry_surname"
-						value="#{registryBundle.registry_surname}" />
-					<aon:inputText id="Registry_surname" maxlength="64"
-						value="#{controller.to.registry.surname}" size="64">
-						<f:validateLength minimum="1" maximum="64" />
-					</aon:inputText>
+					<c:if test="#{!skipSurname}">
+						<aon:outputLabel for="Registry_surname"
+							value="#{registryBundle.registry_surname}" />
+						<aon:inputText id="Registry_surname" maxlength="64"
+							value="#{controller.to.registry.surname}" size="64">
+							<f:validateLength minimum="1" maximum="64" />
+						</aon:inputText>
+					</c:if>
 				
 					<aon:outputLabel for="Registry_alias"
 						value="#{bundle.aon_company_alias}" />
