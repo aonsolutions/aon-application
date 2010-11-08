@@ -38,6 +38,39 @@ public class ContractController extends BasicController {
 	
 	private List<SelectItem> CCCs;
 	
+	private double totalPayment;
+	private double totalDeduction;
+	private double totalLiquid;
+	
+	public double getTotalPayment() {
+		calculateTotalPayment();
+		return totalPayment;
+	}
+
+	public void setTotalPayment(double totalPayment) {
+		this.totalPayment = totalPayment;
+	}
+
+	public double getTotalDeduction() {
+		calculateTotalDeduction();
+		return totalDeduction;
+	}
+
+	public void setTotalDeduction(double totalDeduction) {
+		this.totalDeduction = totalDeduction;
+	}
+
+	public double getTotalLiquid() {
+		calculateTotalLiquid();
+		return totalLiquid;
+	}
+
+	public void setTotalLiquid(double totalLiquid) {
+		this.totalLiquid = totalLiquid;
+	}
+	  
+	
+	
 	public ContractController() {
 		this.workPlaces = new LinkedList<SelectItem>();
 		this.CCCs = new LinkedList<SelectItem>();
@@ -132,5 +165,15 @@ public class ContractController extends BasicController {
 		}
 		context.responseComplete();
 	}
+    
+    private void calculateTotalPayment(){
+    	this.getTo();
+    }
+    private void calculateTotalDeduction(){
+    	
+    }
+    private void calculateTotalLiquid(){
+    	
+    }
 
 }
