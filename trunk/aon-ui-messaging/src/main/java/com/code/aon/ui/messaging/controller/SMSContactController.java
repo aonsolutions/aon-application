@@ -9,6 +9,7 @@ import javax.faces.model.ListDataModel;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -24,7 +25,11 @@ public class SMSContactController {
 	private ListDataModel model;
 	private List<SelectionContact> contacts = new ArrayList<SelectionContact>();
 	
-	private String displayName, name, surname;
+	private String displayName;
+	
+	private String name;
+	
+	private String surname;
 	
 	public ListDataModel getModel() {
 		return model;
@@ -58,14 +63,13 @@ public class SMSContactController {
 		criteria = new Criteria();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onSearch(ActionEvent event) {
 		try {
 			init();
 			addExpressions(); 
 			IManagerBean bean = FormUtil.getController( BEAN_CONTACT ).getManagerBean();
 			criteria.addOrder( bean.getFieldName( IWebMailAlias.CONTACT_NAME ) );
-			List lst = bean.getList( criteria );
+			List<ITransferObject> lst = bean.getList( criteria );
             for (int i = 0, max = lst.size(); i < max; i++) {
             	SelectionContact sc = new SelectionContact();
             	sc.setContact( (Contact) lst.get(i) );
@@ -102,6 +106,9 @@ public class SMSContactController {
 		this.criteria = new Criteria();
 	    this.contacts.clear();
 		this.model = null;
+		this.displayName = null;
+		this.name = null;
+		this.surname = null;
 	}
 
 	public class SelectionContact{
@@ -157,13 +164,13 @@ public class SMSContactController {
 
 	private void addExpressions() throws ManagerBeanException {
 		if (! StringUtils.isEmpty(displayName) ) { 
-			addExpression( "Contact_displayName", displayName );
+			addExpression( IWebMailAlias.CONTACT_DISPLAY_NAME, displayName );
 		}
 		if (! StringUtils.isEmpty(name) ) {
-			addExpression( "Contact_name", name );
+			addExpression( IWebMailAlias.CONTACT_NAME, name );
 		}
 		if (! StringUtils.isEmpty(surname) ) { 
-			addExpression( "Contact_surname", surname);
+			addExpression( IWebMailAlias.CONTACT_SURNAME, surname);
 		}
 	}
 
