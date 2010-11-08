@@ -90,7 +90,7 @@ public class TaskAlarmController extends AlarmController {
 			Iterator iter = taskBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				Task task = (Task)iter.next();
-				customer = task.getDossier().getCustomer().getRegistry().getName() + " " + task.getDossier().getCustomer().getRegistry().getSurname();
+				customer = task.getDossier().getCustomer().getRegistry().getName() ;
 			}
 		}
 		return customer;
