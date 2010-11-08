@@ -43,7 +43,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 @Entity
 @Table(name="registry")
 @Inheritance(strategy=InheritanceType.JOINED )
-@org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REGISTRY", columnNames={"name","surname"})})
+@org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REGISTRY", columnNames={"name"})})
 public class Registry implements ITransferObject {
 	
 	private static final long serialVersionUID = 8635760095705923309L;
@@ -53,7 +53,7 @@ public class Registry implements ITransferObject {
 	private DocumentType documentType;
 //	private GeoZone documentGeozone;
 	private String name;
-	private String surname;
+//	private String surname;
 	private String alias;
 	private RegistryType type;
 	private GeoZone geozone;
@@ -125,13 +125,13 @@ public class Registry implements ITransferObject {
 		this.name = name;
 	}
 
-	@Column(length=64)
-	public String getSurname() {
-		return surname;
-	}
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
+//	@Column(length=64)
+//	public String getSurname() {
+//		return surname;
+//	}
+//	public void setSurname(String surname) {
+//		this.surname = surname;
+//	}
 
 	public RegistryType getType() {
 		return type;
@@ -189,7 +189,8 @@ public class Registry implements ITransferObject {
 
     @Transient
     public String getFullName() {
-    	return ((StringUtils.isEmpty(getSurname())) ? "" : getSurname() + ", ") + ((StringUtils.isEmpty(getName())) ? "" : getName());
+//    	return ((StringUtils.isEmpty(getSurname())) ? "" : getSurname() + ", ") + ((StringUtils.isEmpty(getName())) ? "" : getName());
+    	return (StringUtils.isEmpty(getName())) ? "" : getName();
     }
 
 	@Transient
@@ -263,7 +264,7 @@ public class Registry implements ITransferObject {
 				.append(this.alias, o.alias)
 				.append(this.document, o.document)				
 				.append(this.name, o.name)
-				.append(this.surname, o.surname)				
+//				.append(this.surname, o.surname)				
 				.append(this.type, o.type)
 				.isEquals();
 		}
@@ -277,7 +278,7 @@ public class Registry implements ITransferObject {
 			.append(document)
 			.append(id)	
 			.append(name)			
-			.append(surname)
+//			.append(surname)
 			.append(type)
 			.toHashCode();
 	}
