@@ -135,16 +135,20 @@
 										<aon:outputText value="#{employeeBundle.employee_salary_payment}" />
 									</aon:div>
 								</aon:div>
-								<ui:include src="/com/code/aon/ui/employee/facelet/salaryPayment/gridContent.xhtml" >
+								<ui:include src="/com/code/aon/ui/employee/facelet/payment/gridContent.xhtml" >
 									<ui:param name="controller" value="#{salaryPayment}" />
+									<ui:param name="skipStartDateColumn" value="true" />
+									<ui:param name="skipEndDateColumn" value="true" />
 								</ui:include>
 								<aon:div styleClass="aon-form-group-title">
 									<aon:div styleClass="aon-form-group-title-internal">
 										<aon:outputText value="#{employeeBundle.employee_salary_deduction}" />
 									</aon:div>
 								</aon:div>
-								<ui:include src="/com/code/aon/ui/employee/facelet/salaryDeduction/gridContent.xhtml" >
+								<ui:include src="/com/code/aon/ui/employee/facelet/deduction/gridContent.xhtml" >
 									<ui:param name="controller" value="#{salaryDeduction}" />
+									<ui:param name="skipStartDateColumn" value="true" />
+									<ui:param name="skipEndDateColumn" value="true" />
 								</ui:include>
 							</aon:div>
 						</aon:panel>
