@@ -101,7 +101,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Person_registry_surname,Person_registry_name</value>
+			<value>Person_firstSurname,Person_secondSurname,Person_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -427,7 +427,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Person_registry_surname,Person_registry_name</value>
+			<value>Person_firstSurname,Person_secondSurname,Person_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
