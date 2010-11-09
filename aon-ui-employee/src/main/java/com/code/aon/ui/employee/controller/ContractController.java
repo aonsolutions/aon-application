@@ -3,6 +3,7 @@ package com.code.aon.ui.employee.controller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,15 +25,24 @@ import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.employee.Contract;
+import com.code.aon.employee.ContractDeduction;
+import com.code.aon.employee.ContractPayment;
+import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 
 public class ContractController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
+	
+	private final String CONTRACT_PAYMENT_CONTROLLER = "contractPayment";
+    private final String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
 
 	private Enterprise enterprise;
 	
@@ -45,7 +55,6 @@ public class ContractController extends BasicController {
 	private double totalLiquid;
 	
 	public double getTotalPayment() {
-		calculateTotalPayment();
 		return totalPayment;
 	}
 
@@ -54,7 +63,6 @@ public class ContractController extends BasicController {
 	}
 
 	public double getTotalDeduction() {
-		calculateTotalDeduction();
 		return totalDeduction;
 	}
 
@@ -168,42 +176,63 @@ public class ContractController extends BasicController {
 		context.responseComplete();
 	}
     
-    private final String CONTRACT_PAYMENT_CONTROLLER = "contractPayment";
-    private final String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
-    
-    private void calculateTotalPayment(){
-//    	BasicController bean = (BasicController)AonUtil.getRegisteredBean(CONTRACT_PAYMENT_CONTROLLER);
-//    	IController bean = FormUtil.getController(CONTRACT_PAYMENT_CONTROLLER);
-//    	bean.getManagerBean().getList(criteria);
-    	
-    	
-    	this.getTo();
+    private void calculateTotalPayment(List<ITransferObject> list){
+    	Double total = 0.0;
+    	for(ITransferObject to: list){
+    		ContractPayment cp = (ContractPayment)to;
+    		cp.getFunction();
+    		total++;
+    	}
+    	setTotalPayment(total);
     }
-    private void calculateTotalDeduction(){
-    	
+    private void calculateTotalDeduction(List<ITransferObject> list){
+    	Double total = 0.0;
+    	for(ITransferObject to: list){
+    		ContractDeduction cd = (ContractDeduction)to;
+    		cd.getFunction();
+    		total++;
+    	}
+    	setTotalDeduction(total);
     }
     private void calculateTotalLiquid(){
-    	
-    }
-    
-    public void onCalculateTotals(ActionEvent event){
-    	try {
-			loadTotals();
-		} catch (ManagerBeanException e) {
-			
-		}
+    	setTotalLiquid(getTotalPayment()-getTotalDeduction());
     }
     
     private void loadTotals() throws ManagerBeanException{
-    	Criteria criteria = new Criteria();
-    	
+    	Expression expr1;
+    	Expression expr2;
     	IController pBean = FormUtil.getController(CONTRACT_PAYMENT_CONTROLLER);
+    	pBean.getCriteria().addLessThanOrEqualExpression(pBean.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_START_DATE), new Date()); 
+    	expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(pBean.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_END_DATE), new Date());
+    	expr2 = ExpressionUtilities.getNullExpression(pBean.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_END_DATE));
+    	pBean.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));	
+    	pBean.initializeModel();
     	IController dBean = FormUtil.getController(CONTRACT_DEDUCTION_CONTROLLER);
-    	pBean.getManagerBean().getList(criteria);
-    	dBean.getManagerBean().getList(criteria);
+    	dBean.getCriteria().addLessThanOrEqualExpression(dBean.getFieldName(IEmployeeAlias.CONTRACT_DEDUCTION_START_DATE), new Date()); 
+    	expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(dBean.getFieldName(IEmployeeAlias.CONTRACT_DEDUCTION_END_DATE), new Date());
+    	expr2 = ExpressionUtilities.getNullExpression(dBean.getFieldName(IEmployeeAlias.CONTRACT_DEDUCTION_END_DATE));
+    	dBean.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));	
+    	dBean.initializeModel();
     	
-    	
-    	
+    	calculateTotalPayment(pBean.getManagerBean().getList(pBean.getCriteria()));
+    	calculateTotalDeduction(dBean.getManagerBean().getList(dBean.getCriteria()));
+    	calculateTotalLiquid();
+    }
+    
+    @Override
+    public void onSelect(ActionEvent event) {
+    	super.onSelect(event);
+    	try {
+			loadTotals();
+		} catch (ManagerBeanException e) {
+//			String msg = "No se han podido calcular los totales";
+//			AonUtil.addWarningMessage(msg);
+			LOGGER.error(e.getMessage(), e);
+		}
     }
 
+    public void onSalarySave(ActionEvent event) {
+    	String msg = "Creacion de la nomina";
+		AonUtil.addWarningMessage(msg);
+    }
 }

@@ -1,12 +1,16 @@
 package com.code.aon.ui.employee.event;
 
+import java.util.Date;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.employee.ContractType;
 import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class ContractSearchListener extends ControllerSearchListener {
@@ -17,6 +21,16 @@ public class ContractSearchListener extends ControllerSearchListener {
 	
 	private ContractType contractType; 
 	
+	private Date endDate; 
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	public Person getPerson() {
 		return person;
 	}
@@ -59,6 +73,11 @@ public class ContractSearchListener extends ControllerSearchListener {
 		if ((getContractType() != null) && (getContractType().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEmployeeAlias.CONTRACT_CONTRACT_TYPE_ID), getContractType().getId());			
 		}
+//		if ((getEndDate() != null)) {
+//		}
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEmployeeAlias.CONTRACT_END_DATE), new Date());
+		Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IEmployeeAlias.CONTRACT_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
 	}
 
 }
