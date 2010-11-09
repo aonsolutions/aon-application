@@ -117,7 +117,7 @@ public class CertificateController {
 				criteria.addExpression(empleadoBean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_NAME),params.getName());
 			}
 			if (!StringUtils.isEmpty(params.getSurname())) {
-				criteria.addExpression(empleadoBean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_SURNAME),params.getSurname());
+				criteria.addExpression(empleadoBean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_FIRST_SURNAME),params.getSurname());
 			}
 //			if (!StringUtils.isEmpty(params.getApellido2())) {
 //				criteria.addExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_LAST_NAME),params.getApellido2());
