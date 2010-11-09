@@ -11,7 +11,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<aon:methodParam name="backAction" value="salaryDraft_list" />
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salaryDraft_module}" />
-				<ui:param name="controller" value="#{contact}" />
+				<ui:param name="controller" value="#{contract}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
 
@@ -65,9 +65,15 @@
 					<aon:outputLabel for="Contract_endDate"
 						value="#{bundle.aon_end_date}" />
 					<aon:selectInputDate id="Contract_endDate"
+						value="#{contractSearch.endDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+<!--  
+					<aon:selectInputDate id="Contract_endDate"
 						valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
+-->
 
 <!--  
 					<aon:outputText value="#{employeeBundle.employee_salary_totalPayment}" />
