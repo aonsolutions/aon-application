@@ -39,6 +39,8 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
+			<param id="payments" value="#{salary.getPayments}" />
+			<param id="deductions" value="#{salary.getDeductions}" />
 		</params>
 	</report>
 	<report id="salaryReport" description="Salary report ">
