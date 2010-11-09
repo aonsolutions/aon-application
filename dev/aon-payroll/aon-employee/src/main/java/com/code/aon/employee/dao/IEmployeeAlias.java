@@ -9,8 +9,8 @@ import com.code.aon.employee.ContractData;
 import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
 import com.code.aon.employee.Salary;
-import com.code.aon.employee.SalaryDeduction;
 import com.code.aon.employee.SalaryPayment;
+import com.code.aon.employee.SalaryDeduction;
 
 /** 
 * Interface for holding entity properties constants.
@@ -67,40 +67,46 @@ public interface IEmployeeAlias {
 	String  CONTRACT_PERSON_REGISTRY_NAME = CONTRACT_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Contract_person_registry_surname
-	* Hibernate value: Contract.person.registry.surname
+	* Alias value: Contract_person_firstSurname
+	* Hibernate value: Contract.person.firstSurname
 	*/
-	String  CONTRACT_PERSON_REGISTRY_SURNAME = CONTRACT_ENTRY.getAliasNames()[7];
+	String  CONTRACT_PERSON_FIRST_SURNAME = CONTRACT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Contract_person_secondSurname
+	* Hibernate value: Contract.person.secondSurname
+	*/
+	String  CONTRACT_PERSON_SECOND_SURNAME = CONTRACT_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Contract_startDate
 	* Hibernate value: Contract.startDate
 	*/
-	String  CONTRACT_START_DATE = CONTRACT_ENTRY.getAliasNames()[8];
+	String  CONTRACT_START_DATE = CONTRACT_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Contract_status
 	* Hibernate value: Contract.status
 	*/
-	String  CONTRACT_STATUS = CONTRACT_ENTRY.getAliasNames()[9];
+	String  CONTRACT_STATUS = CONTRACT_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Contract_workPlace_id
 	* Hibernate value: Contract.workPlace.id
 	*/
-	String  CONTRACT_WORK_PLACE_ID = CONTRACT_ENTRY.getAliasNames()[10];
+	String  CONTRACT_WORK_PLACE_ID = CONTRACT_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Contract_workPlace_enterprise_id
 	* Hibernate value: Contract.workPlace.enterprise.id
 	*/
-	String  CONTRACT_WORK_PLACE_ENTERPRISE_ID = CONTRACT_ENTRY.getAliasNames()[11];
+	String  CONTRACT_WORK_PLACE_ENTERPRISE_ID = CONTRACT_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Contract_workPlace_enterprise_registry_name
 	* Hibernate value: Contract.workPlace.enterprise.registry.name
 	*/
-	String  CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME = CONTRACT_ENTRY.getAliasNames()[12];
+	String  CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME = CONTRACT_ENTRY.getAliasNames()[13];
 
 
 
