@@ -1039,11 +1039,11 @@ color:#000;
 }
 
 .aon-commandLink-disabled{
-	color:#cccccc;
+	color: graytext !important;
 }
 
 .aon-commandLink-disabled:hover{
-	color:#cccccc;
+	color: graytext !important;
 }
 
 .aon-label{

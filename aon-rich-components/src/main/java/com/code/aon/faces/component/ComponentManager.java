@@ -104,18 +104,19 @@ public class ComponentManager {
 		return HTML.STYLE_CLASS_ATTR;
 	}
 	
-	private void updateDisabledStyleClass(Tag tag, FaceletContext ctx, UIComponent c) {
-		TagAttribute disabled = FaceletUtil.getAttribute(tag, HTML.DISABLED_ATTR);
-		if ( (disabled != null) && disabled.getBoolean(ctx) ) {
-			String disabledClass = null;
-			TagAttribute disabledClassTag = FaceletUtil.getAttribute(tag, DISABLED_STYLE_CLASS);
-			if ( disabledClassTag != null ) {
-				disabledClass = disabledClassTag.getValue();
+	private String getDisabledClass(FaceletContext ctx, UIComponent c) {
+		String disabledClass = (String) FaceletUtil.getProperty(ctx.getFacesContext(), c, DISABLED_STYLE_CLASS);
+		return disabledClass;
+	}
+	
+	private void updateDisabledStyleClass(FaceletContext ctx, UIComponent c) {
+		String disabledClass = getDisabledClass(ctx ,c);
+		if ( disabledClass != null ) {
+			String styleClass = getInputStyleClass(c);
+			if ( FaceletUtil.getBooleanProperty(ctx.getFacesContext(), c, HTML.DISABLED_ATTR) ) {
+				FaceletUtil.addStyleClass(ctx.getFacesContext(), c, styleClass, disabledClass);
 			} else {
-				disabledClass = (String) FaceletUtil.getProperty(ctx.getFacesContext(), c, DISABLED_STYLE_CLASS);
-			}
-			if ( disabledClass != null ) {
-				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass);
+				FaceletUtil.removeStyleClass(ctx.getFacesContext(), c, styleClass, disabledClass);
 			}
 		}
 	}		
@@ -152,11 +153,14 @@ public class ComponentManager {
 			}
 		}
 		updateRendered(tag, ctx, component);
-		updateDisabledStyleClass(tag, ctx, component);
 	}
 	
 	public void onComponentCreated(FaceletContext ctx, UIComponent component, UIComponent parent) {
 		updateComponent(ctx, component, parent);
+	}
+
+	public void onComponentPopulated(FaceletContext ctx, UIComponent component, UIComponent parent) {
+		updateDisabledStyleClass(ctx, component);
 	}
 	
 }

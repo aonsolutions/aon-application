@@ -34,4 +34,9 @@ public class AonAjaxComponentHandler extends AjaxComponentHandler {
 		ComponentManager.getInstance().onComponentCreated( ctx, c, parent );
 	}	
 
+	@Override
+	protected void onComponentPopulated(FaceletContext ctx, UIComponent c,
+			UIComponent parent) {
+		ComponentManager.getInstance().onComponentPopulated( ctx, c, parent );		
+	}	
 }

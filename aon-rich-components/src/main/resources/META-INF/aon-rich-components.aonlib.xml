@@ -66,6 +66,7 @@
 
 	<component localName="commandButton">
     	<attribute name="styleClass" value="aon-commandButton" />
+    	<attribute name="disabledStyleClass" value="aon-commandLink-disabled" />
     	<attribute name="reRender" value="aonContent" />			
 	</component>
 
