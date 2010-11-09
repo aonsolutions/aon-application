@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="45">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="183"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
 	<style name="complements_TABLE">
@@ -29,6 +29,9 @@
 		</box>
 	</style>
 	<subDataset name="Table Dataset 2"/>
+	<subDataset name="dataset1"/>
+	<parameter name="payments" class="com.code.aon.ui.employee.controller.SalaryPayments"/>
+	<parameter name="deductions" class="com.code.aon.ui.employee.controller.SalaryDeductions"/>
 	<field name="salary" class="com.code.aon.employee.Salary"/>
 	<group name="salary_GROUP" isStartNewPage="true">
 		<groupExpression><![CDATA[$F{salary}]]></groupExpression>
@@ -48,7 +51,7 @@
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[Trabajador :]]></text>
 					</staticText>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="59" y="5" width="210" height="11"/>
 						<textElement verticalAlignment="Middle"/>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getEmployee()]]></textFieldExpression>
@@ -83,32 +86,32 @@
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[Fecha Antiguedad :]]></text>
 					</staticText>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="39" y="17" width="74" height="11"/>
 						<textElement verticalAlignment="Middle"/>
-						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getContract().getPerson().getRegistry().getDocument()]]></textFieldExpression>
 					</textField>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="220" y="17" width="49" height="11"/>
 						<textElement verticalAlignment="Middle"/>
 						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 					</textField>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="171" y="29" width="98" height="11"/>
 						<textElement verticalAlignment="Middle"/>
-						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getContract().getPerson().getSocialSecurityNumber()]]></textFieldExpression>
 					</textField>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="91" y="53" width="34" height="11"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle"/>
 						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 					</textField>
-					<textField>
+					<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 						<reportElement x="203" y="53" width="66" height="11"/>
 						<textElement verticalAlignment="Middle"/>
-						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+						<textFieldExpression class="java.util.Date"><![CDATA[$F{salary}.getContract().getStartDate()]]></textFieldExpression>
 					</textField>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="127" y="41" width="142" height="11"/>
 						<textElement verticalAlignment="Middle"/>
 						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
@@ -128,20 +131,20 @@
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[Empresa :]]></text>
 					</staticText>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="55" y="5" width="214" height="11"/>
 						<textElement verticalAlignment="Middle"/>
-						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getContract().getWorkPlace().getEnterprise().getRegistry().getName()]]></textFieldExpression>
 					</textField>
 					<staticText>
 						<reportElement x="5" y="17" width="49" height="11"/>
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[Domicilio :]]></text>
 					</staticText>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="55" y="17" width="214" height="11"/>
 						<textElement verticalAlignment="Middle"/>
-						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getContract().getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress()]]></textFieldExpression>
 					</textField>
 					<textField>
 						<reportElement x="55" y="29" width="214" height="11"/>
@@ -153,17 +156,17 @@
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[C.I.F :]]></text>
 					</staticText>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="55" y="41" width="214" height="11"/>
 						<textElement verticalAlignment="Middle"/>
-						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getContract().getWorkPlace().getEnterprise().getRegistry().getDocument()]]></textFieldExpression>
 					</textField>
 					<staticText>
 						<reportElement x="5" y="53" width="89" height="11"/>
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[CCC Seguridad Social :]]></text>
 					</staticText>
-					<textField>
+					<textField isBlankWhenNull="true">
 						<reportElement x="95" y="53" width="174" height="11"/>
 						<textElement verticalAlignment="Middle"/>
 						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
@@ -336,10 +339,10 @@
 					</textElement>
 					<text><![CDATA[Salario base ......................................................................................................]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="39" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getBaseSalary().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="30" y="51" width="247" height="11"/>
@@ -351,30 +354,30 @@
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Horas Extraordinarias ........................................................................................]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="87" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getOvertimeHours().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="30" y="99" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Gratificaciones Extraordinarias]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="99" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getSpecialBonuses().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="30" y="111" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Salario en especie]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="111" width="136" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getSalaryInKid().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="10" y="128" width="409" height="11"/>
@@ -436,45 +439,45 @@
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Contingencias comunes]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="286" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getCommonContingency().getFunction()]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="345" y="286" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getCommonContingency().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="30" y="298" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Desempleo]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="298" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getUnemployment().getFunction()]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="345" y="298" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getUnemployment().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="30" y="310" width="247" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Formación Profesional]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="310" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getJobTraining().getFunction()]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="345" y="310" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getJobTraining().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="30" y="322" width="247" height="11"/>
@@ -486,30 +489,30 @@
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Fuerza mayor o estructurales]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="334" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getStructuralOvertime().getFunction()]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="345" y="334" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getStructuralOvertime().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="43" y="346" width="234" height="11"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[No estructurales]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="346" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getNonStructuralOvertime().getFunction()]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="345" y="346" width="67" height="11"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getNonStructuralOvertime().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="30" y="358" width="247" height="11"/>
@@ -518,12 +521,12 @@
 					</textElement>
 					<text><![CDATA[TOTAL APORTACIONES]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="358" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getAportationTotal()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="20" y="373" width="257" height="11"/>
@@ -532,19 +535,19 @@
 					</textElement>
 					<text><![CDATA[2. Impuesto sobre la renta de las personas físicas]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="373" width="67" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getIrpf().getFunction()]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="345" y="373" width="67" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getIrpf().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="20" y="388" width="257" height="11"/>
@@ -553,12 +556,12 @@
 					</textElement>
 					<text><![CDATA[3. Anticipos]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="388" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getAdvancePayment().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="20" y="403" width="257" height="11"/>
@@ -567,12 +570,12 @@
 					</textElement>
 					<text><![CDATA[4. Valor de los productos recibidos en especie]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="403" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getInKid().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="20" y="418" width="257" height="11"/>
@@ -581,12 +584,12 @@
 					</textElement>
 					<text><![CDATA[5. Otras deducciones]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="277" y="418" width="136" height="11"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[0.00]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getOther().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="10" y="433" width="403" height="11"/>
@@ -626,30 +629,21 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
 					<text><![CDATA[RECIBI]]></text>
 				</staticText>
-				<componentElement>
-					<reportElement key="complements" style="complements_TABLE" x="30" y="63" width="383" height="11"/>
-					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-						<datasetRun subDataset="Table Dataset 2">
-							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
-						</datasetRun>
-						<jr:column width="247">
-							<jr:detailCell style="complements_TD" height="11" rowSpan="1">
-								<textField>
-									<reportElement x="0" y="0" width="247" height="11"/>
-									<textElement verticalAlignment="Middle"/>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="136">
-							<jr:detailCell style="complements_TD" height="11" rowSpan="1">
-								<textField>
-									<reportElement x="0" y="0" width="136" height="11"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle"/>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-					</jr:table>
-				</componentElement>
+				<textField isBlankWhenNull="true">
+					<reportElement x="277" y="168" width="136" height="11"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getSpecialSecurityBenefits().getAmount()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="277" y="192" width="136" height="11"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getMovingCompensation().getAmount()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="277" y="216" width="136" height="11"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getOtherNonWage().getAmount()]]></textFieldExpression>
+				</textField>
 			</frame>
 			<frame>
 				<reportElement x="0" y="6" width="555" height="20"/>
@@ -661,7 +655,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<staticText>
-					<reportElement x="5" y="0" width="130" height="20"/>
+					<reportElement x="5" y="0" width="75" height="20"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Periodo de liquidación:]]></text>
 				</staticText>
@@ -683,30 +677,39 @@
 					<textFieldExpression class="java.lang.Integer"><![CDATA[$F{salary}.getTotalDaysHours()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="152" y="0" width="19" height="20"/>
-					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[del]]></text>
+					<reportElement x="100" y="0" width="19" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Del]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="197" y="0" width="19" height="20"/>
-					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[de]]></text>
+					<reportElement x="269" y="0" width="19" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[a]]></text>
 				</staticText>
-				<staticText>
-					<reportElement x="260" y="0" width="17" height="20"/>
-					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[al]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="302" y="0" width="17" height="20"/>
-					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[de]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="360" y="0" width="17" height="20"/>
-					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[de]]></text>
-				</staticText>
+				<textField pattern="dd MMMMM yyyy">
+					<reportElement x="119" y="0" width="150" height="20"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{salary}.getStartDate()]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd MMMMM yyyy">
+					<reportElement x="288" y="0" width="150" height="20"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{salary}.getEndDate()]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</detail>
