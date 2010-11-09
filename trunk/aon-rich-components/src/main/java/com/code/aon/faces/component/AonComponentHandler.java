@@ -74,15 +74,15 @@ public class AonComponentHandler extends ComponentHandler {
 		ComponentManager.getInstance().onComponentCreated( ctx, c, parent );
 	}	
 	
+	@Override
+	protected void onComponentPopulated(FaceletContext ctx, UIComponent c,
+			UIComponent parent) {
+		ComponentManager.getInstance().onComponentPopulated( ctx, c, parent );		
+	}
+
 	private void updateLabelStyleClass(FaceletContext ctx, UIOutput label) {
 		String styleClassAttribute = ComponentManager.getInputStyleClass(label);
-		String styleClass = INPUT_REQUIRED_STYLE_CLASS;
-		Object styleClassValue = FaceletUtil.getProperty(ctx.getFacesContext(), label, styleClassAttribute);
-		String value = ObjectUtils.toString( styleClassValue );
-		if (! StringUtils.isEmpty(value) ) {
-			styleClass += " " + value;
-		}
-		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), label, styleClassAttribute, styleClass);
+		FaceletUtil.addStyleClass(ctx.getFacesContext(), label, styleClassAttribute, INPUT_REQUIRED_STYLE_CLASS);
 	}	
 	
 	private void updateLabel(FaceletContext ctx, UIInput c) {
