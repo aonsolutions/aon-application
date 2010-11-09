@@ -523,6 +523,10 @@
 			<property-name>beanName</property-name>
 			<value>periodAmortization</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AmortizationDetail_amortization_amortizationType_fixedAssetAccount_id,AmortizationDetail_amortization_fixedAssetAccount_id</value>
+		</managed-property>
 	</managed-bean>
 		
 	<!-- **************** AMORTIZATION TYPE ************************** -->
