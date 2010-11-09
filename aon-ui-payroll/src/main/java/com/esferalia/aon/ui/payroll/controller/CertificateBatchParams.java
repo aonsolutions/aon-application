@@ -3,7 +3,7 @@ package com.esferalia.aon.ui.payroll.controller;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.payroll.core.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
 
 public class CertificateBatchParams implements Serializable {
 

@@ -22,7 +22,7 @@ import com.esferalia.aon.payroll.EnterpriseCertificate;
 import com.esferalia.aon.payroll.EnterpriseCertificateDetail;
 import com.esferalia.aon.payroll.PayrollException;
 
-import com.esferalia.aon.payroll.core.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
 
 public class CertificateBatchGenerationWizard implements Serializable {
 
