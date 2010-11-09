@@ -85,7 +85,8 @@ public class EnterpriseTree implements ICompanyConstants {
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		String workPlaceId = bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ID);
 		criteria.addEqualExpression(workPlaceId, workPlace.getId());
-		criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_SURNAME));
+		criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_FIRST_SURNAME));
+		criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_SECOND_SURNAME));
 		criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_NAME));
 		for( ITransferObject to : bean.getList(criteria) ) {
 			Contract contract = (Contract) to;
@@ -136,7 +137,8 @@ public class EnterpriseTree implements ICompanyConstants {
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			String erp = cController.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 			criteria.addEqualExpression(erp, enterprise.getId());
-			criteria.addOrder(cController.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_SURNAME));
+			criteria.addOrder(cController.getFieldName(IEmployeeAlias.CONTRACT_PERSON_FIRST_SURNAME));
+			criteria.addOrder(cController.getFieldName(IEmployeeAlias.CONTRACT_PERSON_SECOND_SURNAME));
 			criteria.addOrder(cController.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_NAME));
 			cController.setCriteria(criteria);
 			cController.initializeModel();
@@ -259,7 +261,8 @@ public class EnterpriseTree implements ICompanyConstants {
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-			criteria.addOrder(controller.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_SURNAME));
+			criteria.addOrder(controller.getFieldName(IEmployeeAlias.CONTRACT_PERSON_FIRST_SURNAME));
+			criteria.addOrder(controller.getFieldName(IEmployeeAlias.CONTRACT_PERSON_SECOND_SURNAME));
 			criteria.addOrder(controller.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_NAME));
 			controller.initializeModel();
 			
