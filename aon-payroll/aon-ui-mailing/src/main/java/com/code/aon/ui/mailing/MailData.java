@@ -20,8 +20,6 @@ public class MailData {
 	
 	private String name;
 	
-	private String surname;
-	
 	private String address;
 	
 	private String city;
@@ -42,7 +40,6 @@ public class MailData {
 		this.id = parseValue(registry.getId());
     	this.document = parseValue(registry.getDocument());
     	this.name = parseValue(registry.getName());
-    	this.surname = parseValue(registry.getSurname());
 
     	RegistryAddress rAddress = registry.getDefaultAddress();
     	if (rAddress != null) {
@@ -97,10 +94,6 @@ public class MailData {
 		return name;
 	}
 
-	public String getSurname() {
-		return surname;
-	}
-
 	public String getAddress() {
 		return address;
 	}
@@ -147,7 +140,6 @@ public class MailData {
 		append(buffer, id);
 		append(buffer, document);
 		append(buffer, name);
-		append(buffer, surname);
 		append(buffer, address);
 		append(buffer, city);
 		append(buffer, zip);
