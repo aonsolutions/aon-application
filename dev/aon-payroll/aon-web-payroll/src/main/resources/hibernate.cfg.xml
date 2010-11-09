@@ -22,6 +22,7 @@
 		<property name="c3p0.preferredTestQuery">select 1;</property>
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+		<mapping package="com.esferalia.aon.payroll.type"/>
 
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
