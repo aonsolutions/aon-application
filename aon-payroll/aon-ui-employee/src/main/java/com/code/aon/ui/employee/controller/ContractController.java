@@ -27,6 +27,8 @@ import com.code.aon.employee.Contract;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 
 public class ContractController extends BasicController {
 
@@ -166,13 +168,41 @@ public class ContractController extends BasicController {
 		context.responseComplete();
 	}
     
+    private final String CONTRACT_PAYMENT_CONTROLLER = "contractPayment";
+    private final String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
+    
     private void calculateTotalPayment(){
+//    	BasicController bean = (BasicController)AonUtil.getRegisteredBean(CONTRACT_PAYMENT_CONTROLLER);
+//    	IController bean = FormUtil.getController(CONTRACT_PAYMENT_CONTROLLER);
+//    	bean.getManagerBean().getList(criteria);
+    	
+    	
     	this.getTo();
     }
     private void calculateTotalDeduction(){
     	
     }
     private void calculateTotalLiquid(){
+    	
+    }
+    
+    public void onCalculateTotals(ActionEvent event){
+    	try {
+			loadTotals();
+		} catch (ManagerBeanException e) {
+			
+		}
+    }
+    
+    private void loadTotals() throws ManagerBeanException{
+    	Criteria criteria = new Criteria();
+    	
+    	IController pBean = FormUtil.getController(CONTRACT_PAYMENT_CONTROLLER);
+    	IController dBean = FormUtil.getController(CONTRACT_DEDUCTION_CONTROLLER);
+    	pBean.getManagerBean().getList(criteria);
+    	dBean.getManagerBean().getList(criteria);
+    	
+    	
     	
     }
 
