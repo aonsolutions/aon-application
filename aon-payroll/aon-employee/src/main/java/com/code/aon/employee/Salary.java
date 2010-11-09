@@ -1,6 +1,7 @@
 package com.code.aon.employee;
 
 import java.util.Date;
+import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,10 +12,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -258,6 +261,31 @@ public class Salary implements ITransferObject {
 
 	public void setIrpfBase(Double irpfBase) {
 		this.irpfBase = irpfBase;
+	}
+	
+	@Transient
+	public String getStartDateDay(){
+		return DateFormatUtils.format(startDate, "dd", Locale.getDefault());
+	}
+	@Transient
+	public String getStartDateMonth(){
+		return DateFormatUtils.format(startDate, "MM", Locale.getDefault());
+	}
+	@Transient
+	public String getStartDateYear(){
+		return DateFormatUtils.format(startDate, "yyyy", Locale.getDefault());
+	}
+	@Transient
+	public String getEndDateDay(){
+		return DateFormatUtils.format(endDate, "dd", Locale.getDefault());
+	}
+	@Transient
+	public String getEndDateMonth(){
+		return DateFormatUtils.format(endDate, "MM", Locale.getDefault());
+	}
+	@Transient
+	public String getEndDateYear(){
+		return DateFormatUtils.format(endDate, "yyyy", Locale.getDefault());
 	}
 
 	

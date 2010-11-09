@@ -6,6 +6,8 @@ import com.code.aon.employee.Contract;
 import com.code.aon.employee.ContractBatch;
 import com.code.aon.employee.ContractBatchDetail;
 import com.code.aon.employee.ContractData;
+import com.code.aon.employee.ContractDeduction;
+import com.code.aon.employee.ContractPayment;
 import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
 import com.code.aon.employee.Salary;
@@ -224,6 +226,104 @@ public interface IEmployeeAlias {
 	* Hibernate value: ContractData.startDate
 	*/
 	String  CONTRACT_DATA_START_DATE = CONTRACT_DATA_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractDeduction entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_DEDUCTION_ENTRY = DAOConstants.getDAOConstant(ContractDeduction.class);
+
+	/** 
+	* Alias value: ContractDeduction_contract_id
+	* Hibernate value: ContractDeduction.contract.id
+	*/
+	String  CONTRACT_DEDUCTION_CONTRACT_ID = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractDeduction_description
+	* Hibernate value: ContractDeduction.description
+	*/
+	String  CONTRACT_DEDUCTION_DESCRIPTION = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractDeduction_endDate
+	* Hibernate value: ContractDeduction.endDate
+	*/
+	String  CONTRACT_DEDUCTION_END_DATE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractDeduction_function
+	* Hibernate value: ContractDeduction.function
+	*/
+	String  CONTRACT_DEDUCTION_FUNCTION = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractDeduction_id
+	* Hibernate value: ContractDeduction.id
+	*/
+	String  CONTRACT_DEDUCTION_ID = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractDeduction_startDate
+	* Hibernate value: ContractDeduction.startDate
+	*/
+	String  CONTRACT_DEDUCTION_START_DATE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContractDeduction_type
+	* Hibernate value: ContractDeduction.type
+	*/
+	String  CONTRACT_DEDUCTION_TYPE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractPayment entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_PAYMENT_ENTRY = DAOConstants.getDAOConstant(ContractPayment.class);
+
+	/** 
+	* Alias value: ContractPayment_contract_id
+	* Hibernate value: ContractPayment.contract.id
+	*/
+	String  CONTRACT_PAYMENT_CONTRACT_ID = CONTRACT_PAYMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractPayment_description
+	* Hibernate value: ContractPayment.description
+	*/
+	String  CONTRACT_PAYMENT_DESCRIPTION = CONTRACT_PAYMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractPayment_endDate
+	* Hibernate value: ContractPayment.endDate
+	*/
+	String  CONTRACT_PAYMENT_END_DATE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractPayment_function
+	* Hibernate value: ContractPayment.function
+	*/
+	String  CONTRACT_PAYMENT_FUNCTION = CONTRACT_PAYMENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractPayment_id
+	* Hibernate value: ContractPayment.id
+	*/
+	String  CONTRACT_PAYMENT_ID = CONTRACT_PAYMENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractPayment_startDate
+	* Hibernate value: ContractPayment.startDate
+	*/
+	String  CONTRACT_PAYMENT_START_DATE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContractPayment_type
+	* Hibernate value: ContractPayment.type
+	*/
+	String  CONTRACT_PAYMENT_TYPE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[6];
 
 
 
