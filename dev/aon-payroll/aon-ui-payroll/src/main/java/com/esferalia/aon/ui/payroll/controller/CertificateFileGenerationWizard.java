@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.faces.context.FacesContext;
@@ -29,7 +30,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.EnterpriseCertificate;
 import com.esferalia.aon.payroll.EnterpriseCertificateDetail;
 import com.esferalia.aon.payroll.PayrollException;
-import com.esferalia.aon.payroll.core.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
 
 public class CertificateFileGenerationWizard implements Serializable {
 
@@ -295,13 +296,13 @@ public class CertificateFileGenerationWizard implements Serializable {
 	}
 	
 	public void onZipGenerate(ActionEvent event) {
-//		byte[] buf = new byte[1024];
+		byte[] buf = new byte[1024];
 		try {
 			File file = File.createTempFile("aon-zip", MimeType.MIME_ZIP.getExtension());
 			FileOutputStream fos = new FileOutputStream(file);
 			ZipOutputStream out = new ZipOutputStream(fos);
 			
-//			for(RemesableCertificate remesable: getSelectedRemesas()){
+//			for(RemesableCertificate remesable: getSelectedBatchList()){
 //				setFileOutput(getCertificateWriter().createCertificate(remesable.getBatch(), getCertificate().getCertificateDetailBatchList(remesable.getBatch())));
 //				FileInputStream in = new FileInputStream(getFileOutput().getFile());
 //				out.putNextEntry(new ZipEntry(getCertificateWriter().getCertificate().getFichero()+".xml"));
