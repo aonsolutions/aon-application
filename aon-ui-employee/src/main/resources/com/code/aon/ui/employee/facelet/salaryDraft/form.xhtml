@@ -9,14 +9,16 @@
 
 	<ui:define name="content">
 		<aon:form id="salaryDraftForm">
-			<aon:methodParam name="saveAction" value="salaryDraft_form" resolve="true" />
+			<aon:methodParam name="saveAction" value="salaryDraft_form" />
+			<aon:methodParam name="saveActionListener" value="#{contract.onSalarySave}" type="actionListener" />
+			<aon:methodParam name="searchAction" value="salaryDraft_search" />
+			<aon:methodParam name="backAction" value="salaryDraft_list" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salaryDraft_module}" />
 				<ui:param name="controller" value="#{contract}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipRemoveButton" value="true" />
-				<ui:param name="skipSaveButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
 <!--  
