@@ -12,9 +12,7 @@ ALTER TABLE `enterprise_ccc` MODIFY `geozone` int(4) DEFAULT NULL COMMENT 'Ident
 
 ALTER TABLE `enterprise_activity` MODIFY `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa';
 
-
 ALTER TABLE `rdir_staff` ADD COLUMN `representative_labor` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el Directivo es representante laboral';
-
 
 ALTER TABLE `person` ADD COLUMN `name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre';
 ALTER TABLE `person` ADD COLUMN `first_surname` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Primer Apellido ';
@@ -22,14 +20,35 @@ ALTER TABLE `person` ADD COLUMN `second_surname` varchar(64) collate latin1_span
 
 ALTER TABLE `registry` DROP COLUMN `surname` ;
 ALTER TABLE `registry` ADD COLUMN `document_type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de documento (NIF, CIF...)' AFTER `document`;
-ALTER TABLE `registry` ADD COLUMN `document_geozone` int(4) DEFAULT NULL COMMENT 'Pais del documento' AFTER `document_type`;
-ALTER TABLE `registry` ADD CONSTRAINT `FK_REGISTRY_DOCUMENT_GEOZONE` FOREIGN KEY (`document_geozone`) REFERENCES `geozone` (`id`);
-ALTER TABLE `registry` ADD COLUMN `geozone` int(4) DEFAULT NULL COMMENT 'Nacionalidad' ;
-ALTER TABLE `registry` ADD CONSTRAINT `FK_REGISTRY_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`);
+ALTER TABLE `registry` ADD COLUMN `document_country` varchar(2) DEFAULT NULL COMMENT 'Pais del documento' AFTER `document_type`;
+ALTER TABLE `registry` ADD COLUMN `nationality` varchar(2) DEFAULT NULL COMMENT 'Nacionalidad' ;
 
-ALTER TABLE `raddress` ADD COLUMN `number` varchar(12) DEFAULT NULL COMMENT 'Número' AFTER `address`;
+ALTER TABLE `raddress` ADD COLUMN `number` varchar(12) DEFAULT NULL COMMENT 'Numero' AFTER `address`;
+ALTER TABLE `raddress` ADD COLUMN `alias`  varchar(15) DEFAULT NULL COMMENT 'Alias';
+ALTER TABLE `raddress` MODIFY `street_type` `street_type` VARCHAR(2) NULL DEFAULT 'CL' COMMENT 'Tipo de via';
+UPDATE raddress set street_type = 'ZZ' WHERE street_type = 0;
+UPDATE raddress set street_type = 'AV' WHERE street_type = 1;
+UPDATE raddress set street_type = 'BD' WHERE street_type = 2;
+UPDATE raddress set street_type = 'BD' WHERE street_type = 3;
+UPDATE raddress set street_type = 'BL' WHERE street_type = 4;
+UPDATE raddress set street_type = 'CL' WHERE street_type = 5;
+UPDATE raddress set street_type = 'CM' WHERE street_type = 6;
+UPDATE raddress set street_type = 'CO' WHERE street_type = 7;
+UPDATE raddress set street_type = 'CT' WHERE street_type = 8;
+UPDATE raddress set street_type = 'ED' WHERE street_type = 9;
+UPDATE raddress set street_type = 'RD' WHERE street_type = 10;
+UPDATE raddress set street_type = 'PJ' WHERE street_type = 11;
+UPDATE raddress set street_type = 'PG' WHERE street_type = 12;
+UPDATE raddress set street_type = 'PQ' WHERE street_type = 13;
+UPDATE raddress set street_type = 'TR' WHERE street_type = 14;
+UPDATE raddress set street_type = 'PZ' WHERE street_type = 15;
+UPDATE raddress set street_type = 'AV' WHERE street_type = 16;
+UPDATE raddress set street_type = 'UR' WHERE street_type = 17;
+UPDATE raddress set street_type = 'CT' WHERE street_type = 18;
+UPDATE raddress set street_type = 'ZZ' WHERE street_type = 19;
+UPDATE raddress set street_type = null WHERE street_type < 'A';
 
-ALTER TABLE `rmedia` ADD COLUMN `raddress` int(4) DEFAULT NULL COMMENT 'Dirección del contacto' ;
+ALTER TABLE `rmedia` ADD COLUMN `raddress` int(4) DEFAULT NULL COMMENT 'Direccion del contacto' ;
 ALTER TABLE `rmedia` ADD CONSTRAINT `FK_RMEDIA_RADDRESS` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`);
 
 ALTER TABLE `contract` 	DROP FOREIGN KEY `FK_CONTRACT_TYPE`;

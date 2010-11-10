@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div style="width: 100%;">
+		<aon:panelGrid columns="2" columnClasses="aon-panelGrid-even aon-italic,aon-panelGrid-even" align="center">
+			<aon:outputLabel for="RegistryAddress_alias" value="#{bundle.aon_alias}"/>
+			<aon:inputText id="RegistryAddress_alias#{sufix}"	value="#{controller.to.alias}" size="18" maxlength="15" styleClass="aon-margin-left aon-form-input-text"/>
+
+			<aon:outputLabel for="RegistryAddress_streetType" value="#{registryBundle.registry_street_type}" styleClass="aon-italic"/>
+			<aon:div>
+				<aon:selectOneMenu id="RegistryAddress_streetType#{sufix}"	value="#{controller.to.streetType}" styleClass="aon-margin-left aon-form-input-text">
+					<f:selectItems value="#{registryCollections.streetTypes}" />
+				</aon:selectOneMenu>
+				<aon:inputText id="RegistryAddress_address#{sufix}"  value="#{controller.to.address}" required="true" size="40" styleClass="aon-margin-left aon-form-input-text"/>
+				<aon:outputLabel for="RegistryAddress_number" value="#{bundle.aon_number}" styleClass="aon-italic aon-margin-left"/>
+				<aon:inputText id="RegistryAddress_number#{sufix}"	value="#{controller.to.number}" size="10" maxlength="5" styleClass="aon-margin-left aon-form-input-text"/>
+			</aon:div>
+			
+			<aon:outputText value="#{registryBundle.registry_address_detail}" styleClass="aon-italic"/>
+			<aon:div>
+				<aon:inputText value="#{controller.to.address2}" size="30" styleClass="aon-margin-left aon-form-input-text"/>
+				<aon:inputText value="#{controller.to.address3}" size="30" styleClass="aon-margin-left aon-form-input-text"/>
+			</aon:div>
+
+			<aon:outputLabel for="RegistryAddress_zip" value="#{registryBundle.registry_zip}" styleClass="aon-italic"/>
+			<aon:div>
+				<aon:inputText id="RegistryAddress_zip#{sufix}"	value="#{controller.to.zip}" required="true" size="8" styleClass="aon-margin-left aon-form-input-text"/>
+
+				<aon:outputLabel for="RegistryAddress_city" value="#{registryBundle.registry_city}" styleClass="aon-italic aon-margin-left"/>
+				<aon:inputText id="RegistryAddress_city#{sufix}" value="#{controller.to.city}" required="true" size="20" styleClass="aon-margin-left aon-form-input-text"/>
+			
+				<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" styleClass="aon-italic aon-margin-left"/>
+				<aon:selectOneMenu id="RegistryAddress_geozone#{sufix}"	value="#{controller.to.geozone}" styleClass="aon-margin-left aon-form-input-text">
+					<f:selectItems value="#{geozoneCollections.geoTrees}" />
+				</aon:selectOneMenu>
+			</aon:div>
+		</aon:panelGrid>
+	</aon:div>
+
+</ui:composition>
