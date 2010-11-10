@@ -18,6 +18,7 @@ import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -181,20 +182,9 @@ public class FaceletUtil {
         ValueBinding vb = c.getValueBinding(name);
         if ( vb == null ) {
         	return c.getAttributes().get(name);
-        } 
-        return vb.getValue(ctx);
-	}
-
-	public static boolean getBooleanProperty( FacesContext ctx, UIComponent c, String name ) {
-		Object value = null;
-        ValueBinding vb = c.getValueBinding(name);
-        if ( vb == null ) {
-        	value = c.getAttributes().get(name);
-        } else {
-        	value = vb.getValue(ctx);
         }
-        return ( value != null ) ? (Boolean) value : false;
-	}	
+        return vb.getValue(ctx); 
+	}
 	
 	public static void addStyleClass( FacesContext ctx, UIComponent c, String attribute, String value ) {
 		String newValue = value;
@@ -204,15 +194,6 @@ public class FaceletUtil {
 			newValue = StringUtils.join(newList, ' ');
 		}
 		UIComponentTagUtils.setStringProperty(ctx, c, attribute, newValue);
-	}
-
-	public static void removeStyleClass( FacesContext ctx, UIComponent c, String attribute, String value ) {
-		String current = ObjectUtils.toString( getProperty(ctx, c, attribute) );
-		if ( StringUtils.contains(current, value) ) {
-			List<String> newList = updateList(current, value, " ", false);
-			String newValue = StringUtils.join(newList, ' ');
-			UIComponentTagUtils.setStringProperty(ctx, c, attribute, newValue);
-		}
 	}
 	
 	public static boolean isRendered( FaceletContext ctx, Tag tag ) {
