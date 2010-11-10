@@ -31,9 +31,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.VelocityException;
 
 /********************************************************************
 * Copyright (c) 2010, esferalia NETWORKS S.A
@@ -99,6 +97,7 @@ public class DBContext extends VelocityContext{
 	public class Column {
 		
 		private int type;
+		private int size;
 		private String name;
 		private String remarks;
 		private boolean isAutoIncrement;
@@ -107,6 +106,7 @@ public class DBContext extends VelocityContext{
 		private void init (ResultSet rs) throws SQLException
 		{
 			this.type= rs.getInt("DATA_TYPE");
+			this.size = rs.getInt("COLUMN_SIZE");
 			this.name = rs.getString("COLUMN_NAME");
 			this.remarks = rs.getString("REMARKS");
 			try {
@@ -128,6 +128,10 @@ public class DBContext extends VelocityContext{
 			return type;
 		}
 		
+		public int getSize(){
+			return size;
+		}
+
 		public String getRemarks() {
 			return remarks;
 		}
@@ -153,6 +157,7 @@ public class DBContext extends VelocityContext{
 
 	public class Table  {
 		private String name;
+		private int size;
 		private String remarks;
 		private Map<String,Column> columns;
 		private ArrayList<ForeignKey> childs; 
@@ -167,24 +172,31 @@ public class DBContext extends VelocityContext{
 		
 		private void initColumns() throws SQLException{
 			this.columns = new LinkedHashMap<String, Column>();
-			
+			this.size = 0;
 			ResultSet rs ;
 			rs = dbMetaData.getColumns(null, null, name, null);
 			while  (rs.next() ){
 				String name = rs.getString("COLUMN_NAME");
 				Column column = new Column(rs);
 				columns.put(name, column);
+				if ( column.type != Types.BLOB && 
+					column.type != Types.LONGVARCHAR &&	
+					column.type != Types.LONGNVARCHAR &&	
+					column.type != Types.LONGVARBINARY){
+					this.size += column.size;
+				}
 				this.isAutoIncrement |= column.isAutoIncrement();
 			}
 			rs.close();
 		}
 
-
+		public int getSize() {
+			return this.size;
+		}
 		
 		public String getName() {
 			return name;
 		}
-		
 		
 		public String getRemarks() {
 			return remarks;
@@ -326,10 +338,15 @@ public class DBContext extends VelocityContext{
 		put(TABLES, tables.values().toArray(new Table []{}));
 	}
 	
+    public static boolean evaluate( DBContext context, Writer writer,String logTag, Reader reader )
+    throws IOException
+    {
+    	return Velocity.evaluate(context, writer, logTag, reader);
+    }
 	
 
 	public static void main(String[] args) 
-	throws ClassNotFoundException, SQLException, ParseErrorException, MethodInvocationException, ResourceNotFoundException, IOException {
+	throws ClassNotFoundException, SQLException, IOException {
 		// create the command line parser
     	CommandLineParser parser = new PosixParser();   
     	
@@ -429,7 +446,10 @@ public class DBContext extends VelocityContext{
             // oops, something went wrong
             System.err.println( "Error : " + exp.getMessage() );
         	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
-        } 
+        }
+        catch ( VelocityException exp ) {
+            System.err.println( "Error : " + exp.getMessage() );
+        }
         finally{
         	if ( connection != null )
         		connection.close();
