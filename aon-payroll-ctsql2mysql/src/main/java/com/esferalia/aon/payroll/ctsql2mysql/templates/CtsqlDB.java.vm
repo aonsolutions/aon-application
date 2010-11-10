@@ -41,6 +41,33 @@ public class AbstractCtsqlDB {
 
 #foreach($table in $tables)
 	
+#foreach ($child in $table.childs)
+		
+	private PreparedStatement ${child.name}Stmt = null;
+		
+	private void init${child}Stmt() 
+	throws SQLException{
+		this.${child.name}Stmt = ctsqlConnection.prepareStatement(
+				"SELECT *"
+				+ " FROM ${child.table.name}"
+				+ " WHERE" 
+#foreach ($col in $child.fkColumns) 
+				+ " $col.name = ?  " #if( $velocityHasNext ) + "AND" #end  
+#end
+			); 
+	}
+
+	private void close${child}Stmt() 
+	throws SQLException{
+		if ( ${child.name}Stmt != null ) { 
+			${child.name}Stmt.close();
+			${child.name}Stmt = null;	
+		}
+	}
+
+#end
+
+	
 	/**
 	 * $table
 	 * $table.remarks
@@ -49,31 +76,11 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private String suffix;
-		
 		private $table (ResultSet rs) 
 		throws SQLException {
-			this(rs, "");
-		}
-		
-		private $table (ResultSet rs, String suffix) 
-		throws SQLException {
 			this.rs =rs;
-			this.suffix = suffix;
-#foreach ($child in $table.childs)
-			init${child.table}Stmt();
-#end			
 		}
 		
-		@Override
-		protected void finalize() throws Throwable {
-#foreach ($child in $table.childs)
-			close${child.table}Stmt();
-#end
-			super.finalize();
-		}
-		
-
 #foreach ($column in $table.columns)
 		/**
 		 * $column.remarks
@@ -83,64 +90,34 @@ public class AbstractCtsqlDB {
 		public ${column.javaClass} get${column}()
 		throws SQLException {
 #if ($column.javaClass.equals("Integer"))
-			return rs.getInt("${column.name}"+suffix );
+			return rs.getInt("${column.name}" );
 #else
-			return rs.get${column.javaClass}("${column.name}"+suffix);
+			return rs.get${column.javaClass}("${column.name}");
 #end
 		}
 #end
 
-#foreach ($parent in $table.parents)
-		
-		private ${parent.table} ${parent.name}; 
-		
-		/**
-		 * @throws SQLException
-		 */
-		public ${parent.table} get${parent}()
-		throws SQLException {
-			if ( this.${parent.name} == null )
-				this.${parent.name} = new ${parent.table}(rs, "${velocityCount}");
-			return this.${parent.name};
-		}
-#end
 
 #foreach ($child in $table.childs)
 		
-		private PreparedStatement ${child.table}Stmt;
 		
-		private void init${child.table}Stmt() 
-		throws SQLException{
-			${child.table}Stmt = ctsqlConnection.prepareStatement(
-					"SELECT *"
-					+ " FROM ${child.table.name}"
-					+ " WHERE" 
-#foreach ($col in $child.fkColumns) 
-					+ " $col.name = ?  " #if( $velocityHasNext ) + "AND" #end  
-#end
-				); 
-		}
-		
-		private void close${child.table}Stmt() 
-		throws SQLException{
-			${child.table}Stmt.close();
-		}
-
-
 		public void visit${child.table}(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
 			boolean				resume 	= true;
 	
 			try {
 				
+				if ( ${child.name}Stmt == null )
+					 init${child}Stmt();
+				
 #foreach ($col in $child.pkColumns)
 #if ($col.javaClass.equals("Integer"))
-				this.${child.table}Stmt.setInt($velocityCount, this.get${col}() ); 
+				${child.name}Stmt.setInt($velocityCount, this.get${col}() ); 
 #else
-				this.${child.table}Stmt.set${col.javaClass}($velocityCount, this.get${col}() ); 
+				${child.name}Stmt.set${col.javaClass}($velocityCount, this.get${col}() ); 
 #end
 #end
-				rs = this.${child.table}Stmt.executeQuery();
+				rs = ${child.name}Stmt.executeQuery();
 				${child.table} ${child.table.name} = new ${child.table}(rs); 
 				while ( resume && rs.next() ) {
 					resume = ctsqlDBVisitor.visit${child.table}(${child.table.name}, this);
@@ -152,8 +129,6 @@ public class AbstractCtsqlDB {
 			}
 		}
 #end
-
-		
 	}
 	
 #end
@@ -169,29 +144,7 @@ public class AbstractCtsqlDB {
 			
 			stmt = ctsqlConnection.createStatement();
 			rs = stmt.executeQuery("SELECT ${table.name}.*"
-#set($parentIndex = 1)
-#foreach ($parent in $table.parents )
-#foreach ($column in $parent.table.columns)
-				+ ",${parent.name}.${column.name} ${column.name}${parentIndex}"
-#end
-#set($parentIndex = $parentIndex + 1)
-#end
-				+ " FROM ${table.name}"
-#foreach ($parent in $table.parents )
-				+ ",OUTER ${parent.table.name} ${parent.name}" 
-#end
-#set($fkIndex = 0 )
-#foreach ($parent in $table.parents )
-#set($fkColIndex = 0 )
-#set($pkColumns = $parent.getPkColumns() )
-#foreach ($fkColumn in $parent.fkColumns )
-#set ($pkColumn = $pkColumns.get($fkColIndex))
-				+ " #if( $fkIndex  == 0 )WHERE#{else}AND#{end} ${table.name}.${fkColumn.name}=${parent.name}.${pkColumn.name} " 
-#set($fkColIndex = $fkColIndex+1 )
-#set($fkIndex = $fkIndex +1 )
-#end
-#end
-				);
+				+ " FROM ${table.name}");
 			$table $table.name = new $table(rs); 
 			while ( resume && rs.next() ) {
 				resume = ctsqlDBVisitor.visit$table($table.name);
@@ -208,7 +161,15 @@ public class AbstractCtsqlDB {
 
 #end
 
-
+	@Override
+	protected void finalize() throws Throwable {
+#foreach($table in $tables)
+#foreach ($child in $table.childs)
+		close${child}Stmt();
+#end	
+#end
+		super.finalize();
+	}
 
 
 

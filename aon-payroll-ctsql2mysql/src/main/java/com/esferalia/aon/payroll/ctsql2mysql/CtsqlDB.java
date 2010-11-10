@@ -10,6 +10,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -18,10 +19,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 /********************************************************************
 * Copyright (c) 2010, esferalia NETWORKS S.A
@@ -47,7 +44,7 @@ extends AbstractCtsqlDB
 	
 	
 	
-	public static void main(String[] args) throws ClassNotFoundException, ParseErrorException, MethodInvocationException, ResourceNotFoundException, SQLException, IOException {
+	public static void main(String[] args) throws ClassNotFoundException, SQLException , IOException {
 		
 		// create the command line parser
     	CommandLineParser parser = new PosixParser();   
@@ -113,20 +110,20 @@ extends AbstractCtsqlDB
     		
             Writer out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/AbstractCtsqlDB.java");
             Reader in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDB.java.vm");
-    		Velocity.evaluate(dbContext, out, "DBContext", in);
+    		DBContext.evaluate(dbContext, out, "DBContext", in);
     		in.close();
     		out.close();
 
 
             out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/CtsqlDBVisitor.java");
             in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDBVisitor.java.vm");
-    		Velocity.evaluate(dbContext, out, "DBContext", in);
+            DBContext.evaluate(dbContext, out, "DBContext", in);
     		in.close();
     		out.close();
 
             out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/DefaultCtsqlDBVisitor.java");
             in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/DefaultCtsqlDBVisitor.java.vm");
-    		Velocity.evaluate(dbContext, out, "DBContext", in);
+            DBContext.evaluate(dbContext, out, "DBContext", in);
     		in.close();
     		out.close();
             
