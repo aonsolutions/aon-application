@@ -6,138 +6,65 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:div styleClass="aon-group">
-		<aon:div styleClass="aon-group-title">
-			<aon:outputText value="#{companyBundle.company_data_module}"/>
-		</aon:div>
-		<aon:div styleClass="aon-group-body"> 
-			<aon:div styleClass="aon-group-body-internal">
-				<aon:panelGrid columns="2" style="width:100%">
+	<c:if test="#{!skipId}">
+		<aon:outputLabel for="Registry_id" value="#{bundle.aon_id}" />
+		<aon:inputText id="Registry_id" value="#{controller.to.id}"
+			rendered="#{!controller.new}" size="15" disabled="true" />
+		<aon:outputText value="--------" rendered="#{controller.new}" />
+	</c:if>		
 
+	<aon:outputLabel for="Registry_document"
+		value="#{bundle.aon_company_document}" />
+	<aon:panelGroup id="registryDocumentPanel">
+		<aon:inputText id="Registry_document" maxlength="16"
+			value="#{controller.to.registry.document}" size="16">
+			<f:validateLength minimum="1" maximum="16" />
+			<a4j:support event="onchange" focus="Registry_name"
+				actionListener="#{controller.onChangeDocument}" 
+				reRender="registryDocumentPanel"  
+				ajaxSingle="true"/>
+		</aon:inputText>
+		<aon:outputText 
+			rendered="#{controller.to.registry.validDocument}"
+			styleClass="aon-icon-predetermine"
+			style="padding-left: 15px;"
+			value="&#160;" />
+		<aon:outputText 
+			rendered="#{!controller.to.registry.validDocument}"
+			styleClass="aon-icon-exception"
+			style="padding-left: 15px;"
+			value="&#160;" />
+		</aon:panelGroup>
 
-					<c:if test="#{!skipId}">
-						<aon:outputLabel for="Registry_id" value="#{bundle.aon_id}" />
-						<aon:inputText id="Registry_id" value="#{controller.to.id}"
-							rendered="#{!controller.new}" size="15" disabled="true" />
-						<aon:outputText value="--------" rendered="#{controller.new}" />
-					</c:if>		
-				
-					<aon:outputLabel for="Registry_document"
-						value="#{bundle.aon_company_document}" />
-					<aon:panelGroup id="registryDocumentPanel">
-						<aon:inputText id="Registry_document" maxlength="16"
-							value="#{controller.to.registry.document}" size="16">
-							<f:validateLength minimum="1" maximum="16" />
-							<a4j:support event="onchange" focus="Registry_name"
-								actionListener="#{controller.onChangeDocument}" 
-								reRender="registryDocumentPanel"  
-								ajaxSingle="true"/>
-						</aon:inputText>
-						<aon:outputText 
-							rendered="#{controller.to.registry.validDocument}"
-							styleClass="aon-icon-predetermine"
-							style="padding-left: 15px;"
-							value="&#160;" />
-						<aon:outputText 
-							rendered="#{!controller.to.registry.validDocument}"
-							styleClass="aon-icon-exception"
-							style="padding-left: 15px;"
-							value="&#160;" />
-						</aon:panelGroup>
-				
-					<aon:outputLabel for="Registry_name"
-						value="#{bundle.aon_company_name}" />
-					<aon:inputText id="Registry_name" maxlength="64"
-						value="#{controller.to.registry.name}" size="64">
-						<f:validateLength minimum="1" maximum="64" />
-					</aon:inputText>
+	<aon:outputLabel for="Registry_name"
+		value="#{bundle.aon_company_name}" />
+	<aon:inputText id="Registry_name" maxlength="64"
+		value="#{controller.to.registry.name}" size="64">
+		<f:validateLength minimum="1" maximum="64" />
+	</aon:inputText>
 <!--  
-					<c:if test="#{!skipSurname}">
-						<aon:outputLabel for="Registry_surname"
-							value="#{registryBundle.registry_surname}" />
-						<aon:inputText id="Registry_surname" maxlength="64"
-							value="#{controller.to.registry.surname}" size="64">
-							<f:validateLength minimum="1" maximum="64" />
-						</aon:inputText>
-					</c:if>
+	<c:if test="#{!skipSurname}">
+		<aon:outputLabel for="Registry_surname"
+			value="#{registryBundle.registry_surname}" />
+		<aon:inputText id="Registry_surname" maxlength="64"
+			value="#{controller.to.registry.surname}" size="64">
+			<f:validateLength minimum="1" maximum="64" />
+		</aon:inputText>
+	</c:if>
 -->				
 				
-					<aon:outputLabel for="Registry_alias"
-						value="#{bundle.aon_company_alias}" />
-					<aon:inputText id="Registry_alias" maxlength="32"
-						value="#{controller.to.registry.alias}" size="32">
-						<f:validateLength minimum="1" maximum="32" />
-					</aon:inputText>
-				
-					<c:if test="#{!skipRegistryType}">
-						<aon:outputText for="Registry_type" value="#{bundle.aon_entity}" />
-						<aon:selectOneRadio id="Registry_type" value="#{controller.to.registry.type}">
-							<f:selectItems value="#{registryCollections.registryTypes}" />
-						</aon:selectOneRadio>
-					</c:if>
-					
-					<ui:insert name="dataPanel"/>
-				</aon:panelGrid>
-			</aon:div>
-		</aon:div>
-	</aon:div>
-					
-					
-	<aon:div>
-		<c:if test="#{!skipSecurityPanel}">
-			<aon:div styleClass="aon-group">
-				<aon:div styleClass="aon-group-title">
-					<aon:outputText value="#{bundle.aon_security}"/>
-				</aon:div>
-				<aon:div styleClass="aon-group-body"> 
-					<aon:div styleClass="aon-group-body-internal">
-						<aon:panelGrid columns="2" style="width:100%">					
-							<ui:insert name="securityPanel"/>
-						</aon:panelGrid>
-					</aon:div>
-				</aon:div>
-			</aon:div>
-		</c:if>
-		
-		<c:if test="#{!skipLogoPanel}">
-			<aon:div styleClass="aon-group">
-				<aon:div styleClass="aon-group-title">
-					<aon:outputText value="#{companyBundle.company_logo}"/>
-				</aon:div>
-				<aon:div styleClass="aon-group-body"> 
-					<aon:div styleClass="aon-group-body-internal">
-						<aon:panelGrid columns="2" style="width:100%">
-							<aon:outputLabel for="attach_file"
-								value="#{companyBundle.company_logo}" />
-							<a4j:region>
-								<h:panelGrid id="attachGrid" columns="2">
-									<ui:insert name="logoPanel"/>
-								</h:panelGrid>
-							</a4j:region>
-						</aon:panelGrid>
-					</aon:div>
-				</aon:div>
-			</aon:div>			
-		</c:if>
+	<aon:outputLabel for="Registry_alias"
+		value="#{bundle.aon_company_alias}" />
+	<aon:inputText id="Registry_alias" maxlength="32"
+		value="#{controller.to.registry.alias}" size="32">
+		<f:validateLength minimum="1" maximum="32" />
+	</aon:inputText>
 
-		<c:if test="#{!skipOtherDataPanel}">
-			<aon:div styleClass="aon-group">
-				<aon:div styleClass="aon-group-title">
-					<aon:outputText value="#{companyBundle.company_other_data}"/>
-				</aon:div>
-				<aon:div styleClass="aon-group-body"> 	
-					<aon:div styleClass="aon-group-body-internal">
-						<a4j:region>
-							<aon:panelGrid id="companyOtherData" columns="2" style="width:100%">		
-								<ui:insert name="othersPanel"/>
-							</aon:panelGrid>
-						</a4j:region>
-					</aon:div>
-				</aon:div>
-			</aon:div>
-		</c:if>
-	</aon:div>
-	
-		
+	<c:if test="#{!skipRegistryType}">
+		<aon:outputText for="Registry_type" value="#{bundle.aon_entity}" />
+		<aon:selectOneRadio id="Registry_type" value="#{controller.to.registry.type}">
+			<f:selectItems value="#{registryCollections.registryTypes}" />
+		</aon:selectOneRadio>
+	</c:if>
 
 </ui:composition>
