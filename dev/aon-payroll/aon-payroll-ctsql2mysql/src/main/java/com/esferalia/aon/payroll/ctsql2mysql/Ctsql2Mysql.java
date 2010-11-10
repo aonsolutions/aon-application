@@ -139,6 +139,8 @@ public class Ctsql2Mysql
             mysqlConnection.setAutoCommit(false);
             
             MysqlDB mysqlWriter = new MysqlDB(mysqlConnection);
+          
+            
             CtsqlDB ctsqlReader = new CtsqlDB(ctsqlConnection);
             mysqlWriter.writeAll(ctsqlReader);
             

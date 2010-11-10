@@ -15,11 +15,10 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
-import com.code.aon.employee.enumeration.PaymentType;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
@@ -120,6 +119,11 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		return true;
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		// TODO Auto-generated method stub
+		super.finalize();
+	}
 
 	protected static <K1,K2,V> V get( Map<K1, Map<K2,V>> map, K1 key1, K2 key2 ){
 		Map<K2,V>  map2 = map.get(key1);
@@ -251,21 +255,6 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		return geozoneIds.get(key);
 	}
 
-	protected void debug(String format, Object ... args){
-		LOGGER.debug(format, args);
-	}
-
-	protected void info(String format, Object ... args){
-		LOGGER.info(format, args);
-	}
-
-	protected void warn(String format, Object ... args){
-		LOGGER.warn(format, args);
-	}
-
-	protected void error(String format, Object ... args){
-		LOGGER.error(format, args);
-	}
 
 	
 	protected Integer getCnae2009Id ( String cnae2009) 
@@ -336,13 +325,33 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 	
 	
 	
-	protected int insertPerson(String document, String name, String surname,
-			String alias, Date birthDate, Short gender,
+	protected int insertPerson(String document, DocumentType docType, String name, String firstSurname,
+			String secondSurname, String alias, Date birthDate, Short gender,
 			Short maritalStatus, String socialSecurityNum) throws SQLException {
-		
 		Short type = enum2short(RegistryType.NATURAL);
-		Integer registry = super.insertRegistry(document, name, surname, alias, type );
-		super.insertPerson(registry, birthDate, gender, maritalStatus,socialSecurityNum);
+		
+		StringBuffer  fullName = new StringBuffer();
+		if ( name != null ){
+			fullName.append(name);
+		}
+		if ( firstSurname != null ){
+			fullName.append(" ");
+			fullName.append(firstSurname);
+		}
+		if ( secondSurname != null ){
+			fullName.append(" ");
+			fullName.append(secondSurname);
+		}
+		
+		Integer registry = super.insertRegistry(
+				document,  
+				enum2short(docType),
+				null,
+				fullName.toString(), 
+				alias, 
+				type ,
+				null);
+		super.insertPerson(registry, birthDate, gender, maritalStatus,socialSecurityNum, name, firstSurname, secondSurname);
 		return registry;
 	}
 	
@@ -351,7 +360,7 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 			Integer scope, Short status ) throws SQLException {
 		
 		Short type = enum2short(RegistryType.LEGAL);
-		Integer registry =  super.insertRegistry(document, name, null, alias, type);
+		Integer registry =  super.insertRegistry(document, null, null, name, alias, type, null);
 		super.insertEnterprise(registry, scope);
 		super.insertCustomer(registry,null, false, false,false,null,status,null,  scope,false, true,true);
 		
@@ -359,7 +368,7 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 	}
 
 
-	protected void insertFax(Integer registry, String fax)
+	protected void insertFax(Integer registry, Integer raddress, String fax )
 	throws SQLException, InvalidFaxException
 	{
 		if ( fax == null )
@@ -377,10 +386,11 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				null, 
 				true,		// administrative 
 				false, 		// not commercial
-				false);		// tecnical
-	}
+				false,		// tecnical
+				raddress);	
+	}	
 
-	protected void insertEmail(Integer registry, String email)
+	protected void insertEmail(Integer registry, Integer raddress, String email)
 	throws SQLException, InvalidEmailException
 	{
 		if ( email == null )
@@ -398,10 +408,11 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				null, 
 				true,		// administrative 
 				false, 		// not commercial
-				true);		// tecnical
+				true,		// tecnical
+				raddress);
 	}
 	
-	protected void insertTelephone(Integer registry, String telephone)
+	protected void insertTelephone(Integer registry, Integer raddress, String telephone)
 	throws SQLException, InvalidTelephoneException
 	{
 		if ( telephone == null )
@@ -425,7 +436,8 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				null, 
 				true,		// administrative 
 				false, 		// not commercial
-				false);		// not tecnical
+				false,		// not tecnical
+				raddress);
 	}
 	
 	protected boolean execute (String sql ) 

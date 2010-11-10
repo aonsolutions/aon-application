@@ -3,13 +3,11 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -19,9 +17,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
@@ -32,29 +27,28 @@ import com.code.aon.employee.enumeration.PaymentType;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cliente;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Colectivos;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Domicilio;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Embargo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empract;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdto;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdtoex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomina;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadev;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Persona;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Provincia;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipocont;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipdoc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipovia;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabajo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabdto;
-import com.sun.crypto.provider.DESCipher;
 
 
 /********************************************************************
@@ -89,13 +83,11 @@ public class MysqlDB extends DefaultMysqlDB{
 	// State related members 
 	private Integer 	scopeId;				// 'scope' id where we are in 
 	
-	private Integer 	salaryId;				// 'scope' id where we are in 
+	private Integer 	salaryId;				// 'salary' id where we are in 
+	private Integer 	contractId;				// 'contract' id where we are in 
 	// --------------------------------------------------------------
 	
 	
-	private Map<Integer, Integer> contracts = 
-		new HashMap<Integer, Integer>();
-
 	private Map<Integer, Integer> persons = 
 		new HashMap<Integer, Integer>();
 
@@ -105,6 +97,9 @@ public class MysqlDB extends DefaultMysqlDB{
 	private Map<String, StreetType> streetTypes = 
 		new HashMap<String, StreetType>();
 	
+	private Map<String, DocumentType> docTypes = 
+		new HashMap<String, DocumentType>();
+
 	private Map<Integer, Integer> enterprises = 
 		new HashMap<Integer, Integer>();
 	
@@ -130,7 +125,26 @@ public class MysqlDB extends DefaultMysqlDB{
 	}
 	
 	
-	
+	@Override
+	public boolean visitTipdoc(Tipdoc tipdoc) throws SQLException {
+		String descripcion = tipdoc.getDescripcion();
+		if ( descripcion != null ) {
+			descripcion = descripcion.toUpperCase(); 
+			if ( descripcion.contains("DNI"))
+				docTypes.put(tipdoc.getCdg(), DocumentType.NIF);
+			else if ( descripcion.contains("NUMERO")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.NIE);
+			else if ( descripcion.contains("CIF")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.CIF);
+			else if ( descripcion.contains("PASAPORTE")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.PASSPORT);
+			else if ( descripcion.contains("TARJETA")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.COMMUNITY_CARD);
+			else if ( descripcion.contains("PERMISO")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.WORK_PERMIT);
+		}
+		return true;
+	}
 
 	@Override
 	public boolean visitTipovia(Tipovia tipovia) throws SQLException {
@@ -188,7 +202,6 @@ public class MysqlDB extends DefaultMysqlDB{
 
 	@Override
 	public boolean visitPersona(Persona persona) throws SQLException { 
-		
 		Gender gender = Gender.UNKNOWN;
 		try {
 			gender = getGender(persona.getSexo());
@@ -207,23 +220,20 @@ public class MysqlDB extends DefaultMysqlDB{
 			debug("persona[{}]: Not found marital status {}", persona.getCdg(), persona.getEstciv());
 		}
 		
-		StringBuffer surname = new StringBuffer();
-		String descripcion = persona.getDescripcion();
-		if ( descripcion != null ) 
-			surname.append(descripcion);
-		String apellido2 = persona.getApellido2();
-		if ( apellido2 != null ) 
-			surname.append(" " + apellido2);
+		
+		DocumentType docType = docTypes.get(persona.getInddoc());
 		
 		Integer registry = insertPerson(persona.getNumdoc(), 
+				docType,
 				persona.getNombre(), 
-				surname.toString(), 
+				persona.getDescripcion(), 
+				persona.getApellido2(), 
 				persona.getAlias(), 		
 				persona.getFecnac(), 
 				enum2short(gender), 
 				enum2short(maritalStatus), 
 				persona.getNumss());
-		
+	
 		StreetType streetType = null;
 		try {
 			streetType = getStreetType(persona.getTipovia());
@@ -231,30 +241,33 @@ public class MysqlDB extends DefaultMysqlDB{
 			debug("persona[{}] : Not found tippo via {}", 
 					persona.getCdg(), persona.getTipovia());
 		}
-		insertRaddress(registry, 
+		Integer raddress = 
+			insertRaddress(registry, 
 				enum2short(AddressType.MAIN), 
 				null, 									//TODO: raddress 'recipient'
 				enum2short(streetType), 
 				persona.getNomvia(), 
 				persona.getNumero(), 
-				persona.getOtrdir(), 
+				persona.getOtrdir(),
+				null,
 				persona.getCodpos(), 
 				persona.getLocalidad(), 
 				geozones.get (persona.getProvincia()));
 		try {
-			insertEmail(registry, persona.getEmail()) ;
+			insertEmail(registry, raddress, persona.getEmail()) ;
 		} catch (InvalidEmailException e) {
 			debug("persona[{}] : Invalid email {}", 
 					persona.getCdg(), persona.getEmail());
 		}
 		try {
-			insertTelephone (registry, persona.getTelefono() );
+			insertTelephone (registry, raddress, persona.getTelefono() );
 		} catch (InvalidTelephoneException e) {
 			debug("persona[{}] : Invalid telephone {}", 
 					persona.getCdg(), persona.getTelefono());
 		}
+
 		persons.put(persona.getCdg(), registry);
-		
+
 		return true;
 	}
 	
@@ -296,19 +309,21 @@ public class MysqlDB extends DefaultMysqlDB{
 					delegacion.getCdg(), delegacion.getProvincia());
 		}
 		// each delegacion will be one 'raddress' of company.
-		insertRaddress(COMPANY_REGISTRY, 			
+		Integer raddress = 
+			insertRaddress(COMPANY_REGISTRY, 			
 						enum2short(AddressType.DELEGATION), 				
 						null,										
 						enum2short(streetType),	
 						delegacion.getNomvia(),			
 						delegacion.getNumero(), 					
-						delegacion.getOtrdir(), 					
+						delegacion.getOtrdir(), 
+						null,
 						delegacion.getCodpos(), 
 						delegacion.getLocalidad(), 
 						geozone);
 		
 		try {
-			insertTelephone (COMPANY_REGISTRY, delegacion.getTelefono() );
+			insertTelephone (COMPANY_REGISTRY, raddress, delegacion.getTelefono() );
 		} catch (InvalidTelephoneException e) {
 			debug("delegacion[{}] : Invalid telephone {}", 
 					delegacion.getCdg(), delegacion.getTelefono());
@@ -345,19 +360,23 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	
 	@Override
-	public boolean visitEmprdom(Emprdom emprdom) throws SQLException {
+	public boolean visitDomicilio(Domicilio domicilio) throws SQLException {
+		domicilio.visitEmprdom(this);
+		return true;
+	}
+	
+	@Override
+	public boolean visitEmprdom(Emprdom emprdom, Domicilio domicilio ) throws SQLException {
 		
 
 		Integer enterprise = enterprises.get(emprdom.getCodemp());
 		
 		if ( enterprise == null )
 		{
-			error("domicilio[{}] : Not found enterprise {} .", 
+			debug("domicilio[{}] : Not found enterprise {} .", 
 					emprdom.getCdg(),emprdom.getCodemp());
 			return true;
 		}
-
-		Domicilio domicilio = emprdom.getEmprdom_domicilio();
 
 		Integer raddress = DefaultMysqlDB.get(raddresses, enterprise, domicilio.getCdg());
 		
@@ -384,31 +403,32 @@ public class MysqlDB extends DefaultMysqlDB{
 					enum2short(streetType), 
 					domicilio.getNomvia(), 
 					domicilio.getNumero(), 
-					domicilio.getOtrdir(), 
+					domicilio.getOtrdir(),
+					null,
 					domicilio.getCodpos(), 
 					domicilio.getLocalidad(), 
 					geozone);
 			
 			try {
-				insertTelephone (enterprise, domicilio.getTelefono() );
+				insertTelephone (enterprise, raddress, domicilio.getTelefono() );
 			} catch (InvalidTelephoneException e) {
 				error("domicilio[{}] : Invalid telephone {}", 
 						domicilio.getCdg(), domicilio.getTelefono());
 			}
 			try {
-				insertTelephone (enterprise, domicilio.getTelefono2() );
+				insertTelephone (enterprise, raddress, domicilio.getTelefono2() );
 			} catch (InvalidTelephoneException e) {
 				error("domicilio[{}] : Invalid telephone {}", 
 						domicilio.getCdg(), domicilio.getTelefono2());
 			}
 			try {
-				insertTelephone (enterprise, domicilio.getTelefono3() );
+				insertTelephone (enterprise, raddress, domicilio.getTelefono3() );
 			} catch (InvalidTelephoneException e) {
 				error("domicilio[{}] : Invalid telephone {}", 
 						domicilio.getCdg(), domicilio.getTelefono3());
 			}
 			try {
-				insertFax(enterprise, domicilio.getFax() );
+				insertFax(enterprise, raddress, domicilio.getFax() );
 			} catch (InvalidFaxException e) {
 				error("domicilio[{}] : Invalid fax {}", 
 						domicilio.getCdg(), domicilio.getFax());
@@ -489,19 +509,21 @@ public class MysqlDB extends DefaultMysqlDB{
 		
 		String ccc = emprccc.getDescripcion();
 		
-		if ( ccc == null ){
-			error("emprecc[{}] : Null CCC", emprccc.getCdg() );
-			return true;
+		Integer geozone = null;
+
+		if ( ccc != null ){
+			String provincia = ccc.substring(0, 2) ;
+			try { 
+				geozone = Integer.parseInt(provincia);
+			} catch (NumberFormatException e) {
+				error("emprecc[{}] : Invalid CCC {}", emprccc.getCdg(), ccc);
+				return true;
+			}
+		}
+		else {
+			debug("emprecc[{}] : Null CCC", emprccc.getCdg() );
 		}
 		
-		Integer geozone = null;
-		String provincia = ccc.substring(0, 2) ;
-		try { 
-			geozone = Integer.parseInt(provincia);
-		} catch (NumberFormatException e) {
-			error("emprecc[{}] : Invalid CCC {}", emprccc.getCdg(), ccc);
-			return true;
-		}
 
 		Short type = null ;
 		String tipccc = emprccc.getTipccc();
@@ -553,39 +575,30 @@ public class MysqlDB extends DefaultMysqlDB{
 			return true;
 		}
 		
-		
-		
-		Integer contract = 
+		this.contractId = 
 			insertContract(person, 
 					workplace, 
 					ccc, 
 					emprper.getFecalt(), 
 					emprper.getFecbaj(), 
 					null,
+					null,
 					enum2short(ContractStatus.PROCESSED));
 		
-		contracts.put(emprper.getCdg(), contract);
+		emprper.visitTrabajo(this);
+		emprper.visitPercep(this);
+		emprper.visitTrabdto(this);
+		
+		emprper.visitNomina(this);
+		emprper.visitNominaex(this);
 	
 		return true;
 	}
 	
 	@Override
-	public boolean visitTrabajo(Trabajo trabajo)
+	public boolean visitTrabajo(Trabajo trabajo, Emprper emprper )
 			throws SQLException {
 		
-		Integer contract = contracts.get(trabajo.getCdg());
-		if ( contract == null ){
-			info("emprper[{}] : Not found contract {}", 
-					trabajo.getCdg(), trabajo.getCdg());
-			return true;
-		}
-		
-		Emprper emprper = trabajo.getTrabajo_emprper();
-		if ( emprper == null ){
-			info("emprper[{}] : Not found emprper {}", 
-					trabajo.getCdg(), trabajo.getCdg());
-			return true;
-		}
 		
 		
 		Integer person = persons.get(emprper.getCodper());
@@ -604,19 +617,22 @@ public class MysqlDB extends DefaultMysqlDB{
 		}
 		
 		String description = null;
-		Tipocont tipocont = trabajo.getRel_tra_cont();
+		/*
+		Tipocont tipocont = null ; //trabajo.getRel_tra_cont();
 		if ( tipocont != null ) {
 			description = tipocont.getDescripcion();
 		}
+		*/
 		
 		String conditions = null;
-		Colectivos colectivos = trabajo.getRel_tra_col();
+		/*
+		Colectivos colectivos = null ; //trabajo.getRel_tra_col();
 		if ( colectivos != null ) {
 			conditions = colectivos.getDescripcion();
-		}
+		}*/
 		
 		insertContract_data(
-				contract, 
+				this.contractId, 
 				trabajo.getCodtc2(), 
 				description, 
 				conditions, 
@@ -628,20 +644,21 @@ public class MysqlDB extends DefaultMysqlDB{
 		
 		insertContract_deduction(
 				enum2short(DeductionType.IRPF), 
-				contract, 
+				this.contractId, 
 				null, 
 				irpfFunction, 
 				trabajo.getFecini(), 
 				trabajo.getFecfin());
+		
 		
 		return true;
 	}
 	
 	
 	private Pattern overtimePattern = 
-		Pattern.compile("HORAS\\w+EXTRA", Pattern.CASE_INSENSITIVE);
+		Pattern.compile("HORAS\\s+EXTRA", Pattern.CASE_INSENSITIVE);
 	private Pattern baseSalaryPattern = 
-		Pattern.compile("SALARIO\\w+BASE", Pattern.CASE_INSENSITIVE);
+		Pattern.compile("SALARIO\\s+BASE", Pattern.CASE_INSENSITIVE);
 	private Pattern compensationPattern = 
 		Pattern.compile("INDEMNIZACION", Pattern.CASE_INSENSITIVE);
 	private Pattern noticePattern = 
@@ -688,22 +705,10 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	
 	@Override
-	public boolean visitPercep(Percep percep)
+	public boolean visitPercep(Percep percep, Emprper emprper)
 			throws SQLException {
 		
-		Integer contract = contracts.get(percep.getNumero());
-		if ( contract == null ){
-			info("emprper[{}] : Not found contract {}", 
-					percep.getCdg(), percep.getNumero());
-			return true;
-		}
 
-		Emprper emprper = percep.getRel_pcp_epp();
-		if ( emprper == null ){
-			error("emprper[{}] : Not found emprper {}", 
-					percep.getCdg(), percep.getNumero());
-			return true;
-		}
 		
 		PaymentType paymetType = 
 			getPaymentType(percep.getDescom(), percep.getDinesp());
@@ -715,7 +720,7 @@ public class MysqlDB extends DefaultMysqlDB{
 		
 		insertContract_payment(
 				enum2short(paymetType), 
-				contract, 
+				this.contractId, 
 				percep.getDescom(), 
 				script, 
 				percep.getFecini(), 
@@ -745,21 +750,8 @@ public class MysqlDB extends DefaultMysqlDB{
 	}
 
 	@Override
-	public boolean visitTrabdto(Trabdto trabdto) throws SQLException {
+	public boolean visitTrabdto(Trabdto trabdto, Emprper emprper) throws SQLException {
 
-		Integer contract = contracts.get(trabdto.getCdg());
-		if ( contract == null ){
-			info("emprper[{}] : Not found contract {}", 
-					trabdto.getCdg(), trabdto.getCdg());
-			return true;
-		}
-
-		Emprper emprper = trabdto.getRel_dto_per();
-		if ( emprper == null ){
-			error("emprper[{}] : Not found emprper {}", 
-					trabdto.getCdg(), trabdto.getCdg());
-			return true;
-		}
 		
 		String concepto = trabdto.getConcepto();
 		
@@ -770,7 +762,7 @@ public class MysqlDB extends DefaultMysqlDB{
 				importe != null ? importe : 0);
 		
 		insertContract_deduction(enum2short(type), 
-				contract, 
+				this.contractId, 
 				concepto, 
 				function, 
 				trabdto.getFecini(), 
@@ -783,22 +775,17 @@ public class MysqlDB extends DefaultMysqlDB{
 	private double toDouble(BigDecimal... bigDecimals) {
 		double result = 0;
 		for (BigDecimal bigDecimal : bigDecimals) {
-			if ( bigDecimal != null )
-				result += bigDecimal.doubleValue();
+			if ( bigDecimal != null  ) {
+					result += bigDecimal.doubleValue();
+			}
 		}
 		return result;
 	}
 	
 
 	@Override
-	public boolean visitNomina(Nomina nomina) throws SQLException {
+	public boolean visitNomina(Nomina nomina, Emprper emprper) throws SQLException {
 		
-		Integer contract = contracts.get(nomina.getNumero());
-		if ( contract == null ){
-			info("nomina[{}] : Not found contract {}", 
-					nomina.getCdg(), nomina.getNumero());
-			return true;
-		}
 		
 		Double totalPayment = toDouble(nomina.getTotal_devengos()); 
 		Double totalDeduction = toDouble(nomina.getTotal_deducir());
@@ -812,10 +799,10 @@ public class MysqlDB extends DefaultMysqlDB{
 		Double baseHExtras = toDouble(nomina.getBase_hextras(), nomina.getBase_hextras_no());
 		Double baseProfessional = toDouble(nomina.getBase_acc(),nomina.getBase_desempleo(), 
 					nomina.getBase_fogasa(),nomina.getBase_fp());
-		
+		//Double totalCuotas = toDouble(nomina.getImporte_cuotas());
 		
 		this.salaryId= 
-			insertSalary(contract, 
+			insertSalary(this.contractId, 
 					nomina.getFecini(), 
 					nomina.getFecfin(), 
 					nomina.getLocalidad(), 
@@ -835,6 +822,94 @@ public class MysqlDB extends DefaultMysqlDB{
 					baseHExtras,
 					baseIRPF);
 		
+		Double importeCg = toDouble(nomina.getImporte_cg());
+		if ( importeCg > 0 ) {
+			BigDecimal cgPercentage = 
+				nomina.getPrc_cg();
+			String cgFunction = String.format("%.2f%%", 
+					cgPercentage != null ? cgPercentage : 0);
+			insertSalary_deduction(this.salaryId, 
+					enum2short(DeductionType.COMMON_CONTINGENCY), 
+					null, 
+					cgFunction, 
+					importeCg);
+		}
+
+		Double importeAcc = toDouble(nomina.getImporte_acc());
+		
+		if ( importeAcc > 0  ){ 
+			
+			double accPercentage = toDouble(nomina.getPrc_acc());
+			
+			if ( accPercentage == 1.65 &&  accPercentage == 1.70 ) {
+				double jobPercentage = 0.10;
+				double uePercentage = accPercentage - jobPercentage; 
+				
+				double importeJob = jobPercentage * importeAcc / accPercentage;
+				String jobFunction = String.format("%.2f%%", jobPercentage);
+				insertSalary_deduction(this.salaryId, 
+						enum2short(DeductionType.JOB_TRAINING), 
+						null, 
+						jobFunction, 
+						importeJob);
+
+				String ueFunction = String.format("%.2f%%", uePercentage);
+				insertSalary_deduction(this.salaryId, 
+						enum2short(DeductionType.UNEMPLOYMENT), 
+						null, 
+						ueFunction, 
+						importeAcc - importeJob);
+			}
+			else {
+				String accFunction = String.format("%.2f%%", accPercentage);
+				insertSalary_deduction(this.salaryId, 
+						enum2short(DeductionType.PROFESSIONAL_CONTINGENCY), 
+						null, 
+						accFunction, 
+						importeAcc);
+			}
+		}
+		
+		Double importeHex = toDouble(nomina.getImporte_hex());
+		if ( importeHex > 0 ) {
+			BigDecimal hexPercentage = 
+				nomina.getPrc_hex();
+			String hexFunction = String.format("%.2f%%", 
+					hexPercentage != null ? hexPercentage : 0);
+			insertSalary_deduction(this.salaryId, 
+					enum2short(DeductionType.STRUCTURAL_OVERTIME), 
+					null, 
+					hexFunction, 
+					importeHex);
+		}
+
+		Double importeHexNo = toDouble(nomina.getImporte_hexno());
+		if ( importeHexNo > 0 ) {
+			BigDecimal hexNoPercentage = 
+				nomina.getPrc_hexno();
+			String hexNoFunction = String.format("%.2f%%", 
+					hexNoPercentage != null ? hexNoPercentage : 0);
+			insertSalary_deduction(this.salaryId, 
+					enum2short(DeductionType.NON_STRUCTURAL_OVERTIME), 
+					null, 
+					hexNoFunction, 
+					importeHexNo);
+		}
+
+
+		Double importeIrpf = toDouble(nomina.getImporte_irpf());
+		
+		if ( importeIrpf > 0 ){ 
+			BigDecimal irpfPercentage = 
+				nomina.getPrc_irpf();
+			String irpfFunction = String.format("%.2f%%", 
+					irpfPercentage != null ? irpfPercentage : 0);
+			insertSalary_deduction(this.salaryId, 
+					enum2short(DeductionType.IRPF), 
+					null, 
+					irpfFunction, 
+					importeIrpf);
+		}
 		
 		
 		nomina.visitNominadev(this);
@@ -892,30 +967,108 @@ public class MysqlDB extends DefaultMysqlDB{
 		return true;
 	}
 	
+
+	@Override
+	public boolean visitNominaex(Nominaex nominaex, Emprper emprper) throws SQLException {
+		
+		
+		Double totalPayment = toDouble(nominaex.getImporte()); 
+		Double totalDeduction = toDouble(nominaex.getTotal_deducir());
+		Double totalLiquid = toDouble(nominaex.getLiquido());
+		
+		
+		Double baseIRPF = totalPayment;
+		
+		this.salaryId= 
+			insertSalary(this.contractId, 
+					nominaex.getFecini(), 
+					nominaex.getFecfin(), 
+					nominaex.getLocalidad(), 
+					nominaex.getNomper(), 
+					nominaex.getNomemp(), 
+					nominaex.getNummat(), 
+					0, 					// TODO: Dias efectivos .. 
+					totalPayment, 
+					totalDeduction, 
+					totalLiquid, 
+					nominaex.getFecemi(), 
+					0.00, 
+					0.00, 
+					0.00, 
+					0.00, 
+					0.00,
+					0.00,
+					baseIRPF);
+		
+		Double importeIrpf = toDouble(nominaex.getImpirpf());
+		
+		if ( importeIrpf > 0 ){ 
+			BigDecimal irpfPercentage = 
+				nominaex.getIrpf();
+			String irpfFunction = String.format("%.2f%%", 
+					irpfPercentage != null ? irpfPercentage : 0);
+			insertSalary_deduction(this.salaryId, 
+					enum2short(DeductionType.IRPF), 
+					null, 
+					irpfFunction, 
+					importeIrpf);
+		}
+
+		
+		nominaex.visitNomdtoex(this);
+		
+		return true;
+	}
+	
+	
+	@Override
+	public boolean visitNomdtoex(Nomdtoex nomdtoex, Nominaex nominaex)
+			throws SQLException {
+		String concepto = nomdtoex.getConcepto();
+		
+		DeductionType type = getDeductionType(concepto);
+
+		Double importe = toDouble(nomdtoex.getImporte());
+
+		String function = String.format("%.3f", 
+				importe != null ? importe : 0);
+		
+		
+		insertSalary_deduction(
+				this.salaryId, 
+				enum2short(type), 
+				concepto, 
+				function, 
+				importe);
+		
+		return true;
+	}
+	
 	public void writeAll(CtsqlDB ctsqlReader) throws SQLException {
 		
+		start();
+		
+		ctsqlReader.visitTipdoc(this);
 		ctsqlReader.visitTipovia(this);
 		ctsqlReader.visitProvincia(this);
 		
+		
 		ctsqlReader.visitPersona(this);
-		
+
 		ctsqlReader.visitDelegacion(this);
+		ctsqlReader.visitDomicilio(this);
 		
-		ctsqlReader.visitEmprdom(this);
-		
+		// contracts
 		ctsqlReader.visitEmprper(this);
-		ctsqlReader.visitTrabajo(this);
-		ctsqlReader.visitPercep(this);
-		ctsqlReader.visitTrabdto(this);
-		
-		ctsqlReader.visitNomina(this);
-		
+
+
+		finish();
 	}
 	
 	
 	
 	
-	public static void main(String[] args) throws ClassNotFoundException, ParseErrorException, MethodInvocationException, ResourceNotFoundException, SQLException, IOException {
+	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
 		
 		// create the command line parser
     	CommandLineParser parser = new PosixParser();   
@@ -949,7 +1102,7 @@ public class MysqlDB extends DefaultMysqlDB{
     	OptionBuilder.withType(String.class);
     	OptionBuilder.withDescription(  "clave para conectarse." );
     	Option ctsqlPasswdOption = OptionBuilder.create( "passwd" );
-    	
+
     	options.addOption(helpOption);
     	options.addOption(ctsqlURLOption);
     	options.addOption(ctsqlUserOption);
