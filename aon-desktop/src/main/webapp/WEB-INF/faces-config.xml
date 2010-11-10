@@ -152,7 +152,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>RegistryAttachment_category_name,RegistryAttachment_description</value>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>type</property-name>
