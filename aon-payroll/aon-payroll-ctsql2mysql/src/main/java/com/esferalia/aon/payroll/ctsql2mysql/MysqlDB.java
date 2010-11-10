@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -86,8 +87,10 @@ public class MysqlDB extends DefaultMysqlDB{
 	private Integer 	salaryId;				// 'salary' id where we are in 
 	private Integer 	contractId;				// 'contract' id where we are in 
 	// --------------------------------------------------------------
+	private Date		fromDate = null;		
 	
 	
+
 	private Map<Integer, Integer> persons = 
 		new HashMap<Integer, Integer>();
 
@@ -124,6 +127,18 @@ public class MysqlDB extends DefaultMysqlDB{
 		super(mysqlConnection);
 	}
 	
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	
+	private boolean outOfDate ( Date date ) {
+		if ( date == null )
+			return false;
+		if ( fromDate == null )
+			return false;
+		return fromDate.compareTo(date) > 0 ; 
+	}
 	
 	@Override
 	public boolean visitTipdoc(Tipdoc tipdoc) throws SQLException {
@@ -553,6 +568,9 @@ public class MysqlDB extends DefaultMysqlDB{
 	public boolean visitEmprper(Emprper emprper)
 			throws SQLException {
 		
+		if ( outOfDate(emprper.getFecbaj()))
+			return true;
+		
 		Integer workplace = 
 			DefaultMysqlDB.get(workplaces, emprper.getCodemp(), emprper.getDomicilio(), emprper.getCodact());
 		if ( workplace == null ){
@@ -786,6 +804,8 @@ public class MysqlDB extends DefaultMysqlDB{
 	@Override
 	public boolean visitNomina(Nomina nomina, Emprper emprper) throws SQLException {
 		
+		if ( outOfDate( nomina.getFecfin()))
+			return true;
 		
 		Double totalPayment = toDouble(nomina.getTotal_devengos()); 
 		Double totalDeduction = toDouble(nomina.getTotal_deducir());
@@ -971,6 +991,8 @@ public class MysqlDB extends DefaultMysqlDB{
 	@Override
 	public boolean visitNominaex(Nominaex nominaex, Emprper emprper) throws SQLException {
 		
+		if ( outOfDate( nominaex.getFecfin()))
+			return true;
 		
 		Double totalPayment = toDouble(nominaex.getImporte()); 
 		Double totalDeduction = toDouble(nominaex.getTotal_deducir());
@@ -1102,6 +1124,7 @@ public class MysqlDB extends DefaultMysqlDB{
     	OptionBuilder.withType(String.class);
     	OptionBuilder.withDescription(  "clave para conectarse." );
     	Option ctsqlPasswdOption = OptionBuilder.create( "passwd" );
+
 
     	options.addOption(helpOption);
     	options.addOption(ctsqlURLOption);
