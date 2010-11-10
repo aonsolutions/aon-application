@@ -15,8 +15,7 @@ public enum DocumentType implements IResourceable {
 	NIE,
 	PASSPORT,
 	WORK_PERMIT,
-	COMMUNITY_CARD,
-	;
+	COMMUNITY_CARD;
 
 	 /** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.registry.i18n.messages";

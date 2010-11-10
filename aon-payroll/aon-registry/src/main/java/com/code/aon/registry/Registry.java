@@ -20,13 +20,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.geozone.GeoZone;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
@@ -51,12 +53,11 @@ public class Registry implements ITransferObject {
 	private Integer id;
 	private String document;
 	private DocumentType documentType;
-//	private GeoZone documentGeozone;
+	private Country documentCountry;
 	private String name;
-//	private String surname;
 	private String alias;
 	private RegistryType type;
-	private GeoZone geozone;
+	private Country nationality;
 	private Set<RegistryAddress> addresses = new HashSet<RegistryAddress>();
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();
 	private Set<RegistryPayMethod> payMethods = new HashSet<RegistryPayMethod>();
@@ -109,13 +110,14 @@ public class Registry implements ITransferObject {
 		this.documentType = documentType;
 	}
 	
-//	@Column(name="document_geozone")
-//	public GeoZone getDocumentGeozone() {
-//		return documentGeozone;
-//	}
-//	public void setDocumentGeozone(GeoZone documentGeozone) {
-//		this.documentGeozone = documentGeozone;
-//	}
+	@Column(name="document_country")
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.common.enumeration.Country") })
+	public Country getDocumentCountry() {
+		return documentCountry;
+	}
+	public void setDocumentCountry(Country documentCountry) {
+		this.documentCountry = documentCountry;
+	}
 
 	@Column(length=64)
 	public String getName() {
@@ -125,14 +127,6 @@ public class Registry implements ITransferObject {
 		this.name = name;
 	}
 
-//	@Column(length=64)
-//	public String getSurname() {
-//		return surname;
-//	}
-//	public void setSurname(String surname) {
-//		this.surname = surname;
-//	}
-
 	public RegistryType getType() {
 		return type;
 	}
@@ -140,11 +134,12 @@ public class Registry implements ITransferObject {
 		this.type = type;
 	}
 
-	public GeoZone getGeozone() {
-		return geozone;
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.common.enumeration.Country") })
+	public Country getNationality() {
+		return nationality;
 	}
-	public void setGeozone(GeoZone geozone) {
-		this.geozone = geozone;
+	public void setNationality(Country nationality) {
+		this.nationality = nationality;
 	}
 
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
@@ -263,9 +258,11 @@ public class Registry implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.alias, o.alias)
 				.append(this.document, o.document)				
+				.append(this.documentType, o.documentType)
+				.append(documentCountry, o.documentCountry)
 				.append(this.name, o.name)
-//				.append(this.surname, o.surname)				
 				.append(this.type, o.type)
+				.append(nationality, o.nationality)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -276,10 +273,12 @@ public class Registry implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(alias)
 			.append(document)
+			.append(documentType)
+			.append(documentCountry)
 			.append(id)	
 			.append(name)			
-//			.append(surname)
 			.append(type)
+			.append(nationality)
 			.toHashCode();
 	}
 
@@ -303,5 +302,4 @@ public class Registry implements ITransferObject {
 		}
 		return (phones=="")?"":phones.substring(0, phones.length()-2);
 	}
-
 }
