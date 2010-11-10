@@ -22,7 +22,7 @@
 					<c:if test="#{sms.showToolbar}" >
 						<aon:commandButton id="sendSMS" value="#{smsBundle.sms_send}"
 							disabled="#{!sms.allowSending}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							styleClass="aon-finding-toolbar-item aon-icon-accept #{(sms.allowSending)?'':'aon-commandLink-disabled'}"
 							actionListener="#{smsManager.sendMessage}"
 							onclick="Richfaces.showModalPanel('waitProccess')" 
 				     		oncomplete="Richfaces.hideModalPanel('waitProccess')"							

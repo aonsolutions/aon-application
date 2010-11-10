@@ -73,12 +73,6 @@ public class AonComponentHandler extends ComponentHandler {
 			UIComponent parent) {
 		ComponentManager.getInstance().onComponentCreated( ctx, c, parent );
 	}	
-	
-	@Override
-	protected void onComponentPopulated(FaceletContext ctx, UIComponent c,
-			UIComponent parent) {
-		ComponentManager.getInstance().onComponentPopulated( ctx, c, parent );		
-	}
 
 	private void updateLabelStyleClass(FaceletContext ctx, UIOutput label) {
 		String styleClassAttribute = ComponentManager.getInputStyleClass(label);
