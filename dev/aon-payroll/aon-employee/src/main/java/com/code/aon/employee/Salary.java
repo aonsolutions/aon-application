@@ -30,7 +30,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  */
 @Entity
 @Table(name="salary")
-public class Salary implements ITransferObject {
+public class Salary implements ITransferObject, ISalary {
 	
 	private static final long serialVersionUID = 628669216993025202L;
 
@@ -110,7 +110,8 @@ public class Salary implements ITransferObject {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
+	
+	@Override
 	public Contract getContract() {
 		return contract;
 	}
@@ -119,6 +120,7 @@ public class Salary implements ITransferObject {
 		this.contract = contract;
 	}
 
+	@Override
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -127,6 +129,7 @@ public class Salary implements ITransferObject {
 		this.startDate = startDate;
 	}
 
+	@Override
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -135,6 +138,7 @@ public class Salary implements ITransferObject {
 		this.endDate = endDate;
 	}
 
+	@Override
 	public String getAddress() {
 		return address;
 	}
@@ -143,6 +147,7 @@ public class Salary implements ITransferObject {
 		this.address = address;
 	}
 
+	@Override
 	public String getEmployee() {
 		return employee;
 	}
@@ -151,6 +156,7 @@ public class Salary implements ITransferObject {
 		this.employee = employee;
 	}
 
+	@Override
 	public String getCategory() {
 		return category;
 	}
@@ -159,6 +165,7 @@ public class Salary implements ITransferObject {
 		this.category = category;
 	}
 
+	@Override
 	public Integer getRegistration() {
 		return registration;
 	}
@@ -167,6 +174,7 @@ public class Salary implements ITransferObject {
 		this.registration = registration;
 	}
 
+	@Override
 	public Integer getTotalDaysHours() {
 		return totalDaysHours;
 	}
@@ -175,6 +183,7 @@ public class Salary implements ITransferObject {
 		this.totalDaysHours = totalDaysHours;
 	}
 
+	@Override
 	public Double getTotalPayment() {
 		return totalPayment;
 	}
@@ -183,6 +192,7 @@ public class Salary implements ITransferObject {
 		this.totalPayment = totalPayment;
 	}
 
+	@Override
 	public Double getTotalDeduction() {
 		return totalDeduction;
 	}
@@ -191,6 +201,7 @@ public class Salary implements ITransferObject {
 		this.totalDeduction = totalDeduction;
 	}
 
+	@Override
 	public Double getTotalLiquid() {
 		return totalLiquid;
 	}
@@ -199,6 +210,7 @@ public class Salary implements ITransferObject {
 		this.totalLiquid = totalLiquid;
 	}
 
+	@Override
 	public Date getBroadcastDate() {
 		return broadcastDate;
 	}
@@ -207,6 +219,7 @@ public class Salary implements ITransferObject {
 		this.broadcastDate = broadcastDate;
 	}
 
+	@Override
 	public Double getRemuneration() {
 		return remuneration;
 	}
@@ -215,6 +228,7 @@ public class Salary implements ITransferObject {
 		this.remuneration = remuneration;
 	}
 
+	@Override
 	public Double getExtraPayProration() {
 		return extraPayProration;
 	}
@@ -223,6 +237,7 @@ public class Salary implements ITransferObject {
 		this.extraPayProration = extraPayProration;
 	}
 
+	@Override
 	public Double getTotal() {
 		return total;
 	}
@@ -231,6 +246,7 @@ public class Salary implements ITransferObject {
 		this.total = total;
 	}
 
+	@Override
 	public Double getCommonBase() {
 		return commonBase;
 	}
@@ -239,6 +255,7 @@ public class Salary implements ITransferObject {
 		this.commonBase = commonBase;
 	}
 
+	@Override
 	public Double getProfessionalBase() {
 		return professionalBase;
 	}
@@ -247,6 +264,7 @@ public class Salary implements ITransferObject {
 		this.professionalBase = professionalBase;
 	}
 
+	@Override
 	public Double getOvertimeBase() {
 		return overtimeBase;
 	}
@@ -255,6 +273,7 @@ public class Salary implements ITransferObject {
 		this.overtimeBase = overtimeBase;
 	}
 
+	@Override
 	public Double getIrpfBase() {
 		return irpfBase;
 	}
@@ -262,33 +281,7 @@ public class Salary implements ITransferObject {
 	public void setIrpfBase(Double irpfBase) {
 		this.irpfBase = irpfBase;
 	}
-	
-	@Transient
-	public String getStartDateDay(){
-		return DateFormatUtils.format(startDate, "dd", Locale.getDefault());
-	}
-	@Transient
-	public String getStartDateMonth(){
-		return DateFormatUtils.format(startDate, "MM", Locale.getDefault());
-	}
-	@Transient
-	public String getStartDateYear(){
-		return DateFormatUtils.format(startDate, "yyyy", Locale.getDefault());
-	}
-	@Transient
-	public String getEndDateDay(){
-		return DateFormatUtils.format(endDate, "dd", Locale.getDefault());
-	}
-	@Transient
-	public String getEndDateMonth(){
-		return DateFormatUtils.format(endDate, "MM", Locale.getDefault());
-	}
-	@Transient
-	public String getEndDateYear(){
-		return DateFormatUtils.format(endDate, "yyyy", Locale.getDefault());
-	}
-
-	
+		
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -351,8 +344,34 @@ public class Salary implements ITransferObject {
 		return new PojoToStringBuilder(this).toString();
 	}
 	
-	public Salary getSalary(){
+	@Override
+	public ISalary getSalary(){
 		return this;
+	}
+	
+	@Transient
+	public String getStartDateDay(){
+		return DateFormatUtils.format(startDate, "dd", Locale.getDefault());
+	}
+	@Transient
+	public String getStartDateMonth(){
+		return DateFormatUtils.format(startDate, "MMMMM", Locale.getDefault());
+	}
+	@Transient
+	public String getStartDateYear(){
+		return DateFormatUtils.format(startDate, "yyyy", Locale.getDefault());
+	}
+	@Transient
+	public String getEndDateDay(){
+		return DateFormatUtils.format(endDate, "dd", Locale.getDefault());
+	}
+	@Transient
+	public String getEndDateMonth(){
+		return DateFormatUtils.format(endDate, "MMMMM", Locale.getDefault());
+	}
+	@Transient
+	public String getEndDateYear(){
+		return DateFormatUtils.format(endDate, "yyyy", Locale.getDefault());
 	}
 
 }

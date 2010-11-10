@@ -1,7 +1,10 @@
 package com.code.aon.employee;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,7 +38,7 @@ import com.code.aon.person.Person;
  */
 @Entity
 @Table(name="contract")
-public class Contract implements ITransferObject {
+public class Contract implements ITransferObject, ISalary {
 
 	private static final long serialVersionUID = -2662643961209110809L;
 	
@@ -75,10 +79,12 @@ public class Contract implements ITransferObject {
 	private byte[] document;
 
 	private ContractStatus status;
+
+	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
+	private Set<ContractPayment> payments = new HashSet<ContractPayment>();
 	
-//	private Set<ContractPayment> payments = new HashSet<ContractPayment>();
-	
-//	private Set<ContractDeduction> deductions = new HashSet<ContractDeduction>();
+	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
+	private Set<ContractDeduction> deductions = new HashSet<ContractDeduction>();
 
 
 	/**
@@ -203,21 +209,19 @@ public class Contract implements ITransferObject {
 		this.status = status;
 	}
 	
-//	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
-//	public Set<ContractPayment> getPayments() {
-//		return this.payments;
-//	}
-//	public void setPayments( Set<ContractPayment> payments ) {
-//		this.payments = payments;
-//	}
+	public Set<ContractPayment> getPayments() {
+		return this.payments;
+	}
+	public void setPayments( Set<ContractPayment> payments ) {
+		this.payments = payments;
+	}
 	
-//	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
-//	public Set<ContractDeduction> getDeductions() {
-//		return this.deductions;
-//	}
-//	public void setDeductions( Set<ContractDeduction> deductions ) {
-//		this.deductions = deductions;
-//	}
+	public Set<ContractDeduction> getDeductions() {
+		return this.deductions;
+	}
+	public void setDeductions( Set<ContractDeduction> deductions ) {
+		this.deductions = deductions;
+	}
 	
 	
 	@Transient
@@ -268,6 +272,149 @@ public class Contract implements ITransferObject {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+
+	@Override
+	public String getAddress() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Date getBroadcastDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCategory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Double getCommonBase() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployee() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Double getExtraPayProration() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Double getIrpfBase() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Double getOvertimeBase() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Double getProfessionalBase() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer getRegistration() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Double getRemuneration() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ISalary getSalary() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Contract getContract() {
+		return this;
+	}
+
+	@Override
+	public Double getTotal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer getTotalDaysHours() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Double getTotalDeduction() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Double getTotalLiquid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Double getTotalPayment() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEndDateDay() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEndDateMonth() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEndDateYear() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getStartDateDay() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getStartDateMonth() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getStartDateYear() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
