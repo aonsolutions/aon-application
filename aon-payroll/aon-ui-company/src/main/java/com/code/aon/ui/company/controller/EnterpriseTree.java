@@ -34,6 +34,7 @@ import com.code.aon.ui.company.util.EnterpriseTreeType;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseTree implements ICompanyConstants {
@@ -111,6 +112,19 @@ public class EnterpriseTree implements ICompanyConstants {
 			loadContracts(wpNode, wp);
 		}
 	}
+
+	private void addEnterpriseNode( TreeNode<EnterpriseTreeData> enterpriseNode, String id, String bundle, String messageKey ) {
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+		String label = AonUtil.getMessage( bundle, messageKey );
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.DATA);
+		node.setData(etd);
+		enterpriseNode.addChild( id, node);
+	}
+	
+	private void addEnterpriseNodes( TreeNode<EnterpriseTreeData> rootNode ) {
+		addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_ADDRESS_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_ADDRESS_MODULE );
+		addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_MEDIA_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_MEDIA_MODULE );
+	}
 	
 	public void loadTree() {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
@@ -120,13 +134,13 @@ public class EnterpriseTree implements ICompanyConstants {
 		EnterpriseTreeData etd = getTreeData(enterprise);
 		enterpriseNode.setData(etd);
 		rootNode.addChild( etd.getType().toString() + etd.getId(), enterpriseNode );
+		addEnterpriseNodes(enterpriseNode);
 		try {
 			loadWorkPlaces(enterpriseNode, enterprise);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
 		}
 		currentNode = etd;
-		
 		
 		try {
 			IController cController = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
@@ -145,8 +159,6 @@ public class EnterpriseTree implements ICompanyConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading contracts for " + enterprise, e );
 		}
-		
-		
 	}
 
 	public Boolean adviseNodeSelected(UITree tree) {
@@ -218,7 +230,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	}	
 	
 	@SuppressWarnings("unchecked")
-	private void selectNode( ActionEvent event, String controllerName, Integer id ) throws ManagerBeanException {
+	private void selectNode( ActionEvent event, String controllerName, Serializable id ) throws ManagerBeanException {
 		IController controller = FormUtil.getController(controllerName);
 		List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
 		int index;
@@ -233,7 +245,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		controller.onSelect(event);			
 	}	
 	
-	private void selectTreeContracts( ActionEvent event, Integer id ) throws ManagerBeanException {
+	private void selectTreeContracts( ActionEvent event, Serializable id ) throws ManagerBeanException {
 		IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
 		try {
 			Contract contract = (Contract) controller.getManagerBean().get(currentNode.getId());
@@ -250,7 +262,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		}		
 	}
 	
-	public void selectTreeContracts( Integer id ) {
+	public void selectTreeContracts( Serializable id ) {
 		try {
 			IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
 			controller.clearCriteria();

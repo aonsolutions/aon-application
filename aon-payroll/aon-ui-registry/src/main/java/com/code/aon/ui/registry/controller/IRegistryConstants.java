@@ -11,6 +11,10 @@ public interface IRegistryConstants {
 	
 	String REGISTRY_DOCUMENT_MAX_SIZE_ERROR = "registry_document_max_size_error";
 	
+	String REGISTRY_ADDRESS_MODULE = "registry_address_module";
+	
+	String REGISTRY_MEDIA_MODULE = "registry_media_module";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************
