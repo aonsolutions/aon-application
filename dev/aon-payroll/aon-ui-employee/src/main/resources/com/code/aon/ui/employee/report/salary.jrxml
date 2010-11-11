@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="45">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="841" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="153"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
 	<style name="complements_TABLE">
@@ -48,15 +48,11 @@
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<subDataset name="Table Dataset 2"/>
-	<subDataset name="dataset1"/>
 	<subDataset name="ds1">
 		<field name="description" class="java.lang.String"/>
 		<field name="function" class="java.lang.String"/>
 		<field name="amount" class="java.lang.Double"/>
 	</subDataset>
-	<parameter name="payments" class="com.code.aon.ui.employee.controller.SalaryPayments"/>
-	<parameter name="deductions" class="com.code.aon.ui.employee.controller.SalaryDeductions"/>
 	<field name="salary" class="com.code.aon.employee.ISalary"/>
 	<group name="salary_GROUP" isStartNewPage="true">
 		<groupExpression><![CDATA[$F{salary}]]></groupExpression>
@@ -254,9 +250,9 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="116">
+			<band height="114">
 				<frame>
-					<reportElement x="0" y="2" width="555" height="114"/>
+					<reportElement x="0" y="1" width="555" height="113"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -265,7 +261,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<rectangle>
-						<reportElement x="0" y="10" width="555" height="104"/>
+						<reportElement x="0" y="10" width="555" height="103"/>
 					</rectangle>
 					<staticText>
 						<reportElement mode="Opaque" x="8" y="0" width="528" height="22"/>
@@ -273,7 +269,7 @@
 						<textElement>
 							<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
-						<text><![CDATA[DETERMINACIÓN DE LAS BASES DECOTIZACIÓN A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACIÓN CONJUNTA Y DE LA BASE SUJETA A RETENCIÓN DE I.R.P.F]]></text>
+						<text><![CDATA[DETERMINACIÓN DE LAS BASES DE COTIZACIÓN A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACIÓN CONJUNTA Y DE LA BASE SUJETA A RETENCIÓN DE I.R.P.F]]></text>
 					</staticText>
 					<staticText>
 						<reportElement x="10" y="22" width="539" height="11"/>
@@ -465,9 +461,9 @@
 		</band>
 	</title>
 	<detail>
-		<band height="533">
+		<band height="507">
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="15" width="555" height="494"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="13" width="555" height="494"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -479,7 +475,7 @@
 					<reportElement x="0" y="7" width="555" height="290"/>
 				</rectangle>
 				<rectangle>
-					<reportElement x="0" y="307" width="555" height="160"/>
+					<reportElement x="0" y="306" width="555" height="160"/>
 				</rectangle>
 				<staticText>
 					<reportElement mode="Opaque" x="5" y="0" width="59" height="11"/>
@@ -500,7 +496,7 @@
 					<textElement verticalAlignment="Middle">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<text><![CDATA[1. Precepciones salariales]]></text>
+					<text><![CDATA[1. Percepciones salariales]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="20" y="22" width="455" height="11"/>
@@ -524,7 +520,7 @@
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getBaseSalary().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getPayments().getBaseSalary().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="20" y="34" width="530" height="11"/>
@@ -551,7 +547,7 @@
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getOvertimeHours().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getPayments().getOvertimeHours().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="20" y="134" width="455" height="11"/>
@@ -573,7 +569,7 @@
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getSpecialBonuses().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getPayments().getSpecialBonuses().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="20" y="146" width="455" height="11"/>
@@ -595,14 +591,14 @@
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getSalaryInKid().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getPayments().getSalaryInKid().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="10" y="158" width="540" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<text><![CDATA[2. Precepciones no salariales]]></text>
+					<text><![CDATA[2. Percepciones no salariales]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="20" y="169" width="530" height="11"/>
@@ -638,26 +634,26 @@
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalPayment()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement mode="Opaque" x="8" y="299" width="72" height="11"/>
+					<reportElement mode="Opaque" x="8" y="298" width="72" height="11"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
 					<text><![CDATA[II. DEDUCCIONES]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="9" y="310" width="541" height="11"/>
+					<reportElement x="9" y="309" width="541" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
 					<text><![CDATA[1. Aportación del trabajador a las cotizaciones de la Seguridad Social  y conceptos de recaudación conjunta ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="19" y="321" width="236" height="11"/>
+					<reportElement x="19" y="320" width="236" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -669,7 +665,7 @@
 					<text><![CDATA[Contingencias comunes]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="255" y="321" width="220" height="11"/>
+					<reportElement x="255" y="320" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -678,20 +674,20 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getCommonContingency().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getCommonContingency().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="321" width="70" height="11"/>
+					<reportElement x="480" y="320" width="70" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getCommonContingency().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getCommonContingency().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="19" y="333" width="236" height="11"/>
+					<reportElement x="19" y="332" width="236" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -703,7 +699,7 @@
 					<text><![CDATA[Desempleo]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="255" y="333" width="220" height="11"/>
+					<reportElement x="255" y="332" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -712,20 +708,20 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getUnemployment().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getUnemployment().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="333" width="70" height="11"/>
+					<reportElement x="480" y="332" width="70" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getUnemployment().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getUnemployment().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="19" y="345" width="236" height="11"/>
+					<reportElement x="19" y="344" width="236" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -737,7 +733,7 @@
 					<text><![CDATA[Formación Profesional]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="255" y="345" width="220" height="11"/>
+					<reportElement x="255" y="344" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -746,20 +742,20 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getJobTraining().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getJobTraining().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="345" width="70" height="11"/>
+					<reportElement x="480" y="344" width="70" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getJobTraining().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getJobTraining().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="19" y="357" width="75" height="11"/>
+					<reportElement x="19" y="356" width="75" height="11"/>
 					<box>
 						<bottomPen lineWidth="0.0"/>
 					</box>
@@ -767,7 +763,7 @@
 					<text><![CDATA[Horas extraordinarias,]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="94" y="357" width="161" height="11"/>
+					<reportElement x="94" y="356" width="161" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -779,7 +775,7 @@
 					<text><![CDATA[Fuerza mayor o estructurales]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="255" y="357" width="220" height="11"/>
+					<reportElement x="255" y="356" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -788,20 +784,20 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getStructuralOvertime().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="357" width="70" height="11"/>
+					<reportElement x="480" y="356" width="70" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getStructuralOvertime().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="94" y="369" width="161" height="11"/>
+					<reportElement x="94" y="368" width="161" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -813,7 +809,7 @@
 					<text><![CDATA[No estructurales]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="255" y="369" width="220" height="11"/>
+					<reportElement x="255" y="368" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -822,20 +818,20 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getNonStructuralOvertime().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="369" width="70" height="11"/>
+					<reportElement x="480" y="368" width="70" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getNonStructuralOvertime().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="255" y="381" width="220" height="11"/>
+					<reportElement x="255" y="380" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -849,17 +845,17 @@
 					<text><![CDATA[TOTAL APORTACIONES]]></text>
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="381" width="70" height="11"/>
+					<reportElement x="480" y="380" width="70" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getAportationTotal()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getAportationTotal()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="9" y="396" width="246" height="11"/>
+					<reportElement x="9" y="395" width="246" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -873,7 +869,7 @@
 					<text><![CDATA[2. Impuesto sobre la renta de las personas físicas]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="255" y="396" width="220" height="11"/>
+					<reportElement x="255" y="395" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -884,20 +880,20 @@
 					<textElement>
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getIrpf().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getIrpf().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="396" width="69" height="11"/>
+					<reportElement x="480" y="395" width="69" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getIrpf().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getIrpf().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="9" y="411" width="246" height="11"/>
+					<reportElement x="9" y="410" width="246" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -911,17 +907,17 @@
 					<text><![CDATA[3. Anticipos]]></text>
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="411" width="70" height="11"/>
+					<reportElement x="480" y="410" width="70" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getAdvancePayment().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getAdvancePayment().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="9" y="426" width="246" height="11"/>
+					<reportElement x="9" y="425" width="246" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -935,17 +931,17 @@
 					<text><![CDATA[4. Valor de los productos recibidos en especie]]></text>
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="426" width="70" height="11"/>
+					<reportElement x="480" y="425" width="70" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getInKid().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getInKid().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="9" y="441" width="246" height="11"/>
+					<reportElement x="9" y="440" width="246" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -959,24 +955,24 @@
 					<text><![CDATA[5. Otras deducciones]]></text>
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="480" y="441" width="70" height="11"/>
+					<reportElement x="480" y="440" width="70" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{deductions}.getOther().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getOther().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement mode="Opaque" x="326" y="457" width="95" height="11"/>
+					<reportElement mode="Opaque" x="326" y="456" width="95" height="11"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
 					<text><![CDATA[B.TOTAL A DEDUCCIR]]></text>
 				</staticText>
 				<textField pattern="#,##0.00">
-					<reportElement x="447" y="456" width="102" height="11"/>
+					<reportElement x="447" y="455" width="102" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
 					</box>
@@ -986,7 +982,7 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalDeduction()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="176" y="471" width="254" height="11"/>
+					<reportElement x="176" y="470" width="254" height="11"/>
 					<box>
 						<bottomPen lineWidth="0.5"/>
 					</box>
@@ -996,7 +992,7 @@
 					<text><![CDATA[LIQUIDO TOTAL A PERCIBIR (A-B)]]></text>
 				</staticText>
 				<textField pattern="#,##0.00">
-					<reportElement mode="Opaque" x="437" y="471" width="118" height="11" backcolor="#CCCCCC"/>
+					<reportElement mode="Opaque" x="437" y="470" width="118" height="11" backcolor="#CCCCCC"/>
 					<box rightPadding="5">
 						<pen lineWidth="1.0"/>
 						<topPen lineWidth="1.0"/>
@@ -1010,14 +1006,14 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalLiquid()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="18" y="483" width="112" height="11"/>
+					<reportElement x="18" y="482" width="112" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
 					</textElement>
 					<text><![CDATA[Firma y sello de la empresa]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="436" y="483" width="35" height="11"/>
+					<reportElement x="436" y="482" width="35" height="11"/>
 					<textElement verticalAlignment="Middle">
 						<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
 					</textElement>
@@ -1031,7 +1027,7 @@
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getSpecialSecurityBenefits().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getPayments().getSpecialSecurityBenefits().getAmount()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement x="480" y="249" width="70" height="11"/>
@@ -1041,7 +1037,7 @@
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getMovingCompensation().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getPayments().getMovingCompensation().getAmount()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement x="480" y="273" width="70" height="11"/>
@@ -1051,13 +1047,13 @@
 					<textElement textAlignment="Right">
 						<font isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$P{payments}.getOtherNonWage().getAmount()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getPayments().getOtherNonWage().getAmount()]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement key="table" x="40" y="45" width="510" height="10"/>
+					<reportElement key="table" x="40" y="45" width="510" height="9"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="ds1">
-							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{payments}.getSalarySupplements())]]></dataSourceExpression>
+							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{salary}.getPayments().getSalarySupplements())]]></dataSourceExpression>
 						</datasetRun>
 						<jr:column width="215">
 							<jr:detailCell style="table_TD" height="10" rowSpan="1">
@@ -1065,12 +1061,18 @@
 									<pen lineWidth="0.0"/>
 									<topPen lineWidth="0.0"/>
 									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.0"/>
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="215" height="10"/>
-									<box leftPadding="0"/>
+									<reportElement x="0" y="0" width="215" height="9"/>
+									<box leftPadding="0">
+										<pen lineStyle="Dotted"/>
+										<topPen lineStyle="Dotted"/>
+										<leftPen lineStyle="Dotted"/>
+										<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+										<rightPen lineStyle="Dotted"/>
+									</box>
 									<textElement/>
 									<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 								</textField>
@@ -1082,11 +1084,18 @@
 									<pen lineWidth="0.0"/>
 									<topPen lineWidth="0.0"/>
 									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.0"/>
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="220" height="10"/>
+									<reportElement x="0" y="0" width="220" height="9"/>
+									<box>
+										<pen lineStyle="Dotted"/>
+										<topPen lineStyle="Dotted"/>
+										<leftPen lineStyle="Dotted"/>
+										<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+										<rightPen lineStyle="Dotted"/>
+									</box>
 									<textElement/>
 									<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 								</textField>
@@ -1098,12 +1107,17 @@
 									<pen lineWidth="0.0"/>
 									<topPen lineWidth="0.0"/>
 									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement x="0" y="0" width="70" height="10"/>
-									<textElement textAlignment="Right"/>
+									<reportElement x="0" y="0" width="70" height="9"/>
+									<box>
+										<bottomPen lineWidth="1.0"/>
+									</box>
+									<textElement textAlignment="Right">
+										<font isBold="true" pdfFontName="Helvetica-Bold"/>
+									</textElement>
 									<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
@@ -1120,7 +1134,7 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{payments}.getSpecialSecurityBenefits().getDescription()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getSpecialSecurityBenefits().getDescription()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="20" y="249" width="235" height="11"/>
@@ -1132,7 +1146,7 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{payments}.getMovingCompensation().getDescription()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getMovingCompensation().getDescription()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="20" y="273" width="235" height="11"/>
@@ -1144,7 +1158,7 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{payments}.getOtherNonWage().getDescription()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getOtherNonWage().getDescription()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="255" y="273" width="220" height="11"/>
@@ -1156,7 +1170,7 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{payments}.getOtherNonWage().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getOtherNonWage().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="255" y="249" width="220" height="11"/>
@@ -1168,7 +1182,7 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{payments}.getMovingCompensation().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getMovingCompensation().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="255" y="225" width="220" height="11"/>
@@ -1180,13 +1194,13 @@
 						<rightPen lineStyle="Dotted"/>
 					</box>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{payments}.getSpecialSecurityBenefits().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getSpecialSecurityBenefits().getFunction()]]></textFieldExpression>
 				</textField>
 				<componentElement>
 					<reportElement key="table" x="40" y="180" width="510" height="10"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="ds1">
-							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{payments}.getComplementarySuply())]]></dataSourceExpression>
+							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{salary}.getPayments().getComplementarySuply())]]></dataSourceExpression>
 						</datasetRun>
 						<jr:column width="215">
 							<jr:detailCell style="table_TD" height="10" rowSpan="1">
@@ -1194,12 +1208,18 @@
 									<pen lineWidth="0.0"/>
 									<topPen lineWidth="0.0"/>
 									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.0"/>
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="215" height="10"/>
-									<box leftPadding="0"/>
+									<box leftPadding="0">
+										<pen lineStyle="Dotted"/>
+										<topPen lineStyle="Dotted"/>
+										<leftPen lineStyle="Dotted"/>
+										<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+										<rightPen lineStyle="Dotted"/>
+									</box>
 									<textElement/>
 									<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 								</textField>
@@ -1211,11 +1231,18 @@
 									<pen lineWidth="0.0"/>
 									<topPen lineWidth="0.0"/>
 									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.0"/>
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="220" height="10"/>
+									<box>
+										<pen lineStyle="Dotted"/>
+										<topPen lineStyle="Dotted"/>
+										<leftPen lineStyle="Dotted"/>
+										<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+										<rightPen lineStyle="Dotted"/>
+									</box>
 									<textElement/>
 									<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 								</textField>
@@ -1227,12 +1254,17 @@
 									<pen lineWidth="0.0"/>
 									<topPen lineWidth="0.0"/>
 									<leftPen lineWidth="0.0"/>
-									<bottomPen lineWidth="1.0"/>
+									<bottomPen lineWidth="0.0"/>
 									<rightPen lineWidth="0.0"/>
 								</box>
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
 									<reportElement x="0" y="0" width="70" height="10"/>
-									<textElement textAlignment="Right"/>
+									<box>
+										<bottomPen lineWidth="1.0"/>
+									</box>
+									<textElement textAlignment="Right">
+										<font isBold="true" pdfFontName="Helvetica-Bold"/>
+									</textElement>
 									<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
@@ -1240,7 +1272,7 @@
 					</jr:table>
 				</componentElement>
 				<textField isBlankWhenNull="true">
-					<reportElement x="255" y="411" width="220" height="11"/>
+					<reportElement x="255" y="410" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -1251,10 +1283,10 @@
 					<textElement>
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getAdvancePayment().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getAdvancePayment().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="255" y="426" width="220" height="11"/>
+					<reportElement x="255" y="425" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -1265,10 +1297,10 @@
 					<textElement>
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getInKid().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getInKid().getFunction()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="255" y="441" width="220" height="11"/>
+					<reportElement x="255" y="440" width="220" height="11"/>
 					<box>
 						<pen lineStyle="Dotted"/>
 						<topPen lineStyle="Dotted"/>
@@ -1279,7 +1311,7 @@
 					<textElement>
 						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{deductions}.getOther().getFunction()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getOther().getFunction()]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
