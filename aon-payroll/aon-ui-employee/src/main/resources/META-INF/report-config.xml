@@ -34,19 +34,28 @@
 	<!--  IMPRESION DE LA NOMINA -->
 	<report id="currentSalaryReport" description="Current Salary report ">
 		<template path="/com/code/aon/ui/employee/report/salary.jasper" />
-		<collection provider="#{salary}"/>
+		<collection provider="#{salary}" forceRefresh="true"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payments" value="#{salary.getPayments}" />
-			<param id="deductions" value="#{salary.getDeductions}" />
 		</params>
 	</report>
 	<report id="salaryReport" description="Salary report ">
 		<template path="/com/code/aon/ui/employee/report/salary.jasper" />
 		<bean key="com.code.aon.employee.Salary" />
 		<criteria provider="#{salary}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.report" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<!--  IMPRESION DEL BORRADOR DE LA NOMINA -->
+	<report id="currentSalaryDraftReport" description="Current Salary Draft report ">
+		<template path="/com/code/aon/ui/employee/report/salary.jasper" />
+		<collection provider="#{contract}" forceRefresh="true"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
