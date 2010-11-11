@@ -28,7 +28,7 @@ import com.code.aon.employee.enumeration.PaymentType;
  */
 @Entity
 @Table(name="contract_payment")
-public class ContractPayment implements ITransferObject {
+public class ContractPayment implements ITransferObject, IPayment {
 	
 	private static final long serialVersionUID = 2831598401831457550L;
 
@@ -77,6 +77,7 @@ public class ContractPayment implements ITransferObject {
 		this.contract = contract;
 	}
 	
+	@Override
 	public PaymentType getType() {
 		return type;
 	}
@@ -85,6 +86,7 @@ public class ContractPayment implements ITransferObject {
 		this.type = type;
 	}
 	
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -93,6 +95,7 @@ public class ContractPayment implements ITransferObject {
 		this.description = description;
 	}
 	
+	@Override
 	public String getFunction() {
 		return function;
 	}
@@ -152,6 +155,12 @@ public class ContractPayment implements ITransferObject {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+
+	@Override
+	public double getAmount() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
