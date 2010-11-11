@@ -28,7 +28,7 @@ import com.code.aon.employee.enumeration.DeductionType;
  */
 @Entity
 @Table(name="contract_deduction")
-public class ContractDeduction implements ITransferObject {
+public class ContractDeduction implements ITransferObject, IDeduction {
 
 	private static final long serialVersionUID = 4510451091870851884L;
 
@@ -76,6 +76,7 @@ public class ContractDeduction implements ITransferObject {
 		this.contract = contract;
 	}
 	
+	@Override
 	public DeductionType getType() {
 		return type;
 	}
@@ -84,6 +85,7 @@ public class ContractDeduction implements ITransferObject {
 		this.type = type;
 	}
 	
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -92,6 +94,7 @@ public class ContractDeduction implements ITransferObject {
 		this.description = description;
 	}
 	
+	@Override
 	public String getFunction() {
 		return function;
 	}
@@ -151,6 +154,12 @@ public class ContractDeduction implements ITransferObject {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+
+	@Override
+	public double getAmount() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

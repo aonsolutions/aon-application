@@ -24,7 +24,7 @@ import com.code.aon.employee.enumeration.PaymentType;
  */
 @Entity
 @Table(name="salary_payment")
-public class SalaryPayment implements ITransferObject {
+public class SalaryPayment implements ITransferObject, IPayment {
 	
 	private static final long serialVersionUID = 7062556672670928116L;
 
@@ -68,6 +68,7 @@ public class SalaryPayment implements ITransferObject {
 		this.salary = salary;
 	}
 	
+	@Override
 	public PaymentType getType() {
 		return type;
 	}
@@ -76,6 +77,7 @@ public class SalaryPayment implements ITransferObject {
 		this.type = type;
 	}
 	
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -84,6 +86,7 @@ public class SalaryPayment implements ITransferObject {
 		this.description = description;
 	}
 	
+	@Override
 	public String getFunction() {
 		return function;
 	}
@@ -92,6 +95,7 @@ public class SalaryPayment implements ITransferObject {
 		this.function = function;
 	}
 	
+	@Override
 	public double getAmount() {
 		return amount;
 	}

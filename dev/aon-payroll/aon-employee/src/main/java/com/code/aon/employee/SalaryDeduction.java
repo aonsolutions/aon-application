@@ -24,7 +24,7 @@ import com.code.aon.employee.enumeration.DeductionType;
  */
 @Entity
 @Table(name="salary_deduction")
-public class SalaryDeduction implements ITransferObject {
+public class SalaryDeduction implements ITransferObject, IDeduction {
 
 	private static final long serialVersionUID = 605359641808170785L;
 
@@ -68,6 +68,7 @@ public class SalaryDeduction implements ITransferObject {
 		this.salary = salary;
 	}
 	
+	@Override
 	public DeductionType getType() {
 		return type;
 	}
@@ -76,6 +77,7 @@ public class SalaryDeduction implements ITransferObject {
 		this.type = type;
 	}
 	
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -84,6 +86,7 @@ public class SalaryDeduction implements ITransferObject {
 		this.description = description;
 	}
 	
+	@Override
 	public String getFunction() {
 		return function;
 	}
@@ -92,6 +95,7 @@ public class SalaryDeduction implements ITransferObject {
 		this.function = function;
 	}
 	
+	@Override
 	public double getAmount() {
 		return amount;
 	}
