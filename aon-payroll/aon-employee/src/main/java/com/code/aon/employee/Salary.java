@@ -1,14 +1,19 @@
 package com.code.aon.employee;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,6 +28,8 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.employee.enumeration.DeductionType;
+import com.code.aon.employee.enumeration.PaymentType;
 
 /**
  * Transfer Object that represents the salary.
@@ -101,6 +108,12 @@ public class Salary implements ITransferObject, ISalary {
 	
 	@Column(name = "irpf_base", precision = 15, scale = 3, nullable = false)
 	private Double irpfBase;
+	
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	private Set<SalaryPayment> payments = new HashSet<SalaryPayment>();
+	
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	private Set<SalaryDeduction> deductions = new HashSet<SalaryDeduction>();
 
 	
 	public Integer getId() {
@@ -281,7 +294,23 @@ public class Salary implements ITransferObject, ISalary {
 	public void setIrpfBase(Double irpfBase) {
 		this.irpfBase = irpfBase;
 	}
-		
+	
+	public Set<SalaryPayment> getSalaryPayments() {
+		return payments;
+	}
+
+	public void setSalaryPayments(Set<SalaryPayment> payments) {
+		this.payments = payments;
+	}
+
+	public Set<SalaryDeduction> getSalaryDeductions() {
+		return deductions;
+	}
+
+	public void setSalaryDeductions(Set<SalaryDeduction> deductions) {
+		this.deductions = deductions;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -372,6 +401,64 @@ public class Salary implements ITransferObject, ISalary {
 	@Transient
 	public String getEndDateYear(){
 		return DateFormatUtils.format(endDate, "yyyy", Locale.getDefault());
+	}
+
+	@Override
+	public Deductions getDeductions() {
+		Deductions d = new Deductions();
+		for(Object o: getSalaryDeductions().toArray()){
+			SalaryDeduction sd = (SalaryDeduction) o;
+			if (sd.getType() == DeductionType.COMMON_CONTINGENCY) {
+				d.setCommonContingency(sd);
+			} else if (sd.getType() == DeductionType.UNEMPLOYMENT) {
+				d.setUnemployment(sd);
+			} else if (sd.getType() == DeductionType.JOB_TRAINING) {
+				d.setJobTraining(sd);
+			} else if (sd.getType() == DeductionType.STRUCTURAL_OVERTIME) {
+				d.setStructuralOvertime(sd);
+			} else if (sd.getType() == DeductionType.NON_STRUCTURAL_OVERTIME) {
+				d.setNonStructuralOvertime(sd);
+			} else if (sd.getType() == DeductionType.IRPF) {
+				d.setIrpf(sd);
+			} else if (sd.getType() == DeductionType.ADVANCE_PAYMENT) {
+				d.setAdvancePayment(sd);
+			} else if (sd.getType() == DeductionType.IN_KIND) {
+				d.setInKid(sd);
+			} else if (sd.getType() == DeductionType.OTHER) {
+				d.setOther(sd);
+			}
+		}
+		return d;
+	}
+
+	@Override
+	public Payments getPayments() {
+		Payments p = new Payments();
+		p.setSalarySupplements(new LinkedList<IPayment>());
+		p.setComplementarySuply(new LinkedList<IPayment>());
+		for(Object o: getSalaryPayments().toArray()){
+			SalaryPayment sp = (SalaryPayment) o;
+			if (sp.getType() == PaymentType.BASE_SALARY) {
+				p.setBaseSalary(sp);
+			} else if (sp.getType() == PaymentType.SALARY_SUPPLEMENTS) {
+				 p.getSalarySupplements().add(sp);
+			} else if (sp.getType() == PaymentType.OVERTIME_HOURS) {
+				p.setOvertimeHours(sp);
+			} else if (sp.getType() == PaymentType.SPECIAL_BONUSES) {
+				p.setSpecialBonuses(sp);
+			} else if (sp.getType() == PaymentType.SALARY_IN_KIND) {
+				p.setSalaryInKid(sp);
+			} else if (sp.getType() == PaymentType.COMPENSATION_SUPLY) {
+				p.getComplementarySuply().add(sp);
+			} else if (sp.getType() == PaymentType.SOCIAL_SECURITY_BENEFITS) {
+				p.setSpecialSecurityBenefits(sp);
+			} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
+				p.setMovingCompensation(sp);
+			} else if (sp.getType() == PaymentType.OTHER_NON_WAGE) {
+				p.setOtherNonWage(sp);
+			}
+		}
+		return p;
 	}
 
 }

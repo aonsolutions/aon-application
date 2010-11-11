@@ -2,6 +2,8 @@ package com.code.aon.employee;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -21,15 +23,19 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractStatus;
+import com.code.aon.employee.enumeration.DeductionType;
+import com.code.aon.employee.enumeration.PaymentType;
 import com.code.aon.person.Person;
 
 /**
@@ -209,17 +215,17 @@ public class Contract implements ITransferObject, ISalary {
 		this.status = status;
 	}
 	
-	public Set<ContractPayment> getPayments() {
+	public Set<ContractPayment> getContractPayments() {
 		return this.payments;
 	}
-	public void setPayments( Set<ContractPayment> payments ) {
+	public void setContractPayments( Set<ContractPayment> payments ) {
 		this.payments = payments;
 	}
 	
-	public Set<ContractDeduction> getDeductions() {
+	public Set<ContractDeduction> getContractDeductions() {
 		return this.deductions;
 	}
-	public void setDeductions( Set<ContractDeduction> deductions ) {
+	public void setContractDeductions( Set<ContractDeduction> deductions ) {
 		this.deductions = deductions;
 	}
 	
@@ -276,7 +282,11 @@ public class Contract implements ITransferObject, ISalary {
 
 	@Override
 	public String getAddress() {
-		// TODO Auto-generated method stub
+		try {
+			return getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress();
+		} catch (ManagerBeanException e) {
+			
+		}
 		return null;
 	}
 
@@ -300,8 +310,7 @@ public class Contract implements ITransferObject, ISalary {
 
 	@Override
 	public String getEmployee() {
-		// TODO Auto-generated method stub
-		return null;
+		return getPerson().getRegistry().getFullName();
 	}
 
 	@Override
@@ -342,8 +351,7 @@ public class Contract implements ITransferObject, ISalary {
 
 	@Override
 	public ISalary getSalary() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	@Override
@@ -381,40 +389,100 @@ public class Contract implements ITransferObject, ISalary {
 		return null;
 	}
 
+	@Transient
+	public String getStartDateDay(){
+		return DateFormatUtils.format(startDate, "dd", Locale.getDefault());
+	}
+	@Transient
+	public String getStartDateMonth(){
+		return DateFormatUtils.format(startDate, "MMMMM", Locale.getDefault());
+	}
+	@Transient
+	public String getStartDateYear(){
+		return DateFormatUtils.format(startDate, "yyyy", Locale.getDefault());
+	}
+	@Transient
+	public String getEndDateDay(){
+		return DateFormatUtils.format(endDate, "dd", Locale.getDefault());
+	}
+	@Transient
+	public String getEndDateMonth(){
+		return DateFormatUtils.format(endDate, "MMMMM", Locale.getDefault());
+	}
+	@Transient
+	public String getEndDateYear(){
+		return DateFormatUtils.format(endDate, "yyyy", Locale.getDefault());
+	}
+	
 	@Override
-	public String getEndDateDay() {
-		// TODO Auto-generated method stub
-		return null;
+	public Deductions getDeductions() {
+		Deductions d = new Deductions();
+		for(Object o: getContractDeductions().toArray()){
+			ContractDeduction sd = (ContractDeduction) o;
+			if(upToDate(sd.getStartDate(), sd.getEndDate())){
+				if (sd.getType() == DeductionType.COMMON_CONTINGENCY) {
+					d.setCommonContingency(sd);
+				} else if (sd.getType() == DeductionType.UNEMPLOYMENT) {
+					d.setUnemployment(sd);
+				} else if (sd.getType() == DeductionType.JOB_TRAINING) {
+					d.setJobTraining(sd);
+				} else if (sd.getType() == DeductionType.STRUCTURAL_OVERTIME) {
+					d.setStructuralOvertime(sd);
+				} else if (sd.getType() == DeductionType.NON_STRUCTURAL_OVERTIME) {
+					d.setNonStructuralOvertime(sd);
+				} else if (sd.getType() == DeductionType.IRPF) {
+					d.setIrpf(sd);
+				} else if (sd.getType() == DeductionType.ADVANCE_PAYMENT) {
+					d.setAdvancePayment(sd);
+				} else if (sd.getType() == DeductionType.IN_KIND) {
+					d.setInKid(sd);
+				} else if (sd.getType() == DeductionType.OTHER) {
+					d.setOther(sd);
+				}
+			}
+		}
+		return d;
 	}
 
 	@Override
-	public String getEndDateMonth() {
-		// TODO Auto-generated method stub
-		return null;
+	public Payments getPayments() {
+		Payments p = new Payments();
+		p.setSalarySupplements(new LinkedList<IPayment>());
+		p.setComplementarySuply(new LinkedList<IPayment>());
+		for(Object o: getContractPayments().toArray()){
+			ContractPayment sp = (ContractPayment) o;
+			if(upToDate(sp.getStartDate(), sp.getEndDate())){
+				if (sp.getType() == PaymentType.BASE_SALARY) {
+					p.setBaseSalary(sp);
+				} else if (sp.getType() == PaymentType.SALARY_SUPPLEMENTS) {
+					p.getSalarySupplements().add(sp);
+				} else if (sp.getType() == PaymentType.OVERTIME_HOURS) {
+					p.setOvertimeHours(sp);
+				} else if (sp.getType() == PaymentType.SPECIAL_BONUSES) {
+					p.setSpecialBonuses(sp);
+				} else if (sp.getType() == PaymentType.SALARY_IN_KIND) {
+					p.setSalaryInKid(sp);
+				} else if (sp.getType() == PaymentType.COMPENSATION_SUPLY) {
+					p.getComplementarySuply().add(sp);
+				} else if (sp.getType() == PaymentType.SOCIAL_SECURITY_BENEFITS) {
+					p.setSpecialSecurityBenefits(sp);
+				} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
+					p.setMovingCompensation(sp);
+				} else if (sp.getType() == PaymentType.OTHER_NON_WAGE) {
+					p.setOtherNonWage(sp);
+				}
+			}
+		}
+		return p;
 	}
 
-	@Override
-	public String getEndDateYear() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getStartDateDay() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getStartDateMonth() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getStartDateYear() {
-		// TODO Auto-generated method stub
-		return null;
+	private boolean upToDate(Date startDate, Date endDate) {
+		if(startDate.before(new Date())){
+			if(endDate==null || endDate.after(new Date())){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
