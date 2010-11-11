@@ -55,5 +55,9 @@ public interface ISalary {
 	public String getEndDateMonth();
 
 	public String getEndDateYear();
+	
+	public Payments getPayments();
+
+	public Deductions getDeductions();
 
 }
