@@ -1354,6 +1354,10 @@
 			<from-outcome>enterprise_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/search.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterprise_data</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/dataContent.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
 	<!-- =================== Work Place ========================== -->
