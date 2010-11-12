@@ -138,8 +138,9 @@
 				</f:facet>
 				<h:commandLink target="_blank" 
 					disabled="#{to.document==null}"
+					title="#{(to.document!=null)?('pdf'):('pdf-disabled')}"
 					actionListener="#{contract.onDownloadContract}"
-					styleClass="aon-editDataTable-button #{(to.document!=null)?(aon-icon-pdf):(aon-icon-pdf-disabled)}"
+					styleClass="aon-editDataTable-button #{(to.document!=null)?('aon-icon-pdf'):('aon-icon-pdf-disabled')}"
 					value="&#160;" />
 			</aon:column>
 <!--  
