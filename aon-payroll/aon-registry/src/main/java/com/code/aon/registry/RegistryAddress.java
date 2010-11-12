@@ -14,7 +14,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -115,7 +114,11 @@ public class RegistryAddress implements ITransferObject, IAddress {
     	buf.append(StringUtils.isEmpty(getAddress3())?"":getAddress3() );
     	buf.append(StringUtils.isEmpty(getAddress3())?"":")");
     	return buf.toString();
-    }    
+    }
+    @Transient
+    public String getShortAddress() {
+  		return StringUtils.isEmpty(getAlias())?StringUtils.abbreviate(getFullAddress(), 20): getAlias();
+    }
 
     public void setAddress3(String address3) {
         this.address3 = address3;

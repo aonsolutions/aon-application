@@ -11,25 +11,26 @@
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 
 		<ui:define name="columns">
-				<f:facet name="footer">
-					<rich:columnGroup  rendered="#{formNew}">
-						<rich:column colspan="6" style="padding-left: 50px;">
-							<ui:include src="tab_grid_content.xhtml">
-								<ui:param name="sufix" value="-New" />
-							</ui:include>
-						</rich:column>
-					</rich:columnGroup>
-				</f:facet>
+			<f:facet name="footer">
+				<rich:columnGroup  rendered="#{formNew}">
+					<aon:column>
+					</aon:column>
+					<rich:column colspan="4" style="padding-left: 50px;">
+						<ui:include src="tab_grid_content.xhtml">
+							<ui:param name="sufix" value="-New" />
+						</ui:include>
+					</rich:column>
+					<aon:column>
+					</aon:column>
+				</rich:columnGroup>
+			</f:facet>
 			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" colspan="4" rendered="#{formEdit}">
 				<ui:include src="tab_grid_content.xhtml">
 					<ui:param name="sufix" value="" />
 				</ui:include>
 			</aon:column>
-<!-- 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" colspan="4" rendered="#{formNew}">
-			</aon:column>
- -->
+
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" rendered="#{formList}">
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryAddress_address" value="#{registryBundle.registry_address}" />
