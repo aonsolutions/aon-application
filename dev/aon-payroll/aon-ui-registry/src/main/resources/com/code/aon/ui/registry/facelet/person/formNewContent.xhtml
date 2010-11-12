@@ -13,12 +13,13 @@
 			<ui:param name="controller" value="#{lookup}"/>
 		</c:if>
 
-		<ui:include	src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml" />
-
+		<ui:include	src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
+		</ui:include>
+<!-- 
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
 			<ui:param name="controllerLookupListener" value="#{personForm}"/>
 		</ui:include>
-
+ -->
 	</aon:panelGrid>
 
 </ui:composition>
