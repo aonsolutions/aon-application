@@ -42,6 +42,8 @@ public class RegistryCollectionsController {
 	private List<SelectItem> addressTypes;
 	
 	private List<SelectItem> streetTypes;
+
+	private List<SelectItem> mediaTypes;
 	
 	private List<SelectItem> registryTypes;
 	
@@ -102,16 +104,16 @@ public class RegistryCollectionsController {
      */
     @SuppressWarnings("unchecked")
     public List getMediaTypes() {
-    	if ( streetTypes == null ) {
+    	if ( mediaTypes == null ) {
 	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	        streetTypes = new LinkedList<SelectItem>();
+	        mediaTypes = new LinkedList<SelectItem>();
 	        for( MediaType type : MediaType.values() ) {
 	            String name = type.getName(locale); 
 	            SelectItem item = new SelectItem(type, name);
-	            streetTypes.add( item );
+	            mediaTypes.add( item );
 	        }
     	}
-        return streetTypes;
+        return mediaTypes;
     }
     
     /**
