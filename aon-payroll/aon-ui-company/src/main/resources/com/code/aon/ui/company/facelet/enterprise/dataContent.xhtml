@@ -40,6 +40,10 @@
 						</aon:div>
 					</aon:div>
 					
+					<c:if test="#{enterpriseTree.currentNode.id == 'enterpriseActivity'}">
+						<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/activityTemplate.xhtml" />
+					</c:if>					
+
 					<c:if test="#{enterpriseTree.currentNode.id == 'enterpriseAddress'}">
 						<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 							<ui:param name="controller" value="#{enterpriseAddress}" />
@@ -50,7 +54,23 @@
 						<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 							<ui:param name="controller" value="#{enterpriseMedia}" />
 						</ui:include>
-					</c:if>					
+					</c:if>			
+
+					<c:if test="#{enterpriseTree.currentNode.id == 'enterpriseRbank'}">
+						<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/financeTemplate.xhtml" />
+					</c:if>			
+
+					<c:if test="#{enterpriseTree.currentNode.id == 'enterpriseDirStaff'}">
+						<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
+							<ui:param name="controller" value="#{enterpriseDirStaff}" />
+						</ui:include>
+					</c:if>			
+												
+					<c:if test="#{enterpriseTree.currentNode.id == 'enterpriseAddInfo'}">
+						<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
+							<ui:param name="controller" value="#{enterpriseAddInfo}" />
+						</ui:include>
+					</c:if>			
 		
 				</aon:div>
 			</aon:form>

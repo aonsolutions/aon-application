@@ -66,6 +66,12 @@ public interface ICompanyConstants {
 	
 	String ENTERPRISE_DIR_STAFF_CONTROLLER_NAME = "enterpriseDirStaff";
 	
+	String ENTERPRISE_ADD_INFO_CONTROLLER_NAME = "enterpriseAddInfo";
+	
+	String ENTERPRISE_BANK_CONTROLLER_NAME = "enterpriseRbank";
+	
+	String ENTERPRISE_PAY_METHOD_CONTROLLER_NAME = "enterpriseRPayMethod";
+	
 	String EMPLOYEE_CONTROLLER_NAME = "employee";	
 	
 	String CONTRACT_CONTROLLER_NAME = "contract";	
@@ -76,5 +82,11 @@ public interface ICompanyConstants {
 	// CONFIGURATION
 	// ************************************************************
 	String SHOW_PANEL_TAB_SET = "showPanelTabSet";
+	
+	String SHOW_FINANCE_DATA = "showFinanceData";
+	
+	String SHOW_DIR_STAFF = "showDirStaff";
+	
+	String SHOW_ADD_INFO = "showAddInfo";
 	
 }
