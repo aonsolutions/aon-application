@@ -46,23 +46,7 @@
 						<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">
 
 							<aon:panelTab id="activities" label="#{companyBundle.company_activity_module}">
-								<aon:div id="activitiesDiv">
-									<ui:include	src="/com/code/aon/ui/company/facelet/enterpriseActivity/listContent.xhtml" />
-									<aon:div id="detail_panel">
-										<aon:div styleClass="aon-form-group" rendered="#{!enterpriseActivity.new}">
-											<aon:div styleClass="aon-form-group-title">
-												<aon:div styleClass="aon-form-group-title-internal">
-													<aon:outputLabel for="enterpriseCCCData" value="#{companyBundle.company_enterprise_ccc}" />
-												</aon:div>
-											</aon:div>
-											
-											<ui:include	src="/com/code/aon/ui/company/facelet/enterpriseCCC/tab_grid.xhtml" >
-												<ui:param name="controller" value="#{enterpriseCCC}" />
-											</ui:include>
-										</aon:div>
-									</aon:div>
-							
-								</aon:div>
+								<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/activityTemplate.xhtml" />
 							</aon:panelTab>
 							
 							<aon:panelTab id="workplace" label="#{companyBundle.company_workplace}">
@@ -84,27 +68,8 @@
 							</aon:panelTab>
 							
 							<c:if test="#{aonConfiguration.bean.enterprise.showFinanceData and aonRole.financeOperator}">
-								<aon:panelTab id="finance"
-									label="#{registryBundle.registry_finance_data_module}">
-									<aon:panel>
-										<f:facet name="header">
-											<aon:outputText
-												value="#{registryBundle.registry_banks_module}" />
-										</f:facet>
-										<ui:include
-											src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
-											<ui:param name="controller" value="#{enterpriseRbank}" />
-										</ui:include>
-									</aon:panel>
-									<aon:panel>
-										<f:facet name="header">
-											<aon:outputText	value="#{configBundle.config_predef_paymethod}" />
-										</f:facet>
-										<ui:include
-											src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
-											<ui:param name="controller" value="#{enterpriseRPayMethod}" />
-										</ui:include>
-									</aon:panel>
+								<aon:panelTab id="finance" label="#{registryBundle.registry_finance_data_module}">
+									<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/financeTemplate.xhtml" />
 								</aon:panelTab>
 							</c:if>
 	
