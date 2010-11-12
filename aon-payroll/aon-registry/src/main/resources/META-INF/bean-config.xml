@@ -7,6 +7,13 @@
 <bean-config>
 
 	<bean description="">
+		<pojo>com.code.aon.person.Person</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.registry.event.PersonBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.registry.RegistryNote</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.registry.event.RegistryNoteBeanVetoListener</vetoListener>
