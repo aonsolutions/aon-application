@@ -300,7 +300,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public void onSelectPerson(ActionEvent event) {
 		RegistryController person = (RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER);
 		try {
-			getContract().setPerson((Person)person.getWrappedList().get(person.getModel().getRowIndex()));
+			getContract().setPerson((Person)person.getModel().getRowData());
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining person", e);
 		}
