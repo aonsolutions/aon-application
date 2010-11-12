@@ -16,19 +16,15 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
+<!-- 
 				<c:if test="#{person.new}">
 					<ui:include src="/com/code/aon/ui/registry/facelet/person/formNewContent.xhtml">
 						<ui:param name="controller" value="#{person}" />
 					</ui:include>				
-				</c:if>							
+				</c:if>
 				<c:if test="#{!person.new}">			
-<!--  
-					<aon:panelGrid id="dataTable" columns="2" styleClass="aon-width-all"
-						columnClasses="aon-panelGrid-odd aon-width-150,
-							aon-panelGrid-even aon-width-auto,
-							aon-panelGrid-odd aon-width-120,
-							aon-panelGrid-even aon-width-auto">
--->	
+ -->							
+
 					<aon:panelGrid id="listData" columns="2" cellpadding="0" cellspacing="10" 
 						styleClass="aon-panelGrid-formatting"
 						columnClasses="aon-width-50percent,aon-width-50percent aon-vertical-align-top">
@@ -38,50 +34,10 @@
 							<ui:param name="controller" value="#{person}" />
 						</ui:include>
 					</aon:panelGrid>
-<!--  
-					</aon:panelGrid>
--->	
-
-					<aon:panelTabSet selectedTab="#{person.selectedTab}">
-						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
-							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
-								<ui:param name="controller" value="#{personAddress}" />
-							</ui:include>
-						</aon:panelTab>
-
-						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
-							<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
-								<ui:param name="controller" value="#{personMedia}" />
-							</ui:include>
-						</aon:panelTab>
-						
-						<aon:panelTab id="finance"
-							label="#{registryBundle.registry_finance_data_module}">
-							<aon:panel>
-								<f:facet name="header">
-									<aon:outputText
-										value="#{registryBundle.registry_banks_module}" />
-								</f:facet>
-								<ui:include
-									src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
-									<ui:param name="controller" value="#{personRbank}" />
-								</ui:include>
-							</aon:panel>
-							<aon:panel>
-								<f:facet name="header">
-									<aon:outputText	value="#{configBundle.config_predef_paymethod}" />
-								</f:facet>
-								<ui:include
-									src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
-									<ui:param name="controller" value="#{personRPayMethod}" />
-								</ui:include>
-							</aon:panel>
-						</aon:panelTab>
-						
-					</aon:panelTabSet>
-					
-					
+<!-- 
 				</c:if>
+ -->						
+					
 			</aon:div>
 		</aon:form>
 		<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">

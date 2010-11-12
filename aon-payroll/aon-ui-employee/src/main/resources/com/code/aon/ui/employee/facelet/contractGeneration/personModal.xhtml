@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showNewPersonWindow">
 		<c:if test="#{contractGenerationWizard.showNewPersonWindow}">
 			<rich:modalPanel id="newEnterpriseModalPanel" 
-				height="530" width="600" resizeable="false" 
+				height="530" width="700" resizeable="false" 
 				rendered="#{contractGenerationWizard.showNewPersonWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
@@ -54,6 +54,9 @@
 								<aon:div styleClass="personModalContent" >
 									<ui:include src="/com/code/aon/ui/registry/facelet/person/formNewContent.xhtml">
 										<ui:param name="controller" value="#{person}" />
+										<ui:param name="skipSecurityPanel" value="#{true}" />
+										<ui:param name="skipLogoPanel" value="#{true}" />
+										<ui:param name="skipOtherDataPanel" value="#{true}" />
 									</ui:include>	
 								</aon:div>
 									

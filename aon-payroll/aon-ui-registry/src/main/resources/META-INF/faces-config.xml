@@ -85,7 +85,7 @@
 	<!--  **** PERSON **** -->
 	<managed-bean>
 		<managed-bean-name>person</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.PersonController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -109,8 +109,12 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{personSearch}</value>
 				<value>#{personForm}</value>
+				<value>#{personControllerListener}</value>
+				<value>#{personLogoControllerListener}</value>
+<!-- 				
 				<value>#{personAddressListener}</value>
 				<value>#{personMediaListener}</value>
+ -->
 				<value>#{personRBankChildListener}</value>
 				<value>#{personRPayMethodChildListener}</value>
 			</list-entries>
@@ -121,6 +125,22 @@
 		</managed-property>		
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>personControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.PersonControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>personLogoControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.PersonLogoControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>personOptionalListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
