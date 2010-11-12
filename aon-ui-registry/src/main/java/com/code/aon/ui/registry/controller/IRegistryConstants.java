@@ -15,6 +15,12 @@ public interface IRegistryConstants {
 	
 	String REGISTRY_MEDIA_MODULE = "registry_media_module";
 	
+	String REGISTRY_FINANCE_DATA_MODULE = "registry_finance_data_module";
+	
+	String REGISTRY_DIR_STAFF = "registry_dir_staff";
+	
+	String REGISTRY_ADD_INFO = "registry_addInfo";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

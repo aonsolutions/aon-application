@@ -3,6 +3,7 @@ package com.code.aon.ui.company.controller;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -29,6 +30,7 @@ import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.company.util.EnterpriseTreeData;
 import com.code.aon.ui.company.util.EnterpriseTreeType;
 import com.code.aon.ui.form.FormUtil;
@@ -122,8 +124,25 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	private void addEnterpriseNodes( TreeNode<EnterpriseTreeData> rootNode ) {
+		addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_ACTIVITY_CONTROLLER_NAME, ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
 		addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_ADDRESS_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_ADDRESS_MODULE );
 		addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_MEDIA_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_MEDIA_MODULE );
+
+		ConfigurationController cc = AonUtil.getConfigurationController();
+		if ( cc.getBean() != null ) {
+			Map<String,Object> map = cc.getBean().get(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+			if ( map != null ) {
+				if ( (Boolean) map.get(ICompanyConstants.SHOW_FINANCE_DATA) && AonUtil.getRoleManager().isFinanceOperator() ) {
+					addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_BANK_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_FINANCE_DATA_MODULE );	
+				}
+				if ( (Boolean) map.get(ICompanyConstants.SHOW_DIR_STAFF) ) {
+					addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_DIR_STAFF_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_DIR_STAFF );
+				}
+				if ( (Boolean) map.get(ICompanyConstants.SHOW_DIR_STAFF) ) {
+					addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_ADD_INFO_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_ADD_INFO );
+				}	
+			}			
+		}
 	}
 	
 	public void loadTree() {
@@ -170,7 +189,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		return selected;
 	}	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Boolean adviseNodeOpened(UITree tree) {
 		ListRowKey treeRowKey = (ListRowKey) tree.getRowKey();
         if (treeRowKey == null || treeRowKey.depth() <= 2) {
