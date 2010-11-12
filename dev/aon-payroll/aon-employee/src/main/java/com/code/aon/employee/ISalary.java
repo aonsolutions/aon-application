@@ -1,6 +1,7 @@
 package com.code.aon.employee;
 
 import java.util.Date;
+import java.util.Locale;
 
 public interface ISalary {
 
@@ -44,17 +45,17 @@ public interface ISalary {
 	
 	public ISalary getSalary();
 	
-	public String getStartDateDay();
+	public String getStartDateDay(Locale locale);
 	
-	public String getStartDateMonth();
+	public String getStartDateMonth(Locale locale);
 
-	public String getStartDateYear();
+	public String getStartDateYear(Locale locale);
 	
-	public String getEndDateDay();
+	public String getEndDateDay(Locale locale);
 
-	public String getEndDateMonth();
+	public String getEndDateMonth(Locale locale);
 
-	public String getEndDateYear();
+	public String getEndDateYear(Locale locale);
 	
 	public Payments getPayments();
 

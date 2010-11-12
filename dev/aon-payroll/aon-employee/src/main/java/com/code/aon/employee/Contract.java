@@ -390,28 +390,28 @@ public class Contract implements ITransferObject, ISalary {
 	}
 
 	@Transient
-	public String getStartDateDay(){
-		return DateFormatUtils.format(startDate, "dd", Locale.getDefault());
+	public String getStartDateDay(Locale locale){
+		return DateFormatUtils.format(startDate, "dd", locale);
 	}
 	@Transient
-	public String getStartDateMonth(){
-		return DateFormatUtils.format(startDate, "MMMMM", Locale.getDefault());
+	public String getStartDateMonth(Locale locale){
+		return DateFormatUtils.format(startDate, "MMMMM", locale);
 	}
 	@Transient
-	public String getStartDateYear(){
-		return DateFormatUtils.format(startDate, "yyyy", Locale.getDefault());
+	public String getStartDateYear(Locale locale){
+		return DateFormatUtils.format(startDate, "yyyy", locale);
 	}
 	@Transient
-	public String getEndDateDay(){
-		return DateFormatUtils.format(endDate, "dd", Locale.getDefault());
+	public String getEndDateDay(Locale locale){
+		return DateFormatUtils.format(endDate, "dd", locale);
 	}
 	@Transient
-	public String getEndDateMonth(){
-		return DateFormatUtils.format(endDate, "MMMMM", Locale.getDefault());
+	public String getEndDateMonth(Locale locale){
+		return DateFormatUtils.format(endDate, "MMMMM", locale);
 	}
 	@Transient
-	public String getEndDateYear(){
-		return DateFormatUtils.format(endDate, "yyyy", Locale.getDefault());
+	public String getEndDateYear(Locale locale){
+		return DateFormatUtils.format(endDate, "yyyy", locale);
 	}
 	
 	@Override
