@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="841" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="153"/>
+	<property name="ireport.y" value="0"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
 	<style name="complements_TABLE">
@@ -71,7 +71,7 @@
 						<reportElement x="0" y="7" width="274" height="69"/>
 					</rectangle>
 					<textField isBlankWhenNull="true">
-						<reportElement x="114" y="48" width="155" height="11"/>
+						<reportElement x="109" y="48" width="160" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
@@ -100,14 +100,14 @@
 						<text><![CDATA[N.I.F :]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="5" y="36" width="150" height="11"/>
+						<reportElement x="5" y="36" width="146" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
 						</textElement>
 						<text><![CDATA[Número de afiliacion a la Seguridad Social :]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="5" y="48" width="108" height="11"/>
+						<reportElement x="5" y="48" width="104" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
 						</textElement>
@@ -121,14 +121,14 @@
 						<text><![CDATA[Grupo de cotización :]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="114" y="24" width="96" height="11"/>
+						<reportElement x="114" y="24" width="94" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
 						</textElement>
 						<text><![CDATA[Número Libro de Matricula :]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="127" y="60" width="67" height="11"/>
+						<reportElement x="127" y="60" width="65" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
 						</textElement>
@@ -142,14 +142,14 @@
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getContract().getPerson().getRegistry().getDocument()]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement x="210" y="24" width="59" height="11"/>
+						<reportElement x="208" y="24" width="61" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+						<textFieldExpression class="java.lang.Integer"><![CDATA[$F{salary}.getRegistration()]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement x="156" y="36" width="113" height="11"/>
+						<reportElement x="151" y="36" width="118" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
@@ -163,7 +163,7 @@
 						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 					</textField>
 					<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-						<reportElement x="194" y="60" width="75" height="11"/>
+						<reportElement x="192" y="60" width="77" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
@@ -205,28 +205,21 @@
 						<text><![CDATA[Domicilio :]]></text>
 					</staticText>
 					<textField isBlankWhenNull="true">
-						<reportElement x="43" y="24" width="226" height="11"/>
+						<reportElement x="43" y="24" width="226" height="24"/>
 						<textElement verticalAlignment="Middle">
 							<font isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
 						<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getContract().getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress()]]></textFieldExpression>
 					</textField>
-					<textField isBlankWhenNull="true">
-						<reportElement x="43" y="36" width="226" height="11"/>
-						<textElement verticalAlignment="Middle">
-							<font isBold="true" pdfFontName="Helvetica-Bold"/>
-						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
-					</textField>
 					<staticText>
-						<reportElement x="5" y="48" width="25" height="11"/>
+						<reportElement x="5" y="48" width="22" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
 						</textElement>
 						<text><![CDATA[C.I.F :]]></text>
 					</staticText>
 					<textField isBlankWhenNull="true">
-						<reportElement x="30" y="48" width="239" height="11"/>
+						<reportElement x="28" y="48" width="241" height="11"/>
 						<textElement verticalAlignment="Middle">
 							<font isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
@@ -244,15 +237,15 @@
 						<textElement verticalAlignment="Middle">
 							<font isBold="true" pdfFontName="Helvetica-Bold"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getContract().getCcc().getCCC()]]></textFieldExpression>
 					</textField>
 				</frame>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="114">
+			<band height="120">
 				<frame>
-					<reportElement x="0" y="1" width="555" height="113"/>
+					<reportElement x="0" y="1" width="555" height="119"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -261,7 +254,7 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<rectangle>
-						<reportElement x="0" y="10" width="555" height="103"/>
+						<reportElement mode="Transparent" x="0" y="10" width="555" height="109"/>
 					</rectangle>
 					<staticText>
 						<reportElement mode="Opaque" x="8" y="0" width="528" height="22"/>
@@ -290,7 +283,7 @@
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[Remuneración mensual]]></text>
 					</staticText>
-					<textField pattern="#,##0.00">
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
 						<reportElement x="480" y="37" width="69" height="11"/>
 						<box>
 							<pen lineWidth="0.0"/>
@@ -316,7 +309,7 @@
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[Prorrata de pagas extraordinarias]]></text>
 					</staticText>
-					<textField pattern="#,##0.00">
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
 						<reportElement x="480" y="49" width="69" height="11"/>
 						<box>
 							<pen lineWidth="0.0"/>
@@ -344,7 +337,7 @@
 						</textElement>
 						<text><![CDATA[TOTAL]]></text>
 					</staticText>
-					<textField pattern="#,##0.00">
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
 						<reportElement x="480" y="61" width="69" height="11"/>
 						<box>
 							<pen lineWidth="0.0"/>
@@ -372,7 +365,7 @@
 						</textElement>
 						<text><![CDATA[2. Base de cotización por contingencias profesionales (A.T. y E.P.) y conceptos de recaudación conjunta (Desemp., F.P., F.G.S.)]]></text>
 					</staticText>
-					<textField pattern="#,##0.00">
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
 						<reportElement x="480" y="75" width="69" height="11"/>
 						<box>
 							<pen lineWidth="0.0"/>
@@ -400,7 +393,7 @@
 						</textElement>
 						<text><![CDATA[3. Base de cotización adicional por horas extraordinarias]]></text>
 					</staticText>
-					<textField pattern="#,##0.00">
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
 						<reportElement x="480" y="87" width="69" height="11"/>
 						<box>
 							<pen lineWidth="0.0"/>
@@ -428,7 +421,7 @@
 						</textElement>
 						<text><![CDATA[4. Base sujeta a retención del I.R.P.F]]></text>
 					</staticText>
-					<textField pattern="#,##0.00">
+					<textField pattern="#,##0.00" isBlankWhenNull="true">
 						<reportElement x="480" y="100" width="69" height="11"/>
 						<box>
 							<pen lineWidth="0.0"/>
@@ -447,7 +440,26 @@
 		</groupFooter>
 	</group>
 	<background>
-		<band splitType="Stretch"/>
+		<band height="764" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="64" y="194" width="96" height="414" forecolor="#CCCCCC">
+					<printWhenExpression><![CDATA[$F{salary} instanceof com.code.aon.employee.Contract]]></printWhenExpression>
+				</reportElement>
+				<textElement rotation="Left">
+					<font size="66" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[BORRADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="394" y="194" width="96" height="414" forecolor="#CCCCCC">
+					<printWhenExpression><![CDATA[$F{salary} instanceof com.code.aon.employee.Contract]]></printWhenExpression>
+				</reportElement>
+				<textElement rotation="Left">
+					<font size="66" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[BORRADOR]]></text>
+			</staticText>
+		</band>
 	</background>
 	<title>
 		<band height="16" splitType="Stretch">
@@ -472,10 +484,10 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<rectangle>
-					<reportElement x="0" y="7" width="555" height="290"/>
+					<reportElement mode="Transparent" x="0" y="7" width="555" height="290"/>
 				</rectangle>
 				<rectangle>
-					<reportElement x="0" y="306" width="555" height="160"/>
+					<reportElement mode="Transparent" x="0" y="306" width="555" height="160"/>
 				</rectangle>
 				<staticText>
 					<reportElement mode="Opaque" x="5" y="0" width="59" height="11"/>
@@ -628,7 +640,7 @@
 					</textElement>
 					<text><![CDATA[A.TOTAL DEVENGADO]]></text>
 				</staticText>
-				<textField pattern="#,##0.00">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement x="437" y="286" width="113" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
@@ -639,7 +651,7 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalPayment()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement mode="Opaque" x="8" y="298" width="72" height="11"/>
+					<reportElement mode="Opaque" x="8" y="298" width="76" height="11"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
@@ -971,7 +983,7 @@
 					</textElement>
 					<text><![CDATA[B.TOTAL A DEDUCCIR]]></text>
 				</staticText>
-				<textField pattern="#,##0.00">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement x="447" y="455" width="102" height="11"/>
 					<box>
 						<bottomPen lineWidth="1.0"/>
@@ -991,7 +1003,7 @@
 					</textElement>
 					<text><![CDATA[LIQUIDO TOTAL A PERCIBIR (A-B)]]></text>
 				</staticText>
-				<textField pattern="#,##0.00">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement mode="Opaque" x="437" y="470" width="118" height="11" backcolor="#CCCCCC"/>
 					<box rightPadding="5">
 						<pen lineWidth="1.0"/>
@@ -1324,12 +1336,13 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<staticText>
-					<reportElement x="501" y="3" width="40" height="10"/>
+					<reportElement x="475" y="3" width="60" height="10"/>
+					<box rightPadding="5"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
 					<text><![CDATA[Total días:]]></text>
 				</staticText>
-				<textField>
-					<reportElement x="542" y="3" width="13" height="10"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="535" y="3" width="20" height="10"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -1340,8 +1353,8 @@
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression class="java.lang.Integer"><![CDATA[$F{salary}.getTotalDaysHours()]]></textFieldExpression>
 				</textField>
-				<textField pattern="">
-					<reportElement x="201" y="3" width="274" height="10"/>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="184" y="3" width="274" height="10"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -1350,11 +1363,11 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.String"><![CDATA["Periodo de liquidación del "+$F{salary}.getStartDateDay()
-+" de "+$F{salary}.getStartDateMonth()
-+" al "+$F{salary}.getEndDateDay()
-+" de "+$F{salary}.getEndDateMonth()
-+" de "+$F{salary}.getEndDateYear()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Periodo de liquidación del "+$F{salary}.getStartDateDay($P{REPORT_LOCALE})
++" de "+$F{salary}.getStartDateMonth($P{REPORT_LOCALE})
++" al "+$F{salary}.getEndDateDay($P{REPORT_LOCALE})
++" de "+$F{salary}.getEndDateMonth($P{REPORT_LOCALE})
++" de "+$F{salary}.getEndDateYear($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
