@@ -18,6 +18,12 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!-- ************ CONTRACT MODEL ************** -->
+	<managed-bean>
+		<managed-bean-name>contractModel</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.ContractModelController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<!-- ************ CONTRACT ************** -->
 	<managed-bean>
