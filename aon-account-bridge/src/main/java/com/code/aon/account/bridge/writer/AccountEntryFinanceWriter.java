@@ -37,7 +37,7 @@ public class AccountEntryFinanceWriter {
 	private static final String P_FRA = "Pago Fra: ";
 	private static final String A_FRA = "Abono Fra: ";
 	private static final String D_FRA = "Dev. Fra: ";
-	private static final String ENTRY = "Apunte: ";
+	private static final String ENTRY = "Asiento: ";
 	
 	private AccountBridgeUtil accountBridgeUtil;
 	private AccountingUtil accountingUtil;
