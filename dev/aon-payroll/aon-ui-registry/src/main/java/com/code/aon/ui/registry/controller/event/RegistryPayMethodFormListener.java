@@ -20,9 +20,6 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	
 	private RegistryPayMethod registryPayMethod;
 	
-	private PayMethodType registryPayMethodType = PayMethodType.BANK_TRANSFER;	
-	
-
 	public RegistryPayMethod getRegistryPayMethod() {
 		return registryPayMethod;
 	}
@@ -39,14 +36,6 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		this.registryPayMethod.setRegistryBank( registryBank );
 	}
 	
-	public PayMethodType getRegistryPayMethodType() {
-		return registryPayMethodType;
-	}
-
-	public void setRegistryPayMethodType(PayMethodType registryPayMethodType) {
-		this.registryPayMethodType = registryPayMethodType;
-	}
-
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
@@ -66,7 +55,7 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		return (registryPayMethod.getPayment() == null) || (this.registryPayMethod.getPayment().getType() == null);
 	}
 	
-	private void updateRegistryPayMethod( Registry registry ) throws ManagerBeanException {
+	protected void updateRegistryPayMethod( Registry registry ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		if (registryPayMethod != null) {
 			if (! isEmpty(registryPayMethod) ) {
@@ -78,7 +67,7 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		}
 	}
 
-	private void updateRegistryBank( Registry registry ) throws ManagerBeanException {
+	protected void updateRegistryBank( Registry registry ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
 		if (registryPayMethod != null) {
 			if ( (! isEmpty(registryPayMethod)) && (! isShowCompanyBanks())  ) {
@@ -110,14 +99,18 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	}
 	
 	public boolean isShowCompanyBanks() {
-		return (registryPayMethod.getPayment() != null)
-			&& (registryPayMethod.getPayment().getType() != registryPayMethodType);
+		return (registryPayMethod.getPayment() != null) && (registryPayMethod.getPayment().getType() == PayMethodType.BANK_TRANSFER);
 	}
-	
+
+	public boolean isCash() {
+		return (registryPayMethod.getPayment() != null) && (registryPayMethod.getPayment().getType() == PayMethodType.CASH_BASIS);
+	}
+
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		super.beforeBeanAdded(event);
 		checkRegistryBank();
-	}		
+	}
+	
 	
 }

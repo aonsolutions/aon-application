@@ -2,12 +2,17 @@ package com.code.aon.registry;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.enumeration.Country;
+import com.code.aon.registry.enumeration.DocumentType;
+
 public class RegistryDocument {
 
 	private static final char[] DNI_LETTERS = { 'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D',
 			'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E' };
 	private static final char[] NIF_LETTERS = { 'J', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' };
 
+	private Country country;
+	private DocumentType type;
 	private String document;
 	private char[] doc;
 	
@@ -27,13 +32,31 @@ public class RegistryDocument {
 		doc = (getDocument() != null)?getDocument().toCharArray():null;
 	}
 
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public DocumentType getType() {
+		return type;
+	}
+
+	public void setType(DocumentType type) {
+		this.type = type;
+	}
+
 	public boolean isValid() {
 		if (doc == null || doc.length == 0) {
 			return false;
 		}
-		if (doc.length == 9) {
-			String first = new String(doc,0,1);
-			return first.matches("[0-9|K|L|M|X|Y|Z]")? isValidDNI() : isValidNIF();
+		if (isValidable()) {
+			if (doc.length == 9) {
+				String first = new String(doc,0,1);
+				return first.matches("[0-9|K|L|M|X|Y|Z]")? isValidDNI() : isValidNIF();
+			}
 		}
 		return false;
 	}
@@ -86,6 +109,10 @@ public class RegistryDocument {
 			return false;
 		}
 		return (Integer.parseInt(strDC) == lInDC);
+	}
+
+	public boolean isValidable() {
+		return (getCountry() == Country.ES && (getType() == DocumentType.NIF || getType() == DocumentType.NIE || getType() == DocumentType.CIF));
 	}
 
 }

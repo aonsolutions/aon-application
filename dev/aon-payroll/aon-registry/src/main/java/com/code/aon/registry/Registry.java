@@ -94,12 +94,23 @@ public class Registry implements ITransferObject {
 	}
 	
 	@Transient
-	public boolean isValidDocument() {
+	public RegistryDocument getRegistryDocument() {
 		if (registryDocument == null) {
 			registryDocument = new RegistryDocument();
 		}
 		registryDocument.setDocument(getDocument());
-		return registryDocument.isValid();
+		registryDocument.setType(getDocumentType());
+		registryDocument.setCountry(getDocumentCountry());
+		return registryDocument;
+	}
+
+	@Transient
+	public boolean isValidDocument() {
+		return getRegistryDocument().isValid();
+	}
+	@Transient
+	public boolean isDocumentValidable() {
+		return getRegistryDocument().isValidable();
 	}
 	
 	@Column(name="document_type")
