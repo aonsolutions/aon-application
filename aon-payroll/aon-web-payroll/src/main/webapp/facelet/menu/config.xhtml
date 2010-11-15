@@ -72,6 +72,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contractMode"
+										actionListener="#{contractModel.onReset}"
 										action="contractOption_list" 
 										value="#{employeeBundle.contract_mode_module}">
 									</aon:commandLink>
