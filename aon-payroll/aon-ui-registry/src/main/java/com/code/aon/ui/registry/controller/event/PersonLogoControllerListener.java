@@ -66,6 +66,13 @@ public class PersonLogoControllerListener extends ControllerAdapter  {
 	}
 
 	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		PersonController personController = (PersonController) event.getController();
+		personController.setAonFile(null);
+		personController.setAttach(null);
+	}
+
+	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		PersonController personController = (PersonController) event.getController();
 		if (personController.getAonFile() != null) {

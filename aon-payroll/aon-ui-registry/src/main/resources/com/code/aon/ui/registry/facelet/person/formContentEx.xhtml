@@ -8,7 +8,7 @@
 
 	<aon:div styleClass="aon-group">
 		<aon:div styleClass="aon-group-title">
-			<aon:outputText value="#{companyBundle.company_data_module}"/>
+			<aon:outputText value="#{registryBundle.registry_person_data}"/>
 		</aon:div>
 		<aon:div styleClass="aon-group-body"> 
 			<aon:div styleClass="aon-group-body-internal">
@@ -22,7 +22,7 @@
 	</aon:div>
 					
 	<aon:div>
-		<c:if test="#{!skipSecurityPanel}">
+		<c:if test="#{!skipSecurityPanel and !controller.new}">
 			<aon:div styleClass="aon-group">
 				<aon:div styleClass="aon-group-title">
 					<aon:outputText value="#{bundle.aon_security}"/>
