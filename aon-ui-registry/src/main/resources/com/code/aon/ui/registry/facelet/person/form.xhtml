@@ -16,30 +16,18 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-<!-- 
-				<c:if test="#{person.new}">
-					<ui:include src="/com/code/aon/ui/registry/facelet/person/formNewContent.xhtml">
-						<ui:param name="controller" value="#{person}" />
-					</ui:include>				
-				</c:if>
-				<c:if test="#{!person.new}">			
- -->							
+				<aon:panelGrid id="listData" columns="2" cellpadding="0" cellspacing="10" 
+					styleClass="aon-panelGrid-formatting"
+					columnClasses="aon-width-50percent,aon-width-50percent aon-vertical-align-top">
 
-					<aon:panelGrid id="listData" columns="2" cellpadding="0" cellspacing="10" 
-						styleClass="aon-panelGrid-formatting"
-						columnClasses="aon-width-50percent,aon-width-50percent aon-vertical-align-top">
-	
-						<ui:include 
-							src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
-							<ui:param name="controller" value="#{person}" />
-						</ui:include>
-					</aon:panelGrid>
-<!-- 
-				</c:if>
- -->						
-					
+					<ui:include src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
+						<ui:param name="controller" value="#{person}" />
+						<ui:param name="skipOtherDataPanel" value="true" />
+					</ui:include>
+				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		</c:if>

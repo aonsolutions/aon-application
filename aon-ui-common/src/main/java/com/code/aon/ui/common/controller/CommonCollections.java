@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -21,6 +23,7 @@ import com.code.aon.ui.util.AonUtil;
 public class CommonCollections {
 	
 	private Map<Locale,List<SelectItem>> countries = new HashMap<Locale,List<SelectItem>>();  
+	private Map<Locale,List<SelectItem>> countryCodes = new HashMap<Locale,List<SelectItem>>();  
 	private Map<Locale,List<SelectItem>> months = new HashMap<Locale,List<SelectItem>>();  
 	private Map<Locale,List<SelectItem>> levels = new HashMap<Locale,List<SelectItem>>();
 	private Map<Locale,List<SelectItem>> confidentialValues = new HashMap<Locale,List<SelectItem>>();
@@ -57,12 +60,30 @@ public class CommonCollections {
 			for (int i = 0; i < m.length; i++) {
 				Country country = m[i];
 				String name = country.getName(locale);
-				SelectItem item = new SelectItem(country, name);
+				SelectItem item = new SelectItem(country, StringUtils.abbreviate(name,25));
 				countryList.add(item);
 			}
 			countries.put(locale,countryList);			
 		}
-		return months.get(locale);
+		return countries.get(locale);
+	}
+
+	/**
+	 * @return s
+	 */
+	public List<SelectItem> getCountryCodes(){
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		if (countryCodes.get(locale) == null) {
+			List<SelectItem> countryList = new LinkedList<SelectItem>();
+			Country[] m = Country.values();
+			for (int i = 0; i < m.length; i++) {
+				Country country = m[i];
+				SelectItem item = new SelectItem(country, country.getValue());
+				countryList.add(item);
+			}
+			countryCodes.put(locale,countryList);			
+		}
+		return countryCodes.get(locale);
 	}
 
 	/**

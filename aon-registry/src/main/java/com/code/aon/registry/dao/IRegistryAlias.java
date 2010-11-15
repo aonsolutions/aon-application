@@ -796,5 +796,17 @@ public interface IRegistryAlias {
 	*/
 	String  PERSON_REGISTRY_DOCUMENT = PERSON_ENTRY.getAliasNames()[6];
 
+	/** 
+	* Alias value: Person_registry_documentCountry
+	* Hibernate value: Person.registry.documentCountry
+	*/
+	String  PERSON_REGISTRY_DOCUMENT_COUNTRY = PERSON_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Person_registry_documentType
+	* Hibernate value: Person.registry.documentType
+	*/
+	String  PERSON_REGISTRY_DOCUMENT_TYPE = PERSON_ENTRY.getAliasNames()[8];
+
 
 }

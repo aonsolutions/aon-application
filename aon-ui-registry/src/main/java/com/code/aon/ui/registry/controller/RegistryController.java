@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -65,12 +67,22 @@ public class RegistryController extends BasicController {
 	
 	public static void validateDocument(IRegistry iRegistry, IManagerBean bean) throws ManagerBeanException {
 		String document = iRegistry.getRegistry().getDocument();
+		Country country = iRegistry.getRegistry().getDocumentCountry();
+		DocumentType type = iRegistry.getRegistry().getDocumentType();
 		if (StringUtils.isNotEmpty(document)) {
 			Criteria criteria = new Criteria();
-			String alias = bean.getFieldName(
+			String alias1 = bean.getFieldName(
+					ClassUtils.getShortClassName(bean.getPOJOClass())
+					+ "_registry_documentCountry");
+			String alias2 = bean.getFieldName(
+					ClassUtils.getShortClassName(bean.getPOJOClass())
+					+ "_registry_documentType");
+			String alias3 = bean.getFieldName(
 					ClassUtils.getShortClassName(bean.getPOJOClass())
 					+ "_registry_document");
-			criteria.addEqualExpression(alias, document);
+			criteria.addEqualExpression(alias1, country);
+			criteria.addEqualExpression(alias2, type);
+			criteria.addEqualExpression(alias3, document);
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list.size() > 0 ) {
 				String msg = AonUtil.getMessage("registryBundle", "registry_document_error"); 

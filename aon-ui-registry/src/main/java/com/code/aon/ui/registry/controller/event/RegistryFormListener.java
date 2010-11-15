@@ -12,6 +12,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -114,6 +115,7 @@ public class RegistryFormListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		setMainAddress( new RegistryAddress() );
 		getMainAddress().setAddressType( AddressType.MAIN );
+		getMainAddress().setStreetType(StreetType.CL);
 		try {
 			getMainAddress().setGeozone( CompanyUtil.getCompanyGeoZone() );
 		} catch( ManagerBeanException e ) {

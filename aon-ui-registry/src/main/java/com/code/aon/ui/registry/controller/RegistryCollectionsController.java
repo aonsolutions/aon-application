@@ -40,23 +40,14 @@ import com.code.aon.registry.enumeration.StreetType;
 public class RegistryCollectionsController {
 
 	private List<SelectItem> addressTypes;
-	
 	private List<SelectItem> streetTypes;
-
 	private List<SelectItem> mediaTypes;
-	
 	private List<SelectItem> registryTypes;
-	
 	private List<SelectItem> genders;
-	
 	private List<SelectItem> maritalStatuses;
-	
 	private List<SelectItem> registryAttachmentTypes;
-	
 	private List<SelectItem> noteTypes;
-	
 	private List<SelectItem> documentTypes;
-	
 	private RegistryBank rBank; // No Borrar. Euke.
 								// Se utiliza como selector 
 								// en la pantalla de alta de vencimientos.
