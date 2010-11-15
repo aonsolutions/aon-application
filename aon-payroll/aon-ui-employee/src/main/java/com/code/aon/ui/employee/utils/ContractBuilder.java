@@ -41,7 +41,7 @@ public class ContractBuilder implements IEmployeeConstants {
 	private static final double FACTOR_4X = 1.8;
 	
 	private ContractBuilder(){
-//		setZoomFactor(2);
+		setZoomFactor(2);
 	}
 	
 	public static ContractBuilder getInstance(){
@@ -140,8 +140,11 @@ public class ContractBuilder implements IEmployeeConstants {
 	@SuppressWarnings("unchecked")
 	private void readPdfFields(PdfReader reader) throws IOException{
 		
-		setContractWidth((int)reader.getPageSize(1).getWidth());
-		setContractHeight((int)reader.getPageSize(1).getHeight());
+//		setContractWidth((int)reader.getPageSize(1).getWidth());
+//		setContractHeight((int)reader.getPageSize(1).getHeight());
+		
+		setContractWidth(getFactorizedValue(reader.getPageSize(1).getWidth()));
+		setContractHeight(getFactorizedValue(reader.getPageSize(1).getHeight()));
 		
 		numberOfContractPages = reader.getNumberOfPages();
 		AcroFields form = reader.getAcroFields();
