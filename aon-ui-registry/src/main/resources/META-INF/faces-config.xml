@@ -107,7 +107,6 @@
 				<value>#{personForm}</value>
 				<value>#{personPayMethodForm}</value>
 				<value>#{personControllerListener}</value>
-				<value>#{personLogoControllerListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -124,14 +123,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>personLogoControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.registry.controller.event.PersonLogoControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>personOptionalListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
