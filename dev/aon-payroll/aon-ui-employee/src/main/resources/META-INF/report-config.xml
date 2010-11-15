@@ -40,7 +40,12 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
+		<nested-report report="salaryPayments"/>
 	</report>
+	<report id="salaryPayments" description="Salary Payments">
+		<template path="/com/code/aon/ui/employee/report/salaryPayments.jasper"/>
+	</report>
+	
 	<report id="salaryReport" description="Salary report ">
 		<template path="/com/code/aon/ui/employee/report/salary.jasper" />
 		<bean key="com.code.aon.employee.Salary" />
