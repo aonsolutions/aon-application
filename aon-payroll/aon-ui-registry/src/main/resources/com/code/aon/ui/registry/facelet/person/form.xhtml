@@ -16,13 +16,9 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="listData" columns="2" cellpadding="0" cellspacing="10" 
-					styleClass="aon-panelGrid-formatting"
-					columnClasses="aon-width-50percent,aon-width-50percent aon-vertical-align-top">
-
+				<aon:panelGrid id="listData" columns="2">
 					<ui:include src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
 						<ui:param name="controller" value="#{person}" />
-						<ui:param name="skipOtherDataPanel" value="true" />
 					</ui:include>
 				</aon:panelGrid>
 			</aon:div>
