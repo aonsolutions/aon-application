@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="contractForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{companyBundle.company_employee}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="edit"
+						value="#{bundle.aon_edit}"
+						action="enterprise_form" actionListener="#{contract.onEdit}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" >
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>		
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
+					
+					<aon:outputText value="#{employeeBundle.employee_enterprise}" />
+					<aon:outputText value="#{enterprise.to.registry.name}" />
+
+					<aon:outputText value="#{companyBundle.company_workplace}" />
+					<aon:outputText value="#{enterpriseTree.workPlace.description}" />
+					
+					<aon:outputText value="#{bundle.aon_name}" />
+					<aon:outputText value="#{enterpriseTree.contract.person.fullName}" />
+
+					<aon:outputText value="#{bundle.aon_document}" />
+					<aon:panelGroup>
+						<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic"/>
+						<aon:inputText value="#{enterpriseTree.contract.person.registry.documentCountry}"
+							styleClass="aon-margin-left" readonly="true" />
+						<aon:outputText value="#{bundle.aon_type}" styleClass="aon-margin-left aon-italic"/>
+						<aon:inputText value="#{enterpriseTree.contract.person.registry.documentType}"
+							styleClass="aon-margin-left" readonly="true" />
+						<aon:inputText value="#{enterpriseTree.contract.person.registry.document}"
+							styleClass="aon-margin-left" readonly="true" />						
+					</aon:panelGroup>
+					
+					<aon:outputText value="#{registryBundle.registry_person_nss}" />
+					<aon:outputText value="#{enterpriseTree.contract.person.socialSecurityNumber}" />
+
+					<aon:outputText value="#{registryBundle.registry_phone}" />
+					<aon:outputText value="#{enterpriseTree.phone.value}" />
+
+					<aon:outputText value="#{registryBundle.registry_fax}" />
+					<aon:outputText value="#{enterpriseTree.fax.value}" />
+
+					<aon:outputText value="#{registryBundle.registry_email}" />
+					<aon:outputText value="#{enterpriseTree.email.value}" />
+							
+					<aon:outputText value="#{bundle.aon_start_date}" />
+					<aon:outputText value="#{enterpriseTree.contract.startDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>		
+
+					<aon:outputText value="#{bundle.aon_end_date}" />
+					<aon:outputText value="#{enterpriseTree.contract.endDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>		
+							
+				</aon:panelGrid>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

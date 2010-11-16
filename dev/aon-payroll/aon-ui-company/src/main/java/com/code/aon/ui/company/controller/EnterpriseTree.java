@@ -29,6 +29,9 @@ import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.company.util.EnterpriseTreeData;
 import com.code.aon.ui.company.util.EnterpriseTreeType;
 import com.code.aon.ui.form.FormUtil;
@@ -50,6 +53,14 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	private WorkPlace workPlace;
 	
+	private Contract contract;
+	
+	private RegistryMedia phone;
+	
+	private RegistryMedia fax;
+	
+	private RegistryMedia email;	
+	
 	public TreeNode<EnterpriseTreeData> getRootNode() {
 		return rootNode;
 	}
@@ -61,7 +72,23 @@ public class EnterpriseTree implements ICompanyConstants {
 	public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
+	
+	public Contract getContract() {
+		return contract;
+	}
 
+	public RegistryMedia getPhone() {
+		return phone;
+	}
+
+	public RegistryMedia getFax() {
+		return fax;
+	}
+
+	public RegistryMedia getEmail() {
+		return email;
+	}
+	
 	public void setCurrentNode(EnterpriseTreeData currentNode) {
 		this.currentNode = currentNode;
 	}
@@ -70,16 +97,16 @@ public class EnterpriseTree implements ICompanyConstants {
 		return enterpriseNode;
 	}
 
-	public EnterpriseTreeData getTreeData( Enterprise e ) {
+	private EnterpriseTreeData getTreeData( Enterprise e ) {
 		return new EnterpriseTreeData( e.getId(), e.getRegistry().getFullName(), EnterpriseTreeType.ENTERPRISE);
 	}
 
-	public EnterpriseTreeData getTreeData( WorkPlace wp ) {
+	private EnterpriseTreeData getTreeData( WorkPlace wp ) {
 		return new EnterpriseTreeData( wp.getId(), wp.getDescription(), EnterpriseTreeType.WORKPLACE);
 	}
 	
-	public EnterpriseTreeData getTreeData( Contract c ) {
-		return new EnterpriseTreeData( c.getId(), c.getPerson().getRegistry().getFullName(), EnterpriseTreeType.CONTRACT);
+	private EnterpriseTreeData getTreeData( Contract c ) {
+		return new EnterpriseTreeData( c.getId(), c.getPerson().getFullName(), EnterpriseTreeType.CONTRACT);
 	}
 	
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
@@ -198,25 +225,37 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 	}
 	
+	private void updateRegistryMedias( Registry registry ) throws ManagerBeanException {
+		IManagerBean beanMedia = BeanManager.getManagerBean(RegistryMedia.class);
+		Criteria criteriaMedia = new Criteria();
+		String registryIdFieldName = beanMedia.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
+		criteriaMedia.addEqualExpression(registryIdFieldName, registry.getId());
+		this.phone = new RegistryMedia();
+		this.fax = new RegistryMedia();
+		this.email = new RegistryMedia();
+		for( ITransferObject to : beanMedia.getList(criteriaMedia) ) {
+			RegistryMedia rmedia = (RegistryMedia) to;
+			switch (rmedia.getMediaType()) {
+			case FIXED_PHONE:
+				phone = rmedia;
+				break;
+			case FAX:
+				fax = rmedia;
+				break;
+			case EMAIL:
+				email = rmedia;
+				break;
+			}			
+		}
+	}
+	
 	public void onSelectTreeContract( ActionEvent event ) {
 		try {
-			selectTreeContracts(event, currentNode.getId());
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			this.contract = (Contract) bean.get( currentNode.getId() );
+			updateRegistryMedias( this.contract.getPerson().getRegistry() );
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onSelectContract exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-	}	
-	
-	public void onSelectContract( ActionEvent event ) {
-		try {
-			IController controller = (IController)AonUtil.getRegisteredBean(CONTRACT_CONTROLLER_NAME);
-			Contract c = (Contract)controller.getModel().getRowData();
-			EnterpriseTreeData data = new EnterpriseTreeData(c.getId(), c.getPerson().getRegistry().getFullName(), EnterpriseTreeType.CONTRACT);
-			setCurrentNode(data);
-			selectTreeContracts(event, currentNode.getId());
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onSelectContract exception: ",e);
+			LOGGER.error(">>>> onSelectTreeContract exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
@@ -255,7 +294,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		}		
 	}
 	
-	public void selectTreeContracts( Serializable id ) {
+	private void selectTreeContracts( Serializable id ) {
 		try {
 			IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
 			controller.clearCriteria();
@@ -282,7 +321,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		}		
 	}
 	
-	public void selectContracts( Person person ) {
+	private void selectContracts( Person person ) {
 		try {
 			IController controller = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
 			controller.clearCriteria();
@@ -302,7 +341,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		}		
 	}
 	
-	public void selectSalaries( Contract contract) {
+	private void selectSalaries( Contract contract) {
 		try {
 			IController controller = FormUtil.getController(SALARY_CONTROLLER_NAME);
 			controller.clearCriteria();
