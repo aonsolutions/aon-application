@@ -109,6 +109,9 @@ public class Salary implements ITransferObject, ISalary {
 	@Column(name = "irpf_base", precision = 15, scale = 3, nullable = false)
 	private Double irpfBase;
 	
+	@Column(name = "quote_group",length=2)
+	private String quoteGroup;
+	
 	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
 	private Set<SalaryPayment> payments = new HashSet<SalaryPayment>();
 	
@@ -295,6 +298,14 @@ public class Salary implements ITransferObject, ISalary {
 		this.irpfBase = irpfBase;
 	}
 	
+	public String getQuoteGroup() {
+		return quoteGroup;
+	}
+
+	public void setQuoteGroup(String quoteGroup) {
+		this.quoteGroup = quoteGroup;
+	}
+
 	public Set<SalaryPayment> getSalaryPayments() {
 		return payments;
 	}
