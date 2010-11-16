@@ -15,7 +15,7 @@ public class EnterpriseTreeData {
 	
 	public static final String CONTRACT_ICON = "/images/aon-icon/aon-icon-contact.png";
 	
-	public static final String DATA_ICON = "/images/aon-icon/aon-icon-menu-top-item.png";
+	public static final String ACTIVITY_ICON = "/images/aon-icon/aon-icon-menu-top-item.png";
 	
 	private Serializable id;
 	

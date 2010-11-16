@@ -3,7 +3,6 @@ package com.code.aon.ui.company.controller;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -30,13 +29,11 @@ import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.company.util.EnterpriseTreeData;
 import com.code.aon.ui.company.util.EnterpriseTreeType;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseTree implements ICompanyConstants {
@@ -51,12 +48,18 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	private EnterpriseTreeData currentNode;
 	
+	private WorkPlace workPlace;
+	
 	public TreeNode<EnterpriseTreeData> getRootNode() {
 		return rootNode;
 	}
 	
 	public EnterpriseTreeData getCurrentNode() {
 		return currentNode;
+	}
+	
+	public WorkPlace getWorkPlace() {
+		return workPlace;
 	}
 
 	public void setCurrentNode(EnterpriseTreeData currentNode) {
@@ -115,35 +118,14 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 	}
 
-	private void addEnterpriseNode( TreeNode<EnterpriseTreeData> enterpriseNode, String id, String bundle, String messageKey ) {
+	private void addAcitivityNode( TreeNode<EnterpriseTreeData> rootNode ) {
+		String id = ICompanyConstants.ENTERPRISE_ACTIVITY_CONTROLLER_NAME;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
-		String label = AonUtil.getMessage( bundle, messageKey );
-		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.DATA);
+		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
 		node.setData(etd);
 		enterpriseNode.addChild( id, node);
-	}
-	
-	private void addEnterpriseNodes( TreeNode<EnterpriseTreeData> rootNode ) {
-		addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_ACTIVITY_CONTROLLER_NAME, ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
-		addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_ADDRESS_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_ADDRESS_MODULE );
-		addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_MEDIA_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_MEDIA_MODULE );
-
-		ConfigurationController cc = AonUtil.getConfigurationController();
-		if ( cc.getBean() != null ) {
-			Map<String,Object> map = cc.getBean().get(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-			if ( map != null ) {
-				if ( (Boolean) map.get(ICompanyConstants.SHOW_FINANCE_DATA) && AonUtil.getRoleManager().isFinanceOperator() ) {
-					addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_BANK_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_FINANCE_DATA_MODULE );	
-				}
-				if ( (Boolean) map.get(ICompanyConstants.SHOW_DIR_STAFF) ) {
-					addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_DIR_STAFF_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_DIR_STAFF );
-				}
-				if ( (Boolean) map.get(ICompanyConstants.SHOW_DIR_STAFF) ) {
-					addEnterpriseNode( rootNode, ICompanyConstants.ENTERPRISE_ADD_INFO_CONTROLLER_NAME, IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_ADD_INFO );
-				}	
-			}			
-		}
-	}
+}
 	
 	public void loadTree() {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
@@ -153,7 +135,9 @@ public class EnterpriseTree implements ICompanyConstants {
 		EnterpriseTreeData etd = getTreeData(enterprise);
 		enterpriseNode.setData(etd);
 		rootNode.addChild( etd.getType().toString() + etd.getId(), enterpriseNode );
-		addEnterpriseNodes(enterpriseNode);
+		if ( controller.isShowActivityNode() ) {
+			addAcitivityNode(enterpriseNode);	
+		}
 		try {
 			loadWorkPlaces(enterpriseNode, enterprise);
 		} catch (ManagerBeanException e) {
@@ -203,20 +187,10 @@ public class EnterpriseTree implements ICompanyConstants {
 		currentNode = (EnterpriseTreeData) tree.getRowData();
 	}
 	
-	public void onSelectTreeEnterprise( ActionEvent event ) {
-		try {
-			selectNode(event, ENTERPRISE_CONTROLLER_NAME, currentNode.getId());
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onSelectEnterprise exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-	}
-	
 	public void onSelectTreeWorkPlace( ActionEvent event ) {
 		try {
-			selectNode(event, ENTERPRISE_WORK_PLACE_CONTROLLER_NAME, currentNode.getId());
-			selectTreeContracts(currentNode.getId());
+			IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
+			this.workPlace = (WorkPlace) bean.get( currentNode.getId() );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectWorkPlace exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());

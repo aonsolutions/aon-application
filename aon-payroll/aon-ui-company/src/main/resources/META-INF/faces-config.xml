@@ -1322,24 +1322,6 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== Enterprise Tree ========================== -->
-<!--  
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>enterpriseTree_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/enterpriseTree/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>enterpriseTree_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/enterpriseTree/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>enterpriseTree_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/enterpriseTree/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>	
--->
-	
 	<!-- =================== Enterprise ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -1355,8 +1337,8 @@
 			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>enterprise_data</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/dataContent.xhtml</to-view-id>
+			<from-outcome>enterprise_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/formTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 
@@ -1367,8 +1349,8 @@
 			<to-view-id>/com/code/aon/ui/company/facelet/workplace/grid.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>enterpriseWorkplace_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/workplace/form.xhtml</to-view-id>
+			<from-outcome>enterpriseWorkplace_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/workplace/formTree.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>contractView_form</from-outcome>
@@ -1385,6 +1367,10 @@
 		<navigation-case>
 			<from-outcome>enterpriseActivity_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/enterpriseActivity/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterpriseActivity_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/enterpriseActivity/formTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 

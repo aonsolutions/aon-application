@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -17,9 +18,11 @@
 			</ui:decorate>
 
 		<aon:div styleClass="aon-scroll-area">
-<!--  
-			<aon:methodParam name="rowSelectorAction" default="#{(enterprise.treeView)?'enterprise_treeForm':'enterprise_form'}" resolve="true" />
--->			
+
+			<c:if test="#{enterprise.treeView}">  
+				<aon:methodParam name="rowSelectorAction" value="enterprise_formTree" />
+			</c:if>
+			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 				<ui:param name="controller" value="#{enterprise}" />
 				<ui:define name="columns">
