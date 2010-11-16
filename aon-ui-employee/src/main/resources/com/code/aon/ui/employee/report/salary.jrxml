@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="841" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="768"/>
+	<property name="ireport.y" value="154"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
 	<style name="complements_TABLE">
@@ -252,7 +252,7 @@
 				<textElement verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getQuoteGroup()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="473" y="59" width="77" height="11"/>
@@ -302,12 +302,24 @@
 	</pageHeader>
 	<detail>
 		<band height="643">
-			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" positionType="Float" x="40" y="45" width="510" height="81"/>
-				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{salary}.getPayments().getSalarySupplements())]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("salaryPayments")]]></subreportExpression>
-			</subreport>
+			<line>
+				<reportElement positionType="Float" x="0" y="6" width="555" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="Float" x="0" y="293" width="555" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="Float" x="0" y="467" width="555" height="1"/>
+			</line>
+			<line direction="BottomUp">
+				<reportElement positionType="Float" x="-1" y="306" width="1" height="161"/>
+			</line>
+			<line direction="BottomUp">
+				<reportElement positionType="Float" x="555" y="306" width="1" height="161"/>
+			</line>
+			<line>
+				<reportElement positionType="Float" x="0" y="305" width="555" height="1"/>
+			</line>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="5" y="-1" width="59" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -994,12 +1006,6 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getOther().getFunction()]]></textFieldExpression>
 			</textField>
-			<subreport>
-				<reportElement key="subreport-1" positionType="Float" x="39" y="185" width="510" height="27"/>
-				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{salary}.getPayments().getComplementarySuply())]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("salaryPayments")]]></subreportExpression>
-			</subreport>
 			<frame>
 				<reportElement x="0" y="523" width="555" height="119"/>
 				<box>
@@ -1197,23 +1203,262 @@
 					<printWhenExpression><![CDATA[($F{salary}.getPayments().getSalarySupplements().size()>8)]]></printWhenExpression>
 				</reportElement>
 			</break>
-			<line>
-				<reportElement x="0" y="10" width="555" height="1"/>
+			<componentElement>
+				<reportElement key="table" positionType="Float" x="0" y="45" width="555" height="81"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="ds1">
+						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{salary}.getPayments().getSalarySupplements())]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="40">
+						<jr:detailCell height="9" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="40" height="9"/>
+								<box>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right">
+									<font isBold="true" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Double"><![CDATA[]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="215">
+						<jr:detailCell style="table_TD" height="9" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0"/>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="215" height="9"/>
+								<box leftPadding="0">
+									<pen lineStyle="Dotted"/>
+									<topPen lineStyle="Dotted"/>
+									<leftPen lineStyle="Dotted"/>
+									<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+									<rightPen lineStyle="Dotted"/>
+								</box>
+								<textElement/>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="225">
+						<jr:detailCell style="table_TD" height="9" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0"/>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="220" height="9"/>
+								<box>
+									<pen lineStyle="Dotted"/>
+									<topPen lineStyle="Dotted"/>
+									<leftPen lineStyle="Dotted"/>
+									<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+									<rightPen lineStyle="Dotted"/>
+								</box>
+								<textElement/>
+								<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70">
+						<jr:detailCell style="table_TD" height="9" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0"/>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="70" height="9"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right">
+									<font isBold="true" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="5">
+						<jr:detailCell height="9" rowSpan="1">
+							<box>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="5" height="9"/>
+								<box>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right">
+									<font size="3" isBold="true" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Double"><![CDATA[]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<line direction="BottomUp">
+				<reportElement positionType="Float" x="-1" y="45" width="1" height="249"/>
 			</line>
-			<line>
-				<reportElement x="0" y="309" width="555" height="1"/>
+			<line direction="BottomUp">
+				<reportElement positionType="Float" x="555" y="46" width="1" height="248"/>
 			</line>
+			<line direction="BottomUp">
+				<reportElement positionType="Float" x="-1" y="6" width="1" height="206"/>
+			</line>
+			<line direction="BottomUp">
+				<reportElement positionType="Float" x="555" y="6" width="1" height="206"/>
+			</line>
+			<componentElement>
+				<reportElement key="table" positionType="Float" x="0" y="185" width="555" height="27"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="ds1">
+						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{salary}.getPayments().getComplementarySuply())]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="40">
+						<jr:detailCell height="9" rowSpan="1">
+							<box>
+								<leftPen lineWidth="0.0"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="40" height="9"/>
+								<box>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right">
+									<font isBold="true" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Double"><![CDATA[]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="215">
+						<jr:detailCell style="table_TD" height="9" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0"/>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="215" height="9"/>
+								<box leftPadding="0">
+									<pen lineStyle="Dotted"/>
+									<topPen lineStyle="Dotted"/>
+									<leftPen lineStyle="Dotted"/>
+									<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+									<rightPen lineStyle="Dotted"/>
+								</box>
+								<textElement/>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="225">
+						<jr:detailCell style="table_TD" height="9" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0"/>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="220" height="9"/>
+								<box>
+									<pen lineStyle="Dotted"/>
+									<topPen lineStyle="Dotted"/>
+									<leftPen lineStyle="Dotted"/>
+									<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+									<rightPen lineStyle="Dotted"/>
+								</box>
+								<textElement/>
+								<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70">
+						<jr:detailCell style="table_TD" height="9" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0"/>
+								<topPen lineWidth="0.0"/>
+								<leftPen lineWidth="0.0"/>
+								<bottomPen lineWidth="0.0"/>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="70" height="9"/>
+								<box>
+									<bottomPen lineWidth="1.0"/>
+								</box>
+								<textElement textAlignment="Right">
+									<font isBold="true" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="5">
+						<jr:detailCell height="9" rowSpan="1">
+							<box>
+								<rightPen lineWidth="0.0"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="5" height="9"/>
+								<box>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Right">
+									<font size="3" isBold="true" pdfFontName="Helvetica-Bold"/>
+								</textElement>
+								<textFieldExpression class="java.lang.Double"><![CDATA[]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
 		</band>
 	</detail>
 	<pageFooter>
 		<band height="14">
-			<staticText>
-				<reportElement x="432" y="0" width="100" height="14">
-					<printWhenExpression><![CDATA[($F{salary}.getPayments().getSalarySupplements().size()>8)]]></printWhenExpression>
+			<textField>
+				<reportElement x="1" y="0" width="538" height="14">
+					<printWhenExpression><![CDATA[$V{PAGE_COUNT}.compareTo( 1 ) < 0]]></printWhenExpression>
 				</reportElement>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="539" y="0" width="15" height="14">
+					<printWhenExpression><![CDATA[$V{PAGE_COUNT}.compareTo( 1 ) < 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2"/>
 				<textElement verticalAlignment="Bottom"/>
-				<text><![CDATA[FOOTER]]></text>
-			</staticText>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 </jasperReport>
