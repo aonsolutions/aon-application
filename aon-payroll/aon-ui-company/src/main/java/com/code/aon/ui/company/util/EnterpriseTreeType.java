@@ -12,7 +12,7 @@ public enum EnterpriseTreeType {
 	
 	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_formTree", null ),
 	WORKPLACE( EnterpriseTreeData.WORKPLACE_ICON, "enterpriseWorkplace_formTree", "onSelectTreeWorkPlace" ),
-	CONTRACT( EnterpriseTreeData.CONTRACT_ICON, "contractView_form", "onSelectTreeContract" ),
+	CONTRACT( EnterpriseTreeData.CONTRACT_ICON, "contract_formTree", "onSelectTreeContract" ),
 	ACTIVITY( EnterpriseTreeData.ACTIVITY_ICON, "enterpriseActivity_formTree", null );
 	
 	private String icon;
