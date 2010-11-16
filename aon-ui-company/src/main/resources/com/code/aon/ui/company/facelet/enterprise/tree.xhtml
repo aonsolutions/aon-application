@@ -16,16 +16,16 @@
 			nodeSelectListener="#{enterpriseTree.processSelection}" 
 			value="#{enterpriseTree.rootNode}" var="enterpriseNode" >
 			
-			<rich:treeNode 
+			<rich:treeNode styleClass="aon-width-all"
 				icon="#{enterpriseNode.type.icon}"
 				iconLeaf="#{enterpriseNode.type.icon}" >
-				<aon:commandLink 
+				<a4j:support event="onselected" reRender="aonContent"
 					action="#{enterpriseNode.type.action}" 
-					actionListener="#{enterpriseNode.actionListener}">
-					<aon:outputText style="font-size: 0.8em;" value="#{enterpriseNode.label}" >
-						<aon:abbreviateConverter maxWidth="45" />
-					</aon:outputText>
-				</aon:commandLink>
+					actionListener="#{enterpriseNode.actionListener}" />
+				<aon:outputText style="font-size: 0.8em;"
+					value="#{enterpriseNode.label}" >
+					<aon:abbreviateConverter maxWidth="45" />
+				</aon:outputText>
 			</rich:treeNode>
 
 		</rich:tree>
