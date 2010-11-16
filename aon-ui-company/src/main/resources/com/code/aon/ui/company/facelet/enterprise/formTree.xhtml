@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+
+	<ui:define name="content">	
+
+		<aon:form id="enterpriseForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="edit"
+						value="#{bundle.aon_edit}"
+						action="enterprise_form" actionListener="#{enterprise.onEdit}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" >
+					</aon:commandButton>
+					<aon:commandButton id="back"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						action="enterprise_list"
+						accesskey="#{bundle.aon_key_cancel}" />
+										
+					<aon:spin id="enterpriseSpin" controller="#{enterprise}" />
+				</ui:define>				
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
+							
+					<aon:outputText value="#{companyBundle.company_enterprise}" />
+					<aon:outputText value="#{enterprise.to.registry.name}" size="64" />
+						
+					<aon:outputText value="#{bundle.aon_id}" />
+					<aon:outputText value="#{enterprise.to.id}" size="16" />
+
+					<aon:outputText value="#{bundle.aon_scope}" />
+					<aon:outputText value="#{enterprise.to.scope.description}" size="16" />
+
+					<aon:outputText value="#{bundle.aon_document_type}" />
+					<aon:outputText value="#{enterprise.to.registry.documentType}" size="64" />
+
+					<aon:outputText value="#{bundle.aon_document_country}" />
+					<aon:outputText value="#{enterprise.to.registry.documentCountry}" size="64" />
+
+					<aon:outputText value="#{bundle.aon_document}" />
+					<aon:outputText value="#{enterprise.to.registry.document}" size="64" />
+						
+					<c:if test="#{controller.dirStaff != null}" >
+						<aon:outputLabel value="#{registryBundle.registry_dir_staff_representative_labor}" />
+						<aon:div>
+							<aon:outputText value="#{bundle.aon_company_document}" />
+							<aon:outputText value="#{controller.dirStaff.document}" size="16" />
+							<aon:outputText value="#{bundle.aon_name}" />
+							<aon:outputText value="#{controller.dirStaff.name}" size="64" />
+						</aon:div>
+					</c:if>
+
+					<aon:outputText value="#{registryBundle.registry_address}" />
+					<aon:outputText value="#{enterprise.mainAddress.fullAddress}"  />
+		
+					<aon:outputText value="#{registryBundle.registry_zip}" />
+					<aon:outputText value="#{enterprise.mainAddress.zip}"  />
+
+					<aon:outputText value="#{registryBundle.registry_city}" />
+					<aon:outputText value="#{enterprise.mainAddress.city}"  />
+
+					<aon:outputText value="#{registryBundle.registry_geozone}" />
+					<aon:outputText value="#{enterprise.mainAddress.geozone.name}"  />
+				
+					<aon:outputText value="#{companyBundle.company_activity}" />
+					<aon:outputText value="#{enterprise.activity.description}"  />
+				
+					<aon:outputText value="#{companyBundle.company_cnae_module}" />
+					<aon:outputText value="#{enterprise.activity.cnae.code} - #{enterprise.activity.cnae.title}" />
+
+					<aon:outputText value="#{companyBundle.company_workplace}" />
+					<aon:outputText value="#{enterprise.workplace.description}" />
+
+					<aon:outputText value="#{companyBundle.company_workplace_economic_agreement}" />
+					<aon:outputText value="#{enterprise.workplace.economicAgreement}" />
+				
+					<aon:outputText value="#{enterprise.fax.mediaType}" />
+					<aon:outputText value="#{enterprise.fax.value}" size="64" />
+					
+					<aon:outputText value="#{enterprise.email.mediaType}" />
+					<aon:outputText value="#{enterprise.email.value}" size="64" />
+					
+					<aon:outputText value="#{enterprise.web.mediaType}" />
+					<aon:outputText value="#{enterprise.web.value}" size="64" />				
+				</aon:panelGrid>
+	
+			</aon:div>
+		</aon:form>		
+		
+	</ui:define>
+
+</ui:composition>
