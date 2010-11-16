@@ -54,6 +54,8 @@ public class EnterpriseController extends RegistryController implements ICompany
 	private boolean cccDirty;
 	
 	private boolean treeView;
+	
+	private boolean showActivityNode;
 
     public boolean isTreeView() {
 		return treeView;
@@ -61,6 +63,10 @@ public class EnterpriseController extends RegistryController implements ICompany
 
 	public void setTreeView(boolean treeView) {
 		this.treeView = treeView;
+	}
+	
+	public boolean isShowActivityNode() {
+		return showActivityNode;
 	}
 
 	public EnterpriseActivity getActivity() {
@@ -232,6 +238,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 			if (! cccs.isEmpty() ) {
 				setCCC( (EnterpriseCCC) cccs.get(0) );
 			}
+			this.showActivityNode = (activities.size() > 1) || (cccs.size() > 1);
 		}
 	}    
 	
@@ -265,6 +272,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 	}
     
     public void initMainActiviy() throws ManagerBeanException {
+    	this.showActivityNode = false;
     	resetMainActivity();
     	if (! isNew() ) {
     		loadMainActivity();

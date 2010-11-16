@@ -10,10 +10,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public enum EnterpriseTreeType {
 	
-	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_form", "onSelectTreeEnterprise" ),
-	WORKPLACE( EnterpriseTreeData.WORKPLACE_ICON, "enterpriseWorkplace_form", "onSelectTreeWorkPlace" ),
+	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_formTree", null ),
+	WORKPLACE( EnterpriseTreeData.WORKPLACE_ICON, "enterpriseWorkplace_formTree", "onSelectTreeWorkPlace" ),
 	CONTRACT( EnterpriseTreeData.CONTRACT_ICON, "contractView_form", "onSelectTreeContract" ),
-	DATA( EnterpriseTreeData.DATA_ICON, "enterprise_data", null );
+	ACTIVITY( EnterpriseTreeData.ACTIVITY_ICON, "enterpriseActivity_formTree", null );
 	
 	private String icon;
 	
@@ -24,7 +24,7 @@ public enum EnterpriseTreeType {
 	EnterpriseTreeType( String icon, String action, String method ) {
 		this.action = action;
 		this.icon = calculateIcon(icon);
-		if ( actionListener != null ) {
+		if ( method != null ) {
 			String expression = "#{enterpriseTree." + method + "}";
 			this.actionListener = calculateActionListener(expression);
 		}
