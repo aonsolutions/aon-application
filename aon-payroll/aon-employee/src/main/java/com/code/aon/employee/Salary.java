@@ -298,6 +298,7 @@ public class Salary implements ITransferObject, ISalary {
 		this.irpfBase = irpfBase;
 	}
 	
+	@Override
 	public String getQuoteGroup() {
 		return quoteGroup;
 	}
