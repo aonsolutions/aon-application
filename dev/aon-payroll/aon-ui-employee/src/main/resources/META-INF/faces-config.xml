@@ -253,7 +253,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Salary_contract_person_firstSurname,Salary_contract_person_secondSurname,Salary_endDate desc</value>
+			<value>Salary_contract_person_firstSurname,Salary_contract_person_secondSurname,Salary_contract_person_name</value>
 		</managed-property>	
 		<managed-property>
 			<property-name>listenerClasses</property-name>
