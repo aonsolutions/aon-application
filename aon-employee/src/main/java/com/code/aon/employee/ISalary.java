@@ -61,4 +61,6 @@ public interface ISalary {
 
 	public Deductions getDeductions();
 
+	String getQuoteGroup();
+
 }
