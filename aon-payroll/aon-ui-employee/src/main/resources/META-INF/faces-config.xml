@@ -251,10 +251,12 @@
 			<property-name>beanName</property-name>
 			<value>salary</value>
 		</managed-property>
+<!--  
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Salary_contract_person_firstSurname,Salary_contract_person_secondSurname,Salary_contract_person_name</value>
+			<value>Salary_employee,Salary_endDate desc</value>
 		</managed-property>	
+-->		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
