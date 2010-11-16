@@ -36,30 +36,30 @@
 					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
 							
 					<aon:outputText value="#{companyBundle.company_enterprise}" />
-					<aon:outputText value="#{enterprise.to.registry.name}" size="64" />
+					<aon:outputText value="#{enterprise.to.registry.name}" />
 						
 					<aon:outputText value="#{bundle.aon_id}" />
-					<aon:outputText value="#{enterprise.to.id}" size="16" />
+					<aon:outputText value="#{enterprise.to.id}" />
 
 					<aon:outputText value="#{bundle.aon_scope}" />
-					<aon:outputText value="#{enterprise.to.scope.description}" size="16" />
+					<aon:outputText value="#{enterprise.to.scope.description}" />
 
 					<aon:outputText value="#{bundle.aon_document_type}" />
-					<aon:outputText value="#{enterprise.to.registry.documentType}" size="64" />
+					<aon:outputText value="#{enterprise.to.registry.documentType}" />
 
 					<aon:outputText value="#{bundle.aon_document_country}" />
-					<aon:outputText value="#{enterprise.to.registry.documentCountry}" size="64" />
+					<aon:outputText value="#{enterprise.to.registry.documentCountry}" />
 
 					<aon:outputText value="#{bundle.aon_document}" />
-					<aon:outputText value="#{enterprise.to.registry.document}" size="64" />
+					<aon:outputText value="#{enterprise.to.registry.document}" />
 						
 					<c:if test="#{controller.dirStaff != null}" >
 						<aon:outputLabel value="#{registryBundle.registry_dir_staff_representative_labor}" />
 						<aon:div>
 							<aon:outputText value="#{bundle.aon_company_document}" />
-							<aon:outputText value="#{controller.dirStaff.document}" size="16" />
+							<aon:outputText value="#{controller.dirStaff.document}" />
 							<aon:outputText value="#{bundle.aon_name}" />
-							<aon:outputText value="#{controller.dirStaff.name}" size="64" />
+							<aon:outputText value="#{controller.dirStaff.name}" />
 						</aon:div>
 					</c:if>
 
