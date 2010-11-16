@@ -485,4 +485,10 @@ public class Contract implements ITransferObject, ISalary {
 		return false;
 	}
 
+	@Override
+	public String getQuoteGroup() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
