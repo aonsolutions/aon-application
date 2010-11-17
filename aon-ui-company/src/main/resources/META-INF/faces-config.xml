@@ -1339,10 +1339,6 @@
 			<from-outcome>enterpriseWorkplace_formTree</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/workplace/formTree.xhtml</to-view-id>
 		</navigation-case>
-		<navigation-case>
-			<from-outcome>contract_formTree</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/workplace/contract_formTree.xhtml</to-view-id>
-		</navigation-case>
 	</navigation-rule>	
 
 	<!-- =================== Work Activity ========================== -->

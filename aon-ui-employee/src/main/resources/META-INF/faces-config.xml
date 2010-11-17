@@ -510,6 +510,10 @@
 			<from-outcome>contract_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/employee/facelet/contract/search.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>contract_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/formTree.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 			
 	<!-- =================== Salary ========================== -->
