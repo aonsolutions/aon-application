@@ -39,8 +39,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseTree implements ICompanyConstants {
 
-	private static final String CONTRACT_CONTROLLER_NAME = "contract";
-
 	private final static Logger LOGGER = LoggerFactory.getLogger(EnterpriseTree.class);
 	
 	private TreeNode<EnterpriseTreeData> rootNode;
@@ -175,24 +173,6 @@ public class EnterpriseTree implements ICompanyConstants {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
 		}
 		currentNode = etd;
-		
-		try {
-			IController cController = FormUtil.getController(CONTRACT_CONTROLLER_NAME);
-			Criteria criteria = new Criteria();
-			String endDate = cController.getFieldName(IEmployeeAlias.CONTRACT_END_DATE);
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
-			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
-			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-			String erp = cController.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
-			criteria.addEqualExpression(erp, enterprise.getId());
-			criteria.addOrder(cController.getFieldName(IEmployeeAlias.CONTRACT_PERSON_FIRST_SURNAME));
-			criteria.addOrder(cController.getFieldName(IEmployeeAlias.CONTRACT_PERSON_SECOND_SURNAME));
-			criteria.addOrder(cController.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_NAME));
-			cController.setCriteria(criteria);
-			cController.initializeModel();
-		} catch (ManagerBeanException e) {
-			LOGGER.error( "Error loading contracts for " + enterprise, e );
-		}
 	}
 
 	public Boolean adviseNodeSelected(UITree tree) {
