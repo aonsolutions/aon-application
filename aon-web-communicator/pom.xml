@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId> 
 			<artifactId>aon.security</artifactId>
-			<version>5.6.0</version>
+			<version>1.9.0</version>
 			<scope>provided</scope>
 		</dependency>	
 		<dependency>
@@ -108,4 +108,3 @@
 		</dependency>
 	</dependencies>
 </project>
- 
