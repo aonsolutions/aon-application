@@ -17,14 +17,31 @@
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="edit"
 						value="#{bundle.aon_edit}"
-						action="enterprise_form" actionListener="#{contract.onEdit}"
+						action="salary_form"
 						styleClass="aon-finding-toolbar-item aon-icon-accept" >
 					</aon:commandButton>
+					<aon:commandButton id="person"
+						value="#{registryBundle.registry_person}"
+						action="person_form" actionListener="#{enterpriseTree.onEditPerson}"
+						styleClass="aon-finding-toolbar-item aon-icon-contact" >
+					</aon:commandButton>
+					<aon:commandButton id="contract"
+						value="#{employeeBundle.employee_contract}"
+						action="contract_form" actionListener="#{enterpriseTree.onEditContract}"
+						styleClass="aon-finding-toolbar-item aon-icon-category" >
+					</aon:commandButton>
+					<aon:htmlCommandLink id="currentSalary-report"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="#{employeeBundle.employee_salary}"
+						action="#{report.onExecute}">
+						<f:param name="reportKey" value="currentSalaryReport" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>					
 				</ui:define>				
 			</ui:decorate>		
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2" styleClass="aon-width-all aon-padding-bottom"
+				<aon:panelGrid columns="2" style="width:100%"
 					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
 					
 					<aon:outputText value="#{bundle.aon_document}" />
@@ -76,21 +93,23 @@
 				</aon:panelGrid>
 				
 				<c:if test="#{salary.model.rowCount > 0}" >
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-						<ui:param name="toolbarDescription" value="#{employeeBundle.employee_salary_module}" />
-						<ui:param name="showMainStyleClass" value="#{false}" />
-						<ui:param name="innerToolbar" value="#{true}" />
-						<ui:param name="toolbarID" value="salaryToolbar" />
-						<ui:define name="toolbarContent">
-							<aon:spin id="enterpriseSpin" controller="#{salary}" />
-						</ui:define>				
-					</ui:decorate>
+					<aon:div styleClass="aon-margin-top">
+						<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+							<ui:param name="toolbarDescription" value="#{employeeBundle.employee_salary_module}" />
+							<ui:param name="showMainStyleClass" value="#{false}" />
+							<ui:param name="innerToolbar" value="#{true}" />
+							<ui:param name="toolbarID" value="salaryToolbar" />
+							<ui:define name="toolbarContent">
+								<aon:spin id="enterpriseSpin" controller="#{salary}" />
+							</ui:define>				
+						</ui:decorate>
+					</aon:div>
 					
 					<ui:include src="/com/code/aon/ui/employee/facelet/salary/formEditContent.xhtml" >
 						<ui:param name="controller" value="#{salary}" />
 					</ui:include>
 		
-					<aon:div styleClass="aon-scroll-area" rendered="#{!salary.new}">
+					<aon:div styleClass="aon-padding-top">
 						<aon:div styleClass="aon-form-group-title">
 							<aon:div styleClass="aon-form-group-title-internal">
 								<aon:outputText value="#{employeeBundle.employee_salary_payment}" />
