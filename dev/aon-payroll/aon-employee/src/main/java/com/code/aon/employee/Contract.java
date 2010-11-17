@@ -435,7 +435,7 @@ public class Contract implements ITransferObject, ISalary {
 				} else if (sd.getType() == DeductionType.ADVANCE_PAYMENT) {
 					d.setAdvancePayment(sd);
 				} else if (sd.getType() == DeductionType.IN_KIND) {
-					d.setInKid(sd);
+					d.setInKind(sd);
 				} else if (sd.getType() == DeductionType.OTHER) {
 					d.setOther(sd);
 				}

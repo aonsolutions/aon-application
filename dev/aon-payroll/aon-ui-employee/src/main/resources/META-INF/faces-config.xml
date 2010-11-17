@@ -156,7 +156,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	<!-- ************ SALARY DEDUCTION ************** -->
+	<!-- ************ CONTRACT DEDUCTION ************** -->
 	<managed-bean>
 		<managed-bean-name>contractDeduction</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
@@ -251,12 +251,6 @@
 			<property-name>beanName</property-name>
 			<value>salary</value>
 		</managed-property>
-<!--  
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Salary_employee,Salary_endDate desc</value>
-		</managed-property>	
--->		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -319,7 +313,7 @@
 	<!-- ************ SALARY PAYMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>salaryPayment</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.employee.controller.SalaryPaymentController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -328,6 +322,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>salaryPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -345,13 +343,26 @@
 					<value>salary.id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>			
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{salaryPaymentListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>salaryPaymentListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.event.SalaryPaymentControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ************ SALARY DEDUCTION ************** -->
 	<managed-bean>
 		<managed-bean-name>salaryDeduction</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.employee.controller.SalaryDeductionController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -378,7 +389,20 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>			
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{salaryDeductionListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>salaryDeductionListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.event.SalaryDeductionControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 
 	<!--  **** CONTRACT TRACKING **** -->
 <!--  
