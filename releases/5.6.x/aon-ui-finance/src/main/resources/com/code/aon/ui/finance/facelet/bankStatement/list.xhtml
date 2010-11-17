@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="bankStatementList">
+			<aon:div ajaxRendered="true" layout="none">
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{financeBundle.finance_bank_statement_module}" />
+					<ui:param name="controller" value="#{bankStatement}" />
+					<ui:param name="skipSearchButton" value="false" />
+
+					<ui:define name="additionalToolbarContent">
+						<aon:commandButton id="import-Popup"
+							value="#{financeBundle.finance_bank_statement_import}"
+							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+							rendered="#{!controller.new and controller.to == null}"
+							actionListener="#{controller.onImportFileShow}">
+							<f:setPropertyActionListener target="#{controller.showImportFileWindow}"
+								value="#{true}" />
+						</aon:commandButton>
+						<aon:commandButton id="checkLinks"
+							value="#{financeBundle.finance_bank_statement_check}"
+							styleClass="aon-finding-toolbar-item aon-icon-attach-file"
+							rendered="#{!controller.new and controller.to == null}"
+							actionListener="#{controller.onCheckLinks}"
+							reRender="#{dataTableId}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					</ui:define>
+				</ui:decorate>
+
+				<!--  aon-region-body -->
+				<aon:div styleClass="aon-scroll-area">
+					<aon:panelGrid id="registryBankTable" columns="2" style="width: 100%;"
+						columnClasses="aon-panelGrid-odd aon-width-140
+							,aon-panelGrid-even aon-width-auto">
+						<aon:outputText value="#{configBundle.config_bank}" />
+						<aon:selectOneMenu id="BankStatement_registryBank"
+							value="#{bankStatement.registryBank}"
+							valueChangeListener="#{bankStatement.onChangeBank}"
+							reRender="bankStatementData"
+							disabled="#{bankStatement.new or bankStatement.to != null}" 
+							ajaxRendered="true">
+							<f:selectItems value="#{companyCollections.companyBanks}" />
+						</aon:selectOneMenu>
+					</aon:panelGrid>
+
+					<aon:div styleClass="aon-padding-top">
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputLabel for="bankStatementData" 
+									value="#{financeBundle.finance_bank_statement_detail}" />
+							</f:facet>
+
+							<ui:decorate
+								template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+								<ui:param name="controller" value="#{bankStatement}" />
+								<ui:param name="skipLineEdition" value="#{true}" />
+								<ui:define name="beginFormListContent">
+									<aon:commandLink id="#{dataTableId}-selectButton"
+										styleClass="aon-table-row-link" value="&#160;"
+										immediate="true" ajaxSingle="true" requestDelay="100"
+										actionListener="#{controller.onSelect}"
+										onkeyup="#{dataTableId}KeyUp(this)"
+										onfocus="#{dataTableId}SelectRow(this)"
+										onblur="#{dataTableId}DeselectRow(this)"
+										focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+									</aon:commandLink>
+								</ui:define>
+								<ui:define name="columns">
+
+									<aon:column styleClass="aon-editDataTable-iconColumn">
+										<f:facet name="header">
+											<aon:outputText value="C" />
+										</f:facet>
+										<aon:div style="display:inline;cursor:pointer;"
+											rendered="#{controller.errorMessage != null}">
+											<aon:outputText value="&#160;" styleClass="aon-icon-exception"
+												style="padding-left:12px" />
+											<rich:toolTip>
+												<aon:outputText value="#{controller.errorMessage}" />
+											</rich:toolTip>
+										</aon:div>
+									</aon:column>
+
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-120">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_date}" />
+										</f:facet>
+										<aon:outputText value="#{to.operationDate}" 
+											rendered="#{formList}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>
+										<aon:selectInputDate id="BankStatement_operationDate" 
+											value="#{controller.to.operationDate}"
+											rendered="#{formEdit}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"/>
+										<f:facet name="footer">
+											<aon:selectInputDate id="BankStatement_operationDate-New" 
+												value="#{controller.to.operationDate}"
+												rendered="#{formNew}" required="true"
+												timeZone="#{timeZoneController.timeZone}"
+												popupDateFormat="#{bundle.aon_date_pattern}"/>
+										</f:facet>
+									</aon:column>
+
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-120">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_concept}" />
+										</f:facet>
+										<aon:outputText value="#{to.concept}"
+											rendered="#{formList}" />
+										<aon:selectOneMenu id="BankStatement_concept"
+											value="#{controller.to.concept}"
+											rendered="#{formEdit}">
+											<f:selectItems value="#{financeCollections.statementConcepts}" />
+										</aon:selectOneMenu>
+										<f:facet name="footer">
+											<aon:selectOneMenu id="BankStatement_concept-New"
+												value="#{controller.to.concept}"
+												rendered="#{formNew}">
+												<f:selectItems value="#{financeCollections.statementConcepts}" />
+											</aon:selectOneMenu>
+										</f:facet>
+									</aon:column>
+
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_description}" />
+										</f:facet>
+										<aon:outputText value="#{to.description}"
+											rendered="#{formList}">
+											<aon:abbreviateConverter maxWidth="64" />
+										</aon:outputText>
+										<aon:inputText id="BankStatement_description"
+											value="#{controller.to.description}"
+											rendered="#{formEdit}" required="true"
+											size="50" maxlength="80" />
+										<f:facet name="footer">
+											<aon:inputText id="BankStatement_description-New"
+												value="#{controller.to.description}"
+												rendered="#{formNew}" required="true"
+												size="50" maxlength="80" />
+										</f:facet>
+									</aon:column>
+
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_type}" />
+										</f:facet>
+										<aon:outputText value="#{(to.payment) ? (financeBundle.finance_payment) : (financeBundle.finance_charge)}"
+											rendered="#{formList}" /> 
+										<aon:selectOneMenu id="BankStatement_payment"
+											value="#{controller.to.payment}"
+											rendered="#{formEdit}">
+											<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
+											<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
+										</aon:selectOneMenu>
+										<f:facet name="footer">
+											<aon:selectOneMenu id="BankStatement_payment-New"
+												value="#{controller.to.payment}"
+												rendered="#{formNew}">
+												<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
+												<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
+											</aon:selectOneMenu>
+										</f:facet>
+									</aon:column>
+
+									<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_amount}" />
+										</f:facet>
+										<aon:outputText value="#{to.amount}"
+											rendered="#{formList}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>
+										<aon:inputText id="BankStatement_amount"
+											value="#{controller.to.amount}"
+											rendered="#{formEdit}" required="true"
+											size="8">
+											<f:validateDoubleRange minimum="0.0" />
+										</aon:inputText> 
+										<f:facet name="footer">
+											<aon:inputText id="BankStatement_amount-New"
+												value="#{controller.to.amount}"
+												rendered="#{formNew}" required="true"
+												size="10">
+												<f:validateDoubleRange minimum="0.0" />
+											</aon:inputText> 
+										</f:facet>
+									</aon:column>
+
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_status}" />
+										</f:facet>
+										<aon:outputText value="#{to.status}" />
+										<f:facet name="footer">
+											<aon:outputText value="#{controller.to.status}" />
+										</f:facet>
+									</aon:column>
+
+			 					</ui:define>
+								<ui:define name="endFormListContent">
+									<aon:div id="addBankStatementLinks" rendered="#{controller.bankStatementLinkList == null}">
+										<aon:commandButton id="addLink"
+											value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
+											actionListener="#{controller.onAddLinkShow}"
+											reRender="showLinkWindow">
+											<f:setPropertyActionListener target="#{controller.showLinkWindow}"
+												value="#{true}" />
+										</aon:commandButton>
+									</aon:div>
+									<aon:div id="showBankStatementLinks" rendered="#{controller.bankStatementLinkList != null}">
+										<aon:commandLink value="#{financeBundle.finance_breakdown}"
+											styleClass="aon-italic"
+											reRender="#{dataTableId},showBankStatementLinks"
+											rendered="#{!to.showBankStatementLink}" 
+											actionListener="#{controller.onShowBankStatementLink}" />
+										<aon:commandLink value="#{financeBundle.finance_hide}"
+											reRender="#{dataTableId},showBankStatementLinks"
+											rendered="#{to.showBankStatementLink}" 
+											actionListener="#{controller.onHideBankStatementLink}" />
+									</aon:div>
+									<rich:subTable id="bankStatementLinkTable" rendered="#{to.showBankStatementLink}" 
+										value="#{controller.bankStatementLinkList}" var="bankStatementLink">
+
+										<aon:column colspan="2"	style="padding:0px; border:none; background-color:#FBEDB6;">
+											<aon:outputText value="&#160;" />
+										</aon:column>
+
+										<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+											style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:outputText value="#{bankStatementLink.date}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+										</aon:column>
+
+										<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+											style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:outputText value="#{bankStatementLink.concept}" />
+										</aon:column>
+
+										<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+											style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:outputText value="#{bankStatementLink.description}" />
+										</aon:column>
+
+										<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+											style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:outputText value="#{(to.payment) ? (financeBundle.finance_payment) : (financeBundle.finance_charge)}" /> 
+										</aon:column>
+
+										<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold"
+											style="padding-right:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:outputText value="#{bankStatementLink.amount}">
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											</aon:outputText>
+										</aon:column>
+
+										<aon:column colspan="2"	style="padding:0px; border:none; background-color:#FBEDB6;">
+											<aon:outputText value="&#160;" />
+										</aon:column>
+									</rich:subTable>
+								</ui:define>
+ 							</ui:decorate>
+						</aon:panel>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalImport.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalLink.xhtml" />
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+
+	</ui:define>
+</ui:composition>

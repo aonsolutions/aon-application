@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="workplace">
+    <columns>
+        <column label="Identificador unico del Centro de Trabajo"
+            name="id" sqlType="integer" type="integer"/>
+        <column label="Descripcion del Centro de Trabajo" length="64"
+            name="description" sqlType="varchar" type="string"/>
+        <column label="Identificador de la Direccion" name="address"
+            sqlType="integer" type="integer"/>
+        <column label="Identificador del Calendario Laboral"
+            name="calendar" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="workplace_ibfk_1" foreignPath="data/raddress.exdm.xml">
+            <sourceColumns>
+                <column name="address"/>
+            </sourceColumns>
+        </join>
+        <join description="workplace_ibfk_2" foreignPath="data/calendar.exdm.xml">
+            <sourceColumns>
+                <column name="calendar"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

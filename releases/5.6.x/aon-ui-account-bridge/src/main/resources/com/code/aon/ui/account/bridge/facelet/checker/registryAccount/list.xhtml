@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="registryList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{toolbarTitle}" />
+				<ui:param name="controller" value="#{controller}" />
+				<ui:param name="skipResetButton" value="true" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:div styleClass="aon-note"
+					rendered="#{controller.model.rowCount == 0}">
+					<aon:div styleClass="aon-note-internal">
+						<aon:panelGroup>
+							<aon:outputText value="#{bundle.aon_search_no_results}" />
+						</aon:panelGroup>
+					</aon:div>
+				</aon:div>
+
+				<aon:dataTable id="controllerTable" var="to"
+					rendered="#{controller.model.rowCount gt 0}"
+					value="#{controller.model}" rows="0">
+
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:outputText rendered="#{to.multipleAccount}"
+							style="padding-left: 20px" styleClass="aon-icon-exception"
+							value="#{accountBridgeBundle.account_bridge_error}" />
+						<aon:outputText rendered="#{to.withoutAccount}"
+							style="padding-left: 20px" styleClass="aon-icon-errorwarning"
+							value="#{accountBridgeBundle.account_bridge_warning}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-numberColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.registry.id}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_name}" />
+						</f:facet>
+						<aon:div styleClass="aon-nowrap">
+							<aon:outputText value="#{to.registry.registry.fullName}" />
+						</aon:div>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{accountBundle.account_account}" />
+						</f:facet>
+						<rich:dataList var="acc" value="#{to.accounts}"
+							type="none">
+							<aon:outputText value="#{acc.account.id}" />
+							<aon:outputText value=" - " />
+							<aon:outputText value="#{acc.account.description}" />
+						</rich:dataList>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:div>
+							<aon:commandLink value="#{bundle.aon_reset}"
+								title="#{accountBundle.account_new_account}"
+								styleClass="aon-dataTable-link" rendered="#{to.withoutAccount}"
+								reRender="controllerTable"
+								actionListener="#{controller.onNewAccount}">
+							</aon:commandLink>
+							<aon:commandLink
+								value="#{accountBridgeBundle.account_bridge_synchronize}"
+								title="#{accountBundle.account_synchronize}"
+								styleClass="aon-dataTable-link" rendered="#{to.synchronizable}"
+								reRender="controllerTable"
+								actionListener="#{controller.onAccountSynchronize}">
+							</aon:commandLink>
+							<aon:commandLink value="Ver" styleClass="aon-dataTable-link"
+								rendered="#{to.multipleAccount}"
+								actionListener="#{controller.onNavigate}"
+								action="accountManager_form">
+							</aon:commandLink>
+						</aon:div>
+					</aon:column>
+				</aon:dataTable>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

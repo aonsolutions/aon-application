@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="activityTypeStandaloneList">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_activity_type}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_editing}" />
+					</aon:div>
+
+					<aon:div id="gridToolbar"
+						styleClass="aon-finding-toolbar-item-group">
+
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							reRender="gridToolbar,activityTypeStandaloneDataList"
+							actionListener="#{activityTypeStandalone.onAccept}"
+							rendered="#{activityTypeStandalone.to!=null}"
+							onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							immediate="#{true}"
+							reRender="gridToolbar,listContainer"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{activityTypeStandalone.onCancel}"
+							rendered="#{activityTypeStandalone.to!=null}"
+							onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+							reRender="gridToolbar,activityTypeStandaloneDataList"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							actionListener="#{activityTypeStandalone.onRemove}"
+							rendered="#{activityTypeStandalone.to!=null and !activityTypeStandalone.new}"
+							onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							focus="description_new"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							reRender="gridToolbar,listContainer"
+							actionListener="#{activityTypeStandalone.onReset}"
+							rendered="#{!activityTypeStandalone.new}"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div id="listContainer" styleClass="aon-scroll-area-internal">
+					<aon:editDataTable id="activityTypeStandaloneDataList"
+						rowKeyVar="rowKey"
+						value="#{activityTypeStandalone.model}" var="to"
+						rendered="#{activityTypeStandalone.model.rowCount > 0 or activityTypeStandalone.new}"
+						columnClasses="aon-editDataTable-iconColumn
+									 ,aon-editDataTable-textColumn
+									 ,aon-editDataTable-textColumn
+									 ,aon-editDataTable-buttonsColumn">
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:commandButton
+								focus="description_edit"
+								reRender="gridToolbar"
+								styleClass="aon-icon-commandButton aon-icon-rowSelector"
+								actionListener="#{activityTypeStandalone.onSelect}">
+							</aon:commandButton>
+							<f:facet name="footer">
+								<aon:commandButton alt="[#{messages.aon_reset}]"
+									styleClass="aon-editDataTable-button aon-icon-new"
+									actionListener="#{activityTypeStandalone.onReset}"
+									reRender="gridToolbar,activityTypeStandaloneDataList"
+									rendered="#{!activityTypeStandalone.new}"
+									accesskey="#{bundle.aon_key_new_line}">
+								</aon:commandButton>
+							</f:facet>
+						</aon:column>
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{projectBundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}"
+								rendered="#{to.id!=activityTypeStandalone.to.id}" />
+							<aon:inputText
+								id="description_edit" 
+								rendered="#{to.id==activityTypeStandalone.to.id}"
+								size="40" value="#{activityTypeStandalone.to.description}"
+								required="true" />
+							<f:facet name="footer">
+								<aon:inputText
+									id="description_new" 
+									rendered="#{activityTypeStandalone.new}"
+									value="#{activityTypeStandalone.to.description}"
+									required="#{true}" size="40" />
+							</f:facet>
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{menuBundle.aon_dossier_type}" />
+							</f:facet>
+							<aon:outputText value="#{to.dossierType.description}"
+								rendered="#{to.id!=activityTypeStandalone.to.id}" />
+							<h:selectOneMenu
+								value="#{activityTypeStandalone.to.dossierType}"
+								rendered="#{to.id==activityTypeStandalone.to.id}"
+								styleClass="aon-form-selectOneMenu-field">
+								<f:selectItem value="#{nullSelectItem.value}" />
+								<f:selectItems value="#{projectCollections.dossierTypePojos}" />
+							</h:selectOneMenu>
+							<f:facet name="footer">
+								<h:selectOneMenu
+									value="#{activityTypeStandalone.to.dossierType}"
+									rendered="#{activityTypeStandalone.new}"
+									styleClass="aon-form-selectOneMenu-field">
+									<f:selectItem value="#{nullSelectItem.value}" />
+									<f:selectItems value="#{projectCollections.dossierTypePojos}" />
+								</h:selectOneMenu>
+							</f:facet>
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+
+							<aon:commandButton title="#{bundle.aon_accept}"
+								actionListener="#{activityTypeStandalone.onAccept}"
+								reRender="gridToolbar,activityTypeStandaloneDataList"
+								onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
+								styleClass="aon-editDataTable-button aon-icon-accept"
+								rendered="#{to.id==activityTypeStandalone.to.id}"
+								accesskey="#{bundle.aon_key_save_line}" />
+							<aon:commandButton title="#{bundle.aon_cancel}"
+								actionListener="#{activityTypeStandalone.onCancel}"
+								immediate="#{true}"
+								reRender="gridToolbar,activityTypeStandaloneDataList"
+								onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+								styleClass="aon-editDataTable-button aon-icon-cancel"
+								accesskey="#{bundle.aon_key_cancel_line}"
+								rendered="#{to.id==activityTypeStandalone.to.id}" />
+
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton title="#{bundle.aon_accept}"
+										actionListener="#{activityTypeStandalone.onAccept}"
+										onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
+										reRender="gridToolbar,activityTypeStandaloneDataList"
+										styleClass="aon-editDataTable-button aon-icon-accept" value=""
+										accesskey="#{bundle.aon_key_save_line}"
+										rendered="#{activityTypeStandalone.new}" />
+									<aon:commandButton title="#{bundle.aon_cancel}"
+										actionListener="#{activityTypeStandalone.onCancel}"
+										immediate="#{true}"
+										reRender="gridToolbar,activityTypeStandaloneDataList"
+										onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+										styleClass="aon-editDataTable-button aon-icon-cancel" value=""
+										accesskey="#{bundle.aon_key_cancel_line}"
+										rendered="#{activityTypeStandalone.new}" />
+								</aon:div>
+							</f:facet>
+						</h:column>
+					</aon:editDataTable>
+					<aon:dataScroller for="activityTypeStandaloneDataList"
+						rowCount="#{activityTypeStandalone.model.rowCount}"
+						showNote="true" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

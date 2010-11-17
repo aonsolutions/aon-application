@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="workgroup">
+    <columns>
+        <column label="Identificador unico del Grupo de Trabajo"
+            name="id" sqlType="integer" type="integer"/>
+        <column label="Descripcion del Grupo de Trabajo" length="64"
+            name="description" sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins/>
+    <descriptionColumns/>
+</table>

@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<h:panelGrid styleClass="aon-width-all aon-text-center">
+		<c:if test="#{!skipConnectedLabel}" >
+			<aon:outputText value="#{companyBundle.company_connected_to}" />
+		</c:if>
+		<h:panelGrid columnClasses="#{skipRightBorder?'aon-logo-only':'aon-logo-left'}"
+			styleClass="aon-width-all">	
+			<a4j:mediaOutput element="img"
+				rendered="#{companyDisplay.companyLogo != null}" 
+				value="#{companyDisplay.logoKey}"
+				title="#{companyDisplay.companyLabel}"
+				style="#{companyDisplay.bigLogo?'width:200px;':''}"
+				createContent="#{companyDisplay.createLogoContent}" />
+		</h:panelGrid>		
+		<aon:div styleClass="aon-company-label">
+			<aon:outputText value="#{companyDisplay.companyLabel}" />
+		</aon:div>
+	</h:panelGrid>		
+				
+</ui:composition>

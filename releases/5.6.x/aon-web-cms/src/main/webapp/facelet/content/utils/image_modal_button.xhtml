@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">	
+
+	<aon:commandLink style="padding-left:0.4em;" immediate="true"
+		reRender="imageGalleryPanelGroup" ajaxSingle="true">
+		<aon:graphicImage
+			url="#{aonResource.resolveLocal['/images/cms/select.png']}"
+			title="#{appBundle.image_modal_open}" />
+		<f:setPropertyActionListener target="#{gallery.showWindow}" value="#{true}" />						
+		<f:setPropertyActionListener target="#{gallery.thumbnail}" value="#{thumbnail}" />
+		<f:setPropertyActionListener target="#{gallery.reRender}" value="#{reRender}" />
+		<f:setPropertyActionListener target="#{gallery.listenerBean}" value="#{listenerBean}" />
+	</aon:commandLink>
+
+</ui:composition>

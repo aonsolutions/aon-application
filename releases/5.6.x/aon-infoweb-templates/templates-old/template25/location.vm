@@ -1,0 +1,73 @@
+<div id="container">
+    <div id="wrapper">
+	<table cellpadding="10" align="center" cellspacing="0" border="0">
+		<tr>
+			<td width="320px">
+				<div class="title">Direcciones</div>
+				<p>$!address.getAddress() $!address.getAddress2() $!address.getAddress3()</p>
+				<p>$!address.getZip() $!address.getCity() ($!address.getGeozone().getName())</p>
+				<p>Tel: $!phone</p>
+ 			#if ($fax && !$fax.toString().trim().equals(""))
+				<p>Fax: $!fax</p>
+			#end
+			</td>
+			<td>
+			#if ($coords.toString().trim().equals(""))
+				<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?dir=$!address.getAddress() $!address.getAddress2() $!address.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName() SPAIN"></iframe>
+			#else
+				<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?coords=$!coords"></iframe>
+			#end
+ 			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>	
+	#set ($coordnum = 1)
+	#foreach ($add in $addresses)
+		#set ($coords = "")
+
+		#if ($coordnum == 1)
+			#set ($coords = $coords1)
+		#elseif ($coordnum == 2)
+			#set ($coords = $coords2)
+		#elseif ($coordnum == 3)
+			#set ($coords = $coords3)
+		#elseif ($coordnum == 4)
+			#set ($coords = $coords4)
+		#elseif ($coordnum == 5)
+			#set ($coords = $coords5)
+		#elseif ($coordnum == 6)
+			#set ($coords = $coords6)
+		#elseif ($coordnum == 7)
+			#set ($coords = $coords7)
+		#elseif ($coordnum == 8)
+			#set ($coords = $coords8)
+		#elseif ($coordnum == 9)
+			#set ($coords = $coords9)
+		#end
+	
+		#set ($coordnum = $coordnum + 1)
+
+		<tr>
+			<td>
+				<div class="title"></div>
+				<p>$!add.getAddress() $!add.getAddress2() $!add.getAddress3()</p>
+				<p>$!add.getZip() $!add.getCity() ($!add.getGeozone().getName())</p>
+			</td>
+			<td>
+				#if ($coords.toString().trim().equals(""))
+					<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?dir=$!add.getAddress() $!add.getAddress2() $!add.getAddress3() $!add.getZip() $!add.getCity() $!add.getGeozone().getName() SPAIN"></iframe>
+				#else
+					<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?coords=$!coords"></iframe>
+				#end
+ 			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>	
+	#end
+	</table>
+</div>
+</div>
