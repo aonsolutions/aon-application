@@ -226,9 +226,9 @@ public class EnterpriseTree implements ICompanyConstants {
 		Criteria criteriaMedia = new Criteria();
 		String registryIdFieldName = beanMedia.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
 		criteriaMedia.addEqualExpression(registryIdFieldName, registry.getId());
-		this.phone = new RegistryMedia();
-		this.fax = new RegistryMedia();
-		this.email = new RegistryMedia();
+		this.phone = null;
+		this.fax = null;
+		this.email = null;
 		for( ITransferObject to : beanMedia.getList(criteriaMedia) ) {
 			RegistryMedia rmedia = (RegistryMedia) to;
 			switch (rmedia.getMediaType()) {
@@ -250,11 +250,32 @@ public class EnterpriseTree implements ICompanyConstants {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			this.contract = (Contract) bean.get( currentNode.getId() );
 			updateRegistryMedias( this.contract.getPerson().getRegistry() );
+			selectSalaries(event, this.contract);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectTreeContract exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}	
-	
+		
+	public void selectSalaries( ActionEvent event, Contract contract ) {
+		try {
+			IController controller = FormUtil.getController(SALARY_CONTROLLER_NAME);
+			controller.clearCriteria();
+			Criteria criteria = controller.getCriteria();
+			String contractAlias = controller.getFieldName(IEmployeeAlias.SALARY_CONTRACT_ID);
+			criteria.addEqualExpression(contractAlias, contract.getId());
+			criteria.addOrder(controller.getFieldName(IEmployeeAlias.SALARY_END_DATE), false);
+			controller.initializeModel();
+			if ( controller.getModel().getRowCount() > 0 ) {
+				controller.getModel().setRowIndex(0);
+				controller.onSelect(event);										
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> selectSalaries exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}		
+	}	
+
 }
