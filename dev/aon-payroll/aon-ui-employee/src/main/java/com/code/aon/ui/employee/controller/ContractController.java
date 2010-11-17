@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
@@ -236,5 +237,14 @@ public class ContractController extends BasicController {
 		AonUtil.addWarningMessage(msg);
     }
     
-    
+	public void onEdit( ActionEvent event ) {
+		try {
+			select( event, getTo() );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onEdit exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}						
+	}    
+	
 }
