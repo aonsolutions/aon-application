@@ -28,22 +28,38 @@
 				</ui:define>
 			</ui:decorate>
 
-			<aon:div style="width: 840px; margin-top: 10px;">
+			<aon:div styleClass="aon-scroll-area">		
 				<ui:include src="/com/code/aon/ui/employee/facelet/salary/formEditContent.xhtml" >
 					<ui:param name="controller" value="#{salary}" />
 				</ui:include>
+			</aon:div>
+			<aon:div styleClass="aon-scroll-area" rendered="#{!salary.new}">
+				<aon:div styleClass="aon-form-group-title">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{employeeBundle.employee_salary_payment}" />
+					</aon:div>
+				</aon:div>
 				<ui:include src="/com/code/aon/ui/employee/facelet/payment/gridContent.xhtml" >
 					<ui:param name="controller" value="#{salaryPayment}" />
-					<ui:param name="totalPayment" value="#{salary.to.totalPayment}" />
+					<ui:param name="skipStartDateColumn" value="true" />
+					<ui:param name="skipEndDateColumn" value="true" />
 				</ui:include>
+				<aon:div styleClass="aon-form-group-title">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{employeeBundle.employee_salary_deduction}" />
+					</aon:div>
+				</aon:div>
 				<ui:include src="/com/code/aon/ui/employee/facelet/deduction/gridContent.xhtml" >
 					<ui:param name="controller" value="#{salaryDeduction}" />
-					<ui:param name="totalDeduction" value="#{salary.to.totalDeduction}" />
-				</ui:include>
-				<ui:include src="/com/code/aon/ui/employee/facelet/salary/formBases.xhtml" >
-					<ui:param name="controller" value="#{salary}" />
+					<ui:param name="skipStartDateColumn" value="true" />
+					<ui:param name="skipEndDateColumn" value="true" />
 				</ui:include>
 			</aon:div>
 		</aon:form>
+<!--  
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{contractTypeLookup}" />
+-->		
 	</ui:define>
 </ui:composition>

@@ -1,6 +1,10 @@
 package com.code.aon.employee;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+
+import com.code.aon.employee.enumeration.PaymentType;
 
 public class Payments {
 
@@ -14,7 +18,34 @@ public class Payments {
 	private IPayment movingCompensation;
 	private IPayment otherNonWage;
 
-	
+	public Payments() {
+		
+	}
+	public Payments(Collection<SalaryPayment> payments) {
+		setSalarySupplements(new LinkedList<IPayment>());
+		setComplementarySuply(new LinkedList<IPayment>());
+		for(SalaryPayment sp: payments){
+			if (sp.getType() == PaymentType.BASE_SALARY) {
+				setBaseSalary(sp);
+			} else if (sp.getType() == PaymentType.SALARY_SUPPLEMENTS) {
+				getSalarySupplements().add(sp);
+			} else if (sp.getType() == PaymentType.OVERTIME_HOURS) {
+				setOvertimeHours(sp);
+			} else if (sp.getType() == PaymentType.SPECIAL_BONUSES) {
+				setSpecialBonuses(sp);
+			} else if (sp.getType() == PaymentType.SALARY_IN_KIND) {
+				setSalaryInKind(sp);
+			} else if (sp.getType() == PaymentType.COMPENSATION_SUPLY) {
+				getComplementarySuply().add(sp);
+			} else if (sp.getType() == PaymentType.SOCIAL_SECURITY_BENEFITS) {
+				setSpecialSecurityBenefits(sp);
+			} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
+				setMovingCompensation(sp);
+			} else if (sp.getType() == PaymentType.OTHER_NON_WAGE) {
+				setOtherNonWage(sp);
+			}
+		}
+	}
 	public IPayment getSalaryInKind() {
 		return salaryInKind;
 	}

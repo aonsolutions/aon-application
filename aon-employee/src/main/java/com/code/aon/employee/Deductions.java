@@ -1,5 +1,9 @@
 package com.code.aon.employee;
 
+import java.util.Collection;
+
+import com.code.aon.employee.enumeration.DeductionType;
+
 
 
 public class Deductions {
@@ -11,9 +15,37 @@ public class Deductions {
 	private IDeduction nonStructuralOvertime;
 	private IDeduction irpf;
 	private IDeduction advancePayment;
-	private IDeduction inKid;
+	private IDeduction inKind;
 	private IDeduction other;
 
+	
+	public Deductions() {
+		
+	}
+	public Deductions(Collection<SalaryDeduction> deductions) {
+		for(SalaryDeduction sd: deductions){
+			if (sd.getType() == DeductionType.COMMON_CONTINGENCY) {
+				setCommonContingency(sd);
+			} else if (sd.getType() == DeductionType.UNEMPLOYMENT) {
+				setUnemployment(sd);
+			} else if (sd.getType() == DeductionType.JOB_TRAINING) {
+				setJobTraining(sd);
+			} else if (sd.getType() == DeductionType.STRUCTURAL_OVERTIME) {
+				setStructuralOvertime(sd);
+			} else if (sd.getType() == DeductionType.NON_STRUCTURAL_OVERTIME) {
+				setNonStructuralOvertime(sd);
+			} else if (sd.getType() == DeductionType.IRPF) {
+				setIrpf(sd);
+			} else if (sd.getType() == DeductionType.ADVANCE_PAYMENT) {
+				setAdvancePayment(sd);
+			} else if (sd.getType() == DeductionType.IN_KIND) {
+				setInKind(sd);
+			} else if (sd.getType() == DeductionType.OTHER) {
+				setOther(sd);
+			}
+		}
+	}
+	
 	public IDeduction getCommonContingency() {
 		return commonContingency;
 	}
@@ -56,11 +88,11 @@ public class Deductions {
 	public void setAdvancePayment(IDeduction advancePayment) {
 		this.advancePayment = advancePayment;
 	}
-	public IDeduction getInKid() {
-		return inKid;
+	public IDeduction getInKind() {
+		return inKind;
 	}
-	public void setInKid(IDeduction inKid) {
-		this.inKid = inKid;
+	public void setInKind(IDeduction inKind) {
+		this.inKind= inKind;
 	}
 	public IDeduction getOther() {
 		return other;
