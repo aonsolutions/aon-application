@@ -31,8 +31,10 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.company.util.EnterpriseTreeData;
 import com.code.aon.ui.company.util.EnterpriseTreeType;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseTree implements ICompanyConstants {
@@ -277,5 +279,27 @@ public class EnterpriseTree implements ICompanyConstants {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
 	}	
+
+	public void onEditPerson( ActionEvent event ) {
+		try {
+			BasicController controller = (BasicController) FormUtil.getController(IRegistryConstants.PERSON_CONTROLLER_NAME);
+			controller.select(event, this.contract.getPerson());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onEditPerson exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}				
+	}
+	
+	public void onEditContract( ActionEvent event ) {
+		try {
+			BasicController controller = (BasicController) FormUtil.getController("contract");
+			controller.select(event, this.contract);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onEditPerson exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}						
+	}
 
 }
