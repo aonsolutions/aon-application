@@ -16,6 +16,7 @@
   <name>aon Solutions</name>
 
   <modules>
+
 	<module>aon-external-libs</module>
 
 	<module>aon-dbutils</module>
