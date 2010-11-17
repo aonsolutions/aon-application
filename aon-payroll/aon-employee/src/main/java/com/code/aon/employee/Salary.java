@@ -459,7 +459,7 @@ public class Salary implements ITransferObject, ISalary {
 			} else if (sp.getType() == PaymentType.SPECIAL_BONUSES) {
 				p.setSpecialBonuses(sp);
 			} else if (sp.getType() == PaymentType.SALARY_IN_KIND) {
-				p.setSalaryInKid(sp);
+				p.setSalaryInKind(sp);
 			} else if (sp.getType() == PaymentType.COMPENSATION_SUPLY) {
 				p.getComplementarySuply().add(sp);
 			} else if (sp.getType() == PaymentType.SOCIAL_SECURITY_BENEFITS) {
