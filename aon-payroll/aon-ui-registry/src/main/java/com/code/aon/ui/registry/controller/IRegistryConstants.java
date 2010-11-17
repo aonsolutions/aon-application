@@ -33,4 +33,6 @@ public interface IRegistryConstants {
 
 	String MEDIA_CONTROLLER_NAME = "media";
 	
+	String PERSON_CONTROLLER_NAME = "person";
+	
 }
