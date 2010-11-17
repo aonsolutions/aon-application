@@ -10,8 +10,8 @@
   <name>AON PARENT</name>
   <scm>
     <connection>
-    scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.6.x/aon-application/trunk</connection>
-    <url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.6.x/websvn/wsvn</url>
+    scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.6.x</connection>
+    <url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.6.x</url>
   </scm>
   <organization>
     <name>esferalia Networks S.A.</name>

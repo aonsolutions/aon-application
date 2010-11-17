@@ -13,8 +13,8 @@
 	<name>AON-MASTER</name>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.6.x/trunk/aon-master</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.6.x/trunk/aon-master</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.6.x/aon-master</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.6.x/aon-master</connection>
 		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.6.x/wsvn/aon-master</url>
 	</scm>
 
