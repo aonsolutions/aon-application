@@ -59,6 +59,8 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	private RegistryMedia email;	
 	
+	private boolean showContractHeader;
+	
 	public TreeNode<EnterpriseTreeData> getRootNode() {
 		return rootNode;
 	}
@@ -87,6 +89,10 @@ public class EnterpriseTree implements ICompanyConstants {
 		return email;
 	}
 	
+	public boolean isShowContractHeader() {
+		return showContractHeader;
+	}
+
 	public void setCurrentNode(EnterpriseTreeData currentNode) {
 		this.currentNode = currentNode;
 	}
@@ -223,7 +229,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 	}
 	
-	private void updateRegistryMedias( Registry registry ) throws ManagerBeanException {
+	private boolean updateRegistryMedias( Registry registry ) throws ManagerBeanException {
 		IManagerBean beanMedia = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteriaMedia = new Criteria();
 		String registryIdFieldName = beanMedia.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
@@ -245,14 +251,15 @@ public class EnterpriseTree implements ICompanyConstants {
 				break;
 			}			
 		}
+		return (phone != null) || (fax != null) || (email != null);
 	}
 	
 	public void onSelectTreeContract( ActionEvent event ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			this.contract = (Contract) bean.get( currentNode.getId() );
-			updateRegistryMedias( this.contract.getPerson().getRegistry() );
-			selectSalaries(event, this.contract);
+			this.showContractHeader = updateRegistryMedias( this.contract.getPerson().getRegistry() );
+			this.showContractHeader |= selectSalaries(event, this.contract);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectTreeContract exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -260,7 +267,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 	}	
 		
-	public void selectSalaries( ActionEvent event, Contract contract ) {
+	public boolean selectSalaries( ActionEvent event, Contract contract ) {
 		try {
 			IController controller = FormUtil.getController(SALARY_CONTROLLER_NAME);
 			controller.clearCriteria();
@@ -271,13 +278,15 @@ public class EnterpriseTree implements ICompanyConstants {
 			controller.initializeModel();
 			if ( controller.getModel().getRowCount() > 0 ) {
 				controller.getModel().setRowIndex(0);
-				controller.onSelect(event);										
+				controller.onSelect(event);
+				return true;
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> selectSalaries exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
+		return false;
 	}	
 
 	public void onEditPerson( ActionEvent event ) {
@@ -289,17 +298,6 @@ public class EnterpriseTree implements ICompanyConstants {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}				
-	}
-	
-	public void onEditContract( ActionEvent event ) {
-		try {
-			BasicController controller = (BasicController) FormUtil.getController("contract");
-			controller.select(event, this.contract);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onEditPerson exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}						
 	}
 
 }
