@@ -8,18 +8,18 @@ public class Payments {
 	private List<IPayment> salarySupplements;
 	private IPayment overtimeHours;
 	private IPayment specialBonuses;
-	private IPayment salaryInKid;
+	private IPayment salaryInKind;
 	private List<IPayment> complementarySuply;
 	private IPayment specialSecurityBenefits;
 	private IPayment movingCompensation;
 	private IPayment otherNonWage;
 
 	
-	public IPayment getSalaryInKid() {
-		return salaryInKid;
+	public IPayment getSalaryInKind() {
+		return salaryInKind;
 	}
-	public void setSalaryInKid(IPayment salaryInKid) {
-		this.salaryInKid = salaryInKid;
+	public void setSalaryInKind(IPayment salaryInKind) {
+		this.salaryInKind = salaryInKind;
 	}
 	public IPayment getBaseSalary() {
 		return baseSalary;
