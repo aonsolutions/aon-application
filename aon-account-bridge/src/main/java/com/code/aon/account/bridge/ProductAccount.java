@@ -9,6 +9,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -16,55 +19,30 @@ import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.Product;
 
-/**
- * The Class ProductAccount.
- */
 @Entity
 @Table(name="product_account")
 public class ProductAccount implements ITransferObject, IAccount {
 	
 	private static final long serialVersionUID = 1809456459170682443L;
 
-	/** The id. */
 	private Integer id;
-	
-	/** The product. */
 	private Product product;
-	
-	/** The account. */
 	private Account account;
-	
-	/** The type. */
 	private ProductAccountType type;
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the id
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	/**
-	 * Gets the product.
-	 * 
-	 * @return the product
-	 */
 	@ManyToOne
 	@JoinColumn(name="product", nullable = false)
 	@ForeignKey(name="FK_PRODUCT_ACCOUNT_PRODUCT")
@@ -72,21 +50,10 @@ public class ProductAccount implements ITransferObject, IAccount {
 	public Product getProduct() {
 		return product;
 	}
-
-	/**
-	 * Sets the product.
-	 * 
-	 * @param product the product
-	 */
 	public void setProduct(Product product) {
 		this.product = product;
 	}
 
-	/**
-	 * Gets the account.
-	 * 
-	 * @return the account
-	 */
 	@ManyToOne
 	@JoinColumn(name="account", nullable = false)
 	@ForeignKey(name="FK_PRODUCT_ACCOUNT_ACCOUNT")
@@ -94,31 +61,14 @@ public class ProductAccount implements ITransferObject, IAccount {
 	public Account getAccount() {
 		return account;
 	}
-
-	/**
-	 * Sets the account.
-	 * 
-	 * @param account the account
-	 */
 	public void setAccount(Account account) {
 		this.account = account;
 	}
 
-	/**
-	 * Gets the type.
-	 * 
-	 * @return the type
-	 */
 	@Column(nullable=false)
 	public ProductAccountType getType() {
 		return type;
 	}
-
-	/**
-	 * Sets the type.
-	 * 
-	 * @param type the type
-	 */
 	public void setType(ProductAccountType type) {
 		this.type = type;
 	}
@@ -130,9 +80,41 @@ public class ProductAccount implements ITransferObject, IAccount {
 	public void setLinkedTo(ITransferObject to) {
 		setProduct((Product) to);
 	}	
+
 	@Transient
 	public String getAccountDescription() {
-		return getProduct()==null?null:getProduct().getName();
+		return (getProduct()==null) ? null : getProduct().getName();
 	}
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ProductAccount o = (ProductAccount) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.account,o.account)
+				.append(this.product,o.product)
+				.append(this.type,o.type)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.account)
+			.append(this.product)
+			.append(this.type)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+
 }

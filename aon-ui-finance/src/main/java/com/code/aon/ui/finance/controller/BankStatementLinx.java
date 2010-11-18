@@ -9,7 +9,7 @@ import com.code.aon.finance.FinanceBatch;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.util.AonUtil;
 
-public class BankStatementLink implements ITransferObject {
+public class BankStatementLinx implements ITransferObject {
 
 	private static final long serialVersionUID = -98770440789965405L;
 
