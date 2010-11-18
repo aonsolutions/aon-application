@@ -2,6 +2,22 @@
 <projectDescription>
 	<name>aon-web-account</name>
 	<comment></comment>
+	<projects>
+		<project>aon-fiscal</project>
+		<project>aon-ui-fiscal</project>
+		<project>aon-ui-account-bridge</project>
+		<project>aon-account-bridge</project>
+		<project>aon-ui-finance</project>
+		<project>aon-ui-resources</project>
+		<project>aon-ui-accounting</project>
+		<project>aon-file-tax</project>
+		<project>aon-file-format</project>
+		<project>aon-accounting</project>
+		<project>aon-ql</project>
+		<project>aon-xhtmlrenderer</project>
+		<project>aon-ui-report</project>
+		<project>aon-report</project>
+	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
