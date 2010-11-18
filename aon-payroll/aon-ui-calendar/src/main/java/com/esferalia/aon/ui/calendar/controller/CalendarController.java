@@ -3,9 +3,7 @@ package com.esferalia.aon.ui.calendar.controller;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -41,6 +39,18 @@ public class CalendarController extends BasicController {
 	private CalendarSource source;
 	private Integer sourceId;
 	private CalendarDataModelImpl modelo;
+	
+	public String getSourceFullName() {
+		if(getSource()==CalendarSource.ENTERPRISE){
+//			(Enterprise)FormUtil.getController("enterprise").getTo()
+			return null;	
+		} else if(getSource()==CalendarSource.WORKPLACE){
+			
+		} else if(getSource()==CalendarSource.CONTRACT){
+			
+		}
+		return null;
+	}
 	
 	public CalendarDataModelImpl getModelo() {
 		return modelo;
