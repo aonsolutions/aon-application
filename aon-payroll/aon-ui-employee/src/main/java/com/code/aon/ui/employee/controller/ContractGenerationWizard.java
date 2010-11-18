@@ -63,8 +63,8 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	private Contract contract;
 	private boolean enterpriseListEnabled;
 	private boolean personListEnabled;
-	private boolean showContractDetailWindow;
 	private boolean showNewPersonWindow;
+	private boolean showNewEnterpriseWindow;
 	private ContractBuilder contractBuilder;
 	private ContractOption contractOption;
 	private ContractType contractType;
@@ -85,11 +85,9 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	}
 	
 	public String getImageUrl() {
-//		#{contractGenerationWizard.contractBuilder.contractPage}.contractImage?model=#{contractGenerationWizard.model}\&zoom=#{contractGenerationWizard.contractBuilder.zoomFactor}
 		imageUrl = getContractBuilder().getContractPage().toString();
 		imageUrl += ".contractImage";
 		imageUrl += "?model="+getModel();
-//		imageUrl += "&zoom="+getContractBuilder().getZoomFactor();
 		imageUrl += "&width="+getContractBuilder().getContractWidth();
 		imageUrl += "&height="+getContractBuilder().getContractHeight();
 		return imageUrl;
@@ -123,6 +121,12 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	}
 	public void setShowNewPersonWindow(boolean showNewPersonWindow) {
 		this.showNewPersonWindow = showNewPersonWindow;
+	}
+	public boolean isShowNewEnterpriseWindow() {
+		return showNewEnterpriseWindow;
+	}
+	public void setShowNewEnterpriseWindow(boolean showNewEnterpriseWindow) {
+		this.showNewEnterpriseWindow = showNewEnterpriseWindow;
 	}
 	public ContractModel getModel() {
 		return model;
@@ -177,13 +181,6 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		}
 		return list;
 	}
-	public boolean isShowContractDetailWindow() {
-		return showContractDetailWindow;
-	}
-
-	public void setShowContractDetailWindow(boolean showContractDetailWindow) {
-		this.showContractDetailWindow = showContractDetailWindow;
-	}
 
 	public void setContract(Contract contract) {
 		this.contract = contract;
@@ -218,10 +215,10 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		} else if (getCurrentStep() == 3) {
 			onContractGenerate(event);
 			onFinish(event);
-			setCurrentStep(getCurrentStep() + 1);
-		} else if (getCurrentStep() == 4) {
 		} 
-//		else if (getCurrentStep() == 5) {
+//		else if (getCurrentStep() == 4) {
+//			setCurrentStep(getCurrentStep() + 1);
+//		} else if (getCurrentStep() == 5) {
 //			onFinish(event);
 //		}
 	}
@@ -266,11 +263,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		setEnterpriseListEnabled(false);
 		setPersonListEnabled(false);
 		setContract(new Contract());
-//		getContract().setContractType(new ContractType());
 		getContract().setStartDate(new Date());
-//		if(getContractBuilder()!=null){
-//			getContractBuilder().setZoomFactor(0);
-//		}
 		setCurrentStep(0);
 	}
 	
@@ -311,11 +304,6 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 
 	public void onSearchEnterprise(ActionEvent event) {
 		((EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER)).onSearch(event);
-		try {
-			((EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER)).clearCriteria();
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining enterprise", e);
-		}
 		setEnterpriseListEnabled(true);
 	}
 	
@@ -341,7 +329,6 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_ID), getContract().getPerson().getId());
-//			criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getContract().getWorkPlace().getEnterprise().getId());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				setContract((Contract)list.get(0));
@@ -395,7 +382,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		((RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER)).onReset(event);
 	}
 	public void onAcceptPerson( ActionEvent event ) {
-		((RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER)).onAccept(event);
+		((RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER)).accept(event);
 		setPersonListEnabled(true);
 	}
 	
