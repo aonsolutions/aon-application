@@ -19,7 +19,7 @@
 		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
 		<aon:methodParam name="resetAction" default="#{controller.beanName}_form" resolve="true" />			
 		<aon:methodParam name="backActionListener" default="#{controller.onCancel}" type="actionListener" />
-		<aon:methodParam name="backAction" default="#{controller.beanName}_list" resolve="true" />									
+		<aon:methodParam name="backAction" default="#{controller.backAction}" />									
 	</ui:include>
 	
 </ui:composition>
