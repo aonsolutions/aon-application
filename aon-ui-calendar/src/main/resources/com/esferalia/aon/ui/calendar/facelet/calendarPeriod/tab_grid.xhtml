@@ -47,7 +47,7 @@
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{commonCollections.months}" />
 						<a4j:support event="onchange" reRender="#{dataTableId}" ajaxSingle="true"
-							actionListener="#{calendarController.onChangeMonth}" />
+							actionListener="#{calendar.onChangeMonth}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

@@ -21,13 +21,23 @@
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:define name="searchContent">
 
-					<aon:outputLabel value="#{bundle.aon_description}" />
+					<aon:outputLabel for="Calendar_description"
+						value="#{bundle.aon_description}" />
 					<aon:inputText id="Calendar_description"
-					valueChangeListener="#{controller.addExpression}"
+						valueChangeListener="#{controller.addExpression}"
 						size="50" />
+						
+					<aon:outputLabel for="Calendar_source"
+						value="#{calendarBundle.aon_calendar_entity}" />
+					<aon:selectOneMenu id="Calendar_source" converter="aon.EnumConverter"
+						valueChangeListener="#{controller.addEqualExpression}" >
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{calendarCollections.calendarSources}" />
+					</aon:selectOneMenu>
+						
 				</ui:define>
 			</ui:decorate>
+			
 		</aon:form>
 	</ui:define>
-
 </ui:composition>
