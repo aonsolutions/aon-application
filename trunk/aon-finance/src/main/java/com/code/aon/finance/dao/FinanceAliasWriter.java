@@ -5,7 +5,9 @@ import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.finance.BankConcept;
 import com.code.aon.finance.BankStatement;
+import com.code.aon.finance.BankStatementLink;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Finance;
@@ -20,20 +22,14 @@ import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.InvoicingGroup;
 import com.code.aon.finance.InvoicingGroupDetail;
 
-/**
- * @author Consulting & Development. jurkiri - 22/01/2007
- *
- */
 public class FinanceAliasWriter {
 	
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-TRUNK/aon-finance/src/main/java/com/code/aon/finance/dao/IFinanceAlias.java");
 		String[] classes = new String[]{
+			BankConcept.class.getName(),
 			BankStatement.class.getName(),
+			BankStatementLink.class.getName(),
 			CustomerFee.class.getName(),
 			Finance.class.getName(),
 			FinanceBatch.class.getName(),

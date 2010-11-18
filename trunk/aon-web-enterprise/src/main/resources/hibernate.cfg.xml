@@ -46,9 +46,11 @@
 		<mapping class="com.code.aon.accounting.Period"/>
 		
 		<!-- AON-ACCOUNT-BRIDGE Mapping files -->
-		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryBankStatement"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceBatch"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceTracking"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
+		<mapping class="com.code.aon.account.bridge.BankConceptAccount"/>
 		<mapping class="com.code.aon.account.bridge.CreditorAccount"/>
 		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
@@ -111,7 +113,9 @@
 		<mapping class="com.code.aon.customer.Customer"/>
 
 		<!-- AON-FINANCE Mapping files -->	
+		<mapping class="com.code.aon.finance.BankConcept"/>
 		<mapping class="com.code.aon.finance.BankStatement"/>
+		<mapping class="com.code.aon.finance.BankStatementLink"/>
 		<mapping class="com.code.aon.finance.Creditor"/>
 		<mapping class="com.code.aon.finance.CustomerFee"/>
 		<mapping class="com.code.aon.finance.Finance"/>

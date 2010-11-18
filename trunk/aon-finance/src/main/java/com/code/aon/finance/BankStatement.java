@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -33,8 +34,10 @@ public class BankStatement implements ITransferObject {
 
     private Integer id;
     private RegistryBank registryBank;
+    private int lotNumber;
     private Date operationDate;
-    private StatementConcept concept;
+    private StatementConcept commonConcept;
+    private String ownConcept;
     private boolean payment;
     private double amount;
     private int document;
@@ -55,7 +58,7 @@ public class BankStatement implements ITransferObject {
         this.id = id;
     }
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="rbank", nullable = false)
     @ForeignKey(name="FK_BANK_STATEMENT_RBANK")
     @Index(name="IDX_BANK_STATEMENT_RBANK")            
@@ -66,6 +69,14 @@ public class BankStatement implements ITransferObject {
 		this.registryBank = registryBank;
 	}
 	
+    @Column(name="lot_number")
+    public int getLotNumber() {
+        return lotNumber;
+    }
+    public void setLotNumber(int lotNumber) {
+        this.lotNumber = lotNumber;
+    }
+    
 	@Column(name="operation_date", nullable = false)
 	@Temporal(TemporalType.DATE)
 	public Date getOperationDate() {
@@ -75,12 +86,20 @@ public class BankStatement implements ITransferObject {
 		this.operationDate = operationDate;
 	}
 
-    @Column(nullable = false)
-	public StatementConcept getConcept() {
-		return concept;
+    @Column(name="common_concept", nullable = false)
+	public StatementConcept getCommonConcept() {
+		return commonConcept;
 	}
-	public void setConcept(StatementConcept concept) {
-		this.concept = concept;
+	public void setCommonConcept(StatementConcept commonConcept) {
+		this.commonConcept = commonConcept;
+	}
+
+    @Column(name="own_concept", length=5)
+	public String getOwnConcept() {
+		return ownConcept;
+	}
+	public void setOwnConcept(String ownConcept) {
+		this.ownConcept = ownConcept;
 	}
 
     @Column(nullable = false)
@@ -131,12 +150,24 @@ public class BankStatement implements ITransferObject {
 		this.description = description;
 	}
 
-	@Column(name = "status")
 	public StatementStatus getStatus() {
 		return status;
 	}
 	public void setStatus(StatementStatus status) {
 		this.status = status;
+	}
+
+	@Transient
+	public boolean isPending() {
+		return status == StatementStatus.PENDING;
+	}
+	@Transient
+	public boolean isChecked() {
+		return status == StatementStatus.CHECKED;
+	}
+	@Transient
+	public boolean isRecorded() {
+		return status == StatementStatus.RECORDED;
 	}
 
 	@Transient
@@ -164,10 +195,12 @@ public class BankStatement implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.amount,o.amount)
-				.append(this.concept,o.concept)
+				.append(this.commonConcept,o.commonConcept)
 				.append(this.description,o.description)
 				.append(this.document,o.document)
+				.append(this.lotNumber,o.lotNumber)
 				.append(this.operationDate,o.operationDate)		
+				.append(this.ownConcept,o.ownConcept)
 				.append(this.registryBank,o.registryBank)		
 				.append(this.reference1,o.reference1)
 				.append(this.reference2,o.reference2)
@@ -183,10 +216,12 @@ public class BankStatement implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)		
 			.append(this.amount)
-			.append(this.concept)
+			.append(this.commonConcept)
 			.append(this.description)
 			.append(this.document)
+			.append(this.lotNumber)
 			.append(this.operationDate)		
+			.append(this.ownConcept)
 			.append(this.registryBank)		
 			.append(this.reference1)
 			.append(this.reference2)
