@@ -19,11 +19,15 @@
 						value="#{registryBundle.registry_person}"
 						action="person_form" actionListener="#{enterpriseTree.onEditPerson}"
 						styleClass="aon-finding-toolbar-item aon-icon-contact" >
+						<f:setPropertyActionListener
+							target="#{person.backAction}" value="contract_formTree" />						
 					</aon:commandButton>
 					<aon:commandButton id="contract"
 						value="#{employeeBundle.employee_contract}"
 						action="contract_form" actionListener="#{contract.onEdit}"
 						styleClass="aon-finding-toolbar-item aon-icon-category" >
+						<f:setPropertyActionListener
+							target="#{contract.backAction}" value="contract_formTree" />						
 					</aon:commandButton>
 					<ui:include src="/com/code/aon/ui/employee/facelet/salary/buttons.xhtml" />
 					<aon:commandButton id="calendar"
