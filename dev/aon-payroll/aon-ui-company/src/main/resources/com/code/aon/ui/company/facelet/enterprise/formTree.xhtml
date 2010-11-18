@@ -19,6 +19,8 @@
 						value="#{bundle.aon_edit}"
 						action="enterprise_form"
 						styleClass="aon-finding-toolbar-item aon-icon-accept" >
+						<f:setPropertyActionListener
+							target="#{enterprise.backAction}" value="enterprise_formTree" />						
 					</aon:commandButton>
 					<aon:commandButton id="back"
 						title="#{bundle.aon_key_cancel_accelerator}"
