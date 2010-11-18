@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.ManagerBeanException;
@@ -41,7 +43,6 @@ public class ContractBuilder implements IEmployeeConstants {
 	private static final double FACTOR_4X = 1.8;
 	
 	private ContractBuilder(){
-		setZoomFactor(2);
 	}
 	
 	public static ContractBuilder getInstance(){
@@ -140,11 +141,8 @@ public class ContractBuilder implements IEmployeeConstants {
 	@SuppressWarnings("unchecked")
 	private void readPdfFields(PdfReader reader) throws IOException{
 		
-//		setContractWidth((int)reader.getPageSize(1).getWidth());
-//		setContractHeight((int)reader.getPageSize(1).getHeight());
-		
-		setContractWidth(getFactorizedValue(reader.getPageSize(1).getWidth()));
-		setContractHeight(getFactorizedValue(reader.getPageSize(1).getHeight()));
+		setContractWidth((int)reader.getPageSize(1).getWidth());
+		setContractHeight((int)reader.getPageSize(1).getHeight());
 		
 		numberOfContractPages = reader.getNumberOfPages();
 		AcroFields form = reader.getAcroFields();
@@ -178,6 +176,7 @@ public class ContractBuilder implements IEmployeeConstants {
 	}
 	
 	public void loadDefaultFields(Contract contract) throws ManagerBeanException {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		RegistryDirStaffLinesController rDirStaff = (RegistryDirStaffLinesController)AonUtil.getRegisteredBean(ENTERPRISE_DIR_STAFF_CONTROLLER);
 		rDirStaff.getCriteria().addGreaterThanOrEqualExpression(rDirStaff.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE), contract.getStartDate());
 		rDirStaff.onSearch(null);
@@ -236,20 +235,20 @@ public class ContractBuilder implements IEmployeeConstants {
 			}
 			// pais empresa
 			if(field.getLabel().equals("Texto7")){
-				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getGeozone().getName());
+				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(locale));
 			}
 			if(field.getLabel().equals("Cifra1")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(0,0));
 			}
 			if(field.getLabel().equals("Cifra2")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(1,1));
 			}
 			if(field.getLabel().equals("Cifra3")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(2,2));
 			}
 			// municipio empresa
 			if(field.getLabel().equals("Texto8")){
-				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
+				field.setValue(contract.getWorkPlace().getAddress().getCity());
 			}
 			if(field.getLabel().equals("Cifra4")){
 //				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
@@ -268,19 +267,19 @@ public class ContractBuilder implements IEmployeeConstants {
 			}
 			// CP
 			if(field.getLabel().equals("Cifra9")){
-				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(0, 1));
+				field.setValue(contract.getWorkPlace().getAddress().getZip().substring(0,0));
 			}
 			if(field.getLabel().equals("Cifra10")){
-				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(1, 2));
+				field.setValue(contract.getWorkPlace().getAddress().getZip().substring(1,1));
 			}
 			if(field.getLabel().equals("Cifra11")){
-				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(2, 3));
+				field.setValue(contract.getWorkPlace().getAddress().getZip().substring(2,2));
 			}
 			if(field.getLabel().equals("Cifra12")){
-				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(3, 4));
+				field.setValue(contract.getWorkPlace().getAddress().getZip().substring(3,3));
 			}
 			if(field.getLabel().equals("Cifra13")){
-				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(4, 5));
+				field.setValue(contract.getWorkPlace().getAddress().getZip().substring(4,4));
 			}
 			// numero ccc
 			if(field.getLabel().equals("Cifra14")){
@@ -322,16 +321,16 @@ public class ContractBuilder implements IEmployeeConstants {
 			}
 			// pais centro trabajo
 			if(field.getLabel().equals("Texto11")){
-				field.setValue(contract.getWorkPlace().getAddress().getGeozone().getName());
+				field.setValue(contract.getWorkPlace().getAddress().getRegistry().getNationality().getName(locale));
 			}
 			if(field.getLabel().equals("Cifra24")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum()).substring(0,0));
 			}
 			if(field.getLabel().equals("Cifra25")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum()).substring(1,1));
 			}
 			if(field.getLabel().equals("Cifra26")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum()).substring(2,2));
 			}
 			// municipio centro trabajo
 			if(field.getLabel().equals("Texto12")){
@@ -380,16 +379,16 @@ public class ContractBuilder implements IEmployeeConstants {
 			}
 			// nacionalidad empleado
 			if(field.getLabel().equals("Texto18")){
-				field.setValue(contract.getPerson().getRegistry().getDefaultAddress().getGeozone().getName());
+				field.setValue(contract.getPerson().getRegistry().getNationality().getName(locale));
 			}
 			if(field.getLabel().equals("Cifra34")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(0,0));
 			}
 			if(field.getLabel().equals("Cifra35")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(1,1));
 			}
 			if(field.getLabel().equals("Cifra36")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(2,2));
 			}
 			//  municipio domicilio empleado
 			if(field.getLabel().equals("Texto19")){
@@ -412,16 +411,16 @@ public class ContractBuilder implements IEmployeeConstants {
 			}
 			// pais domicilio empleado
 			if(field.getLabel().equals("Texto20")){
-				field.setValue(contract.getPerson().getRegistry().getDefaultAddress().getGeozone().getName());
+				field.setValue(contract.getPerson().getRegistry().getDefaultAddress().getRegistry().getNationality().getName(locale));
 			}
 			if(field.getLabel().equals("Cifra42")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getPerson().getRegistry().getDefaultAddress().getRegistry().getNationality().getIsoNum()).substring(0,0));
 			}
 			if(field.getLabel().equals("Cifra43")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getPerson().getRegistry().getDefaultAddress().getRegistry().getNationality().getIsoNum()).substring(1,1));
 			}
 			if(field.getLabel().equals("Cifra44")){
-//				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+				field.setValue(String.valueOf(contract.getPerson().getRegistry().getDefaultAddress().getRegistry().getNationality().getIsoNum()).substring(2,2));
 			}
 		} catch(NullPointerException e){
 //			AonUtil.addErrorMessage("Existen campos nulos");
@@ -456,14 +455,14 @@ public class ContractBuilder implements IEmployeeConstants {
 	 * [page, llx, lly, urx, ury]
 	 */
 	private String getBottomCoordinates(AcroFields form, String key){
-		return Float.toString(getFactorizedValue(form.getFieldPositions(key)[2]));
+		return Float.toString(form.getFieldPositions(key)[2]);
 	}
 	private String getLeftCoordinates(AcroFields form, String key){
-		return Float.toString(getFactorizedValue(form.getFieldPositions(key)[1]));
+		return Float.toString(form.getFieldPositions(key)[1]);
 	}
 	private String getInputTextWidth(AcroFields form, String key){
 		Float f = form.getFieldPositions(key)[3]-form.getFieldPositions(key)[1];
-		return String.valueOf(getFactorizedValue(f.intValue()));
+		return String.valueOf(f.intValue());
 	}
 	private String getInputTextHeight(AcroFields form, String key){
 		return Float.toString(form.getFieldPositions(key)[4]-form.getFieldPositions(key)[2]);
