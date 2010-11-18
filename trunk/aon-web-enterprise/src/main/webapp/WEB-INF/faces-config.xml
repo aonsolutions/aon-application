@@ -169,7 +169,7 @@
 		<list-entries>
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.account.bridge -->
-			<value>#{expenseProductAccountListener}</value>
+			<value>#{productAccountListener}</value>
 		</list-entries>
 	</managed-bean>
 
@@ -252,6 +252,9 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<list-entries>
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<value>#{targetItemListener}</value>
+			<value>#{targetTrackingListener}</value>
+			<value>#{targetSellerListener}</value>
 			<value>#{targetSupplierListener}</value>
 		</list-entries>		
 	</managed-bean>
