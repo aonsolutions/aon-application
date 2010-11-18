@@ -33,6 +33,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.EnterpriseTree;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -239,7 +241,8 @@ public class ContractController extends BasicController {
     
 	public void onEdit( ActionEvent event ) {
 		try {
-			select( event, getTo() );
+			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_TREE_CONTROLLER_NAME);
+			select( event, tree.getContract() );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onEdit exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
