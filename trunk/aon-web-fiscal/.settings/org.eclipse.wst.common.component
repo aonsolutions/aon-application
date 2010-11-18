@@ -7,7 +7,7 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-accounting/aon-ui-accounting">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-accounting/aon-accounting">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-fiscal/aon-ui-fiscal">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="build/classes"/>
