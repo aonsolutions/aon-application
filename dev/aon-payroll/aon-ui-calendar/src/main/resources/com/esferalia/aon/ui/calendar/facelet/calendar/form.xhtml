@@ -13,29 +13,44 @@
 		<aon:form id="calendarForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{calendarBundle.aon_calendar_menu}" />
+				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_menu}" />
 				<ui:param name="controller" value="#{calendar}" />
-				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="skipSpin" value="true" />
-				
 				<ui:define name="beforeSpinToolbarContent">
-				
-					<aon:htmlCommandLink id="export2pdf" value="CALENDARIO"
+					<aon:htmlCommandLink id="export2pdf" value="#{calendarBundle.aon_calendar_calendar}"
+						rendered="#{!calendar.new}"
 						title="Listado Pdf" actionListener="#{calendar.onInitCalendar}"
-						styleClass="aon-finding-toolbar-item aon-icon-info"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						action="calendar_calendar" target="_blank">
 						<f:param name="reportKey" value="yearStatsList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-
 				</ui:define>
 			</ui:decorate>
+
 			<aon:div styleClass="aon-scroll-area">
+<!--  
+				<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/sourceHeader.xhtml" />
+-->
+				
 				<h:panelGrid columns="3">
 					<aon:div styleClass="aon-scroll-area">
-					
 						<aon:panelGrid columns="2">
+					
+							<aon:outputText rendered="#{!calendar.new}"
+								value="#{calendar.to.source}" />
+							<aon:outputText rendered="#{!calendar.new}"
+								value="#{calendar.sourceFullName}" />
+							
+							<aon:outputLabel rendered="#{calendar.new}"
+								value="#{calendarBundle.aon_calendar_entity}" />
+							<aon:selectOneMenu id="calendarSource"
+								rendered="#{calendar.new}"
+								value="#{calendar.to.source}" >
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{calendarCollections.calendarSources}" />
+							</aon:selectOneMenu>
+							
 							<aon:outputLabel value="#{bundle.aon_year}" />
 							<rich:inputNumberSpinner value="#{calendar.year}" 
 								inputSize="4" minValue="2010" maxValue="2100"
@@ -46,9 +61,7 @@
 									actionListener="#{calendar.onChangeYear}"
 									ignoreDupResponses="true" />
 							</rich:inputNumberSpinner>
-						</aon:panelGrid>
 					
-						<aon:panelGrid columns="2">
 							<aon:outputLabel value="#{calendarBundle.aon_calendar_calendar}" />
 							<aon:inputText id="Calendar_description" size="40" maxlength="32"
 								value="#{calendar.to.description}" required="true" />
@@ -159,19 +172,20 @@
 					
 					<aon:div styleClass="aon-scroll-area">
 <!--  
-					<c:if test="#{calendar.new}">
-						<aon:panel style="height=80px"  width="100" header="#{calendarBundle.aon_calendar_import_holidays}">
-							<h:panelGrid columns="2">
-							<aon:outputText value="#{calendarBundle.aon_calendar_import_national}" />
-							<aon:selectBooleanCheckbox />
-							<aon:outputText value="#{calendarBundle.aon_calendar_import_regional}" />
-							<aon:selectBooleanCheckbox />
-							<aon:outputText value="#{calendarBundle.aon_calendar_import_local}" />
-							<aon:selectBooleanCheckbox />
-							</h:panelGrid>
-						</aon:panel>
-					</c:if>
 -->					
+						<c:if test="#{calendar.new}">
+							<aon:panel style="height=80px"  width="100" 
+								header="#{calendarBundle.aon_calendar_import_holidays}">
+								<h:panelGrid columns="2">
+								<aon:outputText value="#{calendarBundle.aon_calendar_import_national}" />
+								<aon:selectBooleanCheckbox />
+								<aon:outputText value="#{calendarBundle.aon_calendar_import_regional}" />
+								<aon:selectBooleanCheckbox />
+								<aon:outputText value="#{calendarBundle.aon_calendar_import_local}" />
+								<aon:selectBooleanCheckbox />
+								</h:panelGrid>
+							</aon:panel>
+						</c:if>
 					</aon:div>
 				</h:panelGrid>
 				
@@ -179,10 +193,10 @@
 					<aon:div>
 						<aon:panelTabSet id="tabPanel">
 							<aon:panelTab label="#{calendarBundle.aon_calendar_holidays}">
-								<ui:include src="grid.xhtml" />
+								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarHoliday/tab_grid.xhtml" />
 							</aon:panelTab>
 							<aon:panelTab label="#{calendarBundle.aon_calendar_period}">
-								<ui:include src="period_grid.xhtml" />
+								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarPeriod/tab_grid.xhtml" />
 							</aon:panelTab>
 						</aon:panelTabSet>
 					</aon:div>
@@ -190,5 +204,10 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{holidayLookup}" />
+<!--  
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{workplaceLookup}" />
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+-->		
 	</ui:define>
 </ui:composition>
