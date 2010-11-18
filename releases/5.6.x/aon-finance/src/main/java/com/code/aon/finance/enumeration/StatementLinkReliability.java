@@ -5,17 +5,18 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-public enum StatementStatus implements IResourceable {
+public enum StatementLinkReliability implements IResourceable {
 
-	PENDING,
-	CHECKED,
-	RECORDED;
+	VERY_HIGH,
+	HIGH,
+	MEDIUM,
+	LOW;
     
     /** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
 
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_statement_status_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_statement_link_reliability_";
     
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
