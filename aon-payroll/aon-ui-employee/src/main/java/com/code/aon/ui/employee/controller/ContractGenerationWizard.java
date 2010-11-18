@@ -268,9 +268,9 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		setContract(new Contract());
 //		getContract().setContractType(new ContractType());
 		getContract().setStartDate(new Date());
-		if(getContractBuilder()!=null){
-			getContractBuilder().setZoomFactor(0);
-		}
+//		if(getContractBuilder()!=null){
+//			getContractBuilder().setZoomFactor(0);
+//		}
 		setCurrentStep(0);
 	}
 	
@@ -402,6 +402,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public void onContractDetailShow( ActionEvent event ) {
 		try {
 			if(getContractBuilder().getContractFields()==null || getContractBuilder().getContractFields().size()==0 ){
+				getContractBuilder().setZoomFactor(2);
 				getContractBuilder().readPdfFields(getContract().getDocument(),getModel());
 				getContractBuilder().loadDefaultFields(getContract());
 				getContractBuilder().setContractPage(1);
@@ -492,5 +493,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			throws ManagerBeanException {
 		return getCollection();
 	}
+	
+	
 	
 }
