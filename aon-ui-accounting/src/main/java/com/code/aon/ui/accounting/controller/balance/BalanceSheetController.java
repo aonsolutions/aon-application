@@ -86,6 +86,8 @@ public class BalanceSheetController implements ICollectionProvider {
 		parameters.setAccountLevel(5);
 		parameters.setBudgeted(false);
 		parameters.setPreviousPeriodVisible(true);
+		parameters.setCounterVisible(false);
+		parameters.setCoverVisible(false);
 	}
 
 	public void onBalance(ActionEvent event) {
