@@ -16,7 +16,7 @@
 	<ui:define name="step_content">
 	
 		<ui:include src="/com/code/aon/ui/employee/facelet/contractGeneration/contractHeader.xhtml" />
-	
+
 		<aon:panelGrid columns="2" style="width: 50%;" >
 			<aon:outputLabel for="workplace"
 				value="#{companyBundle.company_workplace}" />
@@ -126,107 +126,6 @@
 -->			
 		</aon:panelGrid>
 	
-<!--  	
-		<aon:panelGrid columns="4" style="width: 100%;" >
-			
-			<aon:outputLabel for="contractModel"
-				value="#{employeeBundle.contract_contract_model}" />
-			<aon:selectOneMenu id="contractModel"
-				value="#{contractGenerationWizard.contract.contractType.workingDay}" >
-				<f:selectItems value="#{employeeCollections.contractModels}" />
-			</aon:selectOneMenu>
-
-			<aon:outputLabel for="workTime"
-				value="#{employeeBundle.contract_work_time}" />
-			<aon:selectOneRadio id="workTime"
-				value="">
-				<f:selectItems value="#{employeeCollections.workTimes}" />
-			</aon:selectOneRadio>
-
-			<aon:outputLabel for="professionalCategory"
-				value="#{employeeBundle.contract_professional_category}" />
-			<aon:inputText id="professionalCategory" value=""/>
-
-			<aon:outputLabel for="services"
-				value="#{employeeBundle.contract_services}" />
-			<aon:inputText id="services" value="" />
-			
-			<aon:outputLabel for="hours"
-				value="#{employeeBundle.contract_hours}" />
-			<aon:inputText id="hours" value="" />
-			
-			<aon:outputLabel for="startTime"
-				value="#{employeeBundle.contract_start_time}" />
-			<aon:inputText id="startTime" value="" />
-			
-			<aon:outputLabel for="endTime"
-				value="#{employeeBundle.contract_end_time}" />
-			<aon:inputText id="endTime" value="" />
-			
-			<aon:outputLabel for="timePeriodicity"
-				value="#{employeeBundle.contract_time_periodicity}" />
-			<aon:inputText id="timePeriodicity" value="" />
-			
-			<aon:outputLabel for="timeDistribution"
-				value="#{employeeBundle.contract_time_distribution}" />
-			<aon:inputText id="timeDistribution" value="" />
-			
-			<aon:outputLabel for="periodicJobs"
-				value="#{employeeBundle.contract_periodic_jobs}" />
-			<aon:selectBooleanCheckbox id="periodicJobs"
-				value="" >
-			</aon:selectBooleanCheckbox>
-			
-			<aon:outputLabel for="provingPeriod"
-				value="#{employeeBundle.contract_proving_period}" />
-			<aon:inputText id="provingPeriod" value="" />
-			
-			<aon:outputLabel for="takeoverContract"
-				value="#{employeeBundle.contract_takeover_contract}" />
-			<aon:selectBooleanCheckbox id="takeoverContract"
-				value="" >
-			</aon:selectBooleanCheckbox>
-			
-			<aon:outputLabel for="totalRemuneration"
-				value="#{employeeBundle.contract_total_remuneration}" />
-			<aon:inputText id="totalRemuneration" value="" />
-			
-			<aon:outputLabel for="remunerationPeriodicity"
-				value="#{employeeBundle.contract_remuneration_periodicity}" />
-			<aon:inputText id="remunerationPeriodicity" value="" />
-			
-			<aon:outputLabel for="salaryConcepts"
-				value="#{employeeBundle.contract_salary_concepts}" />
-			<aon:inputText id="salaryConcepts" value="" />
-			
-			<aon:outputLabel for="vacationDays"
-				value="#{employeeBundle.contract_vacation_days}" />
-			<aon:inputText id="vacationDays" value="" />
-			
-			<aon:outputLabel for="law12-2001"
-				value="#{employeeBundle.contract_12_2001_law}" />
-			<aon:selectBooleanCheckbox id="law12-2001"
-				value="" >
-			</aon:selectBooleanCheckbox>
-			
-			<aon:outputLabel for="collective"
-				value="#{employeeBundle.contract_collective}" />
-			<aon:inputText id="collective" value="" />
-			
-			<aon:outputLabel for="collectiveConvention"
-				value="#{employeeBundle.contract_collective_convention}" />
-			<aon:inputText id="collectiveConvention" value="" />
-			
-			<aon:outputLabel for="employmentOfficeName"
-				value="#{employeeBundle.contract_employment_office_name}" />
-			<aon:inputText id="employmentOfficeName" value="" />
-			
-			<aon:outputLabel for="additionalClauses"
-				value="#{employeeBundle.contract_additional_clauses}" />
-			<aon:inputText id="additionalClauses" value="" />
-			
-		</aon:panelGrid>
--->
 
 	</ui:define>
 	
