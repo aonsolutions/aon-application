@@ -29,7 +29,10 @@
 								<aon:commandLink id="contractGenerationWizard" 
 									action="contractGenerationWizard_step0"
 									actionListener="#{contractGenerationWizard.onStart}"
-									value="#{employeeBundle.employee_contractGenerationWizard_module}" />
+									value="#{employeeBundle.employee_contractGenerationWizard_module}" >
+									<aon:actionListener method="#{enterprise.onEditSearch}" />
+									<aon:actionListener method="#{person.onEditSearch}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="parteitGenerationWizard" 
