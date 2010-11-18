@@ -26,6 +26,17 @@
 						styleClass="aon-finding-toolbar-item aon-icon-category" >
 					</aon:commandButton>
 					<ui:include src="/com/code/aon/ui/employee/facelet/salary/buttons.xhtml" />
+					<aon:commandButton id="calendar"
+						value="#{calendarBundle.aon_calendar_calendar}"
+						action="calendar_form" 
+						actionListener="#{calendar.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-calendar">
+						<f:setPropertyActionListener target="#{calendar.sourceKey}"
+							value="2" />
+						<f:setPropertyActionListener target="#{calendar.sourceId}"
+							value="#{enterpriseTree.contract.id}" />
+						<aon:actionListener method="#{calendar.onInitialize}" />
+					</aon:commandButton>		
 					<aon:spin id="enterpriseSpin" controller="#{salary}" />
 				</ui:define>				
 			</ui:decorate>		
