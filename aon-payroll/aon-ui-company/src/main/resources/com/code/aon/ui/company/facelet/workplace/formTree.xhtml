@@ -20,6 +20,17 @@
 						action="enterprise_form" actionListener="#{enterpriseWorkplace.onEdit}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept" >
 					</aon:commandButton>
+					<aon:commandButton id="calendar"
+						value="#{calendarBundle.aon_calendar_calendar}"
+						action="calendar_form" 
+						actionListener="#{calendar.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-calendar">
+						<f:setPropertyActionListener target="#{calendar.sourceKey}"
+							value="1" />
+						<f:setPropertyActionListener target="#{calendar.sourceId}"
+							value="#{enterpriseTree.workPlace.id}" />
+						<aon:actionListener method="#{calendar.onInitialize}" />
+					</aon:commandButton>	
 				</ui:define>				
 			</ui:decorate>		
 
