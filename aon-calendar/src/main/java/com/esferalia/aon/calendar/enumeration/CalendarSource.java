@@ -24,7 +24,7 @@ public enum CalendarSource implements IResourceable {
 	CONTRACT;
 
 	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.calendar.i18n.messages";
+    private static final String BASE_NAME = "com.esferalia.aon.calendar.i18n.messages";
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_calendar_source_";
