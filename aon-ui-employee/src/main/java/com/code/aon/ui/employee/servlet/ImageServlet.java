@@ -29,8 +29,11 @@ public class ImageServlet extends HttpServlet implements IEmployeeConstants{
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		
-//		final String MODELS_PATH ="com/code/aon/ui/employee/contractModel/";
-		
+		String page = request.getServletPath();
+		page = StringUtils.substringBetween(page, "/", ".");
+		if(StringUtils.isEmpty(page)){
+			throw new IllegalArgumentException("Pagina de contrato desconocida");
+		}
 		String model = request.getParameter("model");
 //		Integer zoom = Integer.parseInt(request.getParameter("zoom"));
 		Integer width = Integer.parseInt(request.getParameter("width"));
@@ -38,16 +41,10 @@ public class ImageServlet extends HttpServlet implements IEmployeeConstants{
 		if (StringUtils.isEmpty(model)) {
 			throw new IllegalArgumentException("Modelo vacio");
 		}
-		String page = request.getServletPath();
-		page = StringUtils.substringBetween(page, "/", ".");
-		if(StringUtils.isEmpty(page)){
-			throw new IllegalArgumentException("Pagina de contrato desconocida");
-		}
 		final String SCHEMA = model+".pdf"; 
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		URL[] urls = Classpath.search(cl, MODEL_PATH, SCHEMA);
 		BufferedImage pic = PdfToImage.create(urls[0], Integer.parseInt(page), width.intValue(), height.intValue());
-//		pic = ImageUtil.scale(pic, width, height);
 		byte[] buffer = ImageUtil.getImage(pic,MimeType.MIME_PNG.getExtension());
 		InputStream in = new ByteArrayInputStream(buffer);
 		int bytes = in.read(buffer);
@@ -56,7 +53,7 @@ public class ImageServlet extends HttpServlet implements IEmployeeConstants{
 			bytes = in.read(buffer);
 		}
 		in.close();
-		response.setContentType(MimeType.MIME_PNG.getName()); // Formato de la imagen
+		response.setContentType(MimeType.MIME_PNG.getName()); 
 		response.flushBuffer();
 	}
 
