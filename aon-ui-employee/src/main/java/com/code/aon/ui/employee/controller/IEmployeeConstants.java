@@ -14,4 +14,9 @@ public interface IEmployeeConstants {
 	// ************************************************************
 	String MODEL_PATH = "com/code/aon/ui/employee/contractModel/";
 	
+	// ************************************************************
+	// REPORT
+	// ************************************************************
+	String CURRENT_SALARY_REPORT = "currentSalaryReport";
+	
 }
