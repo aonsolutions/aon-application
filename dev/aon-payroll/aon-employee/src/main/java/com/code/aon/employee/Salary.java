@@ -38,84 +38,56 @@ public class Salary implements ITransferObject, ISalary {
 	
 	private static final long serialVersionUID = 628669216993025202L;
 
-	@Id
-	@GeneratedValue
-	@Column(nullable = false)
 	private Integer id;
 	
-	@ManyToOne
-	@JoinColumn( name="contract", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_SALARY_RECCEIPT_CONTRACT")
-	@Index(name = "FK_SALARY_RECCEIPT_CONTRACT")
 	private Contract contract;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "start_date", nullable = false )
 	private Date startDate;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "end_date", nullable = false )
 	private Date endDate;
 	
-	@Column(length=64)
 	private String address;
 	
-	@Column(length=64)
 	private String employee;
 	
-	@Column(length=64)
 	private String category;
 	
-	@Column( nullable = false)
 	private Integer registration;
 	
-	@Column(name = "total_days_hours",  nullable = false)
 	private Integer totalDaysHours;
 	
-	@Column(name = "total_payment", precision = 15, scale = 3, nullable = false)
 	private Double totalPayment;
 	
-	@Column(name = "total_deduction", precision = 15, scale = 3, nullable = false)
 	private Double totalDeduction;
 	
-	@Column(name = "total_liquid", precision = 15, scale = 3, nullable = false)
 	private Double totalLiquid;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "broadcast_date", nullable = false )
 	private Date broadcastDate;
 	
-	@Column( precision = 15, scale = 3, nullable = false)
 	private Double remuneration;
 	
-	@Column(name = "extra_pay_proration", precision = 15, scale = 3, nullable = false)
 	private Double extraPayProration;
 	
-	@Column(precision = 15, scale = 3, nullable = false)
 	private Double total;
 	
-	@Column(name = "common_base", precision = 15, scale = 3, nullable = false)
 	private Double commonBase;
 	
-	@Column(name = "professional_base", precision = 15, scale = 3, nullable = false)
 	private Double professionalBase;
 	
-	@Column(name = "overtime_base", precision = 15, scale = 3, nullable = false)
 	private Double overtimeBase;
 	
-	@Column(name = "irpf_base", precision = 15, scale = 3, nullable = false)
 	private Double irpfBase;
 	
-	@Column(name = "quote_group",length=2)
 	private String quoteGroup;
 	
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
 	private Set<SalaryPayment> payments = new HashSet<SalaryPayment>();
 	
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
 	private Set<SalaryDeduction> deductions = new HashSet<SalaryDeduction>();
 
 	
+	@Id
+	@GeneratedValue
+	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
@@ -125,6 +97,10 @@ public class Salary implements ITransferObject, ISalary {
 	}
 	
 	@Override
+	@ManyToOne
+	@JoinColumn( name="contract", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_SALARY_RECCEIPT_CONTRACT")
+	@Index(name = "FK_SALARY_RECCEIPT_CONTRACT")
 	public Contract getContract() {
 		return contract;
 	}
@@ -134,6 +110,8 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "start_date", nullable = false )
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -143,6 +121,8 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "end_date", nullable = false )
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -152,6 +132,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(length=64)
 	public String getAddress() {
 		return address;
 	}
@@ -161,6 +142,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(length=64)
 	public String getEmployee() {
 		return employee;
 	}
@@ -170,6 +152,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(length=64)
 	public String getCategory() {
 		return category;
 	}
@@ -179,6 +162,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column( nullable = false)
 	public Integer getRegistration() {
 		return registration;
 	}
@@ -188,6 +172,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(name = "total_days_hours",  nullable = false)
 	public Integer getTotalDaysHours() {
 		return totalDaysHours;
 	}
@@ -197,6 +182,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(name = "total_payment", precision = 15, scale = 3, nullable = false)
 	public Double getTotalPayment() {
 		return totalPayment;
 	}
@@ -206,6 +192,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(name = "total_deduction", precision = 15, scale = 3, nullable = false)
 	public Double getTotalDeduction() {
 		return totalDeduction;
 	}
@@ -215,6 +202,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(name = "total_liquid", precision = 15, scale = 3, nullable = false)
 	public Double getTotalLiquid() {
 		return totalLiquid;
 	}
@@ -224,6 +212,8 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "broadcast_date", nullable = false )
 	public Date getBroadcastDate() {
 		return broadcastDate;
 	}
@@ -233,6 +223,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column( precision = 15, scale = 3, nullable = false)
 	public Double getRemuneration() {
 		return remuneration;
 	}
@@ -242,6 +233,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(name = "extra_pay_proration", precision = 15, scale = 3, nullable = false)
 	public Double getExtraPayProration() {
 		return extraPayProration;
 	}
@@ -251,6 +243,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(precision = 15, scale = 3, nullable = false)
 	public Double getTotal() {
 		return total;
 	}
@@ -260,6 +253,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(name = "common_base", precision = 15, scale = 3, nullable = false)
 	public Double getCommonBase() {
 		return commonBase;
 	}
@@ -269,6 +263,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(name = "professional_base", precision = 15, scale = 3, nullable = false)
 	public Double getProfessionalBase() {
 		return professionalBase;
 	}
@@ -278,6 +273,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(name = "overtime_base", precision = 15, scale = 3, nullable = false)
 	public Double getOvertimeBase() {
 		return overtimeBase;
 	}
@@ -287,6 +283,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Column(name = "irpf_base", precision = 15, scale = 3, nullable = false)
 	public Double getIrpfBase() {
 		return irpfBase;
 	}
@@ -296,6 +293,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 	
 	@Override
+	@Column(name = "quote_group",length=2)
 	public String getQuoteGroup() {
 		return quoteGroup;
 	}
@@ -413,12 +411,14 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
 	public Deductions getDeductions() {
 		Deductions d = new Deductions( getSalaryDeductions());
 		return d;
 	}
 
 	@Override
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
 	public Payments getPayments() {
 		Payments p = new Payments( getSalaryPayments());
 		return p;

@@ -32,34 +32,24 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 
 	private static final long serialVersionUID = 4510451091870851884L;
 
-	@Id
-	@GeneratedValue
-	@Column(nullable = false)
 	private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "contract", nullable = false, updatable = false)
-	@ForeignKey(name = "FK_DEDUCTION_CONTRACT")
-	@Index(name = "FK_DEDUCTION_CONTRACT")
 	private Contract contract;
 
 	private DeductionType type;
 	
-	@Column(length = 64)
 	private String description;
 
-	@Column(length = 128)
 	private String function;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "start_date", nullable = false )
-    private Date startDate;	
+	private Date startDate;	
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "end_date" )
-    private Date endDate;	
+	private Date endDate;	
 	
 	
+	@Id
+	@GeneratedValue
+	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
@@ -68,6 +58,10 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 		this.id = id;
 	}
 	
+	@ManyToOne
+	@JoinColumn(name = "contract", nullable = false, updatable = false)
+	@ForeignKey(name = "FK_DEDUCTION_CONTRACT")
+	@Index(name = "FK_DEDUCTION_CONTRACT")
 	public Contract getContract() {
 		return contract;
 	}
@@ -86,6 +80,7 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 	}
 	
 	@Override
+	@Column(length = 64)
 	public String getDescription() {
 		return description;
 	}
@@ -95,6 +90,7 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 	}
 	
 	@Override
+	@Column(length = 128)
 	public String getFunction() {
 		return function;
 	}
@@ -103,7 +99,9 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 		this.function = function;
 	}
 	
-	public Date getStartDate() {
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "start_date", nullable = false )
+    public Date getStartDate() {
 		return startDate;
 	}
 
@@ -111,7 +109,9 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "end_date" )
+    public Date getEndDate() {
 		return endDate;
 	}
 

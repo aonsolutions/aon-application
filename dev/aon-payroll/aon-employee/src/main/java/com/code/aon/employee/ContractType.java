@@ -26,21 +26,14 @@ public class ContractType implements ITransferObject {
 	
 	private static final long serialVersionUID = 6750651890364319423L;
 
-    @Id
-	@GeneratedValue
-	@Column(nullable=false)
-	private Integer id;
+    private Integer id;
 	
-	@Column(length = 64, nullable = false)    
 	private String description;
 	
-	@Column(nullable = false)
 	private ContractDuration duration;
 	
-	@Column(name = "working_day", nullable = false)
 	private ContractWorkingDay workingDay;
 	
-	@Column(name = "ccc_type", nullable = false)
 	private CCCType cccType;
 	
 	/**
@@ -48,6 +41,9 @@ public class ContractType implements ITransferObject {
 	 * 
 	 * @return the id
 	 */
+	@Id
+	@GeneratedValue
+	@Column(nullable=false)
 	public Integer getId() {
 		return id;
 	}
@@ -61,6 +57,7 @@ public class ContractType implements ITransferObject {
 		this.id = id;
 	}
 
+	@Column(length = 64, nullable = false)    
 	public String getDescription() {
 		return description;
 	}
@@ -69,6 +66,7 @@ public class ContractType implements ITransferObject {
 		this.description = description;
 	}	
 	
+	@Column(nullable = false)
 	public ContractDuration getDuration() {
 		return duration;
 	}
@@ -77,6 +75,7 @@ public class ContractType implements ITransferObject {
 		this.duration = duration;
 	}
 
+	@Column(name = "working_day", nullable = false)
 	public ContractWorkingDay getWorkingDay() {
 		return workingDay;
 	}
@@ -85,6 +84,7 @@ public class ContractType implements ITransferObject {
 		this.workingDay = workingDay;
 	}
 	
+	@Column(name = "ccc_type", nullable = false)
 	public CCCType getCCCType() {
 		return cccType;
 	}
