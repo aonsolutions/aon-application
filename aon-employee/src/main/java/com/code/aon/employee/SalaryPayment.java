@@ -28,30 +28,23 @@ public class SalaryPayment implements ITransferObject, IPayment {
 	
 	private static final long serialVersionUID = 7062556672670928116L;
 
-	@Id
-	@GeneratedValue
-	@Column(nullable = false)
 	private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "salary", nullable = false, updatable = false)
-	@ForeignKey(name = "FK_DEDUCTION_SALARY")
-	@Index(name = "FK_DEDUCTION_SALARY")
 	private Salary salary;
 
 	private PaymentType type;
 	
-	@Column(length = 64)
 	private String description;
 
-	@Column(length = 128)
 	private String function;
 
-	@Column(precision = 15, scale = 3)
 	private double amount;
 
 	
 	
+	@Id
+	@GeneratedValue
+	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
@@ -60,6 +53,10 @@ public class SalaryPayment implements ITransferObject, IPayment {
 		this.id = id;
 	}
 	
+	@ManyToOne
+	@JoinColumn(name = "salary", nullable = false, updatable = false)
+	@ForeignKey(name = "FK_DEDUCTION_SALARY")
+	@Index(name = "FK_DEDUCTION_SALARY")
 	public Salary getSalary() {
 		return salary;
 	}
@@ -78,6 +75,7 @@ public class SalaryPayment implements ITransferObject, IPayment {
 	}
 	
 	@Override
+	@Column(length = 64)
 	public String getDescription() {
 		return description;
 	}
@@ -87,6 +85,7 @@ public class SalaryPayment implements ITransferObject, IPayment {
 	}
 	
 	@Override
+	@Column(length = 128)
 	public String getFunction() {
 		return function;
 	}
@@ -96,6 +95,7 @@ public class SalaryPayment implements ITransferObject, IPayment {
 	}
 	
 	@Override
+	@Column(precision = 15, scale = 3)
 	public double getAmount() {
 		return amount;
 	}

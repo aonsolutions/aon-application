@@ -48,48 +48,24 @@ public class Contract implements ITransferObject, ISalary {
 
 	private static final long serialVersionUID = -2662643961209110809L;
 	
-//	private static final Logger LOGGER = LoggerFactory.getLogger(Contract.class.getName());
-	
-	@Id
-	@GeneratedValue
-	@Column(nullable = false)
 	private Integer id;
 	
-	@ManyToOne
-    @JoinColumn( name="person", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_CONTRACT_PERSON")
-	@Index(name = "IDX_CONTRACT_PERSON")
 	private Person person;
 	
-	@ManyToOne
-    @JoinColumn( name="workplace", nullable = false )	
-	@ForeignKey(name = "FK_CONTRACT_WORK_PLACE")
-	@Index(name = "IDX_CONTRACT_WORK_PLACE")
 	private WorkPlace workPlace;
 	
-	@ManyToOne
-    @JoinColumn( name="ccc", nullable = false )	
-	@ForeignKey(name = "FK_CONTRACT_CCC")
-	@Index(name = "IDX_CONTRACT_CCC")
 	private EnterpriseCCC ccc;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "start_date", nullable = false )
-    private Date startDate;	
+	private Date startDate;	
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "end_date" )
-    private Date endDate;	
+	private Date endDate;	
 	
-	@Lob
 	private byte[] document;
 
 	private ContractStatus status;
 
-	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
 	private Set<ContractPayment> payments = new HashSet<ContractPayment>();
 	
-	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
 	private Set<ContractDeduction> deductions = new HashSet<ContractDeduction>();
 
 
@@ -98,6 +74,9 @@ public class Contract implements ITransferObject, ISalary {
 	 * 
 	 * @return the id
 	 */
+	@Id
+	@GeneratedValue
+	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
@@ -116,6 +95,10 @@ public class Contract implements ITransferObject, ISalary {
 	 * 
 	 * @return the person
 	 */
+	@ManyToOne
+    @JoinColumn( name="person", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_CONTRACT_PERSON")
+	@Index(name = "IDX_CONTRACT_PERSON")
 	public Person getPerson() {
 		return person;
 	}
@@ -143,6 +126,10 @@ public class Contract implements ITransferObject, ISalary {
 	 * 
 	 * @param workPlace the new work place
 	 */
+	@ManyToOne
+    @JoinColumn( name="workplace", nullable = false )	
+	@ForeignKey(name = "FK_CONTRACT_WORK_PLACE")
+	@Index(name = "IDX_CONTRACT_WORK_PLACE")
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
 	}
@@ -152,6 +139,10 @@ public class Contract implements ITransferObject, ISalary {
 	 * 
 	 * @return the ccc
 	 */
+	@ManyToOne
+    @JoinColumn( name="ccc", nullable = false )	
+	@ForeignKey(name = "FK_CONTRACT_CCC")
+	@Index(name = "IDX_CONTRACT_CCC")
 	public EnterpriseCCC getCcc() {
 		return ccc;
 	}
@@ -170,7 +161,9 @@ public class Contract implements ITransferObject, ISalary {
 	 * 
 	 * @return the start date
 	 */
-	public Date getStartDate() {
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "start_date", nullable = false )
+    public Date getStartDate() {
 		return startDate;
 	}
 
@@ -188,7 +181,9 @@ public class Contract implements ITransferObject, ISalary {
 	 * 
 	 * @return the end date
 	 */
-	public Date getEndDate() {
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "end_date" )
+    public Date getEndDate() {
 		return endDate;
 	}
 
@@ -201,6 +196,7 @@ public class Contract implements ITransferObject, ISalary {
 		this.endDate = endDate;
 	}	
 	
+	@Lob
 	public byte[] getDocument() {
 		return document;
 	}
@@ -415,6 +411,7 @@ public class Contract implements ITransferObject, ISalary {
 	}
 	
 	@Override
+	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
 	public Deductions getDeductions() {
 		Deductions d = new Deductions();
 		for(Object o: getContractDeductions().toArray()){
@@ -445,6 +442,7 @@ public class Contract implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
 	public Payments getPayments() {
 		Payments p = new Payments();
 		p.setSalarySupplements(new LinkedList<IPayment>());
