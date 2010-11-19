@@ -21,7 +21,8 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.employee.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.payment.IPayment;
 
 /**
  * Transfer Object that represents the contract payment.

@@ -370,10 +370,10 @@ public interface IEmployeeAlias {
 	DAOConstantsEntry CONTRACT_TYPE_ENTRY = DAOConstants.getDAOConstant(ContractType.class);
 
 	/** 
-	* Alias value: ContractType_cccType
-	* Hibernate value: ContractType.cccType
+	* Alias value: ContractType_CCCType
+	* Hibernate value: ContractType.CCCType
 	*/
-	String  CONTRACT_TYPE_CCC_TYPE = CONTRACT_TYPE_ENTRY.getAliasNames()[0];
+	String  CONTRACT_TYPE_CCCTYPE = CONTRACT_TYPE_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: ContractType_description

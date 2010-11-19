@@ -13,9 +13,9 @@ import com.code.aon.employee.enumeration.ContractModel;
 import com.code.aon.employee.enumeration.ContractOption;
 import com.code.aon.employee.enumeration.ContractTrackingType;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
-import com.code.aon.employee.enumeration.DeductionType;
-import com.code.aon.employee.enumeration.PaymentType;
 import com.code.aon.registry.enumeration.StreetType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 
 public class EmployeeCollectionsController {
 
