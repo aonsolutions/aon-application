@@ -1,0 +1,98 @@
+package com.esferalia.aon.salary.payment;
+
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.esferalia.aon.salary.enumeration.PaymentType;
+
+
+public class Payments {
+
+	private Map<PaymentType, IPayment> map;
+	private SalarySupplements salarySupplements;
+	private CompensationOrPrepaidExpenses compensationOrPrepaidExpenses;
+
+	public Payments() {
+		map = new HashMap<PaymentType, IPayment>();	
+	}
+
+	public IPayment getBaseSalary() {
+		return map.get(PaymentType.BASE_SALARY);
+	}
+	public void setBaseSalary(IPayment p) {
+		put(PaymentType.BASE_SALARY, p);
+	}
+
+	public IPayment getOvertimeHours() {
+		return map.get(PaymentType.OVERTIME_HOURS);
+	}
+	public void setOvertimeHours(IPayment p) {
+		put(PaymentType.OVERTIME_HOURS, p);
+	}
+
+	public IPayment getSpecialBonuses() {
+		return map.get(PaymentType.SPECIAL_BONUSES);
+	}
+	public void setSpecialBonuses(IPayment p) {
+		put(PaymentType.SPECIAL_BONUSES, p);
+	}
+
+	public IPayment getSalaryInKind() {
+		return map.get(PaymentType.SALARY_IN_KIND);
+	}
+	public void setSalaryInKind(IPayment p) {
+		put(PaymentType.SALARY_IN_KIND, p);
+	}
+
+	public IPayment getSpecialSecurityBenefits() {
+		return map.get(PaymentType.SOCIAL_SECURITY_BENEFITS);
+	}
+	public void setSpecialSecurityBenefits(IPayment p) {
+		put(PaymentType.SOCIAL_SECURITY_BENEFITS, p);
+	}
+	
+	public IPayment getMovingCompensation() {
+		return map.get(PaymentType.MOVING_COMPENSATION);
+	}
+	public void setMovingCompensation(IPayment p) {
+		put(PaymentType.MOVING_COMPENSATION, p);
+	}
+
+	public IPayment getOtherNonWage() {
+		return map.get(PaymentType.OTHER_NON_WAGE);
+	}
+	public void setOtherNonWage(IPayment p) {
+		put(PaymentType.OTHER_NON_WAGE, p);
+	}
+	
+	public SalarySupplements getSalarySupplements() {
+		if (salarySupplements == null) {
+			setSalarySupplements( new SalarySupplements() );
+		}
+		return salarySupplements;
+	}
+	public void setSalarySupplements(SalarySupplements salarySupplements) {
+		this.salarySupplements = salarySupplements;
+	}
+	public void addSalarySupplements(IPayment p) {
+		getSalarySupplements().addPayment(p);
+	}
+	
+	public CompensationOrPrepaidExpenses getCompensationOrPrepaidExpenses() {
+		if (compensationOrPrepaidExpenses == null) {
+			setCompensationOrPrepaidExpenses( new CompensationOrPrepaidExpenses() );
+		}
+		return compensationOrPrepaidExpenses;
+	}
+	public void setCompensationOrPrepaidExpenses(CompensationOrPrepaidExpenses p) {
+		this.compensationOrPrepaidExpenses = p;
+	}
+	public void addCompensationOrPrepaidExpenses(IPayment p) {
+		getCompensationOrPrepaidExpenses().addPayment(p);
+	}
+
+	private void put(PaymentType type, IPayment p) {
+		map.put(type,p);
+	}
+}
