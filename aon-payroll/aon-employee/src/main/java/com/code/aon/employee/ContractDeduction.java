@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -157,9 +158,10 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 	}
 
 	@Override
+	@Transient
 	public double getAmount() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
+	
 
 }
