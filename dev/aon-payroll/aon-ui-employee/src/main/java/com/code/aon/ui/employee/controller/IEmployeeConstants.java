@@ -19,4 +19,6 @@ public interface IEmployeeConstants {
 	// ************************************************************
 	String CURRENT_SALARY_REPORT = "currentSalaryReport";
 	
+	String SALARY_REPORT = "salaryReport";
+	
 }
