@@ -302,6 +302,7 @@ public class Salary implements ITransferObject, ISalary {
 		this.quoteGroup = quoteGroup;
 	}
 
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
 	public Set<SalaryPayment> getSalaryPayments() {
 		return payments;
 	}
@@ -310,6 +311,7 @@ public class Salary implements ITransferObject, ISalary {
 		this.payments = payments;
 	}
 
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
 	public Set<SalaryDeduction> getSalaryDeductions() {
 		return deductions;
 	}
@@ -381,6 +383,7 @@ public class Salary implements ITransferObject, ISalary {
 	}
 	
 	@Override
+	@Transient
 	public ISalary getSalary(){
 		return this;
 	}
@@ -411,14 +414,14 @@ public class Salary implements ITransferObject, ISalary {
 	}
 
 	@Override
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	@Transient
 	public Deductions getDeductions() {
 		Deductions d = new Deductions( getSalaryDeductions());
 		return d;
 	}
 
 	@Override
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	@Transient
 	public Payments getPayments() {
 		Payments p = new Payments( getSalaryPayments());
 		return p;
