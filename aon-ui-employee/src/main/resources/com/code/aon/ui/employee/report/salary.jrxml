@@ -54,7 +54,7 @@
 		<field name="amount" class="java.lang.Double"/>
 	</subDataset>
 	<parameter name="nestedReports" class="java.util.Map"/>
-	<field name="salary" class="com.code.aon.employee.ISalary"/>
+	<field name="salary" class="com.esferalia.aon.salary.ISalary"/>
 	<group name="salary_GROUP" isStartNewPage="true">
 		<groupExpression><![CDATA[$F{salary}]]></groupExpression>
 		<groupHeader>

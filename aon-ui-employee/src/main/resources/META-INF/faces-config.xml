@@ -54,9 +54,6 @@
 				<value>#{contractListener}</value>
 				<value>#{contractPaymentChildListener}</value>
 				<value>#{contractDeductionChildListener}</value>
-<!--  
-				<value>#{contractTrackingLinesListener}</value>
--->
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -188,29 +185,6 @@
 		</managed-property>			
 	</managed-bean>
 
-<!--  
-	<managed-bean>
-		<managed-bean-name>contractTrackingLinesListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>contractTracking</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>ContractTracking_contract_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
--->	
-	
 	<!-- ************ CONTRACT TYPE ************** -->
 	<managed-bean>
 		<managed-bean-name>contractType</managed-bean-name>
@@ -256,8 +230,6 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{salarySearch}</value>
-				<value>#{salaryPaymentChildListener}</value>
-				<value>#{salaryDeductionChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -267,140 +239,6 @@
 		<managed-bean-class>
 			com.code.aon.ui.employee.event.SalarySearchListener
 		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-	
-	<!-- **** SALARY PAYMENT LISTENER **** -->
-	<managed-bean>
-		<managed-bean-name>salaryPaymentChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>salaryPayment</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>SalaryPayment_salary_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<!-- **** SALARY DEDUCTION LISTENER **** -->
-	<managed-bean>
-		<managed-bean-name>salaryDeductionChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>salaryDeduction</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>SalaryDeduction_salary_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<!-- ************ SALARY PAYMENT ************** -->
-	<managed-bean>
-		<managed-bean-name>salaryPayment</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.controller.SalaryPaymentController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.employee.SalaryPayment</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>salaryPayment</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>-1</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>salary</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>salary.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{salaryPaymentListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>salaryPaymentListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.event.SalaryPaymentControllerListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-
-	<!-- ************ SALARY DEDUCTION ************** -->
-	<managed-bean>
-		<managed-bean-name>salaryDeduction</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.controller.SalaryDeductionController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.employee.SalaryDeduction</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>salaryDeduction</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>salary</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>salary.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>			
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{salaryDeductionListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>salaryDeductionListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.event.SalaryDeductionControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 

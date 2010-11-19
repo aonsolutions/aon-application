@@ -1,52 +1,5 @@
 package com.code.aon.ui.employee.controller;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.code.aon.common.ICriteriaProvider;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.ExtendedPageDataModel;
-import com.code.aon.ui.form.IDataModelDataProvider;
-import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.AonPayroll;
-import com.esferalia.aon.payroll.PayrollException;
-import com.esferalia.aon.payroll.core.IBonificacion;
-import com.esferalia.aon.payroll.core.IContrato;
-import com.esferalia.aon.payroll.core.IEmpleado;
-import com.esferalia.aon.payroll.core.IPersona;
-import com.esferalia.aon.payroll.core.commons.CommonsPayrollDAOFactory;
-import com.esferalia.aon.payroll.core.commons.ICommonsPayrollDAO;
-import com.esferalia.aon.payroll.core.cotizacion.ITipoBonificacion;
-import com.esferalia.aon.payroll.core.empleado.EmpleadoDAOFactory;
-import com.esferalia.aon.payroll.core.empleado.EmpleadoParams;
-import com.esferalia.aon.payroll.core.empleado.IEmpleadoDAO;
-import com.esferalia.aon.payroll.core.enumeration.TipoContingencia;
-import com.esferalia.aon.payroll.core.enumeration.TipoOperacionIT;
-import com.esferalia.aon.payroll.core.it.IParteConfirmacionIT;
-import com.esferalia.aon.payroll.core.it.IParteIT;
-import com.esferalia.aon.payroll.core.it.IParteITDAO;
-import com.esferalia.aon.payroll.core.it.ParteITDAOFactory;
-import com.esferalia.aon.payroll.core.nomina.INominaDAO;
-import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
-import com.esferalia.aon.payroll.utils.NumberValidation;
 
 //public class ParteITWizard implements Serializable, IDataModelDataProvider, ICriteriaProvider {
 public class ParteITWizard {
