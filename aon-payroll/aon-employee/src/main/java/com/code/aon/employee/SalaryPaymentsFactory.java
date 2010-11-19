@@ -1,0 +1,71 @@
+package com.code.aon.employee;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.hibernate.LazyInitializationException;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.employee.dao.IEmployeeAlias;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.salary.ISalaryProxy;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.payment.IPaymentsFactory;
+import com.esferalia.aon.salary.payment.IPaymentsFactoryContext;
+import com.esferalia.aon.salary.payment.Payments;
+
+public class SalaryPaymentsFactory implements IPaymentsFactory {
+
+	@Override
+	public boolean accept(IPaymentsFactoryContext ctx) {
+		ISalaryProxy proxy = ctx.getSalaryProxy();
+		return (proxy instanceof Salary); 
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Payments getPayments(IPaymentsFactoryContext ctx) throws SalaryException{
+		try {
+			Payments payments = new Payments();
+			Collection<SalaryPayment> salaryPayments;
+			Salary salary = (Salary) ctx.getSalaryProxy().getSalary();
+			try {
+				salaryPayments = salary.getSalaryPayments();
+			} catch (LazyInitializationException  e) {
+				IManagerBean bean = BeanManager.getManagerBean(SalaryPayment.class);
+				Criteria c = new Criteria();
+				c.addEqualExpression(bean.getFieldName(IEmployeeAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
+				List<?> list = bean.getList(c);
+				salaryPayments = (Collection<SalaryPayment>) list;
+			}
+			for(SalaryPayment sp: salaryPayments){
+				if (sp.getType() == PaymentType.BASE_SALARY) {
+					payments.setBaseSalary(sp);
+				} else if (sp.getType() == PaymentType.SALARY_SUPPLEMENTS) {
+					payments.addSalarySupplements(sp);
+				} else if (sp.getType() == PaymentType.OVERTIME_HOURS) {
+					payments.setOvertimeHours(sp);
+				} else if (sp.getType() == PaymentType.SPECIAL_BONUSES) {
+					payments.setSpecialBonuses(sp);
+				} else if (sp.getType() == PaymentType.SALARY_IN_KIND) {
+					payments.setSalaryInKind(sp);
+				} else if (sp.getType() == PaymentType.COMPENSATION_OR_PREPAID_EXPENSES) {
+					payments.addCompensationOrPrepaidExpenses(sp);
+				} else if (sp.getType() == PaymentType.SOCIAL_SECURITY_BENEFITS) {
+					payments.setSpecialSecurityBenefits(sp);
+				} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
+					payments.setMovingCompensation(sp);
+				} else if (sp.getType() == PaymentType.OTHER_NON_WAGE) {
+					payments.setOtherNonWage(sp);
+				}
+			}
+			return payments;
+		} catch (ManagerBeanException  e) {
+			throw new SalaryException(e.getMessage(),e);
+		}
+	}
+
+}

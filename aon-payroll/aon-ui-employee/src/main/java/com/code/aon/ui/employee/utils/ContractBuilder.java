@@ -301,7 +301,7 @@ public class ContractBuilder implements IEmployeeConstants {
 //				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
 			} 
 			if(field.getLabel().equals("Texto9")){
-				field.setValue(contract.getCcc().getCCC());
+				field.setValue(contract.getEnterpriseCCC().getCCC());
 			} 
 			if(field.getLabel().equals("Cifra20")){
 //				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
@@ -311,7 +311,7 @@ public class ContractBuilder implements IEmployeeConstants {
 			}
 			// actividad economica
 			if(field.getLabel().equals("Texto10")){
-				field.setValue(contract.getCcc().getActivity().getDescription());
+				field.setValue(contract.getEnterpriseCCC().getActivity().getDescription());
 			}
 			if(field.getLabel().equals("Cifra22")){
 //				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
