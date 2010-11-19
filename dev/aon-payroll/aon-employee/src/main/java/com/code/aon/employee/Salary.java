@@ -41,15 +41,15 @@ import com.esferalia.aon.salary.payment.PaymentsFactoryManager;
 
 @Entity
 @Table(name="salary")
-public class Salary implements ITransferObject, ISalary, ISalaryProxy {
-	
+public class Salary implements ITransferObject , ISalary, ISalaryProxy {
+
 	static {
 		PaymentsFactoryManager payManager =  PaymentsFactoryManager.getInstance();
 		payManager.addFactory( new SalaryPaymentsFactory() );
 		DeductionsFactoryManager dedManager =  DeductionsFactoryManager.getInstance();
 		dedManager.addFactory( new SalaryDeductionsFactory() );
 	}
-	
+
 	private static final long serialVersionUID = 628669216993025202L;
 
 	// AON DATA
@@ -100,7 +100,10 @@ public class Salary implements ITransferObject, ISalary, ISalaryProxy {
 	// OTHERS
 	private IDeductionsFactoryContext dedContext;
 	private IPaymentsFactoryContext payContext;
+	
+	@Transient
 	private Payments payments;
+	@Transient
 	private Deductions deductions;
 	
 	@Id
@@ -224,7 +227,7 @@ public class Salary implements ITransferObject, ISalary, ISalaryProxy {
 
 	@Override
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "senority_date", nullable = false )
+	@Column( name = "seniority_date")
 	public Date getSeniorityDate() {
 		return seniorityDate;
 	}
@@ -515,5 +518,4 @@ public class Salary implements ITransferObject, ISalary, ISalaryProxy {
 		}
 		return payContext;
 	}
-	
 }
