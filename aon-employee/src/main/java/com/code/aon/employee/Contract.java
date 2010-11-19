@@ -82,13 +82,13 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		this.person = person;
 	}
 
-	public WorkPlace getWorkPlace() {
-		return workPlace;
-	}
 	@ManyToOne
     @JoinColumn( name="workplace", nullable = false )	
 	@ForeignKey(name = "FK_CONTRACT_WORK_PLACE")
 	@Index(name = "IDX_CONTRACT_WORK_PLACE")
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
 	}
