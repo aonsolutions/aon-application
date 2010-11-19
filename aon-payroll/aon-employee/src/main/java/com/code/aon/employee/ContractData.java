@@ -32,33 +32,19 @@ public class ContractData implements ITransferObject {
 	
 	private static final long serialVersionUID = 8545553544570810101L;
 
-	@Id
-	@GeneratedValue
-	@Column(nullable = false)
 	private Integer id;
 	
-	@ManyToOne
-    @JoinColumn( name="contract", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_CONTRACT_DATA_CONTRACT")
-	@Index(name = "FK_CONTRACT_DATA_CONTRACT")
 	private Contract contract;
 	
-	@Column(nullable=false)
 	private ContractCode code;
 	
-	@Column(length=64)
 	private String description;
 	
-	@Column(length=64)
 	private String conditions;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "start_date", nullable = false )
-    private Date startDate;	
+	private Date startDate;	
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column( name = "end_date" )
-    private Date endDate;	
+	private Date endDate;	
 	
 	
 	/**
@@ -66,6 +52,9 @@ public class ContractData implements ITransferObject {
 	 * 
 	 * @return the id
 	 */
+	@Id
+	@GeneratedValue
+	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
@@ -84,6 +73,10 @@ public class ContractData implements ITransferObject {
 	 * 
 	 * @return the contract
 	 */
+	@ManyToOne
+    @JoinColumn( name="contract", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_CONTRACT_DATA_CONTRACT")
+	@Index(name = "FK_CONTRACT_DATA_CONTRACT")
 	public Contract getContract() {
 		return contract;
 	}
@@ -97,6 +90,7 @@ public class ContractData implements ITransferObject {
 		this.contract = contract;
 	}
 	
+	@Column(nullable=false)
 	public ContractCode getCode() {
 		return code;
 	}
@@ -105,6 +99,7 @@ public class ContractData implements ITransferObject {
 		this.code = code;
 	}
 
+	@Column(length=64)
 	public String getDescription() {
 		return description;
 	}
@@ -113,6 +108,7 @@ public class ContractData implements ITransferObject {
 		this.description = description;
 	}
 
+	@Column(length=64)
 	public String getConditions() {
 		return conditions;
 	}
@@ -126,7 +122,9 @@ public class ContractData implements ITransferObject {
 	 * 
 	 * @return the start date
 	 */
-	public Date getStartDate() {
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "start_date", nullable = false )
+    public Date getStartDate() {
 		return startDate;
 	}
 
@@ -144,7 +142,9 @@ public class ContractData implements ITransferObject {
 	 * 
 	 * @return the end date
 	 */
-	public Date getEndDate() {
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "end_date" )
+    public Date getEndDate() {
 		return endDate;
 	}
 
