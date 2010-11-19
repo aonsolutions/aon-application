@@ -117,6 +117,10 @@ public class Contract implements ITransferObject, ISalary {
 	 * 
 	 * @return the work place
 	 */
+	@ManyToOne
+    @JoinColumn( name="workplace", nullable = false )	
+	@ForeignKey(name = "FK_CONTRACT_WORK_PLACE")
+	@Index(name = "IDX_CONTRACT_WORK_PLACE")
 	public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
@@ -126,10 +130,6 @@ public class Contract implements ITransferObject, ISalary {
 	 * 
 	 * @param workPlace the new work place
 	 */
-	@ManyToOne
-    @JoinColumn( name="workplace", nullable = false )	
-	@ForeignKey(name = "FK_CONTRACT_WORK_PLACE")
-	@Index(name = "IDX_CONTRACT_WORK_PLACE")
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
 	}
