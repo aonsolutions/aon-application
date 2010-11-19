@@ -211,6 +211,7 @@ public class Contract implements ITransferObject, ISalary {
 		this.status = status;
 	}
 	
+	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
 	public Set<ContractPayment> getContractPayments() {
 		return this.payments;
 	}
@@ -218,6 +219,7 @@ public class Contract implements ITransferObject, ISalary {
 		this.payments = payments;
 	}
 	
+	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
 	public Set<ContractDeduction> getContractDeductions() {
 		return this.deductions;
 	}
@@ -277,6 +279,7 @@ public class Contract implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Transient
 	public String getAddress() {
 		try {
 			return getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress();
@@ -287,101 +290,104 @@ public class Contract implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Transient
 	public Date getBroadcastDate() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public String getCategory() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Double getCommonBase() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public String getEmployee() {
 		return getPerson().getRegistry().getFullName();
 	}
 
 	@Override
+	@Transient
 	public Double getExtraPayProration() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Double getIrpfBase() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Double getOvertimeBase() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Double getProfessionalBase() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Integer getRegistration() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Double getRemuneration() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public ISalary getSalary() {
 		return this;
 	}
 
 	@Override
+	@Transient
 	public Contract getContract() {
 		return this;
 	}
 
 	@Override
+	@Transient
 	public Double getTotal() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Integer getTotalDaysHours() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Double getTotalDeduction() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Double getTotalLiquid() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transient
 	public Double getTotalPayment() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -411,7 +417,7 @@ public class Contract implements ITransferObject, ISalary {
 	}
 	
 	@Override
-	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
+	@Transient
 	public Deductions getDeductions() {
 		Deductions d = new Deductions();
 		for(Object o: getContractDeductions().toArray()){
@@ -442,7 +448,7 @@ public class Contract implements ITransferObject, ISalary {
 	}
 
 	@Override
-	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
+	@Transient
 	public Payments getPayments() {
 		Payments p = new Payments();
 		p.setSalarySupplements(new LinkedList<IPayment>());
@@ -484,8 +490,8 @@ public class Contract implements ITransferObject, ISalary {
 	}
 
 	@Override
+	@Transient
 	public String getQuoteGroup() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
