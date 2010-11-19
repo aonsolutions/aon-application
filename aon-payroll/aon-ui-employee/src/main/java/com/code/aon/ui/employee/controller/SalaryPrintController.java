@@ -1,23 +1,34 @@
 package com.code.aon.ui.employee.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
@@ -26,16 +37,22 @@ import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.report.OutputFormat;
+import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.AonFile;
 
-public class SalaryPrintController {
+public class SalaryPrintController implements ICollectionProvider {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryPrintController.class);
 	
 	private static final String SUBJECT_PATTERN = "Nominas {0}";
+	
+	private static final String SALARIES_ZIP_NAME = "nominas";
 	
 	private SalaryController controller;
 	
@@ -109,6 +126,7 @@ public class SalaryPrintController {
 	}
 	
 	private void resetCriteria() throws ManagerBeanException {
+		clearChecked();
 		controller.clearCriteria();
 		Criteria criteria = controller.getCriteria();
 		String alias = controller.getFieldName(IEmployeeAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
@@ -139,6 +157,10 @@ public class SalaryPrintController {
 
 	public void clearChecked() {
 		checks = new HashSet<Integer>();
+	}
+	
+	public boolean isSelectionEmpty() {
+		return this.checks.isEmpty();
 	}
 	
 	public Enterprise getEnterprise() {
@@ -195,14 +217,68 @@ public class SalaryPrintController {
 			this.showWorkPlaces = true;
 		}
 	}	
+
+	@Override
+	public Collection<ITransferObject> getCollection() {
+		try {
+			return getCollection(false);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	@Override
+	public Collection<ITransferObject> getCollection(boolean forceRefresh)
+			throws ManagerBeanException {
+		IManagerBean bean = this.controller.getManagerBean();
+		List<ITransferObject> l = new LinkedList<ITransferObject>();
+		for( Integer id : checks ) {
+			l.add( bean.get(id) );
+		}
+		return l;
+	}
+
+	public String onPrint() {
+		ReportManager reportManager = new ReportManager();
+		reportManager.setReportKey(IEmployeeConstants.CURRENT_SALARY_REPORT);
+		reportManager.setOutputFormat(OutputFormat.PDF);
+		reportManager.setCollectionProvider( this );
+		return reportManager.onExecute();	
+	}
 	
 	private String getSubject( Enterprise enterprise ) {
 		return MessageFormat.format(SUBJECT_PATTERN, enterprise.getRegistry().getFullName() );
 	}
+	
+	private void writeSalariesZip( File file, Collection<ITransferObject> collection ) throws IOException, ReportException {
+		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
+		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
+		for (ITransferObject to : collection) {
+			Salary salary = (Salary) to;
+			String fileName = controller.getSubject(salary) + "." + MimeType.MIME_PDF.getExtension();
+       		zipOut.putNextEntry(new ZipEntry(fileName));
+       		controller.writeReport(salary, zipOut);
+        	zipOut.closeEntry();
+        }	
+		IOUtils.closeQuietly(zipOut);
+	}
+	
+	private AonFile getSalariesZipFile() throws IOException, ReportException {
+		File file = File.createTempFile( SALARIES_ZIP_NAME, "." + MimeType.MIME_ZIP.getExtension() );
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		writeSalariesZip( file, getCollection() );
+		IOUtils.closeQuietly(out);
+		AonFile aonFile = new AonFile();
+		aonFile.setFile(file);	
+		aonFile.setFileName( SALARIES_ZIP_NAME + "." + MimeType.MIME_ZIP.getExtension() );
+		return aonFile;
+	}		
 
 	public void onSendByEmail( ActionEvent event ) {
 		try {
 			MessageController messageController = controller.initMail( getSubject(enterprise), enterprise );
+			messageController.addAttachment( getSalariesZipFile() );
 			messageController.setShowNewMessageWindow(true);
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onSendByEmail ",e);
