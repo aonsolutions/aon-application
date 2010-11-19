@@ -404,43 +404,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<!--  **** CONTRACT TRACKING **** -->
-<!--  
+	<!--  **** SALARY PRINT **** -->
 	<managed-bean>
-		<managed-bean-name>contractTracking</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.controller.ContractTrackingController</managed-bean-class>
+		<managed-bean-name>salaryPrint</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.controller.SalaryPrintController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.employee.ContractTracking</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>contractTracking</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ContractTracking_date</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>contract</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>contract.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
 	</managed-bean>
--->
 
 	<!-- ************ Proceso de creacion de contratos **************** -->
 	<managed-bean>
@@ -529,6 +500,10 @@
 		<navigation-case>
 			<from-outcome>salary_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/employee/facelet/salary/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>salaryPrint_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/salaryPrint/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 	

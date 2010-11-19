@@ -22,12 +22,12 @@
 						<f:setPropertyActionListener
 							target="#{enterprise.backAction}" value="enterprise_formTree" />						
 					</aon:commandButton>
-					<aon:commandButton id="back"
-						title="#{bundle.aon_key_cancel_accelerator}"
-						value="#{bundle.aon_back}" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						action="enterprise_list"
-						accesskey="#{bundle.aon_key_cancel}" />
+					<aon:commandButton id="salary"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{employeeBundle.employee_salary_module}"
+						actionListener="#{salaryPrint.onInit}"
+						action="salaryPrint_list">
+					</aon:commandButton>						
 					<aon:commandButton id="calendar"
 						value="#{calendarBundle.aon_calendar_calendar}"
 						action="calendar_form" 
@@ -39,7 +39,12 @@
 							value="#{enterprise.to.registry.id}" />
 						<aon:actionListener method="#{calendar.onInitialize}" />
 					</aon:commandButton>	
-										
+					<aon:commandButton id="back"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						action="enterprise_list"
+						accesskey="#{bundle.aon_key_cancel}" />										
 					<aon:spin id="enterpriseSpin" controller="#{enterprise}" />
 				</ui:define>				
 			</ui:decorate>

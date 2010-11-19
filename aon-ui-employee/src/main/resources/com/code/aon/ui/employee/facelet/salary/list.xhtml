@@ -16,10 +16,14 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<ui:include src="/com/code/aon/ui/employee/facelet/salary/listContent.xhtml" >
-					<ui:param name="controller" value="#{salary}" />
-					<ui:param name="skipStartDateColumn" value="true" />
-				</ui:include>
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:define name="columns">
+						<ui:include src="/com/code/aon/ui/employee/facelet/salary/listContent.xhtml" >
+							<ui:param name="controller" value="#{salary}" />
+							<ui:param name="skipStartDateColumn" value="true" />
+						</ui:include>						
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 			
 		</aon:form>
