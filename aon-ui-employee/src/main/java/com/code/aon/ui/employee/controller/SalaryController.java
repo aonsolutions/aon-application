@@ -34,7 +34,7 @@ public class SalaryController extends BasicController {
 	
 	private static final String SALARY_PATTERN = "Nomina {0} ({1,date,dd.MM.yyyy}-{2,date,dd.MM.yyyy})";
 
-	private String getSubject( Salary salary ) {
+	public String getSubject( Salary salary ) {
 		String name = salary.getContract().getPerson().getFullName();
 		return MessageFormat.format(SALARY_PATTERN, name, salary.getStartDate(), salary.getEndDate());
 	}
@@ -44,7 +44,7 @@ public class SalaryController extends BasicController {
 		CompanyEmailUtil.initMessageController(messageController, emails);
 	}
 	
-	private void writeReport( Salary salary, OutputStream out ) throws ReportException {
+	public void writeReport( Salary salary, OutputStream out ) throws ReportException {
 		ReportManager reportManager = new ReportManager();
 		reportManager.setOutputFormat(OutputFormat.PDF);
 		reportManager.setCollectionProvider( new SingleCollectionProvider(salary) );
