@@ -1,13 +1,18 @@
 package com.code.aon.ui.employee.controller;
 
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -24,8 +29,13 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MessageController;
 
 public class SalaryPrintController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryPrintController.class);
+	
+	private static final String SUBJECT_PATTERN = "Nominas {0}";
 	
 	private SalaryController controller;
 	
@@ -131,6 +141,10 @@ public class SalaryPrintController {
 		checks = new HashSet<Integer>();
 	}
 	
+	public Enterprise getEnterprise() {
+		return enterprise;
+	}
+
 	public boolean isShowWorkPlaces() {
 		return showWorkPlaces;
 	}
@@ -179,6 +193,21 @@ public class SalaryPrintController {
 				workPlaces.add(new SelectItem(workPlace, workPlace.getDescription()));
 			}
 			this.showWorkPlaces = true;
+		}
+	}	
+	
+	private String getSubject( Enterprise enterprise ) {
+		return MessageFormat.format(SUBJECT_PATTERN, enterprise.getRegistry().getFullName() );
+	}
+
+	public void onSendByEmail( ActionEvent event ) {
+		try {
+			MessageController messageController = controller.initMail( getSubject(enterprise), enterprise );
+			messageController.setShowNewMessageWindow(true);
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onSendByEmail ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}	
 	

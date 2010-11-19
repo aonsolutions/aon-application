@@ -39,8 +39,7 @@ public class SalaryController extends BasicController {
 		return MessageFormat.format(SALARY_PATTERN, name, salary.getStartDate(), salary.getEndDate());
 	}
 
-	private void setRecipients( MessageController messageController, Salary salary ) throws ManagerBeanException {
-		Enterprise enterprise = salary.getContract().getWorkPlace().getEnterprise();
+	private void setRecipients( MessageController messageController, Enterprise enterprise ) throws ManagerBeanException {
 		String[] emails = CompanyEmailUtil.getEmails(enterprise.getRegistry());			
 		CompanyEmailUtil.initMessageController(messageController, emails);
 	}
@@ -64,20 +63,26 @@ public class SalaryController extends BasicController {
 		return aonFile;
 	}	
 	
-	public void onSendByEmail( ActionEvent event ) {
-		Salary salary = (Salary) getTo();
+	public MessageController initMail( String subject, Enterprise enterprise ) throws ManagerBeanException {
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
-		messageController.setSubject( getSubject(salary) );
+		messageController.setSubject( subject );
+		setRecipients(messageController, enterprise);
+		return messageController;
+	}
+	
+	public void onSendByEmail( ActionEvent event ) {
+		Salary salary = (Salary) getTo();
+		Enterprise enterprise = salary.getContract().getWorkPlace().getEnterprise();
 		try {
-			setRecipients(messageController, salary);
+			MessageController messageController = initMail( getSubject(salary), enterprise );
 			messageController.addAttachment( getSalaryFile(salary) );
+			messageController.setShowNewMessageWindow(true);
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onSendByEmail ",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		messageController.setShowNewMessageWindow(true);
 	}
 
 }
