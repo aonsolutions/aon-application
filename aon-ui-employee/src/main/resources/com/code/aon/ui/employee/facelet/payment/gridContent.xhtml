@@ -29,7 +29,7 @@
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.payments.baseSalary.amount}">
+				<aon:outputText value="#{controller.baseSalary.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
@@ -39,7 +39,7 @@
 			</aon:div>
 			<aon:outputText value="&#160;"/>
 		
-			<c:forEach items="#{controller.payments.salarySupplements}" var="to">
+			<c:forEach items="#{controller.salarySupplements.values}" var="to">
 				<aon:div style="margin-left: 30px; border-bottom: solid #CCCCCC 1px;">
 					<aon:outputText value="#{to.description}"/>
 				</aon:div>
@@ -56,7 +56,7 @@
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.payments.overtimeHours.amount}">
+				<aon:outputText value="#{controller.overtimeHours.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
@@ -66,7 +66,7 @@
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.payments.specialBonuses.amount}">
+				<aon:outputText value="#{controller.specialBonuses.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
@@ -76,7 +76,7 @@
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.payments.salaryInKind.amount}">
+				<aon:outputText value="#{controller.salaryInKind.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
@@ -91,7 +91,7 @@
 			</aon:div>
 			<aon:outputText value="&#160;"/>
 
-			<c:forEach items="#{controller.payments.complementarySuply}" var="to">
+			<c:forEach items="#{controller.compensationOrPrepaidExpenses.values}" var="to">
 				<aon:div style="margin-left: 30px; border-bottom: solid #CCCCCC 1px;">
 					<aon:outputText value="#{to.description}"/>
 				</aon:div>
@@ -108,7 +108,7 @@
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.payments.specialSecurityBenefits.amount}">
+				<aon:outputText value="#{controller.specialSecurityBenefits.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
@@ -118,7 +118,7 @@
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.payments.movingCompensation.amount}">
+				<aon:outputText value="#{controller.movingCompensation.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
@@ -128,7 +128,7 @@
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.payments.otherNonWage.amount}">
+				<aon:outputText value="#{controller.otherNonWage.amount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
