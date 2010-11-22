@@ -10,15 +10,17 @@
 		<ui:param name="controller" value="#{lookup}"/>
 	</c:if>
 
-	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
-		<ui:param name="skipId" value="true"/>
-		<ui:define name="dataPanel">
+	<aon:panelGrid columns="2"
+		columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
+
+		<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
+			<ui:param name="skipId" value="true"/>
+		</ui:decorate>
 
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
 			<ui:param name="controllerLookupListener" value="#{enterpriseForm}"/>
 		</ui:include>
 		
-		</ui:define>
-	</ui:decorate>
+	</aon:panelGrid>
 
 </ui:composition>
