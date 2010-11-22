@@ -51,7 +51,7 @@ public class ContractController extends BasicController {
 	
 	private List<SelectItem> workPlaces;
 	
-	private List<SelectItem> CCCs;
+	private List<SelectItem> EnterpriseCccs;
 	
 	private double totalPayment;
 	private double totalDeduction;
@@ -86,7 +86,7 @@ public class ContractController extends BasicController {
 	
 	public ContractController() {
 		this.workPlaces = new LinkedList<SelectItem>();
-		this.CCCs = new LinkedList<SelectItem>();
+		this.EnterpriseCccs = new LinkedList<SelectItem>();
 	}
 
 	public Enterprise getEnterprise() {
@@ -97,13 +97,13 @@ public class ContractController extends BasicController {
 		this.enterprise = enterprise;
 		if ( isEnterpriseSelected() ) {
 			try {
-				this.CCCs = loadCCCs();
+				this.EnterpriseCccs = loadCCCs();
 				this.workPlaces = loadWorkPlaces();
 			} catch (ManagerBeanException e) {
 				LOGGER.error( "Error in setEnterprise " + enterprise, e);
 			}			
 		} else {
-			this.CCCs.clear();
+			this.EnterpriseCccs.clear();
 			this.workPlaces.clear();
 		}
 	}
@@ -116,8 +116,8 @@ public class ContractController extends BasicController {
 		return workPlaces;
 	}
 
-	public List<SelectItem> getCCCs() {
-		return CCCs;
+	public List<SelectItem> getEnterpriseCccs() {
+		return EnterpriseCccs;
 	}
 
 	public void onEnterpriseChanged( LookupChangeEvent event ) {

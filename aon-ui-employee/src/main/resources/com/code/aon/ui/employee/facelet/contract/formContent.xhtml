@@ -13,7 +13,7 @@
 		<aon:div styleClass="aon-lookup">
 			<aon:lookupInputText id="Enterprise_id" rendered="#{contract.new}"
 				lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
-				reRender="Enterprise_full_name,Contract_workPlace_id,Contract_ccc_id"
+				reRender="Enterprise_full_name,Contract_workPlace_id,Contract_enterpriseCcc_id"
 				value="#{contract.enterprise.id}" size="5" />
 			<aon:lookupButton rendered="#{contract.new}"
 				windowTitle="#{companyBundle.company_enterprise_selection}"
@@ -34,11 +34,11 @@
 			<f:selectItems value="#{contract.workPlaces}" />
 		</aon:selectOneMenu>
 			
-		<aon:outputLabel for="Contract_ccc_id"
+		<aon:outputLabel for="Contract_enterpriseCcc_id"
 			value="#{companyBundle.company_enterprise_ccc}" />
 		<aon:selectOneMenu id="Contract_ccc_id" required="true"
-			value="#{contract.to.ccc}" disabled="#{!contract.enterpriseSelected}">
-			<f:selectItems value="#{contract.CCCs}" />
+			value="#{contract.to.enterpriseCCC}" disabled="#{!contract.enterpriseSelected}">
+			<f:selectItems value="#{contract.enterpriseCccs}" />
 		</aon:selectOneMenu>						
 						
 		<aon:outputLabel for="Person_id"
