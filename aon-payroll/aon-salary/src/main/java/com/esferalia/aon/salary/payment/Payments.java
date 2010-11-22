@@ -4,6 +4,7 @@ package com.esferalia.aon.salary.payment;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
 
@@ -95,4 +96,19 @@ public class Payments {
 	private void put(PaymentType type, IPayment p) {
 		map.put(type,p);
 	}
+
+	public Double getTotal() {
+		double total = 0;
+		for (IPayment d: map.values()) {
+			total = CommonUtil.round( total + d.getAmount());	
+		}
+		for (IPayment d: getSalarySupplements().getValues()) {
+			total = CommonUtil.round( total + d.getAmount());	
+		}
+		for (IPayment d: getCompensationOrPrepaidExpenses().getValues()) {
+			total = CommonUtil.round( total + d.getAmount());	
+		}
+		return total;  
+	}
+	
 }
