@@ -111,11 +111,11 @@
 							<ui:param name="controller" value="#{salary}" />
 						</ui:include>
 						<ui:include src="/com/code/aon/ui/employee/facelet/payment/gridContent.xhtml" >
-							<ui:param name="controller" value="#{salaryPayment}" />
+							<ui:param name="controller" value="#{salary.to.payments}" />
 							<ui:param name="totalPayment" value="#{salary.to.totalPayment}" />
 						</ui:include>
 						<ui:include src="/com/code/aon/ui/employee/facelet/deduction/gridContent.xhtml" >
-							<ui:param name="controller" value="#{salaryDeduction}" />
+							<ui:param name="controller" value="#{salary.to.deductions}" />
 							<ui:param name="totalDeduction" value="#{salary.to.totalDeduction}" />
 						</ui:include>
 						<ui:include src="/com/code/aon/ui/employee/facelet/salary/formBases.xhtml" >

@@ -21,38 +21,38 @@
 
 			<aon:div style="background-color: #F6F6F6;" styleClass="aon-border aon-padding">
 				<aon:div styleClass="aon-bold">
-					<aon:outputText value="#{controller.to.contract.workPlace.enterprise.registry.fullName}"/>
+					<aon:outputText value="#{controller.to.enterpriseName}"/>
 				</aon:div>
 				<aon:div styleClass="aon-italic">
 					<aon:outputText value="#{companyBundle.company_workplace_address}:"/>
 				</aon:div>
 				<aon:div styleClass="aon-bold">
-					<aon:outputText styleClass="aon-margin-left" value="#{controller.to.address}"/>
+					<aon:outputText styleClass="aon-margin-left" value="#{controller.to.enterpriseAddress}"/>
 				</aon:div>
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{bundle.aon_company_document}:"/>
 					<aon:outputText styleClass="aon-margin-left aon-bold" 
-						value="#{controller.to.contract.workPlace.enterprise.registry.document}" />
+						value="#{controller.to.enterpriseDocument}" />
 				</aon:div>
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{employeeBundle.employee_salary_ccc}:"/>
-					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.contract.ccc.CCC}" />
+					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.ccc}" />
 				</aon:div>
 			</aon:div>
 
 			<aon:div style="background-color: #F6F6F6;" styleClass="aon-border aon-padding">
 				<aon:div styleClass="aon-bold">
-					<aon:outputText value="#{controller.to.contract.person.fullName}"/>
+					<aon:outputText value="#{controller.to.employeeName}"/>
 				</aon:div>
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{bundle.aon_person_document}:"/>
-					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.contract.person.registry.document}" />
+					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.employeeDocument}" />
 					<aon:outputText styleClass="aon-margin-left aon-italic" value="#{employeeBundle.employee_salary_registration}:"/>
 					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.registration}" />
 				</aon:div>
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{employeeBundle.employee_salary_ss_number}:"/>
-					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.contract.person.socialSecurityNumber}" />
+					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.socialSecurityNumber}" />
 				</aon:div>
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{employeeBundle.employee_salary_category}:"/>
@@ -62,7 +62,7 @@
 					<aon:outputText styleClass="aon-italic" value="#{employeeBundle.employee_salary_group_category}:"/>
 					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.quoteGroup}"/>
 					<aon:outputText styleClass="aon-margin-left aon-italic" value="#{employeeBundle.employee_salary_seniority_date}:"/>
-					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.contract.startDate}">
+					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.to.seniorityDate}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
 				</aon:div>
@@ -86,7 +86,7 @@
 			</aon:outputText>
 			
 			<aon:outputText styleClass="aon-margin-left aon-italic" value="#{employeeBundle.employee_salary_days}:"/>
-			<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" value="#{controller.to.totalDaysHours}"/>
+			<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" value="#{controller.to.timeUnits}"/>
 		</aon:div>
 
 </ui:composition>
