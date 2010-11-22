@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -162,6 +163,9 @@ public class ContractPayment implements ITransferObject, IPayment {
 	@Override
 	@Transient
 	public double getAmount() {
+		if (NumberUtils.isNumber(getFunction()) ) {
+			return NumberUtils.toDouble(getFunction());	
+		}
 		return 0;
 	}
 	

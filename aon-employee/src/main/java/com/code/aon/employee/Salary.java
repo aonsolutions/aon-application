@@ -484,9 +484,12 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 		if (deductions == null) {
 			DeductionsFactoryManager manager =  DeductionsFactoryManager.getInstance();
 			IDeductionsFactory factory = manager.getFactory( getDeductionsFactoryContext() );
-			deductions = factory.getDeductions(getDeductionsFactoryContext());
+			setDeductions( factory.getDeductions(getDeductionsFactoryContext()));
 		}
 		return deductions;
+	}
+	public void setDeductions(Deductions deductions) throws SalaryException {
+		this.deductions = deductions;
 	}
 
 	@Transient
@@ -495,9 +498,12 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 		if (payments == null) {
 			PaymentsFactoryManager manager =  PaymentsFactoryManager.getInstance();
 			IPaymentsFactory factory = manager.getFactory( getPaymentsFactoryContext() );
-			payments = factory.getPayments(getPaymentsFactoryContext());
+			setPayments(factory.getPayments(getPaymentsFactoryContext()));
 		}
 		return payments;
+	}
+	public void setPayments(Payments payments) throws SalaryException {
+		this.payments = payments;
 	}
 	
 	@Transient
