@@ -21,6 +21,10 @@ public interface IRegistryConstants {
 	
 	String REGISTRY_ADD_INFO = "registry_addInfo";
 	
+	String REGISTRY_PHONE = "registry_phone";
+	
+	String REGISTRY_FAX = "registry_fax";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************
