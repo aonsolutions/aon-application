@@ -99,25 +99,17 @@
 							</aon:div>
 						</aon:div>
 					</aon:panelGrid>
-					<aon:panelGrid id="group_convention_payroll"
+					<aon:panelGrid id="group_agreement_payroll"
 						styleClass="aon-width-all" columnClasses="aon-padding"
 						headerClass="aon-icon-config aon-direct-access-panel">
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.convention_menu_group}"/>
+							<aon:outputText value="#{appBundle.agreement_menu_group}"/>
 						</f:facet>					
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="convention"
-									disabled="true" 
-									action="contract_search" actionListener="#{contract.onEditSearch}"
-									value="Convenios -i18n-">
-								</aon:commandLink>
-							</aon:div>	
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="category" 
-									disabled="true" 
-									action="contract_search" actionListener="#{contract.onEditSearch}"
-									value="Categorias -i18n-">
+								<aon:commandLink id="agreement"
+									action="agreement_search" actionListener="#{agreement.onEditSearch}"
+									value="#{employeeBundle.employee_agreement_module}">
 								</aon:commandLink>
 							</aon:div>	
 						</aon:div>
