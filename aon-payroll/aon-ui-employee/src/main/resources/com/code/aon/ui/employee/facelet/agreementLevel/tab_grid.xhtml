@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:define name="columns">
+		
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="AgreementLevel_type" value="#{employeeBundle.employee_agreementLevel_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.type}" rendered="#{formList}" />
+				<aon:inputText id="AgreementLevel_type"
+					value="#{controller.to.type}"
+					rendered="#{formEdit}" required="true" maxlength="4" size="4" />
+				<f:facet name="footer">
+					<aon:inputText id="AgreementLevel_type-New"
+						value="#{controller.to.type}"
+						rendered="#{formNew}" required="true" maxlength="4" size="4" />
+				</f:facet>
+			</aon:column>
+		
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="AgreementLevel_function" value="#{employeeBundle.employee_agreementLevel_function}" />
+				</f:facet>
+				<aon:outputText value="#{to.function}" rendered="#{formList}" />
+				<aon:inputText id="AgreementLevel_function"
+					value="#{controller.to.function}"
+					rendered="#{formEdit}" required="true" maxlength="128" size="50" />
+				<f:facet name="footer">
+					<aon:inputText id="AgreementLevel_function-New"
+						value="#{controller.to.function}"
+						rendered="#{formNew}" required="true" maxlength="128" size="50" />
+				</f:facet>
+			</aon:column>
+		
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="AgreementLevel_description" value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" rendered="#{formList}" />
+				<aon:inputText id="AgreementLevel_description"
+					value="#{controller.to.description}"
+					rendered="#{formEdit}" required="true" maxlength="64" size="30" />
+				<f:facet name="footer">
+					<aon:inputText id="AgreementLevel_description-New"
+						value="#{controller.to.description}"
+						rendered="#{formNew}" required="true" maxlength="64" size="30" />
+				</f:facet>
+			</aon:column>
+		
+		
+<!--  
+	private Integer id;
+	private Agreement agreement;
+	private Integer type;
+	private String function;
+	private String description;
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="EnterpriseActivity_type"
+						value="#{bundle.aon_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.type}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="EnterpriseActivity_type" required="true"
+					value="#{controller.to.type}" rendered="#{formEdit}">
+					<f:selectItems value="#{companyCollections.enterpriseActivityTypes}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="EnterpriseActivity_type-New" required="true"
+						value="#{controller.to.type}" rendered="#{formNew}">
+						<f:selectItems value="#{companyCollections.enterpriseActivityTypes}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+-->
+
+			
+		</ui:define>
+		
+	</ui:decorate>
+</ui:composition>
