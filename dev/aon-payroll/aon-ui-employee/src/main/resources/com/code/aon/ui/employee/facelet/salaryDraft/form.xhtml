@@ -54,7 +54,7 @@
 						<aon:outputText value="#{employeeBundle.employee_salary_payment}" />
 					</aon:div>
 				</aon:div>
-				<ui:include src="/com/code/aon/ui/employee/facelet/payment/gridContent.xhtml" >
+				<ui:include src="/com/code/aon/ui/employee/facelet/payment/editGridContent.xhtml" >
 					<ui:param name="controller" value="#{contractPayment}" />
 					<ui:param name="skipAmountColumn" value="true" />
 				</ui:include>
@@ -63,7 +63,7 @@
 						<aon:outputText value="#{employeeBundle.employee_salary_deduction}" />
 					</aon:div>
 				</aon:div>
-				<ui:include src="/com/code/aon/ui/employee/facelet/deduction/gridContent.xhtml" >
+				<ui:include src="/com/code/aon/ui/employee/facelet/deduction/editGridContent.xhtml" >
 					<ui:param name="controller" value="#{contractDeduction}" />
 					<ui:param name="skipAmountColumn" value="true" />
 				</ui:include>
