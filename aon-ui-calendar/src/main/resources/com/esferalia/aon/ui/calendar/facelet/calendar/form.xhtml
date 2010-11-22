@@ -17,6 +17,7 @@
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:param name="skipSpin" value="true" />
 				<ui:define name="beforeSpinToolbarContent">
+<!--  
 					<aon:htmlCommandLink id="export2pdf" value="#{calendarBundle.aon_calendar_calendar}"
 						rendered="#{!calendar.new}"
 						title="Listado Pdf" actionListener="#{calendar.onInitCalendar}"
@@ -25,23 +26,89 @@
 						<f:param name="reportKey" value="yearStatsList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
+-->				
 				</ui:define>
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-<!--  
-				<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/sourceHeader.xhtml" />
--->
 				
 				<h:panelGrid columns="3">
 					<aon:div styleClass="aon-scroll-area">
-						<aon:panelGrid columns="2">
+						<aon:panelGrid columns="2" id="calendar_data">
 					
 							<aon:outputText rendered="#{!calendar.new}"
-								value="#{calendar.to.source}" />
+								value="#{companyBundle.company_enterprise}" />
 							<aon:outputText rendered="#{!calendar.new}"
-								value="#{calendar.sourceFullName}" />
+								value="#{calendar.enterprise.registry.fullName}" />
 							
+							<aon:outputText rendered="#{!calendar.new and calendar.workPlace!=null}"
+								value="#{companyBundle.company_workplace}" />
+							<aon:outputText rendered="#{!calendar.new and calendar.workPlace!=null}"
+								value="#{calendar.workPlace.description}" />
+							
+							<aon:outputText rendered="#{!calendar.new and calendar.contract!=null}"
+								value="#{employeeBundle.employee_contract}" />
+							<aon:outputText rendered="#{!calendar.new and calendar.contract!=null}"
+								value="#{calendar.contract.person.fullName}" />
+							
+							<aon:outputLabel for="Enterprise_id"
+								rendered="#{calendar.new}"
+								value="#{companyBundle.company_enterprise}" />
+							<aon:div styleClass="aon-lookup" rendered="#{calendar.new}">
+								<aon:lookupInputText id="Enterprise_id" rendered="#{calendar.new}"
+									lookup="#{enterpriseLookup}" lookupChangeListener="#{calendar.onEnterpriseChanged}"
+									reRender="Enterprise_full_name,calendar_data"
+									value="#{calendar.enterprise.id}" size="5" />
+								<aon:lookupButton rendered="#{calendar.new}"
+									windowTitle="#{companyBundle.company_enterprise_selection}"
+									selectReRender="Enterprise_id,Enterprise_full_name,calendar_data"
+									lookup="#{enterpriseLookup}" lookupChangeListener="#{calendar.onEnterpriseChanged}"
+									minHeight="460" minWidth="650" actionType="search"
+									property="#{calendar.enterprise}">
+								</aon:lookupButton>
+								<aon:inputText id="Enterprise_full_name" rendered="#{calendar.new}"
+									value="#{(calendar.enterprise.registry.fullName!=null)?(calendar.enterprise.registry.fullName):('')}"
+									size="50" disabled="true" />							
+							</aon:div>
+							
+							<aon:outputLabel for="workPlace"
+							rendered="#{calendar.new}"
+								value="#{companyBundle.company_workplace}" />
+							<aon:selectOneMenu id="workPlace"
+								rendered="#{calendar.new}" 
+								disabled="#{calendar.enterprise==null or calendar.enterprise.id==null}"
+								value="#{calendar.workPlace}" >
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{calendar.workPlaces}" />
+								<a4j:support event="onchange" reRender="calendar_data" >
+									<aon:actionListener method="#{calendar.onWorkPlaceChanged}" />
+								</a4j:support>
+							</aon:selectOneMenu>
+						
+							<aon:outputLabel for="Contract_id"
+								rendered="#{calendar.new}"
+								value="#{employeeBundle.employee_contract}" />
+							<aon:div styleClass="aon-lookup" rendered="#{calendar.new}">
+								<aon:lookupInputText id="Contract_id" rendered="#{calendar.new}"
+									disabled="#{calendar.workPlace==null or calendar.workPlace.id==null}"
+									lookup="#{contractLookup}" lookupChangeListener="#{calendar.onContractChanged}"
+									reRender="Enterprise_full_name"
+									value="#{calendar.contract.id}" size="5" />
+								<aon:lookupButton rendered="#{calendar.new}"
+									disabled="#{calendar.workPlace==null or calendar.workPlace.id==null}"
+									windowTitle="#{employeeBundle.employee_contract_selection}"
+									selectReRender="Contract_id,Contract_full_name"
+									lookup="#{contractLookup}" lookupChangeListener="#{calendar.onContractChanged}"
+									minHeight="460" minWidth="650" actionType="list"
+									property="#{calendar.contract}">
+								</aon:lookupButton>
+								<aon:inputText id="Contract_full_name" rendered="#{calendar.new}"
+									value="#{(calendar.contract.person.fullName!=null)?(calendar.contract.person.fullName):('')}"
+									size="50" disabled="true" />							
+							</aon:div>
+								
+								
+<!--  
 							<aon:outputLabel rendered="#{calendar.new}"
 								value="#{calendarBundle.aon_calendar_entity}" />
 							<aon:selectOneMenu id="calendarSource"
@@ -50,6 +117,7 @@
 								<f:selectItem itemLabel="-" value="#{null}" />
 								<f:selectItems value="#{calendarCollections.calendarSources}" />
 							</aon:selectOneMenu>
+-->							
 							
 							<aon:outputLabel value="#{bundle.aon_year}" />
 							<rich:inputNumberSpinner value="#{calendar.year}" 
@@ -64,19 +132,7 @@
 					
 							<aon:outputLabel value="#{calendarBundle.aon_calendar_calendar}" />
 							<aon:inputText id="Calendar_description" size="40" maxlength="32"
-								value="#{calendar.to.description}" required="true" />
-<!--  
-							<aon:outputLabel value="#{bundle.aon_year}" />
-							<rich:inputNumberSpinner value="#{calendar.year}" 
-								inputSize="4" minValue="2010" maxValue="2100"
-								enableManualInput="true" step="1"
-								ignoreDupResponses="true"
-								cycled="false"  style="width:5px;height:5px;" >
-								<a4j:support event="onchange" reRender="tabPanel"
-									actionListener="#{calendar.onChangeYear}"
-									ignoreDupResponses="true" />
-							</rich:inputNumberSpinner>
--->							
+								value="#{calendar.to.description}"  />
 							
 							<aon:outputLabel
 								value="#{calendarBundle.aon_calendar_anual_hours}" />
@@ -204,10 +260,10 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{holidayLookup}" />
-<!--  
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+<!--  
 		<aon:lookupButtonPopup lookup="#{workplaceLookup}" />
-		<aon:lookupButtonPopup lookup="#{contractLookup}" />
 -->		
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
 	</ui:define>
 </ui:composition>
