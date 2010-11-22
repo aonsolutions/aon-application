@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -46,11 +45,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.AonFile;
 
-public class SalaryPrintController implements ICollectionProvider {
+public class SalaryPrintController implements ICollectionProvider, IEmployeeConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryPrintController.class);
-	
-	private static final String SUBJECT_PATTERN = "Nominas {0}";
 	
 	private static final String SALARIES_ZIP_NAME = "nominas";
 	
@@ -241,22 +238,17 @@ public class SalaryPrintController implements ICollectionProvider {
 
 	public String onPrint() {
 		ReportManager reportManager = new ReportManager();
-		reportManager.setReportKey(IEmployeeConstants.CURRENT_SALARY_REPORT);
+		reportManager.setReportKey(CURRENT_SALARY_REPORT);
 		reportManager.setOutputFormat(OutputFormat.PDF);
 		reportManager.setCollectionProvider( this );
 		return reportManager.onExecute();	
 	}
 	
-	private String getSubject( Enterprise enterprise ) {
-		return MessageFormat.format(SUBJECT_PATTERN, enterprise.getRegistry().getFullName() );
-	}
-	
-	private void writeSalariesZip( File file, Collection<ITransferObject> collection ) throws IOException, ReportException {
+	private void writeSalariesZip( File file, Collection<Salary> collection ) throws IOException, ReportException {
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
-		for (ITransferObject to : collection) {
-			Salary salary = (Salary) to;
-			String fileName = controller.getSubject(salary) + "." + MimeType.MIME_PDF.getExtension();
+		for (Salary salary : collection) {
+			String fileName = controller.getFileName(salary) + "." + MimeType.MIME_PDF.getExtension();
        		zipOut.putNextEntry(new ZipEntry(fileName));
        		controller.writeReport(salary, zipOut);
         	zipOut.closeEntry();
@@ -264,10 +256,10 @@ public class SalaryPrintController implements ICollectionProvider {
 		IOUtils.closeQuietly(zipOut);
 	}
 	
-	private AonFile getSalariesZipFile() throws IOException, ReportException {
+	private AonFile getSalariesZipFile( Collection<Salary> salaries ) throws IOException, ReportException {
 		File file = File.createTempFile( SALARIES_ZIP_NAME, "." + MimeType.MIME_ZIP.getExtension() );
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-		writeSalariesZip( file, getCollection() );
+		writeSalariesZip( file, salaries );
 		IOUtils.closeQuietly(out);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
@@ -277,8 +269,9 @@ public class SalaryPrintController implements ICollectionProvider {
 
 	public void onSendByEmail( ActionEvent event ) {
 		try {
-			MessageController messageController = controller.initMail( getSubject(enterprise), enterprise );
-			messageController.addAttachment( getSalariesZipFile() );
+			Collection<Salary> salaries = (Collection) getCollection();
+			MessageController messageController = controller.initMail( enterprise, salaries );
+			messageController.addAttachment( getSalariesZipFile(salaries) );
 			messageController.setShowNewMessageWindow(true);
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onSendByEmail ",e);
