@@ -5,15 +5,13 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
-
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-		<ui:param name="controller" value="#{contract}" />
-		<ui:define name="columns">
 		
-			<ui:include 
-				src="/com/code/aon/ui/employee/facelet/contract/listBasic.xhtml" />
-
-		</ui:define>
-	</ui:decorate>
+	<ui:include 
+		src="/com/code/aon/ui/employee/facelet/contract/listBasic.xhtml" >
+		<ui:param name="skipWorkPlaceColumn" value="true" />
+		<ui:param name="skipEnterpriseColumn" value="true" />
+		<ui:param name="skipModelColumn" value="true" />
+		<ui:param name="skipDocumentColumn" value="true" />
+	</ui:include>
 
 </ui:composition>

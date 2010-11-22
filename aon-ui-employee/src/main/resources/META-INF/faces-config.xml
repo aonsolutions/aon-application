@@ -282,6 +282,41 @@
 	<!-- ======================= LOOKUPS ========================== -->
 	<!-- ========================================================== -->
 	
+	<!-- ************ CONTRACT LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>contractLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.employee.Contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Contract_person_firstSurname,Contract_person_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/employee/facelet/contract/listBasicLookup.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractLookupList}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>contractLookupList</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.event.ContractListListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
 	<!-- ************ CONTRACT TYPE LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>contractTypeLookup</managed-bean-name>
