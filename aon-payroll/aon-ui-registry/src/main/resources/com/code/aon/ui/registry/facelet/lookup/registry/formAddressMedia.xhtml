@@ -5,43 +5,62 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:outputLabel for="Company_address" 
-		value="#{registryBundle.registry_address}" />
-	<aon:inputText id="Company_address"
-		value="#{controllerLookupListener.mainAddress.address}" size="64" maxlength="128"/>
+	<aon:valueParam name="preffix" default="#{controllerLookupListener.controller.pojoShortName}_"/>
 
-	<aon:outputLabel for="Company_address_city" 
+	<aon:outputLabel for="#{preffix}address" value="#{registryBundle.registry_address}" />
+	<aon:div>
+		<aon:selectOneMenu id="#{preffix}streetType"
+			value="#{controllerLookupListener.mainAddress.streetType}">
+			<f:selectItem value="#{null}" itemLabel="-"/>
+			<f:selectItems value="#{registryCollections.streetTypes}" />
+		</aon:selectOneMenu>
+		<aon:inputText id="#{preffix}address" style="margin-left: 5px;"
+			value="#{controllerLookupListener.mainAddress.address}" maxlength="128" size="32" />
+		<aon:outputLabel for="#{preffix}number" styleClass="aon-italic aon-margin-left"
+			value="#{bundle.aon_number}" />
+		<aon:inputText id="#{preffix}number" style="margin-left: 5px;"
+			value="#{controllerLookupListener.mainAddress.number}" maxlength="8" size="5" />
+	</aon:div>
+
+	<aon:outputLabel for="#{preffix}address2" value="#{registryBundle.registry_address_detail}" />
+	<aon:div>
+		<aon:inputText id="#{preffix}address2" value="#{controllerLookupListener.mainAddress.address2}" 
+			style="display:block" maxlength="128" size="64" />
+		<aon:inputText id="#{preffix}address3" value="#{controllerLookupListener.mainAddress.address3}" 
+			style="margin-top: 3px" maxlength="128" size="64" />
+	</aon:div>
+
+	<aon:outputLabel for="#{preffix}address_city" 
 		value="#{registryBundle.registry_city}" />
-	<aon:inputText id="Company_address_city" 
+	<aon:inputText id="#{preffix}address_city" 
 		value="#{controllerLookupListener.mainAddress.city}" size="64" maxlength="64"/>
 		
-	<aon:outputLabel for="Company_address_zip" 
+	<aon:outputLabel for="#{preffix}address_zip" 
 		value="#{registryBundle.registry_zip}" />
-	<aon:inputText id="Company_address_zip" 
+	<aon:inputText id="#{preffix}address_zip" 
 		value="#{controllerLookupListener.mainAddress.zip}" size="32" maxlength="16"/>
 		
-	<aon:outputLabel for="Company_address_geozone" 
+	<aon:outputLabel for="#{preffix}address_geozone" 
 		value="#{registryBundle.registry_geozone}" />
-	<aon:selectOneMenu id="Company_address_geozone"
+	<aon:selectOneMenu id="#{preffix}address_geozone"
 		value="#{controllerLookupListener.mainAddress.geozone}">
 		<f:selectItems value="#{geozoneCollections.geoTrees}" />
 	</aon:selectOneMenu>
 	
-	<aon:outputLabel for="Company_telephone" 
-		value="#{registryBundle.registry_phone}" />
-	<aon:inputText id="Company_telephone" 
+	<aon:outputLabel for="#{preffix}telephone" value="#{registryBundle.registry_phone}" />
+	<aon:inputText id="#{preffix}telephone" 
 		value="#{controllerLookupListener.phone.value}" size="32" maxlength="64"/>
 		
-	<aon:outputLabel 
-		for="Company_fax" 
-		value="#{registryBundle.registry_fax}" />
-	<aon:inputText  id="Company_fax"
+	<aon:outputLabel for="#{preffix}fax" value="#{registryBundle.registry_fax}" />
+	<aon:inputText id="#{preffix}fax"
 		value="#{controllerLookupListener.fax.value}" size="32" maxlength="64"/>
 		
-	<aon:outputLabel 
-		for="Company_email" 
-		value="#{registryBundle.registry_email}" />
-	<aon:inputText id="Company_email" 
+	<aon:outputLabel for="#{preffix}email" value="#{registryBundle.registry_email}" />
+	<aon:inputText id="#{preffix}email" 
 		value="#{controllerLookupListener.email.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
 
+	<aon:outputLabel for="#{preffix}web" value="#{registryBundle.registry_web}" />
+	<aon:inputText id="#{preffix}web"
+		value="#{controllerLookupListener.web.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
+			
 </ui:composition>
