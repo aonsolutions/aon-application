@@ -29,11 +29,16 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.employee.calculator.ContractSalaryCalculator;
 import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractStatus;
 import com.code.aon.person.Person;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculator;
+import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
+import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
 import com.esferalia.aon.salary.payment.PaymentsFactoryManager;
 
@@ -42,6 +47,10 @@ import com.esferalia.aon.salary.payment.PaymentsFactoryManager;
 public class Contract implements ITransferObject, ISalaryProxy {
 
 	static {
+		// CALCULADOR DEL BORRADOR DE NOMINA.
+		SalaryCalculatorManager scm = SalaryCalculatorManager.getInstance(); 
+		scm.addCalculator(new ContractSalaryCalculator());
+		
 		PaymentsFactoryManager payManager =  PaymentsFactoryManager.getInstance();
 		payManager.addFactory( new ContractPaymentsFactory() );
 		DeductionsFactoryManager dedManager =  DeductionsFactoryManager.getInstance();
@@ -205,9 +214,13 @@ public class Contract implements ITransferObject, ISalaryProxy {
 
 	@Override
 	@Transient
-	public ISalary getSalary() {
-		// TODO implementar
-		return null;
+	public ISalary getSalary() throws SalaryException {
+		SalaryCalculatorContext ctx = new SalaryCalculatorContext();
+		ctx.setSalaryProxy(this);
+		SalaryCalculatorManager factoryManager = SalaryCalculatorManager.getInstance();
+		ISalaryCalculator sc = factoryManager.getCalculator(ctx);
+		ISalary salary = sc.calculate( ctx );
+		return salary;
 	}
 
 }
