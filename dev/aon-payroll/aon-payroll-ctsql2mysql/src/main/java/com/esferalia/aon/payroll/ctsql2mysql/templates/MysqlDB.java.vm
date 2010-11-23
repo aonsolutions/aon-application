@@ -1,3 +1,16 @@
+/********************************************************************
+* Copyright (c) 2010, esferalia NETWORKS S.A
+*
+* The copyright of the computer program herein is the property 
+* of esferalia NETWORKS.
+*********************************************************************
+* The program may be used and/or copied only with the written 
+* permission of esferalia NETWORKS, or in accordance with the 
+* terms and conditions stipulated in the agreement contract 
+* under which the program has been supplied.
+*********************************************************************
+*/
+
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.sql.Date;
@@ -42,11 +55,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 #foreach($table in $tables)
 
+	private int ${table.name}StmtSize = 0;
 
 	private int ${table.name}Inserted = 0;
 
 	private List<${table}> ${table.name}s = 
 		new LinkedList<${table}>();
+
+	private PreparedStatement ${table.name}Stmt = null;
 
 	private static class $table {
 #foreach ($column in $table.columns)
@@ -58,44 +74,48 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = ${table.name}s.size();
-		String values = "(#foreach ($column in $table.columns)?#if( $velocityHasNext ),#end#end)";
-		StringBuffer valuesList = new StringBuffer(values);
-		for ( int i = 1; i < size; i++ ) {
-			valuesList.append(",");
-			valuesList.append(values);
-		}
-		PreparedStatement ${table.name}Stmt = null;
-		try {
+		if ( ${table.name}StmtSize != size ) {
+			if ( ${table.name}Stmt != null ) {
+				${table.name}Stmt.close();
+			}
+			String values = "(#foreach ($column in $table.columns)?#if( $velocityHasNext ),#end#end)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
 			${table.name}Stmt = 
 				mysqlConnection.prepareStatement(
 				"INSERT INTO $table.name (#foreach ($column in $table.columns)$column.name#if( $velocityHasNext ),#end#end)"  
 				+" VALUES " + valuesList.toString()  );
-			int offset = 1;
-			for (${table} ${table.name} : ${table.name}s) {
-#foreach ($column in $table.columns)
-				if ( ${table.name}.${column.name} == null )
-					${table.name}Stmt.setNull(offset++, ${column.type});
-				else
-#if ($column.javaClass.equals("Integer"))
-					${table.name}Stmt.setInt(offset++, ${table.name}.${column.name});
-#elseif ($column.type == -4 )
-					${table.name}Stmt.setBinaryStream(offset++, ${table.name}.${column.name});
-#elseif ($column.type == -1 )
-					${table.name}Stmt.setAsciiStream(offset++, ${table.name}.${column.name});
-#elseif ($column.type == -16 )
-					${table.name}Stmt.setCharacterStream(offset++, ${table.name}.${column.name});
-#else
-					${table.name}Stmt.set${column.javaClass}(offset++, ${table.name}.${column.name});
-#end
-#end
-			}
-			${table.name}Stmt.executeUpdate();
-			${table.name}Inserted += size;
+			
+			${table.name}StmtSize = size;
 		}
-		finally {
-			if ( ${table.name}Stmt != null )
-				${table.name}Stmt.close();			
-		}		
+
+		int offset = 1;
+			
+		for (${table} ${table.name} : ${table.name}s) {
+#foreach ($column in $table.columns)
+			if ( ${table.name}.${column.name} == null )
+				${table.name}Stmt.setNull(offset++, ${column.type});
+			else
+#if ($column.javaClass.equals("Integer"))
+				${table.name}Stmt.setInt(offset++, ${table.name}.${column.name});
+#elseif ($column.type == -4 )
+				${table.name}Stmt.setBinaryStream(offset++, ${table.name}.${column.name});
+#elseif ($column.type == -1 )
+				${table.name}Stmt.setAsciiStream(offset++, ${table.name}.${column.name});
+#elseif ($column.type == -16 )
+				${table.name}Stmt.setCharacterStream(offset++, ${table.name}.${column.name});
+#else
+				${table.name}Stmt.set${column.javaClass}(offset++, ${table.name}.${column.name});
+#end
+#end
+		}
+		${table.name}Stmt.executeUpdate();
+		${table.name}Inserted += size;
+
 		// elapsed time in milliseconds
 		long elapsed = System.currentTimeMillis() - start;
 		info("Inserted {}/{} ${table}s in {} milliseconds.", size, ${table.name}Inserted, elapsed );		
@@ -130,7 +150,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 #end
 	
-	
+	private void flush$table(  )
+	throws SQLException {
+		if ( ! ${table.name}s.isEmpty() )
+			insert${table}(${table.name}s);
+		if ( ${table.name}Stmt != null )
+			${table.name}Stmt.close();
+	}	
+
 	/**
 	 * $table
 #foreach ($column in $table.columns)
@@ -174,8 +201,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	protected void finish() 
 	throws SQLException {
 #foreach($table in $tables)
-		if ( ! ${table.name}s.isEmpty() )
-			insert${table}(${table.name}s);
+		flush${table}();
 #end
 		Statement stmt = null; 
 		try {
