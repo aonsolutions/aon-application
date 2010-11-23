@@ -8,11 +8,14 @@
 	
 	<ui:define name="content">
 		<aon:form id="contractTrackingSearch">
+			<aon:methodParam name="resetAction" value="agreement_grid" />
+			<aon:methodParam name="backAction" value="agreement_grid" />
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_agreement_module}" />
 				<ui:param name="controller" value="#{agreement}" />
 			</ui:include>
 
+			<aon:methodParam name="searchAction" value="agreement_grid" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{agreement}" />
