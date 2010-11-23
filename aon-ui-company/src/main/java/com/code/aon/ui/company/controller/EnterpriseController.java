@@ -42,7 +42,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 	private RegistryAddress mainAddress;
 	private WorkPlace workplace;
 	private RegistryDirStaff dirStaff;
-    private RegistryMedia telephone;
+    private RegistryMedia phone;
 	private RegistryMedia fax;
     private RegistryMedia email;
     private RegistryMedia web;
@@ -100,13 +100,15 @@ public class EnterpriseController extends RegistryController implements ICompany
 	public void setDirStaff(RegistryDirStaff dirStaff) {
 		this.dirStaff = dirStaff;
 	}
-	public RegistryMedia getTelephone(){
-    	if(telephone==null){
-    		telephone = new RegistryMedia();
-    		telephone.setMediaType(MediaType.FIXED_PHONE);
+	
+	public RegistryMedia getPhone(){
+    	if(phone==null){
+    		phone = new RegistryMedia();
+    		phone.setMediaType(MediaType.FIXED_PHONE);
     	}
-    	return telephone;
+    	return phone;
     }
+	
     public RegistryMedia getFax(){
     	if(fax==null){
     		fax = new RegistryMedia();
@@ -114,6 +116,7 @@ public class EnterpriseController extends RegistryController implements ICompany
     	}
     	return fax;
     }
+    
     public RegistryMedia getEmail(){
     	if(email==null){
     		email = new RegistryMedia();
@@ -121,6 +124,7 @@ public class EnterpriseController extends RegistryController implements ICompany
     	}
     	return email;
     }
+    
     public RegistryMedia getWeb(){
     	if(web==null){
     		web = new RegistryMedia();
@@ -128,9 +132,11 @@ public class EnterpriseController extends RegistryController implements ICompany
     	}
     	return web;
     }
-    public void setTelephone(RegistryMedia telephone) {
-    	this.telephone = telephone;
+    
+    public void setPhone(RegistryMedia phone) {
+    	this.phone = phone;
     }
+    
     public void setFax(RegistryMedia fax) {
     	this.fax = fax;
     }
@@ -281,9 +287,9 @@ public class EnterpriseController extends RegistryController implements ICompany
     
     private void resetMedias() {
     	Registry r = ((Enterprise)this.getTo()).getRegistry();
-    	setTelephone(new RegistryMedia());
-    	getTelephone().setMediaType(MediaType.FIXED_PHONE);
-    	getTelephone().setRegistry(r);
+    	setPhone(new RegistryMedia());
+    	getPhone().setMediaType(MediaType.FIXED_PHONE);
+    	getPhone().setRegistry(r);
 		setFax(new RegistryMedia());
 		getFax().setMediaType(MediaType.FAX);
 		getFax().setRegistry(r);
@@ -300,7 +306,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 		for(ITransferObject to: controller.getWrappedList()){
 			RegistryMedia rm = (RegistryMedia)to;
 			if(rm.getMediaType()==MediaType.FIXED_PHONE){
-				setTelephone(rm);
+				setPhone(rm);
 			} else if(rm.getMediaType()==MediaType.FAX){
 				setFax(rm);
 			} else if(rm.getMediaType()==MediaType.EMAIL){
@@ -313,8 +319,8 @@ public class EnterpriseController extends RegistryController implements ICompany
 
 	public void saveMedias() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
-    	if(!getTelephone().getValue().isEmpty()){
-    		bean.insertOrUpdate(getTelephone());
+    	if(!getPhone().getValue().isEmpty()){
+    		bean.insertOrUpdate(getPhone());
     	}
     	if(!getFax().getValue().isEmpty()){
     		bean.insertOrUpdate(getFax());
