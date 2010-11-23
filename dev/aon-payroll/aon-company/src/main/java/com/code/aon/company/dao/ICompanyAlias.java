@@ -37,52 +37,64 @@ public interface ICompanyAlias {
 	String  COMPANY_DOCUMENT = COMPANY_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: Company_documentCountry
+	* Hibernate value: Company.documentCountry
+	*/
+	String  COMPANY_DOCUMENT_COUNTRY = COMPANY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Company_documentType
+	* Hibernate value: Company.documentType
+	*/
+	String  COMPANY_DOCUMENT_TYPE = COMPANY_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: Company_id
 	* Hibernate value: Company.id
 	*/
-	String  COMPANY_ID = COMPANY_ENTRY.getAliasNames()[2];
+	String  COMPANY_ID = COMPANY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Company_name
 	* Hibernate value: Company.name
 	*/
-	String  COMPANY_NAME = COMPANY_ENTRY.getAliasNames()[3];
+	String  COMPANY_NAME = COMPANY_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: Company_surname
-	* Hibernate value: Company.surname
+	* Alias value: Company_nationality
+	* Hibernate value: Company.nationality
 	*/
-	String  COMPANY_SURNAME = COMPANY_ENTRY.getAliasNames()[4];
+	String  COMPANY_NATIONALITY = COMPANY_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Company_type
 	* Hibernate value: Company.type
 	*/
-	String  COMPANY_TYPE = COMPANY_ENTRY.getAliasNames()[5];
+	String  COMPANY_TYPE = COMPANY_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Company_EInvoice
 	* Hibernate value: Company.EInvoice
 	*/
-	String  COMPANY_EINVOICE = COMPANY_ENTRY.getAliasNames()[6];
+	String  COMPANY_EINVOICE = COMPANY_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Company_active
 	* Hibernate value: Company.active
 	*/
-	String  COMPANY_ACTIVE = COMPANY_ENTRY.getAliasNames()[7];
+	String  COMPANY_ACTIVE = COMPANY_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Company_surcharge
 	* Hibernate value: Company.surcharge
 	*/
-	String  COMPANY_SURCHARGE = COMPANY_ENTRY.getAliasNames()[8];
+	String  COMPANY_SURCHARGE = COMPANY_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Company_withholding
 	* Hibernate value: Company.withholding
 	*/
-	String  COMPANY_WITHHOLDING = COMPANY_ENTRY.getAliasNames()[9];
+	String  COMPANY_WITHHOLDING = COMPANY_ENTRY.getAliasNames()[11];
 
 
 
@@ -304,6 +316,18 @@ public interface ICompanyAlias {
 	* Hibernate value: Enterprise.registry.document
 	*/
 	String  ENTERPRISE_REGISTRY_DOCUMENT = ENTERPRISE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Enterprise_registry_documentCountry
+	* Hibernate value: Enterprise.registry.documentCountry
+	*/
+	String  ENTERPRISE_REGISTRY_DOCUMENT_COUNTRY = ENTERPRISE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Enterprise_registry_documentType
+	* Hibernate value: Enterprise.registry.documentType
+	*/
+	String  ENTERPRISE_REGISTRY_DOCUMENT_TYPE = ENTERPRISE_ENTRY.getAliasNames()[5];
 
 
 
