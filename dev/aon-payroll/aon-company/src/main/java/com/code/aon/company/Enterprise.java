@@ -25,6 +25,7 @@ import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
@@ -35,7 +36,7 @@ import com.code.aon.registry.Registry;
 @Entity
 @Table(name="enterprise")
 @PrimaryKeyJoinColumn(name="registry")
-public class Enterprise implements ITransferObject, IRegistry {
+public class Enterprise implements ITransferObject, IRegistry, IScopable {
 
 	private static final long serialVersionUID = -6717039049819608334L;
 	
@@ -73,8 +74,8 @@ public class Enterprise implements ITransferObject, IRegistry {
 	
 	@ManyToOne
     @JoinColumn(name="scope", nullable=false)
-    @ForeignKey(name = "FK_CUSTOMER_SCOPE")
-    @Index(name = "IDX_CUSTOMER_SCOPE")
+    @ForeignKey(name = "FK_ENTERPRISE_SCOPE")
+    @Index(name = "IDX_ENTERPRISE_SCOPE")
 	public Scope getScope() {
 		return scope;
 	}
