@@ -1,19 +1,24 @@
 package com.code.aon.employee;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.Deductions;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.deduction.IDeductionsFactory;
 import com.esferalia.aon.salary.deduction.IDeductionsFactoryContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -41,7 +46,7 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 			if (session.contains(contract)) {
 				contractDeductions = contract.getContractDeductions();
 				for(ContractDeduction sd: contractDeductions){
-					manageDeductions(deductions,sd);
+					manageDeductions(ctx,deductions,sd);
 				}
 			} else {
 				IManagerBean bean = BeanManager.getManagerBean(SalaryDeduction.class);
@@ -50,7 +55,7 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 				List<?> list = bean.getList(c);
 				contractDeductions = (Collection<ContractDeduction>) list;
 				for(ContractDeduction sd: contractDeductions){
-					manageDeductions(deductions,sd);
+					manageDeductions(ctx,deductions,sd);
 				}
 			}
 			return deductions;
@@ -59,26 +64,64 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 		}
 	}
 
-	private void manageDeductions(Deductions deductions, ContractDeduction sd) {
-		if (sd.getType() == DeductionType.COMMON_CONTINGENCY) {
-			deductions.setCommonContingency(sd);
-		} else if (sd.getType() == DeductionType.UNEMPLOYMENT) {
-			deductions.setUnemployment(sd);
-		} else if (sd.getType() == DeductionType.JOB_TRAINING) {
-			deductions.setJobTraining(sd);
-		} else if (sd.getType() == DeductionType.STRUCTURAL_OVERTIME) {
-			deductions.setStructuralOvertime(sd);
-		} else if (sd.getType() == DeductionType.NON_STRUCTURAL_OVERTIME) {
-			deductions.setNonStructuralOvertime(sd);
-		} else if (sd.getType() == DeductionType.IRPF) {
-			deductions.setIrpf(sd);
-		} else if (sd.getType() == DeductionType.ADVANCE_PAYMENT) {
-			deductions.setAdvancePayment(sd);
-		} else if (sd.getType() == DeductionType.IN_KIND) {
-			deductions.setInKind(sd);
-		} else if (sd.getType() == DeductionType.OTHER) {
-			deductions.setOther(sd);
+	private void manageDeductions(IDeductionsFactoryContext ctx,Deductions deductions, ContractDeduction sd) throws SalaryException {
+		if(upToDate(sd.getStartDate(), sd.getEndDate())){
+			if (sd.getType() == DeductionType.COMMON_CONTINGENCY) {
+				deductions.setCommonContingency(resolveDeduction(ctx, sd));
+			} else if (sd.getType() == DeductionType.UNEMPLOYMENT) {
+				deductions.setUnemployment(resolveDeduction(ctx, sd));
+			} else if (sd.getType() == DeductionType.JOB_TRAINING) {
+				deductions.setJobTraining(resolveDeduction(ctx, sd));
+			} else if (sd.getType() == DeductionType.STRUCTURAL_OVERTIME) {
+				deductions.setStructuralOvertime(resolveDeduction(ctx, sd));
+			} else if (sd.getType() == DeductionType.NON_STRUCTURAL_OVERTIME) {
+				deductions.setNonStructuralOvertime(resolveDeduction(ctx, sd));
+			} else if (sd.getType() == DeductionType.IRPF) {
+				deductions.setIrpf(resolveDeduction(ctx, sd));
+			} else if (sd.getType() == DeductionType.ADVANCE_PAYMENT) {
+				deductions.setAdvancePayment(resolveDeduction(ctx, sd));
+			} else if (sd.getType() == DeductionType.IN_KIND) {
+				deductions.setInKind(resolveDeduction(ctx, sd));
+			} else if (sd.getType() == DeductionType.OTHER) {
+				deductions.setOther(resolveDeduction(ctx, sd));
+			}
 		}
 	}
 
+	private boolean upToDate(Date startDate, Date endDate) {
+		if(startDate != null && startDate.before(new Date())){
+			if(endDate==null || endDate.after(new Date())){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private IDeduction resolveDeduction(IDeductionsFactoryContext ctx,IDeduction d) throws SalaryException {
+		// TODO este método de resolución de las deducciones es muy básico.
+		// es necesario forzar a cada IDeduction a que se resulva a sí mismo  
+		// en función del contexto "ctx".
+		if (d != null) {
+			SalaryDeduction sd = new SalaryDeduction();
+			sd.setDescription(d.getDescription() );
+			sd.setFunction(d.getFunction() );
+			sd.setType(d.getType()  );
+			sd.setAmount( 0.0 );
+			if (NumberUtils.isNumber(d.getFunction()) ) {
+				sd.setAmount( NumberUtils.toDouble(d.getFunction()) );	
+			} else {
+				if (StringUtils.endsWith(d.getFunction(), "%")) {
+					String func = StringUtils.stripEnd(d.getFunction(), "%");
+					if (NumberUtils.isNumber(func) ) {
+						double percent = NumberUtils.toDouble(func);
+						Salary salary = (Salary) ctx.getCurrentSalary();
+						double totalPayments = salary.getPayments().getTotal();
+						sd.setAmount( CommonUtil.round(totalPayments * percent / 100 ) );
+					}
+				}
+			}
+			return sd;
+		}
+		return null;
+	}
 }
