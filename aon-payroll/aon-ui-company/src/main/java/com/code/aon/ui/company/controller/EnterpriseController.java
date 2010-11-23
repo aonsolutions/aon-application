@@ -8,6 +8,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -147,20 +149,6 @@ public class EnterpriseController extends RegistryController implements ICompany
     	this.web = web;
     }
 
-//    public boolean isTelephone(){
-//    	return !getTelephone().getValue().isEmpty();
-//    }
-//    public boolean isFax(){
-//    	return !getFax().getValue().isEmpty();
-//    }
-//    public boolean isEmail(){
-//    	return !getEmail().getValue().isEmpty();
-//    }
-//    public boolean isWeb(){
-//    	return !getWeb().getValue().isEmpty();
-//    }
-
-
 	public EnterpriseCCC getCCC() {
 		return ccc;
 	}
@@ -248,6 +236,19 @@ public class EnterpriseController extends RegistryController implements ICompany
 		}
 	}    
 	
+    private GeoZone getMainGeoZone( Enterprise enterprise ) throws ManagerBeanException {
+    	GeoZone geoZone = null;
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), enterprise.getRegistry().getId());
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
+		List<ITransferObject> addresses = bean.getList(criteria);
+		if (! addresses.isEmpty() ) {
+			geoZone = ((RegistryAddress) addresses.get(0)).getGeozone();
+		}
+    	return geoZone;
+    }
+	
 	public void saveMainActivity() throws ManagerBeanException {
 		Enterprise enterprise = (Enterprise) getTo();
 		if ( isActivityDirty() ) {
@@ -260,7 +261,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 			IManagerBean cccBean = BeanManager.getManagerBean(EnterpriseCCC.class);	
 			getCCC().setActivity(getActivity());
 			if ( getCCC().getGeozone() == null ) {
-				getCCC().setGeozone(getMainAddress().getGeozone());
+				getCCC().setGeozone(getMainGeoZone(enterprise));
 			}
 			cccBean.insertOrUpdate(getCCC());
 			setCCCDirty(false);
@@ -300,6 +301,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 		getWeb().setMediaType(MediaType.WEB);
 		getWeb().setRegistry(r);
     }
+    
     public void initMedias() throws ManagerBeanException {
     	resetMedias();
     	BasicController controller = (BasicController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_MEDIA_CONTROLLER_NAME);
@@ -319,16 +321,16 @@ public class EnterpriseController extends RegistryController implements ICompany
 
 	public void saveMedias() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
-    	if(!getPhone().getValue().isEmpty()){
+    	if(! StringUtils.isEmpty(getPhone().getValue()) ){
     		bean.insertOrUpdate(getPhone());
     	}
-    	if(!getFax().getValue().isEmpty()){
+    	if(! StringUtils.isEmpty(getFax().getValue()) ){
     		bean.insertOrUpdate(getFax());
     	}
-    	if(!getEmail().getValue().isEmpty()){
+    	if(! StringUtils.isEmpty(getEmail().getValue()) ){
     		bean.insertOrUpdate(getEmail());
     	}
-    	if(!getWeb().getValue().isEmpty()){
+    	if(! StringUtils.isEmpty(getWeb().getValue()) ){
     		bean.insertOrUpdate(getWeb());
     	}
     }
@@ -342,9 +344,10 @@ public class EnterpriseController extends RegistryController implements ICompany
     		getMainAddress().setRegistry(((Enterprise)this.getTo()).getRegistry());
     	}
     }
+    
     public void saveMainAddress() throws ManagerBeanException {
     	IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
-    	if(!getMainAddress().getAddress().isEmpty()){
+    	if(! StringUtils.isEmpty(getMainAddress().getAddress()) ){
     		bean.insertOrUpdate(getMainAddress());
     	}
     }
@@ -355,12 +358,14 @@ public class EnterpriseController extends RegistryController implements ICompany
 			setWorkplace((WorkPlace) controller.getWrappedList().get(0));
 		} else {
 			setWorkplace(new WorkPlace());
+			getWorkplace().setActive(true);
 			getWorkplace().setEnterprise((Enterprise)this.getTo());
 		}
     }
+    
     public void saveMainWorkPlace() throws ManagerBeanException {
     	IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-    	if(!getWorkplace().getDescription().isEmpty()){
+   		if(! StringUtils.isEmpty(getWorkplace().getDescription()) ){
     		bean.insertOrUpdate(getWorkplace());
     	}
     }
@@ -377,7 +382,7 @@ public class EnterpriseController extends RegistryController implements ICompany
     }
     public void saveMainDirStaff() throws ManagerBeanException {
     	IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
-    	if(!getDirStaff().getDocument().isEmpty()){
+    	if(! StringUtils.isEmpty(getDirStaff().getDocument()) ){
     		bean.insertOrUpdate(getDirStaff());
     	}
     }
@@ -397,21 +402,6 @@ public class EnterpriseController extends RegistryController implements ICompany
     public void cccChanged( ValueChangeEvent event ) {
     	setCCCDirty(true);
     }
-    
-    /*
-    private GeoZone getMainGeoZone( Enterprise enterprise ) throws ManagerBeanException {
-    	GeoZone geoZone = null;
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), enterprise.getRegistry().getId());
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
-		List<ITransferObject> addresses = bean.getList(criteria);
-		if (! addresses.isEmpty() ) {
-			geoZone = ((RegistryAddress) addresses.get(0)).getGeozone();
-		}
-    	return geoZone;
-    }
-    */
     
     public void onTreeViewSelect(ActionEvent event){
     	setTreeView(true);

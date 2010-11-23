@@ -9,16 +9,17 @@
 
 	<aon:outputLabel for="#{pojoName}_address" value="#{registryBundle.registry_address}" />
 	<aon:div>
-		<aon:selectOneMenu id="#{pojoName}_streetType"
+		<aon:selectOneMenu id="#{pojoName}_streetType" required="#{addressRequired}"
+			label="#{registryBundle.registry_street_type}"
 			value="#{controllerLookupListener.mainAddress.streetType}">
 			<f:selectItem value="#{null}" itemLabel="-"/>
 			<f:selectItems value="#{registryCollections.streetTypes}" />
 		</aon:selectOneMenu>
-		<aon:inputText id="#{pojoName}_address" style="margin-left: 5px;"
+		<aon:inputText id="#{pojoName}_address" style="margin-left: 5px;" required="#{addressRequired}"
 			value="#{controllerLookupListener.mainAddress.address}" maxlength="128" size="32" />
 		<aon:outputLabel for="#{pojoName}_number" styleClass="aon-italic aon-margin-left"
 			value="#{bundle.aon_number}" />
-		<aon:inputText id="#{pojoName}_number" style="margin-left: 5px;"
+		<aon:inputText id="#{pojoName}_number" style="margin-left: 5px;" required="#{addressRequired}"
 			value="#{controllerLookupListener.mainAddress.number}" maxlength="8" size="5" />
 	</aon:div>
 
