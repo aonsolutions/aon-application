@@ -260,7 +260,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 			IManagerBean cccBean = BeanManager.getManagerBean(EnterpriseCCC.class);	
 			getCCC().setActivity(getActivity());
 			if ( getCCC().getGeozone() == null ) {
-				getCCC().setGeozone(getMainGeoZone(enterprise));
+				getCCC().setGeozone(getMainAddress().getGeozone());
 			}
 			cccBean.insertOrUpdate(getCCC());
 			setCCCDirty(false);
@@ -398,6 +398,7 @@ public class EnterpriseController extends RegistryController implements ICompany
     	setCCCDirty(true);
     }
     
+    /*
     private GeoZone getMainGeoZone( Enterprise enterprise ) throws ManagerBeanException {
     	GeoZone geoZone = null;
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
@@ -410,6 +411,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 		}
     	return geoZone;
     }
+    */
     
     public void onTreeViewSelect(ActionEvent event){
     	setTreeView(true);
