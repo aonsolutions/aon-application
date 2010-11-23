@@ -16,6 +16,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.form.BasicController;
@@ -64,6 +65,13 @@ public class RegistryController extends BasicController {
 			LOGGER.warn("unable to check Document.",e);
 		}
 	}
+	
+	public void initDocument() {
+		Registry registry = ((IRegistry) getTo()).getRegistry();
+		registry.setNationality(Country.ES);
+		registry.setDocumentCountry(Country.ES);
+		registry.setDocumentType(DocumentType.CIF);		
+	}	
 	
 	public static void validateDocument(IRegistry iRegistry, IManagerBean bean) throws ManagerBeanException {
 		String document = iRegistry.getRegistry().getDocument();

@@ -7,68 +7,15 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	
 	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContentEx.xhtml">
 		<ui:param name="skipId" value="true"/>
 		<ui:param name="skipSurname" value="true"/>
-		<ui:define name="dataPanel">
 		
-			<aon:outputLabel for="RegistryAddress_address"
-				value="#{registryBundle.registry_address}" />
-			<aon:div>
-				<aon:selectOneMenu id="RegistryAddress_streetType"
-					value="#{controller.mainAddress.streetType}" >
-					<f:selectItems value="#{registryCollections.streetTypes}" />
-				</aon:selectOneMenu>
-				<aon:inputText id="RegistryAddress_address"
-					value="#{controller.mainAddress.address}"
-					style="display:block" 
-					required="true" size="40" />
-				<aon:inputText value="#{controller.mainAddress.address2}"
-					style="display:block" size="40" />
-				<aon:inputText value="#{controller.mainAddress.address3}"
-					style="display:block" size="40" />
-			</aon:div>
-			
-			<aon:outputLabel for="RegistryAddress_city" value="#{registryBundle.registry_city}" />
-			<aon:inputText id="RegistryAddress_city" 
-				value="#{controller.mainAddress.city}"
-				required="true" size="20" />
-			
-			<aon:outputLabel for="RegistryAddress_zip" value="#{registryBundle.registry_zip}" />
-			<aon:inputText id="RegistryAddress_zip" 
-				value="#{controller.mainAddress.zip}"
-				required="true" size="8" />
-				
-			<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" />
-			<aon:selectOneMenu id="RegistryAddress_geozone"
-				value="#{controller.mainAddress.geozone}" >
-				<f:selectItems value="#{geozoneCollections.geoTrees}" />
-			</aon:selectOneMenu>
-			
-			<aon:outputLabel for="Enterprise_telephone" 
-				value="#{controller.telephone.mediaType}" />
-			<aon:inputText id="Enterprise_telephone" 
-				value="#{controller.telephone.value}" size="40"
-				onblur="toLowerCase(this);" />
-			
-			<aon:outputLabel for="Enterprise_fax" 
-				value="#{controller.fax.mediaType}" />
-			<aon:inputText id="Enterprise_fax" 
-				value="#{controller.fax.value}" size="40"
-				onblur="toLowerCase(this);" />
-			
-			<aon:outputLabel for="Enterprise_email" 
-				value="#{controller.email.mediaType}" />
-			<aon:inputText id="Enterprise_email" 
-				value="#{controller.email.value}" size="40"
-				onblur="toLowerCase(this);" />
-			
-			<aon:outputLabel for="Enterprise_web" 
-				value="#{controller.web.mediaType}" />
-			<aon:inputText id="Enterprise_web" 
-				value="#{controller.web.value}" size="40"
-				onblur="toLowerCase(this);" />
+		<ui:define name="dataPanel">
+			<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+				<ui:param name="controllerLookupListener" value="#{controller}"/>
+				<ui:param name="pojoName" value="#{controller.pojoShortName}"/>
+			</ui:include>		
 		</ui:define>
 		
 		<ui:define name="securityPanel">

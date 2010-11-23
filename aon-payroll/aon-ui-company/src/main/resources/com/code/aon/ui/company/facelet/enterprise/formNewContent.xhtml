@@ -17,8 +17,14 @@
 			<ui:param name="skipId" value="true"/>
 		</ui:decorate>
 
+		<aon:outputLabel for="Enterprise_scope_id" value="#{bundle.aon_scope}" />
+		<aon:selectOneMenu id="Enterprise_scope_id" value="#{controller.to.scope}">
+			<f:selectItems value="#{configCollections.currentUserScopes}" />
+		</aon:selectOneMenu>
+
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-			<ui:param name="controllerLookupListener" value="#{enterpriseForm}"/>
+			<ui:param name="controllerLookupListener" value="#{controller}"/>
+			<ui:param name="pojoName" value="#{controller.pojoShortName}"/>
 		</ui:include>
 		
 	</aon:panelGrid>

@@ -28,6 +28,7 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
+			controller.initDocument();
 			controller.initMainActiviy();			
 			controller.initMainAddress();			
 			controller.initMedias();			
