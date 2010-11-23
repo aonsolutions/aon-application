@@ -37,36 +37,35 @@
 					</aon:panelGrid>
 				</aon:div>
 				
-				<aon:panelTabSet >
-					<aon:panelTab id="level" label="#{employeeBundle.employee_agreementLevel}">
-						<ui:include	src="/com/code/aon/ui/employee/facelet/agreementLevel/tab_grid.xhtml" >
-							<ui:param name="controller" value="#{agreementLevel}" />
-						</ui:include>
-					</aon:panelTab>
+				<aon:div styleClass="aon-scroll-area">
+					<aon:panelTabSet rendered="#{!agreement.new}">
+						<aon:panelTab id="level" label="#{employeeBundle.employee_agreementLevel}">
+							<ui:include	src="/com/code/aon/ui/employee/facelet/agreementLevel/tab_grid.xhtml" >
+								<ui:param name="controller" value="#{agreementLevel}" />
+							</ui:include>
+						
+							<aon:panelTabSet rendered="#{!agreement.new}" >
+								<aon:panelTab id="category" 
+									label="#{employeeBundle.employee_agreementLevel_category}">
+									<aon:div rendered="#{agreementLevel.model!=null}">
+									<ui:include	src="/com/code/aon/ui/employee/facelet/agreementLevelCategory/tab_grid.xhtml" >
+										<ui:param name="controller" value="#{agreementLevelCategory}" />
+									</ui:include>
+									</aon:div>
+								</aon:panelTab>
+								<aon:panelTab id="payment" disabled="#{agreementLevel.model==null}"
+									label="#{employeeBundle.employee_agreementLevel_payment}">
+									<ui:include	src="/com/code/aon/ui/employee/facelet/agreementLevelPayment/tab_grid.xhtml" >
+										<ui:param name="controller" value="#{agreementLevelPayment}" />
+									</ui:include>
+								</aon:panelTab>
+							</aon:panelTabSet>
+						</aon:panelTab>
 					
-					<aon:panelTab id="extra" label="#{employeeBundle.employee_agreementExtra}" disabled="true">
-					</aon:panelTab>
-				</aon:panelTabSet>
-				
-				<aon:panelTabSet >
-					<aon:panelTab id="category" 
-						label="#{employeeBundle.employee_agreementLevel_category}">
-						<aon:div rendered="#{agreementLevel.model!=null}">
-						<ui:include	src="/com/code/aon/ui/employee/facelet/agreementLevelCategory/tab_grid.xhtml" >
-							<ui:param name="controller" value="#{agreementLevelCategory}" />
-						</ui:include>
-						</aon:div>
-					</aon:panelTab>
-					<aon:panelTab id="payment" disabled="#{agreementLevel.model==null}"
-						label="#{employeeBundle.employee_agreementLevel_payment}">
-						<ui:include	src="/com/code/aon/ui/employee/facelet/agreementLevelPayment/tab_grid.xhtml" >
-							<ui:param name="controller" value="#{agreementLevelPayment}" />
-						</ui:include>
-					</aon:panelTab>
-<!--  
--->					
-				</aon:panelTabSet>
-				
+						<aon:panelTab id="extra" label="#{employeeBundle.employee_agreementExtra}" disabled="true">
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</aon:div>
 				
 				
 				

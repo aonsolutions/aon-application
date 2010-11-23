@@ -12,16 +12,16 @@
 		
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="EnterpriseActivity_description" value="#{bundle.aon_description}" />
+					<aon:outputLabel for="EnterpriseActivityCategory_description" value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" rendered="#{formList}" />
-				<aon:inputText id="EnterpriseActivity_description"
+				<aon:inputText id="EnterpriseActivityCategory_description"
 					value="#{controller.to.description}"
-					rendered="#{formEdit}" required="true" maxlength="32" size="20" />
+					rendered="#{formEdit}" required="true" maxlength="64" size="64" />
 				<f:facet name="footer">
-					<aon:inputText id="EnterpriseActivity_description-New"
+					<aon:inputText id="EnterpriseActivityCategory_description-New"
 						value="#{controller.to.description}"
-						rendered="#{formNew}" required="true" maxlength="32" size="20" />
+						rendered="#{formNew}" required="true" maxlength="64" size="64" />
 				</f:facet>
 			</aon:column>
 
