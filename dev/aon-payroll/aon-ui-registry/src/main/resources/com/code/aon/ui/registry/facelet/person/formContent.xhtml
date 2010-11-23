@@ -7,12 +7,12 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:outputLabel for="Registry_id" rendered="#{!controller.new}" 
+	<aon:outputLabel for="Person_id" rendered="#{!controller.new}" 
 		value="#{bundle.aon_id}" />
-	<aon:inputText id="Registry_id" value="#{controller.to.id}"
+	<aon:inputText id="Person_id" value="#{controller.to.id}"
 		rendered="#{!controller.new}" size="15" disabled="true" />
 
-	<aon:outputLabel for="Registry_document" value="#{bundle.aon_document}" />
+	<aon:outputLabel for="Person_document" value="#{bundle.aon_document}" />
 	<aon:panelGroup id="registryDocumentPanel">
 		<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic"/>
 		<aon:selectOneMenu id="Person_document_country" value="#{controller.to.registry.documentCountry}"
@@ -28,15 +28,15 @@
 		<aon:selectOneMenu id="Person_document_type" value="#{controller.to.registry.documentType}"	styleClass="aon-margin-left">
 			<f:selectItem value="#{null}" itemLabel="-"/>
 			<f:selectItems value="#{registryCollections.documentTypes}" />
-			<a4j:support event="onchange" focus="Registry_document"
+			<a4j:support event="onchange" focus="Person_document"
 				actionListener="#{controller.onChangeDocument}" 
 				ajaxSingle="true" limitToList="true"
 				reRender="registryDocumentPanel"/>
 		</aon:selectOneMenu>
-		<aon:inputText id="Registry_document" maxlength="16" style="margin-left: 5px;"
+		<aon:inputText id="Person_document" maxlength="16" style="margin-left: 5px;"
 			value="#{controller.to.registry.document}" size="16">
 			<f:validateLength minimum="1" maximum="16" />
-			<a4j:support event="onchange" focus="Registry_name"
+			<a4j:support event="onchange" focus="Person_name"
 				actionListener="#{controller.onChangeDocument}" 
 				ajaxSingle="true" limitToList="true"
 				reRender="registryDocumentPanel"/>
@@ -58,30 +58,30 @@
 			value="&#160;" />
 		</aon:panelGroup>
 
-	<aon:outputLabel for="Registry_name"
+	<aon:outputLabel for="Person_name"
 		value="#{bundle.aon_name}" />
-	<aon:inputText id="Registry_name" maxlength="64"
+	<aon:inputText id="Person_name" maxlength="64"
 		value="#{controller.to.name}" size="64">
 		<f:validateLength minimum="1" maximum="64" />
 	</aon:inputText>
 
-	<aon:outputLabel for="Registry_firstSurname"
+	<aon:outputLabel for="Person_firstSurname"
 		value="#{registryBundle.registry_person_firstSurname}" />
-	<aon:inputText id="Registry_firstSurname" maxlength="64"
+	<aon:inputText id="Person_firstSurname" maxlength="64"
 		value="#{controller.to.firstSurname}" size="64">
 		<f:validateLength minimum="1" maximum="64" />
 	</aon:inputText>
 
-	<aon:outputLabel for="Registry_secondSurname"
+	<aon:outputLabel for="Person_secondSurname"
 		value="#{registryBundle.registry_person_secondSurname}" />
-	<aon:inputText id="Registry_secondSurname" maxlength="64"
+	<aon:inputText id="Person_secondSurname" maxlength="64"
 		value="#{controller.to.secondSurname}" size="64">
 		<f:validateLength minimum="1" maximum="64" />
 	</aon:inputText>
 				
-	<aon:outputLabel for="Registry_alias"
+	<aon:outputLabel for="Person_alias"
 		value="#{bundle.aon_alias}" />
-	<aon:inputText id="Registry_alias" maxlength="32"
+	<aon:inputText id="Person_alias" maxlength="32"
 		value="#{controller.to.registry.alias}" size="32">
 		<f:validateLength minimum="1" maximum="32" />
 	</aon:inputText>
@@ -102,7 +102,6 @@
 			<f:selectItems value="#{commonCollections.countries}" />
 		</aon:selectOneMenu>
 	</aon:div>
-	
 
 	<aon:outputLabel for="Person_socialSecurityNumber" value="#{registryBundle.registry_person_nss}" />
 	<aon:inputText id="Person_socialSecurityNumber" value="#{controller.to.socialSecurityNumber}"
@@ -120,54 +119,9 @@
 		<f:selectItems value="#{registryCollections.maritalStatuses}" />
 	</aon:selectOneMenu>
 	
-	<aon:outputLabel for="Person_address" value="#{registryBundle.registry_address}" />
-	<aon:div>
-		<aon:selectOneMenu id="RegistryAddress_streetType"
-			value="#{personForm.mainAddress.streetType}">
-			<f:selectItem value="#{null}" itemLabel="-"/>
-			<f:selectItems value="#{registryCollections.streetTypes}" />
-		</aon:selectOneMenu>
-		<aon:inputText id="Person_address" style="margin-left: 5px;"
-			value="#{personForm.mainAddress.address}" maxlength="128" size="30" />
-		<aon:outputLabel for="Person_number" styleClass="aon-italic aon-margin-left"
-			value="#{bundle.aon_number}" />
-		<aon:inputText id="Person_number" style="margin-left: 5px;"
-			value="#{personForm.mainAddress.number}" maxlength="8" size="5" />
-	</aon:div>
-
-	<aon:outputLabel for="Person_address2" value="#{registryBundle.registry_address_detail}" />
-	<aon:div>
-		<aon:inputText id="Person_address2" value="#{personForm.mainAddress.address2}" 
-			style="display:block" maxlength="128" size="40" />
-		<aon:inputText id="Person_address3" value="#{personForm.mainAddress.address3}" 
-			style="margin-top: 3px;display:block" maxlength="128" size="40" />
-	</aon:div>
-
-	<aon:outputLabel for="Person_address_city" value="#{registryBundle.registry_city}" />
-	<aon:inputText id="Person_address_city" value="#{personForm.mainAddress.city}" maxlength="64" size="30" />
-		
-	<aon:outputLabel for="Person_address_zip" value="#{registryBundle.registry_zip}" />
-	<aon:inputText id="Person_address_zip" value="#{personForm.mainAddress.zip}" maxlength="16" size="16" />
-
-	<aon:outputLabel for="Person_address_geozone" value="#{registryBundle.registry_geozone}" />
-	<aon:selectOneMenu id="Person_address_geozone" value="#{personForm.mainAddress.geozone}">
-		<f:selectItems value="#{geozoneCollections.geoTrees}" />
-	</aon:selectOneMenu>
-		
-	<aon:outputLabel for="Person_telephone" value="#{registryBundle.registry_phone}" />
-	<aon:inputText id="Person_telephone" value="#{personForm.phone.value}" maxlength="64" size="15" />
-
-	<aon:outputLabel for="Person_fax" value="#{registryBundle.registry_fax}" />
-	<aon:inputText id="Person_fax" value="#{personForm.fax.value}" maxlength="64" size="15" />
-
-	<aon:outputLabel for="Person_email" value="#{registryBundle.registry_email}" />
-	<aon:inputText id="Person_email" value="#{personForm.email.value}"
-		onblur="toLowerCase(this);" maxlength="64" size="45" />
-
-	<aon:outputLabel for="Person_web" value="#{registryBundle.registry_web}" />
-	<aon:inputText id="Person_web" value="#{personForm.web.value}"
-		onblur="toLowerCase(this);" maxlength="64" size="45" />
-
+	<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+		<ui:param name="controllerLookupListener" value="#{personForm}"/>
+	</ui:include>	
 
 	<aon:outputLabel for="RegistryPayMethod_payment" value="#{configBundle.config_pay_method}" />
 	<aon:selectOneMenu id="RegistryPayMethod_payment" 

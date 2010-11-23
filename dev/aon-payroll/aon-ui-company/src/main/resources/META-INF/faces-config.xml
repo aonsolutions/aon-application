@@ -581,7 +581,6 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{enterpriseSearch}</value>
-				<value>#{enterpriseForm}</value>
 				<value>#{enterpriseScopeListener}</value>
 				<value>#{enterpriseWorkplaceChildListener}</value>
 				<value>#{enterpriseActivityChildListener}</value>
