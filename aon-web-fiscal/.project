@@ -3,19 +3,6 @@
 	<name>aon-web-fiscal</name>
 	<comment></comment>
 	<projects>
-		<project>aon-ui-accounting</project>
-		<project>aon-accounting</project>
-		<project>aon-fiscal</project>
-		<project>aon-ui-fiscal</project>
-		<project>aon-ql</project>
-		<project>aon-file-tax</project>
-		<project>aon-file-format</project>
-		<project>aon-xhtmlrenderer</project>
-		<project>aon-ui-report</project>
-		<project>aon-report</project>
-		<project>aon-ui-account</project>
-		<project>aon-ui-finance</project>
-		<project>aon-ui-account-bridge</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
