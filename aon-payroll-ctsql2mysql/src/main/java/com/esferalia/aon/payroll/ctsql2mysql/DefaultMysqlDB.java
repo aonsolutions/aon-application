@@ -16,12 +16,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Pais;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipdoc;
 
 
 /**
@@ -72,6 +75,16 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 	}
 
 	final static Locale SPANISH	= new Locale("es");
+
+
+	final static Hashtable<Integer, Integer> FIXED_GEOZONES= 
+		new Hashtable<Integer, Integer>() {
+			{
+				put(55,51); // CEUTA(H)
+				put(53,11); // JEREZ DE LA FRONTERA
+				
+			}
+		};
 
 	final static Hashtable<String, String> NEW_GEOZONES= 
 		new Hashtable<String, String>() {
@@ -188,16 +201,21 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 
 	private BitSet cnaes ;
 	
-	private Map<String, Integer> geozoneIds;
-	
 	private Map<Integer, Set<String>> faxes  = 
 		new HashMap<Integer, Set<String>>();
+
+	private Map<String, Country> countries = 
+		new HashMap<String, Country>();
 
 	private Map<Integer, Set<String>> emails  = 
 		new HashMap<Integer, Set<String>>();
 
+	private Map<String, DocumentType> docTypes = 
+		new HashMap<String, DocumentType>();
+
 	private Map<Integer, Set<String>> telephones  = 
 		new HashMap<Integer, Set<String>>();
+
 
 	/**
 	 * @param mysqlConnection
@@ -206,7 +224,6 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 	throws SQLException{
 		super(mysqlConnection);
 		initCnaes();
-		initGeoZones();
 	}
 	
 	private void initCnaes() 
@@ -220,41 +237,11 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		}
 		rs.close();
 	}
-
-	private void initGeoZones() 
-	throws SQLException{
-		geozoneIds = new HashMap<String, Integer>();
-		Statement stmt = mysqlConnection.createStatement();
-		ResultSet rs  = stmt.executeQuery("SELECT id, name FROM geozone");
-		while ( rs.next() ) {
-			Integer id = rs.getInt("id");
-			String name = rs.getString("name");
-			String key = name.trim().toUpperCase();
-			geozoneIds.put(key, id);
-		}
-		rs.close();
-	}
-	
 	
 	protected boolean isCnaeValid( Integer cnae ){
 		return cnaes.get(cnae);
 	}
 	
-	protected Integer getGeoZoneId(String province) 
-	throws NullGeoZoneException, GeoZoneNotFoundException {
-		if ( province == null ) {
-			throw new NullGeoZoneException();
-		}
-		String key = province.trim().toUpperCase();
-		if ( NEW_GEOZONES.containsKey(key) ) {
-			key = NEW_GEOZONES.get(key);
-		}
-		if ( ! geozoneIds.containsKey(key) ) {
-			throw new GeoZoneNotFoundException();
-		}
-		return geozoneIds.get(key);
-	}
-
 
 	
 	protected Integer getCnae2009Id ( String cnae2009) 
@@ -325,8 +312,8 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 	
 	
 	
-	protected int insertPerson(String document, DocumentType docType, String name, String firstSurname,
-			String secondSurname, String alias, Date birthDate, Short gender,
+	protected int insertPerson(String document, DocumentType docType, Country docCountry, String name, String firstSurname,
+			String secondSurname, String alias, Date birthDate, Country country , Short gender,
 			Short maritalStatus, String socialSecurityNum) throws SQLException {
 		Short type = enum2short(RegistryType.NATURAL);
 		
@@ -346,21 +333,27 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		Integer registry = super.insertRegistry(
 				document,  
 				enum2short(docType),
-				null,
+				docCountry != null ? docCountry.getValue() : null,
 				fullName.toString(), 
 				alias, 
 				type ,
-				null);
+				country != null ? country.getValue() : null);
 		super.insertPerson(registry, birthDate, gender, maritalStatus,socialSecurityNum, name, firstSurname, secondSurname);
 		return registry;
 	}
 	
 	
-	protected int insertEnterprise(String document, String name, String alias, 
+	protected int insertEnterprise(String document, Country docCountry, String name, Country country,  String alias, 
 			Integer scope, Short status ) throws SQLException {
 		
 		Short type = enum2short(RegistryType.LEGAL);
-		Integer registry =  super.insertRegistry(document, null, null, name, alias, type, null);
+		Integer registry =  super.insertRegistry(document, 
+				enum2short(DocumentType.CIF), 
+				docCountry != null ? docCountry.getValue() : null, 
+				name, 
+				alias, 
+				type, 
+				country != null ? country.getValue() : null);
 		super.insertEnterprise(registry, scope);
 		super.insertCustomer(registry,null, false, false,false,null,status,null,  scope,false, true,true);
 		
@@ -446,4 +439,42 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		return stmt.execute(sql);
 	}
 	
+	protected Integer getGeoZone(String provincia ){
+		if ( provincia == null )
+			return null;
+		Integer geozone = Integer.valueOf(provincia);
+		Integer fixedGeozone = FIXED_GEOZONES.get(geozone);
+		return fixedGeozone != null ? fixedGeozone : geozone;
+	}
+	
+	
+	protected DocumentType getDocumentType(String oldCdg) {
+		return docTypes.get(oldCdg);
+	}
+
+	@Override
+	public void visitTipdoc(Tipdoc tipdoc) throws SQLException {
+		String descripcion = tipdoc.getDescripcion();
+		if ( descripcion != null ) {
+			descripcion = descripcion.toUpperCase(); 
+			if ( descripcion.contains("DNI"))
+				docTypes.put(tipdoc.getCdg(), DocumentType.NIF);
+			else if ( descripcion.contains("NUMERO")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.NIE);
+			else if ( descripcion.contains("CIF")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.CIF);
+			else if ( descripcion.contains("PASAPORTE")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.PASSPORT);
+			else if ( descripcion.contains("TARJETA")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.COMMUNITY_CARD);
+			else if ( descripcion.contains("PERMISO")) 
+				docTypes.put(tipdoc.getCdg(), DocumentType.WORK_PERMIT);
+		}
+	}
+
+		
+	protected Country getCountry(String oldCdg) {
+		return countries.get(oldCdg);
+	}
+
 }

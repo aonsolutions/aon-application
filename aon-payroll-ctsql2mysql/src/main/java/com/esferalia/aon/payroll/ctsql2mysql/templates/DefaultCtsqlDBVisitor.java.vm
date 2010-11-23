@@ -1,12 +1,3 @@
-package com.esferalia.aon.payroll.ctsql2mysql;
-
-
-import java.sql.SQLException;
-
-#foreach($table in $tables)
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.$table;
-#end
-
 /********************************************************************
 * Copyright (c) 2010, esferalia NETWORKS S.A
 *
@@ -20,25 +11,65 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.$table;
 *********************************************************************
 */
 
+package com.esferalia.aon.payroll.ctsql2mysql;
+
+
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.SQLException;
+
+import java.math.BigDecimal;
+
+#foreach($table in $tables)
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.$table;
+#end
+
 public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	
-	public boolean visit ( CtsqlDB ctsqlDB ) 
+	public void visit ( AbstractCtsqlDB ctsqlDB ) 
 	throws SQLException	{
-		return true;
-	};
+	}
 	
 #foreach($table in $tables)
-	public boolean visit$table($table $table.name)
+	public void visit$table($table $table.name)
 	throws SQLException{
-		return true;
 	}
 
 #foreach ($child in $table.childs)
-	public boolean visit${child.table}($child.table $child.table.name, $table $table.name)
+	public void visit${child}($child.table $child.table.name, $table $table.name)
 	throws SQLException {
-		return true;
 	}
-
 #end	
+
+#foreach ($parent in $table.parents)
+	/**
+	 * ${parent} shows join between ${parent.table} and ${table}
+	 */
+	public static class ${parent} extends  DefaultCtsqlDBVisitor {
+		
+#foreach ($col in $parent.table.columns)
+		
+		private ${col.javaClass} ${parent.table.name}${col};  
+		
+		/**
+		 * $col.remarks
+		 * @return the column '${col.name}' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public ${col.javaClass} get${parent.table}_${col}() {
+			return ${parent.table.name}${col};
+		}
+#end
+		public void visit${parent}($table $table.name, $parent.table $parent.table.name)
+		throws SQLException {
+#foreach ($col in $parent.table.columns)
+			${parent.table.name}${col} = ${parent.table.name}.get${col}();  
+#end
+		}
+	
+	}
+#end	
+
 #end
 }
