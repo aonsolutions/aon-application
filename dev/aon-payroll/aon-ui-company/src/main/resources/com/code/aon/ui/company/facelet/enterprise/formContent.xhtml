@@ -47,6 +47,9 @@
 		</ui:define>
 		
 		<ui:define name="othersPanel">
+		
+			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formActivityContent.xhtml" />
+
 			<aon:outputLabel value="#{companyBundle.company_workplace}" />
 			<aon:div>
 				<aon:inputText id="WorkPlace_description" size="40"
@@ -62,40 +65,21 @@
 					<f:selectItems value="#{companyCollections.economicAgreements}" />
 				</aon:selectOneMenu>
 			</aon:div>
-			
-			<aon:outputLabel for="Enterprise_cnae_id"
-				value="#{companyBundle.company_activity}" />
-			<aon:div styleClass="aon-lookup">
-				<aon:lookupInputText id="Enterprise_cnae_id"
-					lookup="#{cnaeLookup}" lookupChangeListener="#{enterprise.onCNAEChanged}"
-					reRender="Enterprise_cnae_detail" required="true"
-					value="#{enterprise.activity.cnae.id}" maxlength="5" size="5" />
-				<aon:lookupButton
-					windowTitle="#{companyBundle.company_cnae_selection}"
-					selectReRender="Enterprise_cnae_id,Enterprise_cnae_detail"
-					lookup="#{cnaeLookup}" lookupChangeListener="#{enterprise.onCNAEChanged}"
-					minHeight="460" minWidth="650" actionType="search"
-					property="#{enterprise.activity.cnae}">
-				</aon:lookupButton>
-				<aon:inputText id="Enterprise_cnae_detail" label="#{companyBundle.company_activity_description}"
-					value="#{enterprise.activity.description}" required="true"
-					valueChangeListener="#{controller.activityChanged}" maxlength="32" size="32" />							
-			</aon:div>			
-		
-			<aon:outputLabel for="Enterprise_ccc"
-				value="#{companyBundle.company_enterprise_ccc}" />
-			<aon:inputText id="Enterprise_ccc"
-				value="#{controller.CCC.CCC}" required="true" 
-				valueChangeListener="#{controller.cccChanged}" maxlength="11" size="15" />
 				
 			<aon:outputLabel value="#{registryBundle.registry_dir_staff_representative_labor}" />
-			<aon:div>
-				<aon:outputText value="#{bundle.aon_company_document}" />
-				<aon:inputText id="Registry_Lookup_document-Edit" size="16"
-					value="#{controller.dirStaff.document}" />
-				<aon:outputText value="#{bundle.aon_name}" />
-				<aon:inputText id="Registry_full_name-Edit" 
-					size="40" value="#{controller.dirStaff.name}" />
+			<aon:div>			
+				<aon:div>
+					<aon:outputText value="#{bundle.aon_company_document}" styleClass="aon-italic"/>
+					<aon:inputText id="Registry_Lookup_document-Edit"
+						size="16" maxlength="16" styleClass="aon-inputText aon-margin-left"
+						value="#{controller.dirStaff.document}" />
+				</aon:div>
+				<aon:div styleClass="aon-margin-top">
+					<aon:outputText value="#{bundle.aon_name}" styleClass="aon-italic"/>
+					<aon:inputText id="Registry_full_name-Edit" 
+						size="64" maxlength="128" styleClass="aon-inputText aon-margin-left"
+						value="#{controller.dirStaff.name}" />
+				</aon:div>
 			</aon:div>
 		</ui:define>
 		
