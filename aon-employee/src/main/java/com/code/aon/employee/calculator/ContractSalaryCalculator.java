@@ -2,24 +2,18 @@ package com.code.aon.employee.calculator;
 
 import java.util.Date;
 
-import org.apache.commons.lang.math.NumberUtils;
-
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.employee.Contract;
 import com.code.aon.employee.Salary;
-import com.code.aon.employee.SalaryPayment;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
-import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
 import com.esferalia.aon.salary.deduction.IDeductionsFactory;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.IPaymentsFactory;
-import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.salary.payment.PaymentsFactoryContext;
 import com.esferalia.aon.salary.payment.PaymentsFactoryManager;
 
@@ -40,10 +34,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		fillEnterpriseData(salary,contract);
 		fillEmployeeData(salary,contract);
 		fillSalaryData(salary,contract);
-		salary.setPayments( getPayments(contract) );
-		salary.setTotalPayment( salary.getPayments().getTotal() ); 
-		salary.setDeductions( getDeductions(contract) );
-		salary.setTotalDeduction( salary.getDeductions().getTotal() );
+		fillPayments(salary,contract);
+		fillDeductions(salary,contract);
+		salary.setTotalLiquid(CommonUtil.round(salary.getTotalPayment() - salary.getTotalDeduction()));
 		fillBasesData(salary,contract);
 		return salary;
 	}
@@ -72,79 +65,32 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		salary.setTimeUnits( (int) CommonUtil.getDaysBetweenDates(salary.getStartDate(), salary.getEndDate()));
 	}
 
-	private Payments getPayments(Contract contract) throws SalaryException {
+	private void fillPayments(Salary salary, Contract contract) throws SalaryException {
 		PaymentsFactoryManager manager =  PaymentsFactoryManager.getInstance();
 		PaymentsFactoryContext pfc = new PaymentsFactoryContext();
 		pfc.setSalaryProxy(contract);
 		IPaymentsFactory factory = manager.getFactory( pfc );
-		Payments contractPayments = factory.getPayments(pfc);
-		Payments salaryPayments = new Payments();
-		if (contractPayments.getBaseSalary() != null) {
-			salaryPayments.setBaseSalary( resolvePayment( contractPayments.getBaseSalary() ));	
-		}
-		if (contractPayments.getMovingCompensation() != null) {
-			salaryPayments.setMovingCompensation( resolvePayment( contractPayments.getMovingCompensation() ));
-		}
-		if ( contractPayments.getOtherNonWage() != null) {
-			salaryPayments.setOtherNonWage( resolvePayment( contractPayments.getOtherNonWage() ));	
-		}
-		if (contractPayments.getOvertimeHours() != null) {
-			salaryPayments.setOvertimeHours( resolvePayment( contractPayments.getOvertimeHours() ));
-		}
-		if (contractPayments.getSalaryInKind() != null) {
-			salaryPayments.setSalaryInKind( resolvePayment( contractPayments.getSalaryInKind() ));
-		}
-		if (contractPayments.getSpecialBonuses() != null) {
-			salaryPayments.setSpecialBonuses( resolvePayment( contractPayments.getSpecialBonuses() ));
-		}
-		if (contractPayments.getSpecialSecurityBenefits() != null) {
-			salaryPayments.setSpecialSecurityBenefits( resolvePayment( contractPayments.getSpecialSecurityBenefits() ));
-		}
-		for ( IPayment payment: contractPayments.getSalarySupplements().getValues() ) {
-			if (payment != null) {
-				salaryPayments.addSalarySupplements( resolvePayment( payment ));	
-			}
-		}
-		for ( IPayment payment: contractPayments.getCompensationOrPrepaidExpenses().getValues() ) {
-			if (payment != null) {
-				salaryPayments.addSalarySupplements( resolvePayment( payment ));
-			}
-		}
-		return salaryPayments;
+		salary.setPayments( factory.getPayments(pfc) );
+		salary.setTotalPayment( salary.getPayments().getTotal() ); 
 	}
 
-	private IPayment resolvePayment(IPayment p) {
-		if (p != null) {
-			SalaryPayment sp = new SalaryPayment();
-			sp.setDescription(p.getDescription() );
-			sp.setFunction(p.getFunction() );
-			sp.setType(p.getType()  );
-			if (NumberUtils.isNumber(p.getFunction()) ) {
-				sp.setAmount( NumberUtils.toDouble(p.getFunction()) );	
-			} else {
-				sp.setAmount(0.0);
-			}
-			return sp;
-		}
-		return null;
-	}
-
-	private Deductions getDeductions(Contract contract) throws SalaryException  {
+	private void fillDeductions(Salary salary, Contract contract) throws SalaryException {
 		DeductionsFactoryManager manager =  DeductionsFactoryManager.getInstance();
 		DeductionsFactoryContext dfc = new DeductionsFactoryContext();
 		dfc.setSalaryProxy(contract);
+		dfc.setCurrentSalary(salary);
 		IDeductionsFactory factory = manager.getFactory( dfc );
-		return factory.getDeductions(dfc);
+		salary.setDeductions( factory.getDeductions(dfc) );
+		salary.setTotalDeduction( salary.getDeductions().getTotal() );
 	}
 
 	private void fillBasesData(Salary salary, Contract contract) {
-		salary.setTotalLiquid(99999.99); // TODO ¿?¿?¿?¿?¿?
-		salary.setRemuneration(99999.99); // TODO ¿?¿?¿?¿?¿?
-		salary.setExtraPayProration(99999.99); // TODO ¿?¿?¿?¿?¿?
-		salary.setCommonBase(99999.99); // TODO ¿?¿?¿?¿?¿?
-		salary.setProfessionalBase(99999.99); // TODO ¿?¿?¿?¿?¿?
-		salary.setOvertimeBase(99999.99); // TODO ¿?¿?¿?¿?¿?
-		salary.setIrpfBase(99999.99); // TODO ¿?¿?¿?¿?¿?
+		salary.setRemuneration(0.0); // TODO ¿?¿?¿?¿?¿?
+		salary.setExtraPayProration(0.0); // TODO ¿?¿?¿?¿?¿?
+		salary.setCommonBase(0.0); // TODO ¿?¿?¿?¿?¿?
+		salary.setProfessionalBase(0.0); // TODO ¿?¿?¿?¿?¿?
+		salary.setOvertimeBase(0.0); // TODO ¿?¿?¿?¿?¿?
+		salary.setIrpfBase(0.0); // TODO ¿?¿?¿?¿?¿?
 	}
 
 
