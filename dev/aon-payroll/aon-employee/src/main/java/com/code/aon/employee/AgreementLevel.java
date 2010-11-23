@@ -26,8 +26,6 @@ public class AgreementLevel implements ITransferObject {
 
 	private Integer id;
 	private Agreement agreement;
-	private Integer type;
-	private String function;
 	private String description;
 
 	@Id
@@ -50,19 +48,7 @@ public class AgreementLevel implements ITransferObject {
 	public void setAgreement(Agreement agreement) {
 		this.agreement = agreement;
 	}
-	public Integer getType() {
-		return type;
-	}
-	public void setType(Integer type) {
-		this.type = type;
-	}
-	@Column(length = 128)
-	public String getFunction() {
-		return function;
-	}
-	public void setFunction(String function) {
-		this.function = function;
-	}
+	
 	@Column(length = 64)
 	public String getDescription() {
 		return description;
@@ -82,8 +68,6 @@ public class AgreementLevel implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.agreement, o.agreement)			
-				.append(this.type, o.type)			
-				.append(this.function, o.function)			
 				.append(this.description, o.description)			
 				.isEquals();
 		}
@@ -95,8 +79,6 @@ public class AgreementLevel implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)
 			.append(agreement)
-			.append(type)
-			.append(function)
 			.append(description)
 			.toHashCode();
 	}
