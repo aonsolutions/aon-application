@@ -212,6 +212,10 @@ public class DBContext extends VelocityContext{
 			return StringUtils.capitalize(name);
 		}
 		
+		public int getColumnCount() {
+			return this.columns.size();
+		}
+
 		public Column getColumn( String name ) {
 			return this.columns.get(name);
 		}
@@ -227,15 +231,15 @@ public class DBContext extends VelocityContext{
 				ResultSet rs = 
 					dbMetaData.getExportedKeys(null,null, name);
 				ForeignKey foreignKey = null;
-				String previousTable = null;
+				String previousFK = null;
 				while ( rs.next() )
 				{
 					String fkName = rs.getString("FK_NAME");
 					String fkTable = rs.getString("FKTABLE_NAME");
-					if ( ! fkTable.equals(previousTable) ) {
+					if ( ! fkName.equals(previousFK) ) {
 						foreignKey = new ForeignKey(fkName, fkTable);
 						childs.add(foreignKey);
-						previousTable = fkTable;
+						previousFK = fkName;
 					}
 					foreignKey.addFkColumn(fkTable, rs.getString("FKCOLUMN_NAME"));
 					foreignKey.addPkColumn(this.name, rs.getString("PKCOLUMN_NAME"));
@@ -335,10 +339,20 @@ public class DBContext extends VelocityContext{
 		}
 		rs.close();
 		
+		put("StringUtils", this );
 		put(TABLES, tables.values().toArray(new Table []{}));
 	}
 	
-    public static boolean evaluate( DBContext context, Writer writer,String logTag, Reader reader )
+	
+	public String reverse(String str ) { 
+		return StringUtils.reverse(str);
+	}
+	
+	public String capitalize(String str ) { 
+		return StringUtils.capitalize(str);
+	}
+
+	public static boolean evaluate( DBContext context, Writer writer,String logTag, Reader reader )
     throws IOException
     {
     	return Velocity.evaluate(context, writer, logTag, reader);
