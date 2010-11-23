@@ -17,6 +17,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 
 @Entity
 @Table(name="agreement_level_payment")
@@ -26,6 +27,8 @@ public class AgreementLevelPayment implements ITransferObject {
 
 	private Integer id;
 	private AgreementLevel level;
+	private PaymentType type;
+	private String function;
 	private String description;
 
 	@Id
@@ -49,6 +52,20 @@ public class AgreementLevelPayment implements ITransferObject {
 		this.level = level;
 	}
 	
+	public PaymentType getType() {
+		return type;
+	}
+	public void setType(PaymentType type) {
+		this.type = type;
+	}
+	@Column(length = 128)
+	public String getFunction() {
+		return function;
+	}
+	public void setFunction(String function) {
+		this.function = function;
+	}
+	
 	@Column(length = 64)
 	public String getDescription() {
 		return description;
@@ -67,6 +84,8 @@ public class AgreementLevelPayment implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.level, o.level)			
+				.append(this.type, o.type)			
+				.append(this.function, o.function)			
 				.append(this.description, o.description)			
 				.isEquals();
 		}
@@ -78,6 +97,8 @@ public class AgreementLevelPayment implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)
 			.append(level)
+			.append(type)
+			.append(function)
 			.append(description)
 			.toHashCode();
 	}
