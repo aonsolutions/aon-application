@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.employee.Contract;
+import com.code.aon.employee.ContractData;
 import com.code.aon.employee.Salary;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
@@ -85,12 +86,12 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	}
 
 	private void fillBasesData(Salary salary, Contract contract) {
-		salary.setRemuneration(0.0); // TODO ¿?¿?¿?¿?¿?
+		salary.setRemuneration(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
 		salary.setExtraPayProration(0.0); // TODO ¿?¿?¿?¿?¿?
-		salary.setCommonBase(0.0); // TODO ¿?¿?¿?¿?¿?
-		salary.setProfessionalBase(0.0); // TODO ¿?¿?¿?¿?¿?
-		salary.setOvertimeBase(0.0); // TODO ¿?¿?¿?¿?¿?
-		salary.setIrpfBase(0.0); // TODO ¿?¿?¿?¿?¿?
+		salary.setCommonBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+		salary.setProfessionalBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+		salary.setOvertimeBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+		salary.setIrpfBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
 	}
 
 
