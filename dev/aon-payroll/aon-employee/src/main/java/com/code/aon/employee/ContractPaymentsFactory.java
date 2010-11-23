@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
@@ -15,6 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.IPaymentsFactory;
 import com.esferalia.aon.salary.payment.IPaymentsFactoryContext;
 import com.esferalia.aon.salary.payment.Payments;
@@ -42,7 +44,7 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 			if (session.contains(contract)) {
 				contractPayments = contract.getContractPayments();
 				for(ContractPayment cp: contractPayments){
-					manageDeductions(payments,cp);
+					manageDeductions(ctx,payments,cp);
 				}
 			} else {
 				IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
@@ -51,7 +53,7 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 				List<?> list = bean.getList(c);
 				contractPayments = (Collection<ContractPayment>) list;
 				for(ContractPayment cp: contractPayments){
-					manageDeductions(payments,cp);
+					manageDeductions(ctx,payments,cp);
 				}
 			}
 			return payments;
@@ -60,26 +62,26 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 		}
 	}
 	
-	private void manageDeductions(Payments payments, ContractPayment sp) {
+	private void manageDeductions(IPaymentsFactoryContext ctx,Payments payments, ContractPayment sp) {
 		if(upToDate(sp.getStartDate(), sp.getEndDate())){
 			if (sp.getType() == PaymentType.BASE_SALARY) {
-				payments.setBaseSalary(sp);
+				payments.setBaseSalary(resolvePayment(ctx,sp));
 			} else if (sp.getType() == PaymentType.SALARY_SUPPLEMENTS) {
-				payments.addSalarySupplements(sp);
+				payments.addSalarySupplements(resolvePayment(ctx,sp));
 			} else if (sp.getType() == PaymentType.OVERTIME_HOURS) {
-				payments.setOvertimeHours(sp);
+				payments.setOvertimeHours(resolvePayment(ctx,sp));
 			} else if (sp.getType() == PaymentType.SPECIAL_BONUSES) {
-				payments.setSpecialBonuses(sp);
+				payments.setSpecialBonuses(resolvePayment(ctx,sp));
 			} else if (sp.getType() == PaymentType.SALARY_IN_KIND) {
-				payments.setSalaryInKind(sp);
+				payments.setSalaryInKind(resolvePayment(ctx,sp));
 			} else if (sp.getType() == PaymentType.COMPENSATION_OR_PREPAID_EXPENSES) {
-				payments.addCompensationOrPrepaidExpenses(sp);
+				payments.addCompensationOrPrepaidExpenses(resolvePayment(ctx,sp));
 			} else if (sp.getType() == PaymentType.SOCIAL_SECURITY_BENEFITS) {
-				payments.setSpecialSecurityBenefits(sp);
+				payments.setSpecialSecurityBenefits(resolvePayment(ctx,sp));
 			} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
-				payments.setMovingCompensation(sp);
+				payments.setMovingCompensation(resolvePayment(ctx,sp));
 			} else if (sp.getType() == PaymentType.OTHER_NON_WAGE) {
-				payments.setOtherNonWage(sp);
+				payments.setOtherNonWage(resolvePayment(ctx,sp));
 			}
 		}
 	}
@@ -91,6 +93,25 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 			}
 		}
 		return false;
+	}
+
+	private IPayment resolvePayment(IPaymentsFactoryContext ctx,IPayment p) {
+		// TODO este método de resolución de los complementos es muy básico.
+		// es necesario forzar a cada IPayment a que se resulva a sí mismo  
+		// en función del contexto "ctx".
+		if (p != null) {
+			SalaryPayment sp = new SalaryPayment();
+			sp.setDescription(p.getDescription() );
+			sp.setFunction(p.getFunction() );
+			sp.setType(p.getType()  );
+			if (NumberUtils.isNumber(p.getFunction()) ) {
+				sp.setAmount( NumberUtils.toDouble(p.getFunction()) );	
+			} else {
+				sp.setAmount(0.0);
+			}
+			return sp;
+		}
+		return null;
 	}
 
 }
