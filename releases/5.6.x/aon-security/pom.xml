@@ -4,14 +4,14 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.security</artifactId>
 	<packaging>jar</packaging>
-	<version>5.6.0</version>
+	<version>5.6.1</version>
 	<description>AON SECURITY</description>
 	<name>AON SECURITY</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ldap</artifactId>
-			<version>5.6.0</version>
+			<version>5.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
