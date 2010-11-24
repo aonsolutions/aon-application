@@ -25,14 +25,15 @@
 		</ui:define>
 		
 		<ui:define name="logoPanel">
+			<aon:outputText rendered="#{controller.aonFile.size > 0}" value="#{controller.aonFile.fileName}"/>
 			<a4j:mediaOutput element="img" cacheable="false"
 				style="width: 100px;" value="#{company.aonFile.key}"
-				rendered="#{company.aonFile.size > 0}"
-				createContent="#{company.createCurrentLogoContent}">
+				rendered="#{controller.aonFile.size > 0}"
+				mimeType="#{controller.aonFile.mimeType}"
+				createContent="#{controller.createCurrentLogoContent}">
 			</a4j:mediaOutput>
 			<aon:fileUpload id="attach_file"
-				disabled="true"
-				fileUploadListener="#{company.fileUploaded}" >
+				fileUploadListener="#{controller.fileUploaded}" >
 				<f:facet name="label">
 					<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 				</f:facet>
