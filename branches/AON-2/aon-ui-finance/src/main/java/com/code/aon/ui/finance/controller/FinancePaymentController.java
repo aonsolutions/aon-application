@@ -199,9 +199,9 @@ public class FinancePaymentController extends BasicController {
 		finance.setFinanceStatus(FinanceStatus.PAID);
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		financeBean.update(finance);
-		AccountEntry entry = recordFinance(finance);
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.PAID, bundle.getString("aon_finance_tracking_recorded") + " " + entry.getId(), getRegistryBank().getId()==null?null:getRegistryBank());
-		insertAccountEntryFinanceTracking(entry, tracking);
+		//AccountEntry entry = recordFinance(finance);
+		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.PAID, "Pendiente", getRegistryBank().getId()==null?null:getRegistryBank());
+		//insertAccountEntryFinanceTracking(entry, tracking);
 		initializeSearch();
 	}
 	
@@ -218,6 +218,8 @@ public class FinancePaymentController extends BasicController {
 		newFinance.setPayment(finance.isPayment());
 		newFinance.setPayMethod(finance.getPayMethod());
 		newFinance.setRegistry(finance.getRegistry());
+		newFinance.setRegistryName(finance.getRegistryName());
+		newFinance.setRegistryDocument(finance.getRegistryDocument());
 		newFinance.setSecurityLevel(finance.getSecurityLevel());
 		IManagerBean financeBean  = BeanManager.getManagerBean(Finance.class);
 		financeBean.insert(newFinance);

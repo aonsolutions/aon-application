@@ -85,7 +85,7 @@ public class FinanceGenerator {
 		finance.setDueDate(date);
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setInvoice(invoice);
-        finance.setConcept("Factura: " + invoice.getSeries() + ((invoice.getSeries()!=null&&!invoice.getSeries().equals(""))?"/":"") + invoice.getNumber());
+		finance.setConcept(invoice.getDocumentNumber());
 		if(invoice.getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
 		}else{
@@ -93,6 +93,8 @@ public class FinanceGenerator {
 		}
 		finance.setPayMethod(payMethod);
 		finance.setRegistry(registry);
+		finance.setRegistryName(invoice.getRegistryName());
+		finance.setRegistryDocument(invoice.getRegistryDocument());
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		return finance;
 	}

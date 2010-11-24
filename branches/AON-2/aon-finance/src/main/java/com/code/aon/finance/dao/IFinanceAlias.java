@@ -134,28 +134,40 @@ public interface IFinanceAlias {
 	String  FINANCE_REGISTRY_ID = FINANCE_ENTRY.getAliasNames()[12];
 
 	/** 
+	* Alias value: Finance_registryName
+	* Hibernate value: Finance.registryName
+	*/
+	String  FINANCE_REGISTRY_NAME = FINANCE_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Finance_registryDocument
+	* Hibernate value: Finance.registryDocument
+	*/
+	String  FINANCE_REGISTRY_DOCUMENT = FINANCE_ENTRY.getAliasNames()[14];
+
+	/** 
 	* Alias value: Finance_securityLevel
 	* Hibernate value: Finance.securityLevel
 	*/
-	String  FINANCE_SECURITY_LEVEL = FINANCE_ENTRY.getAliasNames()[13];
+	String  FINANCE_SECURITY_LEVEL = FINANCE_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Finance_invoice_series
 	* Hibernate value: Finance.invoice.series
 	*/
-	String  FINANCE_INVOICE_SERIES = FINANCE_ENTRY.getAliasNames()[14];
+	String  FINANCE_INVOICE_SERIES = FINANCE_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Finance_invoice_number
 	* Hibernate value: Finance.invoice.number
 	*/
-	String  FINANCE_INVOICE_NUMBER = FINANCE_ENTRY.getAliasNames()[15];
+	String  FINANCE_INVOICE_NUMBER = FINANCE_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Finance_invoice_issueDate
 	* Hibernate value: Finance.invoice.issueDate
 	*/
-	String  FINANCE_INVOICE_ISSUE_DATE = FINANCE_ENTRY.getAliasNames()[16];
+	String  FINANCE_INVOICE_ISSUE_DATE = FINANCE_ENTRY.getAliasNames()[18];
 
 
 

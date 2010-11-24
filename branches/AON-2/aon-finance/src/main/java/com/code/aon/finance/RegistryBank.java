@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.Registry;
@@ -157,7 +158,22 @@ public class RegistryBank implements ITransferObject {
     	return getBankAccount();
     }
     
-	@Override
+	@Transient
+	public String getFullName() {
+		StringBuilder sb = new StringBuilder();
+		if (getBank() != null && !StringUtils.isEmpty(getBank().getName()))  {
+			sb.append(StringUtils.abbreviate(getBank().getName(), 30));
+			sb.append(" ");
+		}
+		if (getBankAccount() != null) {
+			sb.append("[");
+			sb.append(getBankAccount().toString());
+			sb.append("]");
+		}
+		return sb.toString(); 
+	}
+
+    @Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return super.equals(obj);

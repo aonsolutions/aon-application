@@ -186,6 +186,8 @@ public class FinanceFractionController {
 		finance.setPayment(targetFinance.isPayment());
 		finance.setPayMethod(targetFinance.getPayMethod());
 		finance.setRegistry(targetFinance.getRegistry());
+		finance.setRegistryName(targetFinance.getRegistryName());
+		finance.setRegistryDocument(targetFinance.getRegistryDocument());
 		finance.setSecurityLevel(targetFinance.getSecurityLevel());
 		return finance;
 	}

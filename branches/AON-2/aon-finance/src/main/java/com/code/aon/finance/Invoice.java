@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
@@ -544,7 +545,17 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		return new DiscountExpression("0.0");
 	}
 	
-    @Override
+	@Transient
+	public String getDocumentNumber() {
+		String documentNumber = ((InvoiceType.SALES == type) ? "E" : "R") + "-";
+		if (!StringUtils.isEmpty(series)) {
+			documentNumber += series + "/";
+		}
+		documentNumber += StringUtils.leftPad(Integer.toString(number), 6, "0");
+		return documentNumber;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return super.equals(obj);

@@ -29,7 +29,8 @@ public class FinanceTrackingWriter {
             tracking.setDescription(description);
             tracking.setAmount(finance.getTotalAmount());
             tracking.setRegistryBank(rBank);
-            tracking.setRecorded(trackingType == FinanceTrackingType.PAID || trackingType == FinanceTrackingType.RETURNED);
+            tracking.setRecorded(false);
+            //tracking.setRecorded(trackingType == FinanceTrackingType.PAID || trackingType == FinanceTrackingType.RETURNED);
             tracking = (FinanceTracking)financeTrackingBean.insert(tracking);
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error inserting finance tracking of finance with id=" + finance.getId(), e);

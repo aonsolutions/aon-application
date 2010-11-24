@@ -41,6 +41,12 @@ public class Finance implements ITransferObject{
 	/** The registry. */
 	private Registry registry;
 	
+	/** The registry name. */
+    private String registryName;
+
+	/** The registry document. */
+    private String registryDocument;
+
 	/** The amount. */
 	private double amount;
 	
@@ -309,6 +315,22 @@ public class Finance implements ITransferObject{
 	 */
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
+	}
+
+    @Column(name="rname", length=128)
+    public String getRegistryName() {
+		return registryName;
+	}
+	public void setRegistryName(String registryName) {
+		this.registryName = registryName;
+	}
+
+	@Column(name="rdocument", length=16)
+    public String getRegistryDocument() {
+		return registryDocument;
+	}
+	public void setRegistryDocument(String registryDocument) {
+		this.registryDocument = registryDocument;
 	}
 
 	/**

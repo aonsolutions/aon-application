@@ -25,25 +25,37 @@ public class FinanceTrackingController extends LinesController {
 
 	private static final String FINANCE_CONTROLLER_NAME = "finance";
 	
+	public String getTrackingDescription() throws ManagerBeanException {
+		String description = null;
+		if (getModel().isRowAvailable()) {
+			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+			if (tracking.getType() == FinanceTrackingType.PAID || tracking.getType() == FinanceTrackingType.RETURNED) {
+				description = obtainPaymentDescription(tracking);
+			} else {
+				description = tracking.getDescription();
+			}
+		}
+		return description;
+	}
+
+	private String obtainPaymentDescription(FinanceTracking tracking) {
+		if (tracking.getRegistryBank() != null) {
+			return tracking.getRegistryBank().getFullName();
+		} else {
+			return "Caja";
+		}
+	}
+
 	public boolean isUnrecordable() throws ManagerBeanException{
 		FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
-		IManagerBean accEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
-		criteria.addOrder(accEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ID),false);
-		Iterator iter = accEntryFinanceTrackingBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			AccountEntryFinanceTracking accEntryFinanceTracking = (AccountEntryFinanceTracking)iter.next();
-			return accEntryFinanceTracking.getFinanceTracking().getId().equals(tracking.getId());
-		}
-		return false;
+		return (!tracking.isRecorded() && (tracking.getType() == FinanceTrackingType.PAID || tracking.getType() == FinanceTrackingType.RETURNED));
 	}
 	
 	@SuppressWarnings("unused")
 	public void undoTracking(ActionEvent event) throws ManagerBeanException{
 		FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
-		AccountEntryFinanceTracking accFinanceTracking = deleteAccEntryFinanceTracking(tracking);
-		deleteAccountEntry(accFinanceTracking.getAccountEntry());
+		//AccountEntryFinanceTracking accFinanceTracking = deleteAccEntryFinanceTracking(tracking);
+		//deleteAccountEntry(accFinanceTracking.getAccountEntry());
 		updateFinanceStatus(tracking);
 		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		financeTrackingBean.remove(tracking);
