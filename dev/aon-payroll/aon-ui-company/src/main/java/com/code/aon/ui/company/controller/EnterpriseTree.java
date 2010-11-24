@@ -26,9 +26,7 @@ import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.company.util.EnterpriseTreeData;
 import com.code.aon.ui.company.util.EnterpriseTreeType;
 import com.code.aon.ui.form.BasicController;
@@ -51,11 +49,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	private Contract contract;
 	
-	private RegistryMedia phone;
-	
-	private RegistryMedia fax;
-	
-	private RegistryMedia email;	
+	private RegistryInfo personInfo = new RegistryInfo();
 	
 	private boolean showContractHeader;
 	
@@ -75,16 +69,20 @@ public class EnterpriseTree implements ICompanyConstants {
 		return contract;
 	}
 
-	public RegistryMedia getPhone() {
-		return phone;
+    public RegistryMedia getPhone() {
+		return personInfo.getPhone();
 	}
 
 	public RegistryMedia getFax() {
-		return fax;
+		return personInfo.getFax();
 	}
 
 	public RegistryMedia getEmail() {
-		return email;
+		return personInfo.getEmail();
+	}
+
+	public RegistryMedia getWeb() {
+		return personInfo.getWeb();
 	}
 	
 	public boolean isShowContractHeader() {
@@ -209,36 +207,12 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 	}
 	
-	private boolean updateRegistryMedias( Registry registry ) throws ManagerBeanException {
-		IManagerBean beanMedia = BeanManager.getManagerBean(RegistryMedia.class);
-		Criteria criteriaMedia = new Criteria();
-		String registryIdFieldName = beanMedia.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
-		criteriaMedia.addEqualExpression(registryIdFieldName, registry.getId());
-		this.phone = null;
-		this.fax = null;
-		this.email = null;
-		for( ITransferObject to : beanMedia.getList(criteriaMedia) ) {
-			RegistryMedia rmedia = (RegistryMedia) to;
-			switch (rmedia.getMediaType()) {
-			case FIXED_PHONE:
-				phone = rmedia;
-				break;
-			case FAX:
-				fax = rmedia;
-				break;
-			case EMAIL:
-				email = rmedia;
-				break;
-			}			
-		}
-		return (phone != null) || (fax != null) || (email != null);
-	}
-	
 	public void onSelectTreeContract( ActionEvent event ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			this.contract = (Contract) bean.get( currentNode.getId() );
-			this.showContractHeader = updateRegistryMedias( this.contract.getPerson().getRegistry() );
+			this.personInfo.init( this.contract.getPerson().getRegistry() );
+			this.showContractHeader = this.personInfo.hasMedias();
 			this.showContractHeader |= selectSalaries(event, this.contract);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectTreeContract exception: ",e);

@@ -104,14 +104,10 @@
 					<aon:outputText value="#{companyBundle.company_workplace_economic_agreement}" />
 					<aon:outputText value="#{enterprise.workplace.economicAgreement}" />
 				
-					<aon:outputText value="#{enterprise.fax.mediaType}" />
-					<aon:outputText value="#{enterprise.fax.value}" size="64" />
-					
-					<aon:outputText value="#{enterprise.email.mediaType}" />
-					<aon:outputText value="#{enterprise.email.value}" size="64" />
-					
-					<aon:outputText value="#{enterprise.web.mediaType}" />
-					<aon:outputText value="#{enterprise.web.value}" size="64" />				
+					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" >
+						<ui:param name="controller" value="#{enterprise}" />
+					</ui:include>
+
 				</aon:panelGrid>
 	
 			</aon:div>

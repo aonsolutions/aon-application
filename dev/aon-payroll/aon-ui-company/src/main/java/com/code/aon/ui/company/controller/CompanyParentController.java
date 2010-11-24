@@ -29,6 +29,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -368,21 +369,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		addressDirty = true;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void loadMainAddress() throws ManagerBeanException {
-		Integer id = ((Company)this.getModel().getRowData()).getId();
-		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
-		Iterator iter = rAddressBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			this.mainAddress = (RegistryAddress)iter.next();
-		}else{
+		Company company = (Company)this.getModel().getRowData();
+		this.mainAddress = RegistryInfo.getMainAddress(company);
+		if ( this.mainAddress == null ) {
 			this.mainAddress = new RegistryAddress();
-			this.mainAddress.setRegistry(((Company)this.getModel().getRowData()));
+			this.mainAddress.setRegistry( company );
 			this.mainAddress.setGeozone(new GeoZone());
-			this.mainAddress.setAddressType(AddressType.MAIN);
+			this.mainAddress.setAddressType(AddressType.MAIN);			
 		}
 	}
 	
