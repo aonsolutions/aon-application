@@ -89,6 +89,7 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
 							disabled="#{invoicingDetail.to != null || purchaseFinance.to != null}"
 							accesskey="#{bundle.aon_key_search}" />
+<!-- 
 						<t:commandButton id="record" value="#{accountBundle.to_record}"
 							actionListener="#{invoicing.onRecordInvoice}"
 							rendered="#{invoicingDetail.model.rowCount > 0 and !invoicing.recorded}"
@@ -103,7 +104,8 @@
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
 							disabled="#{invoicingDetail.to != null || purchaseFinance.to != null}" />
-						<t:commandButton id="finances" value="#{financeBundle.finance_generate}"
+ -->
+ 						<t:commandButton id="finances" value="#{financeBundle.finance_generate}"
 							actionListener="#{invoicing.generateFinances}"
 							rendered="#{invoicingDetail.model.rowCount > 0 and purchaseFinance.allPending}"							
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
