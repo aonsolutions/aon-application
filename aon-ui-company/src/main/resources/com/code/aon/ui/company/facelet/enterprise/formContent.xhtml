@@ -25,7 +25,6 @@
 		</ui:define>
 		
 		<ui:define name="logoPanel">
-			<aon:outputText rendered="#{controller.aonFile.size > 0}" value="#{controller.aonFile.fileName}"/>
 			<a4j:mediaOutput element="img" cacheable="false"
 				style="width: 100px;" value="#{company.aonFile.key}"
 				rendered="#{controller.aonFile.size > 0}"
