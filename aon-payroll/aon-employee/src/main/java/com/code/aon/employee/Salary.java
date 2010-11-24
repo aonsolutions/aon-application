@@ -84,6 +84,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 
 	//DEDUCCIONES
 	private Set<SalaryDeduction> salaryDeductions = new HashSet<SalaryDeduction>();
+	private Double socialSecurityContributions;
 	private Double totalDeduction;
 
 	// TOTAL LIQUIDO
@@ -315,6 +316,15 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	}
 	public void setSalaryDeductions(Set<SalaryDeduction> salaryDeductions) {
 		this.salaryDeductions = salaryDeductions;
+	}
+
+	@Override
+	@Column(name = "social_security_contributions", precision = 15, scale = 3, nullable = false)
+	public Double getSocialSecurityContributions() {
+		return socialSecurityContributions;
+	}
+	public void setSocialSecurityContributions(Double socialSecurityContributions) {
+		this.socialSecurityContributions = socialSecurityContributions;
 	}
 
 	@Override
