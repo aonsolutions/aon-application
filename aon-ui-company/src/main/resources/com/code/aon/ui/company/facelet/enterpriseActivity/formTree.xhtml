@@ -11,20 +11,10 @@
 
 		<aon:form id="enterpriseActivityForm">
 		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{companyBundle.company_activity_module}" />
-				<ui:param name="toolbarDescription" value="&#160;" />
-				<ui:define name="toolbarContent">
-					<aon:commandButton id="edit"
-						value="#{bundle.aon_edit}"
-						action="enterprise_form" actionListener="#{enterprise.onEdit}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept" >
-					</aon:commandButton>
-				</ui:define>				
-			</ui:decorate>
-			
 			<aon:div styleClass="aon-scroll-area">
-				<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/activityTemplate.xhtml" />	
+				<ui:include	src="/com/code/aon/ui/company/facelet/enterpriseActivity/gridContent.xhtml" >
+					<ui:param name="controller" value="#{enterpriseActivity}" />
+				</ui:include>
 			</aon:div>
 		</aon:form>		
 		

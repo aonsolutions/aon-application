@@ -85,20 +85,9 @@
 							</aon:panelGroup>
 						</c:if>
 						
-						<c:if test="#{enterpriseTree.phone != null}" >
-							<aon:outputText value="#{registryBundle.registry_phone}" />
-							<aon:outputText value="#{enterpriseTree.phone.value}" />
-						</c:if>
-	
-						<c:if test="#{enterpriseTree.fax != null}" >
-							<aon:outputText value="#{registryBundle.registry_fax}" />
-							<aon:outputText value="#{enterpriseTree.fax.value}" />
-						</c:if>
-	
-						<c:if test="#{enterpriseTree.email != null}" >
-							<aon:outputText value="#{registryBundle.registry_email}" />
-							<aon:outputText value="#{enterpriseTree.email.value}" />
-						</c:if>
+						<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" >
+							<ui:param name="controller" value="#{enterpriseTree}" />
+						</ui:include>
 								
 					</aon:panelGrid>
 				</c:if>
