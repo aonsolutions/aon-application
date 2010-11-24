@@ -308,6 +308,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 				FileInputStream in = new FileInputStream(file);
 				byte[] data = IOUtils.toByteArray(in);
 				f.setData(data);
+				file.delete();
 			}
 			f.setFileName( item.getFileName() );
 			f.setMimeType( MimeType.get(item.getContentType()) );
