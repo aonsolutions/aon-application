@@ -1,6 +1,7 @@
 package com.code.aon.ui.employee.event;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -28,6 +29,16 @@ public class AgreementLevelControllerListener extends ControllerAdapter{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void afterBeanCanceled(ControllerEvent event)
+			throws ControllerListenerException {
+//		LinesController controller = (LinesController)getController();
+//		if(controller.getMasterController().getTo()!=null){
+//			controller.getMasterController().onCancel(null);
+//		}
+//		FormUtil.getController("agreement").onCancel(null);
 	}
 
 }
