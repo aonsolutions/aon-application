@@ -775,7 +775,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>registryPayMethodType</property-name>
-			<value>#{configCollections.payMethodTypes[2].value}</value>
+			<value>#{configCollections.payMethodTypes[1].value}</value>
 		</managed-property>
 	</managed-bean>	
 
