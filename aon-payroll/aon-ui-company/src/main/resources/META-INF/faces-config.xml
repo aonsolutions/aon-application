@@ -581,7 +581,9 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{enterpriseSearch}</value>
+				<value>#{enterpriseForm}</value>
 				<value>#{enterpriseScopeListener}</value>
+				<value>#{enterpriseControllerListener}</value>				
 				<value>#{enterpriseWorkplaceChildListener}</value>
 				<value>#{enterpriseActivityChildListener}</value>
 				<value>#{enterpriseAddressListener}</value>
@@ -589,8 +591,7 @@
 				<value>#{enterpriseRBankChildListener}</value>
 				<value>#{enterpriseRPayMethodChildListener}</value>
 				<value>#{enterpriseAddInfoListener}</value>
-				<value>#{enterpriseDirStaffListener}</value>
-				<value>#{enterpriseControllerListener}</value>				
+				<value>#{enterpriseDirStaffListener}</value>				
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -610,6 +611,12 @@
 		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistrySearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>enterpriseForm</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>enterpriseControllerListener</managed-bean-name>
@@ -768,6 +775,15 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAddress_addressType</key>
+					<value>! #{registryCollections.addressTypes[0].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>			
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>

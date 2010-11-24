@@ -108,9 +108,6 @@
 		<mapping class="com.code.aon.employee.SalaryDeduction"/>
 		<mapping class="com.code.aon.employee.SalaryPayment"/>
 
-		<!-- AON-CUSTOMER Mapping files -->	
-		<mapping class="com.code.aon.customer.Customer"/>
-
 		<!-- AON-PAYROLL Mapping files -->	
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificate"/>
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificateDetail"/>

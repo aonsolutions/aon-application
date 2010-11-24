@@ -8,26 +8,20 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
 	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContentEx.xhtml">
-		<ui:param name="skipId" value="true"/>
 		<ui:param name="skipSurname" value="true"/>
+		<ui:param name="skipSecurityPanel" value="true"/>
 		
 		<ui:define name="dataPanel">
-			<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-				<ui:param name="controllerLookupListener" value="#{controller}"/>
-				<ui:param name="pojoName" value="#{controller.pojoShortName}"/>
-			</ui:include>		
-		</ui:define>
-		
-		<ui:define name="securityPanel">
-			<aon:outputLabel for="Registry_id" value="#{bundle.aon_id}" />
-			<aon:inputText id="Registry_id" value="#{controller.to.id}"
-				rendered="#{!controller.new}" size="15" disabled="true" />
-			<aon:outputText value="" rendered="#{controller.new}" />	
 
 			<aon:outputLabel for="Enterprise_scope_id" value="#{bundle.aon_scope}" />
 			<aon:selectOneMenu id="Enterprise_scope_id" value="#{controller.to.scope}">
 				<f:selectItems value="#{configCollections.currentUserScopes}" />
 			</aon:selectOneMenu>
+			
+			<ui:include src="/com/code/aon/ui/registry/facelet/raddress/form.xhtml" />
+				
+			<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" />
+			
 		</ui:define>
 		
 		<ui:define name="logoPanel">
@@ -47,40 +41,7 @@
 		</ui:define>
 		
 		<ui:define name="othersPanel">
-		
-			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formActivityContent.xhtml" />
-
-			<aon:outputLabel value="#{companyBundle.company_workplace}" />
-			<aon:div>
-				<aon:inputText id="WorkPlace_description" size="40"
-					maxlength="64" value="#{controller.workplace.description}"
-					required="true" />
-				<aon:selectOneMenu id="WorkPlace_address_id" required="true"
-					value="#{controller.workplace.address}" >
-					<f:selectItems value="#{enterprise.addresses}" />
-				</aon:selectOneMenu>
-				<aon:selectOneMenu id="WorkPlace_economicAgreement"
-					value="#{controller.workplace.economicAgreement}">
-					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{companyCollections.economicAgreements}" />
-				</aon:selectOneMenu>
-			</aon:div>
-				
-			<aon:outputLabel value="#{registryBundle.registry_dir_staff_representative_labor}" />
-			<aon:div>			
-				<aon:div>
-					<aon:outputText value="#{bundle.aon_company_document}" styleClass="aon-italic"/>
-					<aon:inputText id="Registry_Lookup_document-Edit"
-						size="16" maxlength="16" styleClass="aon-inputText aon-margin-left"
-						value="#{controller.dirStaff.document}" />
-				</aon:div>
-				<aon:div styleClass="aon-margin-top">
-					<aon:outputText value="#{bundle.aon_name}" styleClass="aon-italic"/>
-					<aon:inputText id="Registry_full_name-Edit" 
-						size="64" maxlength="128" styleClass="aon-inputText aon-margin-left"
-						value="#{controller.dirStaff.name}" />
-				</aon:div>
-			</aon:div>
+			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />
 		</ui:define>
 		
 	</ui:decorate>

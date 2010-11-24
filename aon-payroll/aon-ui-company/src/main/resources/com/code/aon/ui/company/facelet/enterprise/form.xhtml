@@ -40,7 +40,9 @@
 					<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">
 
 						<aon:panelTab id="activities" label="#{companyBundle.company_activity_module}">
-							<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/activityTemplate.xhtml" />
+							<ui:include	src="/com/code/aon/ui/company/facelet/enterpriseActivity/gridContent.xhtml" >
+								<ui:param name="controller" value="#{enterpriseActivity}" />
+							</ui:include>
 						</aon:panelTab>
 						
 						<aon:panelTab id="workplace" label="#{companyBundle.company_workplace}">

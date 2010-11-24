@@ -1,5 +1,6 @@
 package com.code.aon.ui.registry.controller;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -10,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -17,6 +19,9 @@ import com.code.aon.common.enumeration.Country;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.form.BasicController;
@@ -98,4 +103,5 @@ public class RegistryController extends BasicController {
 			}
 		}
 	}
+	
 }

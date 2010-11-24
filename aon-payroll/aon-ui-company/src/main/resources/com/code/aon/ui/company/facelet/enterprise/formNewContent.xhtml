@@ -23,12 +23,9 @@
 		</aon:selectOneMenu>
 
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-			<ui:param name="controllerLookupListener" value="#{controller}"/>
-			<ui:param name="pojoName" value="#{controller.pojoShortName}"/>
+			<ui:param name="controllerLookupListener" value="#{enterpriseForm}"/>
 			<ui:param name="addressRequired" value="#{true}"/>
 		</ui:include>
-
-		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formActivityContent.xhtml" />
 		
 	</aon:panelGrid>
 

@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,7 +13,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.CNAE;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.EnterpriseCCC;
@@ -22,42 +20,25 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
-import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.AddressType;
-import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
-import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseController extends RegistryController implements ICompanyConstants {
 	
-	private EnterpriseActivity activity;
-	
-	private RegistryAddress mainAddress;
+	private RegistryInfo info = new RegistryInfo();
+
+	private boolean showActivityNode;
+	private EnterpriseActivity activity;	
+	private EnterpriseCCC ccc;
 	private WorkPlace workplace;
 	private RegistryDirStaff dirStaff;
-    private RegistryMedia phone;
-	private RegistryMedia fax;
-    private RegistryMedia email;
-    private RegistryMedia web;
-	
-	private EnterpriseCCC ccc;
-	
-	private boolean activityDirty;
-	
-	private boolean cccDirty;
 	
 	private boolean treeView;
-	
-	private boolean showActivityNode;
 
     public boolean isTreeView() {
 		return treeView;
@@ -80,11 +61,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 	}
 	
 	public RegistryAddress getMainAddress() {
-		return mainAddress;
-	}
-	
-	public void setMainAddress(RegistryAddress mainAddress) {
-		this.mainAddress = mainAddress;
+		return info.getAddress();
 	}
 	
 	public WorkPlace getWorkplace() {
@@ -102,52 +79,22 @@ public class EnterpriseController extends RegistryController implements ICompany
 	public void setDirStaff(RegistryDirStaff dirStaff) {
 		this.dirStaff = dirStaff;
 	}
-	
-	public RegistryMedia getPhone(){
-    	if(phone==null){
-    		phone = new RegistryMedia();
-    		phone.setMediaType(MediaType.FIXED_PHONE);
-    	}
-    	return phone;
-    }
-	
-    public RegistryMedia getFax(){
-    	if(fax==null){
-    		fax = new RegistryMedia();
-    		fax.setMediaType(MediaType.FAX);
-    	}
-    	return fax;
-    }
-    
-    public RegistryMedia getEmail(){
-    	if(email==null){
-    		email = new RegistryMedia();
-    		email.setMediaType(MediaType.EMAIL);
-    	}
-    	return email;
-    }
-    
-    public RegistryMedia getWeb(){
-    	if(web==null){
-    		web = new RegistryMedia();
-    		web.setMediaType(MediaType.WEB);
-    	}
-    	return web;
-    }
-    
-    public void setPhone(RegistryMedia phone) {
-    	this.phone = phone;
-    }
-    
-    public void setFax(RegistryMedia fax) {
-    	this.fax = fax;
-    }
-    public void setEmail(RegistryMedia email) {
-    	this.email = email;
-    }
-    public void setWeb(RegistryMedia web) {
-    	this.web = web;
-    }
+	    
+    public RegistryMedia getPhone() {
+		return info.getPhone();
+	}
+
+	public RegistryMedia getFax() {
+		return info.getFax();
+	}
+
+	public RegistryMedia getEmail() {
+		return info.getEmail();
+	}
+
+	public RegistryMedia getWeb() {
+		return info.getWeb();
+	}
 
 	public EnterpriseCCC getCCC() {
 		return ccc;
@@ -155,22 +102,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 
 	public void setCCC(EnterpriseCCC ccc) {
 		this.ccc = ccc;
-	}
-	
-	public boolean isActivityDirty() {
-		return activityDirty;
-	}
-
-	public void setActivityDirty(boolean activityDirty) {
-		this.activityDirty = activityDirty;
-	}
-
-	public boolean isCCCDirty() {
-		return cccDirty;
-	}
-
-	public void setCCCDirty(boolean cccDirty) {
-		this.cccDirty = cccDirty;
 	}
 
 	/**
@@ -216,10 +147,9 @@ public class EnterpriseController extends RegistryController implements ICompany
     }	    
 
 	private void loadMainActivity() throws ManagerBeanException {
-		Enterprise enterprise = (Enterprise) getTo();
 		IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
+		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
 		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_TYPE), EnterpriseActivityType.PRINCIPAL);
 		List<ITransferObject> activities = activityBean.getList(criteria);
 		if (! activities.isEmpty() ) {
@@ -236,113 +166,27 @@ public class EnterpriseController extends RegistryController implements ICompany
 		}
 	}    
 	
-    private GeoZone getMainGeoZone( Enterprise enterprise ) throws ManagerBeanException {
-    	GeoZone geoZone = null;
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), enterprise.getRegistry().getId());
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
-		List<ITransferObject> addresses = bean.getList(criteria);
-		if (! addresses.isEmpty() ) {
-			geoZone = ((RegistryAddress) addresses.get(0)).getGeozone();
-		}
-    	return geoZone;
-    }
-	
-	public void saveMainActivity() throws ManagerBeanException {
-		Enterprise enterprise = (Enterprise) getTo();
-		if ( isActivityDirty() ) {
-			IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
-			getActivity().setEnterprise(enterprise);
-			activityBean.insertOrUpdate(getActivity());
-			setActivityDirty(false);
-		}
-		if ( isCCCDirty() ) {
-			IManagerBean cccBean = BeanManager.getManagerBean(EnterpriseCCC.class);	
-			getCCC().setActivity(getActivity());
-			if ( getCCC().getGeozone() == null ) {
-				getCCC().setGeozone(getMainGeoZone(enterprise));
-			}
-			cccBean.insertOrUpdate(getCCC());
-			setCCCDirty(false);
-		}
-	}    	
-	
-	public void resetMainActivity() {
-		setActivity( new EnterpriseActivity() );
-		getActivity().setType( EnterpriseActivityType.PRINCIPAL );
-		getActivity().setCnae( new CNAE() );
-		setCCC( new EnterpriseCCC() );    		
-		getCCC().setType( CCCType.PRINCIPAL );
-    	setActivityDirty(false);
-    	setCCCDirty(false);		
+	public void reset() {
+    	this.showActivityNode = false;
+    	setActivity(null);
+    	setCCC(null);
+    	setWorkplace(null);
+    	setDirStaff(null);
+    	this.info.reset();
 	}
     
     public void initMainActiviy() throws ManagerBeanException {
-    	this.showActivityNode = false;
-    	resetMainActivity();
     	if (! isNew() ) {
     		loadMainActivity();
     	}
     }
     
-    private void resetMedias() {
-    	Registry r = ((Enterprise)this.getTo()).getRegistry();
-    	setPhone(new RegistryMedia());
-    	getPhone().setMediaType(MediaType.FIXED_PHONE);
-    	getPhone().setRegistry(r);
-		setFax(new RegistryMedia());
-		getFax().setMediaType(MediaType.FAX);
-		getFax().setRegistry(r);
-		setEmail(new RegistryMedia());
-		getEmail().setMediaType(MediaType.EMAIL);
-		getEmail().setRegistry(r);
-		setWeb(new RegistryMedia());
-		getWeb().setMediaType(MediaType.WEB);
-		getWeb().setRegistry(r);
+    public Enterprise getEnterprise() {
+    	return (Enterprise) getTo();
     }
     
-    public void initMedias() throws ManagerBeanException {
-    	resetMedias();
-    	BasicController controller = (BasicController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_MEDIA_CONTROLLER_NAME);
-		for(ITransferObject to: controller.getWrappedList()){
-			RegistryMedia rm = (RegistryMedia)to;
-			if(rm.getMediaType()==MediaType.FIXED_PHONE){
-				setPhone(rm);
-			} else if(rm.getMediaType()==MediaType.FAX){
-				setFax(rm);
-			} else if(rm.getMediaType()==MediaType.EMAIL){
-				setEmail(rm);
-			} else if(rm.getMediaType()==MediaType.WEB){
-				setWeb(rm);
-			}
-		}
-    }
-
-	public void saveMedias() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
-    	if(! StringUtils.isEmpty(getPhone().getValue()) ){
-    		bean.insertOrUpdate(getPhone());
-    	}
-    	if(! StringUtils.isEmpty(getFax().getValue()) ){
-    		bean.insertOrUpdate(getFax());
-    	}
-    	if(! StringUtils.isEmpty(getEmail().getValue()) ){
-    		bean.insertOrUpdate(getEmail());
-    	}
-    	if(! StringUtils.isEmpty(getWeb().getValue()) ){
-    		bean.insertOrUpdate(getWeb());
-    	}
-    }
-    
-    public void initMainAddress() throws ManagerBeanException {
-    	BasicController controller = (BasicController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_ADDRESS_CONTROLLER_NAME);
-    	if(!controller.getWrappedList().isEmpty()){
-    		setMainAddress( (RegistryAddress) controller.getWrappedList().get(0));
-    	} else {
-    		setMainAddress(new RegistryAddress());
-    		getMainAddress().setRegistry(((Enterprise)this.getTo()).getRegistry());
-    	}
+    public void initRegistryInfo() throws ManagerBeanException {
+    	this.info.init( getEnterprise().getRegistry() );
     }
     
     public void saveMainAddress() throws ManagerBeanException {
@@ -353,54 +197,31 @@ public class EnterpriseController extends RegistryController implements ICompany
     }
     
     public void initMainWorkPlace() throws ManagerBeanException {
-    	BasicController controller = (BasicController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_WORK_PLACE_CONTROLLER_NAME);
-		if(!controller.getWrappedList().isEmpty()){
-			setWorkplace((WorkPlace) controller.getWrappedList().get(0));
-		} else {
-			setWorkplace(new WorkPlace());
-			getWorkplace().setActive(true);
-			getWorkplace().setEnterprise((Enterprise)this.getTo());
-		}
-    }
-    
-    public void saveMainWorkPlace() throws ManagerBeanException {
+    	WorkPlace workPlace = null;
     	IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-   		if(! StringUtils.isEmpty(getWorkplace().getDescription()) ){
-    		bean.insertOrUpdate(getWorkplace());
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId() );
+    	if ( (getMainAddress() != null) && (getMainAddress().getId() != null) ) {
+    		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ADDRESS_ID), getMainAddress().getId() );
     	}
+    	List<ITransferObject> list = bean.getList(criteria);
+    	if (! list.isEmpty() ) {
+    		workPlace = (WorkPlace) list.get(0);	
+    	}
+		setWorkplace(workPlace);
     }
     
     public void initMainDirStaff() throws ManagerBeanException {
-    	BasicController controller = (BasicController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_DIR_STAFF_CONTROLLER_NAME);
-		if(!controller.getWrappedList().isEmpty()){
-			setDirStaff((RegistryDirStaff) controller.getWrappedList().get(0));
-		} else {
-			setDirStaff(new RegistryDirStaff());
-			getDirStaff().setRegistry(((Enterprise)this.getTo()).getRegistry());
-			getDirStaff().setRepresentativeLabor(true);
-		}
-    }
-    public void saveMainDirStaff() throws ManagerBeanException {
+    	RegistryDirStaff dirStaff = null;
     	IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
-    	if(! StringUtils.isEmpty(getDirStaff().getDocument()) ){
-    		bean.insertOrUpdate(getDirStaff());
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), getEnterprise().getRegistry().getId() );
+    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR), true );
+    	List<ITransferObject> list = bean.getList(criteria);
+    	if (! list.isEmpty() ) {
+    		dirStaff = (RegistryDirStaff) list.get(0);	
     	}
-    }
-    
-    public void onCNAEChanged( LookupChangeEvent event ) {
-    	setActivityDirty(true);
-    	if ( event.getNewValue() != null ) {
-    		CNAE cnae = (CNAE) event.getNewValue();
-    		getActivity().setDescription( cnae.getTitle() );
-    	}
-    }
-
-    public void activityChanged( ValueChangeEvent event ) {
-    	setActivityDirty(true);
-    }
-    
-    public void cccChanged( ValueChangeEvent event ) {
-    	setCCCDirty(true);
+    	setDirStaff(dirStaff);
     }
     
     public void onTreeViewSelect(ActionEvent event){
@@ -414,7 +235,5 @@ public class EnterpriseController extends RegistryController implements ICompany
     public boolean isRegistryTypeLegal(){
     	return ((Enterprise)this.getTo()).getRegistry().getType()==RegistryType.LEGAL;
     }
-    
-    
     
 }
