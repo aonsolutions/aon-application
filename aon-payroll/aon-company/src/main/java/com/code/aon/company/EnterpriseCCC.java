@@ -51,11 +51,11 @@ public class EnterpriseCCC implements ITransferObject {
 	}
 	
 	@Column(name="ccc", length = 11, nullable = false)
-	public String getCCC() {
+	public String getCcc() {
 		return ccc;
 	}
 
-	public void setCCC(String ccc) {
+	public void setCcc(String ccc) {
 		this.ccc = ccc;
 	}
 

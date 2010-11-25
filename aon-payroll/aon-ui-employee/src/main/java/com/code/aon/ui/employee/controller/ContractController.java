@@ -51,37 +51,6 @@ public class ContractController extends BasicController {
 	
 	private List<SelectItem> EnterpriseCccs;
 	
-//	private double totalPayment;
-//	private double totalDeduction;
-//	private double totalLiquid;
-	
-//	public double getTotalPayment() {
-//		return totalPayment;
-//	}
-//
-//	public void setTotalPayment(double totalPayment) {
-//		this.totalPayment = totalPayment;
-//	}
-//
-//	public double getTotalDeduction() {
-//		return totalDeduction;
-//	}
-//
-//	public void setTotalDeduction(double totalDeduction) {
-//		this.totalDeduction = totalDeduction;
-//	}
-//
-//	public double getTotalLiquid() {
-//		calculateTotalLiquid();
-//		return totalLiquid;
-//	}
-//
-//	public void setTotalLiquid(double totalLiquid) {
-//		this.totalLiquid = totalLiquid;
-//	}
-	  
-	
-	
 	public ContractController() {
 		this.workPlaces = new LinkedList<SelectItem>();
 		this.EnterpriseCccs = new LinkedList<SelectItem>();
@@ -135,7 +104,7 @@ public class ContractController extends BasicController {
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to : list) {
 			EnterpriseCCC ccc = (EnterpriseCCC)to;
-			cccs.add(new SelectItem(ccc, ccc.getCCC()));
+			cccs.add(new SelectItem(ccc, ccc.getCcc()));
 		}
     	return cccs;
     }	  	
@@ -177,28 +146,6 @@ public class ContractController extends BasicController {
 		context.responseComplete();
 	}
     
-//    private void calculateTotalPayment(List<ITransferObject> list){
-//    	Double total = 0.0;
-//    	for(ITransferObject to: list){
-//    		ContractPayment cp = (ContractPayment)to;
-//    		cp.getFunction();
-//    		total++;
-//    	}
-//    	setTotalPayment(total);
-//    }
-//    private void calculateTotalDeduction(List<ITransferObject> list){
-//    	Double total = 0.0;
-//    	for(ITransferObject to: list){
-//    		ContractDeduction cd = (ContractDeduction)to;
-//    		cd.getFunction();
-//    		total++;
-//    	}
-//    	setTotalDeduction(total);
-//    }
-//    private void calculateTotalLiquid(){
-//    	setTotalLiquid(getTotalPayment()-getTotalDeduction());
-//    }
-    
     private void loadLines() throws ManagerBeanException{
     	Expression expr1;
     	Expression expr2;
@@ -222,17 +169,10 @@ public class ContractController extends BasicController {
     	try {
 			loadLines();
 		} catch (ManagerBeanException e) {
-//			String msg = "No se han podido filtrar ni las percepciones ni las deducciones";
-//			AonUtil.addWarningMessage(msg);
 			LOGGER.error(e.getMessage(), e);
 		}
     }
 
-    public void onSalarySave(ActionEvent event) {
-    	String msg = "Creacion de la nomina";
-		AonUtil.addWarningMessage(msg);
-    }
-    
 	public void onEdit( ActionEvent event ) {
 		try {
 			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_TREE_CONTROLLER_NAME);

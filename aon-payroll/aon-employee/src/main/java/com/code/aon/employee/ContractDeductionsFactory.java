@@ -52,7 +52,7 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 					manageDeductions(ctx,deductions,sd);
 				}
 			} else {
-				IManagerBean bean = BeanManager.getManagerBean(SalaryDeduction.class);
+				IManagerBean bean = BeanManager.getManagerBean(ContractDeduction.class);
 				Criteria c = new Criteria();
 				c.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_DEDUCTION_CONTRACT_ID), contract.getId());
 				List<?> list = bean.getList(c);
@@ -61,39 +61,40 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 					manageDeductions(ctx,deductions,sd);
 				}
 			}
-			if ( deductions.getCommonContingency() == null ){
-				IDeduction commonContingencyDeduction = 
-					new CommonContingencyDeduction(ctx);
-				deductions.setCommonContingency(getSalaryDeduction(commonContingencyDeduction));
-
-				double total = deductions.getTotal();
-				deductions.setTotal(total + commonContingencyDeduction.getAmount() );
-				double socialSecuritytotal = deductions.getSocialSecurityContributions();
-				deductions.setSocialSecurityContributions(socialSecuritytotal + commonContingencyDeduction.getAmount() );
-			}
-			if ( deductions.getUnemployment() == null ){
-				IDeduction unemploymentDeduction = 
-					new UnemployementDeduction(ctx);
-				deductions.setUnemployment(getSalaryDeduction(unemploymentDeduction));
-
-				double total = deductions.getTotal();
-				deductions.setTotal(total + unemploymentDeduction.getAmount() );
-				double socialSecuritytotal = deductions.getSocialSecurityContributions();
-				deductions.setSocialSecurityContributions(socialSecuritytotal + unemploymentDeduction.getAmount() );
-			}
-			if ( deductions.getJobTraining() == null ){
-				IDeduction jobTrainingDeduction = 
-					new JobTrainingDeduction(ctx);
-				deductions.setJobTraining(getSalaryDeduction(jobTrainingDeduction));
-
-				double total = deductions.getTotal();
-				deductions.setTotal(total + jobTrainingDeduction.getAmount() );
-				double socialSecuritytotal = deductions.getSocialSecurityContributions();
-				deductions.setSocialSecurityContributions(socialSecuritytotal + jobTrainingDeduction.getAmount() );
-			}
+			ensureDeductions(ctx,deductions);
 			return deductions;
 		} catch (ManagerBeanException  e) {
 			throw new SalaryException(e.getMessage(),e);
+		}
+	}
+
+	private void ensureDeductions(IDeductionsFactoryContext ctx, Deductions deductions) {
+		if ( deductions.getCommonContingency() == null ){
+			IDeduction commonContingencyDeduction = new CommonContingencyDeduction(ctx);
+			deductions.setCommonContingency(getSalaryDeduction(commonContingencyDeduction));
+
+			double total = deductions.getTotal();
+			deductions.setTotal(total + commonContingencyDeduction.getAmount() );
+			double socialSecuritytotal = deductions.getSocialSecurityContributions();
+			deductions.setSocialSecurityContributions(socialSecuritytotal + commonContingencyDeduction.getAmount() );
+		}
+		if ( deductions.getUnemployment() == null ){
+			IDeduction unemploymentDeduction = new UnemployementDeduction(ctx);
+			deductions.setUnemployment(getSalaryDeduction(unemploymentDeduction));
+
+			double total = deductions.getTotal();
+			deductions.setTotal(total + unemploymentDeduction.getAmount() );
+			double socialSecuritytotal = deductions.getSocialSecurityContributions();
+			deductions.setSocialSecurityContributions(socialSecuritytotal + unemploymentDeduction.getAmount() );
+		}
+		if ( deductions.getJobTraining() == null ){
+			IDeduction jobTrainingDeduction = new JobTrainingDeduction(ctx);
+			deductions.setJobTraining(getSalaryDeduction(jobTrainingDeduction));
+
+			double total = deductions.getTotal();
+			deductions.setTotal(total + jobTrainingDeduction.getAmount() );
+			double socialSecuritytotal = deductions.getSocialSecurityContributions();
+			deductions.setSocialSecurityContributions(socialSecuritytotal + jobTrainingDeduction.getAmount() );
 		}
 	}
 
