@@ -179,6 +179,7 @@
 											<include>com.code.aon:aon.company</include>
 											<include>com.code.aon:aon.customer</include>
 											<include>com.code.aon:aon.employee</include>
+											<include>com.esferalia.aon:aon.salary</include>
 											<include>com.transtools:ctsql-jdbc:2.2.3.6</include>
 										</includes>
 									</dependency>
@@ -212,6 +213,10 @@
 										<softlinkSource>
 											<location>/usr/share/java/aon.employee-${project.version}.jar</location>
 											<destination>aon-employee.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.salary-${project.version}.jar</location>
+											<destination>aon-salary.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/ctsql-jdbc-2.2.3.6.jar</location>
