@@ -3,9 +3,6 @@ package com.code.aon.accounting.event;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
@@ -16,11 +13,11 @@ import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 
 /**
  * @author Consulting & Development
@@ -34,20 +31,16 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 		validateEntryDateInPeriod(evt);
 		
         try {
-			String select = "select MAX(entry.journal) j" +
-							" from account_entry as entry " +
-							" where entry.account_period = '" + to.getAccountPeriod() + "'";
-			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-			SQLQuery query = session.createSQLQuery(select);
-	        Integer journal = (Integer) query.addScalar("j", Hibernate.INTEGER ).uniqueResult();
-	        if (journal == null ) {
-		        journal = 0;
-	        }
-	        to.setJournal(++journal);
-	    } catch (Exception e) {
+	        IManagerBean accEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+	        Criteria criteria = new Criteria();
+	        criteria.addEqualExpression(accEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), to.getAccountPeriod()); 
+	        Projection projection = Projection.max(accEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_JOURNAL));
+	        Object value = accEntryBean.getUniqueResult(projection, criteria);
+			int journal = (value != null) ? ((Integer) value).intValue() : 0;
+			to.setJournal(++journal);
+        } catch (Exception e) {
 	    	// Nada, el numero de diario se graba a null y será necesario regenerar después.
 	    }
-		
     }
 	
 	@Override
@@ -147,7 +140,7 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 				}
 				periodBean.update(period);
 			}
-	    } catch (ManagerBeanException e) {
+		} catch (ManagerBeanException e) {
 	        throw new ManagerBeanVetoListenerException(e);
 	    }
 	}

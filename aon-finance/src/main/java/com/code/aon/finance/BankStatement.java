@@ -23,6 +23,7 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.finance.enumeration.StatementConcept;
+import com.code.aon.finance.enumeration.StatementReliability;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.registry.RegistryBank;
 
@@ -44,6 +45,7 @@ public class BankStatement implements ITransferObject {
     private String reference1;
     private String reference2;
     private String description;
+    private StatementReliability reliability;
     private StatementStatus status;
 
 	private boolean showBankStatementLink;
@@ -150,11 +152,35 @@ public class BankStatement implements ITransferObject {
 		this.description = description;
 	}
 
+	public StatementReliability getReliability() {
+		return reliability;
+	}
+	public void setReliability(StatementReliability reliability) {
+		this.reliability = reliability;
+	}
+
 	public StatementStatus getStatus() {
 		return status;
 	}
 	public void setStatus(StatementStatus status) {
 		this.status = status;
+	}
+
+	@Transient
+	public boolean isExact() {
+		return reliability == StatementReliability.VERY_HIGH;
+	}
+	@Transient
+	public boolean isApproximate() {
+		return reliability == StatementReliability.HIGH;
+	}
+	@Transient
+	public boolean isAmbiguous() {
+		return reliability == StatementReliability.MEDIUM;
+	}
+	@Transient
+	public boolean isInexact() {
+		return reliability == StatementReliability.LOW;
 	}
 
 	@Transient
@@ -201,10 +227,11 @@ public class BankStatement implements ITransferObject {
 				.append(this.lotNumber,o.lotNumber)
 				.append(this.operationDate,o.operationDate)		
 				.append(this.ownConcept,o.ownConcept)
+				.append(this.payment,o.payment)		
 				.append(this.registryBank,o.registryBank)		
 				.append(this.reference1,o.reference1)
 				.append(this.reference2,o.reference2)
-				.append(this.payment,o.payment)		
+				.append(this.reliability,o.reliability)		
 				.append(this.status,o.status)		
 				.isEquals();
 		}
@@ -222,10 +249,11 @@ public class BankStatement implements ITransferObject {
 			.append(this.lotNumber)
 			.append(this.operationDate)		
 			.append(this.ownConcept)
+			.append(this.payment)		
 			.append(this.registryBank)		
 			.append(this.reference1)
 			.append(this.reference2)
-			.append(this.payment)		
+			.append(this.reliability)		
 			.append(this.status)		
 			.toHashCode();
 	}	

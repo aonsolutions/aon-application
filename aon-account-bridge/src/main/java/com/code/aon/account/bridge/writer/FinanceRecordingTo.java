@@ -2,6 +2,7 @@ package com.code.aon.account.bridge.writer;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.Period;
@@ -15,34 +16,19 @@ public class FinanceRecordingTo implements ITransferObject {
 
 	private static final long serialVersionUID = -7892480587508670847L;
 
-	private AccountEntryType type;
-	
 	private Period period;
-
 	private Date date;
-	
+	private AccountEntryType type;
 	private Account paymentAccount;
-	
-	private SecurityLevel securityLevel;
-
 	private String balancingConcept;
-
+	private SecurityLevel securityLevel;
 	private List<Finance> financeList;
-
 	private List<FinanceBatchDetail> fbatchDetailList;
-
-	public AccountEntryType getType() {
-		return type;
-	}
-
-	public void setType(AccountEntryType type) {
-		this.type = type;
-	}
+	private Map<Account, Double> accountMap;
 
 	public Period getPeriod() {
 		return period;
 	}
-
 	public void setPeriod(Period period) {
 		this.period = period;
 	}
@@ -50,39 +36,41 @@ public class FinanceRecordingTo implements ITransferObject {
 	public Date getDate() {
 		return date;
 	}
-
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public AccountEntryType getType() {
+		return type;
+	}
+	public void setType(AccountEntryType type) {
+		this.type = type;
 	}
 
 	public Account getPaymentAccount() {
 		return paymentAccount;
 	}
-
 	public void setPaymentAccount(Account paymentAccount) {
 		this.paymentAccount = paymentAccount;
-	}
-
-	public SecurityLevel getSecurityLevel() {
-		return securityLevel;
-	}
-
-	public void setSecurityLevel(SecurityLevel securityLevel) {
-		this.securityLevel = securityLevel;
 	}
 
 	public String getBalancingConcept() {
 		return balancingConcept;
 	}
-
 	public void setBalancingConcept(String balancingConcept) {
 		this.balancingConcept = balancingConcept;
+	}
+
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 	}
 
 	public List<Finance> getFinanceList() {
 		return financeList;
 	}
-
 	public void setFinanceList(List<Finance> financeList) {
 		this.financeList = financeList;
 	}
@@ -90,9 +78,15 @@ public class FinanceRecordingTo implements ITransferObject {
 	public List<FinanceBatchDetail> getFBatchDetailList() {
 		return fbatchDetailList;
 	}
-
 	public void setFBatchDetailList(List<FinanceBatchDetail> fbatchDetailList) {
 		this.fbatchDetailList = fbatchDetailList;
+	}
+
+	public Map<Account, Double> getAccountMap() {
+		return accountMap;
+	}
+	public void setAccountMap(Map<Account, Double> accountMap) {
+		this.accountMap = accountMap;
 	}
 
 }
