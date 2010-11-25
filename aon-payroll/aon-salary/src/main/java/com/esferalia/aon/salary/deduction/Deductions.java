@@ -9,6 +9,9 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 
 public class Deductions {
 	
+	double total  ; 
+	double socialSecurityContributions ; 
+	
 	private Map<DeductionType, IDeduction> map;
 
 	public Deductions() {
@@ -84,11 +87,19 @@ public class Deductions {
 	}
 
 	public Double getTotal() {
-		double total = 0;
-		for (IDeduction d: map.values()) {
-			total = CommonUtil.round( total + d.getAmount());	
-		}
-		return total;  
+		return this.total;  
 	}
 	
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
+	public Double getSocialSecurityContributions() {
+		return this.socialSecurityContributions;  
+	}
+	
+	public void setSocialSecurityContributions(double socialSecurityContributions) {
+		this.socialSecurityContributions = socialSecurityContributions;
+	}
+
 }
