@@ -22,21 +22,8 @@
 					
 					<ui:define name="columns">
 						
-						<aon:column alias="Ageement.id"
-							styleClass="aon-editDataTable-textColumn aon-width-100">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_id}" />
-							</f:facet>
-							<aon:outputText value="#{to.id}" />
-						</aon:column>
-						
-						<aon:column alias="Ageement.description"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_description}" />
-							</f:facet>
-							<aon:outputText value="#{to.description}" />
-						</aon:column>
+						<ui:include 
+							src="/com/code/aon/ui/employee/facelet/agreement/listContent.xhtml" />
 						
 					</ui:define>
 				</ui:decorate>
