@@ -219,6 +219,11 @@ public class CertificateFileGenerationWizard implements Serializable {
 	}
 
 	private void onValidate(ActionEvent event) {
+		if(getModel().getRowCount()<=0){
+			String msg = "Debe seleccionar alguna remesa";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		try {
 			generateBatchList();
 		} catch (PayrollException e) {
