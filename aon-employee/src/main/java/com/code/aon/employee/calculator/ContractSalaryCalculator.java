@@ -36,9 +36,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		fillEmployeeData(salary,contract);
 		fillSalaryData(salary,contract);
 		fillPayments(salary,contract);
+		fillBasesData(salary,contract);
 		fillDeductions(salary,contract);
 		salary.setTotalLiquid(CommonUtil.round(salary.getTotalPayment() - salary.getTotalDeduction()));
-		fillBasesData(salary,contract);
 		return salary;
 	}
 
