@@ -53,84 +53,72 @@
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contractGenerationWizard.contractCodes}" />
 			</aon:selectOneMenu>
-<!--  
-			<aon:outputLabel for="contractModel"
-				value="#{employeeBundle.contract_contract_model}" />
-			<aon:selectOneMenu id="contractModel"
-				value="#{contractGenerationWizard.model}" >
-				<f:selectItems value="#{employeeCollections.contractModels}" />
-			</aon:selectOneMenu>
 
-			<aon:outputLabel for="contractCode"
-				value="#{employeeBundle.contract_contract_code}" />
-			<aon:selectOneMenu id="contractCode"
-				value="#{contractGenerationWizard.code}" >
-				<f:selectItems value="#{employeeCollections.contractCodes}" />
+			<aon:outputLabel 
+				value="#{employeeBundle.employee_contract_period}" />
+			<aon:div>
+				<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
+					value="#{bundle.aon_start_date}:" />
+				<aon:selectInputDate id="startDate" 
+					value="#{contractGenerationWizard.contract.startDate}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+				<aon:outputLabel for="endDate" styleClass="aon-italic aon-margin-right"
+					value="#{bundle.aon_end_date}:" />
+				<aon:selectInputDate id="endDate" 
+					value="#{contractGenerationWizard.contract.endDate}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+			</aon:div>
+			
+			<aon:outputLabel for="agreement"
+				value="#{employeeBundle.employee_contract_agreement}" />
+			<aon:selectOneMenu id="agreement"
+				disabled="#{contractGenerationWizard.enterprise.agreement==null}"
+				value="#{contractGenerationWizard.agreement}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contractGenerationWizard.agreements}" />
 			</aon:selectOneMenu>
--->
-
-<!--  
-			<aon:outputLabel for="ContractType_id"
-				value="#{employeeBundle.employee_contractType}" />
-			<aon:div styleClass="aon-lookup">
-				<aon:lookupInputText id="ContractType_id" lookup="#{contractTypeLookup}"
-					reRender="ContractType_detail" required="true"
-					value="#{contractGenerationWizard.contract.contractType.id}" size="5" />
-				<aon:lookupButton 
-					windowTitle="#{employeeBundle.registry_person_selection}"
-					selectReRender="ContractType_id,ContractType_detail"
-					lookup="#{contractTypeLookup}" minHeight="460" minWidth="650"
-					property="#{contractGenerationWizard.contract.contractType}">
-				</aon:lookupButton>
-				<aon:inputText id="ContractType_detail"
-					value="#{contractGenerationWizard.contract.contractType.description}"
-					size="50" disabled="true" />							
-			</aon:div>		
+				
+			<aon:outputLabel for="category"
+				value="#{employeeBundle.employee_contract_agreement_category}" />
+			<aon:selectOneMenu id="category"
+				disabled="#{contractGenerationWizard.enterprise.agreement==null}"
+				value="#{contractGenerationWizard.category}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contractGenerationWizard.categories}" />
+			</aon:selectOneMenu>
 			
-			<aon:outputLabel for="workTime"
-				value="#{employeeBundle.contract_work_time}" />
-			<aon:selectOneRadio id="workTime"
-				value="#{contractGenerationWizard.workingDay}" >
-				<f:selectItems value="#{employeeCollections.workTimes}" />
-			</aon:selectOneRadio>
--->			
+			<aon:outputLabel for="quote_group"
+				value="#{employeeBundle.employee_contract_quote_group}" />
+			<aon:selectOneMenu id="quote_group"
+				value="#{contractGenerationWizard.quoteGroup}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{employeeCollections.quoteGroups}" />
+			</aon:selectOneMenu>
 			
-			<aon:outputLabel for="startDate"
-				value="#{bundle.aon_start_date}" />
-			<aon:selectInputDate id="startDate" 
-				value="#{contractGenerationWizard.contract.startDate}"
-				inputSize="10" renderAsPopup="true" enableManualInput="true"
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}">
-			</aon:selectInputDate>
-			
-			<aon:outputLabel for="endDate"
-				value="#{bundle.aon_end_date}" />
-			<aon:selectInputDate id="endDate" 
-				value="#{contractGenerationWizard.contract.endDate}"
-				inputSize="10" renderAsPopup="true" enableManualInput="true"
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}">
-			</aon:selectInputDate>
+			<aon:outputLabel for="gross_salary"
+				value="#{employeeBundle.employee_contract_gross_salary}" />
+			<aon:div id="salary">
+				<aon:selectBooleanCheckbox value="#{contractGenerationWizard.agreementSalary}"
+					disabled="#{contractGenerationWizard.enterprise.agreement==null}">
+					<a4j:support event="onclick" reRender="salary"/>
+				</aon:selectBooleanCheckbox>
+				<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right"
+					value="#{employeeBundle.employee_contract_like_agreement}&#160;" />
+				<aon:inputText id="gross_salary"
+					disabled="#{contractGenerationWizard.agreementSalary}"
+					value="#{contractGenerationWizard.salary}" />
+			</aon:div>
+				
 		
-<!--  
-			<aon:outputText value="" />
-			<aon:commandButton id="popupButton"
-				reRender="showContractDetailWindow"
-				actionListener="#{contractGenerationWizard.onContractDetailShow}"
-				styleClass="aon-icon-commandButton aon-icon-pdf"
-				value="#{employeeBundle.contract_detail_data}" >
-				<f:setPropertyActionListener target="#{contractGenerationWizard.showContractDetailWindow}"
-					value="#{true}" />								
-			</aon:commandButton>
--->			
 		</aon:panelGrid>
 	
 
-	</ui:define>
-	
-	<ui:define name="after_form">
-		<aon:lookupButtonPopup lookup="#{contractTypeLookup}" />
 	</ui:define>
 	
 </ui:composition>

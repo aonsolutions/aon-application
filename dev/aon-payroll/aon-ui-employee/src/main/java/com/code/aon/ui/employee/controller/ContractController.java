@@ -46,9 +46,7 @@ public class ContractController extends BasicController {
     private final String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
 
 	private Enterprise enterprise;
-	
 	private List<SelectItem> workPlaces;
-	
 	private List<SelectItem> EnterpriseCccs;
 	
 	public ContractController() {

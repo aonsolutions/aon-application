@@ -13,6 +13,7 @@ import com.code.aon.employee.enumeration.ContractModel;
 import com.code.aon.employee.enumeration.ContractOption;
 import com.code.aon.employee.enumeration.ContractTrackingType;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
+import com.code.aon.employee.enumeration.QuoteGroup;
 import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -28,6 +29,7 @@ public class EmployeeCollectionsController {
 	private List<SelectItem> contractCodes;
 	private List<SelectItem> contractModels;
 	private List<SelectItem> contractOptions;
+	private List<SelectItem> quoteGroups;
 	
 	private List<SelectItem> streetTypes;
 	
@@ -153,6 +155,21 @@ public class EmployeeCollectionsController {
 			}
 		}
 		return streetTypes;
+	}
+	
+	public List<SelectItem> getQuoteGroups() {
+		if (quoteGroups == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+			.getLocale();
+			quoteGroups = new LinkedList<SelectItem>();
+			QuoteGroup[] models = QuoteGroup.values();
+			for (QuoteGroup cm : models) {
+				String name = cm.getName(locale);
+				SelectItem item = new SelectItem(cm, name);
+				quoteGroups.add(item);
+			}
+		}
+		return quoteGroups;
 	}
 	
 	
