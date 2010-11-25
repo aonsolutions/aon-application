@@ -224,7 +224,7 @@ public class FeeInvoicingController extends BasicController {
     			while(iter.hasNext()){
     				Invoice invoice = (Invoice)iter.next();
     				criteria.addOrExpression(getManagerBean().getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId().toString());
-    				recordInvoice(invoice);
+    				//recordInvoice(invoice);
     			}
     		}
     		setCriteria(criteria);
