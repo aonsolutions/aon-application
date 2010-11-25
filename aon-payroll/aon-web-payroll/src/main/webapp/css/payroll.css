@@ -106,3 +106,8 @@
 .aon-icon-calendar{
 	background:transparent url(images/aon-icon/aon-icon-calendar.png) scroll left center no-repeat;	
 }
+.aon-background-shadow{
+	height:100%;
+	background-image:url(images/background-shadow.jpg);
+	background-repeat: repeat-x;
+}
