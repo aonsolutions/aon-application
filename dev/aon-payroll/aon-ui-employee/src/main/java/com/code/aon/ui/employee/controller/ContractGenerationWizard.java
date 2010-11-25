@@ -273,7 +273,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public void onSelectEnterprise(ActionEvent event) {
 		EnterpriseController enterpriseC = (EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER);
 		enterpriseC.onSelect(event);
-		getContract().setEnterpriseCCC(enterpriseC.getCCC());
+		getContract().setEnterpriseCCC(enterpriseC.getCcc());
 		this.workplaces = loadWorkPlaces();
 		setEnterpriseListEnabled(false);
 		setCurrentStep(1);

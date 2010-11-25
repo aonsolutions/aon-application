@@ -111,11 +111,11 @@ public class EnterpriseController extends RegistryController implements ICompany
 		return info.getWeb();
 	}
 
-	public EnterpriseCCC getCCC() {
+	public EnterpriseCCC getCcc() {
 		return ccc;
 	}
 
-	public void setCCC(EnterpriseCCC ccc) {
+	public void setCcc(EnterpriseCCC ccc) {
 		this.ccc = ccc;
 	}
 
@@ -175,7 +175,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 			cccCriteria.addEqualExpression(cccBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
 			List<ITransferObject> cccs = cccBean.getList(cccCriteria);
 			if (! cccs.isEmpty() ) {
-				setCCC( (EnterpriseCCC) cccs.get(0) );
+				setCcc( (EnterpriseCCC) cccs.get(0) );
 			}
 			this.showActivityNode = (activities.size() > 1) || (cccs.size() > 1);
 		}
@@ -184,7 +184,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 	public void reset() {
     	this.showActivityNode = false;
     	setActivity(null);
-    	setCCC(null);
+    	setCcc(null);
     	setWorkplace(null);
     	setDirStaff(null);
     	setAonFile(null);
