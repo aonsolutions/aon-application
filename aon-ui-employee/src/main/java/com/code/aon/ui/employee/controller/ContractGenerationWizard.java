@@ -26,8 +26,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.employee.Agreement;
+import com.code.aon.employee.AgreementLevelCategory;
 import com.code.aon.employee.Contract;
+import com.code.aon.employee.ContractData;
 import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractModel;
@@ -35,6 +39,7 @@ import com.code.aon.employee.enumeration.ContractOption;
 import com.code.aon.employee.enumeration.ContractStatus;
 import com.code.aon.employee.enumeration.ContractType;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
+import com.code.aon.employee.enumeration.QuoteGroup;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
@@ -61,6 +66,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			"contractGenerationWizard_step3",
 			"contractGenerationWizard_step4" };
 	private Contract contract;
+	private Enterprise enterprise;
 	private boolean enterpriseListEnabled;
 	private boolean personListEnabled;
 	private boolean showNewPersonWindow;
@@ -73,6 +79,57 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	private String imageUrl;
 	private ContractWorkingDay workingDay;
 	private List<SelectItem> workplaces;
+	private boolean agreementSalary;
+	private Double salary;
+	private QuoteGroup quoteGroup;
+	private String category;
+	private Agreement agreement;
+	
+	
+	public Agreement getAgreement() {
+		return agreement;
+	}
+
+	public void setAgreement(Agreement agreement) {
+		this.agreement = agreement;
+	}
+
+	public QuoteGroup getQuoteGroup() {
+		return quoteGroup;
+	}
+
+	public void setQuoteGroup(QuoteGroup quoteGroup) {
+		this.quoteGroup = quoteGroup;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public boolean isAgreementSalary() {
+		return agreementSalary;
+	}
+
+	public void setAgreementSalary(boolean agreementSalary) {
+		this.agreementSalary = agreementSalary;
+	}
+
+	public Double getSalary() {
+		if(isAgreementSalary()){
+			// a la espera deque se cree el agreement en enterprise 
+			// para recoger el salario del convenio
+			salary = new Double(10000);
+		} 
+		return salary;
+	}
+
+	public void setSalary(Double salary) {
+		this.salary = salary;
+	}
 	
 	public List<SelectItem> getWorkplaces() {
 		return workplaces;
@@ -189,6 +246,14 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public Contract getContract() {
 		return contract;
 	}
+	
+	public Enterprise getEnterprise() {
+		return enterprise;
+	}
+
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
+	}
 
 	public int getCurrentStep() {
 		return this.currentStep;
@@ -196,6 +261,49 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 
 	public void setCurrentStep(int currentStep) {
 		this.currentStep = currentStep;
+	}
+	
+	public List<SelectItem> getAgreements(){
+		List<SelectItem> agreements = new LinkedList<SelectItem>();
+		if(getEnterprise().getAgreement()!=null){
+			Criteria criteria = new Criteria();
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Agreement.class);
+				String identifier = bean.getFieldName(IEmployeeAlias.AGREEMENT_ID);
+				Integer data = getContract().getWorkPlace().getEnterprise().getAgreement();
+				criteria.addEqualExpression(identifier, data);
+				for( ITransferObject to : bean.getList(criteria) ) {
+					Agreement a = (Agreement)to;
+					String name = a.getDescription();
+					SelectItem item = new SelectItem(a, name);
+					agreements.add(item);			
+				}
+			} catch (ManagerBeanException e) {
+				
+			}
+		}
+		return agreements;
+	}
+	public List<SelectItem> getCategories(){
+		List<SelectItem> categories = new LinkedList<SelectItem>();
+		if(getEnterprise().getAgreement()!=null){
+			Criteria criteria = new Criteria();
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(AgreementLevelCategory.class);
+				String identifier = bean.getFieldName(IEmployeeAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID);
+				Integer data = getContract().getWorkPlace().getEnterprise().getAgreement();
+				criteria.addEqualExpression(identifier, data);
+				for( ITransferObject to : bean.getList(criteria) ) {
+					AgreementLevelCategory c = (AgreementLevelCategory)to;
+					String name = c.getDescription();
+					SelectItem item = new SelectItem(c, name);
+					categories.add(item);			
+				}
+			} catch (ManagerBeanException e) {
+				
+			}
+		}
+		return categories;
 	}
 	
 	// Action Listeners
@@ -216,11 +324,6 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			onContractGenerate(event);
 			onFinish(event);
 		} 
-//		else if (getCurrentStep() == 4) {
-//			setCurrentStep(getCurrentStep() + 1);
-//		} else if (getCurrentStep() == 5) {
-//			onFinish(event);
-//		}
 	}
 
 	public void onPrevious(ActionEvent event) {
@@ -273,6 +376,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public void onSelectEnterprise(ActionEvent event) {
 		EnterpriseController enterpriseC = (EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER);
 		enterpriseC.onSelect(event);
+		setEnterprise((Enterprise) enterpriseC.getTo());
 		getContract().setEnterpriseCCC(enterpriseC.getCcc());
 		this.workplaces = loadWorkPlaces();
 		setEnterpriseListEnabled(false);
@@ -360,6 +464,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		// remesar el contrato
 		getContract().setStatus(ContractStatus.PROCESSED);
 		accept();
+		acceptContractData();
 	}
 	public void onSave(ActionEvent event) {
 		onContractGenerate(event);
@@ -441,6 +546,24 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+	}
+	
+	private void acceptContractData(){
+		ContractData data = new ContractData();
+		data.setCode(getCode());
+		data.setConditions("");
+		data.setContract(getContract());
+		data.setDescription("");
+		data.setStartDate(getContract().getStartDate());
+		data.setEndDate(getContract().getEndDate());
+		data.setQuoteGroup(getQuoteGroup());
+		data.setCategory(getCategory());
+		try {
+			BeanManager.getManagerBean(ContractData.class).insert(data);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
