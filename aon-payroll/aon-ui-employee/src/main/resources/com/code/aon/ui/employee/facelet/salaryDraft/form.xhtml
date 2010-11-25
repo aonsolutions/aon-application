@@ -9,17 +9,10 @@
 
 	<ui:define name="content">
 		<aon:form id="salaryDraftForm">
-			<aon:methodParam name="searchAction" value="salaryDraft_search" />
-			<aon:methodParam name="backAction" value="salaryDraft_list" />
-
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salaryDraft_module}" />
-				<ui:param name="controller" value="#{contract}" />
-<!-- 
-				<aon:methodParam name="saveAction" value="salaryDraft_form" />
-				<aon:methodParam name="saveActionListener" value="#{contract.onSalarySave}" type="actionListener" />
- -->
+				<ui:param name="controller" value="#{salaryDraft}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSaveButton" value="true" />
 				<ui:param name="skipRemoveButton" value="true" />
@@ -34,42 +27,50 @@
 					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
-
-			<aon:div style="width: 840px; margin-top: 10px;">
-				<ui:include src="/com/code/aon/ui/employee/facelet/salaryDraft/formContent.xhtml" >
-					<ui:param name="controller" value="#{contract}" />
-				</ui:include>
-				<c:if test="#{!contract.new}">
+			 
+			<aon:div ajaxRendered="true">
+				<aon:div style="width: 840px; margin-top: 10px;">
+					<ui:include src="/com/code/aon/ui/employee/facelet/salaryDraft/formContent.xhtml" >
+						<ui:param name="controller" value="#{salaryDraft}" />
+					</ui:include>
+				</aon:div>
+				<c:if test="#{!salaryDraft.new}">
 					<aon:div>
 						<aon:panelTabSet>
 							<aon:panelTab id="paymentsTab" label="#{employeeBundle.employee_salary_payment}">
-								<ui:include src="/com/code/aon/ui/employee/facelet/payment/gridContent.xhtml" >
-									<ui:param name="controller" value="#{contract.to.salary.payments}" />
-									<ui:param name="totalPayment" value="#{contract.to.salary.totalPayment}" />
-								</ui:include>
+								<aon:div style="width: 840px; margin-top: 10px;">
+									<ui:include src="/com/code/aon/ui/employee/facelet/payment/gridContent.xhtml" >
+										<ui:param name="controller" value="#{salaryDraft.salary.payments}" />
+										<ui:param name="totalPayment" value="#{salaryDraft.salary.totalPayment}" />
+									</ui:include>
+								</aon:div>
 							</aon:panelTab>
-							<aon:panelTab id="paymentsEditTab" label="#{employeeBundle.employee_salary_payment}">
+							<aon:panelTab id="paymentsEditTab" label="#{bundle.aon_edit}">
 								<ui:include src="/com/code/aon/ui/employee/facelet/payment/editGridContent.xhtml" >
-									<ui:param name="controller" value="#{contractPayment}" />
+									<ui:param name="controller" value="#{salaryDraftPayment}" />
 								</ui:include>
 							</aon:panelTab>
 						</aon:panelTabSet>
 						<aon:panelTabSet>
 							<aon:panelTab id="deductionsTab" label="#{employeeBundle.employee_salary_deduction}">
-								<ui:include src="/com/code/aon/ui/employee/facelet/deduction/gridContent.xhtml" >
-									<ui:param name="controller" value="#{contract.to.salary.deductions}" />
-									<ui:param name="totalDeduction" value="#{contract.to.salary.totalDeduction}" />
-								</ui:include>
+								<aon:div style="width: 840px; margin-top: 10px;">
+									<ui:include src="/com/code/aon/ui/employee/facelet/deduction/gridContent.xhtml" >
+										<ui:param name="controller" value="#{salaryDraft.salary.deductions}" />
+										<ui:param name="totalDeduction" value="#{salaryDraft.salary.totalDeduction}" />
+									</ui:include>
+								</aon:div>
 							</aon:panelTab>
-							<aon:panelTab id="deductionsEditTab" label="#{employeeBundle.employee_salary_deduction}">
+							<aon:panelTab id="deductionsEditTab" label="#{bundle.aon_edit}">
 								<ui:include src="/com/code/aon/ui/employee/facelet/deduction/editGridContent.xhtml" >
-									<ui:param name="controller" value="#{contractDeduction}" />
+									<ui:param name="controller" value="#{salaryDraftDeduction}" />
 								</ui:include>
 							</aon:panelTab>
 						</aon:panelTabSet>
-						<ui:include src="/com/code/aon/ui/employee/facelet/salary/formBases.xhtml" >
-							<ui:param name="salaryTO" value="#{contract.to.salary}" />
-						</ui:include>
+						<aon:div style="width: 840px; margin-top: 10px;">
+							<ui:include src="/com/code/aon/ui/employee/facelet/salary/formBases.xhtml" >
+								<ui:param name="salaryTO" value="#{salaryDraft.salary}" />
+							</ui:include>
+						</aon:div>
 					</aon:div>
 				</c:if>
 			</aon:div>

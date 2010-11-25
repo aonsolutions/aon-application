@@ -56,11 +56,12 @@
 	<!--  IMPRESION DEL BORRADOR DE LA NOMINA -->
 	<report id="currentSalaryDraftReport" description="Current Salary Draft report ">
 		<template path="/com/code/aon/ui/employee/report/salary.jasper" />
-		<collection provider="#{contract}" forceRefresh="true"/>
+		<collection provider="#{salaryDraft}" forceRefresh="true"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
+			<param id="showBackground" value="#{salaryDraft.isShowBackground}" />
 		</params>
 	</report>
 	

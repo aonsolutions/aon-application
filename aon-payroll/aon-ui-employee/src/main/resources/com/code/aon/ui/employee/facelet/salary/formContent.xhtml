@@ -7,18 +7,6 @@
 	xmlns:h="http://java.sun.com/jsf/html" >
 
 	<aon:div >
-<!--  
-		<aon:div styleClass="aon-toolbar" >
-			<aon:htmlCommandLink id="profitAndLossMonthly-report"
-				styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-				value="NOMINA -i18n-"
-				action="#{report.onExecute}">
-				<f:param name="reportKey" value="salaryReport" />
-				<f:param name="outputFormat" value="PDF" />
-			</aon:htmlCommandLink>
-		</aon:div>
--->	
-	
 		<aon:panelGrid columns="6" style="width:100%">
 			<aon:outputText value="#{bundle.aon_start_date}" />
 			<aon:outputText value="#{controller.to.startDate}" >

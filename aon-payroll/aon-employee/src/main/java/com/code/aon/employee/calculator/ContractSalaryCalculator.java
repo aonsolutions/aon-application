@@ -1,10 +1,7 @@
 package com.code.aon.employee.calculator;
 
-import java.util.Date;
-
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.employee.Contract;
-import com.code.aon.employee.ContractData;
 import com.code.aon.employee.Salary;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
@@ -34,7 +31,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		salary.setContract(contract);
 		fillEnterpriseData(salary,contract);
 		fillEmployeeData(salary,contract);
-		fillSalaryData(salary,contract);
+		fillSalaryData(ctx,salary,contract);
 		fillPayments(salary,contract);
 		fillBasesData(salary,contract);
 		fillDeductions(salary,contract);
@@ -58,18 +55,18 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		salary.setSeniorityDate(contract.getStartDate());
 	}
 
-	private void fillSalaryData(Salary salary, Contract contract) {
-		Date today = new Date();
-		salary.setIssueDate( today );
-		salary.setStartDate( CommonUtil.getMonthFirstDay(today));
-		salary.setEndDate( CommonUtil.getMonthLastDay(today));
-		salary.setTimeUnits( (int) CommonUtil.getDaysBetweenDates(salary.getStartDate(), salary.getEndDate()));
+	private void fillSalaryData(SalaryCalculatorContext ctx, Salary salary, Contract contract) {
+		salary.setIssueDate( ctx.getIssueDate() );
+		salary.setStartDate( ctx.getStartDate());
+		salary.setEndDate( ctx.getEndDate());
+		salary.setTimeUnits( ((int) CommonUtil.getDaysBetweenDates(salary.getStartDate(), salary.getEndDate())) + 1);
 	}
 
 	private void fillPayments(Salary salary, Contract contract) throws SalaryException {
 		PaymentsFactoryManager manager =  PaymentsFactoryManager.getInstance();
 		PaymentsFactoryContext pfc = new PaymentsFactoryContext();
 		pfc.setSalaryProxy(contract);
+		pfc.setCurrentSalary(salary);
 		IPaymentsFactory factory = manager.getFactory( pfc );
 		salary.setPayments( factory.getPayments(pfc) );
 		salary.setTotalPayment( salary.getPayments().getTotal() ); 

@@ -48,12 +48,12 @@
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>		
 					<aon:selectInputDate id="Contract_endDate" rendered="#{formEdit}"
-						value="#{controller.to.startDate}"
+						value="#{controller.to.endDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 					<f:facet name="footer">
 						<aon:selectInputDate id="Contract_endDate-New" rendered="#{formNew}"
-							value="#{controller.to.startDate}"
+							value="#{controller.to.endDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</f:facet>		
