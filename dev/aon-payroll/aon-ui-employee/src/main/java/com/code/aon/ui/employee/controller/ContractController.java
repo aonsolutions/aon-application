@@ -26,8 +26,6 @@ import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.employee.Contract;
-import com.code.aon.employee.ContractDeduction;
-import com.code.aon.employee.ContractPayment;
 import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -53,34 +51,34 @@ public class ContractController extends BasicController {
 	
 	private List<SelectItem> EnterpriseCccs;
 	
-	private double totalPayment;
-	private double totalDeduction;
-	private double totalLiquid;
+//	private double totalPayment;
+//	private double totalDeduction;
+//	private double totalLiquid;
 	
-	public double getTotalPayment() {
-		return totalPayment;
-	}
-
-	public void setTotalPayment(double totalPayment) {
-		this.totalPayment = totalPayment;
-	}
-
-	public double getTotalDeduction() {
-		return totalDeduction;
-	}
-
-	public void setTotalDeduction(double totalDeduction) {
-		this.totalDeduction = totalDeduction;
-	}
-
-	public double getTotalLiquid() {
-		calculateTotalLiquid();
-		return totalLiquid;
-	}
-
-	public void setTotalLiquid(double totalLiquid) {
-		this.totalLiquid = totalLiquid;
-	}
+//	public double getTotalPayment() {
+//		return totalPayment;
+//	}
+//
+//	public void setTotalPayment(double totalPayment) {
+//		this.totalPayment = totalPayment;
+//	}
+//
+//	public double getTotalDeduction() {
+//		return totalDeduction;
+//	}
+//
+//	public void setTotalDeduction(double totalDeduction) {
+//		this.totalDeduction = totalDeduction;
+//	}
+//
+//	public double getTotalLiquid() {
+//		calculateTotalLiquid();
+//		return totalLiquid;
+//	}
+//
+//	public void setTotalLiquid(double totalLiquid) {
+//		this.totalLiquid = totalLiquid;
+//	}
 	  
 	
 	
@@ -179,29 +177,29 @@ public class ContractController extends BasicController {
 		context.responseComplete();
 	}
     
-    private void calculateTotalPayment(List<ITransferObject> list){
-    	Double total = 0.0;
-    	for(ITransferObject to: list){
-    		ContractPayment cp = (ContractPayment)to;
-    		cp.getFunction();
-    		total++;
-    	}
-    	setTotalPayment(total);
-    }
-    private void calculateTotalDeduction(List<ITransferObject> list){
-    	Double total = 0.0;
-    	for(ITransferObject to: list){
-    		ContractDeduction cd = (ContractDeduction)to;
-    		cd.getFunction();
-    		total++;
-    	}
-    	setTotalDeduction(total);
-    }
-    private void calculateTotalLiquid(){
-    	setTotalLiquid(getTotalPayment()-getTotalDeduction());
-    }
+//    private void calculateTotalPayment(List<ITransferObject> list){
+//    	Double total = 0.0;
+//    	for(ITransferObject to: list){
+//    		ContractPayment cp = (ContractPayment)to;
+//    		cp.getFunction();
+//    		total++;
+//    	}
+//    	setTotalPayment(total);
+//    }
+//    private void calculateTotalDeduction(List<ITransferObject> list){
+//    	Double total = 0.0;
+//    	for(ITransferObject to: list){
+//    		ContractDeduction cd = (ContractDeduction)to;
+//    		cd.getFunction();
+//    		total++;
+//    	}
+//    	setTotalDeduction(total);
+//    }
+//    private void calculateTotalLiquid(){
+//    	setTotalLiquid(getTotalPayment()-getTotalDeduction());
+//    }
     
-    private void loadTotals() throws ManagerBeanException{
+    private void loadLines() throws ManagerBeanException{
     	Expression expr1;
     	Expression expr2;
     	IController pBean = FormUtil.getController(CONTRACT_PAYMENT_CONTROLLER);
@@ -216,19 +214,15 @@ public class ContractController extends BasicController {
     	expr2 = ExpressionUtilities.getNullExpression(dBean.getFieldName(IEmployeeAlias.CONTRACT_DEDUCTION_END_DATE));
     	dBean.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));	
     	dBean.initializeModel();
-    	
-    	calculateTotalPayment(pBean.getManagerBean().getList(pBean.getCriteria()));
-    	calculateTotalDeduction(dBean.getManagerBean().getList(dBean.getCriteria()));
-    	calculateTotalLiquid();
     }
     
     @Override
     public void onSelect(ActionEvent event) {
     	super.onSelect(event);
     	try {
-			loadTotals();
+			loadLines();
 		} catch (ManagerBeanException e) {
-//			String msg = "No se han podido calcular los totales";
+//			String msg = "No se han podido filtrar ni las percepciones ni las deducciones";
 //			AonUtil.addWarningMessage(msg);
 			LOGGER.error(e.getMessage(), e);
 		}
