@@ -11,14 +11,12 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<aon:methodParam name="backAction" value="salaryDraft_list" />
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salaryDraft_module}" />
-				<ui:param name="controller" value="#{contract}" />
+				<ui:param name="controller" value="#{salaryDraft}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
-
-			<aon:methodParam name="searchAction" default="salaryDraft_list" resolve="true" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{contract}" />
+				<ui:param name="controller" value="#{salaryDraft}" />
 				<ui:define name="searchContent">
 				
 					<aon:outputLabel for="Person_id"

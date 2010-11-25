@@ -28,6 +28,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
@@ -533,5 +534,15 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 			payContext = pfc;			
 		}
 		return payContext;
+	}
+	@Transient
+	@Override
+	public SalaryCalculatorContext getSalaryCalculatorContext() throws SalaryException {
+		SalaryCalculatorContext ctx = new SalaryCalculatorContext();
+		ctx.setSalaryProxy(this);
+		ctx.setIssueDate(this.getIssueDate());
+		ctx.setStartDate(this.getStartDate());
+		ctx.setEndDate(this.getEndDate());
+		return ctx;
 	}
 }

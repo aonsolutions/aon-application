@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="841" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="1536"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
 	<style name="complements_TABLE">
@@ -54,6 +54,9 @@
 		<field name="amount" class="java.lang.Double"/>
 	</subDataset>
 	<parameter name="nestedReports" class="java.util.Map"/>
+	<parameter name="showBackground" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
 	<field name="salary" class="com.esferalia.aon.salary.ISalary"/>
 	<variable name="formatter" class="java.text.SimpleDateFormat">
 		<initialValueExpression><![CDATA[new SimpleDateFormat("dd' de 'MMMMMMMMMMM' de 'yyyy")]]></initialValueExpression>
@@ -69,19 +72,17 @@
 	</group>
 	<background>
 		<band height="764" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{showBackground}
+]]></printWhenExpression>
 			<staticText>
-				<reportElement mode="Transparent" x="66" y="194" width="96" height="414" forecolor="#CCCCCC">
-					<printWhenExpression><![CDATA[$F{salary} instanceof com.code.aon.employee.Contract]]></printWhenExpression>
-				</reportElement>
+				<reportElement mode="Transparent" x="66" y="194" width="96" height="414" forecolor="#CCCCCC"/>
 				<textElement rotation="Left">
 					<font size="66" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[BORRADOR]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="394" y="194" width="96" height="414" forecolor="#CCCCCC">
-					<printWhenExpression><![CDATA[$F{salary} instanceof com.code.aon.employee.Contract]]></printWhenExpression>
-				</reportElement>
+				<reportElement mode="Transparent" x="394" y="194" width="96" height="414" forecolor="#CCCCCC"/>
 				<textElement rotation="Left">
 					<font size="66" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
