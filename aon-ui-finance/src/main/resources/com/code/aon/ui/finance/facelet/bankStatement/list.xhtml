@@ -38,46 +38,72 @@
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
  -->
+						<aon:commandButton id="recordLinks"
+							value="#{financeBundle.finance_record_selected}"
+							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+							rendered="#{!controller.new and controller.to == null}"
+							actionListener="#{controller.onRecordLinks}"
+							reRender="#{dataTableId}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
  					</ui:define>
 				</ui:decorate>
 
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
-					<aon:div style="background-color:#f6f5e3; padding: 5px; margin-bottom: 5px;"
+					<aon:div style="background-color:#f6f5e3; padding:5px; margin-bottom:5px;"
 						rendered="#{!bankStatement.new and bankStatement.to == null}">
 						<aon:div id="bankStatementCommandContainer">
 							<aon:outputText value="#{bundle.aon_see}:" styleClass="aon-bold" />
 							<aon:commandLink value="#{financeBundle.finance_all}"
-								style="margin-left: 5px; text-decoration: underline;"
+								style="margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onSeeAll}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 							<aon:commandLink value="#{financeBundle.finance_list_pending}"
-								style="margin-left: 5px; text-decoration: underline;"
+								style="margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onSeePending}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 							<aon:commandLink value="#{financeBundle.finance_list_checked}"
-								style="margin-left: 5px; text-decoration: underline;"
+								style="margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onSeeChecked}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_check_exact}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSeeExact}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_check_approximate}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSeeApproximate}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_check_ambiguous}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSeeAmbiguous}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 							<aon:commandLink value="#{financeBundle.finance_list_recorded}"
-								style="margin-left: 5px; text-decoration: underline;"
+								style="margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onSeeRecorded}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 
 							<aon:outputText value="#{financeBundle.finance_check_selected}:"
-								 styleClass="aon-bold" style="padding-left: 200px;" />
+								 styleClass="aon-bold" style="padding-left:120px;" />
 							<c:if test="#{aonRole.accountingOperator}">
 								<aon:commandLink id="BankStatement_checkByConcept" 
 									value="#{financeBundle.finance_check_by_concept}"
-									style="margin-left: 5px; text-decoration: underline;"
+									style="margin-left:5px; text-decoration:underline;"
 									rendered="#{bankStatement.checkByAccount}"
 									actionListener="#{bankStatement.onCheckByConcept}"
 									reRender="bankStatementCommandContainer" ajaxSingle="true"
@@ -85,7 +111,7 @@
 									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 								<aon:commandLink id="BankStatement_checkByAccount" 
 									value="#{financeBundle.finance_check_by_account}"
-									style="margin-left: 5px; text-decoration: underline;"
+									style="margin-left:5px; text-decoration:underline;"
 									rendered="#{!bankStatement.checkByAccount}"
 									actionListener="#{bankStatement.onCheckByAccount}"
 									reRender="bankStatementCommandContainer" ajaxSingle="true"
@@ -104,7 +130,7 @@
 									<ui:param name="wizard" value="#{accountWizard}" />
 									<ui:param name="id" value="BankStatement_account" />
 									<ui:param name="required" value="#{false}" />
-									<ui:param name="style" value="display: inline; margin-left: 0.7em;" />
+									<ui:param name="style" value="display:inline; margin-left:0.7em;" />
 									<ui:param name="size" value="12" />
 									<ui:param name="maxlength" value="12" />
 									<ui:param name="renderDescription" value="#{false}" />
@@ -117,8 +143,128 @@
 							</c:if>							
 							<aon:commandButton id="checkSelected"
 								value="#{financeBundle.finance_bank_statement_check}"
-								styleClass="aon-finding-toolbar-item aon-icon-attach-file"
+								styleClass="aon-finding-toolbar-item aon-icon-attach-file aon-noborder"
 								actionListener="#{bankStatement.onCheckSelected}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						</aon:div>
+						<aon:div>
+							<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold" />
+							<aon:commandLink value="#{financeBundle.finance_list_pending}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSelectPending}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_list_checked}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSelectChecked}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_check_exact}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSelectExact}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_check_approximate}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSelectApproximate}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_check_ambiguous}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSelectAmbiguous}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_list_recorded}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSelectRecorded}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_none}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSelectNone}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+
+							<aon:outputText value="#{financeBundle.finance_cancel_checks}:"
+								 styleClass="aon-bold" style="padding-left:60px;" />
+							<aon:commandLink value="#{financeBundle.finance_all}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onCancelAll}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_checked}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onCancelSelected}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_check_exact}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onCancelExact}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_check_approximate}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onCancelApproximate}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_check_ambiguous}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onCancelAmbiguous}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						</aon:div>
+						<aon:div>
+							<aon:outputText value="#{financeBundle.finance_view_entry}:" styleClass="aon-bold" />
+							<aon:commandLink value="#{financeBundle.finance_checked}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onViewEntrySelected}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_list_current_page}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onViewEntryCurrentPage}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_none}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onViewEntryNone}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+
+							<aon:outputText value="#{financeBundle.finance_tobreakdown}:"
+								 styleClass="aon-bold" style="padding-left:300px;" />
+							<aon:commandLink value="#{financeBundle.finance_checked}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onBreakdownSelected}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_list_current_page}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onBreakdownCurrentPage}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandLink value="#{financeBundle.finance_none}"
+								style="margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onBreakdownNone}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -126,7 +272,7 @@
 					</aon:div>
 
 					<aon:div id="bankStatementDataContainer">
-						<aon:panelGrid id="registryBankTable" columns="2" style="width: 100%;"
+						<aon:panelGrid id="registryBankTable" columns="2" style="width:100%;"
 							columnClasses="aon-panelGrid-odd aon-width-140
 								,aon-panelGrid-even aon-width-auto">
 							<aon:outputText value="#{configBundle.config_bank}" />
@@ -151,6 +297,7 @@
 									template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 									<ui:param name="controller" value="#{bankStatement}" />
 									<ui:param name="skipLineEdition" value="#{true}" />
+									<ui:param name="skipRemoveButton" value="#{controller.to.recorded}" />
 									<ui:define name="beginFormListContent">
 										<aon:commandLink id="#{dataTableId}-selectButton"
 											styleClass="aon-table-row-link" value="&#160;"
@@ -186,6 +333,20 @@
 													<aon:outputText value="#{controller.errorMessage}" />
 												</rich:toolTip>
 											</aon:div>
+											<aon:div style="display:inline;cursor:pointer;"
+												rendered="#{to.checked and controller.errorMessage == null}">
+												<aon:outputText value="&#160;" styleClass="aon-icon-point-green"
+													style="padding-left:12px" rendered="#{to.exact}" />
+												<aon:outputText value="&#160;" styleClass="aon-icon-point-light-green"
+													style="padding-left:12px" rendered="#{to.approximate}" />
+												<aon:outputText value="&#160;" styleClass="aon-icon-point-yellow"
+													style="padding-left:12px" rendered="#{to.ambiguous}" />
+												<aon:outputText value="&#160;" styleClass="aon-icon-point-orange"
+													style="padding-left:12px" rendered="#{to.inexact}" />
+												<rich:toolTip>
+													<aon:outputText value="#{to.reliability}" />
+												</rich:toolTip>
+											</aon:div>
 										</aon:column>
 
 										<aon:column alias="BankStatement.lotNumber"
@@ -205,13 +366,13 @@
 												<aon:outputText value="#{bundle.aon_date}" />
 											</f:facet>
 											<aon:outputText value="#{to.operationDate}" 
-												rendered="#{formList}">
+												rendered="#{formList or controller.to.recorded}">
 												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 													timeZone="#{timeZoneController.timeZoneId}" />
 											</aon:outputText>
 											<aon:selectInputDate id="BankStatement_operationDate" 
 												value="#{controller.to.operationDate}"
-												rendered="#{formEdit}" required="true"
+												rendered="#{formEdit and !controller.to.recorded}" required="true"
 												timeZone="#{timeZoneController.timeZone}"
 												popupDateFormat="#{bundle.aon_date_pattern}"/>
 											<f:facet name="footer">
@@ -229,10 +390,10 @@
 												<aon:outputText value="#{bundle.aon_operation}" />
 											</f:facet>
 											<aon:outputText value="#{to.commonConcept}"
-												rendered="#{formList}" />
+												rendered="#{formList or controller.to.recorded}" />
 											<aon:selectOneMenu id="BankStatement_concept"
 												value="#{controller.to.commonConcept}"
-												rendered="#{formEdit}">
+												rendered="#{formEdit and !controller.to.recorded}">
 												<f:selectItems value="#{financeCollections.statementConcepts}" />
 											</aon:selectOneMenu>
 											<f:facet name="footer">
@@ -250,7 +411,7 @@
 												<aon:outputText value="#{bundle.aon_concept}" />
 											</f:facet>
 											<aon:outputText value="#{to.description}"
-												rendered="#{formList}">
+												rendered="#{formList or controller.to.recorded}">
 												<aon:abbreviateConverter maxWidth="50" />
 											</aon:outputText>
 											<rich:toolTip rendered="#{controller.descriptionLength > 50}">
@@ -258,7 +419,7 @@
 											</rich:toolTip>
 											<aon:inputText id="BankStatement_description"
 												value="#{controller.to.description}"
-												rendered="#{formEdit}" required="true"
+												rendered="#{formEdit and !controller.to.recorded}" required="true"
 												size="50" maxlength="80" />
 											<f:facet name="footer">
 												<aon:inputText id="BankStatement_description-New"
@@ -274,10 +435,10 @@
 												<aon:outputText value="#{bundle.aon_type}" />
 											</f:facet>
 											<aon:outputText value="#{(to.payment) ? (financeBundle.finance_payment) : (financeBundle.finance_charge)}"
-												rendered="#{formList}" /> 
+												rendered="#{formList or controller.to.recorded}" /> 
 											<aon:selectOneMenu id="BankStatement_payment"
 												value="#{controller.to.payment}"
-												rendered="#{formEdit}">
+												rendered="#{formEdit and !controller.to.recorded}">
 												<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
 												<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
 											</aon:selectOneMenu>
@@ -297,12 +458,12 @@
 												<aon:outputText value="#{bundle.aon_amount}" />
 											</f:facet>
 											<aon:outputText value="#{to.amount}"
-												rendered="#{formList}">
+												rendered="#{formList or controller.to.recorded}">
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>
 											<aon:inputText id="BankStatement_amount"
 												value="#{controller.to.amount}"
-												rendered="#{formEdit}" required="true"
+												rendered="#{formEdit and !controller.to.recorded}" required="true"
 												size="8">
 												<f:validateDoubleRange minimum="0.0" />
 											</aon:inputText> 
@@ -345,14 +506,26 @@
 											<aon:commandLink value="#{financeBundle.finance_breakdown}"
 												styleClass="aon-italic"
 												reRender="#{dataTableId},showBankStatementLinks"
-												rendered="#{!to.showBankStatementLink}" 
+												rendered="#{to.checked and !to.showBankStatementLink}" 
 												actionListener="#{controller.onShowBankStatementLink}" />
 											<aon:commandLink value="#{financeBundle.finance_hide}"
 												reRender="#{dataTableId},showBankStatementLinks"
-												rendered="#{to.showBankStatementLink}" 
+												rendered="#{to.checked and to.showBankStatementLink}" 
 												actionListener="#{controller.onHideBankStatementLink}" />
 										</aon:div>
-										<rich:subTable id="bankStatementLinkTable" rendered="#{to.showBankStatementLink}" 
+										<aon:div id="showAccountEntryDetails" rendered="#{to.recorded}">
+											<aon:commandLink value="#{financeBundle.finance_view_entry}"
+												styleClass="aon-italic"
+												reRender="#{dataTableId},showAccountEntryDetails"
+												rendered="#{to.recorded and !to.showAccountEntry}" 
+												actionListener="#{controller.onShowAccountEntry}" />
+											<aon:commandLink value="#{financeBundle.finance_hide}"
+												reRender="#{dataTableId},showAccountEntryDetails"
+												rendered="#{to.recorded and to.showAccountEntry}" 
+												actionListener="#{controller.onHideAccountEntry}" />
+										</aon:div>
+										<rich:subTable id="bankStatementLinkTable" 
+											rendered="#{to.checked and controller.showBankStatementLink}"
 											value="#{controller.bankStatementLinkList}" var="bankStatementLink">
 
 											<aon:column colspan="4"	style="padding:0px; border:none; background-color:#FBEDB6;">
@@ -369,7 +542,9 @@
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
 												style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
-												<c:if test="#{aonRole.accountingOperator}">
+												<aon:outputText value="#{financeBundle.finance_tracking_batched} "
+													rendered="#{bankStatementLink.financeBatch}" />
+												<c:if test="#{aonRole.accountingOperator || !bankStatementLink.account}">
 													<aon:outputText value="#{bankStatementLink.concept}" />
 												</c:if>
 												<aon:outputText value="&#160;" />
@@ -395,8 +570,51 @@
 												</aon:outputText>
 											</aon:column>
 
-											<aon:column colspan="2"	style="padding:0px; border:none; background-color:#FBEDB6;">
+											<aon:column colspan="2" style="padding:0px; border:none; background-color:#FBEDB6;">
 												<aon:outputText value="&#160;" />
+											</aon:column>
+										</rich:subTable>
+
+										<rich:subTable id="accountEntryTable" 
+											rendered="#{to.recorded and controller.showAccountEntry}"
+											value="#{controller.accountEntryDetails}" var="entryDetail">
+
+											<aon:column colspan="3" style="padding:0px; border:none; background-color:#F2FDEC;">
+												<aon:outputText value="&#160;" />
+											</aon:column>
+
+											<aon:column colspan="2" styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												<aon:outputText value="#{entryDetail.concept}" />
+											</aon:column>
+
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												<aon:outputText value="#{entryDetail.account.id}" />
+											</aon:column>
+
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												<aon:outputText value="#{entryDetail.account.description}" />
+											</aon:column>
+
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold"
+												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												<aon:outputText value="#{entryDetail.debit}">
+													<f:convertNumber pattern="#,##0.00" />
+												</aon:outputText>
+											</aon:column>
+
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold"
+												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												<aon:outputText value="#{entryDetail.credit}">
+													<f:convertNumber pattern="#,##0.00" />
+												</aon:outputText>
+											</aon:column>
+
+											<aon:column colspan="2"	styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												<aon:outputText value="#{entryDetail.balancingAccount.id}" />
 											</aon:column>
 										</rich:subTable>
 									</ui:define>
