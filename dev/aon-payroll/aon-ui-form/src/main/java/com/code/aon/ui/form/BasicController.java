@@ -90,6 +90,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	private List<Expression> initExpressions;
 	
 	private String backAction;
+	private String backActionListener;
 
 	/**
 	 * Constructor.
@@ -393,7 +394,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	@Override
 	public void onSearch(ActionEvent event) {
 		try {
-			setBackAction(null);
+			resetBackProccess();
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireBeforeModelSearched(evt);
 			controllerListenerSupport.fireBeforeBeanReset(evt);
@@ -435,6 +436,13 @@ public class BasicController extends AbstractPojoController implements IControll
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}
+	
+	
+
+	@Override
+	public void onBack(ActionEvent event) {
+		cancel(event);
 	}
 
 	@Override
@@ -919,8 +927,8 @@ public class BasicController extends AbstractPojoController implements IControll
 	private void restoreState() throws ManagerBeanException {
 		if (this.saveState) {
 			if ((this.savedToId != null) && (getSelectedIndex() != -1)) {
-				ITransferObject to = getManagerBean().get(this.savedToId);
-				setRowData(to);
+				setTo( getManagerBean().get(this.savedToId) );
+				setRowData( getTo() );
 			}
 			this.savedToId = null;
 		}
@@ -1074,5 +1082,33 @@ public class BasicController extends AbstractPojoController implements IControll
 		getModel().setRowIndex(0);
 		onSelect(event);		
 	}
+
+	private void resetBackProccess() {
+		setBackAction(null);
+		setBackActionListener(null);
+	}
+	
+	/**
+	 * Sets the back action listener.
+	 *
+	 * @param expression the new back action listener
+	 */
+	public void setBackActionListener(String expression) {
+		this.backActionListener = expression;
+	}
+
+    /**
+     * Execute default or defined back action.
+     * 
+     * @param event
+     */
+	public void onBackActionListener(ActionEvent event) {
+		if ( this.backActionListener == null ) {
+			onCancel(event);
+		} else if (! StringUtils.isEmpty(this.backActionListener) ) {
+			String expression = "#{" + this.backActionListener + "}";
+			AonUtil.actionListener(expression, event);
+		}
+	}	
 
 }
