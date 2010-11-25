@@ -106,7 +106,7 @@
 	<!-- ************ CONTRACT PAYMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>contractPayment</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.employee.controller.ContractPaymentController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -156,7 +156,7 @@
 	<!-- ************ CONTRACT DEDUCTION ************** -->
 	<managed-bean>
 		<managed-bean-name>contractDeduction</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.employee.controller.ContractDeductionController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
