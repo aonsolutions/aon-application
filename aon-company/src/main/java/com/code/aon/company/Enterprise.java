@@ -46,6 +46,8 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 	
 	private Scope scope;
 	
+	private Integer agreement;
+	
 	private Set<EnterpriseActivity> activities = new HashSet<EnterpriseActivity>();
 	
 	@Id
@@ -91,6 +93,15 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 
 	public void setActivities(Set<EnterpriseActivity> activities) {
 		this.activities = activities;
+	}
+
+	@Column(name="agreement", nullable=false)
+	public Integer getAgreement() {
+		return agreement;
+	}
+
+	public void setAgreement(Integer agreement) {
+		this.agreement = agreement;
 	}
 
 	@Override
