@@ -56,17 +56,29 @@ public class ItemControllerListener extends ControllerAdapter {
     }
 
 	@Override
+    @SuppressWarnings("unchecked")
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		if (event.getController().isNew()) {
 			try {
 				IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 				Item item = (Item)event.getController().getTo();
+				if (item.getStatus() == null) {
+					item.setStatus(ProductStatus.ACTIVE);
+				}
 				Product product = item.getProduct();
 				product.setStatus(item.getStatus());
 				if (product.getBrand() != null && product.getBrand().getId() == null) {
 					product.setBrand(null);
 				}
-                product = (Product) productBean.insert(item.getProduct());
+				if (product.getVat() == null || product.getVat().getId() == null) {
+					ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(CONFIG_COLLECTIONS_CONTROLLER);
+		        	List vats = collections.getVatTaxes();
+		        	if (vats.size() > 0) {
+		        		Tax vat = (Tax)((SelectItem)vats.get(0)).getValue();
+		        		item.getProduct().setVat(vat);
+		        	}
+				}
+				product = (Product) productBean.insert(item.getProduct());
 				item.setProduct(product);
 			} catch (ManagerBeanException e) {
                 throw new ControllerListenerException(e.getMessage(), e);
