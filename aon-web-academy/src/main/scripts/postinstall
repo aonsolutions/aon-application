@@ -82,20 +82,3 @@ fi
 
 
 
-for DOMAIN in $(aondir_domains); do 
-	if aondir_domain_has_app $DOMAIN aon-academy; then 
-		DATASOURCE=`aondir_datasource aon-academy  $DOMAIN`
-		DBCONNECTION=`aondir_dbconnection $DATASOURCE`		
-		echo -n "UPDATING '$DBCONNECTION'..."
-		mysql \
--u `aondir_dbuser $DATASOURCE` \
--h `dbconnection_host  $DBCONNECTION` \
--P  `dbconnection_port  $DBCONNECTION` \
---password=`aondir_dbpasswd $DATASOURCE` \
-`dbconnection_dbname  $DBCONNECTION` \
--e 'BEGIN; \
-UPDATE finance SET registry = (SELECT registry FROM invoice WHERE invoice.id = finance.invoice) WHERE registry <> (SELECT registry FROM invoice WHERE invoice.id = finance.invoice);\
-COMMIT;';
-	[[ $? -eq 0 ]] && echo -e "\\033[1;32mOK\\033[0;39m" || echo -e "\\033[1;31mERROR\\033[0;39m";
-	fi  
-done
