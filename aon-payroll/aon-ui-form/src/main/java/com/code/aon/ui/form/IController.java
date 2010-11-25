@@ -88,6 +88,13 @@ public interface IController extends ISearchable {
     void onRemove(ActionEvent event);
 
     /**
+     * Execute back action.
+     * 
+     * @param event
+     */
+    void onBack(ActionEvent event);
+    
+    /**
      * Execute cancel action.
      * 
      * @param event

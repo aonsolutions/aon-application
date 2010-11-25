@@ -7,10 +7,12 @@ import java.util.ResourceBundle;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
+import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +74,20 @@ public class AonUtil {
 		ValueExpression ve = ef.createValueExpression(elctx, expression, Object.class);
 		return ve.getValue(elctx);
 	}	
+	
+	/**
+	 * Executes the Action listener expression.
+	 *
+	 * @param expression the expression
+	 * @param event the event
+	 */
+	public static void actionListener(String expression, ActionEvent event) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ELContext elctx = ctx.getELContext();
+		ExpressionFactory ef = ctx.getApplication().getExpressionFactory();
+		MethodExpression me = ef.createMethodExpression(elctx, expression, null, new Class[] {ActionEvent.class});
+		me.invoke(elctx, new Object[]{event});
+	}		
 
 	/**
 	 * Gets the configuration controller.
