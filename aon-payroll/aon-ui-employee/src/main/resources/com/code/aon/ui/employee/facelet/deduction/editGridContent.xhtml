@@ -8,18 +8,31 @@
 	
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="showDataScroller" value="false" />
+		<ui:param name="rows" value="#{controller.pageLimit}" />
 		<ui:define name="columns">	
 		
 			<c:if test="#{!skipStartDateColumn}">
 				<aon:column alias="ContractPayment.startDate"
 					styleClass="aon-editDataTable-dateColumn">
 					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_start_date}" />
+						<aon:outputLabel for="ContractDeduction_startDate"
+							value="#{bundle.aon_start_date}" />
 					</f:facet>
-					<aon:outputText value="#{to.startDate}" >
+					<aon:outputText value="#{to.startDate}" rendered="#{formList}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>		
+					<aon:selectInputDate id="ContractDeduction_startDate" rendered="#{formEdit}"
+						value="#{controller.to.startDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<f:facet name="footer">
+						<aon:selectInputDate id="ContractDeduction_startDate-New" rendered="#{formNew}"
+							value="#{controller.to.startDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</f:facet>
 				</aon:column>
 			</c:if>
 			
@@ -27,12 +40,23 @@
 				<aon:column alias="ContractPayment.endDate"
 					styleClass="aon-editDataTable-dateColumn">
 					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_end_date}" />
+						<aon:outputLabel for="ContractDeduction_endDate"
+							value="#{bundle.aon_end_date}" />
 					</f:facet>
-					<aon:outputText value="#{to.endDate}" >
+					<aon:outputText value="#{to.endDate}" rendered="#{formList}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>		
+					<aon:selectInputDate id="ContractDeduction_endDate" rendered="#{formEdit}"
+						value="#{controller.to.startDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<f:facet name="footer">
+						<aon:selectInputDate id="ContractDeduction_endDate-New" rendered="#{formNew}"
+							value="#{controller.to.startDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</f:facet>	
 				</aon:column>
 			</c:if>
 		
@@ -65,9 +89,11 @@
 				<aon:outputText rendered="#{formList}" 
 					value="#{to.description}" />
 				<aon:inputText id="SalaryDeduction_description" rendered="#{formEdit}" 
+					size="40" maxlength="64"
 					value="#{controller.to.description}" />
 				<f:facet name="footer">
-					<aon:inputText id="SalaryDeduction_description-New" rendered="#{formNew}" 
+					<aon:inputText id="SalaryDeduction_description-New" rendered="#{formNew}"
+						size="40" maxlength="64"
 						value="#{controller.to.description}" />
 				</f:facet>		
 			</aon:column>
@@ -80,11 +106,11 @@
 				</f:facet>
 				<aon:outputText rendered="#{formList}"
 					value="#{to.function}" />		
-				<aon:inputText id="SalaryDeduction_function" rendered="#{formEdit}" size="40"
+				<aon:inputText id="SalaryDeduction_function" rendered="#{formEdit}" size="20"
 						maxlength="128" value="#{controller.to.function}"
 						required="true" />
 				<f:facet name="footer">
-					<aon:inputText id="SalaryDeduction_function-New" rendered="#{formNew}" size="40"
+					<aon:inputText id="SalaryDeduction_function-New" rendered="#{formNew}" size="20"
 							maxlength="128" value="#{controller.to.function}"
 							required="true" />
 				</f:facet>
@@ -97,16 +123,10 @@
 						<aon:outputLabel for="SalaryDeduction_amount"
 							value="#{employeeBundle.employee_salary_amount}" />
 					</f:facet>
-					<aon:outputText rendered="#{formList}"
-						value="#{to.amount}" >
+					<aon:outputText rendered="#{!formNew}"
+						value="#{controller.amount}" >
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
-					<aon:inputText id="SalaryDeduction_amount" rendered="#{formEdit}"
-						value="#{controller.to.amount}" />
-					<f:facet name="footer">
-						<aon:inputText id="SalaryDeduction_amount-New" rendered="#{formNew}"
-							value="#{controller.to.amount}" />
-					</f:facet>
 				</aon:column>
 			</c:if>
 		</ui:define>
