@@ -5,10 +5,8 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import org.dom4j.tree.AbstractBranch;
 
 import com.code.aon.employee.enumeration.ContractStatus;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdtoex;
@@ -18,7 +16,6 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabajo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabdto;
-import com.esferalia.aon.payroll.ctsql2mysql.DefaultCtsqlDBVisitor.Rel_epp_per;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
@@ -71,45 +68,6 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		return deductionType;
 	}
 	
-	private Pattern overtimePattern = 
-		Pattern.compile("HORAS\\s+EXTRA", Pattern.CASE_INSENSITIVE);
-	private Pattern baseSalaryPattern = 
-		Pattern.compile("SALARIO\\s+BASE", Pattern.CASE_INSENSITIVE);
-	private Pattern compensationPattern = 
-		Pattern.compile("INDEMNIZACION", Pattern.CASE_INSENSITIVE);
-	private Pattern noticePattern = 
-		Pattern.compile("INDEMNIZACION.*AVISO", Pattern.CASE_INSENSITIVE);
-	private Pattern movingPattern = 
-		Pattern.compile("INDEMNIZACION.*TRASLADO", Pattern.CASE_INSENSITIVE);
-	private Pattern dismissalPattern = 
-		Pattern.compile("INDEMNIZACION.*DESPIDO", Pattern.CASE_INSENSITIVE);
-
-	
-	private PaymentType getPaymentType(String description, String dinEsp ) {
-
-		PaymentType paymetType = null;
-		
-		if ( "E".equalsIgnoreCase(dinEsp)){
-			paymetType = PaymentType.SALARY_IN_KIND;
-		}else if (baseSalaryPattern.matcher(description).find()) {
-			paymetType = PaymentType.BASE_SALARY;
-		}else if (overtimePattern.matcher(description).find()) {
-			paymetType = PaymentType.OVERTIME_HOURS;
-		}else if (noticePattern.matcher(description).find()) {
-			paymetType = PaymentType.MOVING_COMPENSATION;
-		}else if (movingPattern.matcher(description).find()) {
-			paymetType = PaymentType.MOVING_COMPENSATION;
-		}else if (dismissalPattern.matcher(description).find()) {
-			paymetType = PaymentType.MOVING_COMPENSATION;
-		}else if (compensationPattern.matcher(description).find()) {
-			paymetType = PaymentType.COMPENSATION_OR_PREPAID_EXPENSES;
-		}else {
-			paymetType = PaymentType.SALARY_SUPPLEMENTS;
-		}
-		
-		return paymetType;
-	}
-
 	private double toDouble(BigDecimal bigDecimal) {
 		return bigDecimal != null  ? bigDecimal.doubleValue() : 0 ;
 	}
@@ -123,16 +81,6 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		}
 		return result;
 	}
-	
-	private String getFunction(BigDecimal importe, BigDecimal impuni, BigDecimal unidades) {
-		if ( impuni != null && impuni.doubleValue() != 0 ) {
-			if ( unidades != null ) {
-				return String.format("%.3f * %.3f", impuni, unidades );
-			} 
-		}
-		return String.format("%.3f", importe );
-	}
-	
 	
 	
 	@Override
@@ -178,11 +126,10 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					null,
 					null,
 					DefaultMysqlDB.enum2short(ContractStatus.PROCESSED));
-		
+
 		emprper.visitTrabajo_emprper(this);
 		emprper.visitRel_pcp_epp(this);
 		emprper.visitRel_dto_per(this);
-		
 		emprper.visitRel_nom_per(this);
 		emprper.visitRel_pex_per(this);
 	}
@@ -269,12 +216,13 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		Double totalDeduction = toDouble(nomina.getTotal_deducir());
 		Double totalLiquid = toDouble(nomina.getTotal_liquido());
 		
-		Double baseConcom = toDouble(nomina.getBase_concom());
+		Double baseConcom = toDouble(nomina.getTotal_1());
 		Double baseIRPF = toDouble(nomina.getBase_irpf());
 		Double baseprorrataPagas = toDouble(nomina.getBase_proext());
 		Double renumeration = toDouble(nomina.getRemuneracion());
 		Double baseHExtras = toDouble(nomina.getBase_hextras(), nomina.getBase_hextras_no());
 		Double baseProfessional = toDouble(nomina.getBase_acc());
+		Double ssContributions = toDouble(nomina.getImporte_cuotas());
 		
 		Rel_epp_per  rel_epp_per = new Rel_epp_per(); 
 		emprper.visitRel_epp_per(rel_epp_per);
@@ -310,7 +258,8 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					baseConcom, 
 					baseProfessional,
 					baseHExtras,
-					baseIRPF);
+					baseIRPF,
+					ssContributions);
 		
 		Double importeCg = toDouble(nomina.getImporte_cg());
 		if ( importeCg > 0 ) {
@@ -410,12 +359,12 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			throws SQLException {
 		
 		PaymentType paymetType = 
-			getPaymentType(percep.getDescom(), percep.getDinesp());
+			mysqlDB.getPaymentType(percep.getDescom(), percep.getDinesp());
 		
 		BigDecimal impuni = percep.getImpuni();
 		BigDecimal importe = percep.getImporte();
 		BigDecimal unidades = percep.getUnidades();
-		String script = getFunction(importe, impuni, unidades);
+		String script = mysqlDB.getFunction(importe, impuni, unidades);
 		
 		mysqlDB.insertContract_payment(
 				DefaultMysqlDB.enum2short(paymetType), 
@@ -435,13 +384,13 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			nominadev.getDescom();
 		
 		PaymentType paymetType = 
-			getPaymentType( description, nominadev.getDinesp());
+			mysqlDB.getPaymentType( description, nominadev.getDinesp());
 		
 		BigDecimal importe = nominadev.getImporte();
 		BigDecimal impuni = nominadev.getImpuni();
 		BigDecimal unidades = nominadev.getUnidades();
 		
-		String function = getFunction(importe, impuni, unidades);
+		String function = mysqlDB.getFunction(importe, impuni, unidades);
 		
 		mysqlDB.insertSalary_payment(this.salaryId, 
 				DefaultMysqlDB.enum2short(paymetType), 
@@ -521,7 +470,8 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					0.00, 
 					0.00, 
 					0.00,
-					baseIRPF);
+					baseIRPF,
+					0.00);
 		
 		String function = String.format("%.2f%%", 
 				totalPayment != null ? totalPayment : 0);

@@ -25,7 +25,7 @@ ALTER TABLE `registry` ADD COLUMN `nationality` varchar(2) DEFAULT NULL COMMENT 
 
 ALTER TABLE `raddress` ADD COLUMN `number` varchar(12) DEFAULT NULL COMMENT 'Numero' AFTER `address`;
 ALTER TABLE `raddress` ADD COLUMN `alias`  varchar(15) DEFAULT NULL COMMENT 'Alias';
-ALTER TABLE `raddress` MODIFY `street_type` `street_type` VARCHAR(2) NULL DEFAULT 'CL' COMMENT 'Tipo de via';
+ALTER TABLE `raddress` MODIFY `street_type` VARCHAR(2) NULL DEFAULT 'CL' COMMENT 'Tipo de via';
 UPDATE raddress set street_type = 'ZZ' WHERE street_type = 0;
 UPDATE raddress set street_type = 'AV' WHERE street_type = 1;
 UPDATE raddress set street_type = 'BD' WHERE street_type = 2;
@@ -60,6 +60,44 @@ ALTER TABLE `contract` 	ADD COLUMN `document` mediumblob COMMENT 'Impreso (.pdf)
 ALTER TABLE `contract` ADD `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion';
 ALTER TABLE `contract` ADD `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de notificacion del contrato';
 
+
+CREATE TABLE `agreement` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  PRIMARY KEY  (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Convenios';
+
+ALTER TABLE `workplace` ADD COLUMN `agreement` int(4) DEFAULT NULL COMMENT 'Convenio' ;
+ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`) ;
+ALTER TABLE `enterprise` ADD COLUMN `agreement` int(4) DEFAULT NULL COMMENT 'Convenio' ;
+ALTER TABLE `enterprise` ADD CONSTRAINT `FK_ENTERPRISE_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`) ;
+
+CREATE TABLE `agreement_level` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `agreement` int(4) NOT NULL COMMENT 'Convenio',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  PRIMARY KEY  (`id`),
+  CONSTRAINT `FK_LEVEL_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Niveles retributivos';
+
+CREATE TABLE `agreement_level_category` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `agreement_level` int(4) NOT NULL COMMENT 'Nivel retributivo',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  PRIMARY KEY  (`id`),
+  CONSTRAINT `FK_CATEGORY_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias profesionales';
+
+CREATE TABLE `agreement_level_payment` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `agreement_level` int(4) NOT NULL COMMENT 'Nivel retributivo',
+  `type` tinyint(2) COMMENT 'Tipo de Percepción Salarial',
+  `function` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  PRIMARY KEY  (`id`),
+  CONSTRAINT `FK_PAYMENT_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones';
+
 CREATE TABLE `contract_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
@@ -67,25 +105,13 @@ CREATE TABLE `contract_data` (
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `conditions` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Condiciones',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
-  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  `end_date` date default NULL COMMENT 'Fecha de finalizacion',  
+  `quote_group` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Grupo de Cotización',
+  `category` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Categoria o grupo profesional',
   PRIMARY KEY  (`id`),
   CONSTRAINT `FK_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del contrato';
 
-
-CREATE TABLE `payment` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `type` tinyint(2) COMMENT 'Tipo de Percepción Salarial',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
-
-CREATE TABLE `deduction` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `type` tinyint(2) COMMENT 'Tipo de Deducción',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
 CREATE TABLE `contract_bonus` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -128,22 +154,29 @@ CREATE TABLE `salary` (
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio liquidación',
   `end_date` date NOT NULL COMMENT 'Fecha de finalizacion liquidación',
-  `address` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Domicilio de la empresa',
-  `employee` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre del trabajador',
+  `enterprise_name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre de la empresa',
+  `enterprise_address` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Domicilio de la empresa',
+  `enterprise_document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento de la Empresa',
+  `ccc` char(11) collate latin1_spanish_ci default NULL COMMENT 'Valor del Codigo Cuenta Cotizacion',
+  `employee_name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre del trabajador',
+  `social_security_number` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Numero de la seguridad social',
+  `employee_document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento de la Persona',
+  `seniority_date` date DEFAULT NULL COMMENT 'Fecha de antiguedad',
+  `quote_group` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Grupo de Cotización',
   `category` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Categoria o grupo profesional',
   `registration` int(4)   NOT NULL COMMENT 'Número libro de matricula',
-  `total_days_hours` int(4) NOT NULL COMMENT 'total dias/horas',
+  `time_units` int(4) NOT NULL COMMENT 'total dias/horas',
   `total_payment` double(15,3) NOT NULL default '0.000'  COMMENT 'Total devengado',
   `total_deduction` double(15,3)NOT NULL  default '0.000'  COMMENT 'Total a deducir',
   `total_liquid` double(15,3) NOT NULL default '0.000'  COMMENT 'Liquido total a percibir',
-  `broadcast_date` date NOT NULL COMMENT 'Fecha de emisión',
+  `issue_date` date NOT NULL COMMENT 'Fecha de emisión',
   `remuneration` double(15,3) NOT NULL default '0.000'  COMMENT 'Remuneración mensual',
   `extra_pay_proration` double(15,3) NOT NULL default '0.000'  COMMENT 'Prorrateo de pagas extras',
-  `total` double(15,3) NOT NULL default '0.000'  COMMENT 'Total',
   `common_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion por contingencias comunes',
   `professional_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion por contingencias profesionales',
   `overtime_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion adicional por horas extraordinarias',
   `irpf_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base sujeta a retención I.R.P.F',
+  `social_security_contributions` double(15,3) NOT NULL default '0.000'  COMMENT 'Aportaciones a la Seguridad Social',
   PRIMARY KEY  (`id`),
   CONSTRAINT `FK_SALARY_RECCEIPT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';

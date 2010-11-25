@@ -3,6 +3,7 @@
  */
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -15,6 +16,7 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.person.enumeration.Gender;
@@ -25,6 +27,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Pais;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipdoc;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 
 
 /**
@@ -354,7 +357,7 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				alias, 
 				type, 
 				country != null ? country.getValue() : null);
-		super.insertEnterprise(registry, scope);
+		super.insertEnterprise(registry, scope, null);
 		super.insertCustomer(registry,null, false, false,false,null,status,null,  scope,false, true,true);
 		
 		return registry;
@@ -476,5 +479,56 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 	protected Country getCountry(String oldCdg) {
 		return countries.get(oldCdg);
 	}
+
+
+	private Pattern overtimePattern = 
+		Pattern.compile("HORAS\\s+EXTRA", Pattern.CASE_INSENSITIVE);
+	private Pattern baseSalaryPattern = 
+		Pattern.compile("SALARIO\\s+BASE", Pattern.CASE_INSENSITIVE);
+	private Pattern compensationPattern = 
+		Pattern.compile("INDEMNIZACION", Pattern.CASE_INSENSITIVE);
+	private Pattern noticePattern = 
+		Pattern.compile("INDEMNIZACION.*AVISO", Pattern.CASE_INSENSITIVE);
+	private Pattern movingPattern = 
+		Pattern.compile("INDEMNIZACION.*TRASLADO", Pattern.CASE_INSENSITIVE);
+	private Pattern dismissalPattern = 
+		Pattern.compile("INDEMNIZACION.*DESPIDO", Pattern.CASE_INSENSITIVE);
+
+	
+	public PaymentType getPaymentType(String description, String dinEsp ) {
+
+		PaymentType paymetType = null;
+		
+		if ( "E".equalsIgnoreCase(dinEsp)){
+			paymetType = PaymentType.SALARY_IN_KIND;
+		}else if (baseSalaryPattern.matcher(description).find()) {
+			paymetType = PaymentType.BASE_SALARY;
+		}else if (overtimePattern.matcher(description).find()) {
+			paymetType = PaymentType.OVERTIME_HOURS;
+		}else if (noticePattern.matcher(description).find()) {
+			paymetType = PaymentType.MOVING_COMPENSATION;
+		}else if (movingPattern.matcher(description).find()) {
+			paymetType = PaymentType.MOVING_COMPENSATION;
+		}else if (dismissalPattern.matcher(description).find()) {
+			paymetType = PaymentType.MOVING_COMPENSATION;
+		}else if (compensationPattern.matcher(description).find()) {
+			paymetType = PaymentType.COMPENSATION_OR_PREPAID_EXPENSES;
+		}else {
+			paymetType = PaymentType.SALARY_SUPPLEMENTS;
+		}
+		
+		return paymetType;
+	}
+
+	public String getFunction(BigDecimal importe, BigDecimal impuni, BigDecimal unidades) {
+		if ( impuni != null && impuni.doubleValue() != 0 ) {
+			if ( unidades != null ) {
+				return String.format("%.3f * %.3f", impuni, unidades );
+			} 
+		}
+		return String.format("%.3f", importe );
+	}
+	
+	
 
 }

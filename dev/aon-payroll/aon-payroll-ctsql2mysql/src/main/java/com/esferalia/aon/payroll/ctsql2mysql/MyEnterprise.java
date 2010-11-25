@@ -14,6 +14,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Domicilio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empract;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.CNAENotFoundException;
@@ -32,7 +33,9 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	final static int 	COMPANY_REGISTRY 	= 1;
 
 	private Integer 							scopeId;
+	
 	private DefaultMysqlDB 						mysqlDB;
+	private MyAgreement							myAgreement;
 
 	private Map<Integer, Map<String, Integer>> 	cccs;
 	private Map<Integer, Integer> 				enterprises;
@@ -45,8 +48,9 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 
 	
 
-	public MyEnterprise(DefaultMysqlDB mysqlDB) {
+	public MyEnterprise(DefaultMysqlDB mysqlDB, MyAgreement myAgreement) {
 		this.mysqlDB = mysqlDB;
+		this.myAgreement = myAgreement;
 		this.activities = new HashMap<Integer, Integer>();
 		this.enterprises = new HashMap<Integer, Integer>();
 		this.cccs = new HashMap<Integer, Map<String, Integer>>();
@@ -292,19 +296,23 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 				
 				Integer activity = activities.get(emprdom.getCodact());
 				
+				Integer agreement = null; 
+				
 				workplace = mysqlDB.insertWorkplace(
 						enterprise, 
 						description, 
 						raddress, 
 						null,				// TODO:  Concierto Económico del Centro de Trabajo
 						true,
-						activity);
+						activity,
+						agreement);
 				
 				DefaultMysqlDB.save(workplaces, emprdom.getCodemp(), emprdom.getCoddom(),emprdom.getCodact(), workplace);
 			}
 		}
 	}
 
+	
 	public Integer getEnterprise(Integer oldCdg) {
 		return enterprises.get(oldCdg);
 	}

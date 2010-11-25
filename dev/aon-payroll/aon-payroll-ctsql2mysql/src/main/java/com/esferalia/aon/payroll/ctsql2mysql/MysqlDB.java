@@ -97,8 +97,10 @@ public class MysqlDB extends DefaultMysqlDB{
 
 		MyPerson myPerson = 
 			new MyPerson(this); 
+		MyAgreement myAgreement = 
+			new MyAgreement(this); 
 		MyEnterprise myEnterprise = 
-			new MyEnterprise(this);
+			new MyEnterprise(this, myAgreement );
 		MyContract myContract= 
 			new MyContract(this, myEnterprise, myPerson, fromDate);
 		
@@ -106,6 +108,7 @@ public class MysqlDB extends DefaultMysqlDB{
 		ctsqlReader.visitTipdoc(this);
 		
 		ctsqlReader.visit(myPerson);
+		ctsqlReader.visit(myAgreement);
 		ctsqlReader.visit(myEnterprise);
 		ctsqlReader.visit(myContract);
 

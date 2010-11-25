@@ -1,3 +1,16 @@
+/********************************************************************
+* Copyright (c) 2010, esferalia NETWORKS S.A
+*
+* The copyright of the computer program herein is the property 
+* of esferalia NETWORKS.
+*********************************************************************
+* The program may be used and/or copied only with the written 
+* permission of esferalia NETWORKS, or in accordance with the 
+* terms and conditions stipulated in the agreement contract 
+* under which the program has been supplied.
+*********************************************************************
+*/
+
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.sql.Date;
@@ -2009,6 +2022,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Double professional_base; 
 		private Double overtime_base; 
 		private Double irpf_base; 
+		private Double social_security_contributions; 
 	}
 	
 	private void insertSalary( List<Salary> salarys )
@@ -2019,7 +2033,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( salaryStmt != null ) {
 				salaryStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -2028,7 +2042,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			salaryStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO salary (id,contract,start_date,end_date,enterprise_name,enterprise_address,enterprise_document,ccc,employee_name,social_security_number,employee_document,seniority_date,quote_group,category,registration,time_units,total_payment,total_deduction,total_liquid,issue_date,remuneration,extra_pay_proration,common_base,professional_base,overtime_base,irpf_base)"  
+				"INSERT INTO salary (id,contract,start_date,end_date,enterprise_name,enterprise_address,enterprise_document,ccc,employee_name,social_security_number,employee_document,seniority_date,quote_group,category,registration,time_units,total_payment,total_deduction,total_liquid,issue_date,remuneration,extra_pay_proration,common_base,professional_base,overtime_base,irpf_base,social_security_contributions)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			salaryStmtSize = size;
@@ -2141,6 +2155,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salaryStmt.setNull(offset++, 8);
 			else
 				salaryStmt.setDouble(offset++, salary.irpf_base);
+			if ( salary.social_security_contributions == null )
+				salaryStmt.setNull(offset++, 8);
+			else
+				salaryStmt.setDouble(offset++, salary.social_security_contributions);
 		}
 		salaryStmt.executeUpdate();
 		salaryInserted += size;
@@ -2212,10 +2230,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param professional_base Base de cotizacion por contingencias profesionales
 	 * @param overtime_base Base de cotizacion adicional por horas extraordinarias
 	 * @param irpf_base Base sujeta a retención I.R.P.F
+	 * @param social_security_contributions Aportaciones a la Seguridad Social
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSalary(Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Date issue_date, Double remuneration, Double extra_pay_proration, Double common_base, Double professional_base, Double overtime_base, Double irpf_base)
+	protected int insertSalary(Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Date issue_date, Double remuneration, Double extra_pay_proration, Double common_base, Double professional_base, Double overtime_base, Double irpf_base, Double social_security_contributions)
 	throws SQLException {
 		int id = nextSalaryId();
 
@@ -2246,12 +2265,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		salary_.professional_base = professional_base;
 		salary_.overtime_base = overtime_base;
 		salary_.irpf_base = irpf_base;
+		salary_.social_security_contributions = social_security_contributions;
 
 		salarys.add(salary_);
 		
 		int salaryCount = salarys.size();
 		
-		if ( 548 * salaryCount >=  this.maxAllowedPacket ){
+		if ( 563 * salaryCount >=  this.maxAllowedPacket ){
 			insertSalary(salarys);
 			salarys.clear();
 		} 
@@ -4845,6 +4865,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private static class Agreement_level_payment {
 		private Integer id; 
 		private Integer agreement_level; 
+		private Short type; 
+		private String function; 
 		private String description; 
 	}
 	
@@ -4856,7 +4878,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( agreement_level_paymentStmt != null ) {
 				agreement_level_paymentStmt.close();
 			}
-			String values = "(?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -4865,7 +4887,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			agreement_level_paymentStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO agreement_level_payment (id,agreement_level,description)"  
+				"INSERT INTO agreement_level_payment (id,agreement_level,type,function,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			agreement_level_paymentStmtSize = size;
@@ -4882,6 +4904,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreement_level_paymentStmt.setNull(offset++, 4);
 			else
 				agreement_level_paymentStmt.setInt(offset++, agreement_level_payment.agreement_level);
+			if ( agreement_level_payment.type == null )
+				agreement_level_paymentStmt.setNull(offset++, -6);
+			else
+				agreement_level_paymentStmt.setShort(offset++, agreement_level_payment.type);
+			if ( agreement_level_payment.function == null )
+				agreement_level_paymentStmt.setNull(offset++, 12);
+			else
+				agreement_level_paymentStmt.setString(offset++, agreement_level_payment.function);
 			if ( agreement_level_payment.description == null )
 				agreement_level_paymentStmt.setNull(offset++, 12);
 			else
@@ -4933,24 +4963,28 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Agreement_level_payment
 	 * @param agreement_level Nivel retributivo
+	 * @param type Tipo de Percepción Salarial
+	 * @param function Fórmula
 	 * @param description Descripcion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAgreement_level_payment(Integer agreement_level, String description)
+	protected int insertAgreement_level_payment(Integer agreement_level, Short type, String function, String description)
 	throws SQLException {
 		int id = nextAgreement_level_paymentId();
 
 		Agreement_level_payment agreement_level_payment_ = new Agreement_level_payment();
 		agreement_level_payment_.id = id;
 		agreement_level_payment_.agreement_level = agreement_level;
+		agreement_level_payment_.type = type;
+		agreement_level_payment_.function = function;
 		agreement_level_payment_.description = description;
 
 		agreement_level_payments.add(agreement_level_payment_);
 		
 		int agreement_level_paymentCount = agreement_level_payments.size();
 		
-		if ( 84 * agreement_level_paymentCount >=  this.maxAllowedPacket ){
+		if ( 215 * agreement_level_paymentCount >=  this.maxAllowedPacket ){
 			insertAgreement_level_payment(agreement_level_payments);
 			agreement_level_payments.clear();
 		} 
@@ -24681,6 +24715,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Short economicAgreement; 
 		private Boolean active; 
 		private Integer enterprise_activity; 
+		private Integer agreement; 
 	}
 	
 	private void insertWorkplace( List<Workplace> workplaces )
@@ -24691,7 +24726,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( workplaceStmt != null ) {
 				workplaceStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -24700,7 +24735,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			workplaceStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO workplace (id,enterprise,description,address,economicAgreement,active,enterprise_activity)"  
+				"INSERT INTO workplace (id,enterprise,description,address,economicAgreement,active,enterprise_activity,agreement)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			workplaceStmtSize = size;
@@ -24737,6 +24772,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				workplaceStmt.setNull(offset++, 4);
 			else
 				workplaceStmt.setInt(offset++, workplace.enterprise_activity);
+			if ( workplace.agreement == null )
+				workplaceStmt.setNull(offset++, 4);
+			else
+				workplaceStmt.setInt(offset++, workplace.agreement);
 		}
 		workplaceStmt.executeUpdate();
 		workplaceInserted += size;
@@ -24789,10 +24828,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param economicAgreement Concierto Economico del Centro de Trabajo
 	 * @param active Indica si el Centro de Trabajo esta activo o no
 	 * @param enterprise_activity Actividad
+	 * @param agreement Convenio
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWorkplace(Integer enterprise, String description, Integer address, Short economicAgreement, Boolean active, Integer enterprise_activity)
+	protected int insertWorkplace(Integer enterprise, String description, Integer address, Short economicAgreement, Boolean active, Integer enterprise_activity, Integer agreement)
 	throws SQLException {
 		int id = nextWorkplaceId();
 
@@ -24804,12 +24844,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		workplace_.economicAgreement = economicAgreement;
 		workplace_.active = active;
 		workplace_.enterprise_activity = enterprise_activity;
+		workplace_.agreement = agreement;
 
 		workplaces.add(workplace_);
 		
 		int workplaceCount = workplaces.size();
 		
-		if ( 107 * workplaceCount >=  this.maxAllowedPacket ){
+		if ( 117 * workplaceCount >=  this.maxAllowedPacket ){
 			insertWorkplace(workplaces);
 			workplaces.clear();
 		} 
@@ -24952,8 +24993,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private static class Agreement_level {
 		private Integer id; 
 		private Integer agreement; 
-		private Short type; 
-		private String function; 
 		private String description; 
 	}
 	
@@ -24965,7 +25004,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( agreement_levelStmt != null ) {
 				agreement_levelStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -24974,7 +25013,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			agreement_levelStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO agreement_level (id,agreement,type,function,description)"  
+				"INSERT INTO agreement_level (id,agreement,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			agreement_levelStmtSize = size;
@@ -24991,14 +25030,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreement_levelStmt.setNull(offset++, 4);
 			else
 				agreement_levelStmt.setInt(offset++, agreement_level.agreement);
-			if ( agreement_level.type == null )
-				agreement_levelStmt.setNull(offset++, -6);
-			else
-				agreement_levelStmt.setShort(offset++, agreement_level.type);
-			if ( agreement_level.function == null )
-				agreement_levelStmt.setNull(offset++, 12);
-			else
-				agreement_levelStmt.setString(offset++, agreement_level.function);
 			if ( agreement_level.description == null )
 				agreement_levelStmt.setNull(offset++, 12);
 			else
@@ -25050,28 +25081,24 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Agreement_level
 	 * @param agreement Convenio
-	 * @param type Tipo de Percepción Salarial
-	 * @param function Fórmula
 	 * @param description Descripcion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAgreement_level(Integer agreement, Short type, String function, String description)
+	protected int insertAgreement_level(Integer agreement, String description)
 	throws SQLException {
 		int id = nextAgreement_levelId();
 
 		Agreement_level agreement_level_ = new Agreement_level();
 		agreement_level_.id = id;
 		agreement_level_.agreement = agreement;
-		agreement_level_.type = type;
-		agreement_level_.function = function;
 		agreement_level_.description = description;
 
 		agreement_levels.add(agreement_level_);
 		
 		int agreement_levelCount = agreement_levels.size();
 		
-		if ( 215 * agreement_levelCount >=  this.maxAllowedPacket ){
+		if ( 84 * agreement_levelCount >=  this.maxAllowedPacket ){
 			insertAgreement_level(agreement_levels);
 			agreement_levels.clear();
 		} 
@@ -32403,6 +32430,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private static class Enterprise {
 		private Integer registry; 
 		private Integer scope; 
+		private Integer agreement; 
 	}
 	
 	private void insertEnterprise( List<Enterprise> enterprises )
@@ -32413,7 +32441,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( enterpriseStmt != null ) {
 				enterpriseStmt.close();
 			}
-			String values = "(?,?)";
+			String values = "(?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -32422,7 +32450,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			enterpriseStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO enterprise (registry,scope)"  
+				"INSERT INTO enterprise (registry,scope,agreement)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			enterpriseStmtSize = size;
@@ -32439,6 +32467,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				enterpriseStmt.setNull(offset++, 4);
 			else
 				enterpriseStmt.setInt(offset++, enterprise.scope);
+			if ( enterprise.agreement == null )
+				enterpriseStmt.setNull(offset++, 4);
+			else
+				enterpriseStmt.setInt(offset++, enterprise.agreement);
 		}
 		enterpriseStmt.executeUpdate();
 		enterpriseInserted += size;
@@ -32461,20 +32493,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Enterprise
 	 * @param registry Registro de la Empresa
 	 * @param scope Identificador del Ambito
+	 * @param agreement Convenio
 	 * @throws SQLException
 	*/
-	protected void insertEnterprise(Integer registry, Integer scope)
+	protected void insertEnterprise(Integer registry, Integer scope, Integer agreement)
 	throws SQLException {
 
 		Enterprise enterprise_ = new Enterprise();
 		enterprise_.registry = registry;
 		enterprise_.scope = scope;
+		enterprise_.agreement = agreement;
 
 		enterprises.add(enterprise_);
 		
 		int enterpriseCount = enterprises.size();
 		
-		if ( 20 * enterpriseCount >=  this.maxAllowedPacket ){
+		if ( 30 * enterpriseCount >=  this.maxAllowedPacket ){
 			insertEnterprise(enterprises);
 			enterprises.clear();
 		} 
