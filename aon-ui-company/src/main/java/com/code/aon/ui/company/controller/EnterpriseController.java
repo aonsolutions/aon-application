@@ -156,7 +156,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to : list) {
 			EnterpriseCCC ccc = (EnterpriseCCC)to;
-			cccs.add(new SelectItem(ccc, ccc.getCCC()));
+			cccs.add(new SelectItem(ccc, ccc.getCcc()));
 		}
     	return cccs;
     }	    

@@ -46,7 +46,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		salary.setEnterpriseName(contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
 		salary.setEnterpriseAddress(contract.getWorkPlace().getAddress().getFullAddress());
 		salary.setEnterpriseDocument(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
-		salary.setCcc(contract.getEnterpriseCCC().getCCC());
+		salary.setCcc(contract.getEnterpriseCCC().getCcc());
 	}
 
 	private void fillEmployeeData(Salary salary, Contract contract) {

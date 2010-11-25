@@ -301,7 +301,7 @@ public class ContractBuilder implements IEmployeeConstants {
 //				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
 			} 
 			if(field.getLabel().equals("Texto9")){
-				field.setValue(contract.getEnterpriseCCC().getCCC());
+				field.setValue(contract.getEnterpriseCCC().getCcc());
 			} 
 			if(field.getLabel().equals("Cifra20")){
 //				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());

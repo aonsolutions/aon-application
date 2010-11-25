@@ -13,7 +13,7 @@
 		<ui:define name="columns">	
 		
 			<c:if test="#{!skipStartDateColumn}">
-				<aon:column alias="ContractPayment.startDate"
+				<aon:column alias="ContractDeduction.startDate"
 					styleClass="aon-editDataTable-dateColumn">
 					<f:facet name="header">
 						<aon:outputLabel for="ContractDeduction_startDate"
@@ -37,7 +37,7 @@
 			</c:if>
 			
 			<c:if test="#{!skipEndDateColumn}">
-				<aon:column alias="ContractPayment.endDate"
+				<aon:column alias="ContractDeduction.endDate"
 					styleClass="aon-editDataTable-dateColumn">
 					<f:facet name="header">
 						<aon:outputLabel for="ContractDeduction_endDate"
@@ -60,75 +60,61 @@
 				</aon:column>
 			</c:if>
 		
-			<aon:column alias="SalaryDeduction.type"
+			<aon:column alias="ContractDeduction.type"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="SalaryDeduction_type"
+					<aon:outputLabel for="ContractDeduction_type"
 						value="#{employeeBundle.employee_salary_deductionType}" />
 				</f:facet>
 				<aon:outputText rendered="#{formList}"
 					value="#{to.type}" />
-				<aon:selectOneMenu id="SalaryDeduction_type" 
+				<aon:selectOneMenu id="ContractDeduction_type" 
 					value="#{controller.to.type}" rendered="#{formEdit}">
 					<f:selectItems value="#{employeeCollections.deductionTypes}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="SalaryDeduction_type-New" 
+					<aon:selectOneMenu id="ContractDeduction_type-New" 
 						value="#{controller.to.type}" rendered="#{formNew}">
 						<f:selectItems value="#{employeeCollections.deductionTypes}" />
 					</aon:selectOneMenu>
 				</f:facet>		
 			</aon:column>
 			
-			<aon:column alias="SalaryDeduction.description"
+			<aon:column alias="ContractDeduction.description"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="SalaryDeduction_description"
+					<aon:outputLabel for="ContractDeduction_description"
 						value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText rendered="#{formList}" 
 					value="#{to.description}" />
-				<aon:inputText id="SalaryDeduction_description" rendered="#{formEdit}" 
+				<aon:inputText id="ContractDeduction_description" rendered="#{formEdit}" 
 					size="40" maxlength="64"
 					value="#{controller.to.description}" />
 				<f:facet name="footer">
-					<aon:inputText id="SalaryDeduction_description-New" rendered="#{formNew}"
+					<aon:inputText id="ContractDeduction_description-New" rendered="#{formNew}"
 						size="40" maxlength="64"
 						value="#{controller.to.description}" />
 				</f:facet>		
 			</aon:column>
 			
-			<aon:column alias="SalaryDeduction.function"
+			<aon:column alias="ContractDeduction.function"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="SalaryDeduction_function"
+					<aon:outputLabel for="ContractDeduction_function"
 						value="#{employeeBundle.employee_salary_function}" />
 				</f:facet>
 				<aon:outputText rendered="#{formList}"
 					value="#{to.function}" />		
-				<aon:inputText id="SalaryDeduction_function" rendered="#{formEdit}" size="20"
+				<aon:inputText id="ContractDeduction_function" rendered="#{formEdit}" size="20"
 						maxlength="128" value="#{controller.to.function}"
 						required="true" />
 				<f:facet name="footer">
-					<aon:inputText id="SalaryDeduction_function-New" rendered="#{formNew}" size="20"
+					<aon:inputText id="ContractDeduction_function-New" rendered="#{formNew}" size="20"
 							maxlength="128" value="#{controller.to.function}"
 							required="true" />
 				</f:facet>
 			</aon:column>
-			
-			<c:if test="#{!skipAmountColumn}">
-				<aon:column alias="SalaryDeduction.amount"
-					styleClass="aon-editDataTable-numberColumn">
-					<f:facet name="header">
-						<aon:outputLabel for="SalaryDeduction_amount"
-							value="#{employeeBundle.employee_salary_amount}" />
-					</f:facet>
-					<aon:outputText rendered="#{!formNew}"
-						value="#{controller.amount}" >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:column>
-			</c:if>
 		</ui:define>
 	</ui:decorate>
 	
