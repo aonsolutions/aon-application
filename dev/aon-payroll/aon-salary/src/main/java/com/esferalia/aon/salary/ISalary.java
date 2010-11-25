@@ -35,6 +35,7 @@ public interface ISalary {
 	
 	//DEDUCCIONES
 	Deductions getDeductions() throws SalaryException;
+	Double getSocialSecurityContributions();
 	Double getTotalDeduction();
 	
 	// TOTAL LIQUIDO

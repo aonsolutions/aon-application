@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" pageWidth="595" pageHeight="841" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="109"/>
+	<property name="ireport.y" value="0"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
 	<style name="complements_TABLE">
@@ -281,8 +281,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA["Periodo de liquidación del " + $V{formatter}.format($F{salary}.getStartDate()) +" al "+ $V{formatter}.format($F{salary}.getEndDate())
-]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Periodo de liquidación del " + $V{formatter}.format($F{salary}.getStartDate()) +" al "+ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="535" y="76" width="20" height="10"/>
@@ -684,7 +683,7 @@
 				<textElement textAlignment="Right">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getTotal()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="9" y="396" width="246" height="11"/>
