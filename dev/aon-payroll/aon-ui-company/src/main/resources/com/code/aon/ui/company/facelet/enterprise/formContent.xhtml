@@ -18,6 +18,26 @@
 				<f:selectItems value="#{configCollections.currentUserScopes}" />
 			</aon:selectOneMenu>
 			
+			<aon:outputLabel for="Employee_agreement_id"
+				value="#{employeeBundle.employee_agreement}" />
+			<aon:div styleClass="aon-lookup">
+				<aon:lookupInputText id="Employee_agreement_id"
+					lookup="#{agreementLookup}"
+					lookupChangeListener="#{controller.onAgreementChanged}"
+					reRender="Employee_agreement_description"
+					value="#{controller.agreement.id}" size="5" />
+				<aon:lookupButton 
+					windowTitle="#{employeeBundle.employee_agreement_selection}"
+					selectReRender="Employee_agreement_id,Employee_agreement_description"
+					lookupChangeListener="#{controller.onAgreementChanged}"
+					lookup="#{agreementLookup}" minHeight="460" minWidth="650"
+					property="#{controller.agreement}">
+				</aon:lookupButton>
+				<aon:inputText id="Employee_agreement_description"
+					value="#{controller.agreement.description}"
+					size="50" disabled="true" />							
+			</aon:div>
+								
 			<ui:include src="/com/code/aon/ui/registry/facelet/raddress/form.xhtml" />
 				
 			<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" />

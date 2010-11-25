@@ -42,6 +42,7 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 			controller.initMainWorkPlace();			
 			controller.initMainDirStaff();			
 			controller.initLogo();
+			controller.initAgreement();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}

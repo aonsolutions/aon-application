@@ -544,6 +544,29 @@
 			<value>/com/code/aon/ui/employee/facelet/lookup/contractType/list.xhtml</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************ AGREEMENT LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>agreementLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.employee.Agreement</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Agreement_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/employee/facelet/agreement/listContent.xhtml</value>
+		</managed-property>
+	</managed-bean>	
 			
 	<!-- =================== Contract ========================== -->
 	<navigation-rule>
