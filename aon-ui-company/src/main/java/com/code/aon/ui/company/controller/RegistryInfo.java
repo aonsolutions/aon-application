@@ -32,6 +32,7 @@ public class RegistryInfo {
 			initMedias(this.address);	
 		} else {
     		this.address = new RegistryAddress();
+    		this.address.setAddress("");
     		this.address.setAddressType(AddressType.MAIN);
     		this.address.setRegistry(registry);
 		}
