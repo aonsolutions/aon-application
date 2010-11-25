@@ -44,7 +44,7 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 			if (session.contains(contract)) {
 				contractPayments = contract.getContractPayments();
 				for(ContractPayment cp: contractPayments){
-					manageDeductions(ctx,payments,cp);
+					managePayments(ctx,payments,cp);
 				}
 			} else {
 				IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
@@ -53,7 +53,7 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 				List<?> list = bean.getList(c);
 				contractPayments = (Collection<ContractPayment>) list;
 				for(ContractPayment cp: contractPayments){
-					manageDeductions(ctx,payments,cp);
+					managePayments(ctx,payments,cp);
 				}
 			}
 			return payments;
@@ -62,7 +62,7 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 		}
 	}
 	
-	private void manageDeductions(IPaymentsFactoryContext ctx,Payments payments, ContractPayment sp) {
+	private void managePayments(IPaymentsFactoryContext ctx,Payments payments, ContractPayment sp) {
 		if(upToDate(sp.getStartDate(), sp.getEndDate())){
 			if (sp.getType() == PaymentType.BASE_SALARY) {
 				payments.setBaseSalary(resolvePayment(ctx,sp));
