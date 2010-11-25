@@ -1,5 +1,7 @@
 package com.esferalia.aon.salary.deduction;
 
+import java.util.Date;
+
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 

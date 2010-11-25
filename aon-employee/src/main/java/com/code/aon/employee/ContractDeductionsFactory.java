@@ -99,7 +99,7 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 	}
 
 	private void manageDeductions(IDeductionsFactoryContext ctx,Deductions deductions, ContractDeduction sd) throws SalaryException {
-		if(upToDate(sd.getStartDate(), sd.getEndDate())){
+		if(upToDate(ctx,sd.getStartDate(), sd.getEndDate())){
 			IDeduction deduction = resolveDeduction(ctx, sd);
 			if (sd.getType() == DeductionType.COMMON_CONTINGENCY) {
 				deductions.setCommonContingency(deduction);
@@ -125,9 +125,10 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 		}
 	}
 
-	private boolean upToDate(Date startDate, Date endDate) {
-		if(startDate != null && startDate.before(new Date())){
-			if(endDate==null || endDate.after(new Date())){
+	private boolean upToDate(IDeductionsFactoryContext ctx,Date startDate, Date endDate) {
+		Date issueDate = ctx.getCurrentSalary().getIssueDate();
+		if(startDate != null && !startDate.after(issueDate) ){
+			if(endDate==null || !endDate.before(issueDate)){
 				return true;
 			}
 		}

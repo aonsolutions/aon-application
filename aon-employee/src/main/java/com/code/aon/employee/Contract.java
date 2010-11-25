@@ -69,6 +69,8 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	private ContractStatus status;
 	private Set<ContractPayment> contractPayments = new HashSet<ContractPayment>();
 	private Set<ContractDeduction> contractDeductions = new HashSet<ContractDeduction>();
+	@Transient
+	private SalaryCalculatorContext ctx;
 
 	@Id
 	@GeneratedValue
@@ -215,12 +217,20 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	@Override
 	@Transient
 	public ISalary getSalary() throws SalaryException {
-		SalaryCalculatorContext ctx = new SalaryCalculatorContext();
-		ctx.setSalaryProxy(this);
 		SalaryCalculatorManager factoryManager = SalaryCalculatorManager.getInstance();
-		ISalaryCalculator sc = factoryManager.getCalculator(ctx);
-		ISalary salary = sc.calculate( ctx );
+		ISalaryCalculator sc = factoryManager.getCalculator(getSalaryCalculatorContext());
+		ISalary salary = sc.calculate( getSalaryCalculatorContext() );
 		return salary;
+	}
+
+	@Override
+	@Transient
+	public SalaryCalculatorContext getSalaryCalculatorContext() throws SalaryException {
+		if (ctx == null) {
+			ctx = new SalaryCalculatorContext();
+			ctx.setSalaryProxy(this);
+		}
+		return ctx;
 	}
 
 }

@@ -63,7 +63,7 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 	}
 	
 	private void managePayments(IPaymentsFactoryContext ctx,Payments payments, ContractPayment sp) {
-		if(upToDate(sp.getStartDate(), sp.getEndDate())){
+		if(upToDate(ctx,sp.getStartDate(), sp.getEndDate())){
 			if (sp.getType() == PaymentType.BASE_SALARY) {
 				payments.setBaseSalary(resolvePayment(ctx,sp));
 			} else if (sp.getType() == PaymentType.SALARY_SUPPLEMENTS) {
@@ -86,9 +86,10 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 		}
 	}
 
-	private boolean upToDate(Date startDate, Date endDate) {
-		if(startDate != null && startDate.before(new Date())){
-			if(endDate==null || endDate.after(new Date())){
+	private boolean upToDate(IPaymentsFactoryContext ctx, Date startDate, Date endDate) {
+		Date issueDate = ctx.getCurrentSalary().getIssueDate();
+		if(startDate != null && !startDate.after(issueDate) ){
+			if(endDate==null || !endDate.before(issueDate)){
 				return true;
 			}
 		}

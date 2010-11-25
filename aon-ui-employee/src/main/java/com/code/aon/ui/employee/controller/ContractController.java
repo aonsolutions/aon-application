@@ -144,33 +144,6 @@ public class ContractController extends BasicController {
 		context.responseComplete();
 	}
     
-    private void loadLines() throws ManagerBeanException{
-    	Expression expr1;
-    	Expression expr2;
-    	IController pBean = FormUtil.getController(CONTRACT_PAYMENT_CONTROLLER);
-    	pBean.getCriteria().addLessThanOrEqualExpression(pBean.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_START_DATE), new Date()); 
-    	expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(pBean.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_END_DATE), new Date());
-    	expr2 = ExpressionUtilities.getNullExpression(pBean.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_END_DATE));
-    	pBean.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));	
-    	pBean.initializeModel();
-    	IController dBean = FormUtil.getController(CONTRACT_DEDUCTION_CONTROLLER);
-    	dBean.getCriteria().addLessThanOrEqualExpression(dBean.getFieldName(IEmployeeAlias.CONTRACT_DEDUCTION_START_DATE), new Date()); 
-    	expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(dBean.getFieldName(IEmployeeAlias.CONTRACT_DEDUCTION_END_DATE), new Date());
-    	expr2 = ExpressionUtilities.getNullExpression(dBean.getFieldName(IEmployeeAlias.CONTRACT_DEDUCTION_END_DATE));
-    	dBean.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));	
-    	dBean.initializeModel();
-    }
-    
-    @Override
-    public void onSelect(ActionEvent event) {
-    	super.onSelect(event);
-    	try {
-			loadLines();
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-    }
-
 	public void onEdit( ActionEvent event ) {
 		try {
 			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_TREE_CONTROLLER_NAME);
