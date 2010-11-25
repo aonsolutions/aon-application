@@ -104,7 +104,7 @@ public class AccountEntryInvoiceWriter {
 	}
 	
 	public void recordInvoice(Invoice invoice) throws ManagerBeanException {
-		recordInvoice(invoice,true);
+		recordInvoice(invoice, true);
 	}
 	
 	public List<AccountEntryDetail> recordInvoice(Invoice invoice, boolean save) throws ManagerBeanException {
