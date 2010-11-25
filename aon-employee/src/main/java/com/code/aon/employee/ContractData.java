@@ -21,6 +21,7 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.employee.enumeration.ContractCode;
+import com.code.aon.employee.enumeration.QuoteGroup;
 
 /**
  * Transfer Object that represents the contract data.
@@ -45,6 +46,10 @@ public class ContractData implements ITransferObject {
 	private Date startDate;	
 
 	private Date endDate;	
+	
+	private QuoteGroup quoteGroup;
+	
+	private String category;
 	
 	
 	/**
@@ -157,7 +162,21 @@ public class ContractData implements ITransferObject {
 		this.endDate = endDate;
 	}	
 	
+	@Column( name = "quote_group" )
+	public QuoteGroup getQuoteGroup() {
+		return quoteGroup;
+	}
+	public void setQuoteGroup(QuoteGroup quoteGroup) {
+		this.quoteGroup = quoteGroup;
+	}
 	
+	@Column(length=64)
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -173,6 +192,8 @@ public class ContractData implements ITransferObject {
 				.append(this.conditions, o.conditions)			
 				.append(this.startDate, o.startDate)
 				.append(this.endDate, o.endDate)
+				.append(this.quoteGroup, o.quoteGroup)
+				.append(this.category, o.category)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -188,6 +209,8 @@ public class ContractData implements ITransferObject {
 			.append(conditions)			
 			.append(startDate)
 			.append(endDate)
+			.append(quoteGroup)
+			.append(category)
 			.toHashCode();
 	}
 
