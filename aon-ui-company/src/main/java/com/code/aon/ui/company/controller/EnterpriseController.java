@@ -29,6 +29,7 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
+import com.code.aon.employee.Agreement;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -37,6 +38,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.registry.controller.RegistryController;
 
@@ -54,6 +56,8 @@ public class EnterpriseController extends RegistryController implements ICompany
 	
 	private AonFile aonFile;
 	private RegistryAttachment attach;
+	
+	private Agreement agreement;
 
     public boolean isTreeView() {
 		return treeView;
@@ -117,6 +121,14 @@ public class EnterpriseController extends RegistryController implements ICompany
 
 	public void setCcc(EnterpriseCCC ccc) {
 		this.ccc = ccc;
+	}
+	
+	public Agreement getAgreement() {
+		return agreement;
+	}
+
+	public void setAgreement(Agreement agreement) {
+		this.agreement = agreement;
 	}
 
 	/**
@@ -189,6 +201,7 @@ public class EnterpriseController extends RegistryController implements ICompany
     	setDirStaff(null);
     	setAonFile(null);
     	this.info.reset();
+    	setAgreement(new Agreement());
 	}
     
     public void initMainActiviy() throws ManagerBeanException {
@@ -211,6 +224,13 @@ public class EnterpriseController extends RegistryController implements ICompany
     		bean.insertOrUpdate(getMainAddress());
     	}
     }
+
+    public void initAgreement() throws ManagerBeanException {
+    	IManagerBean bean = BeanManager.getManagerBean(Agreement.class);
+    	if ( getEnterprise().getAgreement() != null ) {
+        	this.agreement = (Agreement) bean.get( getEnterprise().getAgreement() );	
+    	}
+    }    
     
     public void initMainWorkPlace() throws ManagerBeanException {
     	WorkPlace workPlace = null;
@@ -317,5 +337,13 @@ public class EnterpriseController extends RegistryController implements ICompany
 			throw new AbortProcessingException(e.getMessage());
 		}
 	}
+
+	public void onAgreementChanged( LookupChangeEvent event ) {
+		Integer id = null;
+		if ( event.getNewValue() != null ) {
+			id = ((Agreement) event.getNewValue()).getId();
+		}
+		getEnterprise().setAgreement(id);
+	}	
 	
 }

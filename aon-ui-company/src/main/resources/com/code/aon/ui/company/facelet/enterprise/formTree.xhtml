@@ -71,16 +71,6 @@
 
 					<aon:outputText value="#{bundle.aon_document}" />
 					<aon:outputText value="#{enterprise.to.registry.document}" />
-						
-					<c:if test="#{controller.dirStaff != null}" >
-						<aon:outputLabel value="#{registryBundle.registry_dir_staff_representative_labor}" />
-						<aon:div>
-							<aon:outputText value="#{bundle.aon_company_document}" />
-							<aon:outputText value="#{controller.dirStaff.document}" />
-							<aon:outputText value="#{bundle.aon_name}" />
-							<aon:outputText value="#{controller.dirStaff.name}" />
-						</aon:div>
-					</c:if>
 
 					<aon:outputText value="#{registryBundle.registry_address}" />
 					<aon:outputText value="#{enterprise.mainAddress.fullAddress}"  />
@@ -93,18 +83,16 @@
 
 					<aon:outputText value="#{registryBundle.registry_geozone}" />
 					<aon:outputText value="#{enterprise.mainAddress.geozone.name}"  />
-				
-					<aon:outputText value="#{companyBundle.company_activity}" />
-					<aon:outputText value="#{enterprise.activity.description}"  />
-				
-					<aon:outputText value="#{companyBundle.company_cnae_module}" />
-					<aon:outputText value="#{enterprise.activity.cnae.code} - #{enterprise.activity.cnae.title}" />
 
-					<aon:outputText value="#{companyBundle.company_workplace}" />
-					<aon:outputText value="#{enterprise.workplace.description}" />
+					<aon:outputText value="#{bundle.aon_scope}" />
+					<aon:outputText value="#{enterprise.to.scope.description}" />
 
-					<aon:outputText value="#{companyBundle.company_workplace_economic_agreement}" />
-					<aon:outputText value="#{enterprise.workplace.economicAgreement}" />
+					<c:if test="#{enterprise.agreement != null}" >
+						<aon:outputText value="#{employeeBundle.employee_agreement}" />
+						<aon:outputText value="#{enterprise.agreement.description}" />
+					</c:if>
+				
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />				
 				
 					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" >
 						<ui:param name="controller" value="#{enterprise}" />

@@ -95,7 +95,7 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 		this.activities = activities;
 	}
 
-	@Column(name="agreement", nullable=false)
+	@Column(name="agreement")
 	public Integer getAgreement() {
 		return agreement;
 	}
