@@ -5,6 +5,10 @@ import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.employee.Agreement;
+import com.code.aon.employee.AgreementLevel;
+import com.code.aon.employee.AgreementLevelCategory;
+import com.code.aon.employee.AgreementLevelPayment;
 import com.code.aon.employee.Contract;
 import com.code.aon.employee.ContractBatch;
 import com.code.aon.employee.ContractBatchDetail;
@@ -30,6 +34,10 @@ public class EmployeeAliasWriter {
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PAYROLL/aon-employee/src/main/java/com/code/aon/employee/dao/IEmployeeAlias.java");
 		String[] classes = new String[] { 
+				Agreement.class.getName(),
+				AgreementLevel.class.getName(),
+				AgreementLevelCategory.class.getName(),
+				AgreementLevelPayment.class.getName(),
 				Contract.class.getName(),
 				ContractBatch.class.getName(),
 				ContractBatchDetail.class.getName(),

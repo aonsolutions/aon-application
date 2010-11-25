@@ -2,6 +2,10 @@ package com.code.aon.employee.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.code.aon.employee.Agreement;
+import com.code.aon.employee.AgreementLevel;
+import com.code.aon.employee.AgreementLevelCategory;
+import com.code.aon.employee.AgreementLevelPayment;
 import com.code.aon.employee.Contract;
 import com.code.aon.employee.ContractBatch;
 import com.code.aon.employee.ContractBatchDetail;
@@ -18,6 +22,118 @@ import com.code.aon.employee.SalaryDeduction;
 * Interface for holding entity properties constants.
 */ 
 public interface IEmployeeAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for Agreement entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_ENTRY = DAOConstants.getDAOConstant(Agreement.class);
+
+	/** 
+	* Alias value: Agreement_description
+	* Hibernate value: Agreement.description
+	*/
+	String  AGREEMENT_DESCRIPTION = AGREEMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Agreement_id
+	* Hibernate value: Agreement.id
+	*/
+	String  AGREEMENT_ID = AGREEMENT_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for AgreementLevel entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_LEVEL_ENTRY = DAOConstants.getDAOConstant(AgreementLevel.class);
+
+	/** 
+	* Alias value: AgreementLevel_agreement_id
+	* Hibernate value: AgreementLevel.agreement.id
+	*/
+	String  AGREEMENT_LEVEL_AGREEMENT_ID = AGREEMENT_LEVEL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AgreementLevel_description
+	* Hibernate value: AgreementLevel.description
+	*/
+	String  AGREEMENT_LEVEL_DESCRIPTION = AGREEMENT_LEVEL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementLevel_id
+	* Hibernate value: AgreementLevel.id
+	*/
+	String  AGREEMENT_LEVEL_ID = AGREEMENT_LEVEL_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for AgreementLevelCategory entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_LEVEL_CATEGORY_ENTRY = DAOConstants.getDAOConstant(AgreementLevelCategory.class);
+
+	/** 
+	* Alias value: AgreementLevelCategory_description
+	* Hibernate value: AgreementLevelCategory.description
+	*/
+	String  AGREEMENT_LEVEL_CATEGORY_DESCRIPTION = AGREEMENT_LEVEL_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AgreementLevelCategory_id
+	* Hibernate value: AgreementLevelCategory.id
+	*/
+	String  AGREEMENT_LEVEL_CATEGORY_ID = AGREEMENT_LEVEL_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementLevelCategory_level_id
+	* Hibernate value: AgreementLevelCategory.level.id
+	*/
+	String  AGREEMENT_LEVEL_CATEGORY_LEVEL_ID = AGREEMENT_LEVEL_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AgreementLevelCategory_level_agreement_id
+	* Hibernate value: AgreementLevelCategory.level.agreement.id
+	*/
+	String  AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID = AGREEMENT_LEVEL_CATEGORY_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for AgreementLevelPayment entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_LEVEL_PAYMENT_ENTRY = DAOConstants.getDAOConstant(AgreementLevelPayment.class);
+
+	/** 
+	* Alias value: AgreementLevelPayment_description
+	* Hibernate value: AgreementLevelPayment.description
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_DESCRIPTION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AgreementLevelPayment_function
+	* Hibernate value: AgreementLevelPayment.function
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_FUNCTION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementLevelPayment_id
+	* Hibernate value: AgreementLevelPayment.id
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AgreementLevelPayment_level_id
+	* Hibernate value: AgreementLevelPayment.level.id
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_LEVEL_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AgreementLevelPayment_type
+	* Hibernate value: AgreementLevelPayment.type
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_TYPE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[4];
 
 
 
