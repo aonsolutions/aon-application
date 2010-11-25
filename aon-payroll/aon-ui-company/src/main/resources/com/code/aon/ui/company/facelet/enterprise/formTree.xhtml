@@ -21,6 +21,8 @@
 						styleClass="aon-finding-toolbar-item aon-icon-accept" >
 						<f:setPropertyActionListener
 							target="#{enterprise.backAction}" value="enterprise_formTree" />						
+						<f:setPropertyActionListener
+							target="#{enterprise.backActionListener}" value="enterprise.onBack" />
 					</aon:commandButton>
 					<aon:commandButton id="salary"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"

@@ -20,14 +20,18 @@
 						action="person_form" actionListener="#{enterpriseTree.onEditPerson}"
 						styleClass="aon-finding-toolbar-item aon-icon-contact" >
 						<f:setPropertyActionListener
-							target="#{person.backAction}" value="contract_formTree" />						
+							target="#{person.backAction}" value="contract_formTree" />
+						<f:setPropertyActionListener
+							target="#{person.backActionListener}" value="person.onBack" />													
 					</aon:commandButton>
 					<aon:commandButton id="contract"
 						value="#{employeeBundle.employee_contract}"
 						action="contract_form" actionListener="#{contract.onEdit}"
 						styleClass="aon-finding-toolbar-item aon-icon-category" >
 						<f:setPropertyActionListener
-							target="#{contract.backAction}" value="contract_formTree" />						
+							target="#{contract.backAction}" value="contract_formTree" />
+						<f:setPropertyActionListener
+							target="#{contract.backActionListener}" value="contract.onBack" />													
 					</aon:commandButton>
 					<ui:include src="/com/code/aon/ui/employee/facelet/salary/buttons.xhtml" />
 					<aon:commandButton id="calendar"
