@@ -12,9 +12,9 @@
 		<aon:outputText value="#{enterprise.activity.cnae.code} - #{enterprise.activity.description}" />
 	</c:if>
 
-	<c:if test="#{enterprise.CCC != null}" >	
+	<c:if test="#{enterprise.ccc != null}" >	
 		<aon:outputText value="#{companyBundle.company_enterprise_ccc}" />
-		<aon:outputText value="#{enterprise.CCC.CCC}" />
+		<aon:outputText value="#{enterprise.ccc.ccc}" />
 	</c:if>
 
 	<aon:outputText value="#{companyBundle.company_workplace}" />
