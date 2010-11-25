@@ -186,7 +186,7 @@ public class CertificateController {
 //		ccc = getRegimenCode(contract.getActividad().getRegimen());
 //		ccc += getActividadCCC(contract.getActividad(), contract.getCuentaCotizacion()).getDescripcion();
 //		return ccc;
-		return contract.getEnterpriseCCC().getCCC();
+		return contract.getEnterpriseCCC().getCcc();
 	}
 	
 //	private String getRegimenCode(Regimen regimen) {

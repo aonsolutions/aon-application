@@ -84,7 +84,7 @@ public class AFIWriter {
 		ent.onSearch(null);
 		ent.onSelectFirst(null);
 		ent.initMainActiviy();
-		String ccc = ent.getCCC().getCcc();
+		String ccc = ent.getCcc().getCcc();
 		emp.setCodigoCuentaCotizacionSeguridadSocial(ccc);
 		String tipo = String.valueOf(enterprise.getRegistry().getType().ordinal());
 		if (StringUtils.isBlank(tipo)) {
