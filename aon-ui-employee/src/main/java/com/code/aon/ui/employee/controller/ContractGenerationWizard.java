@@ -26,12 +26,14 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.employee.Agreement;
 import com.code.aon.employee.AgreementLevelCategory;
 import com.code.aon.employee.Contract;
 import com.code.aon.employee.ContractData;
+import com.code.aon.employee.ContractPayment;
 import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractModel;
@@ -47,6 +49,7 @@ import com.code.aon.ui.employee.utils.ContractBuilder;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.lowagie.text.DocumentException;
 
 public class ContractGenerationWizard implements Serializable, ICollectionProvider{
@@ -322,8 +325,10 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {
 			onContractGenerate(event);
+			setCurrentStep(getCurrentStep() + 1);
+		} else if (getCurrentStep() == 4) {
 			onFinish(event);
-		} 
+		}
 	}
 
 	public void onPrevious(ActionEvent event) {
@@ -465,6 +470,9 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		getContract().setStatus(ContractStatus.PROCESSED);
 		accept();
 		acceptContractData();
+		if(!isAgreementSalary()){
+			acceptContractPayment();
+		}
 	}
 	public void onSave(ActionEvent event) {
 		onContractGenerate(event);
@@ -563,7 +571,21 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-
+	}
+	
+	private void acceptContractPayment(){
+		ContractPayment payment = new ContractPayment();
+		payment.setContract(getContract());
+		payment.setType(PaymentType.BASE_SALARY);
+		payment.setDescription("");
+		payment.setStartDate(getContract().getStartDate());
+		payment.setEndDate(null);
+		payment.setFunction(Double.toString(CommonUtil.round(getSalary())));
+		try {
+			BeanManager.getManagerBean(ContractPayment.class).insert(payment);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////
