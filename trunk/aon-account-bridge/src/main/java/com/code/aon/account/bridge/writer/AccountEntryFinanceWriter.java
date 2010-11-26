@@ -206,19 +206,21 @@ public class AccountEntryFinanceWriter {
 		}
 
 		// Segundo Apunte
-		for (Account account : recordingTo.getAccountMap().keySet()) {
-			double amount = recordingTo.getAccountMap().get(account);
-			balancingAmount += amount;
-
-			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccountEntry(entry);
-			detail.setAccount(account);
-			detail.setBalancingAccount(paymentAccount);
-			detail.setConcept((StringUtils.isEmpty(recordingTo.getBalancingConcept())) ? concept : recordingTo.getBalancingConcept());
-			detail.setCredit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? 0 : amount);
-			detail.setDebit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? amount : 0);
-			detail.setDocumentNumber((recordingTo.getFinanceList().size()==1) ? documentNumber : null);
-			accountEntryDetailBean.insert(detail);
+		if (recordingTo.getAccountMap() != null) {
+			for (Account account : recordingTo.getAccountMap().keySet()) {
+				double amount = recordingTo.getAccountMap().get(account);
+				balancingAmount += amount;
+	
+				AccountEntryDetail detail = new AccountEntryDetail();
+				detail.setAccountEntry(entry);
+				detail.setAccount(account);
+				detail.setBalancingAccount(paymentAccount);
+				detail.setConcept((StringUtils.isEmpty(recordingTo.getBalancingConcept())) ? concept : recordingTo.getBalancingConcept());
+				detail.setCredit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? 0 : amount);
+				detail.setDebit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? amount : 0);
+				detail.setDocumentNumber((recordingTo.getFinanceList().size()==1) ? documentNumber : null);
+				accountEntryDetailBean.insert(detail);
+			}
 		}
 		balancingAmount = CommonUtil.round(balancingAmount);
 
