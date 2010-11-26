@@ -310,7 +310,6 @@
 										</aon:commandLink>
 									</ui:define>
 									<ui:define name="columns">
-
 										<aon:column styleClass="aon-editDataTable-iconColumn">
 											<f:facet name="header">
 												<aon:outputText value="&#160;" />
@@ -487,10 +486,9 @@
 												<aon:outputText value="#{controller.to.status}" />
 											</f:facet>
 										</aon:column>
-
 				 					</ui:define>
 									<ui:define name="endFormListContent">
-										<aon:div id="addBankStatementLinks" rendered="#{to.pending}">
+
 <!-- 
 											<aon:commandButton id="addLink"
 												value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
@@ -500,8 +498,7 @@
 													value="#{true}" />
 											</aon:commandButton>
  -->
-											<aon:outputText value="&#160;" />
-										</aon:div>
+
 										<aon:div id="showBankStatementLinks" rendered="#{to.checked}">
 											<aon:commandLink value="#{financeBundle.finance_breakdown}"
 												styleClass="aon-italic"
@@ -599,14 +596,14 @@
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												style="padding-right:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
 												<aon:outputText value="#{entryDetail.debit}">
 													<f:convertNumber pattern="#,##0.00" />
 												</aon:outputText>
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												style="padding-right:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
 												<aon:outputText value="#{entryDetail.credit}">
 													<f:convertNumber pattern="#,##0.00" />
 												</aon:outputText>
