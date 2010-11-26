@@ -199,8 +199,11 @@ public class AccountEntryFinanceWriter {
 			detail.setAccount(registryAccount);
 			detail.setBalancingAccount(paymentAccount);
 			detail.setConcept(concept);
-			detail.setCredit((!finance.isPayment()) ? finance.getTotalAmount() : 0);
-			detail.setDebit((!finance.isPayment()) ? 0 : finance.getTotalAmount());
+			if (!finance.isPayment()) {
+				detail.setCredit(finance.getTotalAmount());
+			} else {
+				detail.setDebit(finance.getTotalAmount());
+			}
 			detail.setDocumentNumber(documentNumber);
 			accountEntryDetailBean.insert(detail);
 		}
@@ -216,8 +219,11 @@ public class AccountEntryFinanceWriter {
 				detail.setAccount(account);
 				detail.setBalancingAccount(paymentAccount);
 				detail.setConcept((StringUtils.isEmpty(recordingTo.getBalancingConcept())) ? concept : recordingTo.getBalancingConcept());
-				detail.setCredit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? 0 : amount);
-				detail.setDebit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? amount : 0);
+				if (entry.getType().equals(AccountEntryType.COLLECTION)) {
+					detail.setCredit(amount);
+				} else {
+					detail.setDebit(amount);
+				}
 				detail.setDocumentNumber((recordingTo.getFinanceList().size()==1) ? documentNumber : null);
 				accountEntryDetailBean.insert(detail);
 			}
@@ -230,8 +236,11 @@ public class AccountEntryFinanceWriter {
 		detail.setAccount(paymentAccount);
 		detail.setBalancingAccount((recordingTo.getFinanceList().size()==1) ? registryAccount : null);
 		detail.setConcept((StringUtils.isEmpty(recordingTo.getBalancingConcept())) ? concept : recordingTo.getBalancingConcept());
-		detail.setCredit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? balancingAmount : 0);
-		detail.setDebit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? 0 : balancingAmount);
+		if (entry.getType().equals(AccountEntryType.COLLECTION)) {
+			detail.setDebit(balancingAmount);
+		} else {
+			detail.setCredit(balancingAmount);
+		}
 		detail.setDocumentNumber((recordingTo.getFinanceList().size()==1) ? documentNumber : null);
 		accountEntryDetailBean.insert(detail);
 	}
@@ -281,8 +290,11 @@ public class AccountEntryFinanceWriter {
 		detail.setAccount(registryAccount);
 		detail.setBalancingAccount(paymentAccount);
 		detail.setConcept(concept);
-		detail.setCredit((!finance.isPayment()) ? 0 : finance.getTotalAmount());
-		detail.setDebit((!finance.isPayment()) ? finance.getTotalAmount() : 0);
+		if (!finance.isPayment()) {
+			detail.setDebit(finance.getTotalAmount());
+		} else {
+			detail.setCredit(finance.getTotalAmount());
+		}
 		detail.setDocumentNumber(documentNumber);
 		accountEntryDetailBean.insert(detail);
 
@@ -292,8 +304,12 @@ public class AccountEntryFinanceWriter {
 		detail.setAccount(paymentAccount);
 		detail.setBalancingAccount(registryAccount);
 		detail.setConcept(concept);
-		detail.setCredit((!entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)) ? 0 : finance.getTotalAmount());
-		detail.setDebit((!entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)) ? finance.getTotalAmount() : 0);
+		if (entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)) {
+			detail.setCredit(finance.getTotalAmount());
+			
+		} else {
+			detail.setDebit(finance.getTotalAmount());
+		}
 		detail.setDocumentNumber(documentNumber);
 		accountEntryDetailBean.insert(detail);
 	}
@@ -367,8 +383,11 @@ public class AccountEntryFinanceWriter {
 			detail.setAccount(account);
 			detail.setBalancingAccount(recordingTo.getPaymentAccount());
 			detail.setConcept(recordingTo.getBalancingConcept());
-			detail.setCredit((payment) ? 0 : recordingTo.getAccountMap().get(account));
-			detail.setDebit((payment) ? recordingTo.getAccountMap().get(account) : 0);
+			if (!payment) {
+				detail.setCredit(recordingTo.getAccountMap().get(account));
+			} else {
+				detail.setDebit(recordingTo.getAccountMap().get(account));
+			}
 			detail.setDocumentNumber(null);
 			accountEntryDetailBean.insert(detail);
 		}
@@ -379,8 +398,11 @@ public class AccountEntryFinanceWriter {
 		detail.setAccount(recordingTo.getPaymentAccount());
 		detail.setBalancingAccount((recordingTo.getAccountMap().size()==1) ? registryAccount : null);
 		detail.setConcept(recordingTo.getBalancingConcept());
-		detail.setCredit((payment) ? amount : 0);
-		detail.setDebit((payment) ? 0 : amount);
+		if (!payment) {
+			detail.setDebit(amount);
+		} else {
+			detail.setCredit(amount);
+		}
 		detail.setDocumentNumber(null);
 		accountEntryDetailBean.insert(detail);
 
