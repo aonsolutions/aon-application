@@ -131,6 +131,7 @@
 	<module>aon-web-ecommerce</module>
 	<module>aon-web-enterprise</module>
 	<module>aon-web-finance</module>
+        <module>aon-web-fiscal</module>
 	<module>aon-web-infoweb</module>
 	<module>aon-webmail</module>
 	<module>aon-web-payroll</module>
