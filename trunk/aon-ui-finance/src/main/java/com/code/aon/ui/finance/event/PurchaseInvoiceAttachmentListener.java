@@ -17,6 +17,7 @@ import com.code.aon.ui.finance.controller.PurchaseInvoiceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.DownloadUtil;
 
 public class PurchaseInvoiceAttachmentListener extends ControllerAdapter implements IAttachmentController {
 
@@ -143,7 +144,7 @@ public class PurchaseInvoiceAttachmentListener extends ControllerAdapter impleme
     public void downloadAttachment( ActionEvent event ) throws IOException {
     	AonFile af = getAonFile();
     	InputStream in = af.openStream();
-        AttachmentUtil.downloadAttachment( af.getFileName(), af.getMimeType(), in, af.getSize() );
+    	DownloadUtil.downloadAttachment( af.getFileName(), af.getMimeType(), in, af.getSize() );
         in.close();
     }
     
