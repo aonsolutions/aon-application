@@ -15,8 +15,8 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.ui.common.ICommonConstants;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.faces.util.MessageFactory;
@@ -92,7 +92,7 @@ public class AttachmentUtil implements ICommonConstants {
 				FileUtils.deleteQuietly(file);
 			}
 			f.setFileName(item.getFileName());
-			f.setMimeType(f.resolverMimeType());
+			f.setMimeType(f.resolveMimeType());
 			controller.setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
