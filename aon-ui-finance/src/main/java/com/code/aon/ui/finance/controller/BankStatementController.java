@@ -73,10 +73,10 @@ public class BankStatementController extends BasicController {
 	private AonFile aonFile;
 	private boolean showLinkWindow;
 	private BankStatementLinkManager linkManager;
-	private ArrayList<BankStatement> bankStatementChecks= new ArrayList<BankStatement>();
 	private Map<Integer, String> errors;
 	private AccountEntryFinanceWriter writer;
-
+	private ArrayList<BankStatement> bankStatementChecks= new ArrayList<BankStatement>();
+	
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
@@ -1091,7 +1091,7 @@ public class BankStatementController extends BasicController {
 		clearCheckedBankStatement();
 	}
 
-	public List<ITransferObject> getAccountEntryDetails() throws ManagerBeanException {
+	public AccountEntry getAccountEntry() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			BankStatement to = (BankStatement)getModel().getRowData();
 			IManagerBean accEntryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
@@ -1100,10 +1100,15 @@ public class BankStatementController extends BasicController {
 			Iterator<ITransferObject> iterator = accEntryStatementBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				AccountEntryBankStatement accEntryStatement = (AccountEntryBankStatement)iterator.next();
-				return getAccountEntryDetails(accEntryStatement.getAccountEntry());
+				return accEntryStatement.getAccountEntry();
 			}
 		}
 		return null;
+	}
+
+	public List<ITransferObject> getAccountEntryDetails() throws ManagerBeanException {
+		AccountEntry accountEntry = getAccountEntry();
+		return (accountEntry != null) ? getAccountEntryDetails(accountEntry) : null;
 	}
 
 	private List<ITransferObject> getAccountEntryDetails(AccountEntry accEntry) throws ManagerBeanException {
