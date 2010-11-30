@@ -92,14 +92,13 @@
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 							<aon:commandLink value="#{financeBundle.finance_list_recorded}"
-								style="margin-left:5px; text-decoration:underline;"
+								style="padding-right:120px; margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onSeeRecorded}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 
-							<aon:outputText value="#{financeBundle.finance_check_selected}:"
-								 styleClass="aon-bold" style="padding-left:120px;" />
+							<aon:outputText value="#{financeBundle.finance_check_selected}:" styleClass="aon-bold" />
 							<c:if test="#{aonRole.accountingOperator}">
 								<aon:commandLink id="BankStatement_checkByConcept" 
 									value="#{financeBundle.finance_check_by_concept}"
@@ -188,14 +187,13 @@
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 							<aon:commandLink value="#{financeBundle.finance_none}"
-								style="margin-left:5px; text-decoration:underline;"
+								style="padding-right:60px; margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onSelectNone}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 
-							<aon:outputText value="#{financeBundle.finance_cancel_checks}:"
-								 styleClass="aon-bold" style="padding-left:60px;" />
+							<aon:outputText value="#{financeBundle.finance_cancel_checks}:" styleClass="aon-bold" />
 							<aon:commandLink value="#{financeBundle.finance_all}"
 								style="margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onCancelAll}"
@@ -228,28 +226,29 @@
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						</aon:div>
 						<aon:div>
-							<aon:outputText value="#{financeBundle.finance_view_entry}:" styleClass="aon-bold" />
-							<aon:commandLink value="#{financeBundle.finance_checked}"
-								style="margin-left:5px; text-decoration:underline;"
-								actionListener="#{bankStatement.onViewEntrySelected}"
-								reRender="#{dataTableId}"
-								onclick="Richfaces.showModalPanel('waitProccess')"
-								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-							<aon:commandLink value="#{financeBundle.finance_list_current_page}"
-								style="margin-left:5px; text-decoration:underline;"
-								actionListener="#{bankStatement.onViewEntryCurrentPage}"
-								reRender="#{dataTableId}"
-								onclick="Richfaces.showModalPanel('waitProccess')"
-								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-							<aon:commandLink value="#{financeBundle.finance_none}"
-								style="margin-left:5px; text-decoration:underline;"
-								actionListener="#{bankStatement.onViewEntryNone}"
-								reRender="#{dataTableId}"
-								onclick="Richfaces.showModalPanel('waitProccess')"
-								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<c:if test="#{aonRole.accountingOperator}">
+								<aon:outputText value="#{financeBundle.finance_view_entry}:" styleClass="aon-bold" />
+								<aon:commandLink value="#{financeBundle.finance_checked}"
+									style="margin-left:5px; text-decoration:underline;"
+									actionListener="#{bankStatement.onViewEntrySelected}"
+									reRender="#{dataTableId}"
+									onclick="Richfaces.showModalPanel('waitProccess')"
+									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+								<aon:commandLink value="#{financeBundle.finance_list_current_page}"
+									style="margin-left:5px; text-decoration:underline;"
+									actionListener="#{bankStatement.onViewEntryCurrentPage}"
+									reRender="#{dataTableId}"
+									onclick="Richfaces.showModalPanel('waitProccess')"
+									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+								<aon:commandLink value="#{financeBundle.finance_none}"
+									style="padding-right:300px; margin-left:5px; text-decoration:underline;"
+									actionListener="#{bankStatement.onViewEntryNone}"
+									reRender="#{dataTableId}"
+									onclick="Richfaces.showModalPanel('waitProccess')"
+									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							</c:if>
 
-							<aon:outputText value="#{financeBundle.finance_tobreakdown}:"
-								 styleClass="aon-bold" style="padding-left:300px;" />
+							<aon:outputText value="#{financeBundle.finance_tobreakdown}:" styleClass="aon-bold" />
 							<aon:commandLink value="#{financeBundle.finance_checked}"
 								style="margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onBreakdownSelected}"
@@ -389,10 +388,10 @@
 												<aon:outputText value="#{bundle.aon_operation}" />
 											</f:facet>
 											<aon:outputText value="#{to.commonConcept}"
-												rendered="#{formList or controller.to.recorded}" />
+												rendered="#{formList}" />
 											<aon:selectOneMenu id="BankStatement_concept"
 												value="#{controller.to.commonConcept}"
-												rendered="#{formEdit and !controller.to.recorded}">
+												rendered="#{formEdit}">
 												<f:selectItems value="#{financeCollections.statementConcepts}" />
 											</aon:selectOneMenu>
 											<f:facet name="footer">
@@ -410,7 +409,7 @@
 												<aon:outputText value="#{bundle.aon_concept}" />
 											</f:facet>
 											<aon:outputText value="#{to.description}"
-												rendered="#{formList or controller.to.recorded}">
+												rendered="#{formList}">
 												<aon:abbreviateConverter maxWidth="50" />
 											</aon:outputText>
 											<rich:toolTip rendered="#{controller.descriptionLength > 50}">
@@ -418,7 +417,7 @@
 											</rich:toolTip>
 											<aon:inputText id="BankStatement_description"
 												value="#{controller.to.description}"
-												rendered="#{formEdit and !controller.to.recorded}" required="true"
+												rendered="#{formEdit}" required="true"
 												size="50" maxlength="80" />
 											<f:facet name="footer">
 												<aon:inputText id="BankStatement_description-New"
@@ -488,29 +487,31 @@
 										</aon:column>
 				 					</ui:define>
 									<ui:define name="endFormListContent">
-
+										<aon:div id="showBankStatementLinks" rendered="#{!to.recorded}">
 <!-- 
 											<aon:commandButton id="addLink"
 												value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
+												title="#{financeBundle.finance_bank_statement_check}"
 												actionListener="#{controller.onAddLinkShow}"
 												reRender="showLinkWindow">
 												<f:setPropertyActionListener target="#{controller.showLinkWindow}"
 													value="#{true}" />
 											</aon:commandButton>
  -->
-
-										<aon:div id="showBankStatementLinks" rendered="#{to.checked}">
-											<aon:commandLink value="#{financeBundle.finance_breakdown}"
-												styleClass="aon-italic"
-												reRender="#{dataTableId},showBankStatementLinks"
+											<aon:commandButton id="showLink"
+												value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
+												title="#{financeBundle.finance_tobreakdown}"
 												rendered="#{to.checked and !to.showBankStatementLink}" 
-												actionListener="#{controller.onShowBankStatementLink}" />
-											<aon:commandLink value="#{financeBundle.finance_hide}"
-												reRender="#{dataTableId},showBankStatementLinks"
+												actionListener="#{controller.onShowBankStatementLink}"
+												reRender="#{dataTableId},showBankStatementLinks" />
+											<aon:commandButton id="hideLink"
+												value="&#160;" styleClass="aon-icon-index aon-noborder"
+												title="#{financeBundle.finance_hide}"
 												rendered="#{to.checked and to.showBankStatementLink}" 
-												actionListener="#{controller.onHideBankStatementLink}" />
+												actionListener="#{controller.onHideBankStatementLink}"
+												reRender="#{dataTableId},showBankStatementLinks" />
 										</aon:div>
-										<aon:div id="showAccountEntryDetails" rendered="#{to.recorded}">
+										<aon:div id="showAccountEntryDetails" rendered="#{aonRole.accountingOperator and to.recorded}">
 											<aon:commandLink value="#{financeBundle.finance_view_entry}"
 												styleClass="aon-italic"
 												reRender="#{dataTableId},showAccountEntryDetails"
@@ -525,7 +526,8 @@
 											rendered="#{to.checked and controller.showBankStatementLink}"
 											value="#{controller.bankStatementLinkList}" var="bankStatementLink">
 
-											<aon:column colspan="4"	style="padding:0px; border:none; background-color:#FBEDB6;">
+											<aon:column colspan="4"	styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+												style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
@@ -541,10 +543,12 @@
 												style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
 												<aon:outputText value="#{financeBundle.finance_tracking_batched} "
 													rendered="#{bankStatementLink.financeBatch}" />
-												<c:if test="#{aonRole.accountingOperator || !bankStatementLink.account}">
-													<aon:outputText value="#{bankStatementLink.concept}" />
+												<c:if test="#{aonRole.accountingOperator}">
+													<aon:outputText value="#{bankStatementLink.concept}" 
+														rendered="#{bankStatementLink.bankConcept or bankStatementLink.account}" />
 												</c:if>
-												<aon:outputText value="&#160;" />
+												<aon:outputText value="#{bankStatementLink.concept}" 
+													rendered="#{bankStatementLink.financeTracking or bankStatementLink.financeBatch}" />
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
@@ -572,26 +576,47 @@
 											</aon:column>
 										</rich:subTable>
 
-										<rich:subTable id="accountEntryTable" 
-											rendered="#{to.recorded and controller.showAccountEntry}"
-											value="#{controller.accountEntryDetails}" var="entryDetail">
+										<rich:subTable id="accountEntryTable"
+											rendered="#{aonRole.accountingOperator and to.recorded and controller.showAccountEntry}"
+											value="#{controller.accountEntryDetails}" var="entryDetail"
+											headerClass="aon-editDataTable-textColumn aon-subTable-header aon-italic aon-bold">
 
-											<aon:column colspan="3" style="padding:0px; border:none; background-color:#F2FDEC;">
+											<aon:column colspan="3" styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
+												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
 											<aon:column colspan="2" styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
 												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												<f:facet name="header">
+													<aon:div>
+														<aon:outputText value="#{financeBundle.finance_account_entry}: " />
+														<aon:outputText value="#{controller.accountEntry.id}" />
+													</aon:div>
+												</f:facet>
 												<aon:outputText value="#{entryDetail.concept}" />
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
 												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												<f:facet name="header">
+													<aon:div>
+														<aon:outputText value="#{bundle.aon_date}: " />
+														<aon:outputText value="#{controller.accountEntry.entryDate}">
+															<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+																timeZone="#{timeZoneController.timeZoneId}" />
+														</aon:outputText>
+													</aon:div>
+												</f:facet>
 												<aon:outputText value="#{entryDetail.account.id}" />
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
 												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+												<f:facet name="header">
+													<aon:outputText value="#{bundle.aon_confidential}" 
+														rendered="#{controller.accountEntry.confidential}" />
+												</f:facet>
 												<aon:outputText value="#{entryDetail.account.description}" />
 											</aon:column>
 

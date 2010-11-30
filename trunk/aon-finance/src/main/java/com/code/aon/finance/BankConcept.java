@@ -1,5 +1,7 @@
 package com.code.aon.finance;
 
+import java.util.Iterator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +12,12 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
@@ -44,6 +49,16 @@ public class BankConcept implements ITransferObject {
 
 	@Transient
 	public Account getAccount() {
+		if (account == null) {
+			String select = "select account from BankConceptAccount as bankConceptAccount " +
+							"where bankConceptAccount.bankConcept.id = " + getId();
+			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+	    	Query query = session.createQuery(select);
+			Iterator<?> iterator = query.list().iterator();
+			if (iterator.hasNext()) {
+				setAccount((Account)iterator.next());
+			}
+		}
 		return account;
 	}
 	public void setAccount(Account account) {
