@@ -162,10 +162,10 @@ COMMIT;
 #
 
 INSERT IGNORE INTO `pay_method` (`id`, `name`, `type`) VALUES 
-  (1,'EFECTIVO',1),
-  (2,'GIRO',2),
-  (3,'CHEQUE',5),
-  (4,'TRANSFERENCIA',6);
+  (1,'EFECTIVO',0),
+  (2,'GIRO',1),
+  (3,'CHEQUE',4),
+  (4,'TRANSFERENCIA',5);
 
 COMMIT;
 
