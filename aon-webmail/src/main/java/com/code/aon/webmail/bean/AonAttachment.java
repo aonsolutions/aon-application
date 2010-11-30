@@ -7,6 +7,8 @@ import javax.mail.internet.MimeUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.enumeration.MimeType;
+
 public class AonAttachment {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonAttachment.class);
@@ -81,5 +83,19 @@ public class AonAttachment {
 		this.position = position;
 	}
 
-
+	/**
+	 * Gets the mime type.
+	 *
+	 * @return the mime type
+	 */
+	public MimeType getMimeType() {
+		MimeType type = null;
+		try {
+			type = MimeType.get(this.part.getContentType());
+		} catch (MessagingException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		return type;
+	}
+	
 }

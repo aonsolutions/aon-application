@@ -1,7 +1,7 @@
 package com.code.aon.ui.ebackoffice.event;
 
+import com.code.aon.common.util.AonFile;
 import com.code.aon.ebackoffice.Ecconfig;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.ebackoffice.controller.EcconfigController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

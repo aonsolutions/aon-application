@@ -20,7 +20,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.ui.common.io.AonFile;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.ui.util.AonUtil;
 
 public class BalanceImporter {
