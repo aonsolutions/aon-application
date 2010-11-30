@@ -229,7 +229,7 @@
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-			<version>1.4.3</version>
+			<version>1.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.slf4j</groupId>
@@ -331,7 +331,7 @@
 <include>org.slf4j:slf4j-api:1.5.11</include>
 <include>jasperreports:jasperreports:3.7.2</include>
 <include>oro:oro:2.0.8</include>
-<include>javax.mail:mail:1.4.3</include>
+<include>javax.mail:mail:1.4.2</include>
 <include>org.jboss.slf4j:slf4j-jboss-logging:1.0.2.GA</include>										</includes>
 									</dependency>
                                                                 </mapping>
