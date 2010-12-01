@@ -164,12 +164,12 @@
 									actionListener="#{offer.onApprove}" 
 									title="#{commercialBundle.commercial_offer_to_approve}"
 									immediate="true" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
-									styleClass="aon-icon-commandButton aon-icon-settle aon-margin-left" />
+									styleClass="aon-icon-commandButton aon-icon-point-green aon-margin-left" />
 								<aon:commandButton id="refuse" value="&#160;"
 									actionListener="#{offer.onRefuse}"
 									title="#{commercialBundle.commercial_offer_to_refuse}"
 									immediate="true" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
-									styleClass="aon-icon-commandButton aon-icon-unsettle" />							
+									styleClass="aon-icon-commandButton aon-icon-point-red" />
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{offer.onBlock}"
 									title="#{commercialBundle.commercial_offer_to_block}"
