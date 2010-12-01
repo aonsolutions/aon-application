@@ -26,6 +26,13 @@
 				<f:selectItems value="#{contractGenerationWizard.workplaces}" />
 			</aon:selectOneMenu>
 
+			<aon:outputLabel for="ccc"
+				value="#{companyBundle.company_workplace}" />
+			<aon:selectOneMenu id="ccc"
+				value="#{contractGenerationWizard.contract.enterpriseCCC}" >
+				<f:selectItems value="#{enterprise.CCCs}" />
+			</aon:selectOneMenu>
+
 			<aon:outputLabel for="contractOption"
 				value="#{employeeBundle.employee_contract_contract_option}" />
 			<aon:selectOneMenu id="contractOption"
@@ -49,11 +56,11 @@
 				value="#{employeeBundle.employee_contract_work_time}" />
 			<aon:selectOneMenu id="contractCode"
 				disabled="#{contractGenerationWizard.contractType.codes==null}"
-				value="#{contractGenerationWizard.code}" >
+				value="#{contractGenerationWizard.contractData.code}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contractGenerationWizard.contractCodes}" />
 			</aon:selectOneMenu>
-
+			
 			<aon:outputLabel 
 				value="#{employeeBundle.employee_contract_period}" />
 			<aon:div>
@@ -75,37 +82,51 @@
 				</aon:selectInputDate>
 			</aon:div>
 			
+			<aon:outputLabel for="quote_group"
+				value="#{employeeBundle.employee_contract_quote_group}" />
+			<aon:selectOneMenu id="quote_group"
+				value="#{contractGenerationWizard.contractData.quoteGroup}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{employeeCollections.quoteGroups}" />
+			</aon:selectOneMenu>
+			
 			<aon:outputLabel for="agreement"
 				value="#{employeeBundle.employee_contract_agreement}" />
-			<aon:selectOneMenu id="agreement"
-				disabled="#{contractGenerationWizard.enterprise.agreement==null}"
-				value="#{contractGenerationWizard.agreement}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contractGenerationWizard.agreements}" />
-			</aon:selectOneMenu>
+			<aon:div>
+				<aon:selectOneMenu id="agreement"
+					disabled="#{contractGenerationWizard.enterprise.agreement==null}"
+					value="#{contractGenerationWizard.agreement}" >
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{contractGenerationWizard.agreements}" />
+					<a4j:support event="onchange" reRender="agreementLevel" />
+				</aon:selectOneMenu>
+				<aon:outputLabel for="agreementLevel"
+					styleClass="aon-italic aon-margin-left aon-margin-right"
+					value="#{employeeBundle.employee_agreementLevel}:" />
+				<aon:selectOneMenu id="agreementLevel"
+					disabled="#{contractGenerationWizard.agreement==null}"
+					value="#{contractGenerationWizard.agreementLevel}" >
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{contractGenerationWizard.agreementLevels}" />
+					<a4j:support event="onchange" reRender="category, gross_salary_check" />
+				</aon:selectOneMenu>
+			</aon:div>
 				
 			<aon:outputLabel for="category"
 				value="#{employeeBundle.employee_contract_agreement_category}" />
 			<aon:selectOneMenu id="category"
-				disabled="#{contractGenerationWizard.enterprise.agreement==null}"
+				disabled="#{contractGenerationWizard.agreementLevel==null}"
 				value="#{contractGenerationWizard.category}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contractGenerationWizard.categories}" />
 			</aon:selectOneMenu>
 			
-			<aon:outputLabel for="quote_group"
-				value="#{employeeBundle.employee_contract_quote_group}" />
-			<aon:selectOneMenu id="quote_group"
-				value="#{contractGenerationWizard.quoteGroup}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{employeeCollections.quoteGroups}" />
-			</aon:selectOneMenu>
-			
 			<aon:outputLabel for="gross_salary"
 				value="#{employeeBundle.employee_contract_gross_salary}" />
 			<aon:div id="salary">
-				<aon:selectBooleanCheckbox value="#{contractGenerationWizard.agreementSalary}"
-					disabled="#{contractGenerationWizard.enterprise.agreement==null}">
+				<aon:selectBooleanCheckbox id="gross_salary_check"
+					value="#{contractGenerationWizard.agreementSalary}"
+					disabled="#{contractGenerationWizard.payment==null}">
 					<a4j:support event="onclick" reRender="salary"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right"
