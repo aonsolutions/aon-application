@@ -18,8 +18,8 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.7.x/trunk/aon-payroll-ctsql2mysql</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releasesr/5.7.x/trunk/aon-payroll-ctsql2mysqlr</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.7.x/aon-payroll-ctsql2mysql</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releasesr/5.7.x/aon-payroll-ctsql2mysqlr</connection>
 		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.7.x/wsvn/aon-payroll-ctsql2mysql</url>
 	</scm>
 
