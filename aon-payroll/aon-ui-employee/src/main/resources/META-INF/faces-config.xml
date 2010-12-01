@@ -556,6 +556,45 @@
 		</managed-property>		
 	</managed-bean>
 	
+	<!-- ************ FUNCTION CONSTANT ************** -->
+	<managed-bean>
+		<managed-bean-name>functionConstant</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.FunctionConstant</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>functionConstant</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ PaymentConcept ************** -->
+	<managed-bean>
+		<managed-bean-name>paymentConcept</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.PaymentConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>paymentConcept</value>
+		</managed-property>
+	</managed-bean>
+	
+	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
 	<!-- ========================================================== -->
@@ -822,6 +861,30 @@
 	    <navigation-case>
     	  	<from-outcome>agreementLevel_form</from-outcome>
     		<to-view-id>/com/code/aon/ui/employee/facelet/agreementLevel/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== FunctionConstant ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>functionConstant_grid</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/functionConstant/grid.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== PaymentConcept ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>paymentConcept_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/paymentConcept/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>paymentConcept_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/paymentConcept/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>paymentConcept_form</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/paymentConcept/form.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	
