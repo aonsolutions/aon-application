@@ -126,12 +126,13 @@ public class CertificateController {
 				criteria.addGreaterThanOrEqualExpression(empleadoBean.getFieldName(IEmployeeAlias.CONTRACT_END_DATE), params.getStartDate());
 			}
 			if (params.getEndDate()!=null) {
-				criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IEmployeeAlias.CONTRACT_START_DATE), params.getEndDate());
+				criteria.addLessThanOrEqualExpression(empleadoBean.getFieldName(IEmployeeAlias.CONTRACT_END_DATE), params.getEndDate());
 			}
 			
 //			Expression exp1  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "A");
 //			Expression exp2  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "S");
 //			criteria.addExpression( ExpressionUtilities.getAndExpression(exp1, exp2) );
+			criteria.addNotNullExpression(empleadoBean.getFieldName(IEmployeeAlias.CONTRACT_END_DATE));
 			criteria.addOrder(empleadoBean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));
 			
 			List<?> list = empleadoBean.getList(criteria);
