@@ -302,46 +302,58 @@ public interface IEmployeeAlias {
 	DAOConstantsEntry CONTRACT_DATA_ENTRY = DAOConstants.getDAOConstant(ContractData.class);
 
 	/** 
+	* Alias value: ContractData_category
+	* Hibernate value: ContractData.category
+	*/
+	String  CONTRACT_DATA_CATEGORY = CONTRACT_DATA_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: ContractData_code
 	* Hibernate value: ContractData.code
 	*/
-	String  CONTRACT_DATA_CODE = CONTRACT_DATA_ENTRY.getAliasNames()[0];
+	String  CONTRACT_DATA_CODE = CONTRACT_DATA_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: ContractData_conditions
 	* Hibernate value: ContractData.conditions
 	*/
-	String  CONTRACT_DATA_CONDITIONS = CONTRACT_DATA_ENTRY.getAliasNames()[1];
+	String  CONTRACT_DATA_CONDITIONS = CONTRACT_DATA_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ContractData_contract_id
 	* Hibernate value: ContractData.contract.id
 	*/
-	String  CONTRACT_DATA_CONTRACT_ID = CONTRACT_DATA_ENTRY.getAliasNames()[2];
+	String  CONTRACT_DATA_CONTRACT_ID = CONTRACT_DATA_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ContractData_description
 	* Hibernate value: ContractData.description
 	*/
-	String  CONTRACT_DATA_DESCRIPTION = CONTRACT_DATA_ENTRY.getAliasNames()[3];
+	String  CONTRACT_DATA_DESCRIPTION = CONTRACT_DATA_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: ContractData_endDate
 	* Hibernate value: ContractData.endDate
 	*/
-	String  CONTRACT_DATA_END_DATE = CONTRACT_DATA_ENTRY.getAliasNames()[4];
+	String  CONTRACT_DATA_END_DATE = CONTRACT_DATA_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: ContractData_id
 	* Hibernate value: ContractData.id
 	*/
-	String  CONTRACT_DATA_ID = CONTRACT_DATA_ENTRY.getAliasNames()[5];
+	String  CONTRACT_DATA_ID = CONTRACT_DATA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ContractData_quoteGroup
+	* Hibernate value: ContractData.quoteGroup
+	*/
+	String  CONTRACT_DATA_QUOTE_GROUP = CONTRACT_DATA_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: ContractData_startDate
 	* Hibernate value: ContractData.startDate
 	*/
-	String  CONTRACT_DATA_START_DATE = CONTRACT_DATA_ENTRY.getAliasNames()[6];
+	String  CONTRACT_DATA_START_DATE = CONTRACT_DATA_ENTRY.getAliasNames()[8];
 
 
 
