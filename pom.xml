@@ -79,7 +79,6 @@
 	<module>aon-manager</module>
 	<module>aon-calendar</module>
 	<module>aon-employee</module>
-	<module>aon-security</module>
 
 	<module>aon-ui-account</module>
 	<module>aon-ui-account-bridge</module>
