@@ -17,6 +17,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
@@ -95,6 +97,7 @@ public class ContractData implements ITransferObject {
 		this.contract = contract;
 	}
 	
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.employee.enumeration.ContractCode") })
 	@Column(nullable=false)
 	public ContractCode getCode() {
 		return code;
@@ -162,6 +165,7 @@ public class ContractData implements ITransferObject {
 		this.endDate = endDate;
 	}	
 	
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.employee.enumeration.QuoteGroup") })
 	@Column( name = "quote_group" )
 	public QuoteGroup getQuoteGroup() {
 		return quoteGroup;
@@ -170,6 +174,10 @@ public class ContractData implements ITransferObject {
 		this.quoteGroup = quoteGroup;
 	}
 	
+//	@ManyToOne
+//    @JoinColumn( name="category", updatable = false )	
+//	@ForeignKey(name = "FK_CONTRACT_DATA_CATEGORY")
+//	@Index(name = "FK_CONTRACT_DATA_CATEGORY")
 	@Column(length=64)
 	public String getCategory() {
 		return category;
