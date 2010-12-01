@@ -12,8 +12,8 @@
 
 	<aon:panelGroup id="showNewMessageWindow">
 		<c:if test="#{webmailMessage.showNewMessageWindow}">
-			<rich:modalPanel id="showNewMessageModalPanel"
-				rendered="#{webmailMessage.showNewMessageWindow}" showWhenRendered="true"
+			<rich:modalPanel id="showNewMessageModalPanel" domElementAttachment="parent"
+				showWhenRendered="#{webmailMessage.showNewMessageWindow}"
 				minHeight="540" height="590" width="680" >
 				
 				<f:facet name="header">
