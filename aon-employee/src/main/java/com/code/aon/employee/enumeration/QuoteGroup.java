@@ -34,6 +34,10 @@ public enum QuoteGroup implements IResourceable, IStringEnum {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
 	}
+	public String getFullName(Locale locale) {
+		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
+		return getValue()+". "+bundle.getString(MSG_KEY_PREFIX + toString());
+	}
 
 	private String value;
 	    
