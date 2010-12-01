@@ -126,6 +126,28 @@
 										value="#{appBundle.banks_module}">
 									</aon:commandLink>
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="functionConstant"
+										action="functionConstant_grid" 
+										actionListener="#{functionConstant.onSearch}"
+										value="#{employeeBundle.employee_functionConstant_module}">
+									</aon:commandLink>
+								</aon:div>		
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="paymentConcept" 
+										action="paymentConcept_search" 
+										actionListener="#{paymentConcept.onEditSearch}"
+										value="#{employeeBundle.employee_paymentConcept_module}">
+									</aon:commandLink>
+								</aon:div>		
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="deductionConcept" 
+										disabled="true"
+										action="contract_search" 
+										actionListener="#{contract.onEditSearch}"
+										value="#{employeeBundle.employee_deductionConcept_module}">
+									</aon:commandLink>
+								</aon:div>	
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>	
