@@ -164,7 +164,7 @@ public class EmployeeCollectionsController {
 			quoteGroups = new LinkedList<SelectItem>();
 			QuoteGroup[] models = QuoteGroup.values();
 			for (QuoteGroup cm : models) {
-				String name = cm.getName(locale);
+				String name = cm.getFullName(locale);
 				SelectItem item = new SelectItem(cm, name);
 				quoteGroups.add(item);
 			}
