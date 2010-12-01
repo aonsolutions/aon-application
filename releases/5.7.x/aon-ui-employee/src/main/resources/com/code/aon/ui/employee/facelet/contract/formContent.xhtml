@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+
+	<aon:panelGrid columns="2" >
+	
+		<aon:outputLabel for="Enterprise_id"
+			value="#{companyBundle.company_enterprise}" />
+		<aon:div styleClass="aon-lookup">
+			<aon:lookupInputText id="Enterprise_id" rendered="#{contract.new}"
+				lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
+				reRender="Enterprise_full_name,Contract_workPlace_id,Contract_ccc_id"
+				value="#{contract.enterprise.id}" size="5" />
+			<aon:lookupButton rendered="#{contract.new}"
+				windowTitle="#{companyBundle.company_enterprise_selection}"
+				selectReRender="Enterprise_id,Enterprise_full_name,Contract_workPlace_id,Contract_ccc_id"
+				lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
+				minHeight="460" minWidth="650" actionType="search"
+				property="#{contract.enterprise}">
+			</aon:lookupButton>
+			<aon:inputText id="Enterprise_full_name"
+				value="#{(contract.enterprise.registry.fullName!=null)?(contract.enterprise.registry.fullName):('')}"
+				size="50" disabled="true" />							
+		</aon:div>
+
+		<aon:outputLabel for="Contract_workPlace_id"
+			value="#{companyBundle.company_workplace}" />
+		<aon:selectOneMenu id="Contract_workPlace_id" required="true"
+			value="#{contract.to.workPlace}" disabled="#{!contract.enterpriseSelected}">
+			<f:selectItems value="#{contract.workPlaces}" />
+		</aon:selectOneMenu>
+			
+		<aon:outputLabel for="Contract_ccc_id"
+			value="#{companyBundle.company_enterprise_ccc}" />
+		<aon:selectOneMenu id="Contract_ccc_id" required="true"
+			value="#{contract.to.ccc}" disabled="#{!contract.enterpriseSelected}">
+			<f:selectItems value="#{contract.CCCs}" />
+		</aon:selectOneMenu>						
+						
+		<aon:outputLabel for="Person_id"
+			value="#{registryBundle.registry_person}" />
+		<aon:div id="Finance_bankAccount" styleClass="aon-lookup">
+			<aon:lookupInputText id="Person_id" rendered="#{contract.new}"
+				value="#{contract.to.person.id}" required="true"
+				size="5" lookup="#{personLookup}"
+				reRender="Person_full_name">
+			</aon:lookupInputText>
+			<aon:lookupButton rendered="#{contract.new}"
+				windowTitle="#{employeeBundle.employee_contractType_selection}"
+				selectReRender="Person_id,Person_full_name" 
+				lookup="#{personLookup}" minHeight="460" minWidth="650"
+				property="#{contract.to.person}">
+			</aon:lookupButton>
+			<aon:inputText id="Person_full_name"
+				value="#{(contract.to.person.registry.fullName!=null)?(contract.to.person.registry.fullName):('')}"
+				size="50" disabled="true" />	
+		</aon:div>
+		
+		<aon:outputLabel for="ContractType_id"
+			value="#{employeeBundle.employee_contractType}" />
+		<aon:div styleClass="aon-lookup">
+			<aon:lookupInputText id="ContractType_id" lookup="#{contractTypeLookup}"
+				reRender="ContractType_detail" required="true"
+				value="#{contract.to.contractType.id}" size="5" />
+			<aon:lookupButton 
+				windowTitle="#{employeeBundle.registry_person_selection}"
+				selectReRender="ContractType_id,ContractType_detail"
+				lookup="#{contractTypeLookup}" minHeight="460" minWidth="650"
+				property="#{contract.to.contractType}">
+			</aon:lookupButton>
+			<aon:inputText id="ContractType_detail"
+				value="#{contract.to.contractType.description}"
+				size="50" disabled="true" />							
+		</aon:div>									
+	
+		<aon:outputLabel for="Contract_startDate"
+			value="#{bundle.aon_start_date}" />
+		<aon:selectInputDate id="Contract_startDate" 
+			value="#{contract.to.startDate}" required="true"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+		<aon:outputLabel for="Contract_endDate"
+			value="#{bundle.aon_end_date}" />
+		<aon:selectInputDate id="Contract_endDate" 
+			value="#{contract.to.endDate}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+	</aon:panelGrid>
+
+</ui:composition>

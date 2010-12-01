@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="" label="Compras Anuales">
+    <external-parameters>
+        <external-parameter defaultValue="${currentYear}" label="Desde"
+            name="iniyear" prompt="true" type="INTEGER"/>
+        <external-parameter defaultValue="${currentYear}" label="Hasta"
+            name="endyear" prompt="true" type="INTEGER"/>
+        <external-parameter defaultValue="0" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_factura.gif"
+        iconOpen="icons/icon_factura.gif" label="Compras Anuales">
+        <layout type="COLUMN"/>
+        <contents>
+            <listViewContent id="view/Ventas/Año Mes Dia.exvw.xml">
+                <sentence>SELECT YEAR(invoice.issue_date), SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND YEAR(invoice.issue_date) BETWEEN ? AND ?&#xd;
+ GROUP BY 1</sentence>
+                <metadata>
+                    <attribute label="Año" name="DELIVERY_YEAR" type="INTEGER"/>
+                    <attribute label="Total"
+                        name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                </metadata>
+                <parameters>
+                    <parameter name="type"/>
+                    <parameter name="iniyear"/>
+                    <parameter name="endyear"/>
+                </parameters>
+            </listViewContent>
+        </contents>
+        <node dynamicViewId="view/Ventas/Año Mes Dia.exvw.xml"
+            iconClose="icons/icon_year_selected.gif"
+            iconOpen="icons/icon_year_selected.gif" label="${DELIVERY_YEAR}">
+            <dynamicSentence>
+                <sentence>SELECT YEAR(invoice.issue_date), SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product &#xd;
+   AND invoice_detail.item = item.id &#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND YEAR(invoice.issue_date) BETWEEN ? AND ?&#xd;
+ GROUP BY 1</sentence>
+                <metadata>
+                    <attribute label="Año" name="DELIVERY_YEAR" type="INTEGER"/>
+                    <attribute label="Total"
+                        name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                </metadata>
+                <parameters>
+                    <parameter name="type"/>
+                    <parameter name="iniyear"/>
+                    <parameter name="endyear"/>
+                </parameters>
+            </dynamicSentence>
+            <dynamicParameters>
+                <parameter name="type"/>
+                <parameter name="iniyear"/>
+                <parameter name="endyear"/>
+            </dynamicParameters>
+            <layout type="COLUMN"/>
+            <contents>
+                <listViewContent id="view/Ventas/Mes Dia.exvw.xml">
+                    <sentence>SELECT &#xd;
+ MONTH(invoice.issue_date),&#xd;
+ CASE MONTH(invoice.issue_date)&#xd;
+	WHEN 1 THEN 'Enero'&#xd;
+	WHEN 2 THEN 'Febrero'&#xd;
+	WHEN 3 THEN 'Marzo'&#xd;
+	WHEN 4 THEN 'Abril'&#xd;
+	WHEN 5 THEN 'Mayo'&#xd;
+	WHEN 6 THEN 'Junio'&#xd;
+	WHEN 7 THEN 'Julio'&#xd;
+	WHEN 8 THEN 'Agosto'&#xd;
+	WHEN 9 THEN 'Septiembre'&#xd;
+	WHEN 10 THEN 'Octubre'&#xd;
+	WHEN 11 THEN 'Noviembre'&#xd;
+	WHEN 12 THEN 'Diciembre'&#xd;
+END&#xd;
+, SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND YEAR(invoice.issue_date) = ?&#xd;
+ GROUP BY 1</sentence>
+                    <metadata>
+                        <attribute label="Mes" name="DELIVERY_MONTH" type="INTEGER"/>
+                        <attribute label="Mes" name="DELIVERY_MONTHNAME" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="DELIVERY_YEAR"/>
+                    </parameters>
+                </listViewContent>
+            </contents>
+            <node dynamicViewId="view/Ventas/Mes Dia.exvw.xml"
+                iconClose="icons/icon_mes.gif"
+                iconOpen="icons/icon_mes.gif" label="${DELIVERY_MONTHNAME}">
+                <dynamicSentence>
+                    <sentence>SELECT &#xd;
+ MONTH(invoice.issue_date),&#xd;
+ CASE MONTH(invoice.issue_date)&#xd;
+	WHEN 1 THEN 'Enero'&#xd;
+	WHEN 2 THEN 'Febrero'&#xd;
+	WHEN 3 THEN 'Marzo'&#xd;
+	WHEN 4 THEN 'Abril'&#xd;
+	WHEN 5 THEN 'Mayo'&#xd;
+	WHEN 6 THEN 'Junio'&#xd;
+	WHEN 7 THEN 'Julio'&#xd;
+	WHEN 8 THEN 'Agosto'&#xd;
+	WHEN 9 THEN 'Septiembre'&#xd;
+	WHEN 10 THEN 'Octubre'&#xd;
+	WHEN 11 THEN 'Noviembre'&#xd;
+	WHEN 12 THEN 'Diciembre'&#xd;
+END&#xd;
+, SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND YEAR(invoice.issue_date) = ?&#xd;
+ GROUP BY 1</sentence>
+                    <metadata>
+                        <attribute label="Mes" name="DELIVERY_MONTH" type="INTEGER"/>
+                        <attribute label="Mes" name="DELIVERY_MONTHNAME" type="STRING"/>
+                        <attribute label="Total"
+                            name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="DELIVERY_YEAR"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="type"/>
+                    <parameter name="DELIVERY_YEAR"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <listViewContent id="view/Ventas/Dia.exvw.xml">
+                        <sentence>SELECT DAY(invoice.issue_date), SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND YEAR(invoice.issue_date) = ?&#xd;
+   AND MONTH(invoice.issue_date) = ?&#xd;
+ GROUP BY 1</sentence>
+                        <metadata>
+                            <attribute label="Dia" name="DELIVERY_DAY" type="INTEGER"/>
+                            <attribute label="Total"
+                                name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="DELIVERY_YEAR"/>
+                            <parameter name="DELIVERY_MONTH"/>
+                        </parameters>
+                    </listViewContent>
+                </contents>
+                <node dynamicViewId="view/Ventas/Dia.exvw.xml"
+                    iconClose="icons/icon_dia.gif" label="Dia ${DELIVERY_DAY}">
+                    <dynamicSentence>
+                        <sentence>SELECT DAY(invoice.issue_date), SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND YEAR(invoice.issue_date) = ?&#xd;
+   AND MONTH(invoice.issue_date) = ?&#xd;
+ GROUP BY 1</sentence>
+                        <metadata>
+                            <attribute label="Dia" name="DELIVERY_DAY" type="INTEGER"/>
+                            <attribute label="Total"
+                                name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="DELIVERY_YEAR"/>
+                            <parameter name="DELIVERY_MONTH"/>
+                        </parameters>
+                    </dynamicSentence>
+                    <dynamicParameters>
+                        <parameter name="type"/>
+                        <parameter name="DELIVERY_YEAR"/>
+                        <parameter name="DELIVERY_MONTH"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <listViewContent id="view/Ventas/Factura Dia.exvw.xml">
+                            <sentence>SELECT CONCAT_WS("/", invoice.series, invoice.number), SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
+  FROM invoice_detail, invoice, item, product&#xd;
+ WHERE product.id = item.product&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND invoice_detail.invoice = invoice.id&#xd;
+   AND invoice.type = ?&#xd;
+   AND YEAR(invoice.issue_date) = ?&#xd;
+   AND MONTH(invoice.issue_date) = ?&#xd;
+   AND DAY(invoice.issue_date) = ?&#xd;
+ GROUP BY 1</sentence>
+                            <metadata>
+                                <attribute label="Factura"
+                                    name="CONCAT_WS(&quot;/&quot;, invoice.series, invoice.number)" type="STRING"/>
+                                <attribute label="Total"
+                                    name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="type"/>
+                                <parameter name="DELIVERY_YEAR"/>
+                                <parameter name="DELIVERY_MONTH"/>
+                                <parameter name="DELIVERY_DAY"/>
+                            </parameters>
+                        </listViewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+    </node>
+</workstation>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<digester-rules>
+
+	<object-create-rule pattern="*/bean-config"
+		classname="com.code.aon.common.bean.BeanConfigManager" />
+
+	<pattern value="*/bean">
+		<object-create-rule
+			classname="com.code.aon.common.bean.BeanConfig" />
+
+		<call-method-rule pattern="dao/dao-factory"
+			methodname="setDaoFactory" paramcount="0" />
+		<call-method-rule pattern="dao/dao-method"
+			methodname="setDaoMethod" paramcount="0" />
+
+		<call-method-rule pattern="pojo" methodname="setPojo"
+			paramcount="0" />
+
+		<call-method-rule pattern="listeners/listener"
+			methodname="addListener" paramcount="0" />
+
+		<call-method-rule pattern="vetoListeners/vetoListener"
+			methodname="addVetoListener" paramcount="0" />
+
+		<set-next-rule methodname="addBeanConfiguration" />
+	</pattern>
+
+</digester-rules>

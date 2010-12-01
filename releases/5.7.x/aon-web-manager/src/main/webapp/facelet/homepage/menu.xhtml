@@ -1,0 +1,32 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
+
+	<ui:define name="afterMenuContent">
+				
+		<aon:commandLink id="domains" 
+			action="domain_list"
+			title="#{managerBundle.manager_domains}"  
+			value="#{managerBundle.manager_domains}"
+			styleClass="aon-top-menu-item aon-icon-config">
+		</aon:commandLink>
+		<aon:commandLink id="applications" 
+			action="aonApplication_list"
+			rendered="#{manager.config.showApplications}"
+			title="#{managerBundle.manager_applications}"  
+			value="#{managerBundle.manager_applications}"
+			styleClass="aon-top-menu-item aon-icon-general">
+		</aon:commandLink>
+				
+	</ui:define>
+
+	<ui:define name="beforeHelpMenuContent">	
+		<aon:menuItem id="advancedMode" action="advancedMode"
+			rendered="#{manager.config.showAdvancedMode}"
+			value="#{managerBundle.manager_advanced_mode}" />		
+	</ui:define>
+		
+</ui:composition>

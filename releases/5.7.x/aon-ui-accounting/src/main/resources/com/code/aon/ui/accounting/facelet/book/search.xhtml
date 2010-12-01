@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_book_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<ui:param name="skipSearchButton" value="true" />
+
+					<aon:outputLabel for="accountPeriod" value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="accountPeriod" value="#{accountingBook.period}">
+						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="coverEnabled" value="#{accountingBook.coverEnabled}"/>
+						<aon:outputLabel for="coverEnabled" value="#{accountingBundle.accounting_coverEnabled}" />
+						<aon:div  styleClass="aon-margin-left">
+							<aon:inputText value="#{accountingBook.coverTitle}" size="70"/>
+							<aon:div>
+								<aon:inputText value="#{accountingBook.coverSubTitle}" size="70"/>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="journalEnabled" value="#{accountingBook.journalEnabled}" />
+						<aon:outputLabel for="journalEnabled" value="#{accountingBundle.accounting_journalEnabled}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="ledgerEnabled" value="#{accountingBook.ledgerEnabled}" />
+						<aon:outputLabel for="ledgerEnabled" value="#{accountingBundle.accounting_ledgerEnabled}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="trial1QuarterEnabled" value="#{accountingBook.trial1QuarterEnabled}" />
+						<aon:outputLabel for="trial1QuarterEnabled" value="#{accountingBundle.accounting_trial1QuarterEnabled}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="trial2QuarterEnabled" value="#{accountingBook.trial2QuarterEnabled}" />
+						<aon:outputLabel for="trial2QuarterEnabled" value="#{accountingBundle.accounting_trial2QuarterEnabled}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="trial3QuarterEnabled" value="#{accountingBook.trial3QuarterEnabled}" />
+						<aon:outputLabel for="trial3QuarterEnabled" value="#{accountingBundle.accounting_trial3QuarterEnabled}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="trial4QuarterEnabled" value="#{accountingBook.trial4QuarterEnabled}" />
+						<aon:outputLabel for="trial4QuarterEnabled" value="#{accountingBundle.accounting_trial4QuarterEnabled}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="outputVatEnabled" value="#{accountingBook.outputVatEnabled}" />
+						<aon:outputLabel for="outputVatEnabled" value="#{accountingBundle.accounting_output_vat}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="inputVatEnabled" value="#{accountingBook.inputVatEnabled}" />
+						<aon:outputLabel for="inputVatEnabled" value="#{accountingBundle.accounting_input_vat}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="investmentVatEnabled" value="#{accountingBook.investmentVatEnabled}" />
+						<aon:outputLabel for="investmentVatEnabled" value="#{accountingBundle.accounting_investment_vat}" />
+					</aon:div>
+					
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="profitAndLostEnabled" value="#{accountingBook.profitAndLostEnabled}" />
+						<aon:outputLabel for="profitAndLostEnabled" value="#{accountingBundle.accounting_profitAndLostEnabled}" />
+						<aon:selectOneMenu value="#{accountingBook.profitAndLostBalance}">
+							<f:selectItems value="#{accountingBook.profitAndLostBalances}" />
+						</aon:selectOneMenu>
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="situationEnabled" value="#{accountingBook.situationEnabled}" />
+						<aon:outputLabel for="situationEnabled" value="#{accountingBundle.accounting_situationEnabled}" />
+						<aon:selectOneMenu value="#{accountingBook.situationBalance}">
+							<f:selectItems value="#{accountingBook.situationBalances}" />
+						</aon:selectOneMenu>
+					</aon:div>
+
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="patrimonyEnabled" value="#{accountingBook.patrimonyEnabled}" />
+						<aon:outputLabel for="patrimonyEnabled" value="#{accountingBundle.accounting_patrimonyEnabled}" />
+						<aon:selectOneMenu value="#{accountingBook.patrimonyBalance}">
+							<f:selectItems value="#{accountingBook.patrimonyBalances}" />
+						</aon:selectOneMenu>
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="annualReportEnabled" value="#{accountingBook.annualReportEnabled}"/>
+						<aon:outputLabel for="annualReportEnabled" value="#{accountingBundle.accounting_annualReportEnabled}" />
+						<aon:selectOneMenu value="#{accountingBook.annualReport}">
+							<f:selectItems value="#{accountingCollections.annualReports}" />
+						</aon:selectOneMenu>
+					</aon:div>
+					
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-search-commandButton-left">
+						<aon:div styleClass="aon-search-commandButton-right">
+							<aon:htmlCommandLink id="model340-report" 
+								value="#{accountingBundle.accounting_generate}" 
+								target="_blank" actionListener="#{accountingBook.onCreate}"
+								styleClass="aon-search-lookup-button">
+							</aon:htmlCommandLink>
+						</aon:div>
+					</aon:div>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+
+	<!--  **********************************************************
+						      ACCOUNT
+		  ********************************************************** -->
+		  
+	<!--  PLAN GENERAL CONTABLE -->
+	<report id="accountModule" description="Account Module List">
+		<template path="/com/code/aon/ui/account/report/accountModule.jasper"/>
+		<bean key="com.code.aon.account.Account" />
+		<criteria provider="#{account}"/>		
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			</params>
+	</report>
+
+</report-config>
