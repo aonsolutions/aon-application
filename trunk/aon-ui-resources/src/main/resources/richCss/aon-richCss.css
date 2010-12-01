@@ -444,9 +444,6 @@ color:#000;
  .aon-icon-settle{
 	background:transparent url(images/aon-icon/aon-icon-settle.png) scroll left center no-repeat;	
  }
- .aon-icon-unsettle{
-	background:transparent url(images/aon-icon/aon-icon-unsettle.png) scroll left center no-repeat;	
- }
  .aon-icon-confidential{
 	background:transparent url(images/aon-icon/aon-icon-confidential.png) scroll left center no-repeat;	
  }
@@ -673,7 +670,10 @@ color:#000;
  }
 
 /* colour points */
-.aon-icon-point-orange{
+ .aon-icon-point-red{
+ 	background:transparent url(images/aon-icon/aon-icon-point-red.png) scroll left center no-repeat;
+ }
+ .aon-icon-point-orange{
  	background:transparent url(images/aon-icon/aon-icon-point-orange.png) scroll left center no-repeat;
  }
  .aon-icon-point-yellow{
