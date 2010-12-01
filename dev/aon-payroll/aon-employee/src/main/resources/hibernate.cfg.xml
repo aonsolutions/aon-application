@@ -28,6 +28,9 @@
 		<mapping class="com.code.aon.employee.ContractPayment"/>
 		<mapping class="com.code.aon.employee.ContractTracking"/>
 		<mapping class="com.code.aon.employee.ContractType"/>
+		<mapping class="com.code.aon.employee.DeductionConcept"/>
+		<mapping class="com.code.aon.employee.FunctionConstant"/>
+		<mapping class="com.code.aon.employee.PaymentConcept"/>
 		<mapping class="com.code.aon.employee.Salary"/>
 		<mapping class="com.code.aon.employee.SalaryPayment"/>
 		<mapping class="com.code.aon.employee.SalaryDeduction"/>
