@@ -128,8 +128,6 @@ public class ContractPayment implements ITransferObject, IPayment {
 		this.endDate = endDate;
 	}	
 	
-	// TODO Esta propiedad no debe ser Transient
-	@Transient
 	public Month getMonth() {
 		return month;
 	}
@@ -137,8 +135,7 @@ public class ContractPayment implements ITransferObject, IPayment {
 		this.month = month;
 	}
 	
-	// TODO Esta propiedad no debe ser Transient
-	@Transient
+	@Column( name = "description_decorable" )
 	public boolean isDescriptionDecorable() {
 		return descriptionDecorable;
 	}

@@ -427,40 +427,52 @@ public interface IEmployeeAlias {
 	String  CONTRACT_PAYMENT_DESCRIPTION = CONTRACT_PAYMENT_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: ContractPayment_descriptionDecorable
+	* Hibernate value: ContractPayment.descriptionDecorable
+	*/
+	String  CONTRACT_PAYMENT_DESCRIPTION_DECORABLE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: ContractPayment_endDate
 	* Hibernate value: ContractPayment.endDate
 	*/
-	String  CONTRACT_PAYMENT_END_DATE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[2];
+	String  CONTRACT_PAYMENT_END_DATE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ContractPayment_expression
 	* Hibernate value: ContractPayment.expression
 	*/
-	String  CONTRACT_PAYMENT_EXPRESSION = CONTRACT_PAYMENT_ENTRY.getAliasNames()[3];
+	String  CONTRACT_PAYMENT_EXPRESSION = CONTRACT_PAYMENT_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: ContractPayment_id
 	* Hibernate value: ContractPayment.id
 	*/
-	String  CONTRACT_PAYMENT_ID = CONTRACT_PAYMENT_ENTRY.getAliasNames()[4];
+	String  CONTRACT_PAYMENT_ID = CONTRACT_PAYMENT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContractPayment_month
+	* Hibernate value: ContractPayment.month
+	*/
+	String  CONTRACT_PAYMENT_MONTH = CONTRACT_PAYMENT_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: ContractPayment_paymentConcept_id
 	* Hibernate value: ContractPayment.paymentConcept.id
 	*/
-	String  CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID = CONTRACT_PAYMENT_ENTRY.getAliasNames()[5];
+	String  CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID = CONTRACT_PAYMENT_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: ContractPayment_startDate
 	* Hibernate value: ContractPayment.startDate
 	*/
-	String  CONTRACT_PAYMENT_START_DATE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[6];
+	String  CONTRACT_PAYMENT_START_DATE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: ContractPayment_type
 	* Hibernate value: ContractPayment.type
 	*/
-	String  CONTRACT_PAYMENT_TYPE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[7];
+	String  CONTRACT_PAYMENT_TYPE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[9];
 
 
 
