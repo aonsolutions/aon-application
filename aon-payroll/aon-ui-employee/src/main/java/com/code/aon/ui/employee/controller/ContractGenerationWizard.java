@@ -732,7 +732,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			payment.setDescription("");
 			payment.setStartDate(getContract().getStartDate());
 			payment.setEndDate(null);
-			payment.setFunction(Double.toString(CommonUtil.round(getSalary())));
+			payment.setExpression(Double.toString(CommonUtil.round(getSalary())));
 			try {
 				BeanManager.getManagerBean(ContractPayment.class).insert(payment);
 			} catch (ManagerBeanException e) {
