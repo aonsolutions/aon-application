@@ -2,6 +2,7 @@ package com.esferalia.aon.calendar;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -46,6 +47,7 @@ public class CalendarHoliday implements ITransferObject {
 		this.id = id;
 	}
 	
+	@Column(length=64)
 	public String getDescription() {
 		return description;
 	}
