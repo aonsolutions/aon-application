@@ -9,15 +9,13 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="rows" value="#{controller.pageLimit}" />
+		<ui:param name="rows" value="0" />
 		<ui:define name="columns">	
 		
 			<c:if test="#{!skipStartDateColumn}">
-				<aon:column alias="ContractDeduction.startDate"
-					styleClass="aon-editDataTable-dateColumn">
+				<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
 					<f:facet name="header">
-						<aon:outputLabel for="ContractDeduction_startDate"
-							value="#{bundle.aon_start_date}" />
+						<aon:outputLabel for="ContractDeduction_startDate" value="#{bundle.aon_start_date}" />
 					</f:facet>
 					<aon:outputText value="#{to.startDate}" rendered="#{formList}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -37,11 +35,9 @@
 			</c:if>
 			
 			<c:if test="#{!skipEndDateColumn}">
-				<aon:column alias="ContractDeduction.endDate"
-					styleClass="aon-editDataTable-dateColumn">
+				<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
 					<f:facet name="header">
-						<aon:outputLabel for="ContractDeduction_endDate"
-							value="#{bundle.aon_end_date}" />
+						<aon:outputLabel for="ContractDeduction_endDate" value="#{bundle.aon_end_date}" />
 					</f:facet>
 					<aon:outputText value="#{to.endDate}" rendered="#{formList}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -60,11 +56,9 @@
 				</aon:column>
 			</c:if>
 		
-			<aon:column alias="ContractDeduction.type"
-				styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 				<f:facet name="header">
-					<aon:outputLabel for="ContractDeduction_type"
-						value="#{employeeBundle.employee_salary_deductionType}" />
+					<aon:outputLabel for="ContractDeduction_type" value="#{bundle.aon_type}" />
 				</f:facet>
 				<aon:outputText rendered="#{formList}"
 					value="#{to.type}" />
@@ -80,8 +74,7 @@
 				</f:facet>		
 			</aon:column>
 			
-			<aon:column alias="ContractDeduction.description"
-				styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputLabel for="ContractDeduction_description"
 						value="#{bundle.aon_description}" />
@@ -98,20 +91,18 @@
 				</f:facet>		
 			</aon:column>
 			
-			<aon:column alias="ContractDeduction.expression"
-				styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
 				<f:facet name="header">
-					<aon:outputLabel for="ContractDeduction_expression"
-						value="#{employeeBundle.employee_salary_expression}" />
+					<aon:outputLabel for="ContractDeduction_function" value="#{employeeBundle.employee_salary_function}" />
 				</f:facet>
 				<aon:outputText rendered="#{formList}"
-					value="#{to.expression}" />		
-				<aon:inputText id="ContractDeduction_expression" rendered="#{formEdit}" size="20"
-						maxlength="128" value="#{controller.to.expression}"
+					value="#{to.function}" />		
+				<aon:inputText id="ContractDeduction_function" rendered="#{formEdit}" size="20"
+						maxlength="128" value="#{controller.to.function}"
 						required="true" />
 				<f:facet name="footer">
-					<aon:inputText id="ContractDeduction_expression-New" rendered="#{formNew}" size="20"
-							maxlength="128" value="#{controller.to.expression}"
+					<aon:inputText id="ContractDeduction_function-New" rendered="#{formNew}" size="20"
+							maxlength="128" value="#{controller.to.function}"
 							required="true" />
 				</f:facet>
 			</aon:column>
