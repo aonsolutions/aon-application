@@ -98,20 +98,20 @@
 				</f:facet>		
 			</aon:column>
 			
-			<aon:column alias="ContractDeduction.function"
+			<aon:column alias="ContractDeduction.expression"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="ContractDeduction_function"
-						value="#{employeeBundle.employee_salary_function}" />
+					<aon:outputLabel for="ContractDeduction_expression"
+						value="#{employeeBundle.employee_salary_expression}" />
 				</f:facet>
 				<aon:outputText rendered="#{formList}"
-					value="#{to.function}" />		
-				<aon:inputText id="ContractDeduction_function" rendered="#{formEdit}" size="20"
-						maxlength="128" value="#{controller.to.function}"
+					value="#{to.expression}" />		
+				<aon:inputText id="ContractDeduction_expression" rendered="#{formEdit}" size="20"
+						maxlength="128" value="#{controller.to.expression}"
 						required="true" />
 				<f:facet name="footer">
-					<aon:inputText id="ContractDeduction_function-New" rendered="#{formNew}" size="20"
-							maxlength="128" value="#{controller.to.function}"
+					<aon:inputText id="ContractDeduction_expression-New" rendered="#{formNew}" size="20"
+							maxlength="128" value="#{controller.to.expression}"
 							required="true" />
 				</f:facet>
 			</aon:column>

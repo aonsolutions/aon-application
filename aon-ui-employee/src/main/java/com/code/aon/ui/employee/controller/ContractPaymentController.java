@@ -14,8 +14,8 @@ public class ContractPaymentController extends LinesController {
 		double amount = 0;
 		try {
 			ContractPayment cp = (ContractPayment) getModel().getRowData();
-			if (NumberUtils.isNumber(cp.getFunction()) ) {
-				amount = NumberUtils.toDouble(cp.getFunction()) ;	
+			if (NumberUtils.isNumber(cp.getExpression()) ) {
+				amount = NumberUtils.toDouble(cp.getExpression()) ;	
 			} else {
 				amount = 0.0;
 			}
