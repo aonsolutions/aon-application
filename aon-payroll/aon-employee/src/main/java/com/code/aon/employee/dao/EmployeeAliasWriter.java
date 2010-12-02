@@ -17,6 +17,9 @@ import com.code.aon.employee.ContractDeduction;
 import com.code.aon.employee.ContractPayment;
 import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
+import com.code.aon.employee.DeductionConcept;
+import com.code.aon.employee.FunctionConstant;
+import com.code.aon.employee.PaymentConcept;
 import com.code.aon.employee.Salary;
 import com.code.aon.employee.SalaryDeduction;
 import com.code.aon.employee.SalaryPayment;
@@ -46,6 +49,9 @@ public class EmployeeAliasWriter {
 				ContractPayment.class.getName(),
 				ContractTracking.class.getName(),
 				ContractType.class.getName(),
+				DeductionConcept.class.getName(),
+				FunctionConstant.class.getName(),
+				PaymentConcept.class.getName(),
 				Salary.class.getName(),
 				SalaryPayment.class.getName(),
 				SalaryDeduction.class.getName()

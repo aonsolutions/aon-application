@@ -14,6 +14,9 @@ import com.code.aon.employee.ContractDeduction;
 import com.code.aon.employee.ContractPayment;
 import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
+import com.code.aon.employee.DeductionConcept;
+import com.code.aon.employee.FunctionConstant;
+import com.code.aon.employee.PaymentConcept;
 import com.code.aon.employee.Salary;
 import com.code.aon.employee.SalaryPayment;
 import com.code.aon.employee.SalaryDeduction;
@@ -381,10 +384,10 @@ public interface IEmployeeAlias {
 	String  CONTRACT_DEDUCTION_END_DATE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: ContractDeduction_function
-	* Hibernate value: ContractDeduction.function
+	* Alias value: ContractDeduction_expression
+	* Hibernate value: ContractDeduction.expression
 	*/
-	String  CONTRACT_DEDUCTION_FUNCTION = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[3];
+	String  CONTRACT_DEDUCTION_EXPRESSION = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ContractDeduction_id
@@ -430,10 +433,10 @@ public interface IEmployeeAlias {
 	String  CONTRACT_PAYMENT_END_DATE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: ContractPayment_function
-	* Hibernate value: ContractPayment.function
+	* Alias value: ContractPayment_expression
+	* Hibernate value: ContractPayment.expression
 	*/
-	String  CONTRACT_PAYMENT_FUNCTION = CONTRACT_PAYMENT_ENTRY.getAliasNames()[3];
+	String  CONTRACT_PAYMENT_EXPRESSION = CONTRACT_PAYMENT_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ContractPayment_id
@@ -442,16 +445,22 @@ public interface IEmployeeAlias {
 	String  CONTRACT_PAYMENT_ID = CONTRACT_PAYMENT_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: ContractPayment_paymentConcept_id
+	* Hibernate value: ContractPayment.paymentConcept.id
+	*/
+	String  CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID = CONTRACT_PAYMENT_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: ContractPayment_startDate
 	* Hibernate value: ContractPayment.startDate
 	*/
-	String  CONTRACT_PAYMENT_START_DATE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[5];
+	String  CONTRACT_PAYMENT_START_DATE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: ContractPayment_type
 	* Hibernate value: ContractPayment.type
 	*/
-	String  CONTRACT_PAYMENT_TYPE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[6];
+	String  CONTRACT_PAYMENT_TYPE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[7];
 
 
 
@@ -526,6 +535,105 @@ public interface IEmployeeAlias {
 	* Hibernate value: ContractType.workingDay
 	*/
 	String  CONTRACT_TYPE_WORKING_DAY = CONTRACT_TYPE_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for DeductionConcept entity.
+	*/ 
+	DAOConstantsEntry DEDUCTION_CONCEPT_ENTRY = DAOConstants.getDAOConstant(DeductionConcept.class);
+
+	/** 
+	* Alias value: DeductionConcept_code
+	* Hibernate value: DeductionConcept.code
+	*/
+	String  DEDUCTION_CONCEPT_CODE = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DeductionConcept_description
+	* Hibernate value: DeductionConcept.description
+	*/
+	String  DEDUCTION_CONCEPT_DESCRIPTION = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DeductionConcept_id
+	* Hibernate value: DeductionConcept.id
+	*/
+	String  DEDUCTION_CONCEPT_ID = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DeductionConcept_type
+	* Hibernate value: DeductionConcept.type
+	*/
+	String  DEDUCTION_CONCEPT_TYPE = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for FunctionConstant entity.
+	*/ 
+	DAOConstantsEntry FUNCTION_CONSTANT_ENTRY = DAOConstants.getDAOConstant(FunctionConstant.class);
+
+	/** 
+	* Alias value: FunctionConstant_endDate
+	* Hibernate value: FunctionConstant.endDate
+	*/
+	String  FUNCTION_CONSTANT_END_DATE = FUNCTION_CONSTANT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FunctionConstant_expression
+	* Hibernate value: FunctionConstant.expression
+	*/
+	String  FUNCTION_CONSTANT_EXPRESSION = FUNCTION_CONSTANT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FunctionConstant_id
+	* Hibernate value: FunctionConstant.id
+	*/
+	String  FUNCTION_CONSTANT_ID = FUNCTION_CONSTANT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: FunctionConstant_name
+	* Hibernate value: FunctionConstant.name
+	*/
+	String  FUNCTION_CONSTANT_NAME = FUNCTION_CONSTANT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: FunctionConstant_startDate
+	* Hibernate value: FunctionConstant.startDate
+	*/
+	String  FUNCTION_CONSTANT_START_DATE = FUNCTION_CONSTANT_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for PaymentConcept entity.
+	*/ 
+	DAOConstantsEntry PAYMENT_CONCEPT_ENTRY = DAOConstants.getDAOConstant(PaymentConcept.class);
+
+	/** 
+	* Alias value: PaymentConcept_code
+	* Hibernate value: PaymentConcept.code
+	*/
+	String  PAYMENT_CONCEPT_CODE = PAYMENT_CONCEPT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: PaymentConcept_description
+	* Hibernate value: PaymentConcept.description
+	*/
+	String  PAYMENT_CONCEPT_DESCRIPTION = PAYMENT_CONCEPT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: PaymentConcept_id
+	* Hibernate value: PaymentConcept.id
+	*/
+	String  PAYMENT_CONCEPT_ID = PAYMENT_CONCEPT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: PaymentConcept_type
+	* Hibernate value: PaymentConcept.type
+	*/
+	String  PAYMENT_CONCEPT_TYPE = PAYMENT_CONCEPT_ENTRY.getAliasNames()[3];
 
 
 
@@ -692,10 +800,10 @@ public interface IEmployeeAlias {
 	String  SALARY_PAYMENT_DESCRIPTION = SALARY_PAYMENT_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: SalaryPayment_function
-	* Hibernate value: SalaryPayment.function
+	* Alias value: SalaryPayment_expression
+	* Hibernate value: SalaryPayment.expression
 	*/
-	String  SALARY_PAYMENT_FUNCTION = SALARY_PAYMENT_ENTRY.getAliasNames()[2];
+	String  SALARY_PAYMENT_EXPRESSION = SALARY_PAYMENT_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: SalaryPayment_id
@@ -735,10 +843,10 @@ public interface IEmployeeAlias {
 	String  SALARY_DEDUCTION_DESCRIPTION = SALARY_DEDUCTION_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: SalaryDeduction_function
-	* Hibernate value: SalaryDeduction.function
+	* Alias value: SalaryDeduction_expression
+	* Hibernate value: SalaryDeduction.expression
 	*/
-	String  SALARY_DEDUCTION_FUNCTION = SALARY_DEDUCTION_ENTRY.getAliasNames()[2];
+	String  SALARY_DEDUCTION_EXPRESSION = SALARY_DEDUCTION_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: SalaryDeduction_id
