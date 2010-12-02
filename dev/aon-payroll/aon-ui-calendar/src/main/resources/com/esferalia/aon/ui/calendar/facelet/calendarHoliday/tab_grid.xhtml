@@ -8,8 +8,9 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="controller" value="#{calendarHoliday}" />
-		<ui:param name="columnClasses"	value="aon-editDataTable-date,aon-editDataTable-text" />
-		<ui:param name="showDataScroller" value="#{true}"/>
+		<ui:param name="columnClasses" value="
+			aon-editDataTable-date aon-width-150, aon-editDataTable-text aon-width-auto" />
+		
 		<ui:define name="columns">
 			<aon:column>
 				<f:facet name="header">
@@ -20,13 +21,13 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate id="CustomerFee_initialDate"
+				<aon:selectInputDate id="Calendar_date"
 					value="#{controller.to.date}" rendered="#{formEdit}"
 					required="true" inputSize="7"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
 				<f:facet name="footer">
-					<aon:selectInputDate id="CustomerFee_initialDate-New"
+					<aon:selectInputDate id="Calendar_date-New"
 						value="#{controller.to.date}" rendered="#{formNew}"
 						required="true" inputSize="7"
 						timeZone="#{timeZoneController.timeZone}"
@@ -35,15 +36,15 @@
 			</aon:column>
 			<aon:column >
 				<f:facet name="header">
-					<aon:outputLabel  value="#{bundle.aon_description}" />
+					<aon:outputLabel for="Calendar_name" value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" rendered="#{formList}" />
 				<aon:inputText id="Calendar_name" rendered="#{formEdit}" size="50"
 					value="#{calendarHoliday.to.description}" maxlength="64" />
 				<f:facet name="footer">
 					<aon:inputText id="Calendar_name-New" required="true"
-						rendered="#{formNew}" size="50" maxlength="64" value="#{calendarHoliday.to.description}"
-						 />
+						rendered="#{formNew}" size="64" maxlength="64" 
+						value="#{calendarHoliday.to.description}" />
 				</f:facet>
 			</aon:column>
 

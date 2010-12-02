@@ -9,12 +9,10 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="controller" value="#{calendarPeriod}" />
-		<ui:param name="columnClasses"
-			value="aon-editDataTable-text,aon-editDataTable-text" />
-		<ui:param name="showDataScroller" value="#{true}" />
+		
 		<ui:define name="columns">
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.aon_description}" />
 				</f:facet>
@@ -28,7 +26,7 @@
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 				<f:facet name="header">
 					<aon:outputLabel for="Calendar_month"
 						value="#{calendarBundle.aon_calendar_month}" />
@@ -39,20 +37,20 @@
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{commonCollections.months}" />
 					<a4j:support event="onchange" reRender="#{dataTableId}" 
-						actionListener="#{calendar.onChangeMonth}" />
+						actionListener="#{calendar.onPeriodMonthChanged}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="Calendar_month-New"
 						value="#{controller.to.month}" rendered="#{formNew}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{commonCollections.months}" />
-						<a4j:support event="onchange" reRender="#{dataTableId}" ajaxSingle="true"
-							actionListener="#{calendar.onChangeMonth}" />
+						<a4j:support event="onchange" reRender="#{dataTableId}" 
+							actionListener="#{calendar.onPeriodMonthChanged}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 				<f:facet name="header">
 					<aon:outputLabel for="Calendar_period_startDay"
 						value="#{calendarBundle.aon_calendar_start_day}" />
@@ -72,7 +70,7 @@
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 				<f:facet name="header">
 					<aon:outputLabel for="Calendar_period_end_day"
 						value="#{calendarBundle.aon_calendar_end_day}" />
@@ -92,198 +90,162 @@
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-width-10">
+			<aon:column styleClass="aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{calendarBundle.aon_calendar_monday}" />
 				</f:facet>
-
-				<aon:outputText rendered="#{formList}" value="#{to.monday}">
-				</aon:outputText>
-
+				<aon:outputText rendered="#{formList}" value="#{to.monday}" />
 				<aon:outputText rendered="#{formList}" value="(#{to.mondayHours})" />
-
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.monday}">
 					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.mondayHours}" />
-
 				<f:facet name="footer">
-				<aon:div>
-					<aon:selectOneMenu rendered="#{formNew}"
-						value="#{controller.to.monday}">
-						<f:selectItems value="#{calendarCollections.allDayTypes}" />
-					</aon:selectOneMenu>
-					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
-						value="#{controller.to.mondayHours}" />
-				</aon:div>		
+					<aon:div>
+						<aon:selectOneMenu rendered="#{formNew}"
+							value="#{controller.to.monday}">
+							<f:selectItems value="#{calendarCollections.allDayTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
+							value="#{controller.to.mondayHours}" />
+					</aon:div>		
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-width-10">
+			<aon:column styleClass="aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{calendarBundle.aon_calendar_tuesday}" />
 				</f:facet>
-
-				<aon:outputText rendered="#{formList}" value="#{to.tuesday}">
-				</aon:outputText>
-
+				<aon:outputText rendered="#{formList}" value="#{to.tuesday}" />
 				<aon:outputText rendered="#{formList}" value="(#{to.tuesdayHours})" />
-
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.tuesday}">
 					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.tuesdayHours}" />
-
 				<f:facet name="footer">
-				<aon:div>
-					<aon:selectOneMenu rendered="#{formNew}"
-						value="#{controller.to.tuesday}">
-						<f:selectItems value="#{calendarCollections.allDayTypes}" />
-					</aon:selectOneMenu>
-					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
-						value="#{controller.to.tuesdayHours}" />
-				</aon:div>		
+					<aon:div>
+						<aon:selectOneMenu rendered="#{formNew}"
+							value="#{controller.to.tuesday}">
+							<f:selectItems value="#{calendarCollections.allDayTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
+							value="#{controller.to.tuesdayHours}" />
+					</aon:div>		
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-width-10">
+			<aon:column styleClass="aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{calendarBundle.aon_calendar_wednesday}" />
 				</f:facet>
-
-				<aon:outputText rendered="#{formList}" value="#{to.wednesday}">
-				</aon:outputText>
-
-				<aon:outputText rendered="#{formList}"
-					value="(#{to.wednesdayHours})" />
-
+				<aon:outputText rendered="#{formList}" value="#{to.wednesday}" />
+				<aon:outputText rendered="#{formList}" value="(#{to.wednesdayHours})" />
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.wednesday}">
 					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.wednesdayHours}" />
-
 				<f:facet name="footer">
-				<aon:div>
-					<aon:selectOneMenu rendered="#{formNew}"
-						value="#{controller.to.wednesday}">
-						<f:selectItems value="#{calendarCollections.allDayTypes}" />
-					</aon:selectOneMenu>
-					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
-						value="#{controller.to.wednesdayHours}" />
-				</aon:div>		
+					<aon:div>
+						<aon:selectOneMenu rendered="#{formNew}"
+							value="#{controller.to.wednesday}">
+							<f:selectItems value="#{calendarCollections.allDayTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
+							value="#{controller.to.wednesdayHours}" />
+					</aon:div>		
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-width-10">
+			<aon:column styleClass="aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{calendarBundle.aon_calendar_thursday}" />
 				</f:facet>
-
-				<aon:outputText rendered="#{formList}" value="#{to.thursday}">
-				</aon:outputText>
-
+				<aon:outputText rendered="#{formList}" value="#{to.thursday}" />
 				<aon:outputText rendered="#{formList}" value="(#{to.thursdayHours})" />
-
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.thursday}">
 					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.thursdayHours}" />
-
 				<f:facet name="footer">
-				<aon:div>
-					<aon:selectOneMenu rendered="#{formNew}"
-						value="#{controller.to.thursday}">
-						<f:selectItems value="#{calendarCollections.allDayTypes}" />
-					</aon:selectOneMenu>
-					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
-						value="#{controller.to.thursdayHours}" />
-				</aon:div>		
+					<aon:div>
+						<aon:selectOneMenu rendered="#{formNew}"
+							value="#{controller.to.thursday}">
+							<f:selectItems value="#{calendarCollections.allDayTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
+							value="#{controller.to.thursdayHours}" />
+					</aon:div>		
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-width-10">
+			<aon:column styleClass="aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{calendarBundle.aon_calendar_friday}" />
 				</f:facet>
-
-				<aon:outputText rendered="#{formList}" value="#{to.friday}">
-				</aon:outputText>
-
+				<aon:outputText rendered="#{formList}" value="#{to.friday}" />
 				<aon:outputText rendered="#{formList}" value="(#{to.fridayHours})" />
-
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.friday}">
 					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.fridayHours}" />
-
 				<f:facet name="footer">
-				<aon:div>
-					<aon:selectOneMenu rendered="#{formNew}"
-						value="#{controller.to.friday}">
-						<f:selectItems value="#{calendarCollections.allDayTypes}" />
-					</aon:selectOneMenu>
-					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
-						value="#{controller.to.fridayHours}" />
-				</aon:div>		
+					<aon:div>
+						<aon:selectOneMenu rendered="#{formNew}"
+							value="#{controller.to.friday}">
+							<f:selectItems value="#{calendarCollections.allDayTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
+							value="#{controller.to.fridayHours}" />
+					</aon:div>		
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-width-10">
+			<aon:column styleClass="aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{calendarBundle.aon_calendar_saturday}" />
 				</f:facet>
-
-				<aon:outputText rendered="#{formList}" value="#{to.saturday}">
-				</aon:outputText>
-
+				<aon:outputText rendered="#{formList}" value="#{to.saturday}"/>
 				<aon:outputText rendered="#{formList}" value="(#{to.saturdayHours})" />
-
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.saturday}">
 					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.saturdayHours}" />
-
 				<f:facet name="footer">
-				<aon:div>
-					<aon:selectOneMenu rendered="#{formNew}"
-						value="#{controller.to.saturday}">
-						<f:selectItems value="#{calendarCollections.allDayTypes}" />
-					</aon:selectOneMenu>
-					<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
-						value="#{controller.to.saturdayHours}" />
-				</aon:div>
+					<aon:div>
+						<aon:selectOneMenu rendered="#{formNew}"
+							value="#{controller.to.saturday}">
+							<f:selectItems value="#{calendarCollections.allDayTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText size="1" maxlength="6" rendered="#{formNew}"
+							value="#{controller.to.saturdayHours}" />
+					</aon:div>
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-width-10">
+			<aon:column styleClass="aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{calendarBundle.aon_calendar_sunday}" />
 				</f:facet>
-
-				<aon:outputText rendered="#{formList}" value="#{to.sunday}">
-				</aon:outputText>
-
+				<aon:outputText rendered="#{formList}" value="#{to.sunday}" />
 				<aon:outputText rendered="#{formList}" value="(#{to.sundayHours})" />
-
 				<aon:selectOneMenu rendered="#{formEdit}"
 					value="#{controller.to.sunday}">
 					<f:selectItems value="#{calendarCollections.allDayTypes}" />
 				</aon:selectOneMenu>
 				<aon:inputText size="1" maxlength="6" rendered="#{formEdit}"
 					value="#{controller.to.sundayHours}" />
-
 				<f:facet name="footer">
 					<aon:div>
 						<aon:selectOneMenu rendered="#{formNew}"
