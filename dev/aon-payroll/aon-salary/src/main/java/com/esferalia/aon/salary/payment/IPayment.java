@@ -8,7 +8,7 @@ public interface IPayment {
 	
 	public String getDescription();
 	
-	public String getFunction();
+	public String getExpression();
 	
 	public double getAmount();
 

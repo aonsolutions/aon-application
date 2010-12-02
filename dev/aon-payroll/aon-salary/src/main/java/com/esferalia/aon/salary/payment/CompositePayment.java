@@ -35,7 +35,7 @@ public class CompositePayment implements IPayment {
 		if (getPayments().size() == 0) {
 			setDescription(p.getDescription());
 			setType(p.getType());
-			setFunction(p.getFunction());
+			setFunction(p.getExpression());
 		}
 		boolean ok = true;
 		// En principio solo se permite la inclusión en un composite de payments del mismo tipo,
@@ -67,7 +67,7 @@ public class CompositePayment implements IPayment {
 	}
 
 	@Override
-	public String getFunction() {
+	public String getExpression() {
 		return function;
 	}
 

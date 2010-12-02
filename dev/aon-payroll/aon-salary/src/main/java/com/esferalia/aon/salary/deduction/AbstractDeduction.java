@@ -21,7 +21,7 @@ public abstract class AbstractDeduction implements IDeduction {
 	}
 
 	@Override
-	public String getFunction() {
+	public String getExpression() {
 		return function;
 	}
 
