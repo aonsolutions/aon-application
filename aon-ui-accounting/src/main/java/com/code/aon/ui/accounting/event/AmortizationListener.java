@@ -2,7 +2,7 @@ package com.code.aon.ui.accounting.event;
 
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
-import com.code.aon.ui.accounting.controller.AmortizationDetailController;
+import com.code.aon.ui.accounting.controller.amortization.AmortizationDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;

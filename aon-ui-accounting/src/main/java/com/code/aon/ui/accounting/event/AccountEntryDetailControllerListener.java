@@ -9,7 +9,7 @@ import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.ui.accounting.controller.AccountEntryController;
+import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;

@@ -107,7 +107,7 @@
 
 						<c:if test="#{aonConfiguration.bean.target.showCommercialTracking}">
 							<aon:panelTab id="targetTracking" label="#{commercialBundle.commercial_target_tracking_module}">
-								<ui:include src="/com/code/aon/ui/commercial/facelet/targetTracking/tab_list.xhtml" />
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetTracking/tab_grid.xhtml" />
 							</aon:panelTab>
 						</c:if>
 
@@ -138,7 +138,7 @@
 			<c:if test="#{aonConfiguration.bean.target.showProduct}">
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
 			</c:if>	
-			<c:if test="#{aonConfiguration.bean.target.showSeller}">
+			<c:if test="#{aonConfiguration.bean.target.showSeller || aonConfiguration.bean.target.showCommercialTracking}">
 				<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.target.showProfile}">
@@ -150,7 +150,7 @@
 			<c:if test="#{aonConfiguration.bean.target.showSupplier}">
 				<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 				<aon:lookupButtonPopup lookup="#{bankLookup}" />
-			</c:if>					
+			</c:if>
 		</c:if>	
 	</ui:define>
 </ui:composition>

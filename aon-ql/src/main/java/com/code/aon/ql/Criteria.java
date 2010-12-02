@@ -63,6 +63,19 @@ public class Criteria implements Criterion {
 	}
 
 	/**
+	 * Adds a equal expression to this Criteria (a=b).
+	 * 
+	 * @param identifier
+	 *            The left side of the operation.
+	 * @param data
+	 *            The right side of the operation.
+	 */
+	public void addNotEqualExpression(String identifier, Object data) {
+		Expression expression = ExpressionUtilities.getNotEqualExpression(identifier, data);
+		addExpression(expression);
+	}
+
+	/**
 	 * Adds a null-equal expression to this Criteria (a=null).
 	 * 
 	 * @param identifier
