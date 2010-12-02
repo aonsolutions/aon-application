@@ -824,16 +824,22 @@ public interface IEmployeeAlias {
 	String  SALARY_PAYMENT_ID = SALARY_PAYMENT_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: SalaryPayment_paymentConcept
+	* Hibernate value: SalaryPayment.paymentConcept
+	*/
+	String  SALARY_PAYMENT_PAYMENT_CONCEPT = SALARY_PAYMENT_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: SalaryPayment_salary_id
 	* Hibernate value: SalaryPayment.salary.id
 	*/
-	String  SALARY_PAYMENT_SALARY_ID = SALARY_PAYMENT_ENTRY.getAliasNames()[4];
+	String  SALARY_PAYMENT_SALARY_ID = SALARY_PAYMENT_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: SalaryPayment_type
 	* Hibernate value: SalaryPayment.type
 	*/
-	String  SALARY_PAYMENT_TYPE = SALARY_PAYMENT_ENTRY.getAliasNames()[5];
+	String  SALARY_PAYMENT_TYPE = SALARY_PAYMENT_ENTRY.getAliasNames()[6];
 
 
 

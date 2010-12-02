@@ -3,6 +3,7 @@ package com.esferalia.aon.salary.calculator;
 import java.util.Date;
 
 import com.esferalia.aon.salary.ISalaryProxy;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public class SalaryCalculatorContext {
 	
@@ -10,6 +11,7 @@ public class SalaryCalculatorContext {
 	private Date issueDate;
 	private Date startDate;
 	private Date endDate;
+	private ExpressionContext ExpressionContext; 
 
 	public ISalaryProxy getSalaryProxy() {
 		return salaryProxy;
@@ -35,5 +37,10 @@ public class SalaryCalculatorContext {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-
+	public ExpressionContext getExpressionContext() {
+		return ExpressionContext;
+	}
+	public void setExpressionContext(ExpressionContext expressionContext) {
+		ExpressionContext = expressionContext;
+	}
 }

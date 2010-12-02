@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -17,6 +18,8 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.payment.IPayment;
 
 /**
@@ -25,7 +28,7 @@ import com.esferalia.aon.salary.payment.IPayment;
  */
 @Entity
 @Table(name="salary_payment")
-public class SalaryPayment implements ITransferObject, IPayment {
+public class SalaryPayment implements ITransferObject, IPayment, IExpression {
 	
 	private static final long serialVersionUID = 7062556672670928116L;
 
@@ -36,6 +39,8 @@ public class SalaryPayment implements ITransferObject, IPayment {
 	private PaymentType type;
 	
 	private String description;
+
+	private String paymentConcept;
 
 	private String expression;
 
@@ -85,6 +90,14 @@ public class SalaryPayment implements ITransferObject, IPayment {
 		this.description = description;
 	}
 	
+	@Column(name = "payment_concept", length = 5)
+	public String getPaymentConcept() {
+		return paymentConcept;
+	}
+	public void setPaymentConcept(String paymentConcept) {
+		this.paymentConcept = paymentConcept;
+	}
+
 	@Override
 	@Column(length = 128)
 	public String getExpression() {
@@ -138,6 +151,18 @@ public class SalaryPayment implements ITransferObject, IPayment {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+
+	@Override
+	@Transient
+	public String getName() {
+		return getPaymentConcept();
+	}
+
+	@Override
+	@Transient
+	public ExpressionScope getScope() {
+		return ExpressionScope.SALARY;
 	}
 
 }

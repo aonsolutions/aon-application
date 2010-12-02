@@ -2,11 +2,13 @@ package com.esferalia.aon.salary.deduction;
 
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public class DeductionsFactoryContext implements IDeductionsFactoryContext{
 	
 	private ISalaryProxy salaryProxy;
 	private ISalary  currentSalary;
+	private ExpressionContext  expressionContext;
 
 	@Override
 	public ISalaryProxy getSalaryProxy() {
@@ -26,4 +28,11 @@ public class DeductionsFactoryContext implements IDeductionsFactoryContext{
 		this.currentSalary = currentSalary;
 	}
 
+	@Override
+	public ExpressionContext getExpressionContext() {
+		return expressionContext;
+	}
+	public void setExpressionContext(ExpressionContext expressionContext) {
+		this.expressionContext = expressionContext;
+	}
 }
