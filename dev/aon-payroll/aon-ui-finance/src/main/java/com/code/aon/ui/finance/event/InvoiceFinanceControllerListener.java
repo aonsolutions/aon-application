@@ -33,12 +33,15 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceFinanceController financeController = (InvoiceFinanceController)event.getController();
 		InvoiceController invoiceController = (InvoiceController)financeController.getMasterController();
+		invoiceController.setBackAction(null);
 		Invoice invoice = (Invoice)invoiceController.getTo();
 
 		Finance finance = (Finance)financeController.getTo();
 		finance.setPayment((InvoiceType.SALES == invoice.getType()) ? false : true);
 		finance.setInvoice(invoice);
 		finance.setRegistry(invoice.getRegistry());
+		finance.setRegistryName(invoice.getRegistryName());
+		finance.setRegistryDocument(invoice.getRegistryDocument());
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		try {
@@ -61,6 +64,8 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		InvoiceFinanceController financeController = (InvoiceFinanceController)event.getController();
 		financeController.setRegistryBank(null);
+		InvoiceController invoiceController = (InvoiceController)financeController.getMasterController();
+		invoiceController.setBackAction(null);
 
 		Finance finance = (Finance)financeController.getTo();
 		try {

@@ -236,6 +236,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		this.order = new SortOrderMap();
 		this.order.put(IFinanceAlias.FINANCE_DUE_DATE, Ordering.ASCENDING);
 		this.order.put(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE, Ordering.ASCENDING);
+		this.order.put(IFinanceAlias.FINANCE_CONCEPT, Ordering.ASCENDING);
 	}
 	
 	private void initializeHeader() throws ManagerBeanException {
@@ -286,9 +287,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
             Expression returnedExpr = ExpressionUtilities.getEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
             criteria.addExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));
             if (AonUtil.getRoleManager().isConfidentiality()) {
-            	criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), getSecurityLevel() );	
+            	criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), getSecurityLevel());	
             } else {
-            	criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL );
+            	criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
             }
             Expression existingLinesIdsExpr = obtainExistingLinesIds(financeBean);
             if (existingLinesIdsExpr != null) {
@@ -296,6 +297,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
             }
             criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
             criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
+            criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_CONCEPT));
             resetOrder();
             this.finances = new ListDataModel(financeBean.getList(criteria));
         } catch (ManagerBeanException e) {

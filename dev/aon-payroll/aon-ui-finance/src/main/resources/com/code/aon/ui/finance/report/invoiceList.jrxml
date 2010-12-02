@@ -26,33 +26,32 @@
 	<field name="registryDocument" class="java.lang.String"/>
 	<field name="type" class="com.code.aon.finance.enumeration.InvoiceType"/>
 	<field name="documentNumber" class="java.lang.String"/>
-	<variable name="reportTotal" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{invoiceTotal}]]></variableExpression>
-	</variable>
-	<variable name="invoiceTotal" class="java.lang.Double" resetType="None">
-		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice((com.code.aon.product.strategy.ICalculableContainer) ((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean(),(com.code.aon.registry.ITaxInfo) ((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()))]]></variableExpression>
-	</variable>
 	<variable name="currentBean" class="java.lang.Object" resetType="None">
 		<variableExpression><![CDATA[((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
 	<variable name="invoiceTaxableBase" class="java.lang.Double" resetType="None">
-		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTaxableBase((com.code.aon.product.strategy.ICalculableContainer) ((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()))]]></variableExpression>
+		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTaxableBase((com.code.aon.product.strategy.ICalculableContainer) $V{currentBean}))]]></variableExpression>
 	</variable>
 	<variable name="reportTaxableBaseTotal" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$V{invoiceTaxableBase}]]></variableExpression>
 	</variable>
-	<variable name="cuotaIva" class="java.lang.String"/>
-	<variable name="invoiceVatCuota" class="java.lang.Double" resetType="None">
-		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTotalVatQuota((com.code.aon.product.strategy.ICalculableContainer) ((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean(),(com.code.aon.registry.ITaxInfo) ((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()))]]></variableExpression>
-	</variable>
-	<variable name="invoiceRetention" class="java.lang.Double" resetType="None">
-		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTotalRetentionQuota((com.code.aon.product.strategy.ICalculableContainer) ((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean(),(com.code.aon.registry.ITaxInfo) ((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()))]]></variableExpression>
+	<variable name="invoiceVat" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTotalVatQuota((com.code.aon.product.strategy.ICalculableContainer) $V{currentBean},(com.code.aon.registry.ITaxInfo) $V{currentBean}))]]></variableExpression>
 	</variable>
 	<variable name="reportVatTotal" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{invoiceVatCuota}]]></variableExpression>
+		<variableExpression><![CDATA[$V{invoiceVat}]]></variableExpression>
+	</variable>
+	<variable name="invoiceRetention" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTotalRetentionQuota((com.code.aon.product.strategy.ICalculableContainer) $V{currentBean},(com.code.aon.registry.ITaxInfo) $V{currentBean}))]]></variableExpression>
 	</variable>
 	<variable name="reportRetentionTotal" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$V{invoiceRetention}]]></variableExpression>
+	</variable>
+	<variable name="invoiceTotal" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[com.code.aon.common.util.CommonUtil.round($V{invoiceTaxableBase}.doubleValue() + $V{invoiceVat}.doubleValue() - $V{invoiceRetention}.doubleValue())]]></variableExpression>
+	</variable>
+	<variable name="reportTotal" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{invoiceTotal}]]></variableExpression>
 	</variable>
 	<group name="reportGroup">
 		<groupExpression><![CDATA[null]]></groupExpression>
@@ -374,7 +373,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{invoiceVatCuota}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{invoiceVat}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-22" x="358" y="0" width="49" height="14"/>

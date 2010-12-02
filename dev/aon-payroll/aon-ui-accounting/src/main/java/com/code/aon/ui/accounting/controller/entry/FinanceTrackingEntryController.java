@@ -136,6 +136,7 @@ public class FinanceTrackingEntryController {
 		this.order = new SortOrderMap();
 		this.order.put(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE, Ordering.ASCENDING);
 		this.order.put(IFinanceAlias.FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE, Ordering.ASCENDING);
+		this.order.put(IFinanceAlias.FINANCE_TRACKING_FINANCE_CONCEPT, Ordering.ASCENDING);
 	}
 
 	public List<SelectItem> getTypes() {
@@ -166,14 +167,15 @@ public class FinanceTrackingEntryController {
             criteria.addExpression(ExpressionUtilities.getOrExpression(paidExp, returnedExp));
             criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), false);
             if (!AonUtil.getRoleManager().isConfidentiality()) {
-            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL );	
+            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);	
             } else {
-            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_SECURITY_LEVEL), getSecurityLevel() );
+            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_SECURITY_LEVEL), getSecurityLevel());
             }
             criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE));
             criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE));
-            this.finances = new ListDataModel(financeTrackingBean.getList(criteria));
+            criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_CONCEPT));
             resetOrder();
+            this.finances = new ListDataModel(financeTrackingBean.getList(criteria));
         } catch (ManagerBeanException e) {
             LOGGER.error("Error loading Finance model", e);
         }

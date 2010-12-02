@@ -28,7 +28,10 @@
 							actionListener="#{expenseInvoice.generateFinances}"
 							rendered="#{expenseInvoiceDetail.model.rowCount > 0 and (!expenseInvoice.recorded or expenseInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
-							accesskey="#{bundle.aon_key_finance}" />
+							accesskey="#{bundle.aon_key_finance}">
+							<f:setPropertyActionListener target="#{expenseInvoice.backAction}"
+								value="#{null}" />
+						</aon:commandButton>
 						<c:if test="#{aonRole.accountingOperator}">
 							<aon:commandButton id="record"
 								value="#{financeBundle.finance_record}"
@@ -68,13 +71,14 @@
 						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
 						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:div>
+							<aon:div id="invoiceReferenceCodeDiv">
 								<aon:inputText id="Invoice_referenceCode" 
 									value="#{expenseInvoice.to.referenceCode}"
-									rendered="#{!expenseInvoice.readOnly}" size="15" />
+									rendered="#{!expenseInvoice.readOnly and expenseInvoiceFinance.allPending}" 
+									size="25" maxlength="32" />
 								<aon:outputText styleClass="aon-bold"
 									value="#{expenseInvoice.to.referenceCode}"
-									rendered="#{expenseInvoice.readOnly}" />
+									rendered="#{expenseInvoice.readOnly or !expenseInvoiceFinance.allPending}" />
 							</aon:div>
 							<aon:div>
 								<aon:selectBooleanCheckbox id="Invoice_investment"
@@ -87,13 +91,13 @@
 								<c:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
 										value="#{expenseInvoice.to.confidential}"
-										rendered="#{!expenseInvoice.readOnly}" />
+										rendered="#{!expenseInvoice.readOnly and expenseInvoiceFinance.allPending}" />
 									<aon:outputText styleClass="aon-italic aon-margin-right"
 										value="#{bundle.aon_confidential}"
-										rendered="#{!expenseInvoice.readOnly}" />
+										rendered="#{!expenseInvoice.readOnly and expenseInvoiceFinance.allPending}" />
 									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 										value="&#160;" title="#{bundle.aon_confidential}"
-										rendered="#{expenseInvoice.readOnly and expenseInvoice.to.confidential}" />
+										rendered="#{(expenseInvoice.readOnly or !expenseInvoiceFinance.allPending) and expenseInvoice.to.confidential}" />
 								</c:if>
 
 								<c:if test="#{company.EInvoice}">
@@ -181,7 +185,7 @@
 								selectReRender="Creditor_id,Creditor_full_name,Creditor_registry_document,InvoiceAddress"
 								actionType="new">
 							</aon:lookupButton>
-							<aon:inputText id="Creditor_full_name" disabled="#{expenseInvoice.readOnly}"
+							<aon:inputText id="Creditor_full_name" disabled="#{expenseInvoice.readOnly or !expenseInvoiceFinance.allPending}"
 								value="#{expenseInvoice.to.registryName}" size="60" />
 						</a4j:region>
 					</aon:div>
@@ -190,7 +194,8 @@
 						value="#{bundle.aon_company_document}" />
 					<aon:inputText id="Creditor_registry_document"
 						value="#{expenseInvoice.to.registryDocument}"
-						disabled="#{expenseInvoice.readOnly}" size="10" />
+						disabled="#{expenseInvoice.readOnly or !expenseInvoiceFinance.allPending}" 
+						size="10" />
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
 						value="#{registryBundle.registry_address}" />

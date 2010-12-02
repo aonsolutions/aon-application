@@ -71,15 +71,15 @@
 
 	<aon:outputLabel value="#{bundle.aon_date}" />
 	<aon:div>
-		<aon:outputLabel for="Invoice_issueDate-From"
-			styleClass="aon-form-date-label" value="#{bundle.aon_date_from}:" />
+		<aon:outputLabel for="Invoice_issueDate-From" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Invoice_issueDate-From"
 			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 
-		<aon:outputLabel for="Invoice_issueDate-To"
-			styleClass="aon-form-date-label" value="#{bundle.aon_date_to}:" />
+		<aon:outputLabel for="Invoice_issueDate-To" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Invoice_issueDate-To"
 			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"

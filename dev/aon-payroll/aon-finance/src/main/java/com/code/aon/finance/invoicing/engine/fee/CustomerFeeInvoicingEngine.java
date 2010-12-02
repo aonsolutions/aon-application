@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -396,10 +398,13 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		number = (number == 0 ? 1 : number);
 		while (true) {
 			Criteria criteria = new Criteria();
-			if (series == null) {
-				criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
+			String seriesAlias = invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES);
+			if (series == null || StringUtils.isEmpty(series.getId())) {
+				Expression nullExpr = ExpressionUtilities.getNullExpression(seriesAlias);
+				Expression blankExpr = ExpressionUtilities.getEqualExpression(seriesAlias, "");
+				criteria.addExpression(ExpressionUtilities.getOrExpression(nullExpr, blankExpr));
 			} else {
-				criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series.getId());
+				criteria.addEqualExpression(seriesAlias, series.getId());
 			}
 			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), number);
 			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);

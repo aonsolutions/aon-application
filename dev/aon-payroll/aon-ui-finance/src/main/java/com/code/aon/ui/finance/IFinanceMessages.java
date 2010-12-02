@@ -30,6 +30,7 @@ public interface IFinanceMessages {
 	String FINANCE_INVOICE_SEND_EMAIL_ERROR = "finance_invoice_send_email_error";
 	String FINANCE_CASH = "finance_cash";
 	String FINANCE_PENDING = "finance_pending";
-	
+	String FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE = "finance_invoice_checking_module_no_finance";	
+	String FINANCE_INVOICE_CHECKING_MODULE_WRONG_FINANCE = "finance_invoice_checking_module_wrong_finance";
 }
 

@@ -39,12 +39,6 @@ import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 
-/**
- * Transfer Object that represents a Finance Batch.
- * 
- * @author Consulting & Development. Inigo Gayarre - 05-oct-2005
- * @since 1.0
- */
 @Entity
 @Table(name = "fbatch")
 public class FinanceBatch implements ITransferObject,IConfidentialable {
@@ -72,39 +66,12 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
         this.id = id;
     }
     
-    @ManyToOne
-    @JoinColumn(name="rbank")
-    @ForeignKey(name="FK_FBATCH_RBANK")
-    @Index(name="IDX_FBATCH_RBANK")            
-	public RegistryBank getRegistryBank() {
-		return registryBank;
-	}
-	public void setRegistryBank(RegistryBank registryBank) {
-		this.registryBank = registryBank;
-	}
-	
 	@Column(length=32)
 	public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	@Column(name = "status")
-	public FinanceBatchStatus getFinanceBatchStatus() {
-		return financeBatchStatus;
-	}
-	public void setFinanceBatchStatus(FinanceBatchStatus financeBatchStatus) {
-		this.financeBatchStatus = financeBatchStatus;
-	}
-
-	@Column(name = "type")
-	public FinanceBatchType getFinanceBatchType() {
-		return financeBatchType;
-	}
-	public void setFinanceBatchType(FinanceBatchType financeBatchType) {
-		this.financeBatchType = financeBatchType;
 	}
 
 	@Column(name="issue_date")
@@ -116,6 +83,33 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
 		this.issueDate = issueDate;
 	}
 
+	@Column(name = "type")
+	public FinanceBatchType getFinanceBatchType() {
+		return financeBatchType;
+	}
+	public void setFinanceBatchType(FinanceBatchType financeBatchType) {
+		this.financeBatchType = financeBatchType;
+	}
+
+	@Column(name = "status")
+	public FinanceBatchStatus getFinanceBatchStatus() {
+		return financeBatchStatus;
+	}
+	public void setFinanceBatchStatus(FinanceBatchStatus financeBatchStatus) {
+		this.financeBatchStatus = financeBatchStatus;
+	}
+
+    @ManyToOne
+    @JoinColumn(name="rbank")
+    @ForeignKey(name="FK_FBATCH_RBANK")
+    @Index(name="IDX_FBATCH_RBANK")            
+	public RegistryBank getRegistryBank() {
+		return registryBank;
+	}
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
+	
     @Column(nullable = false)
 	public boolean isPayment() {
 		return payment;
@@ -159,8 +153,8 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
 			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(financeBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), getId());
-	        criteria.addOrder(financeBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES));
-	        criteria.addOrder(financeBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER));
+	        criteria.addOrder(financeBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE));
+	        criteria.addOrder(financeBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_CONCEPT));
 			return financeBatchDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining financeBatchDetail list", e);

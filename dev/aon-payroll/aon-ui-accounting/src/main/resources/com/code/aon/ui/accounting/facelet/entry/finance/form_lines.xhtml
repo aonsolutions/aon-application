@@ -24,7 +24,8 @@
 		<aon:commandButton title="#{accountingBundle.accounting_finance_remove_record_list}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 			value="#{accountingBundle.accounting_finance_remove_record_list}"
-			actionListener="#{financeEntry.onRemoveSelected}" reRender="financeEntryForm,financePanelTabSet"
+			actionListener="#{financeEntry.onRemoveSelected}" 
+			reRender="financeEntryForm,financePanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 	</aon:div>
@@ -32,7 +33,7 @@
 	<aon:div id="lineDataDiv">
 		<aon:dataTable id="lineData" value="#{financeEntry.lines}" sortMode="multi"
 			var="to" rows="20" rendered="#{financeEntry.lines.rowCount > 0}"
-			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">				
 			
@@ -52,22 +53,6 @@
 				</aon:div>
 			</aon:column>
 
-			<aon:column sortBy="#{to.invoice.referenceCode}"
-				sortOrder="#{financeEntry.order['Finance_invoice_referenceCode']}">
-				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice}" />
-				</f:facet>
-				<aon:outputText value="#{to.invoice.referenceCode}" />
-			</aon:column>
-			
-			<aon:column sortBy="#{to.invoice.registryName}"
-				sortOrder="#{financeEntry.order['Finance_invoice_registryName']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.invoice.registryName}" />
-			</aon:column>
-	
 			<aon:column sortBy="#{to.dueDate}"
 				sortOrder="#{financeEntry.order['Finance_dueDate']}">
 				<f:facet name="header">
@@ -77,6 +62,38 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
+			</aon:column>
+	
+			<aon:column sortBy="#{to.invoice.referenceCode}"
+				sortOrder="#{financeEntry.order['Finance_invoice_referenceCode']}">
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice}" />
+				</f:facet>
+				<aon:outputText value="#{to.invoice.referenceCode}" />
+			</aon:column>
+			
+			<aon:column sortBy="#{to.concept}"
+				sortOrder="#{financeEntry.order['Finance_concept']}">
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+				</f:facet>
+				<h:outputText value="#{to.concept}" />
+			</aon:column>
+
+			<aon:column sortBy="#{to.registryName}"
+				sortOrder="#{financeEntry.order['Finance_registryName']}">
+				<f:facet name="header">
+					<aon:outputText value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
+				</f:facet>
+				<aon:outputText value="#{to.registryName}" />
+			</aon:column>
+	
+			<aon:column sortBy="#{to.financeStatus}"
+				sortOrder="#{financeEntry.order['Finance_financeStatus']}">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.financeStatus}"/>
 			</aon:column>
 	
 			<aon:column sortBy="#{to.payMethod.name}"
@@ -93,14 +110,6 @@
 					<aon:outputText value="#{configBundle.config_bank_account}" />
 				</f:facet>
 				<aon:outputText value="#{to.bankAccount}"/>
-			</aon:column>
-	
-			<aon:column sortBy="#{to.financeStatus}"
-				sortOrder="#{financeEntry.order['Finance_financeStatus']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_status}" />
-				</f:facet>
-				<aon:outputText value="#{to.financeStatus}"/>
 			</aon:column>
 	
 			<aon:column sortBy="#{to.totalAmount}"

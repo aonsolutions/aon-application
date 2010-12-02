@@ -39,7 +39,10 @@
 							actionListener="#{saleInvoice.generateFinances}"
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and (!saleInvoice.recorded or saleInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
-							accesskey="#{bundle.aon_key_finance}" />
+							accesskey="#{bundle.aon_key_finance}">
+							<f:setPropertyActionListener target="#{saleInvoice.backAction}"
+								value="#{null}" />
+						</aon:commandButton>
 						<c:if test="#{aonRole.accountingOperator}">
 							<aon:commandButton id="record"
 								value="#{financeBundle.finance_record}"
@@ -95,39 +98,42 @@
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
 						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:div>
+							<aon:div id="invoiceReferenceCodeDiv">
 								<aon:selectOneMenu id="Invoice_series"
-									value="#{saleInvoice.to.series}" rendered="#{saleInvoice.new}"
+									value="#{saleInvoice.to.series}" 
+									rendered="#{!saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
 									valueChangeListener="#{saleInvoice.onSeriesChanged}"
 									reRender="Invoice_number,Invoice_securityLevel">
 									<f:selectItem itemLabel=" " value="#{null}" />
 									<f:selectItems value="#{configCollections.seriesIds}" />
 								</aon:selectOneMenu>
 								<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
-									value="#{saleInvoice.to.number}" rendered="#{saleInvoice.new}"
+									value="#{saleInvoice.to.number}" 
+									rendered="#{!saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
 									required="true" size="7" />
 								<aon:commandButton value="&#160;"
 									title="#{financeBundle.finance_invoice_find_next_number}"
 									styleClass="aon-finding-toolbar-item aon-icon-ambito aon-finding-toolbar-item-no-border"
-		 							style="aon-margin-left aon-margin-right" rendered="#{saleInvoice.new}"
+		 							style="aon-margin-left aon-margin-right" 
+									rendered="#{!saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
 									actionListener="#{saleInvoice.onFindNextFreeNumber}"
 									reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
 								</aon:commandButton>															
 								<aon:outputText styleClass="aon-bold aon-margin-right"
 									value="#{saleInvoice.to.referenceCode}"
-									rendered="#{!saleInvoice.new}" />
+									rendered="#{saleInvoice.recorded or saleInvoiceFinance.model.rowCount > 0}" />
 							</aon:div>
 							<aon:div>
 								<c:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
 										value="#{saleInvoice.to.confidential}"
-										rendered="#{!saleInvoice.readOnly}" />
+										rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.allPending}" />
 									<aon:outputText styleClass="aon-italic aon-margin-right"
 										value="#{bundle.aon_confidential}"
-										rendered="#{!saleInvoice.readOnly}" />
+										rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.allPending}" />
 									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
 										value="&#160;" title="#{bundle.aon_confidential}"
-										rendered="#{saleInvoice.readOnly and saleInvoice.to.confidential}" />
+										rendered="#{(saleInvoice.readOnly or !saleInvoiceFinance.allPending) and saleInvoice.to.confidential}" />
 								</c:if>
 
 								<c:if test="#{company.EInvoice}">
@@ -215,7 +221,7 @@
 								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
 								actionType="new">
 							</aon:lookupButton>
-							<aon:inputText id="Customer_full_name" disabled="#{saleInvoice.readOnly}"
+							<aon:inputText id="Customer_full_name" disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}"
 								value="#{saleInvoice.to.registryName}" size="60" />
 						</a4j:region>
 					</aon:div>
@@ -224,7 +230,8 @@
 						value="#{bundle.aon_company_document}" />
 					<aon:inputText id="Customer_registry_document"
 						value="#{saleInvoice.to.registryDocument}"
-						disabled="#{saleInvoice.readOnly}" size="10" />
+						disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" 
+						size="10" />
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
 						value="#{registryBundle.registry_address}" />

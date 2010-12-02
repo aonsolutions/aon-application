@@ -15,7 +15,6 @@
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
-				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
 
 			<ui:decorate
@@ -83,6 +82,15 @@
 							size="50" disabled="true" />							
 					</aon:div>
 
+					<aon:outputLabel for="Finance_concept" 
+						value="#{financeBundle.finance_invoice_document_number}" />
+					<aon:div>
+						<aon:inputText id="Finance_concept"
+							onblur="toUpperCase(this);"
+							valueChangeListener="#{finance.addExpression}"
+							size="20" maxlength="32" />
+					</aon:div>
+
 					<c:if test="#{!finance.payment}">
 						<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml">
 							<ui:param name="aliasPreffix" value="Finance_invoice" />						
@@ -97,39 +105,16 @@
 						valueChangeListener="#{finance.addExpression}"
 						size="20" />
 
-					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
-					<aon:div>
-						<aon:outputLabel for="Finance_invoice_series-Document" rendered="#{!finance.payment}"
-							styleClass="aon-form-date-label aon-margin-right" value="E-" />
-						<aon:selectOneMenu id="Finance_invoice_typ-Document" rendered="#{finance.payment}"
-							value="#{financeSearch.receivedInvoiceType}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItem itemLabel="R" itemValue="R" />
-							<f:selectItem itemLabel="G" itemValue="G" />
-						</aon:selectOneMenu>
-						<aon:outputLabel for="Finance_invoice_series-Document" rendered="#{finance.payment}"
-							styleClass="aon-form-date-label aon-margin-right" value="-" />
-						<aon:inputText id="Finance_invoice_series-Document"
-							onblur="toUpperCase(this);"
-							valueChangeListener="#{controller.addExpression}"
-							size="5" maxlength="5" />
-						<aon:outputLabel for="Finance_invoice_number-Document"
-							styleClass="aon-form-date-label aon-margin-right" value="-" />
-						<aon:inputText id="Finance_invoice_number-Document"
-							valueChangeListener="#{controller.addExpression}"
-							size="6" />
-					</aon:div>
-
 					<aon:outputLabel value="#{financeBundle.finance_invoice_date}" />
 					<aon:div>
-						<aon:outputLabel for="Finance_invoice_issueDate-From" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Finance_invoice_issueDate-From" styleClass="aon-form-date-label aon-padding-right"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Finance_invoice_issueDate-From"
 							valueChangeListener="#{finance.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-						<aon:outputLabel for="Finance_invoice_issueDate-To" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Finance_invoice_issueDate-To" styleClass="aon-form-date-label aon-padding-right"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Finance_invoice_issueDate-To"
 							valueChangeListener="#{finance.addLessThanOrEqualExpression}"
@@ -140,14 +125,14 @@
 					<aon:outputLabel 
 						value="#{financeBundle.finance_finance_date}" />
 					<aon:div>
-						<aon:outputLabel for="Finance_dueDate-From" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Finance_dueDate-From" styleClass="aon-form-date-label aon-padding-right"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Finance_dueDate-From"
 							valueChangeListener="#{finance.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-						<aon:outputLabel for="Finance_dueDate-To" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Finance_dueDate-To" styleClass="aon-form-date-label aon-padding-right"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Finance_dueDate-To"
 							valueChangeListener="#{finance.addLessThanOrEqualExpression}"
@@ -159,7 +144,7 @@
 						<aon:outputLabel for="Finance_securityLevel"
 							value="#{bundle.aon_confidential}" />
 						<aon:selectOneRadio id="Finance_securityLevel"
-							valueChangeListener="#{controller.addExpression}">
+							valueChangeListener="#{finance.addExpression}">
 							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
 							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
 						</aon:selectOneRadio>				

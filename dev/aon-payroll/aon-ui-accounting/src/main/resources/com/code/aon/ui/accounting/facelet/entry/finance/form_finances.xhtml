@@ -23,7 +23,8 @@
 		<aon:commandButton title="#{accountingBundle.accounting_finance_add_record_list}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 			value="#{accountingBundle.accounting_finance_add_record_list}"
-			actionListener="#{financeEntry.onAddSelected}" reRender="financeEntryForm,financePanelTabSet"
+			actionListener="#{financeEntry.onAddSelected}" 
+			reRender="financeEntryForm,financePanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 	</aon:div>
@@ -31,7 +32,7 @@
 	<aon:div id="financeDataDiv">
 		<aon:dataTable id="financeData" value="#{financeEntry.finances}" sortMode="multi"
 			var="to" rows="20" rendered="#{financeEntry.finances.rowCount > 0}"
-			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">				
 			
@@ -44,22 +45,6 @@
 					valueChangeListener="#{financeEntry.rowSelectedFinances}" />
 			</aon:column>
 			
-			<aon:column sortBy="#{to.invoice.referenceCode}"
-				sortOrder="#{financeEntry.order['Finance_invoice_referenceCode']}">
-				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice}" />
-				</f:facet>
-				<aon:outputText value="#{to.invoice.referenceCode}" />
-			</aon:column>
-			
-			<aon:column sortBy="#{to.invoice.registryName}"
-				sortOrder="#{financeEntry.order['Finance_invoice_registryName']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.invoice.registryName}" />
-			</aon:column>
-	
 			<aon:column sortBy="#{to.dueDate}"
 				sortOrder="#{financeEntry.order['Finance_dueDate']}">
 				<f:facet name="header">
@@ -71,6 +56,38 @@
 				</aon:outputText>
 			</aon:column>
 	
+			<aon:column sortBy="#{to.referenceCode}"
+				sortOrder="#{financeEntry.order['Finance_invoice_referenceCode']}">
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice}" />
+				</f:facet>
+				<aon:outputText value="#{to.referenceCode}" />
+			</aon:column>
+
+			<aon:column sortBy="#{to.concept}"
+				sortOrder="#{financeEntry.order['Finance_concept']}">
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+				</f:facet>
+				<h:outputText value="#{to.concept}" />
+			</aon:column>
+
+			<aon:column sortBy="#{to.registryName}"
+				sortOrder="#{financeEntry.order['Finance_registryName']}">
+				<f:facet name="header">
+					<aon:outputText value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
+				</f:facet>
+				<aon:outputText value="#{to.registryName}" />
+			</aon:column>
+
+			<aon:column sortBy="#{to.financeStatus}"
+				sortOrder="#{financeEntry.order['Finance_financeStatus']}">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.financeStatus}" />
+			</aon:column>
+
 			<aon:column sortBy="#{to.payMethod.name}"
 				sortOrder="#{financeEntry.order['Finance_payMethod_name']}">
 				<f:facet name="header">
@@ -78,7 +95,7 @@
 				</f:facet>
 				<aon:outputText value="#{to.payMethod.name}" />
 			</aon:column>
-	
+
 			<aon:column sortBy="#{to.bankAccount}"
 				sortOrder="#{financeEntry.order['Finance_bankAccount']}">
 				<f:facet name="header">
@@ -86,15 +103,7 @@
 				</f:facet>
 				<aon:outputText value="#{to.bankAccount}"/>
 			</aon:column>
-	
-			<aon:column sortBy="#{to.financeStatus}"
-				sortOrder="#{financeEntry.order['Finance_financeStatus']}">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_status}" />
-				</f:facet>
-				<aon:outputText value="#{to.financeStatus}"/>
-			</aon:column>
-	
+
 			<aon:column sortBy="#{to.totalAmount}"
 				sortOrder="#{financeEntry.order['Finance_totalAmount']}">
 				<f:facet name="header">

@@ -28,16 +28,16 @@ import com.code.aon.registry.dao.IRegistryAlias;
 public class FinanceGenerator {
 
 	public Finance initializeFinanceData(Finance finance, double initialAmount) throws ManagerBeanException{
-		if (finance.getInvoice() == null) {
-			throw new IllegalArgumentException("La factura del vto. no puede ser null");
+		if (finance.isEmptyInvoice()) {
+			throw new IllegalArgumentException("El Vencimiento ha de tener Factura asociada.");
 		}
 		RegistryPayMethod rPayMethod = obtainRPayMethod(finance.getInvoice());
 		return initializeFinanceData(finance,rPayMethod,initialAmount);
 	}
 
-	public Finance initializeFinanceData(Finance finance, RegistryPayMethod rPayMethod,double initialAmount){
-		if (finance.getInvoice() == null) {
-			throw new IllegalArgumentException("La factura del vto. no puede ser null");
+	public Finance initializeFinanceData(Finance finance, RegistryPayMethod rPayMethod, double initialAmount){
+		if (finance.isEmptyInvoice()) {
+			throw new IllegalArgumentException("El Vencimiento ha de tener Factura asociada.");
 		}
 		RegistryBank rBank = null;
 		if (rPayMethod != null) {
@@ -51,6 +51,8 @@ public class FinanceGenerator {
 		finance.setDueDate(finance.getInvoice().getIssueDate());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setRegistry(finance.getInvoice().getRegistry());
+		finance.setRegistryName(finance.getInvoice().getRegistryName());
+		finance.setRegistryDocument(finance.getInvoice().getRegistryDocument());
 		finance.setAmount(initialAmount);
 		if(finance.getInvoice().getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
@@ -151,6 +153,7 @@ public class FinanceGenerator {
 		finance.setAmount(totalPrice);
 		finance.setBank(bank);
 		finance.setBankAccount(bankAccount);
+		finance.setConcept(invoice.getDocumentNumber());
 		finance.setDueDate(date);
 		finance.setInvoice(invoice);
 		finance.setFinanceStatus(FinanceStatus.PENDING);
@@ -161,7 +164,10 @@ public class FinanceGenerator {
 		}
 		finance.setPayMethod(payMethod);
 		finance.setRegistry(invoice.getRegistry());
+		finance.setRegistryName(invoice.getRegistryName());
+		finance.setRegistryDocument(invoice.getRegistryDocument());
 		finance.setSecurityLevel(invoice.getSecurityLevel());
+		finance.setScope(invoice.getScope());
 		return finance;
 	}
 	
@@ -209,6 +215,8 @@ public class FinanceGenerator {
 		Finance newFinance = new Finance();
 		newFinance.setPayment(finance.isPayment());
 		newFinance.setRegistry(finance.getRegistry());
+		newFinance.setRegistryName(finance.getRegistryName());
+		newFinance.setRegistryDocument(finance.getRegistryDocument());
 		newFinance.setAmount(newAmount);
 		newFinance.setExpenses(0.0);
 		newFinance.setConcept(finance.getConcept());
@@ -219,6 +227,7 @@ public class FinanceGenerator {
 		newFinance.setBankAccount(finance.getBankAccount());
 		newFinance.setFinanceStatus(FinanceStatus.PENDING);
 		newFinance.setSecurityLevel(finance.getSecurityLevel());
+		newFinance.setScope(finance.getScope());
 		return (Finance)financeBean.insert(newFinance);
 	}
 

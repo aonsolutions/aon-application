@@ -35,7 +35,6 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
@@ -87,6 +86,14 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
 		checkInvoice(invoice);
+		if (invoice.getType() == InvoiceType.SALES) {
+			checkNumber(invoice);
+			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
+			if (!StringUtils.isEmpty(invoice.getSeries())) {
+				referenceCode = invoice.getSeries() + "/" + referenceCode;
+			}
+			invoice.setReferenceCode(referenceCode);
+		}
 		if (checkInvoiceDate(invoice)) {
 			invoice.setTaxDate(invoice.getIssueDate());
 		}
@@ -105,9 +112,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				removeInvoiceDetails(invoice);
 				removeInvoiceAddress(invoice);
 			} else {
-				throw new ManagerBeanVetoListenerException("La factura "
-						+ invoice.getReferenceCode()
-						+ " no se puede borrar. Tiene vencimientos con movimientos.");
+				throw new ManagerBeanVetoListenerException("La factura " + invoice.getReferenceCode() + " no se puede borrar. " +
+															"Tiene vencimientos con movimientos.");
 			}
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
@@ -122,28 +128,34 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 	}
 
+    @SuppressWarnings("unchecked")
 	private void checkNumber(Invoice invoice) throws ManagerBeanVetoListenerException {
-		try {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Criteria criteria = new Criteria();
-			String seriesAlias = invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES);
-			if (StringUtils.isEmpty(invoice.getSeries())) {
-				Expression nullExpr = ExpressionUtilities.getNullExpression(seriesAlias);
-				Expression blankExpr = ExpressionUtilities.getEqualExpression(seriesAlias, invoice.getSeries());
-				criteria.addExpression(ExpressionUtilities.getOrExpression(nullExpr, blankExpr));
-			} else {
-				criteria.addEqualExpression(seriesAlias, invoice.getSeries());
-			}
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), invoice.getNumber());
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), invoice.getType());
-			if (invoiceBean.getCount(criteria) > 0) {
-				criteria = new Criteria();
-				criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
-				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
-			}
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		String whereSeries = "";
+		String andId = "";
+		if (StringUtils.isEmpty(invoice.getSeries())) {
+			whereSeries = "WHERE (invoice.series IS NULL OR invoice.series = '') ";
+		} else {
+			whereSeries = "WHERE invoice.series = '" + invoice.getSeries() + "' ";
 		}
+		if (invoice.getId() != null) {
+			andId = "AND invoice.id <> " + invoice.getId();
+		}
+
+		String select = "SELECT invoice.id id " +
+    					"FROM invoice as invoice " +
+    					whereSeries +
+    					"AND invoice.number = " + invoice.getNumber() + " " +
+    					"AND invoice.type = " + invoice.getType().ordinal() + " " +
+    					andId;
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		SQLQuery query = session.createSQLQuery(select);
+        List list = query
+    		.addScalar("id", Hibernate.INTEGER)
+        	.list();
+        Iterator iterator = list.iterator();
+        if (iterator.hasNext()) {
+			throw new ManagerBeanVetoListenerException("Ya existe una Factura con esa Serie/Número.");
+        }
 	}
 
     @SuppressWarnings("unchecked")
@@ -152,9 +164,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     		return true;
     	}
 
-    	String select = "select invoice.issue_date issue_date, invoice.tax_date tax_date" +
-						" from invoice as invoice" +
-						" where invoice.id = " + invoice.getId();
+    	String select = "SELECT invoice.issue_date issue_date, invoice.tax_date tax_date " +
+						"FROM invoice as invoice " +
+						"WHERE invoice.id = " + invoice.getId();
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(select);
         List list = query

@@ -36,28 +36,17 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.Finance" sqlName="finance">
-		<alias names="amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,id,invoice_id,payMethod_id,payMethod_type,payment,registry_id,securityLevel,invoice_type,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate" />
-		<hibernate names="amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,id,invoice.id,payMethod.id,payMethod.type,payment,registry.id,securityLevel,invoice.type,invoice.series,invoice.number,invoice.referenceCode,invoice.issueDate" />
+		<alias names="amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,id,invoice_id,payMethod_id,payMethod_type,payment,registry_id,registryName,registryDocument,securityLevel,scope_id,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate" />
+		<hibernate names="amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,id,invoice&lt;id,payMethod.id,payMethod.type,payment,registry.id,registryName,registryDocument,securityLevel,scope.id,invoice&lt;series,invoice&lt;number,invoice&lt;referenceCode,invoice&lt;issueDate" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.FinanceTracking" sqlName="finance_tracking">
-		<alias names="amount,description,id,payMethodTypeDetail_id,recorded,registryBank_id,trackingDate,type,finance_amount,finance_bankAccount,finance_bank_id,finance_bank_code,finance_concept,finance_dueDate,finance_expenses,finance_financeStatus,finance_id,finance_invoice_id,finance_payMethod_id,finance_payMethod_type,finance_payment,finance_registry_id,finance_securityLevel,finance_invoice_type,finance_invoice_series,finance_invoice_number,finance_invoice_referenceCode,finance_invoice_issueDate" />
-		<hibernate names="amount,description,id,payMethodTypeDetail.id,recorded,registryBank.id,trackingDate,type,finance.amount,finance.bankAccount,finance.bank.id,finance.bank.code,finance.concept,finance.dueDate,finance.expenses,finance.financeStatus,finance.id,finance.invoice.id,finance.payMethod.id,finance.payMethod.type,finance.payment,finance.registry.id,finance.securityLevel,finance.invoice.type,finance.invoice.series,finance.invoice.number,finance.invoice.referenceCode,finance.invoice.issueDate" />
+		<alias names="amount,description,id,payMethodTypeDetail_id,recorded,registryBank_id,trackingDate,type,finance_amount,finance_bankAccount,finance_bank_id,finance_bank_code,finance_concept,finance_dueDate,finance_expenses,finance_financeStatus,finance_id,finance_invoice_id,finance_payMethod_id,finance_payMethod_type,finance_payment,finance_registry_id,finance_securityLevel,finance_invoice_referenceCode" />
+		<hibernate names="amount,description,id,payMethodTypeDetail.id,recorded,registryBank.id,trackingDate,type,finance.amount,finance.bankAccount,finance.bank.id,finance.bank.code,finance.concept,finance.dueDate,finance.expenses,finance.financeStatus,finance.id,finance.invoice&lt;id,finance.payMethod.id,finance.payMethod.type,finance.payment,finance.registry.id,finance.securityLevel,finance.invoice&lt;referenceCode" />
 	</bean>
 
 	<bean class="com.code.aon.finance.FinanceBatchDetail" sqlName="fbatch_detail">
-		<alias names="amount,financeBatch_id,finance_id,id,status,financeBatch_issueDate,financeBatch_securityLevel,finance_invoice_series,finance_invoice_number,finance_invoice_referenceCode,finance_dueDate" />
-		<hibernate names="amount,financeBatch.id,finance.id,id,status,financeBatch.issueDate,financeBatch.securityLevel,finance.invoice.series,finance.invoice.number,finance.invoice.referenceCode,finance.dueDate" />
+		<alias names="amount,financeBatch_id,finance_id,id,status,financeBatch_issueDate,financeBatch_securityLevel,finance_invoice_referenceCode,finance_concept,finance_dueDate" />
+		<hibernate names="amount,financeBatch.id,finance.id,id,status,financeBatch.issueDate,financeBatch.securityLevel,finance.invoice&lt;referenceCode,finance.concept,finance.dueDate" />
 	</bean>
 </dao>
-
-
-
-
-
-
-
-
-
-
-

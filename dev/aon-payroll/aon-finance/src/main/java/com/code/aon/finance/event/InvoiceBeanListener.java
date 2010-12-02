@@ -51,6 +51,9 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 		while(iter.hasNext()){
 			Finance finance = (Finance)iter.next();
 			finance.setRegistry(invoice.getRegistry());
+			finance.setRegistryName(invoice.getRegistryName());
+			finance.setRegistryDocument(invoice.getRegistryDocument());
+			finance.setSecurityLevel(invoice.getSecurityLevel());
 			financeBean.update(finance);
 		}
 	}

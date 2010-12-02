@@ -2,200 +2,90 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
 
 	<c:if test="#{!renting.new}">
-		<aon:panelGrid id="rentingGrid" columns="6" dir="true" width="100%"
-			styleClass="aon-margin-top"
-			columnClasses="aon-panelGrid-odd aon-width-auto
-							  ,aon-panelGrid-even aon-width-100 aon-editDataTable-numberColumn
-							  ,aon-panelGrid-odd aon-width-100 aon-editDataTable-numberColumn
-							  ,aon-panelGrid-even aon-width-100 aon-editDataTable-numberColumn
-							  ,aon-panelGrid-odd aon-width-100 aon-editDataTable-numberColumn
-							  ,aon-panelGrid-even aon-width-100 aon-editDataTable-numberColumn">
+		<aon:div styleClass="aon-margin-top">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+				<ui:param name="controller" value="#{rentingDetail}" />
+				<ui:param name="skipSelectButton" value="true" />
+				<ui:param name="rowSelectorToggleOnClick" value="false" />
+				<ui:param name="rows" value="0" />
 
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="ACUMULADO" styleClass="aon-bold" />
-			<aon:outputText value="DECLARADO" styleClass="aon-bold" />
-			<aon:outputText value="RESULTADO" styleClass="aon-bold" />
-			<aon:outputText value="AJUSTES" styleClass="aon-bold" />
-			<aon:outputText value="A DECLARAR" styleClass="aon-bold" />
+				<ui:define name="columns">
 
-			<aon:outputText value="#{fiscalBundle.fiscal_lessor_count}" />
-			<aon:outputText value="#{renting.to.lessorCountAccumulated}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.lessorCountDeclared}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.lessorCountResult}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:div>
-				<aon:outputText value="#{renting.to.lessorCountAdjust}" rendered="#{renting.to.finished}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText value="#{renting.to.lessorCountAdjust}" rendered="#{!renting.to.finished}" 
-					required="true" size="8" />
-			</aon:div>
-			<aon:outputText value="#{renting.to.lessorCount}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<aon:commandLink id="selectButton"
+							styleClass="aon-table-row-link" value="&#160;"
+							requestDelay="100" action="#{rentingDetail.invoiceView}"
+							actionListener="#{rentingDetail.onLoadInvoice}">
+						</aon:commandLink>
+					</aon:column>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_renting_amount}" />
-			<aon:outputText value="#{renting.to.rentingAmountAccumulated}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.rentingAmountDeclared}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.rentingAmountResult}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:div>
-				<aon:outputText value="#{renting.to.rentingAmountAdjust}" rendered="#{renting.to.finished}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText value="#{renting.to.rentingAmountAdjust}" rendered="#{!renting.to.finished}" 
-					required="true" size="8" />
-			</aon:div>
-			<aon:outputText value="#{renting.to.rentingAmount}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_document}" />
+						</f:facet>
+						<aon:outputText value="#{to.document}" />
+					</aon:column>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_retention_amount}" />
-			<aon:outputText value="#{renting.to.retentionAccumulated}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.retentionDeclared}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.retentionResult}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:div>
-				<aon:outputText value="#{renting.to.retentionAdjust}" rendered="#{renting.to.finished}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText value="#{renting.to.retentionAdjust}" rendered="#{!renting.to.finished}" 
-					required="true" size="8" />
-			</aon:div>
-			<aon:outputText value="#{renting.to.retention}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}" />
+					</aon:column>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_lessorCount_in_kind}" />
-			<aon:outputText value="#{renting.to.lessorCountInKindAccumulated}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.lessorCountInKindDeclared}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.lessorCountInKindResult}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:div>
-				<aon:outputText value="#{renting.to.lessorCountInKindAdjust}" rendered="#{renting.to.finished}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText value="#{renting.to.lessorCountInKindAdjust}" rendered="#{!renting.to.finished}" 
-					required="true" size="8" />
-			</aon:div>
-			<aon:outputText value="#{renting.to.lessorCountInKind}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputText value="#{fiscalBundle.fiscal_accrual_period_abbr}" />
+						</f:facet>
+						<aon:outputText value="#{to.accrualPeriod}" />
+					</aon:column>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_remuneration_in_kind}" />
-			<aon:outputText value="#{renting.to.remunerationInKindAccumulated}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.remunerationInKindDeclared}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.remunerationInKindResult}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:div>
-				<aon:outputText value="#{renting.to.remunerationInKindAdjust}" rendered="#{renting.to.finished}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText value="#{renting.to.remunerationInKindAdjust}" rendered="#{!renting.to.finished}" 
-					required="true" size="8" />
-			</aon:div>
-			<aon:outputText value="#{renting.to.remunerationInKind}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
+					<aon:column
+						styleClass="aon-editDataTable-textColumn aon-text-center aon-width-80">
+						<f:facet name="header">
+							<aon:outputText
+								value="#{fiscalBundle.fiscal_renting_detail_kind}" />
+						</f:facet>
+						<aon:outputText value="#{to.type}" />
+					</aon:column>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_account_deposit}" />
-			<aon:outputText value="#{renting.to.accountDepositAccumulated}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.accountDepositDeclared}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:outputText value="#{renting.to.accountDepositResult}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-			<aon:div>
-				<aon:outputText value="#{renting.to.accountDepositAdjust}" rendered="#{renting.to.finished}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText value="#{renting.to.accountDepositAdjust}" rendered="#{!renting.to.finished}" 
-					required="true" size="8" />
-			</aon:div>
-			<aon:outputText value="#{renting.to.accountDeposit}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
+					<aon:column
+						styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="#{fiscalBundle.fiscal_paid_returns_abbr}" />
+						</f:facet>
+						<aon:outputText value="#{to.paidReturns}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
 
-			
-			<aon:outputText value="#{fiscalBundle.fiscal_deposit}" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="#{renting.to.deposit}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
+					<aon:column
+						styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="%" />
+						</f:facet>
+						<aon:outputText value="#{to.percent}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_extra_charge}" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:div>
-				<aon:outputText value="#{renting.to.extraCharge}" rendered="#{renting.to.finished}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText value="#{renting.to.extraCharge}" rendered="#{!renting.to.finished}" 
-					required="true" size="8" />
-			</aon:div>
-
-			<aon:outputText value="#{fiscalBundle.fiscal_delay_interest}" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:div>
-				<aon:outputText value="#{renting.to.delayInterest}" rendered="#{renting.to.finished}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText value="#{renting.to.delayInterest}" rendered="#{!renting.to.finished}" 
-					required="true" size="8" />
-			</aon:div>
-
-			<aon:outputText value="#{fiscalBundle.fiscal_total_tax_debt}" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="&#160;" />
-			<aon:outputText value="#{renting.to.totalTaxDebt}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-
-		</aon:panelGrid>
+					<aon:column
+						styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="#{fiscalBundle.fiscal_account_deposit_abbr}" />
+						</f:facet>
+						<aon:outputText value="#{to.accountDeposit}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
+				</ui:define>
+			</ui:decorate>
+		</aon:div>
 	</c:if>
 </ui:composition>
