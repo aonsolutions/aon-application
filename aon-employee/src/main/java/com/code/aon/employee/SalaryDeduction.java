@@ -37,7 +37,7 @@ public class SalaryDeduction implements ITransferObject, IDeduction {
 	
 	private String description;
 
-	private String function;
+	private String expression;
 
 	private double amount;
 
@@ -86,12 +86,12 @@ public class SalaryDeduction implements ITransferObject, IDeduction {
 	
 	@Override
 	@Column(length = 128)
-	public String getFunction() {
-		return function;
+	public String getExpression() {
+		return expression;
 	}
 	
-	public void setFunction(String function) {
-		this.function = function;
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 	
 	@Override
@@ -116,7 +116,7 @@ public class SalaryDeduction implements ITransferObject, IDeduction {
 				.append(this.salary, o.salary)
 				.append(this.type, o.type)
 				.append(this.description, o.description)
-				.append(this.function, o.function)
+				.append(this.expression, o.expression)
 				.append(this.amount, o.amount)
 				.isEquals();	
 		}
@@ -129,7 +129,7 @@ public class SalaryDeduction implements ITransferObject, IDeduction {
 			.append(salary)
 			.append(type)
 			.append(description)
-			.append(function)
+			.append(expression)
 			.append(amount)
 			.toHashCode();
 	}

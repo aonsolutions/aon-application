@@ -103,10 +103,10 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 		if (p != null) {
 			SalaryPayment sp = new SalaryPayment();
 			sp.setDescription(p.getDescription() );
-			sp.setFunction(p.getFunction() );
+			sp.setExpression(p.getExpression() );
 			sp.setType(p.getType()  );
-			if (NumberUtils.isNumber(p.getFunction()) ) {
-				sp.setAmount( NumberUtils.toDouble(p.getFunction()) );	
+			if (NumberUtils.isNumber(p.getExpression()) ) {
+				sp.setAmount( NumberUtils.toDouble(p.getExpression()) );	
 			} else {
 				sp.setAmount(0.0);
 			}
