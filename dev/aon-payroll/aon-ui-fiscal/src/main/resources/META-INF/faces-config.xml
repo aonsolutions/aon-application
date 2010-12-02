@@ -16,7 +16,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************ COLLECTION **************** -->
+	<!-- ************ PARAMETERS **************** -->
 	<managed-bean>
 		<managed-bean-name>fiscalParams</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.fiscal.controller.FiscalParametersController</managed-bean-class>
@@ -202,6 +202,14 @@
 	<!-- ================================================ -->
 	<!-- =================== NAVIGATION ================= -->
 	<!-- ================================================ -->
+
+	<!-- =================== FISCAL PARAMETERS ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>fiscalParams</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/params/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 	<!-- =================== INVOICE REPORT ================= -->
 	<navigation-rule>
