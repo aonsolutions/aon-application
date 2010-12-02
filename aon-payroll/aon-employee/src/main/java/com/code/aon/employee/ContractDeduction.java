@@ -43,7 +43,7 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 	
 	private String description;
 
-	private String function;
+	private String expression;
 
 	private Date startDate;	
 
@@ -94,12 +94,12 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 	
 	@Override
 	@Column(length = 128)
-	public String getFunction() {
-		return function;
+	public String getExpression() {
+		return expression;
 	}
 	
-	public void setFunction(String function) {
-		this.function = function;
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -134,7 +134,7 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 				.append(this.contract, o.contract)
 				.append(this.type, o.type)
 				.append(this.description, o.description)
-				.append(this.function, o.function)
+				.append(this.expression, o.expression)
 				.append(this.startDate, o.startDate)
 				.append(this.endDate, o.endDate)
 				.isEquals();	
@@ -148,7 +148,7 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 			.append(contract)
 			.append(type)
 			.append(description)
-			.append(function)
+			.append(expression)
 			.append(startDate)
 			.append(endDate)
 			.toHashCode();
@@ -162,8 +162,8 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 	@Override
 	@Transient
 	public double getAmount() {
-		if (NumberUtils.isNumber(getFunction()) ) {
-			return NumberUtils.toDouble(getFunction());	
+		if (NumberUtils.isNumber(getExpression()) ) {
+			return NumberUtils.toDouble(getExpression());	
 		}
 		return 0;
 	}

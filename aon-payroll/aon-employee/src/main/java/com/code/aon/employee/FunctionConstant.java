@@ -1,10 +1,14 @@
 package com.code.aon.employee;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -27,7 +31,11 @@ public class FunctionConstant implements ITransferObject{
 	
 	private String name;
 
-	private double value;
+	private String expression;
+	
+	private Date startDate;	
+
+	private Date endDate;
 	
 	
 	@Id
@@ -50,14 +58,34 @@ public class FunctionConstant implements ITransferObject{
 		this.name = name;
 	}
 	
-	@Column(precision = 15, scale = 3)
-	public double getValue() {
-		return value;
+	@Column(length = 128)
+	public String getExpression() {
+		return expression;
 	}
 	
-	public void setValue(double value) {
-		this.value = value;
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "start_date", nullable = false )
+    public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column( name = "end_date" )
+    public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}	
 	
 	
 	@Override
@@ -69,7 +97,9 @@ public class FunctionConstant implements ITransferObject{
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.name, o.name)
-				.append(this.value, o.value)
+				.append(this.expression, o.expression)
+				.append(this.startDate, o.startDate)
+				.append(this.endDate, o.endDate)
 				.isEquals();	
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -79,7 +109,9 @@ public class FunctionConstant implements ITransferObject{
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(name)
-			.append(value)
+			.append(expression)
+			.append(startDate)
+			.append(endDate)
 			.toHashCode();
 	}
 
