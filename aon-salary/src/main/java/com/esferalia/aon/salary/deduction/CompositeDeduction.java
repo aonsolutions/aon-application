@@ -30,11 +30,11 @@ public class CompositeDeduction implements IDeduction {
 		if (getDeductions().size() == 0) {
 			setDescription(d.getDescription());
 			setType(d.getType());
-			setFunction(d.getFunction());
+			setFunction(d.getExpression());
 		}
 		if (ObjectUtils.equals(getDescription(), d.getDescription()) 
 			 && ObjectUtils.equals(getType(), d.getType())
-			 && ObjectUtils.equals(getFunction(), d.getFunction())) {
+			 && ObjectUtils.equals(getExpression(), d.getExpression())) {
 				getDeductions().add(d);
 		} else {
 			throw new IllegalArgumentException("No se soportan deducciones de diferente tipo,función o descripción");
@@ -56,7 +56,7 @@ public class CompositeDeduction implements IDeduction {
 	}
 
 	@Override
-	public String getFunction() {
+	public String getExpression() {
 		return function;
 	}
 
