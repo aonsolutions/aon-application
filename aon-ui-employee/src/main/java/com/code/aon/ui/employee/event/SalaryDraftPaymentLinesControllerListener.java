@@ -18,8 +18,8 @@ public class SalaryDraftPaymentLinesControllerListener extends LinesControllerLi
 		try {
 			super.updateDetailCriteria(master, reset);
 			SalaryDraftController sc =  (SalaryDraftController) master;
-			Date startDate = sc.getStartDate()==null?new Date():sc.getStartDate();
-			Date endDate = sc.getEndDate()==null?new Date():sc.getEndDate();
+			Date startDate = sc.getStartDate()==null?sc.getIssueDate():sc.getStartDate();
+			Date endDate = sc.getEndDate()==null?sc.getIssueDate():sc.getEndDate();
 			IController detail = getDetailController();
 			detail.getCriteria().addLessThanOrEqualExpression(detail.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_START_DATE), startDate );
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(detail.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_END_DATE), endDate);

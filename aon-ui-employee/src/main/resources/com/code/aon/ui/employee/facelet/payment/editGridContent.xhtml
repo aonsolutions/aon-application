@@ -9,12 +9,11 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="rows" value="#{controller.pageLimit}" />
+		<ui:param name="rows" value="0" />
 		<ui:define name="columns">	
 		
 			<c:if test="#{!skipStartDateColumn}">
-				<aon:column alias="ContractPayment.startDate"
-					styleClass="aon-editDataTable-dateColumn">
+				<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
 					<f:facet name="header">
 						<aon:outputLabel for="Contract_startDate"
 							value="#{bundle.aon_start_date}" />
@@ -37,11 +36,9 @@
 			</c:if>
 			
 			<c:if test="#{!skipEndDateColumn}">
-				<aon:column alias="ContractPayment.endDate"
-					styleClass="aon-editDataTable-dateColumn">
+				<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
 					<f:facet name="header">
-						<aon:outputLabel for="Contract_endDate"
-							value="#{bundle.aon_end_date}" />
+						<aon:outputLabel for="Contract_endDate" value="#{bundle.aon_end_date}" />
 					</f:facet>
 					<aon:outputText value="#{to.endDate}" rendered="#{formList}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -60,14 +57,11 @@
 				</aon:column>
 			</c:if>
 			
-			<aon:column alias="ContractPayment.type"
-				styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 				<f:facet name="header">
-					<aon:outputLabel for="ContractPayment_type"
-						value="#{employeeBundle.employee_salary_deductionType}" />
+					<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
 				</f:facet>
-				<aon:outputText rendered="#{formList}"
-					value="#{to.type}" />
+				<aon:outputText rendered="#{formList}" value="#{to.type}" />
 				<aon:selectOneMenu id="ContractPayment_type" 
 					value="#{controller.to.type}" rendered="#{formEdit}">
 					<f:selectItems value="#{employeeCollections.paymentTypes}" />
@@ -80,14 +74,11 @@
 				</f:facet>		
 			</aon:column>
 			
-			<aon:column alias="ContractPayment.description"
-				styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel for="ContractPayment_description"
-						value="#{bundle.aon_description}" />
+					<aon:outputLabel for="ContractPayment_description" value="#{bundle.aon_description}" />
 				</f:facet>
-				<aon:outputText rendered="#{formList}" 
-					value="#{to.description}" />
+				<aon:outputText rendered="#{formList}" value="#{to.description}" />
 				<aon:inputText id="ContractPayment_description" rendered="#{formEdit}" 
 					size="40" maxlength="64"
 					value="#{controller.to.description}" />
@@ -98,21 +89,16 @@
 				</f:facet>		
 			</aon:column>
 			
-			<aon:column alias="ContractPayment.expression"
-				styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
 				<f:facet name="header">
-					<aon:outputLabel for="ContractPayment_expression"
-						value="#{employeeBundle.employee_salary_expression}" />
+					<aon:outputLabel for="ContractPayment_expression" value="#{employeeBundle.employee_salary_expression}" />
 				</f:facet>
-				<aon:outputText rendered="#{formList}"
-					value="#{to.expression}" />		
-				<aon:inputText id="ContractPayment_expression" rendered="#{formEdit}" size="20"
-						maxlength="128" value="#{controller.to.expression}"
-						required="true" />
+				<aon:outputText rendered="#{formList}" value="#{to.expression}" />		
+				<aon:inputText id="ContractPayment_function" rendered="#{formEdit}" size="20"
+						maxlength="128" value="#{controller.to.expression}" required="true" />
 				<f:facet name="footer">
-					<aon:inputText id="ContractPayment_expression-New" rendered="#{formNew}" size="20"
-							maxlength="128" value="#{controller.to.expression}"
-							required="true" />
+					<aon:inputText id="ContractPayment_function-New" rendered="#{formNew}" size="20"
+							maxlength="128" value="#{controller.to.expression}" required="true" />
 				</f:facet>
 			</aon:column>
 		</ui:define>

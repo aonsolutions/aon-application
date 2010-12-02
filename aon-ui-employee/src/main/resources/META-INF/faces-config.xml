@@ -220,6 +220,10 @@
 			<value>salaryDraftPayment</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -282,6 +286,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>salaryDraftDeduction</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
