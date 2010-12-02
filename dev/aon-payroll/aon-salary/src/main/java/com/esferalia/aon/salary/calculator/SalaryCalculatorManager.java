@@ -38,14 +38,16 @@ public class SalaryCalculatorManager {
 		try {
 			for (ISalaryCalculator calculator: getCalculators()) {
 				if (calculator.accept(ctx)) {
-					return calculator.getClass().newInstance(); 
+					ISalaryCalculator sc = calculator.getClass().newInstance();
+					sc.initialize(ctx);
+					return sc;  
 				}
 			}
-			throw new SalaryException("No existe un Calculador adecuada a este contexto");
+			throw new SalaryException("No existe un Calculador adecuado a este contexto");
 		} catch (InstantiationException e) {
-			throw new SalaryException("No existe un Calculador adecuada a este contexto");
+			throw new SalaryException("No existe un Calculador adecuado a este contexto");
 		} catch (IllegalAccessException e) {
-			throw new SalaryException("No existe un Calculador adecuada a este contexto");
+			throw new SalaryException("No existe un Calculador adecuado a este contexto");
 		}
 	}
 

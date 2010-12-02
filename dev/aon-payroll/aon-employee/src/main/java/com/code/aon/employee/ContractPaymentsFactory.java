@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
@@ -16,6 +15,7 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.IPaymentsFactory;
 import com.esferalia.aon.salary.payment.IPaymentsFactoryContext;
@@ -57,12 +57,14 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 				}
 			}
 			return payments;
+		} catch (ExpressionException  e) {
+			throw new SalaryException(e.getMessage(),e);
 		} catch (ManagerBeanException  e) {
 			throw new SalaryException(e.getMessage(),e);
 		}
 	}
 	
-	private void managePayments(IPaymentsFactoryContext ctx,Payments payments, ContractPayment sp) {
+	private void managePayments(IPaymentsFactoryContext ctx,Payments payments, ContractPayment sp) throws ExpressionException {
 		if(upToDate(ctx,sp.getStartDate(), sp.getEndDate())){
 			if (sp.getType() == PaymentType.BASE_SALARY) {
 				payments.setBaseSalary(resolvePayment(ctx,sp));
@@ -96,20 +98,16 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 		return false;
 	}
 
-	private IPayment resolvePayment(IPaymentsFactoryContext ctx,IPayment p) {
+	private IPayment resolvePayment(IPaymentsFactoryContext ctx,ContractPayment cp) throws ExpressionException {
 		// TODO este método de resolución de los complementos es muy básico.
 		// es necesario forzar a cada IPayment a que se resulva a sí mismo  
 		// en función del contexto "ctx".
-		if (p != null) {
+		if (cp != null) {
 			SalaryPayment sp = new SalaryPayment();
-			sp.setDescription(p.getDescription() );
-			sp.setExpression(p.getExpression() );
-			sp.setType(p.getType()  );
-			if (NumberUtils.isNumber(p.getExpression()) ) {
-				sp.setAmount( NumberUtils.toDouble(p.getExpression()) );	
-			} else {
-				sp.setAmount(0.0);
-			}
+			sp.setDescription(cp.getDescription() );
+			sp.setExpression(cp.getExpression() );
+			sp.setType(cp.getType());
+			sp.setAmount( ctx.getExpressionContext().resolve(cp) );
 			return sp;
 		}
 		return null;
