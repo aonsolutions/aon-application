@@ -18,6 +18,7 @@ import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
+import com.code.aon.accounting.enumeration.AnnualReportStyle;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.common.BeanManager;
@@ -37,6 +38,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 public class AccountingCollectionsController {
 
 	private LinkedList<SelectItem> accountLevels;
+	private LinkedList<SelectItem> annualReportStyles;
 	private LinkedList<SelectItem> balanceTypes;
 	private LinkedList<SelectItem> accountEntryTypes;
 	private LinkedList<SelectItem> amortizationPeriods;
@@ -368,4 +370,18 @@ public class AccountingCollectionsController {
 		return balanceTypes;
 	}
 
+	public List<SelectItem> getAnnualReportStyles() {
+		if (annualReportStyles == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			annualReportStyles = new LinkedList<SelectItem>();
+			AnnualReportStyle[] styles = AnnualReportStyle.values();
+			for (int i = 0; i < styles.length; i++) {
+				AnnualReportStyle style = styles[i];
+				String name = style.getName(locale);
+				SelectItem item = new SelectItem(style, name);
+				annualReportStyles.add(item);
+			}
+		}
+		return annualReportStyles;
+	}
 }

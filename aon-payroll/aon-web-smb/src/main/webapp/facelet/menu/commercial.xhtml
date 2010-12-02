@@ -39,6 +39,11 @@
 									action="offer_search" actionListener="#{offer.onEditSearch}"
 									value="#{commercialBundle.commercial_offer_module}" />
 							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="commercialTerm"
+									action="commercialTerm" actionListener="#{commercialTerm.onSearch}" 
+									value="#{commercialBundle.commercial_term_module}" />
+							</aon:div>								
 						</aon:div>
 					</aon:panelGrid>
 					
