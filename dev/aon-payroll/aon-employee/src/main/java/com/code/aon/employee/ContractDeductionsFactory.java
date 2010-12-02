@@ -140,7 +140,7 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 		
 		salaryDeduction.setType(deduction.getType());
 		salaryDeduction.setAmount(deduction.getAmount());
-		salaryDeduction.setFunction(deduction.getFunction());
+		salaryDeduction.setExpression(deduction.getExpression());
 		salaryDeduction.setDescription(deduction.getDescription());
 		
 		return salaryDeduction;
@@ -153,14 +153,14 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 		if (d != null) {
 			SalaryDeduction sd = new SalaryDeduction();
 			sd.setDescription(d.getDescription() );
-			sd.setFunction(d.getFunction() );
+			sd.setExpression(d.getExpression() );
 			sd.setType(d.getType()  );
 			sd.setAmount( 0.0 );
-			if (NumberUtils.isNumber(d.getFunction()) ) {
-				sd.setAmount( NumberUtils.toDouble(d.getFunction()) );	
+			if (NumberUtils.isNumber(d.getExpression()) ) {
+				sd.setAmount( NumberUtils.toDouble(d.getExpression()) );	
 			} else {
-				if (StringUtils.endsWith(d.getFunction(), "%")) {
-					String func = StringUtils.stripEnd(d.getFunction(), "%");
+				if (StringUtils.endsWith(d.getExpression(), "%")) {
+					String func = StringUtils.stripEnd(d.getExpression(), "%");
 					if (NumberUtils.isNumber(func) ) {
 						double percent = NumberUtils.toDouble(func);
 						Salary salary = (Salary) ctx.getCurrentSalary();

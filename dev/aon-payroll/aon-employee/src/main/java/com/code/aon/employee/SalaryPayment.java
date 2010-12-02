@@ -37,7 +37,7 @@ public class SalaryPayment implements ITransferObject, IPayment {
 	
 	private String description;
 
-	private String function;
+	private String expression;
 
 	private double amount;
 
@@ -87,12 +87,12 @@ public class SalaryPayment implements ITransferObject, IPayment {
 	
 	@Override
 	@Column(length = 128)
-	public String getFunction() {
-		return function;
+	public String getExpression() {
+		return expression;
 	}
 	
-	public void setFunction(String function) {
-		this.function = function;
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 	
 	@Override
@@ -117,7 +117,7 @@ public class SalaryPayment implements ITransferObject, IPayment {
 				.append(this.salary, o.salary)
 				.append(this.type, o.type)
 				.append(this.description, o.description)
-				.append(this.function, o.function)
+				.append(this.expression, o.expression)
 				.append(this.amount, o.amount)
 				.isEquals();	
 		}
@@ -130,7 +130,7 @@ public class SalaryPayment implements ITransferObject, IPayment {
 			.append(salary)
 			.append(type)
 			.append(description)
-			.append(function)
+			.append(expression)
 			.append(amount)
 			.toHashCode();
 	}

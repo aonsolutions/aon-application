@@ -32,8 +32,6 @@ public class PaymentConcept implements ITransferObject{
 	
 	private PaymentType type;
 
-	private boolean inKind;
-	
 	
 	@Id
 	@GeneratedValue
@@ -72,15 +70,6 @@ public class PaymentConcept implements ITransferObject{
 		this.description = description;
 	}
 	
-	@Column(name = "in_kind")
-	public boolean getInKind() {
-		return inKind;
-	}
-	
-	public void setInKind(boolean inKind) {
-		this.inKind = inKind;
-	}
-	
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -93,7 +82,6 @@ public class PaymentConcept implements ITransferObject{
 				.append(this.code, o.code)
 				.append(this.description, o.description)
 				.append(this.type, o.type)
-				.append(this.inKind, o.inKind)
 				.isEquals();	
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -105,7 +93,6 @@ public class PaymentConcept implements ITransferObject{
 			.append(code)
 			.append(description)
 			.append(type)
-			.append(inKind)
 			.toHashCode();
 	}
 
