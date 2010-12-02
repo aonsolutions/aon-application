@@ -49,8 +49,6 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 	private int currentPage = 1;
 	
 	private int currentIndex;
-
-	private String tableState;
 	
 	private Ordering dateOrder = Ordering.DESCENDING;
 	
@@ -472,27 +470,12 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 		this.createAsSubfolder = createAsSubfolder;
 	}
 
-	public String getTableState() {
-		return tableState;
-	}
-
-	public void setTableState(String tableState) {
-		this.tableState = tableState;
-	}
-
 	public Ordering getDateOrder() {
 		return dateOrder;
 	}
 
 	public void setDateOrder(Ordering dateOrder) {
 		this.dateOrder = dateOrder;
-	}
-	
-	public String getTableHeight() {
-		int count = getFolder().getMessageListCount();
-		int first = (getCurrentPage()-1) * getPageSize();
-		int visible = Math.min( count-first, getPageSize());
-		return ((visible * 26)+27) + "px";
 	}
 
 	public int getCurrentIndex() {

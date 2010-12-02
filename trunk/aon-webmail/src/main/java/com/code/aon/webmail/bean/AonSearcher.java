@@ -59,8 +59,7 @@ public class AonSearcher {
 			AonMessage[] search = new AonMessage[messages.length];
 			AonMessage aonMessage;
 			for (int i = 0; i < messages.length; i++){
-				aonMessage = new AonMessage();
-				aonMessage.setMessage((MimeMessage)messages[i]);
+				aonMessage = new AonMessage( (MimeMessage)messages[i] );
 				aonMessage.setParent(aonFolder);
 				search[i] = aonMessage; 
 			}
