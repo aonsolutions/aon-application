@@ -31,14 +31,15 @@
 									value="#{financeBundle.finance_vat_report_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="mod303" 
-									action="model303_search" actionListener="#{model303.onReset}"
-									value="#{fiscalBundle.fiscal_model_303_module}" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="mod_347_report" 
 									action="model347_search" actionListener="#{model347.onReset}"
 									value="#{fiscalBundle.fiscal_model_347_module}" />
+							</aon:div>
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="vatTax" 
+									action="vatTax_search" actionListener="#{vatTax.onEditSearch}"
+									value="#{fiscalBundle.fiscal_vat_tax_module}" />
 							</aon:div>
 							
 						</aon:div>

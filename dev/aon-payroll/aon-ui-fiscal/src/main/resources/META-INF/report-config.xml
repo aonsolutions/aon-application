@@ -58,5 +58,14 @@
 		</params>
 	</report>
 	
+	<!--  *********  Declaracion de IVA ********* -->
+	<report id="vatTaxReport" description="Declaracion de IVA">
+		<template path="/com/code/aon/ui/fiscal/report/vatTax.jasper"/>
+		<collection provider="#{vatTax.summary}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
 	
 </report-config>
