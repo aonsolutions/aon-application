@@ -37,6 +37,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** MODEL 340 REPORT  *************** -->
+	<managed-bean>
+		<managed-bean-name>model340</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.Model340Controller</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************** VAT REPORT  *************** -->
 	<managed-bean>
 		<managed-bean-name>vatReport</managed-bean-name>
@@ -178,6 +185,18 @@
 		<navigation-case>
 			<from-outcome>model347_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/fiscal/facelet/model347/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== MODEL 340 REPORT ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>model340_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/model340/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>model340_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/model340/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
