@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
@@ -14,7 +15,8 @@ public class FiscalAliasWriter {
 	
 	public static void main(String[] args) throws IOException {
 		File file = new File("/home/ecastellano/AON-TRUNK/aon-fiscal/src/main/java/com/code/aon/fiscal/dao/IFiscalAlias.java");
-		String[] classes = new String[]{ 
+		String[] classes = new String[]{
+			Renting.class.getName(),
 			VatTax.class.getName(),
 			VatTaxDetail.class.getName(),
 			VatTaxDeclaration.class.getName()

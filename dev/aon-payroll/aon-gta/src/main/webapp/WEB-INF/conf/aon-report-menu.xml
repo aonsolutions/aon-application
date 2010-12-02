@@ -26,11 +26,13 @@
     		target="_blank" 
 	    	contextRelative="true"
     		external="true" />
+<!-- 
     	<option key="Comparativa_Beneficios.xml" 
     		ref="/hyperview.faces?fileName=Comparativa_Beneficios.xml" 
     		target="_blank" 
 	    	contextRelative="true"
     		external="true" />	
+ -->
     	<option key="Matricula.xml" 
     		ref="/hyperview.faces?fileName=Matricula.xml" 
     		target="_blank" 

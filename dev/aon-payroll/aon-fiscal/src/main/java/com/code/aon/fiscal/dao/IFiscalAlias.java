@@ -2,6 +2,7 @@ package com.code.aon.fiscal.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.VatTaxDeclaration;
@@ -10,6 +11,265 @@ import com.code.aon.fiscal.VatTaxDeclaration;
 * Interface for holding entity properties constants.
 */ 
 public interface IFiscalAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for Renting entity.
+	*/ 
+	DAOConstantsEntry RENTING_ENTRY = DAOConstants.getDAOConstant(Renting.class);
+
+	/** 
+	* Alias value: Renting_accountDeposit
+	* Hibernate value: Renting.accountDeposit
+	*/
+	String  RENTING_ACCOUNT_DEPOSIT = RENTING_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Renting_accountDepositAccumulated
+	* Hibernate value: Renting.accountDepositAccumulated
+	*/
+	String  RENTING_ACCOUNT_DEPOSIT_ACCUMULATED = RENTING_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Renting_accountDepositAdjust
+	* Hibernate value: Renting.accountDepositAdjust
+	*/
+	String  RENTING_ACCOUNT_DEPOSIT_ADJUST = RENTING_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Renting_accountDepositDeclared
+	* Hibernate value: Renting.accountDepositDeclared
+	*/
+	String  RENTING_ACCOUNT_DEPOSIT_DECLARED = RENTING_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Renting_accountDepositResult
+	* Hibernate value: Renting.accountDepositResult
+	*/
+	String  RENTING_ACCOUNT_DEPOSIT_RESULT = RENTING_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Renting_comments
+	* Hibernate value: Renting.comments
+	*/
+	String  RENTING_COMMENTS = RENTING_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Renting_complementary
+	* Hibernate value: Renting.complementary
+	*/
+	String  RENTING_COMPLEMENTARY = RENTING_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Renting_delayInterest
+	* Hibernate value: Renting.delayInterest
+	*/
+	String  RENTING_DELAY_INTEREST = RENTING_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Renting_extraCharge
+	* Hibernate value: Renting.extraCharge
+	*/
+	String  RENTING_EXTRA_CHARGE = RENTING_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Renting_id
+	* Hibernate value: Renting.id
+	*/
+	String  RENTING_ID = RENTING_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Renting_lessorCount
+	* Hibernate value: Renting.lessorCount
+	*/
+	String  RENTING_LESSOR_COUNT = RENTING_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Renting_lessorCountAccumulated
+	* Hibernate value: Renting.lessorCountAccumulated
+	*/
+	String  RENTING_LESSOR_COUNT_ACCUMULATED = RENTING_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Renting_lessorCountAdjust
+	* Hibernate value: Renting.lessorCountAdjust
+	*/
+	String  RENTING_LESSOR_COUNT_ADJUST = RENTING_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Renting_lessorCountDeclared
+	* Hibernate value: Renting.lessorCountDeclared
+	*/
+	String  RENTING_LESSOR_COUNT_DECLARED = RENTING_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Renting_lessorCountInKind
+	* Hibernate value: Renting.lessorCountInKind
+	*/
+	String  RENTING_LESSOR_COUNT_IN_KIND = RENTING_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Renting_lessorCountInKindAccumulated
+	* Hibernate value: Renting.lessorCountInKindAccumulated
+	*/
+	String  RENTING_LESSOR_COUNT_IN_KIND_ACCUMULATED = RENTING_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Renting_lessorCountInKindAdjust
+	* Hibernate value: Renting.lessorCountInKindAdjust
+	*/
+	String  RENTING_LESSOR_COUNT_IN_KIND_ADJUST = RENTING_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Renting_lessorCountInKindDeclared
+	* Hibernate value: Renting.lessorCountInKindDeclared
+	*/
+	String  RENTING_LESSOR_COUNT_IN_KIND_DECLARED = RENTING_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Renting_lessorCountInKindResult
+	* Hibernate value: Renting.lessorCountInKindResult
+	*/
+	String  RENTING_LESSOR_COUNT_IN_KIND_RESULT = RENTING_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Renting_lessorCountResult
+	* Hibernate value: Renting.lessorCountResult
+	*/
+	String  RENTING_LESSOR_COUNT_RESULT = RENTING_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: Renting_period
+	* Hibernate value: Renting.period
+	*/
+	String  RENTING_PERIOD = RENTING_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: Renting_registryBank_id
+	* Hibernate value: Renting.registryBank.id
+	*/
+	String  RENTING_REGISTRY_BANK_ID = RENTING_ENTRY.getAliasNames()[21];
+
+	/** 
+	* Alias value: Renting_remunerationInKind
+	* Hibernate value: Renting.remunerationInKind
+	*/
+	String  RENTING_REMUNERATION_IN_KIND = RENTING_ENTRY.getAliasNames()[22];
+
+	/** 
+	* Alias value: Renting_remunerationInKindAccumulated
+	* Hibernate value: Renting.remunerationInKindAccumulated
+	*/
+	String  RENTING_REMUNERATION_IN_KIND_ACCUMULATED = RENTING_ENTRY.getAliasNames()[23];
+
+	/** 
+	* Alias value: Renting_remunerationInKindAdjust
+	* Hibernate value: Renting.remunerationInKindAdjust
+	*/
+	String  RENTING_REMUNERATION_IN_KIND_ADJUST = RENTING_ENTRY.getAliasNames()[24];
+
+	/** 
+	* Alias value: Renting_remunerationInKindDeclared
+	* Hibernate value: Renting.remunerationInKindDeclared
+	*/
+	String  RENTING_REMUNERATION_IN_KIND_DECLARED = RENTING_ENTRY.getAliasNames()[25];
+
+	/** 
+	* Alias value: Renting_remunerationInKindResult
+	* Hibernate value: Renting.remunerationInKindResult
+	*/
+	String  RENTING_REMUNERATION_IN_KIND_RESULT = RENTING_ENTRY.getAliasNames()[26];
+
+	/** 
+	* Alias value: Renting_rentingAmount
+	* Hibernate value: Renting.rentingAmount
+	*/
+	String  RENTING_RENTING_AMOUNT = RENTING_ENTRY.getAliasNames()[27];
+
+	/** 
+	* Alias value: Renting_rentingAmountAccumulated
+	* Hibernate value: Renting.rentingAmountAccumulated
+	*/
+	String  RENTING_RENTING_AMOUNT_ACCUMULATED = RENTING_ENTRY.getAliasNames()[28];
+
+	/** 
+	* Alias value: Renting_rentingAmountAdjust
+	* Hibernate value: Renting.rentingAmountAdjust
+	*/
+	String  RENTING_RENTING_AMOUNT_ADJUST = RENTING_ENTRY.getAliasNames()[29];
+
+	/** 
+	* Alias value: Renting_rentingAmountDeclared
+	* Hibernate value: Renting.rentingAmountDeclared
+	*/
+	String  RENTING_RENTING_AMOUNT_DECLARED = RENTING_ENTRY.getAliasNames()[30];
+
+	/** 
+	* Alias value: Renting_rentingAmountResult
+	* Hibernate value: Renting.rentingAmountResult
+	*/
+	String  RENTING_RENTING_AMOUNT_RESULT = RENTING_ENTRY.getAliasNames()[31];
+
+	/** 
+	* Alias value: Renting_replacement
+	* Hibernate value: Renting.replacement
+	*/
+	String  RENTING_REPLACEMENT = RENTING_ENTRY.getAliasNames()[32];
+
+	/** 
+	* Alias value: Renting_retention
+	* Hibernate value: Renting.retention
+	*/
+	String  RENTING_RETENTION = RENTING_ENTRY.getAliasNames()[33];
+
+	/** 
+	* Alias value: Renting_retentionAccumulated
+	* Hibernate value: Renting.retentionAccumulated
+	*/
+	String  RENTING_RETENTION_ACCUMULATED = RENTING_ENTRY.getAliasNames()[34];
+
+	/** 
+	* Alias value: Renting_retentionAdjust
+	* Hibernate value: Renting.retentionAdjust
+	*/
+	String  RENTING_RETENTION_ADJUST = RENTING_ENTRY.getAliasNames()[35];
+
+	/** 
+	* Alias value: Renting_retentionDeclared
+	* Hibernate value: Renting.retentionDeclared
+	*/
+	String  RENTING_RETENTION_DECLARED = RENTING_ENTRY.getAliasNames()[36];
+
+	/** 
+	* Alias value: Renting_retentionResult
+	* Hibernate value: Renting.retentionResult
+	*/
+	String  RENTING_RETENTION_RESULT = RENTING_ENTRY.getAliasNames()[37];
+
+	/** 
+	* Alias value: Renting_securityLevel
+	* Hibernate value: Renting.securityLevel
+	*/
+	String  RENTING_SECURITY_LEVEL = RENTING_ENTRY.getAliasNames()[38];
+
+	/** 
+	* Alias value: Renting_status
+	* Hibernate value: Renting.status
+	*/
+	String  RENTING_STATUS = RENTING_ENTRY.getAliasNames()[39];
+
+	/** 
+	* Alias value: Renting_totalTaxDebt
+	* Hibernate value: Renting.totalTaxDebt
+	*/
+	String  RENTING_TOTAL_TAX_DEBT = RENTING_ENTRY.getAliasNames()[40];
+
+	/** 
+	* Alias value: Renting_year
+	* Hibernate value: Renting.year
+	*/
+	String  RENTING_YEAR = RENTING_ENTRY.getAliasNames()[41];
 
 
 

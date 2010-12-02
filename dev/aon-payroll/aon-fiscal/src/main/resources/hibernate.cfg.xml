@@ -15,6 +15,7 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- AON-FISCAL Mapping files -->	
+		<mapping class="com.code.aon.fiscal.Renting"/>
 		<mapping class="com.code.aon.fiscal.VatTax"/>
 		<mapping class="com.code.aon.fiscal.VatTaxDeclaration"/>
 		<mapping class="com.code.aon.fiscal.VatTaxDetail"/>
