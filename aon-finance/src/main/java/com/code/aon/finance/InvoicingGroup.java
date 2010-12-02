@@ -9,55 +9,34 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.registry.Registry;
 
-/**
- * The Class InvoicingGroup.
- */
 @Entity
 @Table(name="invoicing_group")
 public class InvoicingGroup implements ITransferObject {
 
-	
 	private static final long serialVersionUID = -7948345500064583985L;
 
-	/** The id. */
 	private Integer id;
-	
-	/** The parent. */
 	private Registry parent;
-	
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
 	@Id
 	@Column(nullable=false)
 	@GeneratedValue
 	public Integer getId() {
 		return id;
 	}
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the id
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	/**
-	 * Gets the parent.
-	 * 
-	 * @return the parent
-	 */
     @ManyToOne
     @JoinColumn(name="parent", nullable = false)
     @ForeignKey(name="FK_INVOICING_GROUP_PARENT")
@@ -65,36 +44,35 @@ public class InvoicingGroup implements ITransferObject {
 	public Registry getParent() {
 		return parent;
 	}
-
-	/**
-	 * Sets the parent.
-	 * 
-	 * @param parent the parent
-	 */
 	public void setParent(Registry parent) {
 		this.parent = parent;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final InvoicingGroup o = (InvoicingGroup) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.parent,o.parent)
+			.isEquals();
 		}
-		if (obj instanceof InvoicingGroup) {
-			InvoicingGroup o = (InvoicingGroup) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.parent)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

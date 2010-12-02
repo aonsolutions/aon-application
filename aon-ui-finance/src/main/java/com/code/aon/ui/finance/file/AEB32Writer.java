@@ -11,13 +11,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.file.format.core.Account;
-import com.code.aon.file.format.model.FileFiller;
-import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.file.bank.model.CSB32.CSB32;
 import com.code.aon.file.bank.model.CSB32.data.Delivery;
 import com.code.aon.file.bank.model.CSB32.data.Individual;
 import com.code.aon.file.bank.model.CSB32.data.Lot;
+import com.code.aon.file.format.core.Account;
+import com.code.aon.file.format.model.FileFiller;
+import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.Invoice;
@@ -25,6 +26,7 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -41,16 +43,16 @@ public class AEB32Writer implements IFinanceConstants {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public FileOutput createAEB32(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public FileOutput createAEB32(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
-		RegistryBank companyRBank = fbatch.getRegistryBank();
+		RegistryBank companyRBank = fBatch.getRegistryBank();
 		lot.setEntity(new Integer(companyRBank.getBankAccount().getEntity()));
 		lot.setOffice(new Integer(companyRBank.getBankAccount().getOffice()));
 		lot.setFileDate(new Date());
 		lot.setFileNumber(new Integer(1));
 
 		Delivery delivery = new Delivery();
-		delivery.setDeliveyNumber(fbatch.getId());
+		delivery.setDeliveyNumber(fBatch.getId());
 		delivery.setGiverCode(company.getDocument());
 		Account ccc1 = new Account();
 		ccc1.parse(companyRBank.getBankAccount().getValue());
@@ -63,10 +65,10 @@ public class AEB32Writer implements IFinanceConstants {
 		delivery.setPaymentAccount(ccc3);
 		delivery.setTruncatedEffects(new Integer(1));
 
-		Iterator iter = fbatchDetailCollection.iterator();
-		while(iter.hasNext()){
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
-			Individual individual = createIndividual(company, fBatchDetail);
+		Iterator iterator = fbatchDetailCollection.iterator();
+		while (iterator.hasNext()) {
+			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+			Individual individual = createIndividual(company, fBatchDetail.getFinance(), fBatch.getIssueDate());
 			delivery.addIndividual(individual);
 		}
 		lot.addDelivery(delivery);
@@ -83,36 +85,36 @@ public class AEB32Writer implements IFinanceConstants {
 		}
 	}
 
-	private Individual createIndividual(Company company, FinanceBatchDetail fBatchDetail) throws ManagerBeanException {
+	private Individual createIndividual(Company company, Finance finance, Date expiryDate) throws ManagerBeanException {
 		Individual individual = new Individual();
 		Account ccc = new Account();
-		ccc.parse(fBatchDetail.getFinance().getBankAccount().getValue());
+		ccc.parse(finance.getBankAccount().getValue());
 		individual.setAccount(ccc);
 		individual.setAceptedCode(new Integer(2));
-		individual.setAditionalData(fBatchDetail.getFinance().getId().toString());
-		individual.setAmount(new Double(fBatchDetail.getFinance().getTotalAmount()));
-		individual.setDocumentNumber(fBatchDetail.getFinance().getInvoice().getReferenceCode());
+		individual.setAditionalData(finance.getId().toString());
+		individual.setAmount(new Double(finance.getTotalAmount()));
+		individual.setDocumentNumber(finance.getId().toString());
 		individual.setDocumentType(new Integer(2)); // RECIBO
-		individual.setEfectPayed(fBatchDetail.getFinance().getInvoice().getRegistryName());
+		individual.setEfectPayed(finance.getRegistryName());
 		individual.setEfectPayer(company.getName());
 		individual.setExpenseClause(new Integer(0));
-		individual.setExpiryDate(fBatchDetail.getFinanceBatch().getIssueDate());
-		individual.setPayedDocument(fBatchDetail.getFinance().getInvoice().getRegistryDocument());
-		IAddress detailAddress = obtainInvoiceAddress(fBatchDetail.getFinance().getInvoice());
-		if(detailAddress != null){
-			individual.setPayedPost(detailAddress.getCity());
+		individual.setExpiryDate(expiryDate);
+		individual.setPayedDocument(finance.getRegistryDocument());
+		IAddress iAddress = obtainInvoiceAddress(finance.getInvoice(), finance.getRegistry());
+		individual.setPaymentDate(finance.getDueDate());
+		if (iAddress != null) {
+			individual.setPayedAddress(iAddress.getAddress() + " " + ((iAddress.getAddress2()!=null)?iAddress.getAddress2():""));
+			individual.setPayedPost(iAddress.getCity());
 			try {
-				individual.setPayedPostPostalCode(new Integer(detailAddress.getZip()));
-				individual.setPayedPostProvince(new Integer(detailAddress.getZip().substring(0, 1)));
+				individual.setPayedPostPostalCode(new Integer(iAddress.getZip()));
+				individual.setPayedPostProvince(new Integer(iAddress.getZip().substring(0, 1)));
 			} catch (NumberFormatException e) {
 				individual.setPayedPostPostalCode(new Integer(0));
 				individual.setPayedPostProvince(new Integer(0));
 			}
-			individual.setPayedAddress(detailAddress.getAddress() + detailAddress.getAddress2());
 		}
-		individual.setPaymentDate(fBatchDetail.getFinance().getDueDate());
 		IAddress companyAddress = obtainRegistryAddress(company.getId());
-		if(companyAddress != null){
+		if (companyAddress != null) {
 			individual.setPaymentPost(companyAddress.getCity());
 			try {
 				individual.setProvinceNumber(new Integer(companyAddress.getZip().substring(0, 1)));
@@ -124,15 +126,17 @@ public class AEB32Writer implements IFinanceConstants {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IAddress obtainInvoiceAddress(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
-		Iterator iterator = invoiceAddressBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			return (InvoiceAddress)iterator.next();
+	private IAddress obtainInvoiceAddress(Invoice invoice, Registry registry) throws ManagerBeanException {
+		if (invoice != null && invoice.getId() != null) {
+			IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+			Iterator iterator = invoiceAddressBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				return (InvoiceAddress)iterator.next();
+			}
 		}
-		return obtainRegistryAddress(invoice.getRegistry().getId());
+		return obtainRegistryAddress(registry.getId());
 	}
 
 	@SuppressWarnings("unchecked")

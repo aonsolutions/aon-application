@@ -109,6 +109,8 @@ public class FinanceFractionController implements IFinanceConstants {
 		Finance finance = new Finance();
 		finance.setPayment(targetFinance.isPayment());
 		finance.setRegistry(targetFinance.getRegistry());
+		finance.setRegistryName(targetFinance.getRegistryName());
+		finance.setRegistryDocument(targetFinance.getRegistryDocument());
 		finance.setAmount(amount);
 		finance.setExpenses(expenses);
 		finance.setConcept(targetFinance.getConcept());
@@ -119,6 +121,7 @@ public class FinanceFractionController implements IFinanceConstants {
 		finance.setBankAccount(targetFinance.getBankAccount());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setSecurityLevel(targetFinance.getSecurityLevel());
+		finance.setScope(targetFinance.getScope());
 		return finance;
 	}
 
@@ -131,6 +134,7 @@ public class FinanceFractionController implements IFinanceConstants {
 			Finance finance = (Finance) list.get(0);
 			targetFinance.setAmount(finance.getAmount());
 			targetFinance.setBank((targetFinance.getBank().getId() == null) ? null : targetFinance.getBank());
+			targetFinance.setInvoice((targetFinance.getInvoice().getId() == null) ? null : targetFinance.getInvoice());
 			targetFinance.setPayMethod((targetFinance.getPayMethod().getId() == null) ? null : targetFinance.getPayMethod());
 			financeBean.update(targetFinance);
 
@@ -140,6 +144,7 @@ public class FinanceFractionController implements IFinanceConstants {
 			for(int i=1; i<list.size(); i++) {
 				finance = (Finance)list.get(i);
 				finance.setBank((finance.getBank().getId() == null) ? null : finance.getBank());
+				finance.setInvoice((finance.getInvoice().getId() == null) ? null : finance.getInvoice());
 				finance.setPayMethod((finance.getPayMethod().getId() == null) ? null : finance.getPayMethod());
 				financeBean.insert(finance);
 

@@ -7,7 +7,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
@@ -15,7 +14,6 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryBank;
@@ -32,8 +30,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	private Supplier supplier;
 
 	private Creditor creditor;
-
-	private String receivedInvoiceType;
 
 	private RegistryBank registryBank;
 
@@ -65,14 +61,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		this.creditor = creditor;
 	}
 	
-	public String getReceivedInvoiceType() {
-		return receivedInvoiceType;
-	}
-
-	public void setReceivedInvoiceType(String receivedInvoiceType) {
-		this.receivedInvoiceType = receivedInvoiceType;
-	}
-
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
@@ -120,7 +108,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		setCustomer(new Customer());
 		setSupplier(new Supplier());
 		setCreditor(new Creditor());
-		setReceivedInvoiceType(null);
 		setRegistryBank(new RegistryBank());
 		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
 		setFinanceStatuses(defaultFinanceStatus);
@@ -140,13 +127,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		if ((getCreditor() != null) && (getCreditor().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCreditor().getId());			
 		}			
-		if (getReceivedInvoiceType() != null && StringUtils.isNotEmpty(getReceivedInvoiceType())) {
-			if (getReceivedInvoiceType().equals("R")) {
-				criteria.addLessThanExpression(getFieldName(IFinanceAlias.FINANCE_INVOICE_TYPE), InvoiceType.UNDEDUCTIBLE);
-			} else if (getReceivedInvoiceType().equals("G")) {
-				criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_INVOICE_TYPE), InvoiceType.UNDEDUCTIBLE);
-			}
-		}
 		if ((getRegistryBank() != null) && (getRegistryBank().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), getRegistryBank().getBankAccount());			
 		}

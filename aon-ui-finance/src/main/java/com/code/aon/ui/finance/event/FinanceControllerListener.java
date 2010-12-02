@@ -3,9 +3,11 @@ package com.code.aon.ui.finance.event;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -27,6 +29,16 @@ public class FinanceControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}		
+	}
+
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		FinanceController controller = (FinanceController)event.getController();
+		controller.setPurchase(false);
+		Finance finance = (Finance)controller.getTo();
+		finance.setPayment(controller.isPayment());
+		finance.setFinanceStatus(FinanceStatus.PENDING);
+		finance.setSecurityLevel(SecurityLevel.OFFICIAL);
 	}
 
 }

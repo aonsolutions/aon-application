@@ -45,7 +45,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 						"AND finance.payment = 0 " +
 						"AND finance.payMethod.id IS NULL " +
 						obtainPrintCondition() +
-						"ORDER BY finance.registry.surname, finance.registry.name";
+						"ORDER BY finance.dueDate, finance.concept";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -60,7 +60,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 						"AND finance.payMethod.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
 						"AND (finance.bankAccount IS NULL OR finance.bankAccount = '') " +
 						obtainPrintCondition() +
-						"ORDER BY finance.registry.surname, finance.registry.name";
+						"ORDER BY finance.dueDate, finance.concept";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -76,7 +76,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 						"AND finance.bankAccount IS NOT NULL " +
 						"AND finance.bankAccount <> '' " +
 						obtainPrintCondition() +
-						"ORDER BY finance.registry.surname, finance.registry.name";
+						"ORDER BY finance.dueDate, finance.concept";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();

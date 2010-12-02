@@ -6,17 +6,23 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.IScopable;
+import com.code.aon.config.Scope;
+import com.code.aon.customer.Customer;
+import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
+import com.code.aon.supplier.Supplier;
 
 public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -24,14 +30,12 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Finance finance = (Finance)evt.getTo();
 		checkFinance(finance);
-		fillConcept(finance);
 	}
 
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Finance finance = (Finance)evt.getTo();
 		checkFinance(finance);
-		fillConcept(finance);
 	}
 
 	@Override
@@ -43,6 +47,9 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	private void checkFinance(Finance finance) throws ManagerBeanVetoListenerException {
 		if(finance.getAmount() == 0){
 			throw new ManagerBeanVetoListenerException("El importe del vencimiento no puede ser 0.0");
+		}
+		if (!finance.isEmptyInvoice()) {
+	        finance.setConcept(finance.getInvoice().getDocumentNumber()); 
 		}
 		BankAccount bankAccount = finance.getBankAccount();
 		if (bankAccount != null) {
@@ -62,18 +69,36 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			finance.setBank(null);
 		}
 		if (finance.getSecurityLevel() == null) {
-			finance.setSecurityLevel(finance.getInvoice().getSecurityLevel());
+			if (!finance.isEmptyInvoice()) {
+				finance.setSecurityLevel(finance.getInvoice().getSecurityLevel());
+			} else {
+				finance.setSecurityLevel(SecurityLevel.OFFICIAL);
+			}
+		}
+		if (finance.getScope() == null || finance.getScope().getId() == null) {
+			if (!finance.isEmptyInvoice()) {
+				finance.setScope(finance.getInvoice().getScope());
+			} else {
+				finance.setScope(obtainRegistryScope(finance.isPayment(), finance.getRegistry()));
+			}
 		}
 	}
 
-	private void fillConcept(Finance finance) {
-		if (StringUtils.isEmpty(finance.getConcept())) {
-			Invoice invoice = finance.getInvoice();
-			String concept = invoice.getReferenceCode();
-			if (invoice.getRegistryName() != null && !invoice.getRegistryName().equals(invoice.getRegistry().getFullName())) {
-				concept = StringUtils.abbreviate(invoice.getReferenceCode() + " - " + invoice.getRegistryName(), 64);
+	private Scope obtainRegistryScope(boolean payment, Registry registry) throws ManagerBeanVetoListenerException {
+		try {
+			IManagerBean bean;
+			if (payment) {
+				bean = BeanManager.getManagerBean(Supplier.class);
+				if (bean.get(registry.getId()) == null) {
+					bean = BeanManager.getManagerBean(Creditor.class);
+				}
+			} else {
+				bean = BeanManager.getManagerBean(Customer.class);
 			}
-	        finance.setConcept(concept); 
+			IScopable scopable = (IScopable)bean.get(registry.getId());
+			return scopable.getScope();
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
 	}
 

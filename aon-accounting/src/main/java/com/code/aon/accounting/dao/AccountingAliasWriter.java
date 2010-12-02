@@ -33,7 +33,7 @@ public class AccountingAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-TRUNK/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
+		File file = new File("/home/ecastellano/AON-TRUNK/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
 		String[] classes = new String[]{
 			AccountBudget.class.getName(),
 			AccountEntry.class.getName(),

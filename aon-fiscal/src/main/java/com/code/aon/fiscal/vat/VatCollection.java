@@ -1,5 +1,6 @@
 package com.code.aon.fiscal.vat;
 
+
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +12,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.fiscal.enumeration.VatReportOrder;
+import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.VatReportType;
 import com.code.aon.fiscal.enumeration.VatType;
 
@@ -132,7 +133,7 @@ public class VatCollection {
 
 	}
 
-	public List<Vat> getVatDetailList(VatCollectionParameters params, VatReportOrder order) throws ManagerBeanException {
+	public List<Vat> getVatDetailList(VatCollectionParameters params, InvoiceReportOrder order) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -204,17 +205,17 @@ public class VatCollection {
 			stmt.append(operation);
 			if (order == null) {
 				stmt.append(" ORDER BY vatType,i.transaction,i.tax_date,i.reference_code");
-			} else if (order == VatReportOrder.INVOICE_DATE) {
+			} else if (order == InvoiceReportOrder.INVOICE_DATE) {
 				stmt.append(" ORDER BY i.issue_date,i.series,i.number");
-			} else if (order == VatReportOrder.TAX_DATE) {
+			} else if (order == InvoiceReportOrder.TAX_DATE) {
 				stmt.append(" ORDER BY i.tax_date,i.series,i.number");
-			} else if (order == VatReportOrder.INVOICE_REFERENCE) {
+			} else if (order == InvoiceReportOrder.INVOICE_REFERENCE) {
 				stmt.append(" ORDER BY i.reference_code");
-			} else if (order == VatReportOrder.INVOICE_ORDER_NUMBER) {
+			} else if (order == InvoiceReportOrder.INVOICE_ORDER_NUMBER) {
 				stmt.append(" ORDER BY vatType,i.series,i.number");
-			} else if (order == VatReportOrder.INVOICE_REGISTRY_DOCUMENT) {
+			} else if (order == InvoiceReportOrder.INVOICE_REGISTRY_DOCUMENT) {
 				stmt.append(" ORDER BY i.rdocument,i.series,i.number");
-			} else if (order == VatReportOrder.INVOICE_REGISTRY_NAME) {
+			} else if (order == InvoiceReportOrder.INVOICE_REGISTRY_NAME) {
 				stmt.append(" ORDER BY i.rname,i.series,i.number");
 			}
 			String sessionName = HibernateUtil.getSessionFactoryName();

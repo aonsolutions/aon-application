@@ -51,8 +51,10 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:panelGrid id="menuGrid" columns="7" dir="true" width="100%"
-					columnClasses="aon-panelGrid-odd aon-width-100
+				<aon:panelGrid id="menuGrid" columns="9" dir="true" width="100%"
+					columnClasses="aon-panelGrid-odd aon-width-80
+								  ,aon-panelGrid-even aon-width-80
+								  ,aon-panelGrid-odd aon-width-80
 								  ,aon-panelGrid-even aon-width-80
 								  ,aon-panelGrid-odd aon-width-80
 								  ,aon-panelGrid-even aon-width-100
@@ -71,11 +73,19 @@
 						<f:selectItems value="#{fiscalCollections.periods}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="renting_administration"
+						value="#{fiscalBundle.fiscal_administration}" />
+					<aon:selectOneMenu id="renting_administration" value="#{renting.to.administration}"
+						required="true" disabled="#{renting.to.finished}">
+						<f:selectItems value="#{fiscalCollections.administrations}" />
+					</aon:selectOneMenu>
+
 					<aon:outputText value="#{bundle.aon_status}" />
 					<aon:div styleClass="aon-nowrap;#{renting.to.finished?'aon-icon-lock':'aon-icon-unlock'}"
 						style="padding-left: 16px;">
 						<aon:outputText value="#{renting.to.status}" />
 						<aon:htmlCommandLink target="_blank"
+							rendered="#{renting.to.finished}"
 							title="#{financeBundle.finance_download_disk}"
 							value="#{financeBundle.finance_download_disk}"
 							style="border-width: 0px 0px 0px 0px; margin-left: 10px;"
@@ -124,6 +134,8 @@
 					<aon:outputText value="&#160;" />
 				</aon:panelGrid>
 
+				<ui:include src="/com/code/aon/ui/fiscal/facelet/renting/amount.xhtml" />
+				
 				<ui:include src="/com/code/aon/ui/fiscal/facelet/renting/detail.xhtml" />
 
 			</aon:div>
