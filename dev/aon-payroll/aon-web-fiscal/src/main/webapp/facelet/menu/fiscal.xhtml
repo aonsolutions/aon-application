@@ -71,9 +71,16 @@
 									<aon:commandLink id="annualReport_report"
 										action="annualReport_search"
 										actionListener="#{annualReport.onEditSearch}"
-										value="#{fiscalBundle.fiscal_annual_report}" />
+										value="#{accountingBundle.accounting_annual_report_module}" />
 								</aon:div>
 	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="annualReportLauncher_report"
+										action="annualReportLauncher_search"
+										actionListener="#{annualReportLauncher.onReset}"
+										value="#{accountingBundle.accounting_annual_report_launcher_module}" />
+								</aon:div>
+
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accountingBook_report"
 										action="accountingBook_search"

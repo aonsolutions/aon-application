@@ -10,6 +10,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.accounting.AmortizationType;
+import com.code.aon.accounting.AnnualReport;
 import com.code.aon.accounting.AutoConcept;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.Loan;
@@ -29,15 +30,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 
-/**
- * Collections controller.
- * 
- * @author Consulting & Development.
- */
 public class AccountingCollectionsController {
 
 	private LinkedList<SelectItem> accountLevels;
-	private LinkedList<SelectItem> annualReportStyles;
 	private LinkedList<SelectItem> balanceTypes;
 	private LinkedList<SelectItem> accountEntryTypes;
 	private LinkedList<SelectItem> amortizationPeriods;
@@ -367,6 +362,18 @@ public class AccountingCollectionsController {
 			}
 		}
 		return balanceTypes;
+	}
+	
+	public List<SelectItem> getAnnualReports() throws ManagerBeanException {
+		List<SelectItem> annualReports = new LinkedList<SelectItem>();
+		IManagerBean balanceBean = BeanManager.getManagerBean(AnnualReport.class);
+		Iterator<?> iter = balanceBean.getList(null).iterator();
+		while (iter.hasNext()) {
+			AnnualReport a = (AnnualReport) iter.next();
+			SelectItem item = new SelectItem(a, a.getName());
+			annualReports.add(item);
+		}
+		return annualReports;
 	}
 
 }

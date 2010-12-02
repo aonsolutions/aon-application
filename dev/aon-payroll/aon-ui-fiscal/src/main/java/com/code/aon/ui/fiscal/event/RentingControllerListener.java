@@ -21,6 +21,7 @@ public class RentingControllerListener extends ControllerAdapter {
 		renting.setComplementary(false);
 		renting.setReplacement(false);
 		renting.setSecurityLevel(SecurityLevel.OFFICIAL);
+		c.setFileOutput(null);
 	}
 
 	@Override
@@ -38,8 +39,35 @@ public class RentingControllerListener extends ControllerAdapter {
 		try {
 			RentingController c = (RentingController) event.getController();
 			c.initializeRentingDetail( );
+			c.setFileOutput(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		RentingController c = (RentingController) event.getController();
+		c.setFileOutput(null);
+	}
+	@Override
+	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
+		RentingController c = (RentingController) event.getController();
+		c.setFileOutput(null);
+	}
+	@Override
+	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		RentingController c = (RentingController) event.getController();
+		c.setFileOutput(null);
+	}
+	@Override
+	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
+		RentingController c = (RentingController) event.getController();
+		c.setFileOutput(null);
+	}
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		RentingController c = (RentingController) event.getController();
+		c.setFileOutput(null);
 	}
 }
