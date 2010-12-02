@@ -9,7 +9,7 @@ import com.code.aon.common.enumeration.IResourceable;
  * Enummeration to identify the different types of an Invoice.
  * 
  */
-public enum VatReportOrder implements IResourceable {
+public enum InvoiceReportOrder implements IResourceable {
 
 	TAX_DATE,
 	INVOICE_DATE,
@@ -23,7 +23,7 @@ public enum VatReportOrder implements IResourceable {
     private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_vat_report_order_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_invoice_report_order_";
 
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>

@@ -545,12 +545,6 @@ public interface IAccountingAlias {
 	*/
 	String  ANNUAL_REPORT_DETAIL_SORT_KEY = ANNUAL_REPORT_DETAIL_ENTRY.getAliasNames()[3];
 
-	/** 
-	* Alias value: AnnualReportDetail_style
-	* Hibernate value: AnnualReportDetail.style
-	*/
-	String  ANNUAL_REPORT_DETAIL_STYLE = ANNUAL_REPORT_DETAIL_ENTRY.getAliasNames()[4];
-
 
 
 	/** 

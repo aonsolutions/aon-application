@@ -52,20 +52,6 @@
 	
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice}" />
-				</f:facet>
-				<aon:outputText value="#{to.finance.invoice.referenceCode}" />
-			</aon:column>
-			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.finance.invoice.registryName}" />
-			</aon:column>
-	
-			<aon:column>
-				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_finance_date}" />
 				</f:facet>
 				<aon:outputText value="#{to.finance.dueDate}">
@@ -74,6 +60,21 @@
 				</aon:outputText>
 			</aon:column>
 			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+				</f:facet>
+				<aon:outputText styleClass="aon-nowrap" 
+					value="#{to.finance.documentNumber}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_debtor}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.registryName}" />
+			</aon:column>
+	
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{configBundle.config_pay_method}" />

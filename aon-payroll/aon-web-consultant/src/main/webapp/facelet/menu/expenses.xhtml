@@ -109,6 +109,71 @@
 							</ui:define>
 						</ui:decorate>
 
+						<c:if test="#{aonRole.statisticsOperator}">
+							<aon:panelGrid id="group_expenses_reports"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-statistics aon-direct-access-panel">		
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_reports}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseAccumulate"
+											action="sales_accumulate_search" 
+											value="#{statBundle.stat_menu_expense}">
+											<aon:actionListener method="#{stat.onReset}"/>
+											<aon:actionListener method="#{stat.onExpenseType}"/>
+										</aon:commandLink>
+									</aon:div>
+								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseCategoryStats"
+											action="category_stats_search" 
+											value="#{statBundle.stat_menu_category_expense}" >
+											<aon:actionListener method="#{stat.onReset}"/>
+											<aon:actionListener method="#{stat.onExpenseType}"/>
+										</aon:commandLink>
+									</aon:div>
+		
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseSummaryStats"
+											action="summary_stats_search" 
+											value="#{statBundle.stat_menu_summary}"  >
+											<aon:actionListener method="#{stat.onReset}"/>
+											<aon:actionListener method="#{stat.onExpenseType}"/>
+										</aon:commandLink>
+									</aon:div>
+									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseABCStats"
+											action="abc_stats_search" 
+											value="#{statBundle.stat_abc_creditor}" >
+											<aon:actionListener method="#{stat.onReset}"/>
+											<aon:actionListener method="#{stat.onExpenseType}"/>
+										</aon:commandLink>
+									</aon:div>
+									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseABCStatsProduct"
+											action="abc_stats_searchProduct"
+											value="#{statBundle.stat_abc_expense}" >
+											<aon:actionListener method="#{stat.onReset}"/>
+											<aon:actionListener method="#{stat.onExpenseType}"/>
+										</aon:commandLink>
+									</aon:div>
+									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseABCStatsCategory"
+											action="abc_stats_searchCategory" 
+											value="#{statBundle.stat_abc_category}" >
+											<aon:actionListener method="#{stat.onReset}"/>
+											<aon:actionListener method="#{stat.onExpenseType}"/>
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+
 					</aon:panelGroup>						
 
 				</h:panelGrid>

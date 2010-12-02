@@ -250,10 +250,9 @@ public class FBatchController extends BasicController implements ICollectionProv
                 }
             }
         	criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), to.getSecurityLevel());	
-        	
+
             criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-            criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
-            criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
+            criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_CONCEPT));
 
             controller.onEditSearch(null);
             controller.setCriteria(criteria);
@@ -375,7 +374,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 		String select = "select fbatchDetail " +
     					"from FinanceBatchDetail as fbatchDetail " +
     					"where fbatchDetail.financeBatch.id = " + fbatch.getId() + " " +
-    					"order by substring(fbatchDetail.finance.bankAccount, 1, 8), fbatchDetail.finance.invoice.registry.id";
+    					"order by substring(fbatchDetail.finance.bankAccount, 1, 8), fbatchDetail.finance.registry.id";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
     	Query query = session.createQuery(select);
     	return query.list(); 

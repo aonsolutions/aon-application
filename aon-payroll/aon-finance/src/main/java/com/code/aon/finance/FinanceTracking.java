@@ -15,10 +15,13 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.registry.RegistryBank;
@@ -45,7 +48,6 @@ public class FinanceTracking implements ITransferObject {
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -57,7 +59,6 @@ public class FinanceTracking implements ITransferObject {
 	public Finance getFinance() {
 		return finance;
 	}
-
 	public void setFinance(Finance finance) {
 		this.finance = finance;
 	}
@@ -67,7 +68,6 @@ public class FinanceTracking implements ITransferObject {
 	public Date getTrackingDate() {
 		return trackingDate;
 	}
-
 	public void setTrackingDate(Date trackingDate) {
 		this.trackingDate = trackingDate;
 	}
@@ -76,7 +76,6 @@ public class FinanceTracking implements ITransferObject {
 	public FinanceTrackingType getType() {
 		return type;
 	}
-
 	public void setType(FinanceTrackingType type) {
 		this.type = type;
 	}
@@ -85,7 +84,6 @@ public class FinanceTracking implements ITransferObject {
     public String getDescription() {
         return description;
     }
-    
     public void setDescription(String description) {
         this.description = description;
     }
@@ -97,7 +95,6 @@ public class FinanceTracking implements ITransferObject {
 	public PayMethodTypeDetail getPayMethodTypeDetail() {
 		return payMethodTypeDetail;
 	}
-
 	public void setPayMethodTypeDetail(PayMethodTypeDetail payMethodTypeDetail) {
 		this.payMethodTypeDetail = payMethodTypeDetail;
 	}
@@ -109,7 +106,6 @@ public class FinanceTracking implements ITransferObject {
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
-
 	public void setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
 	}
@@ -118,7 +114,6 @@ public class FinanceTracking implements ITransferObject {
     public double getAmount() {
         return amount;
     }
-    
     public void setAmount(double amount) {
         this.amount = amount;
     }
@@ -127,7 +122,6 @@ public class FinanceTracking implements ITransferObject {
 	public boolean isRecorded() {
 		return recorded;
 	}
-
 	public void setRecorded(boolean recorded) {
 		this.recorded = recorded;
 	}
@@ -137,26 +131,44 @@ public class FinanceTracking implements ITransferObject {
 		return (type == FinanceTrackingType.PAID || type == FinanceTrackingType.RETURNED);
 	}
 
-	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final FinanceTracking o = (FinanceTracking) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.amount,o.amount)
+			.append(this.description,o.description)
+			.append(this.finance,o.finance)
+			.append(this.payMethodTypeDetail,o.payMethodTypeDetail)
+			.append(this.recorded,o.recorded)
+			.append(this.registryBank,o.registryBank)
+			.append(this.trackingDate,o.trackingDate)
+			.append(this.type,o.type)
+			.isEquals();
 		}
-		if (obj instanceof FinanceTracking) {
-			FinanceTracking o = (FinanceTracking) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.amount)
+			.append(this.description)
+			.append(this.finance)
+			.append(this.payMethodTypeDetail)
+			.append(this.recorded)
+			.append(this.registryBank)
+			.append(this.trackingDate)
+			.append(this.type)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

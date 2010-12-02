@@ -133,13 +133,12 @@ public class AbstractPojoController {
 	 * @param alias
 	 * @return Field path.
 	 */
-	public String resolveAlias( String alias ) {
-		String fieldName = null;
+	public String resolveAlias(String alias) {
+		String fieldName = StringUtils.substringBefore(alias, "-");
 		try {
-			fieldName = getFieldName(alias);
+			fieldName = getFieldName(fieldName);
 		} catch (ManagerBeanException e) {
-			fieldName = alias.replace('_', '.');
-			fieldName = StringUtils.substringBefore(fieldName, "-");
+			fieldName = fieldName.replace('_', '.');
 		}
 		return fieldName;
 	}

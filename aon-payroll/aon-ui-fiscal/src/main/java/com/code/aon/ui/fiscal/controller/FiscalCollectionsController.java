@@ -1,5 +1,6 @@
 package com.code.aon.ui.fiscal.controller;
 
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -13,7 +14,7 @@ import com.code.aon.fiscal.enumeration.Model347ReportOrder;
 import com.code.aon.fiscal.enumeration.Model347Type;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RentingStatus;
-import com.code.aon.fiscal.enumeration.VatReportOrder;
+import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
@@ -32,7 +33,7 @@ public class FiscalCollectionsController {
 	private List<SelectItem> administrations;
 
 	private List<SelectItem> vatTypes;
-	private List<SelectItem> vatOrders;
+	private List<SelectItem> invoiceOrders;
 	private List<SelectItem> periods;
 	private List<SelectItem> model347Orders;
 	private List<SelectItem> model347Types;
@@ -103,17 +104,17 @@ public class FiscalCollectionsController {
 		return vatTypes;
 	}
 
-	public List<SelectItem> getVatReportOrders() {
-		if (vatOrders == null) {
+	public List<SelectItem> getInvoiceReportOrders() {
+		if (invoiceOrders == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			vatOrders = new LinkedList<SelectItem>();
-			for (VatReportOrder order:VatReportOrder.values()) {
+			invoiceOrders = new LinkedList<SelectItem>();
+			for (InvoiceReportOrder order:InvoiceReportOrder.values()) {
 				String name = order.getName(locale);
 				SelectItem item = new SelectItem(order, name);
-				vatOrders.add(item);
+				invoiceOrders.add(item);
 			}
 		}
-		return vatOrders;
+		return invoiceOrders;
 	}
 
 	public List<SelectItem> getPeriods() {

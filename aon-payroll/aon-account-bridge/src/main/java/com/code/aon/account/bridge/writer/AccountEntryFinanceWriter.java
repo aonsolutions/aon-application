@@ -27,15 +27,10 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 
-/**
- * The Class AccountEntryFinanceWriter.
- */
 public class AccountEntryFinanceWriter {
 
 	private static final String C_FRA = "Cobro Fra: ";
@@ -80,19 +75,19 @@ public class AccountEntryFinanceWriter {
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
 		Account registryAccount = null;
-		if (fbatchDetail.getFinance().getInvoice().getType().equals(InvoiceType.SALES)) {
+		if (!fbatchDetail.getFinance().isPayment()) {
 			registryAccount = getAccountBridgeUtil().obtainCustomerAccount(fbatchDetail.getFinance().getRegistry());
 			detail.setCredit(fbatchDetail.getAmount());
-		} else if(fbatchDetail.getFinance().getInvoice().getType().equals(InvoiceType.PURCHASE)) {
-			registryAccount = getAccountBridgeUtil().obtainSupplierAccount(fbatchDetail.getFinance().getRegistry());
-			detail.setDebit(fbatchDetail.getAmount());
 		} else {
-			registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
+			registryAccount = getAccountBridgeUtil().obtainSupplierAccount(fbatchDetail.getFinance().getRegistry());
+			if (registryAccount == null) {
+				registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
+			}
 			detail.setDebit(fbatchDetail.getAmount());
 		}
 		detail.setAccount(registryAccount);
-		detail.setConcept(obtainConcept(fbatchDetail.getFinance().getInvoice(), fbatchDetail.getAmount(), fbatchDetail.getFinanceBatch()));
-		detail.setDocumentNumber(fbatchDetail.getFinance().getInvoice().getDocumentNumber());
+		detail.setConcept(obtainConcept(fbatchDetail.getFinance(), fbatchDetail.getAmount(), fbatchDetail.getFinanceBatch()));
+		detail.setDocumentNumber(fbatchDetail.getFinance().getDocumentNumber());
 		detail.setBalancingAccount(paymentAccount);
 
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -122,10 +117,10 @@ public class AccountEntryFinanceWriter {
 		list.add(finance);
 
 		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
-		recordingTo.setType((finance.isPayment())?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION);
+		recordingTo.setType((finance.isPayment()) ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
 		recordingTo.setDate(paymentDate);
 		recordingTo.setPaymentAccount(obtainPaymentAccount(registryBank, payMethodTypeDetail));
-		recordingTo.setSecurityLevel((finance.getSecurityLevel()==null)?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
+		recordingTo.setSecurityLevel((finance.getSecurityLevel()==null) ? SecurityLevel.OFFICIAL : finance.getSecurityLevel());
 		recordingTo.setFinanceList(list);
 		return recordFinances(recordingTo, null);
 	}
@@ -140,32 +135,32 @@ public class AccountEntryFinanceWriter {
 
 	private void insertFinanceEntryDetails(Account paymentAccount, AccountEntry entry, FinanceRecordingTo recordingTo) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-		Invoice invoice = null;
 		Account registryAccount = null;
+		String concept = null;
+		String documentNumber = null;
 		double balancingAmount = 0;
 		// Primer Apunte
-		String documentNumber = null;
 		for (Finance finance: recordingTo.getFinanceList()) {
-			invoice = finance.getInvoice();
+			if (!finance.isPayment()) {
+				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
+			} else {
+				registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
+				if (registryAccount == null) {
+					registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+				}
+			}
+			concept = obtainConcept(finance, finance.getTotalAmount(), null);
+			documentNumber = finance.getDocumentNumber();
 			balancingAmount += finance.getTotalAmount();
 
 			AccountEntryDetail detail = new AccountEntryDetail();
 			detail.setAccountEntry(entry);
-			if (finance.getInvoice().getType().equals(InvoiceType.SALES)) {
-				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
-				detail.setCredit(finance.getTotalAmount());
-			} else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)) {
-				registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
-				detail.setDebit(finance.getTotalAmount());
-			} else {
-				registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
-				detail.setDebit(finance.getTotalAmount());
-			}
 			detail.setAccount(registryAccount);
-			detail.setConcept(obtainConcept(finance.getInvoice(), finance.getTotalAmount(), null));
-			documentNumber = finance.getInvoice().getDocumentNumber();
-			detail.setDocumentNumber(documentNumber);
 			detail.setBalancingAccount(paymentAccount);
+			detail.setConcept(concept);
+			detail.setCredit((!finance.isPayment()) ? finance.getTotalAmount() : 0);
+			detail.setDebit((!finance.isPayment()) ? 0 : finance.getTotalAmount());
+			detail.setDocumentNumber(documentNumber);
 			accountEntryDetailBean.insert(detail);
 		}
 		
@@ -174,16 +169,11 @@ public class AccountEntryFinanceWriter {
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
 		detail.setAccount(paymentAccount);
-		if (recordingTo.getFinanceList() != null && recordingTo.getFinanceList().size() == 1) {
-			detail.setDocumentNumber(documentNumber);	
-		}
-		detail.setConcept((StringUtils.isEmpty(recordingTo.getBalancingConcept()))?obtainConcept(invoice, balancingAmount, null):recordingTo.getBalancingConcept());
-		detail.setBalancingAccount((recordingTo.getFinanceList().size()==1)?registryAccount:null);
-		if (entry.getType().equals(AccountEntryType.COLLECTION)) {
-			detail.setDebit(balancingAmount);
-		} else{
-			detail.setCredit(balancingAmount);
-		}
+		detail.setBalancingAccount((recordingTo.getFinanceList().size()==1) ? registryAccount : null);
+		detail.setConcept((StringUtils.isEmpty(recordingTo.getBalancingConcept())) ? concept : recordingTo.getBalancingConcept());
+		detail.setCredit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? balancingAmount : 0);
+		detail.setDebit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? 0 : balancingAmount);
+		detail.setDocumentNumber((recordingTo.getFinanceList().size()==1) ? documentNumber : null);
 		accountEntryDetailBean.insert(detail);
 	}
 
@@ -193,10 +183,10 @@ public class AccountEntryFinanceWriter {
 		list.add(finance);
 
 		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
-		recordingTo.setType((finance.isPayment()?AccountEntryType.RETURNED_PAYMENT:AccountEntryType.RETURNED_COLLECTION));
+		recordingTo.setType((finance.isPayment()) ? AccountEntryType.RETURNED_PAYMENT : AccountEntryType.RETURNED_COLLECTION);
 		recordingTo.setDate(returnDate);
 		recordingTo.setPaymentAccount(obtainPaymentAccount(registryBank, payMethodTypeDetail));
-		recordingTo.setSecurityLevel(finance.getSecurityLevel()==null?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
+		recordingTo.setSecurityLevel((finance.getSecurityLevel()==null) ? SecurityLevel.OFFICIAL : finance.getSecurityLevel());
 		recordingTo.setFinanceList(list);
 		return returnFinances(recordingTo);
 	}
@@ -212,45 +202,45 @@ public class AccountEntryFinanceWriter {
 
 	private void insertReturnEntryDetails(Account paymentAccount, AccountEntry entry, Finance finance) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		Account registryAccount = null;
+		if (!finance.isPayment()) {
+			registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
+		} else {
+			registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
+			if (registryAccount == null) {
+				registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+			}
+		}
+		String concept = obtainReturnConcept(finance);
+		String documentNumber = finance.getDocumentNumber();
+
 		// Primer Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
-		Account registryAccount = null;
-		if (finance.getInvoice().getType().equals(InvoiceType.SALES)) {
-			registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
-			detail.setDebit(finance.getTotalAmount());
-		} else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)) {
-			registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
-			detail.setCredit(finance.getTotalAmount());
-		} else {
-			registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
-			detail.setCredit(finance.getTotalAmount());
-		}
 		detail.setAccount(registryAccount);
-		detail.setConcept(obtainReturnConcept(finance.getInvoice()));
-		detail.setDocumentNumber(finance.getInvoice().getDocumentNumber());
 		detail.setBalancingAccount(paymentAccount);
+		detail.setConcept(concept);
+		detail.setCredit((!finance.isPayment()) ? 0 : finance.getTotalAmount());
+		detail.setDebit((!finance.isPayment()) ? finance.getTotalAmount() : 0);
+		detail.setDocumentNumber(documentNumber);
 		accountEntryDetailBean.insert(detail);
 
 		// Segundo Apunte
 		detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
 		detail.setAccount(paymentAccount);
-		detail.setConcept(obtainReturnConcept(finance.getInvoice()));
-		detail.setDocumentNumber(finance.getInvoice().getDocumentNumber());
 		detail.setBalancingAccount(registryAccount);
-		if (entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)) {
-			detail.setCredit(finance.getTotalAmount());
-		} else {
-			detail.setDebit(finance.getTotalAmount());
-		}
+		detail.setConcept(concept);
+		detail.setCredit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? 0 : finance.getTotalAmount());
+		detail.setDebit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? finance.getTotalAmount() : 0);
+		detail.setDocumentNumber(documentNumber);
 		accountEntryDetailBean.insert(detail);
 	}
 
 	private AccountEntry createAccountEntry(FinanceRecordingTo to) throws ManagerBeanException {
 		Period period = to.getPeriod();
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod((period!=null && period.getId()!=null) ? period.getId() : getAccountingUtil().obtainPeriod(to.getDate()).getId());
+		entry.setAccountPeriod((period!=null&&period.getId()!=null) ? period.getId() : getAccountingUtil().obtainPeriod(to.getDate()).getId());
 		entry.setEntryDate(to.getDate());
 		entry.setType(to.getType());
 		entry.setJournal(null);
@@ -270,14 +260,17 @@ public class AccountEntryFinanceWriter {
 		return (account!=null) ? account : getAccountingUtil().obtainCashAccount();
 	}
 
-	private String obtainConcept(Invoice invoice, double total, FinanceBatch fbatch) {
-		String concept = ((total < 0) ? A_FRA : (invoice.getType().equals(InvoiceType.SALES) ? C_FRA : P_FRA)) + invoice.getReferenceCode();
+	private String obtainConcept(Finance finance, double total, FinanceBatch fbatch) {
+		String prefix = (total < 0) ? A_FRA : (!finance.isPayment()) ? C_FRA : P_FRA;
+		String concept = (!finance.isEmptyInvoice()) ? finance.getInvoice().getReferenceCode() : finance.getConcept();
 		String fbatchConcept = (fbatch != null) ? (" (R:" + fbatch.getId() + ")") : "";
-		return StringUtils.abbreviate(concept + fbatchConcept, 32);
+		return StringUtils.abbreviate(prefix + concept + fbatchConcept, 32);
 	}
 
-	private String obtainReturnConcept(Invoice invoice) {
-		return StringUtils.abbreviate(D_FRA + invoice.getReferenceCode(), 32);
+	private String obtainReturnConcept(Finance finance) {
+		String prefix = D_FRA;
+		String concept = (!finance.isEmptyInvoice()) ? finance.getInvoice().getReferenceCode() : finance.getConcept();
+		return StringUtils.abbreviate(prefix + concept, 32);
 	}
 
 	public AccountEntryFinanceTracking recordFinanceTracking(FinanceTracking tracking) throws ManagerBeanException {

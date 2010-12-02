@@ -17,12 +17,10 @@
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle"
 					value="#{accountingBundle.accounting_entry_finance_module}" />
-				<ui:param name="toolbarDescription"
-					value="#{financeEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				<ui:param name="toolbarDescription" value="#{financeEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="toolbarContent">
-					<aon:commandButton
-						value="#{accountingBundle.accounting_entry_generate}"
+					<aon:commandButton value="#{accountingBundle.accounting_entry_generate}"
 						id="saveFinance" accesskey="#{bundle.aon_key_save}"
 						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						actionListener="#{financeEntry.accept}"
@@ -177,18 +175,14 @@
 					<aon:panelTabSet rendered="#{financeEntry.payment != null}">
 
 						<c:if test="#{financeEntry.lines.rowCount > 0}">
-							<aon:panelTab name="lines"
-								label="#{accountingBundle.accounting_finance_record_list}">
-								<ui:include
-									src="/com/code/aon/ui/accounting/facelet/entry/finance/form_lines.xhtml" />
+							<aon:panelTab name="lines" label="#{accountingBundle.accounting_finance_record_list}">
+								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/form_lines.xhtml" />
 							</aon:panelTab>
 						</c:if>
 
 						<c:if test="#{financeEntry.finances.rowCount > 0}">
-							<aon:panelTab name="finances"
-								label="#{accountingBundle.accounting_finance_pending_list}">
-								<ui:include
-									src="/com/code/aon/ui/accounting/facelet/entry/finance/form_finances.xhtml" />
+							<aon:panelTab name="finances" label="#{accountingBundle.accounting_finance_pending_list}">
+								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/form_finances.xhtml" />
 							</aon:panelTab>
 						</c:if>
 
