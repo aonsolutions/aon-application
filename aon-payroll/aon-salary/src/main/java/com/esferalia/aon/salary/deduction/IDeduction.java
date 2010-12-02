@@ -9,7 +9,7 @@ public interface IDeduction {
 	
 	public String getDescription();
 	
-	public String getFunction();
+	public String getExpression();
 	
 	public double getAmount();
 	
