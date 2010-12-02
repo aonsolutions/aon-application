@@ -5,23 +5,19 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-
-/**
- * Enummeration to identify the different types of an Invoice.
- * 
- */
-public enum Model303Column  implements IResourceable {
-	ACUMULADO,
-	DECLARADO,
-	RESULTADO,
-	DECLARAR,
-	AJUSTE;
+public enum Administration implements IResourceable {
+	
+	ALAVA,
+	BIZKAIA,
+	GIPUZKOA,
+	NAVARRA,
+	COMMON_TERRITORY;
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_model303_columns_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_administration_";
 
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
@@ -34,5 +30,5 @@ public enum Model303Column  implements IResourceable {
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
-    }	
+    }
 }

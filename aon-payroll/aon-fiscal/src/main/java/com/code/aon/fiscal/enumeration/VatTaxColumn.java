@@ -5,20 +5,23 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
+
 /**
  * Enummeration to identify the different types of an Invoice.
  * 
  */
-public enum VatTaxStatus implements IResourceable {
-	
-	PENDING,
-	FINISHED;
+public enum VatTaxColumn  implements IResourceable {
+	ACUMULADO,
+	DECLARADO,
+	RESULTADO,
+	DECLARAR,
+	AJUSTE;
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_vat_tax_status_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_vat_tax_columns_";
 
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
@@ -31,5 +34,5 @@ public enum VatTaxStatus implements IResourceable {
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
-    }
+    }	
 }

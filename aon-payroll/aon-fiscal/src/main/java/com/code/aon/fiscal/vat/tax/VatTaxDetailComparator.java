@@ -1,10 +1,12 @@
-package com.code.aon.fiscal.model303;
+package com.code.aon.fiscal.vat.tax;
 
 import java.util.Comparator;
 
-public class Model303Comparator implements Comparator<Model303>{
+import com.code.aon.fiscal.VatTaxDetail;
 
-	public int compare(Model303 o1, Model303 o2) {
+public class VatTaxDetailComparator implements Comparator<VatTaxDetail>{
+
+	public int compare(VatTaxDetail o1, VatTaxDetail o2) {
 		int a = o1.getKey().ordinal();
 		int b = o2.getKey().ordinal();
 		if (a<b) return -1;
