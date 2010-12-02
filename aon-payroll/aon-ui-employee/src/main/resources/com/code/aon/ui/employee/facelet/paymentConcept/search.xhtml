@@ -22,11 +22,6 @@
 					<aon:inputText id="PaymentConcept_code" size="5" maxlength="5"
 						valueChangeListener="#{paymentConcept.addExpression}" />
 
-					<aon:outputLabel for="PaymentConcept_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="PaymentConcept_description" size="64" maxlength="64"
-						valueChangeListener="#{paymentConcept.addExpression}" />
-						
 					<aon:outputLabel for="PaymentConcept_type"
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="PaymentConcept_type" 
@@ -36,6 +31,11 @@
 						<f:selectItems value="#{employeeCollections.paymentTypes}" />
 					</aon:selectOneMenu>	
 
+					<aon:outputLabel for="PaymentConcept_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="PaymentConcept_description" size="64" maxlength="64"
+						valueChangeListener="#{paymentConcept.addExpression}" />
+						
 				</ui:define>
 			</ui:decorate>
 			
