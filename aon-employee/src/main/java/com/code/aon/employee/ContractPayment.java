@@ -24,6 +24,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.payment.IPayment;
 
 /**
@@ -32,7 +34,7 @@ import com.esferalia.aon.salary.payment.IPayment;
  */
 @Entity
 @Table(name="contract_payment")
-public class ContractPayment implements ITransferObject, IPayment {
+public class ContractPayment implements ITransferObject, IPayment, IExpression {
 	
 	private static final long serialVersionUID = 2831598401831457550L;
 
@@ -190,4 +192,15 @@ public class ContractPayment implements ITransferObject, IPayment {
 		return 0;
 	}
 	
+	@Override
+	@Transient
+	public String getName() {
+		return getPaymentConcept()==null?null:getPaymentConcept().getCode();
+	}
+
+	@Override
+	@Transient
+	public ExpressionScope getScope() {
+		return ExpressionScope.CONTRACT;
+	}
 }

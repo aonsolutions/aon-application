@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -16,6 +17,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 
 /**
  * Transfer Object that represents the function context.
@@ -23,7 +26,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  */
 @Entity
 @Table(name="function_constant")
-public class FunctionConstant implements ITransferObject{
+public class FunctionConstant implements ITransferObject, IExpression{
 	
 	private static final long serialVersionUID = -3605182384674355773L;
 
@@ -118,6 +121,12 @@ public class FunctionConstant implements ITransferObject{
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+
+	@Override
+	@Transient
+	public ExpressionScope getScope() {
+		return ExpressionScope.APPLICATION;
 	}
 
 }
