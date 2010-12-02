@@ -280,7 +280,7 @@ public class AccountEntryInvoiceWriter {
 	}
 
 	public String obtainConcept(String prefix, Invoice invoice) {
-		return StringUtils.abbreviate(prefix + " " + invoice.getReferenceCode(), 32) ; 
+		return StringUtils.abbreviate(prefix + invoice.getReferenceCode(), 32) ; 
 	}
 
 	public String obtainConcept(Invoice invoice, double total) {

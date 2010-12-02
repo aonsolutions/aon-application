@@ -18,6 +18,8 @@ public interface IFinanceConstants {
 
 	String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 	
+	String SALE_INVOICE_FORM_NAME = "saleInvoice_form";
+	
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 	
 	String SALE_INVOICE_ADDRESS_CONTROLLER_NAME = "saleInvoiceAddress";
@@ -28,6 +30,8 @@ public interface IFinanceConstants {
 	
 	String SALE_INVOICE_SIGNER_CONTROLLER_NAME = "saleInvoiceSigner";
 
+	String PURCHASE_INVOICE_FORM_NAME = "purchaseInvoice_form";
+	
 	String PURCHASE_INVOICE_CONTROLLER_NAME = "purchaseInvoice";
 	
 	String PURCHASE_INVOICE_ADDRESS_CONTROLLER_NAME = "purchaseInvoiceAddress";
@@ -37,6 +41,8 @@ public interface IFinanceConstants {
 	String PURCHASE_INVOICE_FINANCE_CONTROLLER_NAME = "purchaseInvoiceFinance";
 	
 	String PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME = "purchaseInvoiceSigner";
+	
+	String EXPENSE_INVOICE_FORM_NAME = "expenseInvoice_form";
 	
 	String EXPENSE_INVOICE_CONTROLLER_NAME = "expenseInvoice";
 	
@@ -48,6 +54,8 @@ public interface IFinanceConstants {
 	
 	String EXPENSE_INVOICE_SIGNER_CONTROLLER_NAME = "expenseInvoiceSigner";
 
+	String UNDEDUCTIBLE_INVOICE_FORM_NAME = "undeductibleInvoice_form";
+	
 	String UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME = "undeductibleInvoice";
 	
 	String UNDEDUCTIBLE_INVOICE_ADDRESS_CONTROLLER_NAME = "undeductibleInvoiceAddress";
