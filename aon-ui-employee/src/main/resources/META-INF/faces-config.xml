@@ -594,6 +594,25 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ DeductionConcept ************** -->
+	<managed-bean>
+		<managed-bean-name>deductionConcept</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.DeductionConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>deductionConcept</value>
+		</managed-property>
+	</managed-bean>
+	
 	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
@@ -885,6 +904,22 @@
 	    <navigation-case>
     	  	<from-outcome>paymentConcept_form</from-outcome>
     		<to-view-id>/com/code/aon/ui/employee/facelet/paymentConcept/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== DeductionConcept ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>deductionConcept_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/deductionConcept/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>deductionConcept_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/deductionConcept/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>deductionConcept_form</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/deductionConcept/form.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	
