@@ -54,6 +54,10 @@ public abstract class AbstractFileFiller implements FileFiller {
 		this.output = assignFileOutputStream(filePath);
 	}
 	
+	protected AbstractFileFiller(PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException{
+		this.filePath = null;
+		this.output = new LinesOutput(writer);
+	}
 	
 	
 	/**

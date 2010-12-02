@@ -36,6 +36,8 @@
 	<field name="registry" class="com.code.aon.registry.Registry"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="lines" class="java.util.Set"/>
+	<field name="registryName" class="java.lang.String"/>
+	<field name="registryDocument" class="java.lang.String"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -58,7 +60,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{registry}.getName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{registryName}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -123,7 +125,7 @@
 					<textElement>
 						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_document} + ": " + $F{registry}.getDocument()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_document} + ": " + $F{registryDocument}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

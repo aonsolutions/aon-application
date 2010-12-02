@@ -37,6 +37,12 @@
 							</aon:div>
 
 							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="mod_340_report" 
+									action="model340_search" actionListener="#{model340.onReset}"
+									value="#{fiscalBundle.fiscal_model_340_module}" />
+							</aon:div>
+
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="vatTax" 
 									action="vatTax_search" actionListener="#{vatTax.onEditSearch}"
 									value="#{fiscalBundle.fiscal_vat_tax_module}" />
