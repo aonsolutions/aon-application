@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +15,8 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.StatementConcept;
+import com.code.aon.finance.enumeration.StatementStatus;
 
 /**
  * Collections controller
@@ -33,6 +34,8 @@ public class FinanceCollectionsController {
 	private List<SelectItem> financeStatuses;
 	private List<SelectItem> invoiceTypes;
 	private List<SelectItem> invoiceStatuses;
+	private List<SelectItem> statementConcepts;
+	private List<SelectItem> statementStatuses;
 
 	public List<SelectItem> getBillingPeriods() {
 		if (billingPeriods == null) {
@@ -77,9 +80,9 @@ public class FinanceCollectionsController {
 		if (financeBatchStatus == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			financeBatchStatus = new LinkedList<SelectItem>();
-			for (FinanceBatchStatus type:FinanceBatchStatus.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
+			for (FinanceBatchStatus status:FinanceBatchStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
 				financeBatchStatus.add(item);
 			}
 		}
@@ -103,9 +106,9 @@ public class FinanceCollectionsController {
 		if (financeStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			financeStatuses = new LinkedList<SelectItem>();
-			for (FinanceStatus type:FinanceStatus.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
+			for (FinanceStatus status:FinanceStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
 				financeStatuses.add(item);
 			}
 		}
@@ -129,13 +132,39 @@ public class FinanceCollectionsController {
 		if (invoiceStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			invoiceStatuses = new LinkedList<SelectItem>();
-			for (InvoiceStatus type:InvoiceStatus.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
+			for (InvoiceStatus status:InvoiceStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
 				invoiceStatuses.add(item);
 			}
 		}
 		return invoiceStatuses;
+	}
+	
+	public List<SelectItem> getStatementConcepts() {
+		if (statementConcepts == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			statementConcepts = new LinkedList<SelectItem>();
+			for (StatementConcept concept:StatementConcept.values()) {
+				String name = concept.getName(locale);
+				SelectItem item = new SelectItem(concept, name);
+				statementConcepts.add(item);
+			}
+		}
+		return statementConcepts;
+	}
+	
+	public List<SelectItem> getStatementStatuses() {
+		if (statementStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			statementStatuses = new LinkedList<SelectItem>();
+			for (StatementStatus status:StatementStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				statementStatuses.add(item);
+			}
+		}
+		return statementStatuses;
 	}
 	
 }

@@ -1,5 +1,6 @@
 package com.code.aon.ui.fiscal.event;
 
+
 import java.util.List;
 
 import com.code.aon.common.ITransferObject;
@@ -24,6 +25,7 @@ public class VatTaxDeclarationControllerListener extends ControllerAdapter {
 		}
 		to.setPercent( getPercent(c) );
 		c.calculate(to);
+		c.setFileOutput(null);
 	}
 
 	private double getPercent(VatTaxDeclarationController master) {
@@ -34,6 +36,38 @@ public class VatTaxDeclarationControllerListener extends ControllerAdapter {
 			percent = CommonUtil.round(percent - d.getPercent());
 		}
 		return percent;
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		VatTaxDeclarationController c = (VatTaxDeclarationController) event.getController();
+		c.setFileOutput(null);
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		VatTaxDeclarationController c = (VatTaxDeclarationController) event.getController();
+		c.setFileOutput(null);
+	}
+	@Override
+	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
+		VatTaxDeclarationController c = (VatTaxDeclarationController) event.getController();
+		c.setFileOutput(null);
+	}
+	@Override
+	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		VatTaxDeclarationController c = (VatTaxDeclarationController) event.getController();
+		c.setFileOutput(null);
+	}
+	@Override
+	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
+		VatTaxDeclarationController c = (VatTaxDeclarationController) event.getController();
+		c.setFileOutput(null);
+	}
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		VatTaxDeclarationController c = (VatTaxDeclarationController) event.getController();
+		c.setFileOutput(null);
 	}
 
 }

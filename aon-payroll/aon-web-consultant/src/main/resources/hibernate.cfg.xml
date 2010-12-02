@@ -121,6 +121,7 @@
 		<mapping class="com.code.aon.customer.Customer"/>
 
 		<!-- AON-FINANCE Mapping files -->	
+		<mapping class="com.code.aon.finance.BankStatement"/>
 		<mapping class="com.code.aon.finance.Creditor"/>
 		<mapping class="com.code.aon.finance.CustomerFee"/>
 		<mapping class="com.code.aon.finance.Finance"/>

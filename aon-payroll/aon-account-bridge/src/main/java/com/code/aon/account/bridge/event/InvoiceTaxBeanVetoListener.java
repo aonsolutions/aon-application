@@ -10,10 +10,35 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.enumeration.VatDeductionType;
+import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.ql.Criteria;
 
 public class InvoiceTaxBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+
+	@Override
+	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		InvoiceTax invoiceTax = (InvoiceTax) evt.getTo();
+		if (invoiceTax.getTaxType() != TaxType.VAT) {
+			invoiceTax.setVatDeductionType(VatDeductionType.WITH_RIGHT);
+		}
+		if (invoiceTax.getTaxType() != TaxType.RETENTION) {
+			invoiceTax.setWithholdingType(WithholdingType.PROFESSIONAL);
+		}
+	}
+
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		InvoiceTax invoiceTax = (InvoiceTax) evt.getTo();
+		if (invoiceTax.getTaxType() != TaxType.VAT) {
+			invoiceTax.setVatDeductionType(VatDeductionType.WITH_RIGHT);
+		}
+		if (invoiceTax.getTaxType() != TaxType.RETENTION) {
+			invoiceTax.setWithholdingType(WithholdingType.PROFESSIONAL);
+		}
+	}
 
 	@Override
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
