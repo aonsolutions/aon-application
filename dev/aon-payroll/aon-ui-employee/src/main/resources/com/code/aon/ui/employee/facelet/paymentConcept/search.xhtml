@@ -35,13 +35,7 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{employeeCollections.paymentTypes}" />
 					</aon:selectOneMenu>	
-						
-					<aon:outputLabel for="PaymentConcept_inKind"
-						value="#{employeeBundle.employee_inKind}" />
-					<aon:selectBooleanCheckbox id="PaymentConcept_inKind" 
-						valueChangeListener="#{paymentConcept.addExpression}" />
-					
-					
+
 				</ui:define>
 			</ui:decorate>
 			

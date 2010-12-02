@@ -22,11 +22,11 @@ public class ContractDeductionController extends LinesController {
 		try {
 			s = c.getSalary();
 			ContractDeduction cd = (ContractDeduction) getModel().getRowData();
-			if (NumberUtils.isNumber(cd.getFunction()) ) {
-				amount = NumberUtils.toDouble(cd.getFunction()) ;	
+			if (NumberUtils.isNumber(cd.getExpression()) ) {
+				amount = NumberUtils.toDouble(cd.getExpression()) ;	
 			} else {
-				if (StringUtils.endsWith(cd.getFunction(), "%")) {
-					String func = StringUtils.stripEnd(cd.getFunction(), "%");
+				if (StringUtils.endsWith(cd.getExpression(), "%")) {
+					String func = StringUtils.stripEnd(cd.getExpression(), "%");
 					if (NumberUtils.isNumber(func) ) {
 						double percent = NumberUtils.toDouble(func);
 						double totalPayments = s.getPayments().getTotal();
