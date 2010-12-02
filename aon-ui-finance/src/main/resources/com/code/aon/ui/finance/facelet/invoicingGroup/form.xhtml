@@ -5,6 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -38,55 +39,31 @@
 					</aon:div>					
 				</aon:panelGrid>
 
-				<aon:div styleClass="aon-form-group" rendered="#{!invoicingGroup.new}">
-					<aon:div styleClass="aon-form-group-title">
-						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="invoicingGroupDetailData" value="#{financeBundle.finance_invoicing_group_members}" />
-						</aon:div>
-					</aon:div>
-					<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{!invoicingGroup.new}">
+					<aon:div styleClass="aon-padding-top">
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputLabel for="invoicingGroupDetailData" value="#{financeBundle.finance_invoicing_group_members}" />
+							</f:facet>
 
-						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-							<ui:param name="controller" value="#{invoicingGroupDetail}" />
-							<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
-							<ui:define name="columns">
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_company_name}" />
-									</f:facet>
-									<aon:outputText value="#{to.child.fullName}" rendered="#{formList}" />
-									<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-										<aon:lookupInputText id="Customer_id-Edit"
-											lookup="#{customerLookup}" required="true"
-											reRender="Customer_name-Edit" size="5"
-											value="#{invoicingGroupDetail.to.child.id}" lookupProperty="registry">
-										</aon:lookupInputText>
-										<aon:lookupButton actionType="search"
-											windowTitle="#{customerBundle.customer_selection}"
-											selectReRender="invoicingGroupDetailData"
-											lookup="#{customerLookup}" minHeight="460" minWidth="650"
-											property="#{controller.to.child}" lookupProperty="registry">
-										</aon:lookupButton>
-										<aon:lookupButton 
-											windowTitle="#{customerBundle.customer_new}" minWidth="650" minHeight="650"
-											property="#{controller.to.child}" lookupProperty="registry" lookup="#{customerLookup}"
-											selectReRender="invoicingGroupDetailData"
-											actionType="new">
-										</aon:lookupButton>
-										<aon:inputText id="Customer_name-Edit"
-											value="#{(controller.to.child.fullName!=null)?(controller.to.child.fullName):('')}"
-											size="80" disabled="true" />
-									</aon:div>
-									<f:facet name="footer">
-										<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-											<aon:lookupInputText id="Customer_id-New"
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+								<ui:param name="controller" value="#{invoicingGroupDetail}" />
+								<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
+								<ui:define name="columns">
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_company_name}" />
+										</f:facet>
+										<aon:outputText value="#{to.child.fullName}" rendered="#{formList}" />
+										<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+											<aon:lookupInputText id="Customer_id-Edit"
 												lookup="#{customerLookup}" required="true"
-												reRender="Customer_name-New" size="5"
+												reRender="Customer_name-Edit" size="5"
 												value="#{invoicingGroupDetail.to.child.id}" lookupProperty="registry">
 											</aon:lookupInputText>
-											<aon:lookupButton 
-												windowTitle="#{customerBundle.customer_selection}" actionType="search"
-												selectReRender="Customer_id-New,Customer_name-New"
+											<aon:lookupButton actionType="search"
+												windowTitle="#{customerBundle.customer_selection}"
+												selectReRender="invoicingGroupDetailData"
 												lookup="#{customerLookup}" minHeight="460" minWidth="650"
 												property="#{controller.to.child}" lookupProperty="registry">
 											</aon:lookupButton>
@@ -96,18 +73,41 @@
 												selectReRender="invoicingGroupDetailData"
 												actionType="new">
 											</aon:lookupButton>
-											<aon:inputText id="Customer_name-New"
+											<aon:inputText id="Customer_name-Edit"
 												value="#{(controller.to.child.fullName!=null)?(controller.to.child.fullName):('')}"
 												size="80" disabled="true" />
 										</aon:div>
-									</f:facet>
-								</aon:column>								
-								
-							</ui:define>
-						</ui:decorate>
+										<f:facet name="footer">
+											<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+												<aon:lookupInputText id="Customer_id-New"
+													lookup="#{customerLookup}" required="true"
+													reRender="Customer_name-New" size="5"
+													value="#{invoicingGroupDetail.to.child.id}" lookupProperty="registry">
+												</aon:lookupInputText>
+												<aon:lookupButton 
+													windowTitle="#{customerBundle.customer_selection}" actionType="search"
+													selectReRender="Customer_id-New,Customer_name-New"
+													lookup="#{customerLookup}" minHeight="460" minWidth="650"
+													property="#{controller.to.child}" lookupProperty="registry">
+												</aon:lookupButton>
+												<aon:lookupButton 
+													windowTitle="#{customerBundle.customer_new}" minWidth="650" minHeight="650"
+													property="#{controller.to.child}" lookupProperty="registry" lookup="#{customerLookup}"
+													selectReRender="invoicingGroupDetailData"
+													actionType="new">
+												</aon:lookupButton>
+												<aon:inputText id="Customer_name-New"
+													value="#{(controller.to.child.fullName!=null)?(controller.to.child.fullName):('')}"
+													size="80" disabled="true" />
+											</aon:div>
+										</f:facet>
+									</aon:column>								
 
+								</ui:define>
+							</ui:decorate>
+						</aon:panel>
 					</aon:div>
-				</aon:div>
+				</c:if>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />

@@ -1,7 +1,6 @@
 package com.code.aon.ui.account.bridge.event;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -14,8 +13,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -31,65 +28,30 @@ public class TaxAccountListener extends ControllerAdapter {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		Tax tax = (Tax)event.getController().getTo();
 		try {
 			IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
-			Iterator iterator = ((List)event.getController().getModel().getWrappedData()).iterator();
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
+			Iterator iterator = taxAccountBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
-				Tax tax = (Tax)iterator.next();
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
-				Iterator iter = taxAccountBean.getList(criteria).iterator();
-				while (iter.hasNext()) {
-					TaxAccount taxAccount = (TaxAccount)iter.next();
-					if (TaxAccountType.SALES.equals(taxAccount.getType())) {
-						tax.setSalesAccount(taxAccount.getAccount());
-					} else if (TaxAccountType.PURCHASE.equals(taxAccount.getType())) {
-						tax.setPurchaseAccount(taxAccount.getAccount());
-					}
-				}
-				if (tax.getSalesAccount() == null) {
-					tax.setSalesAccount(new Account());
-				}
-				if (tax.getPurchaseAccount() == null) {
-					tax.setPurchaseAccount(new Account());
+				TaxAccount taxAccount = (TaxAccount)iterator.next();
+				if (TaxAccountType.SALES.equals(taxAccount.getType())) {
+					tax.setSalesAccount(taxAccount.getAccount());
+				} else if (TaxAccountType.PURCHASE.equals(taxAccount.getType())) {
+					tax.setPurchaseAccount(taxAccount.getAccount());
 				}
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
-	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-		if (!event.getController().isNew()) {
-			Tax tax = (Tax)event.getController().getTo();
-			try {
-				IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
-				Iterator iterator = taxAccountBean.getList(criteria).iterator();
-				while (iterator.hasNext()) {
-					TaxAccount taxAccount = (TaxAccount)iterator.next();
-					if (TaxAccountType.SALES.equals(taxAccount.getType())) {
-						tax.setSalesAccount(taxAccount.getAccount());
-					} else if (TaxAccountType.PURCHASE.equals(taxAccount.getType())) {
-						tax.setPurchaseAccount(taxAccount.getAccount());
-					}
-				}
-				if (tax.getSalesAccount() == null) {
-					tax.setSalesAccount(new Account());
-				}
-				if (tax.getPurchaseAccount() == null) {
-					tax.setPurchaseAccount(new Account());
-				}
-	
-				BasicController controller = (BasicController)event.getController();
-				((ExtendedPageDataModel) controller.getModel()).setRowData(controller.getSelectedIndex(), tax);
-			} catch (ManagerBeanException e) {
-				throw new ControllerListenerException(e.getMessage(), e);
-			}
+		if (tax.getSalesAccount() == null) {
+			tax.setSalesAccount(new Account());
+		}
+		if (tax.getPurchaseAccount() == null) {
+			tax.setPurchaseAccount(new Account());
 		}
 	}
 

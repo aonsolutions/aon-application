@@ -45,7 +45,7 @@ public class InvoicingGroupControllerListener extends ControllerAdapter {
             	criteria.addExpression(ExpressionUtilities.getNotEqualExpression(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_ID), group.getId()));
         	}
         	if (invoicingGroupBean.getCount(criteria) > 0) {
-        		String message = AonUtil.addInfoMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.INVALID_INVOICING_GROUP_PARENT_KEY);
+        		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.INVALID_INVOICING_GROUP_PARENT_KEY);
         		throw new ControllerListenerException(message);
         	}
     	} catch (ManagerBeanException e) {
@@ -59,7 +59,7 @@ public class InvoicingGroupControllerListener extends ControllerAdapter {
         	Criteria criteria = new Criteria();
         	criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_CHILD_ID), registry.getId());
         	if (invoicingGroupDetailBean.getCount(criteria) > 0) {
-        		String message = AonUtil.addInfoMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.INVALID_INVOICING_GROUP_DETAIL_PARENT_KEY);
+        		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.INVALID_INVOICING_GROUP_DETAIL_PARENT_KEY);
         		throw new ControllerListenerException(message);
         	}
     	} catch (ManagerBeanException e) {

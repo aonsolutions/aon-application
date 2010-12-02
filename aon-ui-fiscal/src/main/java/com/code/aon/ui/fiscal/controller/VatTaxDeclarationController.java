@@ -1,15 +1,15 @@
 package com.code.aon.ui.fiscal.controller;
 
 
-import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -20,7 +20,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.Company;
+import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.file.tax.model.MOD303.MOD303Format;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
@@ -31,14 +32,21 @@ import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 public class VatTaxDeclarationController extends LinesController {
 	public static final String BEAN_NAME = "vatTaxDeclaration";
-	private Company company;
+	private FileOutput fileOutput;
+
+	public FileOutput getFileOutput() {
+		return fileOutput;
+	}
+	public void setFileOutput(FileOutput fileOutput) {
+		this.fileOutput = fileOutput;
+	}
 	
 	public void calculate(VatTaxDeclaration dec) {
 		VatTaxController master = (VatTaxController) getMasterController();
@@ -167,48 +175,72 @@ public class VatTaxDeclarationController extends LinesController {
 		return null;
 		
 	}
-	
-	
-	public void downloadDisk(ActionEvent event) {
-		VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
-		VatTax vatTax = dec.getVatTax();
-		
-		try {
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			ExternalContext ec = ctx.getExternalContext();
-			HttpServletResponse res = (HttpServletResponse) ec.getResponse();
-			res.setContentType(MimeType.MIME_TXT.getName());
-			String resourceName = vatTax.isAnual()?"390":"303" +  vatTax.getYear() +
-					vatTax.getPeriod() + ".txt"; 
-			res.setHeader("Content-Disposition", "attachment; filename=\""+resourceName+"\";");
-			res.setCharacterEncoding("iso-8859-1");
-			String resource = vatTax.isAnual()?"/com/code/aon/ui/fiscal/facelet/vatTax/39009AN.txt"
-					:"/com/code/aon/ui/fiscal/facelet/vatTax/30309T1.txt";
-			InputStream input = VatTaxDeclaration.class.getResourceAsStream(resource);
-			byte[] arr = IOUtils.toByteArray(input);
-			String n = getCompany().getFullName();
-			char[] name = n.toCharArray();
-			int i = 50;
-			for (int x=0;x < name.length; x++) {
-				arr[i] = (byte) name[x];
-				i++;
-			}
-			ByteArrayInputStream in = new ByteArrayInputStream(arr); 
-			IOUtils.copy(in, res.getOutputStream());
-			res.flushBuffer();
-			ctx.responseComplete();
-		} catch (IOException e) {
-			AonUtil.addErrorMessage("El fichero no es correcto");
-			throw new AbortProcessingException( e );
+
+	public boolean isDiskOk() {
+		int errors = 0;
+		if (getFileOutput() != null) {
+			errors = getFileOutput().getErrors().size();
 		}
-		
+		return (errors==0);
 	}
 
-	private Company getCompany() {
-		if (company == null) {
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			this.company = companyController.obtainCompany(); 
+	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
+		MOD303Writer mod303Writer = new MOD303Writer();
+		VatTaxDeclaration vatTaxDeclaration = (VatTaxDeclaration) getTo();
+		setFileOutput( mod303Writer.createMOD303(vatTaxDeclaration,getFormat(vatTaxDeclaration)) );
+        if (getFileOutput() != null) {
+        	if (getFileOutput().getErrors().size() > 0) {
+        		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
+            }
+        }
+	}
+	
+	private MOD303Format getFormat(VatTaxDeclaration vatTaxDeclaration) {
+		int year = vatTaxDeclaration.getVatTax().getYear();
+		if (year < 2010) {
+			String msg = "No se permite la generación de archivos para declaraciones anteriores al ejercicio 2010."; 
+			AonUtil.addErrorMessage(msg);
+			setFileOutput(null);
+			throw new AbortProcessingException(msg);
 		}
-		return company;
+		if (vatTaxDeclaration.getVatTax().isAnual()) {
+			String msg = "La generación de archivos para declaraciones anuales del ejercicio " + year + " no está aún implementada."; 
+			AonUtil.addErrorMessage(msg);
+			setFileOutput(null);
+			throw new AbortProcessingException(msg);
+		}
+		if (vatTaxDeclaration.getAdministration() != Administration.ALAVA) {
+			String msg = "La generación de archivos para la administracion "+ vatTaxDeclaration.getAdministration() +" no está aún implementada."; 
+			AonUtil.addErrorMessage(msg);
+			setFileOutput(null);
+			throw new AbortProcessingException(msg);
+		}
+		return MOD303Format.ALAVA_2010;
+	}
+
+	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
+        try {
+    		FacesContext faces = FacesContext.getCurrentInstance();
+            HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+            VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
+
+        	String fileName = "MOD303" + dec.getVatTax().getYear() + dec.getVatTax().getPeriod();
+	        response.setContentType(MimeType.MIME_TXT.getName());
+	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
+
+	        ServletOutputStream output = response.getOutputStream();
+	        InputStream input = new FileInputStream(getFileOutput().getFile());
+	        int size = IOUtils.copy(input, output);
+	        if (size > 0) {
+		        response.setHeader("Content-Length", String.valueOf(size));
+	        }
+	        output.close();
+	        input.close();
+
+	        response.flushBuffer();
+	        faces.responseComplete();
+		} catch (IOException e) {
+			throw new ManagerBeanException(e);
+		}
 	}
 }

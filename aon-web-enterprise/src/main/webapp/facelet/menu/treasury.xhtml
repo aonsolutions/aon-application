@@ -49,6 +49,12 @@
 									actionListener="#{fbatch.onEditSearch}"
 									value="#{financeBundle.finance_fbatch_module}" />
 							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="bankStatement"
+									value="#{financeBundle.finance_bank_statement_module}"
+									actionListener="#{bankStatement.onEditSearch}"
+									action="bankStatement_search" />
+							</aon:div>
 							<c:if test="#{aonRole.config}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="payMethod-treasury"
