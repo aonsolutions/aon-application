@@ -1,8 +1,8 @@
-package com.code.aon.fiscal.model303;
+package com.code.aon.fiscal.vat.tax;
 
 
 
-public class Model303Detail {
+public class VatTaxAmount {
 	private double taxableBase;
 	private double quota;
 	private double deductibleQuota;

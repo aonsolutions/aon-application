@@ -1,30 +1,30 @@
-package com.code.aon.fiscal.model303;
+package com.code.aon.fiscal.vat.tax;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.code.aon.fiscal.enumeration.Model303Key;
+import com.code.aon.fiscal.enumeration.VatTaxKey;
 
 
-public class Model303KeyEx {
-	private Model303Key key;
+public class VatTaxKeyEx {
+	private VatTaxKey key;
 	private double percent;
 
-	public Model303KeyEx() {
+	public VatTaxKeyEx() {
 	}
-	public Model303KeyEx(Model303Key key) {
+	public VatTaxKeyEx(VatTaxKey key) {
 		this.key = key;
 	}
-	public Model303KeyEx(Model303Key key,double percent) {
+	public VatTaxKeyEx(VatTaxKey key,double percent) {
 		this.key = key;
 		this.percent = percent;
 	}
 	
-	public Model303Key getKey() {
+	public VatTaxKey getKey() {
 		return key;
 	}
-	public void setKey(Model303Key key) {
+	public void setKey(VatTaxKey key) {
 		this.key = key;
 	}
 	
@@ -40,7 +40,7 @@ public class Model303KeyEx {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final Model303KeyEx o = (Model303KeyEx) obj;
+		final VatTaxKeyEx o = (VatTaxKeyEx) obj;
 		return new EqualsBuilder()
 			.append(this.key, o.key)			
 			.append(this.percent, o.percent)
