@@ -12,6 +12,8 @@ import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationType;
+import com.code.aon.accounting.AnnualReport;
+import com.code.aon.accounting.AnnualReportDetail;
 import com.code.aon.accounting.AutoConcept;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
@@ -32,23 +34,24 @@ public class AccountingAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-TRUNK/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
-		String[] classes = new String[14]; 
-		classes[0] = AccountBudget.class.getName();
-		classes[1] = AccountEntry.class.getName();
-		classes[2] = AccountEntryDetail.class.getName();
-		classes[3] = AccountEntryLink.class.getName();
-		classes[4] = AccountHelper.class.getName();
-		classes[5] = AccountSummary.class.getName();
-		classes[6] = Amortization.class.getName();
-		classes[7] = AmortizationDetail.class.getName();
-		classes[8] = AmortizationType.class.getName();
-		classes[9] = AutoConcept.class.getName();
-		classes[10] = Balance.class.getName();
-		classes[11] = BalanceDetail.class.getName();	
-		classes[12] = Loan.class.getName();
-		classes[13] = Period.class.getName();
-		
-		
+		String[] classes = new String[]{
+			AccountBudget.class.getName(),
+			AccountEntry.class.getName(),
+			AccountEntryDetail.class.getName(),
+			AccountEntryLink.class.getName(),
+			AccountHelper.class.getName(),
+			AccountSummary.class.getName(),
+			Amortization.class.getName(),
+			AmortizationDetail.class.getName(),
+			AmortizationType.class.getName(),
+			AnnualReport.class.getName(),
+			AnnualReportDetail.class.getName(),
+			AutoConcept.class.getName(),
+			Balance.class.getName(),
+			BalanceDetail.class.getName(),	
+			Loan.class.getName(),
+			Period.class.getName()
+		};
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.accounting.dao");
 		writer.write(classes, file);

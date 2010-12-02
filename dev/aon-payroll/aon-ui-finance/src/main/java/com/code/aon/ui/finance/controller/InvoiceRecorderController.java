@@ -17,7 +17,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ui.form.BasicController;
@@ -27,14 +26,6 @@ public class InvoiceRecorderController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceRecorderController.class.getName());
 
-	private static final String SALE_INVOICE_CONTROLLER = "saleInvoice";
-	private static final String PURCHASE_INVOICE_CONTROLLER = "purchaseInvoice";
-	private static final String EXPENSE_INVOICE_CONTROLLER = "expenseInvoice";
-	private static final String UNDEDUCTIBLE_INVOICE_CONTROLLER = "undeductibleInvoice";
-	private static final String SALE_INVOICE_VIEW = "saleInvoice_form";
-	private static final String PURCHASE_INVOICE_VIEW = "purchaseInvoice_form";
-	private static final String EXPENSE_INVOICE_VIEW = "expenseInvoice_form";
-	private static final String UNDEDUCTIBLE_INVOICE_VIEW = "undeductibleInvoice_form";
 	private static final String SALE_VIEW_NAME = "saleInvoiceRecorder_list";
 	private static final String PURCHASE_VIEW_NAME = "purchaseInvoiceRecorder_list";
 	private static final String EXPENSE_VIEW_NAME = "expenseInvoiceRecorder_list";
@@ -417,25 +408,25 @@ public class InvoiceRecorderController extends BasicController {
 
 	public void onLoadInvoice(ActionEvent event) {
 		try {
-			InvoiceRecorder ir = (InvoiceRecorder) getModel().getRowData();
-			InvoiceType type = ir.getInvoice().getType();
+			InvoiceRecorder recordController = (InvoiceRecorder)getModel().getRowData();
+			InvoiceType type = recordController.getInvoice().getType();
 			String invoiceControllerName;
 			String currentViewName;
 			if (type == InvoiceType.SALES) {
-				invoiceControllerName = SALE_INVOICE_CONTROLLER;
-				setInvoiceViewer(SALE_INVOICE_VIEW);
+				invoiceControllerName = IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
+				setInvoiceViewer(IFinanceConstants.SALE_INVOICE_FORM_NAME);
 				currentViewName = SALE_VIEW_NAME;
 			} else if (type == InvoiceType.PURCHASE) {
-				invoiceControllerName = PURCHASE_INVOICE_CONTROLLER;
-				setInvoiceViewer(PURCHASE_INVOICE_VIEW);
+				invoiceControllerName = IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME;
+				setInvoiceViewer(IFinanceConstants.PURCHASE_INVOICE_FORM_NAME);
 				currentViewName = PURCHASE_VIEW_NAME;
 			} else if (type == InvoiceType.EXPENSES) {
-				invoiceControllerName = EXPENSE_INVOICE_CONTROLLER;
-				setInvoiceViewer(EXPENSE_INVOICE_VIEW);
+				invoiceControllerName = IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME;
+				setInvoiceViewer(IFinanceConstants.EXPENSE_INVOICE_FORM_NAME);
 				currentViewName = EXPENSE_VIEW_NAME;
 			} else if (type == InvoiceType.UNDEDUCTIBLE) {
-				invoiceControllerName = UNDEDUCTIBLE_INVOICE_CONTROLLER;
-				setInvoiceViewer(UNDEDUCTIBLE_INVOICE_VIEW);
+				invoiceControllerName = IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
+				setInvoiceViewer(IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME);
 				currentViewName = UNDEDUCTIBLE_VIEW_NAME;
 			} else {
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -444,15 +435,10 @@ public class InvoiceRecorderController extends BasicController {
 				AonUtil.addWarningMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
+			recordController.setRefresh(true);
+
 			InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
-			invoiceController.setBackAction(currentViewName);
-			invoiceController.onEditSearch(event);
-			String alias = invoiceController.getManagerBean().getFieldName(IFinanceAlias.INVOICE_ID);
-			invoiceController.getCriteria().addEqualExpression(alias, ir.getInvoice().getId());
-			ir.setRefresh(true);
-			invoiceController.onSearch(event);
-			invoiceController.getModel().setRowIndex(0);
-			invoiceController.onSelect(event);
+			invoiceController.onLoadInvoice(event, recordController.getInvoice(), currentViewName);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar la factura: " + e.getMessage();
 			LOGGER.warn(msg, e);
