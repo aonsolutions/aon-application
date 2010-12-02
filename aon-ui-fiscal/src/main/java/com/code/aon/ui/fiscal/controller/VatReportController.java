@@ -22,7 +22,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.fiscal.enumeration.VatPeriod;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatReportOrder;
 import com.code.aon.fiscal.enumeration.VatReportType;
 import com.code.aon.fiscal.enumeration.VatType;
@@ -59,7 +59,7 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 
 	private VatType vatType;
 	private Integer year;
-	private VatPeriod vatPeriod;
+	private Period period;
 
 	private VatReportOrder order;
 	private SecurityLevel securityLevel;
@@ -151,11 +151,11 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		this.year = year;
 	}
 
-	public VatPeriod getVatPeriod() {
-		return vatPeriod;
+	public Period getPeriod() {
+		return period;
 	}
-	public void setVatPeriod(VatPeriod vatPeriod) {
-		this.vatPeriod = vatPeriod;
+	public void setPeriod(Period period) {
+		this.period = period;
 	}
 
 	public SecurityLevel getSecurityLevel() {
@@ -179,9 +179,9 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		c.setTime(new Date());
 		setDate(c.getTime());
 		setYear(c.get(Calendar.YEAR));
-		setVatPeriod( VatPeriod.getQuarterlyVatPeriod( c.get(Calendar.MONTH )) );
-		setFromDate(getVatPeriod().getStartDate(getYear()));	
-		setToDate(getVatPeriod().getDueDate(getYear()));
+		setPeriod( Period.getQuarterlyPeriod( c.get(Calendar.MONTH )) );
+		setFromDate(getPeriod().getStartDate(getYear()));	
+		setToDate(getPeriod().getDueDate(getYear()));
 		setFromSeries(null);
 		setFromNumber(null);
 		setToSeries(null);
@@ -473,16 +473,16 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		setToDate(null);
 		if (event.getNewValue() != null) {
 			Integer year = (Integer) event.getNewValue(); 
-			setFromDate(getVatPeriod().getStartDate(year));	
-			setToDate(getVatPeriod().getDueDate(year));
+			setFromDate(getPeriod().getStartDate(year));	
+			setToDate(getPeriod().getDueDate(year));
 		}
 	}
 	
-	public void onVatPeriodChanged(ValueChangeEvent event) {
+	public void onPeriodChanged(ValueChangeEvent event) {
 		setFromDate(null);
 		setToDate(null);
 		if (getYear() != null) {
-			VatPeriod vp = (VatPeriod) event.getNewValue(); 
+			Period vp = (Period) event.getNewValue(); 
 			setFromDate(vp.getStartDate(getYear()));	
 			setToDate(vp.getDueDate(getYear()));
 		} else {

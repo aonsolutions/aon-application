@@ -4,12 +4,12 @@ package com.code.aon.fiscal.model340;
 import java.util.Date;
 
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.fiscal.enumeration.VatPeriod;
+import com.code.aon.fiscal.enumeration.Period;
 
 public class Model340Parameters {
 
 	private Integer year;
-	private VatPeriod period;
+	private Period period;
 	private Date date;
 	private Date fromDate;
 	private Date toDate;
@@ -30,10 +30,10 @@ public class Model340Parameters {
 		this.year = year;
 	}
 
-	public VatPeriod getPeriod() {
+	public Period getPeriod() {
 		return period;
 	}
-	public void setPeriod(VatPeriod period) {
+	public void setPeriod(Period period) {
 		this.period = period;
 	}
 
@@ -80,22 +80,22 @@ public class Model340Parameters {
 	}
 
 	public String getPeriodString() {
-		if (getPeriod() == VatPeriod.M01) return "01";
-		else if (getPeriod() == VatPeriod.M02) return "02";
-		else if (getPeriod() == VatPeriod.M03) return "03";
-		else if (getPeriod() == VatPeriod.M04) return "04";
-		else if (getPeriod() == VatPeriod.M05) return "05";
-		else if (getPeriod() == VatPeriod.M06) return "06";
-		else if (getPeriod() == VatPeriod.M07) return "07";
-		else if (getPeriod() == VatPeriod.M08) return "08";
-		else if (getPeriod() == VatPeriod.M09) return "09";
-		else if (getPeriod() == VatPeriod.M10) return "10";
-		else if (getPeriod() == VatPeriod.M11) return "11";
-		else if (getPeriod() == VatPeriod.M12) return "12";
-		else if (getPeriod() == VatPeriod.T1) return "1T";
-		else if (getPeriod() == VatPeriod.T2) return "2T";
-		else if (getPeriod() == VatPeriod.T3) return "3T";
-		else if (getPeriod() == VatPeriod.T4) return "4T";
+		if (getPeriod() == Period.M01) return "01";
+		else if (getPeriod() == Period.M02) return "02";
+		else if (getPeriod() == Period.M03) return "03";
+		else if (getPeriod() == Period.M04) return "04";
+		else if (getPeriod() == Period.M05) return "05";
+		else if (getPeriod() == Period.M06) return "06";
+		else if (getPeriod() == Period.M07) return "07";
+		else if (getPeriod() == Period.M08) return "08";
+		else if (getPeriod() == Period.M09) return "09";
+		else if (getPeriod() == Period.M10) return "10";
+		else if (getPeriod() == Period.M11) return "11";
+		else if (getPeriod() == Period.M12) return "12";
+		else if (getPeriod() == Period.T1) return "1T";
+		else if (getPeriod() == Period.T2) return "2T";
+		else if (getPeriod() == Period.T3) return "3T";
+		else if (getPeriod() == Period.T4) return "4T";
 		return "";
 	}
 

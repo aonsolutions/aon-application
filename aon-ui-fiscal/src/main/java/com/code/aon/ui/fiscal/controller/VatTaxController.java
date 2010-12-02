@@ -94,7 +94,7 @@ public class VatTaxController extends BasicController {
 		setParams(new VatTaxParameters()); 
 		getParams().setVatTax( vatTax );
 		getParams().setYear( vatTax.getYear() );
-		getParams().setVatPeriod( vatTax.getPeriod() );
+		getParams().setPeriod( vatTax.getPeriod() );
 		if (isNew) {
 			setSummary(getProvider().getVatTax(getParams()));
 			getProvider().fillDeclared(getParams(),getSummary());

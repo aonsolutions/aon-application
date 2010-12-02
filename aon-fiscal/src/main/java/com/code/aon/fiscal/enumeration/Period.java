@@ -11,7 +11,7 @@ import com.code.aon.common.enumeration.IResourceable;
  * Enummeration to identify the different types of an Invoice.
  * 
  */
-public enum VatPeriod implements IResourceable {
+public enum Period implements IResourceable {
 	
 	M01(0,0),
 	M02(1,1),
@@ -34,7 +34,7 @@ public enum VatPeriod implements IResourceable {
 	private int startMonth;
 	private int dueMonth;
 	
-	private VatPeriod(int startMonth,int dueMonth) {
+	private Period(int startMonth,int dueMonth) {
 		this.startMonth= startMonth;
 		this.dueMonth= dueMonth;
 	}
@@ -42,7 +42,7 @@ public enum VatPeriod implements IResourceable {
     private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_vat_period_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_period_";
 
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
@@ -71,7 +71,7 @@ public enum VatPeriod implements IResourceable {
 		this.dueMonth = dueMonth;
 	}
 
-	public static VatPeriod getMonthlyVatPeriod(int month) {
+	public static Period getMonthlyPeriod(int month) {
 		if (month==0) return M01;
 		else if (month==1) return M02;
 		else if (month==2) return M03;
@@ -86,7 +86,7 @@ public enum VatPeriod implements IResourceable {
 		else if (month==11) return M12;
 		throw new IllegalArgumentException("Invalid month!");
 	}
-	public static VatPeriod getQuarterlyVatPeriod(int month) {
+	public static Period getQuarterlyPeriod(int month) {
 		if (month>=0 && month<3) return T1;
 		else if (month>=3 && month<6) return T2;
 		else if (month>=6 && month<9) return T3;

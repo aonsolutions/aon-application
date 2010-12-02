@@ -21,9 +21,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
-import com.lowagie.text.pdf.PdfCopyFields;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
 
 public class AccountingBookController {
 	private Period period;
