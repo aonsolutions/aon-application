@@ -99,9 +99,8 @@ public class AonFolder extends AonMessageSortableList {
 			AonMessage[] list = new AonMessage[messages.length];
 			for (int i = 0; i < messages.length; i++) {
 				if (messages[i] != null && !messages[i].isExpunged()) {
-					AonMessage aonMessage = new AonMessage();
-                	aonMessage.setParent(this);
-                	aonMessage.setMessage((MimeMessage)messages[i]);
+					AonMessage aonMessage = new AonMessage( (MimeMessage)messages[i] );
+                	aonMessage.setParent(this);                	
                 	list[realLength++] = aonMessage;
                 }
             }
