@@ -13,7 +13,6 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.IProgression;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -33,7 +32,7 @@ public class AccountJournalManager {
 		return bean;
 	}
 
-	public void regenerateJournalCounter(Period period,SecurityLevel securityLevel,IProgression progressionBean) throws ManagerBeanException {
+	public void regenerateJournalCounter(Period period,SecurityLevel securityLevel) throws ManagerBeanException {
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -93,7 +92,6 @@ public class AccountJournalManager {
 			        bean.update(entry);
 			        
 			        entry.setRegenerateSummaryOnUpdate(true);
-		        	progressionBean.setProgressionCurrentValue((long) ( i * 100 / count));
 		        	i++;
 		        	if (mustAdd) {
 		        		journal++;

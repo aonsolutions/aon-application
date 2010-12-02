@@ -12,7 +12,6 @@ import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.IProgression;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -92,7 +91,7 @@ public class AccountHelperManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void regenerateAccountHelper(IProgression progressionBean) throws ManagerBeanException {
+	public void regenerateAccountHelper() throws ManagerBeanException {
 		deleteAccountHelper();
 
 		IManagerBean accountHelperBean = BeanManager.getManagerBean(AccountHelper.class);
@@ -115,7 +114,6 @@ public class AccountHelperManager {
         	ah.setCounter(c.intValue());
     		accountHelperBean.insert(ah);
         	i++;    	
-        	progressionBean.setProgressionCurrentValue((long) ( i * 100 / count));
         }
 	}
 }

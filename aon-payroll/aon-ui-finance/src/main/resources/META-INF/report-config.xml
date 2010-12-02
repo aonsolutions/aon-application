@@ -488,21 +488,6 @@
 			<param id="PriceStrategy" value="#{customerFee.getPriceStrategy}" />
 		</params>
 	</report>
-	<!--  *********  feeCheckingPrint  ********* -->
-	<report id="customeFeeChecking" description="Fee Checking">
-		<template path="/com/code/aon/ui/finance/report/feeChecking.jasper"/>
-		<collection provider="#{feeCheckingPrinter}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-		</params>
-		<nested-report report="feeCheckingDetail"/>
-	</report>
-	<report id="feeCheckingDetail" description="feeCheckingDetail">
-		<template path="/com/code/aon/ui/finance/report/feeCheckingDetail.jasper"/>
-	</report>
-
 	<!--  *********  financeCheckingPrint  ********* -->
 	<report id="financeChecking" description="Finance Checking">
 		<template path="/com/code/aon/ui/finance/report/financeChecking.jasper"/>
@@ -517,36 +502,21 @@
 	<report id="financeCheckingDetail" description="financeCheckingDetail">
 		<template path="/com/code/aon/ui/finance/report/financeCheckingDetail.jasper"/>
 	</report>
-
-	<!--  LISTADO DEL LIBRO DE IVA -->
-	<report id="vatBook" description="Listado del Libro de IVA">
-		<template path="/com/code/aon/ui/finance/report/vatBook.jasper"/>
-		<collection provider="#{vatReport}"/>
+	<!--  *********  customerFinanceCheckingPrint  ********* -->
+	<report id="customerFinanceChecking" description="Customer Finance Checking">
+		<template path="/com/code/aon/ui/finance/report/customerFinanceChecking.jasper"/>
+		<collection provider="#{customerFinanceCheckingPrinter}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="fromDate" value="#{vatReport.getFromDate}" />
-			<param id="toDate" value="#{vatReport.getToDate}" />
-			<param id="date" value="#{vatReport.getDate}" />
-			<param id="title" value="#{vatReport.getTitle}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
+		<nested-report report="customerFinanceCheckingDetail"/>
+	</report>
+	<report id="customerFinanceCheckingDetail" description="customerFinanceCheckingDetail">
+		<template path="/com/code/aon/ui/finance/report/customerFinanceCheckingDetail.jasper"/>
 	</report>
 
-	<!--  LISTADO DEL LIBRO DE IVA -->
-	<report id="vatSummaryBook" description="Listado Resumen del Libro de IVA">
-		<template path="/com/code/aon/ui/finance/report/vatBookSummary.jasper"/>
-		<collection provider="#{vatReport}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="fromDate" value="#{vatReport.getFromDate}" />
-			<param id="toDate" value="#{vatReport.getToDate}" />
-			<param id="date" value="#{vatReport.getDate}" />
-			<param id="title" value="#{vatReport.getTitle}" />
-			<param id="months" value="#{vatReport.getMonths}" />
-		</params>
-	</report>
-	
 	<report id="noFeeCustomersReport" description="No Fee Customer's report ">
 		<template path="/com/code/aon/ui/registry/report/masterRegistryList.jasper" />
 		<collection provider="#{customerFee.noFeeCustomersList}" />
@@ -566,21 +536,5 @@
 			<param id="title" value="#{customerFee.getReportTitle}" />
 		</params>
 	</report>
-	
-		<!--  *********  Modelo 347 ********* -->
-	<report id="model347List" description="Model 347List">
-		<template path="/com/code/aon/ui/finance/report/model347.jasper"/>
-		<collection provider="#{model347Report.summaryActive}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
-			<param id="totalA" value="#{model347Report.getTotalKeyA}" />
-			<param id="totalB" value="#{model347Report.getTotalKeyB}" />
-			<param id="format" value="#{model347Report.getFormat}" />
-			<param id="params" value="#{model347Report.getParams}" />
-			<param id="year" value="#{model347Report.getYear}" />
-			<param id="company" value="#{company.obtainCompany}" />
-		</params>
-	</report>
-	
 	
 </report-config>

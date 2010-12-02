@@ -3,7 +3,7 @@
 <digester-rules>
 
 	<object-create-rule pattern="*/amortizationTypes"
-		classname="com.code.aon.ui.accounting.controller.AmortizationTypeImporterManager" />
+		classname="com.code.aon.ui.accounting.controller.amortization.AmortizationTypeImporterManager" />
 
 	<pattern value="*/amortizationType">
 		<object-create-rule

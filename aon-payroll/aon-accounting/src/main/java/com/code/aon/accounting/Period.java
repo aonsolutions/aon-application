@@ -26,8 +26,6 @@ public class Period implements ITransferObject {
 	private String id;
 	private Date initiationDate;
 	private Date deadline;
-
-
 	private AccountPeriodStatus status;
 	
 	@Id
