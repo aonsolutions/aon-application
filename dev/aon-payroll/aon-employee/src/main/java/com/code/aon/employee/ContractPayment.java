@@ -22,6 +22,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.payment.IPayment;
 
@@ -36,21 +37,16 @@ public class ContractPayment implements ITransferObject, IPayment {
 	private static final long serialVersionUID = 2831598401831457550L;
 
 	private Integer id;
-
 	private Contract contract;
-
 	private PaymentType type;
-	
+	private PaymentConcept paymentConcept;
 	private String description;
-
 	private String expression;
-	
 	private Date startDate;	
+	private Date endDate;
+	private Month month;
+	private boolean descriptionDecorable;
 
-	private Date endDate;	
-
-	
-	
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
@@ -78,11 +74,21 @@ public class ContractPayment implements ITransferObject, IPayment {
 	public PaymentType getType() {
 		return type;
 	}
-	
 	public void setType(PaymentType type) {
 		this.type = type;
 	}
 	
+	@ManyToOne
+	@JoinColumn(name = "payment_concept")
+	@ForeignKey(name = "FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT")
+	@Index(name = "IDX_CONTRACT_PAYMENT_PAYMENT_CONCEPT")
+	public PaymentConcept getPaymentConcept() {
+		return paymentConcept;
+	}
+	public void setPaymentConcept(PaymentConcept paymentConcept) {
+		this.paymentConcept = paymentConcept;
+	}
+
 	@Override
 	@Column(length = 64)
 	public String getDescription() {
@@ -108,7 +114,6 @@ public class ContractPayment implements ITransferObject, IPayment {
     public Date getStartDate() {
 		return startDate;
 	}
-
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
@@ -123,7 +128,24 @@ public class ContractPayment implements ITransferObject, IPayment {
 		this.endDate = endDate;
 	}	
 	
+	// TODO Esta propiedad no debe ser Transient
+	@Transient
+	public Month getMonth() {
+		return month;
+	}
+	public void setMonth(Month month) {
+		this.month = month;
+	}
 	
+	// TODO Esta propiedad no debe ser Transient
+	@Transient
+	public boolean isDescriptionDecorable() {
+		return descriptionDecorable;
+	}
+	public void setDescriptionDecorable(boolean descriptionDecorable) {
+		this.descriptionDecorable = descriptionDecorable;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -135,6 +157,7 @@ public class ContractPayment implements ITransferObject, IPayment {
 				.append(this.contract, o.contract)
 				.append(this.type, o.type)
 				.append(this.description, o.description)
+				.append(this.paymentConcept,o.paymentConcept)
 				.append(this.expression, o.expression)
 				.append(this.startDate, o.startDate)
 				.append(this.endDate, o.endDate)
@@ -148,6 +171,7 @@ public class ContractPayment implements ITransferObject, IPayment {
 		return new HashCodeBuilder()
 			.append(contract)
 			.append(type)
+			.append(paymentConcept)
 			.append(description)
 			.append(expression)
 			.append(startDate)
