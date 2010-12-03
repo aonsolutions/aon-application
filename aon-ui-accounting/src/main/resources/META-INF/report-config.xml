@@ -292,6 +292,17 @@
 		</params>
 	</report>	  
 		
+	<!--  *********  FICHAS DE AMORTIZACION FORMULARIO DESDE LA LISTA ********* -->
+	<report id="amortizationFormFromList" description="Amortization Form">
+		<template path="/com/code/aon/ui/accounting/report/amortizationForm.jasper" />
+		<collection provider="#{amortizationDetail.amortizationListComplete}" />  
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>	  
+
 	<!--  *********  PERIODOS DE AMORTIZACION LISTADO ********* -->
 	<report id="amortizationPeriod" description="Amortization Period List">
 		<template path="/com/code/aon/ui/accounting/report/amortizationPeriod.jasper"/>

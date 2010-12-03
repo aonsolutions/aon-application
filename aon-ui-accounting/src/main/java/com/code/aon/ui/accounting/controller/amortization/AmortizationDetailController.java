@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller.amortization;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -27,7 +28,25 @@ public class AmortizationDetailController extends LinesController {
 	public List<AmortizationDetail> getAmortizationList() throws ManagerBeanException {
 		return (List<AmortizationDetail>) getModel().getWrappedData();
 	}
-
+	@SuppressWarnings("unchecked")
+	public List<AmortizationDetail> getAmortizationListComplete() throws ManagerBeanException {
+		AmortizationController ac = (AmortizationController) getMasterController();
+		List<ITransferObject> all = new LinkedList<ITransferObject>(); 
+		Criteria criteria = ac.getCriteria();
+		List<ITransferObject> list = ac.getManagerBean().getList(criteria);
+		String idAlias = getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID);
+		String dateAlias = getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE);
+		for (ITransferObject to:list) {
+			Amortization am = (Amortization) to;
+			Criteria c = new Criteria();
+			c.addEqualExpression(idAlias, am.getId());
+			c.addOrder(dateAlias);
+			all.addAll(getManagerBean().getList(c));
+		}
+		List<?> retList = all; 
+		return (List<AmortizationDetail>) retList;
+	}
+	
 	@Override
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
 		List<ITransferObject> list = super.search(start, count);

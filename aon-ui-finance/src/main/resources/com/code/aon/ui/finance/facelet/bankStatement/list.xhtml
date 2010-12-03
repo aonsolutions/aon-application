@@ -18,6 +18,17 @@
 					<ui:param name="toolbarTitle" value="#{financeBundle.finance_bank_statement_module}" />
 					<ui:param name="controller" value="#{bankStatement}" />
 					<ui:param name="skipSearchButton" value="false" />
+
+					<ui:define name="additionalToolbarContent">
+						<aon:commandButton id="import-Popup"
+							value="#{financeBundle.finance_bank_statement_import}"
+							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+							rendered="#{!bankStatement.new and bankStatement.to == null}"
+							actionListener="#{controller.onImportFileShow}">
+							<f:setPropertyActionListener target="#{bankStatement.showImportFileWindow}"
+								value="#{true}" />
+						</aon:commandButton>
+					</ui:define>
 				</ui:decorate>
 
 				<!--  aon-region-body -->
@@ -76,16 +87,18 @@
 											<aon:outputText value="#{bundle.aon_description}" />
 										</f:facet>
 										<aon:outputText value="#{to.description}"
-											rendered="#{formList}" />
+											rendered="#{formList}">
+											<aon:abbreviateConverter maxWidth="64" />
+										</aon:outputText>
 										<aon:inputText id="BankStatement_description"
 											value="#{bankStatement.to.description}"
 											rendered="#{formEdit}" required="true"
-											size="50" />
+											size="50" maxlength="80" />
 										<f:facet name="footer">
 											<aon:inputText id="BankStatement_description-New"
 												value="#{bankStatement.to.description}"
 												rendered="#{formNew}" required="true"
-												size="50" />
+												size="50" maxlength="80" />
 										</f:facet>
 									</aon:column>
 
@@ -174,6 +187,7 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalImport.xhtml" />
 
 	</ui:define>
 </ui:composition>

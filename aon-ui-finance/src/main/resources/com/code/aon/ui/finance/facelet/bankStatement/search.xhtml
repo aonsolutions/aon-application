@@ -9,13 +9,26 @@
 	<ui:define name="content">
 		<aon:form id="bankStatementSearch">
 
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_bank_statement_module}" />
 				<ui:param name="controller" value="#{bankStatement}" />
-				<aon:methodParam name="resetAction" value="bankStatement_list" />
-				<aon:methodParam name="resetActionListener" value="#{bankStatement.onFullReset}" type="actionListener" />
-			</ui:include>
+
+				<ui:define name="beforeToolbarContent">
+					<aon:methodParam name="resetAction" value="bankStatement_list" />
+					<aon:methodParam name="resetActionListener" value="#{bankStatement.onFullReset}" type="actionListener" />
+				</ui:define>
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="import-Popup"
+						value="#{financeBundle.finance_bank_statement_import}"
+						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+						actionListener="#{controller.onImportFileShow}"
+						action="bankStatement_list">
+						<f:setPropertyActionListener target="#{bankStatement.showImportFileWindow}"
+							value="#{true}" />
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
