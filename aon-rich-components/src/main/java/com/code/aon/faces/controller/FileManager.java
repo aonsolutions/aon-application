@@ -37,6 +37,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ZipUtil;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 
 public class FileManager implements IRichConstants {
 	
@@ -365,7 +366,7 @@ public class FileManager implements IRichConstants {
         File file = getFile();
         AonFile af = getAonFile(file);
         InputStream in = af.openStream();
-        AttachmentUtil.downloadAttachment(af.getFileName(), af.getMimeType(), in, af.getSize());
+        DownloadUtil.downloadAttachment(af.getFileName(), af.getMimeType(), in, af.getSize());
         in.close();
     }	
     

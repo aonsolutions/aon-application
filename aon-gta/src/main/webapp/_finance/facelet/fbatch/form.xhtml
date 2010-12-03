@@ -74,6 +74,7 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
 							onclick="viewDialog.show();"
 							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}" />	
+<!-- 
 						<h:commandButton id="record" value="#{financeBundle.aon_record}"
 							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
@@ -88,7 +89,7 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
 							onclick="viewDialog.show();"
 							action="fbatch_form" actionListener="#{fbatch.onUnrecord}" />
-						<h:outputLabel for="FinanceBatch_recordDate"
+ 						<h:outputLabel for="FinanceBatch_recordDate"
 							styleClass="aon-content-toolbar-item" style="cursor:auto;" value="#{financeBundle.aon_record_date}" 
 							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}" />
 						<t:inputCalendar size="8" id="FinanceBatch_recordDate" value="#{fbatch.recordDate}"
@@ -99,6 +100,7 @@
 							styleClass="aon-form-input-text"
 							popupTodayString="#{bundle.aon_popup_today}"
 							popupWeekString="#{bundle.aon_popup_week}" />
+-->
 					</t:div>
 				</t:div>
 			</t:div>

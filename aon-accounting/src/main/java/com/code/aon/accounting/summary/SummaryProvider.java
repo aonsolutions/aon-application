@@ -189,13 +189,22 @@ public class SummaryProvider {
 	}
 
 	private Balance excludeEntry(PreparedStatement entryStmt, int ordinal, String account, SummaryProviderParameters params) throws SQLException {
-		entryStmt.setInt(1, ordinal);
-		
+		int i = 0;
+		entryStmt.setInt(++i, ordinal);
+		if (params.getFromDate() != null ) {
+			entryStmt.setDate(++i, new java.sql.Date( params.getFromDate().getTime() ) );
+		}
+		if (params.getToDate() != null ) {
+			entryStmt.setDate(++i, new java.sql.Date( params.getToDate().getTime() ) );
+		}
+		if (params.getSecurityLevel() != null ) {
+			entryStmt.setInt(++i, params.getSecurityLevel().ordinal() );
+		}
 		if ( params.getAccountLevel() < 5) {
 			account = StringUtils.substring(account, 0, params.getAccountLevel() );	
 		} 
 		account += PERCENT;
-		entryStmt.setString(2, account);
+		entryStmt.setString(++i, account);
 		ResultSet entrySet = entryStmt.executeQuery();
 		Balance b = null;
 		if (entrySet.next()) {
@@ -216,9 +225,14 @@ public class SummaryProvider {
 		stmt.append( params.getPeriod().getId() );
 		stmt.append("'");
 		stmt.append(" AND a.entry_type = ?");
+		if (params.getFromDate() != null ) {
+			stmt.append(" AND a.entry_date >= ?");
+		}
+		if (params.getToDate() != null ) {
+			stmt.append(" AND a.entry_date <= ?");
+		}
 		if (params.getSecurityLevel() != null ) {
-			stmt.append(" AND a.security_level = ");
-			stmt.append( Integer.toString( params.getSecurityLevel().ordinal()));
+			stmt.append(" AND a.security_level = ?");
 		}
 		stmt.append(" AND a.id = d.account_entry");
 		stmt.append(" AND d.account LIKE ?");

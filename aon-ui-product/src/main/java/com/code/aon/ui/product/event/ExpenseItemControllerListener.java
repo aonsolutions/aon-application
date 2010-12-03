@@ -15,4 +15,12 @@ public class ExpenseItemControllerListener extends ItemControllerListener {
         item.getProduct().setType(ProductType.EXPENSE);
     }
 
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+    	Item item = (Item)event.getController().getTo();
+        item.getProduct().setType(ProductType.EXPENSE);
+
+		super.beforeBeanAdded(event);
+	}
+
 }

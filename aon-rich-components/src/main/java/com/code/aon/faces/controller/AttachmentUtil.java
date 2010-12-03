@@ -1,31 +1,20 @@
 package com.code.aon.faces.controller;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IAttachment;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -33,8 +22,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.sun.faces.util.MessageFactory;
 
 public class AttachmentUtil implements ICommonConstants {
-
-	private final static Logger LOGGER = LoggerFactory.getLogger(AttachmentUtil.class);
 
 	/**
 	 * Checks if is uploaded.
@@ -112,47 +99,4 @@ public class AttachmentUtil implements ICommonConstants {
 		}
 	}
 
-	public static void downloadAttachment(IAttachment attach) {
-		InputStream in = new ByteArrayInputStream(attach.getData());
-		long size = ArrayUtils.getLength(attach.getData());
-		downloadAttachment(attach.getDescription(), attach.getMimeType(), in, size);
-	}
-	
-	private static HttpServletResponse getResponse( FacesContext context ) {
-		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-		if ( response instanceof HttpServletResponseWrapper) {
-			response = (HttpServletResponse) ((HttpServletResponseWrapper) response).getResponse();
-		}
-		return response;
-	}
-
-	public static void downloadAttachment(String fileName, MimeType type, InputStream in, long size) {
-		OutputStream out = null;
-		try {
-	        FacesContext context = FacesContext.getCurrentInstance();
-	        HttpServletResponse response = getResponse(context);
-			if ( type != null ) {
-				response.setContentType( type.getName() );	
-			}
-			if (! StringUtils.isEmpty(fileName) ) {
-				if ( (type != MimeType.MIME_PDF) && (type != MimeType.MIME_SIGNED_PDF) ) {
-					response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");	
-				} else {
-					response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
-				}
-			}
-			if ( size > 0 ) {
-				response.setHeader("Content-Length", String.valueOf(size));	
-			}
-			out = new BufferedOutputStream(response.getOutputStream());
-			IOUtils.copyLarge(in, out);
-			out.close();
-			response.flushBuffer();
-	        context.responseComplete();    	
-		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			IOUtils.closeQuietly(out);
-		}
-	}	
 }

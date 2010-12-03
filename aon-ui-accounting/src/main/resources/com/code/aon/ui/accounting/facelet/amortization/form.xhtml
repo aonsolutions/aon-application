@@ -8,7 +8,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form>
+		<aon:form id="amortizationForm">
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
@@ -17,9 +17,31 @@
 					value="#{accountingBundle.accounting_amortization_form_module}" />
 				<ui:param name="controller" value="#{amortization}" />
 				
-				<ui:param name="skipRemoveButton" value="#{!amortization.updatable}" />
+				<ui:param name="skipRemoveButton" value="#{!amortization.updatable}" />				
 				
 				<ui:define name="beforeSpinToolbarContent">
+
+					<aon:commandButton id="calculate" 
+						value="#{accountingBundle.accounting_calculate}"
+						immediate="#{true}"
+						rendered="#{!amortization.new and amortization.to != null}"
+						reRender="amortizationForm"
+						onclick="if (!confirm('#{accountingBundle.accounting_fixed_asset_calculate}')){ return false;} else {Richfaces.showModalPanel('waitProccess')}"
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" 
+						actionListener="#{amortization.onCalculate}"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh">
+					</aon:commandButton>
+
+					<aon:commandButton id="salePopup" 
+						value="#{accountingBundle.accounting_sale}"
+						immediate="#{true}"
+						rendered="#{!amortization.new and amortization.to != null}"
+						styleClass="aon-finding-toolbar-item aon-icon-payment"
+						reRender="salePanelWindow,amortizationToolbar">
+						<f:setPropertyActionListener target="#{amortization.salePanelVisible}"
+							value="#{true}" />
+					</aon:commandButton>
+					
 					<aon:htmlCommandLink id="amortizationForm-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						value="#{bundle.aon_report}" target="_blank"
@@ -118,10 +140,6 @@
 					<aon:panelGroup id="accumulatedAccount">
 						<aon:outputText rendered="#{!amortization.new}"
 							value="#{amortization.to.accumulatedAccount.fullDescription}" />
-<!--
-						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
-							value="#{amortization.to.amortizationType.accumulatedAccount.fullDescription}" />
-  -->
 						<aon:selectOneMenu id="Amortization_accumulatedAccount"
 							disabled="#{!amortization.new}"
 							rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
@@ -152,10 +170,6 @@
 					<aon:panelGroup id="allocationAccount">
 						<aon:outputText rendered="#{!amortization.new}"
 							value="#{amortization.to.allocationAccount.fullDescription}" />
-<!-- 
-						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
-							value="#{amortization.to.amortizationType.allocationAccount.fullDescription}" />
- -->
  						<aon:selectOneMenu id="Amortization_allocationAccount"
 							disabled="#{!amortization.new}"
 							rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
@@ -167,17 +181,21 @@
 							value="&#160;" />
 					</aon:panelGroup>
 
-					<aon:outputLabel for="Amortization_deadline"
+					<aon:outputText
+						rendered="#{amortization.to.deadline != null}"
 						value="#{accountingBundle.accounting_cancellation_date}" />
-					<aon:selectInputDate id="Amortization_deadline"
-						value="#{amortization.to.deadline}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:outputText value="#{amortization.to.deadline}" rendered="#{amortization.to.deadline != null}">
+						<f:convertDateTime type="date"
+							pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
 
-					<aon:outputLabel for="Amortization_saleAmount"
+					<aon:outputText
+						rendered="#{amortization.to.deadline != null}"
 						value="#{accountingBundle.accounting_sale_amount}" />
-					<aon:inputText id="Amortization_saleAmount"
-						value="#{amortization.to.saleAmount}" size="15" />
+					<aon:outputText value="#{amortization.to.saleAmount}" rendered="#{amortization.to.deadline != null}">
+						<f:convertNumber pattern="#,##0.00" />
+					</aon:outputText>
 				</aon:panelGrid>
 
 				<aon:panelGrid columns="2" style="width: 100%;margin-top:2px;"
@@ -195,5 +213,7 @@
 
 			</aon:div>
 		</aon:form>
+		<ui:include src="modalSale.xhtml" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

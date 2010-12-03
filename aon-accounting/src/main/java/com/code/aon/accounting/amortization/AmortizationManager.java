@@ -1,8 +1,8 @@
 package com.code.aon.accounting.amortization;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -13,13 +13,16 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ql.Criteria;
 
 public class AmortizationManager {
 
@@ -28,15 +31,7 @@ public class AmortizationManager {
 	}
 
 	public void generateDetails(Amortization a) throws ManagerBeanException {
-		if (a.getInitialDate() == null) {
-			throw new IllegalArgumentException("Initial Date can not be null");
-		}
-		if (a.getAmortizationType() == null) {
-			throw new IllegalArgumentException("Amortization Type can not be null");
-		}
-		if (a.getAmount() == null) {
-			throw new IllegalArgumentException("Amount can not be null");
-		}
+		ensureParams(a);
 		IManagerBean bean = BeanManager.getManagerBean(AmortizationDetail.class);
 		Date amortizationFirstDay = a.getInitialDate();
 		Date amortizationLastDay = null;
@@ -44,6 +39,7 @@ public class AmortizationManager {
 		double years = CommonUtil.round(100 / percent);
 		int currentYear = CommonUtil.getYear(a.getInitialDate());
 		int days = getAmortizationDays(currentYear,years);
+
 		if (a.getDeadline() == null) {
 			if (Math.floor(years) == years) {
 				amortizationLastDay = DateUtils.setYears(amortizationFirstDay, (currentYear + (int) years));
@@ -59,10 +55,18 @@ public class AmortizationManager {
 		double dayAllocation = a.getAmount() / days; // No se redondea a posta.
 		
 		Date periodFirst = a.getInitialDate();
-		Date periodLast = CommonUtil.getYearLastDay(periodFirst);
+		Date periodLast;
 		double pending = a.getAmount();
 		boolean lastFee = false;
 		while (periodFirst.before(amortizationLastDay)) {
+			periodLast = CommonUtil.getYearLastDay(periodFirst);
+			if (periodLast.after(amortizationLastDay)) {
+				periodLast = amortizationLastDay;
+			}
+			if (DateUtils.isSameDay(periodLast, amortizationLastDay)) {
+				lastFee = true;
+			}
+
 			AmortizationDetail detail = new AmortizationDetail();
 			double allocation;
 			if (!lastFee) {
@@ -78,8 +82,7 @@ public class AmortizationManager {
 				}
 			} else {
 				// La última cuota se cuadra por diferencia.
-				allocation = CommonUtil.round(pending
-						- ((a.getSaleAmount() == null) ? 0 : a.getSaleAmount()));
+				allocation = CommonUtil.round(pending - ((a.getSaleAmount() == null) ? 0 : a.getSaleAmount()));
 			}
 			pending = CommonUtil.round(pending - allocation);
 			detail.setAllocation(allocation);
@@ -91,19 +94,45 @@ public class AmortizationManager {
 			detail.setStatus(AmortizationDetailStatus.PENDING);
 			detail.setFiscalAllocation(allocation);
 			detail.setFiscalAccumulated(0.0);
-
-			bean.insert(detail);
-
+			AmortizationDetail exists = insertable(bean,detail);
+			if (exists == null) {
+				detail = (AmortizationDetail) bean.insert(detail);	
+			} else {
+				if (exists.getStatus() == AmortizationDetailStatus.PENDING) {
+					detail.setId(exists.getId());
+					detail = (AmortizationDetail) bean.update(detail);	
+				} else {
+					detail = exists;
+				}
+				pending = detail.getPending();
+			}
 			periodFirst = DateUtils.addDays(periodLast, 1);
-			periodLast = CommonUtil.getYearLastDay(periodFirst);
-			if (periodLast.after(amortizationLastDay)) {
-				periodLast = amortizationLastDay;
-			}
-			if (DateUtils.isSameDay(periodLast, amortizationLastDay)) {
-				lastFee = true;
-			}
 		}
 
+	}
+
+	private AmortizationDetail insertable(IManagerBean bean, AmortizationDetail detail) throws ManagerBeanException {
+		Criteria c = new Criteria();
+		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), detail.getAmortization().getId());
+		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), detail.getFromDate());
+		List<ITransferObject> list = bean.getList(c);
+		AmortizationDetail exists = null;	
+		if (list != null && list.size() > 0) {
+			exists = (AmortizationDetail) list.get(0);
+		}
+		return exists;
+	}
+
+	private void ensureParams(Amortization a) {
+		if (a.getInitialDate() == null) {
+			throw new IllegalArgumentException("Initial Date can not be null");
+		}
+		if (a.getAmortizationType() == null) {
+			throw new IllegalArgumentException("Amortization Type can not be null");
+		}
+		if (a.getAmount() == null) {
+			throw new IllegalArgumentException("Amount can not be null");
+		}
 	}
 
 	private int getAmortizationDays(int currentYear,double years) {
@@ -172,12 +201,43 @@ public class AmortizationManager {
 	}
 	
 	
-	public static void main(String[] args) {
-		Amortization a = new Amortization();
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.DAY_OF_MONTH, 1);
-		c.set(Calendar.MONTH, 2);
-		c.set(Calendar.YEAR, 2);
-		a.setInitialDate(c.getTime());
+	public void checkSale(Amortization a) throws ManagerBeanException {
+		IManagerBean detailBean = BeanManager.getManagerBean(AmortizationDetail.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID),a.getId());
+		Date cancelDate = DateUtils.addDays(a.getDeadline(), -1);
+		c.addGreaterThanExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_TO_DATE),cancelDate);
+		c.addNotEqualExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_STATUS), AmortizationDetailStatus.PENDING); 
+		int count = detailBean.getCount(c);
+		if (count > 0) {
+			throw new ManagerBeanException("Existe una cuota posterior a la fecha de cancelación, bloqueada o contabilizada.");
+		}
 	}
+
+	public void sale(Amortization a) throws ManagerBeanException {
+		IManagerBean detailBean = BeanManager.getManagerBean(AmortizationDetail.class);
+		Criteria c = new Criteria();
+		Date cancelDate = DateUtils.addDays(a.getDeadline(), -1);
+		c.addEqualExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID),a.getId());
+		c.addGreaterThanExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_TO_DATE),cancelDate);
+		c.addOrder(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE));
+		List<ITransferObject> details = detailBean.getList(c);
+		int i = 0;
+		for (ITransferObject tro: details) {
+			AmortizationDetail detail = (AmortizationDetail) tro;
+			Date from = detail.getFromDate();
+			Date to =  detail.getToDate();
+			if (i == 0 && (from.equals(cancelDate) || from.before(cancelDate))) {
+					int days = (int) CommonUtil.getDaysBetweenDates(from, to);
+					int newDays = (int) CommonUtil.getDaysBetweenDates(from, cancelDate );
+					double newAllocation = CommonUtil.round( detail.getAllocation() * newDays / days );
+					detail.setAllocation(newAllocation);
+					detail.setToDate(cancelDate);
+					detailBean.update(detail);
+			} else {		
+				detailBean.remove(detail);
+			}
+		}
+	}
+	
 }

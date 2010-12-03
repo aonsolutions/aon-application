@@ -162,7 +162,12 @@ public enum MimeType implements IResourceable {
    /**
     * Signed PDF file MIME Type.
     */
-   MIME_SIGNED_PDF ("application/pdf", "pdf");
+   MIME_SIGNED_PDF ("application/pdf", "pdf"),
+   
+   /**
+    * CSV file MIME Type.
+    */
+   MIME_CSV ("text/csv", "csv");
     
     /**
      * IE for JPEG file MIME Type.
