@@ -13,63 +13,49 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
 
-/**
- * Transfer Object that represents an entity of GeoZone.
- * 
- * @author Consulting & Development. Eugenio Castellano - 27-ene-2005
- * @since 1.0
- * 
- */  
 @Entity
 @Table(name="geozone")
 public class GeoZone implements ITransferObject {
 
 	private static final long serialVersionUID = 8190182167605884507L;
 
-	/** The id. */
     private Integer id;
-
-	/** The name. */
     private String name;
+    private String code;
+    private boolean system;
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
     @Id
     @GeneratedValue
 	@Column(nullable=false)
 	public Integer getId() {
         return this.id;
     }
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param primaryKey the primary key
-	 */
     public void setId(Integer primaryKey) {
         this.id = primaryKey;
     }
 
-	/**
-	 * Gets the name.
-	 * 
-	 * @return the name
-	 */
     @Column(length=32,nullable=false)
     public String getName() {
         return name;
     }
-
-	/**
-	 * Sets the name.
-	 * 
-	 * @param name the name
-	 */
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Column(length=3)
+    public String getCode() {
+        return code;
+    }
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    @Column
+    public boolean isSystem() {
+        return system;
+    }
+    public void setSystem(boolean system) {
+        this.system = system;
     }
 
 	@Override
@@ -81,6 +67,8 @@ public class GeoZone implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.name, o.name)
+				.append(this.code, o.code)
+				.append(this.system, o.system)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -91,6 +79,8 @@ public class GeoZone implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)
 			.append(name)
+			.append(code)
+			.append(system)
 			.toHashCode();
 	}
 
