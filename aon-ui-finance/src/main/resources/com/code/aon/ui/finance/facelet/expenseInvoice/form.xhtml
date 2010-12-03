@@ -70,7 +70,7 @@
 					<aon:outputLabel for="Invoice_referenceCode"
 						value="#{financeBundle.finance_invoice_number}" />
 					<aon:div>
-						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
 							<aon:div id="invoiceReferenceCodeDiv">
 								<aon:inputText id="Invoice_referenceCode" 
 									value="#{expenseInvoice.to.referenceCode}"
@@ -116,7 +116,7 @@
 									<aon:outputText styleClass="aon-italic" value=")" />
 								</c:if>
 							</aon:div>
-						</h:panelGrid>
+						</aon:panelGrid>
 					</aon:div>
 
 					<aon:outputLabel for="Invoice_issueDate"
@@ -266,7 +266,7 @@
 						value="#{financeBundle.finance_invoice_file}" />
 					<aon:div id="Invoice_fileDiv" rendered="#{!expenseInvoice.new and !expenseInvoice.to.signed}">
 						<a4j:region>
-							<h:panelGrid columns="#{expenseInvoiceAttachment.uploaded?3:1}">
+							<aon:panelGrid columns="#{expenseInvoiceAttachment.uploaded?3:1}">
 								<aon:htmlCommandLink id="download" value="&#160;" target="_blank"
 									immediate="true" rendered="#{expenseInvoiceAttachment.uploaded}"
 									title="#{financeBundle.finance_download_disk}"
@@ -285,11 +285,11 @@
 									fileUploadListener="#{expenseInvoiceAttachment.fileUploaded}"
 									listHeight="0px" immediateUpload="true" autoclear="true">
 									<f:facet name="label">
-										<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+										<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 									</f:facet>														
 									<a4j:support event="onuploadcomplete" reRender="Invoice_fileDiv" />
 								</aon:fileUpload>
-							</h:panelGrid>							
+							</aon:panelGrid>							
 						</a4j:region>
 					</aon:div>	
 

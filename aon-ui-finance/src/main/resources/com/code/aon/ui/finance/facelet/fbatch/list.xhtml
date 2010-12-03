@@ -94,7 +94,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{financeBundle.finance_regs}" />
 							</f:facet>
-							<aon:outputText value="#{fbatch.modelToTotalDetails}" >
+							<aon:outputText value="#{to.financeBatchTotalDetails}" >
 								<f:convertNumber pattern="#{bundle.aon_integer_pattern}" />
 							</aon:outputText>	
 						</aon:column>
@@ -103,7 +103,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_amount}" />
 							</f:facet>
-							<aon:outputText value="#{fbatch.modelToTotalAmount}" >
+							<aon:outputText value="#{to.financeBatchTotalAmount}" >
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>	
 						</aon:column>

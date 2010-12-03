@@ -37,6 +37,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryBank;
 
 @Entity
@@ -160,6 +161,36 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
 			LOGGER.error("Error obtaining financeBatchDetail list", e);
 		}
 		return null;
+	}
+
+	@Transient
+	public Integer getFinanceBatchTotalDetails(){
+		try {
+			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), getId());
+			return fBatchDetailBean.getCount(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining fbatch total details", e);
+		}
+		return new Integer(0);
+	}
+
+	@Transient
+	public Double getFinanceBatchTotalAmount(){
+		try {
+			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), getId());
+			Projection projection = Projection.sum(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_AMOUNT));
+			Object value = fBatchDetailBean.getUniqueResult(projection, criteria);
+			if (value != null) {
+				return (Double)value;
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining fbatch total amount", e);
+		}
+		return new Double(0);
 	}
 
 	@Override

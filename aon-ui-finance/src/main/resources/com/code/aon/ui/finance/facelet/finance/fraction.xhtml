@@ -44,7 +44,7 @@
 
 					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
 					<aon:div> 
-						<h:panelGrid columns="2" columnClasses="aon-width-250,aon-width-auto">
+						<aon:panelGrid columns="2" columnClasses="aon-width-250,aon-width-auto">
 							<aon:div>
 								<aon:outputText styleClass="aon-bold"
 									value="#{financeFraction.targetFinance.documentNumber}" />
@@ -59,7 +59,7 @@
 								<aon:outputText styleClass="aon-margin-left"
 									value="#{financeFraction.targetFinance.financeStatus}" />
 							</aon:div>
-						</h:panelGrid>
+						</aon:panelGrid>
 					</aon:div>
 
 					<aon:outputLabel value="#{financeBundle.finance_invoice}" />
