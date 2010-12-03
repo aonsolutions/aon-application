@@ -97,7 +97,7 @@
 					<aon:outputLabel for="Invoice_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
-						<h:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
 							<aon:div id="invoiceReferenceCodeDiv">
 								<aon:selectOneMenu id="Invoice_series"
 									value="#{saleInvoice.to.series}" 
@@ -156,7 +156,7 @@
 									<aon:outputText styleClass="aon-italic" value=")" />
 								</c:if>
 							</aon:div>
-						</h:panelGrid>
+						</aon:panelGrid>
 					</aon:div>
 
 					<aon:outputLabel for="Invoice_issueDate"

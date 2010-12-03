@@ -65,7 +65,9 @@ public class AccountJournalManager {
 				IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
-				criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel );
+				if (securityLevel != null) {
+					criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel );	
+				}
 				criteria.addOrder(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE));
 				criteria.addOrder(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID));
 				

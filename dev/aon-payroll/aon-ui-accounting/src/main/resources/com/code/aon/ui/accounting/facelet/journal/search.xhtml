@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
@@ -37,7 +38,6 @@
 					<aon:selectOneMenu
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{journalReport.period}">
-						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
 					</aon:selectOneMenu>
 
@@ -76,11 +76,21 @@
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_journal"
 						value="#{accountingBundle.accounting_show_order}" />
-					<aon:selectOneMenu value="#{journalReport.journal}" 
-						id="AccountEntryDetail_accountEntry_journal">
-						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_id}" itemValue="#{false}" />
-						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_journal}" itemValue="#{true}" />
-					</aon:selectOneMenu>
+					<aon:div id="orderContainer">
+						<aon:selectOneMenu value="#{journalReport.journal}"
+							id="AccountEntryDetail_accountEntry_journal">
+							<a4j:support event="onchange" actionListener="#{journalReport.onChangeOrder}" reRender="orderContainer" />
+							<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_id}" itemValue="#{false}" />
+							<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_journal}" itemValue="#{true}" />
+						</aon:selectOneMenu>
+						<aon:commandLink styleClass="aon-margin-left aon-bold" style="color:red; text-decoration: underline;"
+							value="#{accountingBundle.accounting_regenerate_journal_counter_module}" 
+							actionListener="#{journalReport.onRegenerate}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')"
+							rendered="#{journalReport.journal and !journalReport.journalCorrect}">
+						</aon:commandLink>
+					</aon:div>
 
 					<aon:outputText value="&#160;" />
 					<aon:div>
@@ -107,5 +117,6 @@
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

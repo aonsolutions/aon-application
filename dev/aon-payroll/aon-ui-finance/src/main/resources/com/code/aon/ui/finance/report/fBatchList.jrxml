@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.771561000000001"/>
-	<property name="ireport.x" value="19"/>
+	<property name="ireport.x" value="315"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -13,8 +13,6 @@
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<field name="financeBatch" class="com.code.aon.finance.FinanceBatch"/>
-	<field name="regs" class="java.lang.Integer"/>
-	<field name="total" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -189,7 +187,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{financeBatch}.getFinanceBatchTotalAmount()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-10" x="254" y="0" width="103" height="14"/>
@@ -254,7 +252,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{regs}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{financeBatch}.getFinanceBatchTotalDetails()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-25" x="357" y="0" width="95" height="14"/>
