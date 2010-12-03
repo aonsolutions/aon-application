@@ -20,7 +20,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class LedgerReportController extends BasicController {
+public class LedgerReportController extends BasicController implements IAccountingBookItem{
 
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
@@ -34,6 +34,9 @@ public class LedgerReportController extends BasicController {
 	private String previousAccount;
 	private boolean currentValue = true;
 	private boolean odd = true;
+	private boolean coverVisible = false;
+	private boolean counterVisible = false;
+	private int pageCounter = 0;
 	private SecurityLevel securityLevel;
 
 	public Period getPeriod() {
@@ -91,6 +94,26 @@ public class LedgerReportController extends BasicController {
 		this.account = account;
 	}
 
+	public boolean isCoverVisible() {
+		return coverVisible;
+	}
+	public void setCoverVisible(boolean coverVisible) {
+		this.coverVisible = coverVisible;
+	}
+
+	public boolean isCounterVisible() {
+		return counterVisible;
+	}
+	public void setCounterVisible(boolean counterVisible) {
+		this.counterVisible = counterVisible;
+	}
+
+	public int getPageCounter() {
+		return pageCounter;
+	}
+	public void setPageCounter(int pageCounter) {
+		this.pageCounter = pageCounter;
+	}
 
 	public void onReset(ActionEvent event) {
 		initialize();
@@ -108,6 +131,9 @@ public class LedgerReportController extends BasicController {
 		setDate(new Date());
 		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 		setAccount(null);
+		setPageCounter(0);
+		setCounterVisible(false);
+		setCoverVisible(false);
 		previousAccountEntryDetail = null;
 		previousAccount = null;
 		odd = true;

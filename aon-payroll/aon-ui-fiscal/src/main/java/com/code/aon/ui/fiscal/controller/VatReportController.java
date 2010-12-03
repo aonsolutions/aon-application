@@ -19,7 +19,9 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
@@ -61,7 +63,12 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	private VatType vatType;
 	private Integer year;
 	private Period period;
+	private com.code.aon.accounting.Period accountPeriod;
 
+	private boolean coverVisible;
+	private boolean counterVisible;
+	private int pageCounter;
+	
 	private InvoiceReportOrder order;
 	private SecurityLevel securityLevel;
 	private Map<VatType,VatTypeBreakdown> summary;
@@ -156,6 +163,9 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		return period;
 	}
 	public void setPeriod(Period period) {
+		if (this.period != period) {
+			setAccountPeriod(null);
+		}
 		this.period = period;
 	}
 
@@ -167,6 +177,26 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		this.securityLevel = securityLevel;
 	}
 
+	public boolean isCoverVisible() {
+		return coverVisible;
+	}
+	public void setCoverVisible(boolean coverVisible) {
+		this.coverVisible = coverVisible;
+	}
+
+	public boolean isCounterVisible() {
+		return counterVisible;
+	}
+	public void setCounterVisible(boolean counterVisible) {
+		this.counterVisible = counterVisible;
+	}
+
+	public int getPageCounter() {
+		return pageCounter;
+	}
+	public void setPageCounter(int pageCounter) {
+		this.pageCounter = pageCounter;
+	}
 	public Map<VatType, VatTypeBreakdown> getSummary() {
 		return summary;
 	}
@@ -188,6 +218,9 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		setToSeries(null);
 		setToNumber(null);
 		setVatType(VatType.OUTPUT);
+		setCounterVisible(false);
+		setCoverVisible(false);
+		setPageCounter(0);
 		setSecurityLevel(null);
 		setSummary(null);
 	}
@@ -461,6 +494,20 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		}
 	}
 
+	public void onAccountingBookDetail(ActionEvent event) {
+		try {
+			VatCollectionParameters vcp = getParameters();
+			vcp.setVatType( getVatType());
+			setTitle(vcp);
+			VatCollection vc = new VatCollection();
+			List<Vat> list = vc.getVatDetailList(vcp,getOrder());
+			setModel(new ListDataModel(list));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+
 	public DataModel getModel() {
 		return model;
 	}
@@ -492,4 +539,21 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 			throw new AbortProcessingException(msg);
 		}
 	}
+
+	public com.code.aon.accounting.Period getAccountPeriod() {
+		try {
+		if (accountPeriod == null && getYear() != null) {
+			IManagerBean periodBean = BeanManager.getManagerBean(com.code.aon.accounting.Period.class);
+			com.code.aon.accounting.Period period = (com.code.aon.accounting.Period) periodBean.get(getYear().toString());
+			return period;
+		}
+		} catch (ManagerBeanException e) {
+			// return null
+		}
+		return accountPeriod;
+	}
+	public void setAccountPeriod(com.code.aon.accounting.Period period) {
+		this.accountPeriod = period;
+	}
+	
 }
