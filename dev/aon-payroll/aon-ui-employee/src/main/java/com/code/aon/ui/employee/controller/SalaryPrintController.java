@@ -105,6 +105,7 @@ public class SalaryPrintController implements ICollectionProvider, IEmployeeCons
 		controller.initializeModel();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException {
 		String id = controller.getFieldName(IEmployeeAlias.SALARY_ID);
 		ProjectionList pl = new ProjectionList( Projection.property(id) );
@@ -268,9 +269,11 @@ public class SalaryPrintController implements ICollectionProvider, IEmployeeCons
 		return aonFile;
 	}		
 
+	@SuppressWarnings("unchecked")
 	public void onSendByEmail( ActionEvent event ) {
 		try {
-			Collection<Salary> salaries = (Collection) getCollection();
+			Collection<?> list = getCollection();
+			Collection<Salary> salaries = (Collection<Salary>) list;
 			MessageController messageController = controller.initMail( enterprise, salaries );
 			messageController.addAttachment( getSalariesZipFile(salaries) );
 			messageController.setShowNewMessageWindow(true);

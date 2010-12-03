@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.math.NumberUtils;
@@ -203,4 +204,12 @@ public class ContractPayment implements ITransferObject, IPayment, IExpression {
 	public ExpressionScope getScope() {
 		return ExpressionScope.CONTRACT;
 	}
+
+	@Transient
+	public String getFullDescription() {
+		return (getPaymentConcept() == null || StringUtils.isEmpty(getPaymentConcept().getCode()))?
+				getDescription():
+				getPaymentConcept().getCode()+ " - " + getDescription();
+	}
+	
 }

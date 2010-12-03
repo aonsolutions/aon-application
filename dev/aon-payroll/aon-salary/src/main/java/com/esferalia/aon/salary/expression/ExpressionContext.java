@@ -1,5 +1,6 @@
 package com.esferalia.aon.salary.expression;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,4 +32,9 @@ public class ExpressionContext {
 		} 
 		return d;
 	}
+	
+	public Collection<IExpression> getValues() {
+		return map.values();
+	}
+	
 }

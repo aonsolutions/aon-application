@@ -11,7 +11,7 @@ import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 
-public class ContractDeductionController extends LinesController {
+public class SalaryDraftDeductionController extends LinesController {
 	
 	// TODO este método de resolución de las deducciones es muy básico.
 	// se recalcula la nomina entera cada vez, por lo que esta NO es manera  
