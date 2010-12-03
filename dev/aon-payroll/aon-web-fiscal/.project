@@ -3,8 +3,6 @@
 	<name>aon-web-fiscal</name>
 	<comment></comment>
 	<projects>
-		<project>aon-ui-accounting</project>
-		<project>aon-accounting</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
