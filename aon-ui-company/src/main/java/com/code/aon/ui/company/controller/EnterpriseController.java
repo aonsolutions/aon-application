@@ -1,6 +1,5 @@
 package com.code.aon.ui.company.controller;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,6 +21,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.EnterpriseCCC;
@@ -39,7 +39,6 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.registry.controller.RegistryController;
 
 public class EnterpriseController extends RegistryController implements ICompanyConstants {

@@ -24,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.employee.Salary;
 import com.code.aon.ql.Criteria;
@@ -39,7 +40,6 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.AonFile;
 
 public class SalaryController extends BasicController implements IEmployeeConstants {
 	
