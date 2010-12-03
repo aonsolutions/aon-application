@@ -18,7 +18,6 @@ public class BankStatementControllerListener extends ControllerAdapter {
 		controller.setModel(null);
 		controller.setRegistryBank(null);
 		controller.setBankStatementLinkManager(null);
-		controller.resetLinks();
 		controller.resetErrors();
 	}
 

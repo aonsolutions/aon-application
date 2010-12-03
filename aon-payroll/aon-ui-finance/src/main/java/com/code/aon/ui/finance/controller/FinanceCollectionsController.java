@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -7,6 +8,11 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.BankConcept;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
@@ -17,6 +23,7 @@ import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementStatus;
+import com.code.aon.ql.Criteria;
 
 /**
  * Collections controller
@@ -167,4 +174,17 @@ public class FinanceCollectionsController {
 		return statementStatuses;
 	}
 	
+	public List<SelectItem> getBankConcepts() throws ManagerBeanException {
+		List<SelectItem> bankConcepts = new LinkedList<SelectItem>();
+		IManagerBean bankConceptBean = BeanManager.getManagerBean(BankConcept.class);
+		Criteria criteria = new Criteria();
+		Iterator<ITransferObject> iter = bankConceptBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			BankConcept bankConcept = (BankConcept)iter.next();
+			SelectItem item = new SelectItem(bankConcept, bankConcept.getName());
+			bankConcepts.add(item);
+		}
+		return bankConcepts;
+	}		
+
 }

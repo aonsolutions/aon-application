@@ -18,18 +18,17 @@ import org.hibernate.annotations.Index;
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.config.PayMethodTypeDetail;
+import com.code.aon.finance.BankConcept;
 
 @Entity
-@Table(name="pm_type_detail_account")
-public class PayMethodTypeDetailAccount implements ITransferObject, IAccount {
-	
-	private static final long serialVersionUID = -1079794304758572771L;
+@Table(name="bank_concept_account")
+public class BankConceptAccount implements ITransferObject, IAccount {
+
+	private static final long serialVersionUID = 7295096890216509899L;
 
 	private Integer id;
-	private PayMethodTypeDetail payMethodTypeDetail;
+	private BankConcept bankConcept;
 	private Account account;
 	
 	@Id
@@ -43,39 +42,38 @@ public class PayMethodTypeDetailAccount implements ITransferObject, IAccount {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="pm_type_detail", nullable = false)
-	@ForeignKey(name="FK_PM_TYPE_DETAIL_ACCOUNT_DETAIL")
-	@Index(name="IDX_PM_TYPE_DETAIL_ACCOUNT_DETAIL")
-	@AonPOJOInitializationInvalidateRestoreNull
-	public PayMethodTypeDetail getPayMethodTypeDetail() {
-		return payMethodTypeDetail;
+	@JoinColumn(name="bank_concept", nullable = false)
+	@ForeignKey(name="FK_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT")
+	@Index(name="IDX_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT")
+	public BankConcept getBankConcept() {
+		return bankConcept;
 	}
-	public void setPayMethodTypeDetail(PayMethodTypeDetail payMethodTypeDetail) {
-		this.payMethodTypeDetail = payMethodTypeDetail;
+	public void setBankConcept(BankConcept bankConcept) {
+		this.bankConcept = bankConcept;
 	}
 
 	@ManyToOne
 	@JoinColumn(name="account", nullable = false)
-	@ForeignKey(name="FK_PM_TYPE_DETAIL_ACCOUNT_ACCOUNT")
-	@Index(name="IDX_PM_TYPE_DETAIL_ACCOUNT_ACCOUNT")						
+	@ForeignKey(name="FK_BANK_CONCEPT_ACCOUNT_ACCOUNT")
+	@Index(name="IDX_BANK_CONCEPT_ACCOUNT_ACCOUNT")					
 	public Account getAccount() {
 		return account;
 	}
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-	
+
 	@Transient
 	public ITransferObject getLinkedTo() {
-		return getPayMethodTypeDetail();
+		return getBankConcept();
 	}
 	public void setLinkedTo(ITransferObject to) {
-		setPayMethodTypeDetail((PayMethodTypeDetail) to);
-	}	
+		setBankConcept((BankConcept) to);
+	}
 
 	@Transient
 	public String getAccountDescription() {
-		return (getPayMethodTypeDetail()==null) ? null : getPayMethodTypeDetail().getDescription();
+		return (getBankConcept()==null) ? null : getBankConcept().getName();
 	}
 
 	@Override
@@ -83,11 +81,11 @@ public class PayMethodTypeDetailAccount implements ITransferObject, IAccount {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final PayMethodTypeDetailAccount o = (PayMethodTypeDetailAccount) obj;
+		final BankConceptAccount o = (BankConceptAccount) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.account,o.account)
-				.append(this.payMethodTypeDetail,o.payMethodTypeDetail)
+				.append(this.bankConcept,o.bankConcept)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -98,7 +96,7 @@ public class PayMethodTypeDetailAccount implements ITransferObject, IAccount {
 		return new HashCodeBuilder()
 			.append(id)		
 			.append(this.account)
-			.append(this.payMethodTypeDetail)
+			.append(this.bankConcept)
 			.toHashCode();
 	}	
 
