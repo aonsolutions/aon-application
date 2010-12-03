@@ -21,12 +21,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.ebackoffice.Eccatalogue;
 import com.code.aon.ebackoffice.enumeration.CatalogueType;
 import com.code.aon.product.Catalogue;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 
 public class EccatalogueController extends LinesController {

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Invoice;
 import com.code.aon.report.ReportException;
@@ -28,7 +29,6 @@ import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.SecurityInfo;
 
 public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessages, IFinanceConstants {

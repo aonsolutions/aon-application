@@ -12,7 +12,7 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.ui.common.io.AonFile;
+import com.code.aon.common.util.AonFile;
 
 /**
  * Controller used in the company maintenance.

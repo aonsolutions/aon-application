@@ -1,5 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,8 +21,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -29,12 +28,12 @@ import javax.faces.event.ValueChangeEvent;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Flags;
+import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Part;
-import javax.mail.Flags.Flag;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.naming.Name;
@@ -56,6 +55,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.ql.Criteria;
@@ -65,12 +65,12 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonMessageTracer;
-import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.EmailSecurity;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.SecurityInfo;
 import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonAttachment;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
@@ -295,22 +295,31 @@ public class MessageController implements IWebMailConstants, BundleConstants {
        	while (iter.hasNext()){
        		AonAttachment attach = iter.next();
        		MimeBodyPart m = (MimeBodyPart) attach.getPart();
+       		InputStream in = null;
+       		OutputStream out = null;
        		try {
+       			String fullName = attach.getFileName();
+       			String name = "webmail-" + FilenameUtils.getBaseName(fullName);
+       			String extension = FilenameUtils.getExtension(fullName);
+       			File file = File.createTempFile( name, "." + extension );
        			AonFile af = new AonFile();
-       			InputStream is = m.getInputStream();
-       			String name = attach.getFileName();
-       			File f = File.createTempFile( "webmail-", name ); 
-       			FileOutputStream fos = new FileOutputStream(f);
-       			IOUtils.copy( is, fos );
-       			is.close();
-    			fos.close();
-    			af.setFile(f);
-    			af.setFileName( name );
+    			af.setFile(file);
+    			af.setFileName( fullName );
+       			in = m.getInputStream(); 
+       			out = new BufferedOutputStream(new FileOutputStream(file));
+       			IOUtils.copy( in, out );
+    			MimeType mimeType = attach.getMimeType();
+    			if ( mimeType == null ) {
+        			af.setMimeType(af.resolveMimeType());	
+    			}
        			newMsgFileList.add(af);
 			} catch (IOException e) {
 				AonUtil.addErrorMessage(e.getMessage());
 			} catch (MessagingException e) {
 				AonUtil.addErrorMessage(e.getMessage());
+			} finally {
+				IOUtils.closeQuietly(in);
+				IOUtils.closeQuietly(out);
 			}
        	}		
 	}
@@ -377,6 +386,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     	AonFile f = new AonFile();
     	f.setFile(item.getFile());
     	f.setFileName(item.getFileName());
+    	f.setMimeType(f.resolveMimeType());
     	errorMessage = getWebMailController().isValidFile(f); 
     	if ( errorMessage == null ) {
         	addAttachment( f );	
@@ -522,22 +532,14 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		       		MimeBodyPart relatedPart = new MimeBodyPart();		       		
 		       		relatedPart.setDataHandler(bp.getDataHandler());
 		       		relatedPart.setContentID(bp.getHeader("Content-ID")[0]);
-		       		relatedPart.setDisposition(Part.INLINE);
+		       		// relatedPart.setDisposition(Part.INLINE);
 					mainPart.addBodyPart(relatedPart);
 		       	}
 	       	}
        	}
-		if ( fileList.size() > 0 ) {
-			FileDataSource fds;
-			for ( int i=0; i < fileList.size(); i++ ) {
-				AonFile file = fileList.get(i);
-				MimeBodyPart mbpNext = new MimeBodyPart();
-				fds = new FileDataSource(file.getFile());
-				String name = FilenameUtils.getName(file.getFileName());
-				mbpNext.setFileName( name );
-				mbpNext.setDataHandler(new DataHandler(fds));
-				mainPart.addBodyPart(mbpNext);
-			}
+		for ( AonFile file : fileList ) {
+			BodyPart bodyPart = WebmailUtil.getBodyPart(file);
+			mainPart.addBodyPart(bodyPart);
 		}       	
        	if ( securityInfo != null ) {
        		mainPart = EmailSecurity.sign( mainPart, securityInfo );

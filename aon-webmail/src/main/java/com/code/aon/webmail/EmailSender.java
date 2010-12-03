@@ -1,8 +1,7 @@
 package com.code.aon.webmail;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.mail.Address;
+import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
@@ -10,6 +9,7 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.IMimeType;
@@ -68,10 +68,7 @@ public class EmailSender {
 		       	mainPart.setContent( content, type );
 		       	multipart.addBodyPart(mainPart);
 				for ( AonFile file : attachemnts ) {
-					MimeBodyPart bodyPart = new MimeBodyPart();
-					FileDataSource fds = new FileDataSource(file.getFile());
-					bodyPart.setFileName( file.getFileName() );
-					bodyPart.setDataHandler(new DataHandler(fds));
+					BodyPart bodyPart = WebmailUtil.getBodyPart(file);
 					multipart.addBodyPart(bodyPart);
 				}
 	       	} catch ( MessagingException e ) {
