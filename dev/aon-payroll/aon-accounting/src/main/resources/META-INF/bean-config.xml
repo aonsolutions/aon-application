@@ -32,9 +32,6 @@
 	
 	<bean description="Listener que se encarga de crear las lineas de amortizacion.">
 		<pojo>com.code.aon.accounting.Amortization</pojo>
-		<listeners>
-	        <listener>com.code.aon.accounting.event.AmortizationBeanListener</listener>
-		</listeners>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.accounting.event.AmortizationVetoableBeanListener</vetoListener>
 		</vetoListeners>

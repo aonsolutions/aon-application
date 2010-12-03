@@ -10,6 +10,7 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.DownloadUtil;
 
 /**
  * The Class AttachmentController.
@@ -88,7 +89,7 @@ public class AttachmentController extends LinesController implements IAttachment
         FacesContext context = FacesContext.getCurrentInstance();
         String id = context.getExternalContext().getRequestParameterMap().get("index");
         IAttachment attachment = (IAttachment) getManagerBean().get(Integer.valueOf(id));
-        AttachmentUtil.downloadAttachment( attachment );    	
+        DownloadUtil.downloadAttachment( attachment );    	
     }
 	
 }

@@ -18,6 +18,12 @@
 				</ui:define>
 				
 				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="update" value="#{accountingBundle.accounting_refresh}"
+						accesskey="Q" title="#{accountingBundle.accounting_refresh}"
+						actionListener="#{trialBalance.onSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh"
+						immediate="true" />
+
 					<aon:htmlCommandLink id="trialBalance-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
 						title="#{bundle.aon_listing} MS Excel"

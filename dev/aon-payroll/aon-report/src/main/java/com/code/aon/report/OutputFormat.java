@@ -2,6 +2,8 @@ package com.code.aon.report;
 
 import java.io.Serializable;
 
+import com.code.aon.common.enumeration.MimeType;
+
 /**
  * Enumeration for the diferent types of output format.
  * 
@@ -21,50 +23,50 @@ public class OutputFormat implements Serializable, Comparable<OutputFormat> {
 	 * PDF format.
 	 */
 	public static final OutputFormat PDF = new OutputFormat(0, "PDF",
-			"application/pdf");
+			MimeType.MIME_PDF);
 
 	/**
 	 * HTML format.
 	 */
 	public static final OutputFormat HTML = new OutputFormat(1, "HTML",
-			"text/html");
+			MimeType.MIME_HTML);
 
 	/**
 	 * XML format.
 	 */
 	public static final OutputFormat XML = new OutputFormat(2, "XML",
-			"text/xml");
+			MimeType.MIME_XML);
 
 	/**
 	 * MS Excel format.
 	 */
 	public static final OutputFormat XLS = new OutputFormat(3, "MS Excel",
-			"application/vnd.ms-excel");
+			MimeType.MIME_MS_EXCEL);
 
 	/**
 	 * CSV format.
 	 */
 	public static final OutputFormat CSV = new OutputFormat(4, "CSV",
-			"text/plain");
+			MimeType.MIME_CSV);
 
 	/**
 	 * RTF format.
 	 */
 	public static final OutputFormat RTF = new OutputFormat(5, "RTF",
-			"application/rtf");
+			MimeType.MIME_RTF);
 
 	/**
 	 * TEXT format.
 	 */
 	public static final OutputFormat TXT = new OutputFormat(6, "TXT",
-			"text/plain");
+			MimeType.MIME_TXT);
 
 	/**
 	 * TEXT format.
 	 */
 	// MIME TYPE obtenido de --> http://support.microsoft.com/kb/936496/es
 	public static final OutputFormat DOCX = new OutputFormat(6, "DOCX",
-			"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			MimeType.MIME_MS_WORD_2007);
 
 	/**
 	 * Index of the element in the output formats array.
@@ -79,7 +81,7 @@ public class OutputFormat implements Serializable, Comparable<OutputFormat> {
 	/**
 	 * MIME type of the generated stream.
 	 */
-	private String mimeType;
+	private MimeType mimeType;
 
 	/**
 	 * Constructor for OutputFormat
@@ -91,7 +93,7 @@ public class OutputFormat implements Serializable, Comparable<OutputFormat> {
 	 * @param mimeType
 	 *            MIME type of the element.
 	 */
-	private OutputFormat(int index, String description, String mimeType) {
+	private OutputFormat(int index, String description, MimeType mimeType) {
 		this.index = index;
 		this.description = description;
 		this.mimeType = mimeType;
@@ -207,10 +209,28 @@ public class OutputFormat implements Serializable, Comparable<OutputFormat> {
 	 * 
 	 * @return The MIME type.
 	 */
-	public String getMimeType() {
+	public MimeType getMimeType2() {
 		return mimeType;
 	}
+	
+	/**
+	 * Returns the MIME type of this <code>OutputFormat</code>.
+	 * 
+	 * @return The MIME type.
+	 */
+	public String getMimeType() {
+		return mimeType.getName();
+	}
 
+    /**
+     * Return MIME type extension.
+     * 
+     * @return The MIME type extension.
+     */	
+	public String getExtension() {
+		return mimeType.getExtension();
+	}
+	
 	/**
 	 * Returns the description of this element.
 	 * 

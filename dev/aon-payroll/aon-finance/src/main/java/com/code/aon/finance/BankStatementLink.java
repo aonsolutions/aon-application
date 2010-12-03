@@ -24,7 +24,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.finance.enumeration.StatementLinkReliability;
 import com.code.aon.finance.enumeration.StatementLinkSource;
 import com.code.aon.finance.enumeration.StatementLinkStatus;
 
@@ -39,7 +38,6 @@ public class BankStatementLink implements ITransferObject {
     private StatementLinkSource source;
     private int sourceId;
     private double amount;
-    private StatementLinkReliability reliability;
     private StatementLinkStatus status;
 
     private ITransferObject sourceTo;
@@ -88,13 +86,6 @@ public class BankStatementLink implements ITransferObject {
 		this.amount = amount;
 	}
 	
-	public StatementLinkReliability getReliability() {
-		return reliability;
-	}
-	public void setReliability(StatementLinkReliability reliability) {
-		this.reliability = reliability;
-	}
-
 	public StatementLinkStatus getStatus() {
 		return status;
 	}
@@ -157,7 +148,9 @@ public class BankStatementLink implements ITransferObject {
 		if (isFinanceTracking()) {
 			return ((FinanceTracking)getSourceTo()).getFinance().getDocumentNumber();
 		} else if (isFinanceBatch()) {
-			return ("Remesa: ") + ((FinanceBatch)getSourceTo()).getId();
+			return Integer.toString(((FinanceBatch)getSourceTo()).getId());
+		} else if (isBankConcept()) {
+			return ((BankConcept)getSourceTo()).getAccount().getId();
 		} else if (isAccount()) {
 			return ((Account)getSourceTo()).getId();
 		}
@@ -196,7 +189,6 @@ public class BankStatementLink implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.amount,o.amount)
 				.append(this.bankStatement,o.bankStatement)
-				.append(this.reliability,o.reliability)		
 				.append(this.source,o.source)		
 				.append(this.sourceId,o.sourceId)		
 				.append(this.status,o.status)		
@@ -211,7 +203,6 @@ public class BankStatementLink implements ITransferObject {
 			.append(id)		
 			.append(this.amount)
 			.append(this.bankStatement)
-			.append(this.reliability)		
 			.append(this.source)		
 			.append(this.sourceId)		
 			.append(this.status)		

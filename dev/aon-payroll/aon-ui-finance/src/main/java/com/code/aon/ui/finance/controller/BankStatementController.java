@@ -22,6 +22,13 @@ import javax.faces.event.ValueChangeEvent;
 import org.richfaces.event.UploadEvent;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.bridge.AccountEntryBankStatement;
+import com.code.aon.account.bridge.BankConceptAccount;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -36,9 +43,9 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.StatementConcept;
-import com.code.aon.finance.enumeration.StatementLinkReliability;
 import com.code.aon.finance.enumeration.StatementLinkSource;
 import com.code.aon.finance.enumeration.StatementLinkStatus;
+import com.code.aon.finance.enumeration.StatementReliability;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -66,9 +73,10 @@ public class BankStatementController extends BasicController {
 	private AonFile aonFile;
 	private boolean showLinkWindow;
 	private BankStatementLinkManager linkManager;
-	private ArrayList<BankStatement> bankStatementChecks= new ArrayList<BankStatement>();
 	private Map<Integer, String> errors;
-
+	private AccountEntryFinanceWriter writer;
+	private ArrayList<BankStatement> bankStatementChecks= new ArrayList<BankStatement>();
+	
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
@@ -150,17 +158,25 @@ public class BankStatementController extends BasicController {
 		this.errors = errors;
 	}
 
+	public AccountEntryFinanceWriter getWriter() {
+		if(writer == null){
+			writer = new AccountEntryFinanceWriter();
+		}
+		return writer;
+	}
+
 	public void onSeeAll(ActionEvent event) throws ManagerBeanException {
 		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
 		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
-		StatementStatus[] statementStatus = {};
-		searchListener.setStatementStatuses(statementStatus);
+		searchListener.setStatementReliabilities(new StatementReliability[0]);
+		searchListener.setStatementStatuses(new StatementStatus[0]);
 		searchBankStatements(getRegistryBank());
 	}
 
 	public void onSeePending(ActionEvent event) throws ManagerBeanException {
 		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
 		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		searchListener.setStatementReliabilities(new StatementReliability[0]);
 		StatementStatus[] statementStatus = {StatementStatus.PENDING};
 		searchListener.setStatementStatuses(statementStatus);
 		searchBankStatements(getRegistryBank());
@@ -169,6 +185,37 @@ public class BankStatementController extends BasicController {
 	public void onSeeChecked(ActionEvent event) throws ManagerBeanException {
 		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
 		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		searchListener.setStatementReliabilities(new StatementReliability[0]);
+		StatementStatus[] statementStatus = {StatementStatus.CHECKED};
+		searchListener.setStatementStatuses(statementStatus);
+		searchBankStatements(getRegistryBank());
+	}
+
+	public void onSeeExact(ActionEvent event) throws ManagerBeanException {
+		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		StatementReliability[] statementReliability = {StatementReliability.VERY_HIGH};
+		searchListener.setStatementReliabilities(statementReliability);
+		StatementStatus[] statementStatus = {StatementStatus.CHECKED};
+		searchListener.setStatementStatuses(statementStatus);
+		searchBankStatements(getRegistryBank());
+	}
+
+	public void onSeeApproximate(ActionEvent event) throws ManagerBeanException {
+		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		StatementReliability[] statementReliability = {StatementReliability.HIGH};
+		searchListener.setStatementReliabilities(statementReliability);
+		StatementStatus[] statementStatus = {StatementStatus.CHECKED};
+		searchListener.setStatementStatuses(statementStatus);
+		searchBankStatements(getRegistryBank());
+	}
+
+	public void onSeeAmbiguous(ActionEvent event) throws ManagerBeanException {
+		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		StatementReliability[] statementReliability = {StatementReliability.MEDIUM, StatementReliability.LOW};
+		searchListener.setStatementReliabilities(statementReliability);
 		StatementStatus[] statementStatus = {StatementStatus.CHECKED};
 		searchListener.setStatementStatuses(statementStatus);
 		searchBankStatements(getRegistryBank());
@@ -177,9 +224,183 @@ public class BankStatementController extends BasicController {
 	public void onSeeRecorded(ActionEvent event) throws ManagerBeanException {
 		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
 		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		searchListener.setStatementReliabilities(new StatementReliability[0]);
 		StatementStatus[] statementStatus = {StatementStatus.RECORDED};
 		searchListener.setStatementStatuses(statementStatus);
 		searchBankStatements(getRegistryBank());
+	}
+
+	public void onSelectPending(ActionEvent event) throws ManagerBeanException {
+		clearCheckedBankStatement();
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.PENDING) {
+				bankStatementChecks.add(statement);
+			}
+		}
+	}
+
+	public void onSelectChecked(ActionEvent event) throws ManagerBeanException {
+		clearCheckedBankStatement();
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.CHECKED) {
+				bankStatementChecks.add(statement);
+			}
+		}
+	}
+
+	public void onSelectExact(ActionEvent event) throws ManagerBeanException {
+		clearCheckedBankStatement();
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.CHECKED && statement.getReliability() == StatementReliability.VERY_HIGH) {
+				bankStatementChecks.add(statement);
+			}
+		}
+	}
+
+	public void onSelectApproximate(ActionEvent event) throws ManagerBeanException {
+		clearCheckedBankStatement();
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.CHECKED && statement.getReliability() == StatementReliability.HIGH) {
+				bankStatementChecks.add(statement);
+			}
+		}
+	}
+
+	public void onSelectAmbiguous(ActionEvent event) throws ManagerBeanException {
+		clearCheckedBankStatement();
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.CHECKED) {
+				if (statement.getReliability() == StatementReliability.MEDIUM || statement.getReliability() == StatementReliability.LOW) {
+					bankStatementChecks.add(statement);
+				}
+			}
+		}
+	}
+
+	public void onSelectRecorded(ActionEvent event) throws ManagerBeanException {
+		clearCheckedBankStatement();
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.RECORDED) {
+				bankStatementChecks.add(statement);
+			}
+		}
+	}
+
+	public void onSelectNone(ActionEvent event) throws ManagerBeanException {
+		clearCheckedBankStatement();
+	}
+
+	public void onCancelAll(ActionEvent event) throws ManagerBeanException {
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.CHECKED) {
+				removeLinks(statement);
+			}
+		}
+		onSearch(null);
+	}
+
+	public void onCancelSelected(ActionEvent event) throws ManagerBeanException {
+		for (BankStatement statement : getCheckedBankStatement()) {
+			if (statement.getStatus() == StatementStatus.CHECKED) {
+				removeLinks(statement);
+			}
+		}
+		onSearch(null);
+	}
+
+	public void onCancelExact(ActionEvent event) throws ManagerBeanException {
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.CHECKED && statement.getReliability() == StatementReliability.VERY_HIGH) {
+				removeLinks(statement);
+			}
+		}
+		onSearch(null);
+	}
+
+	public void onCancelApproximate(ActionEvent event) throws ManagerBeanException {
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.CHECKED && statement.getReliability() == StatementReliability.HIGH) {
+				removeLinks(statement);
+			}
+		}
+		onSearch(null);
+	}
+
+	public void onCancelAmbiguous(ActionEvent event) throws ManagerBeanException {
+		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
+			BankStatement statement = (BankStatement)ito;
+			if (statement.getStatus() == StatementStatus.CHECKED) {
+				if (statement.getReliability() == StatementReliability.MEDIUM || statement.getReliability() == StatementReliability.LOW) {
+					removeLinks(statement);
+				}
+			}
+		}
+		onSearch(null);
+	}
+
+	public void onViewEntrySelected(ActionEvent event) throws ManagerBeanException {
+		for (BankStatement statement : getCheckedBankStatement()) {
+			statement.setShowAccountEntry(true);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onViewEntryCurrentPage(ActionEvent event) throws ManagerBeanException {
+		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			BankStatement statement = (BankStatement)iterator.next();
+			statement.setShowAccountEntry(true);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onViewEntryNone(ActionEvent event) throws ManagerBeanException {
+		for (BankStatement statement : getCheckedBankStatement()) {
+			statement.setShowAccountEntry(false);
+		}
+
+		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			BankStatement statement = (BankStatement)iterator.next();
+			statement.setShowAccountEntry(false);
+		}
+	}
+
+	public void onBreakdownSelected(ActionEvent event) throws ManagerBeanException {
+		for (BankStatement statement : getCheckedBankStatement()) {
+			statement.setShowBankStatementLink(true);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onBreakdownCurrentPage(ActionEvent event) throws ManagerBeanException {
+		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			BankStatement statement = (BankStatement)iterator.next();
+			statement.setShowBankStatementLink(true);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onBreakdownNone(ActionEvent event) throws ManagerBeanException {
+		for (BankStatement statement : getCheckedBankStatement()) {
+			statement.setShowBankStatementLink(false);
+		}
+
+		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			BankStatement statement = (BankStatement)iterator.next();
+			statement.setShowBankStatementLink(false);
+		}
 	}
 
 	public void onCheckByConcept(ActionEvent event) throws ManagerBeanException {
@@ -271,9 +492,8 @@ public class BankStatementController extends BasicController {
 	}
 
 	private int obtainLotNumber() throws ManagerBeanException {
-		IManagerBean statementBean = BeanManager.getManagerBean(BankStatement.class);
-		Projection projection = Projection.max(statementBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LOT_NUMBER));
-		Object value = statementBean.getUniqueResult(projection, null);
+		Projection projection = Projection.max(getManagerBean().getFieldName(IFinanceAlias.BANK_STATEMENT_LOT_NUMBER));
+		Object value = getManagerBean().getUniqueResult(projection, null);
 		if (value != null) {
 			return ((Integer) value).intValue() + 1;
 		}
@@ -346,6 +566,7 @@ public class BankStatementController extends BasicController {
 		bankStatement.setReference1(line.substring(52, 64));
 		bankStatement.setReference2(line.substring(64, 80));
 		bankStatement.setDescription(line.substring(52, 80));
+		bankStatement.setReliability(StatementReliability.VERY_HIGH);
 		bankStatement.setStatus(StatementStatus.PENDING);
 		return (BankStatement)getManagerBean().insert(bankStatement);
 	}
@@ -422,6 +643,7 @@ public class BankStatementController extends BasicController {
 		bankStatement.setReference1(null);
 		bankStatement.setReference2(null);
 		bankStatement.setDescription((description.length() > 80) ? description.substring(0, 80) : description);
+		bankStatement.setReliability(StatementReliability.VERY_HIGH);
 		bankStatement.setStatus(StatementStatus.PENDING);
 		return (BankStatement)getManagerBean().insert(bankStatement);
 	}
@@ -450,6 +672,7 @@ public class BankStatementController extends BasicController {
 		return calendar.getTime();
 	}
 
+
 	public void onCheckSelected(ActionEvent event) throws ManagerBeanException {
 		if (checkByAccount && (getAccount() == null || getAccount().getId() == null)) {
 			addMessage("Cuenta Contable: Error de Validación: Valor es necesario.");
@@ -462,7 +685,6 @@ public class BankStatementController extends BasicController {
 		StatementLinkSource source = (checkByAccount) ? StatementLinkSource.ACCOUNT : StatementLinkSource.BANK_CONCEPT;
 		int sourceId = (checkByAccount) ? Integer.parseInt(getAccount().getId()) : getBankConcept().getId();
 
-		IManagerBean statementBean = BeanManager.getManagerBean(BankStatement.class);
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		for (BankStatement statement : getCheckedBankStatement()) {
 			if (statement.getStatus() == StatementStatus.PENDING) {
@@ -471,20 +693,21 @@ public class BankStatementController extends BasicController {
 				statementLink.setSource(source);
 				statementLink.setSourceId(sourceId);
 				statementLink.setAmount(statement.getAmount());
-				statementLink.setReliability(StatementLinkReliability.VERY_HIGH);
 				statementLink.setStatus(StatementLinkStatus.PENDING);
 				statementLinkBean.insert(statementLink);
 
+				statement.setReliability(StatementReliability.VERY_HIGH);
 				statement.setStatus(StatementStatus.CHECKED);
-				statementBean.update(statement);
+				getManagerBean().update(statement);
 			}
 		}
 
+		onSearch(null);
 		clearCheckedBankStatement();
 	}
 
 	public void onCheckLinks(ActionEvent event) throws ManagerBeanException {
-		resetErrors();
+		//resetErrors();
 		try {
 			List<ITransferObject> bankStatementList = getManagerBean().getList(getCriteria());
 			for (ITransferObject ito : bankStatementList) {
@@ -538,7 +761,6 @@ public class BankStatementController extends BasicController {
 		double toAmount = CommonUtil.round(to.getAmount() * 1.10);
 
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		IManagerBean statementBean = BeanManager.getManagerBean(BankStatement.class);
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		for (int key=1; key<=4; key++) {
 			Criteria criteria = new Criteria();
@@ -588,11 +810,11 @@ public class BankStatementController extends BasicController {
 					//listo. Si no esta contabilizado se asocia.
 					//Si el status es settled, se borra la linea del tracking de saldado y se cobra.
 					//Ver diferencias entre amount y totalAmount
-					StatementLinkReliability reliability = StatementLinkReliability.LOW;
+					StatementReliability reliability = StatementReliability.LOW;
 					if (key == 1 && financeList.size() == 1) {
-						reliability = StatementLinkReliability.VERY_HIGH;
+						reliability = StatementReliability.VERY_HIGH;
 					} else if (key < 4 && financeList.size() == 1) {
-						reliability = StatementLinkReliability.HIGH;
+						reliability = StatementReliability.HIGH;
 					}
 
 					StatementLinkStatus status = StatementLinkStatus.PENDING;
@@ -609,12 +831,12 @@ public class BankStatementController extends BasicController {
 					statementLink.setSource(StatementLinkSource.FINANCE_TRACKING);
 					statementLink.setSourceId(finance.getId());
 					statementLink.setAmount(finance.getTotalAmount());
-					statementLink.setReliability(reliability);
 					statementLink.setStatus(status);
 					statementLinkBean.insert(statementLink);
 
+					to.setReliability(reliability);
 					to.setStatus(StatementStatus.CHECKED);
-					statementBean.update(to);
+					getManagerBean().update(to);
 					return;
 				}
 			}
@@ -723,6 +945,19 @@ public class BankStatementController extends BasicController {
 		getErrors().remove(to.getId());
 	}
 
+	public void removeLinks(BankStatement statement) throws ManagerBeanException {
+		// Falta implementar la parte del FinanceTracking, si el status del link es distinto de pagado, hay que anular la linea del tracking
+		// y no se si alguna cosa mas.
+		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
+		for (ITransferObject ito : getBankStatementLinkList(statement)) {
+			statementLinkBean.remove((BankStatementLink)ito);
+		}
+		statement.setReliability(StatementReliability.VERY_HIGH);
+		statement.setStatus(StatementStatus.PENDING);
+		statement.setShowBankStatementLink(false);
+		getManagerBean().update(statement);
+	}
+
 	public String getErrorMessage() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			BankStatement to = (BankStatement)getModel().getRowData();
@@ -734,14 +969,33 @@ public class BankStatementController extends BasicController {
 	public List<ITransferObject> getBankStatementLinkList() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			BankStatement to = (BankStatement)getModel().getRowData();
-
-			IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), to.getId());
-			criteria.addOrder(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE));
-			return statementLinkBean.getList(criteria);
+			return getBankStatementLinkList(to);
 		}
 		return null;
+	}
+
+	private List<ITransferObject> getBankStatementLinkList(BankStatement statement) throws ManagerBeanException {
+		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+		criteria.addOrder(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE));
+		return statementLinkBean.getList(criteria);
+	}
+
+	public boolean isShowBankStatementLink() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			if (to.isShowBankStatementLink()) {
+				return true;
+			} else if (getCheckedBankStatement().contains(to)) {
+				for (BankStatement statement : getCheckedBankStatement()) {
+					if (to.equals(statement)) {
+						return statement.isShowBankStatementLink();
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	public void onShowBankStatementLink(ActionEvent event) {
@@ -758,6 +1012,142 @@ public class BankStatementController extends BasicController {
 		try {
 			BankStatement to = (BankStatement)getModel().getRowData();
 			to.setShowBankStatementLink(false);
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	public void onRecordLinks(ActionEvent event) throws ManagerBeanException {
+		for (BankStatement statement : getCheckedBankStatement()) {
+			if (statement.getStatus() == StatementStatus.CHECKED) {
+				boolean financeTrackingMode = false;
+				boolean financeBatchMode = false;
+				Map<Account, Double> accountMap = new HashMap<Account, Double>();
+				double amountLinks = 0;
+
+				errors.remove(statement);
+				for (ITransferObject ito : getBankStatementLinkList(statement)) {
+					BankStatementLink statementLink = (BankStatementLink)ito;
+					amountLinks += statementLink.getAmount();
+					if (statementLink.getSource() == StatementLinkSource.FINANCE_TRACKING) {
+						// Lista de Finance ¿Tracking?
+						// Si el finance tracking esta contabilizado --> error
+						financeTrackingMode = true;
+					} else if (statementLink.getSource() == StatementLinkSource.FINANCE_BATCH) {
+						// Lista de Finance Batch
+						// Si el finance batch esta contabilizado --> error
+						financeBatchMode = true;
+					} else {
+						if (statementLink.getSource() == StatementLinkSource.BANK_CONCEPT) {
+							IManagerBean conceptBean = BeanManager.getManagerBean(BankConceptAccount.class);
+							String conceptAlias = conceptBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID);
+							BankConcept concept = (BankConcept)statementLink.getSourceTo();
+							Criteria criteria = new Criteria();
+							criteria.addEqualExpression(conceptAlias, concept.getId());
+							Iterator<ITransferObject> iterator = conceptBean.getList(criteria).iterator();
+							if (iterator.hasNext()) {
+								BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
+								accountMap.put(conceptAccount.getAccount(), new Double(statementLink.getAmount()));
+							} else {
+								getErrors().put(statement.getId(), "El Concepto " + concept.getName() + " no tiene Cuenta Contable asociada.");
+							}
+						} else {
+							accountMap.put((Account)statementLink.getSourceTo(), new Double(statementLink.getAmount()));
+						}
+					}
+				}
+
+				if (errors.get(statement) == null) {
+					if (statement.getAmount() != amountLinks) {
+						getErrors().put(statement.getId(), "El Importe de la línea del Extracto no cuadra con la suma de los Detalles del mismo.");
+					} else {
+						AccountEntry entry = null;
+						if (financeTrackingMode) {
+
+						} else if (financeBatchMode) {
+
+						} else {
+							entry = getWriter().recordBankStatement(statement, accountMap);
+						}
+
+						if (entry != null) {
+							getWriter().insertAccountEntryBankStatement(entry, statement);
+
+							statement.setStatus(StatementStatus.RECORDED);
+							statement.setShowBankStatementLink(false);
+							getManagerBean().update(statement);
+						}
+					}
+				}
+			} else if (statement.getStatus() == StatementStatus.PENDING) {
+				getErrors().put(statement.getId(), "La línea del Extracto esta Pendiente. No se puede Contabilizar.");
+			} else if (statement.getStatus() == StatementStatus.RECORDED) {
+				getErrors().put(statement.getId(), "La línea del Extracto ya esta Contabilizada.");
+			}
+		}
+
+		onSearch(null);
+		clearCheckedBankStatement();
+	}
+
+	public AccountEntry getAccountEntry() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			IManagerBean accEntryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accEntryStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID), to.getId());
+			Iterator<ITransferObject> iterator = accEntryStatementBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				AccountEntryBankStatement accEntryStatement = (AccountEntryBankStatement)iterator.next();
+				return accEntryStatement.getAccountEntry();
+			}
+		}
+		return null;
+	}
+
+	public List<ITransferObject> getAccountEntryDetails() throws ManagerBeanException {
+		AccountEntry accountEntry = getAccountEntry();
+		return (accountEntry != null) ? getAccountEntryDetails(accountEntry) : null;
+	}
+
+	private List<ITransferObject> getAccountEntryDetails(AccountEntry accEntry) throws ManagerBeanException {
+		IManagerBean accEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accEntry.getId());
+		return accEntryDetailBean.getList(criteria);
+	}
+
+	public boolean isShowAccountEntry() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			if (to.isShowAccountEntry()) {
+				return true;
+			} else if (getCheckedBankStatement().contains(to)) {
+				for (BankStatement statement : getCheckedBankStatement()) {
+					if (to.equals(statement)) {
+						return statement.isShowAccountEntry();
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public void onShowAccountEntry(ActionEvent event) {
+		try {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			to.setShowAccountEntry(true);
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	public void onHideAccountEntry(ActionEvent event) {
+		try {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			to.setShowAccountEntry(false);
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -809,19 +1199,4 @@ public class BankStatementController extends BasicController {
 		bankStatementChecks = new ArrayList<BankStatement>();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void checkAllBankStatements(ActionEvent event) throws ManagerBeanException {
-		Iterator iterator = getManagerBean().getList(getCriteria()).iterator();
-		while (iterator.hasNext()) {
-			BankStatement bankStatement = (BankStatement)iterator.next();
-			if (!bankStatementChecks.contains(bankStatement)) {
-				bankStatementChecks.add(bankStatement);
-			}
-		}
-	}
-
-	public void checkNoneBankStatements(ActionEvent event) {
-		clearCheckedBankStatement();
-	}
-
 }

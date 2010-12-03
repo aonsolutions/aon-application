@@ -65,17 +65,33 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 
+					<aon:outputLabel for="BankStatement_payment"
+						value="#{bundle.aon_type}" />
+					<aon:selectOneRadio id="BankStatement_payment"
+						value="#{bankStatementSearch.payment}">
+						<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="true" />
+						<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="false" />
+					</aon:selectOneRadio>
+
 					<aon:outputLabel for="BankStatement_amount"
 						value="#{bundle.aon_amount}" />
 					<aon:inputText id="BankStatement_amount"
 						value="#{bankStatementSearch.amount}"
-						size="10" />
+						size="12" />
 
 					<aon:outputLabel for="BankStatement_description" 
-						value="#{bundle.aon_description}" />
+						value="#{bundle.aon_concept}" />
 					<aon:inputText id="BankStatement_description"
 						value="#{bankStatementSearch.description}"
-						size="20" />
+						size="50" />
+
+					<aon:outputLabel for="BankStatement_commonConcept"
+						value="#{bundle.aon_operation}" />
+					<aon:selectOneMenu id="BankStatement_commonConcept"
+						value="#{bankStatementSearch.commonConcept}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{financeCollections.statementConcepts}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="BankStatement_lotNumber" 
 						value="#{financeBundle.finance_bank_statement_lot}" />

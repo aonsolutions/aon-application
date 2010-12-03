@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.event;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.StatementReliability;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.finance.controller.BankStatementController;
@@ -18,7 +19,14 @@ public class BankStatementControllerListener extends ControllerAdapter {
 		controller.setModel(null);
 		controller.setRegistryBank(null);
 		controller.setBankStatementLinkManager(null);
+		controller.clearCheckedBankStatement();
 		controller.resetErrors();
+	}
+
+	@Override
+	public void beforeModelSearched(ControllerEvent event) throws ControllerListenerException {
+		BankStatementController controller = (BankStatementController)event.getController();
+		controller.clearCheckedBankStatement();
 	}
 
 	@Override
@@ -28,6 +36,7 @@ public class BankStatementControllerListener extends ControllerAdapter {
 		bankStatement.setRegistryBank(controller.getRegistryBank());
 		bankStatement.setOperationDate(controller.getOperationDate());
 		bankStatement.setPayment(true);
+		bankStatement.setReliability(StatementReliability.VERY_HIGH);
 		bankStatement.setStatus(StatementStatus.PENDING);
 	}
 
