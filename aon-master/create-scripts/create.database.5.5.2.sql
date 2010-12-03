@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 5.5.5
+# Version: 5.5.2
 # Created by: girazu
-# Creation Date: 29/10/2010 12:40
+# Creation Date: 19/10/2010 17:33
 
 
 SET GLOBAL log_bin_trust_function_creators = 1;
@@ -90,8 +90,6 @@ CREATE TABLE `enterprise` (
 CREATE TABLE `geozone` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Zona Geografica',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Zona Geografica',
-  `code` varchar(3) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Zona Geografica',
-  `system` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es una Zona Geografica del sistema',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Zonas Geograficas';
 
@@ -475,11 +473,9 @@ CREATE TABLE `finance` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Vencimiento',
   `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago o un cobro',
   `registry` int(4) default NULL COMMENT 'Identificador del Cliente o Proveedor',
-  `rdocument` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento del Cliente o Proveedor',
-  `rname` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Nombre completo del Cliente o Proveedor',
   `amount` double default '0' COMMENT 'Importe del Vencimiento',
   `expenses` double(15,3) default '0.000' COMMENT 'Gastos asociados al Vencimiento',
-  `concept` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Concepto del Vencimiento',
+  `concept` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Concepto del Vencimiento',
   `invoice` int(4) default NULL COMMENT 'Identificador de la Factura',
   `due_date` date default NULL COMMENT 'Fecha de Vencimiento',
   `pay_method` int(4) default NULL COMMENT 'Identificador de la Forma de Pago',
@@ -487,15 +483,12 @@ CREATE TABLE `finance` (
   `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria del Vencimiento',
   `status` tinyint(2) default '0' COMMENT 'Estado del Vencimiento',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Vencimiento',
-  `scope` int(4) NOT NULL COMMENT 'Ambito del Vencimiento',
   PRIMARY KEY  (`id`),
   KEY `idx_finc_rgty` (`registry`),
   KEY `idx_finc_pymt` (`pay_method`),
   KEY `idx_finc_bank` (`bank`),
   KEY `idx_finc_dtty` (`due_date`),
   KEY `invoice` (`invoice`),
-  KEY `IDX_FINANCE_SCOPE` (`scope`),
-  CONSTRAINT `FK_FINANCE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `finance_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `finance_ibfk_2` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `finance_ibfk_3` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
@@ -1015,31 +1008,6 @@ CREATE TABLE `amortization_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Ficha de Amortizacion Contable';
 
 #
-# Structure for the `annual_report` table : 
-#
-
-CREATE TABLE `annual_report` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Memoria',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Memoria';
-
-#
-# Structure for the `annual_report_detail` table : 
-#
-
-CREATE TABLE `annual_report_detail` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `annual_report` int(4) NOT NULL COMMENT 'Identificador de la Memoria',
-  `sortKey` int(4) default '0' COMMENT 'Orden el que aparecera en el listado',
-  `content` text collate latin1_spanish_ci COMMENT 'Contenido del parrafo',
-  `style` tinyint(2) default NULL COMMENT 'Estilo',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_ANNUAL_REPORT_DETAIL_ANNUAL_REPORT` (`annual_report`),
-  CONSTRAINT `FK_ANNUAL_REPORT_DETAIL_ANNUAL_REPORT` FOREIGN KEY (`annual_report`) REFERENCES `annual_report` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Memoria';
-
-#
 # Structure for the `app_param` table : 
 #
 
@@ -1130,27 +1098,6 @@ CREATE TABLE `balance_detail` (
   KEY `idx_balance` (`balance`),
   CONSTRAINT `fk_balance_detail_balance` FOREIGN KEY (`balance`) REFERENCES `balance` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Balace';
-
-#
-# Structure for the `bank_statement` table : 
-#
-
-CREATE TABLE `bank_statement` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `rbank` int(4) NOT NULL COMMENT 'Identificador de Banco de la Compañia',
-  `operation_date` date NOT NULL COMMENT 'Fecha de operacion',
-  `concept` tinyint(2) NOT NULL default '0' COMMENT 'Concepto comun',
-  `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago',
-  `amount` double(15,2) NOT NULL default '0.00' COMMENT 'Importe',
-  `document` int(4) default '0' COMMENT 'Numero de documento',
-  `reference1` varchar(12) collate latin1_spanish_ci default NULL COMMENT 'Referencia 1',
-  `reference2` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Referencia 2',
-  `description` varchar(76) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `status` tinyint(2) default '0' COMMENT 'Estado',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_BANK_STATEMENT_RBANK` (`rbank`),
-  CONSTRAINT `FK_BANK_STATEMENT_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Extractos bancarios';
 
 #
 # Structure for the `brand` table : 
@@ -2709,7 +2656,6 @@ CREATE TABLE `fs_renting` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
   `period` tinyint(2) default '0' COMMENT 'Periodo de la Declaracion',
-  `administration` tinyint(2) default '0' COMMENT 'Administracion',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
   `status` tinyint(2) default '0' COMMENT 'Estado de la Declaracion',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
@@ -2765,12 +2711,10 @@ CREATE TABLE `fs_renting_detail` (
   `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
   `name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Apellidos  y Nombre',
   `paid_returns` double(15,3) default '0.000' COMMENT 'Rendimientos satisfechos',
-  `percent` double(15,3) default '0.000' COMMENT 'Porcentaje de retencion',
   `account_deposit` double(15,3) default '0.000' COMMENT 'Ingresos a cuenta',
-  `accrual_period` int(4) default '0' COMMENT 'Periodo de devengo',
   `address` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Direccion',
   `city` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Municipio',
-  `province` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Provincia',
+  `province` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Provincia',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_RENTING_DETAIL_FS_RENTING` (`fs_renting`),
   CONSTRAINT `FK_FS_RENTING_DETAIL_FS_RENTING` FOREIGN KEY (`fs_renting`) REFERENCES `fs_renting` (`id`)
@@ -4630,9 +4574,10 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('5.5.5');
+INSERT INTO `db_version` (`version_number`) VALUES ('5.5.2');
 
 COMMIT;
 
 
 SET FOREIGN_KEY_CHECKS=1;
+

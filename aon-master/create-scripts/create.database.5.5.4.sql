@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 5.5.5
+# Version: 5.5.4
 # Created by: girazu
-# Creation Date: 29/10/2010 12:40
+# Creation Date: 27/10/2010 13:30
 
 
 SET GLOBAL log_bin_trust_function_creators = 1;
@@ -90,8 +90,6 @@ CREATE TABLE `enterprise` (
 CREATE TABLE `geozone` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Zona Geografica',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Zona Geografica',
-  `code` varchar(3) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Zona Geografica',
-  `system` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es una Zona Geografica del sistema',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Zonas Geograficas';
 
@@ -1130,27 +1128,6 @@ CREATE TABLE `balance_detail` (
   KEY `idx_balance` (`balance`),
   CONSTRAINT `fk_balance_detail_balance` FOREIGN KEY (`balance`) REFERENCES `balance` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Balace';
-
-#
-# Structure for the `bank_statement` table : 
-#
-
-CREATE TABLE `bank_statement` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `rbank` int(4) NOT NULL COMMENT 'Identificador de Banco de la Compañia',
-  `operation_date` date NOT NULL COMMENT 'Fecha de operacion',
-  `concept` tinyint(2) NOT NULL default '0' COMMENT 'Concepto comun',
-  `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago',
-  `amount` double(15,2) NOT NULL default '0.00' COMMENT 'Importe',
-  `document` int(4) default '0' COMMENT 'Numero de documento',
-  `reference1` varchar(12) collate latin1_spanish_ci default NULL COMMENT 'Referencia 1',
-  `reference2` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Referencia 2',
-  `description` varchar(76) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `status` tinyint(2) default '0' COMMENT 'Estado',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_BANK_STATEMENT_RBANK` (`rbank`),
-  CONSTRAINT `FK_BANK_STATEMENT_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Extractos bancarios';
 
 #
 # Structure for the `brand` table : 
@@ -4630,9 +4607,10 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('5.5.5');
+INSERT INTO `db_version` (`version_number`) VALUES ('5.5.4');
 
 COMMIT;
 
 
 SET FOREIGN_KEY_CHECKS=1;
+
