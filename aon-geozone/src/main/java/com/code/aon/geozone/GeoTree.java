@@ -26,41 +26,20 @@ public class GeoTree implements ITransferObject {
 
 	private static final long serialVersionUID = -3277559566165396535L;
 
-	/** The id. */
     private Integer id;
-
-	/** The parent geozone. */
     private GeoZone parent;
-
-	/** The child geozone. */
     private GeoZone child;
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
     @Id
     @GeneratedValue
 	@Column(nullable=false)
 	public Integer getId() {
         return this.id;
     }
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param primaryKey the primary key
-	 */
     public void setId(Integer primaryKey) {
         this.id = primaryKey;
     }
 
-	/**
-	 * Gets the parent geozone.
-	 * 
-	 * @return the parent geozone
-	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="parent")
     @ForeignKey(name = "FK_GEOTREE_PARENT")
@@ -68,21 +47,10 @@ public class GeoTree implements ITransferObject {
 	public GeoZone getParent() {
 		return parent;
 	}
-
-	/**
-	 * Sets the parent geozone.
-	 * 
-	 * @param parent the parent geozone
-	 */
 	public void setParent(GeoZone parent) {
 		this.parent = parent;
 	}
 	
-	/**
-	 * Gets the child geozone.
-	 * 
-	 * @return the child geozone
-	 */
     @OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade(value={org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -92,12 +60,6 @@ public class GeoTree implements ITransferObject {
     public GeoZone getChild() {
 		return child;
 	}
-
-	/**
-	 * Sets the child geozone.
-	 * 
-	 * @param child the child geozone
-	 */
 	public void setChild(GeoZone child) {
 		this.child = child;
 	}
@@ -120,8 +82,8 @@ public class GeoTree implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(child)
 			.append(id)
+			.append(child)
 			.append(parent)
 			.toHashCode();
 	}
