@@ -3,6 +3,8 @@ package com.code.aon.faces.component.util;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.el.ELException;
 import javax.el.ExpressionFactory;
@@ -16,12 +18,14 @@ import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.net.DummyHandler;
+import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.sun.facelets.FaceletContext;
@@ -149,16 +153,26 @@ public class FaceletUtil {
 		return sb.toString();
 	}
 
+	private static List<String> updateList( String list, String value, String separatorChars, boolean add ) {
+		List<String> newList = new LinkedList<String>();
+		for( String s : StringUtils.split(list, separatorChars) ) {
+			if ( (! newList.contains(s)) && (! value.equals(s)) ) {
+				newList.add(s);
+			}
+		}
+		if ( add ) {
+			newList.add(value);
+		}
+		return newList;
+	}
+	
 	public static String updateList(FaceletContext ctx, TagAttribute tag, String value ) {
 		String result = value;
 		if (tag != null) {
 			String current = tag.getValue(ctx);
 			if (! StringUtils.isBlank(current) ) {
-				String[] ids = StringUtils.split(current, " ,");
-				result = StringUtils.join(ids, ',');
-				if (! ArrayUtils.contains(ids, value) ) {
-					result += ',' + value;
-				}
+				List<String> newList = updateList(current, value, " ,", true);
+				result = StringUtils.join(newList, ',');
 			}
 		}
 		return result;
@@ -168,8 +182,18 @@ public class FaceletUtil {
         ValueBinding vb = c.getValueBinding(name);
         if ( vb == null ) {
         	return c.getAttributes().get(name);
-        } 
-        return vb.getValue(ctx);
+        }
+        return vb.getValue(ctx); 
+	}
+	
+	public static void addStyleClass( FacesContext ctx, UIComponent c, String attribute, String value ) {
+		String newValue = value;
+		String current = ObjectUtils.toString( getProperty(ctx, c, attribute) );
+		if (! StringUtils.isEmpty(current) ) {
+			List<String> newList = updateList(current, value, " ", true);
+			newValue = StringUtils.join(newList, ' ');
+		}
+		UIComponentTagUtils.setStringProperty(ctx, c, attribute, newValue);
 	}
 	
 	public static boolean isRendered( FaceletContext ctx, Tag tag ) {

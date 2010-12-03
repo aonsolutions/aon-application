@@ -114,8 +114,8 @@ public class ComponentManager {
 			} else {
 				disabledClass = (String) FaceletUtil.getProperty(ctx.getFacesContext(), c, DISABLED_STYLE_CLASS);
 			}
-			if ( disabledClass != null ) {
-				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass);
+			if (! StringUtils.isBlank(disabledClass) ) {
+				FaceletUtil.addStyleClass(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass);
 			}
 		}
 	}		
