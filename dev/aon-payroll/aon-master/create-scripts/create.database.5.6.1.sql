@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 5.7.0
+# Version: 5.6.1
 # Created by: girazu
-# Creation Date: 25/11/2010 17:54
+# Creation Date: 18/11/2010 08:37
 
 
 SET GLOBAL log_bin_trust_function_creators = 1;
@@ -378,7 +378,6 @@ CREATE TABLE `bank_statement` (
   `reference1` varchar(12) collate latin1_spanish_ci default NULL COMMENT 'Referencia 1',
   `reference2` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Referencia 2',
   `description` varchar(80) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `reliability` tinyint(2) default '0' COMMENT 'Fiabilidad del punteo',
   `status` tinyint(2) default '0' COMMENT 'Estado',
   PRIMARY KEY  (`id`),
   KEY `IDX_BANK_STATEMENT_RBANK` (`rbank`),
@@ -526,7 +525,7 @@ CREATE TABLE `finance` (
   `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria del Vencimiento',
   `status` tinyint(2) default '0' COMMENT 'Estado del Vencimiento',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Vencimiento',
-  `scope` int(4) NOT NULL default '1' COMMENT 'Ambito del Vencimiento',
+  `scope` int(4) NOT NULL COMMENT 'Ambito del Vencimiento',
   PRIMARY KEY  (`id`),
   KEY `idx_finc_rgty` (`registry`),
   KEY `idx_finc_pymt` (`pay_method`),
@@ -534,11 +533,11 @@ CREATE TABLE `finance` (
   KEY `idx_finc_dtty` (`due_date`),
   KEY `invoice` (`invoice`),
   KEY `IDX_FINANCE_SCOPE` (`scope`),
+  CONSTRAINT `FK_FINANCE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `finance_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `finance_ibfk_2` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `finance_ibfk_3` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
-  CONSTRAINT `finance_ibfk_4` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
-  CONSTRAINT `FK_FINANCE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+  CONSTRAINT `finance_ibfk_4` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vencimientos';
 
 #
@@ -1205,6 +1204,7 @@ CREATE TABLE `bank_statement_link` (
   `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen',
   `source_id` int(4) NOT NULL default '0' COMMENT 'Identificador del origen',
   `amount` double(15,2) NOT NULL default '0.00' COMMENT 'Importe',
+  `reliability` tinyint(2) default '0' COMMENT 'Fiabilidad',
   `status` tinyint(2) default '0' COMMENT 'Estado',
   PRIMARY KEY  (`id`),
   KEY `IDX_BANK_STATEMENT_LINK_BANK_STATEMENT` (`bank_statement`),
@@ -4689,9 +4689,10 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('5.7.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('5.6.1');
 
 COMMIT;
 
 
 SET FOREIGN_KEY_CHECKS=1;
+
