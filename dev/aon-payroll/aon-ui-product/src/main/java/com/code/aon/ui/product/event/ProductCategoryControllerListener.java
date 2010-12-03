@@ -9,21 +9,15 @@ import com.code.aon.ui.product.controller.ProductCategoryController;
 public class ProductCategoryControllerListener extends ControllerAdapter {
 
 	@Override
-	public void beforeBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		
-	((ProductCategory)((ProductCategoryController)this.getController()).getTo()).setId(((ProductCategoryController)this.getController()).getCategory().getId());
-	((ProductCategory)((ProductCategoryController)this.getController()).getTo()).setName(((ProductCategoryController)this.getController()).getCategory().getName());
-
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		((ProductCategory)((ProductCategoryController)this.getController()).getTo()).setId(((ProductCategoryController)this.getController()).getCategory().getId());
+		((ProductCategory)((ProductCategoryController)this.getController()).getTo()).setName(((ProductCategoryController)this.getController()).getCategory().getName());
 	}
 	
 	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		((ProductCategory)((ProductCategoryController)this.getController()).getTo()).setId(((ProductCategoryController)this.getController()).getCategory().getId());
 		((ProductCategory)((ProductCategoryController)this.getController()).getTo()).setName(((ProductCategoryController)this.getController()).getCategory().getName());
-
 	}
 
 }

@@ -44,7 +44,6 @@ public class BasicAccountListener extends ControllerAdapter {
 	public String getPojo() {
 		return pojo;
 	}
-
 	public void setPojo(String bean) {
 		this.pojo = bean;
 	}
@@ -52,7 +51,6 @@ public class BasicAccountListener extends ControllerAdapter {
 	public String getAlias() {
 		return alias;
 	}
-
 	public void setAlias(String alias) {
 		this.alias = alias;
 	}
@@ -60,7 +58,6 @@ public class BasicAccountListener extends ControllerAdapter {
 	public Account getAccount() {
 		return account;
 	}
-
 	public void setAccount(Account account) {
 		this.account = account;
 	}
@@ -68,7 +65,6 @@ public class BasicAccountListener extends ControllerAdapter {
 	public IAccount getTo() {
 		return to;
 	}
-
 	public void setTo(IAccount to) {
 		this.to = to;
 	}
@@ -103,9 +99,9 @@ public class BasicAccountListener extends ControllerAdapter {
 		criteria.addEqualExpression(fieldName, id);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (list.size() > 0) {
-			IAccount iaccount = (IAccount) list.get(0);
-			setAccount(iaccount.getAccount());
-			setTo(iaccount);
+			IAccount iAccount = (IAccount) list.get(0);
+			setAccount(iAccount.getAccount());
+			setTo(iAccount);
 		} else {
 			setAccount(null);
 			setTo(null);
@@ -117,18 +113,14 @@ public class BasicAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(getPojo());
 			Account newValue = getAccount();
-			Account oldValue = (getTo() != null && getTo().getAccount() != null && getTo()
-					.getAccount().getId() != null) ? getTo().getAccount() : null;
-
+			Account oldValue = (getTo()!=null && getTo().getAccount()!=null && getTo().getAccount().getId()!=null) ? getTo().getAccount() : null;
 			if (newValue == null) {
 				if (oldValue != null) {
 					bean.remove((ITransferObject) to);
 				}
 			} else {
-
 				if (oldValue == null) {
-					ITransferObject newTo = (ITransferObject) Class.forName(getPojo())
-							.newInstance();
+					ITransferObject newTo = (ITransferObject) Class.forName(getPojo()).newInstance();
 					IAccount toAccount = (IAccount) newTo;
 					toAccount.setLinkedTo(event.getController().getTo());
 					toAccount.setAccount(newValue);
@@ -153,8 +145,7 @@ public class BasicAccountListener extends ControllerAdapter {
 	}
 
 	public boolean isAccountSynchronizable() {
-		return getAccount() != null && getTo() != null
-				&& !getAccount().getDescription().equals(getTo().getAccountDescription());
+		return (getAccount()!=null && getTo()!=null && !getAccount().getDescription().equals(getTo().getAccountDescription()));
 	}
 
 	public void onAccountSynchronize(ActionEvent event) {
@@ -172,6 +163,20 @@ public class BasicAccountListener extends ControllerAdapter {
 		}
 	}
 
+	public void onNewAccount(ActionEvent event) {
+		try {
+			IController c = FormUtil.getController(getMasterController());
+			IRegistry registry = (IRegistry) c.getTo();
+			IAccount iAccount = getAccountBridgeUtil().obtainIRegistryAccount(registry);
+			setTo(iAccount);
+			setAccount((iAccount==null) ? null : iAccount.getAccount());
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+
 	public String getMasterController() {
 		if (CustomerAccount.class.getName().equals( getPojo() )) {
 			return "customer";
@@ -183,17 +188,4 @@ public class BasicAccountListener extends ControllerAdapter {
 		return null;
 	}
 
-	public void onNewAccount(ActionEvent event) {
-		try {
-			IController c = FormUtil.getController(getMasterController());
-			IRegistry registry = (IRegistry) c.getTo();
-			IAccount iaccount = getAccountBridgeUtil().obtainIRegistryAccount(registry);
-			setTo(iaccount);
-			setAccount(iaccount==null?null:iaccount.getAccount());
-		} catch (ManagerBeanException e) {
-			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-	}
 }

@@ -27,14 +27,6 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>expenseProductAccountListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.account.bridge.event.ExpenseProductAccountListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>accountControllerCascadeListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.account.bridge.event.AccountControllerCascadeListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
@@ -86,6 +78,14 @@
 		<managed-bean-name>taxAccountListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.account.bridge.event.TaxAccountListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>bankConceptAccountListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.bridge.event.BankConceptAccountListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>

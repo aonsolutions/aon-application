@@ -9,96 +9,60 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.finance.InvoiceDetail;
 
-/**
- * The Class InvoiceDetailAccount.
- */
 @Entity
 @Table(name="invoice_detail_account")
 public class InvoiceDetailAccount implements ITransferObject, IAccount {
 	
 	private static final long serialVersionUID = -7929315870651403627L;
 
-	/** The id. */
 	private Integer id;
-	
-	/** The invoice detail. */
 	private InvoiceDetail invoiceDetail;
-	
-	/** The account. */
 	private Account account;
 	
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the id
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	/**
-	 * Gets the invoice detail.
-	 * 
-	 * @return the invoice detail
-	 */
 	@ManyToOne
-	@JoinColumn( name="invoice_detail", nullable = false)
+	@JoinColumn(name="invoice_detail", nullable = false)
 	@ForeignKey(name="FK_INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL")
 	@Index(name="IDX_INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL")										
 	public InvoiceDetail getInvoiceDetail() {
 		return invoiceDetail;
 	}
-
-	/**
-	 * Sets the invoice detail.
-	 * 
-	 * @param invoiceDetail the invoice detail
-	 */
 	public void setInvoiceDetail(InvoiceDetail invoiceDetail) {
 		this.invoiceDetail = invoiceDetail;
 	}
 
-	/**
-	 * Gets the account.
-	 * 
-	 * @return the account
-	 */
 	@ManyToOne
-	@JoinColumn( name="account", nullable = false)
+	@JoinColumn(name="account", nullable = false)
 	@ForeignKey(name="FK_INVOICE_DETAIL_ACCOUNT_ACCOUNT")
 	@Index(name="IDX_INVOICE_DETAIL_ACCOUNT_ACCOUNT")									
 	public Account getAccount() {
 		return account;
 	}
-
-	/**
-	 * Sets the account.
-	 * 
-	 * @param account the account
-	 */
 	public void setAccount(Account account) {
 		this.account = account;
 	}
+
 	@Transient
 	public ITransferObject getLinkedTo() {
 		return getInvoiceDetail();
@@ -106,8 +70,39 @@ public class InvoiceDetailAccount implements ITransferObject, IAccount {
 	public void setLinkedTo(ITransferObject to) {
 		setInvoiceDetail((InvoiceDetail) to);
 	}	
+
 	@Transient
 	public String getAccountDescription() {
 		return null;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final InvoiceDetailAccount o = (InvoiceDetailAccount) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.account,o.account)
+				.append(this.invoiceDetail,o.invoiceDetail)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)		
+			.append(this.account)
+			.append(this.invoiceDetail)
+			.toHashCode();
+	}	
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+
 }

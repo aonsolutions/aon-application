@@ -73,6 +73,18 @@
 											actionListener="#{fbatch.onEditSearch}"
 											value="#{financeBundle.finance_fbatch_module}" />
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="bankConcept"
+											action="bankConcept" 
+											value="#{financeBundle.finance_bank_concept_module}" />
+									</aon:div>							
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="bankStatement"
+											value="#{financeBundle.finance_bank_statement_module}"
+											rendered="#{bankStatement.availableRegistryBanks > 0}"
+											actionListener="#{bankStatement.onEditSearch}"
+											action="bankStatement_search" />
+									</aon:div>
 								</c:if>
 							</aon:div>
 						</aon:panelGrid>
