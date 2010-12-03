@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -14,13 +14,13 @@ import java.util.ResourceBundle;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Flags;
+import javax.mail.Flags.Flag;
 import javax.mail.IllegalWriteException;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
-import javax.mail.Flags.Flag;
-import javax.mail.Message.RecipientType;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.WebmailUtil;
 
 public class AonMessage implements IMimeType, BundleConstants {
 
@@ -60,9 +61,21 @@ public class AonMessage implements IMimeType, BundleConstants {
 
 	private boolean selected;
 	
+	private List<BodyPart> inlines;
+	
+	private List<AonAttachment> attachments;
+	
 	private Boolean attachment;
 
-	public AonMessage(){
+	public AonMessage( MimeMessage message ) throws WebmailException {
+		this.message = message;
+		try {
+			previousMessageFlag = message.getFlags();
+			currentMessageFlag = message.getFlags();
+		} catch (MessagingException e) {
+			LOGGER.error("Error getting message fags", e);
+			throw new WebmailException(e);
+		}		
 	}
 	
 	/**
@@ -72,24 +85,6 @@ public class AonMessage implements IMimeType, BundleConstants {
 	 */
 	public MimeMessage getMessage() {
 		return message;
-	}
-
-	/**
-	 * Sets the MimeMessage that this class wrapps.
-	 * 
-	 * @param message
-	 * @throws WebmailException 
-	 */
-	public void setMessage(MimeMessage message) throws WebmailException {
-		try {
-			previousMessageFlag = message.getFlags();
-			currentMessageFlag = message.getFlags();
-		} catch (MessagingException e) {
-			LOGGER.error("Error getting message fags", e);
-			throw new WebmailException(e);
-		}
-		this.message = message;
-		this.attachment = null;
 	}
 
 	/**
@@ -648,33 +643,34 @@ public class AonMessage implements IMimeType, BundleConstants {
 	//ATTACHMENTS
 	//**************************************************************************
 	//**************************************************************************
-	private boolean isAttachment( BodyPart part ) throws MessagingException {
+	private boolean isAttachment( Part part ) throws MessagingException {
 		String disposition = part.getDisposition();
-		if ( (disposition != null) && disposition.equalsIgnoreCase(Part.ATTACHMENT) ) {
-			return true;
-		}		
+		if (! StringUtils.isEmpty(disposition) ) {
+			return StringUtils.endsWithIgnoreCase(disposition, Part.ATTACHMENT);
+		}
 		if (part.getFileName() != null) {
-			if (! part.isMimeType(APPLICATION_APPLEFILE) ) {
-				return part.isMimeType(IMAGE_ANY) || part.isMimeType(APPLICATION_ANY);	
+			String contentId = WebmailUtil.getContentId(part);
+			if ( StringUtils.isEmpty(contentId) ) {
+				if (! part.isMimeType(APPLICATION_APPLEFILE) ) {
+					return part.isMimeType(IMAGE_ANY) || part.isMimeType(APPLICATION_ANY);	
+				}				
 			}
 		}
 		return false;
 	}
-	
-	public List<Part> getAttachmentParts( Part part ) throws MessagingException, IOException {
-		List<Part> parts = new ArrayList<Part>();
-		if ( part.isMimeType(MULTIPART_ANY) ) {
-			Multipart mp = (Multipart) part.getContent();
-			int numPart = mp.getCount();
-			for (int i = 0; i < numPart; i++) {
-				BodyPart bodyPart = mp.getBodyPart(i);
-				if ( isAttachment(bodyPart) ) {
-					parts.add( bodyPart );
-				}
-				parts.addAll( getAttachmentParts(bodyPart) );
-			}			
+
+	private boolean isInline( Part part ) throws MessagingException {
+		String disposition = part.getDisposition();
+		if (! StringUtils.isEmpty(disposition) ) {
+			return StringUtils.endsWithIgnoreCase(disposition, Part.INLINE);
 		}
-		return parts;
+		if (part.getFileName() != null) {
+			String contentId = WebmailUtil.getContentId(part);
+			if (! StringUtils.isEmpty(contentId) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean hasAttachments( Part part ) throws MessagingException, IOException {
@@ -691,28 +687,47 @@ public class AonMessage implements IMimeType, BundleConstants {
 		return false;
 	}
 	
-	public List<AonAttachment> getAttachements() throws WebmailException {
-		List<AonAttachment> attachs = new ArrayList<AonAttachment>();
-		try {
-			List<Part> parts = getAttachmentParts( message );
-			if (! parts.isEmpty() ) {
-				for( int i = 0; i < parts.size(); i++) {
-					AonAttachment attach = new AonAttachment();
-					attach.setPart( parts.get(i) );
-					attach.setPosition( i );
-					attachs.add(attach);					
-				}
-			}
-		} catch (MessagingException e) {
-			LOGGER.error("Error determining if message has attachement", e);
-			throw new WebmailException(e);
-		} catch (IOException e) {
-			LOGGER.error("Error determining if message has attachement", e);
-			throw new WebmailException(e);
+	public List<BodyPart> getInlines() {
+		if ( this.inlines == null ) {
+			initFilesIncluded();
 		}
-		return attachs;
+		return this.inlines;
 	}
 
+	public List<AonAttachment> getAttachements() {
+		if ( this.attachments == null ) {
+			initFilesIncluded();
+		}
+		return this.attachments;
+	}
+
+	private void initFilesIncluded() {
+		this.inlines = new LinkedList<BodyPart>();
+		this.attachments = new LinkedList<AonAttachment>();
+		initFilesIncluded( message );
+	}
+	
+	private void initFilesIncluded( Part part ) {
+		try {
+			if ( part.isMimeType(MULTIPART_ANY) ) {
+				Multipart mp = (Multipart) part.getContent();
+				int numPart = mp.getCount();
+				for (int i = 0; i < numPart; i++) {
+					BodyPart bodyPart = mp.getBodyPart(i);
+					if ( isInline(bodyPart) ) {
+						this.inlines.add( bodyPart );
+					} else if ( isAttachment(bodyPart) ) {
+						AonAttachment attach = new AonAttachment( bodyPart, this.attachments.size() );
+						this.attachments.add( attach );
+					}
+					initFilesIncluded( bodyPart );
+				}			
+			}
+		} catch ( Throwable e ) {
+			LOGGER.error("Error on init attachemnts and inlines", e);
+		}
+	}
+	
 	/**
 	* Method for checking if the message has attachments.
 	*/
@@ -726,7 +741,7 @@ public class AonMessage implements IMimeType, BundleConstants {
 			}
 		}
 		return this.attachment;
-	}
+	}	
 
 	//**************************************************************************
 	//**************************************************************************

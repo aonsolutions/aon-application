@@ -1,9 +1,12 @@
 package com.code.aon.webmail.bean;
 
+import java.io.InputStream;
+
+import javax.mail.BodyPart;
 import javax.mail.MessagingException;
-import javax.mail.Part;
 import javax.mail.internet.MimeUtility;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,19 +18,24 @@ public class AonAttachment {
 	
 	private int position;
 	
-	private Part part;
+	private BodyPart part;
 	
-    /**
+    public AonAttachment(BodyPart part, int position) {
+		this.position = position;
+		this.part = part;
+	}
+
+	/**
 	 * @return the part
 	 */
-	public Part getPart() {
+	public BodyPart getPart() {
 		return part;
 	}
 
 	/**
 	 * @param part the part to set
 	 */
-	public void setPart(Part part) {
+	public void setPart(BodyPart part) {
 		this.part = part;
 	}
 
@@ -68,6 +76,24 @@ public class AonAttachment {
 		}
 		return "";
 	}
+
+	public int getSize(){
+		try {
+			return part.getSize();
+		} catch (MessagingException e) {
+			LOGGER.error(e.getMessage(), e );
+		}
+		return -1;
+	}
+
+	public InputStream getInputStream(){
+		try {
+			return part.getInputStream();
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e );
+		}
+		return null;
+	}
 	
 	/**
 	 * @return the position
@@ -91,7 +117,9 @@ public class AonAttachment {
 	public MimeType getMimeType() {
 		MimeType type = null;
 		try {
-			type = MimeType.get(this.part.getContentType());
+			String value = StringUtils.lowerCase(this.part.getContentType());
+			value = StringUtils.substringBefore(value, ";");
+			type = MimeType.get(value);
 		} catch (MessagingException e) {
 			LOGGER.error( e.getMessage(), e );
 		}

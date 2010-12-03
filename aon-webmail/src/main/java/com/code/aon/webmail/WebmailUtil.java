@@ -6,10 +6,12 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.Part;
 import javax.mail.internet.MimeBodyPart;
 import javax.naming.Name;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
@@ -63,4 +65,12 @@ public class WebmailUtil {
     	return bodyPart;	
     }
 
+    public static String getContentId( Part part ) throws MessagingException {
+    	String[] contentId = part.getHeader("Content-ID");
+    	if (! ArrayUtils.isEmpty(contentId) ) {
+    		return contentId[0];
+    	}
+    	return null;
+    }
+    
 }
