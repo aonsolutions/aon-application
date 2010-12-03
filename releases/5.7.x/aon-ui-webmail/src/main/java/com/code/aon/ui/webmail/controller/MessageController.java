@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +32,6 @@ import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Part;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.naming.Name;
@@ -77,6 +75,7 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
+import com.code.aon.webmail.bean.IMimeType;
 import com.code.aon.webmail.dao.IWebMailAlias;
 import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
@@ -291,10 +290,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	}
 
 	private void copyAttachmentsToFileList( AonMessage message ) throws WebmailException {
-       	Iterator<AonAttachment> iter =message.getAttachements().iterator();
-       	while (iter.hasNext()){
-       		AonAttachment attach = iter.next();
-       		MimeBodyPart m = (MimeBodyPart) attach.getPart();
+       	for( AonAttachment attach : message.getAttachements() ) {
        		InputStream in = null;
        		OutputStream out = null;
        		try {
@@ -305,7 +301,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
        			AonFile af = new AonFile();
     			af.setFile(file);
     			af.setFileName( fullName );
-       			in = m.getInputStream(); 
+       			in = attach.getPart().getInputStream(); 
        			out = new BufferedOutputStream(new FileOutputStream(file));
        			IOUtils.copy( in, out );
     			MimeType mimeType = attach.getMimeType();
@@ -313,9 +309,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
         			af.setMimeType(af.resolveMimeType());	
     			}
        			newMsgFileList.add(af);
-			} catch (IOException e) {
-				AonUtil.addErrorMessage(e.getMessage());
-			} catch (MessagingException e) {
+			} catch (Throwable e) {
 				AonUtil.addErrorMessage(e.getMessage());
 			} finally {
 				IOUtils.closeQuietly(in);
@@ -518,23 +512,13 @@ public class MessageController implements IWebMailConstants, BundleConstants {
        	}
        	newMessage.getMessage().setHeader("X-Mailer", "OfficeWeb - AonWebMail 1.0");
 
-       	MimeMultipart mainPart = new MimeMultipart("related");
+       	MimeMultipart mainPart = new MimeMultipart(IMimeType.RELATED);
        	MimeBodyPart part = new MimeBodyPart();
-       	part.setContent( text, "text/html" );
+       	part.setContent( text, MimeType.MIME_HTML.getName() );
        	mainPart.addBodyPart(part);
        	if (parentAonMsg!=null){
-       		AonMessageTracer amt = new AonMessageTracer(parentAonMsg.getMessage());
-	       	List<BodyPart> list = amt.getRelateds();
-	       	Iterator<BodyPart> iter = list.iterator();
-	       	while (iter.hasNext()){
-		       	BodyPart bp = iter.next();
-		       	if (bp != null){
-		       		MimeBodyPart relatedPart = new MimeBodyPart();		       		
-		       		relatedPart.setDataHandler(bp.getDataHandler());
-		       		relatedPart.setContentID(bp.getHeader("Content-ID")[0]);
-		       		// relatedPart.setDisposition(Part.INLINE);
-					mainPart.addBodyPart(relatedPart);
-		       	}
+	       	for( BodyPart related : parentAonMsg.getInlines() ) {
+				mainPart.addBodyPart( (BodyPart) related );	       		
 	       	}
        	}
 		for ( AonFile file : fileList ) {
@@ -1119,14 +1103,12 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			AonMessageTracer amt = new AonMessageTracer(message.getMessage());
 			try {
 				this.messageContent = amt.getBodyHTML();
-			} catch (MessagingException e) {
-				this.messageContent = AonMessageUtils.HTML_LINE_BREAK;
-			} catch (IOException e) {
+			} catch (Throwable e) {
 				this.messageContent = AonMessageUtils.HTML_LINE_BREAK;
 			}		
 		}
 		return this.messageContent;
-	}
+	}	
 	
 	public int getAttachRemoveIndex() {
 		return attachRemoveIndex;
