@@ -258,7 +258,7 @@ public class AccountingBookController implements ICollectionProvider{
 		setProfitAndLostEnabled(true);
 		setSituationEnabled(true);
 		setPatrimonyEnabled(true);
-		setAnnualReportEnabled(true);
+		setAnnualReportEnabled(false);
 		setGeneratedPages(0);
 		setCoverTitle("CUENTAS ANUALES");
 		setCoverSubTitle("PLAN GENERAL DE CONTABILIDAD DE PEQUEÑAS Y MEDIANAS EMPRESAS");
@@ -448,6 +448,8 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setToDate(c.getTime());
         t.getParameters().setCoverVisible(true);
         t.getParameters().setCounterVisible(true);
+        t.getParameters().setExcludeClosingEntry(true);
+        t.getParameters().setExcludeOperatingEntry(true);
         t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
 		String out = manager.execute(zout, "trialBalance");
@@ -473,6 +475,8 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setToDate(c.getTime());
         t.getParameters().setCoverVisible(true);
         t.getParameters().setCounterVisible(true);
+        t.getParameters().setExcludeClosingEntry(true);
+        t.getParameters().setExcludeOperatingEntry(true);
         t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
 		String out = manager.execute(zout, "trialBalance");
@@ -498,6 +502,8 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setToDate(c.getTime());
         t.getParameters().setCoverVisible(true);
         t.getParameters().setCounterVisible(true);
+        t.getParameters().setExcludeClosingEntry(true);
+        t.getParameters().setExcludeOperatingEntry(true);
         t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
 		String out = manager.execute(zout, "trialBalance");
@@ -519,6 +525,8 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setToDate(getPeriod().getDeadline());
         t.getParameters().setCoverVisible(true);
         t.getParameters().setCounterVisible(true);
+        t.getParameters().setExcludeClosingEntry(true);
+        t.getParameters().setExcludeOperatingEntry(true);
         t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
 		String out = manager.execute(zout, "trialBalance");
@@ -621,6 +629,8 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setCoverVisible(true);
         t.getParameters().setCounterVisible(true);
         t.getParameters().setPageCounter(getGeneratedPages());
+        t.getParameters().setExcludeClosingEntry(true);
+        t.getParameters().setExcludeOperatingEntry(true);
         t.setBalance(getProfitAndLostBalance());
         t.onBalance(null);
 		String out = manager.execute(zout, "officialBalance");
@@ -645,6 +655,8 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setCoverVisible(true);
         t.getParameters().setCounterVisible(true);
         t.getParameters().setPageCounter(getGeneratedPages());
+        t.getParameters().setExcludeClosingEntry(true);
+        t.getParameters().setExcludeOperatingEntry(true);
         t.setBalance(getSituationBalance());
         t.onBalance(null);
 		String out = manager.execute(zout, "officialBalance");

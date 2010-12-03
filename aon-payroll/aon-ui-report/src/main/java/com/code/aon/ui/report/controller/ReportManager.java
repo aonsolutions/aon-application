@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.faces.application.Application;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +35,7 @@ import com.code.aon.report.config.ReportConfig;
 import com.code.aon.report.jr.JRReport;
 import com.code.aon.report.jr.JRReportFactory;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 
 /**
  * Bean Manager for running reports.
@@ -151,23 +151,24 @@ public class ReportManager {
 	 * @throws DAOException
 	 */
 	public String onExecute() {
+		HttpServletResponse response = null;
+		OutputStream out = null;
 		try {
 			ensureParams();
-			String outcome = execute(getOutputStream(), getReportKey());
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			ctx.responseComplete();
+	        response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, getReportKey(), getOutputFormat().getMimeType2()); 
+			String outcome = execute(out, getReportKey());
 			return outcome;
-		} catch (ReportException e) {
+		} catch (Throwable e) {
 			try {
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			ExternalContext ec = ctx.getExternalContext();
-			HttpServletResponse res = (HttpServletResponse) ec.getResponse();
-				res.getWriter().print("Se ha producido un error durante la ejecución del listado.");
-				e.printStackTrace(res.getWriter());
+				response.getWriter().print("Se ha producido un error durante la ejecución del listado.");
+				e.printStackTrace(response.getWriter());
 			} catch (IOException e1) {
-				// Nothing
+				LOGGER.error( e1.getMessage(), e1 );
 			}
 			return null;
+		} finally {
+			DownloadUtil.finishDownload(response, out);
 		}
 	}
 
@@ -305,55 +306,6 @@ public class ReportManager {
 				setOutputFormat(ouf);
 			}
 		}
-	}
-
-	/**
-	 * Obtains the OutputStream where the report will be writen. <br>
-	 * <code>
-	 * 		FacesContext ctx = FacesContext.getCurrentInstance();<br>
-	 * 		ExternalContext ec = ctx.getExternalContext();<br>
-	 * 		HttpServletResponse res = (HttpServletResponse) ec.getResponse();<br>
-	 * 		return res.getOutputStream();
-	 * </code>
-	 * 
-	 * @return The OutputStream where the report will be writen.
-	 * @throws ReportException
-	 *             If an error ocurred.
-	 */
-	private OutputStream getOutputStream() throws ReportException {
-		try {
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			ExternalContext ec = ctx.getExternalContext();
-			HttpServletResponse res = (HttpServletResponse) ec.getResponse();
-			LOGGER.info("ContentType {}",getOutputFormat().getMimeType());
-			res.setContentType(getOutputFormat().getMimeType());
-			String contentDisposition = getContentDispositionHeader();
-			if (contentDisposition != null) {
-				res.setHeader("Content-Disposition", contentDisposition);
-			}
-			return res.getOutputStream();
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ReportException(e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * Returns the value of the "Content-Disposition" HTTP header.
-	 * 
-	 * @return The value of the "Content-Disposition" HTTP header.
-	 */
-	private String getContentDispositionHeader() {
-		if (getOutputFormat() == OutputFormat.XLS) {
-			return "attachment; filename=\"report.xls\";";
-		} else if (getOutputFormat() == OutputFormat.TXT) {
-			return "attachment; filename=\"report.txt\";";
-		} else if (getOutputFormat() == OutputFormat.RTF) {
-			return "attachment; filename=\"report.rtf\";";
-		} else if (getOutputFormat() == OutputFormat.DOCX) {
-			return "attachment; filename=\"report.docx\";";
-		}
-		return null;
 	}
 
 	/**

@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-public enum StatementLinkReliability implements IResourceable {
+public enum StatementReliability implements IResourceable {
 
 	VERY_HIGH,
 	HIGH,
@@ -16,7 +16,7 @@ public enum StatementLinkReliability implements IResourceable {
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
 
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_statement_link_reliability_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_statement_reliability_";
     
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>

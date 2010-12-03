@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -23,14 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
-import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.accounting.AccountEntry;
-import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.dao.IAccountingAlias;
-import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -76,8 +68,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private FileOutput aebOutput;
 	private Date recordDate;
 	private boolean showFbatchRecordWindow;
-	private AccountingUtil accountingUtil;
-	private AccountBridgeUtil accountBridgeUtil;
+	private AccountEntryFinanceWriter writer;
 
 	public Company getCompany() {
 		if (company == null) {
@@ -115,20 +106,13 @@ public class FBatchController extends BasicController implements ICollectionProv
 		this.showFbatchRecordWindow = value;
 	}
 	
-	private AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
+	public AccountEntryFinanceWriter getWriter() {
+		if(writer == null){
+			writer = new AccountEntryFinanceWriter();
 		}
-		return accountingUtil;
+		return writer;
 	}
 
-	private AccountBridgeUtil getAccountBridgeUtil() {
-		if (accountBridgeUtil == null) {
-			accountBridgeUtil = new AccountBridgeUtil();
-		}
-		return accountBridgeUtil;
-	}
-	
     public boolean isTodo() {
         return FinanceBatchStatus.TODO.equals(((FinanceBatch)this.getTo()).getFinanceBatchStatus());
     }
@@ -361,34 +345,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	@SuppressWarnings("unchecked")
     public void onRecord(ActionEvent event) throws ManagerBeanException {
-        FinanceBatch fbatch = (FinanceBatch)this.getTo();
+        FinanceBatch fBatch = (FinanceBatch)this.getTo();
 
-        List<FinanceBatchDetail> fbatchDetailList = new LinkedList<FinanceBatchDetail>();
-        Iterator iterator = fbatch.getDetailList().iterator();
-        while (iterator.hasNext()) {
-            FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)iterator.next();
-            fbatchDetailList.add(fbatchDetail);
-        }
-
-        FinanceRecordingTo recordingTo = new FinanceRecordingTo();
-        recordingTo.setType(fbatch.isPayment() ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
-        recordingTo.setDate((getRecordDate()!=null) ? getRecordDate() : fbatch.getIssueDate());
-        recordingTo.setPaymentAccount((fbatch.getRegistryBank()!= null)?getAccountBridgeUtil().obtainRBankAccount(fbatch.getRegistryBank()):getAccountingUtil().obtainCashAccount());
-        recordingTo.setFBatchDetailList(fbatchDetailList);
-        recordingTo.setSecurityLevel(fbatch.getSecurityLevel());
-
-        AccountEntryFinanceWriter accountEntryWriter = new AccountEntryFinanceWriter();
-        AccountEntry entry = accountEntryWriter.recordFBatchDetails(recordingTo, fbatch);
-
-        IManagerBean accountEntryFbatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
-        AccountEntryFinanceBatch accountEntryFinanceBatch = new AccountEntryFinanceBatch();
-        accountEntryFinanceBatch.setFinanceBatch(fbatch);
-        accountEntryFinanceBatch.setAccountEntry(entry);
-        accountEntryFbatchBean.insert(accountEntryFinanceBatch);
+        AccountEntry entry = getWriter().recordFBatch(fBatch, getRecordDate());
+        getWriter().insertAccountEntryFinanceBatch(entry, fBatch);
 
         IManagerBean fbatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-        iterator = fbatch.getDetailList().iterator();
+        Iterator iterator = fBatch.getDetailList().iterator();
         while (iterator.hasNext()) {
             FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)iterator.next();
             fbatchDetail.setStatus(FinanceStatus.PAID);
@@ -399,52 +363,31 @@ public class FBatchController extends BasicController implements ICollectionProv
 
             String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
             FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), entry.getEntryDate(), FinanceTrackingType.PAID, message,
-            		fbatch.getRegistryBank(), null, fbatchDetail.getFinance().getTotalAmount(), true);
+            		fBatch.getRegistryBank(), null, fbatchDetail.getFinance().getTotalAmount(), true);
         }
 
-        fbatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
-        getManagerBean().update(fbatch);
-        loadDetails(fbatch);
+        fBatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
+        getManagerBean().update(fBatch);
+        loadDetails(fBatch);
     }
 
 	@SuppressWarnings("unchecked")
     public void onUnrecord(ActionEvent event) throws ManagerBeanException {
-        FinanceBatch fbatch = (FinanceBatch)this.getTo();
+        FinanceBatch fBatch = (FinanceBatch)this.getTo();
 
         IManagerBean fbatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         Criteria criteria = new Criteria();
-        criteria.addEqualExpression(fbatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
+        criteria.addEqualExpression(fbatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fBatch.getId());
         criteria.addEqualExpression(fbatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
         if (fbatchDetailBean.getCount(criteria) > 0) {
             AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
             throw new AbortProcessingException();
         }
 
-        AccountEntry entry = null;
-        IManagerBean accountEntryFbatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
-        IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-        IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-        criteria = new Criteria();
-        criteria.addEqualExpression(accountEntryFbatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fbatch.getId());
-        List accountEntryFbatchList = accountEntryFbatchBean.getList(criteria);
-        if (accountEntryFbatchList.size() > 0) {
-            AccountEntryFinanceBatch accountEntryFinanceBatch = (AccountEntryFinanceBatch)accountEntryFbatchList.get(0);
-            entry = accountEntryFinanceBatch.getAccountEntry();
-            accountEntryFbatchBean.remove(accountEntryFinanceBatch);
-
-            criteria = new Criteria();
-            criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
-            Iterator iterator = accountEntryDetailBean.getList(criteria).iterator();
-            while (iterator.hasNext()) {
-                AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iterator.next();
-                accountEntryDetailBean.remove(accountEntryDetail);
-            }
-
-            accountEntryBean.remove(entry);
-        }
+        getWriter().removeAccountEntryFinanceBatch(fBatch);
 
         IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-        Iterator iterator = fbatch.getDetailList().iterator();
+        Iterator iterator = fBatch.getDetailList().iterator();
         while (iterator.hasNext()) {
             FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)iterator.next();
             fbatchDetail.setStatus(FinanceStatus.BATCHED);
@@ -456,9 +399,9 @@ public class FBatchController extends BasicController implements ICollectionProv
             FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.PAID);
         }
         
-        fbatch.setFinanceBatchStatus(fbatch.getFinanceBatchType().equals(FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
-        getManagerBean().update(fbatch);
-        loadDetails(fbatch);
+        fBatch.setFinanceBatchStatus(fBatch.getFinanceBatchType().equals(FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
+        getManagerBean().update(fBatch);
+        loadDetails(fBatch);
     }
 
 }

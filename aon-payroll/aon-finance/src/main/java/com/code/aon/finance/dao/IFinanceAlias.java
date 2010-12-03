@@ -123,10 +123,16 @@ public interface IFinanceAlias {
 	String  BANK_STATEMENT_REGISTRY_BANK_ID = BANK_STATEMENT_ENTRY.getAliasNames()[11];
 
 	/** 
+	* Alias value: BankStatement_reliability
+	* Hibernate value: BankStatement.reliability
+	*/
+	String  BANK_STATEMENT_RELIABILITY = BANK_STATEMENT_ENTRY.getAliasNames()[12];
+
+	/** 
 	* Alias value: BankStatement_status
 	* Hibernate value: BankStatement.status
 	*/
-	String  BANK_STATEMENT_STATUS = BANK_STATEMENT_ENTRY.getAliasNames()[12];
+	String  BANK_STATEMENT_STATUS = BANK_STATEMENT_ENTRY.getAliasNames()[13];
 
 
 
@@ -154,28 +160,22 @@ public interface IFinanceAlias {
 	String  BANK_STATEMENT_LINK_ID = BANK_STATEMENT_LINK_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: BankStatementLink_reliability
-	* Hibernate value: BankStatementLink.reliability
-	*/
-	String  BANK_STATEMENT_LINK_RELIABILITY = BANK_STATEMENT_LINK_ENTRY.getAliasNames()[3];
-
-	/** 
 	* Alias value: BankStatementLink_source
 	* Hibernate value: BankStatementLink.source
 	*/
-	String  BANK_STATEMENT_LINK_SOURCE = BANK_STATEMENT_LINK_ENTRY.getAliasNames()[4];
+	String  BANK_STATEMENT_LINK_SOURCE = BANK_STATEMENT_LINK_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: BankStatementLink_sourceId
 	* Hibernate value: BankStatementLink.sourceId
 	*/
-	String  BANK_STATEMENT_LINK_SOURCE_ID = BANK_STATEMENT_LINK_ENTRY.getAliasNames()[5];
+	String  BANK_STATEMENT_LINK_SOURCE_ID = BANK_STATEMENT_LINK_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: BankStatementLink_status
 	* Hibernate value: BankStatementLink.status
 	*/
-	String  BANK_STATEMENT_LINK_STATUS = BANK_STATEMENT_LINK_ENTRY.getAliasNames()[6];
+	String  BANK_STATEMENT_LINK_STATUS = BANK_STATEMENT_LINK_ENTRY.getAliasNames()[5];
 
 
 

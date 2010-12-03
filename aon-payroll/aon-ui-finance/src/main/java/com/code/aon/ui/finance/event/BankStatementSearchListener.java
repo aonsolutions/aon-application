@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.StatementConcept;
+import com.code.aon.finance.enumeration.StatementReliability;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -17,8 +19,11 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 	private String lotNumber;
 	private Date fromDate;
 	private Date toDate;
-	private String description;
+	private StatementConcept commonConcept;
+	private Boolean payment;
 	private String amount;
+	private String description;
+	private StatementReliability[] statementReliabilities;
 	private StatementStatus[] statementStatuses;
 	
 	public String getLotNumber() {
@@ -45,12 +50,20 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		this.toDate = toDate;
 	}
 
-	public String getDescription() {
-		return description;
+	public StatementConcept getCommonConcept() {
+		return commonConcept;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setCommonConcept(StatementConcept commonConcept) {
+		this.commonConcept = commonConcept;
+	}
+
+	public Boolean getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Boolean payment) {
+		this.payment = payment;
 	}
 
 	public String getAmount() {
@@ -61,6 +74,22 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		this.amount = amount;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public StatementReliability[] getStatementReliabilities() {
+		return statementReliabilities;
+	}
+
+	public void setStatementReliabilities(StatementReliability[] statementReliabilities) {
+		this.statementReliabilities = statementReliabilities;
+	}
+	
 	public StatementStatus[] getStatementStatuses() {
 		return statementStatuses;
 	}
@@ -78,14 +107,17 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		setLotNumber(null);
 		setFromDate(null);
 		setToDate(null);
-		setDescription(null);
+		setCommonConcept(null);
+		setPayment(null);
 		setAmount(null);
+		setDescription(null);
+		setStatementReliabilities(new StatementReliability[0]);
 		StatementStatus[] defaultStatementStatus = {StatementStatus.PENDING};
 		setStatementStatuses(defaultStatementStatus);
 	}
 
 	@Override
-	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (StringUtils.isNotEmpty(getLotNumber())) {
 			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_LOT_NUMBER), getLotNumber());			
 		}
@@ -95,11 +127,21 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		if (getToDate() != null) {
 			criteria.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_OPERATION_DATE), getToDate());			
 		}
-		if (StringUtils.isNotEmpty(getDescription())) {
-			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), getDescription());			
+		if (getCommonConcept() != null) {
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_COMMON_CONCEPT), getCommonConcept());			
+		}
+		if (getPayment() != null) {
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_PAYMENT), getPayment());			
 		}
 		if (StringUtils.isNotEmpty(getAmount())) {
 			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), getAmount());			
+		}
+		if (StringUtils.isNotEmpty(getDescription())) {
+			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), getDescription());			
+		}
+		if (!ArrayUtils.isEmpty(getStatementReliabilities())) {
+			String reliability = getController().resolveAlias(IFinanceAlias.BANK_STATEMENT_RELIABILITY);
+			addEnumToCriteria(criteria, reliability, getStatementReliabilities());
 		}
 		if (!ArrayUtils.isEmpty(getStatementStatuses())) {
 			String status = getController().resolveAlias(IFinanceAlias.BANK_STATEMENT_STATUS);

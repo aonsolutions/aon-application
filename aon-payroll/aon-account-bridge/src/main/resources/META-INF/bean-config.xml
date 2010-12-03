@@ -27,6 +27,13 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="Borrado de la tabla de apuntes">
+		<pojo>com.code.aon.accounting.AccountEntry</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.AccountEntryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 	<bean description="Borrado de la tabla de enlace entre facturas y apuntes">
 		<pojo>com.code.aon.account.bridge.AccountEntryInvoice</pojo>
 		<listeners>

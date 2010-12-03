@@ -8,10 +8,10 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -19,12 +19,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 
 public class SignerController implements ISignConstants {
 
@@ -125,7 +125,7 @@ public class SignerController implements ISignConstants {
 				attach = signatureController.getUnsignedAttachment(to);
 			}
 			if ( attach != null ) {
-				AttachmentUtil.downloadAttachment(attach);
+				DownloadUtil.downloadAttachment(attach);
 			}
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onReport " + e.getMessage());
