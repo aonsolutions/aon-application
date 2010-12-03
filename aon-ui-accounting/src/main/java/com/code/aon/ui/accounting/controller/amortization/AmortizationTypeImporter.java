@@ -29,6 +29,7 @@ public class AmortizationTypeImporter {
 	private static final Digester getDigester() {
 		if (DIGESTER == null) {
 			DIGESTER = DigesterLoader.createDigester(AmortizationTypeImporter.class.getResource(RULES_FILE));
+			DIGESTER.setUseContextClassLoader(true);
 		}
 		return DIGESTER;
 	}

@@ -31,6 +31,7 @@ public class BalanceImporter {
 	private static final Digester getDigester() {
 		if (DIGESTER == null) {
 			DIGESTER = DigesterLoader.createDigester(BalanceImporter.class.getResource(RULES_FILE));
+			DIGESTER.setUseContextClassLoader(true);
 		}
 		return DIGESTER;
 	}

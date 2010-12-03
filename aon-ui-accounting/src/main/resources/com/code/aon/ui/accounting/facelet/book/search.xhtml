@@ -31,8 +31,14 @@
 
 					<aon:outputText value="" />
 					<aon:div>
-						<aon:selectBooleanCheckbox id="coverEnabled" value="#{accountingBook.coverEnabled}" disabled="true"/>
+						<aon:selectBooleanCheckbox id="coverEnabled" value="#{accountingBook.coverEnabled}"/>
 						<aon:outputLabel for="coverEnabled" value="#{accountingBundle.accounting_coverEnabled}" />
+						<aon:div  styleClass="aon-margin-left">
+							<aon:inputText value="#{accountingBook.coverTitle}" size="70"/>
+							<aon:div>
+								<aon:inputText value="#{accountingBook.coverSubTitle}" size="70"/>
+							</aon:div>
+						</aon:div>
 					</aon:div>
 
 					<aon:outputText value="" />
@@ -71,6 +77,24 @@
 						<aon:outputLabel for="trial4QuarterEnabled" value="#{accountingBundle.accounting_trial4QuarterEnabled}" />
 					</aon:div>
 
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="outputVatEnabled" value="#{accountingBook.outputVatEnabled}" />
+						<aon:outputLabel for="outputVatEnabled" value="#{accountingBundle.accounting_output_vat}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="inputVatEnabled" value="#{accountingBook.inputVatEnabled}" />
+						<aon:outputLabel for="inputVatEnabled" value="#{accountingBundle.accounting_input_vat}" />
+					</aon:div>
+
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="investmentVatEnabled" value="#{accountingBook.investmentVatEnabled}" />
+						<aon:outputLabel for="investmentVatEnabled" value="#{accountingBundle.accounting_investment_vat}" />
+					</aon:div>
+					
 					<aon:outputText value="" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="profitAndLostEnabled" value="#{accountingBook.profitAndLostEnabled}" />

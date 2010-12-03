@@ -30,7 +30,7 @@ public class DBManager {
 	
 	private static final String CREATE_SQL = "com/code/aon/master/create/create.database.sql";
 	
-	private static final String INSERT_SQL = "com/code/aon/master/defaults/default-insert.database.sql";
+	private static final String INSERT_SQL = "com/code/aon/master/defaults/insert.database.aon.sql";
 	
 	private URL createSql;
 	
