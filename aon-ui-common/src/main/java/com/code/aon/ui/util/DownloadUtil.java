@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ui.common.ICommonConstants;
 
 /**
@@ -61,6 +62,15 @@ public class DownloadUtil implements ICommonConstants {
 		return fileName;
 	}
 	
+	private static MimeType resolveMimeType( String fileName, MimeType type) {
+		if ( type == null ) {
+			if (! StringUtils.isEmpty(fileName) ) {
+				return MimeResolver.getMimeTypeByExtension(fileName);
+			}
+		}
+		return type;
+	}		
+	
 	/**
 	 * Inits the response.
 	 *
@@ -72,12 +82,13 @@ public class DownloadUtil implements ICommonConstants {
 	 * @throws IOException 
 	 */
 	public static OutputStream initDownload( HttpServletResponse response, String fileName, MimeType type, long size ) throws IOException {
-		if ( type != null ) {
-			response.setContentType( type.getName() );	
+		MimeType mimeType = resolveMimeType(fileName, type);
+		if ( mimeType != null ) {
+			response.setContentType( mimeType.getName() );	
 		}
 		if (! StringUtils.isEmpty(fileName) ) {
-			String name = getFileName(fileName, type);
-			if ( (type != MimeType.MIME_PDF) && (type != MimeType.MIME_SIGNED_PDF) ) {
+			String name = getFileName(fileName, mimeType);
+			if ( (mimeType != MimeType.MIME_PDF) && (mimeType != MimeType.MIME_SIGNED_PDF) ) {
 				response.setHeader("Content-Disposition", "attachment; filename=\"" + name + "\"");	
 			} else {
 				response.setHeader("Content-Disposition", "inline; filename=\"" + name + "\"");

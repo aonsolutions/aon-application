@@ -90,7 +90,7 @@ public enum Period implements IResourceable {
 		if (month>=0 && month<3) return T1;
 		else if (month>=3 && month<6) return T2;
 		else if (month>=6 && month<9) return T3;
-		else if (month>=9 && month<11) return T4;
+		else if (month>=9 && month<12) return T4;
 		throw new IllegalArgumentException("Invalid month!");
 	}
 	

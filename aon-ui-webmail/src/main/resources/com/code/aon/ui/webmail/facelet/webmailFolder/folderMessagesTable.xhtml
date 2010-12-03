@@ -33,9 +33,8 @@
 			
 				<aon:div style="width:99%" rendered="#{webmailFolder.folder.messageCount>0}">
 					
-					<aon:extendedDataTable id="messageDataTable"
-						tableState="#{webmailFolder.tableState}" height="#{webmailFolder.tableHeight}" 
-						value="#{webmailFolder.model}" var="to" rows="#{webmailFolder.pageSize}">
+					<aon:dataTable id="messageDataTable" var="to"
+						value="#{webmailFolder.model}" rows="#{webmailFolder.pageSize}">
 								
 						<aon:rowSelector action="#{webmailFolder.getSelectedMessageAction}"
 							actionListener="#{webmailFolder.changeSelectedMessage}" />
@@ -102,7 +101,7 @@
 								style="#{to.readed?'':'font-weight: bold'}" />
 						</aon:column>
 						<aon:column id="subjectColumn" 
-							label="#{webmailBundle.webmail_subject}" width="340px" 
+							label="#{webmailBundle.webmail_subject}"
 							sortable="true" sortBy="#{to.subject}">
 							<f:facet name="header">
 								<aon:outputText value="#{webmailBundle.webmail_subject}" />
@@ -110,7 +109,7 @@
 							<aon:outputText escape="true" value="#{to.subject}"
 								style="#{to.readed?'':'font-weight: bold'}" />
 						</aon:column>
-						<aon:column id="dateColumn" width="100px" label="#{webmailBundle.webmail_date}"
+						<aon:column id="dateColumn" width="80px" label="#{webmailBundle.webmail_date}"
 							sortable="true" sortBy="#{to.date}" sortOrder="#{webmailFolder.dateOrder}">
 							<f:facet name="header">
 								<aon:outputText value="#{webmailBundle.webmail_date}" />
@@ -119,7 +118,7 @@
 								title="#{to.sentDateFullString}"
 								style="#{to.readed?'':'font-weight: bold'}" />
 						</aon:column>
-						<aon:column id="sizeColumn" width="80px" label="#{webmailBundle.webmail_size}"
+						<aon:column id="sizeColumn" width="70px" label="#{webmailBundle.webmail_size}"
 							sortable="true" sortBy="#{to.message.size}">
 							<f:facet name="header">
 								<aon:outputText value="#{webmailBundle.webmail_size}" />
@@ -127,7 +126,7 @@
 							<aon:outputText value="#{to.displaySize}"
 								style="#{to.readed?'':'font-weight: bold'}" />
 						</aon:column>						
-					</aon:extendedDataTable>
+					</aon:dataTable>
 
 					<aon:dataScroller2 for="messageDataTable" page="#{webmailFolder.currentPage}" />
 	
