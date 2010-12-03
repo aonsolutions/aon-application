@@ -70,7 +70,8 @@ public class VatManager {
 	    int i = params.getFirstNumber() + params.getCount() - 1;
 	    for (ITransferObject to : list ) {
 	    	Invoice invoice = (Invoice) to;
-	    	String oldDoument = invoice.getDocumentNumber(); 
+	    	String oldDoument = invoice.getDocumentNumber();
+	    	invoice.setSeries(params.getSeries().getId());
 	    	invoice.setNumber(i);
 	    	invoice = (Invoice) bean.update(invoice);
 	    	String newDocument = invoice.getDocumentNumber();
@@ -135,6 +136,7 @@ public class VatManager {
 			stmt.append(" select count(*) from invoice i WHERE"); 
 			stmt.append(" i.series = ?");
 			stmt.append(" and i.number BETWEEN ? AND ?");
+			stmt.append(" and i.type != 1");
 			stmt.append(" and i.id not in ( ");
 			stmt.append("  select inv.id from invoice inv");
 			stmt.append("   where inv.issue_date >= ?");

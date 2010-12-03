@@ -1,10 +1,6 @@
 package com.code.aon.ui.webmail.bean;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +9,6 @@ import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -37,10 +32,6 @@ public class AonMessageTracer implements IMimeType {
 			"(cid:[^\"\']+)(\"|\')", Pattern.CASE_INSENSITIVE);
 	
 	private Message message;
-	
-	private Set<String> cids;
-	
-	private ArrayList<BodyPart> relateds;
 	
 	public AonMessageTracer(Message message) {
 		this.message = message;
@@ -241,42 +232,8 @@ public class AonMessageTracer implements IMimeType {
 	}
 	
 	public String getBodyHTML() throws MessagingException, IOException {
-		this.cids = new HashSet<String>();
 		String data = traceContent(message);
-		parseRelateds();
 		return AonMessageUtils.extractInnerHTML(data);
-	}
-
-	/**
-	 * @return the relateds
-	 */
-	public ArrayList<BodyPart> getRelateds() {
-		if ( relateds == null ) {
-			this.cids = new HashSet<String>();
-			try {
-				traceContent(message);
-				parseRelateds();
-			} catch (IOException e) {
-				LOGGER.error( "Error parsing cids & relateds", e );
-			} catch (MessagingException e) {
-				LOGGER.error( "Error parsing cids & relateds", e );
-			}
-		}
-		return relateds;
-	}
-
-	private void parseRelateds() throws IOException, MessagingException {
-		this.relateds = new ArrayList<BodyPart>();
-		Object obj = message.getContent();
-		if (obj instanceof MimeMultipart) {
-			MimeMultipart parts = (MimeMultipart) obj;
-			Iterator<String> iter = cids.iterator();
-			while (iter.hasNext()) {
-				String cid = "<" + iter.next() + ">";
-				BodyPart part = parts.getBodyPart(cid);
-				relateds.add(part);
-			}
-		}
 	}
 
     private String getURLPreffix() {
@@ -298,7 +255,6 @@ public class AonMessageTracer implements IMimeType {
 			do {
 				String fullCid = tagMatcher.group(1);
 				String cid = fullCid.substring(4);
-				this.cids.add( cid );
 				String newText = preffix + cid + ".cid";
 				int start = tagMatcher.start(1) + offset;
 				int end = tagMatcher.end(1) + offset;

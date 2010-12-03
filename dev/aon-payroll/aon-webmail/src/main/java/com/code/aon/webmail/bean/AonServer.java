@@ -208,8 +208,7 @@ public class AonServer {
     }
 
     public AonMessage createAonMessage( Address from ) throws WebmailException {
-    	AonMessage aonMessage = new AonMessage();
-		aonMessage.setMessage(new MimeMessage(session));
+    	AonMessage aonMessage = new AonMessage( new MimeMessage(session) );
 		aonMessage.setSender( from );
     	return aonMessage;
     }
