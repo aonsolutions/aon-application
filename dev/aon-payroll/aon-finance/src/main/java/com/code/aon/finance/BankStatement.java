@@ -119,7 +119,7 @@ public class BankStatement implements ITransferObject {
 		this.reference2 = reference2;
 	}
 
-	@Column(length=76)
+	@Column(length=80)
 	public String getDescription() {
 		return description;
 	}

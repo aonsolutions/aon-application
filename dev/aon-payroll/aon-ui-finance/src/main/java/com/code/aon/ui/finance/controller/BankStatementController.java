@@ -1,29 +1,55 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.faces.controller.AttachmentUtil;
+import com.code.aon.faces.controller.IAttachmentController;
+import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.StatementConcept;
+import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.ui.common.io.AonFile;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.event.BankStatementSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -33,6 +59,9 @@ public class BankStatementController extends BasicController {
 
 	private RegistryBank registryBank;
 	private Date operationDate;
+	private boolean showImportFileWindow;
+	private boolean aeb43;
+	private AonFile aonFile;
 
 	public RegistryBank getRegistryBank() {
 		return registryBank;
@@ -48,6 +77,33 @@ public class BankStatementController extends BasicController {
 		this.operationDate = operationDate;
 	}
 
+	public boolean isShowImportFileWindow() {
+		return showImportFileWindow;
+	}
+	public void setShowImportFileWindow(boolean value) {
+		this.showImportFileWindow = value;
+	}
+
+	public boolean isAeb43() {
+		return aeb43;
+	}
+	public void setAeb43(boolean aeb43) {
+		this.aeb43 = aeb43;
+	}
+
+	public AonFile getAonFile() {
+		return aonFile;
+	}
+	public void setAonFile(AonFile aonFile) {
+		this.aonFile = aonFile;
+	}
+
+	public int getAvailableRegistryBanks() throws ManagerBeanException {
+		String companyControllerName = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
+		CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyControllerName);
+		return companyCollections.getCompanyBanks().size();
+	}
+
 	public void onFullReset(ActionEvent event) {
 		try {
 			getCriteria().addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), new Integer(0));
@@ -56,6 +112,206 @@ public class BankStatementController extends BasicController {
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}
+
+	public void onImportFileShow(ActionEvent event) {
+		setAeb43(true);
+		setAonFile(null);
+
+		try {
+			getCriteria().addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), new Integer(0));
+			setTo(null);
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	public void fileUploaded(UploadEvent event) {
+		AonFile aonFile = new AonFile();
+		aonFile.setFile(event.getUploadItem().getFile());
+		aonFile.setFileName(event.getUploadItem().getFileName());
+		setAonFile(aonFile);
+	}
+
+	public void onImportFile(ActionEvent event) {
+		try {
+			if (isAeb43()) {
+				importAeb43();
+			} else {
+				importCsv();
+			}
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (IOException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	private void importAeb43() throws ManagerBeanException, IOException {
+		BankStatement bankStatement = null;
+		LineNumberReader reader = new LineNumberReader(new InputStreamReader(new FileInputStream(getAonFile().getFile())));
+		String line = reader.readLine();
+		while (line != null) {
+			String lineType = line.substring(0, 2);
+			if (lineType.equals("11")) {
+				RegistryBank registryBank = importAeb43Header(line);
+				if (registryBank != null) {
+					setRegistryBank(registryBank);
+				} else{
+					break;
+				}
+			} else if (lineType.equals("22")) {
+				bankStatement = importAeb43Data(line);
+			} else if (lineType.equals("23")) {
+				importAeb43Concept(line, bankStatement);
+			} else {
+				break;
+			}
+			line = reader.readLine();
+		}
+
+		if (bankStatement != null) {
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), getRegistryBank().getId());
+			setCriteria(criteria);
+			onSearch(null);
+		}
+	}
+
+	private RegistryBank importAeb43Header(String line) throws ManagerBeanException {
+		String searchControllerName = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
+		BankStatementSearchListener bankStatementSearch = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchControllerName);
+		bankStatementSearch.initData();
+		bankStatementSearch.setFromDate(obtainDateAAMMDD(line.substring(20, 26)));
+		bankStatementSearch.setToDate(obtainDateAAMMDD(line.substring(26, 32)));
+
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), getRegistryBank().getRegistry().getId());
+		String bankAcc = line.substring(2, 10) + "__" + line.substring(10, 20);
+		criteria.addExpression(ExpressionUtilities.getLikeExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAcc));
+		Iterator<?> iterator = rBankBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			return (RegistryBank)iterator.next();
+		}
+		return null;
+	}
+
+	private BankStatement importAeb43Data(String line) throws ManagerBeanException {
+		int conceptIdx = Integer.parseInt(line.substring(22, 24));
+		conceptIdx = (conceptIdx > 90) ? (conceptIdx - 80) : conceptIdx;
+
+		BankStatement bankStatement = new BankStatement();
+		bankStatement.setRegistryBank(getRegistryBank());
+		bankStatement.setOperationDate(obtainDateAAMMDD(line.substring(10, 16)));
+		bankStatement.setConcept(StatementConcept.values()[conceptIdx]);
+		bankStatement.setPayment(line.substring(27, 28).equals("1"));
+		bankStatement.setAmount(Double.parseDouble(line.substring(28, 42)) / 100);
+		bankStatement.setDocument(Integer.parseInt(line.substring(42, 52)));
+		bankStatement.setReference1(line.substring(52, 64));
+		bankStatement.setReference2(line.substring(64, 80));
+		bankStatement.setDescription(line.substring(52, 80));
+		bankStatement.setStatus(StatementStatus.PENDING);
+		return (BankStatement)getManagerBean().insert(bankStatement);
+	}
+
+	private BankStatement importAeb43Concept(String line, BankStatement bankStatement) throws ManagerBeanException {
+		String description = line.substring(4, 42).trim() + " " + line.substring(42, 80).trim();
+		if (!bankStatement.getDescription().equals(bankStatement.getReference1() + bankStatement.getReference2())) {
+			description = bankStatement.getDescription() + " " + description;
+		}
+		bankStatement.setDescription((description.length() > 80) ? description.substring(0, 79) : description);
+		return (BankStatement)getManagerBean().update(bankStatement);
+	}
+
+	private void importCsv() throws ManagerBeanException, IOException {
+		BankStatement bankStatement = null;
+		LineNumberReader reader = new LineNumberReader(new InputStreamReader(new FileInputStream(getAonFile().getFile())));
+		String line = reader.readLine();
+		while (line != null) {
+			bankStatement = importCsvData(line, (bankStatement == null));
+			line = reader.readLine();
+		}
+
+		if (bankStatement != null) {
+			setCsvToDate(bankStatement.getOperationDate());
+
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), getRegistryBank().getId());
+			setCriteria(criteria);
+			onSearch(null);
+		}
+	}
+
+	private BankStatement importCsvData(String line, boolean firstLine) throws ManagerBeanException {
+		String delim = ";";
+		int pos = 1;
+		Date date = null;
+		String description = "";
+		double amount = 0;
+		boolean payment = false;
+
+		StringTokenizer stk = new StringTokenizer(line, delim, false);
+		while (stk.hasMoreTokens()) {
+			String token = stk.nextToken();
+			if (pos == 1) {
+				date = obtainDateDDMMAA(token.replace("-", ""));
+			} else if (stk.hasMoreTokens()) {
+				description += token;
+			} else {
+				amount = Double.parseDouble(token.replace(",", "."));
+				if (amount < 0) {
+					payment = true;
+					amount = amount * (-1);
+				}
+			}
+			pos++;
+		}
+
+		if (firstLine) {
+			String searchControllerName = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
+			BankStatementSearchListener bankStatementSearch = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchControllerName);
+			bankStatementSearch.initData();
+			bankStatementSearch.setFromDate(date);
+		}
+
+		BankStatement bankStatement = new BankStatement();
+		bankStatement.setRegistryBank(getRegistryBank());
+		bankStatement.setOperationDate(date);
+		bankStatement.setConcept(StatementConcept.UNKNOWN);
+		bankStatement.setPayment(payment);
+		bankStatement.setAmount(amount);
+		bankStatement.setDocument(0);
+		bankStatement.setDescription(description);
+		bankStatement.setStatus(StatementStatus.PENDING);
+		return (BankStatement)getManagerBean().insert(bankStatement);
+	}
+
+	private void setCsvToDate(Date toDate) {
+		String searchControllerName = IFinanceConstants.BANK_STATEMENT_SEARCH_CONTROLLER_NAME;
+		BankStatementSearchListener bankStatementSearch = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchControllerName);
+		bankStatementSearch.setToDate(toDate);
+	}
+
+	private Date obtainDateAAMMDD(String date) {
+		GregorianCalendar calendar = new GregorianCalendar();
+		int year = 2000 + Integer.parseInt(date.substring(0, 2));
+		int month = Integer.parseInt(date.substring(2, 4)) - 1;
+		int day = Integer.parseInt(date.substring(4, 6));
+		calendar.set(year, month, day, 0, 0, 0);
+		return calendar.getTime();
+	}
+
+	private Date obtainDateDDMMAA(String date) {
+		GregorianCalendar calendar = new GregorianCalendar();
+		int day = Integer.parseInt(date.substring(0, 2));
+		int month = Integer.parseInt(date.substring(2, 4)) - 1;
+		int year = Integer.parseInt(date.substring(4, 8));
+		calendar.set(year, month, day, 0, 0, 0);
+		return calendar.getTime();
 	}
 
 	public void onChangeBank(ValueChangeEvent event) {

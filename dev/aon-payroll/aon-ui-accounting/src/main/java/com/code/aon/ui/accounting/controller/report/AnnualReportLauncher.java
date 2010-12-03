@@ -181,8 +181,11 @@ public class AnnualReportLauncher {
 			throw new AbortProcessingException(e);
 		}
 	}
-	
-	private void pdf(OutputStream out,List<AnnualReportDetail> list) throws ManagerBeanException {
+
+	public void pdf(OutputStream out) throws ManagerBeanException {
+		pdf(out,getList());
+	}
+	public void pdf(OutputStream out,List<AnnualReportDetail> list) throws ManagerBeanException {
 		try {
 			StringBuffer buf = new StringBuffer();
 			buf.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">");
@@ -193,7 +196,6 @@ public class AnnualReportLauncher {
 			buf.append("	<meta http-equiv=\"Expires\" content=\"0\" />");
 			buf.append("	<meta http-equiv=\"Pragma\" content=\"no-cache\" />");
 			buf.append("	<meta http-equiv=\"Cache-Control\" content=\"no-store\" />");
-			buf.append("	<link type=\"text/css\" rel=\"stylesheet\" href=\"../aon-desktop/aonResource/5.6.0-SNAPSHOT/aon-richCss.css\" class=\"user\">");			
 			buf.append("	<style type=\"text/css\">");
 			buf.append("	</style>");
 			buf.append("</head>");
@@ -218,9 +220,11 @@ public class AnnualReportLauncher {
 			Document doc = db.parse(tidyIn);
 			renderer.setDocument(doc,null);
 			renderer.layout();
-			renderer.createPDF(out, true);
-			tidyIn.close();
+			renderer.createPDF(out, false);
+			renderer.getWriter().setCloseStream(false);
+			renderer.finishPDF();
 			tidyOut.close();
+			tidyIn.close();
 		} catch (IOException e) {
 			AonUtil.addErrorMessage("El fichero no es correcto");
 			throw new AbortProcessingException(e);
