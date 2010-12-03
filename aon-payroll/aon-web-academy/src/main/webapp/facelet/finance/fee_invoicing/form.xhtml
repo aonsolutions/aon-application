@@ -73,6 +73,7 @@
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" />
+<!-- 
 						<t:commandButton id="record" value="#{financeBundle.to_record}"
 							actionListener="#{feeInvoicing.onRecordInvoice}"
 							rendered="#{feeInvoicingDetail.model.rowCount > 0 and !feeInvoicing.recorded}"
@@ -85,6 +86,7 @@
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" />
+-->
 						<t:commandLink id="feeInvoicing" value="#{bundle.aon_report}" target="_new"
 							forceId="#{true}" rendered="#{!feeInvoicing.new}"
 							action="#{report.onExecute}"

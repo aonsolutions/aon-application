@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="30"/>
-	<property name="ireport.y" value="837"/>
+	<property name="ireport.x" value="3"/>
+	<property name="ireport.y" value="309"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -27,6 +27,7 @@
 	</background>
 	<title>
 		<band height="686" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{printHeaders} && $P{params}.isCoverVisible()]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-23" x="10" y="128" width="535" height="137"/>
 				<box>
