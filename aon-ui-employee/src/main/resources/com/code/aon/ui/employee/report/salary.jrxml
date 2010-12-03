@@ -50,7 +50,7 @@
 	</style>
 	<subDataset name="ds1">
 		<field name="description" class="java.lang.String"/>
-		<field name="function" class="java.lang.String"/>
+		<field name="expression" class="java.lang.String"/>
 		<field name="amount" class="java.lang.Double"/>
 	</subDataset>
 	<parameter name="nestedReports" class="java.util.Map"/>
@@ -506,7 +506,7 @@
 					<rightPen lineStyle="Dotted"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getCommonContingency().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getCommonContingency().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="321" width="70" height="11"/>
@@ -540,7 +540,7 @@
 					<rightPen lineStyle="Dotted"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getUnemployment().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getUnemployment().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="333" width="70" height="11"/>
@@ -574,7 +574,7 @@
 					<rightPen lineStyle="Dotted"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getJobTraining().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getJobTraining().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="345" width="70" height="11"/>
@@ -616,7 +616,7 @@
 					<rightPen lineStyle="Dotted"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="357" width="70" height="11"/>
@@ -650,7 +650,7 @@
 					<rightPen lineStyle="Dotted"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="369" width="70" height="11"/>
@@ -712,7 +712,7 @@
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getIrpf().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getIrpf().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="396" width="69" height="11"/>
@@ -927,7 +927,7 @@
 					<rightPen lineStyle="Dotted"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getOtherNonWage().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getOtherNonWage().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement positionType="Float" x="255" y="245" width="220" height="11"/>
@@ -939,7 +939,7 @@
 					<rightPen lineStyle="Dotted"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getMovingCompensation().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getMovingCompensation().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement positionType="Float" x="255" y="221" width="220" height="11"/>
@@ -951,7 +951,7 @@
 					<rightPen lineStyle="Dotted"/>
 				</box>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getSpecialSecurityBenefits().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getPayments().getSpecialSecurityBenefits().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="255" y="411" width="220" height="11"/>
@@ -965,7 +965,7 @@
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getAdvancePayment().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getAdvancePayment().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="255" y="426" width="220" height="11"/>
@@ -979,7 +979,7 @@
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getInKind().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getInKind().getExpression()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="255" y="441" width="220" height="11"/>
@@ -993,7 +993,7 @@
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getOther().getFunction()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getOther().getExpression()]]></textFieldExpression>
 			</textField>
 			<frame>
 				<reportElement x="0" y="523" width="555" height="119"/>
