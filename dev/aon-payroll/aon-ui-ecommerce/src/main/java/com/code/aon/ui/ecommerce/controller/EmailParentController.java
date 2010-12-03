@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -25,7 +26,6 @@ import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
 

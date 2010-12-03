@@ -16,10 +16,10 @@ import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.AonSQLFile;
 import com.code.aon.dbutils.AonSQLScript;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.util.AonUtil;
 
 public class SQLScriptController  {

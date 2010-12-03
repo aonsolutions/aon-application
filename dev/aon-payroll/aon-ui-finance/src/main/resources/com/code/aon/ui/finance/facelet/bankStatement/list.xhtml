@@ -492,6 +492,7 @@
 											<aon:commandButton id="addLink"
 												value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
 												title="#{financeBundle.finance_bank_statement_check}"
+												rendered="#{to.pending}"
 												actionListener="#{controller.onAddLinkShow}"
 												reRender="showLinkWindow">
 												<f:setPropertyActionListener target="#{controller.showLinkWindow}"
@@ -526,21 +527,19 @@
 											rendered="#{to.checked and controller.showBankStatementLink}"
 											value="#{controller.bankStatementLinkList}" var="bankStatementLink">
 
-											<aon:column colspan="4"	styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:column colspan="4"	
+												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="#{bankStatementLink.date}">
 													<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 														timeZone="#{timeZoneController.timeZoneId}" />
 												</aon:outputText>
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="#{financeBundle.finance_tracking_batched} "
 													rendered="#{bankStatementLink.financeBatch}" />
 												<c:if test="#{aonRole.accountingOperator}">
@@ -551,27 +550,25 @@
 													rendered="#{bankStatementLink.financeTracking or bankStatementLink.financeBatch}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="#{bankStatementLink.description}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="#{financeBundle.finance_payment}" 
 													rendered="#{bankStatementLink.payment}" /> 
 												<aon:outputText value="#{financeBundle.finance_charge}"
 													rendered="#{!bankStatementLink.payment}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold"
-												style="padding-right:10px; border:none; background-color:#FBEDB6; font-size:0.9em;">
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="#{bankStatementLink.amount}">
 													<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 												</aon:outputText>
 											</aon:column>
 
-											<aon:column colspan="2" style="padding:0px; border:none; background-color:#FBEDB6;">
+											<aon:column colspan="2" 
+												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="&#160;" />
 											</aon:column>
 										</rich:subTable>
@@ -579,15 +576,15 @@
 										<rich:subTable id="accountEntryTable"
 											rendered="#{aonRole.accountingOperator and to.recorded and controller.showAccountEntry}"
 											value="#{controller.accountEntryDetails}" var="entryDetail"
-											headerClass="aon-editDataTable-textColumn aon-subTable-header aon-italic aon-bold">
+											headerClass="aon-editDataTable-textColumn aon-subTable-green-header aon-italic aon-bold">
 
-											<aon:column colspan="3" styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+											<aon:column colspan="3" 
+												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
-											<aon:column colspan="2" styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+											<aon:column colspan="2" 
+												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
 												<f:facet name="header">
 													<aon:div>
 														<aon:outputText value="#{financeBundle.finance_account_entry}: " />
@@ -597,8 +594,7 @@
 												<aon:outputText value="#{entryDetail.concept}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
 												<f:facet name="header">
 													<aon:div>
 														<aon:outputText value="#{bundle.aon_date}: " />
@@ -611,8 +607,7 @@
 												<aon:outputText value="#{entryDetail.account.id}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
 												<f:facet name="header">
 													<aon:outputText value="#{bundle.aon_confidential}" 
 														rendered="#{controller.accountEntry.confidential}" />
@@ -620,22 +615,20 @@
 												<aon:outputText value="#{entryDetail.account.description}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold"
-												style="padding-right:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-green-column">
 												<aon:outputText value="#{entryDetail.debit}">
 													<f:convertNumber pattern="#,##0.00" />
 												</aon:outputText>
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold"
-												style="padding-right:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-green-column">
 												<aon:outputText value="#{entryDetail.credit}">
 													<f:convertNumber pattern="#,##0.00" />
 												</aon:outputText>
 											</aon:column>
 
-											<aon:column colspan="2"	styleClass="aon-editDataTable-textColumn aon-italic aon-bold"
-												style="padding-left:10px; border:none; background-color:#F2FDEC; font-size:0.9em;">
+											<aon:column colspan="2"	
+												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
 												<aon:outputText value="#{entryDetail.balancingAccount.id}" />
 											</aon:column>
 										</rich:subTable>

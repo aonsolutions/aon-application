@@ -24,6 +24,7 @@ import org.richfaces.model.UploadItem;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.ImageUtil;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ql.Criteria;
@@ -32,7 +33,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 

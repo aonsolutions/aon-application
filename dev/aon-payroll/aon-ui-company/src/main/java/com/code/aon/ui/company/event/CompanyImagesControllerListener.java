@@ -7,12 +7,12 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;

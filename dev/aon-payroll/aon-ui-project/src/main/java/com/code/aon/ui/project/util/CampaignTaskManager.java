@@ -57,7 +57,9 @@ public class CampaignTaskManager {
 
 			Task task = new Task();
 			if (activityType != null) {
-				task.setDescription(activityType.getDescription() + " - "
+				task.setDescription( 
+						((activityType.getDescription() != null)?
+							activityType.getDescription() + " - ":"")
 						+ processDetail.getDescription());
 			} else {
 				task.setDescription(processDetail.getDescription() + " ["
