@@ -25,6 +25,7 @@ public class SalaryDraftPaymentLinesControllerListener extends LinesControllerLi
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(detail.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_END_DATE), endDate);
 			Expression expr2 = ExpressionUtilities.getNullExpression(detail.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_END_DATE));
 			detail.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			detail.getCriteria().addOrder(detail.getFieldName(IEmployeeAlias.CONTRACT_PAYMENT_TYPE));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		} 

@@ -6,102 +6,74 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<ui:decorate
-		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="rows" value="0" />
-		<ui:define name="columns">	
+	<aon:dataTable id="ContractPaymentTable" var="to" value="#{controller.model}" rows="0">
+		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:commandButton id="ContractPayment-select"
+				title="#{bundle.aon_update}" 
+				actionListener="#{controller.onEdit}"
+				reRender="paymentModalContainer"
+				styleClass="aon-editDataTable-button aon-icon-rowSelector"
+				focus="accountId" />
+			<f:facet name="footer">
+				<aon:div>
+					<aon:commandButton
+						id="ContractPayment-reset" 
+						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+						actionListener="#{controller.onEditNew}"
+						reRender="paymentModalContainer"
+						styleClass="aon-editDataTable-button aon-icon-reset"
+						accesskey="#{bundle.aon_key_new_line}"/>
+				</aon:div>
+			</f:facet>
+		</aon:column>
+
+		<c:if test="#{!skipStartDateColumn}">
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_start_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.startDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+		</c:if>
 		
-			<c:if test="#{!skipStartDateColumn}">
-				<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
-					<f:facet name="header">
-						<aon:outputLabel for="Contract_startDate"
-							value="#{bundle.aon_start_date}" />
-					</f:facet>
-					<aon:outputText value="#{to.startDate}" rendered="#{formList}" >
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
-					<aon:selectInputDate id="Contract_startDate" rendered="#{formEdit}"
-						value="#{controller.to.startDate}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-					<f:facet name="footer">
-						<aon:selectInputDate id="Contract_startDate-New" rendered="#{formNew}"
-							value="#{controller.to.startDate}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-					</f:facet>		
-				</aon:column>
-			</c:if>
-			
-			<c:if test="#{!skipEndDateColumn}">
-				<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
-					<f:facet name="header">
-						<aon:outputLabel for="Contract_endDate" value="#{bundle.aon_end_date}" />
-					</f:facet>
-					<aon:outputText value="#{to.endDate}" rendered="#{formList}" >
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>		
-					<aon:selectInputDate id="Contract_endDate" rendered="#{formEdit}"
-						value="#{controller.to.endDate}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-					<f:facet name="footer">
-						<aon:selectInputDate id="Contract_endDate-New" rendered="#{formNew}"
-							value="#{controller.to.endDate}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-					</f:facet>		
-				</aon:column>
-			</c:if>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+		<c:if test="#{!skipEndDateColumn}">
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
 				<f:facet name="header">
-					<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
+					<aon:outputText value="#{bundle.aon_end_date}" />
 				</f:facet>
-				<aon:outputText rendered="#{formList}" value="#{to.type}" />
-				<aon:selectOneMenu id="ContractPayment_type" 
-					value="#{controller.to.type}" rendered="#{formEdit}">
-					<f:selectItems value="#{employeeCollections.paymentTypes}" />
-				</aon:selectOneMenu>
-				<f:facet name="footer">
-					<aon:selectOneMenu id="ContractPayment_type-New" 
-						value="#{controller.to.type}" rendered="#{formNew}">
-						<f:selectItems value="#{employeeCollections.paymentTypes}" />
-					</aon:selectOneMenu>
-				</f:facet>		
+				<aon:outputText value="#{to.endDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
 			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-				<f:facet name="header">
-					<aon:outputLabel for="ContractPayment_description" value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText rendered="#{formList}" value="#{to.description}" />
-				<aon:inputText id="ContractPayment_description" rendered="#{formEdit}" 
-					size="40" maxlength="64"
-					value="#{controller.to.description}" />
-				<f:facet name="footer">
-					<aon:inputText id="ContractPayment_description-New" rendered="#{formNew}" 
-						size="40" maxlength="64"
-						value="#{controller.to.description}" />
-				</f:facet>		
-			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
-				<f:facet name="header">
-					<aon:outputLabel for="ContractPayment_expression" value="#{employeeBundle.employee_salary_expression}" />
-				</f:facet>
-				<aon:outputText rendered="#{formList}" value="#{to.expression}" />		
-				<aon:inputText id="ContractPayment_function" rendered="#{formEdit}" size="20"
-						maxlength="128" value="#{controller.to.expression}" required="true" />
-				<f:facet name="footer">
-					<aon:inputText id="ContractPayment_function-New" rendered="#{formNew}" size="20"
-							maxlength="128" value="#{controller.to.expression}" required="true" />
-				</f:facet>
-			</aon:column>
-		</ui:define>
-	</ui:decorate>
+		</c:if>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_type}" />
+			</f:facet>
+			<aon:outputText value="#{to.type}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_description}" />
+			</f:facet>
+			<aon:outputText value="#{to.fullDescription}" />
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<f:facet name="header">
+				<aon:outputText value="#{employeeBundle.employee_salary_expression}" />
+			</f:facet>
+			<aon:outputText value="#{to.expression}" />		
+		</aon:column>
+	</aon:dataTable>
 	
 </ui:composition>

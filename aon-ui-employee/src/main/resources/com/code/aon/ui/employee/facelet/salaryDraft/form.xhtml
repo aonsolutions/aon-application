@@ -46,11 +46,13 @@
 								</aon:div>
 							</aon:panelTab>
 							<aon:panelTab id="paymentsEditTab" label="#{bundle.aon_edit}">
-								<ui:include src="/com/code/aon/ui/employee/facelet/payment/editGridContent.xhtml" >
-									<ui:param name="controller" value="#{salaryDraftPayment}" />
-									<ui:param name="skipStartDateColumn" value="#{true}" />
-									<ui:param name="skipEndDateColumn" value="#{false}" />
-								</ui:include>
+								<aon:div style="width: 840px; margin-top: 10px;">
+									<ui:include src="/com/code/aon/ui/employee/facelet/payment/editGridContent.xhtml" >
+										<ui:param name="controller" value="#{salaryDraftPayment}" />
+										<ui:param name="skipStartDateColumn" value="#{true}" />
+										<ui:param name="skipEndDateColumn" value="#{true}" />
+									</ui:include>
+								</aon:div>
 							</aon:panelTab>
 						</aon:panelTabSet>
 						<aon:panelTabSet>
@@ -79,5 +81,8 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/employee/facelet/payment/modalPayment.xhtml">
+			<ui:param name="controller" value="#{salaryDraftPayment}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>
