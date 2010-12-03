@@ -305,6 +305,14 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener 
+				</value-class>
+				<value>#{rPayMethodControllerListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 
 	<!--  **** SUPPLIER SEGMENT **** -->
