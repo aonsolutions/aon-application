@@ -235,7 +235,7 @@
 									<f:facet name="header">
 										<t:outputText value="#{financeBundle.aon_tracking_description}" />
 									</f:facet>
-									<t:outputText value="#{to.description}" />
+									<t:outputText value="#{financeTracking.trackingDescription}" />
 								</t:column>
 						
 								<t:column width="100">
@@ -255,7 +255,7 @@
 										actionListener="#{financeTracking.undoTracking}"
 										immediate="#{true}" onclick="confirm('#{bundle.aon_remove_confirm}');"
 										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete" value=""
-										rendered="#{financeTracking.unrecordable}" />
+										rendered="#{!to.recorded and financeTracking.unrecordable}" />
 								</t:column>
 							</t:dataTable>
 						</t:div>

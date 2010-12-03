@@ -25,6 +25,11 @@ if ! aondir_has_app $APP; then
 
 
         aondir-addprofile Administrador $APP Admin User &>/dev/null
+        aondir-addprofile Gestion $APP Config Auditor Product Commercial Sale Purchase Warehouse Finance Statistics eSignature User &>/dev/null
         aondir-addprofile Invitado $APP Guest User &>/dev/null
+
+else
+
+        aondir-addprofile Gestion $APP Config Auditor Product Commercial Sale Purchase Warehouse Finance Statistics eSignature User &>/dev/null
 
 fi
