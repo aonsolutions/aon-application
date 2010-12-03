@@ -278,6 +278,15 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ CALENDAR ************* -->
+	<managed-bean>
+		<managed-bean-name>calendarHolidayData</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************ HOLIDAY LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>holidayLookup</managed-bean-name>

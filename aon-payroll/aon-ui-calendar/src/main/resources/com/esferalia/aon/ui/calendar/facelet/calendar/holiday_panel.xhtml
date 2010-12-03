@@ -8,21 +8,26 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:div>
-		<c:forEach items="#{calendar.holidayModelList}" var="list">
-			<aon:dataTable id="holidays"
-				value="#{list.holidayModel}" var="to">
-				<aon:column>
-					<aon:outputText value="#{to.date}">
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
-				</aon:column>
-				<aon:column>
-					<aon:outputText value="#{to.description}"/>
-				</aon:column>
-			</aon:dataTable>
-		</c:forEach>
-	</aon:div>
+	<aon:panel style="height=80px"  width="100" 
+		header="#{calendarBundle.aon_calendar_extended_holidays}">
+		<a4j:repeat value="#{calendarHolidayData.holidayData}" var="data">
+			<aon:panelCollapsible expanded="true" label="#{data.description}">
+				<aon:dataTable value="#{data.model}" var="to"
+					columnClasses="
+					aon-editDataTable-dateColumn aon-width-80,
+					aon-editDataTable-textColumn aon-width-auto">
+					<aon:column>
+						<aon:outputText value="#{to.date}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+					<aon:column>
+						<aon:outputText value="#{to.description}"/>
+					</aon:column>
+				</aon:dataTable>
+			</aon:panelCollapsible>
+		</a4j:repeat>
+	</aon:panel>
 	
 </ui:composition>

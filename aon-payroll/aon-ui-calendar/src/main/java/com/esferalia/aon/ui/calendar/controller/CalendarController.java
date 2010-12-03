@@ -9,8 +9,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.richfaces.model.impl.ListDataModel;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,8 +29,6 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.CalendarPeriod;
-import com.esferalia.aon.calendar.Holiday;
-import com.esferalia.aon.calendar.HolidayDetail;
 import com.esferalia.aon.calendar.dao.ICalendarAlias;
 import com.esferalia.aon.calendar.enumeration.CalendarSource;
 
@@ -164,34 +160,6 @@ public class CalendarController extends BasicController {
 		}
 	}
 	
-	public List<ListDataModel> getHolidayModelList(){
-		List<ListDataModel> list = new LinkedList<ListDataModel>();
-		Holiday holiday = getTo().getHoliday();
-		Criteria criteria;
-		IManagerBean bean;
-		try {
-			bean = BeanManager.getManagerBean(HolidayDetail.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
-			list.add(new ListDataModel(bean.getList(criteria)));
-		} catch (ManagerBeanException e) {
-			
-		}
-		holiday = holiday.getHoliday();
-		while(holiday!=null && holiday.getHoliday()!=null){
-			try {
-				bean = BeanManager.getManagerBean(HolidayDetail.class);
-				criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
-				list.add(new ListDataModel(bean.getList(criteria)));
-			} catch (ManagerBeanException e) {
-				
-			}
-			holiday = holiday.getHoliday();
-		}
-		return list;
-	}
-
 	@Override
 	public com.esferalia.aon.calendar.Calendar getTo() {
 		return (com.esferalia.aon.calendar.Calendar)super.getTo();
