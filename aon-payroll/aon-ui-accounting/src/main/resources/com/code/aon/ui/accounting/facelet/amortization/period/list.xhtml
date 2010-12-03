@@ -17,6 +17,14 @@
 				<ui:param name="controller" value="#{periodAmortization}" />
 
 				<ui:define name="additionalToolbarContent">
+					<aon:htmlCommandLink id="trialBalance-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						title="#{bundle.aon_listing} MS Excel"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="amortizationPeriodXLS" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="amortizationPeriod-report"
 						value="#{bundle.aon_report}" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -151,11 +159,13 @@
 						<aon:outputText value="#{to.amortization.percentage}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
+<!-- 
 						<aon:outputText value="% (" />
 						<aon:outputText value="#{to.amortization.years}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 						<aon:outputText value=")" />
+ -->
 					</aon:column>
 
 					<aon:column styleClass="aon-editDataTable-textColumn">

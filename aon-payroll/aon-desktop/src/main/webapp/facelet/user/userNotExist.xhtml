@@ -11,8 +11,8 @@
 			styleClass="aon-popupWindow">
 
 			<rich:modalPanel id="userNotExistsModalPanel"
-				rendered="#{securityUser.showUserNotExistsWindow}"
-				showWhenRendered="true" minWidth="400" width="400" height="120">
+				showWhenRendered="#{securityUser.showUserNotExistsWindow}"
+				minWidth="400" width="400" height="120">
 
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">

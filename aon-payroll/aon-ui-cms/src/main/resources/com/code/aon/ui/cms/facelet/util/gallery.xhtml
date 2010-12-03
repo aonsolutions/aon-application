@@ -86,11 +86,14 @@
 							                    actionListener="#{resizer.onResizeFile}">
 											</aon:commandButton>
 										</c:if> 
-										<aon:commandButton styleClass="aon-noborder aon-padding"
+										<aon:confirmButton id="remove"
+											title="#{bundle.aon_remove}"
+											value="&#160;" immediate="true"
+											styleClass="aon-noborder aon-padding"
 											image="#{aonResource.resolveLocal['/images/cms/icons/delete.png']}"
-						                	value="#{bundle.aon_remove}"
-						                    actionListener="#{controller.onDeleteFile}"> 
-										</aon:commandButton>
+											confirmTitle="#{bundle.aon_confirm_title}"
+											confirmMessage="#{bundle.aon_remove_confirm}"
+											confirmActionListener="#{controller.onDeleteFile}" />										
 									</aon:panelGroup>
 								</f:facet> 
 							</h:panelGrid>

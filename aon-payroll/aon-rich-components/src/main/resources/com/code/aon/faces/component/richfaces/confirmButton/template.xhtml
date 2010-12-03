@@ -11,7 +11,7 @@
 		<c:if test="#{aon_cb_showWindow}">
 			<rich:modalPanel 
 				id="#{aon_cb_id}"
-				rendered="#{aon_cb_showWindow}" showWhenRendered="true"
+				showWhenRendered="#{aon_cb_showWindow}"
 				minWidth="260" height="130">
 
 				<f:facet name="header">
