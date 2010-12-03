@@ -6,6 +6,21 @@
 
 <report-config>
 
+	<!--  PORTADA DEPOSITO CUENTAS  -->
+	<report id="cover" description="PORTADA DEPOSITO CUENTAS">
+		<template path="/com/code/aon/ui/accounting/report/cover.jasper"/>
+		<bean key="com.code.aon.accounting.AccountEntryDetail" />
+		<collection provider="#{accountingBook}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="period" value="#{accountingBook.getPeriod}" />
+			<param id="title" value="#{accountingBook.getCoverTitle}" />
+			<param id="subTitle" value="#{accountingBook.getCoverSubTitle}" />
+			<param id="constitutionDate" value="#{accountingBook.getConstitutionDate}" />
+		</params>
+	</report>
+
 	<!--  **********************************************************
 						      ACCOUNTING
 		  ********************************************************** -->
@@ -209,6 +224,9 @@
 			<param id="date" value="#{journalReport.getDate}" />
 			<param id="period" value="#{journalReport.getPeriod}" />
 			<param id="journal" value="#{journalReport.isJournal}" />
+			<param id="showCover" value="#{journalReport.isCoverVisible}" />
+			<param id="showCounter" value="#{journalReport.isCounterVisible}" />
+			<param id="pageCounter" value="#{journalReport.getPageCounter}" />
 		</params>
 	</report>
 	<report id="journalBookXls" description="Listado Diario para Excel de Apuntes">
@@ -241,6 +259,9 @@
 			<param id="date" value="#{ledgerReport.getDate}" />
 			<param id="period" value="#{ledgerReport.getPeriod}" />
 			<param id="journalOrdered" value="#{ledgerReport.isJournalOrdered}" />
+			<param id="showCover" value="#{ledgerReport.isCoverVisible}" />
+			<param id="showCounter" value="#{ledgerReport.isCounterVisible}" />
+			<param id="pageCounter" value="#{ledgerReport.getPageCounter}" />
 		</params>
 	</report>
 

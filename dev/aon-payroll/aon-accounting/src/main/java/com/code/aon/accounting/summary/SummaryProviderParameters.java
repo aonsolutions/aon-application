@@ -74,6 +74,11 @@ public class SummaryProviderParameters implements Cloneable{
 	
 	private boolean previousPeriodVisible;
 
+	private boolean coverVisible = false;
+	private boolean counterVisible = false;
+	private int pageCounter = 0;
+	
+
 	public SummaryProviderParameters() {
 		setAccountExpression(null);
 		setAccountDescription(null);
@@ -95,6 +100,9 @@ public class SummaryProviderParameters implements Cloneable{
 		setExcludeClosingEntry(false);
 		setExcludeBalancedAccounts(false);
 		setPreviousPeriodVisible(true);
+		setPageCounter(0);
+		setCounterVisible(false);
+		setCoverVisible(false);
 	}
 
 	public String getAccountExpression() {
@@ -251,6 +259,27 @@ public class SummaryProviderParameters implements Cloneable{
 	}
 	public void setPreviousPeriodVisible(boolean previousPeriodVisible) {
 		this.previousPeriodVisible = previousPeriodVisible;
+	}
+
+	public boolean isCoverVisible() {
+		return coverVisible;
+	}
+	public void setCoverVisible(boolean coverVisible) {
+		this.coverVisible = coverVisible;
+	}
+
+	public boolean isCounterVisible() {
+		return counterVisible;
+	}
+	public void setCounterVisible(boolean counterVisible) {
+		this.counterVisible = counterVisible;
+	}
+
+	public int getPageCounter() {
+		return pageCounter;
+	}
+	public void setPageCounter(int pageCounter) {
+		this.pageCounter = pageCounter;
 	}
 
 	@Override

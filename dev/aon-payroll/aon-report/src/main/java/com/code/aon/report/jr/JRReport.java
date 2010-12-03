@@ -72,6 +72,7 @@ public class JRReport {
 	
 	private Map<String, Object> dynParams = null;
 	private Map<String, Object> customParams = null;
+	private int generatedPages;
 
 	/**
 	 * Constructs a report based on this report configuration.
@@ -234,7 +235,7 @@ public class JRReport {
 	public String run(OutputFormat outputFormat, OutputStream out,
 			ResourceBundle bundle, Criteria criteria, Collection<?> collection) throws ReportException {
 		try {
-
+			setGeneratedPages( 0 );
 			if (JRExporterFactoryManager.accept(outputFormat)) {
 				Date startDate = new Date();
 				IJRExporterFactory factory;
@@ -279,7 +280,7 @@ public class JRReport {
 				
 				JasperReport jr = getJasperReport();
 				JasperPrint print = JasperFillManager.fillReport(jr, map, ds);
-
+				setGeneratedPages( print.getPages().size() ); 
 				map.put(JRExporterParameter.JASPER_PRINT, print);
 				if ( LOGGER.isDebugEnabled()) {
 					debugParameters( map );
@@ -443,5 +444,12 @@ public class JRReport {
 
 	public void setCustomParams(Map<String, Object> customParams) {
 		this.customParams = customParams;
+	}
+
+	public int getGeneratedPages() {
+		return generatedPages;
+	}
+	public void setGeneratedPages(int generatedPages) {
+		this.generatedPages = generatedPages;
 	}
 }
