@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.GregorianCalendar;
@@ -22,11 +21,11 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.dbutils.MySQLDBDumper;
 import com.code.aon.dbutils.event.DBUtilsEvent;
 import com.code.aon.dbutils.event.DBUtilsListener;
 import com.code.aon.dbutils.runner.DBUtilsRunner;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.util.AonUtil;
 
 public class DumpController implements DBUtilsListener {

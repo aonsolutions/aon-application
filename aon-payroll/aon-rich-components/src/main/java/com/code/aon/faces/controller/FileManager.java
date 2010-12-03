@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.ZipUtil;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
@@ -245,7 +245,7 @@ public class FileManager implements IRichConstants {
 	private AonFile getAonFile( File file ) {
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);
-		aonFile.setMimeType(aonFile.resolverMimeType());
+		aonFile.setMimeType(aonFile.resolveMimeType());
 		return aonFile;
 	}
 	

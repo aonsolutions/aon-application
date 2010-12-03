@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -30,7 +31,6 @@ import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.AonFile;
 
 public class CommercialEmailUtil extends CompanyEmailUtil implements ICommercialMessages {
 

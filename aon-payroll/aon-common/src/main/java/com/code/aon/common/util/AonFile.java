@@ -1,4 +1,4 @@
-package com.code.aon.ui.common.io;
+package com.code.aon.common.util;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -11,7 +11,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.MimeResolver;
 
 /**
  * @author ecastellano
@@ -161,7 +160,7 @@ public class AonFile {
 	 * 
 	 * @return the mime type
 	 */
-	public MimeType resolverMimeType() {
+	public MimeType resolveMimeType() {
 		MimeType mt = MimeResolver.getMimeTypeByExtension(getFileName());
 		if ( mt == null ) {
 			if ( getFile() != null ) {
@@ -171,8 +170,6 @@ public class AonFile {
 			}
 		}
 		return mt;
-	}
-	
-	
+	}	
 	
 }

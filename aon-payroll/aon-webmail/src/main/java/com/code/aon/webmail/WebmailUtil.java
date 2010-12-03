@@ -2,12 +2,20 @@ package com.code.aon.webmail;
 
 import java.util.List;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
 import javax.naming.Name;
+
+import org.apache.commons.io.FilenameUtils;
 
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
@@ -25,7 +33,6 @@ public class WebmailUtil {
     public static MailAccount getDefaultAccount( String domain, String user ) throws ManagerBeanException {
     	return getDefaultAccount(domain, user, false);
     }
-
 
     public static MailAccount getDefaultAccount( String domain, String user, boolean first ) throws ManagerBeanException {
     	LdapDAO dao = getMailAccountDAO(domain, user);
@@ -46,4 +53,14 @@ public class WebmailUtil {
 		}
 		return null;
     }    
+
+    public static BodyPart getBodyPart( AonFile af ) throws MessagingException {
+    	MimeBodyPart bodyPart = new MimeBodyPart();
+    	FileDataSource fds = new AonFileDataSource(af);
+		String name = FilenameUtils.getName(af.getFileName());
+    	bodyPart.setFileName( name );
+    	bodyPart.setDataHandler(new DataHandler(fds));
+    	return bodyPart;	
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.code.aon.faces.controller;
 
 import com.code.aon.common.IAttachment;
-import com.code.aon.ui.common.io.AonFile;
+import com.code.aon.common.util.AonFile;
 
 public interface IAttachmentController {
 

@@ -9,9 +9,9 @@ import org.richfaces.event.UploadEvent;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.finance.controller.UndeductibleInvoiceController;
 import com.code.aon.ui.form.event.ControllerAdapter;

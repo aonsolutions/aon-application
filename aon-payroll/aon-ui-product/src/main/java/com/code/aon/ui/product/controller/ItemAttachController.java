@@ -28,11 +28,11 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.AttachmentType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 
 public class ItemAttachController extends LinesController {
