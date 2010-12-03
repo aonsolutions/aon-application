@@ -135,9 +135,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	private void fillApplicationExpressions(SalaryCalculatorContext ctx) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(FunctionConstant.class);
 		Criteria c = new Criteria();
-		c.addGreaterThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_START_DATE), ctx.getIssueDate());
-		Expression exp1 = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_END_DATE), ctx.getIssueDate());  
-		Expression exp2 = ExpressionUtilities.getNotNullExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_END_DATE));
+		c.addLessThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_START_DATE), ctx.getIssueDate());
+		Expression exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_END_DATE), ctx.getIssueDate());  
+		Expression exp2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_END_DATE));
 		c.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2) );
 		List<ITransferObject> list = bean.getList(c);
 		for (ITransferObject to: list) {

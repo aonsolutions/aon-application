@@ -3,7 +3,6 @@ package com.code.aon.ui.employee.controller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,25 +25,17 @@ import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.employee.Contract;
-import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.EnterpriseTree;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ContractController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
 	
-	private final String CONTRACT_PAYMENT_CONTROLLER = "contractPayment";
-    private final String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
-
 	private Enterprise enterprise;
 	private List<SelectItem> workPlaces;
 	private List<SelectItem> EnterpriseCccs;
