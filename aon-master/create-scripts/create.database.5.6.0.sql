@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 5.7.0
+# Version: 5.6.0
 # Created by: girazu
-# Creation Date: 25/11/2010 17:54
+# Creation Date: 01/11/2010 17:34
 
 
 SET GLOBAL log_bin_trust_function_creators = 1;
@@ -368,17 +368,14 @@ CREATE TABLE `rbank` (
 CREATE TABLE `bank_statement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `rbank` int(4) NOT NULL COMMENT 'Identificador de Banco de la Compañia',
-  `lot_number` int(4) NOT NULL default '0' COMMENT 'Numero de lote',
   `operation_date` date NOT NULL COMMENT 'Fecha de operacion',
-  `common_concept` tinyint(2) NOT NULL default '0' COMMENT 'Concepto comun',
-  `own_concept` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Concepto propio',
+  `concept` tinyint(2) NOT NULL default '0' COMMENT 'Concepto comun',
   `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago',
   `amount` double(15,2) NOT NULL default '0.00' COMMENT 'Importe',
   `document` int(4) default '0' COMMENT 'Numero de documento',
   `reference1` varchar(12) collate latin1_spanish_ci default NULL COMMENT 'Referencia 1',
   `reference2` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Referencia 2',
   `description` varchar(80) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `reliability` tinyint(2) default '0' COMMENT 'Fiabilidad del punteo',
   `status` tinyint(2) default '0' COMMENT 'Estado',
   PRIMARY KEY  (`id`),
   KEY `IDX_BANK_STATEMENT_RBANK` (`rbank`),
@@ -526,7 +523,7 @@ CREATE TABLE `finance` (
   `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria del Vencimiento',
   `status` tinyint(2) default '0' COMMENT 'Estado del Vencimiento',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Vencimiento',
-  `scope` int(4) NOT NULL default '1' COMMENT 'Ambito del Vencimiento',
+  `scope` int(4) NOT NULL COMMENT 'Ambito del Vencimiento',
   PRIMARY KEY  (`id`),
   KEY `idx_finc_rgty` (`registry`),
   KEY `idx_finc_pymt` (`pay_method`),
@@ -534,11 +531,11 @@ CREATE TABLE `finance` (
   KEY `idx_finc_dtty` (`due_date`),
   KEY `invoice` (`invoice`),
   KEY `IDX_FINANCE_SCOPE` (`scope`),
+  CONSTRAINT `FK_FINANCE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `finance_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `finance_ibfk_2` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `finance_ibfk_3` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
-  CONSTRAINT `finance_ibfk_4` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
-  CONSTRAINT `FK_FINANCE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+  CONSTRAINT `finance_ibfk_4` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vencimientos';
 
 #
@@ -1169,47 +1166,6 @@ CREATE TABLE `balance_detail` (
   KEY `idx_balance` (`balance`),
   CONSTRAINT `fk_balance_detail_balance` FOREIGN KEY (`balance`) REFERENCES `balance` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Balace';
-
-#
-# Structure for the `bank_concept` table : 
-#
-
-CREATE TABLE `bank_concept` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Concepto',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos bancarios';
-
-#
-# Structure for the `bank_concept_account` table : 
-#
-
-CREATE TABLE `bank_concept_account` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `bank_concept` int(4) NOT NULL default '0' COMMENT 'Identificador del Concepto bancario',
-  `account` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Identificador de la Cuenta Contable',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` (`bank_concept`),
-  KEY `IDX_BANK_CONCEPT_ACCOUNT_ACCOUNT` (`account`),
-  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` FOREIGN KEY (`bank_concept`) REFERENCES `bank_concept` (`id`),
-  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Conceptos bancarios';
-
-#
-# Structure for the `bank_statement_link` table : 
-#
-
-CREATE TABLE `bank_statement_link` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `bank_statement` int(4) NOT NULL COMMENT 'Identificador de Extracto bancario',
-  `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen',
-  `source_id` int(4) NOT NULL default '0' COMMENT 'Identificador del origen',
-  `amount` double(15,2) NOT NULL default '0.00' COMMENT 'Importe',
-  `status` tinyint(2) default '0' COMMENT 'Estado',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_BANK_STATEMENT_LINK_BANK_STATEMENT` (`bank_statement`),
-  CONSTRAINT `FK_BANK_STATEMENT_LINK_BANK_STATEMENT` FOREIGN KEY (`bank_statement`) REFERENCES `bank_statement` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Enlaces del Extracto bancario';
 
 #
 # Structure for the `brand` table : 
@@ -4689,9 +4645,10 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('5.7.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('5.6.0');
 
 COMMIT;
 
 
 SET FOREIGN_KEY_CHECKS=1;
+
