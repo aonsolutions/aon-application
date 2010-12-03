@@ -231,8 +231,8 @@ public class AccountEntryFinanceWriter {
 		detail.setAccount(paymentAccount);
 		detail.setBalancingAccount(registryAccount);
 		detail.setConcept(concept);
-		detail.setCredit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? 0 : finance.getTotalAmount());
-		detail.setDebit((!entry.getType().equals(AccountEntryType.COLLECTION)) ? finance.getTotalAmount() : 0);
+		detail.setCredit((!entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)) ? 0 : finance.getTotalAmount());
+		detail.setDebit((!entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)) ? finance.getTotalAmount() : 0);
 		detail.setDocumentNumber(documentNumber);
 		accountEntryDetailBean.insert(detail);
 	}

@@ -12,8 +12,8 @@
 
 	<aon:panelGroup id="#{lookupId}ReRender" styleClass="aon-popupWindow">
 		<c:if test="#{lookup.showWindow}">
-			<rich:modalPanel id="#{lookupId}" rendered="#{lookup.showWindow}" onshow="#{onLookupShow}"
-				showWhenRendered="true" minWidth="#{lookup.minWidth}" minHeight="#{lookup.minHeight}">
+			<rich:modalPanel id="#{lookupId}" onshow="#{onLookupShow}"
+				showWhenRendered="#{lookup.showWindow}" minWidth="#{lookup.minWidth}" minHeight="#{lookup.minHeight}">
 	
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">

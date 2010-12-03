@@ -11,8 +11,8 @@
 			styleClass="aon-popupWindow">
 
 			<rich:modalPanel id="userChangedModalPanel"
-				rendered="#{currentUser.showUserChangedWindow}"
-				showWhenRendered="true" minWidth="600" width="600" height="120">
+				showWhenRendered="#{currentUser.showUserChangedWindow}"
+				minWidth="600" width="600" height="120">
 
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
