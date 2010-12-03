@@ -99,7 +99,7 @@
 			
 										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
-												<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+												<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
 											</f:facet>
 											<aon:outputText value="#{to.referenceCode}" />
 										</aon:column>
@@ -116,7 +116,7 @@
 
 										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
-												<h:outputText value="#{supplierBundle.supplier_supplier}" />
+												<aon:outputText value="#{supplierBundle.supplier_supplier}" />
 											</f:facet>
 											<aon:outputText value="#{to.supplier.registry.fullName}">
 												<aon:abbreviateConverter maxWidth="50" />
@@ -156,7 +156,7 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{productBundle.product_item}" />
+													<aon:outputText value="#{productBundle.product_item}" />
 												</f:facet>
 												<aon:outputText value="#{to.description}">
 													<aon:abbreviateConverter maxWidth="50" />
@@ -165,7 +165,7 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{bundle.aon_quantity}" />
+													<aon:outputText value="#{bundle.aon_quantity}" />
 												</f:facet>
 												<aon:outputText value="#{(to.quantity)}">
 													<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
@@ -174,7 +174,7 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{bundle.aon_price}" />
+													<aon:outputText value="#{bundle.aon_price}" />
 												</f:facet>
 												<aon:outputText value="#{(to.price)}">
 													<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
