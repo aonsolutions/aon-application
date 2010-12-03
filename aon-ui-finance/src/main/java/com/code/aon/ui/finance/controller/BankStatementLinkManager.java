@@ -46,7 +46,7 @@ public class BankStatementLinkManager {
 	}
 
 	public boolean isFbatchSource() {
-		return (currentStatement != null && currentStatement.getConcept() == StatementConcept.COLLECTION_BATCH);
+		return (currentStatement != null && currentStatement.getCommonConcept() == StatementConcept.COLLECTION_BATCH);
 	}
 
 	/****************** FINANCE LISTS METHODS ***************************/
