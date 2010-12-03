@@ -66,9 +66,8 @@ public class BalanceItem implements Serializable{
 			StringUtils.leftPad(detail.getDescription(), (getLevel() * 5) + detail.getDescription().length()));
 	}
 
-	public String getReportDescriptionWithAccounts() {
-		return  getReportDescription() +(StringUtils.isBlank(getDetail().getAccounts())?"":
-				(" ["+ getDetail().getAccounts() +"]"));
+	public String getAccounts() {
+		return  getDetail().getAccounts();
 	}
 
 	public boolean isTitle() {

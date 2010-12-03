@@ -22,7 +22,13 @@
 						<f:param name="reportKey" value="amortizationList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-									
+					<aon:htmlCommandLink id="amortizationForm-report"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{accountingBundle.accounting_print_form}" target="_blank"
+						action="#{report.onExecute}">
+						<f:param name="reportKey" value="amortizationFormFromList" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 

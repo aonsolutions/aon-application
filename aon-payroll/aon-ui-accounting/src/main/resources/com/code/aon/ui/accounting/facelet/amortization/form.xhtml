@@ -87,8 +87,17 @@
 					<aon:panelGroup id="fixedAssetAccount">
 						<aon:outputText rendered="#{!amortization.new}"
 							value="#{amortization.to.fixedAssetAccount.fullDescription}" />
+						<!-- 
 						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
 							value="#{amortization.to.amortizationType.fixedAssetAccount.fullDescription}" />
+						-->
+						<aon:selectOneMenu id="Amortization_fixedAssetAccount"
+							disabled="#{!amortization.new}"
+							rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
+							value="#{amortization.to.fixedAssetAccount}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{amortization.fixedAssetAccounts}" />
+						</aon:selectOneMenu>
 						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id == null}"
 							value="&#160;" />
 					</aon:panelGroup>
@@ -109,8 +118,17 @@
 					<aon:panelGroup id="accumulatedAccount">
 						<aon:outputText rendered="#{!amortization.new}"
 							value="#{amortization.to.accumulatedAccount.fullDescription}" />
+<!--
 						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
 							value="#{amortization.to.amortizationType.accumulatedAccount.fullDescription}" />
+  -->
+						<aon:selectOneMenu id="Amortization_accumulatedAccount"
+							disabled="#{!amortization.new}"
+							rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
+							value="#{amortization.to.accumulatedAccount}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{amortization.accumulatedAccounts}" />
+						</aon:selectOneMenu>
 						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id == null}"
 							value="&#160;" />
 					</aon:panelGroup>
@@ -134,8 +152,17 @@
 					<aon:panelGroup id="allocationAccount">
 						<aon:outputText rendered="#{!amortization.new}"
 							value="#{amortization.to.allocationAccount.fullDescription}" />
+<!-- 
 						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
 							value="#{amortization.to.amortizationType.allocationAccount.fullDescription}" />
+ -->
+ 						<aon:selectOneMenu id="Amortization_allocationAccount"
+							disabled="#{!amortization.new}"
+							rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
+							value="#{amortization.to.allocationAccount}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{amortization.allocationAccounts}" />
+						</aon:selectOneMenu>
 						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id == null}"
 							value="&#160;" />
 					</aon:panelGroup>

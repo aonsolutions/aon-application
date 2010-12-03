@@ -1,10 +1,15 @@
 package com.code.aon.accounting.event;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.util.AccountUtil;
@@ -40,20 +45,27 @@ public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAda
 			AccountUtil util = new AccountUtil();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 
-			Account account = new Account();
-			account.setId(util.obtainNextAccountId(at.getFixedAssetAccount().getId()));
-			account.setDescription(to.getDescription());
-			to.setFixedAssetAccount((Account) accountBean.insert(account));
+			if (to.getFixedAssetAccount() == null) {
+				Account account = new Account();
+				account.setId(util.obtainNextAccountId(at.getFixedAssetAccount().getId()));
+				account.setDescription(to.getDescription());
+				to.setFixedAssetAccount((Account) accountBean.insert(account));
+			}
 
-			account = new Account();
-			account.setId(util.obtainNextAccountId(at.getAccumulatedAccount().getId()));
-			account.setDescription("Amortización Acumulada " + to.getDescription());
-			to.setAccumulatedAccount((Account) accountBean.insert(account));
+			if (to.getAccumulatedAccount() == null) {
+				Account account = new Account();
+				account.setId(util.obtainNextAccountId(at.getAccumulatedAccount().getId()));
+				account.setDescription("Amortización Acumulada " + to.getDescription());
+				to.setAccumulatedAccount((Account) accountBean.insert(account));
+			}
 
-			account = new Account();
-			account.setId(util.obtainNextAccountId(at.getAllocationAccount().getId()));
-			account.setDescription("Amortización " + to.getDescription());
-			to.setAllocationAccount((Account) accountBean.insert(account));
+			if (to.getAllocationAccount() == null) {
+				Account account = new Account();
+				account.setId(util.obtainNextAccountId(at.getAllocationAccount().getId()));
+				account.setDescription("Amortización " + to.getDescription());
+				to.setAllocationAccount((Account) accountBean.insert(account));
+			}
+
 			if (to.getSecurityLevel() == null) {
 				to.setSecurityLevel( SecurityLevel.OFFICIAL );
 			}
@@ -65,14 +77,36 @@ public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAda
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		try {
 			Amortization a = (Amortization) evt.getTo();
-			IManagerBean bean = BeanManager.getManagerBean(Amortization.class);
-			Amortization bd =  (Amortization) bean.get(a.getId());
-			HibernateUtil.getSession(HibernateUtil.getSessionFactoryName()).evict(bd);
-			if (!bd.getAmount().equals(a.getAmount()) || !bd.getInitialDate().equals(a.getInitialDate())) {
+	    	String select = "select a.initial_date initial_date, a.amount amount, " +
+	    			"a.deadline deadline, a.sale_amount sale_amount " +
+	    			"from amortization as a where a.id = " + a.getId();
+			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName(Amortization.class.getName()));
+			SQLQuery query = session.createSQLQuery(select);
+			List list = query.addScalar("initial_date", Hibernate.DATE)
+							 .addScalar("amount", Hibernate.DOUBLE)
+							 .addScalar("deadline", Hibernate.DATE)
+							 .addScalar("sale_amount", Hibernate.DOUBLE).list();
+			Iterator iterator = list.iterator();
+			Date initialDate = null;
+			Double amount = null;
+			Date deadline = null;
+			Double saleAmount = null;
+			if (iterator.hasNext()) {
+				Object[] obj = (Object[])iterator.next();
+				initialDate= (Date) obj[0];
+				amount= (Double) obj[1];
+				deadline= (Date) obj[2];
+				saleAmount= (Double) obj[3];
+			}
+			if (!ObjectUtils.equals(amount,a.getAmount()) 
+				|| !ObjectUtils.equals(initialDate,a.getInitialDate())
+				|| !ObjectUtils.equals(saleAmount,a.getSaleAmount()) 
+				|| !ObjectUtils.equals(deadline,a.getDeadline())) {
 				IManagerBean detailBean = BeanManager.getManagerBean(AmortizationDetail.class);
 				Criteria c = new Criteria();
 				c.addEqualExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID),a.getId());
@@ -80,10 +114,13 @@ public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAda
 				for (ITransferObject detail: details) {
 					detailBean.remove(detail);	
 				}
-			} else {
-				if (a.getDeadline() != null && a.getSaleAmount() != null) {
+				if (a.getDeadline() != null && !ObjectUtils.equals(deadline,a.getDeadline())) {
 					cancelAmortization(a);
 				}
+//			} else {
+//				if (a.getDeadline() != null && a.getSaleAmount() != null) {
+//					cancelAmortization(a);
+//				}
 			}
 			if (!StringUtils.equals(a.getDescription(), a.getFixedAssetAccount().getDescription())) {
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
@@ -97,7 +134,9 @@ public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAda
 				a.getAllocationAccount().setDescription("Amortización " + a.getDescription());
 				accountBean.update(a.getAllocationAccount());
 			}
-			
+			if (a.getSecurityLevel() == null) {
+				a.setSecurityLevel( SecurityLevel.OFFICIAL );
+			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
