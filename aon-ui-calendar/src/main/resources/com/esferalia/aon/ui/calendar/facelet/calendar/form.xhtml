@@ -15,9 +15,9 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_menu}" />
 				<ui:param name="controller" value="#{calendar}" />
-				<ui:param name="skipSpin" value="true" />
 				<ui:define name="beforeSpinToolbarContent">
 <!--  
+				<ui:param name="skipSpin" value="#{calendar.sourceId!=null}" />
 					<aon:htmlCommandLink id="export2pdf" value="#{calendarBundle.aon_calendar_calendar}"
 						rendered="#{!calendar.new}"
 						title="Listado Pdf" actionListener="#{calendar.onInitCalendar}"
@@ -34,66 +34,67 @@
 				
 				<h:panelGrid columns="3"
 					columnClasses="
-					aon-vertical-align-top, aon-vertical-align-top,
+					aon-vertical-align-top, 
+					aon-vertical-align-top,
 					aon-vertical-align-top">
 				
-					<aon:div styleClass="aon-scroll-area">
-						<aon:panelGrid columns="2" id="calendar_data">
+					<aon:panelGrid columns="2" id="calendar_data">
+						
+						<c:if test="#{!calendar.new}" >
+							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/form_view.xhtml" />
+						</c:if>
+						<c:if test="#{calendar.new}" >
+							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/form_edit.xhtml" />
+						</c:if>
 							
-							<c:if test="#{!calendar.new}" >
-								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/form_view.xhtml" />
-							</c:if>
-							<c:if test="#{calendar.new}" >
-								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/form_edit.xhtml" />
-							</c:if>
-								
-							<aon:outputLabel value="#{bundle.aon_year}" />
-							<rich:inputNumberSpinner value="#{calendar.year}" 
-								inputSize="4" minValue="2010" maxValue="2100"
-								enableManualInput="true" step="1"
-								ignoreDupResponses="true"
-								cycled="false"  style="width:5px;height:5px;" >
-								<a4j:support event="onchange" reRender="tabPanel"
-									actionListener="#{calendar.onChangeYear}"
-									ignoreDupResponses="true" />
-							</rich:inputNumberSpinner>
+						<aon:outputLabel value="#{bundle.aon_year}" />
+						<rich:inputNumberSpinner value="#{calendar.year}" 
+							inputSize="4" minValue="2010" maxValue="2100"
+							enableManualInput="true" step="1"
+							ignoreDupResponses="true"
+							cycled="false"  style="width:5px;height:5px;" >
+							<a4j:support event="onchange" reRender="tabPanel"
+								actionListener="#{calendar.onChangeYear}"
+								ignoreDupResponses="true" />
+						</rich:inputNumberSpinner>
+				
+						<aon:outputLabel for="Calendar_description"
+							value="#{calendarBundle.aon_calendar_calendar}" />
+						<aon:inputText id="Calendar_description" size="40" maxlength="32"
+							value="#{calendar.to.description}"  />
+						
+						<aon:outputLabel for="Calendar_anualHours"
+							value="#{calendarBundle.aon_calendar_anual_hours}" />
+						<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
+							value="#{calendar.to.anualHours}" />
+							
+						<aon:outputLabel for="Holiday_id"
+							value="#{calendarBundle.aon_calendar_holiday}" />
+						<aon:div styleClass="aon-lookup">
+							<aon:lookupInputText id="Holiday_id"
+								value="#{calendar.to.holiday.id}" size="5"
+								lookup="#{holidayLookup}" reRender="Holiday_name" />
+							<aon:lookupButton
+								windowTitle="#{calendarBundle.aon_calendar_holiday}"
+								minHeight="460" minWidth="650" property="#{calendar.to.holiday}"
+								lookup="#{holidayLookup}"
+								selectReRender="Holiday_id,Holiday_name"
+								actionType="list">
+							</aon:lookupButton>
+							<aon:inputText id="Holiday_name"
+								value="#{calendar.to.holiday.description}"
+								disabled="true" size="60" />
+						</aon:div>
+						
+						<aon:outputLabel for="Calendar_comments"
+							value="#{bundle.aon_comment}" />
+						<aon:inputTextarea id="Calendar_comments"
+							value="#{calendar.to.comments}" cols="60" rows="5">
+							<f:validateLength maximum="1024" />
+						</aon:inputTextarea>
+						
+					</aon:panelGrid>
 					
-							<aon:outputLabel for="Calendar_description"
-								value="#{calendarBundle.aon_calendar_calendar}" />
-							<aon:inputText id="Calendar_description" size="40" maxlength="32"
-								value="#{calendar.to.description}"  />
-							
-							<aon:outputLabel for="Calendar_anualHours"
-								value="#{calendarBundle.aon_calendar_anual_hours}" />
-							<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
-								value="#{calendar.to.anualHours}" />
-								
-							<aon:outputLabel for="Holiday_id"
-								value="#{calendarBundle.aon_calendar_holiday}" />
-							<aon:div styleClass="aon-lookup">
-								<aon:lookupInputText id="Holiday_id"
-									value="#{calendar.to.holiday.id}" size="5"
-									lookup="#{holidayLookup}" reRender="Holiday_name" />
-								<aon:lookupButton
-									windowTitle="#{calendarBundle.aon_calendar_holiday}"
-									minHeight="460" minWidth="650" property="#{calendar.to.holiday}"
-									lookup="#{holidayLookup}"
-									selectReRender="Holiday_id,Holiday_name"
-									actionType="list">
-								</aon:lookupButton>
-								<aon:inputText id="Holiday_name"
-									value="#{calendar.to.holiday.description}"
-									disabled="true" size="60" />
-							</aon:div>
-							
-							<aon:outputLabel for="Calendar_comments"
-								value="#{bundle.aon_comment}" />
-							<aon:inputTextarea id="Calendar_comments"
-								value="#{calendar.to.comments}" cols="60" rows="5">
-								<f:validateLength maximum="1024" />
-							</aon:inputTextarea>
-						</aon:panelGrid>
-					</aon:div>
 					
 					<aon:div styleClass="aon-scroll-area">
 						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/schedule_panel.xhtml" />

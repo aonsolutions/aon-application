@@ -13,7 +13,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
@@ -26,9 +25,7 @@ import com.code.aon.ui.employee.event.ContractListListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.calendar.CalendarPeriod;
 import com.esferalia.aon.calendar.dao.ICalendarAlias;
 import com.esferalia.aon.calendar.enumeration.CalendarSource;
 
@@ -96,14 +93,33 @@ public class CalendarController extends BasicController {
 	}
 
 	public String getSourceFullName() {
-		if(getSource()==CalendarSource.ENTERPRISE){
-			return getEnterprise().getRegistry().getFullName();	
-		} else if(getSource()==CalendarSource.WORKPLACE){
-			return getWorkPlace().getDescription();	
-		} else if(getSource()==CalendarSource.CONTRACT){
-			return getContract().getPerson().getRegistry().getFullName();	
+		String name=null;
+		try {
+			com.esferalia.aon.calendar.Calendar cal =(com.esferalia.aon.calendar.Calendar)getModel().getRowData();
+			cal.getSource();
+			cal.getSourceId();
+			IManagerBean bean;
+			Criteria criteria = new Criteria();
+			if(cal.getSource()==CalendarSource.ENTERPRISE){
+				bean = BeanManager.getManagerBean(Enterprise.class);
+				criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_ID), cal.getSourceId());
+				Enterprise e = (Enterprise)bean.getList(criteria).get(0);
+				name = e.getRegistry().getFullName();	
+			} else if(cal.getSource()==CalendarSource.WORKPLACE){
+				bean = BeanManager.getManagerBean(WorkPlace.class);
+				criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ID), cal.getSourceId());
+				WorkPlace w = (WorkPlace)bean.getList(criteria).get(0);
+				name = w.getDescription();	
+			} else if(cal.getSource()==CalendarSource.CONTRACT){
+				bean = BeanManager.getManagerBean(Contract.class);
+				criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_ID), cal.getSourceId());
+				Contract c = (Contract) bean.getList(criteria).get(0);
+				name = c.getPerson().getRegistry().getFullName();	
+			}
+		} catch (ManagerBeanException e) {
+			// NADA. no se puede obtener el nombre del source
 		}
-		return null;
+		return name;
 	}
 
 	public String getSourceKey() {
@@ -145,6 +161,10 @@ public class CalendarController extends BasicController {
 		this.year = year;
 	}
 	
+	@Override
+	public com.esferalia.aon.calendar.Calendar getTo() {
+		return (com.esferalia.aon.calendar.Calendar)super.getTo();
+	}
 
 	private void loadWorkPlaces() throws ManagerBeanException{
 		workPlaces = new LinkedList<SelectItem>();
@@ -160,42 +180,6 @@ public class CalendarController extends BasicController {
 		}
 	}
 	
-	@Override
-	public com.esferalia.aon.calendar.Calendar getTo() {
-		return (com.esferalia.aon.calendar.Calendar)super.getTo();
-	}
-	
-	/*
-	 * ACTION LISTENERS
-	 */
-
-	public void onInitialize(ActionEvent event){
-		try {
-			setEnterprise(new Enterprise());
-			setWorkPlace(new WorkPlace());
-			workPlaces = null;
-			setContract(new Contract());
-			clearCriteria();
-			getCriteria().addEqualExpression(getFieldName(ICalendarAlias.CALENDAR_SOURCE), getSource());
-			getCriteria().addEqualExpression(getFieldName(ICalendarAlias.CALENDAR_SOURCE_ID), getSourceId());
-			onSearch(event);
-			if(getModel().getRowCount() == 0){
-				onReset(event);
-				(getTo()).setSource(getSource());
-				(getTo()).setSourceId(getSourceId());
-			} else {
-				GregorianCalendar cal= new GregorianCalendar();
-				this.setYear(cal.get(Calendar.YEAR));				
-				onSelectFirst(event);
-			}
-			loadSource();
-			loadWorkPlaces();
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-	}
-
 	public void loadSource() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		if(getSource()==CalendarSource.ENTERPRISE){
@@ -213,19 +197,43 @@ public class CalendarController extends BasicController {
 			setContract((Contract)c.getManagerBean().getList(criteria).get(0));
 			setWorkPlace(getContract().getWorkPlace());
 			setEnterprise(getContract().getWorkPlace().getEnterprise());
+		} else {
+			
 		}
 	}
+	
+	/*
+	 * ACTION LISTENERS
+	 */
+	
+	public void initialize(){
+		setEnterprise(new Enterprise());
+		setWorkPlace(new WorkPlace());
+		workPlaces = null;
+		setContract(new Contract());
+	}
 
-	public void onPeriodMonthChanged(ActionEvent event){
-		Month month = ((CalendarPeriod)((LinesController)AonUtil.getRegisteredBean("calendarPeriod")).getTo()).getMonth();
-		if(month==null){
-			((CalendarPeriod)((LinesController)AonUtil.getRegisteredBean("calendarPeriod")).getTo()).setStartDay(null);
-			((CalendarPeriod)((LinesController)AonUtil.getRegisteredBean("calendarPeriod")).getTo()).setEndDay(null);
-		} else {
-			Calendar cal = new GregorianCalendar(getYear(), month.getValue(), 1);
-			cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-			((CalendarCollections)AonUtil.getRegisteredBean("calendarCollections")).setMonthMaxDays(cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			((CalendarPeriod)((LinesController)AonUtil.getRegisteredBean("calendarPeriod")).getTo()).setEndDay(cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+	public void onInitialize(ActionEvent event){
+		try {
+			initialize();
+			clearCriteria();
+			getCriteria().addEqualExpression(getFieldName(ICalendarAlias.CALENDAR_SOURCE), getSource());
+			getCriteria().addEqualExpression(getFieldName(ICalendarAlias.CALENDAR_SOURCE_ID), getSourceId());
+			onSearch(event);
+			GregorianCalendar cal= new GregorianCalendar();
+			this.setYear(cal.get(Calendar.YEAR));				
+			if(getModel().getRowCount() == 0){
+				onReset(event);
+				(getTo()).setSource(getSource());
+				(getTo()).setSourceId(getSourceId());
+			} else {
+				onSelectFirst(event);
+			}
+			loadSource();
+			loadWorkPlaces();
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
 	}
 

@@ -8,9 +8,9 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panel style="height=80px"  width="100" 
+	<aon:panel  
 		header="#{calendarBundle.aon_calendar_extended_holidays}">
-		<a4j:repeat value="#{calendarHolidayData.holidayData}" var="data">
+		<c:forEach items="#{calendarHolidayData.holidayData}" var="data">
 			<aon:panelCollapsible expanded="true" label="#{data.description}">
 				<aon:dataTable value="#{data.model}" var="to"
 					columnClasses="
@@ -27,7 +27,7 @@
 					</aon:column>
 				</aon:dataTable>
 			</aon:panelCollapsible>
-		</a4j:repeat>
+		</c:forEach>
 	</aon:panel>
 	
 </ui:composition>
