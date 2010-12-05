@@ -37,7 +37,7 @@
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{commonCollections.months}" />
 					<a4j:support event="onchange" reRender="#{dataTableId}" 
-						actionListener="#{calendar.onPeriodMonthChanged}" />
+						actionListener="#{calendarPeriod.onMonthChanged}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="Calendar_month-New"
@@ -45,7 +45,7 @@
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{commonCollections.months}" />
 						<a4j:support event="onchange" reRender="#{dataTableId}" 
-							actionListener="#{calendar.onPeriodMonthChanged}" />
+							actionListener="#{calendarPeriod.onMonthChanged}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
