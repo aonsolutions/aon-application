@@ -23,43 +23,24 @@ public class CalendarPeriod implements ITransferObject{
 	private static final long serialVersionUID = 5550862489620324713L;
 
 	private Integer id;
-    
     private Calendar calendar;
-
     private String description;
-
 	private Month month;
-    
     private Integer startDay;
-    
     private Integer endDay;
-    
     private DayType monday;
-    
-    private double mondayHours;
-    
     private DayType tuesday;
-    
-    private double tuesdayHours;
-    
     private DayType wednesday;
-    
-    private double wednesdayHours;
-    
     private DayType thursday;
-    
-    private double thursdayHours;
-    
     private DayType friday;
-    
-    private double fridayHours;
-    
     private DayType saturday;
-    
-    private double saturdayHours;
-    
     private DayType sunday;
-    
+    private double mondayHours;
+    private double tuesdayHours;
+    private double wednesdayHours;
+    private double thursdayHours;
+    private double fridayHours;
+    private double saturdayHours;
     private double sundayHours;
     
 //    private Date fromDate;
