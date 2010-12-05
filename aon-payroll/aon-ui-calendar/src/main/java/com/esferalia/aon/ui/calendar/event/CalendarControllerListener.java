@@ -1,5 +1,8 @@
 package com.esferalia.aon.ui.calendar.event;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.ManagerBeanException;
@@ -39,6 +42,8 @@ public class CalendarControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		CalendarController c = (CalendarController) getController();
+		GregorianCalendar cal= new GregorianCalendar();
+		c.setYear(cal.get(Calendar.YEAR));	
 		c.setSource(c.getTo().getSource());
 		c.setSourceId(c.getTo().getSourceId());
 		try {
@@ -47,8 +52,15 @@ public class CalendarControllerListener extends ControllerAdapter {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
+		
+		
 	}
 	
+	@Override
+	public void beforeBeanSelected(ControllerEvent event){
+		CalendarController c = (CalendarController) getController();
+		c.initialize();
+	}
 	
 
 }
