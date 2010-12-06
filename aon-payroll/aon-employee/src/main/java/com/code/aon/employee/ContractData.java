@@ -130,7 +130,7 @@ public class ContractData implements ITransferObject {
 	 * 
 	 * @return the start date
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column( name = "start_date", nullable = false )
     public Date getStartDate() {
 		return startDate;
@@ -150,7 +150,7 @@ public class ContractData implements ITransferObject {
 	 * 
 	 * @return the end date
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column( name = "end_date" )
     public Date getEndDate() {
 		return endDate;

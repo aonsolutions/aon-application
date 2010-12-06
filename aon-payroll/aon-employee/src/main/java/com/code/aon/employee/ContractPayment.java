@@ -112,7 +112,7 @@ public class ContractPayment implements ITransferObject, IPayment, IExpression {
 		this.expression = expression;
 	}
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column( name = "start_date", nullable = false )
     public Date getStartDate() {
 		return startDate;
@@ -121,7 +121,7 @@ public class ContractPayment implements ITransferObject, IPayment, IExpression {
 		this.startDate = startDate;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column( name = "end_date" )
     public Date getEndDate() {
 		return endDate;
@@ -161,6 +161,8 @@ public class ContractPayment implements ITransferObject, IPayment, IExpression {
 				.append(this.expression, o.expression)
 				.append(this.startDate, o.startDate)
 				.append(this.endDate, o.endDate)
+				.append(this.month, o.month)
+				.append(this.descriptionDecorable, o.descriptionDecorable)
 				.isEquals();	
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -176,6 +178,8 @@ public class ContractPayment implements ITransferObject, IPayment, IExpression {
 			.append(expression)
 			.append(startDate)
 			.append(endDate)
+			.append(month)
+			.append(descriptionDecorable)
 			.toHashCode();
 	}
 

@@ -1,46 +1,48 @@
 package com.code.aon.ui.employee.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
-import com.code.aon.employee.Contract;
 import com.code.aon.employee.ContractDeduction;
-import com.code.aon.ui.form.LinesController;
-import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.SalaryException;
+import com.code.aon.employee.DeductionConcept;
+import com.code.aon.employee.dao.IEmployeeAlias;
+import com.code.aon.ql.Criteria;
 
-public class SalaryDraftDeductionController extends LinesController {
+public class SalaryDraftDeductionController extends SalaryDraftLinesController {
 	
-	// TODO este método de resolución de las deducciones es muy básico.
-	// se recalcula la nomina entera cada vez, por lo que esta NO es manera  
-	public double getAmount(){
-		double amount = 0;
-		Contract c  = (Contract) getMasterController().getTo();
-		ISalary s;
+	protected void initialiceConcepts() {
+		setConcepts(new LinkedList<SelectItem>());
 		try {
-			s = c.getSalary();
-			ContractDeduction cd = (ContractDeduction) getModel().getRowData();
-			if (NumberUtils.isNumber(cd.getExpression()) ) {
-				amount = NumberUtils.toDouble(cd.getExpression()) ;	
-			} else {
-				if (StringUtils.endsWith(cd.getExpression(), "%")) {
-					String func = StringUtils.stripEnd(cd.getExpression(), "%");
-					if (NumberUtils.isNumber(func) ) {
-						double percent = NumberUtils.toDouble(func);
-						double totalPayments = s.getPayments().getTotal();
-						amount = CommonUtil.round(totalPayments * percent / 100 ) ;
-					}
-				}
+			ContractDeduction cd = (ContractDeduction) getTo();
+			IManagerBean bean = BeanManager.getManagerBean(DeductionConcept.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.DEDUCTION_CONCEPT_TYPE), cd.getType());
+			criteria.addOrder(bean.getFieldName(IEmployeeAlias.DEDUCTION_CONCEPT_CODE));
+			List<ITransferObject> list = bean.getList(criteria);
+			for (ITransferObject to: list) {
+				DeductionConcept pc = (DeductionConcept) to;
+				getConcepts().add(new SelectItem(pc, pc.getCode() + " - "+pc.getDescription()));
 			}
-		} catch (SalaryException e) {
-			
 		} catch (ManagerBeanException e) {
-			
-		}
-		
-		return amount;
+			// Se devuelve la lista vacia.
+		} 
 	}
+	
+	public void onDeductionConceptChange(ActionEvent event) {
+		ContractDeduction cp = (ContractDeduction) getTo();
+		if (cp.getType() != null && StringUtils.isEmpty(cp.getDescription())) {
+			cp.setDescription( cp.getDeductionConcept().getDescription() );
+		}
+	}
+	
 
 }
