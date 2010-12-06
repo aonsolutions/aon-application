@@ -228,7 +228,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	}
 
 	@Override
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column( name = "seniority_date")
 	public Date getSeniorityDate() {
 		return seniorityDate;

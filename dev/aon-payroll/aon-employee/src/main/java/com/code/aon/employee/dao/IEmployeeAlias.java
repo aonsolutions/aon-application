@@ -372,40 +372,58 @@ public interface IEmployeeAlias {
 	String  CONTRACT_DEDUCTION_CONTRACT_ID = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: ContractDeduction_deductionConcept_id
+	* Hibernate value: ContractDeduction.deductionConcept.id
+	*/
+	String  CONTRACT_DEDUCTION_DEDUCTION_CONCEPT_ID = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: ContractDeduction_description
 	* Hibernate value: ContractDeduction.description
 	*/
-	String  CONTRACT_DEDUCTION_DESCRIPTION = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[1];
+	String  CONTRACT_DEDUCTION_DESCRIPTION = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractDeduction_descriptionDecorable
+	* Hibernate value: ContractDeduction.descriptionDecorable
+	*/
+	String  CONTRACT_DEDUCTION_DESCRIPTION_DECORABLE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ContractDeduction_endDate
 	* Hibernate value: ContractDeduction.endDate
 	*/
-	String  CONTRACT_DEDUCTION_END_DATE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[2];
+	String  CONTRACT_DEDUCTION_END_DATE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: ContractDeduction_expression
 	* Hibernate value: ContractDeduction.expression
 	*/
-	String  CONTRACT_DEDUCTION_EXPRESSION = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[3];
+	String  CONTRACT_DEDUCTION_EXPRESSION = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: ContractDeduction_id
 	* Hibernate value: ContractDeduction.id
 	*/
-	String  CONTRACT_DEDUCTION_ID = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[4];
+	String  CONTRACT_DEDUCTION_ID = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ContractDeduction_month
+	* Hibernate value: ContractDeduction.month
+	*/
+	String  CONTRACT_DEDUCTION_MONTH = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: ContractDeduction_startDate
 	* Hibernate value: ContractDeduction.startDate
 	*/
-	String  CONTRACT_DEDUCTION_START_DATE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[5];
+	String  CONTRACT_DEDUCTION_START_DATE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: ContractDeduction_type
 	* Hibernate value: ContractDeduction.type
 	*/
-	String  CONTRACT_DEDUCTION_TYPE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[6];
+	String  CONTRACT_DEDUCTION_TYPE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[9];
 
 
 

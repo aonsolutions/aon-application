@@ -4,15 +4,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.salary.ISalaryProxy;
@@ -25,6 +22,7 @@ import com.esferalia.aon.salary.deduction.IDeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.JobTrainingDeduction;
 import com.esferalia.aon.salary.deduction.UnemployementDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class ContractDeductionsFactory implements IDeductionsFactory {
 
@@ -65,6 +63,8 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 			return deductions;
 		} catch (ManagerBeanException  e) {
 			throw new SalaryException(e.getMessage(),e);
+		} catch (ExpressionException  e) {
+			throw new SalaryException(e.getMessage(),e);
 		}
 	}
 
@@ -98,7 +98,7 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 		}
 	}
 
-	private void manageDeductions(IDeductionsFactoryContext ctx,Deductions deductions, ContractDeduction sd) throws SalaryException {
+	private void manageDeductions(IDeductionsFactoryContext ctx,Deductions deductions, ContractDeduction sd) throws SalaryException, ExpressionException {
 		if(upToDate(ctx,sd.getStartDate(), sd.getEndDate())){
 			IDeduction deduction = resolveDeduction(ctx, sd);
 			if (sd.getType() == DeductionType.COMMON_CONTINGENCY) {
@@ -146,29 +146,22 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 		return salaryDeduction;
 	}
 	
-	private IDeduction resolveDeduction(IDeductionsFactoryContext ctx,IDeduction d) throws SalaryException {
+	private IDeduction resolveDeduction(IDeductionsFactoryContext ctx,ContractDeduction d) throws SalaryException, ExpressionException {
 		// TODO este método de resolución de las deducciones es muy básico.
 		// es necesario forzar a cada IDeduction a que se resulva a sí mismo  
 		// en función del contexto "ctx".
 		if (d != null) {
 			SalaryDeduction sd = new SalaryDeduction();
-			sd.setDescription(d.getDescription() );
+			if (d.isDescriptionDecorable()) {
+				sd.setDescription(d.getDescription()  + " ("+ d.getExpression()+")");	
+			} else {
+				sd.setDescription(d.getDescription() );
+			}
 			sd.setExpression(d.getExpression() );
 			sd.setType(d.getType()  );
-			sd.setAmount( 0.0 );
-			if (NumberUtils.isNumber(d.getExpression()) ) {
-				sd.setAmount( NumberUtils.toDouble(d.getExpression()) );	
-			} else {
-				if (StringUtils.endsWith(d.getExpression(), "%")) {
-					String func = StringUtils.stripEnd(d.getExpression(), "%");
-					if (NumberUtils.isNumber(func) ) {
-						double percent = NumberUtils.toDouble(func);
-						Salary salary = (Salary) ctx.getCurrentSalary();
-						double totalPayments = salary.getPayments().getTotal();
-						sd.setAmount( CommonUtil.round(totalPayments * percent / 100 ) );
-					}
-				}
-			}
+			// TODO Cuando las expresiones se resuelvan correctament, llamar a resolve(d).
+			Salary salary = (Salary) ctx.getCurrentSalary();
+			sd.setAmount( ctx.getExpressionContext().resolve(d,salary.getPayments().getTotal()));
 			return sd;
 		}
 		return null;
