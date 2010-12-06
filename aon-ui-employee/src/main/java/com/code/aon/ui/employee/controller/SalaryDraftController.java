@@ -1,5 +1,6 @@
 package com.code.aon.ui.employee.controller;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.employee.Contract;
 import com.code.aon.ui.form.BasicController;
@@ -21,6 +23,9 @@ import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 
 public class SalaryDraftController extends BasicController {
 
+	private Month month;
+	private int year;
+	
 	private Date issueDate;
 	private Date startDate;
 	private Date endDate;
@@ -32,7 +37,6 @@ public class SalaryDraftController extends BasicController {
 		}
 		return issueDate;
 	}
-
 	public void setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 		setStartDate(CommonUtil.getMonthFirstDay(issueDate));
@@ -45,7 +49,6 @@ public class SalaryDraftController extends BasicController {
 		}
 		return startDate;
 	}
-
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
@@ -56,9 +59,22 @@ public class SalaryDraftController extends BasicController {
 		}
 		return endDate;
 	}
-
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	public Month getMonth() {
+		return month;
+	}
+	public void setMonth(Month month) {
+		this.month = month;
+	}
+
+	public int getYear() {
+		return year;
+	}
+	public void setYear(int year) {
+		this.year = year;
 	}
 
 	public boolean isShowBackground() {
@@ -96,8 +112,25 @@ public class SalaryDraftController extends BasicController {
 		return getCollection();
 	}
 	
-	public void onChangeDates(ActionEvent event) {
+	public void onChangeMonth(ActionEvent event) {
 		try {
+			Calendar c = Calendar.getInstance();
+			c.setTime(getIssueDate());
+			c.set(Calendar.MONTH, getMonth().ordinal());
+			setIssueDate(c.getTime());
+			setSalary(null);
+			ControllerEvent evt = new ControllerEvent(this);
+			controllerListenerSupport.fireAfterBeanSelected(evt);
+		} catch (ControllerListenerException e) {
+			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
+		}
+	}
+	public void onChangeYear(ActionEvent event) {
+		try {
+			Calendar c = Calendar.getInstance();
+			c.setTime(getIssueDate());
+			c.set(Calendar.YEAR, getYear());
+			setIssueDate(c.getTime());
 			setSalary(null);
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireAfterBeanSelected(evt);

@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 
 /**
  * Transfer Object that represents the deduction concepts.
@@ -25,12 +25,9 @@ public class DeductionConcept implements ITransferObject{
 	private static final long serialVersionUID = 3933542592010025754L;
 
 	private Integer id;
-
 	private String code;
-
 	private String description;
-	
-	private PaymentType type;
+	private DeductionType type;
 
 	
 	@Id
@@ -44,11 +41,11 @@ public class DeductionConcept implements ITransferObject{
 		this.id = id;
 	}
 	
-	public PaymentType getType() {
+	public DeductionType getType() {
 		return type;
 	}
 	
-	public void setType(PaymentType type) {
+	public void setType(DeductionType type) {
 		this.type = type;
 	}
 	

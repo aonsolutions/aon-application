@@ -1,5 +1,9 @@
 package com.code.aon.ui.employee.event;
 
+import java.util.Date;
+
+import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.employee.controller.SalaryDraftController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -19,7 +23,12 @@ public class SalaryDraftControllerListener extends ControllerAdapter{
 	@Override
 	public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
 		resetSalary(event);
+		SalaryDraftController sc = (SalaryDraftController) event.getController();
+		sc.setIssueDate(new Date());
+		sc.setMonth(Month.getMonthByValue(CommonUtil.getMonth(sc.getIssueDate())));
+		sc.setYear(CommonUtil.getYear(sc.getIssueDate()));
 	}
+	
     private void resetSalary(ControllerEvent event) {
     	SalaryDraftController sc = (SalaryDraftController) event.getController();
 		sc.setSalary(null);

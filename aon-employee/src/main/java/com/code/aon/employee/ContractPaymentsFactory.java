@@ -104,7 +104,11 @@ public class ContractPaymentsFactory implements IPaymentsFactory {
 		// en función del contexto "ctx".
 		if (cp != null) {
 			SalaryPayment sp = new SalaryPayment();
-			sp.setDescription(cp.getDescription() );
+			if (cp.isDescriptionDecorable()) {
+				sp.setDescription(cp.getDescription()  + " ("+ cp.getExpression()+")");	
+			} else {
+				sp.setDescription(cp.getDescription() );
+			}
 			sp.setExpression(cp.getExpression() );
 			sp.setType(cp.getType());
 			sp.setAmount( ctx.getExpressionContext().resolve(cp) );

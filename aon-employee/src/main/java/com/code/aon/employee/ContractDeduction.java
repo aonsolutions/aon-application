@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.math.NumberUtils;
@@ -22,8 +23,11 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 
 /**
  * Transfer Object that represents the contract deduction.
@@ -31,23 +35,20 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
  */
 @Entity
 @Table(name="contract_deduction")
-public class ContractDeduction implements ITransferObject, IDeduction {
+public class ContractDeduction implements ITransferObject, IDeduction, IExpression {
 
 	private static final long serialVersionUID = 4510451091870851884L;
 
 	private Integer id;
-
 	private Contract contract;
-
 	private DeductionType type;
-	
+	private DeductionConcept deductionConcept;
 	private String description;
-
 	private String expression;
-
 	private Date startDate;	
-
 	private Date endDate;	
+	private Month month;
+	private boolean descriptionDecorable;
 	
 	
 	@Id
@@ -82,6 +83,17 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 		this.type = type;
 	}
 	
+	@ManyToOne
+	@JoinColumn(name = "deduction_concept")
+	@ForeignKey(name = "FK_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT")
+	@Index(name = "IDX_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT")
+	public DeductionConcept getDeductionConcept() {
+		return deductionConcept;
+	}
+	public void setDeductionConcept(DeductionConcept deductionConcept) {
+		this.deductionConcept = deductionConcept;
+	}
+
 	@Override
 	@Column(length = 64)
 	public String getDescription() {
@@ -102,7 +114,7 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 		this.expression = expression;
 	}
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column( name = "start_date", nullable = false )
     public Date getStartDate() {
 		return startDate;
@@ -112,7 +124,7 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 		this.startDate = startDate;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column( name = "end_date" )
     public Date getEndDate() {
 		return endDate;
@@ -122,6 +134,20 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 		this.endDate = endDate;
 	}	
 	
+	public Month getMonth() {
+		return month;
+	}
+	public void setMonth(Month month) {
+		this.month = month;
+	}
+	
+	@Column( name = "description_decorable" )
+	public boolean isDescriptionDecorable() {
+		return descriptionDecorable;
+	}
+	public void setDescriptionDecorable(boolean descriptionDecorable) {
+		this.descriptionDecorable = descriptionDecorable;
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -133,10 +159,13 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 			return new EqualsBuilder()
 				.append(this.contract, o.contract)
 				.append(this.type, o.type)
+				.append(this.deductionConcept,o.deductionConcept)
 				.append(this.description, o.description)
 				.append(this.expression, o.expression)
 				.append(this.startDate, o.startDate)
 				.append(this.endDate, o.endDate)
+				.append(this.month, o.month)
+				.append(this.descriptionDecorable, o.descriptionDecorable)
 				.isEquals();	
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -147,10 +176,13 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 		return new HashCodeBuilder()
 			.append(contract)
 			.append(type)
+			.append(deductionConcept)
 			.append(description)
 			.append(expression)
 			.append(startDate)
 			.append(endDate)
+			.append(month)
+			.append(descriptionDecorable)
 			.toHashCode();
 	}
 
@@ -168,5 +200,23 @@ public class ContractDeduction implements ITransferObject, IDeduction {
 		return 0;
 	}
 	
+	@Override
+	@Transient
+	public String getName() {
+		return getDeductionConcept()==null?null:getDeductionConcept().getCode();
+	}
+
+	@Override
+	@Transient
+	public ExpressionScope getScope() {
+		return ExpressionScope.CONTRACT;
+	}
+
+	@Transient
+	public String getFullDescription() {
+		return (getDeductionConcept() == null || StringUtils.isEmpty(getDeductionConcept().getCode()))?
+				getDescription():
+				getDeductionConcept().getCode()+ " - " + getDescription();
+	}
 
 }

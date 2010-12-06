@@ -70,7 +70,7 @@ public class FunctionConstant implements ITransferObject, IExpression{
 		this.expression = expression;
 	}
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column( name = "start_date", nullable = false )
     public Date getStartDate() {
 		return startDate;
@@ -80,7 +80,7 @@ public class FunctionConstant implements ITransferObject, IExpression{
 		this.startDate = startDate;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column( name = "end_date" )
     public Date getEndDate() {
 		return endDate;
