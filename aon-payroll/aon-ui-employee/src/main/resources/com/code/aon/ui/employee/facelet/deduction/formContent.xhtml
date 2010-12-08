@@ -19,7 +19,6 @@
 	<aon:outputLabel for="ContractDeduction_month" value="#{employeeBundle.employee_salary_deduction_month}" />
 	<aon:selectOneMenu id="ContractDeduction_month" value="#{controller.to.month}">
 		<f:selectItem value="#{null}" itemLabel=" - " />
-		<f:selectItem value="#{null}" itemLabel=" - " />
 		<c:if test="#{!skipCurrentMonth}">
 			<f:selectItem value="#{controller.currentMonth}"  />
 		</c:if>
