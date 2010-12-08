@@ -33,7 +33,7 @@ public class SalaryDraftController extends BasicController {
 
 	public Date getIssueDate() {
 		if (issueDate == null) {
-			issueDate = new Date();
+			setIssueDate( new Date());
 		}
 		return issueDate;
 	}
@@ -41,6 +41,8 @@ public class SalaryDraftController extends BasicController {
 		this.issueDate = issueDate;
 		setStartDate(CommonUtil.getMonthFirstDay(issueDate));
 		setEndDate(CommonUtil.getMonthLastDay(issueDate));
+		setMonth(Month.getMonthByValue(CommonUtil.getMonth(issueDate)));
+		setYear(CommonUtil.getYear(issueDate));
 	}
 
 	public Date getStartDate() {
