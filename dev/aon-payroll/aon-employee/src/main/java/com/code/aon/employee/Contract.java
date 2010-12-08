@@ -167,13 +167,27 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	
 	@Transient
 	public String getCode(){
-	
 		return ContractCode.C100.toString();
 	}
 	
 	@Transient
 	public String getType(){
 		return ContractCode.C100.toString();
+	}
+	
+	@Transient
+	public boolean isBlocked() {
+		return getStatus() == ContractStatus.BLOCKED;
+	}
+	
+	@Transient
+	public boolean isPending() {
+		return getStatus() == ContractStatus.PENDING;
+	}
+	
+	@Transient
+	public boolean isProcessed() {
+		return getStatus() == ContractStatus.PROCESSED;
 	}
 	
 	@Override

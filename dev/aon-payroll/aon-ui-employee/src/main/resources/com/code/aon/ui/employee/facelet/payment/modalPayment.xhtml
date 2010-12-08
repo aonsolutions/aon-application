@@ -25,20 +25,20 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="paymentSave"
 											value="#{bundle.aon_accept}"
-											reRender="paymentModalContainer"
+											reRender="paymentModalContainer,#{container}"
 											actionListener="#{controller.onSave}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 										</aon:commandButton>
 										<aon:commandButton id="paymentCancel"
 											value="#{bundle.aon_cancel}"
-											reRender="paymentModalContainer"
+											reRender="paymentModalContainer,#{container}"
 											actionListener="#{controller.onCancel}"
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										</aon:commandButton>
 										<aon:commandButton id="paymentRemove"
 											value="#{bundle.aon_remove}"
-											reRender="paymentModalContainer"
+											reRender="paymentModalContainer,#{container}"
 											actionListener="#{controller.onRemove}"
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -50,6 +50,8 @@
 											<ui:include src="/com/code/aon/ui/employee/facelet/payment/formContent.xhtml">
 												<ui:param name="controller" value="#{controller}" />
 												<ui:param name="containerID" value="paymentMenuGrid" />
+												<ui:param name="skipCurrentMonth" value="#{skipCurrentMonth}" />
+												<ui:param name="contextDisabled" value="#{contextDisabled}" />
 											</ui:include>
 										</aon:panelGrid>
 									</aon:div>

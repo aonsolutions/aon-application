@@ -19,7 +19,13 @@
 	<aon:outputLabel for="ContractDeduction_month" value="#{employeeBundle.employee_salary_deduction_month}" />
 	<aon:selectOneMenu id="ContractDeduction_month" value="#{controller.to.month}">
 		<f:selectItem value="#{null}" itemLabel=" - " />
-		<f:selectItem value="#{controller.currentMonth}"  />
+		<f:selectItem value="#{null}" itemLabel=" - " />
+		<c:if test="#{!skipCurrentMonth}">
+			<f:selectItem value="#{controller.currentMonth}"  />
+		</c:if>
+		<c:if test="#{skipCurrentMonth}">
+			<f:selectItems value="#{commonCollections.months}"  />
+		</c:if>
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ContractDeduction_type" value="#{bundle.aon_type}" />
@@ -44,24 +50,26 @@
 	<aon:inputTextarea id="ContractDeduction_expression" cols="38" rows="2" maxlength="128"
 		value="#{controller.to.expression}" required="true">
 		<f:validateLength maximum="128"/>
-		<a4j:region>
-			<rich:suggestionbox id="ContractDeduction_expression_suggestion"
-				for="ContractDeduction_expression"
-				onselect="suggestionBoxActive=false;"
-				suggestionAction="#{controller.expressionContext}" var="exp"
-				similarityGroupingId=""
-				tokens=" +-/*%()"
-				fetchValue="#{exp.name}"
-				immediate="true" limitToList="true" ajaxSingle="true"
-				eventsQueue="ContractDeduction_expressionSug" ignoreDupResponses="true"
-				requestDelay="100" width="500" height="200"
-				nothingLabel="#{bundle.aon_search_no_results}">
-				<aon:column>
-					<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
-					<aon:outputText value=" (#{exp.expression})"/>
-				</aon:column>
-			</rich:suggestionbox>
-		</a4j:region>
+		<c:if test="#{!contextDisabled}">
+			<a4j:region>
+				<rich:suggestionbox id="ContractDeduction_expression_suggestion"
+					for="ContractDeduction_expression"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%()"
+					fetchValue="#{exp.name}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="ContractDeduction_expressionSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
+						<aon:outputText value=" (#{exp.expression})"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</c:if>
 	</aon:inputTextarea>
 
 	<aon:outputText value="&#160;"/>
