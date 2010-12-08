@@ -51,20 +51,9 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{contractSearch}</value>
-				<value>#{contractListener}</value>
  			</list-entries>
 		</managed-property>
-		<managed-property>
-			<property-name>optionalListenerClasses</property-name>
-			<value>#{contractOptionalListeners}</value>
-		</managed-property>
 	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>contractOptionalListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>contractSearch</managed-bean-name>
@@ -73,15 +62,37 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
-
-	<managed-bean>
-		<managed-bean-name>contractListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.employee.event.ContractControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
 	
+	<!-- ************ CONTRACT PAYMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>contractPayment</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.ContractPaymentController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.ContractPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractPayment</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ CONTRACT DEDUCTION ************** -->
+	<managed-bean>
+		<managed-bean-name>contractDeduction</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.ContractDeductionController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.employee.ContractDeduction</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractDeduction</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ CONTRACT TYPE ************** -->
 	<managed-bean>
 		<managed-bean-name>contractType</managed-bean-name>
@@ -187,7 +198,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<!-- **** CONTRACT PAYMENT LISTENER **** -->
+	<!-- **** SALARY DRAFT PAYMENT LISTENER **** -->
 	<managed-bean>
 		<managed-bean-name>salaryDraftPaymentChildListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.employee.event.SalaryDraftPaymentLinesControllerListener</managed-bean-class>
@@ -206,7 +217,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	<!-- ************ CONTRACT PAYMENT ************** -->
+	<!-- ************ SALARY DRAFT PAYMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>salaryDraftPayment</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.employee.controller.SalaryDraftPaymentController</managed-bean-class>
@@ -255,7 +266,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
 	
-	<!-- **** CONTRACT DEDUCTION LISTENER **** -->
+	<!-- **** SALARY DRAFT DEDUCTION LISTENER **** -->
 	<managed-bean>
 		<managed-bean-name>salaryDraftDeductionChildListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.employee.event.SalaryDraftDeductionLinesControllerListener</managed-bean-class>
@@ -274,7 +285,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	<!-- ************ CONTRACT DEDUCTION ************** -->
+	<!-- ************ SALARY DRAFT DEDUCTION ************** -->
 	<managed-bean>
 		<managed-bean-name>salaryDraftDeduction</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.employee.controller.SalaryDraftDeductionController</managed-bean-class>
@@ -727,6 +738,22 @@
 		</navigation-case>
 	</navigation-rule>	
 			
+	<!-- =================== Contract Payment ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractPayment_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/payment/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Contract Deduction ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractDeduction_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/deduction/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
 	<!-- =================== Salary ========================== -->
 	<navigation-rule>
 		<navigation-case>

@@ -25,20 +25,20 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="deductionSave"
 											value="#{bundle.aon_accept}"
-											reRender="deductionModalContainer"
+											reRender="deductionModalContainer,#{container}"
 											actionListener="#{controller.onSave}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 										</aon:commandButton>
 										<aon:commandButton id="deductionCancel"
 											value="#{bundle.aon_cancel}"
-											reRender="deductionModalContainer"
+											reRender="deductionModalContainer,#{container}"
 											actionListener="#{controller.onCancel}"
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										</aon:commandButton>
 										<aon:commandButton id="deductionRemove"
 											value="#{bundle.aon_remove}"
-											reRender="deductionModalContainer"
+											reRender="deductionModalContainer,#{container}"
 											actionListener="#{controller.onRemove}"
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-delete"
