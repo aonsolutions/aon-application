@@ -9,18 +9,19 @@
 
 	<ui:define name="content">
 		<aon:form id="contractForm">
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contract_module}" />
 				<ui:param name="controller" value="#{contract}" />
-			</ui:include>
-
+				
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+			</ui:decorate>
+			
 			<aon:div styleClass="aon-scroll-area">		
 				<ui:include src="/com/code/aon/ui/employee/facelet/contract/formContent.xhtml" />
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{personLookup}" />
-		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
-		<aon:lookupButtonPopup lookup="#{contractTypeLookup}" />
+		<ui:insert name="contractDetail" />
 	</ui:define>
 </ui:composition>
