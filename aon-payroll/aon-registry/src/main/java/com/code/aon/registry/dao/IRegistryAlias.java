@@ -791,22 +791,40 @@ public interface IRegistryAlias {
 	String  PERSON_SOCIAL_SECURITY_NUMBER = PERSON_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: Person_name
+	* Hibernate value: Person.name
+	*/
+	String  PERSON_NAME = PERSON_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Person_firstSurname
+	* Hibernate value: Person.firstSurname
+	*/
+	String  PERSON_FIRST_SURNAME = PERSON_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Person_secondSurname
+	* Hibernate value: Person.secondSurname
+	*/
+	String  PERSON_SECOND_SURNAME = PERSON_ENTRY.getAliasNames()[8];
+
+	/** 
 	* Alias value: Person_registry_document
 	* Hibernate value: Person.registry.document
 	*/
-	String  PERSON_REGISTRY_DOCUMENT = PERSON_ENTRY.getAliasNames()[6];
+	String  PERSON_REGISTRY_DOCUMENT = PERSON_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Person_registry_documentCountry
 	* Hibernate value: Person.registry.documentCountry
 	*/
-	String  PERSON_REGISTRY_DOCUMENT_COUNTRY = PERSON_ENTRY.getAliasNames()[7];
+	String  PERSON_REGISTRY_DOCUMENT_COUNTRY = PERSON_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Person_registry_documentType
 	* Hibernate value: Person.registry.documentType
 	*/
-	String  PERSON_REGISTRY_DOCUMENT_TYPE = PERSON_ENTRY.getAliasNames()[8];
+	String  PERSON_REGISTRY_DOCUMENT_TYPE = PERSON_ENTRY.getAliasNames()[11];
 
 
 }
