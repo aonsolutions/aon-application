@@ -90,6 +90,9 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 
 	// TOTAL LIQUIDO
 	private Double totalLiquid;
+	
+	// CUOTA TOTAL DE LA EMPRESA
+	private Double totalEnterprise;
 
 	//BASES
 	private Double remuneration; //Remuneración mensual
@@ -347,6 +350,17 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	}
 	public void setTotalLiquid(Double totalLiquid) {
 		this.totalLiquid = totalLiquid;
+	}
+	
+	// *******************************************************
+	// **************** CUOTA TOTAL EMPRESA ******************
+	// *******************************************************
+	@Column(name = "total_enterprise", precision = 15, scale = 3, nullable = false)
+	public Double getTotalEnterprise() {
+		return totalEnterprise;
+	}
+	public void setTotalEnterprise(Double totalEnterprise) {
+		this.totalEnterprise = totalEnterprise;
 	}
 
 	// *******************************************************
