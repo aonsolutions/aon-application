@@ -631,6 +631,15 @@
 			<value>deductionConcept</value>
 		</managed-property>
 	</managed-bean>
+
+	<!-- ************ DeductionConcept ************** -->
+	<managed-bean>
+		<managed-bean-name>salaryExpense</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.controller.SalaryExpenseController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	
 	<!-- ========================================================== -->
