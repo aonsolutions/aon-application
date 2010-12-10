@@ -41,7 +41,7 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
 			<version>${pom.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 			
 		<dependency>
