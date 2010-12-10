@@ -316,46 +316,34 @@ public interface IConfigAlias {
 	DAOConstantsEntry USER_ENTRY = DAOConstants.getDAOConstant(User.class);
 
 	/** 
-	* Alias value: User_aon_key
-	* Hibernate value: User.aon_key
+	* Alias value: User_active
+	* Hibernate value: User.active
 	*/
-	String  USER_AON_KEY = USER_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: User_available
-	* Hibernate value: User.available
-	*/
-	String  USER_AVAILABLE = USER_ENTRY.getAliasNames()[1];
+	String  USER_ACTIVE = USER_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: User_id
 	* Hibernate value: User.id
 	*/
-	String  USER_ID = USER_ENTRY.getAliasNames()[2];
+	String  USER_ID = USER_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: User_login
 	* Hibernate value: User.login
 	*/
-	String  USER_LOGIN = USER_ENTRY.getAliasNames()[3];
+	String  USER_LOGIN = USER_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: User_name
 	* Hibernate value: User.name
 	*/
-	String  USER_NAME = USER_ENTRY.getAliasNames()[4];
+	String  USER_NAME = USER_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: User_status
-	* Hibernate value: User.status
+	* Alias value: User_password
+	* Hibernate value: User.password
 	*/
-	String  USER_STATUS = USER_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: User_validate
-	* Hibernate value: User.validate
-	*/
-	String  USER_VALIDATE = USER_ENTRY.getAliasNames()[6];
+	String  USER_PASSWORD = USER_ENTRY.getAliasNames()[4];
 
 
 
