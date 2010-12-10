@@ -165,8 +165,6 @@ public class AonUserController extends UserController implements ILdapConstants,
 
 	public void acceptPassword(ActionEvent event) throws DeploymentException {
 		User user = (User) getTo();
-		int status = user.getStatus();
-		user.setStatus(status + 2);
 		if (!managerChangingPassword && (getUserManager().getPassword() == null || getUserManager().getPassword().equals("")  
 				|| getUserManager().getNewPassword() == null || getUserManager().getNewPassword().equals("")
 				|| getUserManager().getConfirmPassword() == null || getUserManager().getConfirmPassword().equals(""))) {
