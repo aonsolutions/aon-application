@@ -134,7 +134,7 @@ public class NoticeControllerListener extends ControllerAdapter {
     	if (workGroupId == null) {
             IManagerBean managerBean = BeanManager.getManagerBean(User.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_AVAILABLE), true);
+            criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ACTIVE), true);
             criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
             Iterator iterator = managerBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
