@@ -74,6 +74,7 @@
 
 	<module>aon-desktop</module>
 	<module>aon-web-payroll</module>
+	<module>aon-web-employee</module>
  
 	<module>aon-payroll-ctsql2mysql</module>
 	
