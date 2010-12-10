@@ -22,6 +22,8 @@ public interface IEmployeeConstants {
 	// ************************************************************
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";
 	
+	String SALARY_CONTROLLER="salary";
+	
 	// ************************************************************
 	// CONFIGURATION
 	// ************************************************************
