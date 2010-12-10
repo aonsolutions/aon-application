@@ -145,29 +145,6 @@
 		<url-pattern>*.cidocument</url-pattern>
 	</servlet-mapping>
 
-	<!-- Key Validator
-		<servlet>
-		<servlet-name>User Servlet</servlet-name>
-		<servlet-class>UserServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-		</servlet>
-		
-		<servlet-mapping>
-		<servlet-name>User Servlet</servlet-name>
-		<url-pattern>/user</url-pattern>
-		</servlet-mapping>
-		
-		<servlet>
-		<servlet-name>Key Servlet</servlet-name>
-		<servlet-class>KeyServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-		</servlet>
-		
-		<servlet-mapping>
-		<servlet-name>Key Servlet</servlet-name>
-		<url-pattern>/key</url-pattern>
-		</servlet-mapping>
-	-->
 	<!-- Faces Servlet -->
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>
