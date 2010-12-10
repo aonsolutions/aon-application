@@ -30,7 +30,7 @@ public class UserController extends BasicController {
 		if ( firstSearch ) {
 			try {
 				Criteria criteria = getCriteria(); 
-				criteria.addEqualExpression(getFieldName(IConfigAlias.USER_AVAILABLE), Boolean.TRUE);
+				criteria.addEqualExpression(getFieldName(IConfigAlias.USER_ACTIVE), Boolean.TRUE);
 			} catch (ManagerBeanException e) {
 				LOGGER.error( e.getMessage(), e);
 			}
