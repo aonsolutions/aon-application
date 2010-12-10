@@ -112,7 +112,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
         IManagerBean managerBean = BeanManager.getManagerBean(User.class);
         Criteria criteria = new Criteria();
         criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ID), id);
-        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_AVAILABLE), true);
+        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ACTIVE), true);
         criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
         return (List) managerBean.getList(criteria);
     }
@@ -121,7 +121,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private List<User> getAllUsers() throws ManagerBeanException {
         IManagerBean managerBean = BeanManager.getManagerBean(User.class);
         Criteria criteria = new Criteria();
-        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_AVAILABLE), true);
+        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ACTIVE), true);
         criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
         return (List) managerBean.getList(criteria);
     }
@@ -134,7 +134,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
         List<User> result = new LinkedList<User>();
         for( ITransferObject to : managerBean.getList(criteria) ) {
             UserWorkGroup userWorkGroup = (UserWorkGroup) to;
-            if (userWorkGroup.getUser().getAvailable()) {
+            if (userWorkGroup.getUser().isActive()) {
             	result.add( userWorkGroup.getUser() );
             }	            	
         }
