@@ -17,26 +17,25 @@ import com.code.aon.common.ITransferObject;
 @Table(name="user")
 public class User implements ITransferObject{
 	
-	private static final long serialVersionUID = -151638379810317997L;
+	private static final long serialVersionUID = -4526014120522968324L;
 
+	@Id
+	@GeneratedValue
+	@Column(nullable=false)
 	private Integer id;
 	
+	@Column(length=64, nullable=false)
 	private String name;
 	
+	@Column(length=16,nullable=false)
 	private String login;
 
-	private boolean available;
-
-	private boolean validate;
+	@Column(length = 128)
+	private String password;
 	
-	private String aon_key;
-	
-	private Integer status;
-
-
-    @Id
-    @GeneratedValue
 	@Column(nullable=false)
+	private boolean active;
+
 	public Integer getId() {
 		return id;
 	}
@@ -45,7 +44,6 @@ public class User implements ITransferObject{
 		this.id = id;
 	}
 	
-	@Column(length=64, nullable=false)
 	public String getName() {
 		return name;
 	}
@@ -54,7 +52,6 @@ public class User implements ITransferObject{
 		this.name = name;
 	}
 
-	@Column(length=16,nullable=false)
 	public String getLogin() {
 		return login;
 	}
@@ -63,39 +60,20 @@ public class User implements ITransferObject{
 		this.login = login;
 	}
 	
-	@Column(nullable=false)
-	public boolean getAvailable() {
-		return available;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setAvailable(boolean available) {
-		this.available = available;
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public boolean isActive() {
+		return active;
 	}
 
-	@Column(nullable=false)
-	public boolean getValidate() {
-		return validate;
-	}
-
-	public void setValidate(boolean validate) {
-		this.validate = validate;
-	}
-
-	@Column(length = 128)
-	public String getAon_key() {
-		return aon_key;
-	}
-
-	public void setAon_key(String aon_key) {
-		this.aon_key = aon_key;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override
@@ -106,12 +84,10 @@ public class User implements ITransferObject{
 		final User o = (User) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.aon_key, o.aon_key)			
-				.append(this.available, o.available)
+				.append(this.active, o.active)			
 				.append(this.login, o.login)				
 				.append(this.name, o.name)			
-				.append(this.status, o.status)
-				.append(this.validate, o.validate)
+				.append(this.password, o.password)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -120,13 +96,11 @@ public class User implements ITransferObject{
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(aon_key)		
-			.append(available)			
+			.append(active)
 			.append(id)		
 			.append(login)		
 			.append(name)		
-			.append(status)
-			.append(validate)			
+			.append(password)
 			.toHashCode();
 	}	
 
