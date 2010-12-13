@@ -30,7 +30,7 @@ import org.apache.commons.cli.PosixParser;
 * permission of esferalia NETWORKS, or in accordance with the 
 * terms and conditions stipulated in the agreement contract 
 * under which the program has been supplied.
-******************************************m***************************
+*********************************************************************
 */
 
 public class CtsqlDB extends AbstractCtsqlDB

@@ -36,21 +36,47 @@ import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.NullMaritalStatusExc
  */
 public class MyPerson extends DefaultCtsqlDBVisitor {
 
-
+	
+	private static class Person {
+		private Integer id;
+		private String numDoc;
+		private String name;
+		
+		private Person ( Integer id, String numdoc, String name ) {
+			this.id = id;
+			this.numDoc = numdoc;
+			this.name = name;
+		}
+	}
+	
+	
 	private DefaultMysqlDB mysqlDB;
 	
-	private Map<Integer, Integer> persons = 
-		new HashMap<Integer, Integer>();
+	private Map<String, Integer> cifs = 
+		new HashMap<String, Integer>();
 
+	private Map<Integer, Person> persons = 
+		new HashMap<Integer, Person>();
 
 	public MyPerson(DefaultMysqlDB defaultMysqlDB) throws SQLException {
 		this.mysqlDB = defaultMysqlDB;
 	}
 	
 	public Integer getPerson(Integer oldCdg) {
-		return persons.get(oldCdg);
+		Person person = persons.get(oldCdg);
+		return person == null ? null: person.id;
 	}
 	
+	public String getNumDoc(Integer oldCdg) {
+		Person person = persons.get(oldCdg);
+		return person == null ? null: person.numDoc;
+	}
+
+	public String getName(Integer oldCdg) {
+		Person person = persons.get(oldCdg);
+		return person == null ? null: person.name;
+	}
+
 	@Override
 	public void visit(AbstractCtsqlDB ctsqlDB) throws SQLException {
 		ctsqlDB.visitPersona(this);
@@ -58,6 +84,14 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 	
 	@Override
 	public void visitPersona(Persona persona) throws SQLException { 
+		
+		String numDoc = persona.getNumdoc();
+		
+		Integer registry = cifs.get(numDoc);
+		if ( registry != null  ) {
+			persons.put(persona.getCdg(), new Person ( registry, numDoc, persona.getNombre()));
+			return;
+		}
 		
 		Gender gender = Gender.UNKNOWN;
 		try {
@@ -85,7 +119,7 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 		Country country = mysqlDB.getCountry( persona.getPainac() );
 		Country docCountry = mysqlDB.getCountry( persona.getPaiemi() );
 		
-		Integer registry = mysqlDB.insertPerson(persona.getNumdoc(), 
+		registry = mysqlDB.insertPerson(persona.getNumdoc(), 
 				docType,
 				docCountry,
 				persona.getNombre(), 
@@ -114,6 +148,7 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 				persona.getLocalidad(), 
 				geozone,
 				null);
+			
 		try {
 			mysqlDB.insertEmail(registry, raddress, persona.getEmail()) ;
 		} catch (InvalidEmailException e) {
@@ -127,7 +162,7 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 					persona.getCdg(), persona.getTelefono());
 		}
 
-		persons.put(persona.getCdg(), registry);
+		persons.put(persona.getCdg(), new Person ( registry, numDoc, persona.getNombre()));
 	}
 	
 	

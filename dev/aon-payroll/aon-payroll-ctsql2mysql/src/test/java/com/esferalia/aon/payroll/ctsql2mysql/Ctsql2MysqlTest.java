@@ -43,7 +43,7 @@ public class Ctsql2MysqlTest
      */
     public void testCtsql2Mysql() throws SQLException, ClassNotFoundException,ParseException
     {
-    	/*
+    	/**
     	String args [] = {
   			"-dryrun",
     			"-mysqlurl", "jdbc:mysql://127.0.0.1:3306/payroll-esferalia-org",
