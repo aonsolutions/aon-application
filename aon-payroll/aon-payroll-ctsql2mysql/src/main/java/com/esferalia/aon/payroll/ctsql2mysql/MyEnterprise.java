@@ -32,13 +32,18 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 
 	final static int 	COMPANY_REGISTRY 	= 1;
 
+	final static String PASSWORD  			= "demo";
+
 	private Integer 							scopeId;
 	
 	private DefaultMysqlDB 						mysqlDB;
 	private MyAgreement							myAgreement;
 
 	private Map<Integer, Map<String, Integer>> 	cccs;
+
+	private Map<String, Integer> 				cifs;
 	private Map<Integer, Integer> 				enterprises;
+	
 	private Map<Integer, Integer> 				activities ;
 	private Map<Integer, Map<Integer, Integer>> cnae_activity ;
 	private Map<Integer, Map<Integer, Integer>> raddresses ;
@@ -52,6 +57,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		this.mysqlDB = mysqlDB;
 		this.myAgreement = myAgreement;
 		this.activities = new HashMap<Integer, Integer>();
+		this.cifs= new HashMap<String, Integer>();
 		this.enterprises = new HashMap<Integer, Integer>();
 		this.cccs = new HashMap<Integer, Map<String, Integer>>();
 		this.cnae_activity = new HashMap<Integer, Map<Integer, Integer>>();
@@ -122,13 +128,22 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	@Override
 	public void visitRel_emp_cli(Emprnif emprnif, Cliente cliente) throws SQLException {
 		
+		Integer registry = 
+			cifs.get(emprnif.getNumdoc());
+	
+		if ( registry != null ) {
+			cifs.put(emprnif.getNumdoc(), registry);
+			enterprises.put(emprnif.getCdg(), registry);
+			return;
+		}
+		
 		Short status = "N".equals(cliente.getInactivo()) ? 
 				DefaultMysqlDB.enum2short(CustomerStatus.ACTIVE) :
 					DefaultMysqlDB.enum2short(CustomerStatus.INACTIVE);
 
 		Country docCountry = mysqlDB.getCountry( emprnif.getPaiemi() );
 
-		Integer registry = mysqlDB.insertEnterprise(
+		registry = mysqlDB.insertEnterprise(
 				emprnif.getNumdoc(), 
 				docCountry,
 				emprnif.getDescripcion(), 
@@ -136,8 +151,20 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 				emprnif.getAlias(), 	
 				scopeId,
 				status);
-
+		
+		
 		enterprises.put(emprnif.getCdg(), registry);
+		
+		Integer userId = 
+			mysqlDB.insertUser(
+				emprnif.getDescripcion(), 
+				emprnif.getNumdoc(), 
+				registry, 
+				null, 
+				true, 
+				PASSWORD);
+		
+		mysqlDB.insertUser_scope(userId, this.scopeId);
 		
 		emprnif.visitEmpract_emprnif(this);
 	}
