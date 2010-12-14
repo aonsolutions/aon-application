@@ -6,6 +6,9 @@ import java.util.List;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -19,11 +22,16 @@ import com.esferalia.aon.calendar.dao.ICalendarAlias;
 
 public class CalendarHolidayDataController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarHolidayDataController.class.getName());
+
 	
-	public List<HolidayData> getHolidayData(){
+	public List<HolidayData> getHolidayDataModels(){
 		List<HolidayData> list = new LinkedList<HolidayData>();
 		Calendar calendar = (Calendar) FormUtil.getController("calendar").getTo();
 		Holiday holiday = calendar.getHoliday();
+		if(holiday==null || holiday.getId()==null){
+			return null;
+		}
 		Criteria criteria;
 		IManagerBean bean;
 		HolidayData data;
@@ -36,10 +44,10 @@ public class CalendarHolidayDataController {
 			data.setModel(new ListDataModel(bean.getList(criteria)));
 			list.add(data);
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		holiday = holiday.getHoliday();
-		while(holiday!=null){
+		while(holiday!=null && holiday.getId()!=null){
 			try {
 				bean = BeanManager.getManagerBean(HolidayDetail.class);
 				criteria = new Criteria();
@@ -49,7 +57,7 @@ public class CalendarHolidayDataController {
 				data.setModel(new ListDataModel(bean.getList(criteria)));
 				list.add(data);
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
 			holiday = holiday.getHoliday();
 		}
@@ -57,8 +65,9 @@ public class CalendarHolidayDataController {
 	}
 	
 	
-	
-	
+	/*
+	 * HOLIDAY DATA
+	 */
 	public class HolidayData {
 		private String description;
 		private DataModel model;
