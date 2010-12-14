@@ -61,6 +61,17 @@
 											target="#{salaryExpense.showSalaryExpenseWindow}"
 											value="#{false}" />
 									</aon:htmlCommandLink>	
+									<aon:commandButton id="back"
+										title="#{bundle.aon_key_cancel_accelerator}"
+										value="#{bundle.aon_back}" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										accesskey="#{bundle.aon_key_cancel}" >
+										<rich:componentControl for="expenseModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{salaryExpense.showSalaryExpenseWindow}"
+											value="#{false}" />
+									</aon:commandButton>		
 								</aon:div>
 								
 								<aon:div styleClass="salaryExpenseModalContent" >
