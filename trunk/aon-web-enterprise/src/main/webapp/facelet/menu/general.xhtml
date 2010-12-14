@@ -8,6 +8,13 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<c:if test="#{aonRole.productOperator or aonRole.config}">
+	
+		<aon:methodParam name="general_item_search" value="item_search-#{category}" resolve="true" />	
+		<aon:methodParam name="general_productCategory" value="productCategory-#{category}" resolve="true" />
+		<aon:methodParam name="general_brand" value="brand-#{category}" resolve="true" />
+		<aon:methodParam name="general_segment_form" value="segment_form-#{category}" resolve="true" />
+		<aon:methodParam name="general_geotreeParent_list" value="geotreeParent_list-#{category}" resolve="true" />
+	
 		<aon:panelGrid id="group_general_#{category}"
 			styleClass="aon-width-all" columnClasses="aon-padding"
 			headerClass="aon-direct-access-panel aon-icon-general">
@@ -17,30 +24,30 @@
 			<aon:div styleClass="aon-direct-access-list">
 				<c:if test="#{aonRole.productOperator}">
 					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="item-#{category}" 
-							action="item_search" actionListener="#{item.onEditSearch}"
+						<aon:commandLink id="item_search-#{category}" 
+							action="#{general_item_search}" actionListener="#{item.onEditSearch}"
 							value="#{productBundle.product_module}" />
 					</aon:div>
 				</c:if>
 				<c:if test="#{aonRole.config}">
 					<aon:div styleClass="aon-direct-access-list-element">
 						<aon:commandLink id="productCategory-#{category}" 
-							action="productCategory"
+							action="#{general_productCategory}"
 							value="#{productBundle.product_category_module}" />
 					</aon:div>
 					<aon:div styleClass="aon-direct-access-list-element">
 						<aon:commandLink id="brand-#{category}"
-							action="brand"
+							action="#{general_brand}"
 							value="#{productBundle.product_brand_module}" />
 					</aon:div>
 					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="segment-#{category}" 
-							action="segment_form" 
+						<aon:commandLink id="segment_form-#{category}" 
+							action="#{general_segment_form}" 
 							value="#{registryBundle.registry_segment_module}" />
 					</aon:div>
 					<aon:div styleClass="aon-direct-access-list-element">
-						<aon:commandLink id="geotreeParent-#{category}" 
-							action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
+						<aon:commandLink id="geotreeParent_list-#{category}" 
+							action="#{general_geotreeParent_list}" actionListener="#{geotreeParent.onSearch}"
 							value="#{geozoneBundle.geozone_module}" />
 					</aon:div>
 				</c:if>
