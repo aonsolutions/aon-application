@@ -146,7 +146,7 @@ public class MenuParser {
 	}
 
 	private void parseCategory( Element element ) {
-		String action = element.attributeValue(ACTION_ATTRIBUTE);
+		String action = getAction(element);
 		if ( StringUtils.startsWith(action, MENU_ACTION_PREFFIX) ) {
 			String categoryName = element.attributeValue(VALUE_ATTRIBUTE);
 			String alias = StringUtils.substringAfter(action, MENU_ACTION_PREFFIX);
@@ -205,16 +205,38 @@ public class MenuParser {
 		return outputText.attributeValue(VALUE_ATTRIBUTE);
 	}
 	
+	private boolean isReference( String value ) {
+		return StringUtils.startsWith(value, "#{") && StringUtils.endsWith(value, "}");
+	}
+	
+	private String getValue( String name, Element element ) {
+		String value = StringUtils.trimToNull(element.attributeValue(name));
+		if ( value != null ) {
+			if ( isReference(value) && (!name.equals(ID_ATTRIBUTE)) ) {
+				LOGGER.debug( "{} is reference for option {}", name, element );
+				value = getValue(ID_ATTRIBUTE, element); 
+			} else if ( StringUtils.contains(value, CATEGORY_EXPRESSION) ) {
+				value = StringUtils.replace(value, CATEGORY_EXPRESSION, group.getCategory().getAlias());
+			}
+		}
+		return value;
+	}
+
+	private String getId( Element element ) {
+		return getValue(ID_ATTRIBUTE, element);
+	}
+	
+	private String getAction( Element element ) {
+		return getValue(ACTION_ATTRIBUTE, element);
+	}
+	
 	private OptionGroup getOptionGroup( Element commandLink ) {
 		Element panelGrid = getPanelGrid(commandLink);
 		if ( (panelGrid != null) && (panelGrid != lastPanelGrid) ) {
 			String description = getOptionGroupDescription(panelGrid);
 			this.group = new OptionGroup(category, description);
-			String id = panelGrid.attributeValue(ID_ATTRIBUTE);
-			if (! StringUtils.isEmpty(id) ) {
-				if ( StringUtils.contains(id, CATEGORY_EXPRESSION) ) {
-					id = StringUtils.replace(id, CATEGORY_EXPRESSION, group.getCategory().getAlias());
-				}
+			String id = getId(panelGrid);
+			if ( id != null ) {
 				if (! controller.getGroupMap().containsKey(id) ) {
 					controller.getGroupMap().put( id, this.group );
 				} else {
@@ -238,12 +260,12 @@ public class MenuParser {
 	
 	private ApplicationOption getApplicationOption( Element element ) {
 		ApplicationOption option = null;
-		String action = element.attributeValue(ACTION_ATTRIBUTE);
-		if (! StringUtils.isEmpty(action) ) {
+		String action = getAction(element);
+		if ( action != null ) {
 			option = new ApplicationOption();
 			option.setAction(action);
-			String id = element.attributeValue(ID_ATTRIBUTE);
-			if (! StringUtils.isEmpty(id) ) {
+			String id = getId(element);
+			if ( id != null ) {
 				if ( StringUtils.contains(id, CATEGORY_EXPRESSION) ) {
 					id = StringUtils.replace(id, CATEGORY_EXPRESSION, group.getCategory().getAlias());
 				}
@@ -287,7 +309,7 @@ public class MenuParser {
 		if (! controller.getOptionMap().containsKey(option.getAction()) ) {
 			controller.getOptionMap().put( option.getAction(), option );
 		} else {
-			LOGGER.debug( "Duplicated action for option {}", option );
+			LOGGER.error( "Duplicated action for option {}", option );
 		}		
 		String id = option.getId();
 		if ( (! StringUtils.isEmpty(id)) && isDuplicatedId(id) ) {
