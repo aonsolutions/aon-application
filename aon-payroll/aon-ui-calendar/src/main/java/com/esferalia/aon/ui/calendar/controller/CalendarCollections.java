@@ -38,6 +38,16 @@ public class CalendarCollections {
 		}
 		return dayTypes;
 	}
+	public List<SelectItem> getFullDayTypes() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		dayTypes = new LinkedList<SelectItem>();
+		for (DayType day : DayType.values()) {
+			String name = day.getFullName(locale);
+			SelectItem item = new SelectItem(day, name);
+			dayTypes.add(item);
+		}
+		return dayTypes;
+	}
 
 	public List<SelectItem> getDayTypes() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
