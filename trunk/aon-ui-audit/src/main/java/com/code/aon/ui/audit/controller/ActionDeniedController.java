@@ -3,13 +3,13 @@ package com.code.aon.ui.audit.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIPanel;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -168,9 +168,15 @@ public class ActionDeniedController implements IAuditConstants {
 			reset();
 		} else {
 			this.deniedActions = getDeniedActions( (User) event.getNewValue() );
-			this.selected = getOptions( this.deniedActions );
+			List<ApplicationOption> deniedList = getOptions( this.deniedActions );
 			this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions(true) );
-			this.options.removeAll(this.selected);			
+			this.selected = new LinkedList<ApplicationOption>();
+			for( ApplicationOption option : this.options ) {
+				if ( deniedList.contains(option) ) {
+					this.selected.add(option);
+				}
+			}
+			this.options.removeAll(deniedList);
 		}
 	}
 
