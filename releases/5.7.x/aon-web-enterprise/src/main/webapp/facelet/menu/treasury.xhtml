@@ -26,7 +26,7 @@
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="financeCharge-treasury"
-									action="finance_search-Charge"
+									action="finance_search-treasury"
 									actionListener="#{finance.onEditSearchCharge}"
 									value="#{financeBundle.finance_charge_module}" />
 							</aon:div>
@@ -52,12 +52,12 @@
 							<c:if test="#{aonRole.config}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="payMethod-treasury"
-										action="payMethod"
+										action="payMethod-treasury"
 										value="#{configBundle.config_paymethod_module}" />
 								</aon:div>								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="bank-treasury"
-										action="bank"
+										action="bank-treasury"
 										value="#{configBundle.config_bank_module}" />
 								</aon:div>								
 							</c:if>
