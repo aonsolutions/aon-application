@@ -10,7 +10,7 @@
 
 	<aon:panel  
 		header="#{calendarBundle.aon_calendar_extended_holidays}">
-		<c:forEach items="#{calendarHolidayData.holidayData}" var="data">
+		<c:forEach items="#{calendarHolidayData.holidayDataModels}" var="data">
 			<aon:panelCollapsible expanded="true" label="#{data.description}">
 				<aon:dataTable value="#{data.model}" var="to"
 					columnClasses="

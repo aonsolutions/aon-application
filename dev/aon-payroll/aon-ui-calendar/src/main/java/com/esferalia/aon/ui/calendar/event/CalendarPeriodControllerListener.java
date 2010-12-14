@@ -37,6 +37,17 @@ public class CalendarPeriodControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
+		obtainYear();
+	}
+	
+	@Override
+	public void beforeBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		obtainYear();
+	}
+	
+	private void obtainYear()
+			throws ControllerListenerException{
 		CalendarPeriodController controller = (CalendarPeriodController)getController();
 		Integer year = ((CalendarController)controller.getMasterController()).getYear();
 		if(year==null){
