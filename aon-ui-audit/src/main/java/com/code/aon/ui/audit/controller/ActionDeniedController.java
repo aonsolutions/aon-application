@@ -3,13 +3,13 @@ package com.code.aon.ui.audit.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIPanel;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionDenied;
+import com.code.aon.audit.Application;
 import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -121,12 +122,14 @@ public class ActionDeniedController implements IAuditConstants {
 		}		
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<ActionDenied> getDeniedActions( User user ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_DENIED_USER_ID), user.getId());
+			Application application = getOptionController().getApplication();
+			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_DENIED_ACTION_APPLICATION_ID), application.getId());			
 			return (List) bean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading actions denied", e);
@@ -168,9 +171,15 @@ public class ActionDeniedController implements IAuditConstants {
 			reset();
 		} else {
 			this.deniedActions = getDeniedActions( (User) event.getNewValue() );
-			this.selected = getOptions( this.deniedActions );
+			List<ApplicationOption> deniedList = getOptions( this.deniedActions );
 			this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions(true) );
-			this.options.removeAll(this.selected);			
+			this.selected = new LinkedList<ApplicationOption>();
+			for( ApplicationOption option : this.options ) {
+				if ( deniedList.contains(option) ) {
+					this.selected.add(option);
+				}
+			}
+			this.options.removeAll(deniedList);
 		}
 	}
 

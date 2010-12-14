@@ -8,6 +8,12 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<c:if test="#{aonRole.config}">
+	
+		<aon:methodParam name="general_productCategory" value="productCategory-#{category}" resolve="true" />
+		<aon:methodParam name="general_geotreeParent_list" value="geotreeParent_list-#{category}" resolve="true" />		
+		<aon:methodParam name="general_payMethod" value="payMethod-#{category}" resolve="true" />
+		<aon:methodParam name="general_bank" value="bank-#{category}" resolve="true" />	
+	
 		<aon:panelGrid id="group_general_#{category}"
 			styleClass="aon-width-all" columnClasses="aon-padding"
 			headerClass="aon-direct-access-panel aon-icon-general">
@@ -17,22 +23,22 @@
 			<aon:div styleClass="aon-direct-access-list">
 				<aon:div styleClass="aon-direct-access-list-element">
 					<aon:commandLink id="productCategory-#{category}" 
-						action="productCategory"
+						action="#{general_productCategory}"
 						value="#{productBundle.product_category_module}" />
 				</aon:div>
 				<aon:div styleClass="aon-direct-access-list-element">
-					<aon:commandLink id="geotreeParent-#{category}" 
-						action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
+					<aon:commandLink id="geotreeParent_list-#{category}" 
+						action="#{general_geotreeParent_list}"	actionListener="#{geotreeParent.onSearch}"
 						value="#{geozoneBundle.geozone_module}" />
 				</aon:div>
 				<aon:div styleClass="aon-direct-access-list-element">
 					<aon:commandLink id="payMethod-#{category}" 
-						action="payMethod"
+						action="#{general_payMethod}"
 						value="#{configBundle.config_paymethod_module}" />
 				</aon:div>
 				<aon:div styleClass="aon-direct-access-list-element">
 					<aon:commandLink id="bank-#{category}" 
-						action="bank"
+						action="#{general_bank}"
 						value="#{configBundle.config_bank_module}" />
 				</aon:div>
 			</aon:div>
