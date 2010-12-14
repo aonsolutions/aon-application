@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionDenied;
+import com.code.aon.audit.Application;
 import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -121,12 +122,14 @@ public class ActionDeniedController implements IAuditConstants {
 		}		
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<ActionDenied> getDeniedActions( User user ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_DENIED_USER_ID), user.getId());
+			Application application = getOptionController().getApplication();
+			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_DENIED_ACTION_APPLICATION_ID), application.getId());			
 			return (List) bean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading actions denied", e);
