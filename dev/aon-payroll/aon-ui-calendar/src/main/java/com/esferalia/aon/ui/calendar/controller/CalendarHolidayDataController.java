@@ -1,7 +1,9 @@
 package com.esferalia.aon.ui.calendar.controller;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
@@ -24,25 +27,39 @@ public class CalendarHolidayDataController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarHolidayDataController.class.getName());
 
+	private Map<String,List<ITransferObject>> holidays;
+	
+	public Map<String,List<ITransferObject>> getHolidays(){
+		return holidays;
+	}
 	
 	public List<HolidayData> getHolidayDataModels(){
 		List<HolidayData> list = new LinkedList<HolidayData>();
+		HolidayData data;
+		searchHolidays();
+		for(String key: holidays.keySet()){
+			data = new HolidayData();
+			data.setDescription(key);
+			data.setModel(new ListDataModel(holidays.get(key)));
+			list.add(data);
+		}
+		return list;
+	}
+	
+	private void searchHolidays(){
+		holidays = new HashMap<String,List<ITransferObject>>();
 		Calendar calendar = (Calendar) FormUtil.getController("calendar").getTo();
 		Holiday holiday = calendar.getHoliday();
-		if(holiday==null || holiday.getId()==null){
-			return null;
-		}
+//		if(holiday==null || holiday.getId()==null){
+//			return null;
+//		}
 		Criteria criteria;
 		IManagerBean bean;
-		HolidayData data;
 		try {
 			bean = BeanManager.getManagerBean(HolidayDetail.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
-			data = new HolidayData();
-			data.setDescription(holiday.getDescription());
-			data.setModel(new ListDataModel(bean.getList(criteria)));
-			list.add(data);
+			holidays.put(holiday.getDescription(), bean.getList(criteria));
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -52,17 +69,17 @@ public class CalendarHolidayDataController {
 				bean = BeanManager.getManagerBean(HolidayDetail.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
-				data = new HolidayData();
-				data.setDescription(holiday.getDescription());
-				data.setModel(new ListDataModel(bean.getList(criteria)));
-				list.add(data);
+				holidays.put(holiday.getDescription(), bean.getList(criteria));
 			} catch (ManagerBeanException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 			holiday = holiday.getHoliday();
 		}
-		return list;
+		
 	}
+	
+	
+	
 	
 	
 	/*
