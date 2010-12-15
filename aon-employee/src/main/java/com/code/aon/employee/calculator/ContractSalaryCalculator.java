@@ -150,6 +150,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	}
 
 	private void fillSystemExpressions(SalaryCalculatorContext ctx) {
+/*		
 		ExpressionImpl e = new ExpressionImpl();
 		e.setName("dias_mes");
 		e.setScope(ExpressionScope.SYSTEM);
@@ -164,6 +165,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		Date endDate = contract.getEndDate() != null && contract.getEndDate().before( ctx.getEndDate() )?contract.getEndDate():ctx.getEndDate();
 		e.setExpression(Long.toString(CommonUtil.getDaysBetweenDates(startDate, endDate) + 1));
 		ctx.getExpressionContext().put(e);
+*/
 }
 
 }
