@@ -1,5 +1,6 @@
 package com.code.aon.employee.calculator;
 
+import java.util.Date;
 import java.util.List;
 
 import com.code.aon.common.BeanManager;
@@ -23,6 +24,8 @@ import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
 import com.esferalia.aon.salary.deduction.IDeductionsFactory;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.payment.IPaymentsFactory;
 import com.esferalia.aon.salary.payment.PaymentsFactoryContext;
 import com.esferalia.aon.salary.payment.PaymentsFactoryManager;
@@ -147,8 +150,20 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	}
 
 	private void fillSystemExpressions(SalaryCalculatorContext ctx) {
-		// TODO Auto-generated method stub
-		// Aqui se podrían crear las fórmaulas de las deducciones, de los dias trabajados, etc ... 
-	}
+		ExpressionImpl e = new ExpressionImpl();
+		e.setName("dias_mes");
+		e.setScope(ExpressionScope.SYSTEM);
+		e.setExpression(Long.toString(CommonUtil.getDaysBetweenDates(ctx.getStartDate(), ctx.getEndDate()) + 1));
+		ctx.getExpressionContext().put(e);
+
+		Contract contract = (Contract) ctx.getSalaryProxy();
+		e = new ExpressionImpl();
+		e.setName("dias_trabajados");
+		e.setScope(ExpressionScope.SYSTEM);
+		Date startDate = contract.getStartDate().after( ctx.getStartDate() )?contract.getStartDate():ctx.getStartDate();
+		Date endDate = contract.getEndDate() != null && contract.getEndDate().before( ctx.getEndDate() )?contract.getEndDate():ctx.getEndDate();
+		e.setExpression(Long.toString(CommonUtil.getDaysBetweenDates(startDate, endDate) + 1));
+		ctx.getExpressionContext().put(e);
+}
 
 }
