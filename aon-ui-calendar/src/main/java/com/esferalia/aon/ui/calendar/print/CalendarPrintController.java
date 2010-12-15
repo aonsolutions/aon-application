@@ -83,8 +83,9 @@ public class CalendarPrintController implements Serializable, ICollectionProvide
 		}
 		getPrintableCalendar().setCalendar(controller.getTo());
 		getPrintableCalendar().setYear(controller.getYear());
-		getPrintableCalendar().setMonthFactory(new MonthFactory());
-		getPrintableCalendar().getMonthFactory().setMonthList(getMonthList(controller.getYear()));
+		getPrintableCalendar().setCalendarFactory(new CalendarFactory());
+		getPrintableCalendar().getCalendarFactory().setMonthList(getMonthList(controller.getYear()));
+		getPrintableCalendar().getCalendarFactory().loadHolidays();
 	}
 	
 	
@@ -109,17 +110,19 @@ public class CalendarPrintController implements Serializable, ICollectionProvide
 		cal.set(2010, 0, 1);
 		while(dayOfWeek(month.ordinal(), year).compareTo(list.size())>0){
 			day = new PrintableDay();
-			day.setDate(null);
+			day.setDayOfMonth(null);
 			list.add(day);
 		}
 		while(cal.get(Calendar.DAY_OF_MONTH) < monthDays(month.ordinal(), year)){
 			day = new PrintableDay();
-			day.setDate(new Date(cal.getTimeInMillis()));
+//			day.setDate(new Date(cal.getTimeInMillis()));
+			day.setDayOfMonth(cal.get(Calendar.DAY_OF_MONTH));
 			list.add(day);
 			cal.add(Calendar.DATE, 1);
 		}
 		day = new PrintableDay();
-		day.setDate(new Date(cal.getTimeInMillis()));
+//		day.setDate(new Date(cal.getTimeInMillis()));
+		day.setDayOfMonth(cal.get(Calendar.DAY_OF_MONTH));
 		list.add(day);
 		return list;
 	}

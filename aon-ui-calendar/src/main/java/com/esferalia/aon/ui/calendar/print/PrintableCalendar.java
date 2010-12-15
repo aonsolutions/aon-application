@@ -9,7 +9,7 @@ public class PrintableCalendar {
 	private String person;
 	private Calendar calendar;
 	private Integer year;
-	private MonthFactory monthFactory;
+	private CalendarFactory calendarFactory;
 	
 	public Calendar getCalendar() {
 		return calendar;
@@ -41,11 +41,11 @@ public class PrintableCalendar {
 	public void setYear(Integer year) {
 		this.year = year;
 	}
-	public MonthFactory getMonthFactory() {
-		return monthFactory;
+	public CalendarFactory getCalendarFactory() {
+		return calendarFactory;
 	}
-	public void setMonthFactory(MonthFactory monthFactory) {
-		this.monthFactory = monthFactory;
+	public void setCalendarFactory(CalendarFactory calendarFactory) {
+		this.calendarFactory = calendarFactory;
 	}
-	
+		
 }
