@@ -8,12 +8,33 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="normal" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+	<style name="weekend" forecolor="#000000" backcolor="#CCCCCC" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+	<style name="holiday" forecolor="#000000" backcolor="#CC0000" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+	<style name="myStyle" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{holiday})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#CC0000" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{weekEnd})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="nestedReports" class="java.util.Map"/>
 	<field name="dayOfMonth" class="java.lang.Integer"/>
 	<field name="holiday" class="java.lang.Boolean"/>
+	<field name="weekEnd" class="java.lang.Boolean"/>
+	<background>
+		<band height="70">
+			<rectangle>
+				<reportElement x="0" y="0" width="175" height="70"/>
+			</rectangle>
+		</band>
+	</background>
 	<title>
 		<band splitType="Stretch"/>
 	</title>
@@ -22,8 +43,8 @@
 			<textField>
 				<reportElement positionType="Float" x="0" y="0" width="25" height="10"/>
 				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
@@ -33,8 +54,8 @@
 			<textField>
 				<reportElement positionType="Float" x="25" y="0" width="25" height="10"/>
 				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
@@ -44,8 +65,8 @@
 			<textField>
 				<reportElement positionType="Float" x="50" y="0" width="25" height="10"/>
 				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
@@ -55,8 +76,8 @@
 			<textField>
 				<reportElement positionType="Float" x="75" y="0" width="25" height="10"/>
 				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
@@ -66,8 +87,8 @@
 			<textField>
 				<reportElement positionType="Float" x="100" y="0" width="25" height="10"/>
 				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
@@ -77,8 +98,8 @@
 			<textField>
 				<reportElement positionType="Float" x="125" y="0" width="25" height="10"/>
 				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
@@ -88,8 +109,8 @@
 			<textField>
 				<reportElement positionType="Float" x="150" y="0" width="25" height="10"/>
 				<box>
-					<topPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
@@ -101,7 +122,7 @@
 	<detail>
 		<band height="10" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="0" y="0" width="25" height="10">
+				<reportElement key="normal" style="myStyle" positionType="Float" mode="Opaque" x="0" y="0" width="25" height="10">
 					<printWhenExpression><![CDATA[$F{dayOfMonth}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -110,7 +131,7 @@
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{holiday}?"F":$F{dayOfMonth}.toString()]]></textFieldExpression>

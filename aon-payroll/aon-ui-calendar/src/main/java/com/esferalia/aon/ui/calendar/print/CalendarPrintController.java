@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.calendar.print;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -107,7 +106,10 @@ public class CalendarPrintController implements Serializable, ICollectionProvide
 		List<PrintableDay> list = new LinkedList<PrintableDay>();
 		PrintableDay day;
 		Calendar cal = new GregorianCalendar();
-		cal.set(2010, 0, 1);
+		cal.set(year, month.ordinal(), 1);
+		// se agrega al principio de la lista dias vacios 
+		// hasta llegar al dia de la semana que sea el dia de mes
+		// Ej: si el dia 1 es miercoles, se agregan 2 dias vacios
 		while(dayOfWeek(month.ordinal(), year).compareTo(list.size())>0){
 			day = new PrintableDay();
 			day.setDayOfMonth(null);
@@ -115,14 +117,18 @@ public class CalendarPrintController implements Serializable, ICollectionProvide
 		}
 		while(cal.get(Calendar.DAY_OF_MONTH) < monthDays(month.ordinal(), year)){
 			day = new PrintableDay();
-//			day.setDate(new Date(cal.getTimeInMillis()));
 			day.setDayOfMonth(cal.get(Calendar.DAY_OF_MONTH));
+			if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
+				day.setWeekEnd(true);
+			}
 			list.add(day);
 			cal.add(Calendar.DATE, 1);
 		}
 		day = new PrintableDay();
-//		day.setDate(new Date(cal.getTimeInMillis()));
 		day.setDayOfMonth(cal.get(Calendar.DAY_OF_MONTH));
+		if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
+			day.setWeekEnd(true);
+		}
 		list.add(day);
 		return list;
 	}
@@ -131,6 +137,9 @@ public class CalendarPrintController implements Serializable, ICollectionProvide
 		Calendar cal = new GregorianCalendar();
 		cal.set(year, month, 1);
 		int num = cal.get(Calendar.DAY_OF_WEEK);
+		if(num==Calendar.SUNDAY){
+			return num+5;
+		}
 		return num-2;
 	}
 	

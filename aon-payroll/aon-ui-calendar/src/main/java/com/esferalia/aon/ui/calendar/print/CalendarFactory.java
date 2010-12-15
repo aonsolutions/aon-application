@@ -20,6 +20,7 @@ import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.calendar.CalendarHoliday;
 import com.esferalia.aon.calendar.HolidayDetail;
 import com.esferalia.aon.calendar.dao.ICalendarAlias;
+import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController;
 
 public class CalendarFactory {
@@ -28,6 +29,7 @@ public class CalendarFactory {
 	
 	private List<PrintableMonth> monthList;
 	private List<HolidayDay> holidayList;
+	private List<PeriodDay> periodList;
 	
 	public List<PrintableMonth> getMonthList() {
 		return monthList;
@@ -41,7 +43,16 @@ public class CalendarFactory {
 	public void setHolidayList(List<HolidayDay> holidayList) {
 		this.holidayList = holidayList;
 	}
+	public List<PeriodDay> getPeriodList() {
+		return periodList;
+	}
+	public void setPeriodList(List<PeriodDay> periodList) {
+		this.periodList = periodList;
+	}
 	
+	/*
+	 * PrintableMonth por cada mes
+	 */
 	public PrintableMonth getJanuary(){
 		return getMonthList().get(Month.JANUARY.ordinal());
 	}
@@ -115,10 +126,12 @@ public class CalendarFactory {
 			holidayList.add(day);
 			for(ITransferObject to: bean.getList(criteria)){
 				CalendarHoliday h = (CalendarHoliday) to;
-				day = new HolidayDay();
-				day.setDescription(h.getDescription());
-				day.setDate(h.getDate());
-				holidayList.add(day);
+				if(h.getDayType()==DayType.HOLIDAY){
+					day = new HolidayDay();
+					day.setDescription(h.getDescription());
+					day.setDate(h.getDate());
+					holidayList.add(day);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -141,6 +154,44 @@ public class CalendarFactory {
 			}
 		}
 	}
+	
+	public void loadPeriods(){
+//		CalendarHolidayDataController controller = (CalendarHolidayDataController) AonUtil.getRegisteredBean("calendarHolidayData");
+//		holidayList = new LinkedList<HolidayDay>();
+//		HolidayDay day;
+//		for(String key: controller.getHolidays().keySet()){
+//			day = new HolidayDay();
+//			day.setDescription(key);
+//			day.setDate(null);
+//			holidayList.add(day);
+//			for(ITransferObject to: controller.getHolidays().get(key)){
+//				HolidayDetail h = (HolidayDetail) to;
+//				day = new HolidayDay();
+//				day.setDescription(h.getDescription());
+//				day.setDate(h.getDate());
+//				holidayList.add(day);
+//			}
+//		}
+//		completeCalendarHolidays();
+		asignPeriods();
+	}
+	
+	private void asignPeriods() {
+//		java.util.Calendar cal;
+//		PrintableMonth month;
+//		for(HolidayDay d: getHolidayList()){
+//			if(d.getDate()!=null){
+//				cal = new GregorianCalendar();
+//				cal.setTime(d.getDate());
+//				month = getMonthList().get(cal.get(java.util.Calendar.MONTH));
+//				for(PrintableDay day: month.getDayList()){
+//					if(day.getDayOfMonth()!=null && day.getDayOfMonth().equals(cal.get(java.util.Calendar.DAY_OF_MONTH))){
+//						day.setHoliday(true);
+//					}
+//				}
+//			}
+//		}
+	}
 
 	public class HolidayDay {
 		private String description;
@@ -158,6 +209,40 @@ public class CalendarFactory {
 		public void setDate(Date date) {
 			this.date = date;
 		}
+	}
+	
+	public class PeriodDay {
+		private String description;
+		private Month month;
+		private Integer startDay;
+		private Integer endDay;
+		
+		public String getDescription() {
+			return description;
+		}
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		public Month getMonth() {
+			return month;
+		}
+		public void setMonth(Month month) {
+			this.month = month;
+		}
+		public Integer getStartDay() {
+			return startDay;
+		}
+		public void setStartDay(Integer startDay) {
+			this.startDay = startDay;
+		}
+		public Integer getEndDay() {
+			return endDay;
+		}
+		public void setEndDay(Integer endDay) {
+			this.endDay = endDay;
+		}
+		
+		
 	}
 	
 	
