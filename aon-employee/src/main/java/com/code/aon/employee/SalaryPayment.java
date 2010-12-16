@@ -165,4 +165,9 @@ public class SalaryPayment implements ITransferObject, IPayment, IExpression {
 		return ExpressionScope.SALARY;
 	}
 
+	@Override
+	@Transient
+	public boolean isReadOnly() {
+		return true;
+	}
 }
