@@ -2,13 +2,14 @@ package com.esferalia.aon.salary.expression;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.salary.ISalary;
 
 public class ExpressionContext {
 	
@@ -59,4 +60,13 @@ public class ExpressionContext {
 		return map.values();
 	}
 	
+	public List<IExpression> getExpressionVariables()  {
+		List<IExpression> expressions = new LinkedList<IExpression>();
+		for (IExpression exp : map.values()) {
+			if (NumberUtils.isNumber(exp.getExpression()) ) {
+				expressions.add(exp);
+			}
+		}
+		return expressions;
+	}
 }
