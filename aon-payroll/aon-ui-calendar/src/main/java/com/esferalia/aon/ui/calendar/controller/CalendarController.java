@@ -9,6 +9,9 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,6 +34,8 @@ import com.esferalia.aon.calendar.enumeration.CalendarSource;
 
 public class CalendarController extends BasicController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarController.class.getName());
+	
 	private Integer year;
 	private String sourceKey;
 	private CalendarSource source;
@@ -118,6 +123,7 @@ public class CalendarController extends BasicController {
 			}
 		} catch (ManagerBeanException e) {
 			// NADA. no se puede obtener el nombre del source
+			LOGGER.error("ERROR in getSourceFullName");
 		}
 		return name;
 	}
