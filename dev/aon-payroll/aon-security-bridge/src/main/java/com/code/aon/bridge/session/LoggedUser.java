@@ -42,13 +42,19 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	private Entry getAonUser( AuthPrincipal principal ) {
 		BasicLdap ldap = new BasicLdap();
 		Name dn = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
-		return ldap.get(dn, USER, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );
+		if ( ldap.exists(dn, USER) ) {
+			return ldap.get(dn, USER, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );	
+		}
+		return null;
 	}		
 
 	private Entry getAonDomain( AuthPrincipal principal ) {
 		BasicLdap ldap = new BasicLdap();
 		Name dn = NameResolver.getDomainDN(principal.getDomain());
-		return ldap.get(dn, DOMAIN, PARENT_DOMAIN_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );
+		if ( ldap.exists(dn, DOMAIN) ) {
+			return ldap.get(dn, DOMAIN, PARENT_DOMAIN_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );
+		}
+		return null;
 	}		
 	
     private void initVariables( AuthPrincipal principal ) {
@@ -58,18 +64,21 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
         	if (user.containsKey(SURNAME_ATTRIBUTE) ) {
         		this.userName += " " + user.getAsString(SURNAME_ATTRIBUTE);
         	}
-        	Entry domain = getAonDomain( principal );
-        	if ( domain != null ) {
-            	if (domain.containsKey(PARENT_DOMAIN_ATTRIBUTE) && domain.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
-            		companyName = domain.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
-            	}    	        		
-        	}
-        	if ( StringUtils.isBlank(companyName) ) {
-            	if (user.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
-            		companyName = user.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
-            	}    	
-        	}
+           	if (user.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
+           		companyName = user.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
+           	}    	
+    	} else {
+    		this.userName = principal.getShortName();
     	}
+       	Entry domain = getAonDomain( principal );
+       	if ( (domain != null) && domain.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
+           	if (domain.containsKey(PARENT_DOMAIN_ATTRIBUTE) ) {
+           		companyName = domain.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
+        	}    	        		
+           	if ( StringUtils.isBlank(companyName) ) {
+           		companyName = domain.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
+           	}
+       	}
     }
 
     public boolean isLogged(){
