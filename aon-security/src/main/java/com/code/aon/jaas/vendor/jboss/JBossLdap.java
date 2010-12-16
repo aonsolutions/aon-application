@@ -99,7 +99,12 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 	}
 	
 	public Properties getDSMDProperties(Principal principal) {
-		AuthPrincipal p = (AuthPrincipal) principal;
+		AuthPrincipal p = null;
+		if ( principal instanceof AuthPrincipal ) {
+			p = (AuthPrincipal) principal; 
+		} else {
+			p = new AuthPrincipal(principal.getName());
+		}
 		String domainName = p.getDomain();
 		String application = ldap.getApplicationId( p.getContext() );
 		IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainName, application);
