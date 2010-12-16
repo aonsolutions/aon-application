@@ -42,11 +42,13 @@
 						value="#{calendarBundle.aon_calendar_calendar}"
 						action="calendar_form" 
 						styleClass="aon-finding-toolbar-item aon-icon-calendar">
-						<f:setPropertyActionListener target="#{calendar.sourceKey}"
-							value="0" />
-						<f:setPropertyActionListener target="#{calendar.sourceId}"
-							value="#{enterprise.to.registry.id}" />
-						<aon:actionListener method="#{calendar.onInitialize}" />
+						<f:setPropertyActionListener target="#{calendar.sourceKey}" value="0" />
+						<f:setPropertyActionListener target="#{calendar.sourceId}" value="#{enterprise.to.registry.id}" />
+						<aon:actionListener method="#{calendar.onInitialize}" />						
+						<f:setPropertyActionListener
+							target="#{calendar.backAction}" value="enterprise_formTree" />						
+						<f:setPropertyActionListener
+							target="#{calendar.backActionListener}" value="calendar.onBack" />						
 					</aon:commandButton>	
 					<aon:commandButton id="back"
 						title="#{bundle.aon_key_cancel_accelerator}"
