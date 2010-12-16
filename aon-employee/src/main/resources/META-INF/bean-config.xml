@@ -8,8 +8,6 @@
 
 	<bean description="">
 		<pojo>com.code.aon.employee.ContractEvent</pojo>
-		<listeners>
-		</listeners>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.employee.event.ContractEventVetoableBeanListener</vetoListener>
 		</vetoListeners>
