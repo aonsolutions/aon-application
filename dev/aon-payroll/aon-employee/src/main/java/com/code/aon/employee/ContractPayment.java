@@ -216,4 +216,9 @@ public class ContractPayment implements ITransferObject, IPayment, IExpression {
 				getPaymentConcept().getCode()+ " - " + getDescription();
 	}
 	
+	@Override
+	@Transient
+	public boolean isReadOnly() {
+		return false;
+	}
 }

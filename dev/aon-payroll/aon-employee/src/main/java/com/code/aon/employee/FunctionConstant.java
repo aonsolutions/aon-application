@@ -40,6 +40,9 @@ public class FunctionConstant implements ITransferObject, IExpression{
 
 	private Date endDate;
 	
+	public boolean readOnly;
+	
+	private String comments;
 	
 	@Id
 	@GeneratedValue
@@ -92,6 +95,23 @@ public class FunctionConstant implements ITransferObject, IExpression{
 	
 	
 	@Override
+	@Column( name = "read_only" )
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+	@Column( name = "comments" )
+	public String getComments() {
+		return comments;
+	}
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;
@@ -103,6 +123,8 @@ public class FunctionConstant implements ITransferObject, IExpression{
 				.append(this.expression, o.expression)
 				.append(this.startDate, o.startDate)
 				.append(this.endDate, o.endDate)
+				.append(this.readOnly, o.readOnly)
+				.append(this.comments, o.comments)
 				.isEquals();	
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -115,6 +137,8 @@ public class FunctionConstant implements ITransferObject, IExpression{
 			.append(expression)
 			.append(startDate)
 			.append(endDate)
+			.append(this.readOnly)
+			.append(this.comments)
 			.toHashCode();
 	}
 
@@ -128,5 +152,5 @@ public class FunctionConstant implements ITransferObject, IExpression{
 	public ExpressionScope getScope() {
 		return ExpressionScope.APPLICATION;
 	}
-
+	
 }

@@ -219,4 +219,10 @@ public class ContractDeduction implements ITransferObject, IDeduction, IExpressi
 				getDeductionConcept().getCode()+ " - " + getDescription();
 	}
 
+	@Override
+	@Transient
+	public boolean isReadOnly() {
+		return false;
+	}
+
 }
