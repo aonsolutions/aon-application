@@ -12,6 +12,7 @@ public enum DayType implements IResourceable {
 	NOT_WORKING_DAY,
 	HOLIDAY,
 	VACATION,
+	CONTINUOUS_TIME,
 	OTHER
 	;
 	

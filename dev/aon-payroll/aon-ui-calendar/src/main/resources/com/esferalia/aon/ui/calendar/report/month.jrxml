@@ -17,8 +17,20 @@
 			<style mode="Opaque" forecolor="#000000" backcolor="#CC0000" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
-			<conditionExpression><![CDATA[new Boolean($F{weekEnd})]]></conditionExpression>
+			<conditionExpression><![CDATA[new Boolean($F{notWorkingDay})]]></conditionExpression>
 			<style mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{vacation})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#FF9933" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{continuousTime})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#339900" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{other})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#0066CC" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
@@ -27,7 +39,11 @@
 	<parameter name="nestedReports" class="java.util.Map"/>
 	<field name="dayOfMonth" class="java.lang.Integer"/>
 	<field name="holiday" class="java.lang.Boolean"/>
-	<field name="weekEnd" class="java.lang.Boolean"/>
+	<field name="notWorkingDay" class="java.lang.Boolean"/>
+	<field name="vacation" class="java.lang.Boolean"/>
+	<field name="continuousTime" class="java.lang.Boolean"/>
+	<field name="other" class="java.lang.Boolean"/>
+	<field name="hours" class="java.lang.Double"/>
 	<background>
 		<band height="70">
 			<rectangle>
@@ -134,7 +150,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{holiday}?"F":$F{dayOfMonth}.toString()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dayOfMonth}.toString()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

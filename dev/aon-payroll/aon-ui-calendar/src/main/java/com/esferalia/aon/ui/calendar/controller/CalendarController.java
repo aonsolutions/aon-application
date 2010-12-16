@@ -259,6 +259,7 @@ public class CalendarController extends BasicController {
 				loadWorkPlaces();
 			} catch (ManagerBeanException e) {
 				//NADA, la ista de workplaces estara vacia
+				LOGGER.error("ERROR in onEnterpriseChanged");
 			}
 			setWorkPlaceEnabled(true);
 		} else {
