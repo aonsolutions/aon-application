@@ -42,10 +42,15 @@ public class PrintableCalendar {
 		this.year = year;
 	}
 	public CalendarFactory getCalendarFactory() {
+		if(calendarFactory==null){
+			calendarFactory = new CalendarFactory();
+		}
 		return calendarFactory;
 	}
 	public void setCalendarFactory(CalendarFactory calendarFactory) {
 		this.calendarFactory = calendarFactory;
 	}
+	
+	
 		
 }
