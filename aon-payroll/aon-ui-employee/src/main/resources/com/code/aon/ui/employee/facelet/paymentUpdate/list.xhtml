@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			<aon:methodParam name="searchAction" value="paymentUpdate_search" />
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_payment_update_module}" />
+				<ui:param name="controller" value="#{paymentUpdate}" />
+				<ui:param name="skipResetButton" value="true" />
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="4" styleClass="aon-margin-bottom" width="100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150
+								,aon-panelGrid-even aon-width-auto
+								,aon-panelGrid-odd aon-width-150
+								,aon-panelGrid-even aon-width-150">
+				
+					<aon:outputText value="#{companyBundle.company_enterprise}" />
+					<aon:outputText value="#{paymentUpdate.enterprise.registry.fullName}" />
+
+					<aon:outputText value="#{bundle.aon_date}"/>
+					<aon:div>
+						<aon:outputText value="#{paymentUpdate.month}" />
+						<aon:outputText value="&#160;/&#160;" />
+						<aon:outputText value="#{paymentUpdate.year}" />
+					</aon:div>
+				</aon:panelGrid>
+				
+				<aon:editDataTable value="#{paymentUpdate.model}" var="to">
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{employeeBundle.employee_name}" />	
+						</f:facet>
+						<aon:outputText value="#{to.contract.person.fullName}" />
+					</aon:column>
+					
+					<rich:columns value="#{paymentUpdate.columns}" var="col" index="ind" id="column#{ind}"	
+						styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="#{col}" />
+						</f:facet>
+						
+						<aon:outputText value="&#160;" rendered="#{to.map[col] == null}" />
+						
+						<aon:outputText value="#{to.map[col].expression}" 
+							rendered="#{to.map[col] != null and to.map[col].readOnly}"/>
+
+						<aon:inputText rendered="#{to.map[col] != null and !to.map[col].readOnly}"
+							value="#{to.map[col].expression}" size="10"/>
+
+					</rich:columns>					
+				</aon:editDataTable>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
