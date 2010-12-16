@@ -128,6 +128,7 @@ public class PaymentUpdateController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onSave(ActionEvent event) {
 		// inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -135,13 +136,21 @@ public class PaymentUpdateController {
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
 			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractEvent.class);
 				HibernateUtil.setBeginTransaction(false);
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
+				List<PaymentUpdate> dataList = (List<PaymentUpdate>) getModel().getWrappedData();
+				for (PaymentUpdate pu: dataList) {
+					for (ContractEvent ce: pu.getMap().values()) {
+						bean.insertOrUpdate(ce);
+					}
+				}
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
+				onSearch(event);
 			} catch (Exception e) {
 				try {
 					HibernateUtil.rollbackTransaction(sessionName);
@@ -166,16 +175,28 @@ public class PaymentUpdateController {
 		for (PaymentUpdate pu: dataList) {
 			SalaryCalculatorContext scc = pu.getContract().getSalaryCalculatorContext();
 			scc.setIssueDate(date);
-			scc.setStartDate( CommonUtil.getMonthFirstDay(date));
-			scc.setEndDate( CommonUtil.getMonthLastDay(date));
+			Date startDate= CommonUtil.getMonthFirstDay(date);
+			scc.setStartDate(startDate);
+			Date endDate = CommonUtil.getMonthLastDay(date);
+			scc.setEndDate( endDate);
 			factoryManager.getCalculator(scc);  // Fuerza a inicializar el contexto.
 			List<IExpression> exps = scc.getExpressionContext().getExpressionVariables();
 			for (IExpression exp: exps) {
-				if (!getColumns().contains(exp.getName())){
-					getColumns().add(exp.getName());
+				if (!exp.isReadOnly()) {
+					if (!getColumns().contains(exp.getName())){
+						getColumns().add(exp.getName());
+					}
+					ContractEvent ce = getContractEvent(pu,exp,scc);
+					if (ce == null) {
+						ce = new ContractEvent();
+						ce.setContract(pu.getContract());
+						ce.setStartDate(startDate);
+						ce.setEndDate(endDate);
+						ce.setName(exp.getName());
+						ce.setExpression(exp.getExpression());
+					}
+					pu.getMap().put(exp.getName(),ce);
 				}
-				ContractEvent ce = getContractEvent(pu,exp,scc);
-				pu.getMap().put(exp.getName(), ce==null?exp:ce);
 			}
 			Collections.sort( getColumns() ); 
 		}
@@ -212,7 +233,7 @@ public class PaymentUpdateController {
 
 	public class PaymentUpdate {
 		private Contract contract;
-		private Map<String,IExpression> map;
+		private Map<String,ContractEvent> map;
 		
 		public Contract getContract() {
 			return contract;
@@ -221,13 +242,13 @@ public class PaymentUpdateController {
 			this.contract = contract;
 		}
 		
-		public Map<String, IExpression> getMap() {
+		public Map<String, ContractEvent> getMap() {
 			if (map == null) {
-				setMap(new HashMap<String, IExpression>());
+				setMap(new HashMap<String, ContractEvent>());
 			}
 			return map;
 		}
-		public void setMap(Map<String, IExpression> map) {
+		public void setMap(Map<String, ContractEvent> map) {
 			this.map = map;
 		}
 	}
