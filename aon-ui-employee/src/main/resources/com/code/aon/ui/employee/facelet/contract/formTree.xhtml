@@ -33,7 +33,9 @@
 						<f:setPropertyActionListener
 							target="#{contract.backActionListener}" value="contract.onBack" />													
 					</aon:commandButton>
-					<ui:include src="/com/code/aon/ui/employee/facelet/salary/buttons.xhtml" />
+					<c:if test="#{salary.model.rowCount > 0}" >
+						<ui:include src="/com/code/aon/ui/employee/facelet/salary/buttons.xhtml" />
+					</c:if>
 					<aon:commandButton id="calendar"
 						value="#{calendarBundle.aon_calendar_calendar}"
 						action="calendar_form" 
