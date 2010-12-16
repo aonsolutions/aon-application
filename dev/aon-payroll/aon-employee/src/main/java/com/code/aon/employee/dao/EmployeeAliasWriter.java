@@ -14,6 +14,7 @@ import com.code.aon.employee.ContractBatch;
 import com.code.aon.employee.ContractBatchDetail;
 import com.code.aon.employee.ContractData;
 import com.code.aon.employee.ContractDeduction;
+import com.code.aon.employee.ContractEvent;
 import com.code.aon.employee.ContractPayment;
 import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
@@ -46,6 +47,7 @@ public class EmployeeAliasWriter {
 				ContractBatchDetail.class.getName(),
 				ContractData.class.getName(),
 				ContractDeduction.class.getName(),
+				ContractEvent.class.getName(),
 				ContractPayment.class.getName(),
 				ContractTracking.class.getName(),
 				ContractType.class.getName(),
