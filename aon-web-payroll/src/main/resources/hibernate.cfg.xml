@@ -101,6 +101,7 @@
 		<mapping class="com.code.aon.employee.ContractBatchDetail"/>
 		<mapping class="com.code.aon.employee.ContractData"/>
 		<mapping class="com.code.aon.employee.ContractDeduction"/>
+		<mapping class="com.code.aon.employee.ContractEvent"/>
 		<mapping class="com.code.aon.employee.ContractPayment"/>
 		<mapping class="com.code.aon.employee.ContractTracking"/>
 		<mapping class="com.code.aon.employee.ContractType"/>
