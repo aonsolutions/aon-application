@@ -11,6 +11,7 @@ import com.code.aon.employee.ContractBatch;
 import com.code.aon.employee.ContractBatchDetail;
 import com.code.aon.employee.ContractData;
 import com.code.aon.employee.ContractDeduction;
+import com.code.aon.employee.ContractEvent;
 import com.code.aon.employee.ContractPayment;
 import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
@@ -428,6 +429,49 @@ public interface IEmployeeAlias {
 
 
 	/** 
+	* DAOConstantsEntry for ContractEvent entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_EVENT_ENTRY = DAOConstants.getDAOConstant(ContractEvent.class);
+
+	/** 
+	* Alias value: ContractEvent_contract_id
+	* Hibernate value: ContractEvent.contract.id
+	*/
+	String  CONTRACT_EVENT_CONTRACT_ID = CONTRACT_EVENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractEvent_endDate
+	* Hibernate value: ContractEvent.endDate
+	*/
+	String  CONTRACT_EVENT_END_DATE = CONTRACT_EVENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractEvent_expression
+	* Hibernate value: ContractEvent.expression
+	*/
+	String  CONTRACT_EVENT_EXPRESSION = CONTRACT_EVENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractEvent_id
+	* Hibernate value: ContractEvent.id
+	*/
+	String  CONTRACT_EVENT_ID = CONTRACT_EVENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractEvent_name
+	* Hibernate value: ContractEvent.name
+	*/
+	String  CONTRACT_EVENT_NAME = CONTRACT_EVENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractEvent_startDate
+	* Hibernate value: ContractEvent.startDate
+	*/
+	String  CONTRACT_EVENT_START_DATE = CONTRACT_EVENT_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
 	* DAOConstantsEntry for ContractPayment entity.
 	*/ 
 	DAOConstantsEntry CONTRACT_PAYMENT_ENTRY = DAOConstants.getDAOConstant(ContractPayment.class);
@@ -605,34 +649,46 @@ public interface IEmployeeAlias {
 	DAOConstantsEntry FUNCTION_CONSTANT_ENTRY = DAOConstants.getDAOConstant(FunctionConstant.class);
 
 	/** 
+	* Alias value: FunctionConstant_comments
+	* Hibernate value: FunctionConstant.comments
+	*/
+	String  FUNCTION_CONSTANT_COMMENTS = FUNCTION_CONSTANT_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: FunctionConstant_endDate
 	* Hibernate value: FunctionConstant.endDate
 	*/
-	String  FUNCTION_CONSTANT_END_DATE = FUNCTION_CONSTANT_ENTRY.getAliasNames()[0];
+	String  FUNCTION_CONSTANT_END_DATE = FUNCTION_CONSTANT_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: FunctionConstant_expression
 	* Hibernate value: FunctionConstant.expression
 	*/
-	String  FUNCTION_CONSTANT_EXPRESSION = FUNCTION_CONSTANT_ENTRY.getAliasNames()[1];
+	String  FUNCTION_CONSTANT_EXPRESSION = FUNCTION_CONSTANT_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: FunctionConstant_id
 	* Hibernate value: FunctionConstant.id
 	*/
-	String  FUNCTION_CONSTANT_ID = FUNCTION_CONSTANT_ENTRY.getAliasNames()[2];
+	String  FUNCTION_CONSTANT_ID = FUNCTION_CONSTANT_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: FunctionConstant_name
 	* Hibernate value: FunctionConstant.name
 	*/
-	String  FUNCTION_CONSTANT_NAME = FUNCTION_CONSTANT_ENTRY.getAliasNames()[3];
+	String  FUNCTION_CONSTANT_NAME = FUNCTION_CONSTANT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: FunctionConstant_readOnly
+	* Hibernate value: FunctionConstant.readOnly
+	*/
+	String  FUNCTION_CONSTANT_READ_ONLY = FUNCTION_CONSTANT_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: FunctionConstant_startDate
 	* Hibernate value: FunctionConstant.startDate
 	*/
-	String  FUNCTION_CONSTANT_START_DATE = FUNCTION_CONSTANT_ENTRY.getAliasNames()[4];
+	String  FUNCTION_CONSTANT_START_DATE = FUNCTION_CONSTANT_ENTRY.getAliasNames()[6];
 
 
 
