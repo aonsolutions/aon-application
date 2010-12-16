@@ -28,10 +28,17 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="salaryDraft" 
 									action="salaryDraft_search" 
-									actionListener="#{contract.onEditSearch}"
+									actionListener="#{salaryDraft.onEditSearch}"
 									value="#{employeeBundle.employee_salaryDraft_module}">
 								</aon:commandLink>
-							</aon:div>				
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="paymentUpdate" 
+									action="paymentUpdate_search" 
+									actionListener="#{paymentUpdate.onEditSearch}"
+									value="#{employeeBundle.employee_payment_update_module}">
+								</aon:commandLink>
+							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="salary" 
 									action="salary_search" 
