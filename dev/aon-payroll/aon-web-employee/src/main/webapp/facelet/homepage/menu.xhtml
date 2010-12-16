@@ -1,22 +1,33 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
 
-	<!--
 	<ui:define name="afterMenuContent">
 				
-		<aon:commandLink id="integral" 
-			action="enterprise_search" 
-			value="#{appBundle.menu_integral}"
-			styleClass="aon-top-menu-item aon-icon-payroll">
-			<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
-			<aon:actionListener method="#{enterprise.onEditSearch}" />
-		</aon:commandLink>
+		<c:if test="#{manager.enterprise}">	
+			<aon:commandLink id="integral" 
+				action="enterprise_formTree" 
+				value="#{appBundle.menu_integral}"
+				styleClass="aon-top-menu-item aon-icon-payroll" />
+			<aon:commandLink id="salaryDraft" 
+				action="salaryDraft_search" 
+				actionListener="#{salaryDraft.onEditSearch}"
+				value="#{employeeBundle.employee_salaryDraft_module}"
+				styleClass="aon-top-menu-item aon-icon-config" />
+		</c:if>
+		<c:if test="#{!manager.enterprise}">
+			<aon:commandLink id="salary" 
+				action="salary_list" 
+				value="#{employeeBundle.employee_salary_module}"
+				styleClass="aon-top-menu-item aon-icon-payroll" />
+			<aon:commandLink id="calendar" 
+				action="calendar_form" 
+				value="#{calendarBundle.aon_calendar_calendar}"
+				styleClass="aon-top-menu-item aon-icon-calendar" />
+		</c:if>
 						
 	</ui:define>
-	-->
 		
 </ui:composition>
