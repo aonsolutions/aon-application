@@ -116,6 +116,13 @@
 		</managed-property>	
 	</managed-bean>
 	
+	<!-- ************ PAYMENT UPDATE ************** -->
+	<managed-bean>
+		<managed-bean-name>paymentUpdate</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.PaymentUpdateController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************ SALARY ************** -->
 	<managed-bean>
 		<managed-bean-name>salary</managed-bean-name>
@@ -967,4 +974,15 @@
 	    </navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Payment Update ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>paymentUpdate_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/paymentUpdate/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>paymentUpdate_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/employee/facelet/paymentUpdate/list.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
 </faces-config>
