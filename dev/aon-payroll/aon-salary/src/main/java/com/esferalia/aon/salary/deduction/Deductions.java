@@ -4,7 +4,6 @@ package com.esferalia.aon.salary.deduction;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 
 public class Deductions {

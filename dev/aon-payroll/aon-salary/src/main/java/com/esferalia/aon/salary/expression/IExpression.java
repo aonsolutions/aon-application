@@ -4,4 +4,5 @@ public interface IExpression {
 	String getName();
 	String getExpression();
 	ExpressionScope getScope();
+	boolean isReadOnly();
 }
