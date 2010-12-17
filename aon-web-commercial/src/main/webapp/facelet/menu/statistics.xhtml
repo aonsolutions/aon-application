@@ -89,7 +89,7 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="sellerControl2"
 									value="#{statBundle.seller_stat_control_seller}"
-									action="commercial_search_view">
+									action="commercial_search_view-seller">
 									<aon:actionListener method="#{commercialStat.onReset}" />
 									<aon:actionListener method="#{commercialStat.onSellerType}" />
 								</aon:commandLink>
@@ -98,7 +98,7 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="sellerControl3"
 									value="#{statBundle.seller_stat_control_target}"
-									action="commercial_search_view">
+									action="commercial_search_view-target">
 									<aon:actionListener method="#{commercialStat.onReset}" />
 									<aon:actionListener method="#{commercialStat.onTargetType}" />
 								</aon:commandLink>
@@ -107,7 +107,7 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="sellerControl4"
 									value="#{statBundle.seller_stat_control_product}"
-									action="commercial_search_view">
+									action="commercial_search_view-product">
 									<aon:actionListener method="#{commercialStat.onReset}" />
 									<aon:actionListener method="#{commercialStat.onProductType}" />
 								</aon:commandLink>
@@ -115,7 +115,7 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="sellerControl5"
 									value="#{statBundle.seller_stat_control_category}"
-									action="commercial_search_view">
+									action="commercial_search_view-category">
 									<aon:actionListener method="#{commercialStat.onReset}" />
 									<aon:actionListener method="#{commercialStat.onCategoryType}" />
 								</aon:commandLink>
