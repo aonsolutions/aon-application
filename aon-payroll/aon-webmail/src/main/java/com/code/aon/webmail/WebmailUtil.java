@@ -1,5 +1,7 @@
 package com.code.aon.webmail;
 
+import static com.code.aon.ldap.IAonObjectClasses.MAIL_ACCOUNT;
+
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -28,8 +30,11 @@ public class WebmailUtil {
 	public static LdapDAO getMailAccountDAO( String domain, String user ) {
 		LdapDAO dao = new LdapDAO(MailAccount.class);
 		Name baseDN = NameResolver.getUserAccountsDN(domain, user);
-		dao.setBaseDN( baseDN );
-		return dao;
+		if ( dao.exists(baseDN, MAIL_ACCOUNT)) {
+			dao.setBaseDN( baseDN );
+			return dao;			
+		}
+		return null;
 	}
 
     public static MailAccount getDefaultAccount( String domain, String user ) throws ManagerBeanException {
@@ -38,21 +43,23 @@ public class WebmailUtil {
 
     public static MailAccount getDefaultAccount( String domain, String user, boolean first ) throws ManagerBeanException {
     	LdapDAO dao = getMailAccountDAO(domain, user);
-		IManagerBean beanAccount = new BasicManagerBean(dao);
-		Criteria criteriaAccount = new Criteria();
-		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME), MailAccount.DEFAULT_MAIL_ACCOUNT_NAME);
-		List<ITransferObject> list = beanAccount.getList(criteriaAccount);
-		if (! list.isEmpty() ) {
-			return (MailAccount) list.get(0);
-		}
-		if ( first ) {
-			Criteria criteria = new Criteria();
-			criteria.addOrder( beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME) );
-			List<ITransferObject> fullList = beanAccount.getList(criteria);
-			if (! fullList.isEmpty() ) {
-				return (MailAccount) fullList.get(0);
+    	if ( dao != null ) {
+			IManagerBean beanAccount = new BasicManagerBean(dao);
+			Criteria criteriaAccount = new Criteria();
+			criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME), MailAccount.DEFAULT_MAIL_ACCOUNT_NAME);
+			List<ITransferObject> list = beanAccount.getList(criteriaAccount);
+			if (! list.isEmpty() ) {
+				return (MailAccount) list.get(0);
 			}
-		}
+			if ( first ) {
+				Criteria criteria = new Criteria();
+				criteria.addOrder( beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME) );
+				List<ITransferObject> fullList = beanAccount.getList(criteria);
+				if (! fullList.isEmpty() ) {
+					return (MailAccount) fullList.get(0);
+				}
+			}
+    	}
 		return null;
     }    
 
