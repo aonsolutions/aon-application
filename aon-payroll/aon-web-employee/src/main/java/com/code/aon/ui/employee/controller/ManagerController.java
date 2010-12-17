@@ -1,6 +1,7 @@
 package com.code.aon.ui.employee.controller;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -9,21 +10,30 @@ import javax.faces.event.AbortProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.EnterpriseUser;
+import com.code.aon.employee.Contract;
 import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.calendar.enumeration.CalendarSource;
+import com.esferalia.aon.ui.calendar.controller.CalendarController;
+import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
 
 public class ManagerController implements IEmployeeConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ManagerController.class);
+	
+	public static final String CONTROLLER_NAME = "manager";
 
 	private AuthPrincipal principal;
 	
@@ -33,12 +43,15 @@ public class ManagerController implements IEmployeeConstants {
 	
 	public ManagerController() {
 		this.principal = resolvePrincipal();
-		this.loggedUser = resolveUser();		
-		if ( this.loggedUser.getRegistry() == null ) {
+		this.loggedUser = resolveUser();
+		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
+		if ( isEnterprise() ) {
 			initEnterprise();
 		} else {
 			initWorker();
+			lu.setLoggedUserName(loggedUser.getRegistry().getFullName());
 		}
+		lu.setCompanyName(loggedUser.getEnterprise().getRegistry().getFullName());
 	}
 	
 	public AuthPrincipal getPrincipal() {
@@ -47,6 +60,10 @@ public class ManagerController implements IEmployeeConstants {
 
 	public EnterpriseUser getLoggedUser() {
 		return loggedUser;
+	}
+	
+	public boolean isEnterprise() {
+		return this.loggedUser.getRegistry() == null;
 	}
 
 	private AuthPrincipal resolvePrincipal() {
@@ -91,22 +108,55 @@ public class ManagerController implements IEmployeeConstants {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
 	}
-
-	private void initWorker() {
-		this.homeTemplate = "/com/code/aon/ui/employee/facelet/salary/list.xhtml";
+	
+	private Contract getContract() {
+		try {		
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
+			Criteria criteria = new Criteria();
+			String endDate = bean.getFieldName(IEmployeeAlias.CONTRACT_END_DATE);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			String enterpriseId = bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+			criteria.addEqualExpression(enterpriseId, this.loggedUser.getEnterprise().getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				return (Contract) list.get(0);
+			}			
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> getContract exception ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}					
+		return null;
+	}
+	
+	private void initWorkerSalaries( Contract contract ) {
 		SalaryController controller = (SalaryController) AonUtil.getRegisteredBean(IEmployeeConstants.SALARY_CONTROLLER);
 		try {		
 			Criteria criteria = controller.getCriteria();
-			String personAlias = controller.getFieldName(IEmployeeAlias.SALARY_CONTRACT_PERSON_ID);
-			criteria.addEqualExpression( personAlias, loggedUser.getRegistry().getId() );			
-			String enterpriseAlias = controller.getFieldName(IEmployeeAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
-			criteria.addEqualExpression( enterpriseAlias, loggedUser.getEnterprise().getId() );			
+			String contractId = controller.getFieldName(IEmployeeAlias.SALARY_CONTRACT_ID);
+			criteria.addEqualExpression( contractId, contract.getId() );			
 			controller.onSearch(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> initWorker exception ",e);
+			LOGGER.error(">>>> initWorkerSalaries exception ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
-		}		
+		}			
+	}
+
+	private void initWorkerCalendar( Contract contract ) {
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_CONTROLLER_NAME);
+		controller.setSource(CalendarSource.CONTRACT);
+		controller.setSourceId( contract.getId() );
+		controller.onInitialize(null);
+	}
+	
+	private void initWorker() {
+		this.homeTemplate = "/com/code/aon/ui/employee/facelet/salary/list.xhtml";
+		Contract contract = getContract();
+		initWorkerSalaries( contract );
+		initWorkerCalendar( contract );
 	}
 	
 }
