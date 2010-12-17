@@ -2,6 +2,7 @@ package com.code.aon.ui.util;
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -96,9 +97,35 @@ public class AonUtil {
 	 */
 	public static ConfigurationController getConfigurationController() {
 		return AonUtil.getConfigurationController("aonConfiguration");
-
 	}
 
+	/**
+	 * Gets the value of the property defined for the bean.
+	 *
+	 * @param beanName the bean
+	 * @param property the property
+	 * @return the value
+	 */
+	public static Object getBeanValue( String beanName, String property ) {
+		ConfigurationController cc = AonUtil.getConfigurationController();
+		Map<String, Object> map = cc.getBean().get(beanName);
+		if ( map != null ) {
+			return map.get(property);
+		}
+		return null;		
+	}
+
+	/**
+	 * Gets the boolean value of the property defined for the bean.
+	 *
+	 * @param beanName the bean
+	 * @param property the property
+	 * @return the value
+	 */
+	public static boolean isBeanValue( String beanName, String property ) {
+		return (Boolean) getBeanValue(beanName, property);
+	}
+	
 	/**
 	 * Gets the Role Manager Controller
 	 * 
