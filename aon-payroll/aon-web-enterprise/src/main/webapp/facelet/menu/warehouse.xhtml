@@ -63,7 +63,7 @@
 									<c:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="productCategory-warehouse" 
-												action="productCategory"
+												action="productCategory-warehouse"
 												value="#{productBundle.product_category_module}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -73,12 +73,12 @@
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="tariff-warehouse" 
-												action="tariff_list" actionListener="#{tariff.onSearch}"
+												action="tariff_list-warehouse" actionListener="#{tariff.onSearch}"
 												value="#{productBundle.product_tariff_module}" />
 										</aon:div>									
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="catalogue-warehouse" 
-												action="catalogue_search" actionListener="#{catalogue.onEditSearch}"
+												action="catalogue_search-warehouse" actionListener="#{catalogue.onEditSearch}"
 												value="#{productBundle.product_catalogue_module}" />
 										</aon:div>
 									</c:if>								
