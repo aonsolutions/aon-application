@@ -64,7 +64,7 @@
 							enableManualInput="true" step="1"
 							ignoreDupResponses="true"
 							cycled="false"  style="width:5px;height:5px;" >
-							<a4j:support event="onchange" reRender="tabPanel"
+							<a4j:support event="onchange" reRender="calendarForm, tabPanel, schedule"
 								actionListener="#{calendar.onChangeYear}"
 								ignoreDupResponses="true" />
 						</rich:inputNumberSpinner>
@@ -107,7 +107,7 @@
 					</aon:panelGrid>
 					
 					
-					<aon:div styleClass="aon-scroll-area">
+					<aon:div id="schedule" styleClass="aon-scroll-area">
 						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/schedule_panel.xhtml" />
 					</aon:div>
 					

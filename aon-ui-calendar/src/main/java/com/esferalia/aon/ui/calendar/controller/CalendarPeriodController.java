@@ -27,7 +27,7 @@ public class CalendarPeriodController extends LinesController {
 		CalendarPeriod period = (CalendarPeriod)getTo();
 		Calendar cal = new GregorianCalendar(getYear(), period.getMonth().getValue(), 1);
 		cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-		((CalendarCollections)AonUtil.getRegisteredBean("calendarCollections")).setMonthMaxDays(cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		((CalendarCollections)AonUtil.getRegisteredBean(ICalendarConstants.COLLECTIONS_CONTROLLER_NAME)).setMonthMaxDays(cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 		period.setEndDay(cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 	}	
 }

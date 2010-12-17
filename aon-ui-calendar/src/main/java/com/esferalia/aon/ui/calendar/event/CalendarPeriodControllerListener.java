@@ -30,7 +30,8 @@ public class CalendarPeriodControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
-	public void afterBeanSelected(ControllerEvent event){
+	public void afterModelInitialized(ControllerEvent event)
+			throws ControllerListenerException {
 		
 	}
 	
