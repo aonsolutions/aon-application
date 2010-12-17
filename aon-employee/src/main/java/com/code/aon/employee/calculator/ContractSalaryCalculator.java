@@ -9,6 +9,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.employee.Contract;
+import com.code.aon.employee.ContractEvent;
 import com.code.aon.employee.FunctionConstant;
 import com.code.aon.employee.Salary;
 import com.code.aon.employee.dao.IEmployeeAlias;
@@ -131,8 +132,20 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		// TODO Auto-generated method stub
 	}
 
-	private void fillContractExpressions(SalaryCalculatorContext ctx) {
-		// TODO Auto-generated method stub
+	private void fillContractExpressions(SalaryCalculatorContext ctx) throws ManagerBeanException {
+		Contract contract = (Contract) ctx.getSalaryProxy();
+		IManagerBean bean = BeanManager.getManagerBean(ContractEvent.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_EVENT_CONTRACT_ID), contract.getId());			
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_EVENT_START_DATE), ctx.getEndDate());			
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_EVENT_END_DATE), ctx.getStartDate());
+		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_EVENT_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to: list) {
+			ContractEvent ce = (ContractEvent) to;
+			ctx.getExpressionContext().put(ce);
+		}
 	}
 
 	private void fillApplicationExpressions(SalaryCalculatorContext ctx) throws ManagerBeanException {
