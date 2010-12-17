@@ -88,11 +88,19 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
     public String getLoggedUserName() {
         return userName;
     }    
+
+    public void setLoggedUserName( String userName ) {
+        this.userName = userName;
+    }    
     
     public String getCompanyName(){
     	return companyName;
     }
     
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
 	public FakeMap getUserInRole() {
 		return USER_IN_ROLE;
 	}
