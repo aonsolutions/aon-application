@@ -12,15 +12,12 @@ import com.esferalia.aon.calendar.dao.ICalendarAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class CalendarHolidayControllerListener extends ControllerAdapter {
-
-	
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
 		LinesController controller = (LinesController) getController();
 		Integer year = ((CalendarController)controller.getMasterController()).getYear();
-		
 		Calendar startCal = new GregorianCalendar();
 		Calendar endCal = new GregorianCalendar();
 		startCal.set(year, Calendar.JANUARY, 1);
@@ -31,8 +28,6 @@ public class CalendarHolidayControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
-		
-		
 	}
 	
 }
