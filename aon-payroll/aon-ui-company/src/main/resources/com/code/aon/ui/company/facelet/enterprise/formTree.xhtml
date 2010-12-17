@@ -15,15 +15,17 @@
 				<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="edit"
-						value="#{bundle.aon_edit}"
-						action="enterprise_form"
-						styleClass="aon-finding-toolbar-item aon-icon-accept" >
-						<f:setPropertyActionListener
-							target="#{enterprise.backAction}" value="enterprise_formTree" />						
-						<f:setPropertyActionListener
-							target="#{enterprise.backActionListener}" value="enterprise.onBack" />
-					</aon:commandButton>
+					<c:if test="#{!aonConfiguration.bean.enterprise.standalone}">
+						<aon:commandButton id="edit"
+							value="#{bundle.aon_edit}"
+							action="enterprise_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" >
+							<f:setPropertyActionListener
+								target="#{enterprise.backAction}" value="enterprise_formTree" />						
+							<f:setPropertyActionListener
+								target="#{enterprise.backActionListener}" value="enterprise.onBack" />
+						</aon:commandButton>
+					</c:if>
 					<aon:commandButton id="salary"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						value="#{employeeBundle.employee_salary_module}"
@@ -50,12 +52,14 @@
 						<f:setPropertyActionListener
 							target="#{calendar.backActionListener}" value="calendar.onBack" />						
 					</aon:commandButton>	
-					<aon:commandButton id="back"
-						title="#{bundle.aon_key_cancel_accelerator}"
-						value="#{bundle.aon_back}" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						action="enterprise_list"
-						accesskey="#{bundle.aon_key_cancel}" />										
+					<c:if test="#{!aonConfiguration.bean.enterprise.standalone}">
+						<aon:commandButton id="back"
+							title="#{bundle.aon_key_cancel_accelerator}"
+							value="#{bundle.aon_back}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							action="enterprise_list"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</c:if>										
 					<aon:spin id="enterpriseSpin" controller="#{enterprise}" />
 				</ui:define>				
 			</ui:decorate>
