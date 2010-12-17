@@ -37,19 +37,19 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="parteitGenerationWizard" 
 									disabled="true"
-									action="certificateBatchGenerationWizard_step0"
+									action="certificateBatchGenerationWizard_step0-parteitGeneration"
 									value="#{employeeBundle.employee_parteitWizard_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="contractModificationWizard" 
 									disabled="true"
-									action="certificateBatchGenerationWizard_step0"
+									action="certificateBatchGenerationWizard_step0-contractModification"
 									value="#{employeeBundle.employee_contractModificationWizard_module}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="contractDegenerationWizard" 
 									disabled="true"
-									action="certificateBatchGenerationWizard_step0"
+									action="certificateBatchGenerationWizard_step0-ontractDegeneration"
 									value="#{employeeBundle.employee_contractSuspensionWizard_module}" />
 							</aon:div>
 							
@@ -99,14 +99,14 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="itBatchWizard" 
-										action="contractBatchWizard_step0"
+										action="contractBatchWizard_step0-it"
 										disabled="true"
 										actionListener="#{contractBatchWizard.onStart}"
 										value="#{employeeBundle.employee_itBatchWizard_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="fanBatchWizard" 
-										action="contractBatchWizard_step0"
+										action="contractBatchWizard_step0-fan"
 										disabled="true"
 										actionListener="#{contractBatchWizard.onStart}"
 										value="#{employeeBundle.employee_fanBatchWizard_module}" />
