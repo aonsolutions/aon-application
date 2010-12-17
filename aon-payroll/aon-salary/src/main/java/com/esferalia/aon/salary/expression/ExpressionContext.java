@@ -47,8 +47,8 @@ public class ExpressionContext {
 			Object result = ENGINE.eval(script, bindings );
 			if ( name != null ) {
 				bindings.put(name, result);
+				System.out.println ( "Bindings " + name + " = " + bindings.get(name) );
 			}
-			System.out.println ( "Bindings " + name + " = " + bindings.get(name) );
 		} catch (ScriptException e) {
 			System.out.println(e.getMessage());
 		}
@@ -72,10 +72,17 @@ public class ExpressionContext {
 		
 		Object result = null;
 		String name = expression.getName();
-		
-		put ( expression );
-		result =  bindings.get(name);
-		
+		if ( name != null ) {
+			put ( expression );
+			result =  bindings.get(name);
+		}
+		else {
+			try {
+				result = ENGINE.eval(expression.getExpression(), bindings);
+			} catch (ScriptException e) {
+			}
+		}
+	
 		if ( result instanceof Number) {
 			d = ( ( Number ) result).doubleValue();
 		}
