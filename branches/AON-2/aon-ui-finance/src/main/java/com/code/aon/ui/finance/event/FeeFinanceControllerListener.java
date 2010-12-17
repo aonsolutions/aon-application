@@ -56,6 +56,9 @@ public class FeeFinanceControllerListener extends ControllerAdapter {
 		}
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setRegistry(invoice.getRegistry());
+		finance.setRegistryName(invoice.getRegistryName());
+		finance.setRegistryDocument(invoice.getRegistryDocument());
+        finance.setConcept(invoice.getDocumentNumber()); 
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		RegistryBank rBank = obtainRegistryBank(registryBankId);
 		if(rBank == null){

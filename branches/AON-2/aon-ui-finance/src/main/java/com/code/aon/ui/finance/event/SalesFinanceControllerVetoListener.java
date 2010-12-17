@@ -50,6 +50,9 @@ public class SalesFinanceControllerVetoListener extends ControllerAdapter{
 		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)AonUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
 		loadPayMethodData(((Finance)event.getController().getTo()));
 		((Finance)event.getController().getTo()).setRegistry(((Invoice)salesInvoicingController.getTo()).getRegistry());
+		((Finance)event.getController().getTo()).setRegistryName(((Invoice)salesInvoicingController.getTo()).getRegistryName());
+		((Finance)event.getController().getTo()).setRegistryDocument(((Invoice)salesInvoicingController.getTo()).getRegistryDocument());
+		((Finance)event.getController().getTo()).setConcept(((Invoice)salesInvoicingController.getTo()).getDocumentNumber());
 		((Finance)event.getController().getTo()).setBank(null);
 		((Finance)event.getController().getTo()).setPayment(false);
 		((Finance)event.getController().getTo()).setFinanceStatus(FinanceStatus.PENDING);
@@ -65,6 +68,9 @@ public class SalesFinanceControllerVetoListener extends ControllerAdapter{
 		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)AonUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
 		loadPayMethodData(((Finance)event.getController().getTo()));
 		((Finance)event.getController().getTo()).setRegistry(((Invoice)salesInvoicingController.getTo()).getRegistry());
+		((Finance)event.getController().getTo()).setRegistryName(((Invoice)salesInvoicingController.getTo()).getRegistryName());
+		((Finance)event.getController().getTo()).setRegistryDocument(((Invoice)salesInvoicingController.getTo()).getRegistryDocument());
+		((Finance)event.getController().getTo()).setConcept(((Invoice)salesInvoicingController.getTo()).getDocumentNumber());
 		((Finance)event.getController().getTo()).setBank(null);
 		((Finance)event.getController().getTo()).setPayment(false);
 	}
