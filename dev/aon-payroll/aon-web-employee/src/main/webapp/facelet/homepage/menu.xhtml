@@ -1,5 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
@@ -15,7 +16,11 @@
 				value="#{employeeBundle.employee_payment_update_module}"
 				action="paymentUpdate_search"
 				actionListener="#{paymentUpdate.onEditSearch}"
-				styleClass="aon-top-menu-item aon-icon-utilities" />		
+				styleClass="aon-top-menu-item aon-icon-utilities" >
+				<f:setPropertyActionListener
+					target="#{paymentUpdate.enterprise}"
+					value="#{manager.loggedUser.enterprise}" />								
+			</aon:commandLink>		
 			<aon:commandLink id="salaryDraft" 
 				action="salaryDraft_search" 
 				actionListener="#{salaryDraft.onEditSearch}"
