@@ -11,6 +11,11 @@
 				action="enterprise_formTree" 
 				value="#{appBundle.menu_integral}"
 				styleClass="aon-top-menu-item aon-icon-payroll" />
+			<aon:commandLink id="paymentUpdate"
+				value="#{employeeBundle.employee_payment_update_module}"
+				action="paymentUpdate_search"
+				actionListener="#{paymentUpdate.onEditSearch}"
+				styleClass="aon-top-menu-item aon-icon-utilities" />		
 			<aon:commandLink id="salaryDraft" 
 				action="salaryDraft_search" 
 				actionListener="#{salaryDraft.onEditSearch}"

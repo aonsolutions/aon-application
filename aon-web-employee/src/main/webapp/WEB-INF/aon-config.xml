@@ -21,7 +21,20 @@
 			showFinanceData="true" 
 			showAddInfo="true"
 			showDirStaff="true"
+			standalone="true"
 		/>
 	</company:config>
+	
+	<employee:config version="1.1" xmlns:employee="http://www.esferalia.com/employee">
+		<employee:employee 
+			showPaymentEditionTab="true" 
+			showDeductionEditionTab="true"
+		/>
+		<employee:salary 
+			showEnterpriseColumn="false" 
+			showPersonColumn="false"
+			showIssueDateColumn="true"
+		/>
+	</employee:config>	
 	
 </config>
