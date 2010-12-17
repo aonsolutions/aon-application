@@ -32,6 +32,8 @@ public interface IEmployeeConstants {
 	// CONFIGURATION
 	// ************************************************************
 	String MODEL_PATH = "com/code/aon/ui/employee/contractModel/";
+	
+	String SHOW_ENTERPRISE_IN_SEARCH = "showEnterpriseInSearch";
 
 	// ************************************************************
 	// REPORT

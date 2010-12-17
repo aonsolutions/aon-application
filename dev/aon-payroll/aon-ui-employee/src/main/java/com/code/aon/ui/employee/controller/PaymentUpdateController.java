@@ -1,5 +1,8 @@
 package com.code.aon.ui.employee.controller;
 
+import static com.code.aon.ui.employee.controller.IEmployeeConstants.PAYMENT_UPDATE_CONTROLLER;
+import static com.code.aon.ui.employee.controller.IEmployeeConstants.SHOW_ENTERPRISE_IN_SEARCH;
+
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -87,7 +90,9 @@ public class PaymentUpdateController {
 	}
 	
 	public void onEditSearch(ActionEvent event) {
-		setEnterprise(new Enterprise());
+		if ( AonUtil.isBeanValue(PAYMENT_UPDATE_CONTROLLER, SHOW_ENTERPRISE_IN_SEARCH) ) {
+			setEnterprise(new Enterprise());	
+		}
 		Date date = new Date();
 		setMonth(Month.getMonthByValue(CommonUtil.getMonth(date)));
 		setYear(CommonUtil.getYear(date));
