@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 5.7.1
+# Version: 5.8.0
 # Created by: girazu
-# Creation Date: 17/12/2010 13:42
+# Creation Date: 17/12/2010 14:55
 
 
 SET GLOBAL log_bin_trust_function_creators = 1;
@@ -424,6 +424,23 @@ CREATE TABLE `account_entry_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Apuntes Contables';
 
 #
+# Structure for the `bank_statement_link` table : 
+#
+
+CREATE TABLE `bank_statement_link` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `bank_statement` int(4) NOT NULL COMMENT 'Identificador de Extracto bancario',
+  `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen',
+  `source_id` int(4) NOT NULL default '0' COMMENT 'Identificador del origen',
+  `source_date` date default NULL COMMENT 'Fecha del origen',
+  `amount` double(15,2) NOT NULL default '0.00' COMMENT 'Importe',
+  `status` tinyint(2) default '0' COMMENT 'Estado',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_BANK_STATEMENT_LINK_BANK_STATEMENT` (`bank_statement`),
+  CONSTRAINT `FK_BANK_STATEMENT_LINK_BANK_STATEMENT` FOREIGN KEY (`bank_statement`) REFERENCES `bank_statement` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Enlaces del Extracto bancario';
+
+#
 # Structure for the `fbatch` table : 
 #
 
@@ -434,10 +451,13 @@ CREATE TABLE `fbatch` (
   `type` tinyint(2) default NULL COMMENT 'Tipo de Remesa',
   `status` tinyint(2) default NULL COMMENT 'Estado de la Remesa',
   `rbank` int(4) default NULL COMMENT 'Banco de la Compañia utilizado en la Remesa',
+  `bank_statement_link` int(4) default NULL COMMENT 'Identificador de la Linea del Extracto bancario',
   `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago o un cobro',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
   PRIMARY KEY  (`id`),
   KEY `rbank` (`rbank`),
+  KEY `IDX_FBATCH_BANK_STATEMENT_LINK` (`bank_statement_link`),
+  CONSTRAINT `FK_FBATCH_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
   CONSTRAINT `fbatch_fk_1` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas';
 
@@ -564,12 +584,15 @@ CREATE TABLE `finance_tracking` (
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Seguimiento',
   `pm_type_detail` int(4) default NULL COMMENT 'Identificador del Detalle por Tipo de Forma de Pago',
   `rbank` int(4) default NULL COMMENT 'Identificador de la Cuenta Bancaria de la Compañia',
+  `bank_statement_link` int(4) default NULL COMMENT 'Identificador de la Linea del Extracto bancario',
   `amount` double(15,3) default NULL COMMENT 'Importe del Seguimiento',
   `recorded` tinyint(1) NOT NULL default '0' COMMENT 'Indica si esta contabilizado o no',
   PRIMARY KEY  (`id`),
   KEY `finance` (`finance`),
   KEY `IDX_FINANCE_TRACKING_RBANK` (`rbank`),
   KEY `IDX_FINANCE_TRACKING_PM_TYPE_DETAIL` (`pm_type_detail`),
+  KEY `IDX_FINANCE_TRACKING_BANK_STATEMENT_LINK` (`bank_statement_link`),
+  CONSTRAINT `FK_FINANCE_TRACKING_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
   CONSTRAINT `finance_tracking_fk` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
   CONSTRAINT `FK_FINANCE_TRACKING_PM_TYPE_DETAIL` FOREIGN KEY (`pm_type_detail`) REFERENCES `pm_type_detail` (`id`),
   CONSTRAINT `FK_FINANCE_TRACKING_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
@@ -1194,22 +1217,6 @@ CREATE TABLE `bank_concept_account` (
   CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` FOREIGN KEY (`bank_concept`) REFERENCES `bank_concept` (`id`),
   CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Conceptos bancarios';
-
-#
-# Structure for the `bank_statement_link` table : 
-#
-
-CREATE TABLE `bank_statement_link` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `bank_statement` int(4) NOT NULL COMMENT 'Identificador de Extracto bancario',
-  `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen',
-  `source_id` int(4) NOT NULL default '0' COMMENT 'Identificador del origen',
-  `amount` double(15,2) NOT NULL default '0.00' COMMENT 'Importe',
-  `status` tinyint(2) default '0' COMMENT 'Estado',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_BANK_STATEMENT_LINK_BANK_STATEMENT` (`bank_statement`),
-  CONSTRAINT `FK_BANK_STATEMENT_LINK_BANK_STATEMENT` FOREIGN KEY (`bank_statement`) REFERENCES `bank_statement` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Enlaces del Extracto bancario';
 
 #
 # Structure for the `brand` table : 
@@ -4689,7 +4696,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('5.7.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('5.8.0');
 
 COMMIT;
 
