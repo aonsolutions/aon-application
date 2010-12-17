@@ -45,15 +45,17 @@
 									</ui:include>
 								</aon:div>
 							</aon:panelTab>
-							<aon:panelTab id="paymentsEditTab" label="#{bundle.aon_edit}">
-								<aon:div style="width: 840px; margin-top: 10px;">
-									<ui:include src="/com/code/aon/ui/employee/facelet/payment/editGridContent.xhtml" >
-										<ui:param name="controller" value="#{salaryDraftPayment}" />
-										<ui:param name="skipStartDateColumn" value="#{true}" />
-										<ui:param name="skipEndDateColumn" value="#{true}" />
-									</ui:include>
-								</aon:div>
-							</aon:panelTab>
+							<c:if test="#{aonConfiguration.bean.employee.showPaymentEditionTab}">
+								<aon:panelTab id="paymentsEditTab" label="#{bundle.aon_edit}">
+									<aon:div style="width: 840px; margin-top: 10px;">
+										<ui:include src="/com/code/aon/ui/employee/facelet/payment/editGridContent.xhtml" >
+											<ui:param name="controller" value="#{salaryDraftPayment}" />
+											<ui:param name="skipStartDateColumn" value="#{true}" />
+											<ui:param name="skipEndDateColumn" value="#{true}" />
+										</ui:include>
+									</aon:div>
+								</aon:panelTab>
+							</c:if>								
 						</aon:panelTabSet>
 						<aon:panelTabSet>
 							<aon:panelTab id="deductionsTab" label="#{employeeBundle.employee_salary_deduction}">
@@ -64,15 +66,17 @@
 									</ui:include>
 								</aon:div>
 							</aon:panelTab>
-							<aon:panelTab id="deductionsEditTab" label="#{bundle.aon_edit}">
-								<aon:div style="width: 840px; margin-top: 10px;">
-									<ui:include src="/com/code/aon/ui/employee/facelet/deduction/editGridContent.xhtml" >
-										<ui:param name="controller" value="#{salaryDraftDeduction}" />
-											<ui:param name="skipStartDateColumn" value="#{true}" />
-											<ui:param name="skipEndDateColumn" value="#{true}" />
-									</ui:include>
-								</aon:div>
-							</aon:panelTab>
+							<c:if test="#{aonConfiguration.bean.employee.showDeductionEditionTab}">
+								<aon:panelTab id="deductionsEditTab" label="#{bundle.aon_edit}">
+									<aon:div style="width: 840px; margin-top: 10px;">
+										<ui:include src="/com/code/aon/ui/employee/facelet/deduction/editGridContent.xhtml" >
+											<ui:param name="controller" value="#{salaryDraftDeduction}" />
+												<ui:param name="skipStartDateColumn" value="#{true}" />
+												<ui:param name="skipEndDateColumn" value="#{true}" />
+										</ui:include>
+									</aon:div>
+								</aon:panelTab>
+							</c:if>
 						</aon:panelTabSet>
 						<aon:div style="width: 840px; margin-top: 10px;">
 							<ui:include src="/com/code/aon/ui/employee/facelet/salary/formBases.xhtml" >

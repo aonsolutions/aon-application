@@ -200,7 +200,7 @@
 	<managed-bean>
 		<managed-bean-name>salaryDraftSearch</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.employee.event.ContractSearchListener
+			com.code.aon.ui.employee.event.SalaryDraftSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
