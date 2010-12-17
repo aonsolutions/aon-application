@@ -35,6 +35,23 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	        	invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
 			}
 		}
+		if (StringUtils.isEmpty(invoice.getRegistryName())) {
+			invoice.setRegistryName(invoice.getRegistry().getFullName());
+		}
+		if (StringUtils.isEmpty(invoice.getRegistryDocument())) {
+			invoice.setRegistryDocument(invoice.getRegistry().getDocument());
+		}
+	}
+
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		Invoice invoice = (Invoice)evt.getTo();
+		if (StringUtils.isEmpty(invoice.getRegistryName())) {
+			invoice.setRegistryName(invoice.getRegistry().getFullName());
+		}
+		if (StringUtils.isEmpty(invoice.getRegistryDocument())) {
+			invoice.setRegistryDocument(invoice.getRegistry().getDocument());
+		}
 	}
 
 }

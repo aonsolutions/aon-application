@@ -352,6 +352,11 @@ public class Finance implements ITransferObject{
 		this.securityLevel = securityLevel;
 	}
 	
+	@Transient
+	public boolean isEmptyInvoice() {
+		return (getInvoice() == null || getInvoice().getId() == null);
+	}
+
 	/**
 	 * Gets the total amount.
 	 * 
