@@ -32,7 +32,8 @@ public class ExpressionImpl implements IExpression {
 	
 	@Override
 	public boolean isReadOnly() {
-		return getScope() == ExpressionScope.SYSTEM;
+		return getScope() == ExpressionScope.SYSTEM ||
+			getScope() == ExpressionScope.SALARY;
 	}
 	
 

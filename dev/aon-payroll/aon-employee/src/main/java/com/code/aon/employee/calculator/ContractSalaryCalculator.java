@@ -3,6 +3,8 @@ package com.code.aon.employee.calculator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -120,12 +122,20 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	}
 
 	private void fillBasesData(SalaryCalculatorContext ctx, Salary salary, Contract contract) {
+		
+		 ExpressionContext expressionContext = ctx.getExpressionContext();
+		
 		salary.setRemuneration(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+		
 		salary.setExtraPayProration(0.0); // TODO ¿?¿?¿?¿?¿?
 		salary.setCommonBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+		expressionContext.put("base_cc", salary.getCommonBase().toString());
 		salary.setProfessionalBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+		expressionContext.put("base_cp", salary.getProfessionalBase().toString());
 		salary.setOvertimeBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+		expressionContext.put("base_horas_extras", salary.getOvertimeBase().toString());
 		salary.setIrpfBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+		expressionContext.put("base_irpf", salary.getIrpfBase().toString());
 	}
 
 	private void fillSalaryExpressions(SalaryCalculatorContext ctx) {
