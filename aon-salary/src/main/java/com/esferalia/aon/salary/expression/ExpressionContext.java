@@ -41,12 +41,16 @@ public class ExpressionContext {
 	public IExpression put(IExpression expression) {
 		
 		String name = expression.getName();
-		String value = expression.getExpression();
-		String script = String.format("%s = %s", name, value);
+		String script = expression.getExpression();
+		//String script = String.format("%s = %s", name, value);
 		try {
-			ENGINE.eval(script, bindings );
+			Object result = ENGINE.eval(script, bindings );
+			if ( name != null ) {
+				bindings.put(name, result);
+			}
 			System.out.println ( "Bindings " + name + " = " + bindings.get(name) );
 		} catch (ScriptException e) {
+			System.out.println(e.getMessage());
 		}
 		
 		return map.put(name,expression);
@@ -66,18 +70,14 @@ public class ExpressionContext {
 	public double resolve(IExpression expression) throws ExpressionException {
 		double d = 0.0;
 		
-		if (NumberUtils.isNumber(expression.getExpression()) ) {
-			d= NumberUtils.toDouble(expression.getExpression());	
-		}
-		else {
-			try {
-				String script = expression.getExpression();
-				Object result = ENGINE.eval(script, bindings);
-				if ( result instanceof Number) {
-					d = ( ( Number ) result).doubleValue();
-				}
-			} catch (ScriptException e) {
-			}
+		Object result = null;
+		String name = expression.getName();
+		
+		put ( expression );
+		result =  bindings.get(name);
+		
+		if ( result instanceof Number) {
+			d = ( ( Number ) result).doubleValue();
 		}
 		
 		return d;
