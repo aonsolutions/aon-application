@@ -13,6 +13,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -145,7 +147,9 @@ public class PaymentUpdateController {
 				List<PaymentUpdate> dataList = (List<PaymentUpdate>) getModel().getWrappedData();
 				for (PaymentUpdate pu: dataList) {
 					for (ContractEvent ce: pu.getMap().values()) {
-						bean.insertOrUpdate(ce);
+						if (ce.getExpression() != null && !"0".equals(ce.getExpression())) {
+							bean.insertOrUpdate(ce);	
+						}
 					}
 				}
 				// FIN operaciones de la transaccion
@@ -194,7 +198,7 @@ public class PaymentUpdateController {
 						ce.setStartDate(startDate);
 						ce.setEndDate(endDate);
 						ce.setName(exp.getName());
-						ce.setExpression(exp.getExpression());
+						ce.setExpression(StringUtils.isEmpty(exp.getExpression())?"0":exp.getExpression());
 					}
 					pu.getMap().put(exp.getName(),ce);
 				}

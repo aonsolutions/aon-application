@@ -89,8 +89,8 @@ public class SalaryDraftController extends BasicController {
 				Contract contract = (Contract) getTo();
 				SalaryCalculatorContext ctx = contract.getSalaryCalculatorContext();
 				ctx.setIssueDate(getIssueDate());
-				ctx.setStartDate(getStartDate());
-				ctx.setEndDate(getEndDate());
+				ctx.setStartDate(getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate());
+				ctx.setEndDate((contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate());
 				salary = contract.getSalary();
 			}
 			return salary;
