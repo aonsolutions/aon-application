@@ -10,6 +10,7 @@ public class CalendarDay {
 	private Date date;
 	private DayType type;
 	private Double hours;
+	private boolean overwritten;
 	
 	public String getDescription() {
 		return description;
@@ -35,5 +36,12 @@ public class CalendarDay {
 	public void setHours(Double hours) {
 		this.hours = hours;
 	}
+	public boolean isOverwritten() {
+		return overwritten;
+	}
+	public void setOverwritten(boolean overwritten) {
+		this.overwritten = overwritten;
+	}
+	
 	
 }

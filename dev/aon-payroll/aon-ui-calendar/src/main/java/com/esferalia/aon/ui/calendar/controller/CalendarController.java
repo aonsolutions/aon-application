@@ -208,6 +208,18 @@ public class CalendarController extends BasicController {
 		}
 	}
 	
+	private void refreshLinesYear(){
+		IController holiday = (IController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_HOLIDAY_CONTROLLER_NAME);
+		IController period = (IController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_PERIOD_CONTROLLER_NAME);
+		holiday.initializeModel();
+		period.initializeModel();
+		
+		
+		getYear();
+		
+		
+	}
+	
 	/*
 	 * ACTION LISTENERS
 	 */
@@ -217,6 +229,8 @@ public class CalendarController extends BasicController {
 		setWorkPlace(new WorkPlace());
 		workPlaces = null;
 		setContract(new Contract());
+		
+		
 	}
 
 	public void onInitialize(ActionEvent event){
@@ -244,7 +258,7 @@ public class CalendarController extends BasicController {
 	}
 
 	public void onChangeYear(ActionEvent event){
-		
+		refreshLinesYear();
 	}
 	
 	public void onEnterpriseChanged(LookupChangeEvent event){

@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.calendar.controller;
 
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,17 +49,24 @@ public class CalendarHolidayDataController {
 	
 	private void searchHolidays(){
 		holidays = new HashMap<String,List<ITransferObject>>();
-		Calendar calendar = (Calendar) FormUtil.getController("calendar").getTo();
+		CalendarController controller = (CalendarController) FormUtil.getController(ICalendarConstants.CALENDAR_CONTROLLER_NAME);
+		Calendar calendar = (Calendar) controller.getTo();
 		Holiday holiday = calendar.getHoliday();
 //		if(holiday==null || holiday.getId()==null){
 //			return null;
 //		}
+		java.util.Calendar startCal = new GregorianCalendar();
+		java.util.Calendar endCal = new GregorianCalendar();
+		startCal.set(controller.getYear(), java.util.Calendar.JANUARY, 1);
+		endCal.set(controller.getYear(), java.util.Calendar.DECEMBER, 31);
 		Criteria criteria;
 		IManagerBean bean;
 		try {
 			bean = BeanManager.getManagerBean(HolidayDetail.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
+			criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
+			criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
 			holidays.put(holiday.getDescription(), bean.getList(criteria));
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -69,6 +77,8 @@ public class CalendarHolidayDataController {
 				bean = BeanManager.getManagerBean(HolidayDetail.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
+				criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
+				criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
 				holidays.put(holiday.getDescription(), bean.getList(criteria));
 			} catch (ManagerBeanException e) {
 				LOGGER.error(e.getMessage(), e);

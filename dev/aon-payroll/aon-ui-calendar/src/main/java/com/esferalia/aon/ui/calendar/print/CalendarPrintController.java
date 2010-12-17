@@ -11,6 +11,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
+import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
 
 public class CalendarPrintController implements Serializable, ICollectionProvider {
 	
@@ -61,7 +62,7 @@ public class CalendarPrintController implements Serializable, ICollectionProvide
 	 * ACTION LISTENERS
 	 */
 	public void load(ActionEvent event){
-		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean("calendar"); 
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_CONTROLLER_NAME); 
 		setPrintableCalendar(new PrintableCalendar());
 		getPrintableCalendar().setEnterprise(controller.getEnterprise().getRegistry().getFullName());
 		if(controller.getWorkPlace().getId()!=null){

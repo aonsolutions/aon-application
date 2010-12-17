@@ -14,7 +14,7 @@
 	<style name="myStyle" mode="Transparent">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{holiday})]]></conditionExpression>
-			<style mode="Opaque" forecolor="#000000" backcolor="#CC0000" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+			<style mode="Opaque" forecolor="#000000" backcolor="#FF3333" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{notWorkingDay})]]></conditionExpression>
@@ -22,15 +22,15 @@
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{vacation})]]></conditionExpression>
-			<style mode="Opaque" forecolor="#000000" backcolor="#FF9933" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+			<style mode="Opaque" forecolor="#000000" backcolor="#FFCC66" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{continuousTime})]]></conditionExpression>
-			<style mode="Opaque" forecolor="#000000" backcolor="#339900" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+			<style mode="Opaque" forecolor="#000000" backcolor="#66CC33" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{other})]]></conditionExpression>
-			<style mode="Opaque" forecolor="#000000" backcolor="#0066CC" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+			<style mode="Opaque" forecolor="#000000" backcolor="#6699FF" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
