@@ -6,6 +6,7 @@
 		<xs:complexType>
 		    <xs:sequence>
 		      <xs:element ref="employee" />
+		      <xs:element ref="salary" />
 		    </xs:sequence>		
 			<xs:attribute name="version" type="xs:string" use="required" fixed="1.1"/>		    
 		</xs:complexType>
@@ -15,5 +16,12 @@
 			<xs:attribute name="showPaymentEditionTab" type="xs:boolean" use="required"/>
 			<xs:attribute name="showDeductionEditionTab" type="xs:boolean" use="required"/>
 		</xs:complexType>
+	</xs:element>
+	<xs:element name="salary">
+		<xs:complexType>
+			<xs:attribute name="showEnterpriseColumn" type="xs:boolean" use="required"/>
+			<xs:attribute name="showPersonColumn" type="xs:boolean" use="required"/>
+			<xs:attribute name="showIssueDateColumn" type="xs:boolean" use="required"/>
+		</xs:complexType>		
 	</xs:element>
 </xs:schema>
