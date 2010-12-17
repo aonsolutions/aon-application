@@ -54,6 +54,7 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
     private FinanceBatchType financeBatchType;
     private FinanceBatchStatus financeBatchStatus;
     private RegistryBank registryBank;
+    private BankStatementLink bankStatementLink;
     private boolean payment;
     private SecurityLevel securityLevel;
 	private Set<FinanceBatchDetail> lines = new HashSet<FinanceBatchDetail>();
@@ -111,6 +112,17 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
 		this.registryBank = registryBank;
 	}
 	
+    @ManyToOne
+    @JoinColumn(name="bank_statement_link")
+    @ForeignKey(name="FK_FBATCH_BANK_STATEMENT_LINK")
+    @Index(name="IDX_FBATCH_BANK_STATEMENT_LINK")            
+	public BankStatementLink getBankStatementLink() {
+		return bankStatementLink;
+	}
+	public void setBankStatementLink(BankStatementLink bankStatementLink) {
+		this.bankStatementLink = bankStatementLink;
+	}
+	
     @Column(nullable = false)
 	public boolean isPayment() {
 		return payment;
@@ -138,7 +150,6 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
-	
     @OneToMany(mappedBy = "financeBatch", cascade={CascadeType.REMOVE})
 	public Set<FinanceBatchDetail> getLines() {
 		return this.lines;
@@ -206,6 +217,7 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
 				.append(this.financeBatchType,o.financeBatchType)
 				.append(this.financeBatchStatus,o.financeBatchStatus)		
 				.append(this.registryBank,o.registryBank)		
+				.append(this.bankStatementLink,o.bankStatementLink)		
 				.append(this.payment,o.payment)		
 				.append(this.securityLevel,o.securityLevel)
 				.isEquals();
@@ -222,6 +234,7 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
 			.append(this.financeBatchType)
 			.append(this.financeBatchStatus)		
 			.append(this.registryBank)		
+			.append(this.bankStatementLink)		
 			.append(this.payment)		
 			.append(this.securityLevel)
 			.toHashCode();

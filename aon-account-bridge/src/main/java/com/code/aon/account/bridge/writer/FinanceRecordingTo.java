@@ -11,6 +11,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.finance.FinanceTracking;
 
 public class FinanceRecordingTo implements ITransferObject {
 
@@ -23,6 +24,7 @@ public class FinanceRecordingTo implements ITransferObject {
 	private String balancingConcept;
 	private SecurityLevel securityLevel;
 	private List<Finance> financeList;
+	private List<FinanceTracking> financeTrackingList;
 	private List<FinanceBatchDetail> fbatchDetailList;
 	private Map<Account, Double> accountMap;
 
@@ -73,6 +75,13 @@ public class FinanceRecordingTo implements ITransferObject {
 	}
 	public void setFinanceList(List<Finance> financeList) {
 		this.financeList = financeList;
+	}
+
+	public List<FinanceTracking> getFinanceTrackingList() {
+		return financeTrackingList;
+	}
+	public void setFinanceTrackingList(List<FinanceTracking> financeTrackingList) {
+		this.financeTrackingList = financeTrackingList;
 	}
 
 	public List<FinanceBatchDetail> getFBatchDetailList() {

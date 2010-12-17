@@ -22,13 +22,15 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.IConfidentialable;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.registry.RegistryBank;
 
 @Entity
 @Table(name="finance_tracking")
-public class FinanceTracking implements ITransferObject {
+public class FinanceTracking implements ITransferObject, IConfidentialable {
 	
 	private static final long serialVersionUID = 6433514583468654955L;
 
@@ -39,6 +41,7 @@ public class FinanceTracking implements ITransferObject {
     private String description;
 	private PayMethodTypeDetail payMethodTypeDetail;
     private RegistryBank registryBank;
+    private BankStatementLink bankStatementLink;
 	private double amount;
 	private boolean recorded;
 
@@ -110,6 +113,17 @@ public class FinanceTracking implements ITransferObject {
 		this.registryBank = registryBank;
 	}
 
+    @ManyToOne
+    @JoinColumn(name="bank_statement_link")
+    @ForeignKey(name="FK_FINANCE_TRACKING_BANK_STATEMENT_LINK")
+    @Index(name="IDX_FINANCE_TRACKING_BANK_STATEMENT_LINK")            
+	public BankStatementLink getBankStatementLink() {
+		return bankStatementLink;
+	}
+	public void setBankStatementLink(BankStatementLink bankStatementLink) {
+		this.bankStatementLink = bankStatementLink;
+	}
+	
 	@Column(nullable=true, precision=15, scale=3)
     public double getAmount() {
         return amount;
@@ -131,6 +145,14 @@ public class FinanceTracking implements ITransferObject {
 		return (type == FinanceTrackingType.PAID || type == FinanceTrackingType.RETURNED);
 	}
 
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getFinance().getSecurityLevel();
+	}
+	@Transient
+	public void setConfidential(boolean confidential) {
+	}
+
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;
@@ -144,6 +166,7 @@ public class FinanceTracking implements ITransferObject {
 			.append(this.payMethodTypeDetail,o.payMethodTypeDetail)
 			.append(this.recorded,o.recorded)
 			.append(this.registryBank,o.registryBank)
+			.append(this.bankStatementLink,o.bankStatementLink)
 			.append(this.trackingDate,o.trackingDate)
 			.append(this.type,o.type)
 			.isEquals();
@@ -161,6 +184,7 @@ public class FinanceTracking implements ITransferObject {
 			.append(this.payMethodTypeDetail)
 			.append(this.recorded)
 			.append(this.registryBank)
+			.append(this.bankStatementLink)
 			.append(this.trackingDate)
 			.append(this.type)
 			.toHashCode();

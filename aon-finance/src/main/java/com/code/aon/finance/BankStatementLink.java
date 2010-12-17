@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -37,6 +39,7 @@ public class BankStatementLink implements ITransferObject {
 	private BankStatement bankStatement;
     private StatementLinkSource source;
     private int sourceId;
+    private Date sourceDate;
     private double amount;
     private StatementLinkStatus status;
 
@@ -76,6 +79,15 @@ public class BankStatementLink implements ITransferObject {
 	}
 	public void setSourceId(int sourceId) {
 		this.sourceId = sourceId;
+	}
+
+	@Column(name="source_date")
+	@Temporal(TemporalType.DATE)
+	public Date getSourceDate() {
+		return sourceDate;
+	}
+	public void setSourceDate(Date sourceDate) {
+		this.sourceDate = sourceDate;
 	}
 
 	@Column(precision=15, scale=2)
