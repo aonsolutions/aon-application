@@ -36,12 +36,12 @@
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="payMethod-expenses" 
-											action="payMethod" 
+											action="payMethod-expenses" 
 											value="#{configBundle.config_paymethod_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="bank-expenses"
-											action="bank"
+											action="bank-expenses"
 											value="#{configBundle.config_bank_module}" />
 									</aon:div>
 								</c:if>																											
@@ -70,7 +70,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financePayment"
-											action="finance_search"
+											action="finance_search-expenses"
 											actionListener="#{finance.onEditSearchPayment}"
 											value="#{financeBundle.finance_payment_module}" />
 									</aon:div>
@@ -97,7 +97,7 @@
 									</aon:div>							
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="productCategory-expenses" 
-											action="productCategory"
+											action="productCategory-expenses"
 											value="#{productBundle.product_category_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -124,7 +124,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseAccumulate"
-											action="sales_accumulate_search" 
+											action="sales_accumulate_search-expenses" 
 											value="#{statBundle.stat_menu_expense}">
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onExpenseType}"/>
@@ -133,7 +133,7 @@
 								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseCategoryStats"
-											action="category_stats_search" 
+											action="category_stats_search-expenses" 
 											value="#{statBundle.stat_menu_category_expense}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onExpenseType}"/>
@@ -142,7 +142,7 @@
 		
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseSummaryStats"
-											action="summary_stats_search" 
+											action="summary_stats_search-expenses" 
 											value="#{statBundle.stat_menu_summary}"  >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onExpenseType}"/>
@@ -151,7 +151,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseABCStats"
-											action="abc_stats_search" 
+											action="abc_stats_search-expenses" 
 											value="#{statBundle.stat_abc_creditor}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onExpenseType}"/>
@@ -160,7 +160,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseABCStatsProduct"
-											action="abc_stats_searchProduct"
+											action="abc_stats_searchProduct-expenses"
 											value="#{statBundle.stat_abc_expense}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onExpenseType}"/>
@@ -169,7 +169,7 @@
 									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseABCStatsCategory"
-											action="abc_stats_searchCategory" 
+											action="abc_stats_searchCategory-expenses" 
 											value="#{statBundle.stat_abc_category}" >
 											<aon:actionListener method="#{stat.onReset}"/>
 											<aon:actionListener method="#{stat.onExpenseType}"/>

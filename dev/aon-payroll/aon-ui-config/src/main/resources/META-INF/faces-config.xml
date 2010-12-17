@@ -478,7 +478,16 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>User_login</value>
-		</managed-property>				
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>User_available</key>
+                    <value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/config/facelet/lookup/user/list.xhtml</value>
