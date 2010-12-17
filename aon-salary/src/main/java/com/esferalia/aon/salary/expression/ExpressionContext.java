@@ -6,6 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.Bindings;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -13,10 +19,16 @@ import com.code.aon.common.util.CommonUtil;
 
 public class ExpressionContext {
 	
+	
+	
+	private Bindings bindings ;
+
 	private Map<String,IExpression> map;
+	
 	
 	public ExpressionContext() {
 		map = new HashMap<String, IExpression>();
+		bindings = new SimpleBindings();
 	}
 
 	public void putAll( Map<String,IExpression> map ) {
@@ -27,34 +39,50 @@ public class ExpressionContext {
 		return map.get(key);
 	}
 	public IExpression put(IExpression expression) {
-		return map.put(expression.getName(),expression);
+		
+		String name = expression.getName();
+		String value = expression.getExpression();
+		String script = String.format("%s = %s", name, value);
+		try {
+			ENGINE.eval(script, bindings );
+			System.out.println ( "Bindings " + name + " = " + bindings.get(name) );
+		} catch (ScriptException e) {
+		}
+		
+		return map.put(name,expression);
 	}
+
+	public IExpression put(String name, String script) {
+		ExpressionImpl expressionImpl = new ExpressionImpl();
+		expressionImpl.setName(name);
+		expressionImpl.setExpression(script);
+		expressionImpl.setScope(ExpressionScope.SALARY);
+		return this.put(expressionImpl);
+	}
+
+	private static final ScriptEngine ENGINE = 
+		new ScriptEngineManager().getEngineByName("JavaScript");
 	
 	public double resolve(IExpression expression) throws ExpressionException {
 		double d = 0.0;
+		
 		if (NumberUtils.isNumber(expression.getExpression()) ) {
 			d= NumberUtils.toDouble(expression.getExpression());	
 		}
+		else {
+			try {
+				String script = expression.getExpression();
+				Object result = ENGINE.eval(script, bindings);
+				if ( result instanceof Number) {
+					d = ( ( Number ) result).doubleValue();
+				}
+			} catch (ScriptException e) {
+			}
+		}
+		
 		return d;
 	}
 	
-	// TODO este método hay que borrarlo cuando se resulvan las expresiones correctamente.
-	@Deprecated
-	public double resolve(IExpression expression,double totalDevengado) throws ExpressionException {
-		double d = 0.0;
-		if (NumberUtils.isNumber(expression.getExpression()) ) {
-			d= NumberUtils.toDouble(expression.getExpression());	
-		} else {
-			if (StringUtils.endsWith(expression.getExpression(), "%")) {
-				String func = StringUtils.stripEnd(expression.getExpression(), "%");
-				if (NumberUtils.isNumber(func) ) {
-					double percent = NumberUtils.toDouble(func);
-					d= CommonUtil.round(totalDevengado * percent / 100 );
-				}
-			}
-		}
-		return d;
-	}
 
 	public Collection<IExpression> getValues() {
 		return map.values();
