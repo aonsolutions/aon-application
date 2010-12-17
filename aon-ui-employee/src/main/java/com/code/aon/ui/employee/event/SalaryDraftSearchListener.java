@@ -52,16 +52,13 @@ public class SalaryDraftSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		SalaryDraftController c =  (SalaryDraftController) getController();
-		boolean emptyCriteria = true;
 		if ((getPerson() != null) && (getPerson().getId() != null)) {
-			emptyCriteria = false;
 			criteria.addEqualExpression(getFieldName(IEmployeeAlias.CONTRACT_PERSON_ID), getPerson().getId());			
 		}
 		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-			emptyCriteria = false;
 			criteria.addEqualExpression(getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 		}
-		if (emptyCriteria) {
+		if ( criteria.getExpression() == null ) {
 			throw new ManagerBeanException("Debe indicar algún criterio de búsqueda");
 		}
 		criteria.addLessThanOrEqualExpression(getFieldName(IEmployeeAlias.CONTRACT_START_DATE), c.getEndDate());
