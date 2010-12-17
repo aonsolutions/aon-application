@@ -159,9 +159,7 @@ public class ContractDeductionsFactory implements IDeductionsFactory {
 			}
 			sd.setExpression(d.getExpression() );
 			sd.setType(d.getType()  );
-			// TODO Cuando las expresiones se resuelvan correctament, llamar a resolve(d).
-			Salary salary = (Salary) ctx.getCurrentSalary();
-			sd.setAmount( ctx.getExpressionContext().resolve(d,salary.getPayments().getTotal()));
+			sd.setAmount( ctx.getExpressionContext().resolve(d));
 			return sd;
 		}
 		return null;
