@@ -2,6 +2,7 @@ package com.code.aon.ui.employee.controller;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -96,17 +97,37 @@ public class ManagerController implements IEmployeeConstants {
 		return homeTemplate;
 	}
 	
-	private void initEnterprise() {
-		this.homeTemplate = "/com/code/aon/ui/company/facelet/enterprise/formTree.xhtml";
+	private void initEnterpriseTree() {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
 		controller.onTreeViewSelect(null);
 		try {
 			controller.select(null, this.loggedUser.getEnterprise());
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> initEnterprise exception ",e);
+			LOGGER.error(">>>> initEnterpriseTree exception ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
-		}		
+		}				
+	}
+
+	private void initSalaryDraft() {
+		SalaryDraftController controller = (SalaryDraftController) AonUtil.getRegisteredBean(IEmployeeConstants.SALARY_DRAFT_CONTROLLER);
+		List<Expression> initExpressions = new LinkedList<Expression>();
+		try {
+			String enterpriseId = controller.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+			Expression expr = ExpressionUtilities.getEqualExpression(enterpriseId, this.loggedUser.getEnterprise().getId());
+			initExpressions.add(expr);
+			controller.setInitExpressions(initExpressions);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> initSalaryDraft exception ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	private void initEnterprise() {
+		this.homeTemplate = "/com/code/aon/ui/company/facelet/enterprise/formTree.xhtml";
+		initEnterpriseTree();
+		initSalaryDraft();
 	}
 	
 	private Contract getContract() {

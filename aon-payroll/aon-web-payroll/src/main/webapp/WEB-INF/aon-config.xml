@@ -32,6 +32,12 @@
 			showPersonColumn="true"
 			showIssueDateColumn="false"
 		/>		
+		<employee:salaryDraft
+			showEnterpriseInSearch="true" 
+		/>
+		<employee:paymentUpdate
+			showEnterpriseInSearch="true" 
+		/>
 	</employee:config>
 
 </config>

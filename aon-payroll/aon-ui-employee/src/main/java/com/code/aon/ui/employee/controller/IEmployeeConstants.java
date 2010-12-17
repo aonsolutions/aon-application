@@ -22,7 +22,11 @@ public interface IEmployeeConstants {
 	// ************************************************************
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";
 	
-	String SALARY_CONTROLLER="salary";
+	String SALARY_CONTROLLER = "salary";
+	
+	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
+	
+	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
 	
 	// ************************************************************
 	// CONFIGURATION
