@@ -8,6 +8,7 @@ public class PrintableMonth {
 	
 	private List<PrintableDay> dayList;
 	private Month month;
+	private Double hours;
 
 	public Month getMonth() {
 		return month;
@@ -22,6 +23,13 @@ public class PrintableMonth {
 	public void setDayList(List<PrintableDay> dayList) {
 		this.dayList = dayList;
 	}
+	public Double getHours() {
+		return hours;
+	}
+	public void setHours(Double hours) {
+		this.hours = hours;
+	}
+	
 	
 	
 }
