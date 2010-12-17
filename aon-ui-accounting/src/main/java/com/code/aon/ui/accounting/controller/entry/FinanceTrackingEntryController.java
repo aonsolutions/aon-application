@@ -16,8 +16,8 @@ import org.richfaces.model.Ordering;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
@@ -165,11 +165,12 @@ public class FinanceTrackingEntryController {
             Expression paidExp = ExpressionUtilities.getEqualExpression(ftType, FinanceTrackingType.PAID); 
             Expression returnedExp = ExpressionUtilities.getEqualExpression(ftType, FinanceTrackingType.RETURNED); 
             criteria.addExpression(ExpressionUtilities.getOrExpression(paidExp, returnedExp));
+            criteria.addNullExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
             criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), false);
             if (!AonUtil.getRoleManager().isConfidentiality()) {
-            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);	
+            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);	
             } else {
-            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_SECURITY_LEVEL), getSecurityLevel());
+            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_SECURITY_LEVEL), getSecurityLevel());
             }
             criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE));
             criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE));
@@ -213,9 +214,9 @@ public class FinanceTrackingEntryController {
 			accountEntries = new LinkedList<Integer>();			
 			List<FinanceTracking> list = ((List)lines.getWrappedData());
 			for (FinanceTracking ft : list) {
-				AccountEntryFinanceTracking aeft = getWriter().recordFinanceTracking(ft);
-				if (aeft != null) {
-					accountEntries.add(aeft.getAccountEntry().getId());	
+				AccountEntry entry = getWriter().recordFinanceTracking(ft);
+				if (entry != null) {
+					accountEntries.add(entry.getId());	
 				}
 			}
 			clearCheckedLines();
@@ -242,7 +243,7 @@ public class FinanceTrackingEntryController {
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 	}
-
+ 
 	public void onViewAccountEntry(ActionEvent event) {
 		try {
 			AccountEntryController entryController = (AccountEntryController) FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
