@@ -213,11 +213,6 @@ public class CalendarController extends BasicController {
 		IController period = (IController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_PERIOD_CONTROLLER_NAME);
 		holiday.initializeModel();
 		period.initializeModel();
-		
-		
-		getYear();
-		
-		
 	}
 	
 	/*
@@ -229,8 +224,6 @@ public class CalendarController extends BasicController {
 		setWorkPlace(new WorkPlace());
 		workPlaces = null;
 		setContract(new Contract());
-		
-		
 	}
 
 	public void onInitialize(ActionEvent event){

@@ -1,7 +1,7 @@
 package com.esferalia.aon.ui.calendar.print;
 
-import java.util.GregorianCalendar;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -10,20 +10,15 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-//import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.calendar.CalendarHoliday;
 import com.esferalia.aon.calendar.CalendarPeriod;
 import com.esferalia.aon.calendar.HolidayDetail;
-import com.esferalia.aon.calendar.dao.ICalendarAlias;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController;
@@ -34,7 +29,6 @@ public class CalendarFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarFactory.class.getName());
 	
 	private List<CalendarDay> dayList;
-//	private List<CalendarDay> periodDayList;
 	private List<CalPeriod> periodList;
 	private List<PrintableMonth> monthList;
 	
@@ -44,12 +38,6 @@ public class CalendarFactory {
 	public void setDayList(List<CalendarDay> dayList) {
 		this.dayList = dayList;
 	}
-//	public List<CalendarDay> getPeriodDayList() {
-//		return periodDayList;
-//	}
-//	public void setPeriodDayList(List<CalendarDay> periodDayList) {
-//		this.periodDayList = periodDayList;
-//	}
 	public List<CalPeriod> getPeriodList() {
 		return periodList;
 	}
@@ -119,7 +107,6 @@ public class CalendarFactory {
 		try {
 			List<ITransferObject> list = (List<ITransferObject>) FormUtil.getController("calendarPeriod").getModel().getWrappedData();
 			CalPeriod period;
-			CalendarDay day;
 			for(ITransferObject to: list){
 				CalendarPeriod p = (CalendarPeriod) to;
 				period = new CalPeriod();
@@ -131,7 +118,6 @@ public class CalendarFactory {
 				Calendar cal = new GregorianCalendar();
 				int d = p.getStartDay();
 				while(d <= p.getEndDay()){
-					day = new CalendarDay();
 					cal.set(controller.getYear(), p.getMonth().ordinal(), d);
 					asignPeriodDay(p, cal);
 					d++;
@@ -220,43 +206,15 @@ public class CalendarFactory {
 	}
 
 	private void asignPeriodDay(CalendarPeriod period, Calendar calendar) {
-		// TODO
-		
 		PrintableMonth month = getMonthList().get(calendar.get(java.util.Calendar.MONTH));
 		for(PrintableDay day: month.getDayList()){
 			if(day.getDayOfMonth()!=null){
 				if(day.getDayOfMonth().equals(calendar.get(java.util.Calendar.DAY_OF_MONTH))){
 					day.disableAllTypes();
 					addPeriodInfo(day, calendar, period);
-//					setDayType(day, d.getType());
-//					if(d.getHours()!=null){
-//						day.setHours(d.getHours());
-//					}
 				}
 			}
 		}
-		
-		
-//		java.util.Calendar cal;
-//		PrintableMonth month;
-//		for(CalendarDay d: list){
-//			if(d.getDate()!=null){
-//				cal = new GregorianCalendar();
-//				cal.setTime(d.getDate());
-//				month = getMonthList().get(cal.get(java.util.Calendar.MONTH));
-//				for(PrintableDay day: month.getDayList()){
-//					if(day.getDayOfMonth()!=null){
-//						if(day.getDayOfMonth().equals(cal.get(java.util.Calendar.DAY_OF_MONTH))){
-//							day.disableAllTypes();
-//							setDayType(day, d.getType());
-//							if(d.getHours()!=null){
-//								day.setHours(d.getHours());
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
 	}
 	
 	private void buildMonthList() {
@@ -301,8 +259,6 @@ public class CalendarFactory {
 	}
 	
 	private void addPeriodInfo(PrintableDay day, Calendar cal, CalendarPeriod period){
-		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean("calendar");
-		com.esferalia.aon.calendar.Calendar c = controller.getTo();
 		if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY){
 			day.setHours(period.getMondayHours());
 			setDayType(day,period.getMonday());
@@ -326,19 +282,7 @@ public class CalendarFactory {
 			setDayType(day,period.getSunday());
 		}
 	}
-//	private void setPeriodDayType(CalendarDay day, DayType type) {
-//		if(type==DayType.NOT_WORKING_DAY){
-//			day.setNotWorkingDay(true);
-//		} else if(type==DayType.HOLIDAY){
-//			day.setHoliday(true);
-//		} else if(type==DayType.VACATION){
-//			day.setVacation(true);
-//		} else if(type==DayType.CONTINUOUS_TIME){
-//			day.setContinuousTime(true);
-//		} else if(type==DayType.OTHER){
-//			day.setOther(true);
-//		}
-//	}
+
 	private void addCalendarInfo(PrintableDay day, Calendar cal){
 		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean("calendar");
 		com.esferalia.aon.calendar.Calendar c = controller.getTo();
