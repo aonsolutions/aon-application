@@ -45,6 +45,10 @@
 						<f:setPropertyActionListener target="#{calendar.sourceId}"
 							value="#{enterpriseTree.contract.id}" />
 						<aon:actionListener method="#{calendar.onInitialize}" />
+						<f:setPropertyActionListener
+							target="#{calendar.backAction}" value="contract_formTree" />						
+						<f:setPropertyActionListener
+							target="#{calendar.backActionListener}" value="calendar.onBack" />												
 					</aon:commandButton>		
 					<aon:spin id="enterpriseSpin" controller="#{salary}" />
 				</ui:define>				

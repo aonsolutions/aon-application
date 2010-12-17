@@ -24,6 +24,10 @@
 						<f:setPropertyActionListener target="#{calendar.sourceId}"
 							value="#{enterpriseTree.workPlace.id}" />
 						<aon:actionListener method="#{calendar.onInitialize}" />
+						<f:setPropertyActionListener
+							target="#{calendar.backAction}" value="enterpriseWorkplace_formTree" />						
+						<f:setPropertyActionListener
+							target="#{calendar.backActionListener}" value="calendar.onBack" />												
 					</aon:commandButton>	
 				</ui:define>				
 			</ui:decorate>		
