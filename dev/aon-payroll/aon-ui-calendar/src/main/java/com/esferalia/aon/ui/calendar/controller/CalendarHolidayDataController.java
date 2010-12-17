@@ -52,9 +52,6 @@ public class CalendarHolidayDataController {
 		CalendarController controller = (CalendarController) FormUtil.getController(ICalendarConstants.CALENDAR_CONTROLLER_NAME);
 		Calendar calendar = (Calendar) controller.getTo();
 		Holiday holiday = calendar.getHoliday();
-//		if(holiday==null || holiday.getId()==null){
-//			return null;
-//		}
 		java.util.Calendar startCal = new GregorianCalendar();
 		java.util.Calendar endCal = new GregorianCalendar();
 		startCal.set(controller.getYear(), java.util.Calendar.JANUARY, 1);
@@ -87,9 +84,6 @@ public class CalendarHolidayDataController {
 		}
 		
 	}
-	
-	
-	
 	
 	
 	/*

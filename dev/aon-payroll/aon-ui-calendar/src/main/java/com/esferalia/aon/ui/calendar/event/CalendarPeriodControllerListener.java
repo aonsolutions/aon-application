@@ -19,7 +19,7 @@ public class CalendarPeriodControllerListener extends ControllerAdapter {
 			calendar.setThursday(DayType.WORKING_DAY);
 			calendar.setFriday(DayType.WORKING_DAY);
 			calendar.setSaturday(DayType.NOT_WORKING_DAY);
-			calendar.setSunday(DayType.HOLIDAY);
+			calendar.setSunday(DayType.NOT_WORKING_DAY);
 			calendar.setMondayHours(8);
 			calendar.setTuesdayHours(8);
 			calendar.setWednesdayHours(8);
@@ -27,12 +27,6 @@ public class CalendarPeriodControllerListener extends ControllerAdapter {
 			calendar.setFridayHours(8);
 			calendar.setSaturdayHours(0);
 			calendar.setSundayHours(0);
-	}
-	
-	@Override
-	public void afterModelInitialized(ControllerEvent event)
-			throws ControllerListenerException {
-		
 	}
 	
 	@Override
@@ -58,7 +52,5 @@ public class CalendarPeriodControllerListener extends ControllerAdapter {
 			controller.setYear(year);
 		}
 	}
-
-
 
 }
