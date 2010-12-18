@@ -28,6 +28,27 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* FBATCH LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>fbatchList</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.FBatchListController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.FinanceBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fbatchList</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FinanceBatch_issueDate desc,FinanceBatch_id</value>
+		</managed-property>				
+	</managed-bean>
+	
 	<!-- ************* FBATCH ***************** -->
 	<managed-bean>
 		<managed-bean-name>fbatch</managed-bean-name>

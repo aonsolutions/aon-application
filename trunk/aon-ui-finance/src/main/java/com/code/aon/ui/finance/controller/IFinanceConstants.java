@@ -26,6 +26,8 @@ public interface IFinanceConstants {
 
 	String FINANCE_TRACKING_CONTROLLER_NAME = "financeTracking";
 
+	String FINANCE_BATCH_LIST_CONTROLLER_NAME = "fbatchList";
+
 	String FINANCE_BATCH_CONTROLLER_NAME = "fbatch";
 
 	String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";

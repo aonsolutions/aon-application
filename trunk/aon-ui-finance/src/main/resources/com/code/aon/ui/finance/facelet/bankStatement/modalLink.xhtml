@@ -51,8 +51,8 @@
 
 								<aon:div id="statementLinkCheckDiv" styleClass="aon-scroll-area">
 									<aon:panelTabSet id="statementLinkTabSet" selectedTab="#{bankStatement.bankStatementLinkManager.selectedTab}">
-										<aon:panelTab id="statementLinkTab" label="#{financeBundle.finance_checked_finances}"
-											rendered="#{bankStatementLink.model.rowCount > 0}">
+										<aon:panelTab id="statementLinkTab" rendered="#{bankStatementLink.model.rowCount > 0}"
+											label="#{(bankStatement.bankStatementLinkManager.batchSource) ? (financeBundle.finance_checked_fbatches) : (financeBundle.finance_checked_finances)}">
 											<aon:div styleClass="aon-toolbar">
 												<aon:commandButton title="#{bundle.aon_check_all}"
 													styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -133,7 +133,8 @@
 											</aon:div>
 										</aon:panelTab>
 
-										<aon:panelTab id="financeLinkTab" label="#{financeBundle.finance_unchecked_finances}">
+										<aon:panelTab id="financeLinkTab" rendered="#{!bankStatement.bankStatementLinkManager.batchSource}"
+											label="#{financeBundle.finance_unchecked_finances}">
 											<aon:div styleClass="aon-toolbar">
 												<aon:commandButton title="#{bundle.aon_check_all}"
 													styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -260,7 +261,7 @@
 															<f:facet name="header">
 																<aon:outputText value="&#160;" />
 															</f:facet>
-															<aon:selectBooleanCheckbox id="FinanceCheck"
+															<aon:selectBooleanCheckbox id="FinanceTrackingCheck"
 																value="#{financeTrackingList.rowChecked}"
 																valueChangeListener="#{financeTrackingList.rowSelected}"
 																ajaxSingle="true" />	
@@ -316,65 +317,77 @@
 											</aon:div>
 										</aon:panelTab>
 
-<!-- 
-										<aon:panelTab id="fBatchLinkTab" label="#{financeBundle.finance_batches}"
-											rendered="#{bankStatement.bankStatementLinkManager.fbatchSource}">
-											<aon:dataTable id="fBatchData" value="#{bankStatement.bankStatementLinkManager.fbatchModel}"
-												var="to" rows="10" rendered="#{bankStatement.bankStatementLinkManager.fbatchModel.rowCount > 0}"
-												columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, 
-													aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-													aon-editDataTable-numberColumn">
+										<aon:panelTab id="fbatchLinkTab" rendered="#{bankStatement.bankStatementLinkManager.batchSource}"
+											label="#{financeBundle.finance_unchecked_fbatches}">
+											<aon:div styleClass="aon-toolbar" rendered="#{fbatchList.model.rowCount > 0}">
+												<aon:commandButton title="#{financeBundle.finance_check_selected}"
+													styleClass="aon-finding-toolbar-item aon-icon-newFolder"
+													value="#{financeBundle.finance_check_selected}"
+													actionListener="#{bankStatement.bankStatementLinkManager.onAddLinks}" 
+													reRender="statementLinkCheckDiv"
+													onclick="Richfaces.showModalPanel('waitProccess')" 
+										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+											</aon:div>
+											<aon:div id="fbatchListDiv">
+												<aon:dataTable id="fBatchData" value="#{fbatchList.model}"
+													var="to" rows="10" rendered="#{fbatchList.model.rowCount > 0}"
+													columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, 
+														aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+														aon-editDataTable-numberColumn">
 
-												<aon:column>
-													<f:facet name="header">
-														<aon:outputText value="&#160;" />
-													</f:facet>
-													<aon:selectBooleanCheckbox id="FBatchCheck"
-														value="#{bankStatement.bankStatementLinkManager.fbatchRowChecked}"
-														valueChangeListener="#{bankStatement.bankStatementLinkManager.fbatchRowSelected}"
-														ajaxSingle="true" />	
-		 										</aon:column>
+													<aon:column>
+														<f:facet name="header">
+															<aon:outputText value="&#160;" />
+														</f:facet>
+														<aon:selectBooleanCheckbox id="FinanceBatchCheck"
+															value="#{fbatchList.rowChecked}"
+															valueChangeListener="#{fbatchList.uniqueRowSelected}"
+															ajaxSingle="true" />	
+			 										</aon:column>
+			
+													<aon:column alias="FinanceBatch.issueDate">
+														<f:facet name="header">
+															<aon:outputText value="#{bundle.aon_date}" />
+														</f:facet>
+														<aon:outputText value="#{to.issueDate}">
+															<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+																timeZone="#{timeZoneController.timeZoneId}" />
+														</aon:outputText>
+													</aon:column>
 
-												<aon:column>
-													<f:facet name="header">
-														<aon:outputText value="#{bundle.aon_date}" />
-													</f:facet>
-													<aon:outputText value="#{to.issueDate}">
-														<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-															timeZone="#{timeZoneController.timeZoneId}" />
-													</aon:outputText>
-												</aon:column>
+													<aon:column alias="FinanceBatch.id">
+														<f:facet name="header">
+															<aon:outputText value="#{bundle.aon_id}" />
+														</f:facet>
+														<aon:outputText value="#{to.id}" />
+													</aon:column>
 
-												<aon:column>
-													<f:facet name="header">
-														<aon:outputText value="#{bundle.aon_id}" />
-													</f:facet>
-													<aon:outputText value="#{to.id}" />
-												</aon:column>
+													<aon:column alias="FinanceBatch.description">
+														<f:facet name="header">
+															<aon:outputText	value="#{bundle.aon_description}" />
+														</f:facet>
+														<aon:outputText value="#{to.description}">
+															<aon:abbreviateConverter maxWidth="50" />
+														</aon:outputText>
+														<rich:toolTip rendered="#{fbatchList.descriptionLength > 50}">
+															<aon:outputText value="#{to.description}" />
+														</rich:toolTip>
+													</aon:column>
 
-												<aon:column>
-													<f:facet name="header">
-														<aon:outputText	value="#{bundle.aon_description}" />
-													</f:facet>
-													<aon:outputText value="#{to.description}">
-														<aon:abbreviateConverter maxWidth="50" />
-													</aon:outputText>
-												</aon:column>
+													<aon:column>
+														<f:facet name="header">
+															<aon:outputText value="#{bundle.aon_amount}" />
+														</f:facet>
+														<aon:outputText value="#{to.financeBatchTotalAmount}">
+															<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+														</aon:outputText>
+													</aon:column>
 
-												<aon:column>
-													<f:facet name="header">
-														<aon:outputText value="#{bundle.aon_amount}" />
-													</f:facet>
-													<aon:outputText value="#{to.financeBatchTotalAmount}">
-														<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-													</aon:outputText>
-												</aon:column>
-
-											</aon:dataTable>
+												</aon:dataTable>
 					
-											<aon:dataScroller2 for="fBatchData" showNote="false" />
+												<aon:dataScroller2 for="fBatchData" showNote="true" />
+											</aon:div>
 										</aon:panelTab>
- -->
  									</aon:panelTabSet>
 								</aon:div>
 							</aon:div>
