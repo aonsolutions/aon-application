@@ -13,6 +13,7 @@ import com.code.aon.finance.BankConcept;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.BankStatementLink;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
@@ -106,24 +107,33 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	}
 
 	public void onAddLinks(ActionEvent event) throws ManagerBeanException {
-		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
-		for (Finance finance : financeList.getCheckedFinances()) {
-			addLink(getCurrentStatement(), finance);
-		}
-		if (financeList.getCheckedFinances().size() > 0) {
-			financeList.clearCheckedFinances();
-			financeList.onSearch(null);
-			checkBankStatement(getCurrentStatement());
-		}
+		if (!isBatchSource()) {
+			FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+			for (Finance finance : financeList.getCheckedFinances()) {
+				addLink(getCurrentStatement(), finance);
+			}
+			if (financeList.getCheckedFinances().size() > 0) {
+				financeList.onSearch(null);
+				checkBankStatement(getCurrentStatement());
+			}
 
-		FinanceTrackingListController trackingList = (FinanceTrackingListController)FormUtil.getController(FINANCE_TRACKING_LIST_CONTROLLER_NAME);
-		for (FinanceTracking tracking : trackingList.getCheckedTrackings()) {
-			addLink(getCurrentStatement(), tracking);
-		}
-		if (trackingList.getCheckedTrackings().size() > 0) {
-			trackingList.clearCheckedTrackings();
-			trackingList.onSearch(null);
-			checkBankStatement(getCurrentStatement());
+			FinanceTrackingListController trackingList = (FinanceTrackingListController)FormUtil.getController(FINANCE_TRACKING_LIST_CONTROLLER_NAME);
+			for (FinanceTracking tracking : trackingList.getCheckedTrackings()) {
+				addLink(getCurrentStatement(), tracking);
+			}
+			if (trackingList.getCheckedTrackings().size() > 0) {
+				trackingList.onSearch(null);
+				checkBankStatement(getCurrentStatement());
+			}
+		} else {
+			FBatchListController batchList = (FBatchListController)FormUtil.getController(FINANCE_BATCH_LIST_CONTROLLER_NAME);
+			for (FinanceBatch batch : batchList.getCheckedBatches()) {
+				addLink(getCurrentStatement(), batch);
+			}
+			if (batchList.getCheckedBatches().size() > 0) {
+				batchList.onSearch(null);
+				checkBankStatement(getCurrentStatement());
+			}
 		}
 
 		BankStatementLinkController statementLinkList = (BankStatementLinkController)FormUtil.getController(BANK_STATEMENT_LINK_CONTROLLER_NAME);
@@ -181,6 +191,22 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		trackingBean.update(tracking);
 	}
 
+	private void addLink(BankStatement statement, FinanceBatch batch) throws ManagerBeanException {
+		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
+		BankStatementLink statementLink = new BankStatementLink();
+		statementLink.setBankStatement(statement);
+		statementLink.setSource(StatementLinkSource.FINANCE_BATCH);
+		statementLink.setSourceId(batch.getId());
+		statementLink.setSourceDate(batch.getIssueDate());
+		statementLink.setAmount(batch.getFinanceBatchTotalAmount());
+		statementLink.setStatus((statement.getCommonConcept() != StatementConcept.RETURNED) ? StatementLinkStatus.PAID : StatementLinkStatus.RETURNED);
+		statementLink = (BankStatementLink)statementLinkBean.insert(statementLink);
+
+		IManagerBean batchBean = BeanManager.getManagerBean(FinanceBatch.class);
+		batch.setBankStatementLink(statementLink);
+		batchBean.update(batch);
+	}
+
 	public void addLink(BankStatement statement, BankConcept concept) throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		BankStatementLink statementLink = new BankStatementLink();
@@ -229,7 +255,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		if (statementLink.getSource() == StatementLinkSource.FINANCE_TRACKING) {
 			removeLink(statementLink, (FinanceTracking)statementLink.getSourceTo());
 		} else if (statementLink.getSource() == StatementLinkSource.FINANCE_BATCH) {
-			
+			removeLink(statementLink, (FinanceBatch)statementLink.getSourceTo());
 		}
 
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
@@ -262,6 +288,12 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			}
 			financeBean.update(tracking.getFinance());
 		}
+	}
+
+	private void removeLink(BankStatementLink statementLink, FinanceBatch batch) throws ManagerBeanException {
+		IManagerBean batchBean = BeanManager.getManagerBean(FinanceBatch.class);
+		batch.setBankStatementLink(null);
+		batchBean.update(batch);
 	}
 
 	public void checkBankStatement(BankStatement statement) throws ManagerBeanException {
