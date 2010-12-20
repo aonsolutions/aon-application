@@ -17,6 +17,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,7 +177,9 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public Double getSalary() {
 		if(isAgreementSalary()){
 			salary = NumberUtils.toDouble(getPayment().getExpression());
-		} 
+		} else if(salary==null){
+			salary = 0.0;
+		}
 		return salary;
 	}
 
@@ -704,20 +707,17 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	
 	private void acceptContractData(){
 		getContractData().setContract(getContract());
+		getContractData().setCode(getCode());
 		getContractData().setStartDate(getContract().getStartDate());
 		getContractData().setEndDate(getContract().getEndDate());
 		getContractData().setConditions("");
 		getContractData().setDescription("");
-		
-//		ContractData data = new ContractData();
-//		data.setCode(getCode());
-//		data.setConditions("");
-//		data.setContract(getContract());
-//		data.setDescription("");
-//		data.setStartDate(getContract().getStartDate());
-//		data.setEndDate(getContract().getEndDate());
-//		data.setQuoteGroup(getQuoteGroup());
-//		data.setCategory(getCategory().getDescription());
+		if(getQuoteGroup()!=null){
+			getContractData().setQuoteGroup(getQuoteGroup());
+		}
+		if(getCategory()!=null && StringUtils.isEmpty(getCategory().getDescription())){
+			getContractData().setCategory(getCategory().getDescription());
+		}
 		try {
 			setContractData((ContractData) BeanManager.getManagerBean(ContractData.class).insertOrUpdate(getContractData()));
 		} catch (ManagerBeanException e) {
@@ -726,19 +726,17 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	}
 	
 	private void acceptContractPayment(){
-		if(!isAgreementSalary()){
-			ContractPayment payment = new ContractPayment();
-			payment.setContract(getContract());
-			payment.setType(PaymentType.BASE_SALARY);
-			payment.setDescription("");
-			payment.setStartDate(getContract().getStartDate());
-			payment.setEndDate(null);
-			payment.setExpression(Double.toString(CommonUtil.round(getSalary())));
-			try {
-				BeanManager.getManagerBean(ContractPayment.class).insert(payment);
-			} catch (ManagerBeanException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
+		ContractPayment payment = new ContractPayment();
+		payment.setContract(getContract());
+		payment.setType(PaymentType.BASE_SALARY);
+		payment.setDescription("");
+		payment.setStartDate(getContract().getStartDate());
+		payment.setEndDate(null);
+		payment.setExpression(Double.toString(CommonUtil.round(getSalary())));
+		try {
+			BeanManager.getManagerBean(ContractPayment.class).insert(payment);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	

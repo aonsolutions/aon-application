@@ -56,9 +56,11 @@
 						<aon:commandButton id="enterprise_search"
 							action="#"
 							rendered="#{contractGenerationWizard.enterpriseListEnabled}"
-							actionListener="#{contractGenerationWizard.onResetEnterpriseSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
-							value="#{bundle.aon_search}" />
+							value="#{bundle.aon_search}" >
+							<aon:actionListener method="#{contractGenerationWizard.onResetEnterpriseSearch}" />
+							<aon:actionListener method="#{enterprise.onEditSearch}" />
+						</aon:commandButton>
 						<aon:commandButton id="enterprisePopupButton"
 							reRender="showNewEnterpriseWindow"
 							rendered="#{contractGenerationWizard.currentStep==0 and (!contractGenerationWizard.enterpriseListEnabled)}"
@@ -71,9 +73,11 @@
 						<aon:commandButton id="person_search"
 							action="#"
 							rendered="#{contractGenerationWizard.personListEnabled}"
-							actionListener="#{contractGenerationWizard.onResetPersonSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
-							value="#{bundle.aon_search}" />
+							value="#{bundle.aon_search}" >
+							<aon:actionListener method="#{contractGenerationWizard.onResetPersonSearch}" />
+							<aon:actionListener method="#{person.onEditSearch}" />
+						</aon:commandButton>
 						<aon:commandButton id="personPopupButton"
 							reRender="showNewPersonWindow"
 							rendered="#{(contractGenerationWizard.currentStep==1) and (!contractGenerationWizard.personListEnabled)}"
