@@ -30,7 +30,7 @@
 		<employee:salary 
 			showEnterpriseColumn="true" 
 			showPersonColumn="true"
-			showIssueDateColumn="false"
+			showIssueDateColumn="true"
 		/>		
 		<employee:salaryDraft
 			showEnterpriseInSearch="true" 
