@@ -709,7 +709,6 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onCheckLinks(ActionEvent event) throws ManagerBeanException {
-		//resetErrors();
 		try {
 			List<ITransferObject> bankStatementList = getManagerBean().getList(getCriteria());
 			for (ITransferObject ito : bankStatementList) {
@@ -723,6 +722,7 @@ public class BankStatementController extends BasicController implements IFinance
 						findFinanceBatch(to);
 					}
 				}
+				//resetErrors();
 			}
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
@@ -1096,8 +1096,12 @@ public class BankStatementController extends BasicController implements IFinance
 							recordingTo.setFinanceTrackingList(financeTrackingList);
 							entry = getWriter().recordFinanceTrackings(recordingTo, entry);
 						} else if (financeBatchMode) {
-							// SI + de 1 remesa --> Eror
-							//getWriter().recordFBatch( );
+							if (financeBatchList.size() > 1) {
+								getErrors().put(statement.getId(), "No puede haber más de una Remesa en la misma línea del Extracto.");
+							} else {
+								FinanceBatch fBatch = financeBatchList.get(0);
+								getWriter().recordFBatch(fBatch, statement.getOperationDate());
+							}
 						} else {
 							recordingTo.setType(AccountEntryType.MANUAL);
 							entry = getWriter().recordBankStatementLinks(recordingTo, statement.isPayment(), statement.getAmount());

@@ -12,7 +12,7 @@ import com.code.aon.ui.form.BasicController;
 
 public class FBatchListController extends BasicController {
 
-	private ArrayList<FinanceBatch> checks= new ArrayList<FinanceBatch>();
+	private ArrayList<FinanceBatch> checks = new ArrayList<FinanceBatch>();
 
 	public void onSearch(ActionEvent event) {
 		clearCheckedBatches();
