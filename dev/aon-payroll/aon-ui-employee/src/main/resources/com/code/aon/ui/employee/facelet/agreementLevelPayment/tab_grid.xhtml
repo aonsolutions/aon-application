@@ -29,34 +29,33 @@
 		
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="AgreementLevelPayment_function" value="#{employeeBundle.employee_agreementLevel_function}" />
-				</f:facet>
-				<aon:outputText value="#{to.function}" rendered="#{formList}" />
-				<aon:inputText id="AgreementLevelPayment_function"
-					value="#{controller.to.function}"
-					rendered="#{formEdit}" required="true" maxlength="128" size="50" />
-				<f:facet name="footer">
-					<aon:inputText id="AgreementLevelPayment_function-New"
-						value="#{controller.to.function}"
-						rendered="#{formNew}" required="true" maxlength="128" size="50" />
-				</f:facet>
-			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
 					<aon:outputLabel for="AgreementLevelPayment_description" value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" rendered="#{formList}" />
 				<aon:inputText id="AgreementLevelPayment_description"
 					value="#{controller.to.description}"
-					rendered="#{formEdit}" required="true" maxlength="64" size="64" />
+					rendered="#{formEdit}" required="true" maxlength="64" size="40" />
 				<f:facet name="footer">
 					<aon:inputText id="AgreementLevelPayment_description-New"
 						value="#{controller.to.description}"
-						rendered="#{formNew}" required="true" maxlength="64" size="64" />
+						rendered="#{formNew}" required="true" maxlength="64" size="40" />
 				</f:facet>
 			</aon:column>
 
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="AgreementLevelPayment_expression" value="#{employeeBundle.employee_salary_expression}" />
+				</f:facet>
+				<aon:outputText value="#{to.expression}" rendered="#{formList}" />
+				<aon:inputText id="AgreementLevelPayment_expression"
+					value="#{controller.to.expression}"
+					rendered="#{formEdit}" required="true" maxlength="128" size="40" />
+				<f:facet name="footer">
+					<aon:inputText id="AgreementLevelPayment_expression-New"
+						value="#{controller.to.expression}"
+						rendered="#{formNew}" required="true" maxlength="128" size="40" />
+				</f:facet>
+			</aon:column>
 		
 		</ui:define>
 		

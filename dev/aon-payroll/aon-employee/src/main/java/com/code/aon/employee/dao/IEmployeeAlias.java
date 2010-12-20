@@ -116,10 +116,10 @@ public interface IEmployeeAlias {
 	String  AGREEMENT_LEVEL_PAYMENT_DESCRIPTION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: AgreementLevelPayment_function
-	* Hibernate value: AgreementLevelPayment.function
+	* Alias value: AgreementLevelPayment_expression
+	* Hibernate value: AgreementLevelPayment.expression
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_FUNCTION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[1];
+	String  AGREEMENT_LEVEL_PAYMENT_EXPRESSION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: AgreementLevelPayment_id

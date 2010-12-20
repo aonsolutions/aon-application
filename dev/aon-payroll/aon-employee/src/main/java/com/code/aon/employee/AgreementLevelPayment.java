@@ -28,7 +28,7 @@ public class AgreementLevelPayment implements ITransferObject {
 	private Integer id;
 	private AgreementLevel level;
 	private PaymentType type;
-	private String function;
+	private String expression;
 	private String description;
 
 	@Id
@@ -59,11 +59,11 @@ public class AgreementLevelPayment implements ITransferObject {
 		this.type = type;
 	}
 	@Column(length = 128)
-	public String getFunction() {
-		return function;
+	public String getExpression() {
+		return expression;
 	}
-	public void setFunction(String function) {
-		this.function = function;
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 	
 	@Column(length = 64)
@@ -85,7 +85,7 @@ public class AgreementLevelPayment implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.level, o.level)			
 				.append(this.type, o.type)			
-				.append(this.function, o.function)			
+				.append(this.expression, o.expression)			
 				.append(this.description, o.description)			
 				.isEquals();
 		}
@@ -98,7 +98,7 @@ public class AgreementLevelPayment implements ITransferObject {
 			.append(id)
 			.append(level)
 			.append(type)
-			.append(function)
+			.append(expression)
 			.append(description)
 			.toHashCode();
 	}

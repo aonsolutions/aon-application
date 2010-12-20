@@ -17,6 +17,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,7 +175,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 
 	public Double getSalary() {
 		if(isAgreementSalary()){
-			salary = Double.valueOf(getPayment().getFunction());
+			salary = NumberUtils.toDouble(getPayment().getExpression());
 		} 
 		return salary;
 	}
