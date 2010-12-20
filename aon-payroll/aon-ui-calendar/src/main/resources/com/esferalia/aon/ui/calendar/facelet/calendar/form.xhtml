@@ -18,14 +18,6 @@
 				<ui:define name="beforeSpinToolbarContent">
 <!--  
 				<ui:param name="skipSpin" value="#{calendar.sourceId!=null}" />
-					<aon:htmlCommandLink id="export2pdf" value="#{calendarBundle.aon_calendar_calendar}"
-						rendered="#{!calendar.new}"
-						title="Listado Pdf" actionListener="#{calendar.onInitCalendar}"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						action="calendar_calendar" target="_blank">
-						<f:param name="reportKey" value="yearStatsList" />
-						<f:param name="outputFormat" value="PDF" />
-					</aon:htmlCommandLink>
 -->				
 
 					<aon:htmlCommandLink id="calendarReport_list"
@@ -60,7 +52,7 @@
 							
 						<aon:outputLabel value="#{bundle.aon_year}" />
 						<rich:inputNumberSpinner value="#{calendar.year}" 
-							inputSize="4" minValue="2010" maxValue="2100"
+							inputSize="4" minValue="2000" maxValue="2100"
 							enableManualInput="true" step="1"
 							ignoreDupResponses="true"
 							cycled="false"  style="width:5px;height:5px;" >

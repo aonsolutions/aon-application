@@ -12,26 +12,26 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.calendar.dao.ICalendarAlias;
-import com.esferalia.aon.ui.calendar.controller.CalendarController;
+import com.esferalia.aon.ui.calendar.controller.HolidayController;
 
-public class CalendarHolidayControllerListener extends ControllerAdapter {
+public class HolidayDetailControllerListener extends ControllerAdapter {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarHolidayControllerListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(HolidayDetailControllerListener.class.getName());
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
 		LinesController controller = (LinesController) getController();
-		Integer year = ((CalendarController)controller.getMasterController()).getYear();
+		Integer year = ((HolidayController)controller.getMasterController()).getYear();
 		Calendar startCal = new GregorianCalendar();
 		Calendar endCal = new GregorianCalendar();
 		startCal.set(year, Calendar.JANUARY, 1);
 		endCal.set(year, Calendar.DECEMBER, 31);
 		try {
 			controller.clearCriteria();
-			controller.getCriteria().addBetweenExpression(this.getController().getFieldName(ICalendarAlias.CALENDAR_HOLIDAY_DATE), startCal.getTime(), endCal.getTime());
+			controller.getCriteria().addBetweenExpression(this.getController().getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
 		} catch (ManagerBeanException e) {
-			LOGGER.error("error on CalendarHolidayControllerListener");
+			LOGGER.error("error on HolidayDetailControllerListener");
 		}
 	}
 	
