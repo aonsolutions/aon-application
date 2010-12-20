@@ -3,6 +3,7 @@ package com.esferalia.aon.salary;
 import java.util.Date;
 
 import com.esferalia.aon.salary.deduction.Deductions;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.payment.Payments;
 
 public interface ISalary {
@@ -23,6 +24,7 @@ public interface ISalary {
 	Date getSeniorityDate();
 	
 	// DATOS DE LA NOMINA
+	SalaryType getType();
 	Date getIssueDate();
 	Date getStartDate();
 	Date getEndDate();
