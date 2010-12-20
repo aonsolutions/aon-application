@@ -199,11 +199,12 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		statementLink.setSourceId(batch.getId());
 		statementLink.setSourceDate(batch.getIssueDate());
 		statementLink.setAmount(batch.getFinanceBatchTotalAmount());
-		statementLink.setStatus((statement.getCommonConcept() != StatementConcept.RETURNED) ? StatementLinkStatus.PAID : StatementLinkStatus.RETURNED);
+		statementLink.setStatus(StatementLinkStatus.PAID);
 		statementLink = (BankStatementLink)statementLinkBean.insert(statementLink);
 
 		IManagerBean batchBean = BeanManager.getManagerBean(FinanceBatch.class);
 		batch.setBankStatementLink(statementLink);
+		batch.setLines(null);
 		batchBean.update(batch);
 	}
 
@@ -244,11 +245,15 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			}
 		}
 
-		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
-		financeList.onSearch(null);
-
-		FinanceTrackingListController trackingList = (FinanceTrackingListController)FormUtil.getController(FINANCE_TRACKING_LIST_CONTROLLER_NAME);
-		trackingList.onSearch(null);
+		if (!isBatchSource()) {
+			FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+			financeList.onSearch(null);
+			FinanceTrackingListController trackingList = (FinanceTrackingListController)FormUtil.getController(FINANCE_TRACKING_LIST_CONTROLLER_NAME);
+			trackingList.onSearch(null);
+		} else {
+			FBatchListController batchList = (FBatchListController)FormUtil.getController(FINANCE_BATCH_LIST_CONTROLLER_NAME);
+			batchList.onSearch(null);
+		}
 	}
 
 	public void removeLink(BankStatementLink statementLink) throws ManagerBeanException {
@@ -293,6 +298,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	private void removeLink(BankStatementLink statementLink, FinanceBatch batch) throws ManagerBeanException {
 		IManagerBean batchBean = BeanManager.getManagerBean(FinanceBatch.class);
 		batch.setBankStatementLink(null);
+		batch.setLines(null);
 		batchBean.update(batch);
 	}
 

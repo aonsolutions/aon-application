@@ -149,7 +149,7 @@ public class BankStatementLink implements ITransferObject {
 	@Transient
 	public Date getDate() throws ManagerBeanException {
 		if (isFinanceTracking()) {
-			return ((FinanceTracking)getSourceTo()).getTrackingDate();
+			return ((FinanceTracking)getSourceTo()).getFinance().getDueDate();
 		} else if (isFinanceBatch()) {
 			return ((FinanceBatch)getSourceTo()).getIssueDate();
 		}
@@ -201,9 +201,10 @@ public class BankStatementLink implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.amount,o.amount)
 				.append(this.bankStatement,o.bankStatement)
-				.append(this.source,o.source)		
-				.append(this.sourceId,o.sourceId)		
-				.append(this.status,o.status)		
+				.append(this.source,o.source)
+				.append(this.sourceDate,o.sourceDate)
+				.append(this.sourceId,o.sourceId)
+				.append(this.status,o.status)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -216,6 +217,7 @@ public class BankStatementLink implements ITransferObject {
 			.append(this.amount)
 			.append(this.bankStatement)
 			.append(this.source)		
+			.append(this.sourceDate)		
 			.append(this.sourceId)		
 			.append(this.status)		
 			.toHashCode();

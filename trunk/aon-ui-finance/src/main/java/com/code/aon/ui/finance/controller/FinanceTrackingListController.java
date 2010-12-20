@@ -14,7 +14,7 @@ import com.code.aon.ui.form.BasicController;
 
 public class FinanceTrackingListController extends BasicController {
 
-	private ArrayList<FinanceTracking> checks= new ArrayList<FinanceTracking>();
+	private ArrayList<FinanceTracking> checks = new ArrayList<FinanceTracking>();
 
 	public void setExpression(ValueChangeEvent event) throws AbortProcessingException {
 		try {

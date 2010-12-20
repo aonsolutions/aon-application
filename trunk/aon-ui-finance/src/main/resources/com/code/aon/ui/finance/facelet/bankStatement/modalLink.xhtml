@@ -88,8 +88,7 @@
 														</f:facet>
 														<aon:selectBooleanCheckbox id="StatementLinkCheck"
 															value="#{bankStatementLink.rowChecked}"
-															valueChangeListener="#{bankStatementLink.rowSelected}"
-															ajaxSingle="true" />	
+															valueChangeListener="#{bankStatementLink.rowSelected}" />	
 			 										</aon:column>
 			
 													<aon:column>
@@ -190,8 +189,7 @@
 															</f:facet>
 															<aon:selectBooleanCheckbox id="FinanceCheck"
 																value="#{financeList.rowChecked}"
-																valueChangeListener="#{financeList.rowSelected}"
-																ajaxSingle="true" />	
+																valueChangeListener="#{financeList.rowSelected}" />	
 				 										</aon:column>
 			
 														<aon:column alias="Finance.dueDate">
@@ -263,8 +261,7 @@
 															</f:facet>
 															<aon:selectBooleanCheckbox id="FinanceTrackingCheck"
 																value="#{financeTrackingList.rowChecked}"
-																valueChangeListener="#{financeTrackingList.rowSelected}"
-																ajaxSingle="true" />	
+																valueChangeListener="#{financeTrackingList.rowSelected}" />	
 				 										</aon:column>
 			
 														<aon:column alias="FinanceTracking.trackingDate">
@@ -342,7 +339,7 @@
 														<aon:selectBooleanCheckbox id="FinanceBatchCheck"
 															value="#{fbatchList.rowChecked}"
 															valueChangeListener="#{fbatchList.uniqueRowSelected}"
-															ajaxSingle="true" />	
+															ajaxSingle="true" reRender="fbatchListDiv" />	
 			 										</aon:column>
 			
 													<aon:column alias="FinanceBatch.issueDate">
