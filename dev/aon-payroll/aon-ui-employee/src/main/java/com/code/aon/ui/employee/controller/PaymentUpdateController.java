@@ -16,8 +16,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -154,6 +152,10 @@ public class PaymentUpdateController {
 					for (ContractEvent ce: pu.getMap().values()) {
 						if (ce.getExpression() != null && !"0".equals(ce.getExpression())) {
 							bean.insertOrUpdate(ce);	
+						} else {
+							if (ce.getId() != null) {
+								bean.remove(ce);	
+							}
 						}
 					}
 				}
@@ -197,14 +199,6 @@ public class PaymentUpdateController {
 						getColumns().add(exp.getName());
 					}
 					ContractEvent ce = getContractEvent(pu,exp,scc);
-					if (ce == null) {
-						ce = new ContractEvent();
-						ce.setContract(pu.getContract());
-						ce.setStartDate(startDate);
-						ce.setEndDate(endDate);
-						ce.setName(exp.getName());
-						ce.setExpression(StringUtils.isEmpty(exp.getExpression())?"0":exp.getExpression());
-					}
 					pu.getMap().put(exp.getName(),ce);
 				}
 			}
@@ -226,14 +220,15 @@ public class PaymentUpdateController {
 			List<ITransferObject> list = bean.getList(criteria);
 			ContractEvent ce = null;
 			if (list != null && list.size()>0) {
-				ce = (ContractEvent) list.get(0);
-			} else if (!exp.isReadOnly()) {
+				return (ContractEvent) list.get(0);
+			}
+			if (!exp.isReadOnly()) {
 				ce = new ContractEvent();
 				ce.setContract(pu.getContract());
 				ce.setName(exp.getName());
 				ce.setStartDate(scc.getStartDate());
 				ce.setEndDate(scc.getEndDate());
-				ce.setExpression(null);
+				ce.setExpression("0");
 			}
 			return ce;
 		} catch (ManagerBeanException ex) {
