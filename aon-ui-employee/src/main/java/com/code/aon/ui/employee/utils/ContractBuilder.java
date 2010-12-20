@@ -3,6 +3,7 @@ package com.code.aon.ui.employee.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,6 +12,8 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
@@ -195,11 +198,23 @@ public class ContractBuilder implements IEmployeeConstants {
 			AonUtil.addErrorMessage(msg);
 //			throw new AbortProcessingException(msg);
 		}
+		if(StringUtils.isEmpty(contract.getWorkPlace().getAddress().getZip())
+				|| contract.getWorkPlace().getAddress().getZip().length()!=5){
+			String msg = "El c.p. del centro de trabajo no esta definido";
+			AonUtil.addErrorMessage(msg);
+			contract.getWorkPlace().getAddress().setZip("00000");
+//			throw new AbortProcessingException(msg);
+		} 
 		if(contract.getPerson().getBirthDate()==null){
 			String msg = "La persona no tiene la fecha de nacimiento definida";
 			AonUtil.addErrorMessage(msg);
+			contract.getPerson().setBirthDate(new Date());
 //			throw new AbortProcessingException(msg);
-		}
+		} 
+		if(contract.getPerson().getRegistry().getDefaultAddress()==null){
+			String msg = "La persona no tiene ninguna direccion definida";
+			AonUtil.addErrorMessage(msg);
+		} 
 		for(ContractField field: getContractFields()){
 			try{
 			if(field.getLabel().equals("Texto1")){
@@ -362,6 +377,7 @@ public class ContractBuilder implements IEmployeeConstants {
 			// fecha nacimiento empleado
 			if(field.getLabel().equals("Texto15")){
 				field.setValue(contract.getPerson().getBirthDate().toString());
+				
 			}
 			//numero ss empleado
 			if(field.getLabel().equals("Texto16")){
@@ -392,7 +408,9 @@ public class ContractBuilder implements IEmployeeConstants {
 			}
 			//  municipio domicilio empleado
 			if(field.getLabel().equals("Texto19")){
-				field.setValue(contract.getPerson().getRegistry().getDefaultAddress().getCity());
+				if(contract.getPerson().getRegistry().getDefaultAddress()!=null){
+					field.setValue(contract.getPerson().getRegistry().getDefaultAddress().getCity());
+				}
 			}
 			if(field.getLabel().equals("Cifra37")){
 //				field.setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
@@ -424,6 +442,7 @@ public class ContractBuilder implements IEmployeeConstants {
 			}
 		} catch(NullPointerException e){
 //			AonUtil.addErrorMessage("Existen campos nulos");
+			// Solo se avisa de la existencia de campos nulos
 		}
 		}
 	}
