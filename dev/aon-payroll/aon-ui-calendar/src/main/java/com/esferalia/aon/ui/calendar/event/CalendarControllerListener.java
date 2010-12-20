@@ -16,11 +16,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class CalendarControllerListener extends ControllerAdapter {
-
-	@Override
-	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-	
-	}
 	
 	@Override
 	public void beforeBeanCreated(ControllerEvent event)
@@ -31,12 +26,6 @@ public class CalendarControllerListener extends ControllerAdapter {
 		c.setWorkPlaces(null);
 		c.setContract(new Contract());
 	}
-	
-	@Override
-	public void beforeModelInitialized(ControllerEvent event)
-			throws ControllerListenerException {
-		
-	}	
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
