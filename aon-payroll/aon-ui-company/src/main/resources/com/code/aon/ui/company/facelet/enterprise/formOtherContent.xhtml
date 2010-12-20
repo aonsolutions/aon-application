@@ -27,18 +27,7 @@
 				
 	<c:if test="#{enterprise.dirStaff != null}" >
 		<aon:outputText value="#{registryBundle.registry_dir_staff_representative_labor}" />
-		<aon:div>			
-			<aon:div>
-				<aon:outputText value="#{bundle.aon_company_document}" styleClass="aon-italic"/>
-				<aon:inputText styleClass="aon-inputText aon-margin-left" readonly="true"
-					value="#{enterprise.dirStaff.document}" />
-			</aon:div>
-			<aon:div styleClass="aon-margin-top">
-				<aon:outputText value="#{bundle.aon_name}" styleClass="aon-italic"/>
-				<aon:inputText styleClass="aon-inputText aon-margin-left" readonly="true"
-					value="#{enterprise.dirStaff.name}" />
-			</aon:div>
-		</aon:div>
+		<aon:outputText value="#{enterprise.dirStaff.name}, #{bundle.aon_company_document} #{enterprise.dirStaff.document}" />
 	</c:if>
 	
 </ui:composition>
