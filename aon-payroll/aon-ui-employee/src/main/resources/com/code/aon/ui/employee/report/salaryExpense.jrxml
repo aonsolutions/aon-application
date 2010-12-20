@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryExpense" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42" isFloatColumnFooter="true">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="472"/>
+	<property name="ireport.x" value="220"/>
 	<property name="ireport.y" value="0"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
@@ -174,7 +174,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalSS}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalSSEmployee}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" x="435" y="0" width="75" height="14"/>
@@ -214,7 +214,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalSSEnterprise}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalSS}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -598,7 +598,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalSS}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalSSEmployee}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" x="210" y="0" width="80" height="14"/>
@@ -653,7 +653,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalSSEnterprise}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalSS}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>
