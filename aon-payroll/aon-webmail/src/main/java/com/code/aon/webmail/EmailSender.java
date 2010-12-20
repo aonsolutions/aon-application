@@ -12,7 +12,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonServer;
-import com.code.aon.webmail.bean.IMimeType;
 
 public class EmailSender {
 	
@@ -61,7 +60,7 @@ public class EmailSender {
 		aonMessage.setRecipientsTo( to );
 		aonMessage.setSubject(subject);
 		if (! ArrayUtils.isEmpty(attachemnts) ) {
-	       	MimeMultipart multipart =new MimeMultipart(IMimeType.RELATED);
+	       	MimeMultipart multipart = new MimeMultipart();
 	       	MimeBodyPart mainPart = new MimeBodyPart();
 	       	String type = (mimeType != null) ? mimeType.getName() : MimeType.MIME_TXT.getName();
 	       	try {
