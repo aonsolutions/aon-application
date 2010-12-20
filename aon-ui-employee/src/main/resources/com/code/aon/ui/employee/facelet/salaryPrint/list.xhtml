@@ -107,7 +107,7 @@
 						<ui:param name="skipSelectButton" value="#{true}" />
 						<ui:define name="columns">
 
-							<aon:column styleClass="aon-editDataTable-textColumn">
+							<aon:column styleClass="aon-editDataTable-iconColumn">
 								<f:facet name="header">
 									<aon:outputText value="&#160;" />
 								</f:facet>
@@ -119,10 +119,7 @@
 								</a4j:region>
 							</aon:column>
 							
-							<ui:include src="/com/code/aon/ui/employee/facelet/salary/listContent.xhtml" >
-								<ui:param name="controller" value="#{salary}" />
-								<ui:param name="skipEnterpriseColumn" value="#{true}" />
-							</ui:include>
+							<ui:include src="/com/code/aon/ui/employee/facelet/salary/listContent.xhtml" />
 
 						</ui:define>
 					</ui:decorate>

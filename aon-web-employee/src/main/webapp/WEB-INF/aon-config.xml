@@ -32,7 +32,7 @@
 		/>
 		<employee:salary 
 			showEnterpriseColumn="false" 
-			showPersonColumn="false"
+			showPersonColumn="true"
 			showIssueDateColumn="true"
 		/>
 		<employee:salaryDraft
