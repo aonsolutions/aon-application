@@ -39,7 +39,7 @@ public class SalaryDraftDeductionController extends SalaryDraftLinesController {
 	
 	public void onDeductionConceptChange(ActionEvent event) {
 		ContractDeduction cp = (ContractDeduction) getTo();
-		if (cp.getType() != null && StringUtils.isEmpty(cp.getDescription())) {
+		if (cp.getType() != null) {
 			cp.setDescription( cp.getDeductionConcept().getDescription() );
 		}
 	}
