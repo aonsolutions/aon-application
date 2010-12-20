@@ -20,7 +20,7 @@
 				</aon:column>
 			</c:if>
 			
-			<c:if test="#{!skipEnterpriseColumn}">
+			<c:if test="#{aonConfiguration.bean.salary.showEnterpriseColumn and !skipEnterpriseColumn}">
 				<aon:column alias="Contract.workPlace.enterprise.registry.fullName" styleClass="aon-editDataTable-textColumn aon-nowrap">
 					<f:facet name="header">
 						<aon:outputText value="#{companyBundle.company_enterprise}" />

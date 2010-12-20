@@ -5,8 +5,8 @@
 		<hibernate names="ccc.id,contractType.id,endDate,id,person.id,person.registry.document,person.registry.name,person.firstSurname,person.secondSurname,startDate,status,workPlace.id,workPlace.enterprise.id,workPlace.enterprise.registry.name"/>
 	</bean>
 	<bean class="com.code.aon.employee.Salary">
-		<alias     names="id,address,broadcastDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,employeeName,endDate,extraPayProration,irpfBase,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
-		<hibernate names="id,address,broadcastDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,employeeName,endDate,extraPayProration,irpfBase,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
+		<alias     names="id,address,broadcastDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
+		<hibernate names="id,address,broadcastDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
 	</bean>
 	<bean class="com.code.aon.employee.AgreementLevelCategory">
 		<alias     names="description,id,level_id,level_agreement_id"/>

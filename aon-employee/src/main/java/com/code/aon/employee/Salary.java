@@ -21,10 +21,12 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
@@ -34,6 +36,7 @@ import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
 import com.esferalia.aon.salary.deduction.IDeductionsFactory;
 import com.esferalia.aon.salary.deduction.IDeductionsFactoryContext;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.payment.IPaymentsFactory;
 import com.esferalia.aon.salary.payment.IPaymentsFactoryContext;
 import com.esferalia.aon.salary.payment.Payments;
@@ -73,7 +76,11 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	private Date seniorityDate;
 
 	// Nomina
+	private SalaryType type;
 	private Date issueDate;
+	private int issueMonth;
+	private int issueYear;
+	private Month month;
 	private Date startDate;
 	private Date endDate;
 	//private boolean fullTime; //TODO Dar soporte
@@ -243,6 +250,16 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	// *******************************************************
 	// ****************** NOMINA ***************************
 	// *******************************************************
+	
+	@Override
+	@Column( name = "type")
+	public SalaryType getType() {
+		return type;
+	}
+	public void setType(SalaryType type) {
+		this.type = type;
+	}
+
 	@Override
 	@Temporal(TemporalType.DATE)
 	@Column( name = "issue_date", nullable = false )
@@ -252,7 +269,28 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	public void setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 	}
-
+	
+	@Formula("month(issue_date)")
+	public int getIssueMonth() {
+		return issueMonth;
+	}
+	public void setIssueMonth(int issueMonth) {
+		this.issueMonth = issueMonth;
+		month = Month.getMonthByValue(issueMonth-1);
+	}
+	@Transient
+	public Month getMonth() {
+		return month;
+	}
+	
+	@Formula("year(issue_date)")
+	public int getIssueYear() {
+		return issueYear;
+	}
+	public void setIssueYear(int issueYear) {
+		this.issueYear = issueYear;
+	}
+	
 	@Override
 	@Temporal(TemporalType.DATE)
 	@Column( name = "start_date", nullable = false )
@@ -442,6 +480,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 				.append(this.category,o.category)
 				.append(this.quoteGroup,o.quoteGroup)
 				.append(this.seniorityDate,o.seniorityDate)
+				.append(this.type,o.type)
 				.append(this.issueDate,o.issueDate)
 				.append(this.startDate,o.startDate)
 				.append(this.endDate,o.endDate)
@@ -476,6 +515,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 			.append(category)
 			.append(quoteGroup)
 			.append(seniorityDate)
+			.append(type)
 			.append(issueDate)
 			.append(startDate)
 			.append(endDate)
