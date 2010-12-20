@@ -77,7 +77,7 @@
 								<aon:outputText rendered="#{to.readed and !to.answered}"
 									value="&#160;" styleClass="aon-icon aon-icon-mailInbox-read"
 									style="margin-right: 0px;padding-left: 16px;" />
-								<aon:outputText rendered="#{to.answered}" value="&#160;"
+								<aon:outputText rendered="#{!to.readed and to.answered}" value="&#160;"
 									styleClass="aon-icon aon-icon-mailInbox-answered"
 									style="margin-right: 0px;padding-left: 16px;" />
 								<aon:graphicImage styleClass="aon-vertical-align-middle aon-nopadding aon-nomargin"
