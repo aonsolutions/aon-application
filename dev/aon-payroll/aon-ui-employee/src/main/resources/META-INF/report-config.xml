@@ -65,8 +65,21 @@
 		</params>
 	</report>
 	
-	<!--  IMPRESION DEL BORRADOR DE LA NOMINA -->
+	<!--  IMPRESION DE LOS COSTES DE EMPRESA -->
 	<report id="salaryExpenseReport" description="Salary Expense Report">
+		<template path="/com/code/aon/ui/employee/report/salaryExpense.jasper" />
+		<collection provider="#{salaryExpense}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.employee.i18n.report" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="year" value="#{salaryExpense.getYear}" />
+			<param id="month" value="#{salaryExpense.getMonth}" />
+		</params>
+	</report>
+
+	<!--  IMPRESION DE LOS COSTES DE EMPRESA DEL MES ACTUAL -->
+	<report id="currentSalaryExpenseReport" description="Salary Expense Report">
 		<template path="/com/code/aon/ui/employee/report/salaryExpense.jasper" />
 		<collection provider="#{salaryExpense}" />
 		<params>
