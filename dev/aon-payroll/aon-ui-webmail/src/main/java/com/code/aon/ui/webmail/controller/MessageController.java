@@ -512,7 +512,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
        	}
        	newMessage.getMessage().setHeader("X-Mailer", "OfficeWeb - AonWebMail 1.0");
 
-       	MimeMultipart mainPart = new MimeMultipart(IMimeType.RELATED);
+       	MimeMultipart mainPart = new MimeMultipart();
        	MimeBodyPart part = new MimeBodyPart();
        	part.setContent( text, MimeType.MIME_HTML.getName() );
        	mainPart.addBodyPart(part);
