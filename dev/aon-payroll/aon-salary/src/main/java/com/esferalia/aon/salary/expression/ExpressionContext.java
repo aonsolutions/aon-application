@@ -12,10 +12,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-
-import com.code.aon.common.util.CommonUtil;
 
 public class ExpressionContext {
 	
@@ -38,25 +35,23 @@ public class ExpressionContext {
 	public IExpression get(String key) {
 		return map.get(key);
 	}
-	public IExpression put(IExpression expression) {
-		
+	
+	public IExpression put(IExpression expression) throws ExpressionException {
 		String name = expression.getName();
 		String script = expression.getExpression();
-		//String script = String.format("%s = %s", name, value);
 		try {
 			Object result = ENGINE.eval(script, bindings );
 			if ( name != null ) {
 				bindings.put(name, result);
-				System.out.println ( "Bindings " + name + " = " + bindings.get(name) );
 			}
 		} catch (ScriptException e) {
-			System.out.println(e.getMessage());
+			throw new ExpressionException(e.getMessage(),e);
 		}
 		
 		return map.put(name,expression);
 	}
 
-	public IExpression put(String name, String script) {
+	public IExpression put(String name, String script) throws ExpressionException {
 		ExpressionImpl expressionImpl = new ExpressionImpl();
 		expressionImpl.setName(name);
 		expressionImpl.setExpression(script);

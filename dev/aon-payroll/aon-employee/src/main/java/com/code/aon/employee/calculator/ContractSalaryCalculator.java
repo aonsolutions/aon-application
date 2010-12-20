@@ -1,5 +1,6 @@
 package com.code.aon.employee.calculator;
 
+
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
 import com.esferalia.aon.salary.deduction.IDeductionsFactory;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.payment.IPaymentsFactory;
@@ -54,6 +56,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				fillSalaryExpressions(ctx);
 			}
 		} catch (ManagerBeanException e) {
+			throw new SalaryException(e.getMessage(),e);
+		} catch (ExpressionException e) {
 			throw new SalaryException(e.getMessage(),e);
 		}
 	}
@@ -119,28 +123,29 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		salary.setTotalDeduction( salary.getDeductions().getTotal() );
 	}
 
-	private void fillBasesData(SalaryCalculatorContext ctx, Salary salary, Contract contract) {
-		
-		 ExpressionContext expressionContext = ctx.getExpressionContext();
-		
-		salary.setRemuneration(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
-		
-		salary.setExtraPayProration(0.0); // TODO ¿?¿?¿?¿?¿?
-		salary.setCommonBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
-		expressionContext.put("base_cc", salary.getCommonBase().toString());
-		salary.setProfessionalBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
-		expressionContext.put("base_cp", salary.getProfessionalBase().toString());
-		salary.setOvertimeBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
-		expressionContext.put("base_horas_extras", salary.getOvertimeBase().toString());
-		salary.setIrpfBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
-		expressionContext.put("base_irpf", salary.getIrpfBase().toString());
+	private void fillBasesData(SalaryCalculatorContext ctx, Salary salary, Contract contract) throws SalaryException{
+		try {
+			ExpressionContext expressionContext = ctx.getExpressionContext();
+			salary.setRemuneration(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+			salary.setExtraPayProration(0.0); // TODO ¿?¿?¿?¿?¿?
+			salary.setCommonBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+			expressionContext.put("base_cc", salary.getCommonBase().toString());
+			salary.setProfessionalBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+			expressionContext.put("base_cp", salary.getProfessionalBase().toString());
+			salary.setOvertimeBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+			expressionContext.put("base_horas_extras", salary.getOvertimeBase().toString());
+			salary.setIrpfBase(salary.getTotalPayment()); // TODO ¿?¿?¿?¿?¿?
+			expressionContext.put("base_irpf", salary.getIrpfBase().toString());
+		} catch (ExpressionException e) {
+			throw new SalaryException(e.getMessage(),e);
+		}
 	}
 
 	private void fillSalaryExpressions(SalaryCalculatorContext ctx) {
 		// TODO Auto-generated method stub
 	}
 
-	private void fillContractExpressions(SalaryCalculatorContext ctx) throws ManagerBeanException {
+	private void fillContractExpressions(SalaryCalculatorContext ctx) throws ManagerBeanException, ExpressionException {
 		Contract contract = (Contract) ctx.getSalaryProxy();
 		IManagerBean bean = BeanManager.getManagerBean(ContractEvent.class);
 		Criteria criteria = new Criteria();
@@ -156,7 +161,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		}
 	}
 
-	private void fillApplicationExpressions(SalaryCalculatorContext ctx) throws ManagerBeanException {
+	private void fillApplicationExpressions(SalaryCalculatorContext ctx) throws ManagerBeanException, ExpressionException {
 		IManagerBean bean = BeanManager.getManagerBean(FunctionConstant.class);
 		Criteria c = new Criteria();
 		c.addLessThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_START_DATE), ctx.getIssueDate());
@@ -170,7 +175,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		}
 	}
 
-	private void fillSystemExpressions(SalaryCalculatorContext ctx) {
+	private void fillSystemExpressions(SalaryCalculatorContext ctx) throws ExpressionException {
 		ExpressionImpl e = new ExpressionImpl();
 		e.setName("dias_mes");
 		e.setScope(ExpressionScope.SYSTEM);

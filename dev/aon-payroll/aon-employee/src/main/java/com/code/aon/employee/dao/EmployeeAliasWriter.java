@@ -36,7 +36,7 @@ public class EmployeeAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PAYROLL/aon-employee/src/main/java/com/code/aon/employee/dao/IEmployeeAlias.java");
+		File file = new File("/home/ecastellano/AON-PAYROLL/aon-employee/src/main/java/com/code/aon/employee/dao/IEmployeeAlias.java");
 		String[] classes = new String[] { 
 				Agreement.class.getName(),
 				AgreementLevel.class.getName(),
