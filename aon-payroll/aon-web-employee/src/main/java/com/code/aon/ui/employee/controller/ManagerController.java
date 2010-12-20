@@ -1,5 +1,8 @@
 package com.code.aon.ui.employee.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
+
 import java.security.Principal;
 import java.util.Date;
 import java.util.LinkedList;
@@ -26,6 +29,11 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailAccountController;
+import com.code.aon.ui.webmail.controller.WebMailController;
+import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.WebmailUtil;
 import com.esferalia.aon.calendar.enumeration.CalendarSource;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
@@ -45,6 +53,7 @@ public class ManagerController implements IEmployeeConstants {
 	public ManagerController() {
 		this.principal = resolvePrincipal();
 		this.loggedUser = resolveUser();
+		initWebmail();
 		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
 		if ( isEnterprise() ) {
 			initEnterprise();
@@ -95,6 +104,20 @@ public class ManagerController implements IEmployeeConstants {
 	
 	public String getHomeTemplate() {
 		return homeTemplate;
+	}
+
+	private void initWebmail() {
+		try {
+			WebMailController controller = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+			MailAccount mailAccount = WebmailUtil.getDefaultAccount(this.principal.getDomain(), true);
+			if (mailAccount!=null) {
+				controller.init(mailAccount);
+			}		
+		} catch (Throwable e) {
+			LOGGER.error(">>>> initWebmail exception ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
 	private void initEnterpriseTree() {

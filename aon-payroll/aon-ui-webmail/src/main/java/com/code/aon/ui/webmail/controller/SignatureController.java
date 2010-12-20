@@ -1,5 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +62,14 @@ public class SignatureController extends LdapBasicController implements IWebMail
 
 	private void updateBaseDN( String domain, String user )  {
 		Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
-		getLdapDAO().setBaseDN( baseDN );			
+		if ( getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+			getLdapDAO().setBaseDN( baseDN );	
+		} else {
+			baseDN = NameResolver.getDomainSignaturesDN(domain);
+			if ( getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+				getLdapDAO().setBaseDN( baseDN );
+			}
+		}		
 	}	
 
 	public List<SelectItem> getSignatures() {
