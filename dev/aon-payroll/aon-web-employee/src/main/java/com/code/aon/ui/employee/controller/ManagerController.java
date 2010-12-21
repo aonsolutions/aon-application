@@ -1,6 +1,7 @@
 package com.code.aon.ui.employee.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
+import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME;
 
 import java.security.Principal;
 import java.util.Date;
@@ -33,6 +34,7 @@ import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
 import com.esferalia.aon.calendar.enumeration.CalendarSource;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
+import com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController;
 import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
 
 public class ManagerController implements IEmployeeConstants {
@@ -158,6 +160,8 @@ public class ManagerController implements IEmployeeConstants {
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			String personId = bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_ID);
+			criteria.addEqualExpression(personId, this.loggedUser.getRegistry().getId());
 			String enterpriseId = bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 			criteria.addEqualExpression(enterpriseId, this.loggedUser.getEnterprise().getId());
 			List<ITransferObject> list = bean.getList(criteria);
@@ -191,6 +195,8 @@ public class ManagerController implements IEmployeeConstants {
 		controller.setSource(CalendarSource.CONTRACT);
 		controller.setSourceId( contract.getId() );
 		controller.onInitialize(null);
+		CalendarHolidayDataController chdc = (CalendarHolidayDataController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME);
+		chdc.getHolidayDataModels();
 	}
 	
 	private void initWorker() {
@@ -200,7 +206,5 @@ public class ManagerController implements IEmployeeConstants {
 		initWorkerCalendar( contract );
 		AonUtil.setBeanValue(SALARY_CONTROLLER, SHOW_PERSON_COLUMN, Boolean.FALSE);
 	}
-	
-	
 	
 }
