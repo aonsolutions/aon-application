@@ -32,10 +32,15 @@
 				action="salary_list" 
 				value="#{employeeBundle.employee_salary_module}"
 				styleClass="aon-top-menu-item aon-icon-payroll" />
-			<aon:commandLink id="calendar" 
-				action="calendar_form" 
+			<aon:htmlCommandLink id="calendarReport_list" 
+ 				action="#{report.onExecute}"
+				actionListener="#{calendarPrint.load}"
 				value="#{calendarBundle.aon_calendar_calendar}"
-				styleClass="aon-top-menu-item aon-icon-calendar" />
+				rendered="#{!calendar.new}" target="_blank"
+				styleClass="aon-top-menu-item aon-icon-calendar" >
+				<f:param name="reportKey" value="calendarReport" />
+				<f:param name="outputFormat" value="PDF" />
+			</aon:htmlCommandLink>					
 		</c:if>
 						
 	</ui:define>
