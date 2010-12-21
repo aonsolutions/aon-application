@@ -127,6 +127,21 @@ public class AonUtil {
 	}
 	
 	/**
+	 * Puts the value of the property defined for the bean.
+	 *
+	 * @param beanName the bean
+	 * @param property the property
+	 * @param value the value
+	 */
+	public static void setBeanValue( String beanName, String property, Object value ) {
+		ConfigurationController cc = AonUtil.getConfigurationController();
+		Map<String, Object> map = cc.getBean().get(beanName);
+		if ( map != null ) {
+			map.put(property, value);
+		}		
+	}
+	
+	/**
 	 * Gets the Role Manager Controller
 	 * 
 	 * @return the Role Manager Controller

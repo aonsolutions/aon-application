@@ -1,6 +1,5 @@
 package com.code.aon.ui.employee.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 
 import java.security.Principal;
@@ -29,8 +28,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.MailAccountController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
@@ -201,6 +198,9 @@ public class ManagerController implements IEmployeeConstants {
 		Contract contract = getContract();
 		initWorkerSalaries( contract );
 		initWorkerCalendar( contract );
+		AonUtil.setBeanValue(SALARY_CONTROLLER, SHOW_PERSON_COLUMN, Boolean.FALSE);
 	}
+	
+	
 	
 }
