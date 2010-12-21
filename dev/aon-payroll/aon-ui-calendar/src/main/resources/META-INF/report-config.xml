@@ -16,15 +16,11 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.calendar.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
-<!--  
-			<param id="dayList" value="#{calendar.getDayList}" />
--->
 		</params>
 		<nested-report report="month"/>
 	</report>
 	<report id="month" description="Plantilla del mes del calendario">
 		<template path="/com/esferalia/aon/ui/calendar/report/month.jasper" />
 	</report>
-	
 	
 </report-config>
