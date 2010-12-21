@@ -50,7 +50,7 @@ public class EnterpriseCCC implements ITransferObject {
 		this.id = id;
 	}
 	
-	@Column(name="ccc", length = 11, nullable = false)
+	@Column(name="ccc", length = 11)
 	public String getCcc() {
 		return ccc;
 	}
@@ -69,7 +69,7 @@ public class EnterpriseCCC implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn( name="geozone", nullable = false)
+	@JoinColumn( name="geozone")
 	@ForeignKey(name = "FK_ENTERPRICE_CCC_GEOZONE")
 	@Index(name = "IDX_ENTERPRICE_CCC_GEOZONE")	
 	public GeoZone getGeozone() {
