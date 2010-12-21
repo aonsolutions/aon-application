@@ -1,5 +1,10 @@
 package com.esferalia.aon.ui.calendar.print;
 
+import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_CONTROLLER_NAME;
+import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_HOLIDAY_CONTROLLER_NAME;
+import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME;
+import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_PERIOD_CONTROLLER_NAME;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
@@ -22,7 +27,6 @@ import com.esferalia.aon.calendar.HolidayDetail;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController;
-import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
 
 public class CalendarFactory {
 	
@@ -102,10 +106,10 @@ public class CalendarFactory {
 	
 	@SuppressWarnings("unchecked")
 	private void loadPeriodDays() {
-		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean("calendar");
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
 		periodList = new LinkedList<CalPeriod>();
 		try {
-			List<ITransferObject> list = (List<ITransferObject>) FormUtil.getController("calendarPeriod").getModel().getWrappedData();
+			List<ITransferObject> list = (List<ITransferObject>) FormUtil.getController(CALENDAR_PERIOD_CONTROLLER_NAME).getModel().getWrappedData();
 			CalPeriod period;
 			for(ITransferObject to: list){
 				CalendarPeriod p = (CalendarPeriod) to;
@@ -130,10 +134,9 @@ public class CalendarFactory {
 	
 	private void loadHolidays(){
 		dayList = new LinkedList<CalendarDay>();
-		CalendarHolidayDataController controller = (CalendarHolidayDataController) AonUtil.getRegisteredBean("calendarHolidayData");
-		CalendarDay day;
+		CalendarHolidayDataController controller = (CalendarHolidayDataController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME);
 		for(String key: controller.getHolidays().keySet()){
-			day = new CalendarDay();
+			CalendarDay day = new CalendarDay();
 			day.setDescription(key);
 			day.setDate(null);
 			dayList.add(day);
@@ -151,10 +154,9 @@ public class CalendarFactory {
 	@SuppressWarnings("unchecked")
 	private void loadCalendarDays(){
 		try {
-			IController controller = (IController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_HOLIDAY_CONTROLLER_NAME);
+			IController controller = (IController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_CONTROLLER_NAME);
 			List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
-			CalendarDay day;
-			day = new CalendarDay();
+			CalendarDay day = new CalendarDay();
 			Locale locale = AonUtil.getCurrentLocale();
 			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.calendar.i18n.messages", locale);	
 			day.setDescription(bundle.getString("aon_enum_daytype_full_OTHER"));
@@ -218,7 +220,7 @@ public class CalendarFactory {
 	}
 	
 	private void buildMonthList() {
-		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean("calendar");
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
 		Integer year = controller.getYear();
 		LinkedList<PrintableMonth> months = new LinkedList<PrintableMonth>();
 		PrintableMonth pm;
@@ -284,7 +286,7 @@ public class CalendarFactory {
 	}
 
 	private void addCalendarInfo(PrintableDay day, Calendar cal){
-		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean("calendar");
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
 		com.esferalia.aon.calendar.Calendar c = controller.getTo();
 		if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY){
 			day.setHours(c.getMondayHours());
