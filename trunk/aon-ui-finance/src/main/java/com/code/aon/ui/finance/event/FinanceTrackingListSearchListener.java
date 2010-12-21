@@ -34,7 +34,7 @@ public class FinanceTrackingListSearchListener extends ControllerSearchListener 
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		criteria.addNullExpression(getFieldName(IFinanceAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
-		criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), false);
+		criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), new Boolean(false));
 		if ((getRegistryBank() != null) && (getRegistryBank().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_TRACKING_REGISTRY_BANK_ID), getRegistryBank().getId());
 		}

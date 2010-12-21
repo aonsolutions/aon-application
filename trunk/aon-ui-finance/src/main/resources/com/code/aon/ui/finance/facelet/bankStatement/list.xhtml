@@ -29,16 +29,14 @@
 							<f:setPropertyActionListener target="#{controller.showImportFileWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-<!-- 
 						<aon:commandButton id="checkLinks"
-							value="#{financeBundle.finance_bank_statement_check}"
+							value="#{financeBundle.finance_bank_statement_check_auto}"
 							styleClass="aon-finding-toolbar-item aon-icon-attach-file"
 							rendered="#{!controller.new and controller.to == null}"
 							actionListener="#{controller.onCheckLinks}"
 							reRender="#{dataTableId}"
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
- -->
 						<aon:commandButton id="recordLinks"
 							value="#{financeBundle.finance_record_selected}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
@@ -316,8 +314,7 @@
 											</f:facet>
 											<aon:selectBooleanCheckbox id="BankStatementCheck"
 												value="#{controller.bankStatementRowChecked}"
-												valueChangeListener="#{controller.bankStatementRowSelected}"
-												ajaxSingle="true" />	
+												valueChangeListener="#{controller.bankStatementRowSelected}" />	
 										</aon:column>
 
 										<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -491,7 +488,7 @@
 										<aon:div id="showBankStatementLinks" rendered="#{!to.recorded}">
 											<aon:commandButton id="addLink"
 												value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
-												title="#{financeBundle.finance_bank_statement_check}"
+												title="#{financeBundle.finance_bank_statement_check_manual}"
 												rendered="#{to.pending}"
 												actionListener="#{controller.onAddLinkShow}"
 												reRender="showLinkWindow">
