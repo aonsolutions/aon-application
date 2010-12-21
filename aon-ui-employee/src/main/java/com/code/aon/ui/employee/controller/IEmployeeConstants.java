@@ -34,6 +34,8 @@ public interface IEmployeeConstants {
 	String MODEL_PATH = "com/code/aon/ui/employee/contractModel/";
 	
 	String SHOW_ENTERPRISE_IN_SEARCH = "showEnterpriseInSearch";
+	
+	String SHOW_PERSON_COLUMN = "showPersonColumn";
 
 	// ************************************************************
 	// REPORT
