@@ -54,7 +54,25 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
-	
+
+	<!-- ************* PASSWORD ***************** -->
+	<managed-bean>
+		<managed-bean-name>password</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.controller.PasswordController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+		
+	<!-- =================== Application Menu Navigation Rules ================= -->	
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>changePassword</from-outcome>
+			<to-view-id>/facelet/homepage/changePassword.xhtml</to-view-id> 
+		</navigation-case>
+	</navigation-rule>
+		
 	<!-- =================== HOME ================= -->
 	<navigation-rule>
 		<navigation-case>

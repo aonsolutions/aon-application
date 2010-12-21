@@ -39,5 +39,11 @@
 		</c:if>
 						
 	</ui:define>
+	
+	<ui:define name="beforeHelpMenuContent">	
+		<aon:menuItem id="changePassword" action="changePassword"
+			actionListener="#{password.onInit}"
+			value="#{securityBundle.aon_security_change_password}" />		
+	</ui:define>	
 		
 </ui:composition>
