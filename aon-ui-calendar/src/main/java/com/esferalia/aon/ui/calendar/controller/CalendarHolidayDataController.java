@@ -36,10 +36,9 @@ public class CalendarHolidayDataController {
 	
 	public List<HolidayData> getHolidayDataModels(){
 		List<HolidayData> list = new LinkedList<HolidayData>();
-		HolidayData data;
 		searchHolidays();
 		for(String key: holidays.keySet()){
-			data = new HolidayData();
+			HolidayData data = new HolidayData();
 			data.setDescription(key);
 			data.setModel(new ListDataModel(holidays.get(key)));
 			list.add(data);
@@ -47,7 +46,7 @@ public class CalendarHolidayDataController {
 		return list;
 	}
 	
-	private void searchHolidays(){
+	private void searchHolidays() {
 		holidays = new HashMap<String,List<ITransferObject>>();
 		CalendarController controller = (CalendarController) FormUtil.getController(ICalendarConstants.CALENDAR_CONTROLLER_NAME);
 		Calendar calendar = (Calendar) controller.getTo();
@@ -82,7 +81,6 @@ public class CalendarHolidayDataController {
 			}
 			holiday = holiday.getHoliday();
 		}
-		
 	}
 	
 	

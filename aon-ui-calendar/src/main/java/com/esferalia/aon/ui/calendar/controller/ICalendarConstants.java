@@ -16,7 +16,9 @@ public interface ICalendarConstants {
 
 	String CALENDAR_CONTROLLER_NAME = "calendar";	
 	
-	String CALENDAR_HOLIDAY_CONTROLLER_NAME = "calendarHoliday";	
+	String CALENDAR_HOLIDAY_CONTROLLER_NAME = "calendarHoliday";
+	
+	String CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME = "calendarHolidayData";
 	
 	String CALENDAR_PERIOD_CONTROLLER_NAME = "calendarPeriod";
 	
