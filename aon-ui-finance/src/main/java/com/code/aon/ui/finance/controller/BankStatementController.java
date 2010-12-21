@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -692,13 +691,13 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 
 		for (BankStatement statement : getCheckedBankStatement()) {
-			if (statement.getStatus() == StatementStatus.PENDING) {
+			if (statement.isPending()) {
 				if (checkByAccount) {
 					getBankStatementLinkManager().addLink(statement, getAccount());
 				} else {
 					getBankStatementLinkManager().addLink(statement, getBankConcept());
 				}
-				getBankStatementLinkManager().checkBankStatement(statement);
+				getBankStatementLinkManager().checkBankStatement(statement, StatementReliability.VERY_HIGH);
 
 				getErrors().remove(statement.getId());
 			}
@@ -713,7 +712,8 @@ public class BankStatementController extends BasicController implements IFinance
 			List<ITransferObject> bankStatementList = getManagerBean().getList(getCriteria());
 			for (ITransferObject ito : bankStatementList) {
 				BankStatement to = (BankStatement)ito;
-				if (to.getStatus() != StatementStatus.PENDING) {
+				if (to.isPending()) {
+					getErrors().put(to.getId(), "No se ha encontrado ninguna coincidencia para Puntear la línea del Extracto.");
 					if (hasFinanceLink(to.getCommonConcept())) {
 						findFinance(to, false);
 					} else if (hasFinanceReturnLink(to.getCommonConcept())) {
@@ -721,9 +721,15 @@ public class BankStatementController extends BasicController implements IFinance
 					} else if (hasFinanceBatchLink(to.getCommonConcept())) {
 						findFinanceBatch(to);
 					}
+
+					if (to.isPending()) {
+						findBankStatement(to);
+					}
 				}
-				//resetErrors();
 			}
+
+			onSearch(null);
+			clearCheckedBankStatement();
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -751,135 +757,266 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	private void findFinance(BankStatement to, boolean returned) throws ManagerBeanException, ExpressionException {
-		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.setTime(to.getOperationDate());
-		calendar.add(Calendar.DATE, -7);
-		Date fromDate = calendar.getTime();
-		calendar.setTime(to.getOperationDate());
-		calendar.add(Calendar.DATE, 7);
-		Date toDate = calendar.getTime();
-
-		double fromAmount = CommonUtil.round(to.getAmount() * 0.90);
-		double toAmount = CommonUtil.round(to.getAmount() * 1.10);
+		boolean payment = (to.getCommonConcept() != StatementConcept.RETURNED) ? to.isPayment() : !to.isPayment();
+		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
+		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
+		double fromAmount = CommonUtil.round(to.getAmount() * 0.9);
+		double toAmount = CommonUtil.round(to.getAmount() * 1.1);
 
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
-		for (int key=1; key<=4; key++) {
-			Criteria criteria = new Criteria();
+		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+		for (int key=1; key<=3 && to.isPending(); key++) {
+			Criteria criteriaFin = new Criteria();
+			criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
+
+			Criteria criteriaTrk = new Criteria();
+			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
+			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_REGISTRY_BANK_ID), to.getRegistryBank().getId());
+			criteriaTrk.addNullExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
+			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), new Boolean(false));
 			if (!returned) {
-				criteria.addNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.BATCHED);
+				criteriaFin.addNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
+				criteriaFin.addNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.BATCHED);
+
+				criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.PAID);
 			} else {
-				criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
+				criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
+
+				criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.RETURNED);
 			}
 			switch (key) {
 				case 1: {
-					criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), to.getAmount());
-					criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getOperationDate());
+					criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), to.getAmount());
+					criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getOperationDate());
+
+					criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), to.getAmount());
+					criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), to.getOperationDate());
 					break;
 				}
 				case 2: {
-					criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), to.getAmount());
-					criteria.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, to.getOperationDate());
-					criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), false);
+					criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), to.getAmount());
+					criteriaFin.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, toDate);
+					criteriaFin.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+
+					criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), to.getAmount());
+					criteriaTrk.addBetweenExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
+					criteriaTrk.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE));
 					break;
 				}
 				case 3: {
-					criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), to.getAmount());
-					criteria.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getOperationDate(), toDate);
-					criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-					break;
-				}
-				case 4: {
-					criteria.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), fromAmount, toAmount);
-					criteria.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, toDate);
-					criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), false);
-					criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+					criteriaFin.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), fromAmount, toAmount);
+					criteriaFin.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, toDate);
+					criteriaFin.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT));
+					criteriaFin.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+
+					criteriaTrk.addBetweenExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), fromAmount, toAmount);
+					criteriaTrk.addBetweenExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
+					criteriaTrk.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT));
+					criteriaTrk.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE));
 					break;
 				}
 			}
+			//SCOPE!!
 
-			List<ITransferObject> financeList = financeBean.getList(criteria);
+			ITransferObject linkedTo = null;
+			List<ITransferObject> financeList = financeBean.getList(criteriaFin);
+			List<ITransferObject> trackingList = trackingBean.getList(criteriaTrk);
 			for (ITransferObject ito : financeList) {
 				Finance finance = (Finance)ito;
-				criteria = new Criteria();
-				criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.FINANCE_TRACKING);
-				//FINANCE TRACKING!!!!
-				criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE_ID), finance.getId());
-				if (statementLinkBean.getCount(criteria) == 0) {
-					//Si el status es pending se cobra y se asocia
-					//Si el status es returned se cobra y se asocia
-					//Si el status es paid se mira a ver si esta contabilizado y en caso afirmativo NO se asocia, se saca un mensaje de error y 
-					//listo. Si no esta contabilizado se asocia.
-					//Si el status es settled, se borra la linea del tracking de saldado y se cobra.
-					//Ver diferencias entre amount y totalAmount
-					StatementReliability reliability = StatementReliability.LOW;
-					if (key == 1 && financeList.size() == 1) {
-						reliability = StatementReliability.VERY_HIGH;
-					} else if (key < 4 && financeList.size() == 1) {
-						reliability = StatementReliability.HIGH;
-					}
-
-					StatementLinkStatus status = StatementLinkStatus.PENDING;
-					if (finance.getFinanceStatus() == FinanceStatus.RETURNED) {
-						status = StatementLinkStatus.RETURNED;
-					} else if (finance.getFinanceStatus() == FinanceStatus.PAID) {
-						status = StatementLinkStatus.PAID;
-					} else if (finance.getFinanceStatus() == FinanceStatus.SETTLED) {
-						status = StatementLinkStatus.SETTLED;
-					}
-
-					BankStatementLink statementLink = new BankStatementLink();
-					statementLink.setBankStatement(to);
-					statementLink.setSource(StatementLinkSource.FINANCE_TRACKING);
-					statementLink.setSourceId(finance.getId());
-					statementLink.setAmount(finance.getTotalAmount());
-					statementLink.setStatus(status);
-					statementLinkBean.insert(statementLink);
-
-					to.setReliability(reliability);
-					to.setStatus(StatementStatus.CHECKED);
-					getManagerBean().update(to);
-					return;
+				if (linkedTo == null || isMoreAccurateLink(to, linkedTo, finance.getTotalAmount(), finance.getDueDate())) {
+					linkedTo = finance;
 				}
 			}
+			for (ITransferObject ito : trackingList) {
+				FinanceTracking tracking = (FinanceTracking)ito;
+				if (linkedTo == null || isMoreAccurateLink(to, linkedTo, tracking.getAmount(), tracking.getTrackingDate())) {
+					linkedTo = tracking;
+				}
+			}
+
+			if (linkedTo != null) {
+				if (linkedTo instanceof Finance) {
+					getBankStatementLinkManager().addLink(to, (Finance)linkedTo);
+				} else {
+					getBankStatementLinkManager().addLink(to, (FinanceTracking)linkedTo);
+				}
+
+				StatementReliability reliability = StatementReliability.LOW;
+				if ((financeList.size() + trackingList.size()) == 1) {
+					if (key == 1) reliability = StatementReliability.VERY_HIGH;
+					else if (key == 2) reliability = StatementReliability.HIGH;
+					else reliability = StatementReliability.MEDIUM;
+				}
+				getBankStatementLinkManager().checkBankStatement(to, reliability);
+				getErrors().remove(to.getId());
+			}
 		}
-		/*
-		if (count > 1) {
-			getErrors().put(to.getId(), "Se ha encontrado más de 1 Vencimiento con ese Importe");
-		} else {
-			getErrors().put(to.getId(), "No se ha encontrado ningún Vencimiento con ese Importe");
-		}*/
 	}
 
 	private void findFinanceBatch(BankStatement to) throws ManagerBeanException {
-		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), getRegistryBank().getId());
-		criteria.addNotEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
-		criteria.addLessThanOrEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), to.getOperationDate());
-		criteria.addOrder(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE));
-		BankStatementLinx link = null;
-		int count = 0;
-		for (ITransferObject ito : fBatchBean.getList(criteria)) {
-			FinanceBatch fBatch = (FinanceBatch)ito;
-			if (fBatch.getFinanceBatchTotalAmount().doubleValue() == to.getAmount()) {
-				link = new BankStatementLinx();
-				link.setTo(fBatch);
-				link.setAmount(to.getAmount());
+		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
+		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 
-				++count;
+		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
+		for (int key=1; key<=2 && to.isPending(); key++) {
+			Criteria criteria = new Criteria();
+			criteria.addNullExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
+			criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
+			criteria.addNotEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
+			criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_PAYMENT), new Boolean(to.isPayment()));
+			criteria.addBetweenExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), fromDate, toDate);
+			criteria.addOrder(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE));
+			switch (key) {
+				case 1: {
+					criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), to.getOperationDate());
+					break;
+				}
+				case 2: {
+					criteria.addBetweenExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), fromDate, toDate);
+					criteria.addOrder(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE));
+					break;
+				}
+			}
+			//SCOPE!!
+
+			ITransferObject linkedTo = null;
+			int matchesAmount = 0;
+			List<ITransferObject> fBatchList = fBatchBean.getList(criteria);
+			for (ITransferObject ito : fBatchList) {
+				FinanceBatch fBatch = (FinanceBatch)ito;
+				double fBatchAmount = fBatch.getFinanceBatchTotalAmount();
+				if (to.getAmount() == fBatchAmount) {
+					++matchesAmount;
+				}
+				if (key == 2 || to.getAmount() == fBatchAmount) {
+					if (linkedTo == null || isMoreAccurateLink(to, linkedTo, fBatchAmount, fBatch.getIssueDate())) {
+						linkedTo = fBatch;
+					}
+				}
+			}
+
+			if (linkedTo != null) {
+				FinanceBatch fBatch = (FinanceBatch)linkedTo;
+				getBankStatementLinkManager().addLink(to, fBatch);
+
+				StatementReliability reliability = StatementReliability.LOW;
+				if (matchesAmount == 1) {
+					if (key == 1) reliability = StatementReliability.VERY_HIGH;
+					else if (key == 2) reliability = StatementReliability.HIGH;
+				} else if (fBatchList.size() == 1) {
+					reliability = StatementReliability.MEDIUM;
+				}
+				getBankStatementLinkManager().checkBankStatement(to, reliability);
+				getErrors().remove(to.getId());
 			}
 		}
+	}
 
-		if (count == 1) {
-			List<BankStatementLinx> linkList = new LinkedList<BankStatementLinx>();
-			linkList.add(link);
-			//getLinks().put(to.getId(), linkList);
-		} else if (count > 1) {
-			getErrors().put(to.getId(), "Se ha encontrado más de 1 Remesa con ese Importe");
-		} else {
-			getErrors().put(to.getId(), "No se ha encontrado ninguna Remesa con ese Importe");
+	private void findBankStatement(BankStatement to) throws ManagerBeanException {
+		for (int key=1; key<=5 && to.isPending(); key++) {
+			Criteria criteria = new Criteria();
+			criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_STATUS), StatementStatus.PENDING);
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), to.getRegistryBank().getId());
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_PAYMENT), new Boolean(to.isPayment()));
+			criteria.addOrder(getFieldName(IFinanceAlias.BANK_STATEMENT_OPERATION_DATE), false);
+			switch (key) {
+				case 1: {
+					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
+					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
+					break;
+				}
+				case 2: {
+					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
+					break;
+				}
+				case 3: {
+					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
+					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_COMMON_CONCEPT), to.getCommonConcept());
+					break;
+				}
+				case 4: {
+					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
+					break;
+				}
+				case 5: {
+					String likeStr = StringUtils.substring(to.getDescription(), 0, 15) + "%";
+					criteria.addExpression(ExpressionUtilities.getLikeExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), likeStr));
+					break;
+				}
+			}
+
+			List<ITransferObject> statementList = getManagerBean().getList(criteria);
+			for (ITransferObject ito : statementList) {
+				BankStatement statement = (BankStatement)ito;
+
+				IManagerBean linkBean = BeanManager.getManagerBean(BankStatementLink.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(linkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+				criteria.addNotEqualExpression(linkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.BANK_CONCEPT);
+				criteria.addNotEqualExpression(linkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.ACCOUNT);
+				if (linkBean.getCount(criteria) == 0) {
+					criteria = new Criteria();
+					criteria.addEqualExpression(linkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+					if (linkBean.getCount(criteria) > 0) {
+						List<ITransferObject> linkList = linkBean.getList(criteria);
+						if (key == 1 || key == 3 || key == 4 || linkList.size() == 1) {
+							for (ITransferObject itto : linkList) {
+								BankStatementLink link = (BankStatementLink)itto;
+
+								BankStatementLink newLink = new BankStatementLink();
+								newLink.setBankStatement(to);
+								newLink.setSource(link.getSource());
+								newLink.setSourceId(link.getSourceId());
+								newLink.setSourceDate(to.getOperationDate());
+								newLink.setAmount((linkList.size() == 1) ? to.getAmount() : link.getAmount());
+								newLink.setStatus(StatementLinkStatus.PENDING);
+								linkBean.insert(newLink);
+							}
+
+							StatementReliability reliability = StatementReliability.LOW;
+							if (key == 1) reliability = StatementReliability.VERY_HIGH;
+							else if (key == 2) reliability = StatementReliability.HIGH;
+							else if (key == 3) reliability = StatementReliability.MEDIUM;
+							getBankStatementLinkManager().checkBankStatement(to, reliability);
+							getErrors().remove(to.getId());
+
+							break;
+						}
+					}
+				}
+			}
+
 		}
+	}
+
+	private boolean isMoreAccurateLink(BankStatement statement, ITransferObject linkedTo, double amount, Date date) {
+		if (linkedTo instanceof Finance) {
+			Finance linkedFinance = (Finance)linkedTo;
+			long linkedDaysBetween = CommonUtil.getDaysBetweenDates(statement.getOperationDate(), linkedFinance.getDueDate(), false);
+			long daysBetween = CommonUtil.getDaysBetweenDates(statement.getOperationDate(), date, false);
+			return isMoreAccurateLink(statement, linkedFinance.getTotalAmount(), linkedDaysBetween, amount, daysBetween);
+		} else if (linkedTo instanceof FinanceTracking) {
+			FinanceTracking linkedTracking = (FinanceTracking)linkedTo;
+			long linkedDaysBetween = CommonUtil.getDaysBetweenDates(statement.getOperationDate(), linkedTracking.getTrackingDate(), false);
+			long daysBetween = CommonUtil.getDaysBetweenDates(statement.getOperationDate(), date, false);
+			return isMoreAccurateLink(statement, linkedTracking.getAmount(), linkedDaysBetween, amount, daysBetween);
+		} else if (linkedTo instanceof FinanceBatch) {
+			FinanceBatch linkedBatch = (FinanceBatch)linkedTo;
+			if ((CommonUtil.round(statement.getAmount() * 0.9) > amount) || ((CommonUtil.round(statement.getAmount() * 1.1) < amount))) {
+				return false;
+			}
+			long linkedDaysBetween = CommonUtil.getDaysBetweenDates(statement.getOperationDate(), linkedBatch.getIssueDate(), false);
+			long daysBetween = CommonUtil.getDaysBetweenDates(statement.getOperationDate(), date, false);
+			return isMoreAccurateLink(statement, linkedBatch.getFinanceBatchTotalAmount(), linkedDaysBetween, amount, daysBetween);
+		} 
+		return false;
+	}
+
+	private boolean isMoreAccurateLink(BankStatement statement, double linkedAmount, long linkedDaysBetween, double amount, long daysBetween) {
+		if (Math.abs(statement.getAmount() - amount) == Math.abs(statement.getAmount() - linkedAmount)) {
+			return (Math.abs(daysBetween) < Math.abs(linkedDaysBetween));
+		}
+		return (Math.abs(statement.getAmount() - amount) < Math.abs(statement.getAmount() - linkedAmount));
 	}
 
 	public void onAddLinkShow(ActionEvent event) throws ManagerBeanException {
@@ -887,8 +1024,8 @@ public class BankStatementController extends BasicController implements IFinance
 		boolean payment = (to.getCommonConcept() != StatementConcept.RETURNED) ? to.isPayment() : !to.isPayment();
 		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
 		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
-		double fromAmount = CommonUtil.round(to.getAmount() * 0.9);
-		double toAmount = CommonUtil.round(to.getAmount() * 1.1);
+		Double fromAmount = new Double(CommonUtil.round(to.getAmount() * 0.9));
+		Double toAmount = new Double(CommonUtil.round(to.getAmount() * 1.1));
 
 		BankStatementLinkController statementLinkList = (BankStatementLinkController)FormUtil.getController(BANK_STATEMENT_LINK_CONTROLLER_NAME);
 		statementLinkList.clearCheckedStatementLinks();
@@ -911,10 +1048,8 @@ public class BankStatementController extends BasicController implements IFinance
 			}
 	        criteria = new Criteria();
 			criteria.addEqualExpression(financeList.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-			criteria.addGreaterThanOrEqualExpression(financeList.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate);
-			criteria.addLessThanOrEqualExpression(financeList.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), toDate);
-			criteria.addGreaterThanOrEqualExpression(financeList.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(fromAmount));
-			criteria.addLessThanOrEqualExpression(financeList.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(toAmount));
+			criteria.addBetweenExpression(financeList.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, toDate);
+			criteria.addBetweenExpression(financeList.getFieldName(IFinanceAlias.FINANCE_AMOUNT), fromAmount, toAmount);
 			criteria.setOrderByList(financeList.getOrderList());
 			financeList.setCriteria(criteria);
 			financeList.onSearch(null);
@@ -922,7 +1057,7 @@ public class BankStatementController extends BasicController implements IFinance
 			FinanceTrackingListController trackingList = (FinanceTrackingListController)FormUtil.getController(FINANCE_TRACKING_LIST_CONTROLLER_NAME);
 			trackingList.onEditSearch(null);
 			FinanceTrackingListSearchListener trackingSearch = (FinanceTrackingListSearchListener)AonUtil.getRegisteredBean(FINANCE_TRACKING_LIST_SEARCH_LISTENER_NAME);
-			trackingSearch.setRegistryBank(getRegistryBank());
+			trackingSearch.setRegistryBank(to.getRegistryBank());
 			if (to.getCommonConcept() != StatementConcept.RETURNED) {
 				FinanceTrackingType[] financeTrackingTypes = {FinanceTrackingType.PAID};
 				trackingSearch.setFinanceTrackingTypes(financeTrackingTypes);
@@ -932,10 +1067,8 @@ public class BankStatementController extends BasicController implements IFinance
 			}
 			criteria = new Criteria();
 			criteria.addEqualExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
-			criteria.addGreaterThanOrEqualExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate);
-			criteria.addLessThanOrEqualExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), toDate);
-			criteria.addGreaterThanOrEqualExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), new Double(fromAmount));
-			criteria.addLessThanOrEqualExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), new Double(toAmount));
+			criteria.addBetweenExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
+			criteria.addBetweenExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), fromAmount, toAmount);
 			criteria.setOrderByList(trackingList.getOrderList());
 			trackingList.setCriteria(criteria);
 			trackingList.onSearch(null);
@@ -945,10 +1078,10 @@ public class BankStatementController extends BasicController implements IFinance
 			batchList.onEditSearch(null);
 			criteria = new Criteria();
 			criteria.addNullExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
-			criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), getRegistryBank().getId());
+			criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
 			criteria.addNotEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
 			criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_PAYMENT), new Boolean(payment));
-			criteria.addLessThanOrEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), to.getOperationDate());
+			criteria.addBetweenExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), fromDate, toDate);
 			criteria.setOrderByList(batchList.getOrderList());
 			batchList.setCriteria(criteria);
 			batchList.onSearch(null);
@@ -1028,7 +1161,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onRecordLinks(ActionEvent event) throws ManagerBeanException {
 		for (BankStatement statement : getCheckedBankStatement()) {
-			if (statement.getStatus() == StatementStatus.CHECKED) {
+			if (statement.isChecked()) {
 				boolean financeTrackingMode = false;
 				boolean financeBatchMode = false;
 				List<FinanceTracking> financeTrackingList = new LinkedList<FinanceTracking>();

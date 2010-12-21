@@ -114,7 +114,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			}
 			if (financeList.getCheckedFinances().size() > 0) {
 				financeList.onSearch(null);
-				checkBankStatement(getCurrentStatement());
+				checkBankStatement(getCurrentStatement(), StatementReliability.VERY_HIGH);
 			}
 
 			FinanceTrackingListController trackingList = (FinanceTrackingListController)FormUtil.getController(FINANCE_TRACKING_LIST_CONTROLLER_NAME);
@@ -123,7 +123,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			}
 			if (trackingList.getCheckedTrackings().size() > 0) {
 				trackingList.onSearch(null);
-				checkBankStatement(getCurrentStatement());
+				checkBankStatement(getCurrentStatement(), StatementReliability.VERY_HIGH);
 			}
 		} else {
 			FBatchListController batchList = (FBatchListController)FormUtil.getController(FINANCE_BATCH_LIST_CONTROLLER_NAME);
@@ -132,7 +132,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			}
 			if (batchList.getCheckedBatches().size() > 0) {
 				batchList.onSearch(null);
-				checkBankStatement(getCurrentStatement());
+				checkBankStatement(getCurrentStatement(), StatementReliability.VERY_HIGH);
 			}
 		}
 
@@ -140,7 +140,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		statementLinkList.onSearch(null);
 	}
 
-	private void addLink(BankStatement statement, Finance finance) throws ManagerBeanException {
+	public void addLink(BankStatement statement, Finance finance) throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		BankStatementLink statementLink = new BankStatementLink();
 		statementLink.setBankStatement(statement);
@@ -174,7 +174,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		statementLinkBean.update(statementLink);
 	}
 
-	private void addLink(BankStatement statement, FinanceTracking tracking) throws ManagerBeanException {
+	public void addLink(BankStatement statement, FinanceTracking tracking) throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		BankStatementLink statementLink = new BankStatementLink();
 		statementLink.setBankStatement(statement);
@@ -191,7 +191,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		trackingBean.update(tracking);
 	}
 
-	private void addLink(BankStatement statement, FinanceBatch batch) throws ManagerBeanException {
+	public void addLink(BankStatement statement, FinanceBatch batch) throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		BankStatementLink statementLink = new BankStatementLink();
 		statementLink.setBankStatement(statement);
@@ -302,9 +302,9 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		batchBean.update(batch);
 	}
 
-	public void checkBankStatement(BankStatement statement) throws ManagerBeanException {
+	public void checkBankStatement(BankStatement statement, StatementReliability reliability) throws ManagerBeanException {
 		IManagerBean statementBean = BeanManager.getManagerBean(BankStatement.class);
-		statement.setReliability(StatementReliability.VERY_HIGH);
+		statement.setReliability(reliability);
 		statement.setStatus(StatementStatus.CHECKED);
 		statementBean.update(statement);
 	}
