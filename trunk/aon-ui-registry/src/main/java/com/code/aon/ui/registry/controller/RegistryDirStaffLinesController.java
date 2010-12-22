@@ -2,6 +2,7 @@ package com.code.aon.ui.registry.controller;
 
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,11 +60,11 @@ public class RegistryDirStaffLinesController extends LinesController {
 		rds.setShareNumber(0);
 	}
 
-	public void onDocumentChange( ValueChangeEvent event) {
+	public void onDocumentChange( ActionEvent event) {
 		try {
 			RegistryDirStaff rds = (RegistryDirStaff) getTo();
-			String document = (String) event.getNewValue();
-			if (StringUtils.isNotBlank(document)) {
+			String document = rds.getDocument();
+			if (StringUtils.isEmpty(rds.getName())) {
 				String docAlias = getManagerBean().getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DOCUMENT);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(docAlias, document);
@@ -79,7 +80,7 @@ public class RegistryDirStaffLinesController extends LinesController {
 					list = rBean.getList(criteria);
 					if (list != null && list.size() > 0 ) {
 						Registry registry = (Registry) list.get(0);
-						rds.setName( registry.getName() );	
+						rds.setName( registry.getFullName() );	
 					}
 				}
 			}
