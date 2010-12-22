@@ -12,10 +12,14 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
+import org.apache.commons.digester.substitution.MultiVariableExpander;
 import org.apache.commons.lang.math.NumberUtils;
+import org.mvel2.MVEL;
 
 public class ExpressionContext {
 	
+	private static final ScriptEngine ENGINE = 
+		new ScriptEngineManager().getEngineByName("JavaScript");
 	
 	
 	private Bindings bindings ;
@@ -40,11 +44,12 @@ public class ExpressionContext {
 		String name = expression.getName();
 		String script = expression.getExpression();
 		try {
-			Object result = ENGINE.eval(script, bindings );
+			Object result = MVEL.eval(script, bindings );
+			//Object result = ENGINE.eval(script, bindings );
 			if ( name != null ) {
 				bindings.put(name, result);
 			}
-		} catch (ScriptException e) {
+		} catch (Exception e) {
 			throw new ExpressionException(e.getMessage(),e);
 		}
 		
@@ -59,8 +64,6 @@ public class ExpressionContext {
 		return this.put(expressionImpl);
 	}
 
-	private static final ScriptEngine ENGINE = 
-		new ScriptEngineManager().getEngineByName("JavaScript");
 	
 	public double resolve(IExpression expression) throws ExpressionException {
 		double d = 0.0;
@@ -73,8 +76,9 @@ public class ExpressionContext {
 		}
 		else {
 			try {
-				result = ENGINE.eval(expression.getExpression(), bindings);
-			} catch (ScriptException e) {
+				result = MVEL.eval(expression.getExpression(), bindings);
+				//result = ENGINE.eval(expression.getExpression(), bindings);
+			} catch (Exception e) {
 			}
 		}
 	
@@ -83,6 +87,16 @@ public class ExpressionContext {
 		}
 		
 		return d;
+	}
+	
+	public Object eval(String script ) throws ExpressionException {
+		if ( script == null )
+			return null;
+		try {
+			return ENGINE.eval(script, bindings);
+		} catch (ScriptException e) {
+			throw new ExpressionException(e.getMessage(), e);
+		}
 	}
 	
 
@@ -94,6 +108,7 @@ public class ExpressionContext {
 		List<IExpression> expressions = new LinkedList<IExpression>();
 		for (IExpression exp : map.values()) {
 			if (NumberUtils.isNumber(exp.getExpression()) ) {
+				System.out.println("expressions.add(" + exp.getName() + ", " + exp.getExpression()+ ")");
 				expressions.add(exp);
 			}
 		}

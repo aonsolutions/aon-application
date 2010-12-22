@@ -38,7 +38,7 @@ public class SalaryDeductionsFactory implements IDeductionsFactory {
 			// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
 			// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
 			// el FrameWork.
-			if (session.contains(salary)) {
+			if (session.contains(salary) || salary.getId() == null) {
 				salaryDeductions = salary.getSalaryDeductions();
 				for(SalaryDeduction sd: salaryDeductions){
 					manageDeductions(deductions,sd);
