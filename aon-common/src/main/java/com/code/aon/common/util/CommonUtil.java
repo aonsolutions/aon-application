@@ -234,4 +234,34 @@ public class CommonUtil {
 
 	}
 
+	/**
+	 * Devuelve el primer dia del mes de la fecha pasada.
+	 * 
+	 * @param date
+	 *            La fecha de la que se se desea saber el primer dia del mes.
+	 * 
+	 * @return Un java.util.Date con el primer dia de ese año.
+	 */
+	public static Date getMonthFirstDay(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		return calendar.getTime();
+	}
+
+	/**
+	 * Devuelve el último dia del mes en función de la fecha pasada por
+	 * parámetro.
+	 * 
+	 * @param date
+	 *            La fecha de la que se se desea saber el último dia del mes.
+	 * 
+	 * @return Un java.util.Date con el último dia de ese año.
+	 */
+	public static Date getMonthLastDay(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DAY_OF_MONTH, CommonUtil.daysInMonth(date));
+		return calendar.getTime();
+	}
 }
