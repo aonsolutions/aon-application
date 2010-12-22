@@ -926,16 +926,20 @@ public class BankStatementController extends BasicController implements IFinance
 					break;
 				}
 				case 2: {
+					criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
 					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
 					break;
 				}
 				case 3: {
 					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
+					criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
 					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_COMMON_CONCEPT), to.getCommonConcept());
 					break;
 				}
 				case 4: {
 					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
+					criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
+					criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_COMMON_CONCEPT), to.getCommonConcept());
 					break;
 				}
 				case 5: {
