@@ -197,8 +197,10 @@ public class FinanceGenerator {
 		calendar.add(Calendar.DATE, daysNumber);
 		if(paymentDaysArray.length > 0){
 			for(int i = 0;i<paymentDaysArray.length;i++){
-				if(calendar.get(Calendar.DAY_OF_MONTH) <= paymentDaysArray[i]){
-					calendar.set(Calendar.DAY_OF_MONTH, paymentDaysArray[i]);
+				int days = CommonUtil.daysInMonth( date );
+				int day = paymentDaysArray[i]>days?days:paymentDaysArray[i];
+				if(calendar.get(Calendar.DAY_OF_MONTH) <= day){
+					calendar.set(Calendar.DAY_OF_MONTH, day);
 					return calendar.getTime();
 				}
 			}
