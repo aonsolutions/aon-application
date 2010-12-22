@@ -111,7 +111,10 @@
 										<aon:commandLink id="aon_fee_print"
 											value="#{financeBundle.finance_fee_print_module}"
 											actionListener="#{feePrint.onEditSearch}"
-											action="feePrint_search" />
+ 											action="feePrint_search">
+											<f:setPropertyActionListener value="#{false}"
+												target="#{feePrintSearch.anual}" />
+										</aon:commandLink> 											
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
