@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.ajax4jsf.model.DataComponentState;
 import org.apache.commons.lang.ObjectUtils;
 import org.richfaces.component.UITree;
 import org.richfaces.event.NodeSelectedEvent;
@@ -52,6 +53,8 @@ public class EnterpriseTree implements ICompanyConstants {
 	private RegistryInfo personInfo = new RegistryInfo();
 	
 	private boolean showContractHeader;
+	
+	private DataComponentState state;
 	
 	public TreeNode<EnterpriseTreeData> getRootNode() {
 		return rootNode;
@@ -185,7 +188,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	@SuppressWarnings("rawtypes")
 	public Boolean adviseNodeOpened(UITree tree) {
 		ListRowKey treeRowKey = (ListRowKey) tree.getRowKey();
-        if (treeRowKey == null || treeRowKey.depth() <= 2) {
+        if (treeRowKey == null || treeRowKey.depth() <= 1) {
             return Boolean.TRUE;
         }		
 		return null;
@@ -254,4 +257,16 @@ public class EnterpriseTree implements ICompanyConstants {
 		}				
 	}
 
+	public void onInit( ActionEvent event ) {
+		this.currentNode = this.enterpriseNode.getData();
+	}
+	
+	public DataComponentState getState() {
+		return state;
+	}
+
+	public void setState(DataComponentState state) {
+		this.state = state;
+	}
+	
 }
