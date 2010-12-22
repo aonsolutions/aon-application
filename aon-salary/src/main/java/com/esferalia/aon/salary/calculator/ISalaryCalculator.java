@@ -5,8 +5,8 @@ import com.esferalia.aon.salary.SalaryException;
 
 public interface ISalaryCalculator{
 
-	void initialize(SalaryCalculatorContext ctx) throws SalaryException;
-	ISalary calculate(SalaryCalculatorContext ctx) throws SalaryException;
-	boolean accept(SalaryCalculatorContext ctx);
+	void initialize(ISalaryCalculatorContext ctx) throws SalaryException;
+	ISalary calculate(ISalaryCalculatorContext ctx) throws SalaryException;
+	boolean accept(ISalaryCalculatorContext ctx);
 
 }

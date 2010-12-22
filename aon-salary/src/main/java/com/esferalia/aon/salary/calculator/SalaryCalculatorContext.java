@@ -5,7 +5,7 @@ import java.util.Date;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
-public class SalaryCalculatorContext {
+public class SalaryCalculatorContext implements ISalaryCalculatorContext{
 	
 	private ISalaryProxy salaryProxy;
 	private Date issueDate;
