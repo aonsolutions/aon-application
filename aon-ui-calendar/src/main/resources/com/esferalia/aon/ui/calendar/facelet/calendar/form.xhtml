@@ -16,9 +16,6 @@
 				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_menu}" />
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:define name="beforeSpinToolbarContent">
-<!--  
-				<ui:param name="skipSpin" value="#{calendar.sourceId!=null}" />
--->				
 
 					<aon:htmlCommandLink id="calendarReport_list"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
@@ -95,9 +92,7 @@
 							value="#{calendar.to.comments}" cols="60" rows="5">
 							<f:validateLength maximum="1024" />
 						</aon:inputTextarea>
-						
 					</aon:panelGrid>
-					
 					
 					<aon:div id="schedule" styleClass="aon-scroll-area">
 						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/schedule_panel.xhtml" />
@@ -107,21 +102,6 @@
 						<c:if test="#{!calendar.new}" >
 							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/holiday_panel.xhtml" />
 						</c:if>
-<!--  
-						<c:if test="#{calendar.new}">
-							<aon:panel style="height=80px"  width="100" 
-								header="#{calendarBundle.aon_calendar_import_holidays}">
-								<h:panelGrid columns="2">
-									<aon:outputText value="#{calendarBundle.aon_calendar_import_national}" />
-									<aon:selectBooleanCheckbox />
-									<aon:outputText value="#{calendarBundle.aon_calendar_import_regional}" />
-									<aon:selectBooleanCheckbox />
-									<aon:outputText value="#{calendarBundle.aon_calendar_import_local}" />
-									<aon:selectBooleanCheckbox />
-								</h:panelGrid>
-							</aon:panel>
-						</c:if>
--->						
 					</aon:div>
 
 				</h:panelGrid>
@@ -144,5 +124,6 @@
 		<aon:lookupButtonPopup lookup="#{holidayLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+		
 	</ui:define>
 </ui:composition>
