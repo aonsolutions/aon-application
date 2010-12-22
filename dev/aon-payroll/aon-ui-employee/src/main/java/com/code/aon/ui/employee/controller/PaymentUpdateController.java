@@ -115,6 +115,7 @@ public class PaymentUpdateController {
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			List<ITransferObject> list = bean.getList(criteria);
 			List<PaymentUpdate> dataList = new LinkedList<PaymentUpdate>();
+			
 			for (ITransferObject to: list) {
 				Contract contract = (Contract) to;
 				PaymentUpdate pu = new PaymentUpdate();

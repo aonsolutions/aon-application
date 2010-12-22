@@ -30,6 +30,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.employee.calculator.ContractSalaryCalculator;
+import com.code.aon.employee.calculator.ContractSalaryCalculatorContext;
 import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractStatus;
 import com.code.aon.person.Person;
@@ -40,6 +41,8 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
+import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.payment.PaymentsFactoryManager;
 
 @Entity
@@ -50,11 +53,6 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		// CALCULADOR DEL BORRADOR DE NOMINA.
 		SalaryCalculatorManager scm = SalaryCalculatorManager.getInstance(); 
 		scm.addCalculator(new ContractSalaryCalculator());
-		
-		PaymentsFactoryManager payManager =  PaymentsFactoryManager.getInstance();
-		payManager.addFactory( new ContractPaymentsFactory() );
-		DeductionsFactoryManager dedManager =  DeductionsFactoryManager.getInstance();
-		dedManager.addFactory( new ContractDeductionsFactory() );
 	}
 
 	private static final long serialVersionUID = -2662643961209110809L;
@@ -241,8 +239,10 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	@Transient
 	public SalaryCalculatorContext getSalaryCalculatorContext() throws SalaryException {
 		if (ctx == null) {
-			ctx = new SalaryCalculatorContext();
+			ctx = new ContractSalaryCalculatorContext();
 			ctx.setSalaryProxy(this);
+			ExpressionContext expressionContext = new ExpressionContext();
+			ctx.setExpressionContext(expressionContext);
 		}
 		return ctx;
 	}
