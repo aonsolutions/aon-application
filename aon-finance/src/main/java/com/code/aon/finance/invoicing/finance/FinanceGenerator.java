@@ -179,15 +179,11 @@ public class FinanceGenerator {
 
 	@SuppressWarnings("unchecked")
 	private void insertFinances(List<Finance> financeList) throws ManagerBeanException {
-		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			Iterator iter = financeList.iterator();
-			while(iter.hasNext()){
-				Finance finance = (Finance)iter.next();
-				financeBean.insert(finance);
-			}
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanException("Error inserting finances", e);
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Iterator iter = financeList.iterator();
+		while(iter.hasNext()){
+			Finance finance = (Finance)iter.next();
+			financeBean.insert(finance);
 		}
 	}
 	

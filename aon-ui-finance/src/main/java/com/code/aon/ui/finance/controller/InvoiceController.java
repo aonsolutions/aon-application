@@ -323,8 +323,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			getFinanceGenerator().generateFinances(invoice, getToInvoiceTotalPrice());
 			invoiceFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
-			String msg = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.GENERATE_FINANCES_ERROR_KEY);
-			throw new ManagerBeanException(msg,e);
+			String msg = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.GENERATE_FINANCES_ERROR_KEY) + ". " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
 		}
 	}
 	
