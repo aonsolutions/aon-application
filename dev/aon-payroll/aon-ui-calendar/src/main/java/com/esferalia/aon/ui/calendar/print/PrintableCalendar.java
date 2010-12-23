@@ -9,6 +9,7 @@ public class PrintableCalendar {
 	private String person;
 	private Calendar calendar;
 	private Integer year;
+	private Double totalHours;
 	private CalendarFactory calendarFactory;
 	
 	public Calendar getCalendar() {
@@ -50,7 +51,22 @@ public class PrintableCalendar {
 	public void setCalendarFactory(CalendarFactory calendarFactory) {
 		this.calendarFactory = calendarFactory;
 	}
+	public Double getTotalHours() {
+		calculateHours();
+		return totalHours;
+	}
+	public void setTotalHours(Double totalHours) {
+		this.totalHours = totalHours;
+	}
 	
+	private void calculateHours(){
+		setTotalHours(0.0);
+		for(PrintableMonth m: getCalendarFactory().getMonthList()){
+			if(m.getHours()!=null){
+				setTotalHours(totalHours+m.getHours());
+			}
+		}
+	}
 	
 		
 }
