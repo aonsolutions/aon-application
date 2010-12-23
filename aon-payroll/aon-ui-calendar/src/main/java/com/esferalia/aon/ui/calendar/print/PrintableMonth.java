@@ -24,12 +24,20 @@ public class PrintableMonth {
 		this.dayList = dayList;
 	}
 	public Double getHours() {
+		calculateHours();
 		return hours;
 	}
 	public void setHours(Double hours) {
 		this.hours = hours;
 	}
 	
-	
-	
+	private void calculateHours(){
+		setHours(0.0);
+		for(PrintableDay day: getDayList()){
+			if(day.getHours()!=null){
+				setHours(hours+day.getHours());
+			}
+		}
+	}
+
 }
