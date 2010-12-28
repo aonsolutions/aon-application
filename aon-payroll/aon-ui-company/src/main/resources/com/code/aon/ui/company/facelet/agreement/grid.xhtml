@@ -13,7 +13,7 @@
 			
 			    <aon:methodParam name="searchAction" default="agreement_search"  />						
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{employeeBundle.employee_agreement_module}" />
+					<ui:param name="toolbarTitle" value="#{companyBundle.company_agreement_module}" />
 					<ui:param name="controller" value="#{agreement}" />
 					<ui:param name="skipSearchButton" value="false" />
 				</ui:decorate>		
@@ -35,7 +35,7 @@
 
 						<ui:define name="endFormListContent">
 							<h:commandLink 
-								value="#{employeeBundle.employee_detail}"
+								value="#{companyBundle.company_detail}"
 								action="agreementLevel_form" 
 								actionListener="#{controller.onSelect}" />
 						</ui:define>

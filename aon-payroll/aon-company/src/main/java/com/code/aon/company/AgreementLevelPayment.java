@@ -1,4 +1,4 @@
-package com.code.aon.employee;
+package com.code.aon.company;
 
 
 import javax.persistence.Column;

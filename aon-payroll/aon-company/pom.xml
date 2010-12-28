@@ -13,6 +13,12 @@
 	<name>AON-COMPANY</name>	
 	<dependencies>
 		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.calendar</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
 			<version>${pom.version}</version>
@@ -21,6 +27,12 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.salary</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>

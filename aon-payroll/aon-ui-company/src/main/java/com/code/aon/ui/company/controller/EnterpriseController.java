@@ -22,6 +22,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.company.Agreement;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.EnterpriseCCC;
@@ -29,7 +30,6 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
-import com.code.aon.employee.Agreement;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -223,13 +223,6 @@ public class EnterpriseController extends RegistryController implements ICompany
     		bean.insertOrUpdate(getMainAddress());
     	}
     }
-
-    public void initAgreement() throws ManagerBeanException {
-    	IManagerBean bean = BeanManager.getManagerBean(Agreement.class);
-    	if ( getEnterprise().getAgreement() != null ) {
-        	this.agreement = (Agreement) bean.get( getEnterprise().getAgreement() );	
-    	}
-    }    
     
     public void initMainWorkPlace() throws ManagerBeanException {
     	WorkPlace workPlace = null;
@@ -338,11 +331,11 @@ public class EnterpriseController extends RegistryController implements ICompany
 	}
 
 	public void onAgreementChanged( LookupChangeEvent event ) {
-		Integer id = null;
+		Agreement a = null;
 		if ( event.getNewValue() != null ) {
-			id = ((Agreement) event.getNewValue()).getId();
+			a = ((Agreement) event.getNewValue());
 		}
-		getEnterprise().setAgreement(id);
+		getEnterprise().setAgreement(a);
 	}	
 	
 }
