@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryExpense" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42" isFloatColumnFooter="true">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="220"/>
+	<property name="ireport.x" value="690"/>
 	<property name="ireport.y" value="0"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
@@ -71,7 +71,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 		<variableExpression><![CDATA[$F{salary}.getTotalPayment()]]></variableExpression>
 	</variable>
 	<variable name="subtotalSSEmployee" class="java.lang.Double" resetType="Group" resetGroup="reportGroup" calculation="Sum">
-		<variableExpression><![CDATA[$F{salary}.getSocialSecurityContributions()]]></variableExpression>
+		<variableExpression><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions()]]></variableExpression>
 	</variable>
 	<variable name="subtotalLiquid" class="java.lang.Double" resetType="Group" resetGroup="reportGroup" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getTotalLiquid()]]></variableExpression>
@@ -102,7 +102,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<variable name="totalSSEmployee" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{salary}.getSocialSecurityContributions()]]></variableExpression>
+		<variableExpression><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions()]]></variableExpression>
 	</variable>
 	<variable name="totalLiquid" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{salary}.getTotalLiquid()]]></variableExpression>
@@ -482,7 +482,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getSocialSecurityContributions()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="435" y="0" width="75" height="14"/>
