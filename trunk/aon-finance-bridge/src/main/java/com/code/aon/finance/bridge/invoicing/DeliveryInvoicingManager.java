@@ -45,10 +45,13 @@ public class DeliveryInvoicingManager {
 		updateDeliveryStatus(delivery);
 		Invoice invoice = createInvoice(delivery, series, number, issueDate);
 		createInvoiceDetails(invoice, delivery);
-		if (delivery.getPayMethod() != null && delivery.getPayMethod().getId() != null) {
-			getFinanceGenerator().generateFinances(invoice, delivery, getPriceStrategy().getTotalPrice(invoice, invoice), true);
-		} else {
-			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice), true);
+		double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
+		if (invoiceTotal > 0) {
+			if (delivery.getPayMethod() != null && delivery.getPayMethod().getId() != null) {
+				getFinanceGenerator().generateFinances(invoice, delivery, invoiceTotal, true);
+			} else {
+				getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
+			}
 		}
 		return invoice;
 	}
