@@ -29,12 +29,13 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.Agreement;
+import com.code.aon.company.AgreementLevel;
+import com.code.aon.company.AgreementLevelCategory;
+import com.code.aon.company.AgreementLevelPayment;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.employee.Agreement;
-import com.code.aon.employee.AgreementLevel;
-import com.code.aon.employee.AgreementLevelCategory;
-import com.code.aon.employee.AgreementLevelPayment;
+import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.employee.Contract;
 import com.code.aon.employee.ContractData;
 import com.code.aon.employee.ContractPayment;
@@ -124,7 +125,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	private void loadPayment() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(AgreementLevelPayment.class);
-			String identifier = bean.getFieldName(IEmployeeAlias.AGREEMENT_LEVEL_PAYMENT_LEVEL_ID);
+			String identifier = bean.getFieldName(ICompanyAlias.AGREEMENT_LEVEL_PAYMENT_LEVEL_ID);
 			Integer data = getAgreementLevel().getId();
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(identifier, data);
@@ -331,24 +332,29 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	
 	public List<SelectItem> getAgreements(){
 		List<SelectItem> agreements = new LinkedList<SelectItem>();
-		if(getEnterprise().getAgreement()!=null){
-			Criteria criteria = new Criteria();
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(Agreement.class);
-				String identifier = bean.getFieldName(IEmployeeAlias.AGREEMENT_ID);
-//				Integer data = getContract().getWorkPlace().getEnterprise().getAgreement();
-				Integer data = getEnterprise().getAgreement();
-				criteria.addEqualExpression(identifier, data);
-				for( ITransferObject to : bean.getList(criteria) ) {
-					Agreement a = (Agreement)to;
-					String name = a.getDescription();
-					SelectItem item = new SelectItem(a, name);
-					agreements.add(item);			
-				}
-			} catch (ManagerBeanException e) {
-				
-			}
-		}
+		String name = getEnterprise().getAgreement().getDescription();
+		SelectItem item = new SelectItem(getEnterprise().getAgreement(), name);
+		agreements.add(item);			
+		
+		
+//		if(getEnterprise().getAgreement()!=null){
+//			Criteria criteria = new Criteria();
+//			try {
+//				IManagerBean bean = BeanManager.getManagerBean(Agreement.class);
+//				String identifier = bean.getFieldName(ICompanyAlias.AGREEMENT_ID);
+////				Integer data = getContract().getWorkPlace().getEnterprise().getAgreement();
+//				Agreement data = getEnterprise().getAgreement();
+//				criteria.addEqualExpression(identifier, data.getId());
+//				for( ITransferObject to : bean.getList(criteria) ) {
+//					Agreement a = (Agreement)to;
+//					String name = a.getDescription();
+//					SelectItem item = new SelectItem(a, name);
+//					agreements.add(item);			
+//				}
+//			} catch (ManagerBeanException e) {
+//				
+//			}
+//		}
 		return agreements;
 	}
 	public List<SelectItem> getAgreementLevels(){
@@ -357,7 +363,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			Criteria criteria = new Criteria();
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(AgreementLevel.class);
-				String identifier = bean.getFieldName(IEmployeeAlias.AGREEMENT_LEVEL_AGREEMENT_ID);
+				String identifier = bean.getFieldName(ICompanyAlias.AGREEMENT_LEVEL_AGREEMENT_ID);
 				Integer data = getAgreement().getId();
 				criteria.addEqualExpression(identifier, data);
 				for( ITransferObject to : bean.getList(criteria) ) {
@@ -378,7 +384,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			Criteria criteria = new Criteria();
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(AgreementLevelCategory.class);
-				String identifier = bean.getFieldName(IEmployeeAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID);
+				String identifier = bean.getFieldName(ICompanyAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID);
 				Integer data = getAgreementLevel().getId();
 				criteria.addEqualExpression(identifier, data);
 				for( ITransferObject to : bean.getList(criteria) ) {
@@ -511,7 +517,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		
 		IManagerBean bean = BeanManager.getManagerBean(Agreement.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.AGREEMENT_ID), getEnterprise().getAgreement());
+		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.AGREEMENT_ID), getEnterprise().getAgreement());
 		List<ITransferObject> list = bean.getList(criteria);
 		if(list.size()>0){
 			setAgreement((Agreement) list.get(0));

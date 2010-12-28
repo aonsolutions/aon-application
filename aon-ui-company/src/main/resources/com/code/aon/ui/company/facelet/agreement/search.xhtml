@@ -7,11 +7,11 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 	
 	<ui:define name="content">
-		<aon:form id="contractTrackingSearch">
+		<aon:form id="agreementSearch">
 			<aon:methodParam name="resetAction" value="agreement_grid" />
 			<aon:methodParam name="backAction" value="agreement_grid" />
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_agreement_module}" />
+				<ui:param name="toolbarTitle" value="#{companyBundle.company_agreement_module}" />
 				<ui:param name="controller" value="#{agreement}" />
 			</ui:include>
 

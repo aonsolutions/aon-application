@@ -1,4 +1,4 @@
-package com.code.aon.ui.employee.event;
+package com.code.aon.ui.company.event;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;
@@ -7,12 +7,6 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class AgreementLevelControllerListener extends ControllerAdapter{
-	
-	@Override
-	public void afterModelSearched(ControllerEvent event)
-			throws ControllerListenerException {
-//		((BasicController)getController()).onSelectFirst(null);
-	}
 	
 	@Override
 	public void afterModelInitialized(ControllerEvent event)
@@ -25,19 +19,8 @@ public class AgreementLevelControllerListener extends ControllerAdapter{
 				controller.onReset(null);
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ControllerListenerException("error on afterModelInitialized");
 		}
-	}
-	
-	@Override
-	public void afterBeanCanceled(ControllerEvent event)
-			throws ControllerListenerException {
-//		LinesController controller = (LinesController)getController();
-//		if(controller.getMasterController().getTo()!=null){
-//			controller.getMasterController().onCancel(null);
-//		}
-//		FormUtil.getController("agreement").onCancel(null);
 	}
 
 }

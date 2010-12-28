@@ -35,6 +35,10 @@
 		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>
 		
 		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.Agreement"/>
+		<mapping class="com.code.aon.company.AgreementLevel"/>
+		<mapping class="com.code.aon.company.AgreementLevelCategory"/>
+		<mapping class="com.code.aon.company.AgreementLevelPayment"/>
 		<mapping class="com.code.aon.company.CNAE"/>
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
@@ -92,10 +96,6 @@
 		<mapping class="com.code.aon.audit.Session"/>		
 		
 		<!-- AON-EMPLOYEE Mapping files -->
-		<mapping class="com.code.aon.employee.Agreement"/>
-		<mapping class="com.code.aon.employee.AgreementLevel"/>
-		<mapping class="com.code.aon.employee.AgreementLevelCategory"/>
-		<mapping class="com.code.aon.employee.AgreementLevelPayment"/>
 		<mapping class="com.code.aon.employee.Contract"/>
 		<mapping class="com.code.aon.employee.ContractBatch"/>
 		<mapping class="com.code.aon.employee.ContractBatchDetail"/>

@@ -9,12 +9,12 @@
 
 	<ui:define name="content">
 
-		<aon:form id="contractTypeForm">
+		<aon:form id="agreementForm">
 		
 			<aon:div id="menuExt"> 
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="#{employeeBundle.employee_agreement_module}" />
+					<ui:param name="toolbarTitle" value="#{companyBundle.company_agreement_module}" />
 					<ui:param name="controller" value="#{agreement}" />
 				</ui:decorate>
 			</aon:div>	
@@ -39,30 +39,30 @@
 				
 				<aon:div styleClass="aon-scroll-area">
 					<aon:panelTabSet rendered="#{!agreement.new}">
-						<aon:panelTab id="level" label="#{employeeBundle.employee_agreementLevel}">
-							<ui:include	src="/com/code/aon/ui/employee/facelet/agreementLevel/tab_grid.xhtml" >
+						<aon:panelTab id="level" label="#{companyBundle.company_agreementLevel}">
+							<ui:include	src="/com/code/aon/ui/company/facelet/agreementLevel/tab_grid.xhtml" >
 								<ui:param name="controller" value="#{agreementLevel}" />
 							</ui:include>
 						
 							<aon:panelTabSet rendered="#{!agreement.new}" >
 								<aon:panelTab id="category" 
-									label="#{employeeBundle.employee_agreementLevel_category}">
+									label="#{companyBundle.company_agreementLevel_category}">
 									<aon:div rendered="#{agreementLevel.model!=null}">
-									<ui:include	src="/com/code/aon/ui/employee/facelet/agreementLevelCategory/tab_grid.xhtml" >
+									<ui:include	src="/com/code/aon/ui/company/facelet/agreementLevelCategory/tab_grid.xhtml" >
 										<ui:param name="controller" value="#{agreementLevelCategory}" />
 									</ui:include>
 									</aon:div>
 								</aon:panelTab>
 								<aon:panelTab id="payment" disabled="#{agreementLevel.model==null}"
-									label="#{employeeBundle.employee_agreementLevel_payment}">
-									<ui:include	src="/com/code/aon/ui/employee/facelet/agreementLevelPayment/tab_grid.xhtml" >
+									label="#{companyBundle.company_agreementLevel_payment}">
+									<ui:include	src="/com/code/aon/ui/company/facelet/agreementLevelPayment/tab_grid.xhtml" >
 										<ui:param name="controller" value="#{agreementLevelPayment}" />
 									</ui:include>
 								</aon:panelTab>
 							</aon:panelTabSet>
 						</aon:panelTab>
 					
-						<aon:panelTab id="extra" label="#{employeeBundle.employee_agreementExtra}" disabled="true">
+						<aon:panelTab id="extra" label="#{companyBundle.company_agreementExtra}" disabled="true">
 						</aon:panelTab>
 					</aon:panelTabSet>
 				</aon:div>

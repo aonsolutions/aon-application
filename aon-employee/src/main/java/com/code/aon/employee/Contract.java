@@ -34,16 +34,14 @@ import com.code.aon.employee.calculator.ContractSalaryCalculatorContext;
 import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractStatus;
 import com.code.aon.person.Person;
+import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
-import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.payment.PaymentsFactoryManager;
 
 @Entity
 @Table(name="contract")
@@ -65,6 +63,7 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	private Date endDate;	
 	private byte[] document;
 	private ContractStatus status;
+	private Calendar calendar;
 	private Set<ContractPayment> contractPayments = new HashSet<ContractPayment>();
 	private Set<ContractDeduction> contractDeductions = new HashSet<ContractDeduction>();
 	@Transient
@@ -146,6 +145,17 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		this.status = status;
 	}
 	
+	@ManyToOne
+    @JoinColumn( name="calendar")	
+	@ForeignKey(name = "FK_CONTRACT_CALENDAR")
+	@Index(name = "IDX_CONTRACT_CALENDAR")
+	public Calendar getCalendar() {
+		return calendar;
+	}
+	public void setCalendar(Calendar calendar) {
+		this.calendar = calendar;
+	}
+	
 	@OneToMany(mappedBy = "contract", cascade={CascadeType.REMOVE})
 	public Set<ContractPayment> getContractPayments() {
 		return this.contractPayments;
@@ -202,6 +212,7 @@ public class Contract implements ITransferObject, ISalaryProxy {
 				.append(this.startDate, o.startDate)
 				.append(this.endDate, o.endDate)
 				.append(this.status, o.status)
+				.append(this.calendar, o.calendar)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -217,6 +228,7 @@ public class Contract implements ITransferObject, ISalaryProxy {
 			.append(startDate)
 			.append(endDate)
 			.append(status)
+			.append(calendar)
 			.toHashCode();
 	}
 

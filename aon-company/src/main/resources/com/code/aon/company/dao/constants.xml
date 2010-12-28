@@ -12,4 +12,8 @@
 		<alias names="id,registry_id,scope_id,registry_document,registry_documentCountry,registry_documentType"/>
 		<hibernate names="id,registry.id,scope.id,,registry.document,registry.documentCountry,registry.documentType"/>
 	</bean>		
+	<bean class="com.code.aon.company.AgreementLevelCategory">
+		<alias names="description,id,level_id,level_agreement_id"/>
+		<hibernate names="description,id,level.id,level.agreement.id"/>
+	</bean>
 </dao>
