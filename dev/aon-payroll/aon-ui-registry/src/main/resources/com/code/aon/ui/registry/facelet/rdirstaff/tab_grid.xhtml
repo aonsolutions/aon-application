@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate
@@ -15,15 +16,20 @@
 				</f:facet>
 				<aon:outputText value="#{to.document}" rendered="#{formList}" />
 				<aon:inputText id="Registry_Lookup_document-Edit" size="16"
-					valueChangeListener="#{controller.onDocumentChange}"
-					rendered="#{formEdit}" value="#{controller.to.document}" 
-					reRender="#{dataTableId}"/>
+					rendered="#{formEdit}" value="#{controller.to.document}" >
+					<a4j:support event="onchange"
+						reRender="#{dataTableId}" focus="Registry_full_name-Edit"
+						actionListener="#{controller.onDocumentChange}"/>
+				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="Registry_Lookup_document-New" size="16"
 						rendered="#{formNew}" required="true"
-						value="#{controller.to.document}"
-						valueChangeListener="#{controller.onDocumentChange}"
-						reRender="#{dataTableId}"/> 
+						value="#{controller.to.document}">
+					<a4j:support event="onchange"
+						reRender="#{dataTableId}" focus="Registry_full_name-New"
+						actionListener="#{controller.onDocumentChange}"/>
+				</aon:inputText>
+ 
 				</f:facet>
 			</aon:column>
 
