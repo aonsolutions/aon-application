@@ -20,6 +20,9 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	
 	private RegistryPayMethod registryPayMethod;
 	
+	private PayMethodType registryPayMethodType = PayMethodType.BANK_TRANSFER;	
+	
+
 	public RegistryPayMethod getRegistryPayMethod() {
 		return registryPayMethod;
 	}
@@ -36,6 +39,14 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		this.registryPayMethod.setRegistryBank( registryBank );
 	}
 	
+	public PayMethodType getRegistryPayMethodType() {
+		return registryPayMethodType;
+	}
+
+	public void setRegistryPayMethodType(PayMethodType registryPayMethodType) {
+		this.registryPayMethodType = registryPayMethodType;
+	}
+
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
