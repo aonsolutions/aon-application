@@ -11,11 +11,12 @@ DELETE FROM `tax_detail`;
 DELETE FROM `tax`;
 
 INSERT INTO `tax` (`id`, `name`, `tax_type`, `percentage`, `surcharge`, `start_date`) VALUES 
-  (1,'SIN IVA',1,0,0,'2000-01-01'),
-  (2,'GENERAL',1,18,4,'2010-07-01'),
-  (3,'REDUCIDO',1,8,1,'2010-07-01'),
-  (4,'SUPERREDUCIDO',1,4,0.5,'2000-01-01'),
-  (5,'IRPF',2,15,0,'2000-01-01');
+  (1,'SIN IVA',1,0,0,'2000-01-01',0,0),
+  (2,'GENERAL',1,18,4,'2010-07-01',0,0),
+  (3,'REDUCIDO',1,8,1,'2010-07-01',0,0),
+  (4,'SUPERREDUCIDO',1,4,0.5,'2000-01-01',0,0),
+  (5,'IRPF PROFESIONALES',2,18,0,'2000-01-01',0,0),
+  (6,'IRPF ARRENDAMIENTOS',2,19,0,'2000-01-01',0,1); 
 
 COMMIT;
 
