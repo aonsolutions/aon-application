@@ -42,6 +42,7 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 		finance.setRegistry(invoice.getRegistry());
 		finance.setRegistryName(invoice.getRegistryName());
 		finance.setRegistryDocument(invoice.getRegistryDocument());
+        finance.setConcept(invoice.getDocumentNumber()); 
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		try {

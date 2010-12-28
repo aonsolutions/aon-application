@@ -45,10 +45,16 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	}
 
 	private void checkFinance(Finance finance) throws ManagerBeanVetoListenerException {
-		if(finance.getAmount() == 0){
+		if (finance.getAmount() == 0) {
 			throw new ManagerBeanVetoListenerException("El importe del vencimiento no puede ser 0.0");
 		}
-		if (!finance.isEmptyInvoice()) {
+		if (StringUtils.isEmpty(finance.getRegistryName())) {
+			finance.setRegistryName((!finance.isEmptyInvoice()) ? finance.getInvoice().getRegistryName() : finance.getRegistry().getFullName());
+		}
+		if (StringUtils.isEmpty(finance.getRegistryDocument())) {
+			finance.setRegistryDocument((!finance.isEmptyInvoice()) ? finance.getInvoice().getRegistryDocument() : finance.getRegistry().getDocument());
+		}
+		if (StringUtils.isEmpty(finance.getConcept()) && !finance.isEmptyInvoice()) {
 	        finance.setConcept(finance.getInvoice().getDocumentNumber()); 
 		}
 		BankAccount bankAccount = finance.getBankAccount();

@@ -180,6 +180,10 @@
 		<mapping class="com.code.aon.project.JobType"/>
 		<mapping class="com.code.aon.project.Task"/>		
 
+		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.Purchase"/>
+		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
+
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RecordData"/>
@@ -197,11 +201,27 @@
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
 
+		<!-- AON-SALES Mapping files -->	
+		<mapping class="com.code.aon.sales.Sales"/>
+		<mapping class="com.code.aon.sales.SalesDetail"/>
+
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
 
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
+
+		<!-- AON-WAREHOUSE Mapping files -->		
+		<mapping class="com.code.aon.warehouse.Delivery"/>
+		<mapping class="com.code.aon.warehouse.DeliveryDetail"/>
+		<mapping class="com.code.aon.warehouse.DeliveryDetailLabour"/>
+		<mapping class="com.code.aon.warehouse.Income"/>
+		<mapping class="com.code.aon.warehouse.IncomeDetail"/>
+		<mapping class="com.code.aon.warehouse.Inventory"/>
+		<mapping class="com.code.aon.warehouse.InventoryDetail"/>
+		<mapping class="com.code.aon.warehouse.ItemWarehouse"/>
+		<mapping class="com.code.aon.warehouse.Stock"/>
+		<mapping class="com.code.aon.warehouse.Warehouse"/>
 
 		<!-- AON-AUDIT Mapping files -->
 		<mapping class="com.code.aon.audit.Action"/>

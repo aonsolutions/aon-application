@@ -6,8 +6,6 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.customer.Customer;
@@ -19,9 +17,8 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.finance.controller.FinanceController;
-import com.code.aon.ui.form.event.ControllerSearchListener;
 
-public class FinanceSearchListener extends ControllerSearchListener {
+public class FinanceSearchListener extends FinanceListSearchListener {
 
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 	
@@ -29,7 +26,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	private Supplier supplier;
 	private Creditor creditor;
 	private RegistryBank registryBank;
-	private FinanceStatus[] financeStatuses;
 	private List<PayMethod> payMethods;
 	
 	public Customer getCustomer() {
@@ -64,14 +60,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		this.registryBank = registryBank;
 	}
 
-	public FinanceStatus[] getFinanceStatuses() {
-		return financeStatuses;
-	}
-
-	public void setFinanceStatuses(FinanceStatus[] financeStatuses) {
-		this.financeStatuses = financeStatuses;
-	}
-	
 	public List<PayMethod> getPayMethods() {
 		return payMethods;
 	}
@@ -97,7 +85,7 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	public PayMethod getEmptyPayMethod() {
 		return EMPTY_PAYMETHOD;
 	}
-	
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		setCustomer(new Customer());
@@ -111,28 +99,25 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	}
 	
 	@Override
-	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
 		if ((getCustomer() != null) && (getCustomer().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCustomer().getId());			
 		}
 		if ((getSupplier() != null) && (getSupplier().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getSupplier().getId());			
-		}			
+		}
 		if ((getCreditor() != null) && (getCreditor().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCreditor().getId());			
-		}			
+		}
 		if ((getRegistryBank() != null) && (getRegistryBank().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), getRegistryBank().getBankAccount());			
-		}
-		if (!ArrayUtils.isEmpty(getFinanceStatuses())) {
-			String status = getController().resolveAlias(IFinanceAlias.FINANCE_FINANCE_STATUS);
-			addEnumToCriteria(criteria, status, getFinanceStatuses());
 		}
 		if (getPayMethods() != null && getPayMethodsSize() > 0) {
 			String payMethod = getController().resolveAlias(IFinanceAlias.FINANCE_PAY_METHOD_ID);
 			addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
 		}
+		super.completeCriteria(criteria);
 	}
 
 	public void onAddPayMethod(ActionEvent event) {

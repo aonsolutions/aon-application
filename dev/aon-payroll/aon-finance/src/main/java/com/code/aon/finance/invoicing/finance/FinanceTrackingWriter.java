@@ -10,6 +10,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethodTypeDetail;
+import com.code.aon.finance.BankStatementLink;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -31,6 +32,11 @@ public class FinanceTrackingWriter {
 
     public static FinanceTracking addFinanceTracking(Finance finance, Date date, FinanceTrackingType type, String description, 
     		RegistryBank registryBank, PayMethodTypeDetail payMethodTypeDetail, double amount, boolean recorded) {
+    	return addFinanceTracking(finance, date, type, description, registryBank, payMethodTypeDetail, amount, recorded, null);
+    }
+    
+    public static FinanceTracking addFinanceTracking(Finance finance, Date date, FinanceTrackingType type, String description, 
+    		RegistryBank registryBank, PayMethodTypeDetail payMethodTypeDetail, double amount, boolean recorded, BankStatementLink statementLink) {
         FinanceTracking tracking = new FinanceTracking();
         try {
             IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
@@ -40,6 +46,7 @@ public class FinanceTrackingWriter {
             tracking.setDescription(description);
             tracking.setRegistryBank(registryBank);
             tracking.setPayMethodTypeDetail(payMethodTypeDetail);
+            tracking.setBankStatementLink(statementLink);
             tracking.setAmount(amount);
             tracking.setRecorded(recorded);
             tracking = (FinanceTracking)financeTrackingBean.insert(tracking);

@@ -1219,8 +1219,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		List<Finance> financeList = new LinkedList<Finance>();
 		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
-		financeList = getFinanceGenerator()
-				.generateFinances(invoice, getInvoiceTotal(), false);
+		financeList = getFinanceGenerator().generateFinances(invoice, getInvoiceTotal(), false);
 		setFinances( new ListDataModel(financeList) );
 	}
 

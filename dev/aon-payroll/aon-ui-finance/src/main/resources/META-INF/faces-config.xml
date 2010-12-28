@@ -28,6 +28,27 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* FBATCH LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>fbatchList</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.FBatchListController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.FinanceBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fbatchList</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FinanceBatch_issueDate desc,FinanceBatch_id</value>
+		</managed-property>				
+	</managed-bean>
+	
 	<!-- ************* FBATCH ***************** -->
 	<managed-bean>
 		<managed-bean-name>fbatch</managed-bean-name>
@@ -150,6 +171,102 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************* FINANCE LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>financeList</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.FinanceListController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>financeList</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finance_dueDate,Finance_concept</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{financeListSearch}</value>
+				<value>#{financeScopeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>financeListSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FinanceListSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>financeScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Finance_scope_id</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* FINANCE TRACKING LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>financeTrackingList</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.FinanceTrackingListController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.FinanceTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>financeTrackingList</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FinanceTracking_trackingDate,FinanceTracking_finance_concept</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{financeTrackingListSearch}</value>
+				<value>#{financeTrackingScopeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>financeTrackingListSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FinanceTrackingListSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>financeTrackingScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>FinanceTracking_finance_scope_id</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************* FINANCE ***************** -->
 	<managed-bean>
 		<managed-bean-name>finance</managed-bean-name>
@@ -192,16 +309,6 @@
 	</managed-bean>	
 	
 	<managed-bean>
-		<managed-bean-name>financeScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>Finance_scope_id</value>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>financeControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.finance.event.FinanceControllerListener
@@ -230,7 +337,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* FINANCETRACKING ***************** -->
+	<!-- ************* FINANCE TRACKING ***************** -->
 	<managed-bean>
 		<managed-bean-name>financeTracking</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.finance.controller.FinanceTrackingController</managed-bean-class>
@@ -2854,6 +2961,23 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* BANK STATEMENT LINK ***************** -->
+	<managed-bean>
+		<managed-bean-name>bankStatementLink</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.BankStatementLinkController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.BankStatementLink</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bankStatementLink</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
 	<!-- ========================================================== -->

@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -37,6 +39,7 @@ public class BankStatementLink implements ITransferObject {
 	private BankStatement bankStatement;
     private StatementLinkSource source;
     private int sourceId;
+    private Date sourceDate;
     private double amount;
     private StatementLinkStatus status;
 
@@ -76,6 +79,15 @@ public class BankStatementLink implements ITransferObject {
 	}
 	public void setSourceId(int sourceId) {
 		this.sourceId = sourceId;
+	}
+
+	@Column(name="source_date")
+	@Temporal(TemporalType.DATE)
+	public Date getSourceDate() {
+		return sourceDate;
+	}
+	public void setSourceDate(Date sourceDate) {
+		this.sourceDate = sourceDate;
 	}
 
 	@Column(precision=15, scale=2)
@@ -137,7 +149,7 @@ public class BankStatementLink implements ITransferObject {
 	@Transient
 	public Date getDate() throws ManagerBeanException {
 		if (isFinanceTracking()) {
-			return ((FinanceTracking)getSourceTo()).getTrackingDate();
+			return ((FinanceTracking)getSourceTo()).getFinance().getDueDate();
 		} else if (isFinanceBatch()) {
 			return ((FinanceBatch)getSourceTo()).getIssueDate();
 		}
@@ -189,9 +201,10 @@ public class BankStatementLink implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.amount,o.amount)
 				.append(this.bankStatement,o.bankStatement)
-				.append(this.source,o.source)		
-				.append(this.sourceId,o.sourceId)		
-				.append(this.status,o.status)		
+				.append(this.source,o.source)
+				.append(this.sourceDate,o.sourceDate)
+				.append(this.sourceId,o.sourceId)
+				.append(this.status,o.status)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -204,6 +217,7 @@ public class BankStatementLink implements ITransferObject {
 			.append(this.amount)
 			.append(this.bankStatement)
 			.append(this.source)		
+			.append(this.sourceDate)		
 			.append(this.sourceId)		
 			.append(this.status)		
 			.toHashCode();
