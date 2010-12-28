@@ -12,17 +12,28 @@ public class RegistryPayMethodBeanVetoListener extends ManagerBeanVetoListenerAd
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	RegistryPayMethod to = (RegistryPayMethod)evt.getTo();
-    	if (to.getNumberOfPayments() == 0) {
-    		to.setNumberOfPayments(1);
-    	}
-    	if (to.getPaymentDays() == null) {
-    		to.setPaymentDays(StringUtils.EMPTY);
-    	}
+    	ensureParams(to);
+    	validatePaymentDays(to);
     }
 
     @Override
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	RegistryPayMethod to = (RegistryPayMethod)evt.getTo();
+    	ensureParams(to);
+    	validatePaymentDays(to);
+    }
+
+    private void validatePaymentDays(RegistryPayMethod to) throws ManagerBeanVetoListenerException{
+    	if (StringUtils.isNotEmpty( to.getPaymentDays() )) {
+    		for (int day : to.getPaymentDaysArray()) {
+    			if (day < 1 || day > 31) {
+    				throw new ManagerBeanVetoListenerException("Revise los dias de pago.");    				
+    			}
+    		}
+    	}
+	}
+
+	private void ensureParams(RegistryPayMethod to) {
     	if (to.getNumberOfPayments() == 0) {
     		to.setNumberOfPayments(1);
     	}
@@ -30,5 +41,4 @@ public class RegistryPayMethodBeanVetoListener extends ManagerBeanVetoListenerAd
     		to.setPaymentDays(StringUtils.EMPTY);
     	}
     }
-
 }
