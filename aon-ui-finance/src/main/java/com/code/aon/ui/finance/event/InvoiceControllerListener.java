@@ -5,6 +5,8 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.ui.finance.controller.InvoiceController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -40,5 +42,13 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		InvoiceController invoiceController = (InvoiceController)this.getController(); 
+		IController invoiceDetailController = FormUtil.getController(invoiceController.getInvoiceDetailControllerName());
+		invoiceDetailController.onReset(null);
+	}
+	
 
 }
