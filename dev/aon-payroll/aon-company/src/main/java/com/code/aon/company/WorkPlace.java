@@ -19,7 +19,9 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.enumeration.EconomicAgreement;
+
 import com.code.aon.registry.RegistryAddress;
+import com.esferalia.aon.calendar.Calendar;
 
 /**
  * Transfer Object that represents the workPlace.
@@ -48,6 +50,9 @@ public class WorkPlace implements ITransferObject, IEntity {
     
     /** Indicates if the working place is currently active. */
 	private boolean active;
+	
+	/** Calendar */
+	private Calendar calendar;
 
 	/**
 	 * Gets the id.
@@ -169,6 +174,18 @@ public class WorkPlace implements ITransferObject, IEntity {
 	public void setEconomicAgreement(EconomicAgreement economicAgreement) {
 		this.economicAgreement = economicAgreement;
 	}
+	
+	@ManyToOne
+    @JoinColumn( name="calendar")	
+	@ForeignKey(name = "FK_WORKPLACE_CALENDAR")
+	@Index(name = "FK_WORKPLACE_CALENDAR")
+	public Calendar getCalendar() {
+		return calendar;
+	}
+
+	public void setCalendar(Calendar calendar) {
+		this.calendar = calendar;
+	}
 
 	/* (non-Javadoc)
 	 * @see com.code.aon.employee.INode#accept(com.code.aon.employee.INodeVisitor)
@@ -190,6 +207,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 				.append(this.description, o.description)
 				.append(this.economicAgreement, o.economicAgreement)
 				.append(this.enterprise, o.enterprise)
+				.append(this.calendar, o.calendar)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -204,6 +222,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 			.append(economicAgreement)
 			.append(enterprise)
 			.append(id)
+			.append(calendar)
 			.toHashCode();
 	}
 

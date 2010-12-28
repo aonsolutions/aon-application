@@ -16,10 +16,6 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- Mapping files -->
-		<mapping class="com.code.aon.employee.Agreement"/>
-		<mapping class="com.code.aon.employee.AgreementLevel"/>
-		<mapping class="com.code.aon.employee.AgreementLevelCategory"/>
-		<mapping class="com.code.aon.employee.AgreementLevelPayment"/>
 		<mapping class="com.code.aon.employee.Contract"/>
 		<mapping class="com.code.aon.employee.ContractBatch"/>
 		<mapping class="com.code.aon.employee.ContractBatchDetail"/>
@@ -69,6 +65,8 @@
 		
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>
 	</session-factory>
 
 </hibernate-configuration>

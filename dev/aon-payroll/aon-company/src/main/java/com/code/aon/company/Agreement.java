@@ -1,4 +1,4 @@
-package com.code.aon.employee;
+package com.code.aon.company;
 
 
 import javax.persistence.Column;
@@ -17,16 +17,17 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.calendar.Calendar;
 
 @Entity
-@Table(name="agreement_level_category")
-public class AgreementLevelCategory implements ITransferObject {
+@Table(name="agreement")
+public class Agreement implements ITransferObject {
 
-	private static final long serialVersionUID = -2038737275830609769L;
+	private static final long serialVersionUID = -8910506655444088016L;
 
 	private Integer id;
-	private AgreementLevel level;
 	private String description;
+	private Calendar calendar;
 
 	@Id
 	@GeneratedValue
@@ -38,23 +39,24 @@ public class AgreementLevelCategory implements ITransferObject {
 		this.id = id;
 	}
 	
-	@ManyToOne
-    @JoinColumn( name="agreement_level", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_CATEGORY_AGREEMENT_LEVEL")
-	@Index(name = "FK_CATEGORY_AGREEMENT_LEVEL")
-	public AgreementLevel getLevel() {
-		return level;
-	}
-	public void setLevel(AgreementLevel level) {
-		this.level = level;
-	}
-	
 	@Column(length = 64)
 	public String getDescription() {
 		return description;
 	}
+	
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	@ManyToOne
+    @JoinColumn( name="calendar")	
+	@ForeignKey(name = "FK_CONTRACT_CALENDAR")
+	@Index(name = "IDX_CONTRACT_CALENDAR")
+	public Calendar getCalendar() {
+		return calendar;
+	}
+	public void setCalendar(Calendar calendar) {
+		this.calendar = calendar;
 	}
 	
 	
@@ -63,11 +65,11 @@ public class AgreementLevelCategory implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final AgreementLevelCategory o = (AgreementLevelCategory) obj;
+		final Agreement o = (Agreement) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.level, o.level)			
 				.append(this.description, o.description)			
+				.append(this.calendar, o.calendar)			
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -77,8 +79,8 @@ public class AgreementLevelCategory implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)
-			.append(level)
 			.append(description)
+			.append(calendar)
 			.toHashCode();
 	}
 
