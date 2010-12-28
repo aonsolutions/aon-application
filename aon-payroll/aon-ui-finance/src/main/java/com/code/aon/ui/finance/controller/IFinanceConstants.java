@@ -10,11 +10,23 @@ public interface IFinanceConstants {
 	
 	String FINANCE_FORM_NAME = "finance_form";
 	
+	String FINANCE_LIST_CONTROLLER_NAME = "financeList";
+	
+	String FINANCE_LIST_SEARCH_LISTENER_NAME = "financeListSearch";
+
 	String FINANCE_CONTROLLER_NAME = "finance";
 	
+	String FINANCE_SEARCH_LISTENER_NAME = "financeSearch";
+
 	String FINANCE_PRINTER_CONTROLLER = "financePrint";
 
+	String FINANCE_TRACKING_LIST_CONTROLLER_NAME = "financeTrackingList";
+
+	String FINANCE_TRACKING_LIST_SEARCH_LISTENER_NAME = "financeTrackingListSearch";
+
 	String FINANCE_TRACKING_CONTROLLER_NAME = "financeTracking";
+
+	String FINANCE_BATCH_LIST_CONTROLLER_NAME = "fbatchList";
 
 	String FINANCE_BATCH_CONTROLLER_NAME = "fbatch";
 
@@ -70,6 +82,8 @@ public interface IFinanceConstants {
 
 	String BANK_STATEMENT_CONTROLLER_NAME = "bankStatement";
 
-	String BANK_STATEMENT_SEARCH_CONTROLLER_NAME = "bankStatementSearch";
+	String BANK_STATEMENT_SEARCH_LISTENER_NAME = "bankStatementSearch";
+
+	String BANK_STATEMENT_LINK_CONTROLLER_NAME = "bankStatementLink";
 
 }

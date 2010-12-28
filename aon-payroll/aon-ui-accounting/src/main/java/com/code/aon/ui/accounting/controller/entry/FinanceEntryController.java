@@ -473,15 +473,15 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 				FinanceTracking financeTracking = accountEntryFinanceTracking.getFinanceTracking();
 				Finance finance = financeTracking.getFinance();
 
-				if (FinanceTrackingWriter.isLastTracking(financeTracking)) {
-					accountEntryFTrackingBean.remove(accountEntryFinanceTracking);
+				accountEntryFTrackingBean.remove(accountEntryFinanceTracking);
+				if (financeTracking.getBankStatementLink() == null && FinanceTrackingWriter.isLastTracking(financeTracking)) {
 					fTrackingBean.remove(financeTracking);
 					finance.setFinanceStatus((FinanceTrackingWriter.wasFinanceReturned(finance)?FinanceStatus.RETURNED:FinanceStatus.PENDING));
 					financeBean.update(finance);
 				} else {
 					if (removing) {
-						String message = AonUtil.getMessage("accountingBundle", "accounting_finance_payment_remove_error");
-						throw new AbortProcessingException(message);
+						financeTracking.setRecorded(false);
+						fTrackingBean.update(financeTracking);
 					}
 				}
 			}

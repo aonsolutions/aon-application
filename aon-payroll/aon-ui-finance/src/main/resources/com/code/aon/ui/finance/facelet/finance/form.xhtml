@@ -390,7 +390,7 @@
 										<c:if test="#{aonRole.accountingOperator}">
 											<aon:commandButton id="record"
 												title="#{financeBundle.finance_record}"
-												immediate="true" rendered="#{to.recordable and !to.recorded}"
+												immediate="true" rendered="#{to.recordable and !to.recorded and to.bankStatementLink == null}"
 												actionListener="#{financeTracking.recordTracking}"
 												styleClass="aon-editDataTable-button aon-icon-task-assume"
 												reRender="financeTrackingData" 

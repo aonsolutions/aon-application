@@ -68,6 +68,9 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	public boolean isUndoable() throws ManagerBeanException{
 		if (getModel().isRowAvailable()) {
 			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+			if (tracking.getBankStatementLink() != null && tracking.getBankStatementLink().getId() != null) {
+				return false;
+			}
 			if (tracking.getType() == FinanceTrackingType.BATCHED || tracking.getType() == FinanceTrackingType.FRACTIONED) {
 				return false;
 			}

@@ -77,9 +77,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (invoice.getScope() == null || invoice.getScope().getId() == null) {
 			invoice.setScope(obtainInvoiceScope(invoice.getType(), invoice.getRegistry()));
 		}
-		if (invoice.isDefaultTaxInfo()) {
-			fillDefaultTaxInfo(invoice);
-		}
 	}
 
 	@Override
@@ -96,9 +93,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 		if (checkInvoiceDate(invoice)) {
 			invoice.setTaxDate(invoice.getIssueDate());
-		}
-		if (invoice.isDefaultTaxInfo()) {
-			fillDefaultTaxInfo(invoice);
 		}
 	}
 
@@ -125,6 +119,15 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		int invoiceYear = CommonUtil.getYear(invoice.getIssueDate());
 		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
 			throw new ManagerBeanVetoListenerException("La fecha de la factura no esta dentro del rango válido");
+		}
+		if (StringUtils.isEmpty(invoice.getRegistryName())) {
+			invoice.setRegistryName(invoice.getRegistry().getFullName());
+		}
+		if (StringUtils.isEmpty(invoice.getRegistryDocument())) {
+			invoice.setRegistryDocument(invoice.getRegistry().getDocument());
+		}
+		if (invoice.isDefaultTaxInfo()) {
+			fillDefaultTaxInfo(invoice);
 		}
 	}
 
