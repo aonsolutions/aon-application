@@ -11,6 +11,20 @@ public class FinanceBatchBeanVetoListener extends ManagerBeanVetoListenerAdapter
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		FinanceBatch fBatch = (FinanceBatch)evt.getTo();
+		if (fBatch.getBankStatementLink() != null && fBatch.getBankStatementLink().getId() == null) {
+			fBatch.setBankStatementLink(null);
+		}
+		if (fBatch.getSecurityLevel() == null) {
+			fBatch.setSecurityLevel(SecurityLevel.OFFICIAL);
+		}
+	}
+
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		FinanceBatch fBatch = (FinanceBatch)evt.getTo();
+		if (fBatch.getBankStatementLink() != null && fBatch.getBankStatementLink().getId() == null) {
+			fBatch.setBankStatementLink(null);
+		}
 		if (fBatch.getSecurityLevel() == null) {
 			fBatch.setSecurityLevel(SecurityLevel.OFFICIAL);
 		}

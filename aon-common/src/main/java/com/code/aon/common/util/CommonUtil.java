@@ -114,21 +114,36 @@ public class CommonUtil {
 	 * @return Dias entre las fechas.
 	 */
 	public static long getDaysBetweenDates(Date from, Date to) {
+		return getDaysBetweenDates(from, to, true);
+	}
+
+	/**
+	 * Devuelve el número de dias que hay entre las fechas pasadas por
+	 * parámetro.
+	 * 
+	 * @param from
+	 *            Fecha inicial.
+	 * @param to
+	 *            Fecha final.
+	 * @param checkDates
+	 *            Chequear que from sea anterior a to.
+	 * @return Dias entre las fechas.
+	 */
+	public static long getDaysBetweenDates(Date from, Date to, boolean checkDates) {
 		if (from == null) {
 			throw new IllegalArgumentException("Date 'from' value can not be null.");
 		}
 		if (to == null) {
 			throw new IllegalArgumentException("Date 'to' value can not be null.");
 		}
-		if (to.before(from)) {
+		if (checkDates && to.before(from)) {
 			throw new IllegalArgumentException("Date 'to' can not be earlier than date 'from'.");
 		}
 		Calendar c1 = Calendar.getInstance();
 		Calendar c2 = Calendar.getInstance();
 		c1.setTime(from);
 		c2.setTime(to);
-		double r = (double) (c2.getTimeInMillis() - c1.getTimeInMillis())
-				/ (double) (24 * 3600 * 1000);
+		double r = (double) (c2.getTimeInMillis() - c1.getTimeInMillis()) / (double) (24 * 3600 * 1000);
 		r = CommonUtil.round(r, 0);
 		return (long) r;
 	}

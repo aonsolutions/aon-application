@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,7 +35,6 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
@@ -46,13 +44,12 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
-public class FinanceController extends BasicController implements IFinanceConstants {
+public class FinanceController extends FinanceListController implements IFinanceConstants {
 
 	private Company company;
 	private boolean payment;
@@ -76,7 +73,6 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	private Double totalFinanceAmount;
 	private String invoiceViewer;
 	private boolean purchase;
-	private ArrayList<Finance> checks= new ArrayList<Finance>();
 
 	public Company getCompany() {
 		if (company == null) {
@@ -325,7 +321,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		super.onEditSearch(event);
 	}
 
-	public void onFinancePaymentShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
+	public void onFinancePaymentShow(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)getTo();
 		if (finance.getPayMethod() == null || finance.getPayMethod().getId() == null) {
 			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR);
@@ -367,7 +363,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		return null;
 	}
 
-	public void onFinanceReturnShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
+	public void onFinanceReturnShow(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)getTo();
 		setReturnDate(new Date());
 		setReturnExpenses(finance.getExpenses());
@@ -399,7 +395,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		return obtainPaymentRegistryBank(registry, bank, bankAccount);
 	}
 
-	public List<SelectItem> getPayMethodTypeDetails() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getPayMethodTypeDetails() throws ManagerBeanException {
 		if (payMethodTypeDetailList == null) {
 			payMethodTypeDetailList = new LinkedList<SelectItem>();
 			Finance to = (Finance)this.getTo();
@@ -417,7 +413,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		return payMethodTypeDetailList;
 	}
 
-	public int getPayMethodTypeDetailsSize() throws ManagerBeanException, ExpressionException {
+	public int getPayMethodTypeDetailsSize() throws ManagerBeanException {
 		return getPayMethodTypeDetails().size();
 	}
 
@@ -517,58 +513,6 @@ public class FinanceController extends BasicController implements IFinanceConsta
 
 		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
 		financeTrackingController.onSearch(null);
-	}
-
-	/**
-	 * CHECK LIST CONTROL 
-	 */
-
-	public void rowSelected(ValueChangeEvent event) {
-		if (event.getNewValue() != null) {
-			setRowChecked(((Boolean)event.getNewValue()).booleanValue());
-		}
-	}
-	
-	public boolean getRowChecked() {
-		Finance to = (Finance) model.getRowData();
-		return checks.contains(to);
-	}
-	
-	public void setRowChecked(boolean rowChecked) {
-		if (rowChecked) {
-			Finance to = (Finance) model.getRowData();
-			if (!checks.contains(to)) {
-				checks.add(to);
-			}
-		} else {
-			Finance to = (Finance) model.getRowData();
-			if (checks.contains(to)) {
-				checks.remove(to);
-			}
-		}
-	}
-	
-	public ArrayList<Finance> getCheckedFinances() {
-		return checks;
-	}
-	
-	public void clearCheckedFinances() {
-		checks = new ArrayList<Finance>();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void checkAll(ActionEvent event) throws ManagerBeanException {
-		Iterator iterator = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-			if (!checks.contains(finance)) {
-				checks.add(finance);
-			}
-		}
-	}
-
-	public void checkNone(ActionEvent event) {
-		clearCheckedFinances();
 	}
 
 	@SuppressWarnings("unchecked")

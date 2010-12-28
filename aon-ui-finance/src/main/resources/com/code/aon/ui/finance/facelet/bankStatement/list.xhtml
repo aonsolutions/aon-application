@@ -24,20 +24,19 @@
 							value="#{financeBundle.finance_bank_statement_import}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							rendered="#{!controller.new and controller.to == null}"
-							actionListener="#{controller.onImportFileShow}">
+							actionListener="#{controller.onImportFileShow}"
+							reRender="showImportFileWindow">
 							<f:setPropertyActionListener target="#{controller.showImportFileWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-<!-- 
 						<aon:commandButton id="checkLinks"
-							value="#{financeBundle.finance_bank_statement_check}"
+							value="#{financeBundle.finance_bank_statement_check_auto}"
 							styleClass="aon-finding-toolbar-item aon-icon-attach-file"
 							rendered="#{!controller.new and controller.to == null}"
 							actionListener="#{controller.onCheckLinks}"
 							reRender="#{dataTableId}"
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
- -->
 						<aon:commandButton id="recordLinks"
 							value="#{financeBundle.finance_record_selected}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
@@ -315,8 +314,7 @@
 											</f:facet>
 											<aon:selectBooleanCheckbox id="BankStatementCheck"
 												value="#{controller.bankStatementRowChecked}"
-												valueChangeListener="#{controller.bankStatementRowSelected}"
-												ajaxSingle="true" />	
+												valueChangeListener="#{controller.bankStatementRowSelected}" />	
 										</aon:column>
 
 										<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -364,13 +362,13 @@
 												<aon:outputText value="#{bundle.aon_date}" />
 											</f:facet>
 											<aon:outputText value="#{to.operationDate}" 
-												rendered="#{formList or controller.to.recorded}">
+												rendered="#{formList or !controller.to.pending}">
 												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 													timeZone="#{timeZoneController.timeZoneId}" />
 											</aon:outputText>
 											<aon:selectInputDate id="BankStatement_operationDate" 
 												value="#{controller.to.operationDate}"
-												rendered="#{formEdit and !controller.to.recorded}" required="true"
+												rendered="#{formEdit and controller.to.pending}" required="true"
 												timeZone="#{timeZoneController.timeZone}"
 												popupDateFormat="#{bundle.aon_date_pattern}"/>
 											<f:facet name="footer">
@@ -388,10 +386,10 @@
 												<aon:outputText value="#{bundle.aon_operation}" />
 											</f:facet>
 											<aon:outputText value="#{to.commonConcept}"
-												rendered="#{formList}" />
+												rendered="#{formList or !controller.to.pending}" />
 											<aon:selectOneMenu id="BankStatement_concept"
 												value="#{controller.to.commonConcept}"
-												rendered="#{formEdit}">
+												rendered="#{formEdit and controller.to.pending}">
 												<f:selectItems value="#{financeCollections.statementConcepts}" />
 											</aon:selectOneMenu>
 											<f:facet name="footer">
@@ -433,10 +431,10 @@
 												<aon:outputText value="#{bundle.aon_type}" />
 											</f:facet>
 											<aon:outputText value="#{(to.payment) ? (financeBundle.finance_payment) : (financeBundle.finance_charge)}"
-												rendered="#{formList or controller.to.recorded}" /> 
+												rendered="#{formList or !controller.to.pending}" /> 
 											<aon:selectOneMenu id="BankStatement_payment"
 												value="#{controller.to.payment}"
-												rendered="#{formEdit and !controller.to.recorded}">
+												rendered="#{formEdit and controller.to.pending}">
 												<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
 												<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
 											</aon:selectOneMenu>
@@ -488,17 +486,15 @@
 				 					</ui:define>
 									<ui:define name="endFormListContent">
 										<aon:div id="showBankStatementLinks" rendered="#{!to.recorded}">
-<!-- 
 											<aon:commandButton id="addLink"
 												value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
-												title="#{financeBundle.finance_bank_statement_check}"
+												title="#{financeBundle.finance_bank_statement_check_manual}"
 												rendered="#{to.pending}"
 												actionListener="#{controller.onAddLinkShow}"
 												reRender="showLinkWindow">
 												<f:setPropertyActionListener target="#{controller.showLinkWindow}"
 													value="#{true}" />
 											</aon:commandButton>
- -->
 											<aon:commandButton id="showLink"
 												value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
 												title="#{financeBundle.finance_tobreakdown}"
@@ -525,7 +521,7 @@
 										</aon:div>
 										<rich:subTable id="bankStatementLinkTable" 
 											rendered="#{to.checked and controller.showBankStatementLink}"
-											value="#{controller.bankStatementLinkList}" var="bankStatementLink">
+											value="#{controller.bankStatementLinkList}" var="statementLink">
 
 											<aon:column colspan="4"	
 												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
@@ -533,7 +529,7 @@
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
-												<aon:outputText value="#{bankStatementLink.date}">
+												<aon:outputText value="#{statementLink.date}">
 													<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 														timeZone="#{timeZoneController.timeZoneId}" />
 												</aon:outputText>
@@ -541,28 +537,28 @@
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="#{financeBundle.finance_tracking_batched} "
-													rendered="#{bankStatementLink.financeBatch}" />
+													rendered="#{statementLink.financeBatch}" />
 												<c:if test="#{aonRole.accountingOperator}">
-													<aon:outputText value="#{bankStatementLink.concept}" 
-														rendered="#{bankStatementLink.bankConcept or bankStatementLink.account}" />
+													<aon:outputText value="#{statementLink.concept}" 
+														rendered="#{statementLink.bankConcept or statementLink.account}" />
 												</c:if>
-												<aon:outputText value="#{bankStatementLink.concept}" 
-													rendered="#{bankStatementLink.financeTracking or bankStatementLink.financeBatch}" />
+												<aon:outputText value="#{statementLink.concept}" 
+													rendered="#{statementLink.financeTracking or statementLink.financeBatch}" />
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
-												<aon:outputText value="#{bankStatementLink.description}" />
+												<aon:outputText value="#{statementLink.description}" />
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="#{financeBundle.finance_payment}" 
-													rendered="#{bankStatementLink.payment}" /> 
+													rendered="#{statementLink.payment}" /> 
 												<aon:outputText value="#{financeBundle.finance_charge}"
-													rendered="#{!bankStatementLink.payment}" />
+													rendered="#{!statementLink.payment}" />
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-yellow-column">
-												<aon:outputText value="#{bankStatementLink.amount}">
+												<aon:outputText value="#{statementLink.amount}">
 													<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 												</aon:outputText>
 											</aon:column>
