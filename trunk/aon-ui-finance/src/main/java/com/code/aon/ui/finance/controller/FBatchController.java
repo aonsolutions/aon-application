@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
-import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -343,31 +342,9 @@ public class FBatchController extends BasicController implements ICollectionProv
 		}
 	}
 
-	@SuppressWarnings("unchecked")
     public void onRecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fBatch = (FinanceBatch)this.getTo();
-
-        AccountEntry entry = getWriter().recordFBatch(fBatch, getRecordDate());
-        getWriter().insertAccountEntryFinanceBatch(entry, fBatch);
-
-        IManagerBean fbatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-        Iterator iterator = fBatch.getDetailList().iterator();
-        while (iterator.hasNext()) {
-            FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)iterator.next();
-            fbatchDetail.setStatus(FinanceStatus.PAID);
-            fbatchDetailBean.update(fbatchDetail);
-
-            fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.PAID);
-            financeBean.update(fbatchDetail.getFinance());
-
-            String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
-            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), entry.getEntryDate(), FinanceTrackingType.PAID, message,
-            		fBatch.getRegistryBank(), null, fbatchDetail.getFinance().getTotalAmount(), true);
-        }
-
-        fBatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
-        getManagerBean().update(fBatch);
+        getWriter().recordFBatch(fBatch, getRecordDate());
         loadDetails(fBatch);
     }
 
