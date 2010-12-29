@@ -25,6 +25,7 @@
 			<xs:attribute name="showFinanceData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
 			<xs:attribute name="showDirStaff" type="xs:boolean" use="required"/>
+			<xs:attribute name="standalone" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
