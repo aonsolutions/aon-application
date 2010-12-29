@@ -19,7 +19,7 @@ import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.employee.Contract;
-import com.esferalia.aon.payroll.enumeration.CausaSuspension;
+import com.esferalia.aon.payroll.enumeration.SuspensionCause;;
 
 
 @Entity
@@ -32,7 +32,7 @@ public class EnterpriseCertificateDetail implements ITransferObject {
 	private EnterpriseCertificate enterpriseCertificate;	
 	private Contract contract;
 	private Date expireDate;
-	private CausaSuspension suspensionCause;
+	private SuspensionCause suspensionCause;
 
 	@Id     
 	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -71,12 +71,12 @@ public class EnterpriseCertificateDetail implements ITransferObject {
 		this.expireDate = expireDate;
 	}
 	
-	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.CausaSuspension") })
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.esferalia.aon.payroll.enumeration.SuspensionCause") })
 	@Column(name = "suspension_cause", length = 2, nullable = false)
-	public CausaSuspension getSuspensionCause() {
+	public SuspensionCause getSuspensionCause() {
 		return suspensionCause;
 	}
-	public void setSuspensionCause(CausaSuspension suspensionCause) {
+	public void setSuspensionCause(SuspensionCause suspensionCause) {
 		this.suspensionCause = suspensionCause;
 	}
 	

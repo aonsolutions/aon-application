@@ -236,7 +236,7 @@ public class CertificateFileGenerationWizard implements Serializable {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-			String fileName = getCertificateWriter().getCertificate().getFichero();
+			String fileName = getCertificateWriter().getCertificate().getFile();
 			response.setContentType(MimeType.MIME_XML.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xml\";");
 
