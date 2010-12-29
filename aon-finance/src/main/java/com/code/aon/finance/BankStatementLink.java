@@ -152,6 +152,10 @@ public class BankStatementLink implements ITransferObject {
 			return ((FinanceTracking)getSourceTo()).getFinance().getDueDate();
 		} else if (isFinanceBatch()) {
 			return ((FinanceBatch)getSourceTo()).getIssueDate();
+		} else if (isBankConcept()) {
+			return getBankStatement().getOperationDate();
+		} else if (isAccount()) {
+			return getBankStatement().getOperationDate();
 		}
 		return null;
 	}

@@ -30,7 +30,10 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
+import com.code.aon.finance.enumeration.FinanceBatchStatus;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
+import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 
@@ -60,6 +63,7 @@ public class AccountEntryFinanceWriter {
 	}
 
 	/* FINANCE BATCH */
+
 	@SuppressWarnings("unchecked")
 	public AccountEntry recordFBatch(FinanceBatch fBatch, Date paymentDate) throws ManagerBeanException {
 		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
@@ -69,12 +73,41 @@ public class AccountEntryFinanceWriter {
 		recordingTo.setBalancingConcept(fBatch.getDescription());
 		recordingTo.setSecurityLevel((fBatch.getSecurityLevel()==null) ? SecurityLevel.OFFICIAL : fBatch.getSecurityLevel());
 		recordingTo.setFBatchDetailList(fBatch.getDetailList());
-		return recordFBatchDetails(recordingTo);
+		return recordFBatch(recordingTo, fBatch, null);
 	}
 
-	private AccountEntry recordFBatchDetails(FinanceRecordingTo recordingTo) throws ManagerBeanException {
-		AccountEntry entry = createAccountEntry(recordingTo);
+	@SuppressWarnings("unchecked")
+	public AccountEntry recordFBatch(FinanceRecordingTo recordingTo, FinanceBatch fBatch, AccountEntry entry) throws ManagerBeanException {
+		if (entry == null) {
+			entry = createAccountEntry(recordingTo);
+		}
+		insertFBatchDetails(recordingTo, entry);
+		if (entry != null) {
+	        insertAccountEntryFinanceBatch(entry, fBatch);
 
+	        IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
+	        IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+	        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+	        Iterator iterator = fBatch.getDetailList().iterator();
+	        while (iterator.hasNext()) {
+	            FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+	            fBatchDetail.setStatus(FinanceStatus.PAID);
+	            fBatchDetailBean.update(fBatchDetail);
+
+	            fBatchDetail.getFinance().setFinanceStatus(FinanceStatus.PAID);
+	            financeBean.update(fBatchDetail.getFinance());
+
+	            FinanceTrackingWriter.addFinanceTracking(fBatchDetail.getFinance(), entry.getEntryDate(), FinanceTrackingType.PAID, 
+	            		ENTRY + entry.getId(), fBatch.getRegistryBank(), null, fBatchDetail.getFinance().getTotalAmount(), true);
+	        }
+
+	        fBatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
+	        fBatchBean.update(fBatch);
+		}
+		return entry;
+	}
+
+	private AccountEntry insertFBatchDetails(FinanceRecordingTo recordingTo, AccountEntry entry) throws ManagerBeanException {
 		double balancingAmount = 0.0;
 		// Primer Apunte
 		for (FinanceBatchDetail fbatchDetail: recordingTo.getFBatchDetailList()) {
