@@ -9,8 +9,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.employee.enumeration.ContractWorkingDay;
-import com.esferalia.aon.payroll.core.enumeration.FileStatus;
-import com.esferalia.aon.payroll.enumeration.CausaSuspension;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 
 public class PayrollCollections implements Serializable {
 
@@ -18,7 +18,7 @@ public class PayrollCollections implements Serializable {
 	
 	private List<SelectItem> workTimes;
 	private List<SelectItem> fileStatus;
-	private List<SelectItem> causaSuspension;
+	private List<SelectItem> suspensionCause;
 
 	public List<SelectItem> getWorkTimes() {
 		if (workTimes == null) {
@@ -49,18 +49,18 @@ public class PayrollCollections implements Serializable {
 		return fileStatus;
 	}
 	
-	public List<SelectItem> getCausaSuspension() {
-		if (causaSuspension == null) {
+	public List<SelectItem> getSuspensionCause() {
+		if (suspensionCause == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			causaSuspension = new LinkedList<SelectItem>();
-			CausaSuspension[] causas = CausaSuspension.values();
-			for (CausaSuspension c : causas) {
+			suspensionCause = new LinkedList<SelectItem>();
+			SuspensionCause[] causas = SuspensionCause.values();
+			for (SuspensionCause c : causas) {
 				String name = c.getFullName(locale);
 				SelectItem item = new SelectItem(c, name);
-				causaSuspension.add(item);
+				suspensionCause.add(item);
 			}
 		}
-		return causaSuspension;
+		return suspensionCause;
 	}
 	
 	

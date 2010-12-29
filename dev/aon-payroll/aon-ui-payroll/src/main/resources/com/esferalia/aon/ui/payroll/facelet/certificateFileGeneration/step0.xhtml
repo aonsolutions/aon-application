@@ -27,6 +27,25 @@
 				<aon:outputLabel value="#{payrollBundle.payroll_numeroCcc}" />
 				<aon:outputText value="#{certificateFileGenerationWizard.remesa.numeroCcc}" />
 -->
+				
+<!--  
+				<aon:outputLabel for="Enterprise_id"
+					value="#{companyBundle.company_enterprise}" />
+				<aon:div styleClass="aon-lookup">
+					<aon:lookupInputText id="Enterprise_id" lookup="#{enterpriseLookup}"
+						reRender="Enterprise_full_name"
+						value="#{contractSearch.enterprise.id}" size="5" />
+					<aon:lookupButton 
+						windowTitle="#{companyBundle.company_enterprise_selection}"
+						selectReRender="Enterprise_id,Enterprise_full_name" actionType="search"
+						lookup="#{enterpriseLookup}" minHeight="460" minWidth="650"
+						property="#{contractSearch.enterprise}">
+					</aon:lookupButton>
+					<aon:inputText id="Enterprise_full_name"
+						value="#{(contractSearch.enterprise.registry.fullName!=null)?(contractSearch.enterprise.registry.fullName):('')}"
+						size="50" disabled="true" />							
+				</aon:div>
+-->				
 	
 				<aon:outputLabel for="fecha" value="#{payrollBundle.payroll_fecha_remesa}: " />
 				<aon:selectInputDate id="fecha" 
@@ -37,14 +56,18 @@
 					popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				
-				<aon:outputLabel for="estado"
+				<aon:outputLabel for="status"
 					value="#{payrollBundle.payroll_estado}: " />
-				<aon:selectManyCheckbox id="estado"
+				<aon:selectManyCheckbox id="status"
 					value="#{certificateFileGenerationWizard.params.statusList}">
 					<f:selectItems value="#{payrollCollections.fileStatus}" />
 				</aon:selectManyCheckbox>
 			</ui:define>
 		</ui:decorate>
+	</ui:define>
+	
+	<ui:define name="after_form">
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 	</ui:define>
 
 </ui:composition>
