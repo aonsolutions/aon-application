@@ -331,35 +331,18 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	}
 	
 	public List<SelectItem> getAgreements(){
-		List<SelectItem> agreements = new LinkedList<SelectItem>();
-		String name = getEnterprise().getAgreement().getDescription();
-		SelectItem item = new SelectItem(getEnterprise().getAgreement(), name);
-		agreements.add(item);			
-		
-		
-//		if(getEnterprise().getAgreement()!=null){
-//			Criteria criteria = new Criteria();
-//			try {
-//				IManagerBean bean = BeanManager.getManagerBean(Agreement.class);
-//				String identifier = bean.getFieldName(ICompanyAlias.AGREEMENT_ID);
-////				Integer data = getContract().getWorkPlace().getEnterprise().getAgreement();
-//				Agreement data = getEnterprise().getAgreement();
-//				criteria.addEqualExpression(identifier, data.getId());
-//				for( ITransferObject to : bean.getList(criteria) ) {
-//					Agreement a = (Agreement)to;
-//					String name = a.getDescription();
-//					SelectItem item = new SelectItem(a, name);
-//					agreements.add(item);			
-//				}
-//			} catch (ManagerBeanException e) {
-//				
-//			}
-//		}
+		List<SelectItem> agreements = null;
+		if(getEnterprise().getAgreement()!=null && getEnterprise().getAgreement().getId()!=null){
+			agreements = new LinkedList<SelectItem>();
+			String name = getEnterprise().getAgreement().getDescription();
+			SelectItem item = new SelectItem(getEnterprise().getAgreement(), name);
+			agreements.add(item);			
+		}
 		return agreements;
 	}
 	public List<SelectItem> getAgreementLevels(){
 		List<SelectItem> levels = new LinkedList<SelectItem>();
-		if(getAgreement()!=null){
+		if(getAgreement()!=null && getAgreement().getId()!=null){
 			Criteria criteria = new Criteria();
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(AgreementLevel.class);
@@ -487,11 +470,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		EnterpriseController enterpriseC = (EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER);
 		enterpriseC.onSelect(event);
 		setEnterprise((Enterprise) enterpriseC.getTo());
-		try {
-			loadAgreement();
-		} catch (ManagerBeanException e) {
-			// NADA. no se encuentra el convenio de la empresa
-		}
+		setAgreement(getEnterprise().getAgreement());
 		if(enterpriseC.getCcc()==null){
 			String msg = "La empresa no dispone de ninguna cuenta de cotizacion";
 			AonUtil.addErrorMessage(msg);
@@ -501,27 +480,6 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		this.workplaces = loadWorkPlaces();
 		setEnterpriseListEnabled(false);
 		setCurrentStep(1);
-	}
-	
-	private void loadAgreement() throws ManagerBeanException{
-//		AgreementController aController = (AgreementController) AonUtil.getRegisteredBean("agreement");
-//		aController.getCriteria().addEqualExpression(aController.getFieldName(IEmployeeAlias.AGREEMENT_ID), getEnterprise().getAgreement());
-//		aController.initializeModel();
-//		
-//		LinesController pController = (LinesController) AonUtil.getRegisteredBean("agreementLevelPayment");
-//		pController.getWrappedList();
-//		LinesController cController = (LinesController) AonUtil.getRegisteredBean("agreementLevelCategory");
-//		cController.getWrappedList();
-		
-		
-		
-		IManagerBean bean = BeanManager.getManagerBean(Agreement.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.AGREEMENT_ID), getEnterprise().getAgreement());
-		List<ITransferObject> list = bean.getList(criteria);
-		if(list.size()>0){
-			setAgreement((Agreement) list.get(0));
-		}
 	}
 	
 	public List<SelectItem> loadWorkPlaces(){

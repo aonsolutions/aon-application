@@ -14,7 +14,6 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-	
 		<ui:include src="/com/code/aon/ui/employee/facelet/contractGeneration/contractHeader.xhtml" />
 
 		<aon:panelGrid columns="2" style="width: 50%;" >
@@ -92,17 +91,15 @@
 			
 			<aon:outputLabel for="agreement"
 				value="#{employeeBundle.employee_contract_agreement}" />
-			<aon:div>
-				<aon:selectOneMenu id="agreement"
-					disabled="#{contractGenerationWizard.enterprise.agreement==null}"
-					value="#{contractGenerationWizard.agreement}" >
-					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{contractGenerationWizard.agreements}" />
-					<a4j:support event="onchange" reRender="agreementLevel" />
-				</aon:selectOneMenu>
+			<aon:div rendered="#{contractGenerationWizard.agreement.id==null}">
+				<aon:outputText value=" - " />
+			</aon:div>
+			<aon:div rendered="#{contractGenerationWizard.agreement.id!=null}">
+				<aon:outputText id="agreement"
+					value="#{contractGenerationWizard.agreement.description}" />
 				<aon:outputLabel for="agreementLevel"
 					styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{employeeBundle.employee_agreementLevel}:" />
+					value="#{companyBundle.company_agreementLevel}:" />
 				<aon:selectOneMenu id="agreementLevel"
 					disabled="#{contractGenerationWizard.agreement==null}"
 					value="#{contractGenerationWizard.agreementLevel}" >
@@ -110,17 +107,18 @@
 					<f:selectItems value="#{contractGenerationWizard.agreementLevels}" />
 					<a4j:support event="onchange" reRender="category, gross_salary_check" />
 				</aon:selectOneMenu>
+				
+				<aon:outputLabel for="category"
+					styleClass="aon-italic aon-margin-left aon-margin-right"
+					value="#{employeeBundle.employee_contract_agreement_category}:" />
+				<aon:selectOneMenu id="category"
+					disabled="#{contractGenerationWizard.agreementLevel==null}"
+					value="#{contractGenerationWizard.category}" >
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{contractGenerationWizard.categories}" />
+				</aon:selectOneMenu>
 			</aon:div>
 				
-			<aon:outputLabel for="category"
-				value="#{employeeBundle.employee_contract_agreement_category}" />
-			<aon:selectOneMenu id="category"
-				disabled="#{contractGenerationWizard.agreementLevel==null}"
-				value="#{contractGenerationWizard.category}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contractGenerationWizard.categories}" />
-			</aon:selectOneMenu>
-			
 			<aon:outputLabel for="gross_salary"
 				value="#{employeeBundle.employee_contract_gross_salary}" />
 			<aon:div id="salary">
@@ -139,7 +137,6 @@
 		
 		</aon:panelGrid>
 	
-
 	</ui:define>
 	
 </ui:composition>
