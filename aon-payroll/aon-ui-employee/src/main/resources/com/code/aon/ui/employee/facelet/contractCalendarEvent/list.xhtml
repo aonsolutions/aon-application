@@ -7,22 +7,18 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="contractTrackingList">
+		<aon:form id="contractCalendarEventList">
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contractTracking_module}" />
-<!--  
-				<ui:param name="controller" value="#{contract}" />
--->
-				<ui:param name="controller" value="#{contractTracking}" />
+				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contractCalendarEvent_module}" />
+				<ui:param name="controller" value="#{contractCalendarEvent}" />
 				<ui:param name="skipResetButton" value="true" />
-	
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:methodParam name="rowSelectorAction" value="contractTracking_form" />
+				<aon:methodParam name="rowSelectorAction" value="contractCalendarEvent_form" />
 				
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{contract}" />

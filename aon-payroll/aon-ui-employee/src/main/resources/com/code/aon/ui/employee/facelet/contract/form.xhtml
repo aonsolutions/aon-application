@@ -12,10 +12,16 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contract_module}" />
 				<ui:param name="controller" value="#{contract}" />
-				
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSaveButton" value="true" />
 				<ui:param name="skipRemoveButton" value="true" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton 
+						value="#{employeeBundle.employee_contractCalendarEvent_module}"
+						styleClass="aon-finding-toolbar-item aon-icon-open-popup"
+						action="contractCalendarEvent_form" />
+				</ui:define>
 			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">		
@@ -23,5 +29,6 @@
 			</aon:div>
 		</aon:form>
 		<ui:insert name="contractDetail" />
+		<ui:include src="/com/code/aon/ui/employee/facelet/contractCalendarEvent/modalPanel.xhtml" />
 	</ui:define>
 </ui:composition>
