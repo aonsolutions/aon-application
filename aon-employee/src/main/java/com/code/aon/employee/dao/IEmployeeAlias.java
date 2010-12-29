@@ -5,11 +5,11 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.employee.Contract;
 import com.code.aon.employee.ContractBatch;
 import com.code.aon.employee.ContractBatchDetail;
+import com.code.aon.employee.ContractCalendarEvent;
 import com.code.aon.employee.ContractData;
 import com.code.aon.employee.ContractDeduction;
 import com.code.aon.employee.ContractEvent;
 import com.code.aon.employee.ContractPayment;
-import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
 import com.code.aon.employee.DeductionConcept;
 import com.code.aon.employee.FunctionConstant;
@@ -181,6 +181,43 @@ public interface IEmployeeAlias {
 	* Hibernate value: ContractBatchDetail.id
 	*/
 	String  CONTRACT_BATCH_DETAIL_ID = CONTRACT_BATCH_DETAIL_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractCalendarEvent entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_CALENDAR_EVENT_ENTRY = DAOConstants.getDAOConstant(ContractCalendarEvent.class);
+
+	/** 
+	* Alias value: ContractCalendarEvent_contract_id
+	* Hibernate value: ContractCalendarEvent.contract.id
+	*/
+	String  CONTRACT_CALENDAR_EVENT_CONTRACT_ID = CONTRACT_CALENDAR_EVENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractCalendarEvent_date
+	* Hibernate value: ContractCalendarEvent.date
+	*/
+	String  CONTRACT_CALENDAR_EVENT_DATE = CONTRACT_CALENDAR_EVENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractCalendarEvent_duration
+	* Hibernate value: ContractCalendarEvent.duration
+	*/
+	String  CONTRACT_CALENDAR_EVENT_DURATION = CONTRACT_CALENDAR_EVENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractCalendarEvent_id
+	* Hibernate value: ContractCalendarEvent.id
+	*/
+	String  CONTRACT_CALENDAR_EVENT_ID = CONTRACT_CALENDAR_EVENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractCalendarEvent_type
+	* Hibernate value: ContractCalendarEvent.type
+	*/
+	String  CONTRACT_CALENDAR_EVENT_TYPE = CONTRACT_CALENDAR_EVENT_ENTRY.getAliasNames()[4];
 
 
 
@@ -419,43 +456,6 @@ public interface IEmployeeAlias {
 	* Hibernate value: ContractPayment.type
 	*/
 	String  CONTRACT_PAYMENT_TYPE = CONTRACT_PAYMENT_ENTRY.getAliasNames()[9];
-
-
-
-	/** 
-	* DAOConstantsEntry for ContractTracking entity.
-	*/ 
-	DAOConstantsEntry CONTRACT_TRACKING_ENTRY = DAOConstants.getDAOConstant(ContractTracking.class);
-
-	/** 
-	* Alias value: ContractTracking_contract_id
-	* Hibernate value: ContractTracking.contract.id
-	*/
-	String  CONTRACT_TRACKING_CONTRACT_ID = CONTRACT_TRACKING_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: ContractTracking_date
-	* Hibernate value: ContractTracking.date
-	*/
-	String  CONTRACT_TRACKING_DATE = CONTRACT_TRACKING_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: ContractTracking_duration
-	* Hibernate value: ContractTracking.duration
-	*/
-	String  CONTRACT_TRACKING_DURATION = CONTRACT_TRACKING_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: ContractTracking_id
-	* Hibernate value: ContractTracking.id
-	*/
-	String  CONTRACT_TRACKING_ID = CONTRACT_TRACKING_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: ContractTracking_type
-	* Hibernate value: ContractTracking.type
-	*/
-	String  CONTRACT_TRACKING_TYPE = CONTRACT_TRACKING_ENTRY.getAliasNames()[4];
 
 
 

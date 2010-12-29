@@ -8,11 +8,11 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.employee.Contract;
 import com.code.aon.employee.ContractBatch;
 import com.code.aon.employee.ContractBatchDetail;
+import com.code.aon.employee.ContractCalendarEvent;
 import com.code.aon.employee.ContractData;
 import com.code.aon.employee.ContractDeduction;
 import com.code.aon.employee.ContractEvent;
 import com.code.aon.employee.ContractPayment;
-import com.code.aon.employee.ContractTracking;
 import com.code.aon.employee.ContractType;
 import com.code.aon.employee.DeductionConcept;
 import com.code.aon.employee.FunctionConstant;
@@ -37,11 +37,11 @@ public class EmployeeAliasWriter {
 				Contract.class.getName(),
 				ContractBatch.class.getName(),
 				ContractBatchDetail.class.getName(),
+				ContractCalendarEvent.class.getName(),
 				ContractData.class.getName(),
 				ContractDeduction.class.getName(),
 				ContractEvent.class.getName(),
 				ContractPayment.class.getName(),
-				ContractTracking.class.getName(),
 				ContractType.class.getName(),
 				DeductionConcept.class.getName(),
 				FunctionConstant.class.getName(),

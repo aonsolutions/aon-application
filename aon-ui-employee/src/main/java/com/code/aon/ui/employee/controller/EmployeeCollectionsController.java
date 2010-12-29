@@ -7,11 +7,11 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.employee.enumeration.ContractCalendarEventType;
 import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractDuration;
 import com.code.aon.employee.enumeration.ContractModel;
 import com.code.aon.employee.enumeration.ContractOption;
-import com.code.aon.employee.enumeration.ContractTrackingType;
 import com.code.aon.employee.enumeration.ContractWorkingDay;
 import com.code.aon.employee.enumeration.QuoteGroup;
 import com.code.aon.registry.enumeration.StreetType;
@@ -22,7 +22,7 @@ public class EmployeeCollectionsController {
 
 	private List<SelectItem> contractDurations;
 	private List<SelectItem> contractWorkingDays;
-	private List<SelectItem> contractTrackingTypes;
+	private List<SelectItem> contractCalendarEventTypes;
 	private List<SelectItem> paymentTypes;
 	private List<SelectItem> deductionTypes;
 	
@@ -85,17 +85,17 @@ public class EmployeeCollectionsController {
 		return contractWorkingDays;
 	}
 	
-	public List<SelectItem> getContractTrackingTypes() {
-		if (contractTrackingTypes == null) {
+	public List<SelectItem> getContractCalendarEventTypes() {
+		if (contractCalendarEventTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			contractTrackingTypes = new LinkedList<SelectItem>();
-			for( ContractTrackingType contractTrackingType : ContractTrackingType.values() ) {
-				String name = contractTrackingType.getName(locale);
-				SelectItem item = new SelectItem(contractTrackingType, name);
-				contractTrackingTypes.add(item);			
+			contractCalendarEventTypes = new LinkedList<SelectItem>();
+			for( ContractCalendarEventType type : ContractCalendarEventType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				contractCalendarEventTypes.add(item);			
 			}
 		}
-		return contractTrackingTypes;
+		return contractCalendarEventTypes;
 	}
 	
 	public List<SelectItem> getContractOptions() {

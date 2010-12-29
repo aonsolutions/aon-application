@@ -14,23 +14,25 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.employee.enumeration.ContractTrackingType;
-
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.employee.enumeration.ContractCalendarEventType;
 
 @Entity
-@Table(name = "contract_tracking")
-public class ContractTracking implements ITransferObject {
+@Table(name = "contract_calendar_event")
+public class ContractCalendarEvent implements ITransferObject {
 
 	private static final long serialVersionUID = -2564874457439900595L;
 
 	private Integer id;
 	private Contract contract;
 	private Date date;
-	private ContractTrackingType type;
+	private ContractCalendarEventType type;
 	private Double duration;
 	
 	@Id
@@ -46,8 +48,8 @@ public class ContractTracking implements ITransferObject {
 	
 	@ManyToOne
     @JoinColumn( name="contract", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_CONTRACT_TRACKING_CONTRACT")
-	@Index(name = "IDX_CONTRACT_TRACKING_CONTRACT")
+	@ForeignKey(name = "FK_CONTRACT_CALENDAR_EVENT_CONTRACT")
+	@Index(name = "IDX_CONTRACT_CALENDAR_EVENT_CONTRACT")
 	public Contract getContract() {
 		return contract;
 	}
@@ -67,11 +69,11 @@ public class ContractTracking implements ITransferObject {
 	}
 
 	@Column(name="type")
-	public ContractTrackingType getType() {
+	public ContractCalendarEventType getType() {
 		return type;
 	}
 
-	public void setType(ContractTrackingType type) {
+	public void setType(ContractCalendarEventType type) {
 		this.type = type;
 	}
 
@@ -83,27 +85,37 @@ public class ContractTracking implements ITransferObject {
 	public void setDuration(Double duration) {
 		this.duration = duration;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ContractCalendarEvent o = (ContractCalendarEvent) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.contract, o.contract)
+				.append(this.date, o.date)
+				.append(this.type, o.type)
+				.append(this.duration, o.duration)
+				.isEquals();	
 		}
-		if (obj instanceof ContractTracking) {
-			ContractTracking o = (ContractTracking) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(contract)
+			.append(date)
+			.append(type)
+			.append(duration)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }
