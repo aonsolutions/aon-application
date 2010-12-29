@@ -21,19 +21,9 @@
 				<ui:param name="controller" value="#{agreement}" />
 				<ui:define name="searchContent">
 				
-					<aon:outputLabel for="Ageement_id"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="Ageement_id"
-						valueChangeListener="#{controller.addExpression}"
-						size="4" />
-						
-					<aon:outputLabel for="Ageement_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="Ageement_description"
-						valueChangeListener="#{controller.addExpression}"
-						size="50" />
-					
-									
+					<ui:include 
+						src="/com/code/aon/ui/company/facelet/agreement/searchContent.xhtml" />								
+				
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
