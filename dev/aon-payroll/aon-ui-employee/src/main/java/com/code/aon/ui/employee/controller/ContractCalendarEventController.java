@@ -10,15 +10,15 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.employee.Contract;
-import com.code.aon.employee.ContractTracking;
+import com.code.aon.employee.ContractCalendarEvent;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
-public class ContractTrackingController extends LinesController {
+public class ContractCalendarEventController extends LinesController {
 
 //	private static final Logger LOGGER = LoggerFactory.getLogger(ContractTrackingController.class.getName());
 
-	private ContractTracking track;
+	private ContractCalendarEvent event;
 	private boolean fullTime;
 	private Date startDate;
 	private Date endDate;
@@ -48,15 +48,15 @@ public class ContractTrackingController extends LinesController {
 		this.fullTime = fullTime;
 	}
 
-	public ContractTracking getTrack() {
-		if(track==null){
-			track = new ContractTracking();
+	public ContractCalendarEvent getEvent() {
+		if(event==null){
+			event = new ContractCalendarEvent();
 		}
-		return track;
+		return event;
 	}
 
-	public void setTrack(ContractTracking track) {
-		this.track = track;
+	public void setEvent(ContractCalendarEvent event) {
+		this.event = event;
 	}
 	
 	public boolean isShowMultipleTrackingWindow() {
@@ -76,7 +76,7 @@ public class ContractTrackingController extends LinesController {
 	}
 	
 	public void onMultipleTrackingShow(ActionEvent event)  {
-		setTrack(null);
+		setEvent(null);
 		setFullTime(false);
 		setStartDate(null);
 		setEndDate(null);
@@ -98,13 +98,13 @@ public class ContractTrackingController extends LinesController {
 				startDate.setTimeInMillis(getStartDate().getTime());
 				endDate.setTimeInMillis(getEndDate().getTime());
 				
-				ContractTracking ct;
+				ContractCalendarEvent ct;
 				while(startDate.before(endDate) || startDate.equals(endDate)){
-					ct = new ContractTracking();
+					ct = new ContractCalendarEvent();
 					ct.setContract(((Contract)getMasterController().getTo()));
 					ct.setDate(startDate.getTime());
-					ct.setType(getTrack().getType());
-					ct.setDuration(getTrack().getDuration());
+					ct.setType(getEvent().getType());
+					ct.setDuration(getEvent().getDuration());
 					this.getManagerBean().insert(ct);
 					startDate.add(Calendar.DATE, 1);
 				}

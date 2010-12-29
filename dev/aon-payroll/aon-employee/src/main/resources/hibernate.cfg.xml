@@ -19,11 +19,11 @@
 		<mapping class="com.code.aon.employee.Contract"/>
 		<mapping class="com.code.aon.employee.ContractBatch"/>
 		<mapping class="com.code.aon.employee.ContractBatchDetail"/>
+		<mapping class="com.code.aon.employee.ContractCalendarEvent"/>
 		<mapping class="com.code.aon.employee.ContractData"/>
 		<mapping class="com.code.aon.employee.ContractDeduction"/>
 		<mapping class="com.code.aon.employee.ContractEvent"/>
 		<mapping class="com.code.aon.employee.ContractPayment"/>
-		<mapping class="com.code.aon.employee.ContractTracking"/>
 		<mapping class="com.code.aon.employee.ContractType"/>
 		<mapping class="com.code.aon.employee.DeductionConcept"/>
 		<mapping class="com.code.aon.employee.FunctionConstant"/>
@@ -32,6 +32,10 @@
 		<mapping class="com.code.aon.employee.SalaryPayment"/>
 		<mapping class="com.code.aon.employee.SalaryDeduction"/>
 
+		<mapping class="com.code.aon.company.Agreement"/>
+		<mapping class="com.code.aon.company.AgreementLevel"/>
+		<mapping class="com.code.aon.company.AgreementLevelCategory"/>
+		<mapping class="com.code.aon.company.AgreementLevelPayment"/>
 		<mapping class="com.code.aon.company.CNAE"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseActivity"/>

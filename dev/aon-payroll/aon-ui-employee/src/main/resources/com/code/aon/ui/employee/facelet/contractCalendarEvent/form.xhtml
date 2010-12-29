@@ -14,8 +14,8 @@
 			<aon:div id="menuExt"> 
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contractTracking_module}" />
-					<ui:param name="controller" value="#{contract}" />
+					<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contractCalendarEvent_module}" />
+					<ui:param name="controller" value="#{contractCalendarEvent}" />
 					<ui:param name="skipRemoveButton" value="true" />
 					<ui:param name="skipResetButton" value="true" />
 					<ui:param name="skipSearchButton" value="true" />
@@ -24,8 +24,8 @@
 					<ui:param name="skipFocusFirst" value="true" />
 
 					<ui:define name="toolbarActions">
-						<aon:methodParam name="backAction" value="contractTracking_list" />
-						<aon:methodParam name="saveAction" value="contractTracking_form" />
+						<aon:methodParam name="backAction" value="contract_form" />
+						<aon:methodParam name="saveAction" value="contractCalendarEvent_form" />
 					</ui:define>
 					
 					<ui:define name="beforeSpinToolbarContent">
@@ -33,9 +33,9 @@
 							value="#{employeeBundle.employee_multiple_tracking}"
 							immediate="#{true}" 
 							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
-							actionListener="#{contractTracking.onMultipleTrackingShow}"
+							actionListener="#{contractCalendarEvent.onMultipleTrackingShow}"
 							reRender="showMultipleTrackingWindow">
-							<f:setPropertyActionListener target="#{contractTracking.showMultipleTrackingWindow}"
+							<f:setPropertyActionListener target="#{contractCalendarEvent.showMultipleTrackingWindow}"
 								value="#{true}" />
 						</aon:commandButton>
 					</ui:define>
@@ -86,12 +86,12 @@
 				<aon:div styleClass="aon-scroll-area">
 
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-						<ui:param name="controller" value="#{contractTracking}" />
+						<ui:param name="controller" value="#{contractCalendarEvent}" />
 						<ui:define name="columns">
 						
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputLabel for="ContractTracking_date"
+									<aon:outputLabel for="ContractCalendarEvent_date"
 										value="#{bundle.aon_date}" />
 								</f:facet>
 								<aon:outputText value="#{to.date}" 
@@ -99,7 +99,7 @@
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
-								<aon:selectInputDate id="ContractTracking_date" 
+								<aon:selectInputDate id="ContractCalendarEvent_date" 
 									rendered="#{formEdit}" 
 									value="#{to.date}" required="true"
 									inputSize="10" renderAsPopup="true" enableManualInput="true"
@@ -107,7 +107,7 @@
 									popupDateFormat="#{bundle.aon_date_pattern}">
 								</aon:selectInputDate>
 								<f:facet name="footer">
-									<aon:selectInputDate id="ContractTracking_date-New" 
+									<aon:selectInputDate id="ContractCalendarEvent_date-New" 
 										rendered="#{formNew}"
 										value="#{controller.to.date}" required="true"
 										inputSize="10" renderAsPopup="true" enableManualInput="true"
@@ -119,38 +119,38 @@
 
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputLabel for="ContractTracking_type"
+									<aon:outputLabel for="ContractCalendarEvent_type"
 										value="#{bundle.aon_type}" />
 								</f:facet>
 								<aon:outputText value="#{to.type}" 
 									rendered="#{formList}" />
-								<aon:selectOneMenu id="ContractTracking_type" required="true"
+								<aon:selectOneMenu id="ContractCalendarEvent_type" required="true"
 									rendered="#{formEdit}" 
 									value="#{to.type}" >
-									<f:selectItems value="#{employeeCollections.contractTrackingTypes}" />
+									<f:selectItems value="#{employeeCollections.contractCalendarEventTypes}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
-									<aon:selectOneMenu id="ContractTracking_type-New" required="true"
+									<aon:selectOneMenu id="ContractCalendarEvent_type-New" required="true"
 										rendered="#{formNew}"
 										value="#{controller.to.type}" >
-										<f:selectItems value="#{employeeCollections.contractTrackingTypes}" />
+										<f:selectItems value="#{employeeCollections.contractCalendarEventTypes}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
 
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputLabel for="ContractTracking_duration"
-										value="#{employeeBundle.employee_contractTracking_duration}" />
+									<aon:outputLabel for="ContractCalendarEvent_duration"
+										value="#{employeeBundle.employee_contractCalendarEvent_duration}" />
 								</f:facet>
 								<aon:outputText value="#{to.duration}" 
 									rendered="#{formList}" />
-								<aon:inputText id="ContractTracking_duration" required="true"
+								<aon:inputText id="ContractCalendarEvent_duration" required="true"
 									rendered="#{formEdit}" 
 									size="2" maxlength="2"
 									value="#{to.duration}" />
 								<f:facet name="footer">
-									<aon:inputText id="ContractTracking_duration-New" required="true"
+									<aon:inputText id="ContractCalendarEvent_duration-New" required="true"
 										rendered="#{formNew}"
 										size="2" maxlength="2"
 										value="#{controller.to.duration}" />
@@ -163,7 +163,7 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-		<ui:include src="/com/code/aon/ui/employee/facelet/contractTracking/modalPanel.xhtml" />
+		<ui:include src="/com/code/aon/ui/employee/facelet/contractCalendarEvent/modalPanel.xhtml" />
 	</ui:define>
 
 </ui:composition>
