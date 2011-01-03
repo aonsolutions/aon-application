@@ -1,76 +1,47 @@
 package com.esferalia.aon.ui.calendar.controller;
 
-import java.util.Calendar;
+//import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.company.Agreement;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.employee.Contract;
-import com.code.aon.employee.dao.IEmployeeAlias;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.employee.event.ContractListListener;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.calendar.dao.ICalendarAlias;
+import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.calendar.enumeration.CalendarSource;
 
 public class CalendarController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarController.class.getName());
 	
-	private Integer year;
 	private String sourceKey;
 	private CalendarSource source;
 	private Integer sourceId;
+	private Integer year;
+	private Agreement agreement;
 	private Enterprise enterprise;
 	private WorkPlace workPlace;
 	private Contract contract;
-	private boolean workPlaceEnabled;
-	private boolean contractEnabled;
-	private List<SelectItem> workPlaces;
 	
-	public List<SelectItem> getWorkPlaces() {
-		if(workPlaces==null){
-			workPlaces = new LinkedList<SelectItem>();
-		}
-		return workPlaces;
+	public Agreement getAgreement() {
+		return agreement;
 	}
-	public void setWorkPlaces(List<SelectItem> workPlaces) {
-		this.workPlaces = workPlaces;
-	}
-	
-	public boolean isWorkPlaceEnabled() {
-		return workPlaceEnabled;
-	}
-
-	public void setWorkPlaceEnabled(boolean workPlaceEnabled) {
-		this.workPlaceEnabled = workPlaceEnabled;
-	}
-
-	public boolean isContractEnabled() {
-		return contractEnabled;
-	}
-
-	public void setContractEnabled(boolean contractEnabled) {
-		this.contractEnabled = contractEnabled;
+	public void setAgreement(Agreement agreement) {
+		this.agreement = agreement;
 	}
 
 	public Enterprise getEnterprise() {
@@ -96,37 +67,31 @@ public class CalendarController extends BasicController {
 	public void setContract(Contract contract) {
 		this.contract = contract;
 	}
-
-	public String getSourceFullName() {
-		String name=null;
-		try {
-			com.esferalia.aon.calendar.Calendar cal =(com.esferalia.aon.calendar.Calendar)getModel().getRowData();
-			cal.getSource();
-			cal.getSourceId();
-			IManagerBean bean;
-			Criteria criteria = new Criteria();
-			if(cal.getSource()==CalendarSource.ENTERPRISE){
-				bean = BeanManager.getManagerBean(Enterprise.class);
-				criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_ID), cal.getSourceId());
-				Enterprise e = (Enterprise)bean.getList(criteria).get(0);
-				name = e.getRegistry().getFullName();	
-			} else if(cal.getSource()==CalendarSource.WORKPLACE){
-				bean = BeanManager.getManagerBean(WorkPlace.class);
-				criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ID), cal.getSourceId());
-				WorkPlace w = (WorkPlace)bean.getList(criteria).get(0);
-				name = w.getDescription();	
-			} else if(cal.getSource()==CalendarSource.CONTRACT){
-				bean = BeanManager.getManagerBean(Contract.class);
-				criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_ID), cal.getSourceId());
-				Contract c = (Contract) bean.getList(criteria).get(0);
-				name = c.getPerson().getRegistry().getFullName();	
-			}
-		} catch (ManagerBeanException e) {
-			// NADA. no se puede obtener el nombre del source
-			LOGGER.error("ERROR in getSourceFullName");
-		}
-		return name;
+	
+	public Integer getYear() {
+		return year;
 	}
+	
+	public boolean isAgreementSource() {
+		return getSource()==CalendarSource.AGREEMENT;
+	}
+	
+	public boolean isEnterpriseSource() {
+		return getSource()==CalendarSource.ENTERPRISE;
+	}
+	
+	public boolean isWorkPlaceSource() {
+		return getSource()==CalendarSource.WORKPLACE;
+	}
+	
+	public boolean isContractSource() {
+		return getSource()==CalendarSource.CONTRACT;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+	
 
 	public String getSourceKey() {
 		return sourceKey;
@@ -159,91 +124,74 @@ public class CalendarController extends BasicController {
 		this.sourceId = sourceId;
 	}
 
-	public Integer getYear() {
-		return year;
-	}
-
-	public void setYear(Integer year) {
-		this.year = year;
-	}
-	
-	@Override
-	public com.esferalia.aon.calendar.Calendar getTo() {
-		return (com.esferalia.aon.calendar.Calendar)super.getTo();
-	}
-
-	private void loadWorkPlaces() throws ManagerBeanException{
-		workPlaces = new LinkedList<SelectItem>();
-		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
-		List<ITransferObject> list = bean.getList(criteria);
-		for (ITransferObject to : list) {
-			WorkPlace w = (WorkPlace)to; 
-			String name = w.getDescription();
-			SelectItem item = new SelectItem(w, name);
-			workPlaces.add(item);
-		}
-	}
-	
 	public void loadSource() throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		if(getSource()==CalendarSource.ENTERPRISE){
-			IController c = FormUtil.getController(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-			criteria.addEqualExpression(c.getFieldName(ICompanyAlias.ENTERPRISE_ID), getSourceId());
-			setEnterprise((Enterprise)c.getManagerBean().getList(criteria).get(0));
+		setAgreement(null);
+		setEnterprise(null);
+		setWorkPlace(null);
+		setContract(null);
+		IManagerBean bean;
+		if(getSource()==CalendarSource.AGREEMENT){
+			bean = BeanManager.getManagerBean(Agreement.class);
+			setAgreement((Agreement) bean.get(getSourceId()));
+		} else if(getSource()==CalendarSource.ENTERPRISE){
+			bean = BeanManager.getManagerBean(Enterprise.class);
+			setEnterprise((Enterprise) bean.get(getSourceId()));
 		} else if(getSource()==CalendarSource.WORKPLACE){
-			IController c = FormUtil.getController(ICompanyConstants.WORK_PLACE_CONTROLLER_NAME);
-			criteria.addEqualExpression(c.getFieldName(ICompanyAlias.WORK_PLACE_ID), getSourceId());
-			setWorkPlace((WorkPlace)c.getManagerBean().getList(criteria).get(0));
+			bean = BeanManager.getManagerBean(WorkPlace.class);
+			setWorkPlace((WorkPlace) bean.get(getSourceId()));
 			setEnterprise(getWorkPlace().getEnterprise());
 		} else if(getSource()==CalendarSource.CONTRACT){
-			IController c = FormUtil.getController(ICompanyConstants.CONTRACT_CONTROLLER_NAME);
-			criteria.addEqualExpression(c.getFieldName(IEmployeeAlias.CONTRACT_ID), getSourceId());
-			setContract((Contract)c.getManagerBean().getList(criteria).get(0));
+			bean = BeanManager.getManagerBean(Contract.class);
+			setContract((Contract) bean.get(getSourceId()));
 			setWorkPlace(getContract().getWorkPlace());
-			setEnterprise(getContract().getWorkPlace().getEnterprise());
-		} else {
-			
+			setEnterprise(getWorkPlace().getEnterprise());
 		}
 	}
 	
-	private void refreshLinesYear(){
-		IController holiday = (IController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_HOLIDAY_CONTROLLER_NAME);
-		IController period = (IController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_PERIOD_CONTROLLER_NAME);
-		holiday.initializeModel();
-		period.initializeModel();
+	private void loadDefaultCalendar(){
+		//TODO cargar el calendario basico que estara definido por ley
+		this.onReset(null);
+		
 	}
 	
+	public void initialize() throws ManagerBeanException{
+		this.resetTo();
+		if(getSource()==CalendarSource.CONTRACT){ 
+			if(getContract()!=null && getContract().getCalendar()!=null){
+//				setTo(getContract().getCalendar());
+				this.select(null, getContract().getCalendar());
+			}
+		} else if(getSource()==CalendarSource.WORKPLACE){ 
+			if(getWorkPlace()!=null && getWorkPlace().getCalendar()!=null){
+//				setTo(getWorkPlace().getCalendar());
+				select(null, getWorkPlace().getCalendar());
+			}
+		} else if(getSource()==CalendarSource.ENTERPRISE){ 
+			if(getEnterprise()!=null && getEnterprise().getCalendar()!=null){
+//				setTo(getEnterprise().getCalendar());
+				select(null, getEnterprise().getCalendar());
+			}
+		} else if(getSource()==CalendarSource.AGREEMENT){ 
+			if(getAgreement()!=null && getAgreement().getCalendar()!=null){
+//				setTo(getAgreement().getCalendar());
+				select(null, getAgreement().getCalendar());
+			}
+		}
+		if(getTo()==null){
+			loadDefaultCalendar();
+		} 
+	}
+
 	/*
 	 * ACTION LISTENERS
 	 */
-	
-	public void initialize(){
-		setEnterprise(new Enterprise());
-		setWorkPlace(new WorkPlace());
-		workPlaces = null;
-		setContract(new Contract());
-	}
-
 	public void onInitialize(ActionEvent event){
 		try {
-			initialize();
-			clearCriteria();
-			getCriteria().addEqualExpression(getFieldName(ICalendarAlias.CALENDAR_SOURCE), getSource());
-			getCriteria().addEqualExpression(getFieldName(ICalendarAlias.CALENDAR_SOURCE_ID), getSourceId());
-			onSearch(event);
-			GregorianCalendar cal= new GregorianCalendar();
-			this.setYear(cal.get(Calendar.YEAR));				
-			if(getModel().getRowCount() == 0){
-				onReset(event);
-				(getTo()).setSource(getSource());
-				(getTo()).setSourceId(getSourceId());
-			} else {
-				onSelectFirst(event);
-			}
 			loadSource();
-			loadWorkPlaces();
+//			loadWorkPlaces();
+			initialize();
+			GregorianCalendar cal= new GregorianCalendar();
+			this.setYear(cal.get(java.util.Calendar.YEAR));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -254,50 +202,64 @@ public class CalendarController extends BasicController {
 		refreshLinesYear();
 	}
 	
-	public void onEnterpriseChanged(LookupChangeEvent event){
-		setWorkPlace(null);
-		setContract(null);
-		setContractEnabled(false);
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			setEnterprise((Enterprise)event.getNewValue());
-			getTo().setSource(CalendarSource.ENTERPRISE);
-			getTo().setSourceId(getEnterprise().getId());
+	private void refreshLinesYear(){
+		IController holiday = (IController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_HOLIDAY_CONTROLLER_NAME);
+		IController period = (IController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_PERIOD_CONTROLLER_NAME);
+		holiday.initializeModel();
+		period.initializeModel();
+	}
+	
+	@Override
+	public void accept(ActionEvent event) {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
 			try {
-				loadWorkPlaces();
-			} catch (ManagerBeanException e) {
-				//NADA, la ista de workplaces estara vacia
-				LOGGER.error("ERROR in onEnterpriseChanged");
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// BEGIN operaciones de la transaccion
+				super.accept(event);
+				// se actualiza la entidad a la que se asigna el calendario
+				IManagerBean bean;
+				if(getSource()==CalendarSource.AGREEMENT){
+					bean = BeanManager.getManagerBean(Agreement.class);
+					getAgreement().setCalendar((Calendar) this.getTo());
+					bean.update(getAgreement());
+				} else if(getSource()==CalendarSource.ENTERPRISE){
+					bean = BeanManager.getManagerBean(Enterprise.class);
+					getEnterprise().setCalendar((Calendar) this.getTo());
+					bean.update(getEnterprise());
+				} else if(getSource()==CalendarSource.WORKPLACE){
+					bean = BeanManager.getManagerBean(WorkPlace.class);
+					getWorkPlace().setCalendar((Calendar) this.getTo());
+					bean.update(getWorkPlace());
+				} else if(getSource()==CalendarSource.CONTRACT){
+					bean = BeanManager.getManagerBean(Contract.class);
+					getContract().setCalendar((Calendar) this.getTo());
+					bean.update(getContract());
+				}
+				// END operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				String msg = e.getMessage();
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					msg = "Unable to rollback transaction! (" + msg + ")";
+				}
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(e);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
 			}
-			setWorkPlaceEnabled(true);
-		} else {
-			getTo().setSource(null);
-			getTo().setSourceId(null);
-			setWorkPlaceEnabled(false);
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 	}
-	public void onWorkPlaceChanged(ActionEvent event){
-		setContract(new Contract());
-		if (getWorkPlace() != null && getWorkPlace().getId()!=null) {
-			getTo().setSource(CalendarSource.WORKPLACE);
-			getTo().setSourceId(getWorkPlace().getId());
-			ContractListListener bean = (ContractListListener)AonUtil.getRegisteredBean("contractLookupList");
-			bean.setWorkPlace(getWorkPlace());
-			setContractEnabled(true);
-		} else {
-			getTo().setSource(CalendarSource.ENTERPRISE);
-			getTo().setSourceId(getEnterprise().getId());
-			setContractEnabled(false);
-		}
-	}
-	public void onContractChanged(LookupChangeEvent event){
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			setContract((Contract)event.getNewValue());
-			getTo().setSource(CalendarSource.CONTRACT);
-			getTo().setSourceId(getContract().getId());
-		} else {
-			getTo().setSource(CalendarSource.WORKPLACE);
-			getTo().setSourceId(getWorkPlace().getId());
-		}
-	}
+	
 	
 }

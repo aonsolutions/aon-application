@@ -5,7 +5,7 @@ import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALEND
 import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME;
 import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_PERIOD_CONTROLLER_NAME;
 
-import java.util.Calendar;
+//import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +21,7 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.calendar.CalendarHoliday;
 import com.esferalia.aon.calendar.CalendarPeriod;
 import com.esferalia.aon.calendar.HolidayDetail;
@@ -119,7 +120,7 @@ public class CalendarFactory {
 				period.setStartDay(p.getStartDay());
 				period.setEndDay(p.getEndDay());
 				periodList.add(period);
-				Calendar cal = new GregorianCalendar();
+				java.util.Calendar cal = new GregorianCalendar();
 				int d = p.getStartDay();
 				while(d <= p.getEndDay()){
 					cal.set(controller.getYear(), p.getMonth().ordinal(), d);
@@ -207,7 +208,7 @@ public class CalendarFactory {
 		}
 	}
 
-	private void asignPeriodDay(CalendarPeriod period, Calendar calendar) {
+	private void asignPeriodDay(CalendarPeriod period, java.util.Calendar calendar) {
 		PrintableMonth month = getMonthList().get(calendar.get(java.util.Calendar.MONTH));
 		for(PrintableDay day: month.getDayList()){
 			if(day.getDayOfMonth()!=null){
@@ -236,7 +237,7 @@ public class CalendarFactory {
 	private List<PrintableDay> getDayList(Integer year, Month month){
 		List<PrintableDay> list = new LinkedList<PrintableDay>();
 		PrintableDay day;
-		Calendar cal = new GregorianCalendar();
+		java.util.Calendar cal = new GregorianCalendar();
 		cal.set(year, month.ordinal(), 1);
 		// se agrega al principio de la lista dias vacios 
 		// hasta llegar al dia de la semana que sea el dia de mes
@@ -246,67 +247,67 @@ public class CalendarFactory {
 			day.setDayOfMonth(null);
 			list.add(day);
 		}
-		while(cal.get(Calendar.DAY_OF_MONTH) < monthDays(month.ordinal(), year)){
+		while(cal.get(java.util.Calendar.DAY_OF_MONTH) < monthDays(month.ordinal(), year)){
 			day = new PrintableDay();
-			day.setDayOfMonth(cal.get(Calendar.DAY_OF_MONTH));
+			day.setDayOfMonth(cal.get(java.util.Calendar.DAY_OF_MONTH));
 			addCalendarInfo(day, cal);
 			list.add(day);
-			cal.add(Calendar.DATE, 1);
+			cal.add(java.util.Calendar.DATE, 1);
 		}
 		day = new PrintableDay();
-		day.setDayOfMonth(cal.get(Calendar.DAY_OF_MONTH));
+		day.setDayOfMonth(cal.get(java.util.Calendar.DAY_OF_MONTH));
 		addCalendarInfo(day, cal);
 		list.add(day);
 		return list;
 	}
 	
-	private void addPeriodInfo(PrintableDay day, Calendar cal, CalendarPeriod period){
-		if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY){
+	private void addPeriodInfo(PrintableDay day, java.util.Calendar cal, CalendarPeriod period){
+		if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.MONDAY){
 			day.setHours(period.getMondayHours());
 			setDayType(day,period.getMonday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.TUESDAY){
 			day.setHours(period.getTuesdayHours());
 			setDayType(day,period.getTuesday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.WEDNESDAY){
 			day.setHours(period.getWednesdayHours());
 			setDayType(day,period.getWednesday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.THURSDAY){
 			day.setHours(period.getThursdayHours());
 			setDayType(day,period.getThursday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.FRIDAY){
 			day.setHours(period.getFridayHours());
 			setDayType(day,period.getFriday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.SATURDAY){
 			day.setHours(period.getSaturdayHours());
 			setDayType(day,period.getSaturday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.SUNDAY){
 			day.setHours(period.getSundayHours());
 			setDayType(day,period.getSunday());
 		}
 	}
 
-	private void addCalendarInfo(PrintableDay day, Calendar cal){
+	private void addCalendarInfo(PrintableDay day, java.util.Calendar cal){
 		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
-		com.esferalia.aon.calendar.Calendar c = controller.getTo();
-		if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY){
+		Calendar c = (Calendar) controller.getTo();
+		if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.MONDAY){
 			day.setHours(c.getMondayHours());
 			setDayType(day,c.getMonday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.TUESDAY){
 			day.setHours(c.getTuesdayHours());
 			setDayType(day,c.getTuesday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.WEDNESDAY){
 			day.setHours(c.getWednesdayHours());
 			setDayType(day,c.getWednesday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.THURSDAY){
 			day.setHours(c.getThursdayHours());
 			setDayType(day,c.getThursday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.FRIDAY){
 			day.setHours(c.getFridayHours());
 			setDayType(day,c.getFriday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.SATURDAY){
 			day.setHours(c.getSaturdayHours());
 			setDayType(day,c.getSaturday());
-		} else if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
+		} else if(cal.get(java.util.Calendar.DAY_OF_WEEK)==java.util.Calendar.SUNDAY){
 			day.setHours(c.getSundayHours());
 			setDayType(day,c.getSunday());
 		}
@@ -327,21 +328,21 @@ public class CalendarFactory {
 	}
 	
 	private Integer dayOfWeek(int month, Integer year) {
-		Calendar cal = new GregorianCalendar();
+		java.util.Calendar cal = new GregorianCalendar();
 		cal.set(year, month, 1);
-		int num = cal.get(Calendar.DAY_OF_WEEK);
-		if(num==Calendar.SUNDAY){
+		int num = cal.get(java.util.Calendar.DAY_OF_WEEK);
+		if(num==java.util.Calendar.SUNDAY){
 			return num+5;
 		}
 		return num-2;
 	}
 	
 	private Integer monthDays(int month, Integer year) {
-		Calendar cal = new GregorianCalendar();
+		java.util.Calendar cal = new GregorianCalendar();
 		cal.set(year, month, 1);
-		cal.add(Calendar.MONTH, 1);
-		cal.add(Calendar.DATE, -1);
-		int num = cal.get(Calendar.DAY_OF_MONTH);
+		cal.add(java.util.Calendar.MONTH, 1);
+		cal.add(java.util.Calendar.DATE, -1);
+		int num = cal.get(java.util.Calendar.DAY_OF_MONTH);
 		return num;
 	}
 		
