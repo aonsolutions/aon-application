@@ -27,8 +27,10 @@ public class CalendarHolidayControllerListener extends ControllerAdapter {
 		Calendar endCal = new GregorianCalendar();
 		startCal.set(year, Calendar.JANUARY, 1);
 		endCal.set(year, Calendar.DECEMBER, 31);
+		Integer masterId = ((com.esferalia.aon.calendar.Calendar)controller.getMasterController().getTo()).getId();
 		try {
 			controller.clearCriteria();
+			controller.getCriteria().addEqualExpression(this.getController().getFieldName(ICalendarAlias.CALENDAR_HOLIDAY_CALENDAR_ID), masterId);
 			controller.getCriteria().addBetweenExpression(this.getController().getFieldName(ICalendarAlias.CALENDAR_HOLIDAY_DATE), startCal.getTime(), endCal.getTime());
 		} catch (ManagerBeanException e) {
 			LOGGER.error("error on CalendarHolidayControllerListener");

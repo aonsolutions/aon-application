@@ -19,7 +19,7 @@
 
 					<aon:htmlCommandLink id="calendarReport_list"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						actionListener="#{calendarPrint.load}"
+						actionListener="#{calendarPrint.onLoad}"
 						value="#{bundle.aon_listing}"
 						rendered="#{!calendar.new}"
 						action="#{report.onExecute}">
@@ -40,15 +40,19 @@
 				
 					<aon:panelGrid columns="2" id="calendar_data">
 						
-						<c:if test="#{!calendar.new}" >
 							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/form_view.xhtml" />
+						<c:if test="#{!calendar.new}" >
 						</c:if>
 						<c:if test="#{calendar.new}" >
+<!--  
 							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/form_edit.xhtml" />
+-->
 						</c:if>
 							
-						<aon:outputLabel value="#{bundle.aon_year}" />
-						<rich:inputNumberSpinner value="#{calendar.year}" 
+						<aon:outputLabel rendered="#{!calendar.new}"
+							value="#{bundle.aon_year}" />
+						<rich:inputNumberSpinner value="#{calendar.year}"
+						 	rendered="#{!calendar.new}"
 							inputSize="4" minValue="2000" maxValue="2100"
 							enableManualInput="true" step="1"
 							ignoreDupResponses="true"

@@ -20,11 +20,11 @@ public class CalendarControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		CalendarController c = (CalendarController) getController();
-		c.setEnterprise(new Enterprise());
-		c.setWorkPlace(new WorkPlace());
-		c.setWorkPlaces(null);
-		c.setContract(new Contract());
+//		CalendarController c = (CalendarController) getController();
+//		c.setEnterprise(new Enterprise());
+//		c.setWorkPlace(new WorkPlace());
+////		c.setWorkPlaces(null);
+//		c.setContract(new Contract());
 	}
 	
 	@Override
@@ -33,8 +33,8 @@ public class CalendarControllerListener extends ControllerAdapter {
 		CalendarController c = (CalendarController) getController();
 		GregorianCalendar cal= new GregorianCalendar();
 		c.setYear(cal.get(Calendar.YEAR));	
-		c.setSource(c.getTo().getSource());
-		c.setSourceId(c.getTo().getSourceId());
+//		c.setSource(c.getTo().getSource());
+//		c.setSourceId(c.getTo().getSourceId());
 		try {
 			c.loadSource();
 		} catch (ManagerBeanException e) {
@@ -48,7 +48,12 @@ public class CalendarControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanSelected(ControllerEvent event){
 		CalendarController c = (CalendarController) getController();
-		c.initialize();
+//		try {
+//			c.initialize();
+//		} catch (ManagerBeanException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 
