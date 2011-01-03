@@ -20,7 +20,6 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.esferalia.aon.calendar.enumeration.CalendarSource;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
 @Entity
@@ -33,10 +32,6 @@ public class Calendar implements ITransferObject{
 
 	private Holiday holiday;
 	
-	private CalendarSource source;
-
-	private Integer sourceId;
-
     private String description;
     
     private String comments;
@@ -111,25 +106,6 @@ public class Calendar implements ITransferObject{
 		this.holiday = holiday;
 	}
 	
-	@Column(name = "source")
-	public CalendarSource getSource() {
-		return source;
-	}
-
-	public void setSource(CalendarSource source) {
-		this.source = source;
-	}
-
-	@Column(name = "source_id")
-	@Index(name = "IDX_CALENDAR_SOURCE")
-	public Integer getSourceId() {
-		return sourceId;
-	}
-
-	public void setSourceId(Integer sourceId) {
-		this.sourceId = sourceId;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -284,8 +260,6 @@ public class Calendar implements ITransferObject{
 			return new EqualsBuilder()
 				.append(this.description, o.description)	
 				.append(this.holiday, o.holiday)
-				.append(this.source, o.source)
-				.append(this.sourceId, o.sourceId)
 				.append(this.description, o.description)
 				.append(this.comments, o.comments)
 				.append(this.monday, o.monday)
@@ -313,8 +287,6 @@ public class Calendar implements ITransferObject{
 		return new HashCodeBuilder()
 			.append(id)
 			.append(holiday)
-			.append(source)
-			.append(sourceId)
 			.append(description)
 			.append(comments)
 			.append(monday)

@@ -9,7 +9,7 @@
 		</resource-bundle>
 	</application>
 	
-		<!--  *************** COLLECTIONS ***************** -->
+	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>calendarCollections</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.calendar.controller.CalendarCollections</managed-bean-class>

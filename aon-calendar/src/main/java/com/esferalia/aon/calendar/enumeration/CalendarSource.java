@@ -14,6 +14,9 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum CalendarSource implements IResourceable {
 
+	/** ENTERPRISE. Calendario de convenio */
+	AGREEMENT,
+
 	/** ENTERPRISE. Calendario de empresa */
 	ENTERPRISE,
 	

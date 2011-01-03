@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
 
@@ -61,17 +62,17 @@ public class CalendarPrintController implements Serializable, ICollectionProvide
 	/*
 	 * ACTION LISTENERS
 	 */
-	public void load(ActionEvent event){
+	public void onLoad(ActionEvent event){
 		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_CONTROLLER_NAME); 
 		setPrintableCalendar(new PrintableCalendar());
 		getPrintableCalendar().setEnterprise(controller.getEnterprise().getRegistry().getFullName());
-		if(controller.getWorkPlace().getId()!=null){
+		if(controller.getWorkPlace()!=null && controller.getWorkPlace().getId()!=null){
 			getPrintableCalendar().setWorkPlace(controller.getWorkPlace().getDescription());
 		}
-		if(controller.getContract().getId()!=null){
+		if(controller.getContract()!=null && controller.getContract().getId()!=null){
 			getPrintableCalendar().setPerson(controller.getContract().getPerson().getFullName());
 		}
-		getPrintableCalendar().setCalendar(controller.getTo());
+		getPrintableCalendar().setCalendar((Calendar) controller.getTo());
 		getPrintableCalendar().setYear(controller.getYear());
 		getPrintableCalendar().getCalendarFactory().buildCalendar();
 	}

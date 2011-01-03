@@ -50,8 +50,8 @@ public class Agreement implements ITransferObject {
 	
 	@ManyToOne
     @JoinColumn( name="calendar")	
-	@ForeignKey(name = "FK_CONTRACT_CALENDAR")
-	@Index(name = "IDX_CONTRACT_CALENDAR")
+	@ForeignKey(name = "FK_AGREEMENT_CALENDAR")
+	@Index(name = "FK_AGREEMENT_CALENDAR")
 	public Calendar getCalendar() {
 		return calendar;
 	}

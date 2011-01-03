@@ -29,6 +29,7 @@ import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
+import com.esferalia.aon.calendar.Calendar;
 
 /**
  * Transfer Object that represents a Enterprise.
@@ -47,6 +48,8 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 	private Scope scope;
 	
 	private Agreement agreement;
+	
+	private Calendar calendar;
 	
 	private Set<EnterpriseActivity> activities = new HashSet<EnterpriseActivity>();
 	
@@ -106,6 +109,17 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 	public void setAgreement(Agreement agreement) {
 		this.agreement = agreement;
 	}
+	
+	@ManyToOne
+    @JoinColumn( name="calendar")	
+	@ForeignKey(name = "FK_ENTERPRISE_CALENDAR")
+	@Index(name = "FK_ENTERPRISE_CALENDAR")
+	public Calendar getCalendar() {
+		return calendar;
+	}
+	public void setCalendar(Calendar calendar) {
+		this.calendar = calendar;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -117,6 +131,7 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 			return new EqualsBuilder()
 				.append(this.registry, o.registry)
 				.append(this.scope, o.scope)
+				.append(this.calendar, o.calendar)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -128,6 +143,7 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 			.append(id)
 			.append(registry)
 			.append(scope)
+			.append(calendar)
 			.toHashCode();
 	}
 
