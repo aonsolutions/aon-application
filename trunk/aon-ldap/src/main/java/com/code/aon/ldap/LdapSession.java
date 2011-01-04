@@ -123,6 +123,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		while (values.hasMore()) {
 			entry.put(name, values.nextElement());
 		}
+		values.close();
 	}
 	
 	private Name getName( Name base, Scope scope, SearchResult sr ) {
@@ -161,18 +162,19 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 			Attribute attribute = ane.next();
 			addAttribute( entry, attribute );
 		}
+		ane.close();
 		return entry;
 	}
 
 	public List<Entry> search(Name base, String filter, Scope scope,
 			String... attributes) throws LdapException {
 		List<Entry> results = new ArrayList<Entry>();
+		NamingEnumeration<SearchResult> result = null;
 		try {
 			SearchControls sc = getSearchControls(scope, attributes);
-			NamingEnumeration<SearchResult> ne = dc.search(resolveBase(base),
-					filter, sc);
-			while (ne.hasMore()) {
-				SearchResult sr = ne.next();
+			result = dc.search(resolveBase(base), filter, sc);
+			while (result.hasMore()) {
+				SearchResult sr = result.next();
 				results.add(getEntry(base, scope, sr));
 			}
 		} catch (InvalidSearchFilterException isfe) {
@@ -181,34 +183,43 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 			throw new LdapException("Control Filter Invalid", isce);
 		} catch (NamingException ne) {
 			throw new LdapException("Error in search. " + ne.getMessage(), ne);
+		} finally {
+			closeQuietly(result);
 		}
 		return results;
 	}
 
-	public boolean exists(Name base, String filter) throws LdapException {
+	public boolean exists(Name base, String filter, String... attributes ) throws LdapException {
+		NamingEnumeration<SearchResult> result = null;
 		try {
-			SearchControls sc = getSearchControls(Scope.OBJECT_SCOPE, new String[]{OBJECT_CLASS_ATTRIBUTE});
-			NamingEnumeration<SearchResult> ne = dc.search(resolveBase(base), filter, sc);
-			while (ne.hasMore()) {
+			String[] _attributes = attributes;
+			if ( ArrayUtils.isEmpty(_attributes)) {
+				_attributes = new String[]{OBJECT_CLASS_ATTRIBUTE};
+			}
+			SearchControls sc = getSearchControls(Scope.OBJECT_SCOPE, _attributes);
+			result = dc.search(resolveBase(base), filter, sc);
+			while (result.hasMore()) {
 				return true;
 			}
 		} catch (NameNotFoundException nnfe) {
 			LOGGER.debug( "Name not found: " + base, nnfe );
 		} catch (NamingException ne) {
 			throw new LdapException("Error in get. " + ne.getMessage(), ne);
+		} finally {
+			closeQuietly(result);
 		}
 		return false;
 	}
-	
+		
 	private Entry get(Name base, String filter, Scope scope,
 			String... attributes) throws LdapException {
 		Entry entry = null;
+		NamingEnumeration<SearchResult> result = null;
 		try {
 			SearchControls sc = getSearchControls(scope, attributes);
-			NamingEnumeration<SearchResult> ne = dc.search(resolveBase(base),
-					filter, sc);
-			while (ne.hasMore()) {
-				SearchResult sr = ne.next();
+			result = dc.search(resolveBase(base), filter, sc);
+			while (result.hasMore()) {
+				SearchResult sr = result.next();
 				if (entry == null) {
 					entry = getEntry(base, scope, sr);
 				} else {
@@ -221,6 +232,8 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 			throw new LdapException("Control Filter Invalid", isce);
 		} catch (NamingException ne) {
 			throw new LdapException("Error in get. " + ne.getMessage(), ne);
+		} finally {
+			closeQuietly(result);
 		}
 		return entry;
 	}
@@ -243,13 +256,13 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	public int getCount(Name base, String filter, Scope scope,
 			String... attributes) throws LdapException {
 		int count = -1;
+		NamingEnumeration<SearchResult> result = null;
 		try {
 			SearchControls sc = getSearchControls(scope, attributes);
-			NamingEnumeration<SearchResult> ne = dc.search(resolveBase(base),
-					filter, sc);
+			result = dc.search(resolveBase(base), filter, sc);
 			count = 0;
-			while (ne.hasMore()) {
-				ne.next();
+			while (result.hasMore()) {
+				result.next();
 				count++;
 			}
 		} catch (InvalidSearchFilterException isfe) {
@@ -258,6 +271,8 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 			throw new LdapException("Control Filter Invalid", isce);
 		} catch (NamingException ne) {
 			throw new LdapException("Error in getCount. " + ne.getMessage(), ne);
+		} finally {
+			closeQuietly(result);
 		}
 		return count;
 	}
@@ -268,6 +283,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	}
 
 	public void add(Entry entry) throws LdapException {
+		DirContext newDC = null;
 		try {
 			Attributes attributes = new BasicAttributes();
 			for (Map.Entry<String, List<Object>> me : entry.entrySet()) {
@@ -276,7 +292,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 				Attribute attribute = getAttribute(me.getKey(), value);
 				attributes.put(attribute);
 			}
-			dc.createSubcontext( resolveBase(entry.getDN()), attributes);
+			newDC = dc.createSubcontext( resolveBase(entry.getDN()), attributes);
 		} catch (NameAlreadyBoundException nabe) {
 			throw new LdapException("Entry Already Exists: " + entry.getDN(),
 					nabe);
@@ -284,6 +300,8 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 			throw new LdapException("Invalid Attributes", iae);
 		} catch (NamingException ne) {
 			throw new LdapException("Error in add. " + ne.getMessage(), ne);
+		} finally {
+			closeQuietly(newDC);
 		}
 	}
 
@@ -421,4 +439,24 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		}		
 	}
 	
+    private void closeQuietly(NamingEnumeration<SearchResult> ne) {
+        try {
+            if (ne != null) {
+                ne.close();
+            }
+        } catch (NamingException e) {
+        	LOGGER.error( "Error closing NamingEnumeration", e );
+		}
+    }	
+
+    private void closeQuietly(DirContext dc) {
+        try {
+            if (dc != null) {
+                dc.close();
+            }
+        } catch (NamingException e) {
+        	LOGGER.error( "Error closing DirContext", e );
+		}
+    }	
+    
 }

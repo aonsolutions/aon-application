@@ -85,6 +85,14 @@ public class NameResolver implements ILdapConstants {
 	}
 
 	public static String getValue( Name name, int pos ) {
+		Rdn rdn = getRdn(name, pos);
+		if ( rdn != null ) {
+			return rdn.getValue().toString();
+		}
+		return null;
+	}	
+	
+	public static Rdn getRdn( Name name, int pos ) {
 		try {	
 			LdapName newName = null;
 			if ( LdapName.class.isAssignableFrom(name.getClass()) ) {
@@ -93,13 +101,17 @@ public class NameResolver implements ILdapConstants {
 				newName = new LdapName( name.toString() );
 			}
 			int index = newName.size()-1-pos;
-			return newName.getRdn(index).getValue().toString();
+			return newName.getRdn(index);
 		} catch (InvalidNameException e) {
 			LOGGER.error( "Error getting value " + pos + " of Name: " + name, e);			
 		}
 		return null;		
 	}
 
+	public static Rdn getFirstRdn( Name name ) {
+		return getRdn(name, 0);
+	}
+	
 	public static String getFirstValue( Name name ) {
 		return getValue(name, 0);
 	}
@@ -240,13 +252,17 @@ public class NameResolver implements ILdapConstants {
 	public static Name getMessagesDN() {
 		return getName( ou(MESSAGES) );
 	}
+
+	public static Name getMessagesDN( String language ) {
+		return getName( ou(MESSAGES), ou(language) );
+	}
 	
 	public static Name getMessageDN( int status ) {
 		return getName( ou(MESSAGES), status(status) );
 	}
 
 	public static Name getMessageDN( int status, String language ) {
-		return getName( ou(MESSAGES), ou(language), status(status) );
+		return getName( status(status), getMessagesDN(language) );
 	}
 	
 }
