@@ -14,6 +14,7 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
@@ -186,6 +187,18 @@ public class CommercialTrackingController extends BasicController {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		controller.setBackAction(ICommercialConstants.NAVIGATION_COMMERCIAL_TRACKING_FORM);
+	}
+	
+	public void onOrderBySeller(ActionEvent event){
+		try {
+			Criteria criteria = new Criteria(); 
+			criteria.addOrder(this.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID));
+			criteria.addOrder(this.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE));
+			this.setCriteria(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onOrderBySeller exception: ", e);
+			addMessage(e.getMessage());
+		}
 	}
 	
 }
