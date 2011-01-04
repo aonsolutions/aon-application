@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +76,11 @@ public class Entry implements ILdapConstants, IAonObjectClasses {
 		for( String objectClass : objectClasses ) {
 			addObjectClass( objectClass );
 		}
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<String> getObjectClasses() {
+		return (List) get(OBJECT_CLASS_ATTRIBUTE);
 	}
 	
 	public void put( String key, Object value ) {
@@ -158,7 +164,18 @@ public class Entry implements ILdapConstants, IAonObjectClasses {
 
 	public static String convertToString( Boolean value ) {
 		return value ? TRUE_VALUE : FALSE_VALUE;
+	}	
+
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("dn: ").append(dn).append(SystemUtils.LINE_SEPARATOR);
+		for( Map.Entry<String,List<Object>> entry : values.entrySet() ) {
+			for( Object value : entry.getValue() ) {
+				sb.append(entry.getKey()).append(": ").append(value).append(SystemUtils.LINE_SEPARATOR);
+			}
+		}
+		return sb.toString();
 	}
 	
 }
-

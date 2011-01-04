@@ -116,7 +116,7 @@ public class BasicLdap {
 		}
 		return exists;
 	}
-
+	
 	public Entry get( Name dn, String objectClass, String... attributes ) {
 		Entry entry = null;
 		try {
@@ -128,6 +128,19 @@ public class BasicLdap {
 		}
 		return entry;
 	}
+	
+	public boolean add( Entry entry ) {
+		boolean ok = false;
+		try {
+			getLdapSession().add(entry);
+			ok = true;
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
+		} finally {
+			closeSession();
+		}
+		return ok;
+	}	
 	
 	public Entry addOrganizationUnit( Name dn ) {
 		Entry entry = null;

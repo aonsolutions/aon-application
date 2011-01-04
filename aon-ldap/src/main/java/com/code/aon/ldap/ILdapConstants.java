@@ -66,4 +66,6 @@ public interface ILdapConstants {
 	
 	String GIVEN_NAME_ATTRIBUTE = "givenName";
 	
+	String SERVER_ID_ATTRIBUTE = "serverId";
+	
 }
