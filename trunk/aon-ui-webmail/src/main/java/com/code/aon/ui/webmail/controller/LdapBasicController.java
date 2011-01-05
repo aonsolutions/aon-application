@@ -75,7 +75,7 @@ public abstract class LdapBasicController extends BasicController {
 	}		
 	
 	public boolean isValidName( String name ) {
-		return name.matches("[a-zA-Z][a-zA-Z0-9_-]*");
+		return name.matches("\\p{Alpha}[\\w\\.\\-]*");
 	}
 	
 	protected String getInvalidMessage( String name ) {
