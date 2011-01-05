@@ -24,12 +24,7 @@
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel"
 						accesskey="#{bundle.aon_key_print}">
-						<c:if test="#{aonConfiguration.bean.target.showSearchOnlyCustomers}">
-							<f:param name="reportKey" value="marketingTargetList" />
-						</c:if>
-						<c:if test="#{!aonConfiguration.bean.target.showSearchOnlyCustomers}">
-							<f:param name="reportKey" value="targetList" />
-						</c:if>
+						<f:param name="reportKey" value="targetList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>	
 					<aon:htmlCommandLink id="targetList-report"
@@ -37,15 +32,10 @@
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
-						<c:if test="#{aonConfiguration.bean.target.showSearchOnlyCustomers}">
-							<f:param name="reportKey" value="marketingTargetList" />
-						</c:if>
-						<c:if test="#{!aonConfiguration.bean.target.showSearchOnlyCustomers}">
-							<f:param name="reportKey" value="targetList" />
-						</c:if>
+						<f:param name="reportKey" value="targetList" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="targetListDetailExcel-excel-report" value="&#160;" 
-						target="_new" rendered="#{!aonConfiguration.bean.target.showSearchOnlyCustomers}"
+						target="_new" 
 						action="#{report.onExecute}"
 						disabled="#{customer.to != null}"
 						accesskey="#{bundle.aon_key_print}"
@@ -54,7 +44,7 @@
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="targetListDetail-report" value="#{bundle.aon_detailed_listing}"
-						target="_new" rendered="#{!aonConfiguration.bean.target.showSearchOnlyCustomers}"
+						target="_new" 
 						action="#{report.onExecute}"
 						disabled="#{customer.to != null}"
 						accesskey="#{bundle.aon_key_print}"
