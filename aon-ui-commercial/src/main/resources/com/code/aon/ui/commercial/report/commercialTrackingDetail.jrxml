@@ -23,6 +23,15 @@
 	<field name="next" class="com.code.aon.commercial.CommercialTracking"/>
 	<field name="offer" class="com.code.aon.commercial.Offer"/>
 	<field name="endDate" class="java.util.Date"/>
+	<variable name="telephone" class="java.lang.String">
+		<variableExpression><![CDATA[($F{target}.getRegistry().getPhones()==null?(""):($R{commercial_tracking_telephone_abr}+": "+$F{target}.getRegistry().getPhones()+", "))]]></variableExpression>
+	</variable>
+	<variable name="celular" class="java.lang.String">
+		<variableExpression><![CDATA[($F{target}.getRegistry().getCellular()==null?(""):($R{commercial_tracking_celular_abr}+": "+$F{target}.getRegistry().getCellular().getValue()+", "))]]></variableExpression>
+	</variable>
+	<variable name="email" class="java.lang.String">
+		<variableExpression><![CDATA[($F{target}.getRegistry().getEmail()==null?(new String("")):($R{commercial_tracking_email_abr}+": "+$F{target}.getRegistry().getEmail().getValue()))]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -165,7 +174,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="48" splitType="Stretch">
+		<band height="33" splitType="Stretch">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-18" positionType="Float" mode="Opaque" x="469" y="0" width="49" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
@@ -205,7 +214,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{target}.getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy  " isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Opaque" x="0" y="0" width="40" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -255,7 +264,9 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{target}.getRegistry().getDefaultAddress().getAddress()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{target}.getRegistry().getDefaultAddress().getFullAddress()+", "+
+$F{target}.getRegistry().getDefaultAddress().getCity()+" ("+
+$F{target}.getRegistry().getDefaultAddress().getGeozone().getName()+")"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Opaque" x="40" y="22" width="230" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -268,9 +279,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{target}.getRegistry().getPhones()+", "+
-$F{target}.getRegistry().getCellular().getValue()+", "+
-$F{target}.getRegistry().getEmail().getValue()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{telephone}+$V{celular}+$V{email}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
