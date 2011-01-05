@@ -205,7 +205,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{target}.getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy  " isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Opaque" x="0" y="0" width="40" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
