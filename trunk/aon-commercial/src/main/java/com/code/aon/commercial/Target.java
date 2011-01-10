@@ -20,6 +20,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -52,6 +53,7 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
     private boolean withholding;
     private InvoiceTransactionType transaction;
     private TargetStatus status;
+	private boolean customer;
 	private Set<TargetItem> items = new HashSet<TargetItem>();
 	private Set<TargetSeller> sellers = new HashSet<TargetSeller>();
 	private Set<CommercialTracking> trackings = new HashSet<CommercialTracking>();
@@ -165,6 +167,15 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}
 
+	@Formula("(select COUNT(*) from customer c where registry = c.registry)")
+	public boolean isCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(boolean customer) {
+		this.customer = customer;
+	}
+		
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
