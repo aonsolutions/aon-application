@@ -82,4 +82,16 @@ public class TargetController extends RegistryController {
 		}
 	}
 	
+	public String getListReportKey() {
+		return ICommercialConstants.TARGET_LIST;
+	}
+
+	public String getListDetailReportKey() {
+		return ICommercialConstants.TARGET_LIST_DETAIL;
+	}
+
+	public String getListDetailExcelReportKey() {
+		return ICommercialConstants.TARGET_LIST_DETAIL_EXCEL;
+	}
+	
 }
