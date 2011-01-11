@@ -19,6 +19,7 @@ import org.hibernate.annotations.Parameter;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.Advertising;
+import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.Registry;
 
@@ -126,6 +127,14 @@ public class MarketingTarget implements ITransferObject {
 	public void setAdvertising(Advertising advertising) {
 		getTarget().setAdvertising(advertising);
 	}
+	
+	public TargetStatus getStatus() {
+        return getTarget().getStatus();
+    }
+
+    public void setStatus(TargetStatus status) {
+    	getTarget().setStatus(status);
+    }
 	
 	
 	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
