@@ -29,7 +29,7 @@
 						value="#{registryBundle.registry_category}" />
 					<aon:selectOneMenu id="RegistryAttachment_category_id"
 						value="#{registryCollections.category}"
-						valueChangeListener="#{controller.addIdEqualExpression}">
+						valueChangeListener="#{controller.addCategoryEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{registryCollections.categories}" />
 					</aon:selectOneMenu>
