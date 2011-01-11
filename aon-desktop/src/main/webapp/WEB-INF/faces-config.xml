@@ -131,7 +131,7 @@
 	<managed-bean>
 		<managed-bean-name>corporateIdentityAttach</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.registry.controller.RegistryAttachController
+			com.code.aon.desktop.controller.CorporateIdentityController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
