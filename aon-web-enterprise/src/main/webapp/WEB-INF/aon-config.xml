@@ -100,7 +100,7 @@
 			showTaxInfoData="true"
 			showEcommerceTab="false"
 			showProfile="false"
-			showSearchOnlyCustomers="true"
+			showSearchOnlyCustomers="false"
 			showCommercialTracking="true"
 			showProduct="true"
 			showSeller="true"
