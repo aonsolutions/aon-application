@@ -8,6 +8,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.BankConcept;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.BankStatementLink;
+import com.code.aon.finance.CashFlowForecast;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Finance;
@@ -30,6 +31,7 @@ public class FinanceAliasWriter {
 			BankConcept.class.getName(),
 			BankStatement.class.getName(),
 			BankStatementLink.class.getName(),
+			CashFlowForecast.class.getName(),
 			CustomerFee.class.getName(),
 			Finance.class.getName(),
 			FinanceBatch.class.getName(),
