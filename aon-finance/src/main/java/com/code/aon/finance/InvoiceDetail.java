@@ -35,7 +35,6 @@ import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.IncomeDetail;
 
 @Entity
 @Table(name = "invoice_detail")
