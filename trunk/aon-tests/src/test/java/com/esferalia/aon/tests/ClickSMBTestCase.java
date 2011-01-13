@@ -15,7 +15,6 @@ public class ClickSMBTestCase extends SeleneseTestCase {
 
 	@Test
 	public void testClickSMBTestCase() throws Exception {
-		/*
 		selenium.open("/aon-smb/");
 		selenium.type("j_username_view", "smb");
 		selenium.type("j_password", "demo");
@@ -189,7 +188,6 @@ public class ClickSMBTestCase extends SeleneseTestCase {
 		selenium.click("aonContent:j_id9077:config");
 		selenium.click("j_id21:j_id22");
 		selenium.waitForPageToLoad("30000");
-		*/
 	}
 
 
