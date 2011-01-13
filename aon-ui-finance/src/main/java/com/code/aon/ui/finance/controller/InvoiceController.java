@@ -43,7 +43,6 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -230,14 +229,15 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	public double getToInvoiceTotalPrice() {
-		if (InvoiceType.UNDEDUCTIBLE == getInvoice().getType()) {
-			return getTaxableBase();
-		}
-		return getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), (ITaxInfo)getTo());
+		return getInvoiceTotalPrice((Invoice)getInvoice());
 	}
 	
 	public double getInvoiceTotalPrice() throws ManagerBeanException {
 		Invoice invoice = (Invoice)this.getModel().getRowData();
+		return getInvoiceTotalPrice(invoice);
+	}
+
+	private double getInvoiceTotalPrice(Invoice invoice) {
 		if (InvoiceType.UNDEDUCTIBLE == invoice.getType()) {
 			return getPriceStrategy().getTaxableBase(invoice);
 		}
@@ -345,25 +345,24 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException{
+		double invoiceTotal = getToInvoiceTotalPrice();
+		double financeTotal = getToInvoiceFinanceTotal();
+		if (financeTotal != 0 && invoiceTotal != financeTotal) {
+			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
+			throw new AbortProcessingException(message);
+		}
+
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			
-			double invoiceTotal = getToInvoiceTotalPrice();
-			double financeTotal = getToInvoiceFinanceTotal();
-			if (financeTotal != 0 && invoiceTotal != financeTotal) {
-				String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
-				throw new AbortProcessingException(message);
-			}
 			Invoice invoice = getInvoice();
 			getManagerBean().restoreNullSubPOJOs(invoice);
-			invoice = (Invoice) HibernateUtil.getSession(sessionName).merge(invoice);
 			getAccountWriter().recordAndUpdateInvoice(invoice);
-			setTo(invoice);
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
 			try {
