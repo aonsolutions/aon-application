@@ -37,13 +37,13 @@
         <artifactId>selenium-maven-plugin</artifactId>
         <version>1.0.1</version>
         <executions>
-          <!--execution>
+          <execution>
             <id>xvfb</id>
             <phase>pre-integration-test</phase>
             <goals>
               <goal>xvfb</goal>
             </goals>
-          </execution-->
+          </execution>
           <execution>
             <id>start-server</id>
             <phase>pre-integration-test</phase>
