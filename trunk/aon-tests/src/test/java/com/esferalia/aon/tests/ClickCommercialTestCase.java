@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class ClickCommercialTestCase extends SeleneseTestCase {
 	@Before
 	public void setUp() throws Exception {
-		selenium = new AonSelenium("localhost", 4444, "*chrome", "http://test.esferalia.org/");
+	selenium = new AonSelenium("localhost", 4444, "*chrome", "http://test.esferalia.org/");
 		selenium.start();
 	}
 
