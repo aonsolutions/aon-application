@@ -28,7 +28,7 @@ import com.code.aon.registry.dao.IRegistryAlias;
 public class FinanceGenerator {
 
 	public Finance initializeFinanceData(Finance finance, double initialAmount) throws ManagerBeanException{
-		if (finance.isEmptyInvoice()) {
+		if (finance.getInvoice() == null) {
 			throw new IllegalArgumentException("El Vencimiento ha de tener Factura asociada.");
 		}
 		RegistryPayMethod rPayMethod = obtainRPayMethod(finance.getInvoice());
@@ -36,7 +36,7 @@ public class FinanceGenerator {
 	}
 
 	public Finance initializeFinanceData(Finance finance, RegistryPayMethod rPayMethod, double initialAmount){
-		if (finance.isEmptyInvoice()) {
+		if (finance.getInvoice() == null) {
 			throw new IllegalArgumentException("El Vencimiento ha de tener Factura asociada.");
 		}
 		RegistryBank rBank = null;
