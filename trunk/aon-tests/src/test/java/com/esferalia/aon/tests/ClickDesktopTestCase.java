@@ -16,7 +16,6 @@ public class ClickDesktopTestCase extends SeleneseTestCase {
 
 	@Test
 	public void testClickDesktopTestCase() throws Exception {
-		/*
 		selenium.open("/aon-desktop/");
 		selenium.type("j_username_view", "test");
 		selenium.type("j_password", "demo");
@@ -32,7 +31,6 @@ public class ClickDesktopTestCase extends SeleneseTestCase {
 		selenium.click("//a[@id='aonContent:j_id1123:j_id1171']/img");
 		selenium.click("//a[@id='j_id24:j_id25']/span");
 		selenium.waitForPageToLoad("30000");
-		*/
 	}
 
 	@After
