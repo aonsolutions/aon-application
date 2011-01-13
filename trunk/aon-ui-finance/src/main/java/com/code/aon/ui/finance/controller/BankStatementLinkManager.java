@@ -42,6 +42,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	private BankConcept bankConcept;
 	private Account account;
 	private Double amount;
+	private String comments;
 
 	public BankStatement getCurrentStatement() {
 		return currentStatement;
@@ -79,6 +80,13 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	}
 	public void setAmount(Double amount) {
 		this.amount = amount;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 
 	public boolean isBatchSource() {
@@ -403,6 +411,12 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		statement.setReliability(StatementReliability.VERY_HIGH);
 		statement.setStatus(StatementStatus.PENDING);
 		statementBean.update(statement);
+	}
+
+	public void onSaveComments(ActionEvent event) throws ManagerBeanException {
+		IManagerBean statementBean = BeanManager.getManagerBean(BankStatement.class);
+		getCurrentStatement().setComments(getComments());
+		statementBean.update(getCurrentStatement());
 	}
 
 }

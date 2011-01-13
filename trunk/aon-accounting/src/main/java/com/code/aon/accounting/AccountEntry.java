@@ -140,6 +140,7 @@ public class AccountEntry implements ITransferObject, IConfidentialable {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.accountPeriod,o.accountPeriod)
+				.append(this.comments,o.comments)		
 				.append(this.entryDate,o.entryDate)		
 				.append(this.type,o.type)
 				.append(this.journal,o.journal)		
@@ -154,6 +155,7 @@ public class AccountEntry implements ITransferObject, IConfidentialable {
 		return new HashCodeBuilder()
 			.append(id)		
 			.append(accountPeriod)
+			.append(comments)
 			.append(entryDate)		
 			.append(type)
 			.append(journal)		

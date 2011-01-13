@@ -1064,6 +1064,7 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 
         getBankStatementLinkManager().setCurrentStatement(to);
+        getBankStatementLinkManager().setComments(to.getComments());
         if (statementLinkList.getRowCount() > 0) {
         	getBankStatementLinkManager().setStatementLinkTab();
         }
@@ -1200,6 +1201,7 @@ public class BankStatementController extends BasicController implements IFinance
 						recordingTo.setPaymentAccount(getWriter().obtainPaymentAccount(statement.getRegistryBank(), null));
 						recordingTo.setBalancingConcept(StringUtils.abbreviate(statement.getDescription(), 32));
 						recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
+						recordingTo.setComments(statement.getComments());
 						recordingTo.setAccountMap(accountMap);
 
 						AccountEntry entry = null;
