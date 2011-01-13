@@ -54,7 +54,7 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (StringUtils.isEmpty(finance.getRegistryDocument())) {
 			finance.setRegistryDocument((!finance.isEmptyInvoice()) ? finance.getInvoice().getRegistryDocument() : finance.getRegistry().getDocument());
 		}
-		if (StringUtils.isEmpty(finance.getConcept()) && !finance.isEmptyInvoice()) {
+		if (!finance.isEmptyInvoice()) {
 	        finance.setConcept(finance.getInvoice().getDocumentNumber()); 
 		}
 		BankAccount bankAccount = finance.getBankAccount();
