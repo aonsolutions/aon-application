@@ -54,9 +54,11 @@ public class ControllerSearchListener extends ControllerAdapter {
 			}
 			this.currentController = null;
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error initializing Task Model", e);
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException(e.getMessage(), e);
 		} catch (ExpressionException e) {
-			LOGGER.error("Error initializing Task Model", e);
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
@@ -66,7 +68,8 @@ public class ControllerSearchListener extends ControllerAdapter {
 		try {			
 			init();
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error initializing Task Model", e);
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 

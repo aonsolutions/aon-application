@@ -33,8 +33,8 @@
 						value="#{controller.fromDate}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}">
-						<a4j:support event="oninputchange" reRender="fromContainer" ajaxSingle="true" />
-						<a4j:support event="onchanged" reRender="fromContainer" ajaxSingle="true" />
+						<a4j:support event="oninputchange" reRender="fromContainer"/>
+						<a4j:support event="onchanged" reRender="fromContainer"/>
 					</aon:selectInputDate>
 						
 					<aon:outputText value="&#160;"/>
@@ -83,7 +83,7 @@
 								<f:facet name="header">
 									<aon:outputText value="#{financeBundle.finance_cashflow_initial_balance}" />
 								</f:facet>
-								<aon:inputText value="#{cashFlowBank.balance}" size="10"/>
+								<aon:inputText value="#{cashFlowBank.initialBalance}" size="10"/>
 							</aon:column>
 							
 						</aon:dataTable>

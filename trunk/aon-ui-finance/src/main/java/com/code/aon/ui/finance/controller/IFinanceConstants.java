@@ -86,4 +86,6 @@ public interface IFinanceConstants {
 
 	String BANK_STATEMENT_LINK_CONTROLLER_NAME = "bankStatementLink";
 
+	String CASH_FLOW_FORECAST_CONTROLLER_NAME = "cashFlowForecast";
+
 }
