@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -47,6 +48,7 @@ public class BankStatement implements ITransferObject {
     private String description;
     private StatementReliability reliability;
     private StatementStatus status;
+	private String comments;
 
 	private boolean showBankStatementLink;
 	private boolean showAccountEntry;
@@ -166,6 +168,15 @@ public class BankStatement implements ITransferObject {
 		this.status = status;
 	}
 
+	@Column(name="comments")
+	@Lob
+	public String getComments() {
+		return comments;
+	}
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
 	@Transient
 	public boolean isExact() {
 		return reliability == StatementReliability.VERY_HIGH;
@@ -221,6 +232,7 @@ public class BankStatement implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.amount,o.amount)
+				.append(this.comments,o.comments)
 				.append(this.commonConcept,o.commonConcept)
 				.append(this.description,o.description)
 				.append(this.document,o.document)
@@ -243,6 +255,7 @@ public class BankStatement implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)		
 			.append(this.amount)
+			.append(this.comments)
 			.append(this.commonConcept)
 			.append(this.description)
 			.append(this.document)

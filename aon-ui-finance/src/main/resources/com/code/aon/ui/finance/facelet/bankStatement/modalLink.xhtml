@@ -440,6 +440,24 @@
 												</aon:div>
 											</aon:div>
 										</aon:panelTab>
+
+										<aon:panelTab id="commentsLinkTab" label="#{bundle.aon_comment}">
+											<aon:div styleClass="aon-toolbar">
+												<aon:commandButton title="#{bundle.aon_save}"
+													styleClass="aon-finding-toolbar-item aon-icon-accept"
+													value="#{bundle.aon_save}"
+													actionListener="#{linkManager.onSaveComments}"
+													reRender="commentsListDiv"
+													onclick="Richfaces.showModalPanel('waitProccess')" 
+										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+											</aon:div>
+											<aon:div id="commentsListDiv">
+												<aon:div>
+													<aon:inputTextarea id="Invoice_comments" cols="100" rows="4"
+														value="#{linkManager.comments}" />
+												</aon:div>
+											</aon:div>
+										</aon:panelTab>
  									</aon:panelTabSet>
 								</aon:div>
 							</aon:div>

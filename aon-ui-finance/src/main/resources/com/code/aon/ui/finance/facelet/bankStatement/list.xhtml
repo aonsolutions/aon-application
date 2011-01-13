@@ -480,6 +480,19 @@
 												rendered="#{(to.checked and to.showBankStatementLink) or (to.recorded and to.showAccountEntry)}" 
 												actionListener="#{controller.onHideBankStatementLink}"
 												reRender="#{dataTableId}" />
+
+<!-- 
+											<aon:outputText value="&#160;" styleClass="aon-icon-comment-red"
+												rendered="#{to.comments != null}" />
+											<rich:toolTip>
+												<aon:outputText value="#{to.comments}"/>
+											</rich:toolTip>
+
+							<aon:outputText value="&#160;" styleClass="aon-icon-comment"
+								rendered="#{empty accountEntry.to.comments}" 
+								style="padding-left:20px"/>
+ -->
+							
 										</aon:div>
 										<rich:subTable id="bankStatementLinkTable" 
 											rendered="#{to.checked and controller.showBankStatementLink}"
