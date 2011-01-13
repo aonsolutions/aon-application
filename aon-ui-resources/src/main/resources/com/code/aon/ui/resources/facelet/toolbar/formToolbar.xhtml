@@ -10,16 +10,16 @@
 		<aon:valueParam name="formNew" default="#{controller.new}" />		
 		<aon:methodParam name="saveActionListener" default="#{controller.accept}" type="actionListener" />
 		<aon:methodParam name="saveAction" default="#{controller.beanName}_form" resolve="true" />			
-		<aon:methodParam name="cancelActionListener" default="#{controller.onCancel}" type="actionListener" />
-		<aon:methodParam name="cancelAction" default="#{controller.beanName}_list" resolve="true" />			
+		<aon:methodParam name="cancelActionListener" default="#{controller.onBackActionListener}" type="actionListener" />
+		<aon:methodParam name="cancelAction" default="#{controller.backAction}" />			
 		<aon:methodParam name="removeActionListener" default="#{controller.onRemove}" type="actionListener" />
 		<aon:methodParam name="removeAction" default="#{controller.beanName}_list" resolve="true" />			
 		<aon:methodParam name="searchActionListener" default="#{controller.onEditSearch}" type="actionListener" />
 		<aon:methodParam name="searchAction" default="#{controller.beanName}_search" resolve="true" />		
 		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
 		<aon:methodParam name="resetAction" default="#{controller.beanName}_form" resolve="true" />			
-		<aon:methodParam name="backActionListener" default="#{controller.onCancel}" type="actionListener" />
-		<aon:methodParam name="backAction" default="#{controller.beanName}_list" resolve="true" />									
+		<aon:methodParam name="backActionListener" default="#{controller.onBackActionListener}" type="actionListener" />
+		<aon:methodParam name="backAction" default="#{controller.backAction}" />									
 	</ui:include>
 	
 </ui:composition>

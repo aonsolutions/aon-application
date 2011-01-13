@@ -39,16 +39,32 @@
 									actionListener="#{fbatch.onEditSearch}"
 									value="#{financeBundle.finance_fbatch_module}" />
 							</aon:div>
-							<!--
-							
-								NECESARIO REFACTOR
-							 
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="financialStatement" 
-									action="financialStatement_search" actionListener="#{financialStatement.onReset}"
-									value="#{accountingBundle.accounting_financial_statements}" />
+								<aon:commandLink id="bankConcept"
+									action="bankConcept" 
+									value="#{financeBundle.finance_bank_concept_module}" />
+							</aon:div>							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="bankStatement"
+									value="#{financeBundle.finance_bank_statement_module}"
+									rendered="#{bankStatement.availableRegistryBanks > 0}"
+									actionListener="#{bankStatement.onEditSearch}"
+									action="bankStatement_search" />
 							</aon:div>
-							 -->
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="cashFlowForecast"
+									value="#{financeBundle.finance_cashflow_forecast_module}"
+									rendered="#{cashFlowForecast.availableRegistryBanks > 0}"
+									actionListener="#{cashFlowForecast.onEditSearch}"
+									action="cashFlowForecast_search" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="cashFlowForecastReport"
+									value="#{financeBundle.finance_cashflow_forecast_report_module}"
+									rendered="#{cashFlowForecast.availableRegistryBanks > 0}"
+									actionListener="#{cashFlowForecastReport.onEditSearch}"
+									action="cashFlowForecastReport_search" />
+							</aon:div>
 						</aon:div>
 					</aon:panelGrid>
 				</h:panelGrid>

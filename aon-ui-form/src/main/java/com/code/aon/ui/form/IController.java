@@ -13,6 +13,15 @@ import com.code.aon.common.ManagerBeanException;
  * @author Consulting & Development.
  */
 public interface IController extends ISearchable {
+	
+	/** The form suffix for template action. */
+	String FORM_SUFFIX = "_form";
+	
+	/** The list suffix for template action. */
+	String LIST_SUFFIX = "_list";
+	
+	/** The search suffix for template action. */
+	String SEARCH_SUFFIX = "_search";	
 
     /**
      * Return the manager of bean associated to controller.
@@ -20,12 +29,12 @@ public interface IController extends ISearchable {
      * @return IManagerBean
      * @throws ManagerBeanException
      */
-    public IManagerBean getManagerBean() throws ManagerBeanException;
+    IManagerBean getManagerBean() throws ManagerBeanException;
 
     /**
      * Initialize the model associated to controller.
      */
-    public void initializeModel();
+    void initializeModel();
 
     /**
      * Return the model associated to controller. The model represents a list of <code>ITransferObject</code> 
@@ -34,83 +43,90 @@ public interface IController extends ISearchable {
      * @return DataModel
      * @throws ManagerBeanException
      */
-    public DataModel getModel() throws ManagerBeanException;
+    DataModel getModel() throws ManagerBeanException;
 
     /**
      * Set the model associated to controller.
      * 
      * @param model
      */
-    public void setModel(DataModel model);
+    void setModel(DataModel model);
 
     /**
      * Return the state of bean. True if bean is in state 'New', otherwise false.
      * 
      * @return boolean
      */
-    public boolean isNew();
+    boolean isNew();
 
     /**
      * Sets the state of bean.
      * 
      * @param isNew
      */
-    public void setNew(boolean isNew);
+    void setNew(boolean isNew);
 
     /**
      * Execute insert or update action.
      * 
      * @param event
      */
-    public void onAccept(ActionEvent event);
+    void onAccept(ActionEvent event);
 
     /**
      * Execute search action.
      * 
      * @param event
      */
-    public void onSearch(ActionEvent event);
+    void onSearch(ActionEvent event);
 
     /**
      * Execute removal action.
      * 
      * @param event
      */
-    public void onRemove(ActionEvent event);
+    void onRemove(ActionEvent event);
 
+    /**
+     * Execute back action.
+     * 
+     * @param event
+     */
+    void onBack(ActionEvent event);
+    
     /**
      * Execute cancel action.
      * 
      * @param event
      */
-    public void onCancel(ActionEvent event);
+    void onCancel(ActionEvent event);
 
     /**
      * Execute reset action.
      * 
      * @param event
      */
-    public void onReset(ActionEvent event);
+    void onReset(ActionEvent event);
 
     /**
      * Execute search edition action.
      * 
      * @param event
      */
-    public void onEditSearch(ActionEvent event);
+    void onEditSearch(ActionEvent event);
 
     /**
      * Execute selection action.
      * 
      * @param event
      */
-    public void onSelect(ActionEvent event);
+    void onSelect(ActionEvent event);
 
     /**
      * Return <code>ITransferObject</code> associated to controller.
      * 
      * @return ITransferObject.
      */
-    public ITransferObject getTo();
+    ITransferObject getTo();
 
 }
