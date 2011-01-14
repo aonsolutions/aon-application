@@ -1,5 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
@@ -13,6 +14,7 @@ import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.seller.Seller;
@@ -188,17 +190,20 @@ public class CommercialTrackingController extends BasicController {
 		}
 		controller.setBackAction(ICommercialConstants.NAVIGATION_COMMERCIAL_TRACKING_FORM);
 	}
-	
-	public void onOrderBySeller(ActionEvent event){
+
+	@Override
+	public Collection<ITransferObject> getCollection(boolean forceRefresh)
+			throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		criteria.addExpression(getCriteria().getExpression());
 		try {
-			Criteria criteria = new Criteria(); 
 			criteria.addOrder(this.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID));
 			criteria.addOrder(this.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE));
-			this.setCriteria(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onOrderBySeller exception: ", e);
+			LOGGER.error(">>>> getCollection exception: ", e);
 			addMessage(e.getMessage());
 		}
+		return this.getManagerBean().getList(criteria);
 	}
 	
 }
