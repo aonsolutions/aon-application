@@ -16,8 +16,8 @@
   <name>aon Solutions</name>
 
   <modules>
-	<!--module>aon-parent</module>
-	<module>aon-web-parent</module-->	
+	<module>aon-parent</module>
+	<module>aon-web-parent</module>	
 	
 	<module>aon-external-libs</module>
 
