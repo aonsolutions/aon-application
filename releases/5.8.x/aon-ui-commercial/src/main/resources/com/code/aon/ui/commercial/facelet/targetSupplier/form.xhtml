@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+		<ui:param name="toolbarID" value="ttpFormToolbar" />
+		<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_target_supplier_info}" />
+		<ui:param name="skipSearchButton" value="true" />
+
+		<aon:methodParam name="saveAction" value="" />
+		<ui:param name="saveButtonReRender" value="targetSupplierContent" />
+		<aon:methodParam name="cancelAction" value="" />
+		<ui:param name="cancelButtonReRender" value="targetSupplierContent" />
+		<aon:methodParam name="removeAction" value="" />
+		<ui:param name="removeButtonReRender" value="targetSupplierContent" />
+		<aon:methodParam name="resetAction" value="" />
+		<ui:param name="resetButtonReRender" value="targetSupplierContent" />
+		<aon:methodParam name="backAction" value="" />
+		<ui:param name="backButtonReRender" value="targetSupplierContent" />
+	</ui:include>
+	
+	<aon:div styleClass="aon-scroll-area">
+		<aon:panelGrid id="targetSupplierTable" columns="4"
+				style="width: 100%"
+				columnClasses="aon-panelGrid-odd aon-width-150
+							,aon-panelGrid-even aon-width-auto
+							,aon-panelGrid-odd aon-width-150
+							,aon-panelGrid-even aon-width-200">
+
+			<aon:outputLabel for="Supplier_id" 
+				value="#{supplierBundle.supplier_supplier}" />
+			<aon:div styleClass="aon-lookup">
+				<a4j:region>
+					<aon:lookupInputText id="Supplier_id" 
+						value="#{controller.to.supplier.registry.id}"
+						lookupProperty="registry" lookup="#{supplierLookup}"
+						lookupChangeListener="#{controller.supplierData}" 
+						reRender="Supplier_full_name,Supplier_registry_document"
+						ajaxSingle="true" size="5" />
+					<aon:lookupButton
+						windowTitle="#{supplierBundle.supplier_selection}"
+						minHeight="470" minWidth="650"
+						property="#{controller.to.supplier.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
+						lookupChangeListener="#{controller.supplierData}"
+						selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document"
+						actionType="search">
+					</aon:lookupButton>
+					<aon:lookupButton 
+						windowTitle="#{supplierBundle.supplier_new}"
+						minWidth="650" minHeight="600"
+						property="#{controller.to.supplier.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
+						lookupChangeListener="#{controller.supplierData}"
+						selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document"		 
+						actionType="new">
+					</aon:lookupButton>							
+					<aon:inputText id="Supplier_full_name" 
+						value="#{(controller.to.supplier.registry.fullName!=null)?(controller.to.supplier.registry.fullName):('')}"
+						disabled="true" size="60" />
+				</a4j:region>
+			</aon:div>
+
+			<aon:outputLabel for="Supplier_registry_document" 
+				value="#{bundle.aon_company_document}" />
+			<aon:inputText id="Supplier_registry_document" 
+				value="#{controller.to.supplier.registry.document}"
+				disabled="true" size="10" />
+
+			<aon:outputLabel for="TargetSupplier_tariff" 
+				value="#{productBundle.product_tariff}" />
+			<aon:selectOneMenu id="TargetSupplier_tariff" 
+				value="#{controller.to.tariff}">
+				<f:selectItem itemLabel="-" itemValue="" />
+				<f:selectItems value="#{configCollections.tariffs}" />
+			</aon:selectOneMenu>
+
+			<aon:outputLabel for="TargetSupplier_targetExternalCode" 
+				value="#{commercialBundle.commercial_target_supplier_customer_id}" />
+			<aon:inputText id="TargetSupplier_targetExternalCode" 
+				value="#{controller.to.targetExternalCode}"
+				size="10" />
+		</aon:panelGrid>
+
+		<aon:div styleClass="aon-padding-top">
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="#{configBundle.config_pay_method}" />
+				</f:facet>
+				<aon:panelGrid columns="7" style="width:100%; font-size:0.9em;"
+					rowClasses="aon-panelGrid-odd aon-dataTable-header,aon-panelGrid-even"
+					columnClasses="aon-panelGrid-even aon-width-200,
+						aon-panelGrid-even aon-width-80,
+						aon-panelGrid-even aon-width-100,
+						aon-panelGrid-even aon-width-110,
+						aon-panelGrid-even aon-width-100,
+						aon-panelGrid-even aon-width-auto,
+						aon-panelGrid-even aon-width-200">
+
+					<aon:outputText value="#{bundle.aon_type}"/>
+					<aon:outputText value="#{registryBundle.registry_number_of_payments}" />
+					<aon:outputText value="#{registryBundle.registry_days_to_first_payment}" />
+					<aon:outputText value="#{registryBundle.registry_days_between_payments}" />
+					<aon:outputText value="#{registryBundle.registry_payment_days}" />
+					<aon:outputText value="#{configBundle.config_bank}" />
+					<aon:outputText value="#{configBundle.config_bank_account}" />
+
+					<aon:selectOneMenu id="TargetSupplier_payMethod" 
+						value="#{controller.to.payMethod}">
+						<f:selectItems value="#{configCollections.payMethods}" />
+					</aon:selectOneMenu>
+					<aon:inputText id="TargetSupplier_numberOfPayments"
+						value="#{controller.to.numberOfPayments}" size="5" >
+						<f:validateLongRange minimum="1" />
+					</aon:inputText>	
+					<aon:inputText id="TargetSupplier_daysToFirstPayment"
+						value="#{controller.to.daysToFirstPayment}"	size="5">
+						<f:validateLongRange minimum="0" />
+					</aon:inputText>	
+					<aon:inputText id="TargetSupplier_daysBetweenPayments"
+						value="#{controller.to.daysBetweenPayments}" size="5">
+						<f:validateLongRange minimum="0" />
+					</aon:inputText>	
+					<aon:inputText id="TargetSupplier_paymentDays"
+						value="#{controller.to.paymentDays}" size="5" />
+					<aon:div styleClass="aon-lookup">
+						<a4j:region>
+							<aon:lookupInputText id="TargetSupplier_bank_code"
+								value="#{controller.to.bank.code}" size="5"
+								property="#{controller.to.bank}" lookup="#{bankLookup}"
+								reRender="TargetSupplier_bank_name">
+								<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
+							</aon:lookupInputText>
+							<aon:lookupButton 
+								windowTitle="#{configBundle.config_bank_selection}"
+								minHeight="460" minWidth="650"
+								property="#{controller.to.bank}" lookup="#{bankLookup}"
+								selectReRender="TargetSupplier_bank_code,TargetSupplier_bank_name"
+								actionType="search">
+							</aon:lookupButton>
+							<aon:inputText id="TargetSupplier_bank_name"
+								value="#{controller.to.bank.name}"
+								disabled="true" size="40" />							
+						</a4j:region>
+					</aon:div>
+					<aon:div>
+						<aon:inputText id="TargetSupplier_bank_office"
+							value="#{controller.to.bankAccount.office}"
+							size="4" maxlength="4">
+							<f:validateLength minimum="4" maximum="4" />
+						</aon:inputText>
+						<aon:inputText id="TargetSupplier_bank_control"
+							value="#{controller.to.bankAccount.control}"
+							size="2" maxlength="2">
+							<f:validateLength minimum="2" maximum="2" />
+						</aon:inputText>
+						<aon:inputText id="TargetSupplier_bank_account"
+							value="#{controller.to.bankAccount.account}"
+							size="10" maxlength="10">
+							<f:validateLength minimum="10" maximum="10" />
+						</aon:inputText>
+					</aon:div>
+
+				</aon:panelGrid>
+			</aon:panel>
+		</aon:div>
+
+	</aon:div>
+
+</ui:composition>

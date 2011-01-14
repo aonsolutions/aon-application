@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="supplierForm">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save" value="#{bundle.aon_save}"
+						forceId="#{true}" actionListener="#{supplier.accept}"
+						onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						disabled="#{address.to!=null || media.to!=null}"
+						accesskey="#{bundle.aon_key_save}"/>
+					<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						forceId="#{true}" immediate="#{true}" action="supplier_list"
+						actionListener="#{supplier.onCancel}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						disabled="#{address.to!=null || media.to!=null}"
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<t:commandButton id="remove" value="#{bundle.aon_remove}"
+						rendered="#{!supplier.new}" forceId="#{true}" immediate="true"
+						action="supplier_list" actionListener="#{supplier.onRemove}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
+						disabled="#{address.to!=null || media.to!=null}"
+						accesskey="#{bundle.aon_key_remove}"/>
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{!supplier.new}" forceId="#{true}" immediate="true"
+						action="supplier_form" actionListener="#{supplier.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" 
+						disabled="#{address.to!=null || media.to!=null}"
+						accesskey="#{bundle.aon_key_new}"/>
+					<t:commandButton id="search" value="#{bundle.aon_search}"
+						action="supplier_search"  actionListener="#{supplier.onEditSearch}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						disabled="#{address.to!=null || media.to!=null}"
+						accesskey="#{bundle.aon_key_search}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<ui:include src="/facelet/purchase/master/supplier/formContent.xhtml">
+				<ui:param name="supplierAlias" value="#{supplier}"/>
+				<ui:param name="viewDetails" value="#{!supplier.new}"/>
+			</ui:include>
+
+		</h:form>
+
+		<h:form id="placeList" target="list" />
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

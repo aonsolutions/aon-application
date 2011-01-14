@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Individual_II">
+
+ <field name="type" value="26" format="AlphaNumeric" pattern="X(2)" />
+ <field name="cod_operacion" value="65" format="AlphaNumeric" pattern="X(2)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(2)" />
+ <field name="numero_documento" value="bean" bean="INDIVIDUAL" property="documentNumber" format="AlphaNumeric" pattern="X(15)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(2)" />
+ <field name="tipo_documento" value="bean" bean="INDIVIDUAL" property="documentType" format="Numeric" pattern="9(1)" />
+ <field name="fecha_libramiento" value="bean" bean="INDIVIDUAL" property="paymentDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="cod_acepto" value="bean" bean="INDIVIDUAL" property="aceptedCode" format="Numeric" pattern="9(1)" />
+ <field name="clausula_gastos" value="bean" bean="INDIVIDUAL" property="expenseClause" format="Numeric" pattern="9(1)" />
+ <field name="ccc" value="bean" bean="INDIVIDUAL_ACCOUNT" property="ccc" format="CCC" pattern="ESDC" />
+ <field name="librador" value="bean" bean="INDIVIDUAL" property="efectPayer" format="AlphaNumeric" pattern="X(34)" />
+ <field name="librado" value="bean" bean="INDIVIDUAL" property="efectPayed" format="AlphaNumeric" pattern="X(34)" />
+ <field name="info_adicional" value="bean" bean="INDIVIDUAL" property="aditionalData" format="AlphaNumeric" pattern="X(30)" />
+ 
+</register>

@@ -1,0 +1,18 @@
+package com.code.aon.finance.invoicing.remover;
+
+import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.invoicing.InvoicingException;
+
+public class AccountInvoiceDetailRemover implements IInvoiceDetailRemover {
+	
+	@Override
+	public boolean accept(InvoiceSource source) {
+		return source.equals(InvoiceSource.ACCOUNT);
+	}
+
+	@Override
+	public void removeDetail(InvoiceDetail invoiceDetail) throws InvoicingException{
+	}
+
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Titulares de Vehiculos"
+    label="Titulares de Vehiculos" sqlSentence="SELECT support_order.target,CONCAT(registry.surname,&quot;, &quot;, registry.name)&#xd;&#xa;FROM support_order,registry&#xd;&#xa;WHERE support_order.target = registry.id&#xd;&#xa; AND registry.document LIKE ?&#xd;&#xa; AND registry.name LIKE ?&#xd;&#xa; AND registry.surname LIKE ?&#xd;&#xa;GROUP BY support_order.target,CONCAT(registry.surname,&quot;, &quot;, registry.name)&#xd;&#xa;ORDER BY CONCAT(registry.surname,&quot;, &quot;, registry.name)">
+    <parameters>
+        <parameter columnReference="data/registry.exdm.xml/document"
+            defaultValue="%" label="" name="document" type="STRING"/>
+        <parameter columnReference="data/registry.exdm.xml/name"
+            defaultValue="%" label="" name="name" type="STRING"/>
+        <parameter columnReference="data/registry.exdm.xml/surname"
+            defaultValue="%" label="" name="surname" type="STRING"/>
+    </parameters>
+    <results>
+        <result accessName="REGISTRY_ID" columnId="target"
+            columnReference="data/support_order.exdm.xml/target"
+            export="true" label="CODIGO CLIENTE" tableId="support_order" type="INTEGER"/>
+        <result accessName="REGISTRY_NAME"
+            columnId="CONCAT(registry.surname,&quot;, &quot;, registry.name)"
+            export="true" label="NOMBRE CLIENTE" type="STRING"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/support_order.exdm.xml"/>
+        <dataModelReference id="data/registry.exdm.xml"/>
+    </dataModelReferences>
+</view>

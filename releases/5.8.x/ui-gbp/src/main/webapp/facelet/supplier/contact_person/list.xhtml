@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<h:dataTable id="supplierContactPersonDataTable" value="#{supplierContactPerson.model}" var="to"
+		rows="20" styleClass="dr-table rich-table aon-editDataTable"
+		headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+		footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+		rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+		cellpadding="0" cellspacing="0"
+		columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+					   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+					   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+					   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+					   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:outputText value="&#160;" rendered="#{to==supplierContactPerson.to}" />
+			<aon:commandButton rendered="#{to!=supplierContactPerson.to}"
+				styleClass="aon-editDataTable-button aon-icon-rowSelector"
+				actionListener="#{supplierContactPerson.onSelect}" value="" immediate="true"
+				reRender="supplierContactPersonDataTable">
+			</aon:commandButton>
+			<f:facet name="footer">
+				<aon:div>
+					<aon:commandButton id="reset"
+						title="[#{bundle.aon_reset}]"
+						styleClass="aon-editDataTable-button aon-icon-reset" value=""
+						immediate="true" reRender="supplierContactPersonDataTable"
+						rendered="#{!supplierContactPerson.new}" actionListener="#{supplierContactPerson.onReset}"
+						accesskey="#{bundle.aon_key_new_line}">
+					</aon:commandButton>
+				</aon:div>
+			</f:facet>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_supplier_contact_person_name}" />
+			</f:facet>
+			<aon:outputText value="#{to.name}" rendered="#{to!=supplierContactPerson.to}" />
+			<aon:inputText value="#{to.name}" required="true"
+				rendered="#{to==supplierContactPerson.to}" size="48" maxlength="64" />
+			<f:facet name="footer">
+				<aon:div>
+					<aon:inputText value="#{supplierContactPerson.to.name}" required="true"
+						rendered="#{supplierContactPerson.new}" size="48" maxlength="64" />
+				</aon:div>
+			</f:facet>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_supplier_contact_person_position}" />
+			</f:facet>
+			<aon:outputText value="#{to.position}" rendered="#{to!=supplierContactPerson.to}" />
+			<aon:inputText value="#{to.position}"
+				rendered="#{to==supplierContactPerson.to}" size="32" maxlength="32" />
+			<f:facet name="footer">
+				<aon:div>
+					<aon:inputText value="#{supplierContactPerson.to.position}"
+						rendered="#{supplierContactPerson.new}" size="32" maxlength="32" />
+				</aon:div>
+			</f:facet>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_supplier_contact_person_fixed_phone}" />
+			</f:facet>
+			<aon:outputText value="#{to.fixedPhone}" rendered="#{to!=supplierContactPerson.to}" />
+			<aon:inputText value="#{to.fixedPhone}"
+				rendered="#{to==supplierContactPerson.to}" size="12" maxlength="16" />
+			<f:facet name="footer">
+				<aon:div>
+					<aon:inputText value="#{supplierContactPerson.to.fixedPhone}"
+						rendered="#{supplierContactPerson.new}" size="12" maxlength="16" />
+				</aon:div>
+			</f:facet>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_supplier_contact_person_cellular}" />
+			</f:facet>
+			<aon:outputText value="#{to.cellular}" rendered="#{to!=supplierContactPerson.to}" />
+			<aon:inputText value="#{to.cellular}"
+				rendered="#{to==supplierContactPerson.to}" size="12" maxlength="16" />
+			<f:facet name="footer">
+				<aon:div>
+					<aon:inputText value="#{supplierContactPerson.to.cellular}"
+						rendered="#{supplierContactPerson.new}" size="12" maxlength="16" />
+				</aon:div>
+			</f:facet>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_supplier_contact_person_mail}" />
+			</f:facet>
+			<aon:outputText value="#{to.mail}" rendered="#{to!=supplierContactPerson.to}" />
+			<aon:inputText value="#{to.mail}"
+				rendered="#{to==supplierContactPerson.to}" size="25" maxlength="32" />
+			<f:facet name="footer">
+				<aon:div>
+					<aon:inputText value="#{supplierContactPerson.to.mail}"
+						rendered="#{supplierContactPerson.new}" size="25" maxlength="32" />
+				</aon:div>
+			</f:facet>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_supplier_contact_person_fax}" />
+			</f:facet>
+			<aon:outputText value="#{to.fax}" rendered="#{to!=supplierContactPerson.to}" />
+			<aon:inputText value="#{to.fax}"
+				rendered="#{to==supplierContactPerson.to}" size="12" maxlength="16" />
+			<f:facet name="footer">
+				<aon:div>
+					<aon:inputText value="#{supplierContactPerson.to.fax}"
+						rendered="#{supplierContactPerson.new}" size="12" maxlength="16" />
+				</aon:div>
+			</f:facet>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<f:verbatim rendered="#{to!=supplierContactPerson.to}">&#160;</f:verbatim>
+			<aon:div rendered="#{to==supplierContactPerson.to}">
+				<aon:commandButton id="lineAccept" title="[#{bundle.aon_accept}]"
+					styleClass="aon-editDataTable-button aon-icon-accept"
+					reRender="supplierContactPersonDataTable"
+					actionListener="#{supplierContactPerson.onAccept}" />
+				<aon:commandButton id="lineCancel" title="[#{bundle.aon_cancel}]"
+					styleClass="aon-editDataTable-button aon-icon-cancel"
+					reRender="supplierContactPersonDataTable" immediate="true"
+					actionListener="#{supplierContactPerson.onCancel}" />
+				<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
+					styleClass="aon-editDataTable-button aon-icon-delete"
+					reRender="supplierContactPersonDataTable" immediate="true"
+					actionListener="#{supplierContactPerson.onRemove}" />
+			</aon:div>
+			<f:facet name="footer">
+				<aon:div rendered="#{supplierContactPerson.new}">
+					<f:verbatim rendered="#{!supplierContactPerson.new}">&#160;</f:verbatim>
+					<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						reRender="supplierContactPersonDataTable"
+						actionListener="#{supplierContactPerson.onAccept}" />
+					<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						reRender="supplierContactPersonDataTable" immediate="true"
+						actionListener="#{supplierContactPerson.onCancel}" />
+				</aon:div>
+			</f:facet>
+		</aon:column>
+	</h:dataTable>
+
+	<aon:dataScroller dataTable="supplierContactPersonDataTable" model="#{supplierContactPerson.model}" />
+
+</ui:composition>
+
+</body>
+</html>

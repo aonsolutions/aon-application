@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="production">
+    <columns>
+        <column label="Identificador unico de la Produccion" name="id"
+            sqlType="integer" type="integer"/>
+        <column label="Descripcion de la Produccion" length="64"
+            name="description" sqlType="varchar" type="string"/>
+        <column label="Codigo de lote de la Produccion" length="25"
+            name="lot_code" sqlType="varchar" type="string"/>
+        <column label="Fecha de Produccion" name="production_date"
+            sqlType="date" type="date"/>
+        <column label="Identificador del Articulo producido" name="item"
+            sqlType="integer" type="integer"/>
+        <column label="Cantidad inicial del Articulo en la Composicion"
+            name="initial_quantity" sqlType="double" type="double"/>
+        <column label="Cantidad del Articulo producido" name="quantity"
+            sqlType="double" type="double"/>
+        <column label="Precio del Articulo producido" name="price"
+            sqlType="double" type="double"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="production_ibfk_1" foreignPath="data/item.exdm.xml">
+            <sourceColumns>
+                <column name="item"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

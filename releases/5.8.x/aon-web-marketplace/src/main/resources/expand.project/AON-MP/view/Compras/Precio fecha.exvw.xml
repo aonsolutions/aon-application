@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Precio por fecha" label="Precio por fecha" sqlSentence="SELECT DISTINCT invoice.issue_date, invoice_detail.item, product.name, invoice_detail.price&#xd;&#xa;  FROM invoice_detail, invoice, item, product&#xd;&#xa; WHERE product.id = item.product&#xd;&#xa;   AND invoice_detail.item = item.id&#xd;&#xa;   AND invoice_detail.item = ?&#xd;&#xa;   AND invoice_detail.invoice = invoice.id&#xd;&#xa;   AND invoice.issue_date BETWEEN ? AND ?&#xd;&#xa;   AND invoice.type = ?&#xd;&#xa; ORDER BY 1, 4 ASC&#xd;&#xa;">
+    <parameters>
+        <parameter name="item" type="INTEGER"/>
+        <parameter name="iniDate" type="DATE"/>
+        <parameter name="endDate" type="DATE"/>
+        <parameter name="type" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="issue_date" columnId="issue_date"
+            label="Fecha" tableId="invoice" type="DATE"/>
+        <result accessName="item" columnId="item" label="Codigo"
+            tableId="invoice_detail" type="INTEGER"/>
+        <result accessName="name" columnId="description"
+            label="Articulo" tableId="invoice_detail" type="STRING"/>
+        <result accessName="price" columnId="price" label="Precio"
+            tableId="invoice_detail" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

@@ -1,0 +1,186 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:div id="tipdomiciliosDataDiv">
+
+
+		<aon:editDataTable id="tipdomiciliosData" var="to" rows="5"
+			value="#{tipdomicilio.model}"
+			columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-iconColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-iconColum">
+
+
+		
+			 <aon:rowSelector 
+			 >
+			<aon:actionListener method="#{tipdomicilio.onSelect}" />
+			
+			</aon:rowSelector>  
+
+
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+
+				
+					
+				
+				<f:facet name="footer">
+
+					<aon:commandButton alt="[#{bundle.aon_reset}]" 
+						styleClass="aon-editDataTable-button aon-icon-reset"
+						actionListener="#{tipdomicilio.onReset}" />
+
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+				</f:facet>
+				<aon:outputText value="#{to.cdg}" />
+				<f:facet name="footer">
+
+
+					
+
+
+				</f:facet>
+
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_principales_tipodomcilio_direccion}" />
+				</f:facet>
+
+				<aon:outputText
+					value="#{to.domicilio.tipovia.cdg} #{to.domicilio.nomvia} #{to.domicilio.numero} #{to.domicilio.otrdir} #{to.domicilio.codpos} #{to.domicilio.localidad} #{to.domicilio.provincia.descripcion}"
+					disabled="true" size="50" maxlength="20" />
+
+				<f:facet name="footer">
+				
+				
+				<aon:div styleClass="aon-lookup" rendered="#{tipdomicilio.new}">
+						<aon:lookupInputText id="Dom_cdg" lookup="#{domicilioLookup}"
+							reRender="Dom_description"
+							value="#{tipdomicilio.to.domicilio.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Dom_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_tipodomcilio_domicilio}"
+							selectReRender="Dom_cdg,Dom_description"
+							lookup="#{domicilioLookup}" minHeight="440"
+							property="#{tipdomicilio.to.domicilio}">
+						</aon:lookupButton>
+						<aon:inputText id="Dom_description"
+							value="#{(tipdomicilio.to.domicilio.nomvia!=null)?(tipdomicilio.to.domicilio.nomvia):('')}"
+							size="60" disabled="true" />
+					</aon:div>
+					
+					
+				
+				
+					
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_principales_domicilio_persona}" />
+				</f:facet>
+
+				<aon:outputText
+					value="#{to.cliente.persona}t: #{to.cliente.telefono} f:#{to.cliente.fax} #{to.cliente.email} "
+					disabled="true" size="50" maxlength="20" />
+
+				<f:facet name="footer">
+				
+				</f:facet>
+			</aon:column>
+
+			<rich:column filterBy="#{to.tipdom}" filterEvent="onkeyup">
+				<f:facet name="header">
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_domicilio_tipodomicilio}" />
+				</f:facet>
+				<aon:outputText value="#{to.tipdom}"
+					rendered="#{to!=tipdomicilio.to}" disabled="true" size="50"
+					maxlength="20" />
+
+				<aon:selectOneMenu id="TipoDoms2" value="#{tipdomicilio.to.tipdom}"
+					rendered="#{to==tipdomicilio.to}">
+					<f:selectItem value="#{null}" itemLabel=" -  " />
+					<f:selectItems value="#{tipdomicilio.listaTipos}" />
+				</aon:selectOneMenu>
+
+				<f:facet name="footer">
+					<aon:selectOneMenu id="TipoDoms" value="#{tipdomicilio.to.tipdom}"
+						rendered="#{tipdomicilio.new}">
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{tipdomicilio.listaTipos}" />
+					</aon:selectOneMenu>
+
+				</f:facet>
+
+			</rich:column>
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+			
+				<aon:commandButton title="[#{bundle.aon_accept}]"
+					rendered="#{to==tipdomicilio.to}" reRender="tabsInfo"
+					styleClass="aon-editDataTable-button aon-icon-accept"
+					actionListener="#{tipdomicilio.onAccept}"
+					accesskey="#{bundle.aon_key_save_line}" />
+			<!--  	<aon:commandButton title="[#{bundle.aon_cancel}]"
+					styleClass="aon-editDataTable-button aon-icon-cancel"
+					rendered="#{to==tipdomicilio.to}"
+					actionListener="#{tipdomicilio.onCancel}" immediate="true"
+					reRender="datos" accesskey="#{bundle.aon_key_cancel_line}" />-->
+				<aon:confirmButton id="remove-Porcentaje"
+					title="[#{bundle.aon_remove}]" reRender="tabsInfo"
+					styleClass="aon-editDataTable-button aon-icon-delete"
+					rendered="#{to==tipdomicilio.to}"
+					confirmTitle="#{bundle.aon_confirm_title}"
+					confirmMessage="#{bundle.aon_remove_confirm}"
+					confirmActionListener="#{tipdomicilio.onRemove}" immediate="true"
+					accesskey="#{bundle.aon_key_remove_line}" />
+
+				<f:facet name="footer">
+	<aon:div>
+                <aon:commandButton id="asignardom" rendered="#{tipdomicilio.new}"
+				 	styleClass="aon-editDataTable-button aon-icon-accept"  reRender="tabsInfo"
+					action="integral_form" actionListener="#{tipdomicilio.onAccept}" />
+			
+
+			  	<aon:commandButton id="cancel-tipdomi"
+						title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{tipdomicilio.new}"						
+						actionListener="#{tipdomicilio.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+  </aon:div>
+				</f:facet>
+			</aon:column>
+
+
+		</aon:editDataTable>
+
+
+	
+
+
+		<aon:dataScroller2 for="tipdomiciliosData" showNote="true" />
+
+	</aon:div>
+
+</ui:composition>

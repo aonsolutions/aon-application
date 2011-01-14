@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="customerForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarID" value="toolbar" />
+				<ui:param name="toolbarTitle"
+					value="#{projectBundle.aon_daily_tracking}" />
+				<ui:param name="controller" value="#{dailyTracking}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:selectBooleanCheckbox id="monitor"
+						value="#{dailyTracking.monitor}" rendered="#{aonRole.taskMonitor}">
+						<a4j:support event="onclick" reRender="searchPanel"
+							actionListener="#{dailyTracking.onSwicthMonitor}">
+						</a4j:support>
+					</aon:selectBooleanCheckbox>
+					<aon:outputLabel for="monitor" value="Monitor"
+						rendered="#{aonRole.taskMonitor}" />
+				</ui:define>
+			</ui:decorate>
+			<aon:div id="searchPanel">
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+
+					<ui:param name="controller" value="#{dailyTracking}" />
+
+					<ui:define name="searchContent">
+
+						<aon:outputLabel for="user" rendered="#{dailyTracking.monitor}"
+							value="#{projectBundle.aon_daily_tracking_user}" />
+						<aon:selectOneMenu id="user" rendered="#{dailyTracking.monitor}"
+							value="#{dailyTracking.user}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{dailyTracking.users}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="Customer_id"
+							value="#{customerBundle.customer_customer}" />
+						<aon:div id="customerIdContainer" styleClass="aon-lookup">
+							<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
+								reRender="Customer_full_name"
+								value="#{dailyTracking.customer.id}" size="5" />
+							<aon:lookupButton
+								windowTitle="#{customerBundle.customer_selection}"
+								property="#{dailyTracking.customer}"
+								selectReRender="Customer_id,Customer_full_name"
+								actionType="search" lookup="#{customerLookup}" minHeight="460"
+								minWidth="650">
+							</aon:lookupButton>
+							<aon:inputText id="Customer_full_name"
+								value="#{(dailyTracking.customer.registry.name!=null)?(dailyTracking.customer.registry.fullName):('')}"
+								size="50" disabled="true" />
+						</aon:div>
+
+						<aon:outputLabel for="DailyTracking_trackingDate-From"
+							value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="DailyTracking_trackingDate-From"
+							value="#{dailyTracking.trackingDateFrom}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true" />
+
+						<aon:outputLabel for="DailyTracking_trackingDate-To"
+							value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="DailyTracking_trackingDate-To"
+							value="#{dailyTracking.trackingDateTo}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true" />
+
+						<aon:outputLabel for="DailyTracking_jobType_id"
+							value="#{projectBundle.aon_daily_tracking_job_type}" />
+						<aon:selectOneMenu id="DailyTracking_jobType_id"
+							value="#{dailyTracking.trackingJobType}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{projectCollections.jobTypes}" />
+						</aon:selectOneMenu>
+
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+	</ui:define>
+</ui:composition>
