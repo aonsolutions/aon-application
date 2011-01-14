@@ -23,6 +23,16 @@
 						actionListener="#{cashFlowForecastReport.onRefresh}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
+					<aon:htmlCommandLink id="cashFlowForecastReport-excel-report"
+						value="&#160;" target="_blank" action="#{cashFlowForecastReport.onExcelReport}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="cashFlowForecastReport-report"
+						onclick="alert('No implementado. Prueba el listado a Excel'); return false;"
+						value="#{bundle.aon_listing}" target="_blank" action="#{cashFlowForecastReport.onExcelReport}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 
@@ -113,6 +123,7 @@
 							style="font-size: 0.9em;#{to.systemProperty?'background-color:inherit;font-weight:bold;':'font-weight:normal;'}
 								  #{to.disabled?'text-decoration: line-through; color: #BBB;':''}">
 						<aon:commandLink
+							rendered="#{!to.systemProperty}"
 							styleClass="aon-dataTable-link"
 							actionListener="#{cashFlowForecastReport.onShow}"
 							action="#{cashFlowForecastReport.showAction}"
