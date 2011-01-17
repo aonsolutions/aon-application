@@ -93,7 +93,7 @@
 					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:define name="columns">
 
-						<aon:column styleClass="aon-width-50">
+						<aon:column styleClass="aon-width-70">
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>
@@ -108,6 +108,13 @@
 									confirmTitle="#{bundle.aon_confirm_title}"
 									confirmMessage="#{bundle.aon_remove_confirm}"
 									confirmActionListener="#{fileManager.onCurrentRemove}" />
+								<aon:commandButton id="rename"
+									title="#{richBundle.aon_click_rename}"
+									value="&#160;" reRender="renameDiv"
+									style="line-height:16px;margin-right:0;border:0;padding-left:10px;"
+									styleClass="aon-icon aon-icon-rename">
+									<f:setPropertyActionListener target="#{fileManager.inRename}" value="#{true}" />
+								</aon:commandButton>									
 								<a4j:htmlCommandLink id="download"
 									value="&#160;" target="_blank"
 									rendered="#{to.file}" immediate="true"
@@ -123,16 +130,10 @@
 								<aon:outputText value="#{bundle.aon_name}" />
 							</f:facet>
 							<aon:div id="renameDiv">
-								<h:panelGrid rendered="#{!fileManager.inRename}"
-									columnClasses="aon-noborder"
-									onmouseover="disableRowSelector();" onmouseout="enableRowSelector();" >
-									<aon:outputText value="#{to.name}" title="#{richBundle.aon_click_rename}"
-										styleClass="aon-list-icon #{to.styleClass}" />
-									<a4j:support event="onclick" reRender="renameDiv">
-										<f:setPropertyActionListener target="#{fileManager.inRename}" value="#{true}" />		
-									</a4j:support>
-								</h:panelGrid>
+								<aon:outputText value="#{to.name}" rendered="#{!fileManager.inRename}"
+									styleClass="aon-list-icon #{to.styleClass}" />
 								<h:panelGrid rendered="#{fileManager.inRename}"
+									onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
 									columns="2" columnClasses="aon-noindent aon-noborder, aon-noborder" >
 									<aon:inputText value="#{to.name}" size="40"
 										validator="#{fileManager.fileNameCheck}"
@@ -162,7 +163,7 @@
 							<aon:outputText value="#{to.length}" />
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputText value="#{richBundle.aon_permissions}" />
 							</f:facet>
