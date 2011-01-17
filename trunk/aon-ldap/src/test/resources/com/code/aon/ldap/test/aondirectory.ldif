@@ -3545,7 +3545,7 @@ outgoingHost: 127.0.0.1
 outgoingPort: 25
 outgoingSsl: FALSE
 outgoingVerification: TRUE
-signatureMember: cn=localhost,ou=signatures,uid=eagirrezabal,ou=users,cn=localhost,ou=domains,o=aontest
+signatureMember: cn=localhost,ou=signatures,uid=emarcos,ou=users,cn=localhost,ou=domains,o=aontest
 uid: eagirrezabal@esferalia.com
 userPassword:: ZWExOTA2ODI=
 
@@ -5082,7 +5082,7 @@ outgoingHost: 127.0.0.1
 outgoingPort: 25
 outgoingSsl: FALSE
 outgoingVerification: TRUE
-signatureMember: cn=localhost,ou=signatures,uid=eagirrezabal,ou=users,cn=localhost,ou=domains,o=aontest
+signatureMember: cn=localhost,ou=signatures,uid=adiaz,ou=users,cn=localhost,ou=domains,o=aontest
 uid: adiaz@esferalia.com
 userPassword:: e1NIQX1JWVdyMmNUbzA5YWdKMTV4NndxY2VJSlJ1S2M9
 
