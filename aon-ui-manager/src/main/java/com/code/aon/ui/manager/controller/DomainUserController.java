@@ -77,6 +77,8 @@ public class DomainUserController extends LdapBasicController implements IManage
 	
 	private ManagerBeanWrapper userWrapper;
 	
+	private boolean termsOfServiceAccepted;
+	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -84,6 +86,14 @@ public class DomainUserController extends LdapBasicController implements IManage
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}	
+	
+	public boolean isTermsOfServiceAccepted() {
+		return termsOfServiceAccepted;
+	}
+
+	public void setTermsOfServiceAccepted(boolean termsOfServiceAccepted) {
+		this.termsOfServiceAccepted = termsOfServiceAccepted;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<DomainUser> getUsers() throws ManagerBeanException {
@@ -128,20 +138,24 @@ public class DomainUserController extends LdapBasicController implements IManage
 		account.setSignature(signature);
 		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 		Properties properties = manager.getProperties();
+		String shortDomain = user.getDomain();
+		if ( StringUtils.countMatches(shortDomain, ".") > 1 ) {
+			shortDomain = StringUtils.substringAfter(shortDomain, ".");	
+		}
 		String email = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_EMAIL), user.getUid(), user.getDomain() );
 		account.setEmail(email);
 		String mailUsername = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_MAIL_USERNAME), user.getUid(), user.getDomain() );
 		account.setMailUsername(mailUsername);
-		String host = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_HOST), user.getDomain() );
+		String host = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_HOST), shortDomain );
 		account.setHost(host);		
 		account.setProtocol( properties.getProperty(MAIL_ACCOUNT_PROTOCOL) );
-		String incomingHost = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_INCOMING_HOST), user.getDomain() );
+		String incomingHost = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_INCOMING_HOST), shortDomain );
 		account.setIncomingHost(incomingHost);
 		int incomingPort = NumberUtils.toInt(properties.getProperty(MAIL_ACCOUNT_INCOMING_PORT));
 		account.setIncomingPort(incomingPort);
 		boolean incomingSsl = BooleanUtils.toBoolean(properties.getProperty(MAIL_ACCOUNT_INCOMING_SSL));
 		account.setIncomingSsl(incomingSsl);
-		String outgoingHost = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_OUTGOING_HOST), user.getDomain() );
+		String outgoingHost = MessageFormat.format( properties.getProperty(MAIL_ACCOUNT_OUTGOING_HOST), shortDomain );
 		account.setOutgoingHost(outgoingHost);
 		int outgoingPort = NumberUtils.toInt(properties.getProperty(MAIL_ACCOUNT_OUTGOING_PORT));
 		account.setOutgoingPort(outgoingPort);
