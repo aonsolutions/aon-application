@@ -1,8 +1,33 @@
 # Database: aon_master
-# Version: Actualizacion de la version 5.6.3 a la version 6.0.0.
+# Version: Actualizacion de la version 5.8.0 a la version 6.0.0.
 # Created by: rtrepiana
 # Creation Date: 04/10/2010 
 
+BEGIN;
+
+ALTER TABLE calendar DROP COLUMN `source`;
+ALTER TABLE calendar DROP COLUMN `source_id`;
+
+
+ALTER TABLE enterprise ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
+ALTER TABLE enterprise ADD CONSTRAINT `FK_ENTERPRISE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
+ALTER TABLE workplace ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
+ALTER TABLE workplace ADD CONSTRAINT `FK_WORKPLACE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
+ALTER TABLE contract ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
+ALTER TABLE contract ADD CONSTRAINT `FK_CONTRACT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
+
+CREATE TABLE `contract_calendar_event` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `contract` int(4) NOT NULL COMMENT 'Identificador del Contrato',
+  `date` date NOT NULL COMMENT 'Fecha de la incidencia',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de incidencia',
+  `duration` double default NULL COMMENT 'Duracion de la incidencia',
+  PRIMARY KEY  (`id`),
+  CONSTRAINT `FK_CONTRACT_CALENDAR_EVENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias de calendario en Contratos';
+
+ALTER TABLE calendar_holiday ADD `day_type` tinyint(2) default '0' COMMENT 'Tipo de dia';
+ALTER TABLE calendar_holiday ADD `hours` double default '0' COMMENT 'Numero de horas laborables';
 
 ALTER TABLE `workplace` ADD COLUMN `enterprise_activity` int(4) DEFAULT NULL COMMENT 'Actividad' ;
 ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`) ;
@@ -63,8 +88,11 @@ ALTER TABLE `contract` ADD `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de no
 
 CREATE TABLE `agreement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `calendar` int(4) default NULL COMMENT 'Calendario',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `FK_AGREEMENT_CALENDAR` (`calendar`),
+  CONSTRAINT `FK_AGREEMENT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Convenios';
 
 ALTER TABLE `workplace` ADD COLUMN `agreement` int(4) DEFAULT NULL COMMENT 'Convenio' ;
@@ -92,11 +120,27 @@ CREATE TABLE `agreement_level_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `agreement_level` int(4) NOT NULL COMMENT 'Nivel retributivo',
   `type` tinyint(2) COMMENT 'Tipo de Percepción Salarial',
-  `function` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
   CONSTRAINT `FK_PAYMENT_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones';
+
+CREATE TABLE `payment_concept` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Percepcion Salarial',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
+
+CREATE TABLE `deduction_concept` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Deduccion Salarial',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de deducciones';
 
 CREATE TABLE `contract_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -117,7 +161,7 @@ CREATE TABLE `contract_bonus` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `function` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   PRIMARY KEY  (`id`),
@@ -128,29 +172,50 @@ CREATE TABLE `contract_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `type` tinyint(2) COMMENT 'Tipo de Percepción Salarial',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
+  `payment_concept` int(4) COMMENT 'Identificador unico del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `function` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `description_decorable` tinyint(2) default '0' COMMENT '',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
+  `month` tinyint(2) default null COMMENT 'Mes de la percepcion',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   PRIMARY KEY  (`id`),
-  CONSTRAINT `FK_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+  CONSTRAINT `FK_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
+  CONSTRAINT `FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 
 
 CREATE TABLE `contract_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `type` tinyint(2) COMMENT 'Tipo de Deducción',
+  `deduction_concept` int(4) COMMENT 'Identificador unico del concepto',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `function` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `description_decorable` tinyint(2) default '0' COMMENT '',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  `month` tinyint(2) default null COMMENT 'Mes de la percepcion',
   PRIMARY KEY  (`id`),
-  CONSTRAINT `FK_DEDUCTION_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+  CONSTRAINT `FK_DEDUCTION_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
+  CONSTRAINT `FK_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
+
+CREATE TABLE `contract_event` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `name` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
+  `contract` int(4) NOT NULL COMMENT 'Contrato',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
+  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  CONSTRAINT `FK_CONTRACT_CONSTANT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias';
+
 
 CREATE TABLE `salary` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `type` tinyint(2) COMMENT 'Tipo de Nomina',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio liquidación',
   `end_date` date NOT NULL COMMENT 'Fecha de finalizacion liquidación',
@@ -169,6 +234,7 @@ CREATE TABLE `salary` (
   `total_payment` double(15,3) NOT NULL default '0.000'  COMMENT 'Total devengado',
   `total_deduction` double(15,3)NOT NULL  default '0.000'  COMMENT 'Total a deducir',
   `total_liquid` double(15,3) NOT NULL default '0.000'  COMMENT 'Liquido total a percibir',
+  `total_enterprise` double(15,3) NOT NULL default '0.000'  COMMENT 'Cuota total de la empresa',
   `issue_date` date NOT NULL COMMENT 'Fecha de emisión',
   `remuneration` double(15,3) NOT NULL default '0.000'  COMMENT 'Remuneración mensual',
   `extra_pay_proration` double(15,3) NOT NULL default '0.000'  COMMENT 'Prorrateo de pagas extras',
@@ -177,6 +243,7 @@ CREATE TABLE `salary` (
   `overtime_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion adicional por horas extraordinarias',
   `irpf_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base sujeta a retención I.R.P.F',
   `social_security_contributions` double(15,3) NOT NULL default '0.000'  COMMENT 'Aportaciones a la Seguridad Social',
+  
   PRIMARY KEY  (`id`),
   CONSTRAINT `FK_SALARY_RECCEIPT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';
@@ -185,9 +252,10 @@ CREATE TABLE `salary_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `type` tinyint(2) COMMENT 'Tipo de Percepción Salarial',
+  `payment_concept` varchar(5) COMMENT 'Codigo del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `function` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
-  `amount` double(15,3) default '0.000'  COMMENT 'Importe',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `amount` double(15,3) default '0.000'  COMMENT 'Importe',  
   PRIMARY KEY  (`id`),
   CONSTRAINT `FK_PAYMENT_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones salariales';
@@ -196,8 +264,9 @@ CREATE TABLE `salary_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `type` tinyint(2) COMMENT 'Tipo de deducción Salarial',
+  `deduction_concept` int(4) COMMENT 'Identificador unico del concepto',  
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `function` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `amount` double(15,3) default '0.000'  COMMENT 'Importe',
   PRIMARY KEY  (`id`),
   CONSTRAINT `FK_DEDUCTION_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
@@ -249,6 +318,18 @@ CREATE TABLE `enterprise_certificate_detail` (
   CONSTRAINT `enterprise_certificate_detail_fk_1` FOREIGN KEY (`enterprise_certificate`) REFERENCES `enterprise_certificate` (`id`),
   CONSTRAINT `enterprise_certificate_detail_fk_2` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de certificados de empresa';
+
+CREATE TABLE `function_constant` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `name` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
+  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  `read_only` TINYINT(1) NULL COMMENT 'Modificable',
+  `comments` VARCHAR(128) NULL COMMENT 'Comentario de ayuda',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto de las funciones';
+
 
 INSERT INTO `cnae` ( id, code, title ) 
 VALUES 
@@ -882,6 +963,25 @@ VALUES
 (9820,'9820','Actividades de los hogares como productores de servicios para uso propio'),
 (9900,'9900','Actividades de organizaciones y organismos extraterritoriales');
 
+ALTER TABLE `user` DROP COLUMN `status`;
+
+ALTER TABLE `user` DROP COLUMN `aon_key`;
+
+ALTER TABLE `user` DROP COLUMN `validate`;
+
+ALTER TABLE `user` DROP COLUMN `available`;
+
+ALTER TABLE `user` ADD `enterprise` int(4) NOT NULL default '1' COMMENT 'Identificador de la Empresa';
+
+ALTER TABLE `user` ADD KEY `IDX_USER_ENTERPRISE` (`enterprise`);
+
+ALTER TABLE `user` ADD CONSTRAINT `FK_USER_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`);
+
+ALTER TABLE `user` ADD `registry` int(4) COMMENT 'Identificador del Registry';
+
+ALTER TABLE `user` ADD `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si el Usuario esta activo o no';
+
+ALTER TABLE `user` ADD `password` varchar(128) default NULL COMMENT 'Contraseña del Usuario';
 
 UPDATE `db_version` SET `version_number` = '6.0.0';
 
