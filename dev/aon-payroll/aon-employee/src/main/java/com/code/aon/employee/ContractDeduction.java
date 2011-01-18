@@ -24,10 +24,9 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.salary.deduction.IDeduction;
+import com.code.aon.employee.calculator.IContractDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
-import com.esferalia.aon.salary.expression.IExpression;
 
 /**
  * Transfer Object that represents the contract deduction.
@@ -35,7 +34,7 @@ import com.esferalia.aon.salary.expression.IExpression;
  */
 @Entity
 @Table(name="contract_deduction")
-public class ContractDeduction implements ITransferObject, IDeduction, IExpression {
+public class ContractDeduction implements ITransferObject, IContractDeduction {
 
 	private static final long serialVersionUID = 4510451091870851884L;
 

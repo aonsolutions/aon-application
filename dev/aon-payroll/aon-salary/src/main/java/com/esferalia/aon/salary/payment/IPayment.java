@@ -11,5 +11,5 @@ public interface IPayment {
 	public String getExpression();
 	
 	public double getAmount();
-
+	
 }

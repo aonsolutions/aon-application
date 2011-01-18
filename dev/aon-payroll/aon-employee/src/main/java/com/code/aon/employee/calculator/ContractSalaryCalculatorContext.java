@@ -5,25 +5,39 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.stream.events.EndDocument;
 
 import org.hibernate.Session;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.employee.Contract;
 import com.code.aon.employee.ContractDeduction;
+import com.code.aon.employee.ContractEvent;
 import com.code.aon.employee.ContractPayment;
+import com.code.aon.employee.FunctionConstant;
 import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.payment.IPaymentsFactoryContext;
 
-public class ContractSalaryCalculatorContext extends SalaryCalculatorContext {
+public class ContractSalaryCalculatorContext extends SalaryCalculatorContext implements IContractSalaryCalculatorContext{
+	
+	
+	
+	
+	private Contract getContract() {
+		return  ( Contract ) getSalaryProxy();
+	}
 	
 	private boolean up2Date( Date startDate, Date endDate) {
 		Date issueDate = getIssueDate();
@@ -35,13 +49,151 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext {
 		return false;
 	}
 	
+	private void putExpressions(Collection<IExpression> expressions)
+	throws ExpressionException{
+		ExpressionContext expressionContext = getExpressionContext();
+		for (IExpression expression : expressions) {
+			expressionContext.put(expression);
+		}
+	}
 	
+	public ContractSalaryCalculatorContext(Contract contract) 
+	throws AonException {
+		super();
+		setSalaryProxy(contract);
+	}
+	
+	@Override
+	public ExpressionContext getExpressionContext() {
+		ExpressionContext ctx = super.getExpressionContext();
+		if ( ctx == null ) {
+			setExpressionContext(new ExpressionContext());
+			try {
+				putExpressions(getSystemExpressions());
+				putExpressions(getApplicationExpressions());
+				putExpressions(getCrontactExpressions());
+			} catch ( Exception e ) {}
+		}
+		return super.getExpressionContext();
+	}
+	
+	@Override
+	public String getCcc() {
+		return getContract().getEnterpriseCCC().getCcc();
+	}
+	
+	@Override
+	public String getEnterpriseName(){
+		return getContract().getWorkPlace().getEnterprise().getRegistry().getFullName();
+	}
+
+	@Override
+	public String getEnterpriseAddress() {
+		return getContract().getWorkPlace().getAddress().getFullAddress();
+	}
+	
+	@Override
+	public String getEnterpriseDocument() {
+		return getContract().getWorkPlace().getEnterprise().getRegistry().getDocument();
+	}
+	
+	@Override
+	public String getCategory() {
+		return "XXX";// TODO ¿?¿?¿?¿?¿?
+	}
+	
+	@Override
+	public String getEmployeeName() {
+		return getContract().getPerson().getFullName();
+	}
+	
+	@Override
+	public String getEmployeeDocument() {
+		return getContract().getPerson().getRegistry().getDocument();
+	}
+	
+	@Override
+	public Integer getRegistration() {
+		return 0;// TODO ¿?¿?¿?¿?¿?
+	}
+	
+	@Override
+	public String getSocialSecurityNumber() {
+		return getContract().getPerson().getSocialSecurityNumber();
+	}
+	
+	@Override
+	public Date getSeniorityDate() {
+		return getContract().getStartDate();
+	}
+
+	
+	public Collection<IExpression> getCrontactExpressions() throws AonException {
+		Collection<IExpression> contractExpressions = 
+			new LinkedList<IExpression>();
+
+		Contract contract = getContract();
+		IManagerBean bean = BeanManager.getManagerBean(ContractEvent.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_EVENT_CONTRACT_ID), contract.getId());			
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_EVENT_START_DATE), getEndDate());			
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_EVENT_END_DATE), getStartDate());
+		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_EVENT_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to: list) {
+			ContractEvent ce = (ContractEvent) to;
+			contractExpressions.add(ce);
+		}
+		
+		return contractExpressions;
+	}
+	
+	public Collection<IExpression> getApplicationExpressions()
+			throws AonException {
+		Collection<IExpression> appExpressions = 
+			new LinkedList<IExpression>();
+
+		IManagerBean bean = BeanManager.getManagerBean(FunctionConstant.class);
+		Criteria c = new Criteria();
+		c.addLessThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_START_DATE), getIssueDate());
+		Expression exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_END_DATE),getIssueDate());   
+		Expression exp2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEmployeeAlias.FUNCTION_CONSTANT_END_DATE));
+		c.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2) );
+		List<ITransferObject> list = bean.getList(c);
+		for (ITransferObject to: list) {
+			FunctionConstant fc = (FunctionConstant) to;
+			appExpressions.add(fc);
+		}
+		
+		return appExpressions;
+	}
+	
+	public Collection<IExpression> getSystemExpressions() throws AonException{
+		Collection<IExpression> systemExpressions = 
+			new LinkedList<IExpression>();
+		
+		ExpressionImpl monthDays = new ExpressionImpl();
+		monthDays.setName("dias_mes");
+		monthDays.setScope(ExpressionScope.SYSTEM);
+		monthDays.setExpression(Long.toString(CommonUtil.getDaysBetweenDates(getStartDate(), getEndDate()) + 1));
+		systemExpressions.add(monthDays);
+
+		Contract contract = getContract();
+		ExpressionImpl jobDays = new ExpressionImpl();
+		jobDays.setName("dias_trabajados");
+		jobDays.setScope(ExpressionScope.SYSTEM);
+		Date startDate = contract.getStartDate().after( getStartDate() )?contract.getStartDate():getStartDate();
+		Date endDate = contract.getEndDate() != null && contract.getEndDate().before( getEndDate() )?contract.getEndDate():getEndDate();
+		jobDays.setExpression(Long.toString(CommonUtil.getDaysBetweenDates(startDate, endDate) + 1));
+		systemExpressions.add(jobDays);
+
+		return systemExpressions;
+	}
+	@Override
 	@SuppressWarnings("unchecked")
-	public Collection<ContractPayment> getContractPayments() 
-	throws ManagerBeanException {
-		
-		Date issueDate = getIssueDate();
-		
+	public Collection<IContractPayment> getContractPayments() 
+	throws AonException {
 		Collection<ContractPayment> contractPayments;
 		Contract contract = (Contract) getSalaryProxy();
 		String sessionName = HibernateUtil.getSessionFactoryName(Contract.class.getName());
@@ -60,8 +212,8 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext {
 			contractPayments = (Collection<ContractPayment>) list;
 		}
 		
-		Collection<ContractPayment> up2DatePayments = 
-			new LinkedList<ContractPayment>();
+		Collection<IContractPayment> up2DatePayments = 
+			new LinkedList<IContractPayment>();
 		
 		for (ContractPayment contractPayment : contractPayments) {
 			Date startDate =  contractPayment.getStartDate();
@@ -75,7 +227,8 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Collection<ContractDeduction> getContractDeductions() throws ManagerBeanException{
+	public Collection<IContractDeduction> getContractDeductions() 
+	throws AonException{
 		Collection<ContractDeduction> contractDeductions;
 		Contract contract = (Contract) getSalaryProxy();
 		String sessionName = HibernateUtil.getSessionFactoryName(Contract.class.getName());
@@ -93,8 +246,8 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext {
 			contractDeductions = (Collection<ContractDeduction>) list;
 		}
 		
-		Collection<ContractDeduction> up2DateDeductions = 
-			new LinkedList<ContractDeduction>();
+		Collection<IContractDeduction> up2DateDeductions = 
+			new LinkedList<IContractDeduction>();
 		
 		for (ContractDeduction contractDeduction : contractDeductions) {
 			Date startDate =  contractDeduction.getStartDate();
@@ -106,5 +259,6 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext {
 		
 		return up2DateDeductions;
 	}
+	
 	
 }
