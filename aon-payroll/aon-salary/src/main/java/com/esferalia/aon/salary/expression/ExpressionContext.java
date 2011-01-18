@@ -12,11 +12,10 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
-import org.apache.commons.digester.substitution.MultiVariableExpander;
 import org.apache.commons.lang.math.NumberUtils;
 import org.mvel2.MVEL;
 
-public class ExpressionContext {
+public class ExpressionContext implements Cloneable{
 	
 	private static final ScriptEngine ENGINE = 
 		new ScriptEngineManager().getEngineByName("JavaScript");
@@ -31,7 +30,13 @@ public class ExpressionContext {
 		map = new HashMap<String, IExpression>();
 		bindings = new SimpleBindings();
 	}
-
+	
+	private ExpressionContext(ExpressionContext expressionContext){
+		this();
+		map.putAll(expressionContext.map);
+		bindings.putAll(expressionContext.bindings);
+	}
+	
 	public void putAll( Map<String,IExpression> map ) {
 		map.putAll(map);
 	}
@@ -114,4 +119,14 @@ public class ExpressionContext {
 		}
 		return expressions;
 	}
+	
+	public ExpressionContext getSnapshot() {
+		return new ExpressionContext();
+	}
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return new ExpressionContext(this);
+	}
+
 }

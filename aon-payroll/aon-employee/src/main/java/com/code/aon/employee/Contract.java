@@ -24,7 +24,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.xml.sax.SAXException;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.EnterpriseCCC;
@@ -36,6 +38,7 @@ import com.code.aon.employee.enumeration.ContractStatus;
 import com.code.aon.person.Person;
 import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
@@ -49,7 +52,7 @@ public class Contract implements ITransferObject, ISalaryProxy {
 
 	static {
 		// CALCULADOR DEL BORRADOR DE NOMINA.
-		SalaryCalculatorManager scm = SalaryCalculatorManager.getInstance(); 
+		SalaryCalculatorManager scm = SalaryCalculatorManager.getInstance();
 		scm.addCalculator(new ContractSalaryCalculator());
 	}
 
@@ -243,7 +246,9 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	public ISalary getSalary() throws SalaryException {
 		SalaryCalculatorManager factoryManager = SalaryCalculatorManager.getInstance();
 		ISalaryCalculator sc = factoryManager.getCalculator(getSalaryCalculatorContext());
+		sc.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = sc.calculate( getSalaryCalculatorContext() );
+		
 		return salary;
 	}
 
@@ -251,10 +256,11 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	@Transient
 	public SalaryCalculatorContext getSalaryCalculatorContext() throws SalaryException {
 		if (ctx == null) {
-			ctx = new ContractSalaryCalculatorContext();
-			ctx.setSalaryProxy(this);
-			ExpressionContext expressionContext = new ExpressionContext();
-			ctx.setExpressionContext(expressionContext);
+			try {
+				ctx = new ContractSalaryCalculatorContext(this);
+			} catch (AonException e) {
+				throw new SalaryException(e.getMessage(), e);
+			}
 		}
 		return ctx;
 	}
