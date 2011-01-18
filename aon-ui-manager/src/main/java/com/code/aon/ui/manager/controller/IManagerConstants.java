@@ -43,5 +43,7 @@ public interface IManagerConstants {
 	
 	String NOTIFICATION_EMAIL = "notification_email";
 	String NEW_DOMAIN_USER_URL = "newDomainUserURL";
+	String MAIL_ACCOUNT_CREATE_SCRIPT = "MailAccount_create_script";
+	String MAIL_ACCOUNT_DELETE_SCRIPT = "MailAccount_delete_script";
 	
 }

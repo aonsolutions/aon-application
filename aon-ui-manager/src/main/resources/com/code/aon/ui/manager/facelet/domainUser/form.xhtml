@@ -16,6 +16,7 @@
 				<ui:param name="controller" value="#{domainUser}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:param name="skipSaveButton" value="#{!domainUser.termsOfServiceAccepted}" />
+				<ui:param name="removeConfirmMessage" value="#{managerBundle.manager_domain_user_remove_confirm}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="resetPassword"
 						value="#{managerBundle.manager_reset_password}"
