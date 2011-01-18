@@ -1,6 +1,9 @@
 package com.code.aon.ui.manager.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -16,6 +19,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.slf4j.Logger;
@@ -333,5 +337,30 @@ public class ManagerController implements IManagerConstants {
 				break;
 		}
 	}	
+	
+	public int execute( String[] commandLine ) {
+		int exitVal = -1;
+        try {
+            Runtime rt = Runtime.getRuntime();
+            LOGGER.info( "Executing: {}", StringUtils.join(commandLine, " ") );
+            Process pr = rt.exec( commandLine );
+
+            StringBuffer result = new StringBuffer();
+            
+            Reader reader = new InputStreamReader(pr.getInputStream());
+            BufferedReader in = new BufferedReader(reader);
+
+            String line=null;
+            while((line=in.readLine()) != null) {
+            	LOGGER.debug( "Output: {}", line );
+            }
+
+            exitVal = pr.waitFor();
+            LOGGER.debug( "Exited with error code {}", exitVal );
+        } catch(Throwable e) {
+        	LOGGER.error( "Error executing command " + commandLine[0], e );
+        }		
+        return exitVal;
+	}
 	
 }
