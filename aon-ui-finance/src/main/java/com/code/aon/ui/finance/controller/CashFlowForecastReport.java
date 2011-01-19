@@ -363,7 +363,7 @@ public class CashFlowForecastReport {
 		for (ITransferObject to: list) {
 			CashFlowForecast cff = (CashFlowForecast) to;
 			if (cff.isUndated()) { // No hay checks marcados, se asume el primer dia como fecha.
-				addCashFlowReport(cff,getFromDate(),flows);
+				addCashFlowReport(cff,getToDate(),flows);
 			} else {
 				List<Date> dates = getForecastDates(cff);
 				for (Date date:dates) {
