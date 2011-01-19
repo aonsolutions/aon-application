@@ -1274,16 +1274,6 @@ color:#000;
 .aon-dataTable-row-even{
 	background-color:#f8f9f9;
 	}
-.aon-dataTable-link {
-	background:transparent url(images/aon-icon/aon-icon-arrow-dataTable-item.png) scroll right center no-repeat;
-	padding-right: 10px;
-}
-
-.aon-dataTable-link:hover {
-	color: #285E9C; 
-	text-decoration: underline;
-}
-
 
 /*************************/
 /******  EDITTABLE  ******/
@@ -2366,4 +2356,31 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	border: none; 
 	background-color: #FBEDB6; 
 	font-size: 0.9em;
+}
+
+
+.aon-dataTable-link-noicon {}
+.aon-dataTable-link-noicon:hover {
+	color: #285E9C; 
+	text-decoration: underline;
+}
+
+.aon-dataTable-link {
+	background:transparent url(images/aon-icon/aon-icon-arrow-dataTable-item.png) scroll right center no-repeat;
+	padding-right: 10px;
+}
+
+.aon-dataTable-link:hover {
+	color: #285E9C; 
+	text-decoration: underline;
+}
+
+.aon-dataTable-link-simple {
+	padding-right: 10px;
+}
+
+.aon-dataTable-link-simple:hover {
+	cursor: pointer;
+	color: #285E9C; 
+	text-decoration: underline;
 }
