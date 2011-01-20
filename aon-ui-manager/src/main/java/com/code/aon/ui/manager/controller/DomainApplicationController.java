@@ -41,6 +41,8 @@ public class DomainApplicationController extends LdapBasicController implements 
 	
 	private boolean aonDB;
 	
+	private boolean termsOfServiceAccepted;
+	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -48,6 +50,14 @@ public class DomainApplicationController extends LdapBasicController implements 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
+	
+	public boolean isTermsOfServiceAccepted() {
+		return termsOfServiceAccepted;
+	}
+
+	public void setTermsOfServiceAccepted(boolean termsOfServiceAccepted) {
+		this.termsOfServiceAccepted = termsOfServiceAccepted;
+	}	
 	
 	public boolean isAonDB() {
 		return aonDB;
@@ -73,11 +83,14 @@ public class DomainApplicationController extends LdapBasicController implements 
 		return (List) getModel().getWrappedData();
 	}
 	
-	private boolean isRegisteredApplication( List<DomainApplication> das, String name ) {
-		for( DomainApplication da : das ) {
-			if ( StringUtils.equals(da.getCommonName(), name) ) {
-				return true;
-			}
+	private boolean isRegistableApplication( List<DomainApplication> das, Application application ) {
+		if ( application.getContratable() ) {
+			for( DomainApplication da : das ) {
+				if ( StringUtils.equals(da.getCommonName(), application.getCommonName()) ) {
+					return false;
+				}
+			}			
+			return true;
 		}
 		return false;
 	}
@@ -87,7 +100,7 @@ public class DomainApplicationController extends LdapBasicController implements 
 		List<DomainApplication> das = getDomainApplications();
 		ApplicationController controller = (ApplicationController) AonUtil.getRegisteredBean(APPLICATION_CONTROLLER_NAME);
 		for (Application application : controller.getApplications()) {
-			if (! isRegisteredApplication(das, application.getCommonName()) ) {
+			if ( isRegistableApplication(das, application) ) {
 				SelectItem item = new SelectItem(application.getCommonName(), application.getCommonName() );
 				list.add(item);				
 			}

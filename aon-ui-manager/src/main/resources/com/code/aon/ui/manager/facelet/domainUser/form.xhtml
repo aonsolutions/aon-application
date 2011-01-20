@@ -80,11 +80,11 @@
 					</aon:selectBooleanCheckbox>				
 					<aon:outputLabel for="termsOfService" styleClass="aon-italic"
 						value="#{managerBundle.manager_service_terms_text}" />
-					<h:outputLink target="_blank"
+					<aon:outputLink target="_blank"
 						styleClass="aon-margin-left"
 						value="#{manager.properties.newDomainUserURL}">
-						<h:outputText value="#{managerBundle.manager_service_terms}" />
-					</h:outputLink>	
+						<aon:outputText value="#{managerBundle.manager_service_terms}" />
+					</aon:outputLink>	
 				</aon:div>
 
 				<aon:panelTabSet selectedTab="#{domainUser.selectedTab}" >

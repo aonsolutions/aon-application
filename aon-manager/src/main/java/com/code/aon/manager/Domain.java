@@ -48,6 +48,8 @@ public class Domain implements ILdapTransferObject {
 	
 	private byte[] jpegLogo;
 	
+	private String subDomainSuffix;
+	
 	public Domain() {
 		this.status = 0;
 	}
@@ -163,6 +165,15 @@ public class Domain implements ILdapTransferObject {
 		this.jpegLogo = jpegLogo;
 	}
 
+	@Attribute(name="subDomainSuffix",length=256)
+	public String getSubDomainSuffix() {
+		return subDomainSuffix;
+	}
+
+	public void setSubDomainSuffix(String subDomainSuffix) {
+		this.subDomainSuffix = subDomainSuffix;
+	}	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -181,12 +192,13 @@ public class Domain implements ILdapTransferObject {
 				.append(this.organizationName, o.organizationName)				
 				.append(this.parentDomain, o.parentDomain)				
 				.append(this.status, o.status)
+				.append(this.subDomainSuffix, o.subDomainSuffix)
 				.append(this.userManagement, o.userManagement)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getCommonName(), o.getCommonName());		
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
@@ -200,6 +212,7 @@ public class Domain implements ILdapTransferObject {
 			.append(organizationName)
 			.append(parentDomain)
 			.append(status)
+			.append(subDomainSuffix)
 			.append(userManagement)
 			.toHashCode();
 	}
@@ -216,6 +229,7 @@ public class Domain implements ILdapTransferObject {
 			append("organizationName", organizationName).
 			append("parentDomain", (parentDomain != null) ? parentDomain.getCommonName() : "null" ).
 			append("status", status).
+			append("subDomainSuffix", subDomainSuffix).
 			append("userManagement", userManagement).
 			toString();
 	}
