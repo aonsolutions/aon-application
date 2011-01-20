@@ -11,6 +11,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
@@ -51,8 +52,10 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 		while(iter.hasNext()){
 			Finance finance = (Finance)iter.next();
 			finance.setRegistry(invoice.getRegistry());
-			finance.setRegistryName(invoice.getRegistryName());
-			finance.setRegistryDocument(invoice.getRegistryDocument());
+			if (finance.getFinanceStatus() == FinanceStatus.PENDING || finance.getFinanceStatus() == FinanceStatus.RETURNED) {
+				finance.setRegistryName(invoice.getRegistryName());
+				finance.setRegistryDocument(invoice.getRegistryDocument());
+			}
 			finance.setConcept(invoice.getDocumentNumber());
 			finance.setSecurityLevel(invoice.getSecurityLevel());
 			financeBean.update(finance);

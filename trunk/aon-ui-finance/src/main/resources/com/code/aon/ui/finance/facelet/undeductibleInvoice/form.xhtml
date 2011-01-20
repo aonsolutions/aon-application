@@ -185,7 +185,7 @@
 								selectReRender="Creditor_id,Creditor_full_name,Creditor_registry_document,InvoiceAddress"
 								actionType="new">
 							</aon:lookupButton>
-							<aon:inputText id="Creditor_full_name" disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}"
+							<aon:inputText id="Creditor_full_name" disabled="#{undeductibleInvoice.readOnly}"
 								value="#{undeductibleInvoice.to.registryName}" size="60" />
 						</a4j:region>
 					</aon:div>
@@ -194,7 +194,7 @@
 						value="#{bundle.aon_company_document}" />
 					<aon:inputText id="Creditor_registry_document"
 						value="#{undeductibleInvoice.to.registryDocument}"
-						disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" 
+						disabled="#{undeductibleInvoice.readOnly}" 
 						size="10" />
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
