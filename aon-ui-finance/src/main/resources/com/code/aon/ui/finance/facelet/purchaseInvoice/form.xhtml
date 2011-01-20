@@ -212,7 +212,7 @@
 								selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document,InvoiceAddress"
 								actionType="new">
 							</aon:lookupButton>
-							<aon:inputText id="Supplier_full_name" disabled="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}"
+							<aon:inputText id="Supplier_full_name" disabled="#{purchaseInvoice.readOnly}"
 								value="#{purchaseInvoice.to.registryName}" size="60" />
 						</a4j:region>
 					</aon:div>
@@ -221,7 +221,7 @@
 						value="#{bundle.aon_company_document}" />
 					<aon:inputText id="Supplier_registry_document"
 						value="#{purchaseInvoice.to.registryDocument}"
-						disabled="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" 
+						disabled="#{purchaseInvoice.readOnly}" 
 						size="10" />
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
