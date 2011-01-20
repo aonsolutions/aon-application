@@ -10,6 +10,8 @@ import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxCommandHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
@@ -28,6 +30,16 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  */
 public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRichFacesTags, HTML {
 
+	private static final int MESSAGE_LINE_LENGTH = 80;
+	
+	private static final String MIN_WIDTH_1 = "360";
+	
+	private static final String MIN_WIDTH_2 = "460";
+	
+	private static final String MIN_HEIGHT_1 = "130";   
+		
+	private static final String MIN_HEIGHT_2 = "150";		
+	
 	private static final String PREFFIX = "aon_cb_";
 	
     private static final String COMPONENT_TYPE = "com.code.aon.faces.HtmlConfirmButton";
@@ -126,6 +138,25 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 		return FaceletUtil.getMethodExpression(ctx, getAttribute(name), type,
 				paramTypes);
 	}
+	
+	private void setDimension( VariableMapper mapper, FaceletContext ctx ) {
+		boolean bigBox = StringUtils.length(messageTag.getValue(ctx)) > MESSAGE_LINE_LENGTH;		
+		ValueExpression ve = null;
+		TagAttribute minWidth = getAttribute(MIN_WIDTH);
+		if (minWidth != null) {
+			ve = getValueExpression(ctx, minWidth);
+		} else {
+			ve = FaceletUtil.getValueExpression(ctx, bigBox ? MIN_WIDTH_2: MIN_WIDTH_1, Integer.class);
+		}
+		mapper.setVariable(PREFFIX + MIN_WIDTH, ve);
+		TagAttribute minHeight = getAttribute(MIN_HEIGHT);
+		if (minHeight != null) {
+			ve = getValueExpression(ctx, minHeight);
+		} else {
+			ve = FaceletUtil.getValueExpression(ctx, bigBox ? MIN_HEIGHT_2: MIN_HEIGHT_1, Integer.class);
+		}
+		mapper.setVariable(PREFFIX + MIN_HEIGHT, ve);
+	}
 
 	private void addAttribues( FaceletContext ctx, UIComponent component ) {
 		VariableMapper mapper = ctx.getVariableMapper();
@@ -137,8 +168,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 		mapper.setVariable(PREFFIX + ID_ATTR, id);
 		mapper.setVariable(PREFFIX + CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
 		mapper.setVariable(PREFFIX + CONFIRM_TITLE, getValueExpression(ctx, titleTag));
-		mapper.setVariable(PREFFIX + CONFIRM_MESSAGE, getValueExpression(ctx,
-				messageTag));
+		mapper.setVariable(PREFFIX + CONFIRM_MESSAGE, getValueExpression(ctx, messageTag));
 		ValueExpression action = getMethodExpression(ctx, CONFIRM_ACTION,
 				String.class, FaceletUtil.ACTION_SIG);
 		if (action == null) {
@@ -179,24 +209,27 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 		if (onComplete != null) {
 			mapper.setVariable(PREFFIX + CONFIRM_ON_COMPLETE, getValueExpression(ctx, onComplete));
 		}
+		setDimension(mapper, ctx);
 	}
 
 	@Override
 	protected void applyNextHandler(FaceletContext ctx, UIComponent component) 
 		throws IOException, FacesException, ELException {
 		super.applyNextHandler(ctx, component);	
-		URL path = FaceletUtil.getTemplate(TEMPLATE);
-		VariableMapper orig = ctx.getVariableMapper();
-		ctx.setVariableMapper(new VariableMapperWrapper(orig));
-		try {
-			addAttribues(ctx, component);
-			ctx.includeFacelet(component, path );
-		} catch (Exception e) {
-			throw new FacesException("UIInclude component "
-					+ component.getClientId(ctx.getFacesContext())
-					+ " could't include page with path " + path, e);
-		} finally {
-			ctx.setVariableMapper(orig);
+		if ( component.isRendered() && FaceletUtil.isRendered(ctx, tag) ) { 
+			URL path = FaceletUtil.getTemplate(TEMPLATE);
+			VariableMapper orig = ctx.getVariableMapper();
+			ctx.setVariableMapper(new VariableMapperWrapper(orig));
+			try {
+				addAttribues(ctx, component);
+				ctx.includeFacelet(component, path );
+			} catch (Exception e) {
+				throw new FacesException("UIInclude component "
+						+ component.getClientId(ctx.getFacesContext())
+						+ " could't include page with path " + path, e);
+			} finally {
+				ctx.setVariableMapper(orig);
+			}
 		}
 	}
 	

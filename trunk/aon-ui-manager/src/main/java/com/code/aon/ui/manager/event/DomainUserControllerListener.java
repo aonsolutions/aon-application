@@ -36,6 +36,13 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 	}
 	
 	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainUserController duc = (DomainUserController) event.getController();
+		duc.setTermsOfServiceAccepted(false);
+	}
+	
+	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();

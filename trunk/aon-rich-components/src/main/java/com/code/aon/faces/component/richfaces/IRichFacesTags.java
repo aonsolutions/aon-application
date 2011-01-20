@@ -41,5 +41,10 @@ public interface IRichFacesTags {
 	String VALUE_CHANGE_LISTENER = "valueChangeListener";
 	
 	String VALIDATOR = "validator";
+		
+	String MIN_WIDTH = "minWidth";
+	
+	String MIN_HEIGHT = "minHeight";
+	
 	
 }
