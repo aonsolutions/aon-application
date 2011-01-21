@@ -51,13 +51,15 @@
 										</aon:commandButton>
 										<aon:div>
 											<aon:outputText value="#{financeBundle.finance_checked_amount}: " />
-											<aon:outputText value="#{linkManager.checkedAmount}">
+											<aon:outputText value="#{linkManager.checkedAmount}"
+												rendered="#{linkManager.currentStatement != null}">
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>
 										</aon:div>
 										<aon:div>
 											<aon:outputText value="#{financeBundle.finance_pending_amount}: " />
-											<aon:outputText value="#{linkManager.pendingAmount}">
+											<aon:outputText value="#{linkManager.pendingAmount}"
+												rendered="#{linkManager.currentStatement != null}">
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>
 										</aon:div>
@@ -187,8 +189,12 @@
 											<aon:div id="financeListDiv">
 												<aon:panel rendered="#{financeList.model.rowCount > 0 or financeTrackingList.model.rowCount == 0}">
 													<f:facet name="header">
-														<aon:outputLabel for="bankStatementData" 
-															value="#{financeBundle.finance_unpaid_finances}" />
+														<aon:outputLabel for="financeData" 
+															value="#{financeBundle.finance_unpaid_finances}"
+															rendered="#{!linkManager.returnSource}" />
+														<aon:outputLabel for="financeData" 
+															value="#{financeBundle.finance_paid_finances}"
+															rendered="#{linkManager.returnSource}" />
 													</f:facet>
 
 													<aon:dataTable id="financeData"	value="#{financeList.model}" 
@@ -248,9 +254,6 @@
 															<aon:outputText value="#{to.totalAmount}">
 																<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 															</aon:outputText>
-<!--
-															<aon:inputText value="#{to.totalAmount}" size="6" />
--->
 														</aon:column>
 
 													</aon:dataTable>
@@ -262,8 +265,12 @@
 											<aon:div id="trackingListDiv" styleClass="aon-padding-top">
 												<aon:panel rendered="#{financeTrackingList.model.rowCount > 0}">
 													<f:facet name="header">
-														<aon:outputLabel for="bankStatementData" 
-															value="#{financeBundle.finance_paid_finances}" />
+														<aon:outputLabel for="financeTrackingData" 
+															value="#{financeBundle.finance_paid_finances}"
+															rendered="#{!linkManager.returnSource}" />
+														<aon:outputLabel for="financeTrackingData" 
+															value="#{financeBundle.finance_returned_finances}"
+															rendered="#{linkManager.returnSource}" />
 													</f:facet>
 
 													<aon:dataTable id="financeTrackingData" value="#{financeTrackingList.model}" 

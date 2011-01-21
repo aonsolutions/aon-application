@@ -1068,7 +1068,7 @@ public class BankStatementController extends BasicController implements IFinance
 		criteria = new Criteria();
 		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), bankAccount.getId());
 		criteria.addBetweenExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), fromDate, toDate);
-		if ((to.isPayment() && to.getAmount() >= 0) || (!to.isPayment() && to.getAmount() < 0)) {
+		if ((to.isPayment() && to.getAmount() < 0) || (!to.isPayment() && to.getAmount() >= 0)) {
 			criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT), to.getAmount());
 		} else {
 			criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT), to.getAmount());
@@ -1166,12 +1166,16 @@ public class BankStatementController extends BasicController implements IFinance
 				List<FinanceTracking> financeTrackingList = new LinkedList<FinanceTracking>();
 				List<FinanceBatch> financeBatchList = new LinkedList<FinanceBatch>();
 				Map<Account, Double> accountMap = new HashMap<Account, Double>();
-				double amountLinks = 0;
+				double linksAmount = 0;
 
 				getErrors().remove(statement.getId());
 				for (ITransferObject ito : getBankStatementLinkList(statement)) {
 					BankStatementLink statementLink = (BankStatementLink)ito;
-					amountLinks += statementLink.getAmount();
+					if (statement.isReturned() && statementLink.isFinanceTracking()) {
+						linksAmount += statementLink.getAmount() * (statementLink.isPayment() ? 1 : (-1));
+					} else {
+						linksAmount += statementLink.getAmount() * (statementLink.isPayment() ? (-1) : 1);
+					}
 					if (statementLink.getSource() == StatementLinkSource.FINANCE_TRACKING) {
 						FinanceTracking tracking = (FinanceTracking)statementLink.getSourceTo();
 						if (!tracking.isRecorded()) {
@@ -1208,7 +1212,8 @@ public class BankStatementController extends BasicController implements IFinance
 				}
 
 				if (errors.get(statement.getId()) == null) {
-					if (statement.getAmount() != amountLinks) {
+					double statementAmount = (statement.isPayment()) ? (0 - statement.getAmount()) : statement.getAmount();
+					if (statementAmount != CommonUtil.round(linksAmount)) {
 						getErrors().put(statement.getId(), "El Importe de la línea del Extracto no cuadra con la suma de los Detalles del mismo.");
 					} else {
 						FinanceRecordingTo recordingTo = new FinanceRecordingTo();

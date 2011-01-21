@@ -113,8 +113,12 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		this.entryDetailModel = model;
 	}
 
+	public boolean isReturnSource() {
+		return (currentStatement != null && currentStatement.isReturned());
+	}
+
 	public boolean isBatchSource() {
-		return (currentStatement != null && currentStatement.getCommonConcept() == StatementConcept.COLLECTION_BATCH);
+		return (currentStatement != null && currentStatement.isCollectionBatch());
 	}
 
 	public void setStatementLinkTab() {
@@ -203,6 +207,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		if (!isBatchSource()) {
 			FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
 			for (Finance finance : financeList.getCheckedFinances()) {
+				//aqui vemos si el importe del vto ha sido modificado.
 				addLink(getCurrentStatement(), finance);
 			}
 			if (financeList.getCheckedFinances().size() > 0) {
@@ -402,7 +407,9 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			trackingBean.remove(tracking);
 
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			if (statementLink.getStatus() == StatementLinkStatus.PENDING) {
+			if (statementLink.getStatus() == StatementLinkStatus.PAID) {
+				tracking.getFinance().setFinanceStatus(FinanceStatus.PAID);
+			} else if (statementLink.getStatus() == StatementLinkStatus.PENDING) {
 				tracking.getFinance().setFinanceStatus(FinanceStatus.PENDING);
 			} else if (statementLink.getStatus() == StatementLinkStatus.RETURNED) {
 				tracking.getFinance().setFinanceStatus(FinanceStatus.RETURNED);

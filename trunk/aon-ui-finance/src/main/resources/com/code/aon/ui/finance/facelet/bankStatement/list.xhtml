@@ -403,20 +403,22 @@
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_type}" />
 											</f:facet>
-											<aon:outputText value="#{(to.payment) ? (financeBundle.finance_payment) : (financeBundle.finance_charge)}"
-												rendered="#{formList or !controller.to.pending}" /> 
+											<aon:outputText value="#{financeBundle.finance_bank_statement_payment}"
+												rendered="#{to.payment and (formList or controller.to.recorded)}" />
+											<aon:outputText value="#{financeBundle.finance_bank_statement_charge}"
+												rendered="#{!to.payment and (formList or controller.to.recorded)}" />
 											<aon:selectOneMenu id="BankStatement_payment"
 												value="#{controller.to.payment}"
-												rendered="#{formEdit and controller.to.pending}">
-												<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
-												<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
+												rendered="#{formEdit and !controller.to.recorded}">
+												<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_payment}" itemValue="#{true}" />
+												<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_charge}" itemValue="#{false}" />
 											</aon:selectOneMenu>
 											<f:facet name="footer">
 												<aon:selectOneMenu id="BankStatement_payment-New"
 													value="#{controller.to.payment}"
 													rendered="#{formNew}">
-													<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
-													<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
+													<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_payment}" itemValue="#{true}" />
+													<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_charge}" itemValue="#{false}" />
 												</aon:selectOneMenu>
 											</f:facet>
 										</aon:column>
@@ -520,6 +522,8 @@
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+												<aon:outputText value="#{financeBundle.finance_return_abbrv}" 
+													rendered="#{to.returned}" /> 
 												<aon:outputText value="#{financeBundle.finance_payment}" 
 													rendered="#{statementLink.payment}" /> 
 												<aon:outputText value="#{financeBundle.finance_charge}"
@@ -545,6 +549,12 @@
 
 											<aon:column colspan="3" 
 												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
+												<f:facet name="header">
+													<aon:div>
+														<aon:outputText value="#{bundle.aon_confidential}" 
+															rendered="#{controller.accountEntry.confidential}" />
+													</aon:div>
+												</f:facet>
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
@@ -574,19 +584,24 @@
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
 												<f:facet name="header">
-													<aon:outputText value="#{bundle.aon_confidential}" 
-														rendered="#{controller.accountEntry.confidential}" />
+													<aon:outputText value="#{bundle.aon_concept}" />
 												</f:facet>
 												<aon:outputText value="#{entryDetail.account.description}" />
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-green-column">
+												<f:facet name="header">
+													<aon:outputText value="#{financeBundle.finance_debit}" />
+												</f:facet>
 												<aon:outputText value="#{entryDetail.debit}">
 													<f:convertNumber pattern="#,##0.00" />
 												</aon:outputText>
 											</aon:column>
 
 											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-green-column">
+												<f:facet name="header">
+													<aon:outputText value="#{financeBundle.finance_credit}" />
+												</f:facet>
 												<aon:outputText value="#{entryDetail.credit}">
 													<f:convertNumber pattern="#,##0.00" />
 												</aon:outputText>
