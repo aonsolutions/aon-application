@@ -163,7 +163,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		trackingList.checkNone(event);
 	}
 
-	public void onEditSearch(ActionEvent event) throws ManagerBeanException {
+	public void onEditFinanceSearch(ActionEvent event) throws ManagerBeanException {
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
 		financeList.onEditSearch(event);
 
