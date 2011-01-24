@@ -65,7 +65,9 @@ public class CalendarPrintController implements Serializable, ICollectionProvide
 	public void onLoad(ActionEvent event){
 		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_CONTROLLER_NAME); 
 		setPrintableCalendar(new PrintableCalendar());
-		getPrintableCalendar().setEnterprise(controller.getEnterprise().getRegistry().getFullName());
+		if(controller.getEnterprise()!=null && controller.getEnterprise().getId()!=null){
+			getPrintableCalendar().setEnterprise(controller.getEnterprise().getRegistry().getFullName());
+		}
 		if(controller.getWorkPlace()!=null && controller.getWorkPlace().getId()!=null){
 			getPrintableCalendar().setWorkPlace(controller.getWorkPlace().getDescription());
 		}

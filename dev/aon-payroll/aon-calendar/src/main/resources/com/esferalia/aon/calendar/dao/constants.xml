@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.esferalia.aon.calendar.Calendar">
-		<alias names="anualHours,comments,description,friday,fridayHours,source_holiday_id,id,monday,mondayHours,saturday,saturdayHours,source,sourceId,sunday,sundayHours,thursday,thursdayHours,tuesday,tuesdayHours,wednesday,wednesdayHours"/>
-		<hibernate names="anualHours,comments,description,friday,fridayHours,holiday.id,id,monday,mondayHours,saturday,saturdayHours,source,sourceId,sunday,sundayHours,thursday,thursdayHours,tuesday,tuesdayHours,wednesday,wednesdayHours"/>
+		<alias names="anualHours,calendar_id,comments,description,friday,fridayHours,generic,source_holiday_id,id,monday,mondayHours,saturday,saturdayHours,source,sourceId,sunday,sundayHours,thursday,thursdayHours,tuesday,tuesdayHours,wednesday,wednesdayHours"/>
+		<hibernate names="anualHours,calendar.id,comments,description,friday,fridayHours,generic,holiday.id,id,monday,mondayHours,saturday,saturdayHours,source,sourceId,sunday,sundayHours,thursday,thursdayHours,tuesday,tuesdayHours,wednesday,wednesdayHours"/>
 	</bean>
 </dao>
 

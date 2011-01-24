@@ -101,9 +101,9 @@
 					<aon:outputText value="#{bundle.aon_scope}" />
 					<aon:outputText value="#{enterprise.to.scope.description}" />
 
-					<c:if test="#{enterprise.agreement != null}" >
+					<c:if test="#{enterprise.to.agreement != null and enterprise.to.agreement.id != null}" >
 						<aon:outputText value="#{companyBundle.company_agreement}" />
-						<aon:outputText value="#{enterprise.agreement.description}" />
+						<aon:outputText value="#{enterprise.to.agreement.description}" />
 					</c:if>
 				
 					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />				
