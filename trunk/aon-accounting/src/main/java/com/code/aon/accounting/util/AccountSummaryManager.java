@@ -104,7 +104,6 @@ public class AccountSummaryManager {
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
         Query query = session.createQuery(select);
         List list = query.list();
-        int count = list.size();
         int i = 0;
         Iterator iterator = list.iterator();
         while (iterator.hasNext()) {
