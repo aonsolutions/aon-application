@@ -25,17 +25,17 @@
 					lookup="#{agreementLookup}"
 					lookupChangeListener="#{controller.onAgreementChanged}"
 					reRender="Enterprise_agreement_description"
-					value="#{controller.agreement.id}" size="5" />
+					value="#{controller.to.agreement.id}" size="5" />
 				<aon:lookupButton 
 					windowTitle="#{companyBundle.company_agreement_selection}"
 					selectReRender="Enterprise_agreement_id,Enterprise_agreement_description"
 					lookupChangeListener="#{controller.onAgreementChanged}"
 					lookup="#{agreementLookup}" minHeight="460" minWidth="650"
 					actionType="search"
-					property="#{controller.agreement}">
+					property="#{controller.to.agreement}">
 				</aon:lookupButton>
 				<aon:inputText id="Enterprise_agreement_description"
-					value="#{controller.agreement.description}"
+					value="#{controller.to.agreement.description}"
 					size="50" disabled="true" />							
 			</aon:div>
 								

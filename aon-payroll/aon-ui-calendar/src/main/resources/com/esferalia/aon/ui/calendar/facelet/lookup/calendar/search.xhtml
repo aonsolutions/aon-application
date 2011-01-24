@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="Calendar_description" 
+		value="#{bundle.aon_description}" />
+	<aon:inputText id="Calendar_description"
+		valueChangeListener="#{lookup.addExpression}" size="50" />
+
+<!--  
+	<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/search_content.xhtml" />
+-->	
+					
+
+</ui:composition>

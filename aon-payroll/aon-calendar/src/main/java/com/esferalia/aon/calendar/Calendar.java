@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -29,6 +28,10 @@ public class Calendar implements ITransferObject{
 	private static final long serialVersionUID = -3190986972412754073L;
 
 	private Integer id;
+	
+	private Calendar calendar;
+	
+	private boolean generic;
 
 	private Holiday holiday;
 	
@@ -93,7 +96,27 @@ public class Calendar implements ITransferObject{
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	@ManyToOne
+    @JoinColumn(name="calendar", nullable = true)
+    @ForeignKey(name="FK_CALENDAR_CALENDAR")
+    @Index(name="IDX_CALENDAR_CALENDAR")
+	public Calendar getCalendar() {
+		return calendar;
+	}
+
+	public void setCalendar(Calendar calendar) {
+		this.calendar = calendar;
+	}
 	
+	public boolean isGeneric() {
+		return generic;
+	}
+
+	public void setGeneric(boolean generic) {
+		this.generic = generic;
+	}
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn( name="holiday")	
 	@ForeignKey(name = "FK_CALENDAR_HOLIDAY")
@@ -245,10 +268,10 @@ public class Calendar implements ITransferObject{
 		this.anualHours = anualHours;
 	}
 	
-	@Transient
-	public Calendar getCalendar() {
-		return this;
-	}
+//	@Transient
+//	public Calendar getCalendar() {
+//		return this;
+//	}
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -259,6 +282,8 @@ public class Calendar implements ITransferObject{
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.description, o.description)	
+				.append(this.calendar, o.calendar)
+				.append(this.generic, o.generic)
 				.append(this.holiday, o.holiday)
 				.append(this.description, o.description)
 				.append(this.comments, o.comments)
@@ -287,6 +312,8 @@ public class Calendar implements ITransferObject{
 		return new HashCodeBuilder()
 			.append(id)
 			.append(holiday)
+			.append(calendar)
+			.append(generic)
 			.append(description)
 			.append(comments)
 			.append(monday)

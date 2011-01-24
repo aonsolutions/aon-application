@@ -20,20 +20,8 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:define name="searchContent">
-
-					<aon:outputLabel for="Calendar_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="Calendar_description"
-						valueChangeListener="#{controller.addExpression}"
-						size="50" />
-						
-					<aon:outputLabel for="Calendar_source"
-						value="#{calendarBundle.aon_calendar_entity}" />
-					<aon:selectOneMenu id="Calendar_source" converter="aon.EnumConverter"
-						valueChangeListener="#{controller.addEqualExpression}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{calendarCollections.calendarSources}" />
-					</aon:selectOneMenu>
+				
+					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/search_content.xhtml" />
 						
 				</ui:define>
 			</ui:decorate>
