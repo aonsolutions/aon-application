@@ -18,6 +18,7 @@ import ar.com.fdvs.dj.domain.DynamicReport;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.report.OutputFormat;
+import com.code.aon.report.ReportException;
 import com.code.aon.report.dynamic.DynaElements;
 import com.code.aon.report.dynamic.DynaReport;
 import com.code.aon.report.jr.JRBeanCollectionDataSource;
@@ -28,6 +29,7 @@ import com.code.aon.ui.util.DownloadUtil;
 
 public class DynaReportManager {
 
+	@SuppressWarnings("unchecked")
 	public void toExcel(DynaReport dynaReport,Collection<?> c) {
 		HttpServletResponse response = null;
 		OutputStream out = null;
@@ -43,6 +45,7 @@ public class DynaReportManager {
 			JasperPrint jp = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds);
 			IJRExporterFactory fm = JRExporterFactoryManager.getJRExporterFactory(OutputFormat.XLS); 
 			JRExporter exporter = fm.getJRExporter();
+			fm.fillJRParametersMap(exporter.getParameters());
 		    exporter.setParameter(JRExporterParameter.JASPER_PRINT, jp);
 		    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out); 
 			exporter.exportReport();
@@ -52,6 +55,11 @@ public class DynaReportManager {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		} catch (JRException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (ReportException e) {
 			e.printStackTrace();
 			String msg = "No se pudo generar el listado";
 			AonUtil.addErrorMessage(msg);
