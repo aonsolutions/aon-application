@@ -57,19 +57,10 @@
 					
 				</aon:panelGrid>
 
-				<aon:div rendered="#{domainApplication.new}" styleClass="aon-margin-top">
-					<aon:selectBooleanCheckbox id="termsOfService"
-						reRender="domainApplicationToolbar" ajaxSingle="true"
-						value="#{domainApplication.termsOfServiceAccepted}">
-					</aon:selectBooleanCheckbox>				
-					<aon:outputLabel for="termsOfService" styleClass="aon-italic"
-						value="#{managerBundle.manager_service_terms_text}" />
-					<aon:outputLink target="_blank"
-						styleClass="aon-margin-left"
-						value="#{manager.properties.newDomainApplicationURL}">
-						<aon:outputText value="#{managerBundle.manager_service_terms}" />
-					</aon:outputLink>	
-				</aon:div>					
+				<ui:include src="/com/code/aon/ui/manager/facelet/manager/termsOfService.xhtml" >
+					<ui:param name="controller" value="#{domainApplication}" />
+					<ui:param name="termsOfServiceURL" value="#{manager.properties.newDomainApplicationURL}" />
+				</ui:include>
 									
 				<aon:panelTabSet rendered="#{!domainApplication.new}"
 					selectedTab="#{domainApplication.selectedTab}">
