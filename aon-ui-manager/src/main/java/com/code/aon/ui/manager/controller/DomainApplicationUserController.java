@@ -27,12 +27,22 @@ public class DomainApplicationUserController extends LdapBasicController impleme
 	
 	private Converter workgroupConverter;
 	
+	private boolean termsOfServiceAccepted;
+	
 	@Override
 	public void updateBaseDN(Name parent) {
 		Name baseDN = NameResolver.getName( NameResolver.ou(NameResolver.USERS), parent );
 		getLdapDAO().setBaseDN(baseDN);
 	}
 
+	public boolean isTermsOfServiceAccepted() {
+		return termsOfServiceAccepted;
+	}
+
+	public void setTermsOfServiceAccepted(boolean termsOfServiceAccepted) {
+		this.termsOfServiceAccepted = termsOfServiceAccepted;
+	}	
+	
 	public DomainApplicationUser getDomainApplicationUser() {
 		return (DomainApplicationUser) getTo();
 	}
