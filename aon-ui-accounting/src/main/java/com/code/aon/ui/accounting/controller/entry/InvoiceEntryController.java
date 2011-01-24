@@ -445,28 +445,38 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onAdjustTaxableBase(ActionEvent event) {
-		if (getHeader().getTaxableBase() != null) {
-			try {
-				double total = getHeader().getTaxableBase();
-				double coef = (1 + (getHeader().getTaxPercent()/100));
-				if (getHeader().isSurcharge()) {
-					coef = coef + (getHeader().getSurchargePercent()/100);
+		if (getHeader().getAccount() != null) {
+			if (getHeader().getTaxableBase() != null) {
+				try {
+					double total = getHeader().getTaxableBase();
+					double coef = (1 + (getHeader().getTaxPercent()/100));
+					if (getHeader().isSurcharge()) {
+						coef = coef + (getHeader().getSurchargePercent()/100);
+					}
+					if (getHeader().isWithholding()) {
+						coef = coef - (getHeader().getRetPercent()/100);	
+					}
+					double tb = total / coef; 
+					getHeader().setTaxableBase(tb);
+					onNewDetail(event);
+					onTaxableBaseWizard();
+					getCurrentDetail().setTaxableBase(CommonUtil.round(total-currentDetail.getVatQuota()-currentDetail.getSurchargeQuota()+currentDetail.getRetentionQuota()));
+					onAddDetail(event);
+					onCancelDetail(event);
+					getHeader().setTaxableBase( 0.0 ); 
+				} catch (Exception e) {
+					String msg = "No se puede realizar el cálculo. Revise los datos introducidos.";
+					LOGGER.warn(msg);
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
 				}
-				if (getHeader().isWithholding()) {
-					coef = coef - (getHeader().getRetPercent()/100);	
-				}
-				double tb = total / coef; 
-				getHeader().setTaxableBase(tb);
-				onTaxableBaseWizard(event);
-				currentDetail.setTaxableBase(total-currentDetail.getVatQuota()-currentDetail.getSurchargeQuota()+currentDetail.getRetentionQuota());
-			} catch (Exception e) {
-				String msg = "No se puede realizar el cálculo. Revise los datos introducidos.";
-				LOGGER.warn(msg);
+			} else {
+				String msg="La Base Imponible es un dato requerido para esta utilidad.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
 		} else {
-			String msg="La Base Imponible es un dato requerido para esta utilidad.";
+			String msg="La Cuenta Contable es un dato requerido para esta utilidad.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -476,15 +486,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		if (getHeader().getAccount() != null) {
 			if (getHeader().getTaxableBase() != null) {
 				onNewDetail(event);
-				getCurrentDetail().setTaxableBase( getHeader().getTaxableBase()==null?0.0:getHeader().getTaxableBase());
-				getCurrentDetail().setVatPercent( getHeader().getTaxPercent()==null?0.0:getHeader().getTaxPercent());
-				if (getHeader().isSurcharge()) {
-					getCurrentDetail().setSurchargePercent( getHeader().getSurchargePercent()==null?0.0:getHeader().getSurchargePercent());
-				}
-				if (getHeader().isWithholding()) {
-					getCurrentDetail().setRetentionPercent( getHeader().getRetPercent()==null?0.0:getHeader().getRetPercent());
-				}
-				taxableBaseChanged(getHeader().getTaxableBase());
+				onTaxableBaseWizard();
 				onAddDetail(event);
 				onCancelDetail(event);
 				getHeader().setTaxableBase( 0.0 ); 
@@ -498,7 +500,18 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
 
+	private void onTaxableBaseWizard() {
+		getCurrentDetail().setTaxableBase( getHeader().getTaxableBase()==null?0.0:getHeader().getTaxableBase());
+		getCurrentDetail().setVatPercent( getHeader().getTaxPercent()==null?0.0:getHeader().getTaxPercent());
+		if (getHeader().isSurcharge()) {
+			getCurrentDetail().setSurchargePercent( getHeader().getSurchargePercent()==null?0.0:getHeader().getSurchargePercent());
+		}
+		if (getHeader().isWithholding()) {
+			getCurrentDetail().setRetentionPercent( getHeader().getRetPercent()==null?0.0:getHeader().getRetPercent());
+		}
+		taxableBaseChanged(getHeader().getTaxableBase());
 	}
 
 	public void onChangeTaxableBase(ValueChangeEvent event) {
