@@ -17,6 +17,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class TaxFinancialStatement extends AbstractFinancialStatement {
@@ -71,7 +72,7 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 	private FinancialStatement addStatement(Date fromDate, Date toDate, SecurityLevel securityLevel,String prefix, boolean addition) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), prefix + "*");
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), prefix + IAccountingConstants.ASTERISK);
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
 		double amount = 0; 

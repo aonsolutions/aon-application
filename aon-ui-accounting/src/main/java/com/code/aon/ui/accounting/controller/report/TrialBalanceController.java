@@ -28,6 +28,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
@@ -38,9 +39,6 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TrialBalanceController.class);
 	
-	private static final String STATEMENT_CONTROLLER_NAME = "statement";
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
-
 	private SummaryProviderParameters parameters;
 	private SummaryCollection summaryCollection;
 	private DataModel model;
@@ -197,11 +195,11 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 		try {
 			Summary summary = (Summary) getModel().getRowData();
 			StatementController c = (StatementController) FormUtil
-					.getController(STATEMENT_CONTROLLER_NAME);
+					.getController(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
 			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
-			criteria.addExpression(alias, summary.getId() + "*");
+			criteria.addExpression(alias, summary.getId() + IAccountingConstants.ASTERISK);
 			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 			c.setParams(getParameters());
@@ -225,7 +223,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 	private void showAccountEntry(Balance balance) {
 		try {
 			AccountEntryController entryController = (AccountEntryController) FormUtil
-					.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
 					IAccountingAlias.ACCOUNT_ENTRY_ID), balance.getAccountEntry());
@@ -233,7 +231,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
 			entryController.onSelect(null);
-			entryController.setBackAction("account_statement_list");
+			entryController.setBackAction(IAccountingConstants.ACCOUNT_STMT_LIST_NAVKEY);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al cargar el apunte.";
 			AonUtil.addErrorMessage(msg);
@@ -241,12 +239,12 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 		}
 	}
 	public void onOpeningEntry(ActionEvent event) {
-		StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
+		StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 		Balance balance = c.getOpeningEntry();
 		showAccountEntry(balance);
 	}
 	public void onAccountEntry(ActionEvent event) {
-		StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
+		StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 		Balance balance = (Balance) c.getDetailModel().getRowData();
 		showAccountEntry(balance);
 	}

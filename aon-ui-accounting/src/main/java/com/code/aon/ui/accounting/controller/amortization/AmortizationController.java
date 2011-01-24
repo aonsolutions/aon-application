@@ -17,12 +17,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class AmortizationController extends BasicController {
 
-	private static final String AMORTIZATION_DETAIL_CONTROLLER = "amortizationDetail";
 	private boolean salePanelVisible;
 
 	public boolean isSalePanelVisible() {
@@ -37,8 +37,7 @@ public class AmortizationController extends BasicController {
 			if (isNew()) {
 				return true;
 			}
-
-			AmortizationDetailController adc = (AmortizationDetailController) AonUtil.getRegisteredBean(AMORTIZATION_DETAIL_CONTROLLER);
+			AmortizationDetailController adc = (AmortizationDetailController) AonUtil.getRegisteredBean(IAccountingConstants.AMORTIZATION_DETAIL_CONTROLLER);
 			return adc.hasScoredOrBlockedDetails();
 		} catch (ManagerBeanException e) {
 			return true;
@@ -51,7 +50,7 @@ public class AmortizationController extends BasicController {
 			Account a = am.getAmortizationType().getFixedAssetAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), a.getId() + "*");
+			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), a.getId() + IAccountingConstants.ASTERISK);
 			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
@@ -71,7 +70,7 @@ public class AmortizationController extends BasicController {
 			Account a = am.getAmortizationType().getAccumulatedAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), a.getId() + "*");
+			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), a.getId() + IAccountingConstants.ASTERISK);
 			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
@@ -91,7 +90,7 @@ public class AmortizationController extends BasicController {
 			Account a = am.getAmortizationType().getAllocationAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), a.getId() + "*");
+			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), a.getId() + IAccountingConstants.ASTERISK);
 			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
@@ -135,7 +134,7 @@ public class AmortizationController extends BasicController {
 				AmortizationManager am = new AmortizationManager();
 				am.checkSale(a);
 				am.sale(a);
-				AmortizationDetailController ad = (AmortizationDetailController) AonUtil.getRegisteredBean("amortizationDetail");
+				AmortizationDetailController ad = (AmortizationDetailController) AonUtil.getRegisteredBean(IAccountingConstants.AMORTIZATION_DETAIL_CONTROLLER);
 				ad.initModel();
 				ad.onSearch(event);
 			} else {
@@ -154,7 +153,7 @@ public class AmortizationController extends BasicController {
 			Amortization a = (Amortization) getTo();
 			AmortizationManager am = new AmortizationManager();
 			am.generateDetails(a);
-			AmortizationDetailController ad = (AmortizationDetailController) AonUtil.getRegisteredBean("amortizationDetail");
+			AmortizationDetailController ad = (AmortizationDetailController) AonUtil.getRegisteredBean(IAccountingConstants.AMORTIZATION_DETAIL_CONTROLLER);
 			ad.initModel();
 			ad.onSearch(event);
 		} catch (ManagerBeanException e) {

@@ -16,14 +16,12 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.report.FinancialStatementController;
 import com.code.aon.ui.accounting.controller.report.StatementController;
 import com.code.aon.ui.util.AonUtil;
 
 public abstract class AbstractFinancialStatement implements IFinancialStatementManager {
-
-	private static final String FINANCIAL_STATEMENT_CONTROLLER_NAME = "financialStatement";
-	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 
 	private AccountingUtil accountingUtil;
 	private List<FinancialStatement> list;
@@ -85,14 +83,14 @@ public abstract class AbstractFinancialStatement implements IFinancialStatementM
 		try {
 			FinancialStatement fs = (FinancialStatement) getModel().getRowData();
 			String accounts = fs.getCode();
-			if (accounts != null && accounts.indexOf(",") > 0 ) {
-				accounts = accounts.replaceAll(",", "*|");
-				accounts += "*";
+			if (accounts != null && accounts.indexOf(IAccountingConstants.COMMA) > 0 ) {
+				accounts = accounts.replaceAll(IAccountingConstants.COMMA, "*|");
+				accounts += IAccountingConstants.ASTERISK;
 			}
 			FinancialStatementController fsc = (FinancialStatementController) AonUtil
-				.getRegisteredBean(FINANCIAL_STATEMENT_CONTROLLER_NAME);
+				.getRegisteredBean(IAccountingConstants.FINANCIAL_STATEMENT_CONTROLLER_NAME);
 			StatementController c = (StatementController) AonUtil
-					.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
+					.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onReset(event);
 			SummaryProviderParameters spp = new SummaryProviderParameters();
 			spp.setAccountExpression(accounts);
@@ -101,18 +99,17 @@ public abstract class AbstractFinancialStatement implements IFinancialStatementM
 			spp.setFromDate(period.getInitiationDate());
 			spp.setToDate(period.getDeadline());
 			c.setParams(spp);
-			c.setBackAction("financialStatement_list");
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
 			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
-			criteria.addExpression(alias, accounts + (accounts.indexOf("*") > 0?"":"*") );
+			criteria.addExpression(alias, accounts + (accounts.indexOf(IAccountingConstants.ASTERISK) > 0?IAccountingConstants.EMPTY:IAccountingConstants.ASTERISK) );
 			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
-
 			c.onSearch(event);
 			if (c.getModel().getRowCount() > 0) {
 				c.getModel().setRowIndex(0);
 				c.onSelect(event);
+				c.setBackAction(IAccountingConstants.FINANCIAL_STATEMENT_LIST_NAVKEY);
 			} else {
 				String msg = "No existen cuentas contables para la cuenta.";
 				AonUtil.addErrorMessage(msg);
