@@ -37,8 +37,6 @@ public class StatementController extends BasicController {
 	private List<Balance> detail;
 	private DataModel detailModel;
 	
-	private String backAction;
-
 	private SummaryProviderParameters params;
 
 
@@ -226,16 +224,4 @@ public class StatementController extends BasicController {
 		return getDetail();
 	}
 	
-	
-	public String getBackAction() {
-		return backAction;
-	}
-
-	public void setBackAction(String backAction) {
-		this.backAction = backAction;
-	}
-
-	public String backAction() {
-		return getBackAction();
-	}
 }

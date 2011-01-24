@@ -49,7 +49,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.ui.accounting.IAccountingMessages;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.SortOrderMap;
@@ -58,7 +58,6 @@ import com.code.aon.ui.util.AonUtil;
 public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceEntryController.class.getName());
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
 	private AccountEntryFinanceWriter writer;
 	private AccountEntry accountEntry;
@@ -382,7 +381,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 					finance.setFinanceStatus(FinanceStatus.PAID);
 					financeBean.update(finance);
 	
-					String message = AonUtil.getMessage(IAccountingMessages.BUNDLE_KEY, IAccountingMessages.FINANCE_TRACKING_RECORDED) + " " + accountEntry.getId();
+					String message = AonUtil.getMessage(IAccountingConstants.BUNDLE_KEY, IAccountingConstants.FINANCE_TRACKING_RECORDED) + " " + accountEntry.getId();
 					FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, getDate(), FinanceTrackingType.PAID, message, 
 								getDeposit()==0?getRegistryBank():null, getDeposit()==1?getPayMethodTypeDetail():null, finance.getTotalAmount(), true);
 					getWriter().insertAccountEntryFinanceTracking(accountEntry, tracking);
@@ -558,7 +557,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	public void onViewAccountEntry(ActionEvent event) {
 		try {
-			AccountEntryController entryController = (AccountEntryController) FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			AccountEntryController entryController = (AccountEntryController) FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), accountEntry.getId());
 			entryController.setCriteria(criteria);

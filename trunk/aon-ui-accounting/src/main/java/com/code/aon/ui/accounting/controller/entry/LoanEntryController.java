@@ -26,6 +26,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -33,8 +34,6 @@ import com.code.aon.ui.util.AonUtil;
 public class LoanEntryController  {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoanEntryController.class.getName()); 
-	
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	
 	private Period period;
 	private Loan loan;
@@ -175,7 +174,7 @@ public class LoanEntryController  {
 	}
 	
 	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
 		entryController.setCriteria(criteria);

@@ -34,6 +34,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.report.StatementController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
@@ -42,9 +43,6 @@ import com.code.aon.ui.util.AonUtil;
 public class LoanFeeEntryController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoanFeeEntryController.class.getName()); 
-	
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
-	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 	
 	private LoanFeeEntry entry;
 	private String navigationKey;
@@ -188,7 +186,7 @@ public class LoanFeeEntryController {
 	}
 	
 	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
 		entryController.setCriteria(criteria);
@@ -226,7 +224,7 @@ public class LoanFeeEntryController {
 	public void onAccountStatement(ActionEvent event) {
 		try {
 			Account account = getRelatedAccount();
-			StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
+			StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onReset(event);
 			SummaryProviderParameters spp = new SummaryProviderParameters();
 			spp.setAccountExpression(account.getId());
@@ -237,19 +235,17 @@ public class LoanFeeEntryController {
 			spp.setToDate(period.getDeadline());
 			spp.setSecurityLevel(getEntry().getLoan().getSecurityLevel());
 			c.setParams(spp);
-			c.setBackAction("account_loan_fee_entry");
-			
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
 			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
-			criteria.addExpression(alias, account.getId() + "*");
+			criteria.addExpression(alias, account.getId() + IAccountingConstants.ASTERISK);
 			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
-			
 			c.onSearch(event);
 			if (c.getModel().getRowCount() > 0) {
 				c.getModel().setRowIndex(0);
 				c.onSelect(event);
+				c.setBackAction(IAccountingConstants.ACCOUNT_LOAN_FEE_ENTRY_NAVKEY);
 			} else {
 				String msg = "No existen cuentas contables para la cuenta.";
 				AonUtil.addErrorMessage(msg);
