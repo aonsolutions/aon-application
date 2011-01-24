@@ -20,6 +20,12 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{holiday}" />
 				<ui:define name="searchContent">
+				
+				<aon:outputLabel for="Holiday_description"
+					value="#{bundle.aon_description}" />
+				<aon:inputText id="Holiday_description"
+					valueChangeListener="#{controller.addExpression}" size="50" />
+					
 <!--  
 					<aon:outputLabel value="#{bundle.aon_description}" />
 					<aon:inputText id="Holiday_town"

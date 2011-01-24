@@ -99,8 +99,10 @@ public class CalendarFactory {
 	
 	public void buildCalendar(){
 		this.loadHolidays();
+		this.loadInheritDays();
 		this.loadCalendarDays();
 		buildMonthList();
+		this.loadInheritPeriodDays();
 		this.loadPeriodDays();
 		this.asignDays(dayList);
 	}
@@ -108,7 +110,7 @@ public class CalendarFactory {
 	@SuppressWarnings("unchecked")
 	private void loadPeriodDays() {
 		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
-		periodList = new LinkedList<CalPeriod>();
+//		periodList = new LinkedList<CalPeriod>();
 		try {
 			List<ITransferObject> list = (List<ITransferObject>) FormUtil.getController(CALENDAR_PERIOD_CONTROLLER_NAME).getModel().getWrappedData();
 			CalPeriod period;
@@ -132,6 +134,30 @@ public class CalendarFactory {
 			LOGGER.error("ERROR in loadPeriodDays");
 		}
 	}
+
+	private void loadInheritPeriodDays(){
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
+		
+		periodList = new LinkedList<CalPeriod>();
+		CalPeriod period;
+		for(ITransferObject to: controller.getInheritPeriods()){
+			CalendarPeriod p = (CalendarPeriod) to;
+			period = new CalPeriod();
+			period.setDescription(p.getDescription());
+			period.setMonth(p.getMonth());
+			period.setStartDay(p.getStartDay());
+			period.setEndDay(p.getEndDay());
+			periodList.add(period);
+			java.util.Calendar cal = new GregorianCalendar();
+			int d = p.getStartDay();
+			while(d <= p.getEndDay()){
+				cal.set(controller.getYear(), p.getMonth().ordinal(), d);
+				asignPeriodDay(p, cal);
+				d++;
+			}
+		}
+		
+	}
 	
 	private void loadHolidays(){
 		dayList = new LinkedList<CalendarDay>();
@@ -152,17 +178,43 @@ public class CalendarFactory {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void loadCalendarDays(){
-		try {
-			IController controller = (IController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_CONTROLLER_NAME);
-			List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
+	private void loadInheritDays(){
+//		try {
+			CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
+//			IController controller = (IController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_CONTROLLER_NAME);
+//			List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
 			CalendarDay day = new CalendarDay();
 			Locale locale = AonUtil.getCurrentLocale();
 			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.calendar.i18n.messages", locale);	
 			day.setDescription(bundle.getString("aon_enum_daytype_full_OTHER"));
 			day.setDate(null);
 			dayList.add(day);
+			for(ITransferObject to: controller.getInheritHolidays()){
+				CalendarHoliday h = (CalendarHoliday) to;
+				day = new CalendarDay();
+				day.setDescription(h.getDescription());
+				day.setDate(h.getDate());
+				day.setHours(h.getHours());
+				day.setType(h.getDayType());
+				searchExistingDay(day);
+				dayList.add(day);
+			}
+//		} catch (ManagerBeanException e) {
+//			LOGGER.error(e.getMessage(), e);
+//		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void loadCalendarDays(){
+		try {
+			IController controller = (IController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_CONTROLLER_NAME);
+			List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
+			CalendarDay day = new CalendarDay();
+//			Locale locale = AonUtil.getCurrentLocale();
+//			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.calendar.i18n.messages", locale);	
+//			day.setDescription(bundle.getString("aon_enum_daytype_full_OTHER"));
+//			day.setDate(null);
+//			dayList.add(day);
 			for(ITransferObject to: list){
 				CalendarHoliday h = (CalendarHoliday) to;
 				day = new CalendarDay();
