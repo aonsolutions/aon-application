@@ -43,14 +43,8 @@ public class CalendarControllerListener extends ControllerAdapter {
 		
 		CalendarController controller = (CalendarController) getController();
 		if (controller.getSource() == CalendarSource.NONE){
-//			controller.setEditable(true);
 			controller.setGeneric(true);
-//		} else if (controller.getNewCalendarOption() == NewCalendarOption.EXISTING
-//				|| controller.getNewCalendarOption() == NewCalendarOption.INHERIT) {
-//			controller.setEditable(true);
-//			controller.setGeneric(false);
 		} else {
-//			controller.setEditable(false);
 			controller.setGeneric(false);
 		}
 		controller.setOwnCalendar(true);
@@ -69,20 +63,6 @@ public class CalendarControllerListener extends ControllerAdapter {
 				throw new AbortProcessingException(e);
 			}
 		}
-	}
-	
-	@Override
-	public void beforeEditSearch(ControllerEvent event)
-			throws ControllerListenerException {
-//		CalendarController controller = (CalendarController) getController();
-//		if(controller.getSource()==CalendarSource.NONE){
-//			try {
-//				controller.getCriteria().addEqualExpression(controller.getFieldName(ICalendarAlias.CALENDAR_GENERIC), true);
-//			} catch (ManagerBeanException e) {
-//				AonUtil.addErrorMessage(e.getMessage());
-//				throw new AbortProcessingException(e);
-//			}
-//		}
 	}
 	
 	@Override

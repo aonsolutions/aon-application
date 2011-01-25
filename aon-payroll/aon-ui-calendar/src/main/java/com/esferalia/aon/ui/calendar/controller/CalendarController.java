@@ -33,7 +33,6 @@ import com.esferalia.aon.calendar.CalendarHoliday;
 import com.esferalia.aon.calendar.CalendarPeriod;
 import com.esferalia.aon.calendar.dao.ICalendarAlias;
 import com.esferalia.aon.calendar.enumeration.CalendarSource;
-//import com.esferalia.aon.calendar.enumeration.NewCalendarOption_;
 
 public class CalendarController extends BasicController {
 
@@ -47,22 +46,20 @@ public class CalendarController extends BasicController {
 	private Enterprise enterprise;
 	private WorkPlace workPlace;
 	private Contract contract;
-//	private NewCalendarOption newCalendarOption;
-//	private boolean editable;
 	private boolean generic;
 	private boolean ownCalendar;
 	private boolean usingExisting;
 	private Calendar masterCalendar;
 	
+	public boolean isMissingSource(){
+		return getSource()==CalendarSource.NONE;
+	}
 	public Calendar getMasterCalendar() {
 		return masterCalendar;
 	}
 	public void setMasterCalendar(Calendar masterCalendar) {
 		this.masterCalendar = masterCalendar;
 	}
-//	public boolean isNewCalendarOpt() {
-//		return newCalendarOption==NewCalendarOption.NEW;
-//	}
 	public boolean isGeneric() {
 		return generic;
 	}
@@ -82,17 +79,8 @@ public class CalendarController extends BasicController {
 		this.generic = generic;
 	}
 	public boolean isEditable() {
-		return ownCalendar&&!generic;
+		return (ownCalendar&&!generic)||getSource()==CalendarSource.NONE;
 	}
-//	public void setEditable(boolean editable) {
-//		this.editable = editable;
-//	}
-//	public NewCalendarOption getNewCalendarOption() {
-//		return newCalendarOption;
-//	}
-//	public void setNewCalendarOption(NewCalendarOption newCalendarOption) {
-//		this.newCalendarOption = newCalendarOption;
-//	}
 	public Agreement getAgreement() {
 		return agreement;
 	}
@@ -204,10 +192,8 @@ public class CalendarController extends BasicController {
 			setWorkPlace(getContract().getWorkPlace());
 			setEnterprise(getWorkPlace().getEnterprise());
 		} else if(getSource()==CalendarSource.NONE){
-//			setEditable(true);
 			setGeneric(true);
 			setSourceId(null);
-//			setSourceKey(null);
 		}
 	}
 	
@@ -224,22 +210,19 @@ public class CalendarController extends BasicController {
 			} else if(getSource()==CalendarSource.AGREEMENT){ 
 				c = obtainCalendar(getAgreement());
 			}
-			setGeneric(c.isGeneric());
-			if(c.getCalendar()!=null && c.getCalendar().getId()!=null){
-				setMasterCalendar(c.getCalendar());
-			}
 			if(c!=null){
 				this.select(event, c);
+				if(c.getCalendar()!=null && c.getCalendar().getId()!=null){
+					setGeneric(c.isGeneric());
+					setMasterCalendar(c.getCalendar());
+				}
 			} else {
 				loadDefaultCalendar(event);
 			} 
-		} else {
-//			setEditable(true);
-		}
+		} 
 	}
 	
 	private void loadDefaultCalendar(ActionEvent event){
-//		setEditable(true);
 		this.onReset(event);
 	}
 	
@@ -317,7 +300,6 @@ public class CalendarController extends BasicController {
 	public void onInitialize(ActionEvent event){
 		try {
 			loadSource();
-//			loadWorkPlaces();
 			initialize(event);
 			GregorianCalendar cal= new GregorianCalendar();
 			this.setYear(cal.get(java.util.Calendar.YEAR));
@@ -326,13 +308,6 @@ public class CalendarController extends BasicController {
 			LOGGER.error(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
-	}
-	
-	public void onInitializeGeneric(ActionEvent event){
-//		setEditable(true);
-//		setGeneric(true);
-//		GregorianCalendar cal= new GregorianCalendar();
-//		this.setYear(cal.get(java.util.Calendar.YEAR));
 	}
 
 	public void onChangeYear(ActionEvent event){
@@ -372,14 +347,6 @@ public class CalendarController extends BasicController {
 		}
 		
 	}
-	
-//	public void onChangeNewCalendarOption(ActionEvent event){
-//		if(getNewCalendarOption()==NewCalendarOption.EXISTING){
-//			setEditable(false);
-//		} else {
-//			setEditable(true);
-//		}
-//	}
 
 	public void onChangeUsingExisting(ActionEvent event){
 		if(isUsingExisting()){
@@ -388,7 +355,6 @@ public class CalendarController extends BasicController {
 			setOwnCalendar(true);
 		}
 	}
-	
 	
 	@Override
 	public void accept(ActionEvent event) {
@@ -413,18 +379,14 @@ public class CalendarController extends BasicController {
 	public Calendar obtainCalendar(Contract contract) {
 		setOwnCalendar(false);
 		if(contract.getCalendar()!=null){
-//			setEditable(true);
 			setOwnCalendar(true);
 			return contract.getCalendar();
 		} else if (contract.getWorkPlace().getCalendar()!=null){
-//			setEditable(false);
 			return contract.getWorkPlace().getCalendar();
 		}  else if (contract.getWorkPlace().getEnterprise().getCalendar()!=null){
-//			setEditable(false);
 			return contract.getWorkPlace().getEnterprise().getCalendar();
 		}  else if (contract.getWorkPlace().getEnterprise().getAgreement()!=null){
 			if (contract.getWorkPlace().getEnterprise().getAgreement().getCalendar()!=null){
-//				setEditable(false);
 				return contract.getWorkPlace().getEnterprise().getAgreement().getCalendar();
 			}
 		}
@@ -436,11 +398,9 @@ public class CalendarController extends BasicController {
 			setOwnCalendar(true);
 			return wp.getCalendar();
 		}  else if (wp.getEnterprise().getCalendar()!=null){
-//			setEditable(false);
 			return wp.getEnterprise().getCalendar();
 		}  else if (wp.getEnterprise().getAgreement()!=null){
 			if (wp.getEnterprise().getAgreement().getCalendar()!=null){
-//				setEditable(false);
 				return wp.getEnterprise().getAgreement().getCalendar();
 			}
 		}
@@ -453,7 +413,6 @@ public class CalendarController extends BasicController {
 			return enterprise.getCalendar();
 		}  else if (enterprise.getAgreement()!=null){
 			if (enterprise.getAgreement().getCalendar()!=null){
-//				setEditable(false);
 				return enterprise.getAgreement().getCalendar();
 			}
 		}
@@ -472,7 +431,6 @@ public class CalendarController extends BasicController {
 	 * Actualiza la entidad a la que se asigna el calendario
 	 */
 	private void updateSourceEntity(Calendar calendar){
-//		Calendar calendar = (Calendar) this.getTo();
 		IManagerBean bean;
 		try {
 			if(getSource()==CalendarSource.AGREEMENT){
