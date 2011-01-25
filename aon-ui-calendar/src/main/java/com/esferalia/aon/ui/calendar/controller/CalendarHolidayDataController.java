@@ -29,7 +29,7 @@ public class CalendarHolidayDataController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CalendarHolidayDataController.class.getName());
 
 	private Map<String,List<ITransferObject>> holidays;
-	
+
 	public Map<String,List<ITransferObject>> getHolidays(){
 		return holidays;
 	}
@@ -57,21 +57,26 @@ public class CalendarHolidayDataController {
 		endCal.set(controller.getYear(), java.util.Calendar.DECEMBER, 31);
 		Criteria criteria;
 		IManagerBean bean;
+		List<ITransferObject> list;
 		try {
 			bean = BeanManager.getManagerBean(HolidayDetail.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
 			criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
 			criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
-			holidays.put(holiday.getDescription(), bean.getList(criteria));
-			holiday = holiday.getHoliday();
-			while(holiday!=null && holiday.getId()!=null){
-				criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
-				criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
-				criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
-				holidays.put(holiday.getDescription(), bean.getList(criteria));
+			list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				holidays.put(holiday.getDescription(), list);
 				holiday = holiday.getHoliday();
+				while(holiday!=null && holiday.getId()!=null){
+					criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
+					criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
+					criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
+					list = bean.getList(criteria);
+					holidays.put(holiday.getDescription(), list);
+					holiday = holiday.getHoliday();
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
