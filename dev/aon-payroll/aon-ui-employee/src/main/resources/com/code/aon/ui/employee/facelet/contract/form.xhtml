@@ -9,26 +9,23 @@
 
 	<ui:define name="content">
 		<aon:form id="contractForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contract_module}" />
-				<ui:param name="controller" value="#{contract}" />
-				<ui:param name="skipResetButton" value="true" />
-				<ui:param name="skipSaveButton" value="true" />
-				<ui:param name="skipRemoveButton" value="true" />
-				
-				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton 
-						value="#{employeeBundle.employee_contractCalendarEvent_module}"
-						styleClass="aon-finding-toolbar-item aon-icon-open-popup"
-						action="contractCalendarEvent_form" />
-				</ui:define>
-			</ui:decorate>
+
+			<ui:include src="/com/code/aon/ui/employee/facelet/contract/formToolbar.xhtml" />
 			
-			<aon:div styleClass="aon-scroll-area">		
-				<ui:include src="/com/code/aon/ui/employee/facelet/contract/formContent.xhtml" />
-			</aon:div>
+			<c:if test="#{!contract.new}" >
+				<aon:div styleClass="aon-scroll-area">		
+					<ui:include src="/com/code/aon/ui/employee/facelet/contract/formContent.xhtml" />
+				</aon:div>
+			</c:if>
+			<c:if test="#{contract.new}" >
+				<aon:div styleClass="aon-scroll-area">		
+					<ui:include src="/com/code/aon/ui/employee/facelet/contract/formNewContent.xhtml" />
+				</aon:div>
+			</c:if>
+			
 		</aon:form>
 		<ui:insert name="contractDetail" />
-		<ui:include src="/com/code/aon/ui/employee/facelet/contractCalendarEvent/modalPanel.xhtml" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 	</ui:define>
 </ui:composition>
