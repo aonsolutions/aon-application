@@ -39,6 +39,13 @@
 									value="#{employeeBundle.employee_payment_update_module}">
 								</aon:commandLink>
 							</aon:div>
+<!--  
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="calendar" action="contractCalendarEvent_search"
+									actionListener="#{contractCalendarEvent.onEditSearch}"
+									value="#{calendarBundle.aon_calendar_menu}" />
+							</aon:div>
+-->
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="salary" 
 									action="salary_search" 
@@ -93,13 +100,16 @@
 						headerClass="aon-icon-config aon-direct-access-panel">
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.calendar_menu_group}"/>
-						</f:facet>					
+						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="calendar" action="calendar_search"
-									actionListener="#{calendar.onEditSearch}"
-									value="#{calendarBundle.aon_calendar_menu}" />
-							</aon:div>
+									value="#{calendarBundle.aon_calendar_generic_menu}" >
+									<f:setPropertyActionListener target="#{calendar.sourceKey}" value="4" />
+									<aon:actionListener method="#{calendar.onEditSearch}" />
+									<aon:actionListener method="#{calendar.onInitialize}" />
+								</aon:commandLink>
+							</aon:div>					
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="holiday" action="holiday_search"
 									value="#{calendarBundle.aon_calendar_holiday}" />
