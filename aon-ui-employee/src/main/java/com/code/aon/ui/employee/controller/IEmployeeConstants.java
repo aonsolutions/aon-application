@@ -21,6 +21,10 @@ public interface IEmployeeConstants {
 	// BEAN
 	// ************************************************************
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";
+
+	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";
+	
+	String ENTERPRISE_CCC_CONTROLLER = "enterpriseCCC";
 	
 	String SALARY_CONTROLLER = "salary";
 	
@@ -43,5 +47,6 @@ public interface IEmployeeConstants {
 	String CURRENT_SALARY_REPORT = "currentSalaryReport";
 	
 	String SALARY_REPORT = "salaryReport";
+
 	
 }
