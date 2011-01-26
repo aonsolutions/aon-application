@@ -20,17 +20,15 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.report.StatementController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountEntryDetailController extends LinesController {
 
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
-	private static final String STATEMENT_CONTROLLER_NAME = "statement";
-
 	public boolean isUpdatable() {
-		AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 		if (c.getTo() != null && c.isUpdatable()) {
 			if (c.isAonInvoice()) {
 				try {
@@ -55,7 +53,7 @@ public class AccountEntryDetailController extends LinesController {
 
 	public void onBalanceDebit(ActionEvent event) {
 		try {
-			AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			if (c.getTotalDebit() != null && c.getTotalCredit() != null) {
 				AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
 				double d = CommonUtil.round(CommonUtil.round(c.getTotalDebit() - c.getTotalCredit())
@@ -74,7 +72,7 @@ public class AccountEntryDetailController extends LinesController {
 
 	public void onBalanceCredit(ActionEvent event) {
 		try {
-			AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			if (c.getTotalDebit() != null && c.getTotalCredit() != null) {
 				AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
 				double cr = CommonUtil.round(CommonUtil.round(c.getTotalCredit() - c.getTotalDebit())
@@ -141,7 +139,7 @@ public class AccountEntryDetailController extends LinesController {
 
 	private void onStatement(Account account, ActionEvent event) throws ManagerBeanException, ExpressionException {
 
-		StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
+		StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 		c.onReset(event);
 
 		AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
@@ -155,12 +153,11 @@ public class AccountEntryDetailController extends LinesController {
 		spp.setToDate(period.getDeadline());
 		spp.setSecurityLevel(AonUtil.getRoleManager().isAccountingOperator()?null:SecurityLevel.OFFICIAL);
 		c.setParams(spp);
-		c.setBackAction("accountEntry_form");
 
 		c.onEditSearch(event);
 		Criteria criteria = c.getCriteria();
 		String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
-		criteria.addExpression(alias, account.getId() + "*");
+		criteria.addExpression(alias, account.getId() + IAccountingConstants.ASTERISK);
 		alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 		criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 
@@ -168,6 +165,7 @@ public class AccountEntryDetailController extends LinesController {
 		if (c.getModel().getRowCount() > 0) {
 			c.getModel().setRowIndex(0);
 			c.onSelect(event);
+			c.setBackAction(IAccountingConstants.ACCOUNT_ENTRY_FORM_NAVKEY);
 		} else {
 			String msg = "No existen cuentas contables para la cuenta.";
 			AonUtil.addErrorMessage(msg);

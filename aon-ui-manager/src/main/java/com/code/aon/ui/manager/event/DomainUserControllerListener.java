@@ -57,7 +57,7 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 		try {		
 			duc.registerUserInApplication(user, AON_DESKTOP, USUARIO_PROFILE);
 			duc.registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
-			duc.registerScope(user, GENERAL_SCOPE);
+			duc.registerScopeInDBs(user.getUid(), GENERAL_SCOPE);
 			duc.createMailAccount(user);
 			duc.createUserWebmailDefaultData(user);
 			duc.setWebmail(true);

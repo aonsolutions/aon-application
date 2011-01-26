@@ -18,7 +18,7 @@
 					<aon:commandButton id="back" value="#{bundle.aon_back}"
 						accesskey="K" title="#{bundle.aon_back} Alt+K"
 						action="#{accountEntry.backAction}"
-						rendered="#{accountEntry.backAction != null}"
+						rendered="#{accountEntry.backActionEnabled}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true" />
 				</ui:define>

@@ -6,6 +6,7 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.report.StatementController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -15,14 +16,12 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class StatementDetailListener extends ControllerAdapter {
 
-	private static final String STATEMENT_CONTROLLER_NAME = "statement";
-	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
 			IController c = event.getController();
 			StatementController asc  = (StatementController) FormUtil
-				.getController(STATEMENT_CONTROLLER_NAME);
+				.getController(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			SummaryProviderParameters params = asc.getParams();
 			Criteria criteria = c.getCriteria();
 			

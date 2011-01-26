@@ -9,6 +9,7 @@ import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -18,7 +19,6 @@ import com.code.aon.ui.util.AonUtil;
 public class AccountEntryDetailControllerListener extends ControllerAdapter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryDetailControllerListener.class.getName());
-	private static final String ENTRY_CONTROLLER = "accountEntry";
 
 	private String concept;
 	private Account balancingAccount;
@@ -79,20 +79,20 @@ public class AccountEntryDetailControllerListener extends ControllerAdapter {
 		setConcept(detail.getConcept());
 		setBalancingAccount(detail.getBalancingAccount());
 		setAccount(detail.getAccount());
-    	AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(ENTRY_CONTROLLER); 
+    	AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME); 
         c.setTotalCredit(null);
         c.setTotalDebit(null);
 	}
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-    	AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(ENTRY_CONTROLLER); 
+    	AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME); 
         c.setTotalCredit(null);
         c.setTotalDebit(null);
 	}
 	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-    	AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(ENTRY_CONTROLLER); 
+    	AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME); 
         c.setTotalCredit(null);
         c.setTotalDebit(null);
 	}
