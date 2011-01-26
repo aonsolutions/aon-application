@@ -9,6 +9,7 @@ import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +97,11 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		return converter;
 	}	
 	
+	private String formatDBName( String name ) {
+		String dbName = StringUtils.replace(name, ".", "-");
+		return StringUtils.left(dbName, 64);
+	}
+	
 	public void init( DBConnnection dbc, String name ) {
 		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 		Properties properties = manager.getProperties();
@@ -104,7 +110,8 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		dbc.setUid( properties.getProperty(IManagerAlias.DB_CONNECTION_UID) );
 		dbc.setUserPasswordString( properties.getProperty(IManagerAlias.DB_CONNECTION_USER_PASSWORD) );
 		String text = properties.getProperty(IManagerAlias.DB_CONNECTION_LABELED_URI);
-		String url = MessageFormat.format( text, name );
+		String dbName = formatDBName(name);
+		String url = MessageFormat.format( text, dbName );
 		dbc.setLabeledURI(url);			
 	}
 	

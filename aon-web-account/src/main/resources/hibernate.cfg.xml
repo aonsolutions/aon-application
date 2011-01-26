@@ -62,6 +62,14 @@
 		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>
 		<mapping class="com.code.aon.account.bridge.TaxAccount"/>
 		
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Application"/>
+		<mapping class="com.code.aon.audit.Session"/>				
+
 		<!-- AON-COMMERCIAL Mapping files -->	
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialTerm"/>
@@ -157,6 +165,10 @@
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
+		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.Purchase"/>
+		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
+
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
@@ -174,19 +186,27 @@
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
 		
+		<!-- AON-SALES Mapping files -->	
+		<mapping class="com.code.aon.sales.Sales"/>
+		<mapping class="com.code.aon.sales.SalesDetail"/>
+
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
 
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
 
-		<!-- AON-AUDIT Mapping files -->
-		<mapping class="com.code.aon.audit.Action"/>
-		<mapping class="com.code.aon.audit.ActionDenied"/>
-		<mapping class="com.code.aon.audit.ActionEntry"/>
-		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Application"/>
-		<mapping class="com.code.aon.audit.Session"/>				
+		<!-- AON-WAREHOUSE Mapping files -->		
+		<mapping class="com.code.aon.warehouse.Delivery"/>
+		<mapping class="com.code.aon.warehouse.DeliveryDetail"/>
+		<mapping class="com.code.aon.warehouse.DeliveryDetailLabour"/>
+		<mapping class="com.code.aon.warehouse.Income"/>
+		<mapping class="com.code.aon.warehouse.IncomeDetail"/>
+		<mapping class="com.code.aon.warehouse.Inventory"/>
+		<mapping class="com.code.aon.warehouse.InventoryDetail"/>
+		<mapping class="com.code.aon.warehouse.ItemWarehouse"/>
+		<mapping class="com.code.aon.warehouse.Stock"/>
+		<mapping class="com.code.aon.warehouse.Warehouse"/>
 	</session-factory>
 
 </hibernate-configuration>
