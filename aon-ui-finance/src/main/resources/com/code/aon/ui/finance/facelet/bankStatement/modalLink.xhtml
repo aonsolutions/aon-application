@@ -248,6 +248,9 @@
 															<aon:outputText value="#{to.totalAmount}">
 																<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 															</aon:outputText>
+<!--
+															<aon:inputText value="#{to.totalAmount}" size="6" />
+-->
 														</aon:column>
 
 													</aon:dataTable>
@@ -437,6 +440,95 @@
 														<aon:outputText value="#{bundle.aon_amount} " />
 														<aon:inputText value="#{linkManager.amount}" size="8" />
 													</aon:panelGrid>
+												</aon:div>
+											</aon:div>
+										</aon:panelTab>
+
+										<aon:panelTab id="entryDetailLinkTab" label="#{financeBundle.finance_bind_account_entry}" 
+											rendered="#{linkManager.entryDetailModel.rowCount > 0}">
+											<aon:dataTable id="entryDetailData" value="#{linkManager.entryDetailModel}"
+												var="to" rows="10" rendered="#{linkManager.entryDetailModel.rowCount > 0}"
+												columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, 
+													aon-editDataTable-textColumn, aon-editDataTable-numberColumn, 
+													aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:commandButton id="addEntryDetail"
+														value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
+														title="#{financeBundle.finance_bind}"
+														actionListener="#{linkManager.onBindEntryDetail}"
+														reRender="showLinkWindow"
+														onclick="Richfaces.showModalPanel('waitProccess')" 
+											     		oncomplete="Richfaces.hideModalPanel('waitProccess')">	
+														<f:setPropertyActionListener target="#{bankStatement.showLinkWindow}"
+															value="#{false}" />
+													</aon:commandButton>
+		 										</aon:column>
+			
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_date}" />
+													</f:facet>
+													<aon:outputText value="#{to.accountEntry.entryDate}">
+														<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+															timeZone="#{timeZoneController.timeZoneId}" />
+													</aon:outputText>
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_concept}" />
+													</f:facet>
+													<aon:outputText value="#{to.concept}" />
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_amount}" />
+													</f:facet>
+													<aon:outputText value="#{to.credit + to.debit}">
+														<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+													</aon:outputText>
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{financeBundle.finance_balancing_account}" />
+													</f:facet>
+													<aon:outputText value="#{to.balancingAccount.id}" />
+													<rich:toolTip>
+														<aon:outputText value="#{to.balancingAccount.description}" />
+													</rich:toolTip>
+												</aon:column>
+
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+													</f:facet>
+													<aon:outputText value="#{to.documentNumber}" />
+												</aon:column>
+
+											</aon:dataTable>
+
+										</aon:panelTab>
+
+										<aon:panelTab id="commentsLinkTab" label="#{bundle.aon_comment}">
+											<aon:div styleClass="aon-toolbar">
+												<aon:commandButton title="#{bundle.aon_save}"
+													styleClass="aon-finding-toolbar-item aon-icon-accept"
+													value="#{bundle.aon_save}"
+													actionListener="#{linkManager.onSaveComments}"
+													reRender="commentsListDiv"
+													onclick="Richfaces.showModalPanel('waitProccess')" 
+										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+											</aon:div>
+											<aon:div id="commentsListDiv">
+												<aon:div>
+													<aon:inputTextarea id="Invoice_comments" cols="100" rows="4"
+														value="#{linkManager.comments}" />
 												</aon:div>
 											</aon:div>
 										</aon:panelTab>

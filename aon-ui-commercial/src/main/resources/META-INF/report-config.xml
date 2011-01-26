@@ -188,8 +188,7 @@
 	-->
 	<report id="commercialTrackingFileList" description="Commercial Tracking File Report">
 		<template path="/com/code/aon/ui/commercial/report/commercialTrackingFile.jasper" />
-		<bean key="com.code.aon.commercial.CommercialTracking" />
-		<criteria provider="#{commercialTracking}" />
+		<collection provider="#{commercialTracking}" forceRefresh="true"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />

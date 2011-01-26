@@ -1063,7 +1063,24 @@ public class BankStatementController extends BasicController implements IFinance
 			batchList.onSearch(null);
 		}
 
+		Account bankAccount = getWriter().obtainPaymentAccount(to.getRegistryBank(), null);
+		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		criteria = new Criteria();
+		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), bankAccount.getId());
+		criteria.addBetweenExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), fromDate, toDate);
+		if ((to.isPayment() && to.getAmount() >= 0) || (!to.isPayment() && to.getAmount() < 0)) {
+			criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT), to.getAmount());
+		} else {
+			criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT), to.getAmount());
+		}
+		if (!AonUtil.getRoleManager().isConfidentiality()) {
+			criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+		}
+		getBankStatementLinkManager().setEntryDetailList(entryDetailBean.getList(criteria));
+		getBankStatementLinkManager().setEntryDetailModel(null);
+
         getBankStatementLinkManager().setCurrentStatement(to);
+        getBankStatementLinkManager().setComments(to.getComments());
         if (statementLinkList.getRowCount() > 0) {
         	getBankStatementLinkManager().setStatementLinkTab();
         }
@@ -1200,6 +1217,7 @@ public class BankStatementController extends BasicController implements IFinance
 						recordingTo.setPaymentAccount(getWriter().obtainPaymentAccount(statement.getRegistryBank(), null));
 						recordingTo.setBalancingConcept(StringUtils.abbreviate(statement.getDescription(), 32));
 						recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
+						recordingTo.setComments(statement.getComments());
 						recordingTo.setAccountMap(accountMap);
 
 						AccountEntry entry = null;
@@ -1224,11 +1242,7 @@ public class BankStatementController extends BasicController implements IFinance
 						}
 
 						if (entry != null) {
-							getWriter().insertAccountEntryBankStatement(entry, statement);
-
-							statement.setStatus(StatementStatus.RECORDED);
-							statement.setShowBankStatementLink(false);
-							getManagerBean().update(statement);
+							recordBankStatement(entry, statement);
 						}
 					}
 				}
@@ -1241,6 +1255,14 @@ public class BankStatementController extends BasicController implements IFinance
 
 		onSearch(null);
 		clearCheckedBankStatement();
+	}
+
+	public void recordBankStatement(AccountEntry entry, BankStatement statement) throws ManagerBeanException {
+		getWriter().insertAccountEntryBankStatement(entry, statement);
+
+		statement.setStatus(StatementStatus.RECORDED);
+		statement.setShowBankStatementLink(false);
+		getManagerBean().update(statement);
 	}
 
 	public AccountEntry getAccountEntry() throws ManagerBeanException {

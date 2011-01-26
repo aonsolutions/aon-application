@@ -534,5 +534,17 @@
 			<param id="title" value="#{customerFee.getReportTitle}" />
 		</params>
 	</report>
+
+	<!--  *********  cashFlowForecastList  ********* -->
+	<report id="cashFlowForecastList" description="Cash Flow Forecast List">
+		<template path="/com/code/aon/ui/finance/report/cashFlowForecastList.jasper"/>
+		<bean key="com.code.aon.finance.CashFlowForecast" />
+		<criteria provider="#{cashFlowForecast}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
 	
 </report-config>
