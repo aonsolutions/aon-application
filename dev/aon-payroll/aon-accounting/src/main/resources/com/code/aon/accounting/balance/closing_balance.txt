@@ -1,5 +1,5 @@
 A0|ACTIVO||0|true|false|true|false|false
-A|A) ACTIVO NO CORRIENTE|A.I,A.II,A.III,A.IV,A.V,A.VI|1|true|false|true|false|false
+A|A) ACTIVO NO CORRIENTE|A.I,A.II,A.III,A.IV,A.V,A.VI|1|true|true|true|false|false
 A.I|I. Inmovilizado intangible.|A.I.1,A.I.2,A.I.3,A.I.4,A.I.5,A.I.6|2|true|true|true|false|false
 A.I.1|1. Desarrollo.|201,(2801),(2901)|3|false|false|true|false|false
 A.I.2|2. Concesiones.|202,(2802),(2902)|4|false|false|true|false|false
@@ -26,7 +26,7 @@ A.V.2|2. Créditos a terceros|2425,252,253,254,(2955),(298)|24|false|false|true|f
 A.V.3|3. Valores representativos de deuda|2415,251,(2945),(297)|25|false|false|true|false|false
 A.V.4|4. Derivados.|255|26|false|false|true|false|false
 A.V.5|5. Otros activos financieros.|258,26|27|false|false|true|false|false
-A.VI|VI. Activos por impuesto diferido.|474|28|false|false|true|false|false
+A.VI|VI. Activos por impuesto diferido.|474|28|true|false|true|false|false
 |||29|false|false|true|false|false
 B|B) ACTIVO CORRIENTE|B.I,B.II,B.III,B.IV,B.V,B.VI,B.VII|30|true|true|true|false|false
 B.I|I. Activos no corrientes mantenidos para la venta.|580,581,582,583,584,(599)|31|false|false|true|false|false
