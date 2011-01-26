@@ -42,5 +42,6 @@ public interface IManagerConstants {
 	// Properties
 	
 	String NOTIFICATION_EMAIL = "notification_email";
+	String NEW_DOMAIN_USER_URL = "newDomainUserURL";
 	
 }
