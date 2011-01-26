@@ -477,6 +477,10 @@
 			<value>amortization</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AmortizationDetail_fromDate</value>
+		</managed-property>
+		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>

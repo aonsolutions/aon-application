@@ -23,7 +23,6 @@
 
 					<aon:commandButton id="calculate" 
 						value="#{accountingBundle.accounting_calculate}"
-						immediate="#{true}"
 						rendered="#{!amortization.new and amortization.to != null}"
 						reRender="amortizationForm"
 						onclick="if (!confirm('#{accountingBundle.accounting_fixed_asset_calculate}')){ return false;} else {Richfaces.showModalPanel('waitProccess')}"
@@ -78,7 +77,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="Amortization_initial_date"
-						value="#{bundle.aon_date_from}" />
+						value="#{accountingBundle.accounting_initial_use_date}" />
 					<aon:selectInputDate required="true"
 						disabled="#{!amortization.updatable}"
 						id="Amortization_initial_date"

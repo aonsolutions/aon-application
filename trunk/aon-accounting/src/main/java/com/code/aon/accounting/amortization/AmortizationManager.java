@@ -114,7 +114,10 @@ public class AmortizationManager {
 	private AmortizationDetail insertable(IManagerBean bean, AmortizationDetail detail) throws ManagerBeanException {
 		Criteria c = new Criteria();
 		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), detail.getAmortization().getId());
-		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), detail.getFromDate());
+		Date first = CommonUtil.getYearFirstDay(detail.getFromDate());
+		c.addGreaterThanOrEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), first);
+		Date last = CommonUtil.getYearLastDay(detail.getFromDate());
+		c.addLessThanOrEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), last);
 		List<ITransferObject> list = bean.getList(c);
 		AmortizationDetail exists = null;	
 		if (list != null && list.size() > 0) {
