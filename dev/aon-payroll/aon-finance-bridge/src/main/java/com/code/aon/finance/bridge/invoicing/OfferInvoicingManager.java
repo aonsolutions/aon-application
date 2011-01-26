@@ -57,10 +57,13 @@ public class OfferInvoicingManager {
 		updateOfferStatus(offer);
 		Invoice invoice = createInvoice(offer, series, number, issueDate);
 		createInvoiceDetails(invoice, offer);
-		if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
-			getFinanceGenerator().generateFinances(invoice, offer, getPriceStrategy().getTotalPrice(invoice, invoice), true);
-		} else {
-			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice), true);
+		double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
+		if (invoiceTotal > 0) {
+			if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
+				getFinanceGenerator().generateFinances(invoice, offer, invoiceTotal, true);
+			} else {
+				getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
+			}
 		}
 		return invoice;
 	}
