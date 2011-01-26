@@ -1,5 +1,9 @@
 package com.code.aon.ui.finance.controller;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,13 +20,40 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import org.apache.commons.lang.StringUtils;
+
+import ar.com.fdvs.dj.core.DynamicJasperHelper;
+import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
+import ar.com.fdvs.dj.domain.CustomExpression;
+import ar.com.fdvs.dj.domain.DynamicReport;
+import ar.com.fdvs.dj.domain.Style;
+import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
+import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
+import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
+import ar.com.fdvs.dj.domain.constants.Border;
+import ar.com.fdvs.dj.domain.constants.Font;
+import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
+import ar.com.fdvs.dj.domain.constants.VerticalAlign;
+import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
+import ar.com.fdvs.dj.domain.entities.conditionalStyle.ConditionalStyle;
+import ar.com.fdvs.dj.domain.entities.conditionalStyle.StatusLightCondition;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.CashFlowForecast;
 import com.code.aon.finance.Finance;
@@ -32,11 +63,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.report.IReportConstants;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.finance.event.CashFlowForecastControllerListener;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
 
 
 public class CashFlowForecastReport {
@@ -167,6 +199,7 @@ public class CashFlowForecastReport {
 			bank.setId(rbank.getId());
 			String alias = StringUtils.abbreviate(rbank.getBank().getName(), 15) + " " +rbank.getBankAccount().getAccount();
 			bank.setDescription( alias );
+			bank.setAccount(rbank.getBankAccount().toString());
 			bank.setEnabled(true);
 			// TODO Calcular el saldo inicial del banco.
 			bank.setBalance(0.0);
@@ -321,7 +354,6 @@ public class CashFlowForecastReport {
 		for (CashFlowBank bank : getBanks() ) {
 			CashFlowBank cfb = new CashFlowBank();
 			cfb.setId(bank.getId());
-			cfb.setDescription(null);
 			cfb.setBalance(bank.getInitialBalance());
 			initialBalance.getMap().put(bank.getId(), cfb);
 			
@@ -339,7 +371,6 @@ public class CashFlowForecastReport {
 		for (CashFlowBank bank : getBanks() ) {
 			CashFlowBank cfb = new CashFlowBank();
 			cfb.setId(bank.getId());
-			cfb.setDescription(null);
 			cfr.getMap().put(bank.getId(), cfb);
 		}
 		return cfr;
@@ -369,9 +400,7 @@ public class CashFlowForecastReport {
 				cfr.setMap( new HashMap<Integer, CashFlowBank>());
 				CashFlowBank cfb = new CashFlowBank();
 				int bankId = cff.getRegistryBank()!=null?cff.getRegistryBank().getId():Integer.MIN_VALUE;
-				//getBanks().
 				cfb.setId( bankId );
-				cfb.setDescription(null);
 				cfb.setBalance(0.0 );
 				double amount = cff.isPayment()?CommonUtil.round(cff.getAmount() * (-1)):cff.getAmount();
 				cfr.setAmount( amount );
@@ -427,8 +456,7 @@ public class CashFlowForecastReport {
 			cfr.setPayment( finance.isPayment() );
 			cfr.setMap( new HashMap<Integer, CashFlowBank>());
 			CashFlowBank cfb = new CashFlowBank();
-			cfb.setId( Integer.MIN_VALUE ); // TODO Las transferencias, etc tienes el banco correcto.
-			cfb.setDescription(null);
+			cfb.setId(getRegistryBank(finance));
 			cfb.setBalance(0.0 );
 			double amount = cfr.isPayment()?CommonUtil.round(finance.getAmount() * (-1)):finance.getAmount();
 			cfr.setAmount( amount );
@@ -437,6 +465,18 @@ public class CashFlowForecastReport {
 			flows.add(cfr);
 		}
 		return flows;
+	}
+
+	private int getRegistryBank(Finance finance) {
+		if (finance.getBank() == null || finance.getBankAccount() == null) {
+			return Integer.MIN_VALUE;	
+		}
+		for ( CashFlowBank bank: getBanks() ) {
+			if (StringUtils.equals(bank.getAccount(), finance.getBankAccount().toString()) ) {
+				return bank.getId();
+			}
+		}
+		return Integer.MIN_VALUE;
 	}
 
 	private Collection<? extends CashFlowReport> loadReturnedFinances() throws ManagerBeanException {
@@ -456,7 +496,7 @@ public class CashFlowForecastReport {
 			cfr.setPayment( finance.isPayment() );
 			cfr.setMap( new HashMap<Integer, CashFlowBank>());
 			CashFlowBank cfb = new CashFlowBank();
-			cfb.setId( Integer.MIN_VALUE ); // TODO Las transferencias, etc tienes el banco correcto.
+			cfb.setId(getRegistryBank(finance));
 			cfb.setDescription(null);
 			cfb.setBalance(0.0 );
 			double amount = cfr.isPayment()?CommonUtil.round(finance.getAmount() * (-1)):finance.getAmount();
@@ -486,6 +526,7 @@ public class CashFlowForecastReport {
 	public class CashFlowBank {
 		private Integer id;
 		private String  description;
+		private String  account;
 		private double  balance;
 		private double  initialBalance;
 		private boolean enabled;
@@ -503,7 +544,12 @@ public class CashFlowForecastReport {
 		public void setDescription(String description) {
 			this.description = description;
 		}
-
+		public String getAccount() {
+			return account;
+		}
+		public void setAccount(String account) {
+			this.account = account;
+		}
 		public double getBalance() {
 			return balance;
 		}
@@ -607,7 +653,15 @@ public class CashFlowForecastReport {
 		public void setTotal(double total) {
 			this.total = total;
 		}
-
+		public CashFlowReport getTo() {
+			return this;
+		}
+		public double getBalance(Integer id) {
+			if (getMap().containsKey(id)) {
+				return getMap().get(id).getBalance();	
+			}
+			return 0.0;
+		}
 		@Override
 		public int compareTo(CashFlowReport cfr) {
 			if (cfr == null) {
@@ -619,6 +673,204 @@ public class CashFlowForecastReport {
 			return getDate().compareTo(cfr.getDate());
 		}
 		
+	}
+
+	public String onExcelReport() {
+		HttpServletResponse response = null;
+		OutputStream out = null;
+		try {
+			Font detailFont = new Font();
+			detailFont.setFontName("SansSerif");
+			detailFont.setFontSize(7);
+
+			Font detailBoldFont = new Font();
+			detailBoldFont.setFontName("SansSerif");
+			detailBoldFont.setFontSize(7);
+			detailBoldFont.setBold(true);
+
+			Font headerFont = new Font();
+			headerFont.setFontName("SansSerif");
+			headerFont.setFontSize(8);
+			headerFont.setBold(true);
+
+			Style detailStyle = new Style();
+			detailStyle.setFont(detailFont);
+
+			Style detailBoldStyle = new Style();
+			detailBoldStyle.setFont(detailBoldFont);
+
+			Style headerStyle = new Style();
+			headerStyle.setFont(headerFont);
+			headerStyle.setBorderBottom(Border.PEN_1_POINT);
+			headerStyle.setHorizontalAlign(HorizontalAlign.CENTER);
+			headerStyle.setVerticalAlign(VerticalAlign.MIDDLE);
+			headerStyle.setBackgroundColor(Color.WHITE);
+			headerStyle.setTextColor(Color.BLACK);
+			
+			Style dateStyle = (Style) detailStyle.clone();
+			dateStyle.setPattern("dd/MM/yyyy");
+			
+			Style amountStyle = (Style) detailStyle.clone();
+			amountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
+			amountStyle.setPattern("#,##0.00");
+
+			Style amountRedStyle = (Style) amountStyle.clone();
+			amountRedStyle.setTextColor(Color.RED);
+			
+			Style amountBlueStyle = (Style) amountStyle.clone();
+			amountBlueStyle.setTextColor(Color.BLUE);
+
+			Style amountBoldStyle = (Style) detailBoldStyle.clone();
+			amountBoldStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
+			amountBoldStyle.setPattern("#,##0.00");
+
+			Style amountBoldRedStyle = (Style) amountBoldStyle.clone();
+			amountBoldRedStyle.setTextColor(Color.RED);
+			
+			Style amountBoldBlueStyle = (Style) amountBoldStyle.clone();
+			amountBoldBlueStyle.setTextColor(Color.BLUE);
+			
+			AbstractColumn dateColumn = ColumnBuilder.getNew()
+				.setColumnProperty("date", Date.class.getName())
+				.setTitle("Fecha")
+				.setWidth(50)
+				.setStyle(dateStyle)
+				.setHeaderStyle(headerStyle)
+				.build();
+			AbstractColumn typeColumn = ColumnBuilder.getNew()
+				.setColumnProperty("type", String.class.getName())
+				.setTitle("T")
+				.setWidth(30)
+				.setStyle(detailStyle)
+				.setHeaderStyle(headerStyle)
+				.build();
+			AbstractColumn descriptionColumn = ColumnBuilder.getNew()
+				.setColumnProperty("description", String.class.getName())
+				.setTitle("Descripción")
+				.setWidth(400)
+				.setStyle(detailStyle)
+				.setHeaderStyle(headerStyle)
+				.build();
+			
+			StatusLightCondition positive= new StatusLightCondition(null, new Double(0));
+			StatusLightCondition negative  = new StatusLightCondition(new Double(0),null);
+
+			ArrayList<ConditionalStyle> amountConditionalStyles = new ArrayList<ConditionalStyle>();
+			amountConditionalStyles.add(new ConditionalStyle(positive,amountBlueStyle));
+			amountConditionalStyles.add(new ConditionalStyle(negative,amountStyle));
+
+			AbstractColumn amountColumn = ColumnBuilder.getNew()
+				.setColumnProperty("amount", Double.class.getName())
+				.setTitle("Importe")
+				.setWidth(78)
+				.addConditionalStyles(amountConditionalStyles)
+				.setHeaderStyle(headerStyle)
+				.build();
+
+			ArrayList<ConditionalStyle> totalConditionalStyles = new ArrayList<ConditionalStyle>();
+			totalConditionalStyles.add(new ConditionalStyle(negative,amountBoldRedStyle));
+			totalConditionalStyles.add(new ConditionalStyle(positive,amountBoldBlueStyle));
+			
+			AbstractColumn totalColumn = ColumnBuilder.getNew()
+				.setColumnProperty("total", Double.class.getName())
+				.setTitle("Saldo")
+				.setWidth(78)
+				.addConditionalStyles(totalConditionalStyles)
+				.setHeaderStyle(headerStyle)
+				.build();
+			
+			FastReportBuilder drb = new FastReportBuilder();
+			drb.addField("to",CashFlowReport.class.getName());
+			drb.addField("payment",Boolean.class.getName());
+			drb.addField("systemProperty",Boolean.class.getName());
+			drb.addField("disabled",Boolean.class.getName());
+			drb.addColumn(dateColumn)
+				.addColumn(typeColumn)
+				.addColumn(descriptionColumn)
+				.addColumn(amountColumn)
+				.addColumn(totalColumn);
+			ArrayList<ConditionalStyle> bankConditionalStyles = new ArrayList<ConditionalStyle>();
+			bankConditionalStyles.add(new ConditionalStyle(negative,amountRedStyle));
+			bankConditionalStyles.add(new ConditionalStyle(positive,amountBlueStyle));
+			
+			for (CashFlowBank bank : getBanks()) {
+				if (bank.isEnabled() && bank.getId() != Integer.MIN_VALUE ) {
+					AbstractColumn bankColumn = ColumnBuilder.getNew()
+						.setCustomExpression(new BankCustomExpression(bank.getId()) )					
+						.setTitle(bank.getDescription())
+						.setWidth(78)
+						.addConditionalStyles(bankConditionalStyles)
+						.setHeaderStyle(headerStyle)
+						.build();
+					drb.addColumn(bankColumn);
+				}
+			}
+			drb.setPrintColumnNames(true)
+				.setIgnorePagination(true)
+				.setMargins(0, 0, 0, 0);
+			
+			
+			DynamicReport dr = drb.build();
+			dr.setWhenNoDataStyle(detailStyle);
+			JRDataSource ds = new JRBeanCollectionDataSource((Collection) getModel().getWrappedData());
+			JasperPrint jp = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds);
+			response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, "CashFlowForecast", MimeType.MIME_MS_EXCEL);
+			JRXlsExporter exporter = new JRXlsExporter();
+	        exporter.setParameter(JRExporterParameter.JASPER_PRINT, jp);
+	        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out); 
+	        exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+	        exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+	        exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
+	        exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE,Boolean.TRUE);
+			exporter.exportReport();
+		} catch (ColumnBuilderException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (IOException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (JRException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
+		}
+		return null;
+	}
+
+	public class BankCustomExpression implements CustomExpression {
+		private static final long serialVersionUID = 7368651157413691588L;
+		private Integer bankId;
+
+		public BankCustomExpression(Integer bankId) {
+			this.bankId = bankId;
+		}
+
+		@Override
+		public String getClassName() {
+			return Double.class.getName();
+		}
+
+		@Override
+		public Object evaluate(Map fields, Map variables, Map parameters) {
+			CashFlowReport to = (CashFlowReport) fields.get("to");
+			if (to.getMap().containsKey(bankId)) {
+				return to.getMap().get(bankId).getBalance();
+			}
+			return null;
+		}
 	}
 }
 

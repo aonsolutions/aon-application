@@ -294,7 +294,7 @@
 											<f:facet name="header">
 												<aon:outputText value="I" />
 											</f:facet>
-											<aon:div style="display:inline;cursor:pointer;"
+											<aon:div style="display:inline; cursor:pointer;"
 												rendered="#{controller.errorMessage != null}">
 												<aon:outputText value="&#160;" styleClass="aon-icon-exception"
 													style="padding-left:12px" />
@@ -302,7 +302,7 @@
 													<aon:outputText value="#{controller.errorMessage}" />
 												</rich:toolTip>
 											</aon:div>
-											<aon:div style="display:inline;cursor:pointer;"
+											<aon:div style="display:inline; cursor:pointer;"
 												rendered="#{to.checked and controller.errorMessage == null}">
 												<aon:outputText value="&#160;" styleClass="aon-icon-point-green"
 													style="padding-left:12px" rendered="#{to.exact}" />
@@ -480,7 +480,14 @@
 												rendered="#{(to.checked and to.showBankStatementLink) or (to.recorded and to.showAccountEntry)}" 
 												actionListener="#{controller.onHideBankStatementLink}"
 												reRender="#{dataTableId}" />
-										</aon:div>
+											<aon:div style="display:inline; cursor:pointer;" rendered="#{!empty to.comments}">
+												<aon:outputText value="&#160;" styleClass="aon-icon-comment-red" 
+													style="padding-left:30px" />
+												<rich:toolTip direction="bottom-left">
+													<aon:outputText value="#{to.comments}" />
+												</rich:toolTip>
+											</aon:div>
+ 										</aon:div>
 										<rich:subTable id="bankStatementLinkTable" 
 											rendered="#{to.checked and controller.showBankStatementLink}"
 											value="#{controller.bankStatementLinkList}" var="statementLink">

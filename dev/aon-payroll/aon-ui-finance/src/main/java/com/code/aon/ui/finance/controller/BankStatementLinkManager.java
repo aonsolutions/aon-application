@@ -1,14 +1,19 @@
 package com.code.aon.ui.finance.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import com.code.aon.account.Account;
+import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.BankConcept;
@@ -42,6 +47,9 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	private BankConcept bankConcept;
 	private Account account;
 	private Double amount;
+	private String comments;
+	private List<ITransferObject> entryDetailList;
+	private DataModel entryDetailModel;
 
 	public BankStatement getCurrentStatement() {
 		return currentStatement;
@@ -79,6 +87,30 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	}
 	public void setAmount(Double amount) {
 		this.amount = amount;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public List<ITransferObject> getEntryDetailList() {
+		return entryDetailList;
+	}
+	public void setEntryDetailList(List<ITransferObject> entryDetailList) {
+		this.entryDetailList = entryDetailList;
+	}
+
+	public DataModel getEntryDetailModel() {
+		if (entryDetailModel == null) {
+			entryDetailModel = new ListDataModel(entryDetailList);
+		}
+		return entryDetailModel;
+	}
+	public void setEntryDetailModel(DataModel model) {
+		this.entryDetailModel = model;
 	}
 
 	public boolean isBatchSource() {
@@ -403,6 +435,24 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		statement.setReliability(StatementReliability.VERY_HIGH);
 		statement.setStatus(StatementStatus.PENDING);
 		statementBean.update(statement);
+	}
+
+	public void onBindEntryDetail(ActionEvent event) throws ManagerBeanException {
+		BankStatementLinkController statementLinkList = (BankStatementLinkController)FormUtil.getController(BANK_STATEMENT_LINK_CONTROLLER_NAME);
+		for (ITransferObject ito : statementLinkList.getManagerBean().getList(statementLinkList.getCriteria())) {
+			BankStatementLink statementLink = (BankStatementLink)ito;
+			removeLink(statementLink);
+		}
+
+		AccountEntryDetail to = (AccountEntryDetail)getEntryDetailModel().getRowData();
+		BankStatementController statementController = (BankStatementController)FormUtil.getController(BANK_STATEMENT_CONTROLLER_NAME);
+		statementController.recordBankStatement(to.getAccountEntry(), getCurrentStatement());
+	}
+
+	public void onSaveComments(ActionEvent event) throws ManagerBeanException {
+		IManagerBean statementBean = BeanManager.getManagerBean(BankStatement.class);
+		getCurrentStatement().setComments(getComments());
+		statementBean.update(getCurrentStatement());
 	}
 
 }
