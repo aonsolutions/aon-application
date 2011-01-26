@@ -23,5 +23,15 @@ public interface ICommercialConstants {
 	String SELLER_MEDIA_CONTROLLER_NAME = "sellerMedia";
 	String SELLER_ADDRESS_CONTROLLER_NAME = "sellerAddress";
 	String COLLECTIONS_CONTROLLER_NAME = "commercialCollections";
+
+	// ************************************************************
+	// REPORT
+	// ************************************************************
+
+	String TARGET_LIST_DETAIL_EXCEL = "targetListDetailExcel";
+
+	String TARGET_LIST_DETAIL = "targetListDetail";
+
+	String TARGET_LIST = "targetList";	
 	
 }

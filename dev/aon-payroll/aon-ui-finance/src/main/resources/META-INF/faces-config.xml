@@ -2978,6 +2978,44 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************* CASH FLOW FORECAST  ***************** -->
+	<managed-bean>
+		<managed-bean-name>cashFlowForecast</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.CashFlowForecastController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.CashFlowForecast</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cashFlowForecast</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{cashFlowForecastListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>cashFlowForecastListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.CashFlowForecastControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- ************* CASH FLOW FORECAST REEPORT ***************** -->
+	<managed-bean>
+		<managed-bean-name>cashFlowForecastReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.CashFlowForecastReport
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
 	<!-- ========================================================== -->
@@ -3334,6 +3372,33 @@
 			<from-outcome>bankStatement_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/bankStatement/search.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>   
+	</navigation-rule>
+	   
+	<!-- =================== Cashflow Forecast ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>cashFlowForecast_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/cashFlowForecast/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>cashFlowForecast_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/cashFlowForecast/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>cashFlowForecast_form</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/cashFlowForecast/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
   
+	<!-- =================== Cashflow Forecast Report ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>cashFlowForecastReport_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/cashFlowForecast/report/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>cashFlowForecastReport_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/cashFlowForecast/report/list.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
 </faces-config>

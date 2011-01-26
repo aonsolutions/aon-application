@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{financeBundle.finance_cashflow_forecast_report_module}" />
+				<ui:param name="controller" value="#{cashFlowForecastReport}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="6" style="width: 100%; margin-top: 5px; margin-bottom: 5px;"
+					columnClasses="aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-100
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-100
+						,aon-panelGrid-even aon-width-150
+						,aon-panelGrid-even aon-width-auto">
+					<aon:outputText value="#{bundle.aon_date}"/>
+					<aon:outputText value="#{cashFlowForecastReport.toDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputText value="#{financeBundle.finance_cashflow_from_date}"/>
+					<aon:outputText value="#{cashFlowForecastReport.fromDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					
+					<aon:div>
+						<aon:outputText
+							rendered="#{cashFlowForecastReport.returnedFinanceIncluded}" 
+							value="[#{financeBundle.finance_cashflow_include_returned}]" />
+					</aon:div>
+
+					<aon:div>
+						<aon:outputText
+							rendered="#{cashFlowForecastReport.pendingFinanceIncluded}" 
+							value="[#{financeBundle.finance_cashflow_include_pending} " />
+						<aon:outputText value="#{cashFlowForecastReport.fromDate}"
+							rendered="#{cashFlowForecastReport.pendingFinanceIncluded}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						<aon:outputText
+							rendered="#{cashFlowForecastReport.pendingFinanceIncluded}" 
+							value="]" />
+					</aon:div>
+				</aon:panelGrid>
+			
+				<aon:dataTable value="#{cashFlowForecastReport.model}" var="to">
+					
+					<f:facet name="header">
+                        <rich:columnGroup>
+                            <aon:column style="font-size: 1em;" styleClass="aon-width-100">
+                                <aon:outputText value="#{bundle.aon_date}"/>
+                            </aon:column>
+                            <aon:column style="font-size: 1em;" styleClass="aon-width-25">
+                                <aon:outputText value="T"/>
+                            </aon:column>
+                            <aon:column style="font-size: 1em;" styleClass="aon-width-auto">
+								<aon:outputText value="#{bundle.aon_description}"/>
+                            </aon:column>
+                            <aon:column style="font-size: 1em;" styleClass="aon-width-100">
+								<aon:outputText value="#{financeBundle.finance_balance}"/>
+                            </aon:column>
+							<c:forEach items="#{cashFlowForecastReport.banks}" var="col">
+								<aon:column colspan="2" style="font-size: 1em;" styleClass="aon-width-200">
+									<aon:outputText value="#{col.description}" />
+								</aon:column>
+							</c:forEach>
+                        </rich:columnGroup>
+                    </f:facet>
+                    
+					<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100"
+							style="font-size: 0.9em;#{to.systemProperty?'background-color:inherit;font-weight:bold;':'font-weight:normal;'}">
+						<aon:outputText value="#{to.date}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+					
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-25 aon-nowrap"
+							style="font-size: 0.9em;#{to.systemProperty?'background-color:inherit;font-weight:bold;':'font-weight:normal;'}">
+						<aon:outputText value="#{to.type}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap"
+							style="font-size: 0.9em;#{to.systemProperty?'background-color:inherit;font-weight:bold;':'font-weight:normal;'}">
+						<aon:outputText value="#{to.description}">
+							<aon:abbreviateConverter maxWidth="40"/>
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100"
+							style="font-size: 0.9em;#{to.systemProperty?'background-color:inherit;font-weight:bold;':'font-weight:normal;'}">
+						<aon:outputText value="#{to.total}"
+							style="#{to.total &lt; 0?'color:red;':'color:inherit;'};font-weight:bold;">
+								<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:column>
+
+					<c:forEach items="#{cashFlowForecastReport.banks}" var="col" >
+						<aon:column	styleClass="aon-editDataTable-numberColumn aon-width-100"
+							style="font-size: 0.9em;#{to.systemProperty?'background-color:inherit;font-weight:bold;':'font-weight:normal;'}">
+							<aon:outputText value="#{to.map[col.id].amount}"
+								style="#{to.map[col.id].amount &lt; 0?'color:red;':'color:inherit;'} #{to.systemProperty?'font-weight:bold;':'font-weight:normal;'}"
+								rendered="#{to.map[col.id].amount != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:column>					
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100"
+							style="font-size: 0.9em;#{to.systemProperty?'background-color:inherit;font-weight:bold;':'font-weight:normal;'}">
+							<aon:outputText value="#{to.map[col.id].balance}"
+								style="#{to.map[col.id].balance &lt; 0?'color:red;':'color:inherit;'} #{to.systemProperty?'font-weight:bold;':'font-weight:normal;'}">
+									<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:column>					
+					</c:forEach>
+
+				</aon:dataTable>
+				
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
