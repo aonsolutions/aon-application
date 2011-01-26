@@ -123,6 +123,7 @@
 		<mapping class="com.code.aon.finance.BankConcept"/>
 		<mapping class="com.code.aon.finance.BankStatement"/>
 		<mapping class="com.code.aon.finance.BankStatementLink"/>
+		<mapping class="com.code.aon.finance.CashFlowForecast"/>
 		<mapping class="com.code.aon.finance.Creditor"/>
 		<mapping class="com.code.aon.finance.CustomerFee"/>
 		<mapping class="com.code.aon.finance.Finance"/>
