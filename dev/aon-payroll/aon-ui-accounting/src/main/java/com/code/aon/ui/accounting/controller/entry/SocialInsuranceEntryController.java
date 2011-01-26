@@ -34,6 +34,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -41,7 +42,6 @@ import com.code.aon.ui.util.AonUtil;
 public class SocialInsuranceEntryController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SocialInsuranceEntryController.class.getName());
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
 	private SocialInsuranceEntry entry;
 	private String navigationKey;
@@ -234,7 +234,7 @@ public class SocialInsuranceEntryController {
 	}
 
 	private void loadAccountEntryController(AccountEntry entry, AccountEntry adjust) throws ManagerBeanException {
-		AccountEntryController entryController = (AccountEntryController) FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		AccountEntryController entryController = (AccountEntryController) FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
 		Expression expr1 = ExpressionUtilities.getEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID),
 				entry.getId());

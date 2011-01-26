@@ -36,16 +36,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.lowagie.text.DocumentException;
 
 public class AnnualReportLauncher {
-	
-	private static final String EMPTY = "";
-	private static final String PIPE = "|";
-	private static final String ASTERISK = "*";
-	private static final String COMMA = ",";
 	
 	private AnnualReport annualReport;
 	private SummaryProviderParameters params;
@@ -109,36 +105,36 @@ public class AnnualReportLauncher {
 	
 	private void resolveList(List<AnnualReportDetail> list) throws ManagerBeanException {
 		for (AnnualReportDetail detail: list) {
-			if (StringUtils.contains(detail.getContent(), "#{")) {
+			if (StringUtils.contains(detail.getContent(), IAccountingConstants.OPEN_EXPRESSION)) {
 				detail.setContentResolved(resolve( detail.getContent() )); 
 			}
 		}
 	}
 
 	private String resolve(String content) {
-		String accounts = StringUtils.substringBetween(content, "#{","}#");
+		String accounts = StringUtils.substringBetween(content, IAccountingConstants.OPEN_EXPRESSION,IAccountingConstants.CLOSE_EXPRESSION);
 		if (accounts!= null) {
 			try {
 				StringBuilder accountExp = new StringBuilder();
-				String[] tokens = StringUtils.split(accounts,COMMA);
+				String[] tokens = StringUtils.split(accounts,IAccountingConstants.ASTERISK);
 				for (String token:tokens) {
 					token = token.trim();
 					if (StringUtils.isNotBlank(token)) {
-						accountExp.append(accountExp.length()>0?PIPE:EMPTY);
+						accountExp.append(accountExp.length()>0?IAccountingConstants.PIPE:IAccountingConstants.EMPTY);
 						accountExp.append(token);	
-						accountExp.append(ASTERISK);
+						accountExp.append(IAccountingConstants.ASTERISK);
 					}
 				}
 				Double amount = getAccountsAmount(accountExp.toString());
-				DecimalFormat formatter = new DecimalFormat("#,##0.00");
+				DecimalFormat formatter = new DecimalFormat(IAccountingConstants.DECIMAL_FORMAT_PATTERN);
 				String value = null;
 				try {
 					value = formatter.format(amount);	
 				} catch (NumberFormatException e) {
 					
 				}
-				String before = StringUtils.substringBefore(content, "#{");
-				String after  = StringUtils.substringAfter(content, "}#");
+				String before = StringUtils.substringBefore(content, IAccountingConstants.OPEN_EXPRESSION);
+				String after  = StringUtils.substringAfter(content, IAccountingConstants.CLOSE_EXPRESSION);
 				content = before + value + after;
 				content = resolve(content);
 			} catch (Throwable e) {

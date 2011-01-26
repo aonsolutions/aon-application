@@ -44,7 +44,7 @@
 						,aon-panelGrid-even aon-width-100
 						,aon-panelGrid-even aon-width-150
 						,aon-panelGrid-even aon-width-auto">
-					<aon:outputText value="#{bundle.aon_date}"/>
+					<aon:outputText value="#{financeBundle.finance_cashflow_to_date}"/>
 					<aon:outputText value="#{cashFlowForecastReport.toDate}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
@@ -57,26 +57,48 @@
 					</aon:outputText>
 					
 					<aon:div>
+						<aon:outputText value="[#{bundle.aon_yes} "
+							rendered="#{cashFlowForecastReport.returnedFinanceIncluded}"/> 
+						<aon:outputText value="[#{bundle.aon_no} "
+							rendered="#{!cashFlowForecastReport.returnedFinanceIncluded}"/> 
 						<aon:outputText
-							rendered="#{cashFlowForecastReport.returnedFinanceIncluded}" 
-							value="[#{financeBundle.finance_cashflow_include_returned}]" />
+							value="#{financeBundle.finance_cashflow_include_returned}]" />
 					</aon:div>
 
 					<aon:div>
+						<aon:outputText value="[#{bundle.aon_yes} "
+							rendered="#{cashFlowForecastReport.pendingFinanceIncluded}" />			
+						<aon:outputText value="[#{bundle.aon_no} "
+							rendered="#{!cashFlowForecastReport.pendingFinanceIncluded}" />			
 						<aon:outputText
-							rendered="#{cashFlowForecastReport.pendingFinanceIncluded}" 
-							value="[#{financeBundle.finance_cashflow_include_pending} " />
-						<aon:outputText value="#{cashFlowForecastReport.fromDate}"
-							rendered="#{cashFlowForecastReport.pendingFinanceIncluded}">
+							value="#{financeBundle.finance_cashflow_include_pending}" />
+						<aon:outputText value="#{cashFlowForecastReport.fromDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-						<aon:outputText
-							rendered="#{cashFlowForecastReport.pendingFinanceIncluded}" 
-							value="]" />
+						<aon:outputText value="]" />
 					</aon:div>
 				</aon:panelGrid>
-			
+				
+				<aon:div id="disabledBanks">
+					<aon:panelGrid columns="2" style="width: 100%; margin-top: 5px; margin-bottom: 5px;"
+						rendered="#{cashFlowForecastReport.anyBankDisabled}"
+						columnClasses="aon-panelGrid-odd aon-width-auto aon-text-right,
+									   aon-panelGrid-even aon-width-400">
+
+						<aon:outputText value="#{financeBundle.finance_cashflow_enable_bank}" />
+
+						<aon:div>
+							<aon:selectOneMenu value="#{cashFlowForecastReport.bankToEnable}">
+								<f:selectItems value="#{cashFlowForecastReport.disabledBankCollection}" />
+							</aon:selectOneMenu>
+							<aon:commandButton value="#{financeBundle.finance_show}"
+								actionListener="#{cashFlowForecastReport.onEnableBank}"
+								styleClass="aon-finding-toolbar-item aon-icon-refresh"/>
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>			
+
 				<aon:dataTable id="cashFlowForecastData" value="#{cashFlowForecastReport.model}" var="to">
 					
 					<f:facet name="header">
@@ -99,7 +121,7 @@
 							<c:forEach items="#{cashFlowForecastReport.banks}" var="col">
 								<aon:column style="font-size: 1em;" styleClass="aon-width-200">
 									<aon:commandLink 
-										styleClass="aon-dataTable-link" reRender="cashFlowForecastData"
+										styleClass="aon-dataTable-link" reRender="cashFlowForecastData,disabledBanks"
 										actionListener="#{cashFlowForecastReport.onDisableBank}"
 										title="Eliminar Columna">
 										<f:param name="bankId" value="#{col.id}"/>
@@ -113,7 +135,8 @@
 					<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100"
 							style="font-size: 0.9em;#{to.systemProperty?'background-color:inherit;font-weight:bold;':'font-weight:normal;'}
 									#{to.disabled?'text-decoration: line-through; color: #BBB;':''}">
-						<aon:outputText value="#{to.date}">
+
+						<aon:outputText value="#{to.date}" rendered="#{!to.undated}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
@@ -128,7 +151,7 @@
 							actionListener="#{cashFlowForecastReport.onShow}"
 							action="#{cashFlowForecastReport.showAction}"
 							style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"
-							title="#{to.disabled?'Tener en cuenta':'No tener en cuenta'}">
+							title="#{financeBundle.finance_details}">
 							<aon:outputText value="#{to.type}" />
 						</aon:commandLink>
 					</aon:column>
@@ -139,7 +162,7 @@
 							styleClass="aon-dataTable-link"
 							actionListener="#{cashFlowForecastReport.onSimulate}"
 							style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"
-							title="#{to.disabled?'Tener en cuenta':'No tener en cuenta'}">
+							title="#{to.disabled?(financeBundle.finance_enable):(financeBundle.finance_disable)}">
 							<aon:outputText value="#{to.description}">
 								<aon:abbreviateConverter maxWidth="40"/>
 							</aon:outputText>
@@ -151,7 +174,8 @@
 								#{to.amount &lt; 0?'color:inherit;':'color:blue;'} 
 								#{to.systemProperty?'font-weight:bold;':'font-weight:normal;'}
 								#{to.disabled?'text-decoration: line-through; color: #BBB;':''}">
-						<aon:outputText value="#{to.amount}" rendered="#{to.amount != 0}">
+						<aon:outputText value="#{to.amount}" rendered="#{to.amount != 0}"
+							title="#{to.bankDescription}">
 								<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>					

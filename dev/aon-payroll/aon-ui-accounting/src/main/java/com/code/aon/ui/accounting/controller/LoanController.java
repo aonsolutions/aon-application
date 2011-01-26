@@ -24,6 +24,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.report.StatementController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -31,8 +32,6 @@ import com.code.aon.ui.util.AonUtil;
 public class LoanController extends BasicController{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoanController.class.getName()); 
-
-	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 
 	public Account getRelatedAccount() throws ManagerBeanException {
 		Loan loan = (Loan) getTo();
@@ -80,7 +79,7 @@ public class LoanController extends BasicController{
 		try {
 			Loan loan = (Loan) getTo();
 			Account account = getRelatedAccount();
-			StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
+			StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onReset(event);
 			SummaryProviderParameters spp = new SummaryProviderParameters();
 			spp.setAccountExpression(account.getId());
@@ -89,19 +88,17 @@ public class LoanController extends BasicController{
 			spp.setToDate(new Date());
 			spp.setSecurityLevel(loan.getSecurityLevel());
 			c.setParams(spp);
-			c.setBackAction("loan_form");
-			
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
 			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
-			criteria.addExpression(alias, account.getId() + "*");
+			criteria.addExpression(alias, account.getId() + IAccountingConstants.ASTERISK);
 			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
-			
 			c.onSearch(event);
 			if (c.getModel().getRowCount() > 0) {
 				c.getModel().setRowIndex(0);
 				c.onSelect(event);
+				c.setBackAction(IAccountingConstants.LOAN_FORM_NAVKEY);
 			} else {
 				String msg = "No existen cuentas contables para la cuenta.";
 				AonUtil.addErrorMessage(msg);

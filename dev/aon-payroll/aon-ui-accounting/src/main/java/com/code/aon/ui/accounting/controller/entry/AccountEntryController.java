@@ -28,21 +28,19 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountEntryController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryController.class.getName());
-	private static final Double ZERO = new Double(0);
 	
 	private SpecialEntryControllerManager controllerManager;
-	private String backAction;
 	
 	private boolean updatable;
 	private boolean updatableViaWizard;
 	private boolean aonInvoice;
-//	private String documentNumber;
 	
 	private Double totalDebit;
 	private Double totalCredit;
@@ -231,30 +229,25 @@ public class AccountEntryController extends BasicController {
 		accept(event);
     }
     
-	public String getBackAction() {
-		return backAction;
-	}
-
-	public void setBackAction(String backAction) {
-		this.backAction = backAction;
-	}
-
-	public boolean isStatementAvailable() {
-		// Si se ha accedido al manto. de apuntes desde el extracto, se deshabilita 
-		// la opción de ir al extracto desde las líneas de apuntes, porque se  
-		// cambiaría el contenido del controlador del extracto. 
-		return getBackAction() == null || !("account_statement_list".equals(getBackAction()) );
-	}
-
 	public String backAction() {
-		String b = getBackAction();
+		String b = super.backAction();
 		setBackAction(null);
 		return b;
 	}
 	
+	public boolean isBackActionEnabled() {
+		return !(IAccountingConstants.ACCOUNT_ENTRY_LIST_NAVKEY.equals(super.backAction()));
+	}
+	public boolean isStatementAvailable() {
+		// Si se ha accedido al manto. de apuntes desde el extracto, se deshabilita 
+		// la opción de ir al extracto desde las líneas de apuntes, porque se  
+		// cambiaría el contenido del controlador del extracto. 
+		return !(IAccountingConstants.ACCOUNT_STMT_LIST_NAVKEY.equals(super.backAction()) );
+	}
+
 	public String searchAction() {
 		try {
-			return (getModel().getRowCount() > 0 )?"accountEntry_form":"accountEntry_search";
+			return (getModel().getRowCount() > 0 )?IAccountingConstants.ACCOUNT_ENTRY_FORM_NAVKEY:IAccountingConstants.ACCOUNT_ENTRY_SEARCH_NAVKEY;
 		} catch (ManagerBeanException e) {
 			String msg = "No se pudo realizar la búsqueda.";
 			AonUtil.addErrorMessage(msg);
@@ -281,18 +274,18 @@ public class AccountEntryController extends BasicController {
 				pl.add(Projection.sum(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT)));
 				pl.add(Projection.sum(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT)));
 				List dets = detailsBean.getList(pl, criteria);
-	        	setTotalDebit(ZERO);
-	        	setTotalCredit(ZERO);
+	        	setTotalDebit(IAccountingConstants.ZERO);
+	        	setTotalCredit(IAccountingConstants.ZERO);
 				if (dets.size() > 0) {
 					if (dets.get(0) != null) {
 						Object[] values = (Object[]) dets.get(0);
-						setTotalDebit(values[0] != null ? (Double) values[0]: ZERO );	
-						setTotalCredit(values[1] != null ? (Double) values[1]: ZERO );
+						setTotalDebit(values[0] != null ? (Double) values[0]: IAccountingConstants.ZERO );	
+						setTotalCredit(values[1] != null ? (Double) values[1]: IAccountingConstants.ZERO );
 					} 
 				}
 	        } catch (ManagerBeanException e) {
-	        	setTotalDebit(ZERO);
-	        	setTotalCredit(ZERO);
+	        	setTotalDebit(IAccountingConstants.ZERO);
+	        	setTotalCredit(IAccountingConstants.ZERO);
 	            LOGGER.error("Error getting Account Entry Details", e);
 	        }
         } else {

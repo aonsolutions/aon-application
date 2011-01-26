@@ -7,6 +7,7 @@
 
 	<ui:include src="/com/code/aon/ui/webmail/facelet/util/formInnerToolbar.xhtml" >
 		<ui:param name="skipSearchButton" value="#{true}" />
+		<ui:param name="skipSaveButton" value="#{!controller.termsOfServiceAccepted}" />
 	</ui:include>		
 
 	<aon:div styleClass="aon-scroll-area">
@@ -34,6 +35,10 @@
 			</aon:selectManyCheckbox>			
 
 		</aon:panelGrid>
+		
+		<ui:include src="/com/code/aon/ui/manager/facelet/manager/termsOfService.xhtml" >
+			<ui:param name="termsOfServiceURL" value="#{manager.properties.newDomainApplicationUserURL}" />
+		</ui:include>		
 
 		<c:if test="#{domainApplication.aonDB}">
 			<ui:include src="/com/code/aon/ui/manager/facelet/userScope/grid.xhtml" />

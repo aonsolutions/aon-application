@@ -18,14 +18,13 @@ import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class PeriodAmortizationController extends BasicController {
-
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
 	private Period period;
 	private double accumulated;
@@ -224,7 +223,7 @@ public class PeriodAmortizationController extends BasicController {
 		try {
 			AmortizationDetail detail = (AmortizationDetail) getModel().getRowData();
 			AccountEntryController entryController = (AccountEntryController) FormUtil
-					.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
 					IAccountingAlias.ACCOUNT_ENTRY_ID), detail.getAccountEntry().getId());
@@ -232,7 +231,7 @@ public class PeriodAmortizationController extends BasicController {
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
 			entryController.onSelect(null);
-			entryController.setBackAction("periodAmortization_list");
+			entryController.setBackAction(IAccountingConstants.PERIOD_AMORTIZATION_LIST_NAVKEY);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al cargar el apunte.";
 			AonUtil.addErrorMessage(msg);

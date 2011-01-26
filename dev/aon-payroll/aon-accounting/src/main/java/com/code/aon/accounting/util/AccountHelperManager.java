@@ -53,7 +53,8 @@ public class AccountHelperManager {
 	}
 	
 	private Integer updateOccurrence(Account account, Account balancingAccount, int i) throws ManagerBeanException {
-		if (account != null && balancingAccount != null) {
+		if (account != null && account.getId() != null && 
+			balancingAccount != null && balancingAccount.getId() != null) {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(getAccountAlias(), account.getId());
 			criteria.addEqualExpression(getBalancingAccountAlias(), balancingAccount.getId());
@@ -102,7 +103,6 @@ public class AccountHelperManager {
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
         Query query = session.createQuery(select);
         List list = query.list();
-        int count = list.size();
         int i = 0;
         Iterator iterator = list.iterator();
         while (iterator.hasNext()) {

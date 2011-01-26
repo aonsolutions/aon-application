@@ -127,6 +127,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		if ( applications.isEmpty() ) {
 			LOGGER.warn( "User not registered in any application: {}", user.getDN() );
 		}
+		testWebmail(user, domain);
 	}
 
 	private void testDB( Entry db, String domain ) {
@@ -201,38 +202,60 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
     		checkName(memberName, SIGNATURE, mailAccount.getDN(), signaturesDN);    	
     	}
     }
-    
-    private void testWebmail( String domain ) {
-    	Name usersDN = NameResolver.getDomainApplicationUsersDN(domain, AON_WEBMAIL);
-		List<Entry> users = util.getList(usersDN, DOMAIN_APPLICATION_USER, COMMON_NAME_ATTRIBUTE);
-		for( Entry user : users ) {
-			String name = user.getAsString(COMMON_NAME_ATTRIBUTE);
-			Name userDN = NameResolver.getUserDN(domain, name);
-			if ( util.exists(userDN, USER) ) {
-				Name addressbook = NameResolver.getUserAddressBookDN(domain, name);
-				ensureOrganizationalUnit( addressbook );
-				
-				Name signaturesDN = NameResolver.getUserSignaturesDN(domain, name);
-				ensureOrganizationalUnit( signaturesDN );
-				List<Entry> signatures = util.getList(signaturesDN, SIGNATURE);
-				if ( signatures.isEmpty() ) {
-					LOGGER.error( "User {} with signatures empty", userDN );	
-				}
-				
-				Name accounts = NameResolver.getUserAccountsDN(domain, name);
-				ensureOrganizationalUnit( accounts );
-				List<Entry> mailAccounts = util.getList(accounts, MAIL_ACCOUNT);
-				if ( mailAccounts.isEmpty() ) {
-					LOGGER.error( "User {} with mail accounts empty", userDN );	
-				} else {
-					for( Entry mailAccount : mailAccounts ) {
-						testMailAccount(mailAccount, util.getFullDN(signaturesDN));
-					}	
-				}				
-			}
-		}    	
+
+    private void testContact( Entry contact, Name addressbookDN ) {
+    	if ( contact.containsKey(MEMBER_ATTRIBUTE) ) {
+        	for( Object member : contact.get(MEMBER_ATTRIBUTE) ) {
+        		Name memberName = NameResolver.getName( member.toString() );
+        		checkName(memberName, CONTACT, contact.getDN(), addressbookDN);
+        	}
+    	}
     }
-	
+    
+    private void testWebmail( Entry user, String domain ) {
+    	String name = user.getAsString(USER_ID_ATTRIBUTE);
+
+		Name webmail = NameResolver.getDomainApplicationUserDN(domain, AON_WEBMAIL, name);
+		boolean registered = util.exists(webmail, DOMAIN_APPLICATION_USER);
+    	
+		Name addressbook = NameResolver.getUserAddressBookDN(domain, name);
+		if ( registered ) {
+			ensureOrganizationalUnit( addressbook );
+		}
+		if ( util.exists(addressbook, ORGANIZATIONAL_UNIT) ) {
+			List<Entry> contacts = util.getList(addressbook, CONTACT);
+			for( Entry contact : contacts ) {
+				testContact(contact, util.getFullDN(addressbook));
+			}	
+		}
+		
+		Name signaturesDN = NameResolver.getUserSignaturesDN(domain, name);
+		if ( registered ) {
+			ensureOrganizationalUnit( signaturesDN );
+		}
+		if ( util.exists(signaturesDN, ORGANIZATIONAL_UNIT) ) {
+			List<Entry> signatures = util.getList(signaturesDN, SIGNATURE);
+			if ( signatures.isEmpty() && registered ) {
+				LOGGER.error( "User {} with signatures empty", user.getDN() );	
+			}			
+		}
+		
+		Name accounts = NameResolver.getUserAccountsDN(domain, name);
+		if ( registered ) {
+			ensureOrganizationalUnit( accounts );
+		}
+		if ( util.exists(accounts, ORGANIZATIONAL_UNIT) ) {
+			List<Entry> mailAccounts = util.getList(accounts, MAIL_ACCOUNT);
+			if ( mailAccounts.isEmpty() && registered ) {
+				LOGGER.error( "User {} with mail accounts empty", user.getDN() );	
+			} else {
+				for( Entry mailAccount : mailAccounts ) {
+					testMailAccount(mailAccount, util.getFullDN(signaturesDN));
+				}	
+			}
+		}
+    }
+    
     private void testDomain( Entry domain ) {
     	String name = domain.getAsString(COMMON_NAME_ATTRIBUTE);
     	LOGGER.info( "Start validate domain {}", name );
@@ -260,11 +283,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		for( Entry application : applications ) {
 			testDomainApplication( application, name );
 		}		
-		
-		Name webmail = NameResolver.getDomainApplicationDN(name, AON_WEBMAIL);
-		if ( util.exists(webmail, DOMAIN_APPLICATION) ) {
-			testWebmail( name );
-		}
+
 		LOGGER.info( "End validate domain {}", name );
     }
 	

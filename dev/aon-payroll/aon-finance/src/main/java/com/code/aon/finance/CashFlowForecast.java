@@ -219,8 +219,8 @@ public class CashFlowForecast implements ITransferObject {
 	
 	@Transient
 	public boolean isUndated() {
-		return !(january && february && march && april && may && june && july && 
-				august && september && october && november && december);
+		return (!january && !february && !march && !april && !may && !june && !july && 
+				!august && !september && !october && !november && !december);
 	}
 
 	@Transient
