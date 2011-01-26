@@ -645,10 +645,14 @@ public class BankStatementController extends BasicController implements IFinance
 			addMessage("Cuenta Contable: Error de Validación: Valor es necesario.");
 			throw new AbortProcessingException();
 		}
+		if (!getAccount().isEntryEnabled()) {
+			addMessage("La Cuenta Contable " + getAccount().getId() + " no permite apuntes.");
+			throw new AbortProcessingException();
+		}
 
 		for (BankStatement statement : getCheckedBankStatement()) {
 			if (statement.isPending()) {
-				getBankStatementLinkManager().addLink(statement, getAccount());
+				getBankStatementLinkManager().addLink(statement, getAccount(), statement.getAmount());
 				getBankStatementLinkManager().checkBankStatement(statement, StatementReliability.VERY_HIGH);
 				getErrors().remove(statement.getId());
 			}
@@ -666,7 +670,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 		for (BankStatement statement : getCheckedBankStatement()) {
 			if (statement.isPending()) {
-				getBankStatementLinkManager().addLink(statement, getBankConcept());
+				getBankStatementLinkManager().addLink(statement, getBankConcept(), statement.getAmount());
 				getBankStatementLinkManager().checkBankStatement(statement, StatementReliability.VERY_HIGH);
 				getErrors().remove(statement.getId());
 			}
@@ -1045,7 +1049,6 @@ public class BankStatementController extends BasicController implements IFinance
 			criteria.setOrderByList(trackingList.getOrderList());
 			trackingList.setCriteria(criteria);
 			trackingList.onSearch(null);
-
 		} else {
 			FBatchListController batchList = (FBatchListController)FormUtil.getController(FINANCE_BATCH_LIST_CONTROLLER_NAME);
 			batchList.onEditSearch(null);
@@ -1061,8 +1064,11 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 
         getBankStatementLinkManager().setCurrentStatement(to);
+        if (statementLinkList.getRowCount() > 0) {
+        	getBankStatementLinkManager().setStatementLinkTab();
+        }
+        getBankStatementLinkManager().setAmountPending();
         getErrors().remove(to.getId());
-		//getBankStatementLinkManager().setSelectedTab((to.getCommonConcept() == StatementConcept.COLLECTION_BATCH) ? "fBatchLinkTab" : "financeLinkTab");
 	}
 
 	public void removeLinks(BankStatement statement) throws ManagerBeanException {
@@ -1134,6 +1140,7 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void onRecordLinks(ActionEvent event) throws ManagerBeanException {
 		for (BankStatement statement : getCheckedBankStatement()) {
 			if (statement.isChecked()) {
@@ -1166,12 +1173,12 @@ public class BankStatementController extends BasicController implements IFinance
 							getErrors().put(statement.getId(), "La Remesa " + batch.getId() + " ya esta Contabilizada.");
 						}
 					} else if (statementLink.getSource() == StatementLinkSource.BANK_CONCEPT) {
-						IManagerBean conceptBean = BeanManager.getManagerBean(BankConceptAccount.class);
-						String conceptAlias = conceptBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID);
+						IManagerBean conceptAccountBean = BeanManager.getManagerBean(BankConceptAccount.class);
+						String conceptAlias = conceptAccountBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID);
 						BankConcept concept = (BankConcept)statementLink.getSourceTo();
 						Criteria criteria = new Criteria();
 						criteria.addEqualExpression(conceptAlias, concept.getId());
-						Iterator<ITransferObject> iterator = conceptBean.getList(criteria).iterator();
+						Iterator<ITransferObject> iterator = conceptAccountBean.getList(criteria).iterator();
 						if (iterator.hasNext()) {
 							BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
 							accountMap.put(conceptAccount.getAccount(), new Double(statementLink.getAmount()));
@@ -1188,6 +1195,7 @@ public class BankStatementController extends BasicController implements IFinance
 						getErrors().put(statement.getId(), "El Importe de la línea del Extracto no cuadra con la suma de los Detalles del mismo.");
 					} else {
 						FinanceRecordingTo recordingTo = new FinanceRecordingTo();
+						recordingTo.setType((statement.isPayment()) ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
 						recordingTo.setDate(statement.getOperationDate());
 						recordingTo.setPaymentAccount(getWriter().obtainPaymentAccount(statement.getRegistryBank(), null));
 						recordingTo.setBalancingConcept(StringUtils.abbreviate(statement.getDescription(), 32));
@@ -1196,9 +1204,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 						AccountEntry entry = null;
 						if (financeTrackingMode) {
-							if (statement.getCommonConcept() != StatementConcept.RETURNED) {
-								recordingTo.setType((statement.isPayment()) ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
-							} else {
+							if (statement.getCommonConcept() == StatementConcept.RETURNED) {
 								recordingTo.setType((statement.isPayment()) ? AccountEntryType.RETURNED_COLLECTION : AccountEntryType.RETURNED_PAYMENT);
 							}
 							recordingTo.setFinanceTrackingList(financeTrackingList);
@@ -1208,7 +1214,9 @@ public class BankStatementController extends BasicController implements IFinance
 								getErrors().put(statement.getId(), "No puede haber más de una Remesa en la misma línea del Extracto.");
 							} else {
 								FinanceBatch fBatch = financeBatchList.get(0);
-								getWriter().recordFBatch(fBatch, statement.getOperationDate());
+								recordingTo.setBalancingConcept(fBatch.getDescription());
+								recordingTo.setFBatchDetailList(fBatch.getDetailList());
+								entry = getWriter().recordFBatch(recordingTo, fBatch, entry);
 							}
 						} else {
 							recordingTo.setType(AccountEntryType.MANUAL);
