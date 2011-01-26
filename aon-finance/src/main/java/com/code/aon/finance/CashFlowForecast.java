@@ -218,8 +218,45 @@ public class CashFlowForecast implements ITransferObject {
 	}
 	
 	@Transient
+	public boolean isUndated() {
+		return !(january && february && march && april && may && june && july && 
+				august && september && october && november && december);
+	}
+
+	@Transient
 	public boolean[] getMonths() {
 		return new boolean[]{january,february,march,april,may,june,july,august,september,october,november,december};
+	}
+	@Transient
+	public void setMonths(boolean[] months) {
+		setJanuary(months[0]);
+		setFebruary(months[1]);
+		setMarch(months[2]);
+		setApril(months[3]);
+		setMay(months[4]);
+		setJune(months[5]);
+		setJuly(months[6]);
+		setAugust(months[7]);
+		setSeptember(months[8]);
+		setOctober(months[9]);
+		setNovember(months[10]);
+		setDecember(months[11]);
+	}
+
+	@Transient
+	public void initializeMonths() {
+		setJanuary(false);
+		setFebruary(false);
+		setMarch(false);
+		setApril(false);
+		setMay(false);
+		setJune(false);
+		setJuly(false);
+		setAugust(false);
+		setSeptember(false);
+		setOctober(false);
+		setNovember(false);
+		setDecember(false);
 	}
 
 	@Override

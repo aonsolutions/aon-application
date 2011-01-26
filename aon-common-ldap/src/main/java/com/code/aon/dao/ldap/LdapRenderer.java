@@ -1,5 +1,8 @@
 package com.code.aon.dao.ldap;
 
+import java.util.Date;
+
+import com.code.aon.ldap.Entry;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
@@ -92,14 +95,21 @@ public class LdapRenderer implements CriterionVisitor {
 	}
 
 	public void visitConstantExpression(ConstantExpression expression) {
-		String value = expression.getData().toString();
-		if ( value.indexOf("_") != -1 ) {
-			this.forceLike = true;
+		Object data = expression.getData();
+		if ( data instanceof Boolean ) {
+			out.append( Entry.convertToString((Boolean) data) );	
+		} else if ( data instanceof Date ) {
+			out.append( Entry.convertToString((Date) data) );
+		} else {
+			String value = expression.getData().toString();
+			if ( value.indexOf("_") != -1 ) {
+				this.forceLike = true;
+			}
+			if ( value.indexOf("%") != -1 ) {
+				value = value.replace('%', '*');
+			}
+			out.append( value );			
 		}
-		if ( value.indexOf("%") != -1 ) {
-			value = value.replace('%', '*');
-		}
-		out.append( value );
 	}
 
 	public void visitBetweenExpression(BetweenExpression expression) {

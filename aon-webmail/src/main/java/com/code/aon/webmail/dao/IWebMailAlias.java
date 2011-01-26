@@ -136,7 +136,6 @@ public interface IWebMailAlias {
 	*/
 	String CONTACT_CELLULAR_PHONE = "Contact_cellularPhone";
 	
-	
 	/**
 	* Alias value: Contact_city
 	* Hibernate value: Contact.city
@@ -145,9 +144,15 @@ public interface IWebMailAlias {
 	
 	/**
 	* Alias value: Contact_contacts
-	* Hibernate value: Contact.member
+	* Hibernate value: Contact.contacts
 	*/
 	String CONTACT_CONTACTS = "Contact_contacts";
+
+	/**
+	* Alias value: Contact_contactGroup
+	* Hibernate value: Contact.contactGroup
+	*/
+	String CONTACT_CONTACT_GROUP = "Contact_contactGroup";
 	
 	/**
 	* Alias value: Contact_displayName
@@ -278,6 +283,13 @@ public interface IWebMailAlias {
 	*/
 	String CONTACT_SURNAME = "Contact_surname";
 	
+
+	/**
+	* Alias value: Contact_title
+	* Hibernate value: Contact.title
+	*/
+	String CONTACT_TITLE = "Contact_title";
+
 	
 	/**
 	* Alias value: Contact_web

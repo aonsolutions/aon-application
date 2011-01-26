@@ -36,6 +36,13 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 	}
 	
 	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainUserController duc = (DomainUserController) event.getController();
+		duc.setTermsOfServiceAccepted(false);
+	}
+	
+	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();
@@ -49,16 +56,31 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 		DomainUser user = duc.getDomainUser();
 		try {		
 			duc.registerUserInApplication(user, AON_DESKTOP, USUARIO_PROFILE);
-			duc.createUserWebmailDefaultData(user);
 			duc.registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
-			duc.setWebmail(true);
 			duc.registerScope(user, GENERAL_SCOPE);
+			duc.createMailAccount(user);
+			duc.createUserWebmailDefaultData(user);
+			duc.setWebmail(true);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
 		getManager().getLogger().domainUserAddded(user);
 		updateWebmail(user);
+	}
+	
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainUserController duc = (DomainUserController) event.getController();
+		DomainUser user = duc.getDomainUser();
+		try {
+			duc.removeDomainApplicationsUser(user);
+			duc.removeWebmailData(user);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
 	}
 
 	@Override
@@ -67,11 +89,12 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 		DomainUserController duc = (DomainUserController) event.getController();
 		DomainUser user = duc.getDomainUser();
 		try {
-			duc.removeDomainApplicationsUser(user);
+			duc.deactiveDBUser(user);
+			duc.removeMailAccount(user);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
-		}		
+		}
 		getManager().getLogger().domainUserdRemoved(user);
 	}
 

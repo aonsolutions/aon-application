@@ -45,7 +45,12 @@
 						required="true" cols="80" rows="5" >
 						<f:validateLength maximum="2048" />
 					</aon:inputTextarea>
-					
+
+					<aon:outputLabel for="Applicaiton_contratable"
+						value="#{managerBundle.manager_application_contratable}" />
+	                <aon:selectBooleanCheckbox id="Applicaiton_contratable"
+						value="#{aonApplication.to.contratable}"/>						
+										
 				</aon:panelGrid>
 								
 				<aon:panelTabSet rendered="#{!aonApplication.new}"

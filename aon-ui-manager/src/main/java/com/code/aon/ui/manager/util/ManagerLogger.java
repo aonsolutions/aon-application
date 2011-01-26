@@ -14,6 +14,7 @@ import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.manager.Domain;
+import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.ui.util.AonUtil;
@@ -70,6 +71,16 @@ public class ManagerLogger {
 
 	public void domainRemoved( Domain domain ) {
 		String subject = "REMOVED: Domain " + domain.getCommonName();
+		sendEmail( subject, getContent() );
+	}	
+
+	public void domainApplicationAddded( DomainApplication da ) {
+		String subject = "NEW: Application " + da.getCommonName() + " in Domain " + da.getDomain();
+		sendEmail( subject, getContent() );
+	}
+
+	public void domainApplicationRemoved( DomainApplication da ) {
+		String subject = "REMOVED: Application " + da.getCommonName() + " in Domain " + da.getDomain();
 		sendEmail( subject, getContent() );
 	}	
 	

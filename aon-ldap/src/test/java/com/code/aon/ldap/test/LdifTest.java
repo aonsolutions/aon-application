@@ -99,6 +99,7 @@ public class LdifTest implements IAonObjectClasses, ILdapConstants {
     	return false;
     }
 
+    @Test    
     public void testLdif() {
     	StopWatch sw = new StopWatch();
     	sw.start();
@@ -123,7 +124,6 @@ public class LdifTest implements IAonObjectClasses, ILdapConstants {
 		LOGGER.info( "Total time: " + sw );
     }
 
-    @Test
     public void importLDIF() {
     	StopWatch sw = new StopWatch();
     	cleanTree();

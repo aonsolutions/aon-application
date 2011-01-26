@@ -43,6 +43,14 @@
 							</f:facet>
 							<aon:outputText value="#{to.description}"/>
 						</aon:column>
+
+						<aon:column styleClass="aon-width-50 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{managerBundle.manager_application_contratable}" />
+							</f:facet>
+							<aon:outputText value="&#160;"
+								styleClass="#{(to.contratable)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" />							
+						</aon:column>
 	
 					</ui:define>
 				</ui:decorate>
