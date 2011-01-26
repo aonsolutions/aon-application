@@ -36,4 +36,6 @@ public class ClickAccountTestCase extends SeleneseTestCase {
 	public void tearDown() throws Exception {
 		selenium.stop();
 	}
+
+
 }
