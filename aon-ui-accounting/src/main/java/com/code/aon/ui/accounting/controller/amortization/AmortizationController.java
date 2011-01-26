@@ -8,6 +8,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Amortization;
@@ -164,4 +166,49 @@ public class AmortizationController extends BasicController {
 
 	}
 	
+	public boolean isFixedAssetAccountSynchronizable() {
+		Amortization to = (Amortization) getTo();
+		return isAccountSynchronizable(to.getFixedAssetAccount(), IAccountingConstants.EMPTY);
+	}
+	public boolean isAccumulatedAccountSynchronizable() {
+		Amortization to = (Amortization) getTo();
+		return isAccountSynchronizable(to.getAccumulatedAccount(), IAccountingConstants.ACCUMULATED_ACCOUNT_PREFIX);
+	}
+	public boolean isAllocationAccountSynchronizable() {
+		Amortization to = (Amortization) getTo();
+		return isAccountSynchronizable(to.getAllocationAccount(), IAccountingConstants.ALLOCATION_ACCOUNT_PREFIX);
+	}
+	public boolean isAccountSynchronizable(Account account, String prefix) {
+		Amortization to = (Amortization) getTo();
+		if (account == null || account.getId() == null ||
+			StringUtils.equals(prefix + to.getDescription(), account.getDescription())) {
+			return false;
+		}
+		return true;
+	}
+		
+	public void onFixedAssetAccountSynchronize(ActionEvent event) {
+		Amortization to = (Amortization) getTo();
+		to.setFixedAssetAccount( onAccountSynchronize(to.getFixedAssetAccount(), IAccountingConstants.EMPTY));
+	}
+	public void onAccumulatedAccountSynchronize(ActionEvent event) {
+		Amortization to = (Amortization) getTo();
+		to.setAccumulatedAccount( onAccountSynchronize(to.getAccumulatedAccount(),IAccountingConstants.ACCUMULATED_ACCOUNT_PREFIX));
+	}
+	public void onAllocationAccountSynchronize(ActionEvent event) {
+		Amortization to = (Amortization) getTo();
+		to.setAllocationAccount( onAccountSynchronize(to.getAllocationAccount(),IAccountingConstants.ALLOCATION_ACCOUNT_PREFIX));
+	}
+	public Account onAccountSynchronize(Account account,String prefix) {
+		try {
+			Amortization to = (Amortization) getTo();
+			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+			account.setDescription(prefix + to.getDescription());
+			return (Account) accountBean.update(account);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo sincronizar una cuenta contable. [" + e.getMessage() + "]";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}		
+	}
 }

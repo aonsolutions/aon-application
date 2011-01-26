@@ -1,7 +1,5 @@
 package com.code.aon.accounting.event;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.account.Account;
 import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Amortization;
@@ -63,26 +61,9 @@ public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAda
 
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-		try {
-			Amortization a = (Amortization) evt.getTo();
-			if (!StringUtils.equals(a.getDescription(), a.getFixedAssetAccount().getDescription())) {
-				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-				
-				a.getFixedAssetAccount().setDescription(a.getDescription());
-				accountBean.update(a.getFixedAssetAccount());
-				
-				a.getAccumulatedAccount().setDescription("Amortización Acumulada " + a.getDescription());
-				accountBean.update(a.getAccumulatedAccount());
-				
-				a.getAllocationAccount().setDescription("Amortización " + a.getDescription());
-				accountBean.update(a.getAllocationAccount());
-			}
-			if (a.getSecurityLevel() == null) {
-				a.setSecurityLevel( SecurityLevel.OFFICIAL );
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		Amortization a = (Amortization) evt.getTo();
+		if (a.getSecurityLevel() == null) {
+			a.setSecurityLevel( SecurityLevel.OFFICIAL );
 		}
 	}
 
