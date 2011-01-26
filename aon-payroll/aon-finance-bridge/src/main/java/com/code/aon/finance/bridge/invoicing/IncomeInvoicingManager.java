@@ -44,10 +44,13 @@ public class IncomeInvoicingManager {
 		updateIncomeStatus(income);
 		Invoice invoice = createInvoice(income, referenceCode, issueDate);
 		createInvoiceDetails(invoice, income);
-		if (income.getPayMethod() != null && income.getPayMethod().getId() != null) {
-			getFinanceGenerator().generateFinances(invoice, income, getPriceStrategy().getTotalPrice(invoice, invoice), true);
-		} else {
-			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice), true);
+		double invoiceTotal = getPriceStrategy().getTotalPrice(invoice, invoice);
+		if (invoiceTotal > 0) {
+			if (income.getPayMethod() != null && income.getPayMethod().getId() != null) {
+				getFinanceGenerator().generateFinances(invoice, income, invoiceTotal, true);
+			} else {
+				getFinanceGenerator().generateFinances(invoice, invoiceTotal, true);
+			}
 		}
 		return invoice;
 	}

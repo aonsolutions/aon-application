@@ -462,7 +462,7 @@
 											<aon:commandButton id="addLink"
 												value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
 												title="#{financeBundle.finance_bank_statement_check_manual}"
-												rendered="#{to.pending}"
+												rendered="#{!to.recorded}"
 												actionListener="#{controller.onAddLinkShow}"
 												reRender="showLinkWindow">
 												<f:setPropertyActionListener target="#{controller.showLinkWindow}"
@@ -599,7 +599,9 @@
 			</aon:div>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalImport.xhtml" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalLink.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalLink.xhtml">
+			<ui:param name="linkManager" value="#{bankStatement.bankStatementLinkManager}" />
+		</ui:include>
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 
 	</ui:define>
