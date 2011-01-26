@@ -15,9 +15,9 @@
 					<ui:param name="controller" value="#{target}"/>
 				</ui:include>
 				<c:if test="#{aonConfiguration.bean.target.showSearchOnlyCustomers}">
-					<aon:outputLabel for="MarketingTarget_customer"
+					<aon:outputLabel for="Target_customer"
 						value="#{customerBundle.customer_customer}" />
-					<aon:selectOneMenu id="MarketingTarget_customer" 
+					<aon:selectOneMenu id="Target_customer" 
 						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem value="#{null}" itemLabel="" />
 						<f:selectItem itemValue="#{true}" itemLabel="#{bundle.aon_yes}" />

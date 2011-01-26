@@ -14,12 +14,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.Advertising;
+import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.Registry;
 
@@ -34,8 +34,6 @@ public class MarketingTarget implements ITransferObject {
 
 	/** The target. */
 	private Target target;	
-	
-	private boolean customer;
 	
 	/** The sellers. */
 	private Set<TargetProfile> profiles = new HashSet<TargetProfile>();
@@ -130,6 +128,14 @@ public class MarketingTarget implements ITransferObject {
 		getTarget().setAdvertising(advertising);
 	}
 	
+	public TargetStatus getStatus() {
+        return getTarget().getStatus();
+    }
+
+    public void setStatus(TargetStatus status) {
+    	getTarget().setStatus(status);
+    }
+	
 	
 	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
 	public Set<TargetProfile> getProfiles() {
@@ -140,13 +146,4 @@ public class MarketingTarget implements ITransferObject {
 		this.profiles = profiles;
 	}
 
-	@Formula("(select COUNT(*) from customer c where registry = c.registry)")
-	public boolean isCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(boolean customer) {
-		this.customer = customer;
-	}
-	
 }
