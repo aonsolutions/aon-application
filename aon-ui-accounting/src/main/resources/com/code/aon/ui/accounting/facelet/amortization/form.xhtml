@@ -105,13 +105,9 @@
 
 					<aon:outputText
 						value="#{accountingBundle.accounting_fixed_asset_account}" />
-					<aon:panelGroup id="fixedAssetAccount">
+					<aon:panelGroup id="fixedAssetAccount" styleClass="aon-nowrap">
 						<aon:outputText rendered="#{!amortization.new}"
 							value="#{amortization.to.fixedAssetAccount.fullDescription}" />
-						<!-- 
-						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
-							value="#{amortization.to.amortizationType.fixedAssetAccount.fullDescription}" />
-						-->
 						<aon:selectOneMenu id="Amortization_fixedAssetAccount"
 							disabled="#{!amortization.new}"
 							rendered="#{amortization.new and amortization.to.amortizationType.id != null}"
@@ -121,6 +117,16 @@
 						</aon:selectOneMenu>
 						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id == null}"
 							value="&#160;" />
+						<aon:commandButton
+							value="&#160;"
+							title="#{accountBundle.account_synchronize}"
+							style="border: none;width:10px;"
+							styleClass="aon-finding-toolbar-item aon-icon-transfer"
+							onclick="if (!confirm('#{accountBundle.account_synchronize}?')){ return false;}"
+							rendered="#{amortization.fixedAssetAccountSynchronizable}"
+							reRender="AmortizationData"
+							actionListener="#{amortization.onFixedAssetAccountSynchronize}">
+						</aon:commandButton>
 					</aon:panelGroup>
 						
 
@@ -136,7 +142,7 @@
 
 					<aon:outputText
 						value="#{accountingBundle.accounting_accumulated_account}" />
-					<aon:panelGroup id="accumulatedAccount">
+					<aon:panelGroup id="accumulatedAccount" styleClass="aon-nowrap">
 						<aon:outputText rendered="#{!amortization.new}"
 							value="#{amortization.to.accumulatedAccount.fullDescription}" />
 						<aon:selectOneMenu id="Amortization_accumulatedAccount"
@@ -148,6 +154,16 @@
 						</aon:selectOneMenu>
 						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id == null}"
 							value="&#160;" />
+						<aon:commandButton
+							value="&#160;"
+							title="#{accountBundle.account_synchronize}"
+							onclick="if (!confirm('#{accountBundle.account_synchronize}?')){ return false;}"
+							style="border: none;width:10px;"
+							styleClass="aon-finding-toolbar-item aon-icon-transfer"
+							rendered="#{amortization.accumulatedAccountSynchronizable}"
+							reRender="AmortizationData"
+							actionListener="#{amortization.onAccumulatedAccountSynchronize}">
+						</aon:commandButton>
 					</aon:panelGroup>
 
 
@@ -166,7 +182,7 @@
 
 					<aon:outputText
 						value="#{accountingBundle.accounting_allocation_account}" />
-					<aon:panelGroup id="allocationAccount">
+					<aon:panelGroup id="allocationAccount" styleClass="aon-nowrap">
 						<aon:outputText rendered="#{!amortization.new}"
 							value="#{amortization.to.allocationAccount.fullDescription}" />
  						<aon:selectOneMenu id="Amortization_allocationAccount"
@@ -178,6 +194,16 @@
 						</aon:selectOneMenu>
 						<aon:outputText rendered="#{amortization.new and amortization.to.amortizationType.id == null}"
 							value="&#160;" />
+						<aon:commandButton
+							value="&#160;"
+							title="#{accountBundle.account_synchronize}"
+							onclick="if (!confirm('#{accountBundle.account_synchronize}?')){ return false;}"
+							style="border: none;width:10px;"
+							styleClass="aon-finding-toolbar-item aon-icon-transfer"
+							rendered="#{amortization.allocationAccountSynchronizable}"
+							reRender="AmortizationData"
+							actionListener="#{amortization.onAllocationAccountSynchronize}">
+						</aon:commandButton>
 					</aon:panelGroup>
 
 					<aon:outputText
