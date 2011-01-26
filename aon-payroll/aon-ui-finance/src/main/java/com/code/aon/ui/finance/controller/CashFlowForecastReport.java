@@ -9,11 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -30,6 +34,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.event.CashFlowForecastControllerListener;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -103,13 +109,14 @@ public class CashFlowForecastReport {
 			banks = new LinkedList<CashFlowBank>();
 			CashFlowBank sa = new CashFlowBank();
 			sa.setId(Integer.MIN_VALUE);
-			sa.setDescription("SIN ASIGNAR");
+			sa.setDescription("Sin asignar / otros");
 			sa.setEnabled(true);
 			sa.setBalance(0);
+			sa.setInitialBalance(0);
 			banks.add(sa);
 			for (CashFlowBank bank: getBankList() ) {
 				if (bank.isEnabled()) {
-					banks.add(bank);					
+					banks.add(bank);
 				}
 			}
 		}
@@ -132,11 +139,8 @@ public class CashFlowForecastReport {
 			setToDate(CommonUtil.getMonthLastDay(getFromDate()));
 			setReturnedFinanceIncluded(false);
 			setPendingFinanceIncluded(true);
-			setBankModel(null);
+			initializeData();
 			setBankList(null);
-			setBanks(null);
-			setModel(null);
-			setTotal(0.0);
 			initializeBankList();
 		} catch (ManagerBeanException e) {
 			String msg = "Error al inicializar bancos.";
@@ -145,6 +149,13 @@ public class CashFlowForecastReport {
 		}
 	}
 	
+	private void initializeData() throws ManagerBeanException {
+		setBankModel(null);
+		setBanks(null);
+		setModel(null);
+		setTotal(0.0);
+	}
+
 	private void initializeBankList() throws ManagerBeanException {
 		String companyControllerName = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
 		CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyControllerName);
@@ -154,9 +165,9 @@ public class CashFlowForecastReport {
 			RegistryBank rbank = (RegistryBank) item.getValue();
 			CashFlowBank bank = new CashFlowBank();
 			bank.setId(rbank.getId());
-			bank.setDescription(rbank.getFullName());
+			String alias = StringUtils.abbreviate(rbank.getBank().getName(), 15) + " " +rbank.getBankAccount().getAccount();
+			bank.setDescription( alias );
 			bank.setEnabled(true);
-			bank.setAmount(0.0);
 			// TODO Calcular el saldo inicial del banco.
 			bank.setBalance(0.0);
 			getBankList().add(bank);
@@ -165,6 +176,7 @@ public class CashFlowForecastReport {
 	}
 
 	public void onSearch(ActionEvent event) {
+		checkDates();
 		checkBanks();
 		try {
 			List<CashFlowReport> list = new LinkedList<CashFlowReport>();
@@ -185,22 +197,111 @@ public class CashFlowForecastReport {
 		}
 	}
 
+	private void checkDates() {
+		if (getFromDate().after(getToDate())) {
+			String msg = "La fecha de la previsión no puede ser anterior a la fecha desde.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
+	public void onRefresh(ActionEvent event) {
+		onSearch(event);		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onSimulate(ActionEvent event) {
+		CashFlowReport cfr = (CashFlowReport) getModel().getRowData();
+		cfr.setDisabled(!cfr.isDisabled());
+		List<CashFlowReport> list = (List<CashFlowReport>) getModel().getWrappedData();
+		CashFlowReport initial = list.get(0);
+		initializeBalances(initial);
+		calculateBalance(list);
+	}
+	
+	public void onShow(ActionEvent event) {
+		try {
+			CashFlowReport cfr = (CashFlowReport) getModel().getRowData();
+			if  ("Pr.".equals(cfr.getType())) {
+				CashFlowForecastController cffc = (CashFlowForecastController) FormUtil.getController(IFinanceConstants.CASH_FLOW_FORECAST_CONTROLLER_NAME);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(cffc.getManagerBean().getFieldName(IFinanceAlias.CASH_FLOW_FORECAST_ID), cfr.getId());
+				cffc.setCriteria(criteria);
+				cffc.onSearch(null);
+				cffc.getModel().setRowIndex(0);
+				cffc.onSelect(null);
+				cffc.setBackAction("cashFlowForecastReport_list");
+			} else {
+				FinanceController fc = (FinanceController) FormUtil.getController(IFinanceConstants.FINANCE_CONTROLLER_NAME);
+				fc.setPayment(cfr.isPayment());
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(fc.getManagerBean().getFieldName(IFinanceAlias.FINANCE_ID), cfr.getId());
+				fc.setCriteria(criteria);
+				fc.onSearch(null);
+				fc.getModel().setRowIndex(0);
+				fc.onSelect(null);
+				fc.setBackAction("cashFlowForecastReport_list");
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al mostrar el detalle de la línea.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	public String showAction() {
+		CashFlowReport cfr = (CashFlowReport) getModel().getRowData();
+		if  ("Pr.".equals(cfr.getType())) {
+			return "cashFlowForecast_form";
+		}
+		return "finance_form";
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onDisableBank(ActionEvent event) {
+		try {
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			Map<String, String> params = ec.getRequestParameterMap();
+			String bankId = params.get("bankId");
+			if (StringUtils.isNotEmpty(bankId)) {
+				int id = Integer.parseInt(bankId);
+				for (CashFlowBank bank : getBankList()) {
+					if (bank.getId().intValue() == id) {
+						bank.setEnabled(false);
+						List<CashFlowReport> list = (List<CashFlowReport>) getModel().getWrappedData();
+						CashFlowReport initial = list.get(0);
+						initializeBalances(initial);
+						initializeData();
+						break;
+					}
+				}
+				onSearch(event);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al eliminar un banco.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
 	private void calculateBalance(List<CashFlowReport> list) {
 		Map<Integer,Double> totals = new HashMap<Integer, Double>();
 		for (CashFlowReport cfr: list) {
-			for (Integer id : cfr.getMap().keySet() ) {
-				double b = 0.0;
-				if (!totals.containsKey(id)) {
-					b = cfr.getMap().get(id).getBalance();
-				} else {
-					b = totals.get(id);	
+			if (!cfr.isDisabled()) {
+				for (Integer id : cfr.getMap().keySet() ) {
+					double b = 0.0;
+					if (!totals.containsKey(id)) {
+						b = cfr.getMap().get(id).getBalance();
+					} else {
+						b = totals.get(id);	
+					}
+					double amount = cfr.getAmount();
+					double balance = CommonUtil.round(amount + b);
+					cfr.getMap().get(id).setBalance( balance );
+					setTotal(CommonUtil.round(getTotal() + amount));
+					cfr.setTotal(getTotal());
+					totals.put(id, balance);
 				}
-				double amount = cfr.getMap().get(id).getAmount();
-				double balance = CommonUtil.round(amount + b);
-				cfr.getMap().get(id).setBalance( balance );
-				setTotal(CommonUtil.round(getTotal() + amount));
-				cfr.setTotal(getTotal());
-				totals.put(id, balance);
 			}
 		}
 	}
@@ -211,14 +312,22 @@ public class CashFlowForecastReport {
 		cfr.setDescription("SALDO INICIAL");
 		cfr.setSystemProperty(true);
 		cfr.setMap(new HashMap<Integer, CashFlowBank>());
+		initializeBalances(cfr);
+		return cfr;
+	}
+
+	private void initializeBalances(CashFlowReport initialBalance) {
 		setTotal(0.0);
 		for (CashFlowBank bank : getBanks() ) {
-			cfr.getMap().put(bank.getId(), bank);
-			double b = CommonUtil.round(cfr.getTotal() + bank.getBalance());
-			cfr.setTotal( b );
-			setTotal( CommonUtil.round(getTotal() + bank.getBalance()) );
+			CashFlowBank cfb = new CashFlowBank();
+			cfb.setId(bank.getId());
+			cfb.setDescription(null);
+			cfb.setBalance(bank.getInitialBalance());
+			initialBalance.getMap().put(bank.getId(), cfb);
+			
+			initialBalance.setTotal( cfb.getBalance() );
+			setTotal( CommonUtil.round(getTotal() + cfb.getBalance()) );
 		}
-		return cfr;
 	}
 
 	private CashFlowReport getFinalBalance() {
@@ -230,7 +339,7 @@ public class CashFlowForecastReport {
 		for (CashFlowBank bank : getBanks() ) {
 			CashFlowBank cfb = new CashFlowBank();
 			cfb.setId(bank.getId());
-			cfb.setDescription(bank.getDescription());
+			cfb.setDescription(null);
 			cfr.getMap().put(bank.getId(), cfb);
 		}
 		return cfr;
@@ -252,17 +361,20 @@ public class CashFlowForecastReport {
 			List<Date> dates = getForecastDates(cff);
 			for (Date date:dates) {
 				CashFlowReport cfr = new CashFlowReport();
+				cfr.setId(cff.getId());
 				cfr.setDate(date);
 				cfr.setType("Pr.");
 				cfr.setDescription( cff.getDescription() );
 				cfr.setPayment( cff.isPayment() );
 				cfr.setMap( new HashMap<Integer, CashFlowBank>());
 				CashFlowBank cfb = new CashFlowBank();
-				cfb.setId( cff.getRegistryBank()!=null?cff.getRegistryBank().getId():Integer.MIN_VALUE);
+				int bankId = cff.getRegistryBank()!=null?cff.getRegistryBank().getId():Integer.MIN_VALUE;
+				//getBanks().
+				cfb.setId( bankId );
 				cfb.setDescription(null);
 				cfb.setBalance(0.0 );
 				double amount = cff.isPayment()?CommonUtil.round(cff.getAmount() * (-1)):cff.getAmount();
-				cfb.setAmount( amount );
+				cfr.setAmount( amount );
 				cfr.getMap().put(cfb.getId(), cfb);
 				cfr.setTotal( 0.0 );
 				flows.add(cfr);
@@ -308,6 +420,7 @@ public class CashFlowForecastReport {
 		for (ITransferObject to:list) {
 			Finance finance = (Finance) to;
 			CashFlowReport cfr = new CashFlowReport();
+			cfr.setId(finance.getId());
 			cfr.setDate(finance.getDueDate());
 			cfr.setDescription( finance.getDocumentNumber() + " [" + finance.getRegistryName()+ "]" );
 			cfr.setType(finance.isPayment()?"Pg.":"Cb.");
@@ -318,7 +431,7 @@ public class CashFlowForecastReport {
 			cfb.setDescription(null);
 			cfb.setBalance(0.0 );
 			double amount = cfr.isPayment()?CommonUtil.round(finance.getAmount() * (-1)):finance.getAmount();
-			cfb.setAmount( amount );
+			cfr.setAmount( amount );
 			cfr.getMap().put(cfb.getId(), cfb);
 			cfr.setTotal( 0.0 );
 			flows.add(cfr);
@@ -336,6 +449,7 @@ public class CashFlowForecastReport {
 		for (ITransferObject to:list) {
 			Finance finance = (Finance) to;
 			CashFlowReport cfr = new CashFlowReport();
+			cfr.setId(finance.getId());
 			cfr.setDate(finance.getDueDate());
 			cfr.setType("Dv.");
 			cfr.setDescription( finance.getDocumentNumber() + " [" + finance.getRegistryName()+ "]" );
@@ -346,7 +460,7 @@ public class CashFlowForecastReport {
 			cfb.setDescription(null);
 			cfb.setBalance(0.0 );
 			double amount = cfr.isPayment()?CommonUtil.round(finance.getAmount() * (-1)):finance.getAmount();
-			cfb.setAmount( amount );
+			cfr.setAmount( amount );
 			cfr.getMap().put(cfb.getId(), cfb);
 			cfr.setTotal( 0.0 );
 			flows.add(cfr);
@@ -372,8 +486,8 @@ public class CashFlowForecastReport {
 	public class CashFlowBank {
 		private Integer id;
 		private String  description;
-		private double  amount;
 		private double  balance;
+		private double  initialBalance;
 		private boolean enabled;
 		
 		public Integer getId() {
@@ -390,18 +504,18 @@ public class CashFlowForecastReport {
 			this.description = description;
 		}
 
-		public double getAmount() {
-			return amount;
-		}
-		public void setAmount(double amount) {
-			this.amount = amount;
-		}
-
 		public double getBalance() {
 			return balance;
 		}
 		public void setBalance(double balance) {
 			this.balance = balance;
+		}
+		
+		public double getInitialBalance() {
+			return initialBalance;
+		}
+		public void setInitialBalance(double initialBalance) {
+			this.initialBalance = initialBalance;
 		}
 		
 		public boolean isEnabled() {
@@ -413,13 +527,23 @@ public class CashFlowForecastReport {
 	}
 	
 	public class CashFlowReport implements Comparable<CashFlowReport>{
+		private Integer id; // ID del vtos. o de la previsión.
 		private Date date;
 		private String type;
 		private String description;
 		private boolean payment;
 		private boolean systemProperty;
+		private boolean disabled;
 		private Map<Integer,CashFlowBank> map;
+		private double  amount;
 		private double total;
+		
+		public Integer getId() {
+			return id;
+		}
+		public void setId(Integer id) {
+			this.id = id;
+		}
 		
 		public Date getDate() {
 			return date;
@@ -456,11 +580,25 @@ public class CashFlowForecastReport {
 			this.systemProperty = systemProperty;
 		}
 		
+		public boolean isDisabled() {
+			return disabled;
+		}
+		public void setDisabled(boolean disabled) {
+			this.disabled = disabled;
+		}
+		
 		public Map<Integer, CashFlowBank> getMap() {
 			return map;
 		}
 		public void setMap(Map<Integer, CashFlowBank> map) {
 			this.map = map;
+		}
+
+		public double getAmount() {
+			return amount;
+		}
+		public void setAmount(double amount) {
+			this.amount = amount;
 		}
 
 		public double getTotal() {
