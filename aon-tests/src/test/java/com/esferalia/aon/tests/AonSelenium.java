@@ -33,6 +33,26 @@ public class AonSelenium extends DefaultSelenium {
 	}
 
 
+	@Override
+	public void click(String locator) {
+		waitForELementPresent(locator, 60);
+		super.click(locator);
+	}
+
+	
+	@Override
+	public void type(String locator, String value) {
+		waitForELementPresent(locator, 60);
+		super.type(locator, value);
+	}
+
+	
+	@Override
+	public void select(String selectLocator, String optionLocator) {
+		waitForELementPresent(selectLocator, 60);
+		super.select(selectLocator, optionLocator);
+	}
+	
 	public void waitForELementPresent(String locator, int timeout ) {
 		for (int seconds = 0;seconds < timeout; seconds++) {
 			try { 
@@ -46,11 +66,6 @@ public class AonSelenium extends DefaultSelenium {
 		throw new SeleniumException("ERROR: Element "+locator+" not found");
 	}
 	
-	@Override
-	public void click(String locator) {
-		waitForELementPresent(locator, 60);
-		super.click(locator);
-	}
 	
 	
 
