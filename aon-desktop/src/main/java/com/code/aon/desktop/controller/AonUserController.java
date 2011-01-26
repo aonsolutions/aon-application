@@ -232,7 +232,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 		if ( ldap.exists(userDN, USER) ) {
 			Entry userEntry = ldap.get(userDN, USER,PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE);
 			if ( userEntry != null ) {
-				if (userEntry.getSearchDN() == null) {
+				if ( (userEntry.getSearchDN() == null) && userEntry.containsKey(PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE) ) {
 					Date expirationDate = userEntry.toDate(PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE);
 					passwordExpired = new Date().after(expirationDate);
 				}

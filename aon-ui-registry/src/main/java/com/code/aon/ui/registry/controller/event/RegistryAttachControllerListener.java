@@ -4,6 +4,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.event.AttachmentControllerListener;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -37,6 +38,21 @@ public class RegistryAttachControllerListener extends AttachmentControllerListen
 			attach.setRegistryAttachmentType( raController.getType() );
 		}
 		attach.setCategory(null);		
+	}
+	
+	
+	@Override
+	public void afterEditSearch(ControllerEvent event)
+			throws ControllerListenerException {
+		super.afterEditSearch(event);
+		RegistryAttachController raController = (RegistryAttachController) event.getController();
+		Registry registry = (Registry) raController.getMasterController().getTo();
+		try {		
+			String id = raController.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+			raController.getCriteria().addEqualExpression(id, registry.getId());
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException("Error after edit search",e);
+		}
 	}
 	
 }
