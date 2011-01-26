@@ -67,57 +67,57 @@ public class AmortizationManager {
 				lastFee = true;
 			}
 
-			AmortizationDetail detail = new AmortizationDetail();
+			AmortizationDetail detail  = insertable(bean, a, periodFirst);
+			if (detail == null) {
+				detail = new AmortizationDetail();
+				detail.setStatus(AmortizationDetailStatus.PENDING);
+			} 
 			double allocation;
-			if (!lastFee) {
-				long periodDays = CommonUtil.getDaysBetweenDates(periodFirst, periodLast) + 1;
-				// Se desprecia el hecho de que el año sea bisiesto, puesto que el 
-				// porcentaje de cuota indicado es anual no diario.
-				periodDays = periodDays > 365 ? 365 : periodDays;
-				if (periodDays == 365) {
-					allocation = CommonUtil.round(a.getAmount() * percent / 100);
+			if (detail.getStatus() == AmortizationDetailStatus.PENDING) {
+				if (!lastFee) {
+					long periodDays = CommonUtil.getDaysBetweenDates(periodFirst, periodLast) + 1;
+					// Se desprecia el hecho de que el año sea bisiesto, puesto que el 
+					// porcentaje de cuota indicado es anual no diario.
+					periodDays = periodDays > 365 ? 365 : periodDays;
+					if (periodDays == 365) {
+						allocation = CommonUtil.round(a.getAmount() * percent / 100);
+					} else {
+						// En caso de año no completo, se resuelve multiplicando por la cuota diaria.
+						allocation = CommonUtil.round(periodDays * dayAllocation);
+					}
 				} else {
-					// En caso de año no completo, se resuelve multiplicando por la cuota diaria.
-					allocation = CommonUtil.round(periodDays * dayAllocation);
+					// La última cuota se cuadra por diferencia.
+					allocation = CommonUtil.round(pending - ((a.getSaleAmount() == null) ? 0 : a.getSaleAmount()));
 				}
 			} else {
-				// La última cuota se cuadra por diferencia.
-				allocation = CommonUtil.round(pending - ((a.getSaleAmount() == null) ? 0 : a.getSaleAmount()));
+				allocation = detail.getAllocation();
 			}
 			pending = CommonUtil.round(pending - allocation);
-			detail.setAllocation(allocation);
-			detail.setCoefficient(CommonUtil.round(allocation * 100 / a.getAmount()));
-			detail.setFromDate(periodFirst);
-			detail.setToDate(periodLast);
-			detail.setAmortization(a);
-			detail.setPending(pending);
-			detail.setStatus(AmortizationDetailStatus.PENDING);
-			detail.setFiscalAllocation(allocation);
-			detail.setFiscalAccumulated(0.0);
-			AmortizationDetail exists = insertable(bean,detail);
-			if (exists == null) {
-				detail = (AmortizationDetail) bean.insert(detail);	
-			} else {
-				if (exists.getStatus() == AmortizationDetailStatus.PENDING) {
-					detail.setId(exists.getId());
-					detail = (AmortizationDetail) bean.update(detail);	
-				} else {
-					detail = exists;
-				}
-				pending = detail.getPending();
+			if (detail.getStatus() == AmortizationDetailStatus.PENDING) {
+				detail.setAllocation(allocation);
+				detail.setCoefficient(CommonUtil.round(allocation * 100 / a.getAmount()));
+				detail.setFromDate(periodFirst);
+				detail.setToDate(periodLast);
+				detail.setAmortization(a);
+				detail.setFiscalAllocation(allocation);
 			}
+			detail.setPending(pending);
+			detail.setFiscalAccumulated(0.0);
+			if (detail.getStatus() == AmortizationDetailStatus.PENDING) {
+				detail = (AmortizationDetail) bean.insertOrUpdate(detail);	
+			} 
 			periodFirst = DateUtils.addDays(periodLast, 1);
 		}
 
 	}
 
-	private AmortizationDetail insertable(IManagerBean bean, AmortizationDetail detail) throws ManagerBeanException {
+	private AmortizationDetail insertable(IManagerBean bean, Amortization a, Date date) throws ManagerBeanException {
 		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), detail.getAmortization().getId());
-		Date first = CommonUtil.getYearFirstDay(detail.getFromDate());
+		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
+		Date first = CommonUtil.getYearFirstDay(date);
 		c.addGreaterThanOrEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), first);
-		Date last = CommonUtil.getYearLastDay(detail.getFromDate());
-		c.addLessThanOrEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), last);
+		Date last = CommonUtil.getYearLastDay(date);
+		c.addLessThanOrEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_TO_DATE), last);
 		List<ITransferObject> list = bean.getList(c);
 		AmortizationDetail exists = null;	
 		if (list != null && list.size() > 0) {
