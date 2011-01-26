@@ -2,6 +2,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
+    <validator>
+        <validator-id>AliasValidator</validator-id>
+        <validator-class>com.code.aon.ui.cms.validator.AliasValidator</validator-class>
+    </validator> 
+
 	<!-- ************** ARTICLE ************** -->
 	<managed-bean>
 		<managed-bean-name>article</managed-bean-name>
