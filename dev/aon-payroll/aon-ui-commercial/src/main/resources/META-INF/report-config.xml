@@ -180,5 +180,51 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 		</params>
 	</report>		
+
+	<!--
+	    ********************************************************** 
+								COMMERCIAL TRACKING
+		**********************************************************
+	-->
+	<report id="commercialTrackingFileList" description="Commercial Tracking File Report">
+		<template path="/com/code/aon/ui/commercial/report/commercialTrackingFile.jasper" />
+		<bean key="com.code.aon.commercial.CommercialTracking" />
+		<criteria provider="#{commercialTracking}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>		
+	<report id="commercialTracking" description="Commercial Tracking Report">
+		<template path="/com/code/aon/ui/commercial/report/commercialTracking.jasper" />
+		<bean key="com.code.aon.commercial.CommercialTracking" />
+		<criteria provider="#{commercialTracking}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>		
+	<report id="commercialTrackingDetail" description="Commercial Tracking Report">
+		<template path="/com/code/aon/ui/commercial/report/commercialTrackingDetail.jasper" />
+		<bean key="com.code.aon.commercial.CommercialTracking" />
+		<criteria provider="#{commercialTracking}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>		
+	<report id="commercialTrackingDetailExcel" description="Commercial Tracking Excel Report">
+		<template path="/com/code/aon/ui/commercial/report/commercialTrackingDetailExcel.jasper" />
+		<bean key="com.code.aon.commercial.CommercialTracking" />
+		<criteria provider="#{commercialTracking}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>		
 	
 </report-config>

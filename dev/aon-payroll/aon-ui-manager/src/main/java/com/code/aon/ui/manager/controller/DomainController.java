@@ -25,7 +25,6 @@ import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.enumeration.AccessPolicyType;
-import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 
@@ -34,8 +33,6 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
 	
 	private final static int DEFAULT_DOMAIN_NAME_MAX_LENGTH = 128;
-	
-	private final static int CHILD_DOMAIN_NAME_MAX_LENGTH = 14;
 	
 	private AccessPolicy accessPolicy;
 	
@@ -52,9 +49,6 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	}	
 	
 	public int getDomainNameMaxLength() {
-		if ( getManager().getUserType() == UserType.PARENT ) {
-			return CHILD_DOMAIN_NAME_MAX_LENGTH;
-		}		
 		return DEFAULT_DOMAIN_NAME_MAX_LENGTH;
 	}
 	
