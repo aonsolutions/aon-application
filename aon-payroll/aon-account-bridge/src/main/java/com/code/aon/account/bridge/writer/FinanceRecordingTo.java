@@ -23,6 +23,7 @@ public class FinanceRecordingTo implements ITransferObject {
 	private Account paymentAccount;
 	private String balancingConcept;
 	private SecurityLevel securityLevel;
+	private String comments;
 	private List<Finance> financeList;
 	private List<FinanceTracking> financeTrackingList;
 	private List<FinanceBatchDetail> fbatchDetailList;
@@ -68,6 +69,13 @@ public class FinanceRecordingTo implements ITransferObject {
 	}
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 
 	public List<Finance> getFinanceList() {

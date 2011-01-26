@@ -681,6 +681,7 @@ public class AccountEntryFinanceWriter {
 		entry.setType(to.getType());
 		entry.setJournal(null);
 		entry.setSecurityLevel(securityLevel);
+		entry.setComments(to.getComments());
 
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 		return (AccountEntry)accountEntryBean.insert(entry);
