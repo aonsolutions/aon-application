@@ -30,6 +30,8 @@ public class Application implements ILdapTransferObject {
 	
 	private String serverId;
 	
+	private Boolean contratable;
+	
 	@Id
 	public Name getId() {
 		return id;
@@ -67,6 +69,15 @@ public class Application implements ILdapTransferObject {
 		this.serverId = serverId;
 	}
 
+	@Attribute(name="contratable")
+	public Boolean getContratable() {
+		return contratable;
+	}
+
+	public void setContratable(Boolean contratable) {
+		this.contratable = contratable;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -76,6 +87,7 @@ public class Application implements ILdapTransferObject {
 		if (o.getCommonName() == null && getCommonName() == null) {
 			return new EqualsBuilder()
 				.append(this.commonName, o.commonName)
+				.append(this.contratable, o.contratable)
 				.append(this.description, o.description)				
 				.append(this.serverId, o.serverId)				
 				.isEquals();
@@ -87,6 +99,7 @@ public class Application implements ILdapTransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(commonName)
+			.append(contratable)
 			.append(description)
 			.append(serverId)
 			.toHashCode();
@@ -96,6 +109,7 @@ public class Application implements ILdapTransferObject {
 	public String toString() {
 		return new ToStringBuilder(this).
 			append("commonName", commonName ).
+			append("contratable", contratable ).
 			append("description", StringUtils.abbreviate(description, 64)).
 			append("serverId", serverId ).
 			toString();

@@ -1,5 +1,8 @@
 package com.code.aon.faces.component.richfaces.lookup.button;
 
+import static com.code.aon.faces.component.richfaces.IRichFacesTags.MIN_HEIGHT;
+import static com.code.aon.faces.component.richfaces.IRichFacesTags.MIN_WIDTH;
+
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;

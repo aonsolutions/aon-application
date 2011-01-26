@@ -27,9 +27,15 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationControllerListener.class);
 	
+	private ManagerController getManager() {
+		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+	}
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
+		DomainApplicationController dac = (DomainApplicationController) event.getController();
+		dac.setTermsOfServiceAccepted(false);
 		updateDataSources();
 	}
 
@@ -37,9 +43,11 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainApplicationController dac = (DomainApplicationController) event.getController();
-		dac.createOrganizationalUnits(dac.getDomainApplication());
+		DomainApplication application = dac.getDomainApplication();
+		dac.createOrganizationalUnits(application);
 		updateApplication(dac);
-		insertApplicationDBDefaults(dac.getDomainApplication());
+		insertApplicationDBDefaults(application);
+		getManager().getLogger().domainApplicationAddded(application);
 	}	
 	
 	@Override
@@ -50,6 +58,14 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 		updateApplication(dac);
 		updateDataSources();
 	}
+	
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainApplicationController dac = (DomainApplicationController) event.getController();
+		DomainApplication application = dac.getDomainApplication();
+		getManager().getLogger().domainApplicationRemoved(application);
+	}	
 	
 	private void updateApplication( DomainApplicationController dac ) {
 		DomainApplication application = dac.getDomainApplication();

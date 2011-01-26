@@ -54,12 +54,14 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.ManagerBeanWrapper;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.ContactController;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 import com.code.aon.ui.webmail.controller.MailAccountController;
 import com.code.aon.ui.webmail.controller.SignatureController;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
+import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class DomainUserController extends LdapBasicController implements IManagerConstants {
 
@@ -186,6 +188,35 @@ public class DomainUserController extends LdapBasicController implements IManage
 		}
 		addDefaultMailAccount(user, signature);
 	}
+	
+	private void removeContactGroups( DomainUser user ) throws ManagerBeanException {
+		ContactController cc = (ContactController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_CONTACT);
+		cc.updateBaseDN(user.getId());
+		IManagerBean bean = cc.getManagerBean();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IWebMailAlias.CONTACT_CONTACT_GROUP), Boolean.TRUE);
+		for( ITransferObject to : cc.getManagerBean().getList(criteria) ) {
+			bean.remove(to);
+		}
+	}
+	
+	public void removeWebmailData( DomainUser user ) throws ManagerBeanException {
+		BasicLdap ldap = new BasicLdap();
+		String domain = user.getDomain();
+		Name accountsDN = NameResolver.getUserAccountsDN(domain, user.getUid());
+		if ( ldap.exists(accountsDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(accountsDN, true);
+		}
+		Name signaturesDN = NameResolver.getUserSignaturesDN(domain, user.getUid());
+		if ( ldap.exists(signaturesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(signaturesDN, true);
+		}
+		Name addressBookDN = NameResolver.getUserAddressBookDN(domain, user.getUid());
+		if ( ldap.exists(addressBookDN, ORGANIZATIONAL_UNIT) ) {
+			removeContactGroups( user );
+			ldap.deleteDepth(addressBookDN, true);
+		}
+	}	
 	
 	public void onShowChangePasswordWindow( ActionEvent event ) {
 		setShowChangePasswordWindow(true);
@@ -329,13 +360,17 @@ public class DomainUserController extends LdapBasicController implements IManage
 			}
 		}
 	}
+	
+	private void resetDBUser( User user ) throws ManagerBeanException {
+		user.setValidate(true);
+		user.setAvailable(true);
+		user.setStatus(0);		
+	}
 
 	private User initDBUser( String uid ) throws ManagerBeanException {
 		User user = new User();
 		user.setLogin(uid);
-		user.setValidate(true);
-		user.setAvailable(true);
-		user.setStatus(0);
+		resetDBUser(user);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression("uid", uid);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
@@ -360,6 +395,8 @@ public class DomainUserController extends LdapBasicController implements IManage
 			bean.insert(user);
 		} else {
 			user = (User) list.get(0);
+			resetDBUser(user);
+			bean.update(user);
 		}
 		return user;
 	}	
@@ -377,5 +414,49 @@ public class DomainUserController extends LdapBasicController implements IManage
 			bean.insert(userScope);
 		}
 	}	
+
+	public void createMailAccount( DomainUser user ) throws ManagerBeanException {
+		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		String command = null; 
+		for( int i = 1; (command = manager.getProperties().getProperty(MAIL_ACCOUNT_CREATE_SCRIPT+"."+i)) != null ;i++) {
+			manager.execute( new String[] {command, user.getName(), user.getDomain()} );
+		}
+	}	
+
+	public void removeMailAccount( DomainUser user ) throws ManagerBeanException {
+		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		String command = null; 
+		for( int i = 1; (command = manager.getProperties().getProperty(MAIL_ACCOUNT_DELETE_SCRIPT+"."+i)) != null ;i++) {
+			manager.execute( new String[] {command, user.getName(), user.getDomain()} );
+		}
+	}		
+
+	public void deactiveDBUser( DomainUser user ) throws ManagerBeanException {
+		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+		for (DBConnnection dbc : ddbc.getDBConnnections()) {
+			manager.changeDbConnection(dbc);
+			if ( manager.getDBManager().existsTable(dbc, "user") ) {
+				try {
+					deactiveDBUser(user.getUid());	
+				} catch ( Throwable th ) {
+					LOGGER.error( "Error deactivating user " + user.getUid() + " in " + dbc, th );
+				}
+			}					
+		}
+	}
+	
+	private void deactiveDBUser( String uid ) throws ManagerBeanException {
+		IManagerBean bean = getBDUserManagerBean();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), uid);
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			User dbUser = (User) list.get(0);
+			dbUser.setAvailable(false);
+			dbUser.setStatus(-1);
+			bean.update(dbUser);
+		}
+	}
 	
 }

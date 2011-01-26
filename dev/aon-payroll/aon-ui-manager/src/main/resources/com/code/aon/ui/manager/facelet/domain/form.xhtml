@@ -54,6 +54,13 @@
 					<aon:inputText id="Domain_organizationName" required="true"
 						size="95" value="#{domain.to.organizationName}" />
 
+					<c:if test="#{manager.config.showDomainSubDomainSuffix}" >
+						<aon:outputLabel for="Domain_subDomainSuffix"
+							value="#{managerBundle.manager_domain_subDomainSuffix}" />
+						<aon:inputText id="Domain_subDomainSuffix" size="60" maxlength="256"
+							value="#{domain.to.subDomainSuffix}" />
+					</c:if>
+
 					<c:if test="#{manager.config.showDomainMail}" >
 						<aon:outputLabel for="Domain_mail"
 							value="#{bundle.aon_email}" />
