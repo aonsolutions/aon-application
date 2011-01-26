@@ -22,20 +22,13 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.controller.report.TrialBalanceController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class BalanceSheetController implements ICollectionProvider {
-
-	private static final String TRIAL_BALANCE_CONTROLLER_NAME = "trialBalance";
-	private static final String EMPTY = "";
-	private static final String OPEN_BRACKET = "(";
-	private static final String CLOSE_BRACKET = ")";
-	private static final String PIPE = "|";
-	private static final String ASTERISK = "*";
-	private static final String COMMA = ",";
 
 	private DataModel balanceModel;
 	private SummaryProviderParameters parameters;
@@ -187,22 +180,22 @@ public class BalanceSheetController implements ICollectionProvider {
 		try {
 			BalanceItem item = (BalanceItem) getBalanceModel().getRowData();
 			TrialBalanceController c = (TrialBalanceController) AonUtil
-					.getRegisteredBean(TRIAL_BALANCE_CONTROLLER_NAME);
+					.getRegisteredBean(IAccountingConstants.TRIAL_BALANCE_CONTROLLER_NAME);
 			c.onReset(event);
 			SummaryProviderParameters spp = getParameters().clone();
 
 			BalanceDetail bd = item.getDetail();
-			String[] tokens = StringUtils.split(bd.getAccounts(), COMMA);
+			String[] tokens = StringUtils.split(bd.getAccounts(), IAccountingConstants.COMMA);
 			StringBuilder exp = new StringBuilder();
 			for (String token : tokens) {
 				token = token.trim();
 				if (StringUtils.isNotBlank(token)) {
-					exp.append(exp.length() > 0 ? PIPE : EMPTY);
-					if (token.startsWith(OPEN_BRACKET) && token.endsWith(CLOSE_BRACKET)) {
-						token = token.replace(OPEN_BRACKET, EMPTY).replace(CLOSE_BRACKET, EMPTY);
+					exp.append(exp.length() > 0 ? IAccountingConstants.PIPE : IAccountingConstants.EMPTY);
+					if (token.startsWith(IAccountingConstants.OPEN_BRACKET) && token.endsWith(IAccountingConstants.CLOSE_BRACKET)) {
+						token = token.replace(IAccountingConstants.OPEN_BRACKET, IAccountingConstants.EMPTY).replace(IAccountingConstants.CLOSE_BRACKET, IAccountingConstants.EMPTY);
 					}
 					exp.append(token);
-					exp.append(ASTERISK);
+					exp.append(IAccountingConstants.ASTERISK);
 				}
 			}
 			spp.setAccountExpression(exp.toString());
@@ -214,8 +207,8 @@ public class BalanceSheetController implements ICollectionProvider {
 			}
 			c.onResetStatement(event);
 			c.setParameters(spp);
-			c.setBackAction("balance_sheet_list");
 			c.onSearch(event);
+			c.setBackAction(IAccountingConstants.BALANCE_SHEET_LIST_NAVKEY);
 			if (c.getModel().getRowCount() == 0) {
 				String msg = "No existen cuentas contables para la cuenta.";
 				AonUtil.addErrorMessage(msg);

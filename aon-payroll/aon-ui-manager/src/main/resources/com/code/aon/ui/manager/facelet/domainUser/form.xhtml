@@ -72,20 +72,11 @@
 						value="#{domainUser.to.active}" />
 				
 				</aon:panelGrid>
-				
-				<aon:div rendered="#{domainUser.new}" styleClass="aon-margin-top">
-					<aon:selectBooleanCheckbox id="termsOfService"
-						reRender="domainUserToolbar" ajaxSingle="true"
-						value="#{domainUser.termsOfServiceAccepted}">
-					</aon:selectBooleanCheckbox>				
-					<aon:outputLabel for="termsOfService" styleClass="aon-italic"
-						value="#{managerBundle.manager_service_terms_text}" />
-					<aon:outputLink target="_blank"
-						styleClass="aon-margin-left"
-						value="#{manager.properties.newDomainUserURL}">
-						<aon:outputText value="#{managerBundle.manager_service_terms}" />
-					</aon:outputLink>	
-				</aon:div>
+				 
+				<ui:include src="/com/code/aon/ui/manager/facelet/manager/termsOfService.xhtml" >
+					<ui:param name="controller" value="#{domainUser}" />
+					<ui:param name="termsOfServiceURL" value="#{manager.properties.newDomainUserURL}" />
+				</ui:include>
 
 				<aon:panelTabSet selectedTab="#{domainUser.selectedTab}" >
 					<aon:panelTab name="contact"

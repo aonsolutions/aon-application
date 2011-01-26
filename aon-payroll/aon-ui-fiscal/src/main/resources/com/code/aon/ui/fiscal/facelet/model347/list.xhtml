@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -51,17 +52,20 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 						<aon:div>
-							<aon:selectOneMenu id="Model_347_format"
-								value="#{model347.format}">
-								<f:selectItems value="#{model347.mod347Formats}" />
-							</aon:selectOneMenu>
-							<aon:commandButton id="gen-disk" 
-								value="#{financeBundle.finance_create_disk}"
-								actionListener="#{model347.onCreateDisk}" 
-								styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-								style="border-width: 0px 0px 0px 0px;"
-								reRender="totalPanel" 
-								accesskey="#{bundle.aon_key_cancel}" />
+							<c:if test="#{aonConfiguration.bean.fiscal.model347Enabled}">
+								<ui:param name="skipSearchButton" value="true" />
+								<aon:selectOneMenu id="Model_347_format"
+									value="#{model347.format}">
+									<f:selectItems value="#{model347.mod347Formats}" />
+								</aon:selectOneMenu>
+								<aon:commandButton id="gen-disk" 
+									value="#{financeBundle.finance_create_disk}"
+									actionListener="#{model347.onCreateDisk}" 
+									styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+									style="border-width: 0px 0px 0px 0px;"
+									reRender="totalPanel" 
+									accesskey="#{bundle.aon_key_cancel}" />
+							</c:if>
 						</aon:div>			
 
 						<aon:outputText value="#{financeBundle.finance_total_key_b}" rendered="#{model347.keyBVisible}" />

@@ -14,6 +14,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.BasicController;
@@ -21,8 +22,6 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class LedgerReportController extends BasicController implements IAccountingBookItem{
-
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
 	private Period period;
 	private Date fromDate;
@@ -232,7 +231,7 @@ public class LedgerReportController extends BasicController implements IAccounti
 		try {
 			AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
 			AccountEntryController entryController = (AccountEntryController) FormUtil
-					.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
 					IAccountingAlias.ACCOUNT_ENTRY_ID), detail.getAccountEntry().getId());
@@ -240,7 +239,7 @@ public class LedgerReportController extends BasicController implements IAccounti
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
 			entryController.onSelect(null);
-			entryController.setBackAction("ledger_list");
+			entryController.setBackAction(IAccountingConstants.LEDGER_LIST_NAVKEY);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al cargar el apunte.";
 			AonUtil.addErrorMessage(msg);

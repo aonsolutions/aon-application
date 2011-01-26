@@ -178,6 +178,15 @@ public class BankStatement implements ITransferObject {
 	}
 
 	@Transient
+	public boolean isReturned() {
+		return commonConcept == StatementConcept.RETURNED;
+	}
+	@Transient
+	public boolean isCollectionBatch() {
+		return commonConcept == StatementConcept.COLLECTION_BATCH;
+	}
+
+	@Transient
 	public boolean isExact() {
 		return reliability == StatementReliability.VERY_HIGH;
 	}

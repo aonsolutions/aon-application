@@ -81,6 +81,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.account.controller.AccountCollectionsController;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.AccountAppParamsController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -94,9 +95,6 @@ import com.code.aon.ui.util.AonUtil;
 public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceEntryController.class.getName());
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
-	private static final String ACCOUNT_APP_PARAM_CONTROLLER_NAME = "accAppParams";
-	private static final String ACCOUNT_COLLECTIONS_CONTROLLER_NAME = "accountCollections";
 
 	private AccountEntryInvoiceWriter writer;
 	private FinanceGenerator financeGenerator;
@@ -355,7 +353,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		VatDeductionType vatDeductionType = (header != null && getHeader().getVatDeductionType() != null) ? getHeader().getVatDeductionType() : VatDeductionType.WITH_RIGHT;
 		WithholdingType withholdingType = (header != null && getHeader().getWithholdingType() != null) ? getHeader().getWithholdingType() : WithholdingType.PROFESSIONAL;
 		SecurityLevel securityLevel = (header != null && getHeader().getSecurityLevel() != null) ? getHeader().getSecurityLevel() : SecurityLevel.OFFICIAL;
-		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
+		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_INVOICE_SERIES);
 		String series = (header != null && !StringUtils.isEmpty(getHeader().getSeries())) ? getHeader().getSeries() : (param != null) ? param.getValue() : null;
 		ApplicationParameter taxParam = c.getParameter(DefaultAccounts.DEFAULT_VAT_PERCENT);
@@ -445,28 +443,38 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onAdjustTaxableBase(ActionEvent event) {
-		if (getHeader().getTaxableBase() != null) {
-			try {
-				double total = getHeader().getTaxableBase();
-				double coef = (1 + (getHeader().getTaxPercent()/100));
-				if (getHeader().isSurcharge()) {
-					coef = coef + (getHeader().getSurchargePercent()/100);
+		if (getHeader().getAccount() != null) {
+			if (getHeader().getTaxableBase() != null) {
+				try {
+					double total = getHeader().getTaxableBase();
+					double coef = (1 + (getHeader().getTaxPercent()/100));
+					if (getHeader().isSurcharge()) {
+						coef = coef + (getHeader().getSurchargePercent()/100);
+					}
+					if (getHeader().isWithholding()) {
+						coef = coef - (getHeader().getRetPercent()/100);	
+					}
+					double tb = total / coef; 
+					getHeader().setTaxableBase(tb);
+					onNewDetail(event);
+					onTaxableBaseWizard();
+					getCurrentDetail().setTaxableBase(CommonUtil.round(total-currentDetail.getVatQuota()-currentDetail.getSurchargeQuota()+currentDetail.getRetentionQuota()));
+					onAddDetail(event);
+					onCancelDetail(event);
+					getHeader().setTaxableBase( 0.0 ); 
+				} catch (Exception e) {
+					String msg = "No se puede realizar el cálculo. Revise los datos introducidos.";
+					LOGGER.warn(msg);
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
 				}
-				if (getHeader().isWithholding()) {
-					coef = coef - (getHeader().getRetPercent()/100);	
-				}
-				double tb = total / coef; 
-				getHeader().setTaxableBase(tb);
-				onTaxableBaseWizard(event);
-				currentDetail.setTaxableBase(total-currentDetail.getVatQuota()-currentDetail.getSurchargeQuota()+currentDetail.getRetentionQuota());
-			} catch (Exception e) {
-				String msg = "No se puede realizar el cálculo. Revise los datos introducidos.";
-				LOGGER.warn(msg);
+			} else {
+				String msg="La Base Imponible es un dato requerido para esta utilidad.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
 		} else {
-			String msg="La Base Imponible es un dato requerido para esta utilidad.";
+			String msg="La Cuenta Contable es un dato requerido para esta utilidad.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -476,15 +484,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		if (getHeader().getAccount() != null) {
 			if (getHeader().getTaxableBase() != null) {
 				onNewDetail(event);
-				getCurrentDetail().setTaxableBase( getHeader().getTaxableBase()==null?0.0:getHeader().getTaxableBase());
-				getCurrentDetail().setVatPercent( getHeader().getTaxPercent()==null?0.0:getHeader().getTaxPercent());
-				if (getHeader().isSurcharge()) {
-					getCurrentDetail().setSurchargePercent( getHeader().getSurchargePercent()==null?0.0:getHeader().getSurchargePercent());
-				}
-				if (getHeader().isWithholding()) {
-					getCurrentDetail().setRetentionPercent( getHeader().getRetPercent()==null?0.0:getHeader().getRetPercent());
-				}
-				taxableBaseChanged(getHeader().getTaxableBase());
+				onTaxableBaseWizard();
 				onAddDetail(event);
 				onCancelDetail(event);
 				getHeader().setTaxableBase( 0.0 ); 
@@ -498,7 +498,18 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
 
+	private void onTaxableBaseWizard() {
+		getCurrentDetail().setTaxableBase( getHeader().getTaxableBase()==null?0.0:getHeader().getTaxableBase());
+		getCurrentDetail().setVatPercent( getHeader().getTaxPercent()==null?0.0:getHeader().getTaxPercent());
+		if (getHeader().isSurcharge()) {
+			getCurrentDetail().setSurchargePercent( getHeader().getSurchargePercent()==null?0.0:getHeader().getSurchargePercent());
+		}
+		if (getHeader().isWithholding()) {
+			getCurrentDetail().setRetentionPercent( getHeader().getRetPercent()==null?0.0:getHeader().getRetPercent());
+		}
+		taxableBaseChanged(getHeader().getTaxableBase());
 	}
 
 	public void onChangeTaxableBase(ValueChangeEvent event) {
@@ -559,7 +570,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		getCurrentDetail().setAccount(a);
 
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil
-				.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
+				.getRegisteredBean(IAccountingConstants.ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		try {
 			ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_VAT_PERCENT);
 			if (param != null) {
@@ -795,7 +806,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
 			onViewAccountEntry(event);
-			onGenerateKey = "accountEntry_form";
+			onGenerateKey = IAccountingConstants.ACCOUNT_ENTRY_FORM_NAVKEY;
 		} catch (Exception e) {
 			onGenerateKey = null;
 			try {
@@ -1299,7 +1310,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		try {
 			AccountEntry entry = getAccountEntryInvoice().getAccountEntry();
 			AccountEntryController entryController = (AccountEntryController) FormUtil
-					.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
 					IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
@@ -1633,7 +1644,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private List<SelectItem> getAccounts() {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		try {
-			AccountCollectionsController acc = (AccountCollectionsController) AonUtil.getRegisteredBean( ACCOUNT_COLLECTIONS_CONTROLLER_NAME );
+			AccountCollectionsController acc = (AccountCollectionsController) AonUtil.getRegisteredBean( IAccountingConstants.ACCOUNT_COLLECTIONS_CONTROLLER_NAME );
 			if (isSales()) {
 				if (getHeader().getRegistry() != null && getHeader().getRegistry().getId() != null) {
 					Account a = getAccountBridgeUtil().getCustomerAccount(getHeader().getRegistry());

@@ -322,28 +322,28 @@ public class DomainUserController extends LdapBasicController implements IManage
 		dauc.getManagerBean().insert( dau );
 	}
 	
-	private void registerScope( String userName, String scopeName ) throws ManagerBeanException {
+	private void registerScope( String userUid, String scopeName ) throws ManagerBeanException {
 		DBBasicController scopeController = (DBBasicController) AonUtil.getRegisteredBean(SCOPE_CONTROLLER_NAME);
 		Criteria scopeCriteria = new Criteria();
 		scopeCriteria.addEqualExpression(scopeController.getFieldName(IConfigAlias.SCOPE_DESCRIPTION), scopeName);
 		List<ITransferObject> scopes = scopeController.getManagerBean().getList(scopeCriteria);
 		if (! scopes.isEmpty() ) {
 			Scope scope = (Scope) scopes.get(0);
-			User user = ensureDBUser( userName );
+			User user = ensureDBUser( userUid );
 			ensureDBUserScope(user, scope);
 		}
 	}
 
-	public void registerScope( DomainUser user, String scope ) throws ManagerBeanException {
+	public void registerScopeInDBs( String userUid, String scope ) throws ManagerBeanException {
 		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		for (DBConnnection dbc : ddbc.getDBConnnections()) {
 			manager.changeDbConnection(dbc);
 			if ( manager.getDBManager().existsTable(dbc, "scope") ) {
 				try {
-					registerScope(user.getUid(), scope);	
+					registerScope(userUid, scope);	
 				} catch ( Throwable th ) {
-					LOGGER.error( "Error registering " + scope + " for user " + user + " in " + dbc, th );
+					LOGGER.error( "Error registering " + scope + " for user " + userUid + " in " + dbc, th );
 				}
 			}					
 		}

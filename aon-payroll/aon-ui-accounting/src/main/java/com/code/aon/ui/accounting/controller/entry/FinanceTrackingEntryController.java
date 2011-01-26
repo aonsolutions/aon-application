@@ -32,6 +32,7 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.SortOrderMap;
@@ -40,8 +41,6 @@ import com.code.aon.ui.util.AonUtil;
 public class FinanceTrackingEntryController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceTrackingEntryController.class.getName());
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
-	private static final String ACCOUNT_ENTRY_PAGE = "accountEntry_form";
 
 	private AccountEntryFinanceWriter writer;
 
@@ -224,7 +223,7 @@ public class FinanceTrackingEntryController {
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
 			onViewAccountEntry(event);
-			onGenerateKey = ACCOUNT_ENTRY_PAGE;
+			onGenerateKey = IAccountingConstants.ACCOUNT_ENTRY_FORM_NAVKEY;
 		} catch (Exception e) {
 			onGenerateKey = null;
 			try {
@@ -246,7 +245,7 @@ public class FinanceTrackingEntryController {
  
 	public void onViewAccountEntry(ActionEvent event) {
 		try {
-			AccountEntryController entryController = (AccountEntryController) FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			AccountEntryController entryController = (AccountEntryController) FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			Expression exp = null;
 			for (int i = 0;i< accountEntries.size();i++) {
