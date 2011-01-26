@@ -48,7 +48,7 @@ public class AonSelenium extends DefaultSelenium {
 	
 	@Override
 	public void click(String locator) {
-		waitForELementPresent(locator, 30);
+		waitForELementPresent(locator, 60);
 		super.click(locator);
 	}
 	
