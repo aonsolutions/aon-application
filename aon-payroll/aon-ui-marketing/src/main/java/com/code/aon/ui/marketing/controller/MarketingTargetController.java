@@ -63,6 +63,21 @@ public class MarketingTargetController extends TargetController {
 		return this.mtBean;
 	}
 
+	@Override
+	public String getListReportKey() {
+		return IMarketingConstants.MARKETING_TARGET_LIST;
+	}	
+
+	@Override
+	public String getListDetailReportKey() {
+		return IMarketingConstants.MARKETING_TARGET_LIST_DETAIL;
+	}
+
+	@Override
+	public String getListDetailExcelReportKey() {
+		return IMarketingConstants.MARKETING_TARGET_LIST_DETAIL_EXCEL;
+	}
+	
 	public class MarketingTargetManagedBean implements IManagerBean {
 		
 		private IManagerBean bean;

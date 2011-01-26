@@ -5,6 +5,7 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.finance.BankConcept;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.BankStatementLink;
+import com.code.aon.finance.CashFlowForecast;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
@@ -182,6 +183,133 @@ public interface IFinanceAlias {
 	* Hibernate value: BankStatementLink.status
 	*/
 	String  BANK_STATEMENT_LINK_STATUS = BANK_STATEMENT_LINK_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for CashFlowForecast entity.
+	*/ 
+	DAOConstantsEntry CASH_FLOW_FORECAST_ENTRY = DAOConstants.getDAOConstant(CashFlowForecast.class);
+
+	/** 
+	* Alias value: CashFlowForecast_amount
+	* Hibernate value: CashFlowForecast.amount
+	*/
+	String  CASH_FLOW_FORECAST_AMOUNT = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CashFlowForecast_april
+	* Hibernate value: CashFlowForecast.april
+	*/
+	String  CASH_FLOW_FORECAST_APRIL = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CashFlowForecast_august
+	* Hibernate value: CashFlowForecast.august
+	*/
+	String  CASH_FLOW_FORECAST_AUGUST = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CashFlowForecast_december
+	* Hibernate value: CashFlowForecast.december
+	*/
+	String  CASH_FLOW_FORECAST_DECEMBER = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: CashFlowForecast_description
+	* Hibernate value: CashFlowForecast.description
+	*/
+	String  CASH_FLOW_FORECAST_DESCRIPTION = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: CashFlowForecast_dueDate
+	* Hibernate value: CashFlowForecast.dueDate
+	*/
+	String  CASH_FLOW_FORECAST_DUE_DATE = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: CashFlowForecast_february
+	* Hibernate value: CashFlowForecast.february
+	*/
+	String  CASH_FLOW_FORECAST_FEBRUARY = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: CashFlowForecast_id
+	* Hibernate value: CashFlowForecast.id
+	*/
+	String  CASH_FLOW_FORECAST_ID = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: CashFlowForecast_january
+	* Hibernate value: CashFlowForecast.january
+	*/
+	String  CASH_FLOW_FORECAST_JANUARY = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: CashFlowForecast_july
+	* Hibernate value: CashFlowForecast.july
+	*/
+	String  CASH_FLOW_FORECAST_JULY = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: CashFlowForecast_june
+	* Hibernate value: CashFlowForecast.june
+	*/
+	String  CASH_FLOW_FORECAST_JUNE = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: CashFlowForecast_march
+	* Hibernate value: CashFlowForecast.march
+	*/
+	String  CASH_FLOW_FORECAST_MARCH = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: CashFlowForecast_may
+	* Hibernate value: CashFlowForecast.may
+	*/
+	String  CASH_FLOW_FORECAST_MAY = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: CashFlowForecast_november
+	* Hibernate value: CashFlowForecast.november
+	*/
+	String  CASH_FLOW_FORECAST_NOVEMBER = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: CashFlowForecast_october
+	* Hibernate value: CashFlowForecast.october
+	*/
+	String  CASH_FLOW_FORECAST_OCTOBER = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: CashFlowForecast_payment
+	* Hibernate value: CashFlowForecast.payment
+	*/
+	String  CASH_FLOW_FORECAST_PAYMENT = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: CashFlowForecast_paymentDay
+	* Hibernate value: CashFlowForecast.paymentDay
+	*/
+	String  CASH_FLOW_FORECAST_PAYMENT_DAY = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: CashFlowForecast_registryBank_id
+	* Hibernate value: CashFlowForecast.registryBank.id
+	*/
+	String  CASH_FLOW_FORECAST_REGISTRY_BANK_ID = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: CashFlowForecast_september
+	* Hibernate value: CashFlowForecast.september
+	*/
+	String  CASH_FLOW_FORECAST_SEPTEMBER = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: CashFlowForecast_startDate
+	* Hibernate value: CashFlowForecast.startDate
+	*/
+	String  CASH_FLOW_FORECAST_START_DATE = CASH_FLOW_FORECAST_ENTRY.getAliasNames()[19];
 
 
 
