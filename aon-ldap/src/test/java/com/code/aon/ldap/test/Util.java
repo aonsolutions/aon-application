@@ -94,7 +94,7 @@ public class Util {
 	
 	public void delete( Name dn, String objectClass ) {
 		try {
-			LOGGER.debug( "Delete: {}", dn );
+			LOGGER.info( "Delete: {}", dn );
 			ldap.getLdapSession().deleteDepth(dn, true);
 		} catch ( LdapException e ) {
 			Assert.fail(e.getMessage());			

@@ -58,6 +58,7 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
 		getManager().getLogger().domainUserAddded(user);
+		updateWebmail(user);
 	}
 
 	@Override

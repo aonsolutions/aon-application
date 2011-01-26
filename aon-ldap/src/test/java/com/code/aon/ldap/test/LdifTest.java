@@ -33,11 +33,11 @@ public class LdifTest implements IAonObjectClasses, ILdapConstants {
 	};
 	
 	private final static String[] SUPPORTED_OBJECT_CLASSES = new String[] {
-		"organization", "organizationalUnit",
+		"organization", "organizationalUnit", "aonContact",
 		"aonApplication", "aonMessage", "aonRole", "aonDomain",
 		"aonDomainApplication", "aonDBConnection", "aonDBConnection",
 		"aonAccessPolicy", "aonProfile", "aonUser", "aonSignature",
-		"aonMailAccount"
+		"aonMailAccount", "aonDomainApplicationUser", "aonDomainApplicationProfile"
 	};
 	
 	private static final String LDIF_RESOURCE = "aondirectory.ldif";
@@ -64,13 +64,13 @@ public class LdifTest implements IAonObjectClasses, ILdapConstants {
 	}
     
     private void cleanTree() {
-		Name applications = NameResolver.getApplicationsDN();
-		if ( util.exists(applications, ORGANIZATIONAL_UNIT) ) {
-			util.delete(applications, ORGANIZATIONAL_UNIT);
-		}
 		Name domains = NameResolver.getDomainsDN();
 		if ( util.exists(domains, ORGANIZATIONAL_UNIT) ) {
 			util.delete(domains, ORGANIZATIONAL_UNIT);
+		}
+		Name applications = NameResolver.getApplicationsDN();
+		if ( util.exists(applications, ORGANIZATIONAL_UNIT) ) {
+			util.delete(applications, ORGANIZATIONAL_UNIT);
 		}
 		Name messages = NameResolver.getMessagesDN();
 		if ( util.exists(messages, ORGANIZATIONAL_UNIT) ) {
@@ -98,8 +98,7 @@ public class LdifTest implements IAonObjectClasses, ILdapConstants {
     	}
     	return false;
     }
-           
-    @Test
+
     public void testLdif() {
     	StopWatch sw = new StopWatch();
     	sw.start();
@@ -115,7 +114,16 @@ public class LdifTest implements IAonObjectClasses, ILdapConstants {
 			LOGGER.error(e.getMessage(), e);
 		}
     }
- 	
+
+    public void testCleanTree() {
+    	StopWatch sw = new StopWatch();
+    	sw.start();
+    	cleanTree();
+		sw.stop();
+		LOGGER.info( "Total time: " + sw );
+    }
+
+    @Test
     public void importLDIF() {
     	StopWatch sw = new StopWatch();
     	cleanTree();
