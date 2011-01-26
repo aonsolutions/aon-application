@@ -20,6 +20,8 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import ar.com.fdvs.dj.domain.CustomExpression;
+import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
+import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -44,7 +46,7 @@ import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class CashFlowForecastReport {
+public class NEW_CashFlowForecastReport {
 	
 	private Date fromDate;
 	private Date toDate;
@@ -362,35 +364,27 @@ public class CashFlowForecastReport {
 		List<CashFlowReport> flows = new LinkedList<CashFlowReport>();
 		for (ITransferObject to: list) {
 			CashFlowForecast cff = (CashFlowForecast) to;
-			if (cff.isUndated()) { // No hay checks marcados, se asume el primer dia como fecha.
-				addCashFlowReport(cff,getToDate(),flows);
-			} else {
-				List<Date> dates = getForecastDates(cff);
-				for (Date date:dates) {
-					addCashFlowReport(cff,date,flows);
-				}
+			List<Date> dates = getForecastDates(cff);
+			for (Date date:dates) {
+				CashFlowReport cfr = new CashFlowReport();
+				cfr.setId(cff.getId());
+				cfr.setDate(date);
+				cfr.setType("Pr.");
+				cfr.setDescription( cff.getDescription() );
+				cfr.setPayment( cff.isPayment() );
+				cfr.setMap( new HashMap<Integer, CashFlowBank>());
+				CashFlowBank cfb = new CashFlowBank();
+				int bankId = cff.getRegistryBank()!=null?cff.getRegistryBank().getId():Integer.MIN_VALUE;
+				cfb.setId( bankId );
+				cfb.setBalance(0.0 );
+				double amount = cff.isPayment()?CommonUtil.round(cff.getAmount() * (-1)):cff.getAmount();
+				cfr.setAmount( amount );
+				cfr.getMap().put(cfb.getId(), cfb);
+				cfr.setTotal( 0.0 );
+				flows.add(cfr);
 			}
 		}
 		return flows;
-	}
-
-	private void addCashFlowReport(CashFlowForecast cff, Date date, List<CashFlowReport> flows) {
-		CashFlowReport cfr = new CashFlowReport();
-		cfr.setId(cff.getId());
-		cfr.setDate(date);
-		cfr.setType("Pr.");
-		cfr.setDescription( cff.getDescription() );
-		cfr.setPayment( cff.isPayment() );
-		cfr.setMap( new HashMap<Integer, CashFlowBank>());
-		CashFlowBank cfb = new CashFlowBank();
-		int bankId = cff.getRegistryBank()!=null?cff.getRegistryBank().getId():Integer.MIN_VALUE;
-		cfb.setId( bankId );
-		cfb.setBalance(0.0 );
-		double amount = cff.isPayment()?CommonUtil.round(cff.getAmount() * (-1)):cff.getAmount();
-		cfr.setAmount( amount );
-		cfr.getMap().put(cfb.getId(), cfb);
-		cfr.setTotal( 0.0 );
-		flows.add(cfr);
 	}
 
 	private List<Date> getForecastDates(CashFlowForecast cff) {
@@ -653,8 +647,10 @@ public class CashFlowForecastReport {
 			}
 			return getDate().compareTo(cfr.getDate());
 		}
+		
 	}
 
+	@SuppressWarnings("unchecked")
 	public String onExcelReport() {
 		try {
 			DynaElements dyn = new DynaElements();
@@ -664,36 +660,37 @@ public class CashFlowForecastReport {
 			report.addField("systemProperty", Boolean.class);
 			report.addField("disabled", Boolean.class);
 			report.addColumn(dyn.getDateColumn("date", "Fecha"))
-				.addColumn(dyn.getStringColumn("type", "T", 30))
-				.addColumn(dyn.getStringColumn("description", "Descripción", 400))
-				.addColumn(dyn.getNumberBlueNormalColumn("amount", "Importe"))
-				.addColumn(dyn.getNumberRedBlueBoldColumn("total", "Saldo"));
+			 	.addColumn(dyn.getStringColumn("type", "T", 30))
+			 	.addColumn(dyn.getStringColumn("description", "Descripción", 400))
+			 	.addColumn(dyn.getNumberBlueNormalColumn("amount", "Importe"))
+			 	.addColumn(dyn.getNumberRedBlueBoldColumn("total", "Saldo"));
 			for (CashFlowBank bank : getBanks()) {
-				if (bank.isEnabled()) {
-					report.addColumn(dyn.getNumberRedBlueColumn(new BankCustomExpression(bank.getId()), bank.getDescription()));
+				if (bank.isEnabled() ) {
+//					report.addColumn(dyn.getNumberColumn(new BankCustomExpression(bank.getId()), bank.getDescription()));
+					report.getReport().addColumn(ColumnBuilder.getNew()
+						.setCustomExpression(new BankCustomExpression(bank.getId()))
+						.setTitle(bank.getDescription())
+						.setWidth(DynaElements.NUMBER_DEFAULT_WIDTH)
+						.setStyle(DynaElements.DETAIL_NUMBER_STYLE)
+						.setHeaderStyle(DynaElements.COLUMN_HEADER_STYLE)
+						.build());
 				}
 			}
+			
 			DynaReportManager drm = new DynaReportManager();
-			drm.toExcel(report, getStrippedCollection());
+			drm.toExcel(report, (Collection) getModel().getWrappedData());
 		} catch (ReportException e) {
 			e.printStackTrace();
 			String msg = "No se pudo generar el listado";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
-		}
+		} catch (ColumnBuilderException e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} 
 		return null;
-	}
-
-	private List<CashFlowReport> getStrippedCollection() {
-		List<CashFlowReport> list = new LinkedList<CashFlowReport>();
-		List<?> model = (List<?>) getModel().getWrappedData();
-		for (Object o: model) {
-			CashFlowReport r = (CashFlowReport) o;
-			if (!r.isDisabled()) {
-				list.add(r);
-			}
-		}
-		return list;
 	}
 
 	public class BankCustomExpression implements CustomExpression {

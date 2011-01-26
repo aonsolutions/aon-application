@@ -20,13 +20,6 @@
 				<ui:param name="controller" value="#{cashFlowForecastReport}" />
 				<ui:define name="searchContent">
 
-					<aon:outputLabel for="CashFlowForecastReport_toDate" 
-						 value="#{financeBundle.finance_cashflow_to_date}" />
-					<aon:selectInputDate id="CashFlowForecastReport_toDate"
-						value="#{controller.toDate}" required="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-				
 					<aon:outputLabel for="CashFlowForecastReport_fromDate" 
 						value="#{financeBundle.finance_cashflow_from_date}" />
 					<aon:selectInputDate id="CashFlowForecastReport_fromDate"
@@ -37,6 +30,13 @@
 						<a4j:support event="onchanged" reRender="fromContainer"/>
 					</aon:selectInputDate>
 						
+					<aon:outputLabel for="CashFlowForecastReport_toDate" 
+						 value="#{financeBundle.finance_cashflow_to_date}" />
+					<aon:selectInputDate id="CashFlowForecastReport_toDate"
+						value="#{controller.toDate}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+
 					<aon:outputText value="&#160;"/>
 					<aon:div>
 						<aon:selectBooleanCheckbox id="CashFlowForecastReport_include_returned"

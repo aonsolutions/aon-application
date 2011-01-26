@@ -67,5 +67,9 @@ public interface ILdapConstants {
 	String GIVEN_NAME_ATTRIBUTE = "givenName";
 	
 	String SERVER_ID_ATTRIBUTE = "serverId";
+
+	String[] DN_ATTRIBUTES = new String[] {
+		MEMBER_ATTRIBUTE, DATA_SOURCE_ATTRIBUTE, SIGNATURE_MEMBER_ATTRIBUTE
+	};
 	
 }

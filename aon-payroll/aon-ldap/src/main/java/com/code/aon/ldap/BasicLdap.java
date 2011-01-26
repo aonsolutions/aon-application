@@ -97,12 +97,31 @@ public class BasicLdap {
 		}
 	}
 	
-	public void delete( Name dn ) throws LdapException {
+	public boolean delete( Name dn ) {
+		boolean ok = false;		
 		try {
 			getLdapSession().delete(dn);
+			ok = true;
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			closeSession();
 		}
+		return ok;
+	}
+
+	
+	public boolean deleteDepth( Name dn, boolean selfDelete ) {
+		boolean ok = false;		
+		try {
+			getLdapSession().deleteDepth(dn, selfDelete);
+			ok = true;
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
+		} finally {
+			closeSession();
+		}
+		return ok;
 	}
 	
 	public boolean exists( Name dn, String objectClass ) {
