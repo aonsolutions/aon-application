@@ -44,5 +44,9 @@ public interface IAccountingConstants {
 	
 	// BUNDLE MESSAGES
 	String FINANCE_TRACKING_RECORDED = "accounting_finance_tracking_recorded";
+
+	// OTHERS
+	String ACCUMULATED_ACCOUNT_PREFIX = "Amortización Acumulada ";
+	String ALLOCATION_ACCOUNT_PREFIX = "Amortización ";
 	
 }
