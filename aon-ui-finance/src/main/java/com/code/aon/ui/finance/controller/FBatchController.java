@@ -16,8 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -47,23 +45,20 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.finance.event.FinanceListSearchListener;
 import com.code.aon.ui.finance.file.AEB19Writer;
 import com.code.aon.ui.finance.file.AEB32Writer;
+import com.code.aon.ui.finance.file.AEB34Writer;
 import com.code.aon.ui.finance.file.AEB58Writer;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
-/**
- * Controller used in the fbatch maintenance.
- * 
- */
 public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchController.class.getName());
-
 	private Company company;
+	private boolean payment;
 	private FileOutput aebOutput;
 	private Date recordDate;
 	private boolean showFbatchRecordWindow;
@@ -79,6 +74,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void setCompany(Company company) {
 		this.company = company;
+	}
+
+	public boolean isPayment() {
+		return payment;
+	}
+
+	public void setPayment(boolean payment) {
+		this.payment = payment;
 	}
 
 	public FileOutput getAebOutput() {
@@ -113,19 +116,19 @@ public class FBatchController extends BasicController implements ICollectionProv
 	}
 
     public boolean isTodo() {
-        return FinanceBatchStatus.TODO.equals(((FinanceBatch)this.getTo()).getFinanceBatchStatus());
+        return FinanceBatchStatus.TODO == ((FinanceBatch)this.getTo()).getFinanceBatchStatus();
     }
 
     public boolean isDone() {
-        return FinanceBatchStatus.DONE.equals(((FinanceBatch)this.getTo()).getFinanceBatchStatus());
+        return FinanceBatchStatus.DONE == ((FinanceBatch)this.getTo()).getFinanceBatchStatus();
     }
 
     public boolean isRecorded() {
-        return FinanceBatchStatus.RECORDED.equals(((FinanceBatch)this.getTo()).getFinanceBatchStatus());
+        return FinanceBatchStatus.RECORDED == ((FinanceBatch)this.getTo()).getFinanceBatchStatus();
     }
 
     public boolean isDiskMode() {
-        return !FinanceBatchType.NONE.equals(((FinanceBatch)this.getTo()).getFinanceBatchType());
+        return FinanceBatchType.NONE != ((FinanceBatch)this.getTo()).getFinanceBatchType();
     }
 
     public boolean isFilled() {
@@ -133,57 +136,81 @@ public class FBatchController extends BasicController implements ICollectionProv
         return (fbatch.getFinanceBatchTotalDetails().intValue() > 0);
     }
 
+	public void onEditSearchCharge(ActionEvent event) {
+		setPayment(false);
+		super.onEditSearch(event);
+	}
+
+	public void onEditSearchPayment(ActionEvent event) {
+		setPayment(true);
+		super.onEditSearch(event);
+	}
+
 	@SuppressWarnings("unchecked")
-	public Integer getAccountEntryId() {
-    	FinanceBatch fbatch = (FinanceBatch)this.getTo();
-		try {
-			if (fbatch != null && fbatch.getId() != null) {
-				IManagerBean accountEntryFbatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(accountEntryFbatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fbatch.getId());
-				Iterator iterator = accountEntryFbatchBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-					AccountEntryFinanceBatch accountEntryFbatch = (AccountEntryFinanceBatch)iterator.next();
-					return accountEntryFbatch.getAccountEntry().getId();
-				}
+	public Integer getAccountEntryId() throws ManagerBeanException {
+    	FinanceBatch to = (FinanceBatch)this.getTo();
+		if (to != null && to.getId() != null) {
+			IManagerBean accEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), to.getId());
+			Iterator iterator = accEntryFBatchBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				AccountEntryFinanceBatch accountEntryFbatch = (AccountEntryFinanceBatch)iterator.next();
+				return accountEntryFbatch.getAccountEntry().getId();
 			}
-		}catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining account entry id", e);
 		}
     	return null;
 	}
 
-    public void loadAvailableFinances(boolean payment) {
-        try {
-            FinanceController controller = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
-            FinanceBatch to = (FinanceBatch)this.getTo();
+	public void onEditSearchFinance(ActionEvent event) throws ManagerBeanException {
+		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+		financeList.onEditSearch(event);
+        financeList.setCriteria(getAvailableFinancesCriteria());
+	}
 
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-            criteria.addGreaterThanExpression(controller.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
-            Expression pendingExpr = ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
-            Expression returnedExpr = ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
-            criteria.addExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));
-            if (!to.getFinanceBatchType().equals(FinanceBatchType.NONE)) {
-                criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_TYPE), PayMethodType.NEGOTIABLE_DOCUMENT);
-                if (!to.getFinanceBatchType().equals(FinanceBatchType.AEB_58) && !to.getFinanceBatchType().equals(FinanceBatchType.AEB_58_D)) {
-                	criteria.addNotNullExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT));
-                	criteria.addExpression(ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), new BankAccount()));
-                    if (!to.getFinanceBatchType().equals(FinanceBatchType.AEB_32)) {
-                        criteria.addLessThanOrEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getIssueDate());
-                    }
+	private Criteria getAvailableFinancesCriteria() throws ManagerBeanException {
+        FinanceBatch to = (FinanceBatch)this.getTo();
+
+        FinanceListSearchListener financeSearch = (FinanceListSearchListener)AonUtil.getRegisteredBean(FINANCE_LIST_SEARCH_LISTENER_NAME);
+		FinanceStatus[] financeStatuses = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
+		financeSearch.setFinanceStatuses(financeStatuses);
+
+        FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+        Criteria criteria = new Criteria();
+        criteria.addEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
+        criteria.addGreaterThanExpression(financeController.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
+        if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
+        	if (to.getFinanceBatchType() != FinanceBatchType.AEB_34) {
+        		String payMethodTypeAlias = financeController.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_TYPE);
+        		criteria.addEqualExpression(payMethodTypeAlias, PayMethodType.NEGOTIABLE_DOCUMENT);
+        	} else {
+        		String payMethodTypeAlias = financeController.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_TYPE);
+        		Expression transferExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.BANK_TRANSFER);
+                Expression chequeExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.CHEQUE);
+                criteria.addExpression(ExpressionUtilities.getOrExpression(transferExpr, chequeExpr));
+        	}
+            if ((to.getFinanceBatchType() != FinanceBatchType.AEB_58) && (to.getFinanceBatchType() != FinanceBatchType.AEB_58_D)) {
+            	criteria.addNotNullExpression(financeController.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT));
+            	criteria.addNotEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), new BankAccount());
+                if ((to.getFinanceBatchType() != FinanceBatchType.AEB_32) && (to.getFinanceBatchType() != FinanceBatchType.AEB_34)) {
+                    criteria.addLessThanOrEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getIssueDate());
                 }
             }
-        	criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), to.getSecurityLevel());	
-            criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-            criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_CONCEPT));
-
-            controller.onEditSearch(null);
-            controller.setCriteria(criteria);
-            controller.onSearch(null);
-        } catch (ManagerBeanException e) {
-            LOGGER.error("Error reloading Finance model", e);
         }
+    	criteria.addEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), to.getSecurityLevel());	
+        criteria.addOrder(financeController.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+        criteria.addOrder(financeController.getFieldName(IFinanceAlias.FINANCE_CONCEPT));
+		return criteria;
+	}
+
+	public void onSearchFinance(ActionEvent event) throws ManagerBeanException {
+		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+		financeList.onSearch(event);
+	}
+
+	public void loadAvailableFinances() throws ManagerBeanException {
+		this.onEditSearchFinance(null);
+		this.onSearchFinance(null);
     }
 
     private void loadDetails(FinanceBatch fbatch) {
@@ -192,77 +219,58 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
     @SuppressWarnings("unchecked")
-	public void onBatchSelected(ActionEvent event) {
+	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fBatch = (FinanceBatch)getTo();
-        if (!FinanceBatchStatus.TODO.equals(fBatch.getFinanceBatchStatus())) {
-            try {
-                fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
-                getManagerBean().update(fBatch);
-                setAebOutput(null);
-            } catch (ManagerBeanException e) {
-                LOGGER.error("Error updating FinanceBatch with id=" + fBatch.getId(), e);
-            }
+        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
+            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
+            getManagerBean().update(fBatch);
+            setAebOutput(null);
         }
 
-        FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
-        try {
-            IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+        FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+        Iterator iterator = financeController.getCheckedFinances().iterator();
+        while (iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
+            finance.setFinanceStatus(FinanceStatus.BATCHED);
+            financeBean.update(finance);
 
-            Iterator iterator = financeController.getCheckedFinances().iterator();
-            while (iterator.hasNext()) {
-				Finance finance = (Finance)iterator.next();
-                finance.setFinanceStatus(FinanceStatus.BATCHED);
-                financeBean.update(finance);
+            FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
+			fBatchDetail.setFinance(finance);
+			fBatchDetail.setFinanceBatch(fBatch);
+            fBatchDetail.setAmount(finance.getTotalAmount());
+            fBatchDetail.setStatus(FinanceStatus.BATCHED);
+			financeBatchDetailBean.insert(fBatchDetail);
 
-                FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
-				fBatchDetail.setFinance(finance);
-				fBatchDetail.setFinanceBatch(fBatch);
-                fBatchDetail.setAmount(finance.getTotalAmount());
-                fBatchDetail.setStatus(FinanceStatus.BATCHED);
-				financeBatchDetailBean.insert(fBatchDetail);
-
-				String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED) + " " + fBatch.getId() + " - " + fBatch.getDescription();
-				FinanceTrackingWriter.addFinanceTracking(finance, fBatch.getIssueDate(), FinanceTrackingType.BATCHED, message);
-            }
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error adding selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
-		}
-
+			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED);
+			message += " " + fBatch.getId() + " - " + fBatch.getDescription();
+			FinanceTrackingWriter.addFinanceTracking(finance, fBatch.getIssueDate(), FinanceTrackingType.BATCHED, message);
+        }
         financeController.clearCheckedFinances();
         loadDetails(fBatch);
-        loadAvailableFinances(fBatch.isPayment());
+        onSearchFinance(event);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onRemoveSelected(ActionEvent event) {
+	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fBatch = (FinanceBatch)getTo();
-        if (!FinanceBatchStatus.TODO.equals(fBatch.getFinanceBatchStatus())) {
-            try {
-                fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
-                getManagerBean().update(fBatch);
-                setAebOutput(null);
-            } catch (ManagerBeanException e) {
-                LOGGER.error("Error updating FinanceBatch with id=" + fBatch.getId(), e);
-            }
+        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
+            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
+            getManagerBean().update(fBatch);
+            setAebOutput(null);
         }
 
+		IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-        try {
-			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-
-			Iterator iterator = fBatchDetailController.getCheckedFinanceBatchDetails().iterator();
-	        while(iterator.hasNext()){
-	        	FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
-	        	financeBatchDetailBean.remove(fBatchDetail);
-	        }
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error removing selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
-		}
-
+		Iterator iterator = fBatchDetailController.getCheckedFinanceBatchDetails().iterator();
+        while(iterator.hasNext()){
+        	FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+        	financeBatchDetailBean.remove(fBatchDetail);
+        }
 		fBatchDetailController.clearCheckedFinanceBatchDetails();
         loadDetails(fBatch);
-		loadAvailableFinances(fBatch.isPayment());
+        onSearchFinance(event);
     }
 
 	@SuppressWarnings("unchecked")
@@ -270,15 +278,19 @@ public class FBatchController extends BasicController implements ICollectionProv
     	FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
         Collection fbatchDetailCollection = obtainDetailsCollection(fbatch);
-        if (fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_19) || fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_19_D)) {
+        if ((fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19) || (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D)) {
 			AEB19Writer aeb19Writer = new AEB19Writer();
 			aebOutput = aeb19Writer.createAEB19(getCompany(), fbatch, fbatchDetailCollection);
 		}
-		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_32)) {
+		else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_32) {
 			AEB32Writer aeb32Writer = new AEB32Writer();
 			aebOutput = aeb32Writer.createAEB32(getCompany(), fbatch, fbatchDetailCollection);
 		}
-		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_58) || fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_58_D)) {
+		else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34) {
+			AEB34Writer aeb34Writer = new AEB34Writer();
+			aebOutput = aeb34Writer.createAEB34(getCompany(), fbatch, fbatchDetailCollection);
+		}
+		else if ((fbatch.getFinanceBatchType() == FinanceBatchType.AEB_58) || (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_58_D)) {
 			AEB58Writer aeb58Writer = new AEB58Writer();
 			aebOutput = aeb58Writer.createAEB58(getCompany(), fbatch, fbatchDetailCollection);
 		}
@@ -376,7 +388,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.PAID);
         }
         
-        fBatch.setFinanceBatchStatus(fBatch.getFinanceBatchType().equals(FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
+        fBatch.setFinanceBatchStatus((fBatch.getFinanceBatchType() == FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
         getManagerBean().update(fBatch);
         loadDetails(fBatch);
     }

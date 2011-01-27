@@ -74,11 +74,20 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
+				<value>#{fBatchSearch}</value>
 				<value>#{fBatchControllerListener}</value>
 				<value>#{fBatchDetailListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>fBatchSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FBatchSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>fBatchControllerListener</managed-bean-name>
