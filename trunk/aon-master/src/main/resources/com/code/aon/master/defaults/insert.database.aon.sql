@@ -405,6 +405,15 @@ INSERT INTO `app_param` (`name`, `value`) VALUES
 COMMIT;
 
 #
+# Data for the `warehouse` table  (LIMIT 0,500)
+#
+
+INSERT INTO `warehouse` (`id`, `name`) VALUES 
+  (1,'GENERAL');
+
+COMMIT;
+
+#
 # Data for the `scope` table  (LIMIT 0,500)
 #
 
