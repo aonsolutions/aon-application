@@ -9,6 +9,6 @@
  <field name="nif_detail" value="bean" bean="DETAIL_PERSON" property="code" format="Nif" pattern="X(12)" />
  <field name="numero_dato" value="012" format="AlphaNumeric" pattern="X(3)" />
  <field name="domicilio" value="bean" bean="DETAIL_PERSON" property="addressPart1" format="AlphaNumeric" pattern="X(36)" />
- <field name="free2" value=" " format="Alphabetic" pattern="X(7)" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(7)" />
 
 </register>
