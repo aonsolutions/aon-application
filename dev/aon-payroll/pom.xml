@@ -112,6 +112,49 @@
 	<module>aon-web-smb</module>
 	<module>aon-web-account</module>
  
+
+	<module>aon-asset</module>
+	<module>aon-campaign</module>
+	<module>aon-cms</module>
+	<module>aon-ebackoffice</module>
+	<module>aon-infoweb</module>
+	<module>aon-infoweb-templates</module>
+	<module>aon-jsf-bridge</module>
+	<module>aon-manager</module>
+	<module>aon-marketing</module>
+	<module>aon-payroll-nominasta</module>
+	<module>aon-purchase-bridge</module>
+	<module>aon-ui-asset</module>
+	<module>aon-ui-campaign</module>
+	<module>aon-ui-cms</module>
+	<module>aon-ui-ebackoffice</module>
+	<module>aon-ui-ecommerce</module>
+	<module>aon-ui-infoweb</module>
+	<module>aon-ui-mailing</module>
+	<module>aon-ui-manager</module>
+	<module>aon-ui-marketing</module>
+	<module>aon-ui-mbpayroll</module>
+	<module>aon-ui-project</module>
+	<module>aon-ui-publisher</module>
+	<module>aon-ui-purchase</module>
+	<module>aon-ui-warehouse</module>
+	<module>aon-web-asset</module>
+	<module>aon-web-cms</module>
+	<module>aon-web-commercial</module>
+	<module>aon-web-communicator</module>
+	<module>aon-web-consultant</module>
+	<module>aon-web-ebackoffice</module>
+	<module>aon-web-ecommerce</module>
+	<module>aon-web-enterprise</module>
+	<module>aon-web-finance</module>
+	<module>aon-web-fiscal</module>
+	<module>aon-web-infoweb</module>
+	<module>aon-web-manager</module>
+	<module>aon-web-mbpayroll</module>
+	<module>aon-web-publisher</module>
+	<module>aon-web-task</module>
+	<module>aon-web-webmail</module>
+
 	<module>aon-payroll-ctsql2mysql</module>
 	
   </modules>
