@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -103,7 +105,7 @@ public class AEB32Writer implements IFinanceConstants {
 		IAddress iAddress = obtainInvoiceAddress(finance.getInvoice(), finance.getRegistry());
 		individual.setPaymentDate(finance.getDueDate());
 		if (iAddress != null) {
-			individual.setPayedAddress(iAddress.getAddress() + " " + ((iAddress.getAddress2()!=null)?iAddress.getAddress2():""));
+			individual.setPayedAddress(iAddress.getAddress() + (StringUtils.isNotEmpty(iAddress.getAddress2())?" "+iAddress.getAddress2():""));
 			individual.setPayedPost(iAddress.getCity());
 			try {
 				individual.setPayedPostPostalCode(new Integer(iAddress.getZip()));
