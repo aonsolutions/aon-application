@@ -7,7 +7,9 @@ BEGIN;
 
 ALTER TABLE calendar DROP COLUMN `source`;
 ALTER TABLE calendar DROP COLUMN `source_id`;
-
+ALTER TABLE calendar ADD COLUMN `generic` tinyint(1) default '1' COMMENT 'Indica si es editable o no';
+ALTER TABLE calendar ADD COLUMN `calendar` int(4) default NULL COMMENT 'calendario del que se hereda';
+ALTER TABLE calendar ADD CONSTRAINT `FK_CALENDAR_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
 
 ALTER TABLE enterprise ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
 ALTER TABLE enterprise ADD CONSTRAINT `FK_ENTERPRISE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
@@ -142,6 +144,41 @@ CREATE TABLE `deduction_concept` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de deducciones';
 
+INSERT INTO `deduction_concept` 
+	(id	,code	,description					,type ) 
+VALUES
+	(1, 'CGC'	,"(BASE_CGC/CGC*100)+'%'"		,0),
+	(2, 'CGP'	,"(BASE_CGP/CGP*100)+'%'"		,1),
+	(3, 'DESMP'	,"(BASE_CGP/DESMP*100)+'%'"		,2),
+	(4, 'FP'	,"(BASE_CGP/FP*100)+'%'"		,3),
+	(5, 'NESTR'	,"(BASE_NESTR/NESTR*100)+'%'"	,4),
+	(6, 'ESTR'	,"(BASE_ESTR/ESTR*100)+'%'"		,5),
+	(7, 'IRPF'	,"(BASE_IRPF/IRPF*100)+'%'"		,6);
+
+CREATE TABLE `system_deduction` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `type` tinyint(2) COMMENT 'Tipo de Deducción',
+  `deduction_concept` int(4) COMMENT 'Identificador unico del concepto',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  `description_decorable` tinyint(2) default '0' COMMENT '',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
+  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  `month` tinyint(2) default null COMMENT 'Mes de la deducción',
+  PRIMARY KEY  (`id`),
+  CONSTRAINT `FK_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
+
+INSERT INTO `system_deduction` 
+	(type	,deduction_concept	,expression				,start_date		,description_decorable	 )
+VALUES
+	(0		,1					,"BASE_CGC * 4.70/100"	,'2010-01-01'	,1), 
+	(2		,3					,"BASE_CGP * (INDEFINIDO ? 1.55 : 1,60 )/100"
+														,'2010-01-01'	,1), 
+	(3		,4					,"BASE_CGP * 0.10/100"	,'2010-01-01'	,1),  
+	(4		,5					,"BASE_NESTR * 4.70/100",'2010-01-01'	,1), 
+	(5		,6					,"BASE_NESTR * 2.00/100",'2010-01-01'	,1);
+
 CREATE TABLE `contract_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
@@ -152,6 +189,8 @@ CREATE TABLE `contract_data` (
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',  
   `quote_group` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Grupo de Cotización',
   `category` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Categoria o grupo profesional',
+  `registration` int(4)   NOT NULL COMMENT 'Número libro de matricula',
+  `seniority_date` date NOT NULL COMMENT 'Fecha de antiguedad ',
   PRIMARY KEY  (`id`),
   CONSTRAINT `FK_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del contrato';
@@ -184,6 +223,18 @@ CREATE TABLE `contract_payment` (
   CONSTRAINT `FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 
+CREATE TABLE `contract_extra_pay` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `contract` int(4) NOT NULL COMMENT 'Contrato',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  `description_decorable` tinyint(2) default '0' COMMENT '',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
+  `month` tinyint(2) default null COMMENT 'Mes de la paga extra',
+  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  PRIMARY KEY  (`id`),
+  CONSTRAINT `FK_EXTRA_PAY_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pagas extras';
 
 CREATE TABLE `contract_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -322,13 +373,41 @@ CREATE TABLE `enterprise_certificate_detail` (
 CREATE TABLE `function_constant` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
+  `expression` varchar(512) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   `read_only` TINYINT(1) NULL COMMENT 'Modificable',
   `comments` VARCHAR(128) NULL COMMENT 'Comentario de ayuda',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto de las funciones';
+
+INSERT INTO `function_constant` 
+	(name			,expression					,start_date	,end_date	,read_only	,comments		)
+VALUES
+	('BASE_CGC_MIN'	,"[	1 : 1031.70,
+						2 : 855.90, 
+						3 : 744.60, 
+						4 : 3198.00, 
+						5 : 738.90, 
+						6 : 738.90,
+						7 : 738.90,
+						8 : 24.63*DIAS_MES, 
+						9 : 24.63*DIAS_MES,
+						10: 24.63*DIAS_MES,
+						11: 24.63*DIAS_MES]"
+												,'2010-01-01',NULL		,1			,'Bases minimas'), 
+	('BASE_CGC_MAX'	,"[	1 : 3198.00,
+						2 : 3198.00, 
+						3 : 3198.00, 
+						4 : 3198.00, 
+						5 : 3198.00, 
+						6 : 3198.00,
+						7 : 3198.00,
+						8 : 106.60*DIAS_MES, 
+						9 : 106.60*DIAS_MES,
+						10: 106.60*DIAS_MES,
+						11: 106.60*DIAS_MES]"
+												,'2010-01-01',NULL		,1			,'Bases maximas');
 
 
 INSERT INTO `cnae` ( id, code, title ) 
