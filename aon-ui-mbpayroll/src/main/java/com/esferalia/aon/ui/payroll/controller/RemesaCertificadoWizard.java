@@ -235,7 +235,7 @@ public class RemesaCertificadoWizard implements Serializable {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-			String fileName = getCertificateWriter().getCertificate().getFichero();
+			String fileName = getCertificateWriter().getCertificate().getFile();
 			response.setContentType(MimeType.MIME_XML.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xml\";");
 
@@ -309,7 +309,7 @@ public class RemesaCertificadoWizard implements Serializable {
 			for(RemesableCertificate remesable: getSelectedRemesas()){
 				setFileOutput(getCertificateWriter().createCertificate(remesable.getRemesa(), getEmpresaDAO().getDetalleRemesaCertificados(remesable.getRemesa())));
 				FileInputStream in = new FileInputStream(getFileOutput().getFile());
-				out.putNextEntry(new ZipEntry(getCertificateWriter().getCertificate().getFichero()+".xml"));
+				out.putNextEntry(new ZipEntry(getCertificateWriter().getCertificate().getFile()+".xml"));
 				int len;
 				while ((len = in.read(buf)) > 0) {
 					out.write(buf, 0, len);
