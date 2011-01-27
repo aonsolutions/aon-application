@@ -1,5 +1,7 @@
 package com.code.aon.ui.manager.event;
 
+import java.sql.SQLException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			if ( getManager().getUserType() == UserType.PARENT ) {
 				domain.setParentDomain( getManager().getCurrentDomain() );
 			}
+			domainController.updateParentDomains();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -48,7 +51,6 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		DomainController domainController = (DomainController) event.getController();
 		Domain domain = domainController.getDomain();
 		try {
-			domainController.createOrganizationalUnits(domain);
 			updateDomain(domain);
 			domainController.insertOrUpdateAccessPolicy();
 			DBConnnection dbc = domainController.createAndRegister(domain);
@@ -63,10 +65,28 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	}
 
 	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+		try {		
+			for (DBConnnection dbc : ddbc.getDBConnnections()) {
+				try {
+					getManager().removeDB( dbc );
+				} catch ( SQLException sqle ) {
+					LOGGER.error(sqle.getMessage(), sqle);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}	
+	}
+
+	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		Domain domain = (Domain) event.getController().getTo();
-		getManager().getLogger().domainAddded(domain);
+		getManager().getLogger().domainRemoved(domain);
 	}
 
 	@Override
@@ -76,6 +96,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		updateDomain(domainController.getDomain());
 		try {
 			domainController.initAccessPolicy();
+			domainController.updateParentDomains();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

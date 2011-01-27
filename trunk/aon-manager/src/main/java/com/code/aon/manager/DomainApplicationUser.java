@@ -51,6 +51,12 @@ public class DomainApplicationUser implements ILdapTransferObject {
 	private String organizationName;
 	
 	private String organizationUnitName;
+	
+	private Integer status;
+	
+	public DomainApplicationUser() {
+		this.status = 0;
+	}
 
 	@Id
 	public Name getId() {
@@ -118,6 +124,15 @@ public class DomainApplicationUser implements ILdapTransferObject {
 		this.businessCategory = businessCategory;
 	}	
 	
+	@Attribute(name=STATUS_ATTRIBUTE)
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}	
+	
 	@Attribute(name=MEMBER_ATTRIBUTE, baseClass="javax.naming.ldap.LdapName")
 	public List<Name> getProfiles() {
 		return profiles;
@@ -126,7 +141,7 @@ public class DomainApplicationUser implements ILdapTransferObject {
 	public void setProfiles(List<Name> profiles) {
 		this.profiles = profiles;
 	}
-
+	
 	public String getProfileList() {
 		if ( this.profiles != null ) {
 			List<String> list = new LinkedList<String>();
@@ -152,6 +167,7 @@ public class DomainApplicationUser implements ILdapTransferObject {
 				.append(this.description, o.description)
 				.append(this.organizationName, o.organizationName)
 				.append(this.organizationUnitName, o.organizationUnitName)
+				.append(this.status, o.status)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getCommonName(), o.getCommonName());		
@@ -165,6 +181,7 @@ public class DomainApplicationUser implements ILdapTransferObject {
 			.append(description)
 			.append(organizationName)
 			.append(organizationUnitName)
+			.append(status)
 			.toHashCode();
 	}
 

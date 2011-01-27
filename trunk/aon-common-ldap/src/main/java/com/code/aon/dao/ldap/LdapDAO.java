@@ -276,7 +276,10 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			setProperties(to, entry);
 			getLdapSession().add(entry);
 			setDN( to, entry.getDN() );
-		} catch ( LdapException e ) {
+			if ( this.metadata.getConstructMethod() != null ) {
+				this.metadata.getConstructMethod().invoke( to, this );
+			}
+		} catch ( Throwable e ) {
 			throw new DAOException( "Error in insert of " + metadata.getMainObjectClass(), e );
 		} finally {
 			closeSession();
@@ -287,9 +290,13 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	@Override
 	public boolean remove(ITransferObject to) throws DAOException {
 		try {
-			Name dn = getDN(to);
-			getLdapSession().deleteDepth(dn, true);
-		} catch ( LdapException e ) {
+			Name dn = getDN(to);			
+			if ( this.metadata.getRemoveMethod() != null ) {
+				this.metadata.getRemoveMethod().invoke( null, this, dn);
+			} else {
+				getLdapSession().deleteDepth(dn, true);
+			}
+		} catch ( Throwable e ) {
 			throw new DAOException( "Error in remove of " + metadata.getMainObjectClass(), e );
 		} finally {
 			closeSession();

@@ -29,8 +29,7 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter i
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
-		dauc.setTermsOfServiceAccepted(false);
+		getManager().resetTermsOfServiceAccepted();
 	}
 	
 	@Override

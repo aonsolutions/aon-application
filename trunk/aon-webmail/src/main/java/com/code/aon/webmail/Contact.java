@@ -317,7 +317,7 @@ public class Contact implements IPerson {
 		this.title = title;
 	}
 
-	@Attribute(name="contactGroup")
+	@Attribute(name=CONTACT_GROUP_ATTRIBUTE)
 	public Boolean getContactGroup() {
 		return contactGroup;
 	}

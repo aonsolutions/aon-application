@@ -177,4 +177,16 @@ public class BasicLdap {
 		return entry;
 	}		
 	
+	public List<Entry> getList( Name base, String filter, String... attributes ) {
+		List<Entry> list = null;
+		try {
+			list = getLdapSession().search(base, filter, attributes );
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e);
+		} finally {
+			closeSession();
+		}
+		return list;		
+	}
+	
 }

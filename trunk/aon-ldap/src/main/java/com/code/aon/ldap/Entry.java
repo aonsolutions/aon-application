@@ -21,9 +21,9 @@ public class Entry implements ILdapConstants, IAonObjectClasses {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(Entry.class);
 	
-	private static final String TRUE_VALUE = "TRUE";
+	public static final String TRUE_VALUE = "TRUE";
 	
-	private static final String FALSE_VALUE = "FALSE";
+	public static final String FALSE_VALUE = "FALSE";
 
 	private static final SimpleDateFormat GENERALIZED_TIME_FORMAT = new SimpleDateFormat( "yyyyMMddHHmmss'Z'" );
 	

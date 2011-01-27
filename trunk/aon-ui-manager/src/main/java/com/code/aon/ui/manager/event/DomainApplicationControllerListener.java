@@ -34,8 +34,7 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		DomainApplicationController dac = (DomainApplicationController) event.getController();
-		dac.setTermsOfServiceAccepted(false);
+		getManager().resetTermsOfServiceAccepted();
 		updateDataSources();
 	}
 
@@ -44,7 +43,6 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 			throws ControllerListenerException {
 		DomainApplicationController dac = (DomainApplicationController) event.getController();
 		DomainApplication application = dac.getDomainApplication();
-		dac.createOrganizationalUnits(application);
 		updateApplication(dac);
 		insertApplicationDBDefaults(application);
 		getManager().getLogger().domainApplicationAddded(application);
@@ -54,7 +52,6 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainApplicationController dac = (DomainApplicationController) event.getController();
-		dac.createOrganizationalUnits(dac.getDomainApplication());
 		updateApplication(dac);
 		updateDataSources();
 	}
