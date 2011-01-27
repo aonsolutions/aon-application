@@ -361,16 +361,10 @@ public class DomainUserController extends LdapBasicController implements IManage
 		}
 	}
 	
-	private void resetDBUser( User user ) throws ManagerBeanException {
-		user.setValidate(true);
-		user.setAvailable(true);
-		user.setStatus(0);		
-	}
 
 	private User initDBUser( String uid ) throws ManagerBeanException {
 		User user = new User();
 		user.setLogin(uid);
-		resetDBUser(user);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression("uid", uid);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
@@ -395,7 +389,6 @@ public class DomainUserController extends LdapBasicController implements IManage
 			bean.insert(user);
 		} else {
 			user = (User) list.get(0);
-			resetDBUser(user);
 			bean.update(user);
 		}
 		return user;
@@ -453,8 +446,6 @@ public class DomainUserController extends LdapBasicController implements IManage
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
 			User dbUser = (User) list.get(0);
-			dbUser.setAvailable(false);
-			dbUser.setStatus(-1);
 			bean.update(dbUser);
 		}
 	}
