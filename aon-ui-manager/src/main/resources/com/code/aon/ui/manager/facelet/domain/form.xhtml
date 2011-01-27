@@ -55,10 +55,22 @@
 						size="95" value="#{domain.to.organizationName}" />
 
 					<c:if test="#{manager.config.showDomainSubDomainSuffix}" >
-						<aon:outputLabel for="Domain_subDomainSuffix"
-							value="#{managerBundle.manager_domain_subDomainSuffix}" />
-						<aon:inputText id="Domain_subDomainSuffix" size="60" maxlength="256"
-							value="#{domain.to.subDomainSuffix}" />
+						<c:if test="#{domain.to.domainManagement}" >					
+							<aon:outputLabel for="Domain_subDomainSuffix"
+								value="#{managerBundle.manager_domain_subDomainSuffix}" />
+							<aon:inputText id="Domain_subDomainSuffix" size="60" maxlength="256"
+								value="#{domain.to.subDomainSuffix}" />
+						</c:if>
+						<c:if test="#{!domain.to.domainManagement}" >					
+							<aon:outputLabel for="Domain_parentDomain"
+								value="#{managerBundle.manager_domain_parent}" />
+							<aon:selectOneMenu id="Domain_parentDomain"
+								converter="#{domain.converter}"
+								value="#{domain.to.parentDomain}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{domain.parentDomains}" />
+							</aon:selectOneMenu>								
+						</c:if>
 					</c:if>
 
 					<c:if test="#{manager.config.showDomainMail}" >
@@ -93,9 +105,12 @@
 						<aon:panelGrid columns="2">
 							<aon:outputLabel for="Domain_status"
 								value="#{bundle.aon_status}" />
-							<aon:inputText id="Domain_status" size="5"
-								value="#{domain.to.status}" />
-		
+							<aon:selectOneMenu id="User_available"
+								value="#{domain.to.status}">
+								<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="0" />
+								<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="11" />
+							</aon:selectOneMenu>								
+
 							<aon:outputLabel for="Domain_dnsManagement"
 								value="#{managerBundle.manager_domain_dnsManagement}" />
 			                <aon:selectBooleanCheckbox id="Domain_dnsManagement"

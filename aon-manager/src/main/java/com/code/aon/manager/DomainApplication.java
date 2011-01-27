@@ -1,6 +1,7 @@
 package com.code.aon.manager;
 
 import static com.code.aon.ldap.IAonObjectClasses.DOMAIN_APPLICATION;
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.TOP;
 
 import javax.naming.Name;
@@ -20,6 +21,7 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.NameResolver;
 
 @EntryObject(mainObjectClass=DOMAIN_APPLICATION, objectClasses={TOP})
@@ -83,6 +85,32 @@ public class DomainApplication implements ILdapTransferObject, Cloneable {
 	public void setDataSource(DBConnnection dataSource) {
 		this.dataSource = dataSource;
 	}
+	
+	public void construct( BasicLdap ldap ) {
+		String domain = getDomain();
+		Name profilesDN = NameResolver.getDomainApplicationProfilesDN(domain, getCommonName());
+		if (! ldap.exists(profilesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(profilesDN);
+		}
+		Name usersDN = NameResolver.getDomainApplicationUsersDN(domain, getCommonName());
+		if (! ldap.exists(usersDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(usersDN);
+		}
+	}
+	
+	public static void delete( BasicLdap ldap, Name dn ) {
+		String application = NameResolver.getFirstValue(dn);
+		String domain = NameResolver.getValue(dn, 2);
+		Name users = NameResolver.getDomainApplicationUsersDN(domain, application);
+		if ( ldap.exists(users, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(users, true);
+		}
+		Name profiles = NameResolver.getDomainApplicationProfilesDN(domain, application);
+		if ( ldap.exists(profiles, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(profiles, true);
+		}		
+		ldap.deleteDepth(dn, true);
+	}	
 	
 	@Override
 	public Object clone() {

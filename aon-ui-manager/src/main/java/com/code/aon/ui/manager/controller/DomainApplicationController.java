@@ -41,8 +41,6 @@ public class DomainApplicationController extends LdapBasicController implements 
 	
 	private boolean aonDB;
 	
-	private boolean termsOfServiceAccepted;
-	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -50,14 +48,6 @@ public class DomainApplicationController extends LdapBasicController implements 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-	
-	public boolean isTermsOfServiceAccepted() {
-		return termsOfServiceAccepted;
-	}
-
-	public void setTermsOfServiceAccepted(boolean termsOfServiceAccepted) {
-		this.termsOfServiceAccepted = termsOfServiceAccepted;
-	}	
 	
 	public boolean isAonDB() {
 		return aonDB;
@@ -78,7 +68,7 @@ public class DomainApplicationController extends LdapBasicController implements 
 		return (DomainApplication) getTo();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DomainApplication> getDomainApplications() throws ManagerBeanException {
 		return (List) getModel().getWrappedData();
 	}
@@ -107,20 +97,6 @@ public class DomainApplicationController extends LdapBasicController implements 
 		}
 		return list;
 	}	
-	
-	public void createOrganizationalUnits( DomainApplication da ) {
-		BasicLdap ldap = new BasicLdap();
-		String domainName = da.getDomain();
-		String application = da.getCommonName();
-		Name profilesDN = NameResolver.getDomainApplicationProfilesDN(domainName, application);
-		if (! ldap.exists(profilesDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.addOrganizationUnit(profilesDN);
-		}
-		Name usersDN = NameResolver.getDomainApplicationUsersDN(domainName, application);
-		if (! ldap.exists(usersDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.addOrganizationUnit(usersDN);
-		}
-	}		
 
     /**
      * Available roles list defined in application.
