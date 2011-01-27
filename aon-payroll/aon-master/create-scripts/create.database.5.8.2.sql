@@ -4,8 +4,6 @@
 # Creation Date: 13/01/2011 19:33
 
 
-SET GLOBAL log_bin_trust_function_creators = 1;
-
 SET FOREIGN_KEY_CHECKS=0;
 
 CREATE DATABASE `aon_master`
@@ -45,16 +43,6 @@ CREATE TABLE `academic_year` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Año Academico';
 
 #
-# Structure for the `scope` table : 
-#
-
-CREATE TABLE `scope` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `description` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Ambito',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos';
-
-#
 # Structure for the `registry` table : 
 #
 
@@ -71,6 +59,16 @@ CREATE TABLE `registry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
 
 #
+# Structure for the `scope` table : 
+#
+
+CREATE TABLE `scope` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `description` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Ambito',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos';
+
+#
 # Structure for the `enterprise` table : 
 #
 
@@ -79,8 +77,8 @@ CREATE TABLE `enterprise` (
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY  (`registry`),
   KEY `IDX_ENTERPRISE_SCOPE` (`scope`),
-  CONSTRAINT `FK_ENTERPRISE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_ENTERPRISE_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Empresa';
 
 #
@@ -458,8 +456,8 @@ CREATE TABLE `fbatch` (
   PRIMARY KEY  (`id`),
   KEY `rbank` (`rbank`),
   KEY `IDX_FBATCH_BANK_STATEMENT_LINK` (`bank_statement_link`),
-  CONSTRAINT `FK_FBATCH_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
-  CONSTRAINT `fbatch_fk_1` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
+  CONSTRAINT `fbatch_fk_1` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`),
+  CONSTRAINT `FK_FBATCH_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas';
 
 #
@@ -593,8 +591,8 @@ CREATE TABLE `finance_tracking` (
   KEY `IDX_FINANCE_TRACKING_RBANK` (`rbank`),
   KEY `IDX_FINANCE_TRACKING_PM_TYPE_DETAIL` (`pm_type_detail`),
   KEY `IDX_FINANCE_TRACKING_BANK_STATEMENT_LINK` (`bank_statement_link`),
-  CONSTRAINT `FK_FINANCE_TRACKING_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
   CONSTRAINT `finance_tracking_fk` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
+  CONSTRAINT `FK_FINANCE_TRACKING_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
   CONSTRAINT `FK_FINANCE_TRACKING_PM_TYPE_DETAIL` FOREIGN KEY (`pm_type_detail`) REFERENCES `pm_type_detail` (`id`),
   CONSTRAINT `FK_FINANCE_TRACKING_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Seguimiento de Vencimientos';
@@ -1215,8 +1213,8 @@ CREATE TABLE `bank_concept_account` (
   PRIMARY KEY  (`id`),
   KEY `IDX_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` (`bank_concept`),
   KEY `IDX_BANK_CONCEPT_ACCOUNT_ACCOUNT` (`account`),
-  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` FOREIGN KEY (`bank_concept`) REFERENCES `bank_concept` (`id`),
-  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
+  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` FOREIGN KEY (`bank_concept`) REFERENCES `bank_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Conceptos bancarios';
 
 #
@@ -1332,6 +1330,36 @@ CREATE TABLE `campaign_dossier` (
   CONSTRAINT `campaign_dossier_fk_1` FOREIGN KEY (`campaign`) REFERENCES `campaign` (`id`),
   CONSTRAINT `campaign_dossier_fk_2` FOREIGN KEY (`dossier`) REFERENCES `dossier` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campañas y Expedientes';
+
+#
+# Structure for the `cashflow_forecast` table : 
+#
+
+CREATE TABLE `cashflow_forecast` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago o un cobro',
+  `description` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio de aplicacion',
+  `due_date` date default NULL COMMENT 'Fecha final de aplicacion',
+  `rbank` int(4) default NULL COMMENT 'Identificador de Banco de la Compañia',
+  `amount` double(15,2) NOT NULL default '0.00' COMMENT 'Importe',
+  `payment_day` double(15,2) NOT NULL default '1.00' COMMENT 'Dia de pago',
+  `january` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en enero',
+  `february` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en febrero',
+  `march` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en marzo',
+  `april` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en abril',
+  `may` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en mayo',
+  `june` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en junio',
+  `july` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en julio',
+  `august` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en agosto',
+  `september` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en septiembre',
+  `october` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en octubre',
+  `november` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en noviembre',
+  `december` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en diciembre',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_CASHFLOW_FORECAST_RBANK` (`rbank`),
+  CONSTRAINT `FK_CASHFLOW_FORECAST_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prevision de tesoreria';
 
 #
 # Structure for the `catalogue` table : 
@@ -1516,6 +1544,49 @@ CREATE TABLE `commercial_term` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones Comerciales';
 
 #
+# Structure for the `commission_type` table : 
+#
+
+CREATE TABLE `commission_type` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Comision',
+  `rate` double(6,2) default '0.00' COMMENT 'Porcentaje de Comision',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Comisiones';
+
+#
+# Structure for the `seller` table : 
+#
+
+CREATE TABLE `seller` (
+  `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Agente Comercial',
+  `commission_type` int(4) default NULL COMMENT 'Identificador del Tipo de Comision',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Agente Comercial',
+  PRIMARY KEY  (`registry`),
+  KEY `IDX_SELLER_COMMISSION_TYPE` (`commission_type`),
+  CONSTRAINT `FK_SELLER_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
+  CONSTRAINT `seller_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agentes Comerciales';
+
+#
+# Structure for the `target` table : 
+#
+
+CREATE TABLE `target` (
+  `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente Potencial',
+  `tariff` int(4) default NULL COMMENT 'Tarifa asociada al Cliente Potencial',
+  `advertising` tinyint(2) NOT NULL default '0' COMMENT 'Admision de Publicidad',
+  `surcharge` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial tiene recargo de equivalencia',
+  `withholding` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial aplica retencion de impuestos',
+  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Cliente Potencial',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Cliente Potencial',
+  PRIMARY KEY  (`registry`),
+  KEY `IDX_TARGET_TARIFF` (`tariff`),
+  CONSTRAINT `FK_TARGET_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
+  CONSTRAINT `target_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales';
+
+#
 # Structure for the `supplier_segment` table : 
 #
 
@@ -1543,49 +1614,6 @@ CREATE TABLE `supplier` (
   CONSTRAINT `supplier_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `supplier_ibfk_2` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores';
-
-#
-# Structure for the `target` table : 
-#
-
-CREATE TABLE `target` (
-  `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente Potencial',
-  `tariff` int(4) default NULL COMMENT 'Tarifa asociada al Cliente Potencial',
-  `advertising` tinyint(2) NOT NULL default '0' COMMENT 'Admision de Publicidad',
-  `surcharge` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial tiene recargo de equivalencia',
-  `withholding` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial aplica retencion de impuestos',
-  `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Cliente Potencial',
-  `status` tinyint(2) default '0' COMMENT 'Estado del Cliente Potencial',
-  PRIMARY KEY  (`registry`),
-  KEY `IDX_TARGET_TARIFF` (`tariff`),
-  CONSTRAINT `FK_TARGET_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
-  CONSTRAINT `target_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales';
-
-#
-# Structure for the `commission_type` table : 
-#
-
-CREATE TABLE `commission_type` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Comision',
-  `rate` double(6,2) default '0.00' COMMENT 'Porcentaje de Comision',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Comisiones';
-
-#
-# Structure for the `seller` table : 
-#
-
-CREATE TABLE `seller` (
-  `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Agente Comercial',
-  `commission_type` int(4) default NULL COMMENT 'Identificador del Tipo de Comision',
-  `status` tinyint(2) default '0' COMMENT 'Estado del Agente Comercial',
-  PRIMARY KEY  (`registry`),
-  KEY `IDX_SELLER_COMMISSION_TYPE` (`commission_type`),
-  CONSTRAINT `FK_SELLER_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
-  CONSTRAINT `seller_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agentes Comerciales';
 
 #
 # Structure for the `offer` table : 
@@ -1658,11 +1686,11 @@ CREATE TABLE `commercial_tracking` (
   KEY `activity` (`activity`),
   KEY `next_commercial_tracking` (`next_commercial_tracking`),
   KEY `IDX_COMMERCIAL_TRACKING_OFFER` (`offer`),
-  CONSTRAINT `FK_COMMERCIAL_TRACKING_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`),
   CONSTRAINT `commercial_tracking_fk` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `commercial_tracking_fk1` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `commercial_tracking_fk2` FOREIGN KEY (`activity`) REFERENCES `commercial_activity` (`id`),
-  CONSTRAINT `commercial_tracking_fk3` FOREIGN KEY (`next_commercial_tracking`) REFERENCES `commercial_tracking` (`id`)
+  CONSTRAINT `commercial_tracking_fk3` FOREIGN KEY (`next_commercial_tracking`) REFERENCES `commercial_tracking` (`id`),
+  CONSTRAINT `FK_COMMERCIAL_TRACKING_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Seguimientos Comerciales';
 
 #
@@ -1723,9 +1751,9 @@ CREATE TABLE `commission_type_commission` (
   PRIMARY KEY  (`id`),
   KEY `IDX_COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE` (`commission_type`),
   KEY `IDX_COMMISSION_TYPE_COMMISSION_COMMISSION` (`commission`),
-  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
-  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Tipo de Comision';
+  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`),
+  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Tipo de Comision';
 
 #
 # Structure for the `company` table : 
@@ -1814,20 +1842,6 @@ CREATE TABLE `contact` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contactos de Usuario';
 
 #
-# Structure for the `person` table : 
-#
-
-CREATE TABLE `person` (
-  `registry` int(4) NOT NULL default '0' COMMENT 'Registro de la Persona',
-  `birth_date` date default NULL COMMENT 'Fecha de nacimiento de la Persona',
-  `gender` tinyint(2) NOT NULL default '0' COMMENT 'Sexo de la Persona',
-  `marital_status` tinyint(2) NOT NULL default '0' COMMENT 'Estado civil de la Persona',
-  `social_security_num` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Numero de Seguridad Social de la Persona',
-  PRIMARY KEY  (`registry`),
-  CONSTRAINT `person_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Personas';
-
-#
 # Structure for the `enterprise_activity` table : 
 #
 
@@ -1840,8 +1854,8 @@ CREATE TABLE `enterprise_activity` (
   PRIMARY KEY  (`id`),
   KEY `IDX_ENTERPRISE_ACTIVITY_ENTERPRISE` (`enterprise`),
   KEY `IDX_ENTERPRISE_ACTIVITY_CNAE` (`cnae`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE` FOREIGN KEY (`cnae`) REFERENCES `cnae` (`id`)
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE` FOREIGN KEY (`cnae`) REFERENCES `cnae` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
 
 #
@@ -1857,9 +1871,23 @@ CREATE TABLE `enterprise_ccc` (
   PRIMARY KEY  (`id`),
   KEY `IDX_ENTERPRISE_CCC_ENTERPRISE_ACTIVITY` (`enterprise_activity`),
   KEY `IDX_ENTERPRISE_CCC_GEOZONE` (`geozone`),
-  CONSTRAINT `FK_ENTERPRISE_CCC_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_CCC_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`)
+  CONSTRAINT `FK_ENTERPRISE_CCC_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_CCC_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Codigo Cuenta Cotizacion';
+
+#
+# Structure for the `person` table : 
+#
+
+CREATE TABLE `person` (
+  `registry` int(4) NOT NULL default '0' COMMENT 'Registro de la Persona',
+  `birth_date` date default NULL COMMENT 'Fecha de nacimiento de la Persona',
+  `gender` tinyint(2) NOT NULL default '0' COMMENT 'Sexo de la Persona',
+  `marital_status` tinyint(2) NOT NULL default '0' COMMENT 'Estado civil de la Persona',
+  `social_security_num` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Numero de Seguridad Social de la Persona',
+  PRIMARY KEY  (`registry`),
+  CONSTRAINT `person_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Personas';
 
 #
 # Structure for the `contract_type` table : 
@@ -1891,10 +1919,10 @@ CREATE TABLE `contract` (
   KEY `IDX_CONTRACT_WORKPLACE` (`workplace`),
   KEY `IDX_CONTRACT_CCC` (`ccc`),
   KEY `IDX_CONTRACT_TYPE` (`type`),
-  CONSTRAINT `FK_CONTRACT_PERSON` FOREIGN KEY (`person`) REFERENCES `person` (`registry`),
-  CONSTRAINT `FK_CONTRACT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
   CONSTRAINT `FK_CONTRACT_CCC` FOREIGN KEY (`ccc`) REFERENCES `enterprise_ccc` (`id`),
-  CONSTRAINT `FK_CONTRACT_TYPE` FOREIGN KEY (`type`) REFERENCES `contract_type` (`id`)
+  CONSTRAINT `FK_CONTRACT_PERSON` FOREIGN KEY (`person`) REFERENCES `person` (`registry`),
+  CONSTRAINT `FK_CONTRACT_TYPE` FOREIGN KEY (`type`) REFERENCES `contract_type` (`id`),
+  CONSTRAINT `FK_CONTRACT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contratos';
 
 #
@@ -3451,10 +3479,10 @@ CREATE TABLE `lh_position` (
   KEY `workplace` (`workplace`),
   KEY `workactivity` (`workactivity`),
   KEY `calendar` (`calendar`),
-  CONSTRAINT `lh_position_ibfk_5` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
   CONSTRAINT `lh_position_ibfk_1` FOREIGN KEY (`employee`) REFERENCES `employee` (`registry`),
   CONSTRAINT `lh_position_ibfk_3` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
-  CONSTRAINT `lh_position_ibfk_4` FOREIGN KEY (`workactivity`) REFERENCES `workactivity` (`id`)
+  CONSTRAINT `lh_position_ibfk_4` FOREIGN KEY (`workactivity`) REFERENCES `workactivity` (`id`),
+  CONSTRAINT `lh_position_ibfk_5` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Historia Laboral (Cargos)';
 
 #
@@ -3787,8 +3815,8 @@ CREATE TABLE `pm_type_detail_account` (
   PRIMARY KEY  (`id`),
   KEY `IDX_PM_TYPE_DETAIL_ACCOUNT_DETAIL` (`pm_type_detail`),
   KEY `IDX_PM_TYPE_DETAIL_ACCOUNT_ACCOUNT` (`account`),
-  CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_DETAIL` FOREIGN KEY (`pm_type_detail`) REFERENCES `pm_type_detail` (`id`),
-  CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
+  CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_DETAIL` FOREIGN KEY (`pm_type_detail`) REFERENCES `pm_type_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Entidades Bancarias';
 
 #
@@ -4433,11 +4461,11 @@ CREATE TABLE `target_supplier` (
   KEY `IDX_TARGET_SUPPLIER_TARIFF` (`tariff`),
   KEY `IDX_TARGET_SUPPLIER_PAY_METHOD` (`pay_method`),
   KEY `IDX_TARGET_SUPPLIER_BANK` (`bank`),
-  CONSTRAINT `FK_TARGET_SUPPLIER_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
-  CONSTRAINT `FK_TARGET_SUPPLIER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
-  CONSTRAINT `FK_TARGET_SUPPLIER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
+  CONSTRAINT `FK_TARGET_SUPPLIER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_TARGET_SUPPLIER_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
-  CONSTRAINT `FK_TARGET_SUPPLIER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`)
+  CONSTRAINT `FK_TARGET_SUPPLIER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
+  CONSTRAINT `FK_TARGET_SUPPLIER_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
+  CONSTRAINT `FK_TARGET_SUPPLIER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion de Clientes Potenciales con Proveedores';
 
 #
@@ -4621,67 +4649,8 @@ CREATE TABLE `web_info_style` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Estilos a utilizar en las plantillas para generar ficha web';
 
-#
-# Definition for the `facturasCategoriaFecha` function : 
-#
 
 INSERT INTO `db_version` (`version_number`) VALUES ('5.8.2');
-
-#
-# Definition for the `facturasGrupoCategoriaFecha` function : 
-#
-
-CREATE FUNCTION `facturasGrupoCategoriaFecha`(i DATE, f DATE, c INT, t INT)
-    RETURNS double
-    NOT DETERMINISTIC
-    SQL SECURITY DEFINER
-    COMMENT ''
-RETURN (SELECT IF (SUM(invoice_detail.taxable_base) IS NULL, 0,
-       SUM(TRUNCATE(invoice_detail.taxable_base *
-       (IF (invoice.surcharge = 0,1,(invoice_tax.percentage + invoice_tax.surcharge + 100) / 100)), 2)))
-FROM invoice_detail, invoice, item, product, pcategory, pcategory_group, invoice_tax
-WHERE item.product = product.id  AND product.category = pcategory.id
-AND pcategory_group.id = pcategory.pcategory_group
-AND invoice_detail.item = item.id  AND invoice_detail.invoice = invoice.id
-AND invoice_tax.invoice_detail = invoice_detail.id  AND invoice.type = t
-AND pcategory_group.id = c  AND invoice.issue_date BETWEEN DATE_ADD(i, INTERVAL 1 DAY) AND f);
-
-#
-# Definition for the `inventarioCategoriaFecha` function : 
-#
-
-CREATE FUNCTION `inventarioCategoriaFecha`(d DATE, c INT)
-    RETURNS double
-    NOT DETERMINISTIC
-    SQL SECURITY DEFINER
-    COMMENT ''
-RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.cost * inventory_detail.real_quantity))
-          FROM inventory, inventory_detail, item, product, pcategory
-         WHERE item.product = product.id
-           AND product.category = pcategory.id
-           AND inventory_detail.item = item.id
-           AND inventory.id = inventory_detail.inventory
-           AND pcategory.id = c
-           AND inventory.inventory_date = d);
-
-#
-# Definition for the `inventarioGrupoCategoriaFecha` function : 
-#
-
-CREATE FUNCTION `inventarioGrupoCategoriaFecha`(d DATE, c INT)
-    RETURNS double
-    NOT DETERMINISTIC
-    SQL SECURITY DEFINER
-    COMMENT ''
-RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.cost * inventory_detail.real_quantity))
-       FROM inventory, inventory_detail, item, product, pcategory, pcategory_group
-       WHERE item.product = product.id  AND product.category = pcategory.id
-       AND pcategory_group.id = pcategory.pcategory_group  AND inventory_detail.item = item.id
-       AND inventory.id = inventory_detail.inventory  AND pcategory_group.id = c
-       AND inventory.inventory_date = d);
-
-
-INSERT INTO `db_version` (`version_number`) VALUES ('5.8.0');
 
 COMMIT;
 
