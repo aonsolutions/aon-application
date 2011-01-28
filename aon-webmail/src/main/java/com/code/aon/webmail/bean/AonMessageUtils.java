@@ -47,7 +47,7 @@ public class AonMessageUtils {
 			"\n", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 
 	private static final Pattern UNDO_CID_PATTERN = Pattern.compile(
-			"[\"|\'][^\"\']+.cid", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
+			"[\"\'](http://[^\"\']+.cid)[\"\']", Pattern.CASE_INSENSITIVE );	
 
 	/**
 	 * Utility method to extract content between the body tags of an HTML
@@ -137,7 +137,7 @@ public class AonMessageUtils {
 			String text = tagMatcher.group();
 			String newText = new String(text);
 			int pos = newText.lastIndexOf("/");
-			newText = "\"cid:" + newText.substring(pos+1, newText.length()-4);
+			newText = "cid:" + newText.substring(pos+1, newText.length()-4);
 			textRplc = textRplc.replace(text, newText);
 		}
 		return textRplc;
