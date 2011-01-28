@@ -358,28 +358,15 @@ public class ProcessLauncherWizard implements Serializable {
 							.getManagerBean(Dossier.class);
 					Criteria criteria = new Criteria();
 					if (getCustomer() != null && getCustomer().getId() != null) {
-						criteria
-								.addEqualExpression(
-										dossierBean
-												.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID),
-										getCustomer().getId());
+						criteria.addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID),getCustomer().getId());
 					}
-					if (getDossierType() != null
-							&& getDossierType().getId() != null) {
-						criteria
-								.addEqualExpression(
-										dossierBean
-												.getFieldName(IProjectAlias.DOSSIER_DOSSIER_TYPE_ID),
-										getDossierType().getId());
+					if (getDossierType() != null && getDossierType().getId() != null) {
+						criteria.addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_DOSSIER_TYPE_ID),getDossierType().getId());
 					}
 					if (!StringUtils.isBlank(getDossierNumber())) {
-						criteria.addEqualExpression(dossierBean
-								.getFieldName(IProjectAlias.DOSSIER_NUMBER),
-								getDossierNumber());
+						criteria.addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_NUMBER),getDossierNumber());
 					}
-					criteria.addEqualExpression(dossierBean
-							.getFieldName(IProjectAlias.DOSSIER_STATUS),
-							DossierStatus.ACTIVE);
+					criteria.addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_STATUS),DossierStatus.ACTIVE);
 					List<ITransferObject> list = dossierBean.getList(criteria);
 					for (ITransferObject to : list) {
 						Dossier d = (Dossier) to;
@@ -389,15 +376,10 @@ public class ProcessLauncherWizard implements Serializable {
 					IManagerBean activityBean = BeanManager
 							.getManagerBean(Activity.class);
 					Criteria criteria = new Criteria();
-					criteria
-							.addEqualExpression(
-									activityBean
-											.getFieldName(IProjectAlias.ACTIVITY_ACTIVITY_TYPE_ID),
-									getActivityType().getId());
+					criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.ACTIVITY_ACTIVITY_TYPE_ID),getActivityType().getId());
+					criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.ACTIVITY_DOSSIER_STATUS),DossierStatus.ACTIVE);
 					if (getCustomer() != null && getCustomer().getId() != null) {
-						criteria.addEqualExpression(
-								"Activity.dossier.customer.id", getCustomer()
-										.getId());
+						criteria.addEqualExpression("Activity.dossier.customer.id", getCustomer().getId());
 					}
 					List<ITransferObject> list = activityBean.getList(criteria);
 					for (ITransferObject to : list) {
