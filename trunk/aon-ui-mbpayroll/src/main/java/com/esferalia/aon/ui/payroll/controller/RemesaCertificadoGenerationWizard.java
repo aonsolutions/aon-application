@@ -24,6 +24,7 @@ import com.esferalia.aon.payroll.core.empresa.IEmpresaDAO;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresa;
 import com.esferalia.aon.payroll.core.empresa.IRemesaCertificadoEmpresaDetalle;
 import com.esferalia.aon.payroll.core.empresa.RemesaCertificadoEmpresaParams;
+import com.esferalia.aon.payroll.core.enumeration.CausaSuspension;
 import com.esferalia.aon.payroll.core.enumeration.FileStatus;
 
 public class RemesaCertificadoGenerationWizard implements Serializable {
@@ -42,6 +43,16 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	private List<IRemesaCertificadoEmpresa> listaRemesas;
 	private List<IRemesaCertificadoEmpresa> savedRemesas;
 	private boolean remesable;
+	private CausaSuspension suspensionCauseForAll;
+	
+	public CausaSuspension getSuspensionCauseForAll() {
+		return suspensionCauseForAll;
+	}
+
+	public void setSuspensionCauseForAll(CausaSuspension suspensionCauseForAll) {
+		this.suspensionCauseForAll = suspensionCauseForAll;
+//		aplyAllSuspensionCause(suspensionCauseForAll);
+	}
 
 	public boolean isRemesable() {
 		return remesable;
@@ -255,7 +266,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		return remesable.getCausaSuspension()!=null;
 	}
 
-	private boolean isAnyEmpleadoSelected() {
+	public boolean isAnyEmpleadoSelected() {
 		for (int i = 0; i < getModel().getRowCount(); i++) {
 			getModel().setRowIndex(i);
 			RemesableEmpleadoCertificate r = (RemesableEmpleadoCertificate) getModel().getRowData();
@@ -384,6 +395,21 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		wizard.setCurrentStep(1);
 		wizard.initializeRemesasModel(getSavedRemesas());
 		setSavedRemesas(null);
+	}
+	
+	public void onApplyAllSuspensionCause(ActionEvent event) {
+		applyAllSuspensionCause(getSuspensionCauseForAll());
+	}
+	
+	private void applyAllSuspensionCause(CausaSuspension suspensionCause) {
+		for (int i = 0; i < getModel().getRowCount(); i++) {
+			getModel().setRowIndex(i);
+			RemesableEmpleadoCertificate r = (RemesableEmpleadoCertificate) getModel()
+			.getRowData();
+			if(r.isSelected()){
+				r.setCausaSuspension(suspensionCause);
+			}
+		}
 	}
 
 }
