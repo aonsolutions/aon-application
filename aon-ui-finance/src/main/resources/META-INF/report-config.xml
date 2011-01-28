@@ -330,19 +330,6 @@
 		</params>
 	</report>
 	
-	<!--  *********  MovementFinanceList  ********* -->
-	<report id="movementFinanceList" description="Finance List">
-		<template path="/com/code/aon/ui/finance/report/financeMovementList.jasper" />
-		<bean key="com.code.aon.finance.Finance" />
-		<criteria provider="#{financeMovement}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payment" value="#{finance.isPayment}" />
-			<param id="initialBalance" value="#{financeMovement.getBalance}" />
-		</params>
-	</report>
-
     <!--  *********  FinanceList  ********* -->
 	<report id="financeListByAccount" description="Finance List">
 		<template path="/com/code/aon/ui/finance/report/financeListByAccount.jasper" />
