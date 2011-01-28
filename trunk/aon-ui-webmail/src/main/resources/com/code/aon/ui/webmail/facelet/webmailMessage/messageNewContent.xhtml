@@ -172,7 +172,10 @@
 			<aon:div id="messageContent" styleClass="padding-top">
 				<aon:inputRichText id="messageEditor"
 					value="#{webmailMessage.content}" 
-					height="#{contentHeight}" configuration="tinyMCE" />													
+					height="#{contentHeight}" configuration="tinyMCE" />	
+					<c:if test="#{loggedUser.userInRole['Admin']}" >
+						<f:param name="theme_advanced_buttons2_add" value="|,code"/>
+					</c:if> 
 			</aon:div>
 		</aon:div>
 
