@@ -164,6 +164,8 @@ public class EmpresaDAO implements IEmpresaDAO {
 			Expression exp2  = ExpressionUtilities.getNotEqualExpression(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_CODCCC), "S");
 			criteria.addExpression( ExpressionUtilities.getAndExpression(exp1, exp2) );
 			criteria.addOrder(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_ACTIVIDAD_EMPRESA_NAME));
+			criteria.addOrder(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_PERSONA_SURNAME));
+			criteria.addOrder(empleadoBean.getFieldName(IPayrollAlias.EMPLEADO_FECHA_FIN), false);
 			
 			List<?> list = empleadoBean.getList(criteria);
 			return (List<IEmpleado>) list;
