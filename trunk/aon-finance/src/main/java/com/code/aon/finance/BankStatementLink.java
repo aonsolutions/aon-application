@@ -166,7 +166,8 @@ public class BankStatementLink implements ITransferObject {
 		} else if (isFinanceBatch()) {
 			return Integer.toString(((FinanceBatch)getSourceTo()).getId());
 		} else if (isBankConcept()) {
-			return ((BankConcept)getSourceTo()).getAccount().getId();
+			Account bankConceptAccount = ((BankConcept)getSourceTo()).getAccount();
+			return (bankConceptAccount != null) ? bankConceptAccount.getId() : "";
 		} else if (isAccount()) {
 			return ((Account)getSourceTo()).getId();
 		}
