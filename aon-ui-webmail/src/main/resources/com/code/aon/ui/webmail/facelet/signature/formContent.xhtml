@@ -23,13 +23,21 @@
 			
 			<aon:outputLabel for="Signature_signature"
 				value="#{webmailBundle.webmail_signature_signature}" />
-			<aon:inputRichText id="Signature_signature"
-				value="#{controller.to.signature}"
-				height="400" width="640" configuration="tinyMCE" >
-				<c:if test="#{loggedUser.userInRole['Admin']}" >
-					<f:param name="theme_advanced_buttons2_add" value="|,code"/>
-				</c:if> 
-			</aon:inputRichText>																		
+			<aon:div style="width:98%">
+				<a4j:region>
+					<aon:selectBooleanCheckbox id="Signature_signature_richTextEnabled"
+						value="#{controller.richTextEnabled}" >
+						<a4j:support reRender="Signature_signature" event="onclick"	/>
+					</aon:selectBooleanCheckbox>
+					<aon:outputLabel for="Signature_signature_richTextEnabled"
+						value="#{webmailBundle.webmail_richtext_enabled}" />	
+					<aon:inputRichText id="Signature_signature"
+						viewMode="#{controller.richTextEnabled?'visual':'source'}"
+						value="#{controller.to.signature}"
+						height="400" width="640" configuration="tinyMCE" > 
+					</aon:inputRichText>																		
+				</a4j:region>								
+			</aon:div>				
 					
 		</aon:panelGrid>
 	</aon:div>
