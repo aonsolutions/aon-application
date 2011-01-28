@@ -391,44 +391,6 @@
 		</managed-property>		
 	</managed-bean>
 	
-	<!-- ************* FINANCE MOVEMENT ***************** -->
-	<managed-bean>
-		<managed-bean-name>financeMovement</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.FinanceMovementController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.Finance</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>financeMovement</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Finance_bank_id,Finance_dueDate,Finance_invoice_referenceCode</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{financeMovementSearch}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>financeMovementSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinanceMovementSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
 	<!--  **** CREDITOR **** -->
 	<managed-bean>
 		<managed-bean-name>creditor</managed-bean-name>
@@ -3113,18 +3075,6 @@
 		</navigation-case>
 	</navigation-rule>	
 	
-		<!-- =================== Finance Movements================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>financeMovement_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/financeMovement/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>financeMovement_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/financeMovement/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>	
-
   	<!-- =================== Finance Batch ================= -->
 	<navigation-rule>
 		<navigation-case>
