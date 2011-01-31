@@ -244,6 +244,17 @@
 								</aon:div>
 							</aon:panelTab>
 						</c:if>
+						
+						<c:if test="#{company.documentManagement}">
+							<aon:panelTab id="documentManagement"
+								label="#{bundle.aon_documents}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+									<ui:param name="controller" value="#{customerRAttach}" />
+									<ui:param name="sortColumns" value="#{true}" />
+								</ui:include>								
+							</aon:panelTab>
+						</c:if>
+						
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>

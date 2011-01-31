@@ -425,6 +425,7 @@
 				<value>#{creditorRPayMethodChildListener}</value>
 				<value>#{creditorSegmentListener}</value>
 				<value>#{creditorAddInfoListener}</value>
+				<value>#{creditorRAttachChildListener}</value>
 			</list-entries>
 		</managed-property>		
 		<managed-property>
@@ -801,6 +802,108 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+
+	<!-- **** CREDITOR DOCUMENTS **** --> 
+	<managed-bean>
+		<managed-bean-name>creditorRAttach</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryAttachController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>creditorRAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>type</property-name>
+			<value>#{registryCollections.registryAttachmentTypes[5].value}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>maximumSize</property-name>
+			<value>1048576</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>creditor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{creditorRAttachControllerListener}</value> 
+				<value>#{creditorRAttachScopeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>creditorRAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.RegistryAttachControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>creditorRAttachScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>RegistryAttachment_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>creditorRAttachChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>creditorRAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAttachment_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 
 	<!-- **************** INVOICING GROUP  *************** -->
 	<managed-bean>

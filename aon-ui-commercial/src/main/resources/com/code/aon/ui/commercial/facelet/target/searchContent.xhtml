@@ -11,9 +11,7 @@
 	<aon:div style="width:510px;">
 		<aon:panelCollapsible expanded="true" label="#{commercialBundle.commercial_search_general}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-				<ui:include src="/com/code/aon/ui/commercial/facelet/target/searchBasicContent.xhtml">
-					<ui:param name="controller" value="#{target}"/>
-				</ui:include>
+				<ui:include src="/com/code/aon/ui/commercial/facelet/target/searchBasicContent.xhtml" />
 				<c:if test="#{aonConfiguration.bean.target.showSearchOnlyCustomers}">
 					<aon:outputLabel for="Target_customer"
 						value="#{customerBundle.customer_customer}" />
@@ -30,7 +28,6 @@
 		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
-					<ui:param name="controller" value="#{target}" />
 					<ui:param name="searchController" value="#{targetSearch}" />
 				</ui:include>
 			</aon:panelGrid>
@@ -39,7 +36,6 @@
 		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_media_module}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
-					<ui:param name="controller" value="#{target}" />
 					<ui:param name="searchController" value="#{targetSearch}" />
 				</ui:include>
 			</aon:panelGrid>
@@ -48,7 +44,6 @@
 		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_segment_module}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml">
-					<ui:param name="controller" value="#{target}" />
 					<ui:param name="searchController" value="#{targetSearch}" />
 				</ui:include>
 			</aon:panelGrid>
@@ -253,6 +248,15 @@
 				</aon:panelGrid>
 			</aon:panelCollapsible>
 		</c:if>		
+		
+		<c:if test="#{company.documentManagement}">
+			<aon:panelCollapsible expanded="false" label="#{bundle.aon_documents}">
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/searchContent.xhtml" />
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</c:if>
+				
 	</aon:div>
 
 </ui:composition>
