@@ -114,22 +114,28 @@
 						<c:if test="#{aonConfiguration.bean.creditor.showSegment}">
 							<aon:panelTab id="segment"
 								label="#{registryBundle.registry_segment_module}">
-								<aon:div rendered="#{true}">
-									<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
-										<ui:param name="controller" value="#{creditorSegment}" />
-									</ui:include>
-								</aon:div>
+								<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
+									<ui:param name="controller" value="#{creditorSegment}" />
+								</ui:include>
 							</aon:panelTab>
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.creditor.showAddInfo}">
 							<aon:panelTab id="addInfo"
 								label="#{registryBundle.registry_addInfo}">
-								<aon:div rendered="#{true}">
-									<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
-										<ui:param name="controller" value="#{creditorAddInfo}" />
-									</ui:include>
-								</aon:div>
+								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
+									<ui:param name="controller" value="#{creditorAddInfo}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{company.documentManagement}">
+							<aon:panelTab id="documentManagement"
+								label="#{bundle.aon_documents}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+									<ui:param name="controller" value="#{creditorRAttach}" />
+									<ui:param name="sortColumns" value="#{true}" />
+								</ui:include>								
 							</aon:panelTab>
 						</c:if>
 					</aon:panelTabSet>

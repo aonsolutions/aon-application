@@ -39,6 +39,8 @@ public interface ILdapConstants {
     String DOMAIN_MANAGEMENT_ATTRIBUTE = "domainManagement";
     
     String DNS_MANAGEMENT_ATTRIBUTE = "dnsManagement";
+    
+    String DOCUMENT_MANAGEMENT_ATTRIBUTE = "documentManagement";
 	
 	String PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE = "passwordExpirationTimestamp";
 

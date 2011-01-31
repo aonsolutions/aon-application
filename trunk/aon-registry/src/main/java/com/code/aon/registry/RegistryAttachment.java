@@ -1,5 +1,7 @@
 package com.code.aon.registry;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -18,7 +23,9 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -31,7 +38,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
  */
 @Entity
 @Table(name="rattach")
-public class RegistryAttachment implements IAttachment, IScopable {
+public class RegistryAttachment implements IAttachment, IScopable, IConfidentialable {
 
 	private static final long serialVersionUID = -6774043069274297973L;
 
@@ -60,7 +67,11 @@ public class RegistryAttachment implements IAttachment, IScopable {
     private RegistryAttachmentType registryAttachmentType;
     
     /** The scope. */
-	private Scope scope;    
+	private Scope scope;
+	
+	private SecurityLevel securityLevel;
+	
+	private Date attachDate;
     
     /**
      * The empty constructor.
@@ -247,7 +258,38 @@ public class RegistryAttachment implements IAttachment, IScopable {
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
-	
+
+	@Column(name="attach_date")
+	@Temporal(TemporalType.DATE)
+    public Date getAttachDate() {
+		return attachDate;
+	}
+
+	public void setAttachDate(Date attachDate) {
+		this.attachDate = attachDate;
+	}
+
+	@Column(name = "security_level")
+    public SecurityLevel getSecurityLevel() {
+        return securityLevel;
+    }
+    
+    public void setSecurityLevel(SecurityLevel securityLevel) {
+        this.securityLevel = securityLevel;
+    }
+
+	@Override
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+
+	@Override
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}    
+    
 	/**
 	 * Clones the RegistryAttachment.
 	 * 
@@ -268,6 +310,7 @@ public class RegistryAttachment implements IAttachment, IScopable {
 		final RegistryAttachment o = (RegistryAttachment) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.attachDate, o.attachDate)
 				.append(this.category, o.category)
 				.append(this.data, o.data)				
 				.append(this.description, o.description)
@@ -275,6 +318,7 @@ public class RegistryAttachment implements IAttachment, IScopable {
 				.append(this.registry, o.registry)
 				.append(this.registryAttachmentType, o.registryAttachmentType)
 				.append(this.scope, o.scope)
+				.append(this.securityLevel, o.securityLevel)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -283,6 +327,7 @@ public class RegistryAttachment implements IAttachment, IScopable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(attachDate)
 			.append(category)
 			.append(data)
 			.append(description)	
@@ -291,12 +336,14 @@ public class RegistryAttachment implements IAttachment, IScopable {
 			.append(registry)
 			.append(registryAttachmentType)				
 			.append(scope)
+			.append(securityLevel)
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).
+			append("attachDate", attachDate).
 			append("category", (category != null) ? category.getId() : "null" ).
 			append("description", description).
 			append("id", id).
@@ -304,6 +351,7 @@ public class RegistryAttachment implements IAttachment, IScopable {
 			append("registry", registry.getId()).
 			append("registryAttachmentType", registryAttachmentType).
 			append("scope", (scope != null) ? scope.getId() : "null" ).
+			append("securityLevel", securityLevel).
 			toString();
 	}
 

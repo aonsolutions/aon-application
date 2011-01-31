@@ -289,58 +289,70 @@ public interface IRegistryAlias {
 	DAOConstantsEntry REGISTRY_ATTACHMENT_ENTRY = DAOConstants.getDAOConstant(RegistryAttachment.class);
 
 	/** 
+	* Alias value: RegistryAttachment_attachDate
+	* Hibernate value: RegistryAttachment.attachDate
+	*/
+	String  REGISTRY_ATTACHMENT_ATTACH_DATE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: RegistryAttachment_category_id
 	* Hibernate value: RegistryAttachment.category.id
 	*/
-	String  REGISTRY_ATTACHMENT_CATEGORY_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[0];
+	String  REGISTRY_ATTACHMENT_CATEGORY_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: RegistryAttachment_data
 	* Hibernate value: RegistryAttachment.data
 	*/
-	String  REGISTRY_ATTACHMENT_DATA = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[1];
+	String  REGISTRY_ATTACHMENT_DATA = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RegistryAttachment_description
 	* Hibernate value: RegistryAttachment.description
 	*/
-	String  REGISTRY_ATTACHMENT_DESCRIPTION = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[2];
+	String  REGISTRY_ATTACHMENT_DESCRIPTION = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: RegistryAttachment_id
 	* Hibernate value: RegistryAttachment.id
 	*/
-	String  REGISTRY_ATTACHMENT_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[3];
+	String  REGISTRY_ATTACHMENT_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: RegistryAttachment_mimeType
 	* Hibernate value: RegistryAttachment.mimeType
 	*/
-	String  REGISTRY_ATTACHMENT_MIME_TYPE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[4];
+	String  REGISTRY_ATTACHMENT_MIME_TYPE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: RegistryAttachment_registryAttachmentType
 	* Hibernate value: RegistryAttachment.registryAttachmentType
 	*/
-	String  REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[5];
+	String  REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: RegistryAttachment_registry_id
 	* Hibernate value: RegistryAttachment.registry.id
 	*/
-	String  REGISTRY_ATTACHMENT_REGISTRY_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[6];
+	String  REGISTRY_ATTACHMENT_REGISTRY_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: RegistryAttachment_scope_id
 	* Hibernate value: RegistryAttachment.scope.id
 	*/
-	String  REGISTRY_ATTACHMENT_SCOPE_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[7];
+	String  REGISTRY_ATTACHMENT_SCOPE_ID = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: RegistryAttachment_securityLevel
+	* Hibernate value: RegistryAttachment.securityLevel
+	*/
+	String  REGISTRY_ATTACHMENT_SECURITY_LEVEL = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: RegistryAttachment_size
 	* Hibernate value: RegistryAttachment.size
 	*/
-	String  REGISTRY_ATTACHMENT_SIZE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[8];
+	String  REGISTRY_ATTACHMENT_SIZE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[10];
 
 
 

@@ -52,6 +52,8 @@ public class Domain implements ILdapTransferObject {
 	
 	private boolean domainManagement;
 	
+	private boolean documentManagement;
+	
 	private byte[] jpegLogo;
 	
 	private String subDomainSuffix;
@@ -150,6 +152,15 @@ public class Domain implements ILdapTransferObject {
 	public void setDomainManagement(Boolean domainManagement) {
 		this.domainManagement = domainManagement;
 	}
+	
+	@Attribute(name=DOCUMENT_MANAGEMENT_ATTRIBUTE)
+	public boolean isDocumentManagement() {
+		return documentManagement;
+	}
+
+	public void setDocumentManagement(boolean documentManagement) {
+		this.documentManagement = documentManagement;
+	}
 
 	@Cascade(CascadeType.ALL)
 	@BaseDN("{this}")
@@ -227,7 +238,8 @@ public class Domain implements ILdapTransferObject {
 		if (o.getCommonName() == null && getCommonName() == null) {
 			return new EqualsBuilder()
 				.append(this.commonName, o.commonName)
-				.append(this.dnsManagement, o.dnsManagement)				
+				.append(this.dnsManagement, o.dnsManagement)		
+				.append(this.documentManagement, o.documentManagement)
 				.append(this.domainManagement, o.domainManagement)				
 				.append(this.host, o.host)				
 				.append(this.jpegLogo, o.jpegLogo)				
@@ -248,6 +260,7 @@ public class Domain implements ILdapTransferObject {
 		return new HashCodeBuilder()
 			.append(commonName)
 			.append(dnsManagement)
+			.append(documentManagement)
 			.append(domainManagement)
 			.append(host)
 			.append(jpegLogo)
@@ -266,6 +279,7 @@ public class Domain implements ILdapTransferObject {
 		return new ToStringBuilder(this).
 			append("commonName", commonName ).
 			append("dnsManagement", dnsManagement ).
+			append("documentManagement", documentManagement ).
 			append("domainManagement", domainManagement ).
 			append("host", host ).
 			append("mail", mail).
