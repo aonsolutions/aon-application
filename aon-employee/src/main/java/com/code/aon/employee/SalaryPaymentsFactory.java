@@ -77,7 +77,7 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 		} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
 			payments.setMovingCompensation(sp);
 		} else if (sp.getType() == PaymentType.OTHER_NON_WAGE) {
-			payments.setOtherNonWage(sp);
+			payments.addOtherNonWages(sp);
 		}
 	}
 
