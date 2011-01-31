@@ -83,7 +83,6 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public InvoiceTransactionType getTransaction() {
 		return transaction;
 	}
-	
 	public void setTransaction(InvoiceTransactionType transaction) {
 		this.transaction = transaction;
 	}
@@ -91,7 +90,6 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public CreditorStatus getStatus() {
 		return status;
 	}
-	
 	public void setStatus(CreditorStatus status) {
 		this.status = status;
 	}
@@ -103,7 +101,6 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public Scope getScope() {
 		return scope;
 	}
-	
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
@@ -112,7 +109,6 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public Set<RegistryAttachment> getDocuments() {
 		return documents;
 	}
-	
 	public void setDocuments(Set<RegistryAttachment> documents) {
 		this.documents = documents;
 	}
