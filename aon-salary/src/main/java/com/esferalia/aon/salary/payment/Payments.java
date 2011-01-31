@@ -13,6 +13,7 @@ public class Payments {
 	private Map<PaymentType, IPayment> map;
 	private SalarySupplements salarySupplements;
 	private CompensationOrPrepaidExpenses compensationOrPrepaidExpenses;
+	private OtherNonWages otherNonWages;
 
 	public Payments() {
 		map = new HashMap<PaymentType, IPayment>();	
@@ -59,13 +60,6 @@ public class Payments {
 	public void setMovingCompensation(IPayment p) {
 		put(PaymentType.MOVING_COMPENSATION, p);
 	}
-
-	public IPayment getOtherNonWage() {
-		return map.get(PaymentType.OTHER_NON_WAGE);
-	}
-	public void setOtherNonWage(IPayment p) {
-		put(PaymentType.OTHER_NON_WAGE, p);
-	}
 	
 	public SalarySupplements getSalarySupplements() {
 		if (salarySupplements == null) {
@@ -91,6 +85,19 @@ public class Payments {
 	}
 	public void addCompensationOrPrepaidExpenses(IPayment p) {
 		getCompensationOrPrepaidExpenses().addPayment(p);
+	}
+	
+	public OtherNonWages getOtherNonWages() {
+		if (otherNonWages == null) {
+			setOtherNonWages( new OtherNonWages() );
+		}
+		return otherNonWages;
+	}
+	public void setOtherNonWages(OtherNonWages p) {
+		this.otherNonWages = p;
+	}
+	public void addOtherNonWages(IPayment p) {
+		getOtherNonWages().addPayment(p);
 	}
 
 	private void put(PaymentType type, IPayment p) {
