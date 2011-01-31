@@ -20,7 +20,7 @@
 					<aon:panelGroup>
 						<aon:panelGrid id="group_config_company"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-config aon-direct-access-panel">
+							headerClass="aon-icon-company aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{companyBundle.company_menu_group}" />
 							</f:facet>
@@ -40,25 +40,6 @@
 						</aon:panelGrid>
 
 						<c:if test="#{aonRole.admin}">
-							<aon:panelGrid id="group_config_utilities"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-utilities aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_utilities}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mbase_form" action="sqlScript_form"
-											actionListener="#{sqlScript.onInitialize}"
-											value="#{dbutilsBundle.dbutils_script_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="checks" action="util_checking"
-											value="#{financeBundle.finance_checking_module}" />
-									</aon:div>
-								</aon:div>
-							</aon:panelGrid>
-						
 							<aon:panelGrid id="group_config_security"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-security aon-direct-access-panel">
@@ -81,35 +62,60 @@
 
 					</aon:panelGroup>
 
-					<aon:panelGrid id="group_config_general" styleClass="aon-width-all"
-						columnClasses="aon-padding"
-						headerClass="aon-direct-access-panel aon-icon-general">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.menu_general}" />
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="series" action="series"
-									value="#{configBundle.config_series_module}" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="tax" action="tax_list"
-									value="#{configBundle.config_tax_module}" />
-							</aon:div>
-							<c:if test="#{aonRole.accountingOperator}">
+					<aon:panelGroup>
+
+						<aon:panelGrid id="group_config_general" styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-general">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_general}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accPeriod" action="accPeriod"
-										actionListener="#{accPeriod.onSearch}"
-										value="#{accountingBundle.accounting_period_module}" />
+									<aon:commandLink id="series" action="series"
+										value="#{configBundle.config_series_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="defaultParams" action="defaultParams"
-										actionListener="#{accAppParams.onLoad}"
-										value="#{accountingBundle.accounting_default_params_module}" />
+									<aon:commandLink id="tax" action="tax_list"
+										value="#{configBundle.config_tax_module}" />
 								</aon:div>
-							</c:if>
-						</aon:div>
-					</aon:panelGrid>
+								<c:if test="#{aonRole.accountingOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accPeriod" action="accPeriod"
+											actionListener="#{accPeriod.onSearch}"
+											value="#{accountingBundle.accounting_period_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="defaultParams" action="defaultParams"
+											actionListener="#{accAppParams.onLoad}"
+											value="#{accountingBundle.accounting_default_params_module}" />
+									</aon:div>
+								</c:if>
+							</aon:div>
+						</aon:panelGrid>
+
+						<c:if test="#{aonRole.admin}">
+							<aon:panelGrid id="group_config_utilities"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-utilities aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_utilities}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mbase_form" action="sqlScript_form"
+											actionListener="#{sqlScript.onInitialize}"
+											value="#{dbutilsBundle.dbutils_script_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="checks" action="util_checking"
+											value="#{financeBundle.finance_checking_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+
+					</aon:panelGroup>						
 
 				</h:panelGrid>
 			</aon:div>
