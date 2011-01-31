@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<c:if test="#{!skipNameColumn}">
@@ -76,7 +77,10 @@
 				<aon:outputText value="#{employeeBundle.employee_contract_model}" />
 			</f:facet>
 			<aon:div styleClass="aon-nowrap">
-				<aon:outputText value="#{to.code}" title="#{to.type}"/>
+				<aon:outputText value="#{contract.currentContractData.code.value}" />
+				<rich:toolTip direction="top-left" layout="block">
+		            <aon:outputText value="#{contract.currentContractData.code}" />
+		        </rich:toolTip>
 			</aon:div>
 		</aon:column>
 	</c:if>
@@ -88,7 +92,7 @@
 			</f:facet>
 			<h:commandLink target="_blank" 
 				disabled="#{to.document==null}"
-				title="#{(to.document!=null)?('pdf'):('pdf-disabled')}"
+				title="#{(to.document!=null)?('pdf'):('no pdf')}"
 				actionListener="#{contract.onDownloadContract}"
 				styleClass="aon-editDataTable-button #{(to.document!=null)?('aon-icon-pdf'):('aon-icon-pdf-disabled')}"
 				value="&#160;" />

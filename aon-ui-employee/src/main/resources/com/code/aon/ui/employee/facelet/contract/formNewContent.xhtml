@@ -123,7 +123,15 @@
 				value="#{contract.contractData.code}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contract.contractCodes}" />
+				<a4j:support event="onchange" reRender="description" >
+					<aon:actionListener method="#{contract.onChangeContractCode}" />
+				</a4j:support>
 			</aon:selectOneMenu>
+			
+			<aon:outputLabel for="description"
+				value="#{bundle.aon_description}" />
+			<aon:inputText id="description" size="64" maxlength="64"
+				value="#{contract.contractData.description}" />
 			
 			<aon:outputLabel for="quote_group"
 				value="#{employeeBundle.employee_contract_quote_group}" />
@@ -137,6 +145,13 @@
 				value="#{employeeBundle.employee_contract_category}" />
 			<aon:inputText id="category" size="40" maxlength="64"
 				value="#{contract.contractData.category}" />
+				
+			<aon:outputLabel for="irpf"
+				value="#{employeeBundle.employee_contract_irpf_percent}" />
+			<aon:inputText id="irpf" size="10" 
+				value="#{contract.irpf}" >
+				<f:validateDoubleRange />
+			</aon:inputText>
 			
 			<aon:outputLabel
 				value="#{employeeBundle.employee_file_attach}" />
@@ -156,7 +171,9 @@
 					<f:facet name="label">
 						<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 					</f:facet>
-					<a4j:support event="onuploadcomplete" reRender="contract_new_panel" />
+					<a4j:support event="onuploadcomplete" reRender="contract_new_panel" >
+						<aon:actionListener method="#{contract.onFileUploaded}" />
+					</a4j:support>
 				</aon:fileUpload>
 				
 				<aon:outputText value="#{contract.aonFile.fileName}"
@@ -171,14 +188,6 @@
 			</aon:inputTextarea>
 			
 		</aon:panelGrid>
-		
-<!--  
-		<aon:panel style="width: 15%;">
-			<aon:commandButton 
-				value="ADJUNTAR CONTRATO"
-				styleClass="aon-finding-toolbar-item aon-icon-pdf" />
-		</aon:panel>
--->		
 		
 	</aon:div>
 	

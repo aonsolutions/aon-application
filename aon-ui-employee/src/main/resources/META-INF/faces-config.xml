@@ -608,6 +608,14 @@
 		</navigation-case>
 	</navigation-rule>	
 
+	<!-- =================== Contract Data ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractData_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/employee/facelet/contract/data/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
 	<!-- =================== Salary ========================== -->
 	<navigation-rule>
 		<navigation-case>
