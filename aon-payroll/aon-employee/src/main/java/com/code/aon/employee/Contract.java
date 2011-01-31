@@ -24,7 +24,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
-import org.xml.sax.SAXException;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
@@ -33,18 +32,15 @@ import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.employee.calculator.ContractSalaryCalculator;
 import com.code.aon.employee.calculator.ContractSalaryCalculatorContext;
-import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractStatus;
 import com.code.aon.person.Person;
 import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
-import com.esferalia.aon.salary.expression.ExpressionContext;
 
 @Entity
 @Table(name="contract")
@@ -173,17 +169,6 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	}
 	public void setContractDeductions( Set<ContractDeduction> contractDeductions ) {
 		this.contractDeductions = contractDeductions;
-	}
-	
-	
-	@Transient
-	public String getCode(){
-		return ContractCode.C100.toString();
-	}
-	
-	@Transient
-	public String getType(){
-		return ContractCode.C100.toString();
 	}
 	
 	@Transient
