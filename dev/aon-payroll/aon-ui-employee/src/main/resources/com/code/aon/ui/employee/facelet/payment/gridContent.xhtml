@@ -123,15 +123,22 @@
 				</aon:outputText>
 			</aon:div>
 
-			<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
+			<aon:div style="margin-left: 20px;">
 				<aon:outputText value="#{employeeBundle.employee_salary_other_non_wage}"/>
 			</aon:div>
-			<aon:div style="border-bottom: solid #CCCCCC 1px;">
-				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.otherNonWage.amount}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div>
+			<aon:outputText value="&#160;"/>
+
+			<c:forEach items="#{controller.otherNonWages.values}" var="to">
+				<aon:div style="margin-left: 30px; border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="#{to.description}"/>
+				</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<aon:outputText value="#{to.amount}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</c:forEach>
 
 			<aon:div style="width: 100%;text-align: right; margin-right: 5px;">
 				<aon:outputText value="A. #{employeeBundle.employee_salary_totalPayment}" styleClass="aon-bold"/>
