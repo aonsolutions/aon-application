@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +17,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
@@ -38,6 +40,8 @@ import com.code.aon.employee.enumeration.ContractCode;
 import com.code.aon.employee.enumeration.ContractOption;
 import com.code.aon.employee.enumeration.ContractType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.EnterpriseTree;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -48,6 +52,8 @@ import com.code.aon.ui.util.AonUtil;
 public class ContractController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
+	private static final int MAX_FILE_SIZE = 3*1024*1024;
+	private final int DESCRIPTION_MAX_LENGHT = 64;
 	
 	private Enterprise enterprise;
 	private ContractData contractData;
@@ -56,7 +62,24 @@ public class ContractController extends BasicController {
 	private ContractOption contractOption;
 	private ContractType contractType;
 	private boolean autonomous;
+	private Double irpf;
+	private AonFile aonFile;
 	
+	public AonFile getAonFile() {
+		return this.aonFile;
+	}
+
+	public void setAonFile(AonFile aonFile) {
+		this.aonFile = aonFile;
+	}
+
+	public Double getIrpf() {
+		return irpf;
+	}
+
+	public void setIrpf(Double irpf) {
+		this.irpf = irpf;
+	}
 	
 	public Enterprise getEnterprise() {
 		return enterprise;
@@ -233,8 +256,44 @@ public class ContractController extends BasicController {
 		}						
 	}
 	public void onShowDetails( ActionEvent event ) {
-		AonUtil.addWarningMessage("No implementado");
-		throw new AbortProcessingException("No implementado");
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+//			Criteria criteria = new Criteria();
+//			Integer id = ((Contract)getTo()).getId();
+//			criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_CONTRACT_ID), id);
+//			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_END_DATE), new Date());
+//			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_END_DATE));
+//			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
+//			
+//			criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_END_DATE));
+//
+//			setContractData((ContractData) bean.getList(criteria).get(0));
+//			
+//		} catch (ManagerBeanException e) {
+//			String msg = "Imposible mostrar los detalles del contrato (" + e.getMessage() +")";
+//			LOGGER.error(msg);
+//			AonUtil.addErrorMessage(msg);
+//			throw new AbortProcessingException(msg,e);
+//		}
+	}
+	
+	public ContractData getCurrentContractData(){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			Contract c = (Contract)this.getModel().getRowData();
+			Integer id = c.getId();
+			criteria.addEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_CONTRACT_ID), id);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_END_DATE), new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_END_DATE));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
+			criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_DATA_END_DATE));
+			return (ContractData) bean.getList(criteria).get(0);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar los detalles del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+		}
+		return null;
 	}
 
 	public void onEnterpriseChanged( LookupChangeEvent event ) {
@@ -283,23 +342,22 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onWorkPlaceChanged( ActionEvent event ) {
-//		if(getAonFile().getSize()>FILE_SIZE){
-//			
-//		}
+		
 	}
 	
-	
-	
-	private static final long FILE_SIZE = 2*1024*1024;
-	
-	private AonFile aonFile;
-	
-	public AonFile getAonFile() {
-		return this.aonFile;
+	public void onChangeContractCode( ActionEvent event ) {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();;
+		String description = getContractData().getCode().getName(locale);
+		getContractData().setDescription(StringUtils.abbreviate(description,DESCRIPTION_MAX_LENGHT));
 	}
-
-	public void setAonFile(AonFile aonFile) {
-		this.aonFile = aonFile;
+	
+	public void onFileUploaded( ActionEvent event ) {
+		if(getAonFile().getSize()>MAX_FILE_SIZE){
+			setAonFile(null);
+			String msg = "El tamaño del archivo excede de lo permitido (3 Mb)";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 	
 	public void fileUploaded(UploadEvent event) {
@@ -320,4 +378,7 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	
+	
+		
 }

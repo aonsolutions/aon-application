@@ -19,11 +19,11 @@
 		</aon:div>
 		<aon:htmlCommandLink target="_blank" 
 			disabled="#{contract.to.document==null}"
-			title="#{(contract.to.document!=null)?('pdf'):('pdf-disabled')}"
+			title="#{(contract.to.document!=null)?('pdf'):('disabled')}"
 			actionListener="#{contract.onDownloadSelected}"
 			styleClass="aon-editDataTable-button #{(contract.to.document!=null)?('aon-icon-pdf'):('aon-icon-pdf-disabled')}"
 			style="padding-left: 20px;"
-			value="#{contract.to.code}" />
+			value="#{contract.contractData.code.value}" />
 
 		<aon:outputText value="#{companyBundle.company_workplace}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:outputText value="#{contract.to.workPlace.description}" style="margin-left: 50px;"/>
