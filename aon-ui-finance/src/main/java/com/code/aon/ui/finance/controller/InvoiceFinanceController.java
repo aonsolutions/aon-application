@@ -29,7 +29,7 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
-public class InvoiceFinanceController extends LinesController {
+public class InvoiceFinanceController extends LinesController implements IFinanceConstants {
 
 	private RegistryBank registryBank;
 
@@ -42,21 +42,24 @@ public class InvoiceFinanceController extends LinesController {
 	}
 
 	public boolean isModelToEditable() throws ManagerBeanException{
-		if (this.getModel().getRowCount() > 0) {  
-			Finance finance = (Finance)this.getModel().getRowData(); 
+		if (getModel().isRowAvailable()) {  
+			Finance finance = (Finance)getModel().getRowData(); 
 			return (finance.getFinanceStatus().equals(FinanceStatus.PENDING) || finance.getFinanceStatus().equals(FinanceStatus.RETURNED));
 		}
 		return false;
 	}
 
 	public boolean isModelToPending() throws ManagerBeanException{
-		Finance finance = (Finance)this.getModel().getRowData(); 
-		return (finance.getFinanceStatus().equals(FinanceStatus.PENDING));
+		if (getModel().isRowAvailable()) {
+			Finance finance = (Finance)getModel().getRowData(); 
+			return (finance.getFinanceStatus().equals(FinanceStatus.PENDING));
+		}
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")
 	public boolean isAllPending() throws ManagerBeanException{
-		Iterator iterator = ((List)this.getModel().getWrappedData()).iterator();
+		Iterator iterator = ((List)getModel().getWrappedData()).iterator();
 		while(iterator.hasNext()){
 			Finance finance = (Finance)iterator.next();
 			if(FinanceStatus.PENDING != finance.getFinanceStatus()){
@@ -152,6 +155,26 @@ public class InvoiceFinanceController extends LinesController {
 		rBank.setBankAccount(finance.getBankAccount());
 		rBank = (RegistryBank)rBankBean.insert(rBank);
 		setRegistryBank(rBank);
+	}
+
+	public void onLoadFinance(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {  
+			Finance finance = (Finance)getModel().getRowData();
+			String backAction = "";
+			if (finance.getInvoice().getType() == InvoiceType.SALES) {
+				backAction = SALE_INVOICE_FORM_NAME;
+			} else if (finance.getInvoice().getType() == InvoiceType.PURCHASE) {
+				backAction = PURCHASE_INVOICE_FORM_NAME;
+			} else if (finance.getInvoice().getType() == InvoiceType.EXPENSES) {
+				backAction = EXPENSE_INVOICE_FORM_NAME;
+			} else if (finance.getInvoice().getType() == InvoiceType.UNDEDUCTIBLE) {
+				backAction = UNDEDUCTIBLE_INVOICE_FORM_NAME;
+			}
+
+			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
+			financeController.setPayment(finance.getInvoice().getType() != InvoiceType.SALES);
+			financeController.onLoadFinance(event, finance, backAction);
+		}
 	}
 
 }
