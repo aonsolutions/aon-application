@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:form id="taskList">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+			<ui:param name="toolbarID" value="toolbar"/>
+			<ui:param name="toolbarTitle" value="#{projectBundle.aon_task_inbox_module}"/>
+			<ui:param name="toolbarDescription" value="#{bundle.aon_listing}"/>
+						
+			<ui:define name="toolbarContent">
+				<aon:commandButton id="resetTask" value="#{bundle.aon_reset}"
+					immediate="true" action="task_form"
+					actionListener="#{task.onReset}"
+					styleClass="aon-finding-toolbar-item aon-icon-reset"
+					accesskey="#{bundle.aon_key_new}" />
+				<aon:commandButton id="search" value="#{bundle.aon_search}"
+					action="task_search" actionListener="#{task.onEditSearch}"
+					styleClass="aon-finding-toolbar-item aon-icon-search"
+					accesskey="#{bundle.aon_key_search}" />
+				<aon:htmlCommandLink id="taskInbox-report"
+					target="_blank" value="#{bundle.aon_report}"
+					styleClass="aon-finding-toolbar-item aon-icon-printer"
+					action="#{report.onExecute}">
+					<f:param name="reportKey" value="taskInbox" />
+					<f:param name="outputFormat" value="PDF" />
+				</aon:htmlCommandLink>
+				<aon:commandButton id="refresh" value="#{projectBundle.aon_refresh}"
+					actionListener="#{task.onRefresh}"
+					styleClass="aon-finding-toolbar-item aon-icon-refresh"
+					accesskey="#{projectBundle.aon_key_refresh}" />
+
+				<aon:commandButton id="daily_tracking" immediate="true"
+					styleClass="aon-finding-toolbar-item aon-icon-daily-tracking"
+					value="#{projectBundle.aon_daily_tracking}" action="dailyTracking_form"
+					actionListener="#{dailyTracking.onReset}" />
+
+				<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}"
+					rendered="#{aonRole.taskMonitor}">
+					<a4j:support event="onclick" reRender="toolbar,taskTableContainer"
+						actionListener="#{task.onSwicthMonitor}">
+					</a4j:support>
+				</aon:selectBooleanCheckbox>
+				<aon:outputLabel for="monitor" value="Monitor"
+					rendered="#{aonRole.taskMonitor}" />
+			</ui:define>
+		</ui:decorate>
+		<!--  aon-region-body -->
+		<aon:div id="taskTableContainer" styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area-internal">
+
+				<aon:editDataTable id="taskDataList" value="#{task.model}" var="to"
+					rows="20" rendered="#{task.model.rowCount > 0}">
+
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<h:commandButton id="task-select"
+							immediate="true" value="&#160;"
+							styleClass="aon-icon-commandButton aon-icon-rowSelector"
+							actionListener="#{task.onSelect}" action="task_form">
+						</h:commandButton>
+					</aon:column>
+				<!-- 
+					<aon:column rendered="#{!task.monitor}"
+						styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:selectBooleanCheckbox value="#{task.rowChecked}"
+							rendered="#{to.pending or to.inProgress}">
+							<a4j:support event="onclick" ajaxSingle="true" limitToList="true"
+								reRender="toolbar" eventsQueue="rowCheck"
+								ignoreDupResponses="true" requestDelay="100" />
+						</aon:selectBooleanCheckbox>
+					</aon:column>
+ -->
+					<aon:column rendered="#{!task.monitor}"
+						styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="A" />
+						</f:facet>
+
+						<aon:graphicImage url="/css/images/icons/aon-task-start.gif"
+							style="cursor:pointer" alt="#{projectBundle.task_start}"
+							title="#{projectBundle.task_start}"
+							rendered="#{to.pending and task.myListTask}">
+							<a4j:support event="onclick"
+								onclick="if (!confirm('#{projectBundle.task_start}?')) return false;"
+								actionListener="#{task.onListStartTask}"
+								reRender="taskTableContainer,toolbar" />
+						</aon:graphicImage>
+
+						<aon:graphicImage url="/css/images/icons/aon-task-stop.gif"
+							style="cursor:pointer" alt="#{projectBundle.task_stop}"
+							title="#{projectBundle.task_stop}"
+							rendered="#{task.myListTask and to.inProgress}">
+							<a4j:support event="onclick"
+								onclick="if (!confirm('#{projectBundle.task_stop}?')) return false;"
+								actionListener="#{task.onListStopTask}"
+								reRender="taskTableContainer,toolbar" />
+						</aon:graphicImage>
+
+						<aon:graphicImage url="/css/images/icons/aon-task-reopen.gif"
+							style="cursor:pointer"
+							rendered="#{task.myListTask and !to.sourceProcess and to.finished}"
+							alt="#{projectBundle.task_reopen}" title="#{projectBundle.task_reopen}">
+							<a4j:support event="onclick"
+								onclick="if (!confirm('#{projectBundle.task_reopen}?')) return false;"
+								actionListener="#{task.onListReopenTask}"
+								reRender="taskTableContainer,toolbar" />
+						</aon:graphicImage>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByPriority}">
+								<aon:outputText value="P" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByPriority}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:graphicImage
+							url="/css/images/icons/aon-task-priority-#{to.priority}.gif"
+							alt="#{to.priority}" title="#{to.priority}"/>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByStatus}">
+								<aon:outputText value="S" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByStatus}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:graphicImage
+							url="/css/images/icons/aon-task-status-#{to.status}.gif"
+							alt="#{to.status}" title="#{to.status}" />
+					</aon:column>
+
+					<aon:column rendered="#{!task.monitor}"
+						styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="F" />
+						</f:facet>
+
+						<aon:graphicImage url="/css/images/icons/aon-icon-task-finish.png"
+							alt="#{projectBundle.task_finish}"
+							title="#{projectBundle.task_finish}"
+							rendered="#{!task.monitor and !task.new and !to.finished and !to.deleted}"
+							style="#{!task.monitor?'cursor:pointer':''}">
+							<a4j:support rendered="#{!task.monitor}" event="onclick"
+								onclick="if (!confirm('#{projectBundle.task_finish}?')) return false;"
+								actionListener="#{task.onFinishTaskFromList}"
+								reRender="taskDataList,toolbar,chooseContainer" />
+						</aon:graphicImage>
+
+					</aon:column>
+
+					<aon:column rendered="#{!task.monitor}"
+						styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByUser}">
+								<aon:outputText value="U" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByUser}" />
+							</aon:commandLink>
+						</f:facet>
+
+						<aon:graphicImage url="/css/images/icons/aon-user-icon.gif"
+							alt="#{projectBundle.task_user_task} #{to.user.name}"
+							tiitle="#{projectBundle.task_user_task} #{to.user.name}"
+							rendered="#{task.myListTask}"
+							style="#{!task.monitor?'cursor:pointer':''}">
+							<a4j:support rendered="#{!task.monitor}" event="onclick"
+								onclick="if (!confirm('#{projectBundle.task_release_selected}?')) return false;"
+								actionListener="#{task.onReleaseTaskFromList}"
+								reRender="taskDataList,toolbar" />
+						</aon:graphicImage>
+
+						<aon:graphicImage url="/css/images/icons/aon-group-icon.gif"
+							alt="#{projectBundle.task_group_task} #{to.workGroup.description}"
+							title="#{projectBundle.task_group_task} #{to.workGroup.description}"
+							rendered="#{!task.myListTask}"
+							style="#{!task.monitor?'cursor:pointer':''}">
+							<a4j:support rendered="#{!task.monitor}" event="onclick"
+								onclick="if (!confirm('#{projectBundle.task_assume_selected}?')) return false;"
+								actionListener="#{task.onAssumeTaskFromList}"
+								reRender="taskDataList,toolbar" />
+						</aon:graphicImage>
+
+					</aon:column>
+
+					<aon:column rendered="#{task.monitor}"
+						styleClass="aon-editDataTable-text">
+						<f:facet name="header">
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByWorkGroup}">
+								<aon:outputText value="#{projectBundle.aon_work_group}" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByWorkGroup}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:outputText value="#{to.workGroup.description}"
+							style="#{to.expired?'color:red;':''}" />
+					</aon:column>
+
+					<aon:column rendered="#{task.monitor}"
+						styleClass="aon-editDataTable-text">
+						<f:facet name="header">
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByUser}">
+								<aon:outputText value="#{projectBundle.aon_user}" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByUser}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:outputText value="#{to.user.name}"
+							style="#{to.expired?'color:red;':''}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="C" />
+						</f:facet>
+						<aon:div style="display:inline;cursor:pointer;"
+							rendered="#{to.comments != null and to.comments!=''	}">
+							<aon:graphicImage url="/css/images/icons/aon-task-comment.gif" />
+							<rich:toolTip value="#{to.comments}" showEvent="onclick"
+								style="width: 400px;"
+								hideDelay="2000">
+								<f:facet name="defaultContent">
+									<aon:outputText value="#{bundle.aon_in_progress}" />
+								</f:facet>
+							</rich:toolTip>
+						</aon:div>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-text">
+						<f:facet name="header">
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByDescription}">
+								<aon:outputText value="#{bundle.aon_description}" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByDescription}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:outputText value="#{to.description}"
+							style="#{to.expired?'color:red;':''}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-text">
+						<f:facet name="header">
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByDossier}">
+								<aon:outputText value="#{projectBundle.dossier_dossier}" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByDossier}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:div style="#{to.expired?'color:red;':''}">
+							<aon:outputText value="#{to.dossier.number}" />
+							<aon:outputText
+								value="&#160;(#{to.dossier.customer.registry.alias})"
+								rendered="#{to.dossier.id != null}" />
+						</aon:div>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+
+						<aon:graphicImage url="/css/images/icons/aon-task-periodical.gif"
+							alt="#{to.repeatPeriod}" title="#{to.repeatPeriod}"  
+							rendered="#{to.repeatable}">
+						</aon:graphicImage>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-text">
+						<f:facet name="header">
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByStartDate}">
+								<aon:outputText value="#{projectBundle.aon_initial_date}" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByStartDate}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:outputText value="#{to.startDate}"
+							style="#{to.expired?'color:red;':''}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-number">
+						<f:facet name="header">
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByPercent}">
+								<aon:outputText value="%" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByPercent}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:outputText value="#{to.percent}"
+							style="#{to.expired?'color:red;':''}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-text">
+						<f:facet name="header">
+							<aon:commandLink styleClass="aon-table-header-link"
+								actionListener="#{task.sortByDueDate}">
+								<aon:outputText value="#{projectBundle.aon_due_date}" />
+								<aon:graphicImage
+									url="/css/images/icons/aon-table-header-order-#{task.orderAscendingLiteral}.gif"
+									rendered="#{task.sortedByDueDate}" />
+							</aon:commandLink>
+						</f:facet>
+						<aon:outputText value="#{to.dueDate}"
+							style="#{to.expired?'color:red;':''}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+				</aon:editDataTable>
+
+				<aon:dataScroller2 for="taskDataList" showNote="true" />
+
+			</aon:div>
+		</aon:div>
+	</aon:form>
+
+	<ui:include src="/com/code/aon/ui/project/facelet/task/finishTaskPanel.xhtml" />
+	
+</ui:composition>

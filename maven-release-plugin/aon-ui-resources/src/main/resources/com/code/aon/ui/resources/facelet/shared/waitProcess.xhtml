@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<rich:modalPanel id="waitProccess" height="200" width="300"
+		zindex="2000" resizeable="false">
+
+		<f:facet name="header">
+			<aon:div styleClass="aon-popupWindow-title">
+				<aon:outputText value="#{bundle.aon_advice}" />
+			</aon:div>
+		</f:facet>
+
+		<h:panelGrid columns="2" styleClass="aon-width-all" columnClasses=",aon-text-center" >
+			<aon:div styleClass="aon-timer" />
+			<aon:outputText styleClass="aon-timer-internal"
+				value="#{bundle.aon_in_progress}" />
+		</h:panelGrid>
+			
+	</rich:modalPanel>
+	
+</ui:composition>

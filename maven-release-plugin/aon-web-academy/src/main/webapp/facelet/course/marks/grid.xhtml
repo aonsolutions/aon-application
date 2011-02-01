@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="courseMarkList">
+		
+			<t:div id="aon-content-menu" styleClass="aon-content-menu-aux"
+				forceId="#{true}">
+				<h:outputText
+					value="#{appBundle.course_code} #{course.to.code}, #{course.to.courseSubject.description} #{course.to.courseLevel.description} #{course.to.academicYear.description}" />
+			</t:div>
+			
+			<t:div styleClass="aon-content-menu" rendered="#{!customer.new}" id="aon-content-menu" forceId="#{true}">
+				<t:panelGrid columns="7" cellpadding="0" cellspacing="0" border="0">
+					<t:panelGroup>						
+						<t:commandLink id="course_data" value="#{appBundle.course_course}" 
+							action="course_form" styleClass="aon-content-menu-item"	visibleOnUserRole="GruposGrupo"/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="academicSkill_data" value="#{appBundle.academicSkill_academicSkills}" 
+							action="course_academicSkill_data" visibleOnUserRole="GruposHabilidades" 
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="alumn_data" value="#{appBundle.aon_alumns}" 
+							action="course_alumn_data" visibleOnUserRole="GruposAlumnos"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="alumn_absence_data" value="#{appBundle.absence_absences}" 
+							actionListener="#{courseAlumnAbsence.onSearch}" 
+							action="course_alumn_absence_data" visibleOnUserRole="GruposAusencias"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="evaluation_data" 
+							value="#{appBundle.course_evaluation}" 
+							action="course_evaluation_data" visibleOnUserRole="GruposVCalidad"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="course_mark_data" 
+							value="#{appBundle.aon_mark_data}" visibleOnUserRole="GruposCalificaciones"
+							styleClass="aon-content-menu-item-active"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="alumn_mark_data" value="#{appBundle.mark_print}" 
+							actionListener="#{courseAlumnMark.onSearch}" 
+							action="course_alumn_mark_data" visibleOnUserRole="GruposObservaciones"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+				</t:panelGrid>
+			</t:div>
+			
+			<!--  toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandLink id="alumnMarkList" value="#{bundle.aon_report}"
+							forceId="#{true}"  target="_new"
+							action="#{courseAlumnMark.onExecute}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
+							accesskey="#{bundle.aon_key_print}" />
+						<h:selectOneMenu value="#{markPrinter.printOption}"
+							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItems value="#{markPrinter.printOptions}" />
+						</h:selectOneMenu>
+					</t:div>
+				</t:div>
+			</t:div>
+		
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+				
+					<t:div styleClass="aon-form-note">
+						<t:div styleClass="aon-form-note-internal">
+							<t:panelGrid columns="1" width="95%">
+								<t:div styleClass="aon-text-outstanding">
+									<h:outputText value="#{appBundle.mark_evaluation}: " />
+									<t:outputText value="#{courseMark.evaluation}" />
+								</t:div>
+								<t:div>
+									<t:inputText value="#{courseMark.evaluation}" 
+										styleClass="aon-form-input-text" 
+										size="4" maxlength="2"
+										required="#{true}">
+										<f:validateLongRange minimum="0" maximum="12"/>
+									</t:inputText>
+									<t:commandButton id="evalcahnge" 
+										value="#{appBundle.evaluation_change}"
+										actionListener="#{courseMark.onSearch}"
+										styleClass="aon-form-button" />
+								</t:div>
+							</t:panelGrid>
+						</t:div>
+					</t:div>
+				
+					<t:div styleClass="aon-table-hack">
+
+						<t:dataTable id="courseMarkData" value="#{courseMark.result}" var="to"
+							rows="20" rowIndexVar="rowIndex"
+							rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							styleClass="aon-table" headerClass="aon-table-header"
+							columnClasses="aon-table-body aon-table-body-string"
+							rowClasses="aon-table-row-odd, aon-table-row-even">
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{appBundle.course_alumn}" />
+								</f:facet>
+								<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
+								<h:outputText value="#{to.customer.registry.name}" />
+								<t:commandLink immediate="#{true}"
+									rendered="#{to!=courseMark.to}"
+									styleClass="aon-table-row-selected"
+									actionListener="#{courseMark.onSelect}">
+								</t:commandLink>
+								<f:facet name="footer">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+							</t:column>
+							<t:columns value="#{courseMark.alumnMarkHeaders}" var="column">
+								<f:facet name="header">
+									<t:div>
+										<f:verbatim>&#160;</f:verbatim>
+										<h:outputText title="#{column.description}" value="#{column.code}" />
+									</t:div>
+								</f:facet>
+								<t:outputText value="#{to.values[column.position].mark}"
+									rendered="#{to!=courseMark.to}" />
+								<t:div rendered="#{to==courseMark.to}">
+									<t:inputText styleClass="aon-form-input-text" size="3" 
+										value="#{courseMark.to.values[column.position].mark}" />
+								</t:div>
+								<f:facet name="footer">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+							</t:columns>
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{appBundle.mark_average_abrv}" />
+								</f:facet>
+								<h:outputText value="#{courseMark.averageMark}" />
+								<f:facet name="footer">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+							</t:column>
+							<h:column>
+								<f:facet name="header">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+								<t:div>
+									<f:verbatim rendered="#{to!=courseMark.to}">&#160;</f:verbatim>
+			
+									<t:commandButton title="#{bundle.aon_save}"
+										actionListener="#{courseMark.onAccept}"
+										rendered="#{to==courseMark.to}" value=""
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<t:commandButton title="#{bundle.aon_cancel}"
+										actionListener="#{courseMark.onCancel}" immediate="#{true}"
+										onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+										value="" rendered="#{to==courseMark.to}"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</t:div>
+								<f:facet name="footer">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+							</h:column>
+						</t:dataTable>
+
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="courseMarkData" />
+							<ui:param name="model" value="#{courseMark.result}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+
+					</t:div>
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

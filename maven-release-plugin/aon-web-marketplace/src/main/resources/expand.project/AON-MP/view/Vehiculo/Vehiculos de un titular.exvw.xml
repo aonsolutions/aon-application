@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Vehiculos de un titular"
+    label="Vehiculos de un titular" sqlSentence="SELECT tas_item.id, tas_item.publicCode&#xd;&#xa;FROM support_order,tas_item&#xd;&#xa;WHERE support_order.target = ?&#xd;&#xa;  AND support_order.tas_item = tas_item.id&#xd;&#xa;GROUP BY tas_item.id, tas_item.publicCode">
+    <parameters>
+        <parameter columnReference="data/support_order.exdm.xml/target"
+            label="" name="registry_id" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="TAS_ITEM_ID" columnId="id"
+            columnReference="data/tas_item.exdm.xml/id" export="true"
+            label="" tableId="tas_item" type="INTEGER"/>
+        <result accessName="TAS_ITEM_PUBLIC_CODE" columnId="publicCode"
+            columnReference="data/tas_item.exdm.xml/publicCode"
+            export="true" label="" tableId="tas_item" type="STRING"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/support_order.exdm.xml"/>
+        <dataModelReference id="data/tas_item.exdm.xml"/>
+    </dataModelReferences>
+</view>

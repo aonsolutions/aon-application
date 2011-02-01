@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<converter>
+		<description>Conversor para los DeliveryStatus</description>
+		<converter-id>aonDeliveryStatusConverter</converter-id>
+		<converter-class>com.code.aon.ui.warehouse.converter.DeliveryStatusConverter</converter-class>
+	</converter>
+	
+	<converter>
+		<description>Conversor para los IncomeStatus</description>
+		<converter-id>aonIncomeStatusConverter</converter-id>
+		<converter-class>com.code.aon.ui.warehouse.converter.IncomeStatusConverter</converter-class>
+	</converter>
+	
+</faces-config>

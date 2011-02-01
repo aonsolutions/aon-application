@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="trabdtoSearch">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_principales_trabdto_mnto}" />
+				<ui:param name="controller" value="#{trabdto}" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{trabdto.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="trabdto_list" />
+					
+					
+					
+					
+					
+					
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_trabdto_num_orden}" />
+					<aon:inputText id="Trabdto_id_orden"
+						valueChangeListener="#{trabdto.addExpression}"
+						size="" maxlength="" />
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_trabdto_num_linea}" />
+					<aon:inputText id="Trabdto_linea"
+						valueChangeListener="#{trabdto.addExpression}"
+						size="" maxlength="" />
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_trabdto_fecini_desc}" />
+					<aon:selectInputDate renderAsPopup="true" 
+						valueChangeListener="#{trabdto.addEqualExpression}"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						id="Trabdto_fecini" enableManualInput="true" />
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_trabdto_fecfin_Desc}" />
+					<aon:selectInputDate renderAsPopup="true" 
+						valueChangeListener="#{trabdto.addEqualExpression}"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						id="Trabdto_fecfin" enableManualInput="true" />
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_trabdto_concep_minor}" />
+					<aon:inputText id="Trabdto_concepto"
+						valueChangeListener="#{trabdto.addExpression}"
+						size="" maxlength="" />
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_trabdto_importe_minor}" />
+					<aon:inputText id="Trabdto_importe"
+						valueChangeListener="#{trabdto.addExpression}"
+						size="" maxlength="" />
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_trabdto_importe_indicar}" />
+					<aon:selectOneRadio	id="Trabdto_indimp"
+						valueChangeListener="#{bonifica.addExpression}" >
+						<aon:enumConverter
+							enum="com.code.aon.payroll.enumeration.ImporteIndicar" />
+						<f:selectItems
+							value="#{trabdto.listaImporteIndicar}" />
+					</aon:selectOneRadio>
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_trabdto_afecta}" />
+					<aon:selectOneRadio id="Trabdto_afecta"
+						valueChangeListener="#{bonifica.addExpression}" >
+						<aon:enumConverter
+							enum="com.code.aon.payroll.enumeration.Afectados" />
+						<f:selectItems
+							value="#{trabdto.listaAfectados}" />
+					</aon:selectOneRadio>
+					
+					
+
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+
+
+	</ui:define>
+
+</ui:composition>

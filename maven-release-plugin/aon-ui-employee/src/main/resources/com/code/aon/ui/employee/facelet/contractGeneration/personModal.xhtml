@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showNewPersonWindow">
+		<c:if test="#{contractGenerationWizard.showNewPersonWindow}">
+			<rich:modalPanel id="newEnterpriseModalPanel" 
+				height="550" width="650" resizeable="false" 
+				rendered="#{contractGenerationWizard.showNewPersonWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_reset}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showNewPersonWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contractGenerationWizard.showNewPersonWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="newPersonFrom">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="newPerson-save"
+										value="#{bundle.aon_save}"
+										reRender="showNewPersonWindow, personContent"
+										actionListener="#{contractGenerationWizard.onAcceptPerson}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										accesskey="#{bundle.aon_key_save}">
+										<rich:componentControl for="newPersonModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{contractGenerationWizard.showNewPersonWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								
+								<aon:div styleClass="personModalContent" >
+									<ui:include src="/com/code/aon/ui/registry/facelet/person/formNewContent.xhtml">
+										<ui:param name="controller" value="#{person}" />
+										<ui:param name="skipSecurityPanel" value="#{true}" />
+										<ui:param name="skipLogoPanel" value="#{true}" />
+										<ui:param name="skipOtherDataPanel" value="#{true}" />
+									</ui:include>	
+								</aon:div>
+									
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+				<aon:lookupButtonPopup lookup="#{cnaeLookup}" />
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

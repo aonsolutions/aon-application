@@ -1,0 +1,701 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+	<!-- ************ tipovia LOOKUP ************** -->
+        <managed-bean>
+		<managed-bean-name>tipoviaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipoviaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.tipos.Tipovia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/organismos_entidades/delegaciones/tipoViaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
+
+ <!--  ************ Provincia LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>provinciaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>provinciaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.geograficas.Provincia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/organismos_entidades/delegaciones/provinciaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ Divisa LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>divisaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>divisaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.divisa.Divisa</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/divisa/divisaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ Delegacion LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>delegacionLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>divisaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/delegacionLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
+		<!--  ************ empresario LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>empresarioLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>empresarioLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.tipos.Empresario</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/empresarioLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+			<!--  ************ documento LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>documentoLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>documentoLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.tipos.Documento</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/documentoLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
+			<!--  ************ Pais LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>paisLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>paisLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.geograficas.Pais</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/paisLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ Nacion LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>nacionLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>nacionLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.geograficas.Nacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/personas/nacionLookup/list.xhtml</value> 
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ Base LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>baseLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>baseLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.Base</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/convenios/categoria/baseLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ Epigrafe LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>epigrafeLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>epigrafeLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.Epigrafe</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/convenios/categoria/epigrafeLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+		
+			<!--  ************ cliente LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>clienteLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>clienteLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.Cliente</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/clienteLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ complemento LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>complementoLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>complementoLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.convenios.Complemento</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/convenios/percepcion/complementoLookup/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/auxiliares/convenios/percepcion/complementoLookup/search.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ entidad LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>entidadLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>entidadLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Entidad</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/organismos_entidades/entidades/entidadLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ sucursal LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>sucursalLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>sucursalLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/organismos_entidades/entidades/sucursalLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ admon LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>admonLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>admonLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.Admon</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/empresas/admonLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+		<!--  ************ empresa LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>empresaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>empresaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Empresa</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/integral/empresaLookup/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/principales/clientes/integral/empresaLookup/search.xhtml</value>
+	 	</managed-property>
+	</managed-bean>	
+	
+
+		<!--  ************ actividades  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>actividadLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>actividadLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Actividad</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/integral/actividadLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+		
+			<!--  ************ domicilio  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>domicilioLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domicilioLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.Domicilio</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/integral/domicilioLookup/list.xhtml</value>
+		</managed-property>
+	
+	</managed-bean>	
+	
+				<!--  ************ cuentas  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>cuentaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cuentaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.Cuentas</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/integral/cuentaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+				<!--  ************ persona  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>personaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>personaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.personas.Persona</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/otrperc/personaLookup/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/principales/personas/otrperc/personaLookup/search.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+				<!--  ************ mutua LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>mutuaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mutuaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Mutua</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/autonomo/mutuaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+				<!--  ************ trabajador  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>trabajadorLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>trabajadorLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.persona.Trabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/embargos/trabajadorLookup/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/principales/personas/embargos/trabajadorLookup/search.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+				<!--  ************ convenio  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>convenioLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>convenioLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.convenios.Convenio</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/actividad/convenioLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
+				<!--  ************ cnae93  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>cnae93Lookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae93Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.CnaeMaestro</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/actividad/cnae93Lookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+					<!--  ************ cnae09  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>cnae09Lookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae93Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.Cnae2009Maestro</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/actividad/cnae09Lookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
+						<!--  ************ categoria  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>categoriaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>categoriaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.convenios.Categoria</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/avanzadas/hojastrabajo/categoriaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+		
+				<!--  ************ ccontratos  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>contratosLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contratosLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.contratos.ContratosInternos</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/avanzadas/hojastrabajo/contratosLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+		
+				<!--  ************ ctc2  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>contratostc2Lookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contratostc2Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.contratos.ContratosTc2</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/avanzadas/hojastrabajo/contratostc2Lookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
+				<!--  ************ porcentaje  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>porcentajeLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>porcentajeLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.PorcentajeMaestro</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/avanzadas/simulacion/porcentajeLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ ccontratos  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>tipocontratoLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipocontratoLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.personas.Tipocont</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/integral/trabajo/tipocontratoLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!--  ************ colectivos  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>colectivosLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>colectivosLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.Colectivos</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/integral/trabajo/colectivosLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ bonificacion LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>bonificacionLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bonificacionLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.Bonificacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/integral/bonificaciones/bonificacionLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+
+<!--  ************ tipo incidencia LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>tipincLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipincLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.personas.Tipinc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/integral/incidencias/otras/tipincLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!--  ************ tipo incidencia LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>tipautLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipautLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.personas.Tipaut</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/integral/trabajo/tipautLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ tipo incidencia LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>emprccosLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>emprccosLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Emprccos</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/integral/trabajador/emprccosLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
+	
+</faces-config>

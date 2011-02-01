@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panel style="height=80px"  width="100" id="schedulePanel"
+		header="#{calendarBundle.aon_calendar_schedule}">
+	
+		<aon:panelGrid columns="2">
+			<aon:outputLabel value="#{calendarBundle.aon_calendar_monday}" />
+			<aon:div rendered="#{calendar.editable}">
+				<aon:selectOneMenu value="#{calendar.to.monday}">
+					<f:selectItems value="#{calendarCollections.dayTypes}" />
+				</aon:selectOneMenu>
+				<aon:inputText size="2" maxlength="6"
+					value="#{calendar.to.mondayHours}" />
+			</aon:div>
+			<aon:div rendered="#{!calendar.editable}">
+				<aon:outputText 
+					value="#{calendar.to.monday}" />
+				<aon:outputText 
+					value="(#{calendar.to.mondayHours})" />
+			</aon:div>
+			
+			<aon:outputLabel value="#{calendarBundle.aon_calendar_tuesday}" />
+			<aon:div rendered="#{calendar.editable}">
+				<aon:selectOneMenu value="#{calendar.to.tuesday}">
+					<f:selectItems value="#{calendarCollections.dayTypes}" />
+				</aon:selectOneMenu>
+				<aon:inputText size="2" maxlength="6"
+					value="#{calendar.to.tuesdayHours}" />
+			</aon:div>
+			<aon:div rendered="#{!calendar.editable}">
+				<aon:outputText 
+					value="#{calendar.to.tuesday}" />
+				<aon:outputText 
+					value="(#{calendar.to.tuesdayHours})" />
+			</aon:div>
+			
+			<aon:outputLabel value="#{calendarBundle.aon_calendar_wednesday}" />
+			<aon:div rendered="#{calendar.editable}">
+				<aon:selectOneMenu value="#{calendar.to.wednesday}">
+					<f:selectItems value="#{calendarCollections.dayTypes}" />
+				</aon:selectOneMenu>
+				<aon:inputText size="2" maxlength="6"
+					value="#{calendar.to.wednesdayHours}" />
+			</aon:div>
+			<aon:div rendered="#{!calendar.editable}">
+				<aon:outputText 
+					value="#{calendar.to.wednesday}" />
+				<aon:outputText 
+					value="(#{calendar.to.wednesdayHours})" />
+			</aon:div>
+			
+			<aon:outputLabel value="#{calendarBundle.aon_calendar_thursday}" />
+			<aon:div rendered="#{calendar.editable}">
+				<aon:selectOneMenu value="#{calendar.to.thursday}">
+					<f:selectItems value="#{calendarCollections.dayTypes}" />
+				</aon:selectOneMenu>
+				<aon:inputText size="2" maxlength="6"
+					value="#{calendar.to.thursdayHours}" />
+			</aon:div>
+			<aon:div rendered="#{!calendar.editable}">
+				<aon:outputText 
+					value="#{calendar.to.thursday}" />
+				<aon:outputText 
+					value="(#{calendar.to.thursdayHours})" />
+			</aon:div>
+			
+			<aon:outputLabel value="#{calendarBundle.aon_calendar_friday}" />
+			<aon:div rendered="#{calendar.editable}">
+				<aon:selectOneMenu value="#{calendar.to.friday}">
+					<f:selectItems value="#{calendarCollections.dayTypes}" />
+				</aon:selectOneMenu>
+				<aon:inputText size="2" maxlength="6"
+					value="#{calendar.to.fridayHours}" />
+			</aon:div>
+			<aon:div rendered="#{!calendar.editable}">
+				<aon:outputText 
+					value="#{calendar.to.friday}" />
+				<aon:outputText 
+					value="(#{calendar.to.fridayHours})" />
+			</aon:div>
+			
+			<aon:outputLabel value="#{calendarBundle.aon_calendar_saturday}" />
+			<aon:div rendered="#{calendar.editable}">
+				<aon:selectOneMenu value="#{calendar.to.saturday}">
+					<f:selectItems value="#{calendarCollections.dayTypes}" />
+				</aon:selectOneMenu>
+				<aon:inputText size="2" maxlength="6"
+					value="#{calendar.to.saturdayHours}" />
+			</aon:div>
+			<aon:div rendered="#{!calendar.editable}">
+				<aon:outputText 
+					value="#{calendar.to.saturday}" />
+				<aon:outputText 
+					value="(#{calendar.to.saturdayHours})" />
+			</aon:div>
+			
+			<aon:outputLabel value="#{calendarBundle.aon_calendar_sunday}" />
+			<aon:div rendered="#{calendar.editable}">
+				<aon:selectOneMenu value="#{calendar.to.sunday}">
+					<f:selectItems value="#{calendarCollections.dayTypes}" />
+				</aon:selectOneMenu>
+				<aon:inputText size="2" maxlength="6"
+					value="#{calendar.to.sundayHours}" />
+			</aon:div>
+			<aon:div rendered="#{!calendar.editable}">
+				<aon:outputText 
+					value="#{calendar.to.sunday}" />
+				<aon:outputText 
+					value="(#{calendar.to.sundayHours})" />
+			</aon:div>
+		</aon:panelGrid>
+	</aon:panel>
+	
+</ui:composition>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="item_tariff">
+    <columns>
+        <column label="Identificador unico de la Tarifa del Articulo"
+            name="id" sqlType="integer" type="integer"/>
+        <column label="Identificador de Articulo" name="item"
+            sqlType="integer" type="integer"/>
+        <column label="Identificador de Tarifa" name="tariff"
+            sqlType="integer" type="integer"/>
+        <column
+            label="Porcentaje de descuento sobre el precio del Articulo"
+            name="percentage" sqlType="double" type="double"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="item_tariff_ibfk_1" foreignPath="data/tariff.exdm.xml">
+            <sourceColumns>
+                <column name="tariff"/>
+            </sourceColumns>
+        </join>
+        <join description="item_tariff_ibfk_2" foreignPath="data/item.exdm.xml">
+            <sourceColumns>
+                <column name="item"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

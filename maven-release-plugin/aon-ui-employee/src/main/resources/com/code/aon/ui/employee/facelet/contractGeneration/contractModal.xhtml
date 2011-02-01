@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showContractDetailWindow">
+		<c:if test="#{contractGenerationWizard.showContractDetailWindow}">
+			<rich:modalPanel id="contractDetailModalPanel" 
+				height="500" width="610" resizeable="false" 
+				rendered="#{contractGenerationWizard.showContractDetailWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{employeeBundle.contractGeneration_step4}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showContractDetailWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contractGenerationWizard.showContractDetailWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="contractDetailFrom">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="contractDetail-save"
+										value="#{bundle.aon_save}"
+										reRender="showContractDetailWindow"
+										actionListener="#{contractGenerationWizard.onContractSave}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										accesskey="#{bundle.aon_key_save}">
+										<rich:componentControl for="contractDetailModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{contractGenerationWizard.showContractDetailWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="prev"
+										value="#{employeeBundle.employee_back}"
+										reRender="showContractDetailWindow"
+										rendered="#{contractGenerationWizard.lastModalPage}"
+										actionListener="#{contractGenerationWizard.onFirstModalPage}"
+										styleClass="aon-finding-toolbar-item aon-icon-previous" />
+									<aon:commandButton id="next"
+										value="#{employeeBundle.employee_forward}"
+										reRender="showContractDetailWindow"
+										rendered="#{!contractGenerationWizard.lastModalPage}"
+										actionListener="#{contractGenerationWizard.onChangeModalPage}"
+										styleClass="aon-finding-toolbar-item aon-icon-next" />
+								</aon:div>
+  
+								<aon:div styleClass="contractModalContent"
+									style="background: grey url(#{contractGenerationWizard.contractPage}.contractImage?model=#{contractGenerationWizard.model}) top left no-repeat; border:#ffffff 1px solid; height:842px; width:595px;">
+									<c:forEach items="#{contractGenerationWizard.contractFields}" var="field" >
+										<c:if test="#{field.text}">
+											<aon:inputText 
+												title="#{field.label}"
+												rendered="#{field.page==contractGenerationWizard.contractPage}"
+												style="background-color:transparent; border:none; position:absolute; bottom:#{field.bottomCoordinates}px; left:#{field.leftCoordinates}px;width:#{field.width}px; "
+												value="#{field.value}" size="#{field.width}"
+												maxlength="16" />
+										</c:if>
+										<c:if test="#{field.check}">
+											<aon:selectBooleanCheckbox 
+												title="#{field.label}"
+												rendered="#{field.page==contractGenerationWizard.contractPage}"
+												style="background-color:transparent; border:none; position:absolute; bottom:#{field.bottomCoordinates}px; left:#{field.leftCoordinates}px;"
+												value="#{field.booleanValue}" >
+											</aon:selectBooleanCheckbox>
+										</c:if>
+									</c:forEach>
+
+								</aon:div>
+									
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

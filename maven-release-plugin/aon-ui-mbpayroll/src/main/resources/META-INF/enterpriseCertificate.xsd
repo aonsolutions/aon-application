@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- edited with XMLSpy v2008 rel. 2 sp2 (http://www.altova.com) by INEM (INEM) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:documentation xml:lang="es">
+		XML Schema - Comunicaciones de Certificados de Empresa (ceses) 
+		para altas iniciales y reanudaciones de prestaciones por desempleo.
+		</xsd:documentation>
+	</xsd:annotation>
+	<!-- NIVEL 0 -->
+	<xsd:element name="Certificado_empresa">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="CERTIFICADO_EMPRESA_TYPE"/>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- NIVEL 1 -->
+	<xsd:complexType name="CERTIFICADO_EMPRESA_TYPE">
+		<xsd:sequence>
+			<xsd:element name="Cuenta_cotizacion" type="CUENTA_COTIZACION_TYPE" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- NIVEL 1.1 -->
+	<xsd:complexType name="CUENTA_COTIZACION_TYPE">
+		<xsd:sequence>
+			<xsd:element name="Datos_Representante" type="REPRESENTANTE_TYPE"/>
+			<xsd:element name="Datos_Empresa" type="EMPRESA_TYPE"/>
+			<xsd:element name="Datos_Trabajador" type="TRABAJADOR_TYPE" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- NIVEL 2 -->
+	<xsd:complexType name="REPRESENTANTE_TYPE">
+		<xsd:sequence>
+			<xsd:element name="CIF_NIF" type="CIF_NIF_SIMPLETYPE"/>
+			<xsd:element name="Nombre" type="NOMBRE_SIMPLETYPE"/>
+			<xsd:element name="Apellido1" type="APELLIDO_SIMPLETYPE"/>
+			<xsd:element name="Apellido2" type="APELLIDO_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="Cargo" type="CARGO_SIMPLETYPE" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="EMPRESA_TYPE">
+		<xsd:sequence>
+			<xsd:element name="CIF_NIF" type="CIF_NIF_SIMPLETYPE"/>
+			<xsd:element name="CCC" type="CODIGO_CUENTA_COTIZACION_SIMPLETYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TRABAJADOR_TYPE">
+		<xsd:sequence>
+			<xsd:element name="DNI_NIE" type="NIF_NIE_SIMPLETYPE"/>
+			<xsd:element name="Nombre" type="NOMBRE_SIMPLETYPE"/>
+			<xsd:element name="Apellido1" type="APELLIDO_SIMPLETYPE"/>
+			<xsd:element name="Apellido2" type="APELLIDO_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="NumSS" type="NUMERO_SEGURIDAD_SOCIAL_SIMPLETYPE"/>
+			<xsd:element name="GrupoCotizacion" type="N2_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="TipoContrato" type="N3_BASICTYPE"/>
+			<xsd:element name="DuracionContrato" type="N5_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="IndicadorDuracionContrato" type="CHAR_STRING_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="CodProfesion" type="N7_BASICTYPE"/>
+			<xsd:element name="CargoPublicoSindical" type="N2_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="PorcentualDedicacion" type="N4_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="FechaAltaEmpresa" type="FECHA_SIMPLETYPE"/>
+			<xsd:element name="CodCausaSuspension" type="N2_BASICTYPE"/>
+			<xsd:element name="FechaSuspensionExtincion" type="FECHA_SIMPLETYPE"/>
+			<xsd:element name="FechaFinSuspension" type="FECHA_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="ERE" type="ERE_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="PorcentualReduccionERE" type="N4_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="PorcentualReduccionOTROS" type="N4_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="CodCausaPorcentReduccion" type="N2_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="FechaDesdePeriodoSalarios" type="FECHA_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="FechaHastaPeriodoSalarios" type="FECHA_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="DiasSalarioTramitacion" type="N5_BASICTYPE"/>
+			<xsd:element name="DistribucionJornadas" type="DISTRIBUCION_JORNADAS_TYPE" minOccurs="0"/>
+			<xsd:choice>
+				<xsd:element name="Datos_Cotizacion" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:complexContent>
+							<xsd:extension base="COTIZACION_TYPE">
+								<xsd:sequence>
+									<xsd:element name="Ano" type="ANO_SIMPLETYPE"/>
+									<xsd:element name="Mes" type="MES_SIMPLETYPE"/>
+									<xsd:element name="NumDiasCotizados" type="DIAS_SIMPLETYPE"/>
+									<xsd:element name="BaseCotizacionContingenciasComunes" type="N9_BASICTYPE" minOccurs="0"/>
+									<xsd:element name="BaseCotizacionDesempleo" type="N9_BASICTYPE"/>
+									<xsd:element name="Observaciones" type="BIG_STRING_BASICTYPE" minOccurs="0"/>
+								</xsd:sequence>
+							</xsd:extension>
+						</xsd:complexContent>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="Datos_Cotizacion_REA" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:complexContent>
+							<xsd:extension base="COTIZACION_REA_TYPE">
+								<xsd:sequence>
+									<xsd:element name="Ano" type="ANO_SIMPLETYPE"/>
+									<xsd:element name="Mes" type="MES_SIMPLETYPE"/>
+									<xsd:element name="GrupoCotizacion" type="N2_BASICTYPE"/>
+									<xsd:element name="NumDiasCotizados" type="DIAS_COTIZ_REA_SIMPLETYPE"/>
+									<xsd:element name="NumJornadasCotizadas" type="JORN_COTIZ_REA_SIMPLETYPE"/>
+									<xsd:element name="Observaciones" type="BIG_STRING_BASICTYPE" minOccurs="0"/>
+								</xsd:sequence>
+							</xsd:extension>
+						</xsd:complexContent>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+			<xsd:choice minOccurs="0">
+				<xsd:element name="Datos_VacacionesCotizadas" minOccurs="0">
+					<xsd:complexType>
+						<xsd:complexContent>
+							<xsd:extension base="VACACIONES_COTIZADAS_TYPE">
+								<xsd:sequence>
+									<xsd:element name="NumDiasCotizados" type="N3_BASICTYPE"/>
+									<xsd:element name="BaseCotizacionContingenciasComunes" type="N9_BASICTYPE" minOccurs="0"/>
+									<xsd:element name="BaseCotizacionDesempleo" type="N9_BASICTYPE"/>
+									<xsd:element name="Observaciones" type="BIG_STRING_BASICTYPE" minOccurs="0"/>
+								</xsd:sequence>
+							</xsd:extension>
+						</xsd:complexContent>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="Datos_VacacionesCotizadas_REA" minOccurs="0">
+					<xsd:complexType>
+						<xsd:complexContent>
+							<xsd:extension base="VACACIONES_COTIZADAS_REA_TYPE">
+								<xsd:sequence>
+									<xsd:element name="GrupoCotizacion" type="N2_BASICTYPE"/>
+									<xsd:element name="NumDiasCotizados" type="N2_BASICTYPE"/>
+									<xsd:element name="NumJornadasCotizadas" type="N2_BASICTYPE"/>
+									<xsd:element name="Observaciones" type="BIG_STRING_BASICTYPE" minOccurs="0"/>
+								</xsd:sequence>
+							</xsd:extension>
+						</xsd:complexContent>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- NIVEL 3.1 -->
+	<xsd:complexType name="DISTRIBUCION_JORNADAS_TYPE">
+		<xsd:sequence>
+			<xsd:element name="Periodo" type="PERIODO_DISTRIBUCION_JORNADAS_TYPE" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- NIVEL 3.1 -->
+	<xsd:complexType name="PERIODO_DISTRIBUCION_JORNADAS_TYPE">
+		<xsd:sequence>
+			<xsd:element name="TipoDistribucion" type="CHAR_STRING_BASICTYPE"/>
+			<xsd:element name="FechaInicioPeriodo" type="FECHA_SIMPLETYPE"/>
+			<xsd:element name="FechaFinPeriodo" type="FECHA_SIMPLETYPE"/>
+			<xsd:element name="NumeroDiasTrabajadosPorSemanaOPeriodo" type="N5_BASICTYPE"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- NIVEL 3.2 -->
+	<xsd:complexType name="COTIZACION_TYPE"/>
+	<xsd:complexType name="COTIZACION_REA_TYPE"/>
+	<xsd:complexType name="VACACIONES_COTIZADAS_TYPE"/>
+	<xsd:complexType name="VACACIONES_COTIZADAS_REA_TYPE"/>
+	<!-- 
+	TIPOS SIMPLES
+	 -->
+	<xsd:simpleType name="CIF_NIF_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="([A-Z][0-9]{7}[A-Z0-9])|([0-9]{8}[A-Z])|([XYZ][0-9]{7}[A-Z])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NIF_NIE_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="([0-9XYZ][0-9]{7}[A-Z]){1,1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NOMBRE_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="APELLIDO_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CARGO_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CODIGO_CUENTA_COTIZACION_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{15}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FECHA_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ERE_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{5}20[0-9]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NUMERO_SEGURIDAD_SOCIAL_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{12}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ANO_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(19|20)[0-9]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MES_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(0[1-9])|1[012]"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DIAS_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(00[1-9]|0[12][0-9]|03[01])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="DIAS_COTIZ_REA_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(0[0-9]|[12][0-9]|3[01])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="JORN_COTIZ_REA_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(0[0-9]|[12][0-9]|3[01])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- 
+	TIPOS BASICOS 
+	 -->
+	<xsd:simpleType name="N1_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="N2_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="N3_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{3}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="N4_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="N5_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{5}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="N6_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{6}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="N7_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{7}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="N8_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{8}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="N9_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{9}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="N10_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{10}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SMALL_STRING_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="BIG_STRING_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CHAR_STRING_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

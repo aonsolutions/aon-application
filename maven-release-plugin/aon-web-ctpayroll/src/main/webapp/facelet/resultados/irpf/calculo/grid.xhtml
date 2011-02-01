@@ -1,0 +1,139 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="nomdtoexDataDiv">
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{lincalcu}" />
+			<ui:param name="columnClasses" value="
+			aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
+			aon-editDataTable-textColumn, aon-editDataTable-numberColumn,
+			aon-editDataTable-numberColumn, aon-editDataTable-numberColumn" />
+			<!--  
+			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
+			-->
+			<ui:param name="skipResetButton" value="#{true}" />	
+			
+
+			<ui:define name="columns">
+
+	     	    <aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_complemento}" />
+					</f:facet>
+					<aon:outputText value="#{to.codcom}" rendered="#{to!=lincalcu.to}" />
+					
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==lincalcu.to}" size="5"
+						value="#{lincalcu.to.codcom}" maxlength="2" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{lincalcu.new}" size="5"
+							value="#{lincalcu.to.codcom}" maxlength="2" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_desc_comp}" />
+					</f:facet>
+					<aon:outputText value="#{to.descom}" rendered="#{to!=lincalcu.to}" />
+					
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==lincalcu.to}" size="30"
+						value="#{lincalcu.to.descom}" maxlength="50" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{lincalcu.new}" size="30"
+							value="#{lincalcu.to.descom}" maxlength="50" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_fijovar}" />
+					</f:facet>
+					<aon:outputText value="#{to.fijovar}" rendered="#{to!=lincalcu.to}" />
+					
+					<aon:selectOneMenu id="FijoVariable_edit" value="#{lincalcu.to.fijovar}" 
+							rendered="#{to==lincalcu.to}">						
+							<f:selectItem value="#{null}" itemLabel="&#160;" />
+							<f:selectItems value="#{lincalcu.listaFijoVariable}"/>
+						</aon:selectOneMenu>
+					<f:facet name="footer">
+						<aon:selectOneMenu id="FijoVariable_new" value="#{lincalcu.to.fijovar}" 
+							rendered="#{lincalcu.new}">						
+							<f:selectItem value="#{null}" itemLabel="&#160;" />
+							<f:selectItems value="#{lincalcu.listaFijoVariable}"/>
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_importe_unit}" />
+					</f:facet>
+					<aon:outputText value="#{to.importeUni}" rendered="#{to!=lincalcu.to}" >
+						<f:convertNumber type="number" pattern="###,###.###" />
+					</aon:outputText>
+					
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==lincalcu.to}" size="15"
+						value="#{lincalcu.to.importeUni}" maxlength="13" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{lincalcu.new}" size="15"
+							value="#{lincalcu.to.importeUni}" maxlength="13" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_meses_dias}" />
+					</f:facet>
+					<aon:outputText value="#{to.unidades}" rendered="#{to!=lincalcu.to}" >
+						<f:convertNumber type="number" pattern="###,###.###" />
+					</aon:outputText>
+					
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==lincalcu.to}" size="13"
+						value="#{lincalcu.to.unidades}" maxlength="10" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{lincalcu.new}" size="13"
+							value="#{lincalcu.to.unidades}" maxlength="10" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_importe}" />
+					</f:facet>
+					<aon:outputText value="#{to.importe}" rendered="#{to!=lincalcu.to}" >
+						<f:convertNumber type="number" pattern="###,###.###" />
+					</aon:outputText>
+					
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==lincalcu.to}" size="15"
+						value="#{lincalcu.to.importe}" maxlength="13" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{lincalcu.new}" size="15"
+							value="#{lincalcu.to.importe}" maxlength="13" />
+					</f:facet>
+				</aon:column>
+		
+				
+				
+
+				
+			</ui:define>
+		</ui:decorate>
+					
+	</aon:div>
+
+</ui:composition>
