@@ -96,11 +96,7 @@
 						<aon:outputText value="#{finance.to.referenceCode}"
 							rendered="#{finance.to.emptyInvoice}" />
 						<aon:div rendered="#{!finance.to.emptyInvoice}"> 
-							<aon:htmlCommandLink immediate="true"
-								styleClass="aon-dataTable-link" 
-								actionListener="#{finance.onLoadInvoice}"
-								action="#{finance.getInvoiceViewer}"
-								value="#{finance.to.referenceCode}"
+							<aon:outputText value="#{finance.to.referenceCode}"
 								rendered="#{!finance.to.emptyInvoice}" />
 							<aon:outputText styleClass="aon-italic aon-margin-left"
 								value="(#{bundle.aon_date}: "
@@ -114,7 +110,13 @@
 							<aon:outputText styleClass="aon-italic"
 								value=")"
 								rendered="#{!finance.to.emptyInvoice}" />
-						</aon:div> 
+							<aon:htmlCommandLink id="invoice_link" immediate="true"
+								styleClass="aon-icon-file-entrance aon-margin-left" style="padding-right: 20px;"
+								value="&#160;" title="#{bundle.aon_go}"
+								rendered="#{!finance.to.emptyInvoice}"
+								actionListener="#{finance.onLoadInvoice}"
+								action="#{finance.getInvoiceViewer}" />
+ 						</aon:div> 
 					</aon:div> 
 
 					<aon:outputLabel for="Customer_id"
