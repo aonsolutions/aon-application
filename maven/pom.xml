@@ -4,13 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon.application</artifactId>
-  <version>6.0.0-SNAPSHOT</version>
+  <version>6.6.6</version>
   <packaging>pom</packaging>
   <description>POM de aon Solutions (para sacar versions...)</description>
   <name>aon Solutions</name>
  <scm>
-    <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/dev/maven</connection>
-    <url>http://dev.esferalia.com/websvn/wsvn</url>
+    <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/dev/6.6.6/maven</connection>
+    <url>scm:svn:http://dev.esferalia.com/repos/aon-application/dev/6.6.6/wsvn</url>
   </scm>
 
   <modules>
