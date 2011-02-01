@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="CabeceraRemesa">
+
+ <field name="type" value="11" format="AlphaNumeric" pattern="X(2)" />
+ <field name="cod_operacion" value="65" format="AlphaNumeric" pattern="X(2)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(2)" />
+ <field name="fecha_fichero" value="bean" bean="LOT" property="fileDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="numero_remesa" value="bean" bean="DELIVERY" property="deliveyNumber" format="Numeric" pattern="9(4)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(6)" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(6)" />
+ <field name="identificacion_cedente" value="bean" bean="DELIVERY" property="giverCode" format="AlphaNumeric" pattern="X(15)" />
+ <field name="efectos_truncados" value="bean" bean="DELIVERY" property="truncatedEffects" format="Numeric" pattern="9(1)" />
+ <field name="free4" value=" " format="Alphabetic" pattern="X(6)" />
+ <field name="free5" value=" " format="Alphabetic" pattern="X(5)" />
+ <field name="free6" value=" " format="Alphabetic" pattern="X(4)" />
+ <field name="free7" value=" " format="Alphabetic" pattern="X(6)" />
+ <field name="ccc_abono" value="bean" bean="DELIVERY_ACCOUNT_1" property="ccc" format="CCC" pattern="ESDC" />
+ <field name="ccc_adeudo" value="bean" bean="DELIVERY_ACCOUNT_2" property="ccc" format="CCC" pattern="ESDC" />
+ <field name="ccc_impagados" value="bean" bean="DELIVERY_ACCOUNT_3" property="ccc" format="CCC" pattern="ESDC" />
+ <field name="free8" value=" " format="Alphabetic" pattern="X(1)" />
+ <field name="free9" value=" " format="Alphabetic" pattern="X(24)" />
+ 
+</register>

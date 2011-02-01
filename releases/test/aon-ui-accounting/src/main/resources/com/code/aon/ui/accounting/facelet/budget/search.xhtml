@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="accountBudgetForm">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_account_budget_module}" />
+				<ui:param name="controller" value="#{accountBudget}" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+
+				<ui:param name="controller" value="#{accountBudget}" />
+
+				<ui:define name="searchContent">
+						
+					<aon:outputLabel for="AccountBudget_account_id"
+						value="#{accountBundle.account_account}" />
+					<aon:inputText id="AccountBudget_account_id" size="15"
+						valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="AccountBudget_period"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="AccountBudget_period" 
+						valueChangeListener="#{accountBudget.addExpression}" >
+						<f:selectItems value="#{accountingCollections.activeAccountPeriodKeys}" />
+					</aon:selectOneMenu>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

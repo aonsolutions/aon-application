@@ -1,0 +1,60 @@
+package com.esferalia.aon.salary;
+
+import java.util.Date;
+
+import com.esferalia.aon.salary.deduction.Deductions;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.payment.Payments;
+
+public interface ISalary {
+
+	// DATOS DE EMPRESA
+	String getEnterpriseName();
+	String getEnterpriseAddress();
+	String getEnterpriseDocument();
+	String getCcc();
+
+	// DATOS DEL EMPLEADO
+	String getEmployeeName();
+	String getEmployeeDocument();
+	Integer getRegistration();
+	String getSocialSecurityNumber();	
+	String getCategory();
+	String getQuoteGroup();
+	Date getSeniorityDate();
+	
+	// DATOS DE LA NOMINA
+	SalaryType getType();
+	Date getIssueDate();
+	Date getStartDate();
+	Date getEndDate();
+	boolean isFullTime();	// Si es jornada completa
+	Integer getTimeUnits(); // Si (fullTime)? dias : horas
+	
+	//DEVENGOS
+	Payments getPayments() throws SalaryException;
+	Double getTotalPayment();
+	
+	//DEDUCCIONES
+	Deductions getDeductions() throws SalaryException;
+	Double getSocialSecurityContributions();
+	Double getTotalDeduction();
+	
+	// TOTAL LIQUIDO
+	Double getTotalLiquid();
+
+	//BASES
+	//Remuneración mensual
+	Double getRemuneration();
+	// Prorrata de pagas extraordinarias
+	Double getExtraPayProration();
+	//Base de cotización por contigencias comunes
+	Double getCommonBase();
+	//Base de cotización por contigencias profesionales (A.T. y E.P.) y conceptos de recaudación conjunta (Desemp., F.P., F.G.S.)
+	Double getProfessionalBase();
+	//Base de cotización adicional por horas extraordinarias
+	Double getOvertimeBase();
+	//Base sujeta a retención del I.R.P.F.
+	Double getIrpfBase();
+	
+}

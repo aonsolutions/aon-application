@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+  <!-- =================== Navigation Rules ================= -->
+
+  <!-- ********************************* -->
+  <!-- *********** MASTER ************** -->
+  <!-- ********************************* -->
+
+  <!-- =================== Supplier ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>supplier_form</from-outcome>
+      <to-view-id>/facelet/purchase/master/supplier/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>supplier_list</from-outcome>
+      <to-view-id>/facelet/purchase/master/supplier/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>supplier_search</from-outcome>
+      <to-view-id>/facelet/purchase/master/supplier/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- =================== Invoicing ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>purchase_invoicing_form</from-outcome>
+      <to-view-id>/facelet/purchase/master/invoicing/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>purchase_invoicing_list</from-outcome>
+      <to-view-id>/facelet/purchase/master/invoicing/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>purchase_invoicing_search</from-outcome>
+      <to-view-id>/facelet/purchase/master/invoicing/search.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>income_detail_list</from-outcome>
+      <to-view-id>/facelet/purchase/master/invoicing/incomeDetail/list.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- =================== Purchase ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>purchase_form</from-outcome>
+      <to-view-id>/facelet/purchase/master/purchase/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>purchase_list</from-outcome>
+      <to-view-id>/facelet/purchase/master/purchase/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>purchase_search</from-outcome>
+      <to-view-id>/facelet/purchase/master/purchase/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- ********************************* -->
+  <!-- ************ MENU *************** -->
+  <!-- ********************************* -->
+  
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>supplier</from-outcome>
+      <to-view-id>/facelet/purchase/master/supplier/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>purchase</from-outcome>
+      <to-view-id>/facelet/purchase/master/purchase/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>purchase_invoicing</from-outcome>
+      <to-view-id>/facelet/purchase/master/invoicing/form.faces</to-view-id>
+    </navigation-case>
+   <navigation-case>
+      <from-outcome>supplierSegment</from-outcome>
+      <to-view-id>/facelet/purchase/auxiliary/supplier_segment/grid.faces</to-view-id>
+   </navigation-case>   
+  </navigation-rule>
+  
+</faces-config>

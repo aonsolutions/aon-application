@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+<ui:composition>
+
+	<aon:panelGrid columns="2" dir="true">
+
+		<aon:outputLabel value="#{appBundle.aon_cdr_name}" />
+		<aon:outputText value="#{manager.documents.selected.jcrName}"/>
+
+		<aon:outputLabel value="#{appBundle.aon_cdr_title}" />
+  		<rich:inplaceInput value="#{manager.documents.selected.name}"/>
+ 
+		<aon:outputLabel value="#{appBundle.aon_cdr_keywords}" />
+  		<rich:inplaceInput value="#{manager.documents.selected.keywords}"/>
+
+		<aon:outputLabel value="#{appBundle.aon_cdr_nowords}" />
+  		<rich:inplaceInput value="#{manager.documents.selected.nowords}" />
+
+		<aon:outputLabel value="#{appBundle.aon_cdr_category}" />
+		<aon:selectOneMenu value="#{manager.documents.selected.category}" >
+			<f:selectItems value="#{manager.categories.categoryItems}"/>
+		</aon:selectOneMenu>						
+	
+		<aon:outputLabel value="#{appBundle.aon_cdr_language}" />
+		<aon:selectOneMenu value="#{manager.documents.selected.language}" >
+			<f:selectItems value="#{search.parameters.languages}"/>
+		</aon:selectOneMenu>						
+
+	</aon:panelGrid>
+
+</ui:composition>
+</body>
+</html>

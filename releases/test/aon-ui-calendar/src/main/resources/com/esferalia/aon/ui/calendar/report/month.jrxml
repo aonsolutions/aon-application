@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="month" columnCount="7" printOrder="Horizontal" pageWidth="175" pageHeight="70" columnWidth="25" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="normal" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+	<style name="weekend" forecolor="#000000" backcolor="#CCCCCC" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+	<style name="holiday" forecolor="#000000" backcolor="#CC0000" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+	<style name="myStyle" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{holiday})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#FF3333" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{notWorkingDay})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{vacation})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#FFCC66" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{continuousTime})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#66CC33" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($F{other})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#6699FF" fill="Solid" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="logoImageFile" class="java.io.InputStream"/>
+	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
+	<parameter name="nestedReports" class="java.util.Map"/>
+	<field name="dayOfMonth" class="java.lang.Integer"/>
+	<field name="holiday" class="java.lang.Boolean"/>
+	<field name="notWorkingDay" class="java.lang.Boolean"/>
+	<field name="vacation" class="java.lang.Boolean"/>
+	<field name="continuousTime" class="java.lang.Boolean"/>
+	<field name="other" class="java.lang.Boolean"/>
+	<field name="hours" class="java.lang.Double"/>
+	<background>
+		<band height="70">
+			<rectangle>
+				<reportElement x="0" y="0" width="175" height="70"/>
+			</rectangle>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement positionType="Float" x="0" y="0" width="25" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{calendar_monday}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="25" y="0" width="25" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{calendar_tuesday}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="50" y="0" width="25" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{calendar_wednesday}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="75" y="0" width="25" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{calendar_thursday}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="100" y="0" width="25" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{calendar_friday}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="125" y="0" width="25" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{calendar_saturday}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="150" y="0" width="25" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{calendar_sunday}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="normal" style="myStyle" positionType="Float" mode="Opaque" x="0" y="0" width="25" height="10">
+					<printWhenExpression><![CDATA[$F{dayOfMonth}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dayOfMonth}.toString()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
