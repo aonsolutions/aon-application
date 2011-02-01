@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="Borrado de una factura.">
+		<pojo>com.code.aon.finance.Invoice</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.InvoiceBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Borrado de una línea de factura.">
+		<pojo>com.code.aon.finance.InvoiceDetail</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.InvoiceDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Borrado de una línea de impuestos de factura.">
+		<pojo>com.code.aon.finance.InvoiceTax</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.InvoiceTaxBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Borrado de la tabla de apuntes">
+		<pojo>com.code.aon.accounting.AccountEntry</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.AccountEntryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Borrado de la tabla de enlace entre facturas y apuntes">
+		<pojo>com.code.aon.account.bridge.AccountEntryInvoice</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.AccountEntryInvoiceBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="Control de enlace entre Customer y Account">
+		<pojo>com.code.aon.account.bridge.CustomerAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.CustomerAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Creditor y Account">
+		<pojo>com.code.aon.account.bridge.CreditorAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.CreditorAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Supplier y Account">
+		<pojo>com.code.aon.account.bridge.SupplierAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.SupplierAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre RegistryBank y Account">
+		<pojo>com.code.aon.account.bridge.RegistryBankAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.RegistryBankAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Tax y Account">
+		<pojo>com.code.aon.account.bridge.TaxAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.TaxAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Loan y Account">
+		<pojo>com.code.aon.account.bridge.LoanAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.LoanAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre Product y Account">
+		<pojo>com.code.aon.account.bridge.ProductAccount</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.ProductAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de enlace entre PayMethodTypeDetail y Account">
+		<pojo>com.code.aon.account.bridge.PayMethodTypeDetailAccount</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.PayMethodTypeDetailAccountBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.PayMethodTypeDetailAccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+</bean-config>

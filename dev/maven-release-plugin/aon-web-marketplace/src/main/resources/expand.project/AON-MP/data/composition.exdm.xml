@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="composition">
+    <columns>
+        <column label="Identificador unico de la Composicion" name="id"
+            sqlType="integer" type="integer"/>
+        <column label="Tipo de Composicion" length="2" name="type"
+            sqlType="tinyint" type="string"/>
+        <column label="Descripcion de la Composicion" length="64"
+            name="description" sqlType="varchar" type="string"/>
+        <column label="Identificador del Articulo a componer"
+            name="item" sqlType="integer" type="integer"/>
+        <column label="Cantidad de Articulo a componer" name="quantity"
+            sqlType="double" type="double"/>
+        <column label="Precio de la Composicion" name="price"
+            sqlType="double" type="double"/>
+        <column label="Gastos porcentuales de la Composicion"
+            name="expenses_percent" sqlType="double" type="double"/>
+        <column label="Gastos fijos de la Composicion"
+            name="expenses_fixed" sqlType="double" type="double"/>
+        <column
+            label="Indica si el precio lo forman la suma de los detalles de la Composicion"
+            length="1" name="price_in_details" sqlType="bit" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="composition_ibfk_1" foreignPath="data/item.exdm.xml">
+            <sourceColumns>
+                <column name="item"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

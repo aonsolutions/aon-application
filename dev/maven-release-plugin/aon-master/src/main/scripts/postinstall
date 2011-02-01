@@ -1,0 +1,11 @@
+
+#/bin/sh
+
+
+/usr/share/aon-master/bin/up2datedbs.sh
+
+ERR=$?
+
+[[ $ERR < 0 ]] && exit $ERR || exit 0 
+
+

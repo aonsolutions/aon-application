@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+
+
+	<aon:outputLabel for="Calendar_description"
+		value="#{bundle.aon_description}" />
+	<aon:inputText id="Calendar_description"
+		valueChangeListener="#{controller.addExpression}" size="50" />
+
+<!--  
+	<aon:outputLabel for="Calendar_source"
+		value="#{calendarBundle.aon_calendar_entity}" />
+	<aon:selectOneMenu id="Calendar_source" converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{calendarCollections.calendarSources}" />
+	</aon:selectOneMenu>
+-->
+
+</ui:composition>

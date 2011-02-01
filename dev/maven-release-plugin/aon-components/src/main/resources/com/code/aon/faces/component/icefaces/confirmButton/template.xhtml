@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition>
+
+	<aon:subForm>
+		<aon:panelGroup styleClass="aon-popup-panel aon-confirm-box" >
+		
+			<ice:panelPopup 
+				visible="#{confirmShowWindow}"
+				styleClass="aon-popup-" style="width:300px;">
+
+				<f:facet name="header">
+					<aon:panelGrid width="100%" cellpadding="0" cellspacing="0"
+						columns="2" columnClasses="aon-popup-title, aon-popup-title-closeButton">
+						<aon:outputText value="#{confirmTitle}" />
+						<aon:commandButton type="button" styleClass="aon-popup-button-close" immediate="true"
+							image="/images/icefaces/popupclose.gif">
+							<f:setPropertyActionListener target="#{confirmShowWindow}" value="#{false}" />
+						</aon:commandButton>							
+					</aon:panelGrid>
+				</f:facet>
+
+				<f:facet name="body">
+
+					<aon:panelGrid columns="1" style="width:100%;">
+						<aon:div styleClass="aon-popup-question">
+							<aon:div styleClass="">			
+								<aon:outputText value="#{confirmMessage}" />				
+							</aon:div>
+						</aon:div>
+						<aon:panelGrid columns="1"  style="width:100%;">
+							<aon:div styleClass="aon-popup-buttons" >
+								<aon:commandButton value="#{bundle.aon_yes}"
+									action="#{confirmAction}"
+									styleClass="aon-popup-button"
+									immediate="#{immediate}">
+									<f:setPropertyActionListener target="#{confirmShowWindow}" value="#{false}" />
+									<c:if test="#{confirmActionListener != null}">									
+										<aon:actionListener method="#{confirmActionListener}" />
+									</c:if>
+								</aon:commandButton>
+								<aon:commandButton value="#{bundle.aon_no}"
+									styleClass="aon-popup-button"
+									immediate="true">
+									<f:setPropertyActionListener target="#{confirmShowWindow}" value="#{false}" />									
+								</aon:commandButton>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGrid>
+
+				</f:facet>
+
+			</ice:panelPopup>
+			
+		</aon:panelGroup>
+		
+	</aon:subForm>
+
+</ui:composition>
+
+</body>
+</html>

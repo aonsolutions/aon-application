@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="DEC">
+	<field name="cabecera" value="DEC" format="AlphaNumeric" pattern="X(3)" />
+	<field name="baseCotizacion" value="bean" bean="DEC" property="baseCotizacion" format="Numeric" pattern="9(6)V99" />
+	<field name="sumaBasesCotizacion" value="bean" bean="DEC" property="sumaBasesCotizacion" format="Numeric" pattern="9(6)V99" />
+	<field name="cotizacionAnteriorHorasExtras" value="bean" bean="DEC" property="cotizacionAnteriorHorasExtras" format="Numeric" pattern="9(6)V99" />
+	<field name="cotizacionAnteriorOtros" value="bean" bean="DEC" property="cotizacionAnteriorOtros" format="Numeric" pattern="9(6)V99" />
+	<field name="carencia" value="bean" bean="DEC" property="carencia" format="AlphaNumeric" pattern="X(1)" />
+	<field name="diasCotizados" value="bean" bean="DEC" property="diasCotizados" format="Numeric" pattern="9(2)" />
+	<field name="sumaDiasCotizados" value="bean" bean="DEC" property="sumaDiasCotizados" format="Numeric" pattern="9(3)" />
+	<field name="free1" value=" " format="AlphaNumeric" pattern="X(29)" />
+</register>
+

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="agreementGrid">
+
+			<aon:div ajaxRendered="true" layout="none">
+			
+			    <aon:methodParam name="searchAction" default="agreement_search"  />						
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{companyBundle.company_agreement_module}" />
+					<ui:param name="controller" value="#{agreement}" />
+					<ui:param name="skipSearchButton" value="false" />
+				</ui:decorate>		
+				
+				<!--  aon-region-body -->
+	 			<aon:div styleClass="aon-scroll-area">
+	 			
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+						<ui:param name="controller" value="#{agreement}" />
+
+						<ui:param name="skipLineEdition" value="true" />
+						
+						<ui:define name="beginFormListContent">
+							<aon:commandLink value="&#160;" 
+								rendered="#{agreement.to==null}"
+								styleClass="aon-table-row-link" 
+								actionListener="#{controller.onSelect}" />
+						</ui:define>
+
+						<ui:define name="endFormListContent">
+							<h:commandLink 
+								value="#{companyBundle.company_detail}"
+								action="agreementLevel_form" 
+								actionListener="#{controller.onSelect}" />
+						</ui:define>
+						
+						<ui:define name="columns">
+						
+							<aon:column alias="Ageement.id"
+								styleClass="aon-editDataTable-textColumn aon-width-100">
+								<f:facet name="header">
+									<h:outputText value="#{bundle.aon_id}" />
+								</f:facet>
+								<aon:outputText value="#{to.id}" />
+								<f:facet name="footer">
+									<aon:outputText rendered="#{controller.new}"
+										value="#{controller.to.id}" />
+								</f:facet>
+							</aon:column>
+							
+							<aon:column alias="Ageement.description"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<h:outputText value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:outputText rendered="#{to!=controller.to}"
+									value="#{to.description}" />
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{to==controller.to}" size="60"
+									value="#{controller.to.description}" maxlength="64" />
+								<f:facet name="footer">
+									<aon:inputText styleClass="aon-form-input-text" required="true"
+										rendered="#{controller.new}" size="60"
+										value="#{controller.to.description}" maxlength="64" />
+								</f:facet>
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

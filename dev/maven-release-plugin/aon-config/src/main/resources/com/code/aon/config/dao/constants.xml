@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.config.UserWorkGroup">
+		<alias names="id,user_id,workGroup_id,user_name,workGroup_description"/>
+		<hibernate names="id,user.id,workGroup.id,user.name,workGroup.description"/>
+	</bean>
+
+	<bean class="com.code.aon.config.UserScope">
+		<alias names="id,scope_id,user_id,scope_description"/>
+		<hibernate names="id,scope.id,user.id,scope.description"/>
+	</bean>
+</dao>

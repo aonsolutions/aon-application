@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Productos por familia" sqlSentence="SELECT invoice_detail.item, product.name description, SUM(invoice_detail.quantity), &#xd;&#xa;&#x9;SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;&#xa;  FROM invoice_detail, invoice, pcategory, item, product&#xd;&#xa; WHERE product.id = item.product &#xd;&#xa;   AND invoice_detail.item = item.id &#xd;&#xa;   AND invoice_detail.invoice = invoice.id &#xd;&#xa;   AND product.category = pcategory.id &#xd;&#xa;   AND pcategory.id = ? &#xd;&#xa;   AND invoice.issue_date&#xd;&#xa;      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,&quot;-&quot;,?,&quot;-&quot;,1), &quot;%Y-%m-%d&quot;), INTERVAL 12 MONTH)&#xd;&#xa;          AND DATE_SUB(STR_TO_DATE(CONCAT(?,&quot;-&quot;,? + 1,&quot;-&quot;,1), &quot;%Y-%m-%d&quot;), INTERVAL 1 DAY) &#xd;&#xa;   AND invoice.type = ?&#xd;&#xa; GROUP BY invoice_detail.item">
+    <parameters>
+        <parameter columnReference="data/pcategory.exdm.xml/id" label=""
+            name="pcategory" type="INTEGER"/>
+        <parameter name="year1" type="INTEGER"/>
+        <parameter name="month1" type="INTEGER"/>
+        <parameter name="year2" type="INTEGER"/>
+        <parameter name="month2" type="INTEGER"/>
+        <parameter name="type" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="PRODUCT_ID" columnId="item" export="true"
+            label="Codigo" tableId="invoice_detail" type="INTEGER"/>
+        <result accessName="PRODUCT_NAME" columnId="name"
+            columnReference="data/pcategory.exdm.xml/name" export="true"
+            label="Articulo" tableId="product" type="STRING"/>
+        <result accessName="quantity" columnId="" label="Cantidad" type="DOUBLE"/>
+        <result accessName="total" columnId="" label="Total" type="DOUBLE"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/pcategory.exdm.xml"/>
+    </dataModelReferences>
+</view>

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+	
+		<aon:form id="faqForm">
+		
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.faq}" />
+				<ui:param name="controller" value="#{faq}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="categories"
+						value="#{appBundle.faq_category}"
+						action="faq_category_list"
+						actionListener="#{faq_category.onSearch}"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{faq_category.onInit}" />
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="Faq_alias" style="width:100px"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="Faq_alias"
+						required="true" size="32" maxlength="32"
+						value="#{faq.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+					
+					<aon:outputLabel for="FaqDetail_question"
+						value="#{appBundle.faq_question}" />
+					<aon:inputText id="FaqDetail_question"
+						required="true" size="100" maxlength="255"
+						value="#{faq.toI18n.question}" />
+
+					<aon:outputLabel for="Faq_category"
+						value="#{appBundle.faq_category}"/>
+					<aon:selectOneMenu id="Faq_category"  
+						required="true"
+						value="#{faq.to.faqCategory.id}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.faqCategoryList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Faq_position"
+						value="#{appBundle.faq_position}"/>
+					<aon:inputText id="Faq_position"
+						required="true" size="10" maxlength="8"
+						value="#{faq.to.position}" />
+					
+					<aon:outputLabel for="Faq_active"
+						value="#{appBundle.faq_active}"/>
+					<aon:selectBooleanCheckbox id="Faq_active" 
+						value="#{faq.to.active}" />
+
+					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+						<ui:param name="labelValue" value="#{appBundle.faq_answer}" />
+						<ui:param name="inputTextId" value="FaqDetail_answer" />
+						<ui:param name="inputTextValue" value="#{faq.toI18n.answer}" />
+						<ui:param name="richTextEnabled" value="#{faq.richTextEnabled}" />
+					</ui:include>																	
+													
+				</aon:panelGrid>
+			</aon:div>
+		
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

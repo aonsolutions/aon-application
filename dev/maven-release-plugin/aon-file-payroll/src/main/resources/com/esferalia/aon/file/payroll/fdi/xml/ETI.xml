@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="ETI">
+	<field name="cabecera" value="ETI" format="AlphaNumeric" pattern="X(3)" />
+	<field name="identificador" value="FDI30     " format="AlphaNumeric" pattern="X(10)" />
+	<field name="clave" value="bean" bean="ETI" property="clave" format="Numeric" pattern="9(8)" />
+	<field name="free1" value=" " format="AlphaNumeric" pattern="X(8)" />
+	<field name="fecha" value="bean" bean="ETI" property="fecha" format="Numeric" pattern="9(8)" />
+	<field name="hora" value="bean" bean="ETI" property="hora" format="Numeric" pattern="9(4)" />
+	<field name="fichero" value="bean" bean="ETI" property="fichero" format="AlphaNumeric" pattern="X(8)" />
+	<field name="sufijo" value="FDI" format="AlphaNumeric" pattern="X(3)" />
+	<field name="prioridad" value="N" format="AlphaNumeric" pattern="X(1)" />
+	<field name="prueba" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="identificacion" value="bean" bean="ETI" property="identificacion" format="AlphaNumeric" pattern="X(14)" />
+	<field name="tgss" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="free2" value=" " format="AlphaNumeric" pattern="X(1)" />
+</register>
