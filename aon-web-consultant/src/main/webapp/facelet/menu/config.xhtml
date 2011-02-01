@@ -20,7 +20,7 @@
 					<aon:panelGroup>
 						<aon:panelGrid id="group_config_company"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-config aon-direct-access-panel">
+							headerClass="aon-icon-company aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{companyBundle.company_menu_group}"/>
 							</f:facet>					
@@ -86,6 +86,19 @@
 									action="tax_list" 
 									value="#{configBundle.config_tax_module}" />
 							</aon:div>								
+							<c:if test="#{aonRole.accountingOperator}">							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accPeriod" action="accPeriod"
+										actionListener="#{accPeriod.onSearch}"
+										value="#{accountingBundle.accounting_period_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="defaultParams" action="defaultParams"
+										actionListener="#{accAppParams.onLoad}"
+										value="#{accountingBundle.accounting_default_params_module}" />
+								</aon:div>
+							</c:if>
+
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="relationship" 
 									action="relationship_form" 

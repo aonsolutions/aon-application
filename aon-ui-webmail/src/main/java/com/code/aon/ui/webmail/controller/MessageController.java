@@ -75,7 +75,6 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
-import com.code.aon.webmail.bean.IMimeType;
 import com.code.aon.webmail.dao.IWebMailAlias;
 import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
@@ -281,12 +280,14 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	private void finishMessage() {
     	setShowNewMessageWindow(false);
 		content = null;
-		for( AonFile af : newMsgFileList ) {
-			if ( af.getFile().exists() ) {
-				FileUtils.deleteQuietly( af.getFile() );
+		if ( newMsgFileList == null ) {
+			for( AonFile af : newMsgFileList ) {
+				if ( af.getFile().exists() ) {
+					FileUtils.deleteQuietly( af.getFile() );
+				}
 			}
+	    	newMsgFileList = null;
 		}
-    	newMsgFileList = null;		
 	}
 
 	private void copyAttachmentsToFileList( AonMessage message ) throws WebmailException {
@@ -395,37 +396,51 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	//*********** END ATTACH ****************************************
 	//***************************************************************
 	
-	
-    public void onSend(ActionEvent event) {
-    	try {
-	    	AonMessage aonMessage = compoundMessage();
-	    	AonFolder dest = null;
-	    	AonServer server = getWebMailController().getServer();
-	    	try {
-	    		server.sendMessage(aonMessage);
-		    	dest = server.getAonFolder(server.getSentFolderName());
-		    	if (parentMessage!=null){
-			    	parentMessage.getMessage().setFlag(Flag.ANSWERED, true);
-			    	parentMessage.getParent().getFolder().expunge();
-		    	}
-	    	} catch ( WebmailException e ) {
-	    		LOGGER.error( e.getMessage(), e);
-		    	dest = server.getAonFolder(server.getDraftFolderName());
-	    	}
-	    	Message[] messages = new Message[1];
-    		messages[0] = aonMessage.getMessage();
-    		messages[0].setFlag(Flag.SEEN, true);
-	    	dest.open(Folder.READ_WRITE);
-	    	Folder desfFolder = dest.getFolder();
+	private void storeMessage( AonServer server, AonMessage aonMessage, boolean draft ) {
+    	Message[] messages = new Message[1];
+		messages[0] = aonMessage.getMessage();
+		try {
+			messages[0].setFlag(Flag.SEEN, true);
+			String folderName = draft ? server.getDraftFolderName() : server.getSentFolderName();
+			AonFolder folder = server.getAonFolder(folderName);
+			folder.open(Folder.READ_WRITE);
+	    	Folder desfFolder = folder.getFolder();
 	    	desfFolder.appendMessages(messages);
 	    	desfFolder.expunge();
-	    	dest.close(false);
+	    	folder.close(false);		
+		} catch (MessagingException e) {
+			LOGGER.error( "Error setting contactName", e );
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
+	
+    public void onSend(ActionEvent event) {
+    	AonServer server = getWebMailController().getServer();
+    	AonMessage aonMessage = null;
+    	try {
+	    	aonMessage = compoundMessage();
+    		server.sendMessage(aonMessage);
+		} catch (Throwable th) {
+			AonUtil.addErrorMessage(th.getMessage());
+			if ( aonMessage != null ) {
+	    		storeMessage(server, aonMessage, true);
+				refreshDraftFolder();	    		
+			}
+			throw new AbortProcessingException(th);
+		}
+    	try {	
+    		storeMessage(server, aonMessage, false);
+			if (parentMessage!=null){
+		    	parentMessage.getMessage().setFlag(Flag.ANSWERED, true);
+		    	parentMessage.getParent().getFolder().expunge();
+	    	}
 	    	deleteDraftMessage();
-	    	refreshDraftFolder();
-	    	finishMessage();
+    		refreshDraftFolder();
 		} catch (Throwable th) {
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th);
+		} finally {
+	    	finishMessage();
 		}
     }
 

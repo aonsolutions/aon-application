@@ -17,11 +17,11 @@
 				<h:panelGrid columns="2" styleClass="aon-width-all" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
-
 					<aon:panelGroup>
+
 						<aon:panelGrid id="group_entries" styleClass="aon-width-all"
 							columnClasses="aon-padding"
-							headerClass="aon-icon-sales aon-direct-access-panel">
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{accountingBundle.menu_entries}" />
 							</f:facet>
@@ -35,12 +35,16 @@
 									<aon:commandLink id="account" action="account_list"
 										value="#{accountBundle.account_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="autConcept" action="autConcept"
+										value="#{accountingBundle.accounting_aut_concept_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 
 						<aon:panelGrid id="group_pred_entries" styleClass="aon-width-all"
 							columnClasses="aon-padding"
-							headerClass="aon-icon-account-entry aon-direct-access-panel">
+							headerClass="aon-icon-account-entry-predefined aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{accountingBundle.menu_pred_entries}" />
 							</f:facet>
@@ -89,7 +93,7 @@
 
 						<aon:panelGrid id="group_pred_entries_end_period"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-account-entry aon-direct-access-panel">
+							headerClass="aon-icon-account-entry-close aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{accountingBundle.menu_end_period_entries}" />
@@ -118,28 +122,35 @@
 
 						<aon:panelGrid id="group_pred_entries_loan"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-sales aon-direct-access-panel">
+							headerClass="aon-icon-moneybag aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{accountingBundle.accounting_loan_module}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="loanEntry" action="account_loan_entry"
-										actionListener="#{loanEntry.onReset}"
-										value="#{accountingBundle.accounting_loan_entry_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="loanFeeEntry"
 										action="account_loan_fee_entry"
 										actionListener="#{loanFeeEntry.onReset}"
 										value="#{accountingBundle.accounting_loan_fee_entry_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="loanEntry" action="account_loan_entry"
+										actionListener="#{loanEntry.onReset}"
+										value="#{accountingBundle.accounting_loan_entry_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="loan" action="loan_search"
+										actionListener="#{loan.onEditSearch}"
+										value="#{accountingBundle.accounting_loan_management_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
+
 					</aon:panelGroup>
 
 					<aon:panelGroup>
+
 						<aon:panelGrid id="group_reports" styleClass="aon-width-all"
 							columnClasses="aon-padding"
 							headerClass="aon-icon-account-reports aon-direct-access-panel">
@@ -197,55 +208,46 @@
 							<f:facet name="header">
 								<aon:outputText value="#{accountingBundle.menu_official_balances}" />
 							</f:facet>
-
 							<aon:div styleClass="aon-direct-access-list">
-
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="journal-Balance" action="journal_search-Balance"
 										actionListener="#{journalReport.onEditSearch}"
 										value="#{accountingBundle.accounting_journal_module}" />
 								</aon:div>
-
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="ledger" action="ledger_search"
 										actionListener="#{ledgerReport.onEditSearch}"
 										value="#{accountingBundle.accounting_ledger_module}" />
 								</aon:div>
-
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="trialBalance-Balance" action="trialBalance_search-Balance"
 										actionListener="#{trialBalance.onReset}"
 										value="#{accountingBundle.accounting_trial_balance_module}" />
 								</aon:div>
-
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="operating_balance_sheet"
 										action="balance_sheet_search-operating"
 										actionListener="#{balanceSheet.onOperatingBalance}"
 										value="#{accountingBundle.accounting_balance_menu_pyg}" />
 								</aon:div>
-
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="closing_balance_sheet"
 										action="balance_sheet_search-closing"
 										actionListener="#{balanceSheet.onClosingBalance}"
 										value="#{accountingBundle.accounting_balance_menu_bs}" />
 								</aon:div>
-
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="patrimony_balance_sheet"
 										action="balance_sheet_search-patrimony"
 										actionListener="#{balanceSheet.onPatrimonyBalance}"
 										value="#{accountingBundle.accounting_balance_menu_patrimony}" />
 								</aon:div>
-
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="custom_balance_sheet"
 										action="balance_sheet_search-custom"
 										actionListener="#{balanceSheet.onCustomBalance}"
 										value="#{accountingBundle.accounting_balance_menu_custom}" />
 								</aon:div>
-
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accounting_balance" action="balance_list"
 										value="#{accountingBundle.accounting_balance_menu}" />

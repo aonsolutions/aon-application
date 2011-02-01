@@ -431,8 +431,8 @@ color:#000;
  .aon-icon-exception{
 	background:transparent url(images/aon-icon/aon-icon-exception.png) scroll left center no-repeat;	
  }
- .aon-icon-payment{
-	background:transparent url(images/aon-icon/aon-icon-payment.png) scroll left center no-repeat;	
+ .aon-icon-pay{
+	background:transparent url(images/aon-icon/aon-icon-pay.png) scroll left center no-repeat;	
  }
  .aon-icon-return{
 	background:transparent url(images/aon-icon/aon-icon-return.png) scroll left center no-repeat;	
@@ -2319,6 +2319,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-menu-user{
 	background:transparent url(images/aon-main-menu/aon-icon-user.png) no-repeat scroll center left;
 }
+.aon-icon-invoice{
+	background:transparent url(images/aon-main-menu/aon-icon-invoice.png) no-repeat scroll center left;
+}
 .aon-icon-payroll{
 	background:transparent url(images/aon-main-menu/aon-icon-payroll.png) no-repeat scroll center left;
 }
@@ -2330,6 +2333,15 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 }
 .aon-icon-account-entry{
 	background:transparent url(images/aon-main-menu/aon-icon-account-entry.png) no-repeat scroll center left;
+}
+.aon-icon-account-entry-predefined{
+	background:transparent url(images/aon-main-menu/aon-icon-account-entry-predefined.png) no-repeat scroll center left;
+}
+.aon-icon-account-entry-close{
+	background:transparent url(images/aon-main-menu/aon-icon-account-entry-close.png) no-repeat scroll center left;
+}
+.aon-icon-moneybag{
+	background:transparent url(images/aon-main-menu/aon-icon-moneybag.png) no-repeat scroll center left;
 }
 .aon-icon-balance{
 	background:transparent url(images/aon-main-menu/aon-icon-balance.png) no-repeat scroll center left;

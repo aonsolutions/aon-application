@@ -63,6 +63,10 @@
 							</aon:div>
 						</aon:panelGrid>
 
+					</aon:panelGroup>
+
+					<aon:panelGroup>
+
 						<aon:panelGrid id="group_treasury_bank_statement"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-statement aon-direct-access-panel">
@@ -85,10 +89,6 @@
 							</aon:div>
 						</aon:panelGrid>
 
-					</aon:panelGroup>
-
-					<aon:panelGroup>
-
 						<aon:panelGrid id="group_treasury_forecast"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-forecast aon-direct-access-panel">
@@ -109,55 +109,6 @@
 										rendered="#{cashFlowForecast.availableRegistryBanks > 0}"
 										actionListener="#{cashFlowForecastReport.onEditSearch}"
 										action="cashFlowForecastReport_search" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-
-						<c:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_treasury_auxiliar"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-general aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.menu_auxiliary}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="payMethod-treasury"
-											action="payMethod-treasury"
-											value="#{configBundle.config_paymethod_module}" />
-									</aon:div>								
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="bank-treasury"
-											action="bank-treasury"
-											value="#{configBundle.config_bank_module}" />
-									</aon:div>
-								</aon:div>
-							</aon:panelGrid>
-						</c:if>
-
-
-						<aon:panelGrid id="group_treasury_utilities"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-utilities aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_utilities}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{aonRole.accountingOperator}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="financeTrackingEntry"
-											action="account_finance_tracking_entry"
-											actionListener="#{financeTrackingEntry.onReset}"
-											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
-									</aon:div>
-								</c:if>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="checks" action="util_checking"
-										value="#{financeBundle.finance_checking_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="checks2" action="invoice_checking"
-										value="#{financeBundle.finance_invoice_checking_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

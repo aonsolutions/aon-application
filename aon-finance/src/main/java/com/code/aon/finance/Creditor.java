@@ -98,6 +98,14 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
+	
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryAttachment> getDocuments() {
+		return documents;
+	}
+	public void setDocuments(Set<RegistryAttachment> documents) {
+		this.documents = documents;
+	}
 
 	@Transient
 	public boolean isTaxFree() {
