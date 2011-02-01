@@ -10,7 +10,7 @@
   <name>AON PARENT</name>
   <scm>
     <connection>
-    scm:svn:http://dev.esferalia.com/repos/aon-application/trunk</connection>
+    scm:svn:http://dev.esferalia.com/repos/aon-application/dev/maven</connection>
     <url>http://dev.esferalia.com/websvn/wsvn</url>
   </scm>
   <organization>
@@ -103,12 +103,12 @@
                 <version>2.0</version>
                 <configuration>
                         <preparationGoals>clean</preparationGoals>
-                        <releaseVersion>5.5.0</releaseVersion>
-                        <developmentVersion>5.6.0-SNAPSHOT</developmentVersion>
+                        <releaseVersion>6.0.0</releaseVersion>
+                        <developmentVersion>6.1.0-SNAPSHOT</developmentVersion>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
 
-                        <tag>5.5.x</tag>
-                        <tagBase>http://dev.esferalia.com/repos/aon-application/releases</tagBase>
+                        <tag>6.0.x</tag>
+                        <tagBase>http://dev.esferalia.com/repos/aon-application/dev</tagBase>
                 </configuration>
         </plugin>
 
