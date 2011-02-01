@@ -2227,10 +2227,13 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background:transparent url(images/aon-main-menu/aon-icon-favorites.png) no-repeat scroll center left;
 }
 .aon-icon-commercial{
-	background:transparent url(images/aon-main-menu/aon-icon-commercial.gif) no-repeat scroll center left;
+	background:transparent url(images/aon-main-menu/aon-icon-commercial.png) no-repeat scroll center left;
 }
 .aon-icon-offer{
 	background:transparent url(images/aon-main-menu/aon-icon-offer.gif) no-repeat scroll center left;
+}
+.aon-icon-prices{
+	background:transparent url(images/aon-main-menu/aon-icon-prices.png) no-repeat scroll center left;
 }
 .aon-icon-sales{
 	background:transparent url(images/aon-main-menu/aon-icon-sales.png) no-repeat scroll center left;
@@ -2244,6 +2247,18 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-treasury{
 	background:transparent url(images/aon-main-menu/aon-icon-treasury.png) no-repeat scroll center left;
 }
+.aon-icon-charge{
+	background:transparent url(images/aon-main-menu/aon-icon-charge.png) no-repeat scroll center left;
+}
+.aon-icon-payment{
+	background:transparent url(images/aon-main-menu/aon-icon-payment.png) no-repeat scroll center left;
+}
+.aon-icon-statement{
+	background:transparent url(images/aon-main-menu/aon-icon-statement.png) no-repeat scroll center left;
+}
+.aon-icon-forecast{
+	background:transparent url(images/aon-main-menu/aon-icon-forecast.png) no-repeat scroll center left;
+}
 .aon-icon-warehouse{
 	background:transparent url(images/aon-main-menu/aon-icon-warehouse.png) no-repeat scroll center left;
 }
@@ -2252,6 +2267,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 }
 .aon-icon-campaign{
 	background:transparent url(images/aon-main-menu/aon-icon-campaign.png) no-repeat scroll center left;
+}
+.aon-icon-company{
+	background:transparent url(images/aon-main-menu/aon-icon-company.png) no-repeat scroll center left;
 }
 .aon-icon-config{
 	background:transparent url(images/aon-main-menu/aon-icon-config.png) no-repeat scroll center left;

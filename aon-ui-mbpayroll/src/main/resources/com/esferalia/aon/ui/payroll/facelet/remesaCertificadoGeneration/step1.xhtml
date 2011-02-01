@@ -14,8 +14,33 @@
 	</ui:define>
 
 	<ui:define name="step_content">
-		<aon:div styleClass="aon-scroll-area">
-			<aon:dataTable id="empleadoData" value="#{remesaCertificadoGenerationWizard.model}"
+	
+	<aon:div id="empleadoData">
+		<aon:div styleClass="aon-text-right">
+			<aon:panel rendered="#{remesaCertificadoGenerationWizard.anyEmpleadoSelected}">
+				<rich:inplaceSelect disabled="#{!remesaCertificadoGenerationWizard.anyEmpleadoSelected}" 
+				 	id="causaSuspensionAplyAll" 
+				 	value="#{remesaCertificadoGenerationWizard.suspensionCauseForAll}"
+				 	listHeight="300px" listWidth="300px"
+				 	style="width:300px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
+			        defaultLabel="&#160;-&#160;" >
+					<f:selectItems value="#{payrollCollections.causaSuspension}" />
+	<!--  
+					<a4j:support event="onchange" reRender="checkMessage, empleadoData" >
+						<aon:actionListener method="#{remesaCertificadoGenerationWizard.onAplyAllSuspensionCause}" />
+					</a4j:support>
+	-->
+				</rich:inplaceSelect>
+				<aon:commandButton id="apply"
+					disabled="#{!remesaCertificadoGenerationWizard.anyEmpleadoSelected}"
+					value="#{payrollBundle.payroll_apply_cause_all}"
+					styleClass="aon-icon-commandButton aon-icon-accept aon-margin-left" >
+					<aon:actionListener method="#{remesaCertificadoGenerationWizard.onApplyAllSuspensionCause}" />
+				</aon:commandButton>
+			</aon:panel>
+		</aon:div>
+		<aon:div >
+			<aon:dataTable value="#{remesaCertificadoGenerationWizard.model}"
 				var="to" rows="20" rendered="#{remesaCertificadoGenerationWizard.model.rowCount > 0}"
 				columnClasses="
 				aon-editDataTable-iconColumn, 
@@ -68,6 +93,7 @@
 			</aon:dataTable>
 			<aon:dataScroller2 for="empleadoData" showNote="true" />
 		</aon:div>
-
+	
+	</aon:div>
 	</ui:define>
 </ui:composition>
