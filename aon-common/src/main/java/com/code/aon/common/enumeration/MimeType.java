@@ -3,6 +3,8 @@ package com.code.aon.common.enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.ArrayUtils;
+
 
 /**
  * Enumeration MIME type.
@@ -17,7 +19,7 @@ public enum MimeType implements IResourceable {
     /**
      * JPEG file MIME Type.
      */
-    MIME_JPEG ("image/jpeg", "jpg"),
+    MIME_JPEG ("image/jpeg", "jpg", "image/pjpeg" ),
 
     /**
      * GIF file MIME Type.
@@ -52,7 +54,7 @@ public enum MimeType implements IResourceable {
     /**
      * BMP file MIME Type.
      */
-    MIME_BMP ("image/bmp", "bmp"),
+    MIME_BMP ("image/bmp", "bmp", "image/x-ms-bmp"),
 
     /**
      * TIFF file MIME Type.
@@ -170,11 +172,6 @@ public enum MimeType implements IResourceable {
    MIME_CSV ("text/csv", "csv");
     
     /**
-     * IE for JPEG file MIME Type.
-     */
-	public static final String MIME_IE_JPEG = "image/pjpeg";
-
-    /**
      * Messages file base path.
      */
 	private static final String BASE_NAME = "com.code.aon.common.i18n.messages";
@@ -190,6 +187,11 @@ public enum MimeType implements IResourceable {
 	private String name;
 
     /**
+     * MIME type aliases.
+     */
+	private String[] aliases;
+	
+    /**
      * MIME type extension.
      */
 	private String extension;
@@ -200,25 +202,41 @@ public enum MimeType implements IResourceable {
      * @param name
      * @param extension
      */
-	private MimeType(String name, String extension) {
+	private MimeType(String name, String extension, String ... aliases ) {
 		this.name = name;
 		this.extension = extension;
+		if (! ArrayUtils.isEmpty(aliases) ) {
+			this.aliases = aliases;	
+		}
 	}
+	
+    /**
+     * Test if its the same MIME type.
+     *
+     * @param type the type
+     * @return true, if successful
+     */
+    public boolean match( String type ) {
+    	if (! name.equals(type) ) {
+    		if ( aliases != null ) {
+    			return ArrayUtils.contains(aliases, type);
+    		}
+    		return false;
+    	}
+    	return true;
+    }
 
     /**
      * Return the MIME type.
      * 
-     * @param b MIME type identifier.
+     * @param type MIME type identifier.
      * @return The MIME type.
      */
-	public static MimeType get(String b) {
+	public static MimeType get(String type) {
     	for( MimeType mimeType : MimeType.values() ) {
-    		if ( mimeType.name.equals(b) ) {
+    		if ( mimeType.match(type) ) {
     			return mimeType;
     		}
-    	}
-    	if ( MIME_IE_JPEG.equals(b) ) {
-    		return MIME_JPEG;
     	}
     	return null;
 	}
@@ -256,11 +274,17 @@ public enum MimeType implements IResourceable {
     public String getExtension() {
         return extension;
     }
-
-    /*
-     * (non-Javadoc)
-     * @see com.code.aon.common.enumeration.IResourceable#getName(java.util.Locale)
+    
+    /**
+     * Gets the aliases.
+     *
+     * @return the aliases
      */
+    public String[] getAliases() {
+		return aliases;
+	}
+
+	@Override
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
