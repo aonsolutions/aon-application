@@ -10,6 +10,7 @@ BEGIN;
 
 ALTER TABLE `bank_statement` ADD `comments` text collate latin1_spanish_ci COMMENT 'Comentarios';
 
+
 UPDATE `db_version` SET `version_number` = '5.8.2';
 
 COMMIT;
