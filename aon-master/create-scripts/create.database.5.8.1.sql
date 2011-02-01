@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 5.8.2
+# Version: 5.8.1
 # Created by: girazu
-# Creation Date: 13/01/2011 19:33
+# Creation Date: 12/01/2011 18:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -378,7 +378,6 @@ CREATE TABLE `bank_statement` (
   `description` varchar(80) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `reliability` tinyint(2) default '0' COMMENT 'Fiabilidad del punteo',
   `status` tinyint(2) default '0' COMMENT 'Estado',
-  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios',
   PRIMARY KEY  (`id`),
   KEY `IDX_BANK_STATEMENT_RBANK` (`rbank`),
   CONSTRAINT `FK_BANK_STATEMENT_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
@@ -4650,7 +4649,7 @@ CREATE TABLE `web_info_style` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Estilos a utilizar en las plantillas para generar ficha web';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('5.8.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('5.8.1');
 
 COMMIT;
 
