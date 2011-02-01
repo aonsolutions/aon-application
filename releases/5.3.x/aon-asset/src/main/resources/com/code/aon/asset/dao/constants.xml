@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<dao>
-	
-	<bean class="com.code.aon.asset.AssetActivity" sqlName="asset_activity">
-		<alias names="asset_id,asset_name,date,fromTime,id,status,toTime,who,why" />
-		<hibernate names="asset.id,asset.name,date,fromTime,id,status,toTime,who,why" />
-	</bean>
-	
-</dao>

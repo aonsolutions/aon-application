@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<dao>
-	<bean class="com.code.aon.person.Person" sqlName="person">
-		<alias names="birthDate,gender,id,maritalStatus,registry_id,socialSecurityNumber,registry_document"/>
-		<hibernate names="birthDate,gender,id,maritalStatus,registry.id,socialSecurityNumber,registry.document"/>
-	</bean>
-</dao>
