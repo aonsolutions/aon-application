@@ -1,14 +1,18 @@
 package com.code.aon.manager;
 
 import static com.code.aon.ldap.IAonObjectClasses.AMAVIS_ACCOUNT;
+import static com.code.aon.ldap.IAonObjectClasses.CONTACT;
+import static com.code.aon.ldap.IAonObjectClasses.DOMAIN_APPLICATION;
 import static com.code.aon.ldap.IAonObjectClasses.INET_ORG_PERSON;
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_PERSON;
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.PERSON;
 import static com.code.aon.ldap.IAonObjectClasses.POSIX_ACCOUNT;
 import static com.code.aon.ldap.IAonObjectClasses.TOP;
 import static com.code.aon.ldap.IAonObjectClasses.USER;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.naming.Name;
 import javax.persistence.Id;
@@ -23,6 +27,9 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.dao.ldap.util.IPerson;
+import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.NameResolver;
 
 @EntryObject(mainObjectClass=USER, objectClasses={TOP, POSIX_ACCOUNT, PERSON, ORGANIZATIONAL_PERSON, INET_ORG_PERSON, AMAVIS_ACCOUNT})
@@ -416,6 +423,65 @@ public class DomainUser implements IPerson {
     	return ((StringUtils.isEmpty(surname)) ? "" : surname + ", ") + ((StringUtils.isEmpty(name)) ? "" : name);
     }	
 
+	public void construct( BasicLdap ldap ) {
+		String domain = getDomain();
+		Name addressBookDN = NameResolver.getUserAddressBookDN(domain, getUid());
+		if (! ldap.exists(addressBookDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(addressBookDN);
+		}
+		Name signaturesDN = NameResolver.getUserSignaturesDN(domain, getUid());
+		if (! ldap.exists(signaturesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(signaturesDN);
+		}
+		Name accountsDN = NameResolver.getUserAccountsDN(domain, getUid());
+		if (! ldap.exists(accountsDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(accountsDN);
+		}
+	}
+	
+	private static void removeContactGroups( BasicLdap ldap, Name base ) {
+		String oc = NameResolver.getObjectClass(CONTACT);
+		String group = NameResolver.getEqualExpression(CONTACT_GROUP_ATTRIBUTE, Entry.TRUE_VALUE);
+		String filter = NameResolver.getAndExpression(oc, group);
+		List<Entry> list = ldap.getList(base, filter, OBJECT_CLASS_ATTRIBUTE);
+		for( Entry entry : list ) {
+			ldap.delete(entry.getDN());
+		}
+	}
+	
+	private static void removeDomainApplicationsUser( BasicLdap ldap, String domain, String uid ) {
+		Name base = NameResolver.getDomainApplicationsDN(domain);
+		String oc = NameResolver.getObjectClass(DOMAIN_APPLICATION);
+		List<Entry> domainApplications = ldap.getList(base, oc, COMMON_NAME_ATTRIBUTE);
+		for( Entry da : domainApplications ) {
+			String applicationName = da.getAsString(COMMON_NAME_ATTRIBUTE);
+			Name dauDN = NameResolver.getDomainApplicationUserDN(domain, applicationName, uid);
+			if ( ldap.exists(dauDN, IAonObjectClasses.DOMAIN_APPLICATION_USER) ) {
+				ldap.delete(dauDN);
+			}
+		}
+	}
+	
+	public static void delete( BasicLdap ldap, Name dn ) {
+		String uid = NameResolver.getFirstValue(dn);
+		String domain = NameResolver.getValue(dn, 2);
+		removeDomainApplicationsUser(ldap, domain, uid);
+		Name addressBookDN = NameResolver.getUserAddressBookDN(domain, uid);
+		if ( ldap.exists(addressBookDN, ORGANIZATIONAL_UNIT) ) {
+			removeContactGroups( ldap, addressBookDN );
+			ldap.deleteDepth(addressBookDN, true);
+		}		
+		Name accountsDN = NameResolver.getUserAccountsDN(domain, uid);
+		if ( ldap.exists(accountsDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(accountsDN, true);
+		}
+		Name signaturesDN = NameResolver.getUserSignaturesDN(domain, uid);
+		if ( ldap.exists(signaturesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(signaturesDN, true);
+		}
+		ldap.deleteDepth(dn, true);
+	}	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

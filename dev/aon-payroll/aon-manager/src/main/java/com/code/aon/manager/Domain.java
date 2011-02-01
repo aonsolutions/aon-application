@@ -1,7 +1,10 @@
 package com.code.aon.manager;
 
 import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
+import static com.code.aon.ldap.IAonObjectClasses.DOMAIN_APPLICATION;
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.TOP;
+import static com.code.aon.ldap.IAonObjectClasses.USER;
 
 import javax.naming.Name;
 import javax.persistence.Id;
@@ -18,6 +21,9 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.NameResolver;
 
 @EntryObject(baseDN="ou=domains",mainObjectClass=DOMAIN, objectClasses={TOP})
 public class Domain implements ILdapTransferObject {
@@ -173,6 +179,44 @@ public class Domain implements ILdapTransferObject {
 	public void setSubDomainSuffix(String subDomainSuffix) {
 		this.subDomainSuffix = subDomainSuffix;
 	}	
+	
+	public static void delete( BasicLdap ldap, Name dn ) {
+		String domain = NameResolver.getFirstValue(dn);
+		Name usersDN = NameResolver.getUsersDN(domain);
+		if ( ldap.exists(usersDN, ORGANIZATIONAL_UNIT) ) {
+			String oc = NameResolver.getObjectClass(USER);
+			for( Entry entry : ldap.getList(usersDN, oc, OBJECT_CLASS_ATTRIBUTE) ) {
+				DomainUser.delete(ldap, entry.getDN());
+			}
+		}
+		Name applicationsDN = NameResolver.getDomainApplicationsDN( domain );
+		if ( ldap.exists(applicationsDN, ORGANIZATIONAL_UNIT) ) {
+			String oc = NameResolver.getObjectClass(DOMAIN_APPLICATION);
+			for( Entry entry : ldap.getList(applicationsDN, oc, OBJECT_CLASS_ATTRIBUTE) ) {
+				DomainApplication.delete(ldap, entry.getDN());
+			}
+		}
+		Name bdsDN = NameResolver.getDomainBDsDN(domain);
+		if ( ldap.exists(bdsDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(bdsDN, true);
+		}
+		ldap.deleteDepth(dn, true);
+	}		
+	
+	public void construct( BasicLdap ldap ) {
+		Name applicationsDN = NameResolver.getDomainApplicationsDN(getCommonName());
+		if (! ldap.exists(applicationsDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(applicationsDN);
+		}
+		Name bdsDN = NameResolver.getDomainBDsDN(getCommonName());
+		if (! ldap.exists(bdsDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(bdsDN);
+		}
+		Name usersDN = NameResolver.getUsersDN(getCommonName());
+		if (! ldap.exists(usersDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(usersDN);
+		}
+	}
 	
 	@Override
 	public boolean equals(Object obj) {

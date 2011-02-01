@@ -32,16 +32,6 @@ public class SignatureController extends LdapBasicController implements IWebMail
 
 	private List<SelectItem> signatures;
 	
-	private boolean richTextEnabled = true;
-	
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
-	
 	protected String getDuplicatedMessage( String name ) {
 		return AonUtil.getMessage(BUNDLE_NAME, SIGNATURE_DUPLICATED, name);
 	}	

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 import javax.naming.Context;
 import javax.naming.Name;
@@ -24,7 +25,11 @@ import com.code.aon.manager.AccessPolicy;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
+import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.manager.enumeration.AccessPolicyType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 
@@ -39,6 +44,10 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	private List<SelectItem> accessPolicies;
 	
 	private String selectedTab;
+	
+	private List<SelectItem> parentDomains;
+	
+	private Converter converter;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -60,7 +69,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		this.accessPolicy = accessPolicy;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Domain> getDomains() throws ManagerBeanException {
 		return (List) getModel().getWrappedData();
 	}
@@ -134,23 +143,6 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		}
 	}	
 	
-	public void createOrganizationalUnits( Domain domain ) {
-		BasicLdap ldap = new BasicLdap();
-		String domainName = domain.getCommonName();
-		Name applicationsDN = NameResolver.getDomainApplicationsDN(domainName);
-		if (! ldap.exists(applicationsDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.addOrganizationUnit(applicationsDN);
-		}
-		Name bdsDN = NameResolver.getDomainBDsDN(domainName);
-		if (! ldap.exists(bdsDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.addOrganizationUnit(bdsDN);
-		}
-		Name usersDN = NameResolver.getUsersDN(domainName);
-		if (! ldap.exists(usersDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.addOrganizationUnit(usersDN);
-		}
-	}	
-
 	public DBConnnection createAndRegister( Domain domain ) throws ManagerBeanException {
 		DBConnnection dbc = new DBConnnection();
 		DomainDBConnectionController ddbcc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
@@ -166,7 +158,34 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		application.setCommonName(name);
 		application.setDataSource(dataSource);
 		dac.getManagerBean().insert(application);
-		dac.createOrganizationalUnits(application);
 	}
+
+	@SuppressWarnings("unchecked")
+	public void updateParentDomains() {
+		this.parentDomains = new LinkedList<SelectItem>();
+		try {
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(getFieldName(IManagerAlias.DOMAIN_DOMAIN_MANAGEMENT), Boolean.TRUE);
+			List<Domain> list = (List) getManagerBean().getList(criteria);
+			for (Domain domain : list) {
+				SelectItem item = new SelectItem(domain, domain.getCommonName() );
+				this.parentDomains.add(item);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}	
+		
+	public List<SelectItem> getParentDomains() {
+		return parentDomains;
+	}
+
+	public Converter getConverter() {
+		if ( converter == null ) {
+			IController controller = (IController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+			this.converter = new TransferObjectConverter(controller);			
+		}
+		return converter;
+	}	
 	
 }

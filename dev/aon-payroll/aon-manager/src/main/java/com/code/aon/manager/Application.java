@@ -1,6 +1,7 @@
 package com.code.aon.manager;
 
 import static com.code.aon.ldap.IAonObjectClasses.APPLICATION;
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.TOP;
 
 import javax.naming.Name;
@@ -16,6 +17,8 @@ import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.NameResolver;
 
 @EntryObject(baseDN="ou=applications",mainObjectClass=APPLICATION, objectClasses={TOP})
 public class Application implements ILdapTransferObject {
@@ -78,6 +81,30 @@ public class Application implements ILdapTransferObject {
 		this.contratable = contratable;
 	}
 
+	public static void delete( BasicLdap ldap, Name dn ) {
+		String application = NameResolver.getFirstValue(dn);
+		Name profilesDN = NameResolver.getApplicationProfilesDN(application);
+		if ( ldap.exists(profilesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(profilesDN, true);
+		}
+		Name rolesDN = NameResolver.getApplicationRolesDN(application);
+		if ( ldap.exists(rolesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(rolesDN, true);
+		}
+		ldap.deleteDepth(dn, true);
+	}	
+	
+	public void construct( BasicLdap ldap ) {
+		Name rolesDN = NameResolver.getApplicationRolesDN(getCommonName());
+		if (! ldap.exists(rolesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(rolesDN);
+		}
+		Name profilesDN = NameResolver.getApplicationProfilesDN(getCommonName());
+		if (! ldap.exists(profilesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(profilesDN);
+		}
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

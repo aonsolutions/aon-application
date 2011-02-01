@@ -1,6 +1,5 @@
 package com.code.aon.ui.manager.controller;
 
-import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.ILdapConstants.USER_PASSWORD_ATTRIBUTE;
 import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_EMAIL;
 import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_HOST;
@@ -46,7 +45,6 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
-import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.ql.Criteria;
@@ -54,14 +52,12 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.ManagerBeanWrapper;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.ContactController;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 import com.code.aon.ui.webmail.controller.MailAccountController;
 import com.code.aon.ui.webmail.controller.SignatureController;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
-import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class DomainUserController extends LdapBasicController implements IManagerConstants {
 
@@ -79,8 +75,6 @@ public class DomainUserController extends LdapBasicController implements IManage
 	
 	private ManagerBeanWrapper userWrapper;
 	
-	private boolean termsOfServiceAccepted;
-	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -88,16 +82,8 @@ public class DomainUserController extends LdapBasicController implements IManage
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}	
-	
-	public boolean isTermsOfServiceAccepted() {
-		return termsOfServiceAccepted;
-	}
 
-	public void setTermsOfServiceAccepted(boolean termsOfServiceAccepted) {
-		this.termsOfServiceAccepted = termsOfServiceAccepted;
-	}
-
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DomainUser> getUsers() throws ManagerBeanException {
 		return (List) getModel().getWrappedData();
 	}	
@@ -120,7 +106,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		return this.userWrapper.getManagerBean();
 	}
 	
-	private Signature addDefaultSignature( DomainUser user ) throws ManagerBeanException {
+	public Signature addDefaultSignature( DomainUser user ) throws ManagerBeanException {
 		Signature signature = new Signature();
 		signature.setName( user.getDomain() );
 		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
@@ -133,7 +119,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		return signature;
 	}
 
-	private void addDefaultMailAccount( DomainUser user, Signature signature ) throws ManagerBeanException {
+	public void addDefaultMailAccount( DomainUser user, Signature signature ) throws ManagerBeanException {
 		MailAccount account = new MailAccount();
 		account.setName(NameResolver.DEFAULT_MAIL_ACCOUNT_NAME);
 		account.setPasswordString(user.getUid());
@@ -169,54 +155,6 @@ public class DomainUserController extends LdapBasicController implements IManage
 		controller.updateBaseDN(user.getId());
 		controller.getManagerBean().insert( account );				
 	}
-	
-	public void createUserWebmailDefaultData( DomainUser user ) throws ManagerBeanException {
-		BasicLdap ldap = new BasicLdap();
-		String domain = user.getDomain();
-		Name addressBookDN = NameResolver.getUserAddressBookDN(domain, user.getUid());
-		if (! ldap.exists(addressBookDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.addOrganizationUnit(addressBookDN);
-		}
-		Name signaturesDN = NameResolver.getUserSignaturesDN(domain, user.getUid());
-		if (! ldap.exists(signaturesDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.addOrganizationUnit(signaturesDN);
-		}
-		Signature signature = addDefaultSignature(user);
-		Name accountsDN = NameResolver.getUserAccountsDN(domain, user.getUid());
-		if (! ldap.exists(accountsDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.addOrganizationUnit(accountsDN);
-		}
-		addDefaultMailAccount(user, signature);
-	}
-	
-	private void removeContactGroups( DomainUser user ) throws ManagerBeanException {
-		ContactController cc = (ContactController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_CONTACT);
-		cc.updateBaseDN(user.getId());
-		IManagerBean bean = cc.getManagerBean();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IWebMailAlias.CONTACT_CONTACT_GROUP), Boolean.TRUE);
-		for( ITransferObject to : cc.getManagerBean().getList(criteria) ) {
-			bean.remove(to);
-		}
-	}
-	
-	public void removeWebmailData( DomainUser user ) throws ManagerBeanException {
-		BasicLdap ldap = new BasicLdap();
-		String domain = user.getDomain();
-		Name accountsDN = NameResolver.getUserAccountsDN(domain, user.getUid());
-		if ( ldap.exists(accountsDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.deleteDepth(accountsDN, true);
-		}
-		Name signaturesDN = NameResolver.getUserSignaturesDN(domain, user.getUid());
-		if ( ldap.exists(signaturesDN, ORGANIZATIONAL_UNIT) ) {
-			ldap.deleteDepth(signaturesDN, true);
-		}
-		Name addressBookDN = NameResolver.getUserAddressBookDN(domain, user.getUid());
-		if ( ldap.exists(addressBookDN, ORGANIZATIONAL_UNIT) ) {
-			removeContactGroups( user );
-			ldap.deleteDepth(addressBookDN, true);
-		}
-	}	
 	
 	public void onShowChangePasswordWindow( ActionEvent event ) {
 		setShowChangePasswordWindow(true);
@@ -346,18 +284,6 @@ public class DomainUserController extends LdapBasicController implements IManage
 					LOGGER.error( "Error registering " + scope + " for user " + userUid + " in " + dbc, th );
 				}
 			}					
-		}
-	}
-	
-	public void removeDomainApplicationsUser( DomainUser user ) throws ManagerBeanException, LdapException {
-		BasicLdap ldap = new BasicLdap();
-		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
-		String domain = user.getDomain();
-		for (DomainApplication application : dac.getDomainApplications()) {
-			Name dauDN = NameResolver.getDomainApplicationUserDN(domain, application.getCommonName(), user.getUid());
-			if ( ldap.exists(dauDN, IAonObjectClasses.DOMAIN_APPLICATION_USER) ) {
-				ldap.delete(dauDN);
-			}
 		}
 	}
 	

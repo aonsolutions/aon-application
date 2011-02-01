@@ -83,6 +83,8 @@ public class ManagerController implements IManagerConstants {
 	
 	private ManagerLogger logger;
 	
+	private boolean termsOfServiceAccepted;
+	
 	public ManagerController() {
 		this.dbManager = new DBManager();
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
@@ -146,6 +148,18 @@ public class ManagerController implements IManagerConstants {
 	
 	public String loginAction() {
 		return isAdministrator() ? HOME : null;
+	}
+	
+	public boolean isTermsOfServiceAccepted() {
+		return termsOfServiceAccepted;
+	}
+
+	public void setTermsOfServiceAccepted(boolean termsOfServiceAccepted) {
+		this.termsOfServiceAccepted = termsOfServiceAccepted;
+	}	
+
+	public void resetTermsOfServiceAccepted() {
+		termsOfServiceAccepted = isAdministrator();
 	}
 	
 	public void onAccept(ActionEvent event) {
