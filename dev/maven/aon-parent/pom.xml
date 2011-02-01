@@ -4,14 +4,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.code.aon</groupId>
   <artifactId>aon.parent</artifactId>
-  <version>6.0.0-SNAPSHOT</version>
+  <version>6.6.6</version>
   <packaging>pom</packaging>
   <description>POM padre de los proyectos AON</description>
   <name>AON PARENT</name>
   <scm>
     <connection>
-    scm:svn:http://dev.esferalia.com/repos/aon-application/dev/maven</connection>
-    <url>http://dev.esferalia.com/websvn/wsvn</url>
+    scm:svn:http://dev.esferalia.com/repos/aon-application/dev/6.6.6/dev/maven</connection>
+    <url>scm:svn:http://dev.esferalia.com/repos/aon-application/dev/6.6.6/websvn/wsvn</url>
   </scm>
   <organization>
     <name>esferalia Networks S.A.</name>
