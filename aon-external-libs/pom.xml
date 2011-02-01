@@ -14,8 +14,8 @@
 
 	<scm>
 		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.9.x/wsvn/aon-external-libs</url>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.9.x/trunk/aon-external-libs</connection>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.9.x/trunk/aon-external-libs</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.9.x/aon-external-libs</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.9.x/aon-external-libs</developerConnection>
 	</scm>
 
 	<dependencies>
