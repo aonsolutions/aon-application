@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/employee/facelet/contractGeneration/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{employeeBundle.contractGeneration_step4}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+
+		<aon:div styleClass="aon-text-center">
+			<aon:div styleClass="aon-text-center" style="font-size: 1.5em;margin-top: 20px; ">
+				
+				<aon:outputText 
+					value="#{employeeBundle.employee_contract_save_ok}" />
+			</aon:div>
+			
+			<rich:separator lineType="solid" style="margin-top: 20px; margin-bottom: 20px;"/>
+				
+			<h:commandLink target="_blank" 
+				actionListener="#{contractGenerationWizard.onDownloadContract}"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf"
+				value="#{employeeBundle.employee_contract}" />
+			<h:commandLink target="_blank" action="#{report.onExecute}"
+				disabled="true"
+				value="#{employeeBundle.employee_contract_basic_copy}"
+				style="border-width: 0px 0px 0px 0px;"
+				styleClass="aon-finding-toolbar-item aon-icon-mail-save" >
+				<f:param name="reportKey" value="contractBasicCopyReport" />
+			</h:commandLink>
+				
+
+		</aon:div>
+	</ui:define>
+
+</ui:composition>

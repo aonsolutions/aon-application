@@ -1,0 +1,16 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
+
+	<ui:define name="menuContent">
+		<aon:commandLink id="procesos" value="#{appBundle.menu_procesos}"
+			action="menu_procesos" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-master" />
+		<aon:commandLink id="config"
+			value="#{bundle.aon_configuration}"
+			action="menu_config" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-config" />			
+	</ui:define>
+	
+</ui:composition>

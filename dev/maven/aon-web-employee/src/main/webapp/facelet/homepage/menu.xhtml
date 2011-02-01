@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
+
+	<ui:define name="afterMenuContent">
+				
+		<c:if test="#{manager.enterprise}">	
+			<aon:commandLink id="integral" 
+				action="enterprise_formTree" 
+				value="#{appBundle.menu_integral}"
+				actionListener="#{enterpriseTree.onInit}"
+				styleClass="aon-top-menu-item aon-icon-payroll" />
+			<aon:commandLink id="paymentUpdate"
+				value="#{employeeBundle.employee_payment_update_module}"
+				action="paymentUpdate_search"
+				actionListener="#{paymentUpdate.onEditSearch}"
+				styleClass="aon-top-menu-item aon-icon-utilities" >
+				<f:setPropertyActionListener
+					target="#{paymentUpdate.enterprise}"
+					value="#{manager.loggedUser.enterprise}" />								
+			</aon:commandLink>		
+			<aon:commandLink id="salaryDraft" 
+				action="salaryDraft_list" 
+				actionListener="#{salaryDraft.onEditSearch}"
+				value="#{employeeBundle.employee_salaryDraft_module}"
+				styleClass="aon-top-menu-item aon-icon-config" />
+		</c:if>
+		<c:if test="#{!manager.enterprise}">
+			<aon:commandLink id="salary" 
+				action="salary_list" 
+				value="#{employeeBundle.employee_salary_module}"
+				styleClass="aon-top-menu-item aon-icon-payroll" />
+			<aon:htmlCommandLink id="calendarReport_list" 
+ 				action="#{report.onExecute}"
+				actionListener="#{calendarPrint.load}"
+				value="#{calendarBundle.aon_calendar_calendar}"
+				rendered="#{!calendar.new}" target="_blank"
+				styleClass="aon-top-menu-item aon-icon-calendar" >
+				<f:param name="reportKey" value="calendarReport" />
+				<f:param name="outputFormat" value="PDF" />
+			</aon:htmlCommandLink>					
+		</c:if>
+						
+	</ui:define>
+	
+	<ui:define name="beforeHelpMenuContent">	
+		<aon:menuItem id="changePassword" action="changePassword"
+			actionListener="#{password.onInit}"
+			value="#{securityBundle.aon_security_change_password}" />		
+	</ui:define>	
+		
+</ui:composition>

@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{calendarHoliday}" />
+		<ui:param name="columnClasses" value="
+			aon-editDataTable-dateColumn aon-width-100, 
+			aon-editDataTable-textColumn aon-width-100, 
+			aon-editDataTable-numberColumn aon-width-100, 
+			aon-editDataTable-textColumn aon-width-auto" />
+		
+		<ui:define name="columns">
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CalendarHoliday_date" value="#{bundle.aon_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.date}"
+					rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="CalendarHoliday_date"
+					value="#{controller.to.date}" rendered="#{formEdit}"
+					required="true" inputSize="7"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="CalendarHoliday_date-New"
+						value="#{controller.to.date}" rendered="#{formNew}"
+						required="true" inputSize="7"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CalendarHoliday_dayType" 
+						value="#{calendarBundle.aon_calendar_day_type}" />
+				</f:facet>
+				<aon:outputText rendered="#{formList}" value="#{to.dayType}"/>
+				<aon:selectOneMenu id="CalendarHoliday_dayType" 
+					rendered="#{formEdit}"
+					value="#{controller.to.dayType}">
+					<f:selectItems value="#{calendarCollections.fullDayTypes}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:div>
+						<aon:selectOneMenu id="CalendarHoliday_dayType-New" 
+							rendered="#{formNew}"
+							value="#{controller.to.dayType}">
+							<f:selectItems value="#{calendarCollections.fullDayTypes}" />
+						</aon:selectOneMenu>
+					</aon:div>		
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="CalendarHoliday_hours" 
+						value="#{calendarBundle.aon_calendar_hours}" />
+				</f:facet>
+				<aon:outputText rendered="#{formList}" value="#{to.hours}" />
+				<aon:inputText id="CalendarHoliday_hours"
+					size="1" maxlength="6" rendered="#{formEdit}"
+					value="#{controller.to.hours}" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:inputText id="CalendarHoliday_hours-New"
+							size="1" maxlength="6" rendered="#{formNew}"
+							value="#{controller.to.hours}" />
+					</aon:div>		
+				</f:facet>
+			</aon:column>
+			
+			<aon:column >
+				<f:facet name="header">
+					<aon:outputLabel for="CalendarHoliday_description" value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" rendered="#{formList}" />
+				<aon:inputText id="CalendarHoliday_description" rendered="#{formEdit}" size="50"
+					value="#{calendarHoliday.to.description}" maxlength="64" />
+				<f:facet name="footer">
+					<aon:inputText id="CalendarHoliday_description-New" required="true"
+						rendered="#{formNew}" size="64" maxlength="64" 
+						value="#{calendarHoliday.to.description}" />
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+</ui:composition>

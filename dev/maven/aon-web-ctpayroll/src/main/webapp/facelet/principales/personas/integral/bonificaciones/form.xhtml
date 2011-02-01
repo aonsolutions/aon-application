@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	<body>
+
+		<ui:composition
+			template="/facelet/templates/aon.ui.content.xhtml">
+
+			<ui:define name="content">
+
+				<aon:form id="bonificaForm">
+
+					<!-- 
+						<ui:include	src="/facelet/templates/formPrintToolbar.xhtml">
+					-->
+					<ui:include
+						src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+						<ui:param name="toolbarTitle"
+							value="#{appBundle.aon_payroll_principales_bonifica_mnto}" />
+						<ui:param name="controller" value="#{bonifica}" />
+
+						<aon:methodParam name="backAction"
+							value="integralTrab_form" />
+						<aon:methodParam name="cancelAction"
+							value="integralTrab_form" />
+
+					</ui:include>
+
+					<!--	FIN HEADER & TOOLBAR	-->
+
+					<aon:div id="bonificaData"
+						styleClass="aon-scroll-area">
+
+						<aon:panelGrid columns="2" dir="true"
+							width="100%">
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_bonifica_trabajador}" />
+							<aon:outputText value="#{trabajador.to.cdg}" size="3" maxlength="3" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_bonifica_nom_ape}" />
+							<aon:div>
+								<aon:outputText value="#{trabajador.to.persona.descripcion} " />
+								<aon:outputText value="#{trabajador.to.persona.apellido2}, " />
+								<aon:outputText value="#{trabajador.to.persona.nombre} " />
+							</aon:div>
+							
+						</aon:panelGrid>
+						
+						<rich:spacer />
+						
+						<aon:panelGrid columns="4" dir="true"
+							width="100%">
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_bonifica_boni}" />
+							<aon:div styleClass="aon-lookup">
+								<aon:lookupInputText id="bonificacion_cdg" readonly="#{!bonifica.new}"
+									lookup="#{bonificacionLookup}" reRender="bonificacion_descripcion"
+									value="#{bonifica.to.tipboni.cdg}" size="5">
+								</aon:lookupInputText>
+								<aon:lookupButton id="bonificacion_lookup"
+									disabled="#{!bonifica.new}"
+									windowTitle="#{appBundle.aon_payroll_principales_trabajador_empresa}"
+									selectReRender="bonificacion_cdg,bonificacion_descripcion"
+									lookup="#{bonificacionLookup}" minHeight="440"
+									property="#{bonifica.to.tipboni}">
+								</aon:lookupButton>
+								<aon:inputText id="bonificacion_descripcion"
+									value="#{(bonifica.to.tipboni.description!=null)?(bonifica.to.tipboni.description):('')}"
+									size="45" disabled="true" />
+							</aon:div>
+							
+							<aon:outputLabel for="bonifica_calculo"
+								value="#{appBundle.aon_payroll_principales_bonifica_calculo}" />
+							<aon:inputText id="bonifica_calculo"
+								value="#{bonifica.to.tipboni.calculo}" 
+								readonly="true" size="35" />
+							
+							<aon:outputLabel for="bonifica_fec_conces"
+								value="#{appBundle.aon_payroll_principales_bonifica_fec_conces}" />
+							<aon:selectInputDate id="bonifica_fec_conces" 
+								renderAsPopup="true" readonly="#{!bonifica.new}"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{bonifica.to.id.fecini}" enableManualInput="true" />
+							
+							<aon:outputLabel for="bonifica_fec_term"
+								value="#{appBundle.aon_payroll_principales_bonifica_fec_term}" />
+							<aon:selectInputDate renderAsPopup="true" id="bonifica_fec_term"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{bonifica.to.fecfin}" enableManualInput="true" />
+							
+							<aon:outputLabel for="bonifica_horas"
+								value="#{appBundle.aon_payroll_principales_bonifica_formacion}" />
+							<aon:inputText id="bonifica_horas" value="#{bonifica.to.horas}"
+								size="2" maxlength="2" />
+							
+							<aon:outputLabel for="bonifica_importe"
+								value="#{appBundle.aon_payroll_principales_bonifica_importe_directo}" />
+							<aon:inputText id="bonifica_importe" value="#{bonifica.to.importe}"
+								size="8" maxlength="8" readonly="#{!bonifica.new}" />
+							
+							<aon:outputLabel for="bonifica_tipoImporte"
+								value="#{appBundle.aon_payroll_principales_bonifica_tipo_importe}" />
+							<aon:selectOneMenu id="bonifica_tipoImporte" disabled="#{!bonifica.new}"
+								value="#{bonifica.to.tipo}">
+								<f:selectItem value="#{null}" itemLabel="&#160;" />
+								<f:selectItems value="#{bonifica.listaTiposImporte}" />
+							</aon:selectOneMenu>
+							
+							<aon:outputLabel for="bonifica_prorrat" 
+								value="#{appBundle.aon_payroll_principales_bonifica_prorrat}" />
+							<aon:selectBooleanCheckbox id="bonifica_prorrat" disabled="#{!bonifica.new}"
+								value="#{bonifica.to.prorrateo}" />
+
+						</aon:panelGrid>
+					</aon:div>
+				</aon:form>
+
+				<aon:lookupButtonPopup lookup="#{bonificacionLookup}" />
+				 
+			</ui:define>
+		</ui:composition>
+	</body>
+</html>

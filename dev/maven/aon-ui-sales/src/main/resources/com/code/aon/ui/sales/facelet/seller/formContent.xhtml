@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+	
+	<aon:outputLabel for="Seller_commissionType"
+		value="#{configBundle.config_commission_type}" />
+	<aon:selectOneMenu id="Seller_commissionType"
+		value="#{controller.to.commissionType}">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{configCollections.commissionTypes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Seller_status"
+		value="#{bundle.aon_status}" />
+	<aon:selectOneMenu id="Seller_status" required="true"
+		value="#{controller.to.status}">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{salesCollections.sellerStatuses}" />
+	</aon:selectOneMenu>
+
+</ui:composition>

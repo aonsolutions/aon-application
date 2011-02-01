@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="expenseItemList">
+			<aon:div ajaxRendered="true" layout="none">
+
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+					<ui:param name="toolbarTitle"
+						value="#{productBundle.product_expense_module}" />
+					<ui:param name="controller" value="#{expenseItem}" />
+				</ui:decorate>
+
+				<aon:div styleClass="aon-scroll-area">
+
+					<ui:decorate
+						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+						<ui:param name="controller" value="#{expenseItem}" />
+						<ui:param name="columnClasses"
+							value="aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text,
+									aon-editDataTable-text,aon-editDataTable-text,aon-editDataTable-text" />
+	
+						<ui:define name="columns">
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="ExpenseItem_product_code" value="#{bundle.aon_id}" />
+								</f:facet>
+								<aon:outputText value="#{to.product.code}"
+									rendered="#{formList}" />
+								<aon:inputText id="ExpenseItem_product_code" rendered="#{formEdit}"
+									value="#{expenseItem.to.product.code}" required="true"
+									size="10" maxlength="15" />
+								<f:facet name="footer">
+									<aon:inputText id="ExpenseItem_product_code-New" rendered="#{formNew}"
+										value="#{expenseItem.to.product.code}" required="true"
+										size="15" maxlength="15" />
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="ExpenseItem_product_name" value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.product.name}"
+									rendered="#{formList}" />
+								<aon:inputText id="ExpenseItem_product_name" rendered="#{formEdit}"
+									value="#{expenseItem.to.product.name}" required="true" 
+									size="50" maxlength="64" />
+								<f:facet name="footer">
+									<aon:inputText id="ExpenseItem_product_name-New" rendered="#{formNew}"
+										value="#{expenseItem.to.product.name}" required="true"
+										size="50" maxlength="64" />
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="ExpenseItem_product_category" value="#{productBundle.product_category}" />
+								</f:facet>
+								<aon:outputText value="#{to.product.category.name}"
+									rendered="#{formList}" />
+								<aon:selectOneMenu id="ExpenseItem_product_category" rendered="#{formEdit}"
+									value="#{expenseItem.to.product.category}">
+									<f:selectItems value="#{productCollections.categories}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu id="ExpenseItem_product_category-New" rendered="#{formNew}"
+										value="#{expenseItem.to.product.category}">
+										<f:selectItems value="#{productCollections.categories}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="ExpenseItem_product_vat" value="#{bundle.aon_vat}" />
+								</f:facet>
+								<aon:outputText value="#{to.product.vat.name}"
+									rendered="#{formList}" />
+								<aon:selectOneMenu id="ExpenseItem_product_vat" rendered="#{formEdit}"
+									value="#{expenseItem.to.product.vat}">
+									<f:selectItems value="#{configCollections.vatTaxes}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu id="ExpenseItem_product_vat-New" rendered="#{formNew}"
+										value="#{expenseItem.to.product.vat}">
+										<f:selectItems value="#{configCollections.vatTaxes}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="ExpenseItem_product_retention" value="#{bundle.aon_retention}" />
+								</f:facet>
+								<aon:outputText value="#{to.product.retention.name}"
+									rendered="#{formList}" />
+								<aon:selectOneMenu id="ExpenseItem_product_retention" rendered="#{formEdit}"
+									value="#{expenseItem.to.product.retention}">
+									<f:selectItem itemLabel="-" itemValue="" />
+									<f:selectItems value="#{configCollections.retentionTaxes}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu id="ExpenseItem_product_retention-New" rendered="#{formNew}"
+										value="#{expenseItem.to.product.retention}">
+										<f:selectItem itemLabel="-" itemValue="" />
+										<f:selectItems value="#{configCollections.retentionTaxes}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+	
+							<c:if test="#{aonRole.accountingOperator}">
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputLabel for="ExpenseItem_purchaseAccount" value="#{productBundle.product_expense_account}" />
+									</f:facet>
+									<aon:outputText value="#{expenseItem.account}"
+										rendered="#{formList}" />
+									<ui:include
+										src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+										<ui:param name="wizard" value="#{accountWizard}" />
+										<ui:param name="id" value="ExpenseItem_purchaseAccount" />
+										<ui:param name="required" value="#{false}" />
+										<ui:param name="size" value="12" />
+										<ui:param name="maxlength" value="12" />
+										<ui:param name="renderDescription" value="#{false}" />
+										<ui:param name="renderedAttr" value="#{formEdit}" />
+										<ui:param name="disabled" value="#{false}" />
+										<ui:param name="reRenderAttr" value="none" />
+										<ui:param name="entity" value="#{expenseItem.to.product.purchaseAccount}" />
+										<ui:param name="ELExpression" value="expenseItem.to.product.purchaseAccount" />
+									</ui:include>
+									<f:facet name="footer">
+										<ui:include
+											src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+											<ui:param name="wizard" value="#{accountWizard}" />
+											<ui:param name="id" value="ExpenseItem_purchaseAccount-New" />
+											<ui:param name="required" value="#{false}" />
+											<ui:param name="size" value="12" />
+											<ui:param name="maxlength" value="12" />
+											<ui:param name="renderDescription" value="#{false}" />
+											<ui:param name="renderedAttr" value="#{formNew}" />
+											<ui:param name="disabled" value="#{false}" />
+											<ui:param name="reRenderAttr" value="none" />
+											<ui:param name="entity" value="#{expenseItem.to.product.purchaseAccount}" />
+											<ui:param name="ELExpression" value="expenseItem.to.product.purchaseAccount" />
+										</ui:include>
+									</f:facet>
+	 							</aon:column>
+							</c:if>
+ 						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,468 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="pagasDataDiv">
+ 
+		<aon:editDataTable id="pagaextData" value="#{pagaext.model}" 
+			var="to" rows="0"
+			rendered="#{(pagaext.model.rowCount > 0) or (pagaext.new)}" 
+			columnClasses="aon-editDataTable-iconColumn
+				, aon-editDataTable-iconColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-buttonsColumn">
+					
+			<aon:rowSelector toggleOnClick="#{pagaext.to == null}" actionListener="#{pagaext.onSelect}" />
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{pagaext.onReset}" value=""
+							rendered="#{!pagaext.new}"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_cdg}" />
+				</f:facet>
+				<aon:outputText value="#{to.complemento.cdg}" rendered="#{to!=pagaext.to}" />
+				
+				<!-- 
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="2"
+					value="#{pagaext.to.complemento.cdg}" maxlength="2" />
+				
+				 -->
+				
+				
+				<aon:lookupInputText id="Complemento2_cdg" rendered="#{to==pagaext.to}"
+					lookup="#{complementoLookup}"
+					reRender="Complemento_description"
+					value="#{pagaext.to.complemento.cdg}" size="2">
+				</aon:lookupInputText>
+				<aon:lookupButton id="Complemento2_lookup" rendered="#{to==pagaext.to}"
+					windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
+					selectReRender="Complemento_cdg,Complemento_description"
+					lookup="#{complementoLookup}" minHeight="440"
+					property="#{pagaext.to.complemento}">
+				</aon:lookupButton>
+					
+					
+				
+				
+				<f:facet name="footer">
+					<!--  
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="2"
+						value="#{pagaext.to.complemento.cdg}" maxlength="2" />
+					-->
+					<aon:div>
+						<aon:lookupInputText id="Complemento_cdg" rendered="#{pagaext.new}"
+							lookup="#{complementoLookup}"
+							reRender="Complemento_description"
+							value="#{pagaext.to.complemento.cdg}" size="2" >
+						</aon:lookupInputText>
+						
+						<aon:lookupButton id="Complemento_lookup" rendered="#{pagaext.new}"
+							windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
+							selectReRender="Complemento_cdg,Complemento_description"
+							lookup="#{complementoLookup}" minHeight="440"
+							property="#{pagaext.to.complemento}" >
+						</aon:lookupButton>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.complemento.description}" rendered="#{to!=pagaext.to}" />
+				
+				<!-- 
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="15"
+					value="#{pagaext.to.complemento.desabr}" maxlength="15" />
+				
+				<br />
+					 -->
+				<aon:outputText id="Complemento_description2"  rendered="#{to==pagaext.to}"
+					value="#{(pagaext.to.complemento.description!=null)?(pagaext.to.complemento.description):('')}"
+					size="34" disabled="true" />
+					
+					
+					
+				<f:facet name="footer">
+				<!-- 
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="15"
+						value="#{pagaext.to.complemento.desabr}" maxlength="15" />
+				 -->
+					<aon:outputText id="Complemento_description_new"  rendered="#{pagaext.new}"
+					value="#{(pagaext.to.complemento.description!=null)?(pagaext.to.complemento.description):('')}"
+					size="34" disabled="true" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_desde}" />
+				</f:facet>
+				<aon:outputText value="#{to.perini}" rendered="#{to!=pagaext.to}" />
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="2"
+					value="#{pagaext.to.perini}" maxlength="4" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="2"
+						value="#{pagaext.to.perini}" maxlength="4" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__indini}" />
+				</f:facet>
+				<aon:outputText value="#{to.indini}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="IndAnioDesdeUpdate" value="#{pagaext.to.indini}" rendered="#{to==pagaext.to}">												
+					<f:selectItem value="#{null}" itemLabel=" -  " />
+					<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="IndAnioDesdeNew" value="#{pagaext.to.indini}" rendered="#{pagaext.new}">												
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_hasta}" />
+				</f:facet>
+				<aon:outputText value="#{to.perfin}" rendered="#{to!=pagaext.to}" />
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="2"
+					value="#{pagaext.to.perfin}" maxlength="4" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="2"
+						value="#{pagaext.to.perfin}" maxlength="4" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__indfin}" />
+				</f:facet>
+				<aon:outputText value="#{to.indfin}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="IndAnioHastaUpdate" value="#{pagaext.to.indfin}" rendered="#{to==pagaext.to}">												
+					<f:selectItem value="#{null}" itemLabel=" -  " />
+					<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="IndAnioHastaNew" value="#{pagaext.to.indfin}" rendered="#{pagaext.new}">												
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__feccob}" />
+				</f:facet>
+				<aon:outputText value="#{to.feccob}" rendered="#{to!=pagaext.to}" />
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="2"
+					value="#{pagaext.to.feccob}" maxlength="4" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="2"
+						value="#{pagaext.to.feccob}" maxlength="4" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__prorat}" />
+				</f:facet>
+				<aon:outputText value="#{to.prorat}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="TipoProUpdate" value="#{pagaext.to.prorat}" rendered="#{to==pagaext.to}">												
+					<f:selectItem value="#{null}" itemLabel=" -  " />
+					<f:selectItems value="#{pagaext.listaTipoProrrateo}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="TipoProNew" value="#{pagaext.to.prorat}" rendered="#{pagaext.new}">												
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{pagaext.listaTipoProrrateo}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div>
+					<f:verbatim rendered="#{to!=pagaext.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]" 
+						rendered="#{to==pagaext.to}"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						actionListener="#{pagaext.onAccept}"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==pagaext.to}"
+						actionListener="#{pagaext.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:confirmButton id="remove-pagaext" title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						rendered="#{to==pagaext.to}"
+						confirmTitle="#{bundle.aon_confirm_title}" 
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{pagaext.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />								
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<f:verbatim rendered="#{!pagaext.new}">&#160;</f:verbatim>
+						<aon:commandButton title="[#{bundle.aon_accept}]" 
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							rendered="#{pagaext.new}"
+							actionListener="#{pagaext.onAccept}"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:confirmButton id="cancel-pagaext" title="[#{bundle.aon_cancel}]"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{pagaext.new}" reRender="conveniosForm"
+							confirmTitle="#{bundle.aon_confirm_title}" 
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{pagaext.onCancel}" immediate="true"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+			
+		</aon:editDataTable>
+		<aon:lookupButtonPopup lookup="#{complementoLookup}" />
+		
+		
+		
+		
+		<!-- */*/*//**/*/*/*//*/*/*/*/*/*/*/*/*/*/*// -->
+		<!-- */*/*//**/*/*/*//*/*/*/*/*/*/*/*/*/*/*// -->
+		<!-- */*/*//**/*/*/*//*/*/*/*/*/*/*/*/*/*/*// -->
+		<!-- */*/*//**/*/*/*//*/*/*/*/*/*/*/*/*/*/*// -->
+		
+		
+		<!-- 
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="controller" value="#{pagaext}" />
+		<ui:param name="columnClasses" value="aon-editDataTable-iconColumn
+				, aon-editDataTable-iconColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-buttonsColumn" />
+		<ui:param name="showDataScroller" value="#{(!convenio.new) and (convenio.to != null)}" />			
+		<ui:param name="skipResetButton" value="#{convenio.new or (convenio.to == null)}" />
+		<ui:param name="rowSelectorReRender" value="categoriaDataDiv,percepcionDataDiv" />
+		<ui:param name="saveButtonReRender" value="categoriaDataDiv,percepcionDataDiv" />
+		<ui:param name="cancelButtonReRender" value="categoriaDataDiv,percepcionDataDiv" />
+		<ui:param name="removeButtonReRender" value="categoriaDataDiv,percepcionDataDiv" />
+		
+		<ui:define name="columns">
+		
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_cdg}" />
+				</f:facet>
+				<aon:outputText value="#{to.complemento.cdg}" rendered="#{to!=pagaext.to}" />
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="2"
+					value="#{pagaext.to.complemento.cdg}" maxlength="2" />
+				
+				
+				
+				<aon:div styleClass="aon-lookup">
+				 
+					<aon:lookupInputText id="Complemento_cdg"
+						lookup="#{complementoLookup}"
+						reRender="Complemento_description"
+						value="#{pagaext.to.complemento.cdg}" size="5">
+					</aon:lookupInputText>
+					
+					<aon:lookupButton id="Complemento_lookup" rendered="#{to==pagaext.to}"
+						windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
+						selectReRender="Complemento_cdg,Complemento_description"
+						lookup="#{complementoLookup}" minHeight="440"
+						property="#{pagaext.to.complemento}">
+					</aon:lookupButton>
+				 
+					<aon:inputText id="Complemento_description2"
+						value="#{(pagaext.to.complemento.description!=null)?(pagaext.to.complemento.description):('')}"
+						size="34" disabled="true" />
+					
+					
+				</aon:div>		
+				
+				
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="2"
+						value="#{pagaext.to.complemento.cdg}" maxlength="2" />
+					
+					<aon:lookupInputText id="Complemento_new_cdg" rendered="#{pagaext.new}"
+						lookup="#{complementoLookup}"
+						reRender="Complemento_description"
+						value="#{pagaext.to.complemento.cdg}" size="5">
+					</aon:lookupInputText>
+					<aon:lookupButton id="Complemento_new_lookup" rendered="#{pagaext.new}"
+						windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
+						selectReRender="Complemento_cdg,Complemento_description"
+						lookup="#{complementoLookup}" minHeight="440"
+						property="#{pagaext.to.complemento}">
+					</aon:lookupButton>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.complemento.desabr}" rendered="#{to!=pagaext.to}" />
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="15"
+					value="#{pagaext.to.complemento.desabr}" maxlength="15" />
+					
+					
+				<aon:inputText id="Complemento_description"
+					value="#{(pagaext.to.complemento.description!=null)?(pagaext.to.complemento.description):('')}"
+					size="34" disabled="true" />
+					
+					
+					
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="15"
+						value="#{pagaext.to.complemento.desabr}" maxlength="15" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_desde}" />
+				</f:facet>
+				<aon:outputText value="#{to.perini}" rendered="#{to!=pagaext.to}" />
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="4"
+					value="#{pagaext.to.perini}" maxlength="4" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="4"
+						value="#{pagaext.to.perini}" maxlength="4" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__indini}" />
+				</f:facet>
+				<aon:outputText value="#{to.indini}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="IndAnioDesdeUpdate" value="#{pagaext.to.indini}" rendered="#{to==pagaext.to}">												
+					<f:selectItem value="#{null}" itemLabel=" -  " />
+					<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="IndAnioDesdeNew" value="#{pagaext.to.indini}" rendered="#{pagaext.new}">												
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_hasta}" />
+				</f:facet>
+				<aon:outputText value="#{to.perfin}" rendered="#{to!=pagaext.to}" />
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="4"
+					value="#{pagaext.to.perfin}" maxlength="4" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="4"
+						value="#{pagaext.to.perfin}" maxlength="4" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__indfin}" />
+				</f:facet>
+				<aon:outputText value="#{to.indfin}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="IndAnioHastaUpdate" value="#{pagaext.to.indfin}" rendered="#{to==pagaext.to}">												
+					<f:selectItem value="#{null}" itemLabel=" -  " />
+					<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="IndAnioHastaNew" value="#{pagaext.to.indfin}" rendered="#{pagaext.new}">												
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__feccob}" />
+				</f:facet>
+				<aon:outputText value="#{to.feccob}" rendered="#{to!=pagaext.to}" />
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==pagaext.to}" size="4"
+					value="#{pagaext.to.feccob}" maxlength="4" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{pagaext.new}" size="4"
+						value="#{pagaext.to.feccob}" maxlength="4" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__prorat}" />
+				</f:facet>
+				<aon:outputText value="#{to.prorat}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="TipoProUpdate" value="#{pagaext.to.prorat}" rendered="#{to==pagaext.to}">												
+					<f:selectItem value="#{null}" itemLabel=" -  " />
+					<f:selectItems value="#{pagaext.listaTipoProrrateo}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="TipoProNew" value="#{pagaext.to.prorat}" rendered="#{pagaext.new}">												
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{pagaext.listaTipoProrrateo}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+		
+		
+		</ui:define>
+	</ui:decorate>		
+	 -->
+		
+	</aon:div>
+
+</ui:composition>

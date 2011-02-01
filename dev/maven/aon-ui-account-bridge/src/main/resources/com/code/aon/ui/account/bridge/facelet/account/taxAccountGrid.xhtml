@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{accountManagerTax}" />
+		<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+		<ui:param name="newCancelButtonReRender" value="accountManagerTaxDiv" />
+		<ui:define name="columns">
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="Tax_id" value="#{configBundle.config_tax_module}" />
+				</f:facet>
+				<aon:outputText rendered="#{formList}"
+					value="#{to.accountDescription}" />
+				<aon:selectOneMenu id="Tax_id" rendered="#{formEdit}"
+					value="#{accountManagerTax.to.tax}">
+					<f:selectItems value="#{configCollections.taxes}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="Tax_id-New" rendered="#{formNew}"
+						value="#{accountManagerTax.to.tax}">
+						<f:selectItems value="#{configCollections.taxes}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="Tax_type" value="#{bundle.aon_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.type}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="Tax_type" rendered="#{formEdit}"
+					required="true" value="#{accountManagerTax.to.type}">
+					<f:selectItems value="#{accountBridgeCollections.taxAccountTypes}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="Tax_type-New" rendered="#{formNew}"
+						required="true" value="#{accountManagerTax.to.type}">
+						<f:selectItems value="#{accountBridgeCollections.taxAccountTypes}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+			
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:div styleClass="aon-toolbar" >
+		<aon:commandButton id="workActivity-reset"
+			title="#{bundle.aon_key_new_accelerator}"
+			value="#{bundle.aon_reset}"
+			action="workActivity_form" actionListener="#{workActivity.onReset}"
+			styleClass="aon-finding-toolbar-item aon-icon-new" />	
+	</aon:div>
+	
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+		<ui:param name="controller" value="#{workActivity}" />
+		<ui:define name="columns">
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_id}" />
+				</f:facet>
+				<aon:outputText value="#{to.id}" />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+				<f:facet name="header">
+					<aon:outputText value="#{companyBundle.company_activity_ccc}" />
+				</f:facet>
+				<aon:outputText value="#{to.enterpriseCCC.CCC}" />
+			</aon:column>
+						
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

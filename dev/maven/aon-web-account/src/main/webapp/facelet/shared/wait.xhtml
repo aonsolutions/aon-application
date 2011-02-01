@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:form id="waitForm">
+		<rich:modalPanel id="waitProccess" height="100" width="325"
+			zindex="2000">
+
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="#{progressLabel}" />
+				</aon:div>
+			</f:facet>
+
+			<aon:div styleClass="aon-popupWindow-content">
+				<aon:div styleClass="aon-popupWindow-content-internal">
+
+					<a4j:outputPanel id="progressPanel">
+						<rich:progressBar value="#{progressBarBean.progressionCurrentValue}"
+							interval="2000" label="#{progressBarBean.progressionCurrentValue} %"
+							minValue="0" maxValue="100"
+							reRenderAfterComplete="progressPanel">
+							<f:facet name="complete">
+								<aon:outputText value="Process Done" />
+							</f:facet>
+						</rich:progressBar>
+					</a4j:outputPanel>
+				</aon:div>
+			</aon:div>
+
+		</rich:modalPanel>
+	</aon:form>
+</ui:composition>

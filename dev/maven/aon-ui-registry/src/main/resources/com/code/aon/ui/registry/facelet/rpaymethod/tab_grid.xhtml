@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="columnClasses"
+			value="aon-nowrap aon-editDataTable-textColumn, 
+					aon-nowrap aon-editDataTable-textColumn, 
+					aon-editDataTable-numberColumn,
+					aon-editDataTable-numberColumn, 
+					aon-editDataTable-numberColumn,
+					aon-nowrap aon-editDataTable-textColumn" />			
+		<ui:param name="showDataScroller" value="false" />			
+		<ui:param name="skipResetButton" value="#{controller.model.rowCount > 0}" />			
+
+		<ui:define name="columns">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryPayMethod_payment" value="#{configBundle.config_pay_method}" />
+				</f:facet>
+				<aon:outputText value="#{to.payment.name}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="RegistryPayMethod_payment"
+					valueChangeListener="#{controller.onPayMethodChanged}"
+					reRender="RegistryPayMethod_bank"
+					rendered="#{formEdit}" value="#{controller.to.payment}">
+					<f:selectItems value="#{configCollections.payMethods}" />
+				</aon:selectOneMenu>					
+				<f:facet name="footer">
+					<aon:selectOneMenu id="RegistryPayMethod_payment-New"
+						valueChangeListener="#{controller.onPayMethodChanged}"
+						reRender="RegistryPayMethod_bank-New"
+						rendered="#{formNew}" value="#{controller.to.payment}">
+						<f:selectItems value="#{configCollections.payMethods}" />
+					</aon:selectOneMenu>					
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryPayMethod_bank" value="#{configBundle.config_bank}" />
+				</f:facet>
+				<aon:outputText value="#{to.registryBank.fullName}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="RegistryPayMethod_bank"
+					rendered="#{formEdit}" value="#{controller.to.registryBank}">
+					<f:selectItem value="#{null}" />
+					<f:selectItems value="#{controller.banks}" />
+				</aon:selectOneMenu>					
+				<f:facet name="footer">
+					<aon:selectOneMenu id="RegistryPayMethod_bank-New"
+						rendered="#{formNew}" value="#{controller.to.registryBank}">
+						<f:selectItem value="#{null}" />
+						<f:selectItems value="#{controller.banks}" />
+					</aon:selectOneMenu>					
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryPayMethod_numberOfPayments" value="#{registryBundle.registry_number_of_payments}" />
+				</f:facet>
+				<aon:outputText value="#{to.numberOfPayments}"
+					rendered="#{formList}" />
+				<aon:inputText id="RegistryPayMethod_numberOfPayments"
+					value="#{controller.to.numberOfPayments}"
+					rendered="#{formEdit}" required="true" size="5" >
+					<f:validateLongRange minimum="1" />
+				</aon:inputText>	
+				<f:facet name="footer">
+					<aon:inputText id="RegistryPayMethod_numberOfPayments-New"
+						value="#{controller.to.numberOfPayments}"
+						rendered="#{formNew}" required="true" size="5" >
+						<f:validateLongRange minimum="1" />								
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryPayMethod_daysToFirstPayment" value="#{registryBundle.registry_days_to_first_payment}" />
+				</f:facet>
+				<aon:outputText value="#{to.daysToFirstPayment}"
+					rendered="#{formList}" />
+				<aon:inputText id="RegistryPayMethod_daysToFirstPayment"
+					value="#{controller.to.daysToFirstPayment}"
+					rendered="#{formEdit}" required="true" size="5" />
+				<f:facet name="footer">
+					<aon:inputText id="RegistryPayMethod_daysToFirstPayment-New" 
+						value="#{controller.to.daysToFirstPayment}"
+						rendered="#{formNew}" required="true" size="5" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryPayMethod_daysBetweenPayments" value="#{registryBundle.registry_days_between_payments}" />
+				</f:facet>
+				<aon:outputText value="#{to.daysBetweenPayments}"
+					rendered="#{formList}" />
+				<aon:inputText id="RegistryPayMethod_daysBetweenPayments"
+					value="#{controller.to.daysBetweenPayments}"
+					rendered="#{formEdit}" required="true" size="5" />
+				<f:facet name="footer">
+					<aon:inputText id="RegistryPayMethod_daysBetweenPayments-New"
+						value="#{controller.to.daysBetweenPayments}"
+						rendered="#{formNew}" required="true" size="5" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryPayMethod_paymentDays" value="#{registryBundle.registry_payment_days}" />
+				</f:facet>
+				<aon:outputText value="#{to.paymentDays}"
+					rendered="#{formList}" />
+				<aon:inputText id="RegistryPayMethod_paymentDays"
+					value="#{controller.to.paymentDays}" rendered="#{formEdit}" size="5" />
+				<f:facet name="footer">
+					<aon:inputText id="RegistryPayMethod_paymentDays-New"
+						value="#{controller.to.paymentDays}" rendered="#{formNew}" size="5" />
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

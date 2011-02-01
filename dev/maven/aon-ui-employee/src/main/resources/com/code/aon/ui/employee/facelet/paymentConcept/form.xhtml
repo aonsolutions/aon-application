@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form  id="paymentConceptForm">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_paymentConcept_module}" />
+				<ui:param name="controller" value="#{paymentConcept}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2" >
+					
+					<aon:outputLabel for="PaymentConcept_code"
+						value="#{bundle.aon_id}" />
+					<aon:inputText id="PaymentConcept_code" size="5" maxlength="5"
+						value="#{paymentConcept.to.code}" />
+
+					<aon:outputLabel for="PaymentConcept_type"
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="PaymentConcept_type" 
+						value="#{paymentConcept.to.type}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{employeeCollections.paymentTypes}" />
+					</aon:selectOneMenu>	
+
+					<aon:outputLabel for="PaymentConcept_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="PaymentConcept_description" size="64" maxlength="64"
+						value="#{paymentConcept.to.description}" />
+						
+				</aon:panelGrid>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

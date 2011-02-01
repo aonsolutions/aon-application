@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Lista de Presupuestos de una order de reparación"
+    label="Lista de Presupuestos de una order de reparación" sqlSentence="SELECT CONCAT(offer.series,&quot;/&quot;,offer.number), &#xd;&#xa;       offer.issue_date,&#xd;&#xa;       registry.document,&#xd;&#xa;       CONCAT_WS(&quot;, &quot;,registry.surname,registry.name)&#xd;&#xa;  FROM tas_offer, offer,  registry&#xd;&#xa; WHERE tas_offer.offer = offer.id &#xd;&#xa;  AND tas_offer.support_order = ?&#xd;&#xa;  AND offer.target = registry.id">
+    <parameters>
+        <parameter label="Código de orden de reparación"
+            name="support_order" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="SERIE_NUMERO"
+            columnId="CONCAT(offer.series,&quot;/&quot;,offer.number)"
+            label="SERIE/NUMERO" type="STRING"/>
+        <result accessName="issue_date" columnId="issue_date"
+            label="FECHA" tableId="offer" type="DATE"/>
+        <result accessName="document" columnId="document" label="NIF"
+            tableId="registry" type="STRING"/>
+        <result accessName="NOMBRE_CLIENTE"
+            columnId="CONCAT_WS(&quot;, &quot;,registry.surname,registry.name)"
+            label="NOMBRE CLIENTE" type="STRING"/>
+    </results>
+    <dataModelReferences/>
+</view>

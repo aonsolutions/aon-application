@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div styleClass="aon-margin-top" style="width: 100%;" rendered="#{!annualReport.new}">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+			<ui:param name="controller" value="#{annualReportDetail}" />
+			<ui:define name="columns">
+
+			<aon:column styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:inputText required="true" 
+					rendered="#{to==annualReportDetail.to}" value="#{annualReportDetail.to.sortKey}"
+					maxlength="4" size="2" />
+				<aon:div styleClass="aon-nowrap" rendered="#{to!=annualReportDetail.to}">
+					<aon:graphicImage url="/css/images/aon-icon/aon-arrow-up.gif"
+						title="#[#{to.sortKey}]"
+						style="cursor:pointer" rendered="#{to.sortKey != 0}">
+						<a4j:support event="onclick"
+							actionListener="#{annualReportDetail.onMoveUp}"
+							reRender="annualReportDetailData" />
+					</aon:graphicImage>
+					<aon:graphicImage url="/css/images/aon-icon/aon-arrow-down.gif"
+						title="#[#{to.sortKey}]"
+						style="cursor:pointer"
+						rendered="#{to.sortKey &lt; (annualReportDetail.model.rowCount-1)}">
+						<a4j:support event="onclick"
+							actionListener="#{annualReportDetail.onMoveDown}"
+							reRender="annualReportDetailData" />
+					</aon:graphicImage>
+				</aon:div>
+				<f:facet name="footer">
+				</f:facet>
+			</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-iconColumn aon-width-100">
+					<f:facet name="header">
+						<aon:outputText value="#{accountingBundle.accounting_sortkey}" />
+					</f:facet>
+					<aon:inputText required="true" 
+						rendered="#{to==annualReportDetail.to}" value="#{annualReportDetail.to.sortKey}"
+						maxlength="4" size="2" />
+					<aon:outputText  rendered="#{to!=annualReportDetail.to}" value="#{to.sortKey}" />
+					<f:facet name="footer">
+						<aon:inputText required="true"
+							rendered="#{annualReportDetail.new}" value="#{annualReportDetail.to.sortKey}"
+							maxlength="4" size="2" />
+					</f:facet>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+					<f:facet name="header">
+						<aon:outputText value="#{accountingBundle.accounting_content}" />
+					</f:facet>
+					<aon:div>
+						<aon:outputText value="#{to.content}" escape="false"
+							rendered="#{to!=annualReportDetail.to}" />
+					</aon:div>
+					<rich:editor id="messageEditor-Edit"
+							rendered="#{to==annualReportDetail.to}"
+							value="#{annualReportDetail.to.content}" 
+							height="400" configuration="tinyMCE"
+							language="#{facesContext.application.defaultLocale.language}" />	
+					<f:facet name="footer">
+						<rich:editor id="messageEditor-New"
+								rendered="#{annualReportDetail.new}"
+								value="#{annualReportDetail.to.content}" 
+								height="400" configuration="tinyMCE"
+								language="#{facesContext.application.defaultLocale.language}" />	
+					</f:facet>
+				</aon:column>
+			</ui:define>
+		</ui:decorate>
+	</aon:div>
+</ui:composition>
