@@ -23,7 +23,7 @@
 					<aon:commandButton id="paymentPopup" 
 						value="#{(finance.payment)?(financeBundle.finance_to_pay):(financeBundle.finance_to_charge)}"
 						immediate="#{true}" rendered="#{!finance.new and (finance.pending or finance.returned)}"
-						styleClass="aon-finding-toolbar-item aon-icon-payment"
+						styleClass="aon-finding-toolbar-item aon-icon-pay"
 						actionListener="#{finance.onFinancePaymentShow}"
 						reRender="showFinancePaymentWindow">
 						<f:setPropertyActionListener target="#{finance.showFinancePaymentWindow}"

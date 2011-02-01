@@ -44,6 +44,7 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.finance.event.FinanceSearchListener;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
@@ -574,30 +575,43 @@ public class FinanceController extends FinanceListController implements IFinance
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), to.getInvoice().getId());
-			FormUtil.getController(IFinanceConstants.INVOICE_PRINTER_CONTROLLER).setCriteria(criteria);
+			FormUtil.getController(INVOICE_PRINTER_CONTROLLER).setCriteria(criteria);
 		}
 	}
 
 	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)this.getTo();
-		InvoiceType type = finance.getInvoice().getType();
 		String invoiceControllerName = "";
-		if (type == InvoiceType.SALES) {
-			invoiceControllerName = IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
-			setInvoiceViewer(IFinanceConstants.SALE_INVOICE_FORM_NAME);
-		} else if (type == InvoiceType.PURCHASE) {
-			invoiceControllerName = IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME;
-			setInvoiceViewer(IFinanceConstants.PURCHASE_INVOICE_FORM_NAME);
-		} else if (type == InvoiceType.EXPENSES) {
-			invoiceControllerName = IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME;
-			setInvoiceViewer(IFinanceConstants.EXPENSE_INVOICE_FORM_NAME);
-		} else if (type == InvoiceType.UNDEDUCTIBLE) {
-			invoiceControllerName = IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
-			setInvoiceViewer(IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME);
+		if (finance.getInvoice().getType() == InvoiceType.SALES) {
+			invoiceControllerName = SALE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(SALE_INVOICE_FORM_NAME);
+		} else if (finance.getInvoice().getType() == InvoiceType.PURCHASE) {
+			invoiceControllerName = PURCHASE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(PURCHASE_INVOICE_FORM_NAME);
+		} else if (finance.getInvoice().getType() == InvoiceType.EXPENSES) {
+			invoiceControllerName = EXPENSE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(EXPENSE_INVOICE_FORM_NAME);
+		} else if (finance.getInvoice().getType() == InvoiceType.UNDEDUCTIBLE) {
+			invoiceControllerName = UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(UNDEDUCTIBLE_INVOICE_FORM_NAME);
 		}
 
 		InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
-		invoiceController.onLoadInvoice(event, finance.getInvoice(), IFinanceConstants.FINANCE_FORM_NAME);
+		invoiceController.onLoadInvoice(event, finance.getInvoice(), FINANCE_FORM_NAME, invoiceControllerName);
+	}
+
+	public void onLoadFinance(ActionEvent event, Finance finance, String backAction) throws ManagerBeanException {
+		FinanceSearchListener financeSearch = (FinanceSearchListener)AonUtil.getRegisteredBean(FINANCE_SEARCH_LISTENER_NAME);
+
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.FINANCE_ID), finance.getId());
+		financeSearch.setFinanceStatuses(null);
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
+
+		setBackAction(backAction);
+		setBackActionListener(FINANCE_CONTROLLER_NAME + ".onBack");
 	}
 
 }

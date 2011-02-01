@@ -402,6 +402,10 @@ public class AonMessage implements IMimeType, BundleConstants {
 		setRecipients(addresses, MimeMessage.RecipientType.TO);
 	}
 	
+	private static String getRecipientsTo( Message message ) throws MessagingException {
+		return getRecipient(message, MimeMessage.RecipientType.TO);
+	}
+	
 	/**
 	 * Gets the recipients specifiedy by the "TO" header.
 	 * 
@@ -899,6 +903,10 @@ public class AonMessage implements IMimeType, BundleConstants {
 		sb.append( "<DIV style='BACKGROUND: #e4e4e4'>" );
 		String from = getSender(message);
 		sb.append( "<b>" ).append(bundle.getString(FROM_MESSAGE)).append(":</b> ").append(from).append( "</DIV>" );
+		if ( headerId == null ) {
+			String to = getRecipientsTo(message);
+			sb.append( "<b>" ).append(bundle.getString(TO_MESSAGE)).append(":</b> ").append(to).append( "</DIV>" );
+		}
 		sb.append( "<b>" ).append(bundle.getString(DATE_MESSAGE)).append(":</b> ").append( message.getSentDate() );
 		String cc = getRecipientsCc(message);
 		if (! StringUtils.isEmpty(cc) ) {

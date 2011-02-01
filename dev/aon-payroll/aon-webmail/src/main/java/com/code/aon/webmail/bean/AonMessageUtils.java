@@ -131,16 +131,22 @@ public class AonMessageUtils {
 	}
 
     public static String unparse_cid(String content){
-		String textRplc = new String(content);
 		Matcher tagMatcher = UNDO_CID_PATTERN.matcher(content);
-		while(tagMatcher.find()){
-			String text = tagMatcher.group();
-			String newText = new String(text);
-			int pos = newText.lastIndexOf("/");
-			newText = "cid:" + newText.substring(pos+1, newText.length()-4);
-			textRplc = textRplc.replace(text, newText);
-		}
-		return textRplc;
+		if ( tagMatcher.find() ) {
+			StringBuffer sb = new StringBuffer(content);
+			int offset = 0;
+			do {
+				String cidURL = tagMatcher.group(1);
+				int pos = cidURL.lastIndexOf("/");
+				String newText = "cid:" + cidURL.substring(pos+1, cidURL.length()-4);
+				int start = tagMatcher.start(1) + offset;
+				int end = tagMatcher.end(1) + offset;
+				sb.replace( start, end, newText);
+				offset += (newText.length() - cidURL.length());
+			} while( tagMatcher.find() );
+			return sb.toString();
+		}		
+		return content;
     }
 
 	public static String parse_cr(String data) {

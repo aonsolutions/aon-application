@@ -438,7 +438,7 @@ public class InvoiceRecorderController extends BasicController {
 			recordController.setRefresh(true);
 
 			InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
-			invoiceController.onLoadInvoice(event, recordController.getInvoice(), currentViewName);
+			invoiceController.onLoadInvoice(event, recordController.getInvoice(), currentViewName, invoiceControllerName);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar la factura: " + e.getMessage();
 			LOGGER.warn(msg, e);

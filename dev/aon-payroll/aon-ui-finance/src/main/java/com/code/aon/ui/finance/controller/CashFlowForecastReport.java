@@ -470,8 +470,15 @@ public class CashFlowForecastReport {
 				c.setTime(CommonUtil.getMonthLastDay(c.getTime()));
 				int lastDay = c.get(Calendar.DAY_OF_MONTH);
 				c.set(Calendar.DAY_OF_MONTH, (lastDay < cff.getPaymentDay())?lastDay:cff.getPaymentDay());
-				if (!c.getTime().after(getToDate())) {
-					dates.add(c.getTime());	
+				Date date = c.getTime();
+				if (!cff.getStartDate().after(date)) { // La fecha resultante es mayor que el inicio de la prevision.
+					if (cff.getDueDate() == null || !cff.getDueDate().before(date)) { // La fecha resultante es mayor que el fin de la prevision.	
+						if (!c.getTime().after(getToDate())) { // La fecha resultante es menor que la fecha hasta
+							if (!c.getTime().before(getFromDate())){ // La fecha resultante es mayor que la fecha desde
+								dates.add(c.getTime());	
+							}
+						}
+					}
 				}
 			}
 		}

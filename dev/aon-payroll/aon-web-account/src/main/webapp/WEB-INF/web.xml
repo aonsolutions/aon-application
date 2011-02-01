@@ -300,9 +300,9 @@
 	<security-role><role-name>Guest</role-name></security-role>
 	<security-role><role-name>Admin</role-name></security-role>
 	<security-role><role-name>Auditor</role-name></security-role>
-	<security-role><role-name>Accounting</role-name></security-role>
-	<security-role><role-name>Invoicing</role-name></security-role>
 	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>Finance</role-name></security-role>
+	<security-role><role-name>Accounting</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonAccount</resource-env-ref-name>

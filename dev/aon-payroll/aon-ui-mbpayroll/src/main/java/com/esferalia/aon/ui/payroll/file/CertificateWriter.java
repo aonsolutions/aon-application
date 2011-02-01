@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +32,8 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -71,6 +74,10 @@ import com.esferalia.aon.payroll.core.nomina.NominaDAOFactory;
 import com.esferalia.aon.payroll.core.nomina.NominaParams;
 
 public class CertificateWriter {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CertificateWriter.class.getName());
+	private final String DATE_FORMAT = "yyyyMMdd";
+	private final String FINAL_END_DATE = "99991231";
 	
 	private Certificate certificate;
 	private IEmpleadoDAO empleadoDAO;
@@ -319,59 +326,58 @@ public class CertificateWriter {
 	private DistribucionJornada createDistribucionJornadaRecord(IRemesaCertificadoEmpresaDetalle detalle) {
 		List<ITrabajo> trabajosTP = null;
 		DistribucionJornada jornada = null;
-		
 		try {
 			trabajosTP = getEmpleadoDAO().getTrabajosTP(detalle.getEmpleado());
-		} catch(PayrollException e) {
+		} catch (PayrollException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
-		
-		if(trabajosTP != null && trabajosTP.size() > 0) {
+		if (trabajosTP != null && trabajosTP.size() > 0) {
 			Periodo periodo = null;
 			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
-			DateFormat dateDDMMYYYY = new SimpleDateFormat("ddMMyyyy");
-			
-			for(ITrabajo t:trabajosTP){
-				if(t.getTipoTP() != null && t.getDiasTP()!= null) {
-					if(periodo == null) {
+			DateFormat dateYYYYMMDD = new SimpleDateFormat(DATE_FORMAT);
+			for (ITrabajo t : trabajosTP) {
+				if (t.getTipoTP() != null && t.getDiasTP() != null) {
+					if (periodo == null) {
 						periodo = new Periodo();
-						
 						periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
-						
-						if(dateDDMMYYYY.format(t.getFecfin()).equals("31129999")) {
+						if (dateYYYYMMDD.format(t.getFecfin()).equals(FINAL_END_DATE)) {
 							periodo.setFechaFinPeriodo(parseFecha(detalle.getFechaBaja()));
 						}
 						else {
 							periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
 						}
-						
 						periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
 						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(), 5));
-					}
-					else if(periodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(parseToLength(t.getDiasTP(), 5)) && periodo.getTipoDistribucion().equals(parseTipoDistribucion(t.getTipoTP()))) {
-						periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
 					}
 					else {
-						listaPeriodos.add(periodo);
-						
-						periodo = new Periodo();
-						
-						periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
-						periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
-						periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
-						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(), 5));
+						try {
+							Date fechaInicioPeriodo = dateYYYYMMDD.parse(periodo.getFechaInicioPeriodo());
+							if (periodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(parseToLength(t.getDiasTP(), 5))
+									&& periodo.getTipoDistribucion().equals(parseTipoDistribucion(t.getTipoTP()))
+									&& differenceBetweenDates(t.getFecfin(),fechaInicioPeriodo).equals(2)) {
+								periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
+							}
+							else {
+								listaPeriodos.add(periodo);
+								periodo = new Periodo();
+								periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
+								periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
+								periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
+								periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(), 5));
+							}
+						} catch (ParseException e) {
+							String msg = "Error al obtener la fecha de inicio del periodo ("+e.getMessage()+")";
+							LOGGER.warn(msg);
+						}
 					}
 				}
 			}
-			
-			if(periodo != null) {
+			if (periodo != null) {
 				listaPeriodos.add(periodo);
-				
 				jornada = new DistribucionJornada();
 				jornada.setListaPeriodos(listaPeriodos);
 			}
 		}
-		
 		return jornada;
 	}
 	
