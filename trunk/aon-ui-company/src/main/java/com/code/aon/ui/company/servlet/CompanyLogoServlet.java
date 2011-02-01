@@ -1,33 +1,64 @@
 package com.code.aon.ui.company.servlet;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Company;
-import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.registry.servlet.RegistryAttachmentServlet;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.IAttachment;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.MimeResolver;
+import com.code.aon.ui.company.controller.CompanyDisplay;
+import com.code.aon.ui.util.DataSourceUtil;
+import com.code.aon.ui.util.DownloadUtil;
 
 /**
  * Servlet class invoked whenever a field form needs a Registry Attachment.
  * 
- * @author Consulting & Development. Aimar Tellitu - 29-jul-2005
+ * @author Consulting & Development. Aimar Tellitu - 01-feb-2011
  * @since 1.0
  */
-public class CompanyLogoServlet extends RegistryAttachmentServlet {
+public class CompanyLogoServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 2658337530508553434L;
+	private static final long serialVersionUID = 5043406396881442075L;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyLogoServlet.class.getName());
+	
+	/**
+	 * Finish download.
+	 *
+	 * @param response the response
+	 * @param out the out
+	 */
+	private void finishDownload( HttpServletResponse response, OutputStream out ) {
+		IOUtils.closeQuietly(out);
+		if ( response != null ) {
+			try {
+				response.flushBuffer();
+			} catch (IOException e) {
+				LOGGER.error( e.getMessage(), e );
+			}	
+		}
+	}
+	
+	private MimeType getMimeType( IAttachment attachment ) {
+		MimeType mt = MimeResolver.getMimeTypeByExtension(attachment.getDescription());
+		if ( mt == null ) {
+			mt =  MimeResolver.getMimeType(attachment.getData());
+		}
+		return mt;		
+	}
+	
 	/**
 	 * Retrieves the required RegistryAttachment from the database
 	 * 
@@ -37,45 +68,28 @@ public class CompanyLogoServlet extends RegistryAttachmentServlet {
 	 * @throws IOException the IO exception
 	 * @throws ServletException the servlet exception
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
+		OutputStream out = null;
 		try {
-			Company company = obtainCompany();
-			Criteria criteria = new Criteria();
-			IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-			criteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
-			criteria.addExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), ""+RegistryAttachmentType.LOGO.ordinal());
-			List list = getManagerBean().getList(criteria);
-			if (list.size() > 0) {
-				RegistryAttachment ra = (RegistryAttachment) list.get(0);
-				try {
-					res.setContentType(ra.getMimeType().getName());
-				}
-				catch (NullPointerException n) {}
-				res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
-				res.getOutputStream().write(ra.getData());
-				res.flushBuffer();
+			Properties dbProperties = DataSourceUtil.getDBProperties(req);
+			if (! dbProperties.isEmpty() ) {
+				CompanyDisplay companyDisplay = new CompanyDisplay(dbProperties);
+				if ( companyDisplay.hasLogo() ) {
+					IAttachment logo = companyDisplay.getLogo();
+					MimeType type = getMimeType(logo);
+					out = DownloadUtil.initDownload(res, null, type, logo.getSize());
+					InputStream in = new ByteArrayInputStream(companyDisplay.getCompanyLogo());
+					IOUtils.copyLarge(in, out);
+				}				
 			}
 		} catch (Throwable th) {
-			th.printStackTrace();
+			LOGGER.error( th.getMessage(), th );
 			throw new ServletException(th.getMessage(), th);
+		} finally {
+			finishDownload(res, out);
 		}
 	}
 
-	/**
-	 * Obtains the company
-	 * 
-	 * @return the company
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	@SuppressWarnings("unchecked")
-	private Company obtainCompany() throws ManagerBeanException {
-		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-		Iterator iter = companyBean.getList(null).iterator();
-		if(iter.hasNext()){
-			return (Company)iter.next();
-		}
-		return null;
-	}
+
 }
