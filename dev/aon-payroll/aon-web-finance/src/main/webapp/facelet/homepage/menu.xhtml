@@ -18,10 +18,10 @@
 				value="#{appBundle.menu_expenses}"
 				action="menu_expenses" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-expenses" />
-			<aon:commandLink id="utilities"
-				value="#{appBundle.menu_utilities}"
-				action="menu_utilities" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-utilities" />
+			<aon:commandLink id="treasury"
+				value="#{financeBundle.finance_menu_group}"
+				action="menu_treasury" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-treasury" />
 		</c:if>
 		<c:if test="#{aonRole.config}">
 			<aon:commandLink id="config"

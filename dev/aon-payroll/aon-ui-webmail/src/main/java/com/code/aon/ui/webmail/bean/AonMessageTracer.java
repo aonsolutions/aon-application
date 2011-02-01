@@ -29,7 +29,7 @@ public class AonMessageTracer implements IMimeType {
 	private final static Logger LOGGER = LoggerFactory.getLogger(BeanManager.class);
 
 	private static final Pattern CID_PATTERN = Pattern.compile(
-			"(cid:[^\"\']+)(\"|\')", Pattern.CASE_INSENSITIVE);
+			"=\\s*[\"\'](cid:[^\"\']+)[\"\']", Pattern.CASE_INSENSITIVE);
 	
 	private Message message;
 	
@@ -265,5 +265,5 @@ public class AonMessageTracer implements IMimeType {
 		}
 		return content;
     }
-	
+    
 }
