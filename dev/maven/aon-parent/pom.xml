@@ -106,7 +106,6 @@
                         <releaseVersion>6.0.0</releaseVersion>
                         <developmentVersion>6.1.0-SNAPSHOT</developmentVersion>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-
                         <tag>6.0.x</tag>
                         <tagBase>http://dev.esferalia.com/repos/aon-application/dev</tagBase>
                 </configuration>
