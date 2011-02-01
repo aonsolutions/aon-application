@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<aon:div id="empresasDataDiv">
+
+
+ 
+		<aon:editDataTable id="empresasData" var="to" rows="3"
+			value="#{empresa.model}"
+			columnClasses=" aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,">
+   		
+			
+			 <aon:rowSelector 
+			 reRender="actDataDiv,tabsInfo"  action="empresa_form">
+			<aon:actionListener method="#{empresa.onSelect}" />
+			
+			</aon:rowSelector>  
+
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;&#160;&#160;" />
+				</f:facet>
+
+				<h:commandButton alt="[#{bundle.aon_reset}]"
+					rendered="#{to==empresa.to}"
+					styleClass="aon-editDataTable-button aon-icon-rowSelector "
+					actionListener="#{empresa.onSelect}" action="empresa_form" />
+
+			<!--  	<aon:commandButton
+					styleClass="aon-editDataTable-button aon-icon-cancel"
+					rendered="#{to==empresa.to}" reRender="actDataDiv" immediate="true">
+					<aon:actionListener method="#{empresa.onCancel}" />
+				</aon:commandButton>-->
+
+				<f:facet name="footer">				
+				<h:commandButton alt="[#{bundle.aon_reset}]"
+					styleClass="aon-editDataTable-button aon-icon-reset"
+					actionListener="#{empresa.onReset}" action="empresa_form"
+					rendered="#{!empresa.new}" accesskey="#{bundle.aon_key_new_line}" />				
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+				</f:facet>
+				<aon:outputText value="#{to.cdg}" />
+
+			</aon:column>
+
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_principales_clientes_empresa}" />
+				</f:facet>
+				<aon:outputText value="#{to.descripcion}" />
+
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_principales_clientes_inirel}" />
+				</f:facet>
+				<aon:outputText value="#{to.fecini}" />
+
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_principales_clientes_finrel}" />
+				</f:facet>
+				<aon:outputText value="#{to.fecfin}" />
+
+			</aon:column>
+
+	 	</aon:editDataTable>
+		<aon:dataScroller2 for="empresasData" showNote="true" />  
+
+	</aon:div>
+
+</ui:composition>

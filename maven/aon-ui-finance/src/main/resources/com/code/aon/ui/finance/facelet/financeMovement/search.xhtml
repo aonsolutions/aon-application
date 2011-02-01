@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="financeMovementSearch">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_payment_movement}" />
+				<ui:param name="controller" value="#{financeMovement}" />
+				<ui:param name="skipResetButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{financeMovement}" />
+				<ui:define name="searchContent">
+
+					<aon:outputLabel 
+						value="#{financeBundle.finance_balance}"  />
+					<aon:inputText id="Saldo" required="true"
+						value="#{financeMovement.balance}"
+						size="10" />
+						
+					<aon:outputLabel 
+						value="#{financeBundle.finance_show}" />
+					<aon:selectOneMenu 
+						value="#{financeMovementSearch.financeType}">
+						<f:selectItem itemLabel="Todos" itemValue="0" />
+						<f:selectItem itemLabel="Cobros" itemValue="1" />
+						<f:selectItem itemLabel="Pagos" itemValue="2" />
+					</aon:selectOneMenu>	
+
+					<aon:outputLabel 
+						value="#{financeBundle.finance_finance_date}" />
+					<aon:div>
+						<aon:outputLabel for="Finance_dueDate-From" styleClass="aon-form-date-label aon-padding-right"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Finance_dueDate-From"
+							valueChangeListener="#{financeMovement.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="Finance_dueDate-To" styleClass="aon-form-date-label aon-padding-right"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Finance_dueDate-To"
+							valueChangeListener="#{financeMovement.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+					
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel for="Finance_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneRadio id="Finance_securityLevel"
+							valueChangeListener="#{controller.addExpression}">
+							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+						</aon:selectOneRadio>				
+					</c:if>
+
+					<aon:outputLabel for="Finance_registryBank_id"
+						value="#{configBundle.config_bank}" />
+					<aon:selectOneMenu id="Finance_registryBank_id"
+						value="#{financeMovementSearch.registryBank}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{companyCollections.companyBanks}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Finance_payMethod_id"
+						value="#{configBundle.config_pay_method}" />
+					<aon:div id="payMethodDiv">
+						<a4j:repeat value="#{financeMovementSearch.payMethods}" rowKeyVar="index" var="payMth">
+							<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+								<aon:selectOneMenu id="Finance_payMethod_id"
+									value="#{financeMovementSearch.payMethods[index]}">
+									<f:selectItem itemLabel="-" itemValue="#{financeMovementSearch.emptyPayMethod}"/>
+									<f:selectItems value="#{configCollections.payMethods}" />
+								 	<a4j:support event="onchange" reRender="payMethodDiv"/>
+								</aon:selectOneMenu>
+								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="payMethodDiv"
+									actionListener="#{financeMovementSearch.onRemovePayMethod}"
+									rendered="#{payMth.id != null}">
+									<f:param name="index" value="#{index}" />
+								</aon:commandButton>
+								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="payMethodDiv"
+									actionListener="#{financeMovementSearch.onAddPayMethod}"
+									rendered="#{(payMth.id != null) and (index == (financeMovementSearch.payMethodsSize-1))}"/>					
+							</aon:div>						
+						</a4j:repeat>
+					</aon:div>
+
+					<aon:outputText value="#{bundle.aon_status}"/>
+					<aon:selectManyCheckbox value="#{financeMovementSearch.financeStatuses}">
+						<f:selectItems value="#{financeCollections.financeStatuses}"/>
+					</aon:selectManyCheckbox>							
+	
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
+	</ui:define>
+</ui:composition>

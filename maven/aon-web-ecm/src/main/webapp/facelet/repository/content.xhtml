@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:div styleClass="aon-scroll-area" style="padding-top:0;">		
+			<aon:div styleClass="aon-section-title" style="padding-top:0;">
+				<aon:outputText value="#{menuBundle.aon_repository}" />
+			</aon:div>	
+			
+			<aon:form id="adminForm">
+				<aon:div>
+					<aon:panelGrid style="width:100%;border:0;" columns="2" cellspacing="2" cellpadding="2" 
+							columnClasses="aon-width-240 aon-vertical-align-top aon-noborder
+										,aon-noborder aon-width-auto aon-vertical-align-top">
+						<aon:panelGroup id="folderPanel" style="border:0;">
+							<aon:div styleClass="aon-toolbar" rendered="#{manager.administrator}">
+								<aon:commandButton id="folderNew" value="" title="#{menuBundle.aon_ecm_add}"
+									reRender="showFolderModalPanel"
+									styleClass="aon-finding-toolbar-item aon-icon-newFolder"
+									actionListener="#{manager.onNewFolder}" 
+									 />
+								<aon:confirmButton id="folderDelete" value="" title="#{menuBundle.aon_ecm_delete}"
+									reRender="folderPanel, documentPanel"
+									confirmTitle="Confirmar" confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{manager.folders.remove}"
+									styleClass="aon-finding-toolbar-item aon-icon-deleteFolder" 
+									 />
+							</aon:div> 
+				
+							<rich:tree id="tree" value="#{manager.folders.rootTreeNode}" var="item" 
+									nodeFace="#{item.type}"
+									nodeSelectListener="#{manager.folders.nodeSelected}"
+									reRender="documentPanel"
+									ajaxSubmitSelection="true"  
+									switchType="ajax"
+									toggleOnClick="true"
+									rowKeyVar="rowKey"
+									styleClass="aon-tree">
+					            <rich:treeNode type="folder" 
+					            		iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-inbox.png" 
+					            		icon="/aonResource/images/aon-icon/aon-icon-tree-inbox.png">
+					                <aon:outputText value="#{item.name}" />
+					            </rich:treeNode>
+							</rich:tree>
+						</aon:panelGroup>
+
+						<aon:div id="documentPanel">
+							<aon:div styleClass="aon-toolbar" style="margin-top:0;" 
+									rendered="#{manager.contentManagement}">
+								<aon:commandButton id="documentAdd" 
+									value="#{menuBundle.aon_ecm_add} #{menuBundle.aon_admin_document}"
+									title="#{menuBundle.aon_ecm_new}"
+									reRender="showDocumentModalPanel"
+									actionListener="#{manager.onNewDocument}"
+									styleClass="aon-finding-toolbar-item aon-icon-reset" />
+							</aon:div> 
+							<aon:div>
+								<aon:dataTable id="docDataList" 
+									value="#{manager.documents.model}" var="to"
+									styleClass="aon-dataTable" columnClasses="aon-dataTable-row-odd,aon-dataTable-row-even">									
+									<aon:rowSelector actionListener="#{manager.documents.documentSelected}" 
+										reRender="documentPanel"/>	
+			
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.aon_cdr_status}" />
+										</f:facet>
+										<aon:outputText value="#{to.status}"/>
+									</aon:column>
+			
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.aon_cdr_name}" />
+										</f:facet>
+										<aon:outputText value="#{to.name}"/>
+									</aon:column>
+			
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.aon_cdr_author}" />
+										</f:facet>
+										<aon:outputText value="#{to.userName}"/>
+									</aon:column>
+			
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.aon_cdr_version}" />
+										</f:facet>
+										<aon:outputText value="#{to.version}"/>
+									</aon:column>
+			
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.aon_cdr_entrydate}" />
+										</f:facet>
+										<aon:outputText value="#{to.created}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
+										</aon:outputText>
+									</aon:column>
+								</aon:dataTable>							
+							</aon:div>
+							<aon:div styleClass="aon-separator"><aon:outputText value="&nbsp;" /></aon:div>
+							<aon:div rendered="#{manager.documents.selected.name != null}" styleClass="aon-group">
+								<aon:div styleClass="aon-group-title">
+									<aon:outputText id="path" value="#{manager.folders.selectedNode.node.path}/" style="font-weight:normal;" />
+									<aon:outputText value="#{manager.documents.selected.name}" style="font-size:1.2em;margin: 0 5px;" />
+								</aon:div>
+								
+								<aon:div styleClass="aon-group-body">
+									<aon:div styleClass="aon-group-body-internal">
+										<aon:div styleClass="aon-toolbar aon-toolbar-inner" 
+												rendered="#{manager.contentManagement}">				
+			
+											<h:commandLink id="documentDownload"
+												title="#{menuBundle.aon_admin_document_download}"
+												actionListener="#{manager.documents.download}"
+												styleClass="aon-finding-toolbar-item aon-icon-file-download"
+												rendered="#{manager.menu.visible}" 
+												target="_blank"
+												value="#{menuBundle.aon_admin_document_download}"/>
+					
+											<aon:commandButton id="documentUpdate" 
+												title="#{menuBundle.aon_ecm_update}"
+												actionListener="#{manager.documents.update}"					
+												styleClass="aon-finding-toolbar-item aon-icon-accept"
+												rendered="#{manager.menu.visible and !manager.documents.selected.locked}" 
+												reRender="documentPanel"
+												value="#{menuBundle.aon_ecm_update}" />
+
+											<aon:commandButton id="documentLock" 
+												title="#{menuBundle.aon_admin_document_lock}"
+												actionListener="#{manager.documents.lock}"					
+												styleClass="aon-finding-toolbar-item aon-icon-document-lock"
+												rendered="#{manager.menu.visible and !manager.documents.selected.locked}" 
+												reRender="documentPanel"
+												value="#{menuBundle.aon_admin_document_lock}" />
+										
+											<aon:commandButton id="documentUnlock"
+												title="#{menuBundle.aon_admin_document_unlock}"
+												actionListener="#{manager.documents.unlock}"					
+												styleClass="aon-finding-toolbar-item aon-icon-document-unlock"
+												rendered="#{manager.menu.visible and manager.documents.selected.locked}" 
+												reRender="documentPanel"
+												value="#{menuBundle.aon_admin_document_unlock}" />
+											
+											<aon:confirmButton id="documentDelete"
+												title="#{menuBundle.aon_admin_document_delete}"
+												confirmTitle="Confirmar" 
+												confirmMessage="#{bundle.aon_remove_confirm}"
+												confirmActionListener="#{manager.documents.remove}"
+												styleClass="aon-finding-toolbar-item aon-icon-delete"
+												rendered="#{manager.menu.visible}" 
+												reRender="documentPanel"
+												value="#{menuBundle.aon_admin_document_delete}" />
+						
+											<aon:commandButton id="documentVersionCheckIn" 
+												value="#{menuBundle.aon_version_checkin}"
+												title="#{menuBundle.aon_version_checkin}"
+												actionListener="#{manager.onStartCheckin}"
+												styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+												rendered="#{manager.menu.visible and manager.documents.checkedOut}" 
+												reRender="showCheckinModalPanel, documentPanel" />
+											
+											<h:commandLink id="documentVersionCheckOut"
+													title="#{menuBundle.aon_version_checkout}"
+													actionListener="#{manager.documents.checkout}"
+													styleClass="aon-finding-toolbar-item aon-icon-file-exit"
+													rendered="#{manager.menu.visible and !manager.documents.checkedOut}"
+													target="_blank" onclick="return true;"
+													value="#{menuBundle.aon_version_checkout}" />
+					
+											<aon:commandButton id="restore"
+												title="#{menuBundle.aon_version_uncheckout}"
+												actionListener="#{manager.documents.restore}"
+												styleClass="aon-finding-toolbar-item aon-icon-file-exit-cancel"
+												rendered="#{manager.menu.visible and manager.documents.checkedOut}"
+												reRender="documentPanel"
+												value="#{menuBundle.aon_version_uncheckout}" />
+										</aon:div>
+
+										<rich:tabPanel switchType="ajax" 
+													rendered="#{manager.documents.selected != null}" >
+											<rich:tab label="#{menuBundle.aon_admin_document_properties}">
+												<ui:include src="/facelet/repository/actions/documentProperties.xhtml" />	
+											</rich:tab>
+											<rich:tab label="#{menuBundle.aon_admin_document_versions}">
+												<ui:include src="/facelet/repository/actions/documentVersionHistory.xhtml" />	
+											</rich:tab>
+											<rich:tab label="#{menuBundle.aon_admin_document_permissions}">
+												<ui:include src="/facelet/repository/actions/documentPermissions.xhtml" />	
+											</rich:tab>
+										</rich:tabPanel>
+									</aon:div>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+
+					</aon:panelGrid>
+				</aon:div>
+			</aon:form>
+		</aon:div>
+
+		<ui:include src="/facelet/repository/actions/folderModalPanel.xhtml" />	
+		<ui:include src="/facelet/repository/actions/documentModalPanel.xhtml" />	
+		<ui:include src="/facelet/repository/actions/checkinModalPanel.xhtml" />
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>

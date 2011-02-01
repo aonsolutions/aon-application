@@ -1,0 +1,16 @@
+<div class="content">
+<div class="content-text">	
+<div class="titular">$!title</div>
+<table width="90%">
+  <tr>
+    <td>
+    	#foreach ($image in $images)
+		<img src='../images/$!image.getName()'/>
+		<!--$!image.getDescription();-->
+    	#end
+    </td>
+    <td>$!text</td>
+  </tr>
+</table>
+</div>
+</div>

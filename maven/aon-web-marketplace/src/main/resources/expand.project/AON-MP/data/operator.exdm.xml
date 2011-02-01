@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="operator">
+    <columns>
+        <column label="" name="person" sqlType="integer" type="integer"/>
+        <column label="" length="1" name="manager" sqlType="bit" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="person"/>
+    </primaryKey>
+    <joins>
+        <join description="operator_ibfk_1" foreignPath="data/person.exdm.xml">
+            <sourceColumns>
+                <column name="person"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="entidadMaestroList">
+			
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_entidades}" />
+				<ui:param name="controller" value="#{entidadMaestro}" />
+				<ui:param name="reportKey" value="EntidadListPrint"/>
+				<ui:param name="reportKeyXls" value="EntidadListPrint"/>
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
+			</ui:include>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="entidadMaestroData" value="#{entidadMaestro.model}"
+					var="to" rows="20" rendered="#{entidadMaestro.model.rowCount > 0}"
+					columnClasses="aon-width-150, aon-editDataTable-textColumn">
+
+					<aon:rowSelector action="entidadMaestro_form" actionListener="#{entidadMaestro.onSelect}" />
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+						</f:facet>
+						<aon:outputText value="#{to.cdg}"/>
+					</aon:column>
+
+ 					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_description}" />
+						</f:facet>
+						<aon:outputText value="#{to.description}"/>
+					</aon:column>
+
+ 					
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="entidadMaestroData" showNote="true" />
+
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

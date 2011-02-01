@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{registryBundle.registry_person}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.contract.person.registry.fullName}"/>
+		</aon:div>
+	</aon:column>
+
+	<c:if test="#{!skipEnterpriseColumn}">		
+		<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
+			styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{companyBundle.company_enterprise}" />
+			</f:facet>
+			<aon:div styleClass="aon-nowrap">
+				<aon:outputText value="#{to.contract.workPlace.enterprise.registry.fullName}"/>
+			</aon:div>
+		</aon:column>
+	</c:if>
+
+	<aon:column alias="Contract.contractType.description"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{employeeBundle.employee_contractType}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.contract.contractType.description}"/>
+		</aon:div>
+	</aon:column>
+			
+	<aon:column alias="Contract.ccc.activity.description"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{companyBundle.company_activity}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.contract.ccc.activity.description}"/>
+		</aon:div>
+	</aon:column>
+	
+	<aon:column alias="Contract.startDate"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_start_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.contract.startDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+	</aon:column>
+
+</ui:composition>

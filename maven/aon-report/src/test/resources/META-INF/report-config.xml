@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+
+	<default-config>
+
+		<fetch-mode paginated="false" />
+		
+		<params>
+			<param id="logo"
+				value="com/code/aon/report/resources/aon_p.jpg" />
+			<param id="logo2"
+				value="com/code/aon/report/resources/aon_p.jpg2" />
+			<param id="header" value="true" />
+			<param id="footer" value="true" />
+			<param id="format" value="mixed" />
+		</params>
+	</default-config>
+
+	<report id="payform" description="Pay form's report">
+		<template
+			path="/com/transtools/stock/resources/report/payform.jasper" />
+		<bean key="PayForm" />
+		<criteria provider="#{payform}" />
+	</report>
+
+	<report id="customer" description="Customer's report">
+
+		<template
+			path="/com/transtools/stock/resources/report/customer.jasper" />
+		<bean key="Customer" />
+		<criteria provider="#{customer}" forceRefresh="true"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+	</report>
+
+	<report id="supplier" description="Supplier's report">
+		<template
+			path="/com/transtools/stock/resources/report/supplier.jasper" />
+		<bean key="Supplier" />
+		<criteria provider="#{customer}" />
+	</report>
+
+	<report id="item" description="Items's report">
+		<template
+			path="/com/transtools/stock/resources/report/item.jasper" />
+		<collection provider="#{item}" forceRefresh="true"/>
+	</report>
+
+	<report id="order" description="Order's report">
+		<template
+			path="/com/transtools/stock/resources/report/order.jasper" />
+		<bean key="Order" />
+		<criteria provider="#{order}" />
+		<nested-report report="orderLines" />
+	</report>
+
+	<report id="orderFormulary" description="Order's form">
+		<template
+			path="/com/transtools/stock/resources/report/orderForm.jasper" />
+		<bean key="Order" />
+		<criteria provider="#{order}" />
+		<nested-report report="orderLines" />
+	</report>
+
+	<report id="orderLines" description="Order Lines form">
+		<template
+			path="/com/transtools/stock/resources/report/orderLines.jasper" />
+	</report>
+
+	<report id="state" description="States's report">
+		<template
+			path="/com/transtools/stock/resources/report/state.jasper" />
+		<bean key="State" />
+		<criteria provider="#{state}" />
+	</report>
+
+	<!--  *********  InvoiceList  ********* -->
+	<report id="salesInvoiceList" description="Sales Invoice's List">
+		<template path="/com/code/aon/ui/finance/report/salesInvoiceList.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{feeInvoicing}"/>
+		<fetch-mode paginated="true" page-count="100" virtualizer-max-size="50"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="customer" value="#{feeInvoicing.getCustomer}" />
+		</params>
+	</report>
+
+</report-config>
+

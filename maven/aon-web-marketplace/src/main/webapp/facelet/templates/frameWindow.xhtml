@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"	
+	xmlns:c="http://java.sun.com/jstl/core"		
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+	<head>
+		<title>
+			<ui:insert name="title">Title</ui:insert>					
+		</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
+			<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
+		</c:forEach>
+	  	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
+			<t:stylesheet path="#{styleSheet}" />
+		</c:forEach>
+		<ui:insert name="head"/>
+	</head>
+	<body id="aon-body">
+		<ui:insert name="content"/>
+	</body>
+</f:view>	
+</html>
+

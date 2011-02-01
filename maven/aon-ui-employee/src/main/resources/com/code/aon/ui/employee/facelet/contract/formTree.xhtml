@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="contractForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salary_module}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="person"
+						value="#{registryBundle.registry_person}"
+						action="person_form" actionListener="#{enterpriseTree.onEditPerson}"
+						styleClass="aon-finding-toolbar-item aon-icon-contact" >
+						<f:setPropertyActionListener
+							target="#{person.backAction}" value="contract_formTree" />
+						<f:setPropertyActionListener
+							target="#{person.backActionListener}" value="person.onBack" />													
+					</aon:commandButton>
+					<aon:commandButton id="contract"
+						value="#{employeeBundle.employee_contract}"
+						action="contract_form" actionListener="#{contract.onEdit}"
+						styleClass="aon-finding-toolbar-item aon-icon-category" >
+						<f:setPropertyActionListener
+							target="#{contract.backAction}" value="contract_formTree" />
+						<f:setPropertyActionListener
+							target="#{contract.backActionListener}" value="contract.onBack" />													
+					</aon:commandButton>
+					<c:if test="#{salary.model.rowCount > 0}" >
+						<ui:include src="/com/code/aon/ui/employee/facelet/salary/buttons.xhtml" />
+					</c:if>
+					<aon:commandButton id="calendar"
+						value="#{calendarBundle.aon_calendar_calendar}"
+						action="calendar_form" 
+						styleClass="aon-finding-toolbar-item aon-icon-calendar">
+						<f:setPropertyActionListener target="#{calendar.sourceKey}"
+							value="3" />
+						<f:setPropertyActionListener target="#{calendar.sourceId}"
+							value="#{enterpriseTree.contract.id}" />
+						<aon:actionListener method="#{calendar.onInitialize}" />
+						<f:setPropertyActionListener
+							target="#{calendar.backAction}" value="contract_formTree" />						
+						<f:setPropertyActionListener
+							target="#{calendar.backActionListener}" value="calendar.onBack" />												
+					</aon:commandButton>		
+					<aon:spin id="enterpriseSpin" controller="#{salary}" />
+				</ui:define>				
+			</ui:decorate>		
+
+			<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{enterpriseTree.showContractHeader}" >
+					<aon:panelGrid columns="2" style="width:100%"
+						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
+						
+						<c:if test="#{salary.model.rowCount == 0}" >
+							<aon:outputText value="#{bundle.aon_name}" />
+							<aon:outputText value="#{enterpriseTree.contract.person.fullName}" />
+							
+							<aon:outputText value="#{bundle.aon_document}" />
+							<aon:panelGroup>
+								<aon:inputText value="#{enterpriseTree.contract.person.registry.document}"
+									readonly="true" />						
+								<aon:outputText value="#{bundle.aon_type}" styleClass="aon-margin-left aon-italic"/>
+								<aon:inputText value="#{enterpriseTree.contract.person.registry.documentType}"
+									styleClass="aon-margin-left" readonly="true" />
+								<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-margin-left aon-italic"/>
+								<aon:inputText value="#{enterpriseTree.contract.person.registry.documentCountry}"
+									styleClass="aon-margin-left" readonly="true" />
+							</aon:panelGroup>
+							
+							<aon:outputText value="#{registryBundle.registry_person_nss}" />
+							<aon:outputText value="#{enterpriseTree.contract.person.socialSecurityNumber}" />
+		
+							<aon:outputText value="#{employeeBundle.employee_contract}" />
+							<aon:panelGroup>
+								<aon:outputText value="#{bundle.aon_start_date}" styleClass="aon-italic"/>
+								<aon:inputText value="#{enterpriseTree.contract.startDate}"
+									styleClass="aon-margin-left" readonly="true" >
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:inputText>		
+								<aon:outputText value="#{bundle.aon_end_date}" styleClass="aon-margin-left aon-italic"/>
+								<aon:inputText value="#{enterpriseTree.contract.endDate}"
+									styleClass="aon-margin-left" readonly="true" >
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:inputText>		
+							</aon:panelGroup>
+						</c:if>
+						
+						<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" >
+							<ui:param name="controller" value="#{enterpriseTree}" />
+						</ui:include>
+								
+					</aon:panelGrid>
+				</c:if>
+				
+				<c:if test="#{salary.model.rowCount > 0}" >
+					
+					<aon:div style="width: 840px; margin-top: 10px;">
+						<ui:include src="/com/code/aon/ui/employee/facelet/salary/formEditContent.xhtml" >
+							<ui:param name="controller" value="#{salary}" />
+						</ui:include>
+						<ui:include src="/com/code/aon/ui/employee/facelet/payment/gridContent.xhtml" >
+							<ui:param name="controller" value="#{salary.to.payments}" />
+							<ui:param name="totalPayment" value="#{salary.to.totalPayment}" />
+						</ui:include>
+						<ui:include src="/com/code/aon/ui/employee/facelet/deduction/gridContent.xhtml" >
+							<ui:param name="controller" value="#{salary.to.deductions}" />
+							<ui:param name="totalDeduction" value="#{salary.to.totalDeduction}" />
+						</ui:include>
+						<ui:include src="/com/code/aon/ui/employee/facelet/salary/formBases.xhtml" >
+							<ui:param name="salaryTO" value="#{salary.to}" />
+						</ui:include>					
+					</aon:div>
+												
+				</c:if>
+
+			</aon:div>
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+	</ui:define>
+</ui:composition>

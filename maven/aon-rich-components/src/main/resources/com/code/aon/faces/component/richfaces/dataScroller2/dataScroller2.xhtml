@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"	
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div styleClass="aon-note"
+		rendered="#{model.rowCount == 0 and showNote}">
+		<aon:div styleClass="aon-note-internal">
+			<aon:panelGroup>
+				<aon:outputText value="#{bundle.aon_search_no_results}" />
+			</aon:panelGroup>
+		</aon:div>
+	</aon:div>
+
+	<aon:div styleClass="aon-dataScroller2" rendered="#{model.rowCount>0}">					
+	    <aon:panelGrid id="#{dataTable}MessageDataScroller" columns="2" columnClasses="aon-dataScroller2-text,aon-dataScroller2-buttons">
+			<aon:div>
+				<aon:outputFormat value="#{bundle.aon_scroll}">
+					<f:param value="#{model.first+1}" />
+					<f:param value="#{model.last}" />
+					<f:param value="#{model.rowCount}" />
+				</aon:outputFormat>
+			</aon:div>
+			<c:if test="#{model.showControls}">
+				<aon:div>
+	
+					<aon:commandButton id="#{dataTable}FirstScroll" ajaxSingle="true" process="#{dataTable}"
+						disabled="#{!model.previousNeeded}" actionListener="#{model.first}"
+						oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
+						reRender="#{dataTable},#{dataTable}MessageDataScroller"
+						styleClass="aon-dataScroller2-button #{model.previousNeeded?'aon-dataScroller2-button-first':'aon-dataScroller2-button-first-disabled'}">
+						<c:if test="#{!disableHotKeys and model.previousNeeded}" >
+							<aon:actionHotKey key="home" disableInInput="true" />
+						</c:if>
+					</aon:commandButton>
+	
+					<aon:commandButton id="#{dataTable}PreviousScroll" ajaxSingle="true" process="#{dataTable}"
+						disabled="#{!model.previousNeeded}" actionListener="#{model.previous}"
+						oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
+						reRender="#{dataTable},#{dataTable}MessageDataScroller"
+						styleClass="aon-dataScroller2-button #{model.previousNeeded?'aon-dataScroller2-button-previous':'aon-dataScroller2-button-previous-disabled'}">
+						<c:if test="#{!disableHotKeys and model.previousNeeded}" >
+							<aon:actionHotKey key="pageUp" />
+						</c:if>						
+					</aon:commandButton>
+					
+					<a4j:repeat value="#{model.pages}" var="page">
+						<aon:commandLink id="#{dataTable}PageScroll"
+							rendered="#{(model.currentPage+1) != page}"
+							ajaxSingle="true" process="#{dataTable}" eventsQueue="aon_ds" 
+							actionListener="#{model.moveToPage}" oncomplete="#{oncomplete}"
+							reRender="#{dataTable},#{dataTable}MessageDataScroller"
+							styleClass="aon-dataScroller2-inactive">
+							<f:param name="page" value="#{page}" />
+							<aon:outputText value="#{page}" />
+						</aon:commandLink>
+						<aon:outputText rendered="#{(model.currentPage+1) == page}"
+							styleClass="aon-dataScroller2-selected"
+							value="#{page}"/>
+					</a4j:repeat>
+					
+					<aon:commandButton id="#{dataTable}NextScroll" ajaxSingle="true" process="#{dataTable}"
+						disabled="#{!model.nextNeeded}" actionListener="#{model.next}"
+						oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
+						reRender="#{dataTable},#{dataTable}MessageDataScroller"
+						styleClass="aon-dataScroller2-button #{model.nextNeeded?'aon-dataScroller2-button-next':'aon-dataScroller2-button-next-disabled'}">
+						<c:if test="#{!disableHotKeys and model.nextNeeded}" >
+							<aon:actionHotKey key="pageDown" />
+						</c:if>						
+					</aon:commandButton>
+	
+					<aon:commandButton id="#{dataTable}LastScroll" ajaxSingle="true" process="#{dataTable}"
+						disabled="#{!model.nextNeeded}" actionListener="#{model.last}"
+						oncomplete="#{oncomplete}" requestDelay="100" eventsQueue="aon_ds"
+						reRender="#{dataTable},#{dataTable}MessageDataScroller"
+						styleClass="aon-dataScroller2-button #{model.nextNeeded?'aon-dataScroller2-button-last':'aon-dataScroller2-button-last-disabled'}">
+						<c:if test="#{!disableHotKeys and model.nextNeeded}" >
+							<aon:actionHotKey key="end" disableInInput="true" />
+						</c:if>
+					</aon:commandButton>
+					
+				</aon:div>
+			</c:if>
+		</aon:panelGrid>	
+	</aon:div>
+
+</ui:composition>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Productos" label="Productos" sqlSentence="SELECT invoice_detail.item, product.name description, &#xd;&#xa;&#x9;SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;&#xa;  FROM invoice_detail, invoice, item, product&#xd;&#xa; WHERE product.id = item.product &#xd;&#xa;   AND invoice_detail.item = item.id &#xd;&#xa;   AND invoice_detail.invoice = invoice.id&#xd;&#xa;   AND invoice.type = ?&#xd;&#xa;   AND invoice.issue_date BETWEEN ? AND ?&#xd;&#xa; GROUP BY 1,2&#xd;&#xa; ORDER BY 3 DESC">
+    <parameters>
+        <parameter name="type" type="INTEGER"/>
+        <parameter name="iniDate" type="DATE"/>
+        <parameter name="endDate" type="DATE"/>
+    </parameters>
+    <results>
+        <result accessName="ITEM_ID" columnId="item" export="true"
+            label="Codigo" tableId="invoice_detail" type="INTEGER"/>
+        <result accessName="ITEM_NAME" columnId="name" export="true"
+            label="Producto" tableId="product" type="STRING"/>
+        <result accessName="total"
+            columnId="SUM(TRUNCATE(invoice_detail.taxable_base,2))"
+            label="Total" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>
