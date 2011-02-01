@@ -4,6 +4,7 @@
 
 APP=aon-desktop
 
+
 if ! aondir_has_app $APP; then
 
         aondir-addapp $APP &>/dev/null
@@ -20,6 +21,24 @@ if ! aondir_has_app $APP; then
 
         aondir-addprofile Administrador $APP Admin User &>/dev/null
         aondir-addprofile User $APP User DocumentsVisible &>/dev/null
+else
+	aondir-delrole $APP &>/dev/null
+	
+        aondir-addrole User $APP &>/dev/null
+        aondir-addrole Guest $APP &>/dev/null
+        aondir-addrole Admin $APP &>/dev/null
+        aondir-addrole Confidentiality $APP &>/dev/null
+        aondir-addrole FAXSender $APP &>/dev/null
+        aondir-addrole SMSSender $APP &>/dev/null
+        aondir-addrole DocumentsVisible $APP &>/dev/null
+        aondir-addrole CorporativeDocumentsManager $APP &>/dev/null
+        aondir-addrole PredefinedDocumentsExecutable $APP &>/dev/null
+
+	ldapsearch -D "$ROOTDN" -x -w $ROOTPW -H $URL \
+	-b "ou=profiles,cn=aon-desktop,ou=applications,o=aondirectory" \
+	"member=cn=Manager,ou=roles,cn=aon-desktop,ou=applications,o=aondirectory"  -LLL member |\
+ 	sed -e 's/\(^dn:.*$\)/\1\r\n\r\nchangetype: modify/' -e 's/cn=Manager/cn=Admin/' |\
+	ldapmodify -D "$ROOTDN" -x -w $ROOTPW -H $URL
 
 fi
 
