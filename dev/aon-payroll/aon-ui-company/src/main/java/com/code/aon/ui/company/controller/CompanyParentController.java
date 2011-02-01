@@ -1,5 +1,9 @@
 package com.code.aon.ui.company.controller;
 
+import static com.code.aon.bridge.session.LoggedUser.LOGGED_USER;
+import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
+import static com.code.aon.ldap.ILdapConstants.DOCUMENT_MANAGEMENT_ATTRIBUTE;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +13,9 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.naming.Name;
 
+import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -17,6 +23,9 @@ import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.geozone.GeoZone;
+import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
@@ -81,6 +90,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printRecordData;
 	
 	private boolean smartCard;
+	
+	private boolean documentManagement;
 
     /**
      * Gets the company label.
@@ -563,6 +574,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.smartCard = smartCard;
 	}
 
+	public boolean isDocumentManagement() {
+		return documentManagement;
+	}
+
+	public void setDocumentManagement(boolean documentManagement) {
+		this.documentManagement = documentManagement;
+	}
+
 	/**
 	 * Gets the child bean.
 	 * 
@@ -614,6 +633,18 @@ public class CompanyParentController extends BasicController implements ICompany
 	public boolean obtainSmartCard() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(SMART_CARD_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+	}
+
+	public boolean obtainDocumentManagement() throws ManagerBeanException {
+		LoggedUser _loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER);
+		String domain = _loggedUser.getPrincipal().getDomain();
+		Name domainDN = NameResolver.getDomainDN(domain);
+		BasicLdap ldap = new BasicLdap();
+		Entry entry = ldap.get(domainDN, DOMAIN, DOCUMENT_MANAGEMENT_ATTRIBUTE);
+		if ( (entry != null) && entry.containsKey(DOCUMENT_MANAGEMENT_ATTRIBUTE) ) {
+			return entry.toBoolean(DOCUMENT_MANAGEMENT_ATTRIBUTE);
+		}
+		return false;
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -111,10 +111,10 @@
 								<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="11" />
 							</aon:selectOneMenu>								
 
-							<aon:outputLabel for="Domain_dnsManagement"
-								value="#{managerBundle.manager_domain_dnsManagement}" />
-			                <aon:selectBooleanCheckbox id="Domain_dnsManagement"
-								value="#{domain.to.dnsManagement}"/>
+							<aon:outputLabel for="Domain_documentManagement"
+								value="#{managerBundle.manager_domain_documentManagement}" />
+			                <aon:selectBooleanCheckbox id="Domain_documentManagement"
+								value="#{domain.to.documentManagement}"/>
 		
 							<aon:outputLabel for="Domain_userManagement"
 								value="#{managerBundle.manager_domain_userManagement}" />
@@ -125,6 +125,12 @@
 								value="#{managerBundle.manager_domain_domainManagement}" />
 			                <aon:selectBooleanCheckbox id="Domain_domainManagement"
 								value="#{domain.to.domainManagement}"/>
+
+							<aon:outputLabel for="Domain_dnsManagement"
+								value="#{managerBundle.manager_domain_dnsManagement}" />
+			                <aon:selectBooleanCheckbox id="Domain_dnsManagement"
+								value="#{domain.to.dnsManagement}"/>
+		
 						</aon:panelGrid>
 						
                     </aon:panelTab>

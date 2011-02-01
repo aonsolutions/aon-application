@@ -1,5 +1,8 @@
 package com.code.aon.supplier;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,24 +10,29 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.supplier.enumeration.SupplierStatus;
 
 /**
@@ -54,6 +62,9 @@ public class Supplier implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	
 	/** The scope. */
 	private Scope scope;
+	
+	/** The documents. */
+	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	
 	/**
 	 * Gets the id.
@@ -175,27 +186,49 @@ public class Supplier implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public boolean isTaxFree() {
 		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}
+	
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryAttachment> getDocuments() {
+		return documents;
+	}
+	
+	public void setDocuments(Set<RegistryAttachment> documents) {
+		this.documents = documents;
+	}	
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Supplier o = (Supplier) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.registry, o.registry)
+				.append(this.scope, o.scope)
+				.append(this.status, o.status)
+				.append(this.transaction, o.transaction)
+				.append(this.withholding, o.withholding)
+				.isEquals();
 		}
-		if (obj instanceof Supplier) {
-			Supplier o = (Supplier) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()		
+			.append(id)
+			.append(registry)
+			.append(scope)
+			.append(status)
+			.append(transaction)
+			.append(withholding)
+			.toHashCode();
 	}
 
 	@Override
-	public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}
 
 }

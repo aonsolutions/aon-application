@@ -19,6 +19,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setPrintHeader(companyController.obtainPrintHeader());
 			companyController.setPrintRecordData(companyController.obtainPrintRecordData());
 			companyController.setSmartCard(companyController.obtainSmartCard());
+			companyController.setDocumentManagement(companyController.obtainDocumentManagement());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

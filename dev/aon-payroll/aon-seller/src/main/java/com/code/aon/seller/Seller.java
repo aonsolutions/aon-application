@@ -1,5 +1,8 @@
 package com.code.aon.seller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -25,6 +29,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.CommissionType;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.seller.enumeration.SellerStatus;
 
 @Entity
@@ -37,6 +42,7 @@ public class Seller implements ITransferObject, IRegistry {
 	private Registry registry;
 	private CommissionType commissionType;
 	private SellerStatus status;
+	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 
 	@Id
 	@Column(name="registry")
@@ -81,6 +87,15 @@ public class Seller implements ITransferObject, IRegistry {
 	public void setStatus(SellerStatus status) {
 		this.status = status;
 	}
+	
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryAttachment> getDocuments() {
+		return documents;
+	}
+	
+	public void setDocuments(Set<RegistryAttachment> documents) {
+		this.documents = documents;
+	}	
 
 	@Override
 	public boolean equals(Object obj) {
