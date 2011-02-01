@@ -37,7 +37,8 @@ public class FinanceCollectionsController {
 	private List<SelectItem> creditorStatuses;
 	private List<SelectItem> financeTrackingTypes;
 	private List<SelectItem> financeBatchStatus;
-	private List<SelectItem> financeBatchTypes;
+	private List<SelectItem> financeBatchPaymentTypes;
+	private List<SelectItem> financeBatchChargeTypes;
 	private List<SelectItem> financeStatuses;
 	private List<SelectItem> invoiceTypes;
 	private List<SelectItem> invoiceStatuses;
@@ -96,17 +97,34 @@ public class FinanceCollectionsController {
 		return financeBatchStatus;
 	}
 
-	public List<SelectItem> getFinanceBatchTypes() {
-		if (financeBatchTypes == null) {
+	public List<SelectItem> getFinanceBatchPaymentTypes() {
+		if (financeBatchPaymentTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			financeBatchTypes = new LinkedList<SelectItem>();
+			financeBatchPaymentTypes = new LinkedList<SelectItem>();
 			for (FinanceBatchType type:FinanceBatchType.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				financeBatchTypes.add(item);
+				if (type.isPayment() == null || type.isPayment()) {
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					financeBatchPaymentTypes.add(item);
+				}
 			}
 		}
-		return financeBatchTypes;
+		return financeBatchPaymentTypes;
+	}
+
+	public List<SelectItem> getFinanceBatchChargeTypes() {
+		if (financeBatchChargeTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			financeBatchChargeTypes = new LinkedList<SelectItem>();
+			for (FinanceBatchType type:FinanceBatchType.values()) {
+				if (type.isPayment() == null || !type.isPayment()) {
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					financeBatchChargeTypes.add(item);
+				}
+			}
+		}
+		return financeBatchChargeTypes;
 	}
 
 	public List<SelectItem> getFinanceStatuses() {

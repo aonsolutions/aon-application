@@ -15,7 +15,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
-import com.code.aon.ui.finance.controller.FinanceController;
+import com.code.aon.ui.finance.controller.FinanceListController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -29,8 +29,9 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		FinanceBatch fBatch = (FinanceBatch)event.getController().getTo();
-		fBatch.setPayment(false);
+		FBatchController fBatchController = (FBatchController)event.getController();
+		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
+		fBatch.setPayment(fBatchController.isPayment());
 		fBatch.setIssueDate(new Date());
 		fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
 		fBatch.setSecurityLevel(SecurityLevel.OFFICIAL);
@@ -40,9 +41,13 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		FBatchController fBatchController = (FBatchController)event.getController();
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
-		fBatchController.loadAvailableFinances(fBatch.isPayment());
 		fBatchController.setRecordDate(fBatch.getIssueDate());
 		fBatchController.setAebOutput(null);
+		try {
+			fBatchController.loadAvailableFinances();
+		} catch(ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
     @Override
@@ -69,22 +74,30 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
     public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
         FBatchController fBatchController = (FBatchController)event.getController();
         FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
-        fBatchController.loadAvailableFinances(fBatch.isPayment());
 		fBatchController.setRecordDate(fBatch.getIssueDate());
 		fBatchController.setAebOutput(null);
+		try {
+			fBatchController.loadAvailableFinances();
+		} catch(ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
     }
 
     @Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		FBatchController fBatchController = (FBatchController)event.getController();
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
-		fBatchController.loadAvailableFinances(fBatch.isPayment());
 		fBatchController.setRecordDate(fBatch.getIssueDate());
 		fBatchController.setAebOutput(null);
+		try {
+			fBatchController.loadAvailableFinances();
+		} catch(ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 
         FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
         fBatchDetailController.clearCheckedFinanceBatchDetails();
-        FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
+        FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
         financeController.clearCheckedFinances();
     }
 

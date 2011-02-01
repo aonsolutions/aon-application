@@ -15,6 +15,7 @@ import com.code.aon.ui.webmail.controller.ContactController;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailAccountController;
 import com.code.aon.ui.webmail.controller.SignatureController;
+import com.code.aon.webmail.Signature;
 
 public class DomainUserControllerListener extends ControllerAdapter implements IManagerConstants {
 
@@ -38,8 +39,7 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		DomainUserController duc = (DomainUserController) event.getController();
-		duc.setTermsOfServiceAccepted(false);
+		getManager().resetTermsOfServiceAccepted();
 	}
 	
 	@Override
@@ -59,7 +59,8 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 			duc.registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
 			duc.registerScopeInDBs(user.getUid(), GENERAL_SCOPE);
 			duc.createMailAccount(user);
-			duc.createUserWebmailDefaultData(user);
+			Signature signature = duc.addDefaultSignature(user);
+			duc.addDefaultMailAccount(user, signature);
 			duc.setWebmail(true);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
@@ -69,20 +70,6 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 		updateWebmail(user);
 	}
 	
-	@Override
-	public void beforeBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		DomainUserController duc = (DomainUserController) event.getController();
-		DomainUser user = duc.getDomainUser();
-		try {
-			duc.removeDomainApplicationsUser(user);
-			duc.removeWebmailData(user);
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ControllerListenerException( e.getMessage(), e );
-		}		
-	}
-
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {

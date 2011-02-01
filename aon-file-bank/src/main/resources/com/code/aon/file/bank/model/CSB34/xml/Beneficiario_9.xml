@@ -10,6 +10,6 @@
  <field name="numero_dato" value="018" format="AlphaNumeric" pattern="X(3)" />
  <field name="documento" value="bean" bean="DETAIL_PERSON" property="document" format="AlphaNumeric" pattern="X(18)" />
  <field name="codigo" value="bean" bean="DETAIL_PERSON" property="codeAlt" format="AlphaNumeric" pattern="X(18)" />
- <field name="free2" value=" " format="Alphabetic" pattern="X(7)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(7)" />
 
 </register>

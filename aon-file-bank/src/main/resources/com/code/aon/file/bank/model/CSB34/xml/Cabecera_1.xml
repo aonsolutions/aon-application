@@ -11,9 +11,8 @@
  <field name="fecha" value="bean" bean="MASTER" property="orderDate" format="FormatDate" pattern="ddMMyy" />
  <field name="ccc" value="bean" bean="MASTER_ACCOUNT" property="ccc" format="CCC" pattern="ESC" />
  <field name="detalle_cargo" value="bean" bean="MASTER" property="detail" format="AlphaNumeric" pattern="X(1)" />
- <field name="gastos" value="bean" bean="MASTER" property="costs" format="AlphaNumeric" pattern="X(1)" />
- <field name="free2" value=" " format="Alphabetic" pattern="X(2)" />
- <field name="ccc" value="bean" bean="MASTER_ACCOUNT" property="ccc" format="CCC" pattern="D" />
- <field name="free2" value=" " format="Alphabetic" pattern="X(7)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(3)" />
+ <field name="control" value="bean" bean="MASTER_ACCOUNT" property="ccc" format="CCC" pattern="D" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(7)" />
 
 </register>

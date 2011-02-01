@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.naming.Name;
 import javax.persistence.Id;
 
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +20,7 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.NameResolver;
 
 /**
@@ -26,6 +28,14 @@ import com.code.aon.ldap.NameResolver;
  */
 public class EntityMetadata {
 
+	private static final String CONSTRUCT_METHOD_NAME = "construct";
+	
+	private static final Class<?>[] CONSTRUCT_METHOD_SIGNATURE = new Class[]{BasicLdap.class};
+
+	private static final String DELETE_METHOD_NAME = "delete";
+	
+	private static final Class<?>[] DELETE_METHOD_SIGNATURE = new Class[]{BasicLdap.class, Name.class};
+	
 	private Class<? extends ITransferObject> pojoClass;
 	
 	private PropertyInfo rdn;
@@ -41,6 +51,10 @@ public class EntityMetadata {
 	private String[] objectClasses;
 	
 	private Name baseDN;
+	
+	private Method constructMethod;
+	
+	private Method removeMethod;
 
 	/**
 	 * Instantiates a new Entity Metadata.
@@ -108,6 +122,14 @@ public class EntityMetadata {
 				}
 			}
 		}		
+		Method method = MethodUtils.getAccessibleMethod(pojoClass, CONSTRUCT_METHOD_NAME, CONSTRUCT_METHOD_SIGNATURE);
+		if ( method != null ) {
+			this.constructMethod = method;
+		}
+		method = MethodUtils.getAccessibleMethod(pojoClass, DELETE_METHOD_NAME, DELETE_METHOD_SIGNATURE);
+		if ( method != null ) {
+			this.removeMethod = method;
+		}
 		if ( this.rdn == null ) {
 			throw new IllegalArgumentException( RDN.class + " annotation is mandatory" );
 		}
@@ -187,5 +209,23 @@ public class EntityMetadata {
 	public Name getBaseDN() {
 		return baseDN;
 	}
-	
+
+	/**
+	 * Gets the construct method.
+	 *
+	 * @return the construct method
+	 */
+	public Method getConstructMethod() {
+		return constructMethod;
+	}
+
+	/**
+	 * Gets the remove method.
+	 *
+	 * @return the remove method
+	 */
+	public Method getRemoveMethod() {
+		return removeMethod;
+	}
+
 }
