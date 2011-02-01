@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import javax.faces.context.FacesContext;
 import javax.naming.Name;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.cfg.Environment;
@@ -48,6 +49,18 @@ public class DataSourceUtil implements IAonObjectClasses, ILdapConstants {
     	String context = ctx.getExternalContext().getRequestContextPath();
     	return DataSourceUtil.getDBProperties(domain, context);
 	}
+	
+	/**
+	 * Gets the DB properties.
+	 *
+	 * @param request the request
+	 * @return the DB properties
+	 */
+	public static Properties getDBProperties( HttpServletRequest request ) {
+    	String domain = DomainResolver.getDomain(request);
+    	String context = request.getContextPath();
+    	return DataSourceUtil.getDBProperties(domain, context);
+	}	
 	
     /**
      * Gets the dB properties.

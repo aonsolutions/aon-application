@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Properties;
 
 import javax.faces.event.ActionEvent;
 import javax.imageio.ImageIO;
@@ -21,6 +22,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.IAttachment;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -37,14 +39,18 @@ public class CompanyDisplay {
 	
 	private String logoKey;
 	
-	private byte[] companyLogo;
+	private IAttachment logo;
 	
 	private boolean bigLogo;
 	
 	public CompanyDisplay() {
-		init();
+		this(null);
 	}
 
+	public CompanyDisplay( Properties dbProperties ) {
+		init(dbProperties);
+	}
+	
 	public String getCompanyLabel() {
 		return companyLabel;
 	}
@@ -54,11 +60,15 @@ public class CompanyDisplay {
 	}
 
 	public byte[] getCompanyLogo() {
-		return companyLogo;
+		return logo.getData();
 	}
 
-	public void setCompanyLogo(byte[] companyLogo) {
-		this.companyLogo = companyLogo;
+	public boolean hasLogo() {
+		return (getLogo() != null) && (! ArrayUtils.isEmpty(getCompanyLogo()));
+	}
+	
+	public IAttachment getLogo() {
+		return logo;
 	}
 
 	public String getLogoKey() {
@@ -70,7 +80,7 @@ public class CompanyDisplay {
 	}
 
 	public boolean isShow() {
-		return !( StringUtils.isEmpty(this.companyLabel) && ArrayUtils.isEmpty(this.companyLogo) );
+		return !StringUtils.isEmpty(this.companyLabel) || hasLogo();
 	}
 	
 	public boolean isBigLogo() {
@@ -82,21 +92,22 @@ public class CompanyDisplay {
 	}
 
 	public void createLogoContent(OutputStream out, Object data) throws IOException {
-		if (! ArrayUtils.isEmpty(companyLogo) ) {
-			out.write( companyLogo );
+		if ( hasLogo() ) {
+			out.write( getCompanyLogo() );
 		}
 	}
 
-	private Configuration getConfiguration() {
+	private Configuration getConfiguration( Properties dbs ) {
 		AnnotationConfiguration configuration = new AnnotationConfiguration();
-		configuration.addProperties(DataSourceUtil.getDBProperties());
+		Properties properties = (dbs != null) ? dbs : DataSourceUtil.getDBProperties();
+		configuration.addProperties(properties);
 		configuration.configure(HIBERNATE_CONFIGURATION_FILE);
 		return configuration;
 	}
 	
 	private boolean calculateBigLog() {
-		if ( ! ArrayUtils.isEmpty(this.companyLogo) ) {
-			InputStream in = new ByteArrayInputStream(this.companyLogo);
+		if ( hasLogo() ) {
+			InputStream in = new ByteArrayInputStream( getCompanyLogo() );
 			try {
 				BufferedImage image = ImageIO.read(in);
 				return (image.getWidth() > 200);
@@ -107,12 +118,12 @@ public class CompanyDisplay {
 		return true;
 	}
 	
-	public void update( Company company, RegistryAttachment logo ) {
+	public void update( Company company, RegistryAttachment attachment ) {
 		this.companyLabel = company.getName();
-		if ( logo != null ) {
-			this.companyLogo = logo.getData();
+		if ( attachment != null ) {
+			this.logo = attachment;
 			this.bigLogo = calculateBigLog();
-			this.logoKey = logo.getId().toString();			
+			this.logoKey = attachment.getId().toString();			
 		}
 	}
 	
@@ -121,16 +132,15 @@ public class CompanyDisplay {
 		update( (Company) controller.getTo(), controller.getAttach());
 	}
 	
-	@SuppressWarnings({ "unchecked"})
-	private void init() {
+	private void init( Properties dbProperties ) {
 		SessionFactory factory = null;
 		try {
-			Configuration configuration = getConfiguration();
+			Configuration configuration = getConfiguration(dbProperties);
 			factory =  configuration.buildSessionFactory();
 			
 			StatelessSession session = factory.openStatelessSession();
 			Criteria companyCriteria = session.createCriteria(Company.class);
-			List companyList = companyCriteria.list();
+			List<?> companyList = companyCriteria.list();
 			if (! companyList.isEmpty() ) {
 				Company company = (Company) companyList.get(0); 
 				this.companyLabel = company.getName();
@@ -138,7 +148,7 @@ public class CompanyDisplay {
 				logoCriteria.add(Restrictions.eq("registry.id", company.getId()));
 				logoCriteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
 				logoCriteria.add(Restrictions.isNotNull("data"));
-				List logoList = logoCriteria.list();
+				List<?> logoList = logoCriteria.list();
 				RegistryAttachment logo = logoList.isEmpty() ? null : (RegistryAttachment) logoList.get(0);
 				update(company, logo);
 			}
