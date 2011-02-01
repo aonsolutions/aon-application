@@ -153,7 +153,7 @@
 	
   </modules>
   <scm>
-    <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/dev/maven-release-plugin</connection>
+    <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/dev/maven-release-plugin/pom.xml</connection>
     <url>http://dev.esferalia.com/websvn/wsvn</url>
   </scm>
   <build>
