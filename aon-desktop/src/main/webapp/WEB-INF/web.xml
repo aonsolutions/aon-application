@@ -125,7 +125,6 @@
 		<param-name>com.sun.faces.displayConfiguration</param-name>
 		<param-value>false</param-value>
 	</context-param>
-	<!--
 	<context-param>
 		<description>
 			When a page is requested, what interval in seconds should 
@@ -137,7 +136,6 @@
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
-	-->
 	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
@@ -325,13 +323,7 @@
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Manager</role-name>
 			<role-name>User</role-name>
-			<role-name>SMSSender</role-name>
-			<role-name>FAXSender</role-name>
-			<role-name>DocumentsVisible</role-name>
-			<role-name>PredefinedDocumentsExecutable</role-name>
-			<role-name>CorporativeDocumentsManager</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -342,27 +334,16 @@
 			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
-	<security-role>
-		<role-name>Manager</role-name>
-	</security-role>
-	<security-role>
-		<role-name>User</role-name>
-	</security-role>
-	<security-role>
-		<role-name>SMSSender</role-name>
-	</security-role>
-	<security-role>
-		<role-name>FAXSender</role-name>
-	</security-role>
-	<security-role>
-		<role-name>DocumentsVisible</role-name>
-	</security-role>
-	<security-role>
-		<role-name>PredefinedDocumentsExecutable</role-name>
-	</security-role>
-	<security-role>
-		<role-name>CorporativeDocumentsManager</role-name>
-	</security-role>
+	
+	<security-role><role-name>User</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Confidentiality</role-name></security-role>
+	<security-role><role-name>SMSSender</role-name></security-role>
+	<security-role><role-name>FAXSender</role-name></security-role>
+	<security-role><role-name>DocumentsVisible</role-name></security-role>
+	<security-role><role-name>PredefinedDocumentsExecutable</role-name></security-role>
+	<security-role><role-name>CorporativeDocumentsManager</role-name></security-role>
 
 	<resource-env-ref>
 		<resource-env-ref-name>jdbc/AonDesktop</resource-env-ref-name>

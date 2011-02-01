@@ -1,5 +1,8 @@
 package com.code.aon.finance;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -29,6 +33,7 @@ import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAttachment;
 
 @Entity
 @Table(name="creditor")
@@ -43,6 +48,7 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
     private InvoiceTransactionType transaction;
 	private CreditorStatus status;
 	private Scope scope;
+	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 
 	@Id
 	@Column(name="registry")
@@ -77,6 +83,7 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public InvoiceTransactionType getTransaction() {
 		return transaction;
 	}
+	
 	public void setTransaction(InvoiceTransactionType transaction) {
 		this.transaction = transaction;
 	}
@@ -84,6 +91,7 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public CreditorStatus getStatus() {
 		return status;
 	}
+	
 	public void setStatus(CreditorStatus status) {
 		this.status = status;
 	}
@@ -95,6 +103,7 @@ public class Creditor implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public Scope getScope() {
 		return scope;
 	}
+	
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}

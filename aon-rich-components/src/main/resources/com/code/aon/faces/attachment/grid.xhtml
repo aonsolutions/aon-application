@@ -18,17 +18,17 @@
 				<aon:outputText value="#{to.description}" rendered="#{formList}" />
 				<aon:inputText id="#{controller.beanName}_description" required="true"
 					value="#{controller.to.description}" maxlength="64"
-					rendered="#{formEdit}" size="40" />
+					rendered="#{formEdit}" size="50" />
 				<f:facet name="footer">
 					<aon:inputText id="#{controller.beanName}_description-New" required="true"
 						value="#{controller.to.description}" maxlength="64"
-						rendered="#{formNew}" size="40" />
+						rendered="#{formNew}" size="50" />
 				</f:facet>
 			</aon:column>
  
  			<ui:insert name="additionalColumns"/>
 			 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap aon-width-120">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_fileupload_element}" />
 				</f:facet>
@@ -50,7 +50,7 @@
 							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
 							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
 							fileUploadListener="#{controller.fileUploaded}"
-							listHeight="0px" immediateUpload="true" autoclear="true">
+							listWidth="110px" >
 							<f:facet name="label">
 								<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 							</f:facet>														

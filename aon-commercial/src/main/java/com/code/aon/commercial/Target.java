@@ -34,6 +34,7 @@ import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAttachment;
 
 /**
  * Transfer Object that represents a Target.
@@ -57,6 +58,7 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 	private Set<TargetItem> items = new HashSet<TargetItem>();
 	private Set<TargetSeller> sellers = new HashSet<TargetSeller>();
 	private Set<CommercialTracking> trackings = new HashSet<CommercialTracking>();
+	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	
 	@Id
 	@Column(name="registry")
@@ -161,6 +163,15 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 	public void setTrackings(Set<CommercialTracking> trackings) {
 		this.trackings = trackings;
 	}
+	
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryAttachment> getDocuments() {
+		return documents;
+	}
+	
+	public void setDocuments(Set<RegistryAttachment> documents) {
+		this.documents = documents;
+	}	
 	
 	@Transient
 	public boolean isTaxFree() {

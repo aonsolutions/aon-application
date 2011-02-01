@@ -1,5 +1,8 @@
 package com.code.aon.customer;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -30,6 +34,7 @@ import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAttachment;
 
 /**
  * Transfer Object that represents a Customer.
@@ -52,6 +57,7 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
     private boolean eInvoice;
     private boolean deliveryGrouped = true;
     private boolean deliveryValuated = true;
+    private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 
     @Id
 	@Column(name="registry")
@@ -166,6 +172,15 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public boolean isTaxFree() {
 		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}
+	
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryAttachment> getDocuments() {
+		return documents;
+	}
+	
+	public void setDocuments(Set<RegistryAttachment> documents) {
+		this.documents = documents;
+	}	
 
 	@Override
 	public boolean equals(Object obj) {
