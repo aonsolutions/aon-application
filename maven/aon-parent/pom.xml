@@ -97,7 +97,7 @@
         </executions>
       </plugin>
 
-        <plugin>
+        <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.0</version>
@@ -109,7 +109,7 @@
                         <tag>6.0.x</tag>
                         <tagBase>http://dev.esferalia.com/repos/aon-application/dev</tagBase>
                 </configuration>
-        </plugin>
+        </plugin-->
 
     </plugins>
   </build>
