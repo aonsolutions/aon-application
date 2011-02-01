@@ -70,7 +70,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private List<SelectItem> addresses;
 	private boolean showInvoiceAddressWindow;
 	private FinanceEmailUtil emailController;
-	private String backAction;
 
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();
@@ -196,22 +195,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 
-	public String getBackAction() {
-		return backAction;
-	}
-	public void setBackAction(String backAction) {
-		this.backAction = backAction;
-	}
-	
-	public String backAction() {
-		String action = backAction;
-		if (StringUtils.isEmpty(action)) {
-			action = getBeanName() + "_list";
-		}
-		setBackAction(null); 
-		return action;
-	}
-	
 	public void onDateChanged(ActionEvent event) {
 		getInvoice().setTaxDate(getInvoice().getIssueDate());
 	}
@@ -522,7 +505,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		messageController.setSecurityInfo( securyInfo );
 	}
 	
-	public void onLoadInvoice(ActionEvent event, Invoice invoice, String backAction) throws ManagerBeanException {
+	public void onLoadInvoice(ActionEvent event, Invoice invoice, String backAction, String invoiceControllerName) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
 		onSearch(event);
@@ -530,6 +513,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		onSelect(event);
 
 		setBackAction(backAction);
+		setBackActionListener(invoiceControllerName + ".onBack");
 	}
 
 }
