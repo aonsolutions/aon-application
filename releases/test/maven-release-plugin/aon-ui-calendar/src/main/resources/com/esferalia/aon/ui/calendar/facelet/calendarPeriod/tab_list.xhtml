@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+		<ui:param name="controller" value="#{calendarPeriod}" />
+		<ui:param name="skipSelectButton" value="true" />
+		<ui:param name="rowSelectorToggleOnClick" value="false" />
+		<ui:param name="showNote" value="false" />
+		
+		<ui:define name="columns">
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputLabel value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+				<f:facet name="header">
+					<aon:outputLabel 
+						value="#{calendarBundle.aon_calendar_month}" />
+				</f:facet>
+				<aon:outputText value="#{to.month}" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+				<f:facet name="header">
+					<aon:outputLabel 
+						value="#{calendarBundle.aon_calendar_start_day}" />
+				</f:facet>
+				<aon:outputText value="#{to.startDay}" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+				<f:facet name="header">
+					<aon:outputLabel 
+						value="#{calendarBundle.aon_calendar_end_day}" />
+				</f:facet>
+				<aon:outputText value="#{to.endDay}" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_monday}" />
+				</f:facet>
+				<aon:outputText value="#{to.monday}" />
+				<aon:outputText value="(#{to.mondayHours})" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_tuesday}" />
+				</f:facet>
+				<aon:outputText value="#{to.tuesday}" />
+				<aon:outputText value="(#{to.tuesdayHours})" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_wednesday}" />
+				</f:facet>
+				<aon:outputText value="#{to.wednesday}" />
+				<aon:outputText value="(#{to.wednesdayHours})" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_thursday}" />
+				</f:facet>
+				<aon:outputText value="#{to.thursday}" />
+				<aon:outputText value="(#{to.thursdayHours})" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_friday}" />
+				</f:facet>
+				<aon:outputText value="#{to.friday}" />
+				<aon:outputText value="(#{to.fridayHours})" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_saturday}" />
+				</f:facet>
+				<aon:outputText value="#{to.saturday}"/>
+				<aon:outputText value="(#{to.saturdayHours})" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_sunday}" />
+				</f:facet>
+				<aon:outputText value="#{to.sunday}" />
+				<aon:outputText value="(#{to.sundayHours})" />
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+</ui:composition>

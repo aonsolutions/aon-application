@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="EMP">
+	<field name="cabecera" value="EMP" format="AlphaNumeric" pattern="X(3)" />
+	<field name="ccc_rrss" value="bean" bean="EMP" property="codigoCuentaCotizacionSeguridadSocial" format="AlphaNumeric" pattern="9(15)" />
+	<field name="emp_tipo" value="bean" bean="EMP" property="tipo" format="AlphaNumeric" pattern="X(1)" />
+	<field name="emp_pais" value="bean" bean="EMP" property="pais" format="AlphaNumeric" pattern="X(3)" />
+	<field name="emp_numero" value="bean" bean="EMP" property="numero" format="AlphaNumeric" pattern="X(14)" />
+	<field name="emp_calificador" value="bean" bean="EMP" property="calificador" format="AlphaNumeric" pattern="X(2)" />
+	<field name="ccc_prin_rrss" value="bean" bean="EMP" property="codigoCuentaCotizacionPrincipal" format="AlphaNumeric" pattern="9(15)" />
+	<field name="free1" value=" " format="AlphaNumeric" pattern="X(13)" />
+	<field name="free2" value=" " format="AlphaNumeric" pattern="X(3)" />
+	<field name="free3" value=" " format="AlphaNumeric" pattern="X(1)" />
+</register>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.esferalia.com/config">
+
+	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+		<product:catalogue
+			showEcommerceData="true"
+		/>		
+		<product:product
+			showBarcode="true"
+			showType="false"
+			showBrand="true"
+			showStock="false"
+			showSuppliers="false"
+			showAccount="false"
+			showAttachment="true"
+			showEcommerceData="true"
+			showHistory="false"
+			showAlternatives="false"
+		/>
+		<product:productCategory
+			showCategoryGroup="true"
+		/>
+	</product:config>
+	
+	<commercial:config version="1.2"
+		xmlns:commercial="http://www.esferalia.com/commercial">
+		<commercial:offer
+			showInvoicing="false"
+			showSalesOrder="true"
+			showSeller="false"
+		/>
+		<commercial:target
+			showTaxInfoData="true"
+			showEcommerceTab="true"
+			showProfile="false"
+			showSearchOnlyCustomers="false"
+			showCommercialTracking="false"
+			showProduct="true"
+			showSeller="false"
+			showAddInfo="true"
+			showSupplier="false"
+			showTariff="false"
+			showFinanceData="false"
+			showNote="false"
+		/>
+		
+	</commercial:config>
+
+	<webmail:config version="1.1" xmlns:webmail="http://www.esferalia.com/webmail" >
+		<webmail:webmail
+			connect="true"
+		/>
+	</webmail:config>	
+
+</config>

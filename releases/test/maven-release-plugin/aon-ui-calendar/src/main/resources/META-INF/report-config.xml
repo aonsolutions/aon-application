@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+	<!--  **********************************************************
+						      CALENDAR
+		  ********************************************************** -->
+	
+	<report id="calendarReport" description="Calendar report ">
+		<template path="/com/esferalia/aon/ui/calendar/report/calendar.jasper" />
+		<collection provider="#{calendarPrint}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.calendar.i18n.report" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+		<nested-report report="month"/>
+	</report>
+	<report id="month" description="Plantilla del mes del calendario">
+		<template path="/com/esferalia/aon/ui/calendar/report/month.jasper" />
+	</report>
+	
+</report-config>

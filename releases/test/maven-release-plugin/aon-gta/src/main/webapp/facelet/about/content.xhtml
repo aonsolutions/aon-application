@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.frame.xhtml">
+
+	<ui:define name="head">
+		<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Window.js">
+			// nothing
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+		<t:div styleClass="aon-auxiliary-window-content">
+			<t:div>
+				<h:graphicImage url="/images/window/aon-window-about.gif" alt="" />
+				<t:div style=" left: 40px; top: -20px; position:relative;color:#000;font-size:20px; " >
+					<h:outputText value="#{appBundle.aon_application_title}" />
+				</t:div>
+			</t:div>
+			<t:div style="font-size:14px;text-align:center;padding-bottom:1em;">
+				<h:outputText value="#{appBundle.aon_application_description}" />
+				<strong><h:outputText style="color: #000;" value="V#{updater.version}" /></strong>
+			</t:div>
+			<t:div styleClass="aon-auxiliary-window-helpInfo">
+				<t:div><h:outputText value="#{appBundle.aon_footer_right}" /></t:div>
+				<t:div><h:outputText value="#{appBundle.aon_copyright_information1}" /></t:div>
+				<t:div><h:outputText value="#{appBundle.aon_copyright_information2}" /></t:div>
+				<t:div><h:outputText value="#{appBundle.aon_copyright_information3}" /></t:div>				
+			</t:div>
+			<t:div><f:verbatim>&#160;</f:verbatim></t:div>
+		</t:div>
+		<t:div styleClass="aon-auxiliary-window-foot">
+			<h:panelGrid columns="2" dir="true" width="95%" >
+				<h:panelGroup>
+					<t:commandButton value="#{appBundle.aon_copyright_licence}" style="margin-right:3px;"
+					onclick="window.open('${facesContext.externalContext.requestContextPath}/gpl_licence.pdf','','width=766,height=450,status=no,toolbar=no,menubar=no,location=no');"
+					/>
+					<t:commandButton value="#{bundle.aon_close}" style="margin-right:3px;"
+					onclick="window.close();"
+					/>
+				</h:panelGroup>
+				<h:panelGroup >
+					
+						<t:div style="text-align:right;"><h:outputText value="#{appBundle.aon_footer}" /></t:div>
+						<t:div style="text-align:right;"><h:outputText value="#{appBundle.aon_copyright_information4}" /></t:div>
+					
+				</h:panelGroup>
+			</h:panelGrid>
+	
+		</t:div>
+		
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>

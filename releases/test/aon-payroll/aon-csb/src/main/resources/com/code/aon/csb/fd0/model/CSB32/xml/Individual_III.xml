@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Individual_III">
+
+ <field name="type" value="27" format="AlphaNumeric" pattern="X(2)" />
+ <field name="cod_operacion" value="65" format="AlphaNumeric" pattern="X(2)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(2)" />
+ <field name="numero_documento" value="bean" bean="INDIVIDUAL" property="documentNumber" format="AlphaNumeric" pattern="X(15)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(2)" />
+ <field name="domicilio_librado" value="bean" bean="INDIVIDUAL" property="payedAddress" format="AlphaNumeric" pattern="X(34)" />
+ <field name="cp_plaza_librada" value="bean" bean="INDIVIDUAL" property="payedPostPostalCode" format="Numeric" pattern="9(5)" />
+ <field name="plaza_librada" value="bean" bean="INDIVIDUAL" property="payedPost" format="AlphaNumeric" pattern="X(20)" />
+ <field name="num_provincia_plaza_librada" value="bean" bean="INDIVIDUAL" property="payedPostProvince" format="Numeric" pattern="9(2)" />
+ <field name="ine_plaza_librada" value="bean" bean="INDIVIDUAL" property="payedPostINE" format="AlphaNumeric" pattern="X(7)" />
+ <field name="nif_librado" value="bean" bean="INDIVIDUAL" property="payedDocument" format="AlphaNumeric" pattern="X(9)" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(50)" />
+ 
+</register>

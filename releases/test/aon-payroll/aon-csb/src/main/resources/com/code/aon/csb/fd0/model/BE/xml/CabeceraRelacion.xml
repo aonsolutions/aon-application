@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="CabeceraRelacion">
+
+ <field name="type" value="1" format="AlphaNumeric" pattern="X(1)" />
+ <field name="cod_presenter" value="bean" bean="LOT" property="presenterCode" format="Numeric" pattern="9(5)" />
+ <field name="cod_aplicacion" value="TRA" format="AlphaNumeric" pattern="X(3)" />
+ <field name="cod_proceso" value="bean" bean="LOT" property="aplicationCode" format="Numeric" pattern="9(2)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(9)" />
+ <field name="cod_emisor" value="bean" bean="RELATION" property="emitterCode" format="Numeric" pattern="9(5)" />
+ <field name="numero_orden" value="bean" bean="RELATION" property="orderNumber" format="Numeric" pattern="9(5)" />
+ <field name="free2" value="00000" format="Numeric" pattern="9(5)" />
+ <field name="fecha_ejecucion" value="bean" bean="RELATION" property="executionDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(471)" />
+ 
+</register>

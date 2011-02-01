@@ -1,0 +1,25 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/headerEx.xhtml" >
+		<ui:define name="userInfoContent">
+			<aon:form>
+				<aon:outputText value="#{loggedUser.companyName}" style="padding-left:10px"/>
+				<aon:outputText value="/" styleClass="padding-left"/>		
+				<aon:outputText rendered="#{aonConfiguration.properties.hideHeaderLinks}"
+					value="#{loggedUser.loggedUserName}" styleClass="aon-bold"/>																		
+				<h:commandLink title="#{appBundle.aon_user_data}"
+					rendered="#{!aonConfiguration.properties.hideHeaderLinks}"
+					actionListener="#{currentUser.onLoadCurrentUser}" styleClass="aon-icon aon-icon-user-change-password"
+					action="user_change_form">								
+					<aon:outputText value="#{loggedUser.loggedUserName}" styleClass="aon-bold"/>											
+				</h:commandLink>
+			</aon:form>		
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

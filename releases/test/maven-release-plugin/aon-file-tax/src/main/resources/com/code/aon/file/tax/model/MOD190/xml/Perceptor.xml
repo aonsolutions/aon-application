@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Perceptor">
+
+ <field name="type" value="2" format="Numeric" pattern="9(1)" />
+ <field name="modelo" value="190" format="Numeric" pattern="9(3)" />
+ <field name="ejercicio" value="bean" bean="WITHHOLDER" property="year" format="Numeric" pattern="9(4)" />
+ <field name="nif_retenedor" value="bean" bean="WITHHOLDER" property="code" format="Nif" pattern="X(9)" />
+ <field name="nif_perceptor" value="bean" bean="RECEIVER" property="code" format="Nif" pattern="X(9)" />
+ <field name="nif_rpte" value="bean" bean="RECEIVER" property="managerCode" format="Nif" pattern="X(9)" />
+ <field name="nombre" value="bean" bean="RECEIVER" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="provincia" value="bean" bean="RECEIVER" property="province" format="Numeric" pattern="9(2)" />
+ <field name="clave" value="bean" bean="RECEIVER" property="key" format="AlphaNumeric" pattern="X(1)" />
+ <field name="subclave" value="bean" bean="RECEIVER" property="subkey" format="Numeric" pattern="9(2)" />
+ <field name="percep_din" value="bean" bean="RECEIVER" property="receibedMoney" format="Numeric" pattern="S9(11)V99" />
+ <field name="retenc_din" value="bean" bean="RECEIVER" property="withholdedMoney" format="Numeric" pattern="9(11)V99" />
+ <field name="percep_esp" value="bean" bean="RECEIVER" property="receibedSpice" format="Numeric" pattern="S9(11)V99" />
+ <field name="ing_cta_efe" value="bean" bean="RECEIVER" property="payEfect" format="Numeric" pattern="9(11)V99" />
+ <field name="ing_cta_rep" value="bean" bean="RECEIVER" property="payReperc" format="Numeric" pattern="9(11)V99" />
+ <field name="devengo" value="bean" bean="RECEIVER" property="year" format="Numeric" pattern="9(4)" />
+ <field name="ceuta_melilla" value="bean" bean="RECEIVER" property="ceuMel" format="Numeric" pattern="9(1)" />
+ <field name="nacimiento" value="bean" bean="RECEIVER" property="bornYear" format="Numeric" pattern="9(4)" />
+ <field name="sit_familiar" value="bean" bean="RECEIVER" property="familyStatus" format="Numeric" pattern="9(1)" />
+ <field name="nif_conyugue" value="bean" bean="RECEIVER" property="marriageCode" format="Nif" pattern="X(9)" />
+ <field name="discapacidad" value="bean" bean="RECEIVER" property="discapacity" format="Numeric" pattern="9(1)" />
+ <field name="relacion" value="bean" bean="RECEIVER" property="relation" format="Numeric" pattern="9(1)" />
+ <field name="prolongacion_act_lab" value="bean" bean="RECEIVER" property="laboralExtension" format="Numeric" pattern="9(1)" />
+ <field name="movilidad_geo" value="bean" bean="RECEIVER" property="geoMovility" format="Numeric" pattern="9(1)" />
+ <field name="reducciones" value="bean" bean="RECEIVER" property="reductions" format="Numeric" pattern="9(11)V99" />
+ <field name="gastos_deducibles" value="bean" bean="RECEIVER" property="costs" format="Numeric" pattern="9(11)V99" />
+ <field name="pensiones" value="bean" bean="RECEIVER" property="pension" format="Numeric" pattern="9(11)V99" />
+ <field name="alimentos" value="bean" bean="RECEIVER" property="food" format="Numeric" pattern="9(11)V99" />
+ <field name="hijos1" value="bean" bean="RECEIVER" property="children1" format="Numeric" pattern="9(1)" />
+ <field name="hijos2" value="bean" bean="RECEIVER" property="children2" format="Numeric" pattern="9(1)" />
+ <field name="hijos3" value="bean" bean="RECEIVER" property="children3" format="Numeric" pattern="9(2)" />
+ <field name="hijos4" value="bean" bean="RECEIVER" property="children4" format="Numeric" pattern="9(2)" />
+ <field name="hijos_discapacitados1" value="bean" bean="RECEIVER" property="childHandicapped1" format="Numeric" pattern="9(2)" />
+ <field name="hijos_discapacitados2" value="bean" bean="RECEIVER" property="childHandicapped2" format="Numeric" pattern="9(2)" />
+ <field name="hijos_discapacitados3" value="bean" bean="RECEIVER" property="childHandicapped3" format="Numeric" pattern="9(2)" />
+ <field name="hijos_discapacitados4" value="bean" bean="RECEIVER" property="childHandicapped4" format="Numeric" pattern="9(2)" />
+ <field name="hijos_discapacitados5" value="bean" bean="RECEIVER" property="childHandicapped5" format="Numeric" pattern="9(2)" />
+ <field name="hijos_discapacitados6" value="bean" bean="RECEIVER" property="childHandicapped6" format="Numeric" pattern="9(2)" />
+ <field name="ascend1" value="bean" bean="RECEIVER" property="parents1" format="Numeric" pattern="9(1)" />
+ <field name="ascend2" value="bean" bean="RECEIVER" property="parents2" format="Numeric" pattern="9(1)" />
+ <field name="ascend3" value="bean" bean="RECEIVER" property="parents3" format="Numeric" pattern="9(1)" />
+ <field name="ascend4" value="bean" bean="RECEIVER" property="parents4" format="Numeric" pattern="9(1)" />
+ <field name="ascend_discapacitados1" value="bean" bean="RECEIVER" property="parentsHandicapped1" format="Numeric" pattern="9(1)" />
+ <field name="ascend_discapacitados2" value="bean" bean="RECEIVER" property="parentsHandicapped2" format="Numeric" pattern="9(1)" />
+ <field name="ascend_discapacitados3" value="bean" bean="RECEIVER" property="parentsHandicapped3" format="Numeric" pattern="9(1)" />
+ <field name="ascend_discapacitados4" value="bean" bean="RECEIVER" property="parentsHandicapped4" format="Numeric" pattern="9(1)" />
+ <field name="ascend_discapacitados5" value="bean" bean="RECEIVER" property="parentsHandicapped5" format="Numeric" pattern="9(1)" />
+ <field name="ascend_discapacitados6" value="bean" bean="RECEIVER" property="parentsHandicapped6" format="Numeric" pattern="9(1)" />
+ 
+</register>

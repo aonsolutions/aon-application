@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
+				
+	<ui:define name="afterMenuContent">
+		<c:if test="#{!currentDomain.domainManagement}">		
+			<c:forEach items="#{aonapps.applicationList}" var="app">
+				<aon:outputLink styleClass="aon-top-menu-item aon-menu-application" 
+						value="#{app.context}" target="_blank" rendered="#{app.toolbarEnabled}">
+					<aon:outputText value="#{app.name}" style="text-transform:capitalize"/> 
+				</aon:outputLink>
+			</c:forEach>
+		</c:if>
+		<c:if test="#{currentDomain.domainManagement}">
+			<c:forEach items="#{aonapps.applicationList}" var="app">
+				<aon:commandLink
+					styleClass="aon-top-menu-item aon-menu-application" 
+					action="domain_select" value="#{app.name}" rendered="#{app.toolbarEnabled}">
+					<f:setPropertyActionListener value="#{app}" target="#{domain.selectedApplication}" />
+				</aon:commandLink>
+			</c:forEach>
+		</c:if>					
+	</ui:define>
+	
+</ui:composition>

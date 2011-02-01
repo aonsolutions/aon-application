@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="incomeList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_income_module}" />
+				<ui:param name="controller" value="#{income}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:htmlCommandLink id="incomeList2-excel-report" value="&#160;" 
+						target="_new" rendered="#{!delivery.new}"
+						action="#{report.onExecute}" 
+						disabled="#{deliveryDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="incomeList2" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="incomeList2-report" value="#{bundle.aon_listing}"
+						target="_new" rendered="#{!income.new}"
+						action="#{report.onExecute}" 
+						disabled="#{incomeDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="incomeList2" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="incomeDetailledList-excel-report" value="&#160;"
+						target="_new" rendered="#{!delivery.new}"
+						action="#{report.onExecute}" 
+						disabled="#{deliveryDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel">
+						<f:param name="reportKey" value="incomeDetailledList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="incomeDetailledList-report" value="#{bundle.aon_detailed_listing}"
+						target="_new" rendered="#{!income.new}"
+						action="#{report.onExecute}" 
+						disabled="#{incomeDetail.to != null}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="incomeDetailledList" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{income}" />
+					<ui:define name="columns">
+						<aon:column alias="Income.series,Income.number"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.referenceCode}" />
+						</aon:column>
+
+						<aon:column alias="Income.issueTime"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.issueTime}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="Income.supplier.registry.surname,Income.supplier.registry.name"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{supplierBundle.supplier_supplier}" />
+							</f:facet>
+							<aon:outputText value="#{to.supplier.registry.fullName}">
+								<aon:abbreviateConverter maxWidth="50" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="Income.supplier.registry.document"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_company_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.supplier.registry.document}" />
+						</aon:column>
+
+						<aon:column alias="Income.status"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:outputText value="#{income.incomeTotalPrice}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

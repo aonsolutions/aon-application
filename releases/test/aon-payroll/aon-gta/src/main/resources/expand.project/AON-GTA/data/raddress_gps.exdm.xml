@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="raddress_gps">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="raddress" sqlType="integer" type="integer"/>
+        <column label="" name="latitude" sqlType="double" type="double"/>
+        <column label="" name="longitude" sqlType="double" type="double"/>
+        <column label="" length="19" name="capture_time"
+            sqlType="timestamp" type="string"/>
+        <column label="" length="4" name="type" sqlType="tinyint" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="raddress_gps_ibfk_1" foreignPath="data/raddress.exdm.xml">
+            <sourceColumns>
+                <column name="raddress"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

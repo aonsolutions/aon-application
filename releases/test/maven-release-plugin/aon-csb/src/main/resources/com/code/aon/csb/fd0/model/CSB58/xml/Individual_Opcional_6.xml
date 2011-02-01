@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Registro Individual_Opcional -->
+<register name="Individual_Opcional_6">
+
+ <field name="inicial" value="5676" format="AlphaNumeric" pattern="X(4)" />
+ <field name="nif" value="bean" bean="ORDERER" property="code" format="Nif" pattern="X(9)" />
+ <field name="sufijo" value="bean" bean="ORDERER" property="sufix" format="AlphaNumeric" pattern="X(3)" />
+ <field name="cod_referencia" value="bean" bean="INDIVIDUAL" property="referenceCode" format="AlphaNumeric" pattern="X(12)" />
+ <field name="dir_titular" value="bean" bean="INDIVIDUAL" property="accountUserAddress" format="AlphaNumeric" pattern="X(40)" />
+ <field name="plaza_dir_titular" value="bean" bean="INDIVIDUAL" property="accountUserAddress2" format="AlphaNumeric" pattern="X(35)" />
+ <field name="cp_titular" value="bean" bean="INDIVIDUAL" property="accountUserPCode" format="Numeric" pattern="9(5)" />
+ <field name="localidad_ordenante" value="bean" bean="INDIVIDUAL" property="ordererCounty" format="AlphaNumeric" pattern="X(38)" />
+ <field name="cod_provincia" value="bean" bean="INDIVIDUAL" property="country" format="AlphaNumeric" pattern="X(2)" />
+ <field name="fecha" value="bean" bean="INDIVIDUAL" property="initDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(8)" />
+ 
+</register>

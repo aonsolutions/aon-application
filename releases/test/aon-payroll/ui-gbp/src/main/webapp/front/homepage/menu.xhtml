@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGroup>
+		<aon:div>
+			<aon:panelGroup>
+				<!-- main menu declaration  -->
+				<aon:form>
+					<aon:menuBar id="menu">
+						<aon:menuItem id="front_offer"
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							value="#{menuBundle.gbp_front_offer}" 
+							actionListener="#{frontOffer.onInitialModel}"
+							action="front_offer_list" />
+						<aon:menuItem id="front_pro_forma"
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							value="#{menuBundle.gbp_front_pro_forma}"
+							actionListener="#{frontProForma.onInitialModel}"
+							action="front_pro_forma_list" />
+						<aon:menuItem id="front_proof_of_payment"
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							value="#{menuBundle.gbp_proof_of_payment}"
+							actionListener="#{frontProof.onInitialModel}"
+							action="front_proof_list" />
+					</aon:menuBar>
+				</aon:form>
+			</aon:panelGroup>
+		</aon:div>
+	</aon:panelGroup>
+
+</ui:composition>

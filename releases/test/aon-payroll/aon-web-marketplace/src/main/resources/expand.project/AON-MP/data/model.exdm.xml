@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="model">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="make" sqlType="integer" type="integer"/>
+        <column label="" length="64" name="name" sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="model_ibfk_1" foreignPath="data/make.exdm.xml">
+            <sourceColumns>
+                <column name="make"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

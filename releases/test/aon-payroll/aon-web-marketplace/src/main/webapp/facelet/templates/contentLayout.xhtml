@@ -1,0 +1,58 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"		
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
+	<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
+</c:forEach>
+<f:view>
+	<head>
+	<title>
+		<ui:insert name="title">Title</ui:insert>					
+	</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Expires" content="0" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Cache-Control" content="no-store" />
+<!--
+	<t:stylesheet path="/css/aon.css" />
+	<t:stylesheet path="/css/layout.css" />
+  -->
+  	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
+		<t:stylesheet path="#{styleSheet}" />
+	</c:forEach>
+  	
+	<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Accelerators.js">
+		// nothing
+	</script>
+	<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Utils.js">
+		// nothing
+	</script>
+	<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Window.js">
+		// nothing
+	</script>
+	<ui:insert name="head"/>
+	</head>
+  <body id="aon-body" onload="windowLoaded();" onresize="aonResizeBody();">
+	<t:div id="aon-content-container">
+		<ui:insert name="sidebar" />
+		<t:div styleClass="aon-content-region aon-content-region-#{treeMenu.hidden ? 'expanded' : 'contrated'}">
+			<ui:insert name="header" />
+			<t:div>
+					<t:div styleClass="aon-errors" id="aon-errors">
+						<t:messages showSummary="false" showDetail="true"
+						errorClass="aon-error-message"
+						fatalClass="aon-fatal-error-message"
+						infoClass="aon-info-message"
+						replaceIdWithLabel="true"
+						/>
+				</t:div>
+				<ui:insert name="content" />
+			</t:div>
+		</t:div>
+	</t:div>
+	</body>
+</f:view>
+</html>

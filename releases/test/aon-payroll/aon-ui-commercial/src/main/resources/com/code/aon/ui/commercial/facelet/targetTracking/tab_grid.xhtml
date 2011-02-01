@@ -1,0 +1,159 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="controller" value="#{targetTracking}" />
+		<ui:param name="columnClasses" value="aon-editDataTable-dateColumn,
+			aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+		
+		<ui:define name="columns">
+		
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.date}"
+				rendered="#{formList}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>	
+			<aon:selectInputDate id="CommercialTracking_date" 
+				rendered="#{formEdit}"
+				value="#{controller.to.date}" required="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+			</aon:selectInputDate>								
+			<f:facet name="footer">
+				<aon:selectInputDate id="CommercialTracking_date-New" 
+					rendered="#{formNew}"
+					value="#{controller.to.date}" required="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>								
+			</f:facet>
+		</aon:column>
+	
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{salesBundle.sales_seller}" />
+			</f:facet>
+			<aon:outputText value="#{to.seller.registry.fullName}" rendered="#{formList}"/>
+			<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+				<aon:lookupInputText id="TargetTracking_seller_id"
+					lookup="#{sellerLookup}" required="true"
+					reRender="TargetTracking_seller_name"
+					value="#{targetTracking.to.seller.id}" size="5">
+				</aon:lookupInputText>
+				<aon:lookupButton 
+					windowTitle="#{salesBundle.sales_seller_selection}"
+					selectReRender="TargetTracking_seller_id,TargetTracking_seller_name"
+					lookup="#{sellerLookup}" minHeight="440"
+					property="#{targetTracking.to.seller}">
+				</aon:lookupButton>
+				<aon:lookupButton 
+					windowTitle="#{salesBundle.sales_seller_new}"
+					minHeight="520" minWidth="650"
+					property="#{targetTracking.to.seller}" lookup="#{sellerLookup}"
+					selectReRender="TargetTracking_seller_id,TargetTracking_seller_name"
+					actionType="new">
+				</aon:lookupButton>																				
+				<aon:inputText id="TargetTracking_seller_name"
+					value="#{(targetTracking.to.seller.registry.name!=null)?(targetTracking.to.seller.registry.fullName):('')}"
+					size="40" disabled="true" />
+			</aon:div>
+			<f:facet name="footer" >
+				<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+					<aon:lookupInputText id="TargetTracking_seller_id-New"
+						lookup="#{sellerLookup}" required="true"
+						reRender="TargetTracking_seller_name"
+						value="#{targetTracking.to.seller.id}" size="5">
+					</aon:lookupInputText>
+					<aon:lookupButton 
+						windowTitle="#{salesBundle.sales_seller_selection}"
+						selectReRender="TargetTracking_seller_id-New,TargetTracking_seller_name-New"
+						lookup="#{sellerLookup}" minHeight="440"
+						property="#{targetTracking.to.seller}">
+					</aon:lookupButton>
+					<aon:lookupButton 
+						windowTitle="#{salesBundle.sales_seller_new}"
+						minHeight="520" minWidth="650"
+						property="#{targetTracking.to.seller}" lookup="#{sellerLookup}"
+						selectReRender="TargetTracking_seller_id-New,TargetTracking_seller_name-New"
+						actionType="new">
+					</aon:lookupButton>																				
+					<aon:inputText id="TargetTracking_seller_name-New"
+						value="#{(targetTracking.to.seller.registry.name!=null)?(targetTracking.to.seller.registry.fullName):('')}"
+						size="40" disabled="true" />
+				</aon:div>
+			</f:facet>
+		</aon:column>
+	
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{commercialBundle.commercial_tracking_activity}" />
+			</f:facet>
+			<aon:outputText value="#{to.activity.name}" rendered="#{formList}"/>
+			<aon:selectOneMenu id="CommercialTracking_activity_id"
+				rendered="#{formEdit}"
+				required="true" value="#{controller.to.activity}">
+				<f:selectItem value="#{null}" itemLabel="    " />
+				<f:selectItems value="#{commercialCollections.activities}" />
+			</aon:selectOneMenu>
+			<f:facet name="footer">
+				<aon:selectOneMenu id="CommercialTracking_activity_id-New"
+					rendered="#{formNew}"
+					required="true" value="#{controller.to.activity}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{commercialCollections.activities}" />
+				</aon:selectOneMenu>
+			</f:facet>
+		</aon:column>
+	
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_status}" />
+			</f:facet>
+			<aon:outputText value="#{to.status}" rendered="#{formList}"/>
+			<aon:selectOneMenu id="CommercialTracking_status"
+				rendered="#{formEdit}"
+				reRender="CommercialTracking_statusDiv"
+				value="#{controller.to.status}">
+				<f:selectItems
+					value="#{commercialCollections.commercialTrackingStatuses}" />
+			</aon:selectOneMenu>
+			<f:facet name="footer">
+				<aon:selectOneMenu id="CommercialTracking_status-New"
+					rendered="#{formNew}"
+					reRender="CommercialTracking_statusDiv"
+					value="#{controller.to.status}">
+					<f:selectItems
+						value="#{commercialCollections.commercialTrackingStatuses}" />
+				</aon:selectOneMenu>
+			</f:facet>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_comment}" />
+			</f:facet>
+			<aon:outputText value="#{to.comments}" rendered="#{formList}" >
+				<aon:abbreviateConverter maxWidth="80" />
+			</aon:outputText>
+			<aon:inputTextarea id="CommercialTracking_comments"
+				rendered="#{formEdit}"
+				value="#{controller.to.comments}" cols="51" rows="4" />
+			<f:facet name="footer">
+				<aon:inputTextarea id="CommercialTracking_comments-New"
+					rendered="#{formNew}"
+					value="#{controller.to.comments}" cols="51" rows="4" />
+			</f:facet>
+		</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

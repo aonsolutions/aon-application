@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{auditBundle.audit_last_executed_module}" />
+				<ui:param name="controller" value="#{actionLastExecuted}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{actionLastExecuted}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />					
+					<ui:define name="columns">
+			
+						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.executionDate}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>							
+						</aon:column>
+			
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{auditBundle.audit_option}" />
+							</f:facet>
+							<aon:outputText value="#{actionLastExecuted.description}"/>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{auditBundle.audit_group}" />
+							</f:facet>					
+							<aon:outputText value="#{actionLastExecuted.category.name}" />
+						</aon:column>
+	
+					</ui:define>
+				</ui:decorate>
+	
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

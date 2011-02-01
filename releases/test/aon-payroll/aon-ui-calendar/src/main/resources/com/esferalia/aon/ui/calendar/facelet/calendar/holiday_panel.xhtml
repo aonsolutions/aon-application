@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panel  
+		header="#{calendarBundle.aon_calendar_extended_holidays}">
+		<c:forEach items="#{calendarHolidayData.holidayDataModels}" var="data">
+			<aon:panelCollapsible expanded="true" label="#{data.description}">
+				<aon:dataTable value="#{data.model}" var="to"
+					columnClasses="
+					aon-editDataTable-dateColumn aon-width-80,
+					aon-editDataTable-textColumn aon-width-auto">
+					<aon:column>
+						<aon:outputText value="#{to.date}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+					<aon:column>
+						<aon:outputText value="#{to.description}"/>
+					</aon:column>
+				</aon:dataTable>
+			</aon:panelCollapsible>
+		</c:forEach>
+	</aon:panel>
+	
+</ui:composition>
