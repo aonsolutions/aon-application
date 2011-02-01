@@ -252,11 +252,11 @@
 						</ui:define>
 
 						<ui:define name="endFormListContent">
-							<aon:htmlCommandLink immediate="true"
-								styleClass="aon-dataTable-link" 
+							<aon:htmlCommandLink id="finance_link" immediate="true"
+								styleClass="aon-icon-file-entrance" style="padding-right: 20px;"
+								value="&#160;" title="#{bundle.aon_go}" 
 								actionListener="#{financeController.onLoadFinance}"
-								action="finance_form"
-								value="#{bundle.aon_go}" />
+								action="finance_form" />
 						</ui:define>
 
 					</ui:decorate>
