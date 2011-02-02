@@ -4,12 +4,15 @@ import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AonMessageUtils {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(AonMessageUtils.class);
 
 	private static final long KB_BYTES = 1024;
 	
@@ -24,9 +27,6 @@ public class AonMessageUtils {
 	// HTML line break, need for display of message
 	public static final String HTML_LINE_BREAK = "<br/>";
 
-	// &nbsp; , space attribute
-	private static final String HTML_SPACE = "&nbsp;";
-
 	// search patterns, used for stripping html body tags from content
 	private static final Pattern BODY_PATTERN = Pattern.compile(
 			"<\\s*body[^>]*>(.*)<\\s*/\\s*body\\s*>", Pattern.CASE_INSENSITIVE
@@ -37,18 +37,12 @@ public class AonMessageUtils {
 			"<\\s*html[^>]*>(.*)<\\s*/\\s*html\\s*>", Pattern.CASE_INSENSITIVE
 					+ Pattern.DOTALL);
 	
-	// search pattern, common incountered eamil tags to remove
-	private static final Pattern TAG_PATTERN = Pattern
-			.compile(
-					"</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>",
-					Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
-
-	private static final Pattern TEXT_LINE_BREAK_PATTERN = Pattern.compile(
-			"\n", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
-
 	private static final Pattern UNDO_CID_PATTERN = Pattern.compile(
 			"[\"\'](http://[^\"\']+.cid)[\"\']", Pattern.CASE_INSENSITIVE );	
 
+	private static final Pattern ENCODED_PATTERN = Pattern.compile(
+			"=\\?[^\\?]+\\?[BQ]\\?([^\\?]+)\\?=" );
+	
 	/**
 	 * Utility method to extract content between the body tags of an HTML
 	 * message.
@@ -94,41 +88,6 @@ public class AonMessageUtils {
 		}
 		return match;
 	}
-	
-	/**
-	 * Called to remove html tags from content of a text/html message to view in
-	 * FF.
-	 * 
-	 * @param content
-	 * @return content stripped of html tags.
-	 */
-	public static StringBuffer removeHTMLTags(StringBuffer content) {
-		StringBuffer match = new StringBuffer();
-		try {
-			Matcher tagMatcher = TAG_PATTERN.matcher(content);
-			match.append(tagMatcher.replaceAll(HTML_SPACE));
-		} catch (IllegalStateException e) {
-			return content;
-		}
-		return match;
-	}
-
-	/**
-	 * Called to remove all text line breaks and replace with html breaks.
-	 * 
-	 * @param content
-	 * @return content stripped of html tags.
-	 */
-	public static StringBuffer removeTextChariageBreaks(String content) {
-		StringBuffer match = new StringBuffer();
-		try {
-			Matcher tagMatcher = TEXT_LINE_BREAK_PATTERN.matcher(content);
-			match.append(tagMatcher.replaceAll(HTML_LINE_BREAK));
-		} catch (IllegalStateException e) {
-			return new StringBuffer(content);
-		}
-		return match;
-	}
 
     public static String unparse_cid(String content){
 		Matcher tagMatcher = UNDO_CID_PATTERN.matcher(content);
@@ -148,6 +107,32 @@ public class AonMessageUtils {
 		}		
 		return content;
     }
+    
+    public static String decodeText(String content) {
+		Matcher tagMatcher = ENCODED_PATTERN.matcher(content);
+		if ( tagMatcher.find() ) {
+			StringBuffer sb = new StringBuffer(content);
+			int offset = 0;
+			do {
+				String encodedText = tagMatcher.group();
+				int start = tagMatcher.start() + offset;
+				int end = tagMatcher.end() + offset;
+				String newText = null;
+				try {
+					newText = MimeUtility.decodeWord(encodedText);
+				} catch (Throwable e) {
+					LOGGER.debug( "Error decoding text", e );
+					newText = tagMatcher.group(1);
+				}
+				if (! StringUtils.isEmpty(newText) ) {
+					sb.replace( start, end, newText);
+					offset += (newText.length() - encodedText.length());					
+				}
+			} while( tagMatcher.find() );
+			return sb.toString();
+		}
+		return content;
+    }	    
 
 	public static String parse_cr(String data) {
 		String newData = StringUtils.replace( data, "\r", "<br>" );
@@ -157,7 +142,7 @@ public class AonMessageUtils {
 
 	public static String parse_tags(String data) {
 		String newData = StringUtils.replace( data, "<", "&lt;" );
-		newData = StringUtils.replace( data, ">", "&gt;" );
+		newData = StringUtils.replace( newData, ">", "&gt;" );
 		return newData;
 	}
 	
@@ -177,24 +162,6 @@ public class AonMessageUtils {
 			}
 		}
 		return result;		
-	}
-	
-	public static boolean isValidEmail( String email ) {
-		if (! StringUtils.isBlank(email) ) {
-			try {
-				new InternetAddress(email);
-				return hasNameAndDomain(email);
-		    } catch (AddressException ex){
-		    	return false;
-		    }			
-		}
-	    return false;
-	}
-	
-	private static boolean hasNameAndDomain(String email){
-		String[] tokens = email.split("@");
-		return (tokens.length == 2) && (!StringUtils.isBlank(tokens[0])) && 
-			(!StringUtils.isBlank(tokens[1]));
 	}
 	
 }
