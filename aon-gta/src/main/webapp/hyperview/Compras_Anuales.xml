@@ -11,7 +11,7 @@
         iconOpen="icons/icon_factura.gif" label="Compras Anuales">
         <layout type="COLUMN"/>
         <contents>
-            <listViewContent id="view/Ventas/Año Mes Dia.exvw.xml">
+            <listViewContent id="view/Ventas/Ano Mes Dia.exvw.xml">
                 <sentence>SELECT YEAR(invoice.issue_date), SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;
   FROM invoice_detail, invoice, item, product&#xd;
  WHERE product.id = item.product &#xd;
@@ -21,7 +21,7 @@
    AND YEAR(invoice.issue_date) BETWEEN ? AND ?&#xd;
  GROUP BY 1</sentence>
                 <metadata>
-                    <attribute label="Año" name="DELIVERY_YEAR" type="INTEGER"/>
+                    <attribute label="Ano" name="DELIVERY_YEAR" type="INTEGER"/>
                     <attribute label="Total"
                         name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
                 </metadata>
@@ -32,7 +32,7 @@
                 </parameters>
             </listViewContent>
         </contents>
-        <node dynamicViewId="view/Ventas/Año Mes Dia.exvw.xml"
+        <node dynamicViewId="view/Ventas/Ano Mes Dia.exvw.xml"
             iconClose="icons/icon_year_selected.gif"
             iconOpen="icons/icon_year_selected.gif" label="${DELIVERY_YEAR}">
             <dynamicSentence>
@@ -45,7 +45,7 @@
    AND YEAR(invoice.issue_date) BETWEEN ? AND ?&#xd;
  GROUP BY 1</sentence>
                 <metadata>
-                    <attribute label="Año" name="DELIVERY_YEAR" type="INTEGER"/>
+                    <attribute label="Ano" name="DELIVERY_YEAR" type="INTEGER"/>
                     <attribute label="Total"
                         name="SUM(TRUNCATE(invoice_detail.taxable_base,2))" type="DOUBLE"/>
                 </metadata>
