@@ -14,6 +14,13 @@
 	<name>AON WEB EBACKOFFICE</name>
 	<build>
 		<finalName>aon-ebackoffice</finalName>
+		<plugins>
+			<!-- Para construir el RPM -->
+                       <plugin>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>rpm-maven-plugin</artifactId>
+                       </plugin>
+		</plugins>
 	</build>
 	<properties>
 		<dbVersion>5.1.1</dbVersion>

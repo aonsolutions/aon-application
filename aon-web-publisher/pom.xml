@@ -14,6 +14,13 @@
 	<name>AON WEB PUBLISHER</name>
 	<build>
 		<finalName>aon-publisher</finalName>
+		<plugins>
+			<!-- Para construir el RPM -->
+                       <plugin>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>rpm-maven-plugin</artifactId>
+                       </plugin>
+		</plugins>
 	</build>
 	<dependencies>
 		<dependency>

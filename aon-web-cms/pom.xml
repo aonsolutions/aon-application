@@ -14,6 +14,13 @@
 	<name>WEB CMS</name>
 	<build>
 		<finalName>aon-web-cms</finalName>
+		<plugins>
+			<!-- Para construir el RPM -->
+                       <plugin>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>rpm-maven-plugin</artifactId>
+                       </plugin>
+		</plugins>
 	</build>
 	<properties>
 		<dbVersion>2.1.0</dbVersion>

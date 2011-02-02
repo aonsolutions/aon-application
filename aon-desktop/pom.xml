@@ -16,7 +16,14 @@
 		<dbVersion>5.1.1</dbVersion>
 	</properties> 
 	<build>
-		<finalName>aon-desktop</finalName> 
+		<finalName>aon-desktop</finalName>
+		<plugins>
+			<!-- Para construir el RPM -->
+                       <plugin>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>rpm-maven-plugin</artifactId>
+                       </plugin>
+		</plugins> 
 	</build>
 	<dependencies>
 		<dependency>
