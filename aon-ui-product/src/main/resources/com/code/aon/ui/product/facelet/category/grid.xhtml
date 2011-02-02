@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/facelet/templates/aon.ui.content.xhtml"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="content">
+		<aon:form id="categoryList">
+
+			<aon:div ajaxRendered="true" layout="none">
+
+				<ui:include
+					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+					<ui:param name="toolbarTitle"
+						value="#{productBundle.product_category_module}" />
+					<ui:param name="controller" value="#{productCategory}" />
+				</ui:include>
+
+				<aon:div styleClass="aon-scroll-area">
+					<ui:decorate
+						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+						<ui:param name="controller" value="#{productCategory}" />
+						<ui:param name="columnClasses"
+							value="aon-editDataTable-text" />
+
+						<ui:define name="columns">
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.name}"
+									rendered="#{to.id!=productCategory.to.id}" />
+								<aon:inputText value="#{productCategory.to.name}"
+									rendered="#{to.id==productCategory.to.id}" required="true" />
+								<f:facet name="footer">
+									<aon:inputText value="#{productCategory.to.name}"
+										rendered="#{productCategory.new}" required="true" />
+								</f:facet>
+							</aon:column>
+
+							<c:if test="#{aonConfiguration.bean.productCategory.showCategoryGroup}">
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{productBundle.product_category_group}" />
+									</f:facet>
+	
+									<aon:outputText value="#{to.group.name}"
+										rendered="#{formList}" />
+									<aon:selectOneMenu rendered="#{formEdit}"
+										value="#{productCategory.to.group}">
+										<f:selectItem itemLabel="-"  itemValue="{null}" />
+										<f:selectItems
+											value="#{productCollections.categoryGroups}" />
+									</aon:selectOneMenu>
+									<f:facet name="footer">
+										<aon:selectOneMenu value="#{productCategory.to.group}"
+											rendered="#{formNew}">
+											<f:selectItem itemLabel="-" itemValue="{null}" />
+											<f:selectItems
+												value="#{productCollections.categoryGroups}" />
+										</aon:selectOneMenu>
+									</f:facet>
+								</aon:column>
+							</c:if>
+ 
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

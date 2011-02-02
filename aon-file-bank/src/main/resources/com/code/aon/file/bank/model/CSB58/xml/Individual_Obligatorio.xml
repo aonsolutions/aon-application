@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Registro Individual_Obligatorio -->
+<register name="Individual_Obligatorio">
+
+ <field name="inicial" value="5670" format="AlphaNumeric" pattern="X(4)" />
+ <field name="nif" value="bean" bean="ORDERER" property="code" format="Nif" pattern="X(9)" />
+ <field name="sufijo" value="bean" bean="ORDERER" property="sufix" format="AlphaNumeric" pattern="X(3)" />
+ <field name="cod_referencia" value="bean" bean="INDIVIDUAL" property="referenceCode" format="AlphaNumeric" pattern="X(12)" />
+ <field name="nombre" value="bean" bean="INDIVIDUAL" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="ccc" value="bean" bean="INDIVIDUAL_ACCOUNT" property="ccc" format="CCC" pattern="ESDC" />
+ <field name="importe" value="bean" bean="INDIVIDUAL" property="amount" format="Numeric" pattern="9(8)V99" />
+ <field name="cod_devoluciones" value="bean" bean="INDIVIDUAL" property="returnCode" format="AlphaNumeric" pattern="X(6)" />
+ <field name="cod_interno" value="bean" bean="INDIVIDUAL" property="internalCode" format="AlphaNumeric" pattern="X(10)" />
+ <field name="concepto" value="bean" bean="INDIVIDUAL" property="concept" format="AlphaNumeric" pattern="X(40)" />
+ <field name="fecha_vencimiento" value="bean" bean="INDIVIDUAL" property="expiryDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(2)" />
+ 
+</register>

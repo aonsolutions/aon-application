@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+
+	<aon:div>
+<!-- 
+		<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" >
+			<input type="hidden" name="cmd" value="_notify-synch" />
+			<input type="hidden" name="tx" value="TransactionID" />
+			<input type="hidden" name="at" value="YourIdentityToken" />
+			<input type="submit" value="PDT" />
+ -->
+		<aon:form>
+		 
+	
+	
+		<!--  
+		<div>
+			<h:graphicImage style="width:120px; height: 70px;"
+				value="/css/ec-images/paymethods/paypal.jpg" />
+		</div>
+		-->
+		
+		
+		<!--  
+		#{aonResource.resolveLocal['/css/ec-images/paymethods/paypal.jpg']}
+		-->
+			<!--  
+		<aon:outputLabel value="PayPal" /> 
+		<h:outputLink
+			value="https://www.sandbox.paypal.com/cgi-bin/webscr" target="paypal">
+			<f:param name="cmd" value="_ExpressCheckout" />
+			<f:param name="business" value="me@mybusiness.com" />
+			<f:param name="return" value="http://localhost:8080/aon-ecommerce/" />
+			<f:param name="cancel_return" value="http://localhost:8080/aon-ecommerce/" />
+			<f:param name="image_url" value="http://www.esferalia.com/img/logos/esferalia.gif" />
+			<f:param name="currency_code" value="EUR" />
+	
+	
+	
+			<f:param name="item_name" value="Cart" />
+			<f:param name="amount" value="#{shoppingCart.cart.total}" />
+	
+			<aon:outputText style="color:#000;" value="Add To Cart" />
+		</h:outputLink> 
+			-->
+		
+		
+		
+		
+		
+			<!--  
+		<h:outputLink
+			value="https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=xpt/Marketing_CommandDriven/general/OnlineLogoCenter-outside" target="paypal">
+			<f:param name="cmd" value="_ExpressCheckout" />
+			
+			
+			<f:param name="business" value="me@mybusiness.com" />
+			<f:param name="return" value="http://localhost:8080/aon-ecommerce/" />
+			<f:param name="cancel_return" value="http://localhost:8080/aon-ecommerce/" />
+			<f:param name="image_url" value="http://www.esferalia.com/img/logos/esferalia.gif" />
+			<f:param name="currency_code" value="EUR" />
+	
+	
+	
+			<f:param name="item_name" value="Cart" />
+			<f:param name="amount" value="#{shoppingCart.cart.total}" />
+	
+			<img src="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" 
+				align="left" style="margin-right:7px;" />
+		</h:outputLink> 
+			-->
+		
+		
+	<!--  
+		<form action='expresscheckout.java' method="post">
+			<input type='image' name='submit' 
+			src='https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif' 
+			border='0' align='top' alt='PayPal'/>
+		</form>
+		
+		<aon:commandButton >
+			<h:graphicImage style="margin-right:7px;"
+				value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
+			<aon:actionListener method="#{shop.paypalIpn}" />
+		</aon:commandButton>
+	-->
+		
+		
+		<!--  
+		<aon:outputText value="" />
+		
+		<h:commandButton value="&#160;" >
+			<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
+			<aon:actionListener method="#{paypal.initialize}" />
+		</h:commandButton>
+		-->
+		
+		
+		
+		<aon:commandLink>
+			<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif"  />
+			<aon:actionListener method="#{paypal.initialize}" />
+		</aon:commandLink>
+		
+		<!--  
+		<h:outputLink value="aonPaypal">
+			<img src="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" 
+				align="left" style="margin-right:7px;" />
+			<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif"  />
+		</h:outputLink> 
+		-->
+			</aon:form>
+		</aon:div>
+		
+		
+			<!--  
+		<aon:outputLink id="paypal-accept-buttom" target="paypal"
+			value="https://www.sandbox.paypal.com/cgi-bin/webscr"
+			styleClass="aon-icon-accept">
+			<aon:outputText style="color:#000;"
+				value="#{bundle.aon_accept} paypal" />
+			<a4j:support event="onclick">
+				<aon:actionListener method="#{shop.paypalIpn}" />
+			</a4j:support>
+		</aon:outputLink> 
+			-->
+		<!--  
+									<f:param name="tx" value="1"/>
+									<f:param name="at" value="1"/>
+		-->
+								
+	
+</ui:composition>

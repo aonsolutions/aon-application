@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:div id="finindemDataDiv">
+	
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{finindem}" />
+			<ui:param name="columnClasses" value="
+			aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+			aon-editDataTable-numberColumn, aon-editDataTable-iconColumn" />
+						
+			<ui:define name="columns">
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_orden}" />
+				</f:facet>
+				<aon:outputText value="#{to.id.orden}" rendered="#{to!=finindem.to}" />
+				<aon:inputText id="orden_edit" styleClass="aon-form-input-text"
+					rendered="#{to==finindem.to}"  required="#{true}"
+					value="#{finindem.to.id.orden}" maxlength="4" size="7" />
+				<f:facet name="footer">
+					<aon:inputText id="orden_new" styleClass="aon-form-input-text" required="#{true}"
+						rendered="#{finindem.new}" value="#{finindem.to.id.orden}"
+						maxlength="4" size="7" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_text}" />
+				</f:facet>
+				<aon:outputText value="#{to.texto}" rendered="#{to!=finindem.to}" />
+				<aon:inputText id="texto_edit" styleClass="aon-form-input-text"
+					rendered="#{to==finindem.to}"  required="#{true}"
+					value="#{finindem.to.texto}" maxlength="40" size="45" />
+				<f:facet name="footer">
+					<aon:inputText id="texto_new" styleClass="aon-form-input-text" required="#{true}"
+						rendered="#{finindem.new}" value="#{finindem.to.texto}"
+						maxlength="40" size="45" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_importe}" />
+				</f:facet>
+				<aon:outputText value="#{to.importe}" rendered="#{to!=finindem.to}" />
+				<aon:inputText id="importe_edit" styleClass="aon-form-input-text"
+					rendered="#{to==finindem.to}"  
+					value="#{finindem.to.importe}" maxlength="11" size="14" />
+				<f:facet name="footer">
+					<aon:inputText id="importe_new" styleClass="aon-form-input-text" 
+						rendered="#{finindem.new}" value="#{finindem.to.importe}"
+						maxlength="11" size="14" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_finiquito_irpf}" />
+				</f:facet>
+				<aon:outputText value="#{to.irpf}" rendered="#{to!=finindem.to}" />
+				<aon:inputText id="irpf_edit" styleClass="aon-form-input-text"
+					rendered="#{to==finindem.to}" 
+					value="#{finindem.to.irpf}" maxlength="10" size="13" />
+				<f:facet name="footer">
+					<aon:inputText id="irpf_new" styleClass="aon-form-input-text" 
+						rendered="#{finindem.new}" value="#{finindem.to.irpf}"
+						maxlength="10" size="13" />
+				</f:facet>
+			</aon:column>
+			
+ 		 </ui:define>
+	 </ui:decorate>
+ 		 
+	</aon:div>
+
+</ui:composition>

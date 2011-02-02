@@ -1,0 +1,29 @@
+|||0|false|false|true|false|true
+1|1. Importe neto de la cifra de negocios|700,701,702,703,704,705,(706),(708),(709)|1|false|false|true|false|true
+2|2. Variación de existencias de productos terminados y en curso de fabricación|(6930),71,7930|2|false|false|true|false|true
+3|3. Trabajos realizados por la empresa para su activo|73|3|false|false|true|false|true
+4|4. Aprovisionamientos|(600),(601),(602),(606),(607),608,609,61,(693),(6932),(6933),7931,7932,7933|4|false|false|true|false|true
+5|5. Otros ingresos de explotación|740,747,75|5|false|false|true|false|true
+6|6. Gastos de personal|(64),7950,7957|6|false|false|true|false|true
+7|7. Otros gastos de explotación|(62),(631),(634),636,639,(65),(694),(695),794,7954|7|false|false|true|false|true
+8|8. Amortización de inmovilizado|(68)|8|false|false|true|false|true
+9|9. Imputación de subvenciones de inmovilizado no financiero y otras|746|9|false|false|true|false|true
+10|10. Excesos de provisiones|7951,7952,7955,7956|10|false|false|true|false|true
+11|11. Deterioro y resultado por enejenaciones del inmovilizado|(670),(671),(672),(690),(691),(692),770,771,772,790,791,792|11|false|false|true|false|true
+12|12. Otros Resultados|(678),778|12|false|false|true|false|true
+|||13|false|false|true|false|true
+A|A) RESULTADO DE EXPLOTACIÓN (1+2+3+4+5+6+7+8+9+10+11+12)|1,2,3,4,5,6,7,8,9,10,11,12|14|true|true|true|false|true
+|||15|false|false|true|false|true
+13|13. Ingresos financieros|760,761,762,767,769|16|false|false|true|false|true
+14|14. Gastos financieros|(660),(661),(662),(664),(665),(669)|17|false|false|true|false|true
+15|15. Variación de valor razonable en instrumentos financieros|(663),763|18|false|false|true|false|true
+16|16. Diferencias de cambio|(668),768|19|false|false|true|false|true
+17|17. Deterioro y resultado por enajenaciones de instrum|(666),(667),(673),(675),(696),(697),(698),(699),766,773,775,796,797,798,799|20|false|false|true|false|true
+|||21|false|false|true|false|true
+B|B) RESULTADO FINANCIERO (13+14+15+16+17)|13,14,15,16,17|22|true|true|true|false|true
+|||23|false|false|true|false|true
+C|C) RESULTADO ANTES DE IMPUESTOS (A+B)|A,B|24|true|true|true|false|true
+|||25|false|false|true|false|true
+18|18. Impuestos sobre beneficios|(6300),(6301),(633),638|26|false|false|true|false|true
+|||27|false|false|false|false|true
+D|D) RESULTADO DEL EJERCICIO (C+18)|C,18|28|true|true|true|false|true

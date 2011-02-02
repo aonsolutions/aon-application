@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
+
+	<ui:define name="menuContent">
+		<aon:commandLink id="masters"
+			value="#{appBundle.account_masters}"
+			action="menu_masters" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-master" />
+		<aon:commandLink id="entries"
+			value="#{accountingBundle.menu_entries}"
+			action="menu_entries" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-account-entry" />
+		<aon:commandLink id="reports"
+			value="#{appBundle.account_reports}"
+			action="menu_reports" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-account-reports" />
+		<aon:commandLink id="fixed_assets"
+			value="#{appBundle.account_fixed_assets}"
+			action="menu_fixed_assets" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-fixed-asset" />
+		<aon:commandLink id="treasury"
+			value="#{financeBundle.finance_menu_group}"
+			action="menu_treasury" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-treasury" />
+		<aon:commandLink id="configuration"
+			value="#{bundle.aon_configuration}"
+			action="menu_config" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-config" />
+	</ui:define>
+	
+</ui:composition>

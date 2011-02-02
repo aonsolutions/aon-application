@@ -1,0 +1,8 @@
+
+	<div id="sidebar_nav">
+		<ul>
+		#foreach($item in $menu)
+			<li><a href="$!item.getLink()">$!item.getLabel()</a></li>
+		#end
+		</ul>
+	</div>

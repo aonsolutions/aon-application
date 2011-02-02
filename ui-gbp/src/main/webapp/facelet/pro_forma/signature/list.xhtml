@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:div id="signDiv">
+		<aon:div styleClass="aon-toolbar"
+			rendered="#{!proFormaSignature.signedByUser and proFormaSignature.pending}" >
+			<aon:commandButton id="sign" value="#{appBundle.gbp_sign}"
+				styleClass="aon-finding-toolbar-item aon-icon-signature"
+				reRender="proFormaSignatureDataTable,signDiv,proFormaGrid"
+				actionListener="#{proFormaSignature.onSign}"/>
+		</aon:div>
+	</aon:div>	
+
+	<h:dataTable id="proFormaSignatureDataTable" value="#{proFormaSignature.model}" var="to"
+		rows="20" styleClass="dr-table rich-table aon-editDataTable"
+		headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+		footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+		rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+		cellpadding="0" cellspacing="0"
+		columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+					   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+					   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+					   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_pro_forma_signature_signature_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.signatureDate}">
+				<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_pro_forma_signature_user_name}" />
+			</f:facet>
+			<aon:outputText value="#{to.userName}"/>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_pro_forma_signature_role}" />
+			</f:facet>
+			<aon:outputText value="#{to.role}"/>
+		</aon:column>
+
+	</h:dataTable>
+	
+	<aon:dataScroller dataTable="proFormaSignatureDataTable" model="#{proFormaSignature.model}" />
+
+</ui:composition>
+
+</body>
+</html>

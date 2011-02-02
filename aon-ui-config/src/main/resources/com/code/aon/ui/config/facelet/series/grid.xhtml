@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="seriesList">
+			<aon:div ajaxRendered="true" layout="none">
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{configBundle.config_series_module}" />
+					<ui:param name="controller" value="#{series}" />
+				</ui:decorate>
+
+				<aon:div styleClass="aon-scroll-area">
+					<ui:decorate
+						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+						<ui:param name="controller" value="#{series}" />
+						<ui:define name="columns">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+								<f:facet name="header">
+									<aon:outputLabel for="Series_id" value="#{bundle.aon_id}" />
+								</f:facet>
+								<aon:outputText value="#{to.id}" />
+								<f:facet name="footer">
+									<aon:inputText id="Series_id"
+										rendered="#{formNew}" size="7" maxlength="5"
+										value="#{series.to.id}" required="#{true}" />
+								</f:facet>
+							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+								<f:facet name="header">
+									<aon:outputLabel for="Series_description" value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:outputText rendered="#{formList}"
+									value="#{to.description}" />
+								<aon:inputText id="Series_description"
+									rendered="#{formEdit}" size="40" maxlength="32" 
+									value="#{series.to.description}" required="#{true}" />
+								<f:facet name="footer">
+									<aon:inputText id="Series_description-New"
+										rendered="#{formNew}" size="40" maxlength="32" 
+										value="#{series.to.description}" required="#{true}" />
+								</f:facet>
+							</aon:column>
+
+							<c:if test="#{aonRole.confidentiality}">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+									<f:facet name="header">
+										<aon:outputLabel for="Series_securityLevel" value="#{bundle.aon_confidential}" />
+									</f:facet>
+									<aon:outputText rendered="#{formList}"
+										value="&#160;"
+										styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
+										style="padding-left:20px" />
+									<aon:selectBooleanCheckbox id="Series_securityLevel"
+										rendered="#{formEdit}" value="#{series.to.confidential}" />
+									<f:facet name="footer">
+										<aon:selectBooleanCheckbox id="Series_securityLevel-New"
+											rendered="#{formNew}" value="#{series.to.confidential}" />
+									</f:facet>
+								</aon:column>
+							</c:if>
+
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+								<f:facet name="header">
+									<aon:outputLabel for="Series_active" value="#{configBundle.config_series_active}" />
+								</f:facet>
+								<aon:outputText rendered="#{formList}"
+									value="&#160;"
+									styleClass="#{to.active?'aon-icon-checked':'aon-icon-check'}" 
+									style="padding-left:20px" />
+								<aon:selectBooleanCheckbox id="Series_active"
+									rendered="#{formEdit}" value="#{series.to.active}" />
+								<f:facet name="footer">
+									<aon:selectBooleanCheckbox id="Series_active-New"
+										rendered="#{formNew}" value="#{series.to.active}">
+									</aon:selectBooleanCheckbox>
+								</f:facet>
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>

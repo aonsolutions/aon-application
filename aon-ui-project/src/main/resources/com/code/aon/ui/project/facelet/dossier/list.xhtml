@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div styleClass="aon-finding-title-toolbar">
+		<aon:panelGrid columns="1" dir="true"
+			columnClasses="aon-finding-toolbar">
+
+			<aon:div styleClass="aon-finding-toolbar-item-group">
+
+				<aon:commandButton id="resetInListDossier" value="#{bundle.aon_reset}"
+					actionListener="#{dossier.onReset}" reRender="customerTab"
+					styleClass="aon-icon-commandButton aon-icon-reset"
+					accesskey="#{bundle.aon_key_new}" />
+			</aon:div>
+		</aon:panelGrid>
+	</aon:div>
+
+	<aon:dataTable id="dossierDataList" value="#{dossier.model}" var="to"
+		rows="20">
+		<aon:rowSelector actionListener="#{dossier.onSelect}"
+			reRender="customerTab" />
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{projectBundle.dossier_number}" />
+			</f:facet>
+			<aon:outputText value="#{to.number}" />
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_type}" />
+			</f:facet>
+			<aon:outputText value="#{to.dossierType.description}" />
+		</aon:column>
+
+<!-- 
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{projectBundle.dossier_location}" />
+			</f:facet>
+			<aon:outputText value="#{to.location}" />
+		</aon:column>
+ -->
+ 		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_status}" />
+			</f:facet>
+			<aon:outputText value="#{to.status}" />
+		</aon:column>
+	</aon:dataTable>
+	<aon:dataScroller2 for="dossierDataList" showNote="true" />
+</ui:composition>

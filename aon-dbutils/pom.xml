@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>5.9.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.code.aon</groupId>
+	<artifactId>aon-dbutils</artifactId>
+	<version>5.9.0</version>
+	<description>AON DB DUMPER</description>
+	<name>AON DB DUMPER</name>
+
+        <scm>
+                <url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.9.x/aon-dbutils</url>
+                <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.9.x/aon-dbutils</connection>
+                <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/5.9.x/aon-dbutils</developerConnection>
+        </scm>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.3</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.5</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.11</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+        <build>
+                <plugins>
+                        <plugin>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>buildnumber-maven-plugin</artifactId>
+                                <version>1.0-beta-4</version>
+                                <executions>
+                                        <execution>
+                                                <phase>validate</phase>
+                                                <goals>
+                                                        <goal>create</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                                <configuration>
+                                        <doCheck>true</doCheck>
+                                        <doUpdate>true</doUpdate>
+                                </configuration>
+                        </plugin>
+                </plugins>
+        </build>
+
+       <profiles>
+                <profile>
+                        <id>rpm-release</id>
+                        <activation>        
+                                <property>  
+                                        <name>rpm.release</name>
+                                        <value>true</value>     
+                                </property>                     
+                        </activation>                           
+
+                        <build>                                 
+                                <plugins>                       
+                                        <!-- Para construir el RPM -->
+                                        <plugin>                      
+
+                                                <groupId>org.codehaus.mojo</groupId>
+                                                <artifactId>rpm-maven-plugin</artifactId>
+                                                <version>2.0.1</version>                 
+                                                <extensions>true</extensions>            
+
+                                                <executions>
+                                                        <execution>
+                                                                <id>rpm-build</id>
+                                                                <goals>           
+                                                                        <goal>attached-rpm</goal>
+                                                                </goals>                         
+                                                        </execution>                             
+
+                                                </executions>
+
+                                                <configuration>
+                                                        <group>Applications/Aon</group>
+                                                        <release>${buildNumber}</release>
+                                                        <copyright>2010, esferalia Networks S.A</copyright>
+                                                        <mappings>                                                   
+                                                                <mapping>                                            
+                                                                        <filemode>755</filemode>                     
+                                                                        <username>root</username>                    
+                                                                        <groupname>root</groupname>
+                                                                        <directory>/usr/share/java</directory>
+
+									<sources>
+										<source>
+											<location>target</location>
+											<includes>
+												
+<include>${project.artifactId}-${project.version}.jar</include>
+											</includes>
+										</source>
+										<softlinkSource>
+											
+<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
+											<destination>${project.artifactId}.jar</destination>
+										</softlinkSource>
+									</sources>
+                                                                </mapping>
+                                                        </mappings>
+                                                        <!--mappings>                                                   
+                                                        </mappings-->
+                                                </configuration>
+                                        </plugin>
+
+                                        <plugin>
+                                                <groupId>org.codehaus.mojo</groupId>
+                                                <artifactId>wagon-maven-plugin</artifactId>
+                                                <version>1.0-beta-3</version>
+                                                <executions>
+                                                        <execution>
+                                                                <id>upload-rpm</id>
+                                                                <phase>deploy</phase>
+                                                                <goals>
+                                                                        <goal>upload</goal>
+                                                                </goals>
+                                                                <configuration>
+                                                                        <fromDir>${project.basedir}/target/rpm/${project.artifactId}/RPMS/</fromDir>
+                                                                        <includes>**/*.rpm</includes>
+                                                                        <url>scp://dev.esferalia.com</url>
+                                                                        <toDir>/var/www/aon-inetserver</toDir>
+                                                                </configuration>
+                                                        </execution>
+                                                </executions>
+                                        </plugin>
+
+
+                                </plugins>
+                        </build>
+                </profile>
+        </profiles>
+
+
+</project>
+ 
+

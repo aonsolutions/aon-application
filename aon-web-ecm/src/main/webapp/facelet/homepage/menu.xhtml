@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+ 
+<ui:composition>
+	<aon:form id="ecmMenuForm">
+		<aon:menuBar id="ecmMenu"> 
+			<aon:dropDownMenu value="#{menuBundle.aon_administration}" 
+					rendered="#{manager.administrator || manager.contentManagement}" >
+				<aon:menuItem value="#{menuBundle.aon_repository}" iconClass="aon-icon-index"  
+					action="admin_repository" actionListener="#{manager.folders.reset}"
+					rendered="#{manager.administrator || manager.contentManagement}" />
+				<aon:menuItem value="#{menuBundle.aon_permissions}" iconClass="aon-icon-user"  
+					action="permissions_list" 
+					rendered="#{manager.administrator}" />
+				<aon:menuItem value="#{menuBundle.aon_category}" iconClass="aon-icon-index"  
+					action="admin_category" 
+					rendered="#{manager.administrator}" />
+			</aon:dropDownMenu>
+
+			<aon:dropDownMenu value="#{menuBundle.aon_search}">
+				<aon:menuItem value="#{menuBundle.aon_search_bycontent}" iconClass="aon-icon-search"
+					action="search_by_content" actionListener="#{search.onReset}" />
+				<aon:menuItem value="#{menuBundle.aon_search_advanced}" iconClass="aon-icon-advanced-search"
+					action="advanced_search" actionListener="#{search.onReset}" />
+			</aon:dropDownMenu>			
+		</aon:menuBar>
+	</aon:form>
+</ui:composition>
+
+</body>
+</html>

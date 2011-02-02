@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="cnaeForm">
+			
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__cnae}" />				
+				<ui:param name="controller" value="#{cnaeMaestro}" />
+				<ui:param name="reportKey" value="CnaeList"/>
+				<ui:param name="reportKeyXls" value="CnaeListXls"/>
+				
+			</ui:include>
+
+		
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="cnaeMaestro"  columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+					<aon:outputLabel for="CnaeMaestro_cdg" value="#{appBundle.aon_payroll_cdg}" />
+					<aon:inputText id="CnaeMaestro_cdg" value="#{cnaeMaestro.to.cdg}" disabled="#{!cnaeMaestro.new}" 
+						required="true" size="15" maxlength="10" />
+					
+					<aon:outputLabel for="CnaeMaestro_description" value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText id="CnaeMaestro_description" value="#{cnaeMaestro.to.description}" 
+						size="150" maxlength="250" >
+					</aon:inputText>
+						
+					<aon:outputLabel value="#{appBundle.aon_payroll_cotizacion_ocupacion}" />	
+					<aon:div>
+					<aon:inputText id="CnaeMaestro_ocupacion" value="#{cnaeMaestro.to.ocupacion}" 
+						size="30" maxlength="25" >
+					</aon:inputText>
+					
+					
+					<!-- <ui:include src="ocupacion/grid.xhtml" /> -->	
+		            </aon:div>
+					
+				</aon:panelGrid>
+				
+				<aon:panelGrid id="cnaeMaestroOcupaciones"  columns="1" width="50%">
+					
+					
+				</aon:panelGrid>
+	
+	
+	
+	
+	
+		<rich:listShuttle id="listaOcupaciones"
+			sourceValue="#{cnaeMaestro.listaOcupacionesLibres}"
+            targetValue="#{cnaeMaestro.listaOcupacionesAsignadas}" 
+            sourceCaptionLabel="#{appBundle.aon_payroll_cotizacion_no_asignado}"
+            targetCaptionLabel="#{appBundle.aon_payroll_cotizacion_asignado}"
+            var="items" 
+            listHeight="350" listWidth="350" 
+            sourceListWidth="300"
+            targetListWidth="300"
+            copyControlLabel="#{appBundle.aon_payroll_cotizacion_asignar}"
+            copyAllControlLabel="#{appBundle.aon_payroll_cotizacion_asignar_todo}"
+            removeControlLabel="#{appBundle.aon_payroll_cotizacion_quitar}"
+            removeAllControlLabel="#{appBundle.aon_payroll_cotizacion_quitar_todo}"
+            orderControlsVisible="#{false}"
+            fastOrderControlsVisible="#{false}" 
+            columnClasses="aon-editDataTable-dateColumn,
+            aon-editDataTable-dateColumn, aon-editDataTable-dateColumn, 
+            aon-editDataTable-dateColumn"
+            valueChangeListener="cnaeMaestro.refreshOcupaciones" >
+            
+            <rich:column>
+            	<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+				</f:facet>
+                <aon:outputText value="#{items.id.cdg}"></aon:outputText>
+            </rich:column>
+           <!-- 
+            <rich:column>
+             	<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_pctit}" />
+				</f:facet>
+                <aon:outputText value="#{items.pctit}"></aon:outputText>
+            </rich:column>
+            <rich:column>
+             	<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_pctims}" />
+				</f:facet>
+                <aon:outputText value="#{items.pctims}"></aon:outputText>
+            </rich:column>
+            <rich:column>
+            	<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_pcttotal}" />
+				</f:facet>
+                <aon:outputText value="#{items.pcttotal}"></aon:outputText>
+            </rich:column>
+             -->
+            
+            <a4j:support  event="onlistchanged" reRender="CnaeMaestro_ocupacion" />
+            
+            <!-- 
+            <a4j:support event="onorderchanged" reRender="toolBar" />
+            -->
+            
+        </rich:listShuttle>
+	
+	
+	
+	
+	
+				<ui:include src="grid.xhtml" rendered="#{!cnaeMaestro.new}" />
+						
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

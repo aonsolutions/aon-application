@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<jboss-web>
+
+	<!-- Isolate classes from other deployments -->
+	<class-loading>
+		<loader-repository>
+			code.es:loader=aon-web-ecm.war
+			<loader-repository-config>java2ParentDelegation=false</loader-repository-config>
+		</loader-repository>
+	</class-loading>
+
+	<use-cookies>false</use-cookies>
+	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-ldap</security-domain>
+
+	<!-- The context-root element specifies the context root of a web
+	application. It may be given here for standalone wars.
+	-->
+	<context-root>/aon-ecm</context-root>
+	
+</jboss-web>

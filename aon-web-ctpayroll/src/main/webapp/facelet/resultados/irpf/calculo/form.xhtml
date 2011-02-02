@@ -1,0 +1,350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	<body>
+
+		<ui:composition
+			template="/facelet/templates/aon.ui.content.xhtml">
+
+			<ui:define name="content">
+
+				<aon:form id="calculoForm">
+
+					<!-- 
+						<ui:include
+						src="/facelet/templates/formPrintToolbar.xhtml">
+					-->
+					<ui:include 
+						src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+						<ui:param name="toolbarTitle"
+							value="#{menuBundle.resultados_irpf__result_irpf}" />
+						<ui:param name="controller"
+							value="#{calculo}" />
+					</ui:include>
+<!--	FIN HEADER & TOOLBAR	-->
+
+					<aon:div id="calculoData"
+						styleClass="aon-scroll-area aon-scroll-area-clientes">
+						
+					<!-- ********** PESTAINAS ********** -->
+						<rich:tabPanel switchType="ajax" style="margin-bottom:5px;" >
+							<rich:tab
+								label="#{appBundle.aon_payroll_resultados_irpf_calculo_tab1}" >
+								<aon:div id="calculosDiv">									 
+								<!-- TAB 1 -->	
+									
+									<aon:div>
+									<aon:panelGrid columns="2" dir="true"
+										style="margin-bottom=5px;float:left;">
+										
+										
+										<aon:outputLabel
+											value="CDG:" />
+										<aon:inputText id="cdg" value="#{calculo.to.id.cdg}" 
+											size="5" maxlength="4" disabled="#{true}" />
+										
+										
+											
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_anio}" />
+										<aon:inputText id="Anio" value="#{calculo.to.id.anio}" required="#{true}"
+											size="5" maxlength="4" disabled="#{!calculo.new}" />
+											
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_mes}" />
+										<aon:inputText id="Mes" value="#{calculo.to.id.mes}" required="#{true}"
+											size="5" maxlength="2" disabled="#{!calculo.new}" />
+											
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_dia}" />
+										<aon:inputText id="Dia" value="#{calculo.to.id.dia}" required="#{true}"
+											size="5" maxlength="2" disabled="#{!calculo.new}" />
+									</aon:panelGrid>
+										
+									<aon:panelGrid columns="2" dir="true"
+										style="margin-bottom=5px;float:left;">
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_trab}" />
+										<aon:div styleClass="aon-lookup">
+											<aon:lookupInputText id="trabajador_cdg" required="#{true}" disabled="#{!calculo.new}"
+												lookup="#{trabajadorLookup}" reRender="trabajador_descripcion,empresa_descripcion"
+												value="#{calculo.to.emprper.cdg}" size="5" >
+											</aon:lookupInputText>
+											<aon:lookupButton id="trabajador_lookup"  disabled="#{!calculo.new}"
+												windowTitle="#{appBundle.aon_payroll_resultados_irpf_impresos190_empresa_nif}"
+												selectReRender="trabajador_cdg,trabajador_descripcion,empresa_descripcion"
+												lookup="#{trabajadorLookup}" minHeight="440"
+												property="#{calculo.to.emprper}">
+											</aon:lookupButton>
+											<aon:inputText id="trabajador_descripcion"
+												value="#{(calculo.to.persona.nombre!=null)?(calculo.to.persona.nombreComp):('')}"
+												size="45" disabled="true" />
+										</aon:div>
+											
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_empsa}" />
+										<aon:inputText id="empresa_descripcion" 
+											value="#{calculo.to.empresa.descripcion}"
+											size="45" maxlength="20" disabled="true"/>
+											
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_dias_contrato}" />
+										<aon:inputText value="#{calculo.to.diascont}" 
+											size="5" maxlength="2" />
+										
+									</aon:panelGrid>
+									</aon:div>
+									
+									
+									
+									<aon:panelGrid columns="2" dir="true" width="45%"
+										style="margin-bottom=5px;clear:both;float:left;">
+										
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_anual}" />
+										<aon:inputText value="#{calculo.to.impAnualid}"
+											size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_cuota_anual}" />
+										<aon:inputText
+											value="#{calculo.to.cuotaAnualid}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_retrib}" />
+										<aon:inputText
+											value="#{calculo.to.retrAnt}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_irpf_anterior}" />
+										<aon:div>
+											<aon:inputText
+												value="#{calculo.to.irpfAnterior}" size="9" maxlength="5" />
+											<aon:outputText value=" %" />
+										</aon:div>
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_ret_acum_compf}" />
+										<aon:inputText
+											value="#{calculo.to.retrAcuFij}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_ret_acum_compv}" />
+										<aon:inputText
+											value="#{calculo.to.retrAcuVar}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_ret_prev_compf}" />
+										<aon:inputText
+											value="#{calculo.to.retrPreFij}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_ret_prev_compv}" />
+										<aon:inputText
+											value="#{calculo.to.retrPreVar}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_ret_estim_ejerc}" />
+										<aon:inputText
+											value="#{calculo.to.retrEstimada}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_retrib_consider}" />
+										<aon:inputText
+											value="#{calculo.to.retrConsid}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_aport_ss_acum}" />
+										<aon:inputText
+											value="#{calculo.to.impAcuSs}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_apor_ss_prev}" />
+										<aon:inputText
+											value="#{calculo.to.impPreSs}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_ind_hijos}" />
+										<aon:inputText
+											value="#{calculo.to.hijos}" size="13" maxlength="12" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_aplic_ind_irpf}" />
+										<aon:inputText
+											value="#{calculo.to.aplicado}" size="2" maxlength="1" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_regul}" />
+										<aon:selectBooleanCheckbox value="#{calculo.to.regula}" />
+
+
+									</aon:panelGrid>
+									
+									<aon:panelGrid columns="2" dir="true" width="45%"
+										style="margin-bottom=5px;margin-left=5px;float:left;">
+
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reduc_irreg}" />
+										<aon:inputText
+											value="#{calculo.to.impIrreg}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_gastos_deduc}" />
+										<aon:inputText
+											value="#{calculo.to.impCss}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_min_personal}" />
+										<aon:inputText
+											value="#{calculo.to.impPersonal}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_min_descen}" />
+										<aon:inputText
+											value="#{calculo.to.impFamiliar}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reducc_rendim}" />
+										<aon:inputText
+											value="#{calculo.to.impRentas}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reduc_prolon}" />
+										<aon:inputText
+											value="#{calculo.to.impProlongacion}" readonly="#{calculo.new}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reduc_mov}" />
+										<aon:inputText
+											value="#{calculo.to.impMovilidad}" size="14" maxlength="11" readonly="#{calculo.new}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reduc_discap}" />
+										<aon:inputText
+											value="#{calculo.to.impDiscapacidadt}" size="14" maxlength="11" readonly="#{calculo.new}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reduc_hijos}" />
+										<aon:inputText
+											value="#{calculo.to.impCuidadohijo}" size="14" maxlength="11" readonly="#{calculo.new}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reduc_edad}" />
+										<aon:inputText
+											value="#{calculo.to.impAscen}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reduc_asist}" />
+										<aon:inputText
+											value="#{calculo.to.impAsistencia}" size="14" maxlength="11" readonly="#{calculo.new}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reduc_discap}" />
+										<aon:inputText
+											value="#{calculo.to.impDiscapacidad}" size="14" maxlength="11" readonly="#{calculo.new}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_pension_percep}" />
+										<aon:inputText
+											value="#{calculo.to.impPensionista}" size="14" maxlength="11" readonly="#{calculo.new}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_reduc_descen}" />
+										<aon:inputText
+											value="#{calculo.to.impDescen}" size="14" maxlength="11" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_pension_compens}" />
+										<aon:inputText
+											value="#{calculo.to.impPension}" size="14" maxlength="11" />
+
+									</aon:panelGrid>
+									
+									
+									<aon:panel style="margin-bottom=5px;margin-left=5px;float:left;">
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_marca_irpf}"/>
+										</f:facet>
+										
+										<aon:selectOneRadio id="IndicadorIrpf" value="#{calculo.to.indirpf}"
+											layout="pageDirection">	
+											<f:selectItems value="#{calculo.listaIndicadoresIrpf}"/>											
+										</aon:selectOneRadio>
+										
+									</aon:panel>
+									
+									<aon:div>
+									<aon:panelGrid columns="2" dir="true" width="30%"
+										style="margin-bottom=2px;clear:both;float:left;">
+
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_ret_anual_nueva}" />
+										<aon:inputText
+											value="#{calculo.to.retanualn}" size="16" maxlength="13" readonly="#{calculo.new}"/>
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_ret_anual_base}" />
+										<aon:inputText
+											value="#{calculo.to.retanualb}" size="16" maxlength="13" readonly="#{calculo.new}" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_dif_ret}" />
+										<aon:inputText
+											value="#{calculo.to.difret}" size="16" maxlength="13" readonly="#{calculo.new}" />
+										
+									</aon:panelGrid>
+										
+									<aon:panelGrid columns="1" dir="true" 
+										style="margin-bottom=2px;float:left;">
+										
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_irpf_anual}" />
+										<aon:inputText
+											value="#{calculo.to.irpfanual}" size="7" maxlength="5" readonly="#{calculo.new}" />										
+									</aon:panelGrid>
+										
+										
+									<aon:panelGrid columns="2" dir="true"  width="30%"
+										style="margin-bottom=2px;float:left;">
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_base_calc_ret}" />
+										<aon:inputText
+											value="#{calculo.to.baseCalculo}" size="16" maxlength="13" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_cuota_calc_ret}" />
+										<aon:inputText
+											value="#{calculo.to.cuotaCalculo}" size="16" maxlength="13" />
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_ret_irpf_acum}" />
+										<aon:inputText
+											value="#{calculo.to.irpfAcu}" size="16" maxlength="13" />
+									</aon:panelGrid>
+											
+									<aon:panelGrid columns="2" dir="true"  width="30%"
+										style="margin-bottom=2px;float:left;">	
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_tipo_irpf_calc}" />
+										<aon:div>
+											<aon:inputText
+												value="#{calculo.to.irpfCal}" size="7" maxlength="5" />
+											<aon:outputText value=" %" />
+										</aon:div>
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_min_minusv_forla}" />
+										<aon:div>
+											<aon:inputText
+												value="#{calculo.to.minforal}" size="7" maxlength="5" />
+											<aon:outputText value=" %" />
+										</aon:div>
+										<aon:outputLabel
+											value="#{appBundle.aon_payroll_resultados_irpf_calculo_tipo_irpf_asig}" />
+										<aon:div>
+											<aon:inputText
+												value="#{calculo.to.irpf}" size="7" maxlength="5" />
+											<aon:outputText value=" %" />
+										</aon:div>
+										
+									</aon:panelGrid>
+									
+									</aon:div>
+									
+								<!-- FIN TAB 1 -->
+								</aon:div>
+							</rich:tab>
+							<rich:tab 
+								label="#{appBundle.aon_payroll_resultados_irpf_calculo_tab2}" >
+								<aon:div id="complementosDiv">
+									<aon:outputText
+										value="#{appBundle.aon_payroll_resultados_irpf_calculo_lista_comp}" />
+									<ui:include
+										src="grid.xhtml" />
+								</aon:div>
+							</rich:tab>
+						</rich:tabPanel>
+					<!-- ********** FIN PESTAINAS ********** -->
+
+					</aon:div>
+				</aon:form>
+				
+				<aon:lookupButtonPopup lookup="#{trabajadorLookup}" />
+
+			</ui:define>
+		</ui:composition>
+
+	</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="trabinciSearch">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_principales_otrasinci_mnto}" />
+				<ui:param name="controller" value="#{trabinci}" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{trabinci.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="trabinci_list" />
+
+
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_inciit_fecini_inci}" />
+					<aon:selectInputDate renderAsPopup="true"
+						valueChangeListener="#{trabinci.addEqualExpression}"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						id="Trabinci_id_fecini" enableManualInput="true" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_inciit_fecfin_inci}" />
+					<aon:selectInputDate renderAsPopup="true"
+						valueChangeListener="#{trabinci.addEqualExpression}"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						id="Trabinci_fecfin" enableManualInput="true" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_inciit_dias_it}" />
+					<aon:inputText id="Trabinci_codinc" size="" maxlength="" 
+						valueChangeListener="#{trabinci.addExpression}"/>
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_inciit_dias_presta_it}" />
+					<aon:inputText id="Trabinci_importe" size="" maxlength=""  
+						valueChangeListener="#{trabinci.addExpression}"/>
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_inciit_dias_presta_60}" />
+					<aon:inputText id="Trabinci_cantidad" size="" maxlength=""  
+						valueChangeListener="#{trabinci.addExpression}"/>
+
+					
+
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+
+
+	</ui:define>
+
+</ui:composition>

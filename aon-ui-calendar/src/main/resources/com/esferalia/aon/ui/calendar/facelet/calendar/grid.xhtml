@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{calendarHoliday}" />
+		<ui:param name="columnClasses"	value="aon-editDataTable-date,aon-editDataTable-text" />
+		<ui:param name="showDataScroller" value="#{true}"/>
+		<ui:define name="columns">
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="Calendar_date" value="#{bundle.aon_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.date}"
+					rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="CustomerFee_initialDate"
+					value="#{controller.to.date}" rendered="#{formEdit}"
+					required="true" inputSize="7"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="CustomerFee_initialDate-New"
+						value="#{controller.to.date}" rendered="#{formNew}"
+						required="true" inputSize="7"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</f:facet>
+			</aon:column>
+			<aon:column >
+				<f:facet name="header">
+					<aon:outputLabel  value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" rendered="#{formList}" />
+				<aon:inputText id="Calendar_name" rendered="#{formEdit}" size="50"
+					value="#{calendarHoliday.to.description}" maxlength="64" />
+				<f:facet name="footer">
+					<aon:inputText id="Calendar_name-New" required="true"
+						rendered="#{formNew}" size="50" maxlength="64" value="#{calendarHoliday.to.description}"
+						 />
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+</ui:composition>

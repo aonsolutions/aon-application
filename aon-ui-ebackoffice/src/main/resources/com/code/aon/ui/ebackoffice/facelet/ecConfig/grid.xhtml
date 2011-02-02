@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+
+		<aon:form id="ectargetGrid">
+
+			<aon:div ajaxRendered="true" layout="none">
+
+				<ui:include
+					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+					<ui:param name="toolbarTitle"
+						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig}" />
+					<ui:param name="controller" value="#{ecconfig}" />
+
+				</ui:include>
+
+				<!-- region-body -->
+				<aon:div styleClass="aon-scroll-area">
+
+					<aon:editDataTable id="ecconfigData" var="to" rows="20"
+						rendered="#{(ecconfig.model.rowCount > 0) or (ecconfig.new)}"
+						value="#{ecconfig.model}"
+						columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-iconColumn aon-width-60,  aon-editDataTable-textColumn,aon-editDataTable-iconColumn aon-width-60,aon-editDataTable-textColumn aon-width-auto , aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+
+						<aon:rowSelector toggleOnClick="#{ecconfig.to == null}"
+							actionListener="#{ecconfig.onSelect}" />
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:commandButton id="balanceDetailTable-select"
+								actionListener="#{ecconfig.onSelect}"
+								rendered="#{to!=ecconfig.to}"
+								styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{ecconfig.onReset}" value=""
+										rendered="#{!ecconfig.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_active}" />
+							</f:facet>
+							<aon:outputText value="&#160;" style="text-align:center;"
+								styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+								rendered="#{to!=ecconfig.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==ecconfig.to}"
+								value="#{ecconfig.to.active}" />
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox rendered="#{ecconfig.new}"
+									value="#{ecconfig.to.active}" />
+							</f:facet>
+						</aon:column>
+
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" rendered="#{to!=ecconfig.to}" />
+
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==ecconfig.to}" value="#{ecconfig.to.name}"
+								size="15" maxlength="64" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{ecconfig.new}" size="20"
+									value="#{ecconfig.to.name}" maxlength="64" />
+
+							</f:facet>
+						</aon:column>
+
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_skin}" />
+							</f:facet>
+							<aon:outputText value="#{to.skin}" rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.skin}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.skins}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.skin}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.skins}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_header}" />
+							</f:facet>
+
+							<a4j:mediaOutput id="header_preview" element="img"
+								rendered="#{to!=ecconfig.to}" cacheable="false"
+								value="#{to.headerImg}" style="width:30px"
+								createContent="#{ecconfig.paintHeader}" />
+
+							<aon:div id="header">
+								<!--<h:commandLink id="download" target="_blank"
+									onmouseover="disableRowSelector();"
+									onmouseout="enableRowSelector();"
+									rendered="#{to==ecconfig.to}"
+									actionListener="#{ecconfig.downloadImage}"
+									styleClass="aon-icon aon-icon-mail-save"
+									style="line-height:16px;margin-right:0;"
+									title="#{bundle.aon_fileupload_download}">
+									<f:param name="index" value="#{to.catalogueImg}" />
+									<aon:outputText value="&#160;" />
+								</h:commandLink>-->
+								<a4j:region>
+									<aon:fileUpload rendered="#{formEdit}"
+										addControlLabel="#{bundle.aon_fileUpload_add}"
+										stopControlLabel="#{bundle.aon_fileUpload_stop}"
+										stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+										uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+										fileUploadListener="#{ecconfig.headerUploaded}"
+										listHeight="0px" immediateUpload="true" autoclear="true">
+										<f:facet name="label">
+											<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+										</f:facet>
+										<a4j:support event="onuploadcomplete"
+											reRender="attachFile,ItemAttach_description" />
+									</aon:fileUpload>
+								</a4j:region>
+							</aon:div>
+							<aon:div id="headerchange" rendered="#{to==ecconfig.to}">
+								<a4j:region>
+									<aon:fileUpload addControlLabel="#{bundle.aon_fileUpload_add}"
+										stopControlLabel="#{bundle.aon_fileUpload_stop}"
+										stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+										uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+										fileUploadListener="#{ecconfig.headerUploaded}"
+										listHeight="0px" immediateUpload="true" autoclear="true">
+										<f:facet name="label">
+											<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+										</f:facet>
+										<a4j:support event="onuploadcomplete"
+											reRender="attachFileNew,ItemAttach_description-New" />
+									</aon:fileUpload>
+								</a4j:region>
+							</aon:div>
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_footer}" />
+							</f:facet>
+
+							<a4j:mediaOutput id="footer_preview" element="img"
+								rendered="#{to!=ecconfig.to}" cacheable="false"
+								value="#{to.footerImg}" style="width:30px"
+								createContent="#{ecconfig.paintFooter}" />
+
+							<aon:div id="footerFile">
+								<!--<h:commandLink id="download" target="_blank"
+									onmouseover="disableRowSelector();"
+									onmouseout="enableRowSelector();"
+									rendered="#{to==ecconfig.to}"
+									actionListener="#{ecconfig.downloadImage}"
+									styleClass="aon-icon aon-icon-mail-save"
+									style="line-height:16px;margin-right:0;"
+									title="#{bundle.aon_fileupload_download}">
+									<f:param name="index" value="#{to.catalogueImg}" />
+									<aon:outputText value="&#160;" />
+								</h:commandLink>-->
+								<a4j:region>
+									<aon:fileUpload rendered="#{formEdit}"
+										addControlLabel="#{bundle.aon_fileUpload_add}"
+										stopControlLabel="#{bundle.aon_fileUpload_stop}"
+										stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+										uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+										fileUploadListener="#{ecconfig.footerUploaded}"
+										listHeight="0px" immediateUpload="true" autoclear="true">
+										<f:facet name="label">
+											<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+										</f:facet>
+										<a4j:support event="onuploadcomplete"
+											reRender="attachFile,ItemAttach_description" />
+									</aon:fileUpload>
+								</a4j:region>
+							</aon:div>
+							<aon:div id="footerchange" rendered="#{to==ecconfig.to}">
+								<a4j:region>
+									<aon:fileUpload addControlLabel="#{bundle.aon_fileUpload_add}"
+										stopControlLabel="#{bundle.aon_fileUpload_stop}"
+										stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+										uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+										fileUploadListener="#{ecconfig.footerUploaded}"
+										listHeight="0px" immediateUpload="true" autoclear="true">
+										<f:facet name="label">
+											<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+										</f:facet>
+										<a4j:support event="onuploadcomplete"
+											reRender="attachFileNew,ItemAttach_description-New" />
+									</aon:fileUpload>
+								</a4j:region>
+							</aon:div>
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_commerce}" />
+							</f:facet>
+							<aon:outputText value="&#160;" style="text-align:center;"
+								styleClass="#{(to.commerce)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+								rendered="#{to!=ecconfig.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==ecconfig.to}"
+								value="#{ecconfig.to.commerce}" />
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox rendered="#{ecconfig.new}"
+									value="#{ecconfig.to.commerce}" />
+							</f:facet>
+						</aon:column>
+
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_login}" />
+							</f:facet>
+							<aon:outputText value="#{to.showLogin}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.showLogin}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.loginTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.showLogin}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.loginTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_pricetype}" />
+							</f:facet>
+							<aon:outputText value="#{to.showPrice}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.showPrice}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.priceTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.showPrice}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.priceTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_taxinprice}" />
+							</f:facet>
+							<aon:outputText value="#{to.taxInType}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.taxInType}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.taxPriceTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.taxInType}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.taxPriceTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_originalprice}" />
+							</f:facet>
+							<aon:outputText value="#{to.showItemPrice}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.showItemPrice}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.originalPriceTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.showItemPrice}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.originalPriceTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_wish}" />
+							</f:facet>
+							<aon:outputText value="#{to.wishList}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.wishList}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.wishListTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.wishList}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.wishListTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+
+
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=ecconfig.to}">&#160;</f:verbatim>
+								<aon:commandButton title="[#{bundle.aon_accept}]"
+									rendered="#{to==ecconfig.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									actionListener="#{ecconfig.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==ecconfig.to}"
+									actionListener="#{ecconfig.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton id="remove-Porcentaje"
+									title="[#{bundle.aon_remove}]"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==ecconfig.to}"
+									confirmTitle="#{bundle.aon_confirm_title}"
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{ecconfig.onRemove}" immediate="true"
+									accesskey="#{bundle.aon_key_remove_line}" />
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+
+									<aon:commandButton title="[#{bundle.aon_accept}]"
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										rendered="#{ecconfig.new}"
+										actionListener="#{ecconfig.onAccept}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton id="cancel-Porcentaje"
+										title="[#{bundle.aon_cancel}]"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{ecconfig.new}"
+										confirmTitle="#{bundle.aon_confirm_title}"
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{ecconfig.onCancel}" immediate="true"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+
+
+					</aon:editDataTable>
+					<aon:dataScroller2 for="ecconfigData" />
+				</aon:div>
+			</aon:div>
+
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+	</ui:define>
+</ui:composition>

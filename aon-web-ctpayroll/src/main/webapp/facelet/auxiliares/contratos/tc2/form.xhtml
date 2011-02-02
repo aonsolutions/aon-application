@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="contratosTc2Form">
+
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_contratos__tipcotc2}" />				
+				<ui:param name="controller" value="#{contratosTc2}" />
+				<ui:param name="reportKey" value="contratosTc2ListPrint"/>
+			</ui:include>
+
+			<aon:div id="contratosTc2" styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+					<aon:outputLabel value="#{appBundle.aon_payroll_cdg}" />
+					<aon:inputText value="#{contratosTc2.to.cdg}" disabled="#{!contratosTc2.new}" 
+						required="true" size="2" maxlength="3" />
+				
+					<aon:outputLabel for="Description" value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText id="Description" value="#{contratosTc2.to.description}" 
+						required="true" size="100" maxlength="150" >
+					</aon:inputText>
+					
+					<aon:outputLabel for="DescriptionAbr" value="#{appBundle.aon_payroll_auxiliares_contratos__tipcotc2_desabr}" />
+					<aon:inputText id="DescriptionAbr" value="#{contratosTc2.to.desabr}" 
+						size="100" maxlength="30" >
+					</aon:inputText>
+					
+					<aon:outputLabel for="CodigoAnt" value="#{appBundle.aon_payroll_auxiliares_contratos__tipcotc2_cdgant}" />
+					<aon:inputText id="CodigoAnt" value="#{contratosTc2.to.cdgant}" 
+						size="100" maxlength="125" >
+					</aon:inputText>
+	
+				</aon:panelGrid>
+	
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

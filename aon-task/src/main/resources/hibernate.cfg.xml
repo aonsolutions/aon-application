@@ -1,0 +1,101 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+ 
+		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
+		<property name="connection.service">jboss.admin:service=AonLdap</property>
+		<!--
+		<property name="connection.service">Catalina:type=Security,name=AonSecurity</property>
+		 -->
+		<property name="connection.datasource">java:comp/env/jdbc/AonTask</property>		
+		<property name="show_sql">true</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+
+		<!-- C3P0 Stuff -->
+		<property name="c3p0.acquire_increment">1</property>
+		<property name="c3p0.idle_test_period">1900</property>
+		<property name="c3p0.timeout">3600</property>
+		<property name="c3p0.max_size">30</property>
+		<property name="c3p0.min_size">1</property>
+		<property name="c3p0.max_statements">0</property>
+		<property name="c3p0.preferredTestQuery">select 1;</property>
+
+
+		<!-- AON-PROJECT Mapping files -->
+		<mapping class="com.code.aon.project.Activity"/>
+		<mapping class="com.code.aon.project.ActivityType"/>
+		<mapping class="com.code.aon.project.DailyTracking"/>
+		<mapping class="com.code.aon.project.Dossier"/>
+		<mapping class="com.code.aon.project.DossierType"/>
+		<mapping class="com.code.aon.project.JobType"/>
+		<mapping class="com.code.aon.project.Task"/>
+
+		<!-- AON-CAMPAIGN Mapping files -->
+		<mapping class="com.code.aon.campaign.ActivityProcess"/>
+		<mapping class="com.code.aon.campaign.Campaign"/>
+		<mapping class="com.code.aon.campaign.CampaignDossier"/>
+		<mapping class="com.code.aon.campaign.Process"/>
+		<mapping class="com.code.aon.campaign.ProcessDetail"/>
+		<mapping class="com.code.aon.campaign.ProcessDetailTransition"/>
+		<mapping class="com.code.aon.campaign.ProcessTransitionType"/>
+
+		<!-- AON-COMPANY Mapping files -->
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+
+		<!-- AON-PRODUCT Mapping files -->
+		<mapping class="com.code.aon.product.Tariff"/>
+		
+		<!-- AON-REGISTRY Mapping files -->
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		
+		<!-- AON-SALES Mapping files -->	
+		<mapping class="com.code.aon.customer.Customer"/>
+		<mapping class="com.code.aon.customer.CustomerSegment"/>
+
+		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoZone"/>			
+
+		<!-- AON-CONFIG Mapping files -->		
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
+
+		<!-- AON GROUPWARE -->
+		<mapping class="com.code.aon.groupware.Alarm"/>
+		<mapping class="com.code.aon.groupware.Note"/>
+		<mapping class="com.code.aon.groupware.Notice"/>
+		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
+		<mapping class="com.code.aon.groupware.Favorite"/>
+		<mapping class="com.code.aon.groupware.Message"/>
+		<mapping class="com.code.aon.groupware.MessageContent"/>
+
+	</session-factory>
+
+</hibernate-configuration>

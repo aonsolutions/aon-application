@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{fiscalBundle.fiscal_model_340_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<ui:param name="skipSearchButton" value="true" />
+
+					<aon:outputLabel for="reportDate"
+						value="#{financeBundle.finance_report_date}" />
+					<aon:selectInputDate id="reportDate" 
+						inputStyle="margin-left: 0.5em;"
+						value="#{model340.params.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+
+					<aon:outputLabel for="Vat_Year"
+						value="#{bundle.aon_year}" />
+					<rich:inputNumberSpinner cycled="false"	
+							id="Vat_Year" style="margin-left: 0.5em;" 
+							value="#{model340.params.year}" inputSize="5"
+							maxValue="2020"
+							minValue="2000"
+							maxlength="4">
+					</rich:inputNumberSpinner>
+
+					<aon:outputLabel for="Vat_period"
+						value="#{bundle.aon_period}" />
+					<aon:selectOneMenu id="Vat_period" style="margin-left: 5px;"
+						value="#{model340.params.period}">
+						<f:selectItems value="#{fiscalCollections.periods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Model_340_format" value="#{bundle.aon_output_format}" />
+					<aon:selectOneMenu id="Model_340_format" style="margin-left: 5px;"
+						value="#{model340.format}">
+						<f:selectItems value="#{fiscalCollections.mod340Formats}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="" />
+					<aon:outputText value="" />
+					
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:htmlCommandLink id="model340-report" 
+							value="#{fiscalBundle.fiscal_generate}" 
+							target="_blank" actionListener="#{model340.onCreateDisk}"
+							styleClass="aon-search-lookup-button">
+						</aon:htmlCommandLink>
+					</aon:div>	
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

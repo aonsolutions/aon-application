@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/esferalia/aon/ui/payroll/facelet/remesaITregeneration/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{payrollBundle.FDIRegeneration_step1}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_remesa}" />
+			</f:facet>
+				<aon:div styleClass="aon-nowrap">
+					<aon:outputText value="#{payrollBundle.payroll_remesa_generation_hour}" />
+					<aon:outputText value="#{FDIRegenerationWizard.remesaINSS.hora}" style="margin-left: 5px;font-weight:bold;">
+						<f:convertDateTime pattern="#{bundle.aon_time_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputText value="#{payrollBundle.payroll_remesa_generation_day}" style="margin-left: 5px;"/>
+					<aon:outputText value="#{FDIRegenerationWizard.remesaINSS.fecha}" style="margin-left: 5px;font-weight:bold;">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:div>
+		</aon:panel>
+
+		<aon:div id="remesaITListContainer" layout="none">
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_remesa_parte_it}" />
+				</f:facet>
+				<aon:dataTable id="remesaITList" var="to" rows="20" width="auto"
+					value="#{FDIRegenerationWizard.remesaParteITModel}"
+					columnClasses="
+							aon-editDataTable-textColumn aon-width-50,
+							aon-editDataTable-textColumn aon-width-auto,
+							aon-editDataTable-textColumn aon-width-100,
+							aon-editDataTable-textColumn aon-width-auto,
+							aon-editDataTable-textColumn aon-width-80, 
+							aon-editDataTable-textColumn aon-width-80, 
+							aon-editDataTable-textColumn aon-width-50,
+							aon-editDataTable-textColumn aon-width-150, 
+							aon-editDataTable-iconColumn">
+	
+					<ui:include
+						src="/com/esferalia/aon/ui/payroll/facelet/remesaITregeneration/columns.xhtml" />
+				</aon:dataTable>
+				<aon:dataScroller2 for="remesaITList" showNote="true" />
+			</aon:panel>
+		</aon:div>
+		
+	</ui:define>
+
+</ui:composition>

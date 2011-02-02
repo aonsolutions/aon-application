@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGrid columns="2" dir="true">
+
+		<aon:outputLabel for="CommercialTerm_name"
+			value="#{bundle.aon_name}" />
+		<aon:inputText id="CommercialTerm_name" required="true"
+			value="#{lookup.to.name}"
+			size="40" maxlength="64" />
+	
+		<aon:outputLabel for="CommercialTerm_description"
+			value="#{bundle.aon_description}" />
+		<aon:inputTextarea id="CommercialTerm_description" required="true"
+			value="#{lookup.to.description}"
+			rows="4" cols="60" />
+	
+		<aon:outputLabel for="CommercialTerm_general"
+			value="#{commercialBundle.commercial_offer_general}" />
+		<aon:selectBooleanCheckbox id="CommercialTerm_general" disabled="true"
+			value="#{lookup.to.general}" />									
+		
+	</aon:panelGrid>
+
+</ui:composition>

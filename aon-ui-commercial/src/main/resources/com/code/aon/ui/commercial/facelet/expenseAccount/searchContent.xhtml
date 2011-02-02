@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+
+
+	<aon:outputLabel value="#{salesBundle.sales_seller}" />
+	<aon:div styleClass="aon-lookup">
+		<a4j:region>
+			<aon:lookupInputText id="ExpenseAccount_registry_id"
+				value="#{expenseSearch.registry.id}" size="5"
+				lookupProperty="registry" lookup="#{sellerLookup}"
+				reRender="Seller_full_name" ajaxSingle="true" />
+			<aon:lookupButton windowTitle="#{salesBundle.sales_seller_selection}"
+				minHeight="460" minWidth="650" property="#{expenseSearch.registry}"
+				lookupProperty="registry" lookup="#{sellerLookup}"
+				selectReRender="ExpenseAccount_registry_id,Seller_full_name"
+				actionType="search">
+			</aon:lookupButton>
+			<aon:inputText id="Seller_full_name"
+				value="#{(expenseSearch.registry.fullName!=null)?(expenseSearch.registry.fullName):('')}"
+				disabled="true" size="60" />
+		</a4j:region>
+	</aon:div>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="ExpenseAccount_issueDate-From"
+			styleClass="aon-form-date-label" value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="ExpenseAccount_issueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="ExpenseAccount_issueDate-To"
+			styleClass="aon-form-date-label" value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="ExpenseAccount_issueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>
+
+	<aon:outputLabel value="#{bundle.aon_type}" />
+	<aon:selectOneRadio id="expenseAccount_type"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItems value="#{commercialCollections.expenseHolderTypes}" />
+	</aon:selectOneRadio>
+
+	<aon:outputLabel value="#{bundle.aon_status}" />
+	<aon:selectManyCheckbox converter="aon.EnumConverter"
+		value="#{expenseSearch.expenseStatuses}">
+		<f:selectItems value="#{commercialCollections.expenseAccountStatuses}" />
+	</aon:selectManyCheckbox>
+
+
+
+
+
+
+	<aon:outputLabel value="" />
+
+	<aon:panelCollapsible expanded="false" label="Detalle de gastos">
+		<aon:panelGrid columns="2"
+			columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+			<aon:outputLabel for="Expense_description"
+				value="#{commercialBundle.commercial_expenses_name}" />
+
+			<aon:div styleClass="aon-lookup">
+				<aon:inputText id="ExpenseAccountDetail_expense_id"
+					value="#{expenseSearch.expense.id}" size="10" maxlength="64" />
+				<aon:lookupButton
+					windowTitle="#{commercialBundle.commercial_commercialTerm_selection}"
+					selectReRender="ExpenseAccountDetail_expense_id,ExpenseAccountDetail_expense_description"
+					lookup="#{expenseLookup}" property="#{expenseSearch.expense}">
+				</aon:lookupButton>
+				<aon:inputText id="ExpenseAccountDetail_expense_description"
+					disabled="true" value="#{expenseSearch.expense.description}"
+					size="40" maxlength="64" />
+			</aon:div>
+
+			<aon:outputLabel value="#{bundle.aon_price}" />
+
+			<aon:inputText size="32" id="ExpenseAccount_lines_price"
+				valueChangeListener="#{controller.addExpression}" maxlength="32" />
+
+			<aon:outputLabel value="#{bundle.aon_quantity}" />
+
+			<aon:inputText size="32" id="ExpenseAccount_lines_quantity"
+				valueChangeListener="#{controller.addExpression}" />
+
+			<aon:outputLabel value="#{bundle.aon_amount}" />
+
+			<aon:inputText size="32" id="ExpenseAccount_lines_amount"
+				valueChangeListener="#{controller.addExpression}" maxlength="32" />
+
+		</aon:panelGrid>
+	</aon:panelCollapsible>
+
+</ui:composition>

@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			
+				
+			<aon:htmlCommandLink id="nominaReportMSExcel"
+				value="" target="_blank"
+				action="#{report.onExecute}"
+				styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+				accesskey="#{bundle.aon_key_print}">
+				<f:param name="reportKey" value="nominaReport" />
+				<f:param name="outputFormat" value="MS Excel" />
+			</aon:htmlCommandLink>
+
+			<aon:htmlCommandLink id="nominaReportHTML"
+				value="" target="_blank"
+				action="#{report.onExecute}"
+				styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+				accesskey="#{bundle.aon_key_print}">
+				<f:param name="reportKey" value="nominaReport" />
+				<f:param name="outputFormat" value="HTML" />
+			</aon:htmlCommandLink>
+
+			<aon:htmlCommandLink id="nominaReportPDF"
+				value="#{bundle.aon_listing}" target="_blank"
+				action="#{report.onExecute}"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf"
+				accesskey="#{bundle.aon_key_print}">
+				<f:param name="reportKey" value="nominaReport" />
+			</aon:htmlCommandLink>
+
+			<aon:dataTable value="#{impNominaWizard.list}" var="nomina">
+			
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="Nombre y Apellidos"/>
+					</f:facet>
+					<aon:outputText value="#{nomina.empleado.persona.fullName}" />
+				</aon:column>
+			
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="Dias"/>
+					</f:facet>
+					<aon:outputText value="#{nomina.diasNomina}" />
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="Tipo"/>
+					</f:facet>
+					<aon:outputText value="#{nomina.tipoNomina}" />
+				</aon:column>
+				
+			</aon:dataTable>
+		</aon:form>		
+	</ui:define>
+</ui:composition>

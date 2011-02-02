@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="clientesForm">
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_integral}" />
+				<ui:param name="controller" value="#{cliente}"/>
+				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="backAction" value="integral_list"/>
+						
+			</ui:include>	
+      
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{cliente.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="integral_list" />	
+					
+									
+									
+				   <aon:outputLabel for="Cliente_cdg" 
+						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Cliente_cdg"
+							lookup="#{clienteLookup}"
+							reRender="Cliente_description"
+							value="#{cliente.cliente.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Cliente_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_clientes}"
+							selectReRender="Cliente_cdg,Cliente_description"
+							lookup="#{clienteLookup}" minHeight="440"
+							property="#{cliente.cliente}">
+						</aon:lookupButton>
+						<aon:inputText id="Cliente_description"
+							value="#{(cliente.cliente.descripcion!=null)?(cliente.cliente.descripcion):('')}"   
+							size="55" disabled="true" />
+					</aon:div>
+				 
+				      <aon:outputLabel for="Cliente_descripcion" value="#{appBundle.aon_payroll_principales_clientes_nom}" />
+					<aon:inputText id="Cliente_descripcion" valueChangeListener="#{cliente.addExpression}" 
+						 size="60" maxlength="40" />
+				
+				
+				   <aon:outputLabel for="Cliente_descripcion" value="#{appBundle.aon_payroll_principales_clientes_alias}" />
+					<aon:inputText id="Cliente_alias" valueChangeListener="#{cliente.addExpression}" 
+						 size="60" maxlength="40" />
+				
+				  
+					  <aon:outputLabel for="Cliente_numdoc" value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
+					<aon:inputText id="Cliente_numdoc" valueChangeListener="#{cliente.addExpression}"
+						 size="60" maxlength="20" />
+
+					<aon:outputLabel for="Dele_cdg"
+						value="#{appBundle.aon_payroll_principales_clientes_deleg}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Del_cdg" lookup="#{delegacionLookup}"
+							reRender="Del_description" value="#{cliente.delegacion.cdg}"
+							size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Del_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_clientes_deleg}"
+							selectReRender="Del_cdg,Del_description"
+							lookup="#{delegacionLookup}" minHeight="440"
+							property="#{cliente.delegacion}">
+						</aon:lookupButton>
+						<aon:inputText id="Del_description"
+							value="#{(cliente.delegacion.descripcion!=null)?(cliente.delegacion.descripcion):('')}"
+							size="34" disabled="true" />
+					</aon:div>
+
+
+
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+		
+	<aon:lookupButtonPopup lookup="#{delegacionLookup}" />	
+		<aon:lookupButtonPopup lookup="#{clienteLookup}" />
+	
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

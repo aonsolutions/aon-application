@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.esferalia.com/config" >
+
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true" 
+		/>
+	</registry:config>
+		
+	<company:config version="1.1" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="true" 
+			showCompanyOtherData="true"
+			showPanelTabSet="true" 
+			showEInvoice="false"
+			showDigitalCertificate="false"
+		/>
+		<company:enterprise 
+			showFinanceData="true" 
+			showAddInfo="true"
+			showDirStaff="true"
+		/>
+	</company:config>
+
+	<customer:config version="1.1" xmlns:customer="http://www.esferalia.com/customer">
+		<customer:customer
+			showOfferData="false"
+			showSalesData="false"
+			showDeliveryData="false" 
+			showFinanceData="true" 
+			showProjectData="false"
+			showFinanceFeeData="false" 
+			showTaxInfoData="true"
+			showAccount="true"
+			showTariff="false" 
+			showSegment="false"
+			showNote="false"
+			showRelationship="false"
+			showRecordData="false"
+			showAddInfo="true"
+			showDirStaff="false"
+			showHistory="false"
+		/>
+	</customer:config>
+
+	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
+		<supplier:supplier
+			showFinanceData="true" 
+			showTaxInfoData="true"
+			showAccount="true"
+			showSegment="false"
+			showAddInfo="true"
+		/>
+	</supplier:config>
+
+	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
+		<finance:creditor
+			showFinanceData="true" 
+			showTaxInfoData="true"
+			showAccount="true"
+			showSegment="false"
+			showAddInfo="true"
+		/>
+		<finance:invoice
+			showWarehouseData="false" 
+			showSendEmail="false"
+		/>
+	</finance:config>
+
+	<fiscal:config version="1.0" xmlns:fiscal="http://www.esferalia.com/fiscal">
+		<fiscal:fiscal
+			model347Enabled="true" 
+		/>
+	</fiscal:config>
+
+	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+		<product:catalogue
+			showEcommerceData="false"
+		/>
+		<product:product
+			showBarcode="false"
+			showType="true"
+			showBrand="true"
+			showStock="false"
+			showAlternatives="false"
+			showSuppliers="false"
+			showAccount="true"
+			showAttachment="false"
+			showEcommerceData="false"
+			showHistory="false"
+		/>
+ 		<product:productCategory
+ 			showCategoryGroup="false"
+ 		/>
+	</product:config>
+
+	<webmail:config version="1.1" xmlns:webmail="http://www.esferalia.com/webmail" >
+		<webmail:webmail
+			connect="true"
+		/>
+	</webmail:config>	
+
+</config>

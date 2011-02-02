@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JdbcRelease" default="all" basedir=".">
+
+	<!-- set global properties for this build -->
+	<property name="src" value="Java" />
+	<property name="classes" value="classes" />
+	<property name="develop.jar" value="${basedir}/ctsql-jdbc-develop.jar" />
+	<property name="dist.jar" value="${basedir}/ctsql-jdbc.jar" />
+	<property name="dist.map" value="${basedir}/ctsql-jdbc.map" />
+	<property name="application.proguard.jar" value="${basedir}/proguard/proguard.jar" />
+
+	<taskdef resource="proguard/ant/task.properties"
+	             classpath="${application.proguard.jar}" />
+	
+	<target name="all" depends="obfuscate">
+		<echo message="DONE" />
+	</target>
+	
+	<target name="compile">
+		<echo message="Compile the java code from ${src} into ${classes}" />
+		<javac srcdir="${src}" destdir="${classes}" includes="com/transtools/**/*.java" excludes="**/test/**" />
+		<delete file="${develop.jar}" quiet="true" />
+		<jar jarfile="${develop.jar}">
+			<manifest>
+				<section name="com/transtools/jdbc">
+					<attribute name="Specification-Title" value="CTSQL Jdbc Driver"/>
+					<attribute name="Specification-Version" value="2.2.3.6"/>
+					<attribute name="Specification-Vendor" value="TransTOOLs, S.A."/>
+					<attribute name="Implementation-Title" value="com.transtools.jdbc"/>
+					<attribute name="Implementation-Version" value="2.2.3.6"/>
+					<attribute name="Implementation-Vendor" value="TransTOOLs, S.A."/>
+				</section>
+			</manifest>
+			<fileset dir="${classes}">
+				<exclude name="**/test/**"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="obfuscate" depends="compile">
+		<echo message="Obfuscate the classes in ${develop.jar} into ${dist.jar}" />
+		<proguard renamesourcefileattribute="SourceFile"
+				  printmapping="${dist.map}"
+				  shrink="false"
+				  optimize="false"
+				  overloadaggressively="false"
+				  verbose="true"
+				  ignorewarnings="false" >
+			-injars ${develop.jar}
+			-outjars ${dist.jar}
+			-libraryjars ${java.home}/lib/rt.jar
+			<keepattribute name="SourceFile"/>
+			<keepattribute name="LineNumberTable"/>
+			<keepattribute name="Deprecated"/>
+			<keepattribute name="Signature"/>
+			<keepattribute name="*Annotation*"/>
+			<keepattribute name="Enclosingconstructor"/>
+
+			<keepnames access="public" type="class" name="com.transtools.jdbc.CtsqlJdbcDriver">
+				<method access="public protected"/>
+				<field access="public protected"/>
+			</keepnames>
+		</proguard>
+	</target>
+	
+</project>

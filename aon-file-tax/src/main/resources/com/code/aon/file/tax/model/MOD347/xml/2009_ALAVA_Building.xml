@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Inmueble">
+
+ <field name="type" value="2" format="Numeric" pattern="9(1)" />
+ <field name="modelo" value="347" format="Numeric" pattern="9(3)" />
+ <field name="ejercicio" value="bean" bean="DEPONENT" property="year" format="Numeric" pattern="9(4)" />
+ <field name="nif_declarante" value="bean" bean="DEPONENT" property="code" format="Nif" pattern="X(9)" />
+ <field name="nif_arrendatario" value="bean" bean="BUILDING" property="code" format="Nif" pattern="X(9)" />
+ <field name="nif_rpte" value="bean" bean="BUILDING" property="managerCode" format="Nif" pattern="X(9)" />
+ <field name="nombre" value="bean" bean="BUILDING" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="tipo" value="I" format="Alphabetic" pattern="X(1)" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(23)" />
+ <field name="importe" value="bean" bean="BUILDING" property="quantity" format="Numeric" pattern="9(13)V99" />
+ 
+ <field name="situacion_inmueble" value=" " format="Numeric" pattern="9(1)" />
+ 
+ <field name="ref_catastral" value="bean" bean="BUILDING" property="cadastre" format="AlphaNumeric" pattern="X(25)" />
+ 
+  <field name="tipo_via" value="bean" bean="BUILDING" property="streetType" format="Alphabetic" pattern="X(5)" />
+  <field name="nombre_via"  value="bean" bean="BUILDING" property="streetName" format="Alphabetic" pattern="X(50)" />
+  <field name="tipo_numeracion" value=" " format="Alphabetic" pattern="X(3)" />
+  <field name="numero" value="bean" bean="BUILDING" property="streetNumber" format="Alphabetic" pattern="X(5)" />
+  <field name="calificador" value=" " format="Alphabetic" pattern="X(3)" />
+  <field name="bloque" value=" " format="Alphabetic" pattern="X(3)" />
+  <field name="portal" value=" " format="Alphabetic" pattern="X(3)" />
+  <field name="escalera" value="bean" bean="BUILDING" property="streetStair" format="AlphaNumeric"  pattern="X(3)" />
+  <field name="piso" value="bean" bean="BUILDING" property="streetStorey" format="AlphaNumeric"  pattern="X(3)" />
+  <field name="puerta" value="bean" bean="BUILDING" property="streetDoor" format="AlphaNumeric" pattern="X(3)" />
+  <field name="complemento" value=" " format="Alphabetic" pattern="X(40)" />
+  <field name="localidad" value=" " format="Alphabetic" pattern="X(30)" />
+  <field name="municipio"  value="bean" bean="BUILDING" property="county" format="AlphaNumeric" pattern="X(30)" />
+  <field name="cod_municipio" value=" " format="Alphabetic" pattern="X(5)" />
+  <field name="cod_provincia" value="bean" bean="BUILDING" property="province" format="Numeric" pattern="9(2)"  />
+  <field name="cod_postal" value=" " format="Alphabetic" pattern="X(5)" />
+ 
+ <!-- <field name="provincia" value="bean" bean="BUILDING" property="province" format="Numeric" pattern="9(2)" />
+ <field name="municipio" value="bean" bean="BUILDING" property="county" format="AlphaNumeric" pattern="X(24)" />
+ <field name="siglas" value="bean" bean="BUILDING" property="streetType" format="Alphabetic" pattern="X(2)" />
+ <field name="nombre" value="bean" bean="BUILDING" property="streetName" format="Alphabetic" pattern="X(20)" />
+ <field name="numero" value="bean" bean="BUILDING" property="streetNumber" format="Numeric" pattern="X(5)" />
+ <field name="escalera" value="bean" bean="BUILDING" property="streetStair" format="AlphaNumeric" pattern="X(2)" />
+ <field name="piso" value="bean" bean="BUILDING" property="streetStorey" format="AlphaNumeric" pattern="X(2)" />
+ <field name="puerta" value="bean" bean="BUILDING" property="streetDoor" format="AlphaNumeric" pattern="X(2)" /> -->
+ <field name="free1" value=" " format="Alphabetic" pattern="X(167)" />
+ 
+</register>

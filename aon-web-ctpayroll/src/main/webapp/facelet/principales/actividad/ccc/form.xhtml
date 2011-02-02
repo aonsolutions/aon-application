@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+
+
+		<aon:form id="cccForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_principales_act_ccc}" />
+				<ui:param name="controller" value="#{emprccc}" />
+				<aon:methodParam name="backAction" value="actividad_form" />
+			</ui:include>
+
+
+
+			<aon:div id="datos2" styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2" dir="true" width="100%"
+					style="margin-bottom=2px;">
+
+					<aon:outputLabel for="Actividad_cdg"
+						value="#{appBundle.aon_payroll_principales_tipocuenta_actividad}" />
+					<aon:div>
+						<aon:inputText id="Acti_cdg" value="#{emprccc.to.actividad.cdg}"
+							size="5" disabled="true" />
+
+						<aon:inputText id="Acti_description"
+							value="#{emprccc.to.actividad.descripcion}" size="60"
+							disabled="true" />
+					</aon:div>
+
+					<aon:outputLabel for="Actividad_cdg"
+						value="#{appBundle.aon_payroll_principales_act_ccc_num}" />
+
+					<aon:inputText value="#{emprccc.to.descripcion}" size="50" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_autonomos_mutua}" />
+
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Mutua_cdg" lookup="#{mutuaLookup}"
+							reRender="Mutua_description" value="#{emprccc.to.mutua.cdg}"
+							size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Mut_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_autonomos_mutua}"
+							selectReRender="Mutua_cdg,Mutua_description"
+							lookup="#{mutuaLookup}" minHeight="440"
+							property="#{emprccc.to.mutua}">
+						</aon:lookupButton>
+						<aon:inputText id="Mutua_description"
+							value="#{(emprccc.to.mutua.description!=null)?(emprccc.to.mutua.description):('')}"
+							size="34" disabled="true" />
+					</aon:div>
+
+
+					<aon:outputLabel for="Actividad_cdg"
+						value="#{appBundle.aon_payroll_principales_act_ccc_tc2}" />
+
+					<aon:inputText value="#{emprccc.to.concol}" size="50" />
+
+					<aon:outputLabel for="Actividad_cdg"
+						value="#{appBundle.aon_payroll_principales_act_ccc_seguro}" />
+
+					<aon:inputText value="#{emprccc.to.seguro}" size="50" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_act_ccc_indss}" />
+
+					<aon:selectBooleanCheckbox value="#{emprccc.to.indss}" />
+
+					<aon:outputLabel for="Actividad_cdg" value="  " />
+
+					<aon:panelGroup>
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_act_ccc_tipo}" />
+						<aon:selectOneRadio value="#{emprccc.to.id.tipccc}"
+							layout="pageDirection">
+							<f:selectItems value="#{emprccc.listatipos}" />
+						</aon:selectOneRadio>
+					</aon:panelGroup>
+				</aon:panelGrid>
+			</aon:div>
+
+
+
+		</aon:form>
+     <aon:lookupButtonPopup lookup="#{mutuaLookup}" />	
+
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

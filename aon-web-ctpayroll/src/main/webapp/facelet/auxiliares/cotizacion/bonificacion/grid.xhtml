@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="bonificacionGrid">
+	
+			<aon:div ajaxRendered="true" layout="none">
+	
+				<ui:include src="/facelet/templates/gridPrintToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni}" />
+					<ui:param name="controller" value="#{cotizacionBonificacion}" />
+					<ui:param name="reportKey" value="cotizacionBonificacionesList"/>
+					<aon:valueParam name="skipSearchButton" default="false" />
+					<aon:valueParam name="skipBackButton" default="false" />
+					<aon:methodParam name="backAction" value="auxiliares" />
+		      	</ui:include>	
+	 
+				<!-- region-body -->
+	 			<aon:div styleClass="aon-scroll-area">
+					
+					<aon:editDataTable id="bonificacionData" var="to" rows="20"
+						rendered="#{(cotizacionBonificacion.model.rowCount > 0) or (cotizacionBonificacion.new)}" value="#{cotizacionBonificacion.model}"
+						columnClasses="aon-editDataTable-iconColumn, 
+						aon-width-150,	aon-editDataTable-textColumn,
+						aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,
+						aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,
+						aon-editDataTable-iconColumn, aon-editDataTable-iconColumn,
+						aon-editDataTable-iconColumn, aon-editDataTable-iconColumn,
+						aon-editDataTable-buttonsColumn">
+								
+						<aon:rowSelector toggleOnClick="#{cotizacionBonificacion.to == null}"
+							actionListener="#{cotizacionBonificacion.onSelect}" />
+							
+						<f:facet name="header">
+	                        <rich:columnGroup>
+	                            <rich:column colspan="1">
+	                                <rich:spacer />
+	                            </rich:column>
+	                             <rich:column colspan="3" >
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_datos}" />
+	                            </rich:column>
+	                            <rich:column colspan="3">
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_porcentajes}" />
+	                            </rich:column>
+	                            <rich:column colspan="4">
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_marcas}" />
+	                            </rich:column>
+	                             <rich:column colspan="1">
+	                                <rich:spacer />
+	                            </rich:column>
+	                        </rich:columnGroup>
+	                    </f:facet>
+						
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{cotizacionBonificacion.onReset}" value=""
+										rendered="#{!cotizacionBonificacion.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+							</f:facet>
+							<aon:outputText value="#{to.cdg}" rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cotizacionBonificacion.to}" size="2"
+								value="#{cotizacionBonificacion.to.cdg}" maxlength="2" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cotizacionBonificacion.new}" size="2"
+									value="#{cotizacionBonificacion.to.cdg}" maxlength="4" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cotizacionBonificacion.to}" size="50"
+								value="#{cotizacionBonificacion.to.description}" maxlength="50" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cotizacionBonificacion.new}" size="50"
+									value="#{cotizacionBonificacion.to.description}" maxlength="50" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_calculo}" />
+							</f:facet>
+							<aon:outputText value="#{to.calculo}" rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:inputText styleClass="aon-form-input-text " 
+								rendered="#{to==cotizacionBonificacion.to}" size="1"
+								value="#{cotizacionBonificacion.to.calculo}" maxlength="1" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" 
+									rendered="#{cotizacionBonificacion.new}" size="1"
+									value="#{cotizacionBonificacion.to.calculo}" maxlength="1" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_cg}" />
+							</f:facet>
+							<aon:outputText value="#{to.prcCg}" rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:inputText id="cotizacionBonificacion_prcCg_edit" styleClass="aon-form-input-text " 
+								rendered="#{to==cotizacionBonificacion.to}" size="5"
+								value="#{cotizacionBonificacion.to.prcCg}" maxlength="5" >
+								<f:validator validatorId="porcentajeValidator" />
+							</aon:inputText>
+							<f:facet name="footer">
+								<aon:inputText id="cotizacionBonificacion_prcCg_new" styleClass="aon-form-input-text" 
+									rendered="#{cotizacionBonificacion.new}" size="5"
+									value="#{cotizacionBonificacion.to.prcCg}" maxlength="5" >
+									<f:validator validatorId="porcentajeValidator" />
+								</aon:inputText>
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_acc}" />
+							</f:facet>
+							<aon:outputText value="#{to.prcAcc}" rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:inputText id="cotizacionBonificacion_prcAcc_edit" styleClass="aon-form-input-text " 
+								rendered="#{to==cotizacionBonificacion.to}" size="5"
+								value="#{cotizacionBonificacion.to.prcAcc}" maxlength="5" >
+								<f:validator validatorId="porcentajeValidator" />
+							</aon:inputText>
+							<f:facet name="footer">
+								<aon:inputText id="cotizacionBonificacion_prcAcc_new" styleClass="aon-form-input-text" 
+									rendered="#{cotizacionBonificacion.new}" size="5"
+									value="#{cotizacionBonificacion.to.prcAcc}" maxlength="5" >
+									<f:validator validatorId="porcentajeValidator" />
+								</aon:inputText>
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_conj}" />
+							</f:facet>
+							<aon:outputText value="#{to.prcAccfgs}" rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:inputText id="cotizacionBonificacion_prcAccfgs_edit" styleClass="aon-form-input-text " 
+								rendered="#{to==cotizacionBonificacion.to}" size="5"
+								value="#{cotizacionBonificacion.to.prcAccfgs}" maxlength="5" >
+								<f:validator validatorId="porcentajeValidator" />
+							</aon:inputText>
+							<f:facet name="footer">
+								<aon:inputText id="cotizacionBonificacion_prcAccfgs_new" styleClass="aon-form-input-text" 
+									rendered="#{cotizacionBonificacion.new}" size="5"
+									value="#{cotizacionBonificacion.to.prcAccfgs}" maxlength="5" >
+									<f:validator validatorId="porcentajeValidator" />
+								</aon:inputText>
+							</f:facet>
+						</aon:column>
+ 
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_boniss}" />
+							</f:facet>
+							<aon:outputText value="&#160;" 
+								styleClass="#{(to.boniss=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==cotizacionBonificacion.to}"
+									value="#{cotizacionBonificacion.to.bonissbol}" />
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox rendered="#{cotizacionBonificacion.new}"
+										value="#{cotizacionBonificacion.to.bonissbol}" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_60}" />
+							</f:facet>
+							<aon:outputText value="&#160;" 
+								styleClass="#{(to.mayor60=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==cotizacionBonificacion.to}"
+									value="#{cotizacionBonificacion.to.mayor60bol}" />
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox rendered="#{cotizacionBonificacion.new}"
+										value="#{cotizacionBonificacion.to.mayor60bol}" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_rdl5}" />
+							</f:facet>
+							<aon:outputText value="&#160;" 
+								styleClass="#{(to.rdl052006=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==cotizacionBonificacion.to}"
+									value="#{cotizacionBonificacion.to.rdl052006bol}" />
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox rendered="#{cotizacionBonificacion.new}"
+										value="#{cotizacionBonificacion.to.rdl052006bol}" />
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_restait}" />
+							</f:facet>
+							<aon:outputText value="&#160;" 
+								styleClass="#{(to.restait=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								rendered="#{to!=cotizacionBonificacion.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==cotizacionBonificacion.to}"
+									value="#{cotizacionBonificacion.to.restaitbol}" />
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox rendered="#{cotizacionBonificacion.new}"
+										value="#{cotizacionBonificacion.to.restaitbol}" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=cotizacionBonificacion.to}">&#160;</f:verbatim>
+								<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
+									rendered="#{to==cotizacionBonificacion.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									actionListener="#{cotizacionBonificacion.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==cotizacionBonificacion.to}"
+									actionListener="#{cotizacionBonificacion.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton title="[#{bundle.aon_remove}]"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==cotizacionBonificacion.to}"
+									confirmTitle="#{bundle.aon_confirm_title}" 
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{cotizacionBonificacion.onRemove}" immediate="true"
+									accesskey="#{bundle.aon_key_remove_line}" />								
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+									<f:verbatim rendered="#{!cotizacionBonificacion.new}">&#160;</f:verbatim>
+									<aon:commandButton title="[#{bundle.aon_accept}]" 
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										rendered="#{cotizacionBonificacion.new}"
+										actionListener="#{cotizacionBonificacion.onAccept}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton title="[#{bundle.aon_cancel}]"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{cotizacionBonificacion.new}"
+										confirmTitle="#{bundle.aon_confirm_title}" 
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{cotizacionBonificacion.onCancel}" immediate="true"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+						
+					</aon:editDataTable>
+					<aon:dataScroller2 for="bonificacionData" showNote="true" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>

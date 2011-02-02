@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="contractViewForm">
+			<aon:methodParam name="backAction" value="enterpriseWorkplace_form" />
+			<aon:methodParam name="saveAction" value="contractView_form" />
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contract_module}" />
+				<ui:param name="controller" value="#{contract}" />
+				<ui:param name="skipSaveButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="multiple_tracking"
+						value="#{calendarBundle.aon_calendar_menu}"
+						action="calendar_form" 
+						actionListener="#{calendar.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-open-popup">
+						<f:setPropertyActionListener target="#{calendar.sourceKey}"
+							value="2" />
+						<f:setPropertyActionListener target="#{calendar.sourceId}"
+							value="#{contract.to.id}" />
+						<aon:actionListener method="#{calendar.onInitialize}" />
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<ui:include src="/com/code/aon/ui/employee/facelet/contract/formContent.xhtml" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

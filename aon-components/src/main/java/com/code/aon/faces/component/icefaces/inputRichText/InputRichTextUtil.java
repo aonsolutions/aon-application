@@ -1,0 +1,16 @@
+package com.code.aon.faces.component.icefaces.inputRichText;
+
+import javax.faces.context.FacesContext;
+
+public class InputRichTextUtil {
+	
+	public static final String FCK_FACES_RESOURCE_PREFIX = "/fckfaces";
+	
+	public static final String internalPath(String path) {
+		return FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + FCK_FACES_RESOURCE_PREFIX + path;
+	}
+	
+	public static final String externalPath(String path) {
+		return FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + path;
+	}
+}

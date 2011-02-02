@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Declaration">
+	<field name="type" value="D" format="AlphaNumeric" pattern="X(1)" />
+	<field name="document" value="bean" bean="DECLARATION" property="document" format="Nif" pattern="X(9)" />
+	<field name="document1" value="bean" bean="DECLARATION" property="document" format="Nif" pattern="X(9)" />
+	<field name="startPeriod" value="bean" bean="DECLARATION" property="startPeriod" format="Numeric" pattern="9(6)" />
+	<field name="endPeriod" value="bean" bean="DECLARATION" property="endPeriod" format="Numeric" pattern="9(6)" />
+	<field name="model" value="303" format="Numeric" pattern="9(3)" />
+	<field name="result" value="bean" bean="DECLARATION" property="result" format="Numeric" pattern="S9(12)V99" />
+	<field name="currency" value="E" format="AlphaNumeric" pattern="X(1)" />
+	<field name="name" value="bean" bean="DECLARATION" property="name" format="AlphaNumeric" pattern="X(50)" />
+	<field name="address" value="bean" bean="DECLARATION" property="address" format="AlphaNumeric" pattern="X(25)" />
+	<field name="addressNumber" value="bean" bean="DECLARATION" property="addressNumber" format="Numeric" pattern="9(3)" />
+	<field name="free1" value=" " format="Alphabetic" pattern="X" />
+	<field name="free2" value=" " format="Alphabetic" pattern="X(2)" />
+	<field name="free3" value=" " format="Alphabetic" pattern="X(2)" />
+	<field name="free4" value=" " format="Alphabetic" pattern="X(3)" />
+	<field name="entity" value="bean" bean="DECLARATION" property="entity" format="AlphaNumeric" pattern="X(25)" />
+	<field name="city" value="bean" bean="DECLARATION" property="city" format="AlphaNumeric" pattern="X(25)" />
+	<field name="province" value="bean" bean="DECLARATION" property="province" format="AlphaNumeric" pattern="X(25)" />
+	<field name="zip" value="bean" bean="DECLARATION" property="zip" format="Numeric" pattern="9(5)" />
+	<field name="telephone" value="bean" bean="DECLARATION" property="telephone" format="Numeric" pattern="9(9)" />
+	<field name="free5" value=" " format="Alphabetic" pattern="X(25)" />
+	<field name="free6" value=" " format="Alphabetic" pattern="X(17)" />
+	<field name="free7" value=" " format="Alphabetic" pattern="X(17)" />
+	<field name="free7" value=" " format="Alphabetic" pattern="X(16)" />
+	<field name="amounts" value="bean" bean="DECLARATION" property="amounts" format="AlphaNumeric" pattern="X(1710)" />
+	<field name="free7" value=" " format="Alphabetic" pattern="X(90)" />
+</register>

@@ -1,0 +1,13 @@
+package com.code.aon.ice.controller;
+
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.LinesController;
+import com.icesoft.faces.component.ext.RowSelectorEvent;
+
+public class ICELinesController extends LinesController {
+
+	@SuppressWarnings("unused")
+	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {
+		super.onSelect(null);
+	}
+}

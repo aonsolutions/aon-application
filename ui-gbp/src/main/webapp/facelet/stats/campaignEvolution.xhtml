@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="gridToolbar" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.gbp_campaign_evolution_report}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bundle.aon_search}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandLink target="_blank" value="#{appBundle.gbp_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-printer"
+							action="#{report.onExecute}">
+							<f:param name="reportKey" value="campaign_evolution_stat" />
+							<f:param name="outputFormat" value="PDF" />
+						</h:commandLink>
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="campaignGrid" columns="2" dir="true">
+
+				<aon:outputLabel for="Campaign_Id-Edit"
+						value="#{appBundle.gbp_campaign_campaign}" />
+				<aon:div id="cmpLookUp" styleClass="aon-lookup">
+					<aon:lookupInputText id="Campaign_Id-Edit"
+						lookup="#{campaignLookup}"
+						value="#{campaignEvolutionReport.campaign.id}" size="5"
+						reRender="cmpLookUp">
+					</aon:lookupInputText>
+					<aon:lookupButton id="Campaign_Lookup-Edit"
+						windowTitle="#{appBundle.gbp_supplier_campaigns}"
+						selectReRender="cmpLookUp"
+						lookup="#{campaignLookup}" actionType="search"
+						property="#{campaignEvolutionReport.campaign}">
+					</aon:lookupButton>
+					<aon:inputText id="Campaign_name-Edit"
+						value="#{campaignEvolutionReport.campaign.name}"
+						size="64" disabled="true" />
+				</aon:div>
+					<aon:outputLabel for="Campaign_startDate"
+						value="#{appBundle.gbp_campaign_start_date}" />
+					<aon:selectInputDate id="Campaign_startDate"
+						value="#{campaignEvolutionReport.fromDate}" required="true"
+						datePattern="#{bundle.aon_date_pattern}" enableManualInput="true"
+						inputSize="15" />
+
+					<aon:outputLabel for="Campaign_endDate"
+						value="#{appBundle.gbp_campaign_end_date}" />
+					<aon:selectInputDate id="Campaign_endDate"
+						value="#{campaignEvolutionReport.toDate}"
+						datePattern="#{bundle.aon_date_pattern}" enableManualInput="true"
+						inputSize="15" />
+
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{campaignLookup}" />
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panel>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_datos_empleado}" />
+		</f:facet>
+		<aon:panelGrid columns="6" dir="true" width="100%">
+
+			<aon:outputText value="#{payrollBundle.payroll_documento}" />
+			<aon:outputText
+				value="#{salaryModificationWizard.persona.registry.document.value}" />
+
+			<aon:outputText value="#{payrollBundle.payroll_nombre}" />
+			<aon:outputText value="#{salaryModificationWizard.persona.fullName}" />
+
+			<aon:outputText value="#{payrollBundle.payroll_numss}" />
+			<aon:outputText value="#{salaryModificationWizard.persona.numSS}" />
+		</aon:panelGrid>
+	</aon:panel>
+
+</ui:composition>

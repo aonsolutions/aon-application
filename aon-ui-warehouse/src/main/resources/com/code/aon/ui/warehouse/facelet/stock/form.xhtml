@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="financeForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_stock_module}" />
+				<ui:param name="controller" value="#{stock}" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-padding-bottom">
+					<aon:panelGrid columns="2">
+									
+						<aon:outputLabel for="Item_product_code"
+							value="#{bundle.aon_id}" />
+						<aon:inputText id="Item_product_code"
+							disabled="true" size="20"
+							value="#{stock.to.item.product.code}" />
+	
+						<aon:outputLabel for="Item_full_name"
+							value="#{productBundle.product_item}" />
+						<aon:inputText id="Item_full_name" 
+							disabled="true" size="64"
+							value="#{stock.to.item.product.name} #{stock.to.item.detail}" />
+					</aon:panelGrid>
+				</aon:div>
+
+				<aon:div id="transferDiv" styleClass="aon-padding-bottom" >
+					<aon:panelGrid columns="4" rendered="#{stock.moveEnabled}" > 
+
+						<aon:outputLabel for="Source_warehouse"
+							value="#{warehouseBundle.warehouse_stock_source}" />
+						<aon:selectOneMenu id="Source_warehouse" required="true"
+							value="#{stock.sourceWarehouse}" reRender="Moving_Quantity">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{stock.availableSourceWarehouses}" />
+						</aon:selectOneMenu>
+	
+						<aon:outputLabel for="Target_warehouse"
+							value="#{warehouseBundle.warehouse_stock_target}" />
+						<aon:selectOneMenu id="Target_warehouse" required="true"
+							value="#{stock.targetWarehouse}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{warehouseCollections.warehouses}" />
+						</aon:selectOneMenu>
+	
+						<aon:outputLabel for="Moving_Quantity"
+							value="#{bundle.aon_quantity}" />
+						<aon:inputText id="Moving_Quantity"
+							size="5" value="#{stock.movingQuantity}" >
+							<f:validateDoubleRange minimum="0" maximum="#{stock.maximumQuantity}" />
+						</aon:inputText>	
+	
+						<aon:div/>
+						<aon:commandButton style="border-right: 0;" reRender="stockDataDiv,transferDiv"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" 
+							value="#{warehouseBundle.warehouse_stock_move}"
+							actionListener="#{stock.move}" />
+					</aon:panelGrid>
+				</aon:div>
+				
+				<aon:div styleClass="aon-form-group">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="stockData" value="#{warehouseBundle.warehouse_warehouse_module}" />
+						</aon:div>
+					</aon:div>
+					<aon:div id="stockDataDiv" styleClass="aon-scroll-area">
+					
+						<aon:dataTable id="stockData" value="#{stock.stockModel}"
+							var="to" rows="20" rendered="#{stock.stockModel.rowCount > 0}"
+							columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{warehouseBundle.warehouse_warehouse}" />
+								</f:facet>
+								<aon:outputText value="#{to.warehouse.name}" />
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_quantity}" />
+								</f:facet>
+								<aon:outputText value="#{to.quantity}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:column>
+						</aon:dataTable>
+						<aon:dataScroller2 for="stockData" showNote="true" />
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

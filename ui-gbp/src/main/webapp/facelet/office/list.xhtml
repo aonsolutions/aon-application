@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="officeForm">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="gridToolbar" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.gbp_office}" />
+					</aon:div>						
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.gbp_listing}- #{appBundle.gbp_editing}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							actionListener="#{office.onReset}"
+							rendered="#{!office.new}"
+							reRender="officeDataTable,gridToolbar"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
+							rendered="#{office.to!=null}"
+							reRender="officeDataTable, gridToolbar"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{office.onAccept}"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							rendered="#{office.to!=null}"
+							reRender="officeDataTable, gridToolbar"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="#{true}"
+							actionListener="#{office.onCancel}"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{office.to!=null and !office.new}"
+							reRender="officeDataTable, gridToolbar"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							immediate="true" confirmTitle="Confirmation Dialog"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{office.onRemove}"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="office_search" actionListener="#{office.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}"/>
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<h:dataTable id="officeDataTable"
+					value="#{office.model}" var="to" rows="20"
+					styleClass="dr-table rich-table aon-editDataTable"
+					headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+					footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+					rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+					cellpadding="0" cellspacing="0"
+					columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-numberColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:outputText value="&#160;" rendered="#{to==office.to}" />
+						<aon:commandButton rendered="#{to!=office.to}"
+							styleClass="aon-editDataTable-button aon-icon-rowSelector"
+							actionListener="#{office.onSelect}" value="" immediate="true"
+							reRender="officeDataTable,gridToolbar">
+						</aon:commandButton>
+						<f:facet name="footer">
+							<aon:div>
+								<aon:commandButton id="reset"
+									title="[#{bundle.aon_reset}]"
+									styleClass="aon-editDataTable-button aon-icon-reset"
+									value="" immediate="true"
+									reRender="officeDataTable,gridToolbar"
+									rendered="#{!office.new}"
+									actionListener="#{office.onReset}"
+									accesskey="#{bundle.aon_key_new_line}">
+								</aon:commandButton>
+							</aon:div>
+						</f:facet>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_office_code}" />
+						</f:facet>
+						<aon:outputText value="#{to.code}"
+							rendered="#{to!=office.to}" />
+						<aon:inputText value="#{to.code}"
+							styleClass="aon-form-input-text" rendered="#{to==office.to}"
+							required="#{true}" size="6" maxlength="4" />
+						<f:facet name="footer">
+							<aon:div>
+								<aon:inputText value="#{office.to.code}"
+									styleClass="aon-form-input-text" rendered="#{office.new}"
+									required="#{true}" size="4" maxlength="4" />
+							</aon:div>
+						</f:facet>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_office_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}"
+							rendered="#{to!=office.to}" />
+						<aon:inputText value="#{to.name}"
+							styleClass="aon-form-input-text" rendered="#{to==office.to}"
+							required="#{true}" size="64" maxlength="64" />
+						<f:facet name="footer">
+							<aon:div>
+								<aon:inputText value="#{office.to.name}"
+									styleClass="aon-form-input-text" rendered="#{office.new}"
+									required="#{true}" size="64" maxlength="64" />
+							</aon:div>
+						</f:facet>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<f:verbatim rendered="#{to!=office.to}">&#160;</f:verbatim>
+						<aon:div rendered="#{to==office.to}">
+							<aon:commandButton id="lineAccept"
+								title="[#{bundle.aon_accept}]"
+								styleClass="aon-editDataTable-button aon-icon-accept"
+								reRender="officeDataTable,gridToolbar"
+								actionListener="#{office.onAccept}" />
+							<aon:commandButton id="lineCancel"
+								title="[#{bundle.aon_cancel}]"
+								styleClass="aon-editDataTable-button aon-icon-cancel"
+								reRender="officeDataTable,gridToolbar" immediate="true"
+								actionListener="#{office.onCancel}" />
+							<aon:commandButton id="lineRemove"
+								title="[#{bundle.aon_remove}]"
+								styleClass="aon-editDataTable-button aon-icon-delete"
+								reRender="officeDataTable,gridToolbar" immediate="true"
+								actionListener="#{office.onRemove}" />
+						</aon:div>
+						<f:facet name="footer">
+							<aon:div rendered="#{office.new}">
+								<f:verbatim rendered="#{!office.new}">&#160;</f:verbatim>
+								<aon:commandButton id="newAccept"
+									title="[#{bundle.aon_accept}]"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									reRender="officeDataTable,gridToolbar"
+									actionListener="#{office.onAccept}" />
+								<aon:commandButton id="newCancel"
+									title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									reRender="officeDataTable,gridToolbar" immediate="true"
+									actionListener="#{office.onCancel}" />
+							</aon:div>
+						</f:facet>
+					</aon:column>
+				</h:dataTable>
+
+				<aon:dataScroller dataTable="officeDataTable"
+					model="#{office.model}" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+</body>
+</html>

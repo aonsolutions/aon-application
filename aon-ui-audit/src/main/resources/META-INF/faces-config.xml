@@ -1,0 +1,350 @@
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-facesconfig_1_2.xsd"
+	version="1.2">
+
+	<application>
+		<resource-bundle>
+		   <base-name>com.code.aon.ui.audit.i18n.messages</base-name>
+		   <var>auditBundle</var>
+		</resource-bundle>
+	</application>
+
+   	<!-- ************* APPLICATION OPTION CONVERTER ***************** -->
+	<converter>
+		<converter-id>applicationOptionConverter</converter-id>
+		<converter-class>com.code.aon.ui.audit.converter.ApplicationOptionConverter</converter-class>
+	</converter>
+	
+	<!--  *************** COLLECTIONS ***************** -->
+
+	<managed-bean>
+		<managed-bean-name>auditCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.AuditCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ APPLICATION ************** -->
+	<managed-bean>
+		<managed-bean-name>auditApplication</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.audit.Application</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>auditApplication</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Application_name</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{applicationActionListener}</value>
+			</list-entries>
+		</managed-property>			
+	</managed-bean>
+			
+	<managed-bean>
+		<managed-bean-name>applicationActionListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>applicationAction</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Action_application_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>applicationChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.ChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>masterBean</property-name>
+			<value>auditApplication</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterPropertyName</property-name>
+			<value>application</value>
+		</managed-property>
+	</managed-bean>	
+
+	<!-- ************ SESSION ************** -->
+	<managed-bean>
+		<managed-bean-name>auditSession</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.audit.Session</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>auditSession</value> 
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Session_startDate</value>
+		</managed-property>						
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{sessionActionEntryListener}</value>
+				<value>#{sessionControllerListener}</value>
+			</list-entries>
+		</managed-property>					
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>sessionActionEntryListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>actionEntry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ActionEntry_session_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>		
+
+	<managed-bean>
+		<managed-bean-name>sessionControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.event.SessionControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
+
+	<!-- ************ ACTION ENTRY ************** -->
+	<managed-bean>
+		<managed-bean-name>actionEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.audit.ActionEntry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>actionEntry</value> 
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ActionEntry_executionDate</value>
+		</managed-property>										
+	</managed-bean>
+
+	<!-- ************ ACTION ************** -->
+	<managed-bean>
+		<managed-bean-name>applicationAction</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.audit.Action</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>applicationAction</value> 
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Action_name</value>
+		</managed-property>						
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{applicationChildListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************ APPLICATION OPTION CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>appOption</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.ApplicationOptionController
+		</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ ACTION FAVORITE CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>actionFavorite</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.ActionFavoriteController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ ACTION DENIED CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>actionDenied</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.ActionDeniedController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<!-- ************ ACTION ENTRY ************** -->
+	<managed-bean>
+		<managed-bean-name>actionLastExecuted</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.audit.controller.ActionLastExecutedController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.audit.ActionEntry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>actionEntry</value> 
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ActionEntry_executionDate desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ActionEntry_session_application_id</key>
+                    <value>#{appOption.application.id}</value>
+				</map-entry>
+				<map-entry>
+					<key>ActionEntry_session_user_id</key>
+                    <value>#{userUtils.loggedUser.id}</value>
+				</map-entry>
+				<map-entry>
+					<key>ActionEntry_action_menu</key>
+                    <value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ ACTION MORE USED CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>actionMoreUsed</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.ActionMoreUsedController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>actionMoreUsed</value> 
+		</managed-property>		
+	</managed-bean>	
+	
+	<!-- ************ WEB MAP CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>webMap</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.WebMapController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- =================== Action ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>actionFavorite</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/action/favorite.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>actionDenied</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/action/denied.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>actionLastExecuted</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/actionLastExecuted/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>actionMoreUsed</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/actionMoreUsed/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>webMap</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/shared/webMap.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+
+	<!-- =================== Session ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>auditSession_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditSession/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>auditSession_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditSession/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>auditSession_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditSession/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+	
+	
+	<!-- =================== Application ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>auditApplication_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditApplication/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>auditApplication_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditApplication/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>auditApplication_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditApplication/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+	
+</faces-config>

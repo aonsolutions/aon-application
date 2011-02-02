@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:panelGroup>
+		<aon:div>
+			<aon:panelGroup>
+				<!-- main menu declaration  -->
+				<aon:form>
+					<aon:menuBar id="menu">
+						<aon:dropDownMenu id="config" value="#{menuBundle.gbp_config}"
+							submitMode="ajax" event="onclick">
+							<aon:menuItem id="incidence_type"
+								value="#{menuBundle.gbp_incidence_type}"
+								action="incidence_type_list" />
+							<aon:menuItem id="office" value="#{menuBundle.gbp_office}"
+								action="office_list" />
+							<aon:menuItem id="requirement"
+								value="#{menuBundle.gbp_requirement}" action="requirement_list" />
+							<aon:menuItem id="internal_customer"
+								value="#{menuBundle.gbp_internal_customer}"
+								action="internal_customer_list" />
+							<aon:menuItem id="account_contact"
+								value="#{menuBundle.gbp_account_contact}"
+								action="account_contact_list" />
+							<aon:menuItem id="supplier_type"
+								value="#{menuBundle.gbp_supplier_type}"
+								action="supplier_type_list" />
+							<aon:menuItem id="bank" value="#{menuBundle.gbp_bank}"
+								action="bank_list" />
+							<aon:menuItem id="bank_percent"
+								value="#{menuBundle.gbp_bank_percent}"
+								action="bank_percent_list" />
+							<aon:menuItem id="batch_config"
+								value="#{menuBundle.gbp_batch_config}"
+								action="batch_config_list" />
+							<aon:menuItem id="area_group"
+								value="#{menuBundle.gbp_area_group}"
+								action="area_group_list" />
+							<aon:menuItem id="area"
+								value="#{menuBundle.gbp_area}"
+								action="area_list" />
+						</aon:dropDownMenu>
+						<aon:menuItem id="supplier"
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							actionListener="#{supplier.onInitialModel}"
+							value="#{menuBundle.gbp_supplier}" action="supplier_list" />
+						<aon:menuItem id="campaign"
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							actionListener="#{campaign.onInitialModel}"
+							value="#{menuBundle.gbp_campaign}" action="campaign_list" />
+						<aon:menuItem id="offer" styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							value="#{menuBundle.gbp_offer}"
+							actionListener="#{offer.onInitialModel}" action="offer_list" />
+						<aon:menuItem id="pro_forma"
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							value="#{menuBundle.gbp_pro_forma}"
+							actionListener="#{proForma.onInitialModel}"
+							action="pro_forma_list" />
+						<aon:dropDownMenu id="stats" value="#{menuBundle.gbp_stats}"
+							submitMode="ajax" event="onclick">
+							<aon:menuItem id="supplierEvolutionStat"
+								value="#{menuBundle.gbp_supplier_evolution_report}"
+								actionListener="#{supplierEvolutionReport.onInitialize}"
+								action="supplier_evolution_stat" />
+							<aon:menuItem id="campaignEvolutionStat"
+								value="#{menuBundle.gbp_campaign_evolution_report}"
+								actionListener="#{campaignEvolutionReport.onInitialize}"
+								action="campaign_evolution_stat" />
+							<aon:menuItem id="supplierTypeEvolutionStat"
+								value="#{menuBundle.gbp_supplier_type_evolution_report}"
+								actionListener="#{supplierTypeEvolutionReport.onInitialize}"
+								action="supplier_type_evolution_stat" />
+							<aon:menuItem id="offerControlStat"
+								value="#{menuBundle.gbp_offer_control_report}"
+								actionListener="#{offerControlReport.onInitialize}"
+								action="offer_control_stat" />
+							<aon:menuItem id="invoiceControlStat"
+								value="#{menuBundle.gbp_invoice_control_report}"
+								actionListener="#{invoiceControlReport.onInitialize}"
+								action="invoice_control_stat" />
+							<aon:menuItem id="campaignComparerStat"
+								value="#{menuBundle.gbp_campaign_comparer_report}"
+								actionListener="#{campaignComparerReport.onInitialize}"
+								action="campaign_comparer_stat" />
+							<aon:menuItem id="anualComparerStat"
+								value="#{menuBundle.gbp_anual_comparer_report}"
+								actionListener="#{anualComparerReport.onInitialize}"
+								action="anual_comparer_stat" />
+							<aon:menuItem id="byAreaEvolutionStat"
+								value="#{menuBundle.gbp_area_control_report}"
+								actionListener="#{byAreaEvolutionReport.onInitialize}"
+								action="byarea_evolution_stat" />
+						</aon:dropDownMenu>
+					</aon:menuBar>
+				</aon:form>
+			</aon:panelGroup>
+		</aon:div>
+	</aon:panelGroup>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="bankList">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid columns="3" dir="true" 
+			columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{menuBundle.gbp_bank}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{appBundle.gbp_listing}" />
+				</aon:div>					
+					
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="bank_form" actionListener="#{bank.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}"/>
+			    </aon:div>
+				
+				<!-- end toolbar navigation -->
+			</aon:panelGrid>
+		</aon:div>
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">					
+			<aon:dataTable id="bankDataList" 
+				value="#{bank.model}" var="to" rows="20"
+				columnClasses="aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left">
+							   
+					<aon:rowSelector action="bank_form" actionListener="#{bank.onSelect}" />
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_bank_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_bank_document}" />
+						</f:facet>
+						<aon:outputText value="#{to.document}"/>
+					</aon:column>
+
+				</aon:dataTable>
+						
+				<aon:dataScroller dataTable="bankDataList"
+					model="#{bank.model}" showNote="true" />					
+				
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

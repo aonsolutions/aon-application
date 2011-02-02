@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Transtools jdbc plug-in
+Bundle-SymbolicName: com.transtools.jdbc
+Bundle-Version: 3.4.3
+Bundle-Localization: plugin
+Export-Package: com.transtools.ctsql,
+ com.transtools.ctsql.impl;x-internal:=true,
+ com.transtools.jdbc
+Bundle-Vendor: TransTOOLs, S.A.
+Require-Bundle: org.junit
+Bundle-RequiredExecutionEnvironment: J2SE-1.3

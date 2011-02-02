@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="percepSearch">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_resultados_devengos}" />
+				<ui:param name="controller" value="#{nominadev}" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{nominadev.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="nominadev_list" />
+<aon:div id="clientes"
+				styleClass="aon-scroll-area aon-scroll-area-search">
+
+				<aon:div id="percep" styleClass="aon-scroll-area">
+
+					<aon:panelGrid columns="4" dir="true" width="100%"
+						style="margin-bottom=2px;">
+
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_cdg}" />
+						<aon:inputText id="Nominadev_id_cdg"
+											valueChangeListener="#{nominadev.addExpression}" size="10"
+							maxlength="6" />
+
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_ord}" />
+						<aon:inputText id="Nominadev_id_orden"
+											valueChangeListener="#{nominadev.addExpression}" size="10"
+							maxlength="6" />
+							
+								<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_des}" />
+						<aon:inputText  id="Nominadev_descom"
+											valueChangeListener="#{nominadev.addExpression}" size="60"
+							maxlength="6" />
+							
+										<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_uni}" />
+						<aon:inputText  id="Nominadev_unidades"
+											valueChangeListener="#{nominadev.addExpression}" size="10"
+							maxlength="6" />
+							
+										<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_impuni}" />
+						<aon:inputText  id="Nominadev_impuni"
+											valueChangeListener="#{nominadev.addExpression}" size="10"
+							maxlength="6" />
+							
+										<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_importe}" />
+						<aon:inputText  id="Nominadev_importe"
+											valueChangeListener="#{nominadev.addExpression}" size="10"
+							maxlength="6" />
+					
+
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_codcom}" />
+
+						<aon:div id="CompleLookupDiv" styleClass="aon-lookup">
+							<aon:lookupInputText id="Comple_cdg"
+								lookup="#{complementoLookup}" value="#{nominadev.to.codcom}"
+								size="5">
+							</aon:lookupInputText>
+							<aon:lookupButton id="Comple_lookup"
+								windowTitle="#{appBundle.aon_payroll_resultados_devengos_codcom}"
+								selectReRender="Comple_cdg" lookup="#{complementoLookup}"
+								minHeight="440" property="#{nominadev.complemento}">
+							</aon:lookupButton>
+
+						</aon:div>
+
+
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_devengos_tipcom}" />
+								<aon:selectOneMenu id="Nominadev_tipcom"
+									valueChangeListener="#{nominadev.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.TipoComplemento" />
+									<f:selectItem value="#{null}" itemLabel="    " />
+									<f:selectItems value="#{nominadev.tipcom}" />
+								</aon:selectOneMenu>
+
+								<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_importe_fijovar}" />
+						<aon:selectOneMenu id="Nominadev_fijovar"
+									valueChangeListener="#{nominadev.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.FijoVariable" />
+
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{nominadev.fijovar}" />
+						</aon:selectOneMenu>
+						
+						
+								<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_importe_indcom}" />
+						<aon:selectOneMenu id="Nominadev_indcom"
+									valueChangeListener="#{nominadev.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.IndiceComplemento" />
+
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{nominadev.indicescom}" />
+						</aon:selectOneMenu>
+						
+								<aon:outputLabel
+							value="#{appBundle.aon_payroll_resultados_devengos_importe_ret}" />
+						<aon:selectOneMenu value="#{nominadev.to.dinesp}">
+
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{nominadev.dinesp}" />
+						</aon:selectOneMenu>
+
+					</aon:panelGrid>
+
+				</aon:div>
+			</aon:div>
+
+					
+					
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	<aon:lookupButtonPopup lookup="#{trabajadorLookup}" />
+		<aon:lookupButtonPopup lookup="#{complementoLookup}" />
+
+
+	</ui:define>
+
+</ui:composition>

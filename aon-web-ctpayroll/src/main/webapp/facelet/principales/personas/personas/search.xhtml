@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="otrpercSearch">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_pricipales_personas_mnto_personas}" />
+				<ui:param name="controller" value="#{persona}" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{persona.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="persona_list" />
+
+					<h:panelGrid columns="1">
+
+						<aon:panelCollapsible expanded="true"
+							label="Datos Personales                        ">
+
+							<h:panelGrid columns="4">
+								<aon:outputLabel for="Persona_cdg"
+									value="#{appBundle.aon_payroll_pricipales_personas_cdg}" />
+								<aon:inputText id="Persona_cdg" size="10" maxlength="8"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_alias"
+									value="#{appBundle.aon_payroll_pricipales_personas_alias}" />
+								<aon:inputText id="Persona_alias" size="20" maxlength="25"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_nombre"
+									value="#{appBundle.aon_payroll_pricipales_personas_nombre}" />
+								<aon:inputText id="Persona_nombre" size="20" maxlength="25"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_descripcion"
+									value="#{appBundle.aon_payroll_pricipales_personas_apellido1}" />
+								<aon:inputText id="Persona_descripcion" size="20" maxlength="35"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_apellido2"
+									value="#{appBundle.aon_payroll_pricipales_personas_apellido2}" />
+								<aon:inputText id="Persona_apellido2" size="20" maxlength="25"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_aliastc2"
+									value="#{appBundle.aon_payroll_pricipales_personas_alias_tc2}" />
+								<aon:inputText id="Persona_aliastc2" size="5" maxlength="5"
+									valueChangeListener="#{persona.addExpression}" />
+
+
+								<aon:outputLabel for="Documento_cdg"
+									value="#{appBundle.aon_payroll_pricipales_personas_tip_doc}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="Documento_cdg"
+										lookup="#{documentoLookup}" reRender="Documento_description"
+										value="#{persona.tipdoc.cdg}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Documento_lookup"
+										windowTitle="#{appBundle.aon_payroll_pricipales_personas_tip_doc}"
+										selectReRender="Documento_cdg,Documento_description"
+										lookup="#{documentoLookup}" minHeight="440"
+										property="#{persona.tipdoc}">
+									</aon:lookupButton>
+									<aon:inputText id="Documento_description"
+										value="#{(persona.tipdoc.description!=null)?(persona.tipdoc.description):('')}"
+										size="55" disabled="true" />
+										<aon:inputText id="Persona_numdoc" size="10" maxlength="10"
+										valueChangeListener="#{persona.addExpression}" >
+									</aon:inputText>
+																			
+								</aon:div>
+								<aon:outputLabel for="Pais_cdg"
+									value="#{appBundle.aon_payroll_pricipales_personas_pais}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="Pais_cdg" lookup="#{paisLookup}"
+										reRender="Pais_description" value="#{persona.pais.cdg}"
+										size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Pais_lookup"
+										windowTitle="#{appBundle.aon_payroll_pricipales_personas_pais}"
+										selectReRender="Pais_cdg,Pais_description"
+										lookup="#{paisLookup}" minHeight="440"
+										property="#{persona.pais}">
+									</aon:lookupButton>
+									<aon:inputText id="Pais_description"
+										value="#{(persona.pais.descripcion!=null)?(persona.pais.descripcion):('')}"
+										size="55" disabled="true" />
+								</aon:div>
+							</h:panelGrid>
+							
+						</aon:panelCollapsible>
+
+						<aon:panelCollapsible expanded="false"
+							label="Direccion Postal                        ">
+							<h:panelGrid columns="4">
+
+
+
+								<aon:outputLabel for="Documento_cdg"
+									value="#{appBundle.aon_payroll_pricipales_personas_via}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="Tipovia_cdg" lookup="#{tipoviaLookup}"
+										reRender="Tipovia_description" value="#{persona.tipovia.cdg}"
+										size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Tipovia_lookup"
+										windowTitle="#{appBundle.aon_payroll_pricipales_personas_via}"
+										selectReRender="Tipovia_cdg,Tipovia_description"
+										lookup="#{tipoviaLookup}" minHeight="440"
+										property="#{persona.tipovia}">
+									</aon:lookupButton>
+									<aon:inputText id="Tipovia_description"
+										value="#{(persona.tipovia.description!=null)?(persona.tipovia.description):('')}"
+										size="55" disabled="true" />
+								</aon:div>
+
+								<aon:outputLabel for="Persona_nomvia"
+									value="#{appBundle.aon_payroll_pricipales_personas_desc_via}" />
+								<aon:inputText id="Persona_nomvia" size="30" maxlength="40"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_numero"
+									value="#{appBundle.aon_payroll_pricipales_personas_numero}" />
+								<aon:inputText id="Persona_numero" size="5" maxlength="5"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_otrdir"
+									value="#{appBundle.aon_payroll_pricipales_personas_otros}" />
+								<aon:inputText id="Persona_otrdir" size="15" maxlength="12"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_codpos"
+									value="#{appBundle.aon_payroll_pricipales_personas_cp}" />
+								<aon:inputText id="Persona_codpos" size="5" maxlength="5"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_localidad"
+									value="#{appBundle.aon_payroll_pricipales_personas_localidad}" />
+								<aon:inputText id="Persona_localidad" size="20" maxlength="30"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Provincia_cdg"
+									value="#{appBundle.aon_payroll_pricipales_personas_provincia}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="Provincia_cdg"
+										lookup="#{provinciaLookup}" reRender="Provincia_description"
+										value="#{persona.provincia.cdg}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Provincia_lookup"
+										windowTitle="#{appBundle.aon_payroll_pricipales_personas_provincia}"
+										selectReRender="Provincia_cdg,Provincia_description"
+										lookup="#{provinciaLookup}" minHeight="440"
+										property="#{persona.provincia}">
+									</aon:lookupButton>
+									<aon:inputText id="Provincia_description"
+										value="#{(persona.provincia.descripcion!=null)?(persona.provincia.descripcion):('')}"
+										size="55" disabled="true" />
+								</aon:div>
+
+							</h:panelGrid>
+						</aon:panelCollapsible>
+
+						<aon:panelCollapsible expanded="false"
+							label="Datos Familiares                        ">
+							<h:panelGrid columns="4">
+
+								<aon:outputLabel for="Persona_telefono"
+									value="#{appBundle.aon_payroll_pricipales_personas_telefono}" />
+								<aon:inputText id="Persona_telefono" size="15" maxlength="12"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_fax"
+									value="#{appBundle.aon_payroll_pricipales_personas_fax}" />
+								<aon:inputText id="Persona_fax" size="15" maxlength="12"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_email"
+									value="#{appBundle.aon_payroll_pricipales_personas_email}" />
+								<aon:inputText id="Persona_email" size="30" maxlength="40"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_numss"
+									value="#{appBundle.aon_payroll_pricipales_personas_numss}" />
+								<aon:inputText id="Persona_numss" size="15" maxlength="12"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_lugnac"
+									value="#{appBundle.aon_payroll_pricipales_personas_lugar_ncmto}" />
+								<aon:inputText id="Persona_lugnac" size="20" maxlength="30"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_pricipales_personas_fecha_ncmto}" />
+								<aon:selectInputDate value="#{persona.fecnac}"
+									renderAsPopup="true" enableManualInput="true"
+									popupDateFormat="#{bundle.aon_date_pattern}">
+								</aon:selectInputDate>
+
+								<aon:outputLabel for="Provincia1_cdg"
+									value="#{appBundle.aon_payroll_pricipales_personas_prov_ncmto}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="Provincia1_cdg"
+										lookup="#{provinciaLookup}" reRender="Provincia1_description"
+										value="#{persona.provincia1.cdg}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Provincia1_lookup"
+										windowTitle="#{appBundle.aon_payroll_pricipales_personas_prov_ncmto}"
+										selectReRender="Provincia1_cdg,Provincia1_description"
+										lookup="#{provinciaLookup}" minHeight="440"
+										property="#{persona.provincia1}">
+									</aon:lookupButton>
+									<aon:inputText id="Provincia1_description"
+										value="#{(persona.provincia1.descripcion!=null)?(persona.provincia1.descripcion):('')}"
+										size="55" disabled="true" />
+								</aon:div>
+
+								<aon:outputLabel for="Pais1_cdg"
+									value="#{appBundle.aon_payroll_pricipales_personas_pais_ncmto}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="Pais1_cdg" lookup="#{paisLookup}"
+										reRender="Pais1_description" value="#{persona.pais1.cdg}"
+										size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Pais1_lookup"
+										windowTitle="#{appBundle.aon_payroll_pricipales_personas_pais_ncmto}"
+										selectReRender="Pais1_cdg,Pais1_description"
+										lookup="#{paisLookup}" minHeight="440"
+										property="#{persona.pais1}">
+									</aon:lookupButton>
+									<aon:inputText id="Pais1_description"
+										value="#{(persona.pais1.descripcion!=null)?(persona.pais1.descripcion):('')}"
+										size="55" disabled="true" />
+								</aon:div>
+
+								<aon:outputLabel for="Persona_padre"
+									value="#{appBundle.aon_payroll_pricipales_personas_padre}" />
+								<aon:inputText id="Persona_padre" size="20" maxlength="25"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_madre"
+									value="#{appBundle.aon_payroll_pricipales_personas_madre}" />
+								<aon:inputText id="Persona_madre" size="20" maxlength="25"
+									valueChangeListener="#{persona.addExpression}" />
+
+								<aon:outputLabel for="Persona_estciv"
+									value="#{appBundle.aon_payroll_pricipales_personas_estado_civil}" />
+								<aon:selectOneMenu id="Persona_estciv"
+									valueChangeListener="#{persona.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.EstadoCivil" />
+									<f:selectItem value="#{null}" itemLabel="    " />
+									<f:selectItems value="#{persona.listaEstciv}" />
+								</aon:selectOneMenu>
+
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_pricipales_personas_nacionalidad}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="Nacion_cdg" lookup="#{nacionLookup}"
+										reRender="Nacion_description" value="#{persona.nacion.cdg}"
+										size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Nacion_lookup"
+										windowTitle="#{appBundle.aon_payroll_pricipales_personas_nacionalidad}"
+										selectReRender="Nacion_cdg,Nacion_description"
+										lookup="#{nacionLookup}" minHeight="440"
+										property="#{persona.nacion}">
+									</aon:lookupButton>
+									<aon:inputText id="Nacion_description"
+										value="#{(persona.nacion.description!=null)?(persona.nacion.description):('')}"
+										size="55" disabled="true" />
+								</aon:div>
+
+								<aon:outputLabel for="Persona_sexo"
+									value="#{appBundle.aon_payroll_pricipales_personas_genero}" />
+								<aon:selectOneRadio id="Persona_sexo"
+									valueChangeListener="#{persona.addExpression}">
+									<aon:enumConverter enum="com.code.aon.payroll.enumeration.Sexo" />
+									<f:selectItems value="#{persona.listaSexo}" />
+								</aon:selectOneRadio>
+
+							</h:panelGrid>
+						</aon:panelCollapsible>
+
+
+
+
+					</h:panelGrid>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+
+		<aon:lookupButtonPopup lookup="#{documentoLookup}" />
+		<aon:lookupButtonPopup lookup="#{paisLookup}" />
+		<aon:lookupButtonPopup lookup="#{tipoviaLookup}" />
+		<aon:lookupButtonPopup lookup="#{provinciaLookup}" />
+		<aon:lookupButtonPopup lookup="#{nacionLookup}" />
+	</ui:define>
+</ui:composition>

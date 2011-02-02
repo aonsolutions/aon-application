@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:valueParam name="preffix" default="Contact" />
+
+	<aon:outputLabel for="#{preffix}_outlookName"
+		value="#{bundle.aon_name}" />
+	<aon:inputText id="#{preffix}_outlookName"
+		maxlength="128" size="95" required="#{nameRequired}"
+		value="#{controller.to.outlookName}" />
+
+	<aon:outputLabel for="#{preffix}_surname"
+		value="#{bundle.aon_surname}" />
+	<aon:inputText id="#{preffix}_surname"
+		maxlength="128" size="95" required="#{surnameRequired}"
+		value="#{controller.to.surname}" />
+
+</ui:composition>

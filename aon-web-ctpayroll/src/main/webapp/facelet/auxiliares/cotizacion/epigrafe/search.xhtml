@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+
+		<aon:form id="epigrafeMaestroSearch">
+
+	
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_epigrafes}" />
+				<ui:param name="controller" value="#{epigrafeMaestro}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{epigrafeMaestro.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="epigrafeMaestro_list" />		
+	 		
+				
+					<aon:outputLabel for="Epigrafe_cdg"
+						value="#{appBundle.aon_payroll_cdg}" />
+					<aon:inputText id="Epigrafe_cdg" size="10" maxlength="8"
+						valueChangeListener="#{epigrafeMaestro.addExpression}" />
+
+					<aon:outputLabel for="Epigrafe_description"
+						value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText id="Epigrafe_description" size="60" maxlength="50"
+						valueChangeListener="#{epigrafeMaestro.addExpression}" />
+			  			
+					<aon:outputLabel for="Epigrafe_epigrafes_id_fecini"
+						value="#{appBundle.aon_payroll_cotizacion_fecini}" />
+					<aon:selectInputDate id="Epigrafe_epigrafes_id_fecini"
+						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
+						value="#{epigrafeMaestro.searchFecini}" />
+						
+					<aon:outputLabel for="Epigrafe_epigrafes_fecfin"
+						value="#{appBundle.aon_payroll_cotizacion_fecfin}" />
+					<aon:selectInputDate id="Epigrafe_epigrafes__fecfin"
+						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
+						value="#{epigrafeMaestro.searchFecfin}" />
+				 
+					
+					<aon:outputLabel for="Epigrafe_epigrafes_indit"
+						value="#{appBundle.aon_payroll_cotizacion_epigrafes_indiIT}" />	
+					<aon:selectOneMenu id="Epigrafe_epigrafes_indit"					
+					   valueChangeListener="#{epigrafeMaestro.addEqualExpression}" >	
+					   <aon:enumConverter enum="com.code.aon.payroll.enumeration.Epigrafes" />
+					    <f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{epigrafe.listaEpigrafes}" />
+					</aon:selectOneMenu>	
+				
+					<aon:outputLabel for="Epigrafe_epigrafes_canit"
+						value="#{appBundle.aon_payroll_cotizacion_epigrafes_impIT}" />
+					<aon:inputText id="Epigrafe_epigrafes_canit" size="20" maxlength="15"
+						valueChangeListener="#{epigrafeMaestro.addExpression}" />
+				 	
+					<aon:outputLabel for="Epigrafe_epigrafes_indipm"
+						value="#{appBundle.aon_payroll_cotizacion_epigrafes_indIMS}" />
+					<aon:selectOneMenu id="Epigrafe_epigrafes_indipm"
+					    valueChangeListener="#{epigrafeMaestro.addEqualExpression}" >			
+						<aon:enumConverter enum="com.code.aon.payroll.enumeration.Epigrafes" />
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{epigrafe.listaEpigrafes}" />
+					</aon:selectOneMenu>
+					 	
+					<aon:outputLabel for="Epigrafe_epigrafes_canipm"
+						value="#{appBundle.aon_payroll_cotizacion_epigrafes_impIMS}" />
+					<aon:inputText id="Epigrafe_epigrafes_canipm" size="20" maxlength="15"
+						valueChangeListener="#{epigrafeMaestro.addExpression}" />
+					
+					
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+	</ui:define>
+		
+</ui:composition>

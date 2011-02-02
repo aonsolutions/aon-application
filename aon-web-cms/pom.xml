@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.web.parent</artifactId>
+		<version>5.9.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.code.aon</groupId>
+	<artifactId>aon-cms</artifactId>
+	<packaging>war</packaging>
+	<version>5.9.0</version>
+	<description>WEB CMS</description>
+	<name>WEB CMS</name>
+	<build>
+		<finalName>aon-web-cms</finalName>
+		<plugins>
+			<!-- Para construir el RPM -->
+                       <plugin>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>rpm-maven-plugin</artifactId>
+                       </plugin>
+		</plugins>
+	</build>
+	<properties>
+		<dbVersion>2.1.0</dbVersion>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security</artifactId>
+			<version>1.9.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.resources</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.dbutils</artifactId>
+				</exclusion>
+			</exclusions>					
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.cms</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+</project>
+ 
+

@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showOfferCopyWindow">
+		<c:if test="#{offer.showOfferCopyWindow}">
+			<rich:modalPanel id="offerCopyModalPanel" minHeight="240"
+				minWidth="520" rendered="#{offer.showOfferCopyWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{commercialBundle.commercial_offer_copy}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showOfferCopyWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{offer.showOfferCopyWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="offerCopyForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="offerCopy-accept"
+										value="#{commercialBundle.commercial_offer_to_copy}"
+										actionListener="#{offer.onCopy}"
+										action="offer_form"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="offerCopyModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{offer.showOfferCopyWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="offerCopy-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showOfferCopyWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{offer.showOfferCopyWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
+
+										<aon:outputLabel for="Offer_offerSeries"
+											value="#{bundle.aon_series}" />
+										<aon:selectOneMenu id="Offer_offerSeries"
+											value="#{offer.offerSeries}"
+											valueChangeListener="#{offer.onOfferCopySeriesChanged}" 
+											reRender="Offer_offerNumber">
+											<f:selectItem itemLabel=" " itemValue="#{null}" />
+											<f:selectItems value="#{configCollections.seriesIds}" />
+										</aon:selectOneMenu>
+
+										<aon:outputLabel for="Offer_offerNumber"
+											value="#{bundle.aon_number}" />
+										<aon:inputText id="Offer_offerNumber"
+											value="#{offer.offerNumber}"
+											required="true" size="7" />
+
+										<aon:outputLabel for="Offer_offerTarget_id" 
+											value="#{commercialBundle.commercial_target}" />
+										<aon:div styleClass="aon-lookup">
+											<aon:lookupInputText id="Offer_offerTarget_id" 
+												value="#{offer.offerTarget.registry.id}" size="5"
+												lookupProperty="registry" lookup="#{targetLookup}"
+												lookupChangeListener="#{offer.offerCopyTargetData}" 
+												reRender="Offer_offerTarget_full_name"
+												ajaxSingle="true" required="true" />
+											<aon:lookupButton
+												windowTitle="#{commercialBundle.commercial_target_selection}"
+												minHeight="470" minWidth="650"
+												property="#{offer.offerTarget.registry}" lookupProperty="registry" lookup="#{targetLookup}"
+												lookupChangeListener="#{offer.offerCopyTargetData}"
+												selectReRender="Offer_offerTarget_id,Offer_offerTarget_full_name"
+												actionType="search">
+											</aon:lookupButton>
+											<aon:inputText id="Offer_offerTarget_full_name" 
+												value="#{(offer.offerTarget.registry.fullName!=null)?(offer.offerTarget.registry.fullName):('')}"
+												disabled="true" size="60" />
+										</aon:div>
+
+										<aon:outputLabel for="Offer_offerDate"
+											value="#{bundle.aon_date}" />
+										<aon:selectInputDate id="Offer_offerDate" 
+											value="#{offer.offerDate}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="top-right"
+											verticalOffset="-60" />
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

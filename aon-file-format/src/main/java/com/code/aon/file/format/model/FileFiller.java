@@ -1,0 +1,16 @@
+package com.code.aon.file.format.model;
+
+import java.util.ArrayList;
+
+/**
+ * File filler interface
+ * 
+ * @author Consulting & Development. Iñigo GAyarre - 06/02/2007
+ * @since 1.0
+ *
+ */
+public interface FileFiller {
+
+	public ArrayList<Exception> create();
+	
+}

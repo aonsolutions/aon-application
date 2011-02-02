@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<ui:decorate 
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="columnClasses" value="aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn" />
+		<ui:define name="columns">
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryAddInfo_attribute" value="#{bundle.aon_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.attribute}"
+					rendered="#{formList}" />
+				<aon:inputText id="RegistryAddInfo_attribute"
+					value="#{controller.to.attribute}"
+					rendered="#{formEdit}" required="true" 
+					size="40" maxlength="32" />
+				<f:facet name="footer">
+					<aon:div>
+						<rich:comboBox suggestionValues="#{registryCollections.addInfoAttributes}"
+							value="#{controller.to.attribute}"
+							rendered="#{formNew}" required="true"
+							maxlength="32" width="250"	
+							directInputSuggestions="true"
+							inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif; font-size:1em;"
+							buttonDisabledStyle="display:none;"
+							buttonInactiveStyle="display:none;"
+							buttonStyle="display:none;" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryAddInfo_value" value="#{bundle.aon_value}" />
+				</f:facet>
+				<aon:outputText value="#{to.value}"
+					rendered="#{formList}" />
+				<aon:inputText id="RegistryAddInfo_value"
+					value="#{controller.to.value}"
+					rendered="#{formEdit}" required="true" 
+					size="40" maxlength="32" />
+				<f:facet name="footer">
+					<aon:inputText id="RegistryAddInfo_value-New"
+						value="#{controller.to.value}"
+						rendered="#{formNew}" required="true" 
+						size="40" maxlength="32" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryAddInfo_valueDate" value="#{bundle.aon_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.valueDate}"
+					rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="RegistryAddInfo_valueDate"
+					value="#{controller.to.valueDate}"
+					rendered="#{formEdit}" 
+					required="true" inputSize="7"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="RegistryAddInfo_valueDate-New"
+						value="#{controller.to.valueDate}"
+						rendered="#{formNew}" 
+						required="true" inputSize="7"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</f:facet>
+			</aon:column>
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

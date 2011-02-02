@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="main_form" enctype="multipart/form-data">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.template}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							actionListener="#{template.onInit}" 
+							action="template_list" 
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:fileUpload id="Template_file" 
+						width="100%" 
+						addControlLabel="#{appBundle.aon_upload_add}" 
+						stopControlLabel="#{appBundle.aon_upload_stop}" 
+						stopEntryControlLabel="#{appBundle.aon_upload_stop}"
+						uploadControlLabel="#{appBundle.aon_upload_upload}"
+						cancelEntryControlLabel="#{appBundle.aon_upload_cancel}"
+						clearAllControlLabel="#{appBundle.aon_upload_clear_all}" 
+						clearControlLabel="#{appBundle.aon_upload_clear}"
+						doneLabel="#{appBundle.aon_upload_done}" 
+						progressLabel="#{appBundle.aon_upload_progress}" 
+						sizeErrorLabel="#{appBundle.aon_upload_size_error}" 
+						transferErrorLabel="#{appBundle.aon_upload_transfer_error}" 
+						fileUploadListener="#{template.fileUploaded}"
+						immediateUpload="true" autoclear="false" listHeight="70px" listWidth="100%">
+					<a4j:support event="onuploadcomplete" action="template_list" />
+				</aon:fileUpload>
+
+			</aon:div>
+		</aon:form>
+		
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

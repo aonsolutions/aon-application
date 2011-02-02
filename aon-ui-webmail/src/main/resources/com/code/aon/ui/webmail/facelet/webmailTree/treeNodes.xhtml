@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	<rich:treeNode type="INBOX" 
+		iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-inbox.png']}" 
+		icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-inbox.png']}">
+		<ui:insert name="nodeContent" />
+	</rich:treeNode>
+	<rich:treeNode type="Enviados" 
+		iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-sent.png']}" 
+		icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-sent.png']}">
+		<ui:insert name="nodeContent" />
+	</rich:treeNode>
+	<rich:treeNode type="spam" 
+		iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-spam.png']}" 
+		icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-spam.png']}">
+		<ui:insert name="nodeContent" />
+	</rich:treeNode>
+	<rich:treeNode type="Papelera" 
+		iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-trash.png']}" 
+		icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-trash.png']}">
+		<ui:insert name="nodeContent" />
+	</rich:treeNode>
+	<rich:treeNode type="Borrador" 
+		iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-draft.png']}" 
+		icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-draft.png']}">
+		<ui:insert name="nodeContent" />
+	</rich:treeNode>
+	<rich:treeNode type="other" 
+		iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-folder.png']}" 
+		icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-folder.png']}">
+		<ui:insert name="nodeContent" />
+	</rich:treeNode>
+
+</ui:composition>

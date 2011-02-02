@@ -1,0 +1,42 @@
+#!/bin/sh
+
+. aondir-functions
+
+APP=aon-desktop
+
+
+if ! aondir_has_app $APP; then
+
+        aondir-addapp $APP &>/dev/null
+
+        aondir-addrole User $APP &>/dev/null
+        aondir-addrole Guest $APP &>/dev/null
+        aondir-addrole Admin $APP &>/dev/null
+        aondir-addrole Confidentiality $APP &>/dev/null
+        aondir-addrole FAXSender $APP &>/dev/null
+        aondir-addrole SMSSender $APP &>/dev/null
+        aondir-addrole DocumentsVisible $APP &>/dev/null
+        aondir-addrole CorporativeDocumentsManager $APP &>/dev/null
+        aondir-addrole PredefinedDocumentsExecutable $APP &>/dev/null
+
+        aondir-addprofile Administrador $APP Admin User &>/dev/null
+        aondir-addprofile User $APP User DocumentsVisible &>/dev/null
+else
+	aondir-delrole $APP &>/dev/null
+	aondir-delprofile $APP &>/dev/null
+	
+        aondir-addrole User $APP &>/dev/null
+        aondir-addrole Guest $APP &>/dev/null
+        aondir-addrole Admin $APP &>/dev/null
+        aondir-addrole Confidentiality $APP &>/dev/null
+        aondir-addrole FAXSender $APP &>/dev/null
+        aondir-addrole SMSSender $APP &>/dev/null
+        aondir-addrole DocumentsVisible $APP &>/dev/null
+        aondir-addrole CorporativeDocumentsManager $APP &>/dev/null
+        aondir-addrole PredefinedDocumentsExecutable $APP &>/dev/null
+
+	aondir-addprofile Administrador $APP &>/dev/null
+	aondir-addprofile User $APP User DocumentsVisible  &>/dev/null
+	aondir-addprofile Usuario $APP User DocumentsVisible PredefinedDocumentsExecutable SMSSender   &>/dev/null
+fi
+

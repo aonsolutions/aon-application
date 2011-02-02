@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition>
+	<aon:form id="templatesForm">
+
+	<aon:div>
+		<aon:div style="text-align:center;margin-top:20px">
+			<aon:outputText value="#{appBundle.aon_web_info_sytle_template} "/>
+			<aon:selectOneMenu value="#{webPageStyle.template}" style="width:200px">
+				<f:selectItems value="#{webPageStyle.templates}" />
+				<a4j:support actionListener="#{webPageStyle.onChangeTemplate}" event="onchange" reRender="variables"/> 
+			</aon:selectOneMenu>
+		</aon:div>
+
+		<aon:div id="variables" style="margin-top:20px">
+		<aon:div layout="none" ajaxRendered="true" rendered="#{webPageStyle.templateSelected}">
+			<aon:editDataTable id="WebInfoStyle_datatable" value="#{webPageStyle.model}" var="to" rows="20" 
+					columnClasses ="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+									aon-editDataTable-textColumn aon-width-auto, aon-editDataTable-buttonsColumn">
+				<aon:rowSelector toggleOnClick="false"/>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;"/>
+					</f:facet>
+					<a4j:support actionListener="#{webPageStyle.onSelect}" event="onclick" />
+					<h:graphicImage value="/images/#{webPageStyle.iconByType}" style="margin:2px"/>
+					<f:facet name="footer">
+						<aon:div>
+							<aon:outputText value="&#160;"/>
+						</aon:div>
+					</f:facet>
+				</aon:column>
+		
+				<aon:column style="width:300px">
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_web_info_sytle_variable}" />
+					</f:facet>
+					<aon:div rendered="#{to != webPageStyle.to}">
+						<a4j:support actionListener="#{webPageStyle.onSelect}" event="onclick" />
+						<aon:outputText value="#{webPageStyle.rowVariableName}" />
+					</aon:div>
+					<aon:div rendered="#{to == webPageStyle.to}" >
+						<aon:outputText value="#{webPageStyle.toVariableName}" />
+					</aon:div>
+					<f:facet name="footer">
+						<aon:div>
+							<aon:outputText value="&#160;"/>
+						</aon:div>
+					</f:facet>
+				</aon:column>
+		
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_web_info_sytle_value}" />
+					</f:facet>
+					<aon:div rendered="#{to!=webPageStyle.to}">
+						<a4j:support actionListener="#{webPageStyle.onSelect}" event="onclick" />
+						<aon:div value="&#160;" style="width:64px;height:17px;border:1px black solid;background-color:#{to.value}" rendered="#{webPageStyle.color}" />
+						<aon:outputText value="#{webPageStyle.fontName}" rendered="#{webPageStyle.font}" style="font-family:#{webPageStyle.fontType};font-size:15px"/>
+						<aon:outputText value="#{to.value}" rendered="#{webPageStyle.number}"/>
+						<aon:outputText value="#{webPageStyle.rattachName}" rendered="#{webPageStyle.image}" />
+					</aon:div>
+					<aon:div id="div_rgb" rendered="#{to==webPageStyle.to}">
+						<aon:inputText id="rgb2" value="#{webPageStyle.to.value}" onfocus="showColorPicker(this);" size="10" maxlength="7" rendered="#{webPageStyle.color}"/>
+						<aon:selectOneMenu id="WebInfoPageResource_font" value="#{webPageStyle.to.value}" rendered="#{webPageStyle.font}" >
+							<f:selectItems value="#{webPageStyle.fontTypes}" />
+						</aon:selectOneMenu>
+						<rich:inputNumberSpinner value="#{webPageStyle.to.value}" required="#{true}" step="1" rendered="#{webPageStyle.number}"/>
+						<aon:selectOneMenu id="WebInfoPageResource_rattach" value="#{webPageStyle.to.value}" rendered="#{webPageStyle.image}" >
+							<f:selectItems value="#{webPageStyle.images}" />
+						</aon:selectOneMenu>
+					</aon:div>
+					<f:facet name="footer">
+						<aon:div>
+							<aon:outputText value="&#160;"/>
+						</aon:div>
+					</f:facet>
+				</aon:column>
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;"/>
+					</f:facet>
+					<aon:div rendered="#{to==webPageStyle.to}" >
+						<aon:commandButton title="#{bundle.aon_save}"
+							actionListener="#{webPageStyle.onAccept}"
+							value="" styleClass="aon-editDataTable-button aon-icon-accept"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:commandButton title="#{bundle.aon_cancel}"
+							actionListener="#{webPageStyle.onCancel}" immediate="#{true}"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							value="" accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+					<f:facet name="footer">		
+						<aon:div>
+							<aon:outputText rendered="#{!webPageStyle.new}" value="&#160;"/>
+							<aon:commandButton title="#{bundle.aon_save}"
+								actionListener="#{webPageStyle.onAccept}"
+								rendered="#{webPageStyle.new}" value=""
+								styleClass="aon-editDataTable-button aon-icon-accept"
+								accesskey="#{bundle.aon_key_save_line}" />
+							<aon:commandButton title="#{bundle.aon_cancel}"
+								actionListener="#{webPageStyle.onCancel}" immediate="#{true}"
+								rendered="#{webPageStyle.new}"
+								styleClass="aon-editDataTable-button aon-icon-cancel"
+								value="" accesskey="#{bundle.aon_key_cancel_line}" />
+						</aon:div>
+					</f:facet>
+				</aon:column>
+			</aon:editDataTable>
+	
+			<aon:dataScroller dataTable="WebInfoStyle_datatable" for="WebInfoStyle_datatable"
+				model="#{webPageStyle.model}" rowCount="20" showNote="true"  />
+		</aon:div>
+		</aon:div>
+
+	</aon:div>
+
+	</aon:form>
+</ui:composition>
+</body>
+</html>
+					

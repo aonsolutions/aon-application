@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+
+		<aon:form id="tiposAutorizacionSearch">
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_tipos__tipaut}" />
+				<ui:param name="controller" value="#{tiposAutorizacion}" />
+				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="backAction" value="tiposAutorizacion_form"/>
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{tiposAutorizacion.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="tiposAutorizacion_form" />				
+				
+					<aon:outputLabel for="Autorizacion_cdg"
+						value="#{appBundle.aon_payroll_cdg}" />
+					<aon:inputText id="Autorizacion_cdg" size="3" maxlength="3"
+						valueChangeListener="#{tiposAutorizacion.addExpression}" />
+
+					<aon:outputLabel for="Autorizacion_description"
+						value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText id="Autorizacion_description" size="70" maxlength="70"
+						valueChangeListener="#{tiposAutorizacion.addExpression}" />
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+	</ui:define>
+		
+</ui:composition>
