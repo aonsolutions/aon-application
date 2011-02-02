@@ -144,7 +144,7 @@
 
   <scm>
     <connection>
-    scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-parent</connection>
+    scm:svn:http://dev.esferalia.com/repos/aon-application/trunk</connection>
     <url>http://dev.esferalia.com/websvn/wsvn</url>
   </scm>
 
