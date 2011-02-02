@@ -138,7 +138,7 @@
                                 </parameters>
                             </viewContent>
                             <viewContent
-                                id="view/Facturas/Datos de la Dirección.exvw.xml" type="FORM">
+                                id="view/Facturas/Datos de la Direccion.exvw.xml" type="FORM">
                                 <parameters>
                                     <parameter name="INVOICE_RADDRESS"/>
                                 </parameters>

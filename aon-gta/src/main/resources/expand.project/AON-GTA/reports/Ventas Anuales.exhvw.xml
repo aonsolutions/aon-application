@@ -11,7 +11,7 @@
         iconOpen="icons/icon_factura.gif" label="Ventas Anuales">
         <layout type="COLUMN"/>
         <contents>
-            <viewContent id="view/Ventas/Año Mes Dia.exvw.xml" type="LIST">
+            <viewContent id="view/Ventas/Ano Mes Dia.exvw.xml" type="LIST">
                 <parameters>
                     <parameter name="type"/>
                     <parameter name="iniyear"/>
@@ -19,7 +19,7 @@
                 </parameters>
             </viewContent>
         </contents>
-        <node dynamicViewId="view/Ventas/Año Mes Dia.exvw.xml"
+        <node dynamicViewId="view/Ventas/Ano Mes Dia.exvw.xml"
             iconClose="icons/icon_year_selected.gif"
             iconOpen="icons/icon_year_selected.gif" label="${DELIVERY_YEAR}">
             <dynamicParameters>
