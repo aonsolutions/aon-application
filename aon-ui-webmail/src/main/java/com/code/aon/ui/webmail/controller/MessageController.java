@@ -488,12 +488,6 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		}
     }
     
-    public void addAttach(MimeMultipart multipart,File file) throws IOException, MessagingException{
-    	MimeBodyPart adjunto = new MimeBodyPart ();
-    	adjunto.attachFile(file);
-    	multipart.addBodyPart(adjunto);
-    }
-    
     //*******************************************************************************************
 	/**
 	* Method for compounding the message.
@@ -789,7 +783,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			InputStream in = msg.getInputStream();
 
 			System.out.println("");
-	        Enumeration enumeration = msg.getAllHeaders();
+	        Enumeration<?> enumeration = msg.getAllHeaders();
 	        LineOutputStream lineoutputstream = new LineOutputStream(out);
 	        while(enumeration.hasMoreElements()){
 	        	try{
