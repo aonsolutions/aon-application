@@ -22,6 +22,61 @@
 		<url>http://dev.esferalia.com/websvn/wsvn/aon.web.parent</url>
 	</scm>
   <build>
+    <pluginManagement>
+    	<plugins>
+			<!-- Para construir el RPM -->
+                       <plugin>
+
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>rpm-maven-plugin</artifactId>
+                                <version>2.0.1</version>
+                                <extensions>true</extensions>
+
+				<executions>
+					<execution>
+						<id>rpm-build</id>
+						<goals>
+							<goal>attached-rpm</goal>
+						</goals>
+					</execution>
+
+				</executions>
+
+                                <configuration>
+	                            <group>Applications/Aon</group>
+	                            <release>${buildNumber}</release>
+				    <copyright>2009, esferalia Networks S.A</copyright>
+					<requires>
+						<require>aon-external-libs</require>
+						<require>aon-directory-client &gt;= 5.0.0-4</require>
+					</requires>
+                                        <mappings>
+                                                <mapping>
+							<filemode>755</filemode>
+                                                        <username>jboss</username>
+                                                        <groupname>jboss</groupname>
+                                                        <directory>/var/lib/jbossas/server/default/deploy</directory>
+							<sources>
+								<source>
+									<includes>
+										<include>*.war</include>
+									</includes>
+									<location>target</location>
+								</source>
+							</sources>
+                                                </mapping>
+					</mappings>
+                                       <postinstallScriptlet>
+                                                <scriptFile>src/main/scripts/postinstall</scriptFile>
+                                                <fileEncoding>utf-8</fileEncoding>
+                                        </postinstallScriptlet>
+                                </configuration>
+
+
+                        </plugin>
+	
+    	</plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -60,6 +115,30 @@
           </archive>
         </configuration>
       </plugin>
+
+
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>wagon-maven-plugin</artifactId>
+				<version>1.0-beta-3</version>
+				<executions>
+					<execution>
+						<id>upload-rpm</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<configuration>
+							<fromDir>${project.basedir}/target/rpm/${project.artifactId}/RPMS/</fromDir>
+							<includes>**/*.rpm</includes>
+							<url>scp://dev.esferalia.com</url>
+							<toDir>/var/www/aon-inetserver</toDir>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 
     </plugins>
   </build>
@@ -538,16 +617,22 @@
 		<scope>provided</scope>
 	</dependency>
 	<!-- FIN para construir el war-->	
+	<!-- TESTs --> 
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>      
+            <scope>test</scope>           
+        </dependency>                     
+                                          
+        <dependency>                      
+            <groupId>org.seleniumhq.selenium.client-drivers</groupId>
+            <artifactId>selenium-java-client-driver</artifactId>     
+            <version>1.0.1</version>                                 
+            <scope>test</scope>                                      
+        </dependency>                                                
+
   </dependencies>
-  <profiles>
-    <profile>
-      <id>rpm-release</id>
-     <activation>
-        <property>
-          <name>rpm.release</name>
-          <value>true</value>
-        </property>
-      </activation>
 
 <repositories>                            
 
@@ -577,142 +662,8 @@
                 <enabled>false</enabled>                                     
             </releases>                                                      
         </repository>                                                        
-    </repositories>                                                          
-                                                                             
-    <dependencies>                                                           
+   </repositories>                                                          
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.2</version>      
-            <scope>test</scope>           
-        </dependency>                     
-                                          
-        <dependency>                      
-            <groupId>org.seleniumhq.selenium.client-drivers</groupId>
-            <artifactId>selenium-java-client-driver</artifactId>     
-            <version>1.0.1</version>                                 
-            <scope>test</scope>                                      
-        </dependency>                                                
-
-    </dependencies>
- 
-
-  <build>
-    <plugins>
-
-			<!-- Para construir el RPM -->
-                       <plugin>
-
-                                <groupId>org.codehaus.mojo</groupId>
-                                <artifactId>rpm-maven-plugin</artifactId>
-                                <version>2.0.1</version>
-                                <extensions>true</extensions>
-
-				<executions>
-					<execution>
-								<id>rpm-build</id>
-						<goals>
-							<goal>attached-rpm</goal>
-						</goals>
-					</execution>
-
-				</executions>
-
-                                <configuration>
-	                            <group>Applications/Aon</group>
-	                            <release>${buildNumber}</release>
-				    <copyright>2009, esferalia Networks S.A</copyright>
-					<requires>
-						<require>aon-external-libs</require>
-						<require>aon-directory-client &gt;= 5.0.0-4</require>
-					</requires>
-                                        <mappings>
-                                                <mapping>
-							<filemode>755</filemode>
-                                                        <username>jboss</username>
-                                                        <groupname>jboss</groupname>
-                                                        <directory>/var/lib/jbossas/server/default/deploy</directory>
-							<sources>
-								<source>
-									<includes>
-										<include>*.war</include>
-									</includes>
-									<location>target</location>
-								</source>
-							</sources>
-                                                </mapping>
-					</mappings>
-                                       <postinstallScriptlet>
-                                                <scriptFile>src/main/scripts/postinstall</scriptFile>
-                                                <fileEncoding>utf-8</fileEncoding>
-                                        </postinstallScriptlet>
-                                </configuration>
-
-
-                        </plugin>
-
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>wagon-maven-plugin</artifactId>
-						<version>1.0-beta-3</version>
-						<executions>
-							<execution>
-								<id>upload-rpm</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>upload</goal>
-								</goals>
-								<configuration>
-									<fromDir>${project.basedir}/target/rpm/${project.artifactId}/RPMS/</fromDir>
-									<includes>**/*.rpm</includes>
-									<url>scp://dev.esferalia.com</url>
-									<toDir>/var/www/aon-inetserver</toDir>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>selenium-maven-plugin</artifactId>
-						<version>1.0.1</version>
-						<!--
-							executions> <execution> <id>xvfb</id>
-							<phase>pre-integration-test</phase> <goals> <goal>xvfb</goal>
-							</goals> </execution> <execution> <id>start-server</id>
-							<phase>pre-integration-test</phase> <goals>
-							<goal>start-server</goal> </goals> <configuration>
-							<background>true</background> </configuration> </execution>
-
-
-							<execution> <phase>post-integration-test</phase>
-							<id>stop-server</id> <goals> <goal>stop-server</goal> </goals>
-							</execution> </executions -->
-					</plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-
-						<!--
-							executions> <execution> <id>test</id>
-							<phase>integration-test</phase> <goals> <goal>test</goal>
-							</goals> <configuration> <skip>false</skip> </configuration>
-							</execution> </executions -->
-
-            </plugin>
-
-
-    </plugins>
-  </build>
-
-    </profile>
-  </profiles>
 </project>
 
 
