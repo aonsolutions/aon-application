@@ -539,20 +539,19 @@
 	</dependency>
 	<!-- FIN para construir el war-->	
   </dependencies>
-  <profiles>
-    <profile>
-      <id>rpm-release</id>
-     <activation>
-        <property>
-          <name>rpm.release</name>
-          <value>true</value>
-        </property>
-      </activation>
-
-
-  <build>
-    <plugins>
-
+   <profiles>
+	<profile>
+	      <id>rpm-release</id>
+	     <activation>
+		<property>
+		  <name>rpm.release</name>
+		  <value>true</value>
+		</property>
+	      </activation>
+		
+		<build>
+    <pluginManagement>
+    	<plugins>
 			<!-- Para construir el RPM -->
                        <plugin>
 
@@ -563,7 +562,7 @@
 
 				<executions>
 					<execution>
-								<id>rpm-build</id>
+						<id>rpm-build</id>
 						<goals>
 							<goal>attached-rpm</goal>
 						</goals>
@@ -603,34 +602,12 @@
 
 
                         </plugin>
+	
+    	</plugins>
+    </pluginManagement>
 
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>wagon-maven-plugin</artifactId>
-						<version>1.0-beta-3</version>
-						<executions>
-							<execution>
-								<id>upload-rpm</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>upload</goal>
-								</goals>
-								<configuration>
-									<fromDir>${project.basedir}/target/rpm/${project.artifactId}/RPMS/</fromDir>
-									<includes>**/*.rpm</includes>
-									<url>scp://dev.esferalia.com</url>
-									<toDir>/var/www/aon-payroll</toDir>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-
-    </plugins>
-  </build>
-
-
-
-    </profile>
-  </profiles>
+		</build>
+	</profile>
+   </profiles>
+	
 </project>
