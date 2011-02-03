@@ -286,11 +286,11 @@ public class DomainUserController extends LdapBasicController implements IManage
 			}					
 		}
 	}
-	
 
 	private User initDBUser( String uid ) throws ManagerBeanException {
 		User user = new User();
 		user.setLogin(uid);
+		user.setActive(true);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression("uid", uid);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
@@ -315,6 +315,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 			bean.insert(user);
 		} else {
 			user = (User) list.get(0);
+			user.setActive(true);
 			bean.update(user);
 		}
 		return user;
@@ -372,6 +373,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
 			User dbUser = (User) list.get(0);
+			dbUser.setActive(false);
 			bean.update(dbUser);
 		}
 	}
