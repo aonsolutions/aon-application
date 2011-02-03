@@ -6,8 +6,6 @@
 
 	<payroll:config version="1.0" xmlns:payroll="http://www.esferalia.com/payroll">
 	
-		<payroll:payroll enable="true" />
-		
 	</payroll:config>
 </config>
 

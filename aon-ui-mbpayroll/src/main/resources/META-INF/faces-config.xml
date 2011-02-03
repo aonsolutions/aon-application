@@ -18,128 +18,191 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	<!-- ************ Certificate Controller **************** -->
+
+	<!-- ************ Parte IT Wizard **************** -->
 	<managed-bean>
-		<managed-bean-name>enterpriseCertificate</managed-bean-name>
+		<managed-bean-name>parteITWizard</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.CertificateController
+			com.esferalia.aon.ui.payroll.controller.ParteITWizard
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	<!-- ************ Remesa Certificado Wizard **************** -->
+
+	<!-- ************ Remesa IT Wizard **************** -->
 	<managed-bean>
-		<managed-bean-name>certificateBatchGenerationWizard</managed-bean-name>
+		<managed-bean-name>remesaITWizard</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.CertificateBatchGenerationWizard
+			com.esferalia.aon.ui.payroll.controller.RemesaITWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ FDI Regeneration Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>FDIRegenerationWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.FDIRegenerationWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ Salary Modification Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>salaryModificationWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.SalaryModificationWizard
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************ Remesa Certificado Wizard **************** -->
 	<managed-bean>
-		<managed-bean-name>certificateFileGenerationWizard</managed-bean-name>
+		<managed-bean-name>remesaCertificadoWizard</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.CertificateFileGenerationWizard
+			com.esferalia.aon.ui.payroll.controller.RemesaCertificadoWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ Remesa Certificado Generation Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>remesaCertificadoGenerationWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.RemesaCertificadoGenerationWizard
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************ Proceso de creacion de contratos **************** -->
+	<!-- ************ Impresion Nomina Wizard **************** -->
 	<managed-bean>
-		<managed-bean-name>contractGenerationWizard</managed-bean-name>
+		<managed-bean-name>impNominaWizard</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.ContractGenerationWizard
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- ************ Proceso de creacion del fichero AFI **************** -->
-	<managed-bean>
-		<managed-bean-name>contractBatchWizard</managed-bean-name>
-		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.ContractBatchWizard
+			com.esferalia.aon.ui.payroll.controller.ImpNominaWizard
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- =================== ParteIT Wizard Management========================== -->
-
-	<navigation-rule id="certificateFileGenerationWizard">
+	<navigation-rule id="parteITWizard">
 	    <navigation-case>
-    	  	<from-outcome>certificateFileGenerationWizard_step0</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certificateFileGeneration/step0.xhtml</to-view-id>
+    	  	<from-outcome>parteITWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step0.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
-    	  	<from-outcome>certificateFileGenerationWizard_step1</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certificateFileGeneration/step1.xhtml</to-view-id>
+    	  	<from-outcome>parteITWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step1.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
-    	  	<from-outcome>certificateFileGenerationWizard_step2</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certificateFileGeneration/step2.xhtml</to-view-id>
+    	  	<from-outcome>parteITWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step2.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
-    	  	<from-outcome>certificateFileGenerationWizard_step3</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certificateFileGeneration/step3.xhtml</to-view-id>
+    	  	<from-outcome>parteITWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step3.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule id="remesaITWizard">
+	    <navigation-case>
+    	  	<from-outcome>remesaITWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaITWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaITWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaITWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step3.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaITWizard_step4</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaIT/step4.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 
-	<navigation-rule id="certificateBatchGenerationWizard">
+	<navigation-rule id="FDIRegenerationWizard">
 	    <navigation-case>
-    	  	<from-outcome>certificateBatchGenerationWizard_step0</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certificateBatchGeneration/step0.xhtml</to-view-id>
+    	  	<from-outcome>FDIRegenerationWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaITregeneration/step0.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
-    	  	<from-outcome>certificateBatchGenerationWizard_step1</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certificateBatchGeneration/step1.xhtml</to-view-id>
+    	  	<from-outcome>FDIRegenerationWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaITregeneration/step1.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
-    	  	<from-outcome>certificateBatchGenerationWizard_step2</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certificateBatchGeneration/step2.xhtml</to-view-id>
-	    </navigation-case>
-	</navigation-rule>
-
-	<navigation-rule id="contractGenerationWizard">
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step0</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step0.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step1</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step1.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step2</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step2.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step3</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step3.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step4</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step4.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step5</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step5.xhtml</to-view-id>
+    	  	<from-outcome>FDIRegenerationWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaITregeneration/step2.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 
-	<navigation-rule id="contractBatchWizard">
+	<navigation-rule id="salaryModificationWizard">
 	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step0</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step0.xhtml</to-view-id>
+    	  	<from-outcome>salaryModificationWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryModification/step0.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step1</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step1.xhtml</to-view-id>
+    	  	<from-outcome>salaryModificationWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryModification/step1.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step2</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step2.xhtml</to-view-id>
+    	  	<from-outcome>salaryModificationWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryModification/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>salaryModificationWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryModification/step3.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
+
+	<navigation-rule id="remesaCertificadoWizard">
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificado/step3.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<navigation-rule id="remesaCertificadoGenerationWizard">
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoGenerationWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoGenerationWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>remesaCertificadoGenerationWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/step2.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<navigation-rule id="impNominaWizard">
+	    <navigation-case>
+    	  	<from-outcome>impNominaWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/impNomina/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>impNominaWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/impNomina/step1.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
 
 </faces-config>

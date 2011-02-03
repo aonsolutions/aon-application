@@ -115,9 +115,7 @@ public class CompanyUtil {
 		Iterator iter = workActivity.getEmployees().iterator();
 		while (iter.hasNext()) {
 			Employee employee = (Employee) iter.next();
-			String name = 
-//				employee.getRegistry().getName() + " " + employee.getRegistry().getSurname();
-				employee.getRegistry().getName();
+			String name = employee.getRegistry().getName();
 			if ( isVisible( active, employee.isActive() ) ) {
 				SelectItem item = new SelectItem( employee.getId(), name );
 				employees.add(item);
