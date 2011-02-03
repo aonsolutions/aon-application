@@ -67,6 +67,11 @@
 									<aon:commandLink id="invoice_report"   actionListener="#{invoiceReport.onReset}"
 										action="invoiceReport_search" value="#{fiscalBundle.fiscal_invoice_report}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mod_347_report" 
+										action="model347_search" actionListener="#{model347.onReset}"
+										value="#{fiscalBundle.fiscal_model_347_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 
