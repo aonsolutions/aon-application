@@ -82,7 +82,9 @@ public class AttachController {
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream(attach.getInputStream());
-			DownloadUtil.downloadAttachment(attach.getFileName(), attach.getMimeType(), in, attach.getSize()); 
+			// El size del BodyPart no siempre es correcto por eso no se indica
+			// ya que puede dar problemas en la descarga si es mayor del real
+			DownloadUtil.downloadAttachment(attach.getFileName(), attach.getMimeType(), in, -1); 
 		} finally {
 			IOUtils.closeQuietly(in);
 		}		

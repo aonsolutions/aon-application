@@ -71,6 +71,7 @@ public class CommercialEmailUtil extends CompanyEmailUtil implements ICommercial
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
 		aonFile.setFileName( attach.getDescription() + ".pdf" );
+		aonFile.setMimeType(MimeType.MIME_PDF);
 		return aonFile;
 	}
 
@@ -93,6 +94,7 @@ public class CommercialEmailUtil extends CompanyEmailUtil implements ICommercial
 				FileUtils.writeByteArrayToFile(file, attach.getData());
 				aonFile.setFile(file);
 				aonFile.setFileName( attach.getDescription() );
+				aonFile.setMimeType( attach.getMimeType() );
 				files.add( aonFile );
 			}
 			return files;

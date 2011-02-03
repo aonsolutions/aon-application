@@ -11,12 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.MimeResolver;
 
 public class AonAttachment {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonAttachment.class);
 	
 	private int position;
+	
+	private String fileName;
 	
 	private BodyPart part;
 	
@@ -40,27 +43,27 @@ public class AonAttachment {
 	}
 
 	public String getFileName(){
-		String fileName;
-		try {
-			fileName = part.getFileName();
-		} catch (MessagingException e1) {
-			fileName = "Error reading name";
-		}
-		if (fileName==null)
-			fileName = "no_name_file_"+position;
-		try {
-			if (part.getContentType().startsWith("message/") &&
-					!fileName.endsWith(".eml")){
-				fileName += ".eml";
-			}
-		} catch (MessagingException e1) {
-		}
-		if ((fileName.indexOf("=?iso") >= 0) || 
-				(fileName.indexOf("=?ISO") >= 0)){
+		if ( this.fileName == null ) {
 			try {
-				fileName = MimeUtility.decodeWord(fileName);
+				fileName = part.getFileName();
+			} catch (MessagingException e1) {
+				fileName = "Error reading name";
 			}
-			catch (Exception e) {
+			if (fileName==null) {
+				fileName = "no_name_file_"+position;
+			}
+			try {
+				if (part.getContentType().startsWith("message/") &&
+						!fileName.endsWith(".eml")){
+					fileName += ".eml";
+				}
+			} catch (MessagingException e1) {
+			}
+			if ( StringUtils.containsIgnoreCase(fileName, "=?") ) {
+				try {
+					fileName = MimeUtility.decodeWord(fileName);
+				} catch (Exception e) {
+				}
 			}
 		}
 		return fileName;
@@ -75,15 +78,6 @@ public class AonAttachment {
 			LOGGER.error(e.getMessage(), e );
 		}
 		return "";
-	}
-
-	public int getSize(){
-		try {
-			return part.getSize();
-		} catch (MessagingException e) {
-			LOGGER.error(e.getMessage(), e );
-		}
-		return -1;
 	}
 
 	public InputStream getInputStream(){
@@ -120,6 +114,9 @@ public class AonAttachment {
 			String value = StringUtils.lowerCase(this.part.getContentType());
 			value = StringUtils.substringBefore(value, ";");
 			type = MimeType.get(value);
+			if ( type == null ) {
+				type = MimeResolver.getMimeTypeByExtension( getFileName() );
+			}
 		} catch (MessagingException e) {
 			LOGGER.error( e.getMessage(), e );
 		}

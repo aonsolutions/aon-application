@@ -303,13 +303,16 @@ public class AonServer {
 	}
 	
     public void importMessage( byte[] data, AonFolder destinationFolder ) throws MessagingException {
-    	ByteArrayInputStream source = new ByteArrayInputStream(data);
-    	MimeMessage message = new MimeMessage(session, source);
-        
     	destinationFolder.open(Folder.READ_WRITE);
     	Folder folder = destinationFolder.getFolder();
-    	folder.appendMessages(new Message[]{message});
+    	folder.appendMessages(new Message[]{createMessage(data)});
     	destinationFolder.close(true);    	
+    }    
+    
+    public MimeMessage createMessage( byte[] data ) throws MessagingException {
+    	ByteArrayInputStream source = new ByteArrayInputStream(data);
+    	MimeMessage message = new MimeMessage(session, source);
+        return message;
     }    
 	
 }
