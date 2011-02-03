@@ -167,6 +167,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		File file = File.createTempFile( report, PDF_EXTENSION );
 		aonFile.setFile( file );
 		aonFile.setFileName( getFileName(to, report) );
+		aonFile.setMimeType(MimeType.MIME_PDF);
 
 		ReportManager reportManager = new ReportManager();
 		reportManager.setCollectionProvider( new SingleCollectionProvider(to) );

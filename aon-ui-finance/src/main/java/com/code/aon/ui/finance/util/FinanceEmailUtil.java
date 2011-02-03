@@ -85,6 +85,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
 		aonFile.setFileName( fileName + ".pdf" );
+		aonFile.setMimeType(MimeType.MIME_PDF);
 		return aonFile;
 	}
 
@@ -97,6 +98,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);
 		aonFile.setFileName( "facturae.xml" );
+		aonFile.setMimeType(MimeType.MIME_XML);
 		return aonFile;
 	}
 	
