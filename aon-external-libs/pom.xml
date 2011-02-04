@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>5.9.0</version>
+		<version>5.9.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-external-libs</artifactId>
-	<version>5.9.0</version>
+	<version>5.9.1</version>
 	<description>AON EXTERNAL LIBS</description>
 	<name>AON EXTERNAL LIBS</name>
 
