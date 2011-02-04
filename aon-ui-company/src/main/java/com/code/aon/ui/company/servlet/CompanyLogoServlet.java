@@ -75,7 +75,7 @@ public class CompanyLogoServlet extends HttpServlet {
 			Properties dbProperties = DataSourceUtil.getDBProperties(req);
 			if (! dbProperties.isEmpty() ) {
 				CompanyDisplay companyDisplay = new CompanyDisplay(dbProperties);
-				if ( companyDisplay.hasLogo() ) {
+				if ( companyDisplay.isLogoDefined() ) {
 					IAttachment logo = companyDisplay.getLogo();
 					MimeType type = getMimeType(logo);
 					out = DownloadUtil.initDownload(res, null, type, logo.getSize());

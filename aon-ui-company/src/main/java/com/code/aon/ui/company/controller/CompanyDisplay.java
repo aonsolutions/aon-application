@@ -63,7 +63,7 @@ public class CompanyDisplay {
 		return logo.getData();
 	}
 
-	public boolean hasLogo() {
+	public boolean isLogoDefined() {
 		return (getLogo() != null) && (! ArrayUtils.isEmpty(getCompanyLogo()));
 	}
 	
@@ -80,7 +80,7 @@ public class CompanyDisplay {
 	}
 
 	public boolean isShow() {
-		return !StringUtils.isEmpty(this.companyLabel) || hasLogo();
+		return !StringUtils.isEmpty(this.companyLabel) || isLogoDefined();
 	}
 	
 	public boolean isBigLogo() {
@@ -92,7 +92,7 @@ public class CompanyDisplay {
 	}
 
 	public void createLogoContent(OutputStream out, Object data) throws IOException {
-		if ( hasLogo() ) {
+		if ( isLogoDefined() ) {
 			out.write( getCompanyLogo() );
 		}
 	}
@@ -106,7 +106,7 @@ public class CompanyDisplay {
 	}
 	
 	private boolean calculateBigLog() {
-		if ( hasLogo() ) {
+		if ( isLogoDefined() ) {
 			InputStream in = new ByteArrayInputStream( getCompanyLogo() );
 			try {
 				BufferedImage image = ImageIO.read(in);
@@ -143,7 +143,6 @@ public class CompanyDisplay {
 			List<?> companyList = companyCriteria.list();
 			if (! companyList.isEmpty() ) {
 				Company company = (Company) companyList.get(0); 
-				this.companyLabel = company.getName();
 				Criteria logoCriteria = session.createCriteria(RegistryAttachment.class);
 				logoCriteria.add(Restrictions.eq("registry.id", company.getId()));
 				logoCriteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
