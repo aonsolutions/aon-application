@@ -68,10 +68,11 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 	public boolean isExecutable() {
 		if ( app == null ) {
 			int sent = (int)getCurrentMonthMessageSent();
-			if ( sent >= 5 ) return false;
-			return true;
+			if ( sent >= 5 ) {
+				return false;
+			}
 		}
-		return app.isExecutable();
+		return true;
 	}
 
 	public boolean isInfobarEnabled() {
