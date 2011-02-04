@@ -86,10 +86,11 @@
 
 			<c:if test="#{currentDomain.domainManagement}">
 				<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Admin">
-					<aon:commandLink actionListener="#{domain.onSearch}" action="domain_list">
+					<aon:commandLink actionListener="#{domain.onEditSearch}" action="domain_list">
 						<aon:graphicImage height="32" width="32"
 							url="#{aonResource.resolveLocal['/images/aon-icon-big-employee-group.png']}" />
 						<aon:div><aon:outputText value="#{appBundle.aon_domains}" /></aon:div>
+						<aon:actionListener method="#{domain.onSearch}" />
 					</aon:commandLink>
 				</aon:div>
 			</c:if>
