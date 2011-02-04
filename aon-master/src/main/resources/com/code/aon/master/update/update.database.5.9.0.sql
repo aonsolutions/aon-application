@@ -1,22 +1,26 @@
 # Database: aon_master
-# Version: Actualizacion de la version 5.8.0 a la version 6.0.0.
+# Version: Actualizacion de la version 5.9.0 a la version 6.0.0.
 # Created by: rtrepiana
 # Creation Date: 04/10/2010 
 
 BEGIN;
 
-ALTER TABLE calendar DROP COLUMN `source`;
-ALTER TABLE calendar DROP COLUMN `source_id`;
-ALTER TABLE calendar ADD COLUMN `generic` tinyint(1) default '1' COMMENT 'Indica si es editable o no';
-ALTER TABLE calendar ADD COLUMN `calendar` int(4) default NULL COMMENT 'calendario del que se hereda';
-ALTER TABLE calendar ADD CONSTRAINT `FK_CALENDAR_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
+ALTER TABLE `calendar` DROP COLUMN `source`;
+ALTER TABLE `calendar` DROP COLUMN `source_id`;
+ALTER TABLE `calendar` ADD COLUMN `generic` tinyint(1) default '1' COMMENT 'Indica si es editable o no';
+ALTER TABLE `calendar` ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario del que se hereda';
+ALTER TABLE `calendar` ADD KEY `IDX_CALENDAR_CALENDAR` (`calendar`);
+ALTER TABLE `calendar` ADD CONSTRAINT `FK_CALENDAR_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
 
-ALTER TABLE enterprise ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
-ALTER TABLE enterprise ADD CONSTRAINT `FK_ENTERPRISE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
-ALTER TABLE workplace ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
-ALTER TABLE workplace ADD CONSTRAINT `FK_WORKPLACE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
-ALTER TABLE contract ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
-ALTER TABLE contract ADD CONSTRAINT `FK_CONTRACT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
+ALTER TABLE `enterprise` ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
+ALTER TABLE `enterprise` ADD KEY `IDX_ENTERPRISE_CALENDAR` (`calendar`);
+ALTER TABLE `enterprise` ADD CONSTRAINT `FK_ENTERPRISE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
+ALTER TABLE `workplace` ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
+ALTER TABLE `workplace` ADD KEY `IDX_WORKPLACE_CALENDAR` (`calendar`);
+ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
+ALTER TABLE `contract` ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
+ALTER TABLE `contract` ADD KEY `IDX_CONTRACT_CALENDAR` (`calendar`);
+ALTER TABLE `contract` ADD CONSTRAINT `FK_CONTRACT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
 
 CREATE TABLE `contract_calendar_event` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -25,14 +29,16 @@ CREATE TABLE `contract_calendar_event` (
   `type` tinyint(2) default NULL COMMENT 'Tipo de incidencia',
   `duration` double default NULL COMMENT 'Duracion de la incidencia',
   PRIMARY KEY  (`id`),
+  KEY `IDX_CONTRACT_CALENDAR_EVENT_CONTRACT` (`contract`),
   CONSTRAINT `FK_CONTRACT_CALENDAR_EVENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias de calendario en Contratos';
 
 ALTER TABLE calendar_holiday ADD `day_type` tinyint(2) default '0' COMMENT 'Tipo de dia';
 ALTER TABLE calendar_holiday ADD `hours` double default '0' COMMENT 'Numero de horas laborables';
 
-ALTER TABLE `workplace` ADD COLUMN `enterprise_activity` int(4) DEFAULT NULL COMMENT 'Actividad' ;
-ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`) ;
+ALTER TABLE `workplace` ADD COLUMN `enterprise_activity` int(4) DEFAULT NULL COMMENT 'Actividad';
+ALTER TABLE `workplace` ADD KEY `IDX_WORKPLACE_ENTERPRISE_ACTIVITY` (`enterprise_activity`);
+ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`);
 
 ALTER TABLE `enterprise_ccc` MODIFY `ccc` char(11) collate latin1_spanish_ci DEFAULT NULL COMMENT 'Valor del Codigo Cuenta Cotizacion';
 ALTER TABLE `enterprise_ccc` MODIFY `geozone` int(4) DEFAULT NULL COMMENT 'Identificador de la Zona Geografica';
@@ -53,29 +59,30 @@ ALTER TABLE `registry` ADD COLUMN `nationality` varchar(2) DEFAULT NULL COMMENT 
 ALTER TABLE `raddress` ADD COLUMN `number` varchar(12) DEFAULT NULL COMMENT 'Numero' AFTER `address`;
 ALTER TABLE `raddress` ADD COLUMN `alias`  varchar(15) DEFAULT NULL COMMENT 'Alias';
 ALTER TABLE `raddress` MODIFY `street_type` VARCHAR(2) NULL DEFAULT 'CL' COMMENT 'Tipo de via';
-UPDATE raddress set street_type = 'ZZ' WHERE street_type = 0;
-UPDATE raddress set street_type = 'AV' WHERE street_type = 1;
-UPDATE raddress set street_type = 'BD' WHERE street_type = 2;
-UPDATE raddress set street_type = 'BD' WHERE street_type = 3;
-UPDATE raddress set street_type = 'BL' WHERE street_type = 4;
-UPDATE raddress set street_type = 'CL' WHERE street_type = 5;
-UPDATE raddress set street_type = 'CM' WHERE street_type = 6;
-UPDATE raddress set street_type = 'CO' WHERE street_type = 7;
-UPDATE raddress set street_type = 'CT' WHERE street_type = 8;
-UPDATE raddress set street_type = 'ED' WHERE street_type = 9;
-UPDATE raddress set street_type = 'RD' WHERE street_type = 10;
-UPDATE raddress set street_type = 'PJ' WHERE street_type = 11;
-UPDATE raddress set street_type = 'PG' WHERE street_type = 12;
-UPDATE raddress set street_type = 'PQ' WHERE street_type = 13;
-UPDATE raddress set street_type = 'TR' WHERE street_type = 14;
-UPDATE raddress set street_type = 'PZ' WHERE street_type = 15;
-UPDATE raddress set street_type = 'AV' WHERE street_type = 16;
-UPDATE raddress set street_type = 'UR' WHERE street_type = 17;
-UPDATE raddress set street_type = 'CT' WHERE street_type = 18;
-UPDATE raddress set street_type = 'ZZ' WHERE street_type = 19;
-UPDATE raddress set street_type = null WHERE street_type < 'A';
+UPDATE `raddress` set `street_type` = 'ZZ' WHERE `street_type` = 0;
+UPDATE `raddress` set `street_type` = 'AV' WHERE `street_type` = 1;
+UPDATE `raddress` set `street_type` = 'BD' WHERE `street_type` = 2;
+UPDATE `raddress` set `street_type` = 'BD' WHERE `street_type` = 3;
+UPDATE `raddress` set `street_type` = 'BL' WHERE `street_type` = 4;
+UPDATE `raddress` set `street_type` = 'CL' WHERE `street_type` = 5;
+UPDATE `raddress` set `street_type` = 'CM' WHERE `street_type` = 6;
+UPDATE `raddress` set `street_type` = 'CO' WHERE `street_type` = 7;
+UPDATE `raddress` set `street_type` = 'CT' WHERE `street_type` = 8;
+UPDATE `raddress` set `street_type` = 'ED' WHERE `street_type` = 9;
+UPDATE `raddress` set `street_type` = 'RD' WHERE `street_type` = 10;
+UPDATE `raddress` set `street_type` = 'PJ' WHERE `street_type` = 11;
+UPDATE `raddress` set `street_type` = 'PG' WHERE `street_type` = 12;
+UPDATE `raddress` set `street_type` = 'PQ' WHERE `street_type` = 13;
+UPDATE `raddress` set `street_type` = 'TR' WHERE `street_type` = 14;
+UPDATE `raddress` set `street_type` = 'PZ' WHERE `street_type` = 15;
+UPDATE `raddress` set `street_type` = 'AV' WHERE `street_type` = 16;
+UPDATE `raddress` set `street_type` = 'UR' WHERE `street_type` = 17;
+UPDATE `raddress` set `street_type` = 'CT' WHERE `street_type` = 18;
+UPDATE `raddress` set `street_type` = 'ZZ' WHERE `street_type` = 19;
+UPDATE `raddress` set `street_type` = null WHERE `street_type` < 'A';
 
 ALTER TABLE `rmedia` ADD COLUMN `raddress` int(4) DEFAULT NULL COMMENT 'Direccion del contacto' ;
+ALTER TABLE `rmedia` ADD KEY `IDX_RMEDIA_RADDRESS`(`raddress`);
 ALTER TABLE `rmedia` ADD CONSTRAINT `FK_RMEDIA_RADDRESS` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`);
 
 ALTER TABLE `contract` 	DROP FOREIGN KEY `FK_CONTRACT_TYPE`;
@@ -83,7 +90,7 @@ ALTER TABLE `contract`  DROP COLUMN `type`;
 DROP TABLE `contract_type`;
 DROP TABLE `contract_tracking`;
 
-ALTER TABLE `contract` 	ADD COLUMN `document` mediumblob COMMENT 'Impreso (.pdf) del comtrato.';
+ALTER TABLE `contract` 	ADD COLUMN `document` mediumblob COMMENT 'Impreso (.pdf) del contrato.';
 ALTER TABLE `contract` ADD `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion';
 ALTER TABLE `contract` ADD `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de notificacion del contrato';
 
@@ -93,20 +100,23 @@ CREATE TABLE `agreement` (
   `calendar` int(4) default NULL COMMENT 'Calendario',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
-  KEY `FK_AGREEMENT_CALENDAR` (`calendar`),
+  KEY `IDX_AGREEMENT_CALENDAR` (`calendar`),
   CONSTRAINT `FK_AGREEMENT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Convenios';
 
-ALTER TABLE `workplace` ADD COLUMN `agreement` int(4) DEFAULT NULL COMMENT 'Convenio' ;
-ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`) ;
-ALTER TABLE `enterprise` ADD COLUMN `agreement` int(4) DEFAULT NULL COMMENT 'Convenio' ;
-ALTER TABLE `enterprise` ADD CONSTRAINT `FK_ENTERPRISE_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`) ;
+ALTER TABLE `workplace` ADD COLUMN `agreement` int(4) DEFAULT NULL COMMENT 'Convenio';
+ALTER TABLE `workplace` ADD KEY `IDX_WORKPLACE_AGREEMENT` (`agreement`);
+ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`);
+ALTER TABLE `enterprise` ADD COLUMN `agreement` int(4) DEFAULT NULL COMMENT 'Convenio';
+ALTER TABLE `enterprise` ADD KEY `IDX_ENTERPRISE_AGREEMENT` (`agreement`);
+ALTER TABLE `enterprise` ADD CONSTRAINT `FK_ENTERPRISE_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`);
 
 CREATE TABLE `agreement_level` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `agreement` int(4) NOT NULL COMMENT 'Convenio',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
+  KEY `IDX_LEVEL_AGREEMENT` (`agreement`),
   CONSTRAINT `FK_LEVEL_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Niveles retributivos';
 
@@ -115,6 +125,7 @@ CREATE TABLE `agreement_level_category` (
   `agreement_level` int(4) NOT NULL COMMENT 'Nivel retributivo',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
+  KEY `IDX_CATEGORY_AGREEMENT_LEVEL` (`agreement_level`),
   CONSTRAINT `FK_CATEGORY_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias profesionales';
 
@@ -125,6 +136,7 @@ CREATE TABLE `agreement_level_payment` (
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
+  KEY `IDX_PAYMENT_AGREEMENT_LEVEL` (`agreement_level`),
   CONSTRAINT `FK_PAYMENT_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones';
 
@@ -134,7 +146,7 @@ CREATE TABLE `payment_concept` (
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepcion Salarial',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
 
 CREATE TABLE `deduction_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -142,7 +154,7 @@ CREATE TABLE `deduction_concept` (
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Deduccion Salarial',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de deducciones';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de deducciones';
 
 INSERT INTO `deduction_concept` 
 	(id	,code	,description					,type ) 
@@ -166,6 +178,7 @@ CREATE TABLE `system_deduction` (
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   `month` tinyint(2) default null COMMENT 'Mes de la deducción',
   PRIMARY KEY  (`id`),
+  KEY `IDX_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT` (`deduction_concept`),
   CONSTRAINT `FK_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
@@ -192,6 +205,7 @@ CREATE TABLE `contract_data` (
   `registration` int(4)   NOT NULL COMMENT 'Número libro de matricula',
   `seniority_date` date NOT NULL COMMENT 'Fecha de antiguedad ',
   PRIMARY KEY  (`id`),
+  KEY `IDX_DATA_CONTRACT`(`contract`),
   CONSTRAINT `FK_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del contrato';
 
@@ -204,6 +218,7 @@ CREATE TABLE `contract_bonus` (
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   PRIMARY KEY  (`id`),
+  KEY `IDX_BONUS_CONTRACT` (`contract`),
   CONSTRAINT `FK_BONUS_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bonificaciones';
 
@@ -219,6 +234,8 @@ CREATE TABLE `contract_payment` (
   `month` tinyint(2) default null COMMENT 'Mes de la percepcion',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   PRIMARY KEY  (`id`),
+  KEY `IDX_PAYMENT_CONTRACT` (`contract`),
+  KEY `IDX_CONTRACT_PAYMENT_PAYMENT_CONCEPT` (`payment_concept`),
   CONSTRAINT `FK_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
@@ -233,6 +250,7 @@ CREATE TABLE `contract_extra_pay` (
   `month` tinyint(2) default null COMMENT 'Mes de la paga extra',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   PRIMARY KEY  (`id`),
+  KEY `IDX_EXTRA_PAY_CONTRACT` (`contract`),
   CONSTRAINT `FK_EXTRA_PAY_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pagas extras';
 
@@ -248,6 +266,8 @@ CREATE TABLE `contract_deduction` (
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   `month` tinyint(2) default null COMMENT 'Mes de la percepcion',
   PRIMARY KEY  (`id`),
+  KEY `IDX_DEDUCTION_CONTRACT` (`contract`),
+  KEY `IDX_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT` (`deduction_concept`),
   CONSTRAINT `FK_DEDUCTION_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
@@ -259,9 +279,10 @@ CREATE TABLE `contract_event` (
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  KEY `IDX_CONTRACT_CONSTANT_CONTRACT` (`contract`),
   CONSTRAINT `FK_CONTRACT_CONSTANT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias';
 
 
 CREATE TABLE `salary` (
@@ -294,8 +315,8 @@ CREATE TABLE `salary` (
   `overtime_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion adicional por horas extraordinarias',
   `irpf_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base sujeta a retención I.R.P.F',
   `social_security_contributions` double(15,3) NOT NULL default '0.000'  COMMENT 'Aportaciones a la Seguridad Social',
-  
   PRIMARY KEY  (`id`),
+  KEY `IDX_SALARY_RECCEIPT_CONTRACT` (`contract`),
   CONSTRAINT `FK_SALARY_RECCEIPT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';
 
@@ -308,6 +329,7 @@ CREATE TABLE `salary_payment` (
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `amount` double(15,3) default '0.000'  COMMENT 'Importe',  
   PRIMARY KEY  (`id`),
+  KEY `IDX_PAYMENT_SALARY` (`salary`),
   CONSTRAINT `FK_PAYMENT_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones salariales';
 
@@ -320,6 +342,7 @@ CREATE TABLE `salary_deduction` (
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
   `amount` double(15,3) default '0.000'  COMMENT 'Importe',
   PRIMARY KEY  (`id`),
+  KEY `IDX_DEDUCTION_SALARY` (`salary`),
   CONSTRAINT `FK_DEDUCTION_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
@@ -331,7 +354,7 @@ CREATE TABLE `contract_batch` (
   `red_response_date` date default NULL COMMENT 'Fecha de respuesta del sistema red',
   `red_response_id` date default NULL COMMENT 'Identificador de la respuesta',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de contratos';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de contratos';
 
 
 CREATE TABLE `contract_batch_detail` (
@@ -339,11 +362,11 @@ CREATE TABLE `contract_batch_detail` (
   `contract_batch` int(4) NOT NULL COMMENT 'Identificador unico de la remesa de contratos',
   `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato',
   PRIMARY KEY  (`id`),
-  KEY `contract_batch` (`contract_batch`),
-  KEY `contract` (`contract`),
-  CONSTRAINT `contract_batch_detail_fk_1` FOREIGN KEY (`contract_batch`) REFERENCES `contract_batch` (`id`),
-  CONSTRAINT `contract_batch_detail_fk_2` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de contratos';
+  KEY `IDX_CONTRACT_BATCH_DETAIL_CONTRACT_BATCH` (`contract_batch`),
+  KEY `IDX_CONTRACT_BATCH_DETAIL_CONTRACT` (`contract`),
+  CONSTRAINT `FK_CONTRACT_BATCH_DETAIL_CONTRACT_BATCH` FOREIGN KEY (`contract_batch`) REFERENCES `contract_batch` (`id`),
+  CONSTRAINT `FK_CONTRACT_BATCH_DETAIL_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de contratos';
 
 
 CREATE TABLE `enterprise_certificate` (
@@ -353,9 +376,9 @@ CREATE TABLE `enterprise_certificate` (
   `status` int(4) default NULL COMMENT 'Estado del certificado correspondiente a la ultima respuesta',
   `sign` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Estado del certificado correspondiente a la ultima respuesta',
   PRIMARY KEY  (`id`),
-  KEY `enterprise` (`enterprise`),
-  CONSTRAINT `enterprise_certificate_fk_1` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de certificados de empresa';
+  KEY `IDX_ENTERPRISE_CERTIFICATE_ENTERPRISE` (`enterprise`),
+  CONSTRAINT `FK_ENTERPRISE_CERTIFICATE_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de certificados de empresa';
 
 CREATE TABLE `enterprise_certificate_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del certificado de empresa de la remesa',
@@ -364,11 +387,11 @@ CREATE TABLE `enterprise_certificate_detail` (
   `expire_date` date default NULL COMMENT 'Fecha de baja del empleado',
   `suspension_cause` varchar(2) collate latin1_spanish_ci NOT NULL COMMENT 'Causa de la suspension del empleado',
   PRIMARY KEY  (`id`),
-  KEY `enterprise_certificate` (`enterprise_certificate`),
-  KEY `contract` (`contract`),
-  CONSTRAINT `enterprise_certificate_detail_fk_1` FOREIGN KEY (`enterprise_certificate`) REFERENCES `enterprise_certificate` (`id`),
-  CONSTRAINT `enterprise_certificate_detail_fk_2` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de certificados de empresa';
+  KEY `IDX_ENTERPRISE_CERTIFICATE_DETAIL_ENTERPRISE_CERTIFICATE` (`enterprise_certificate`),
+  KEY `IDX_ENTERPRISE_CERTIFICATE_DETAIL_CONTRACT` (`contract`),
+  CONSTRAINT `FK_ENTERPRISE_CERTIFICATE_DETAIL_ENTERPRISE_CERTIFICATE` FOREIGN KEY (`enterprise_certificate`) REFERENCES `enterprise_certificate` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_CERTIFICATE_DETAIL_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de certificados de empresa';
 
 CREATE TABLE `function_constant` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -379,7 +402,7 @@ CREATE TABLE `function_constant` (
   `read_only` TINYINT(1) NULL COMMENT 'Modificable',
   `comments` VARCHAR(128) NULL COMMENT 'Comentario de ayuda',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70023 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto de las funciones';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto de las funciones';
 
 INSERT INTO `function_constant` 
 	(name			,expression					,start_date	,end_date	,read_only	,comments		)
