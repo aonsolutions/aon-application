@@ -408,7 +408,7 @@
 		</managed-property>				
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Creditor_registry_surname,Creditor_registry_name</value>
+			<value>Creditor_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -526,7 +526,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>creditorMedia</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryMediaController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -1231,7 +1231,7 @@
 		</managed-property>				
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CustomerFee_customer_registry_surname,CustomerFee_customer_registry_name,CustomerFee_customer_registry_id</value>
+			<value>CustomerFee_customer_registry_name,CustomerFee_customer_registry_id</value>
 		</managed-property>						
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -3109,7 +3109,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Creditor_registry_surname,Creditor_registry_name</value>
+			<value>Creditor_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
