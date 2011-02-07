@@ -151,7 +151,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Target_registry_surname,Target_registry_name</value>
+			<value>Target_registry_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -459,7 +459,7 @@
 
 	<managed-bean>
 		<managed-bean-name>targetMedia</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryMediaController</managed-bean-class>		
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -765,7 +765,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>TargetSupplier_supplier_registry_surname,TargetSupplier_supplier_registry_name</value>
+			<value>TargetSupplier_supplier_registry_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -944,7 +944,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Target_registry_surname,Target_registry_name</value>
+			<value>Target_registry_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listPagePath</property-name>
