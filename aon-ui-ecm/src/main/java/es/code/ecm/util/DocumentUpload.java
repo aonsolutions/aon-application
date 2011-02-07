@@ -5,14 +5,11 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Calendar;
 
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicException;
-import net.sf.jmimemagic.MagicMatch;
-import net.sf.jmimemagic.MagicMatchNotFoundException;
-import net.sf.jmimemagic.MagicParseException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.MimeResolver;
 
 
 /**
@@ -178,17 +175,8 @@ public class DocumentUpload implements Serializable {
 
 	public void setData(byte[] data) {
 		this.data = data;
-		mimeType = "application/octet-stream";
-		try {
-			MagicMatch match = Magic.getMagicMatch( data );
-			mimeType = match.getMimeType();
-		} catch (MagicParseException e) {
-			LOGGER.debug( e.getMessage() );
-		} catch (MagicMatchNotFoundException e) {
-			LOGGER.debug( e.getMessage() );
-		} catch (MagicException e) {
-			LOGGER.debug( e.getMessage() );
-		}
+		MimeType mt = MimeResolver.getMimeType(data); 
+		setMimeType( mt!=null?mt.getName():"application/octet-stream");
 	}
 
 	public void paint(OutputStream stream, Object object) throws IOException {

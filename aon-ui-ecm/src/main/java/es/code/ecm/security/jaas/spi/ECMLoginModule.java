@@ -32,7 +32,7 @@ import com.code.aon.jaas.deployment.DeploymentException;
  *
  */
 public class ECMLoginModule extends AbstractLoginModule {
-
+	
     /** Obtiene un logger apropiado. */
 	protected static final Logger LOGGER = LoggerFactory.getLogger( ECMLoginModule.class.getName() );
 
