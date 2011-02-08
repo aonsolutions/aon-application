@@ -24,10 +24,13 @@ public interface IManagerConstants {
 	// Applications
 	String AON_DESKTOP = "aon-desktop";
 	String AON_WEBMAIL = "aon-webmail";
+	String AON_MANAGER = "aon-manager";
 	String AON_CMS = "aon-cms";
 	String AON_PUBLISHER = "aon-publisher";
 	
 	String USUARIO_PROFILE = "Usuario";
+	String ADMINISTRADOR_PROFILE = "Administrador";
+	String ADMIN_USER = "admin";
 	String GENERAL_SCOPE = "GENERAL";
 	
 	// Messages
@@ -49,3 +52,4 @@ public interface IManagerConstants {
 	String MAIL_ACCOUNT_DELETE_SCRIPT = "MailAccount_delete_script";
 	
 }
+
