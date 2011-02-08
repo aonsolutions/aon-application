@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.employee.enumeration.ContractStatus;
+import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
@@ -31,7 +31,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
-import static com.code.aon.employee.calculator.ContractSalaryCalculator.*;
+import static com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.*;
 
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
 

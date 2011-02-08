@@ -1,6 +1,6 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
-import static com.code.aon.employee.calculator.ContractSalaryCalculator.*;
+import static com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
