@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="salaryPrintList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salary_module}" />
+				<ui:param name="toolbarDescription" value="#{salaryPrint.enterprise.registry.fullName}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="search"
+						title="#{bundle.aon_key_search_accelerator}"
+						value="#{bundle.aon_search}"
+						actionListener="#{salaryPrint.onFilter}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}" />
+					<aon:commandButton id="clear"
+						title="#{bundle.aon_key_new_accelerator}"
+						value="#{bundle.aon_clear}"
+						actionListener="#{salaryPrint.onClearFilter}"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber"
+						accesskey="#{bundle.aon_key_new}" />	
+					<aon:commandButton id="email"
+						value="&#160;" disabled="#{!webmail.logged}"
+						rendered="#{!salaryPrint.selectionEmpty}"
+						actionListener="#{salaryPrint.onSendByEmail}"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+						reRender="showNewMessageWindow">
+					</aon:commandButton>					
+					<aon:htmlCommandLink id="currentSalary-report"
+						rendered="#{!salaryPrint.selectionEmpty}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="#{employeeBundle.employee_salary}"
+						action="#{salaryPrint.onPrint}">
+					</aon:htmlCommandLink>								
+					<aon:commandButton id="back"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						action="enterprise_formTree"
+						accesskey="#{bundle.aon_key_cancel}" />										
+				</ui:define>				
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2">
+					<c:if test="#{salaryPrint.showWorkPlaces}">
+						<aon:outputLabel for="Salary_contract_workPlace_id"
+							value="#{companyBundle.company_workplace}" />
+						<aon:selectOneMenu id="Salary_contract_workPlace_id"
+							value="#{salaryPrint.workPlace}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{salaryPrint.workPlaces}" />
+						</aon:selectOneMenu>				
+					</c:if>
+					<aon:outputLabel value="#{bundle.aon_start_date}" />
+					<aon:div>
+						<aon:outputLabel for="Salary_startDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Salary_startDate-From"
+							value="#{salaryPrint.fromDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					
+						<aon:outputLabel for="Salary_startDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Salary_startDate-To"
+							value="#{salaryPrint.toDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>					
+					</aon:div>
+				</aon:panelGrid>
+
+				<aon:div styleClass="aon-toolbar aon-margin-top"
+					rendered="#{salary.model.rowCount > 0}">
+					<aon:commandButton title="#{bundle.aon_check_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+						value="#{bundle.aon_check_all}"
+						ajaxSingle="true" reRender="salaryPrintDataDiv,aonToolbar"
+						actionListener="#{salaryPrint.checkAll}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+					<aon:commandButton title="#{bundle.aon_uncheck_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+						value="#{bundle.aon_uncheck_all}"
+						ajaxSingle="true" reRender="salaryPrintDataDiv,aonToolbar"
+						actionListener="#{salaryPrint.checkNone}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+				</aon:div>
+
+				<aon:div id="salaryPrintDataDiv">
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{salary}" />
+						<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+						<ui:param name="skipSelectButton" value="#{true}" />
+						<ui:define name="columns">
+
+							<aon:column styleClass="aon-editDataTable-iconColumn">
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<a4j:region>
+									<aon:selectBooleanCheckbox
+											value="#{salaryPrint.rowChecked}" >
+										<a4j:support event="onclick" reRender="aonToolbar" />
+									</aon:selectBooleanCheckbox>
+								</a4j:region>
+							</aon:column>
+							
+							<ui:include src="/com/code/aon/ui/employee/facelet/salary/listContent.xhtml" />
+
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />	
+	</ui:define>
+</ui:composition>

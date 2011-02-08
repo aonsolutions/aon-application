@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/employee/facelet/contractGeneration/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{employeeBundle.contractGeneration_step3}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+
+		<aon:div id="contractDetail">
+			<aon:div styleClass="aon-toolbar" >
+				<h:panelGrid columns="3" style="border: 0;" cellpadding="3" >
+					<aon:div>
+						<aon:commandButton id="contract-save"
+							value="#{bundle.aon_save}"
+							action="#{contractGenerationWizard.next}"
+							actionListener="#{contractGenerationWizard.onSave}"
+							onclick="if (!confirm('#{bundle.aon_save}?')) { return false;}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />	
+					</aon:div>
+					<aon:div styleClass="aon-spin-control" >
+				<!--  
+						<aon:div styleClass="aon-spin-control-element"> 
+							<aon:commandButton id="#{spinId}-first" disabled="#{controller.inFirst}" immediate="true"
+								action="#{action}" actionListener="#{controller.onSelectFirst}"
+								ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+								styleClass="aon-dataScroller-button #{controller.inFirst?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}">
+								<c:if test="#{!disableHotKeys and !controller.inFirst}" >
+									<aon:actionHotKey key="ctrl+home" />
+								</c:if>
+							</aon:commandButton>
+						</aon:div>
+				-->
+						<aon:outputText value="#{employeeBundle.employee_contract_page}" />
+						<aon:div styleClass="aon-spin-control-element"> 
+							<aon:commandButton id="contractDetail-prev2"  
+								ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+								disabled="#{!contractGenerationWizard.lastContractPage}"
+								reRender="contractDetail"
+								styleClass="aon-dataScroller-button #{!contractGenerationWizard.lastContractPage?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}"
+								actionListener="#{contractGenerationWizard.onFirstContractPage}" />
+						</aon:div>
+						<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
+							<aon:outputFormat value="#{bundle.aon_spin_result}">
+								<f:param value="#{contractGenerationWizard.contractBuilder.contractPage}" />
+								<f:param value="#{contractGenerationWizard.contractBuilder.numberOfContractPages}" />
+							</aon:outputFormat>	
+						</aon:div>
+						<aon:div styleClass="aon-spin-control-element"> 
+							<aon:commandButton id="contractDetail-next2" 
+								ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+								disabled="#{contractGenerationWizard.lastContractPage}"
+								reRender="contractDetail"
+								styleClass="aon-dataScroller-button #{contractGenerationWizard.lastContractPage?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}"
+								actionListener="#{contractGenerationWizard.onChangeContractPage}" />				
+						</aon:div>
+				<!--  
+						<aon:div styleClass="aon-spin-control-element"> 
+							<aon:commandButton id="#{spinId}-last" disabled="#{controller.inLast}" immediate="true"
+								action="#{action}" actionListener="#{controller.onSelectLast}"
+								ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+								styleClass="aon-dataScroller-button #{controller.inLast?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}">
+								<c:if test="#{!disableHotKeys and !controller.inLast}" >
+									<aon:actionHotKey key="ctrl+end" />
+								</c:if>
+							</aon:commandButton>
+						</aon:div>
+				-->
+					</aon:div>
+					<aon:div>
+					
+						<rich:inputNumberSlider maxValue="4" step="1"
+							value="#{contractGenerationWizard.contractBuilder.zoomFactor}"
+							showArrows="true" width="150"
+							showToolTip="true"  
+							showBoundaryValues="false"
+				            showInput="false"  
+							enableManualInput="false" 
+				            barClass=""
+				            decreaseClass="aon-icon-zoom-decrease"
+				            increaseClass="aon-icon-zoom-increase"
+				            >
+				            <a4j:support event="onchange" reRender="contractDetail"/>
+				       </rich:inputNumberSlider>
+					
+					</aon:div>
+				</h:panelGrid>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area" 
+				style="height:#{contractGenerationWizard.contractBuilder.contractHeight}px; width:#{contractGenerationWizard.contractBuilder.contractWidth}px; border: #000000 1px solid">
+				<aon:div styleClass="contractModalContent"
+					style="position: absolute; left: 30; right: 30; margin: auto; background: grey url(#{contractGenerationWizard.imageUrl}) top left no-repeat; border:#ffffff 1px solid; height:#{contractGenerationWizard.contractBuilder.contractHeight}px; width:#{contractGenerationWizard.contractBuilder.contractWidth}px;">
+<!--  
+					style="position: absolute; left: 30; right: 30; margin: auto; background: grey url(#{contractGenerationWizard.contractBuilder.contractPage}.contractImage?model=#{contractGenerationWizard.model}\&zoom=#{contractGenerationWizard.contractBuilder.zoomFactor}) top left no-repeat; border:#ffffff 1px solid; height:842px; width:595px;">
+-->
+					
+					<c:forEach items="#{contractGenerationWizard.contractBuilder.contractFields}" var="field" >
+						<c:if test="#{field.text}">
+							<aon:inputText 
+								title="#{field.label}"
+								rendered="#{field.page==contractGenerationWizard.contractBuilder.contractPage}"
+								style="background-color:#E0ECF8; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates}px; left:#{field.scaledLeftCoordinates}px;width:#{field.scaledWidth}px; "
+								value="#{field.value}" size="#{field.width}"
+								maxlength="16" />
+						</c:if>
+						<c:if test="#{field.check}">
+							<aon:selectBooleanCheckbox 
+								title="#{field.label}"
+								rendered="#{field.page==contractGenerationWizard.contractBuilder.contractPage}"
+								style="background-color:transparent; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates}px; left:#{field.scaledLeftCoordinates}px;"
+								value="#{field.booleanValue}" >
+							</aon:selectBooleanCheckbox>
+						</c:if>
+					</c:forEach>
+		
+				</aon:div>
+			</aon:div>
+		</aon:div>
+		
+	</ui:define>
+
+</ui:composition>
