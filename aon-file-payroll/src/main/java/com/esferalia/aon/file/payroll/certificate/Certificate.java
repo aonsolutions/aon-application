@@ -33,7 +33,7 @@ public class Certificate {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		String f = formatter.format(date);
 		fecha = Integer.parseInt(f);
-		formatter = new SimpleDateFormat("HHmm");
+		formatter = new SimpleDateFormat("HHmmss");
 		String t = formatter.format(date);
 		hora = Integer.parseInt(t);
 		fichero = cif + fecha.toString() + hora.toString();
