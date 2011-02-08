@@ -37,8 +37,8 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.employee</artifactId>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.payroll</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>		
@@ -57,12 +57,6 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
-			<version>${pom.version}</version>
-			<scope>compile</scope>
-		</dependency>				
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.payroll</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>				

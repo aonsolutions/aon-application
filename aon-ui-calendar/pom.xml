@@ -25,8 +25,8 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.employee</artifactId>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.ui.payroll</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>

@@ -1,8 +1,8 @@
 package com.esferalia.aon.ui.calendar.controller;
 
-import com.code.aon.employee.Contract;
 import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.calendar.enumeration.CalendarSource;
+import com.esferalia.aon.payroll.Contract;
 
 public class CalendarUtils {
 

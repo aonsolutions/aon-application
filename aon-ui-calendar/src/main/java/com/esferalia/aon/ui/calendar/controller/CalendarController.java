@@ -20,7 +20,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Agreement;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.employee.Contract;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -33,6 +32,7 @@ import com.esferalia.aon.calendar.CalendarHoliday;
 import com.esferalia.aon.calendar.CalendarPeriod;
 import com.esferalia.aon.calendar.dao.ICalendarAlias;
 import com.esferalia.aon.calendar.enumeration.CalendarSource;
+import com.esferalia.aon.payroll.Contract;
 
 public class CalendarController extends BasicController {
 

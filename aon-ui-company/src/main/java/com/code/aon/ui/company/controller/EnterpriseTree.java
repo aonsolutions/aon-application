@@ -22,8 +22,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
-import com.code.aon.employee.Contract;
-import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -35,6 +33,8 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class EnterpriseTree implements ICompanyConstants {
 
@@ -115,15 +115,15 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
 		Criteria criteria = new Criteria();
-		String endDate = bean.getFieldName(IEmployeeAlias.CONTRACT_END_DATE);
+		String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
 		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
 		Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-		String workPlaceId = bean.getFieldName(IEmployeeAlias.CONTRACT_WORK_PLACE_ID);
+		String workPlaceId = bean.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ID);
 		criteria.addEqualExpression(workPlaceId, workPlace.getId());
-		criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_FIRST_SURNAME));
-		criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_SECOND_SURNAME));
-		criteria.addOrder(bean.getFieldName(IEmployeeAlias.CONTRACT_PERSON_REGISTRY_NAME));
+		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_FIRST_SURNAME));
+		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_SECOND_SURNAME));
+		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_REGISTRY_NAME));
 		for( ITransferObject to : bean.getList(criteria) ) {
 			Contract contract = (Contract) to;
 			TreeNodeImpl<EnterpriseTreeData> contractNode = new TreeNodeImpl<EnterpriseTreeData>();
@@ -229,9 +229,9 @@ public class EnterpriseTree implements ICompanyConstants {
 			IController controller = FormUtil.getController(SALARY_CONTROLLER_NAME);
 			controller.clearCriteria();
 			Criteria criteria = controller.getCriteria();
-			String contractAlias = controller.getFieldName(IEmployeeAlias.SALARY_CONTRACT_ID);
+			String contractAlias = controller.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID);
 			criteria.addEqualExpression(contractAlias, contract.getId());
-			criteria.addOrder(controller.getFieldName(IEmployeeAlias.SALARY_END_DATE), false);
+			criteria.addOrder(controller.getFieldName(IPayrollAlias.SALARY_END_DATE), false);
 			controller.initializeModel();
 			if ( controller.getModel().getRowCount() > 0 ) {
 				controller.getModel().setRowIndex(0);

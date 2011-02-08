@@ -37,6 +37,14 @@
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.ui.calendar</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
