@@ -46,6 +46,8 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 	private PaymentConcept paymentConcept;
 	private String description;
 	private String expression;
+	private String irpfExpression;
+	private String quoteExpression;
 	private Date startDate;	
 	private Date endDate;
 	private Month month;
@@ -113,6 +115,24 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 		this.expression = expression;
 	}
 	
+	@Override
+	@Column(name = "irpf_expression", length = 128)
+	public String getIrpfExpression() {
+		return irpfExpression;
+	}
+	public void setIrpfExpression(String irpfExpression) {
+		this.irpfExpression = irpfExpression;
+	}
+
+	@Override
+	@Column(name = "quote_expression", length = 128)
+	public String getQuoteExpression() {
+		return quoteExpression;
+	}
+	public void setQuoteExpression(String quoteExpression) {
+		this.quoteExpression = quoteExpression;
+	}
+
 	@Temporal(TemporalType.DATE)
 	@Column( name = "start_date", nullable = false )
     public Date getStartDate() {
@@ -131,7 +151,8 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}	
-	
+
+	@Override
 	public Month getMonth() {
 		return month;
 	}

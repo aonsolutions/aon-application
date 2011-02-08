@@ -7,18 +7,42 @@ import java.util.List;
 import java.util.Map;
 
 import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.mvel2.MVEL;
 
-public class ExpressionContext implements Cloneable{
+public class ExpressionContext {
 	
-	private static final ScriptEngine ENGINE = 
-		new ScriptEngineManager().getEngineByName("JavaScript");
+	
+	private static class CompositeBindings 
+		extends SimpleBindings {
+		
+		private Bindings readOnly;
+		
+		public CompositeBindings(Map<String, Object> vars, 
+				Bindings readOnly) {
+			super(vars);
+			this.readOnly = readOnly;
+		}
+		
+		@Override
+		public Object get(Object key) {
+			if ( super.containsKey(key)  ){
+				return super.get(key);
+			}
+			else {
+				return readOnly.get(key);
+			}
+		}		
+
+		@Override
+		public boolean containsKey(Object key) {
+			return super.containsKey(key) || readOnly.containsKey(key);
+		}
+		
+	}
+	
 	
 	
 	private Bindings bindings ;
@@ -31,37 +55,45 @@ public class ExpressionContext implements Cloneable{
 		bindings = new SimpleBindings();
 	}
 	
-	private ExpressionContext(ExpressionContext expressionContext){
+	public ExpressionContext(ExpressionContext expressionContext){
 		this();
 		map.putAll(expressionContext.map);
 		bindings.putAll(expressionContext.bindings);
 	}
 	
-	public void putAll( Map<String,IExpression> map ) {
-		map.putAll(map);
-	}
-	
-	public IExpression get(String key) {
-		return map.get(key);
-	}
-	
-	public IExpression put(IExpression expression) throws ExpressionException {
+	public Object put(IExpression expression) throws ExpressionException {
 		String name = expression.getName();
 		String script = expression.getExpression();
 		try {
 			Object result = MVEL.eval(script, bindings );
-			//Object result = ENGINE.eval(script, bindings );
 			if ( name != null ) {
 				bindings.put(name, result);
 			}
+			return result;
 		} catch (Exception e) {
 			throw new ExpressionException(e.getMessage(),e);
 		}
-		
-		return map.put(name,expression);
 	}
 
-	public IExpression put(String name, String script) throws ExpressionException {
+	private <T> T put(IExpression expression, Class<T> toType) throws ExpressionException {
+		String name = expression.getName();
+		String script = expression.getExpression();
+		try {
+			T result = MVEL.eval(script, bindings, toType );
+			if ( name != null ) {
+				bindings.put(name, result);
+			}
+			return result;
+		} catch (Exception e) {
+			throw new ExpressionException(e.getMessage(),e);
+		}
+	}
+
+	public void put(String name, Double value) {
+		this.bindings.put(name, value);
+	}
+
+	public Object put(String name, String script) throws ExpressionException {
 		ExpressionImpl expressionImpl = new ExpressionImpl();
 		expressionImpl.setName(name);
 		expressionImpl.setExpression(script);
@@ -70,41 +102,64 @@ public class ExpressionContext implements Cloneable{
 	}
 
 	
-	public double resolve(IExpression expression) throws ExpressionException {
-		double d = 0.0;
-		
-		Object result = null;
+	public Double resolve(IExpression expression) throws ExpressionException {
 		String name = expression.getName();
 		if ( name != null ) {
-			put ( expression );
-			result =  bindings.get(name);
+			return put ( expression, Double.class );
 		}
 		else {
 			try {
-				result = MVEL.eval(expression.getExpression(), bindings);
-				//result = ENGINE.eval(expression.getExpression(), bindings);
+				return  MVEL.eval(expression.getExpression(), bindings, Double.class);
 			} catch (Exception e) {
+				throw new ExpressionException(e.getMessage(),e);
 			}
 		}
-	
-		if ( result instanceof Number) {
-			d = ( ( Number ) result).doubleValue();
-		}
-		
-		return d;
 	}
 	
 	public Object eval(String script ) throws ExpressionException {
 		if ( script == null )
 			return null;
 		try {
-			return ENGINE.eval(script, bindings);
-		} catch (ScriptException e) {
+			return MVEL.eval(script, bindings);
+		} catch (Exception e) {
 			throw new ExpressionException(e.getMessage(), e);
 		}
 	}
 	
+	public <T> T  eval(String script, Class<T> toType) throws ExpressionException {
+		if ( script == null )
+			return null;
+		try {
+			return MVEL.eval(script, bindings, toType );
+		} catch (Exception e) {
+			throw new ExpressionException(e.getMessage(), e);
+		}
+	}
 
+	public Object eval(String script, Map<String, Object> vars ) throws ExpressionException {
+		if ( script == null )
+			return null;
+		try {
+			Bindings locals = 
+				new CompositeBindings(vars, bindings);
+			return MVEL.eval(script, locals );
+		} catch (Exception e) {
+			throw new ExpressionException(e.getMessage(), e);
+		}
+	}
+
+	public <T> T  eval(String script, Map<String, Object> vars, Class<T> toType) throws ExpressionException {
+		if ( script == null )
+			return null;
+		try {
+			Bindings locals = 
+				new CompositeBindings(vars, bindings);
+			return MVEL.eval(script, locals, toType );
+		} catch (Exception e) {
+			throw new ExpressionException(e.getMessage(), e);
+		}
+	}
+	
 	public Collection<IExpression> getValues() {
 		return map.values();
 	}
@@ -120,13 +175,4 @@ public class ExpressionContext implements Cloneable{
 		return expressions;
 	}
 	
-	public ExpressionContext getSnapshot() {
-		return new ExpressionContext();
-	}
-	
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		return new ExpressionContext(this);
-	}
-
 }

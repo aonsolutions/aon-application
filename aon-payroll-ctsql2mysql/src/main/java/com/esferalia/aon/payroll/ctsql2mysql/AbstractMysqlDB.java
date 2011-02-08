@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.LinkedList;
 
+import java.io.Reader;
 import java.io.InputStream;
 
 import org.slf4j.Logger;
@@ -189,8 +190,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextLeasingId() {
+		public int nextLeasingId() {
 			return ++this.leasingId;
+		} 
+
+		public void setLeasingId(Integer leasingId) {
+			this.leasingId = leasingId;
 		} 
 	
 	private void flushLeasing(  )
@@ -200,6 +205,52 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( leasingStmt != null )
 			leasingStmt.close();
 	}	
+
+	/**
+	 * Leasing
+	 * @param id Identificador Unico
+	 * @param leasing_date Fecha de Concesion
+	 * @param supplier_name Razon Social del Proveedor
+	 * @param supplier_document CIF del Proveedor
+	 * @param description Descripcion
+	 * @param term Plazo
+	 * @param interest_percent Porcentaje de Interes
+	 * @param review Revision
+	 * @param amount Importe del leasing
+	 * @param rbank Banco por el que se paga el leasing
+	 * @param security_level Nivel de Seguridad
+	 * @param fixed_asset_account Cuenta de inmobilizado
+	 * @param vat IVA del leasing
+	 * @throws SQLException
+	*/
+	protected void insertLeasing(Integer id, Date leasing_date, String supplier_name, String supplier_document, String description, String term, String interest_percent, String review, Double amount, Integer rbank, Short security_level, String fixed_asset_account, Integer vat)
+	throws SQLException {
+
+		Leasing leasing_ = new Leasing();
+		leasing_.id = id;
+		leasing_.leasing_date = leasing_date;
+		leasing_.supplier_name = supplier_name;
+		leasing_.supplier_document = supplier_document;
+		leasing_.description = description;
+		leasing_.term = term;
+		leasing_.interest_percent = interest_percent;
+		leasing_.review = review;
+		leasing_.amount = amount;
+		leasing_.rbank = rbank;
+		leasing_.security_level = security_level;
+		leasing_.fixed_asset_account = fixed_asset_account;
+		leasing_.vat = vat;
+
+		leasings.add(leasing_);
+		
+		int leasingCount = leasings.size();
+		
+		if ( 230 * leasingCount >=  this.maxAllowedPacket ){
+			insertLeasing(leasings);
+			leasings.clear();
+		} 
+	}
+
 
 	/**
 	 * Leasing
@@ -247,6 +298,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int db_versionStmtSize = 0;
 
@@ -329,6 +381,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			db_versions.clear();
 		} 
 	}
+
+
 
 	private int composition_detailStmtSize = 0;
 
@@ -430,8 +484,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextComposition_detailId() {
+		public int nextComposition_detailId() {
 			return ++this.composition_detailId;
+		} 
+
+		public void setComposition_detailId(Integer composition_detailId) {
+			this.composition_detailId = composition_detailId;
 		} 
 	
 	private void flushComposition_detail(  )
@@ -441,6 +499,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( composition_detailStmt != null )
 			composition_detailStmt.close();
 	}	
+
+	/**
+	 * Composition_detail
+	 * @param id Identificador unico del Detalle de la Composicion
+	 * @param composition Identificador de la Composicion
+	 * @param item Identificador del Articulo subproducto
+	 * @param description Descripcion del Articulo subproducto
+	 * @param quantity Cantidad de Articulo subproducto
+	 * @param price Precio del Articulo subproducto
+	 * @throws SQLException
+	*/
+	protected void insertComposition_detail(Integer id, Integer composition, Integer item, String description, Double quantity, Double price)
+	throws SQLException {
+
+		Composition_detail composition_detail_ = new Composition_detail();
+		composition_detail_.id = id;
+		composition_detail_.composition = composition;
+		composition_detail_.item = item;
+		composition_detail_.description = description;
+		composition_detail_.quantity = quantity;
+		composition_detail_.price = price;
+
+		composition_details.add(composition_detail_);
+		
+		int composition_detailCount = composition_details.size();
+		
+		if ( 116 * composition_detailCount >=  this.maxAllowedPacket ){
+			insertComposition_detail(composition_details);
+			composition_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Composition_detail
@@ -474,6 +564,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int cv_evaluate_typeStmtSize = 0;
 
@@ -555,8 +646,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCv_evaluate_typeId() {
+		public int nextCv_evaluate_typeId() {
 			return ++this.cv_evaluate_typeId;
+		} 
+
+		public void setCv_evaluate_typeId(Integer cv_evaluate_typeId) {
+			this.cv_evaluate_typeId = cv_evaluate_typeId;
 		} 
 	
 	private void flushCv_evaluate_type(  )
@@ -566,6 +661,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( cv_evaluate_typeStmt != null )
 			cv_evaluate_typeStmt.close();
 	}	
+
+	/**
+	 * Cv_evaluate_type
+	 * @param id Identificador unico del Tipo de Evaluacion
+	 * @param name Nombre del Tipo de Evaluacion
+	 * @throws SQLException
+	*/
+	protected void insertCv_evaluate_type(Integer id, String name)
+	throws SQLException {
+
+		Cv_evaluate_type cv_evaluate_type_ = new Cv_evaluate_type();
+		cv_evaluate_type_.id = id;
+		cv_evaluate_type_.name = name;
+
+		cv_evaluate_types.add(cv_evaluate_type_);
+		
+		int cv_evaluate_typeCount = cv_evaluate_types.size();
+		
+		if ( 74 * cv_evaluate_typeCount >=  this.maxAllowedPacket ){
+			insertCv_evaluate_type(cv_evaluate_types);
+			cv_evaluate_types.clear();
+		} 
+	}
+
 
 	/**
 	 * Cv_evaluate_type
@@ -591,6 +710,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int pcategoryStmtSize = 0;
 
@@ -682,8 +802,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPcategoryId() {
+		public int nextPcategoryId() {
 			return ++this.pcategoryId;
+		} 
+
+		public void setPcategoryId(Integer pcategoryId) {
+			this.pcategoryId = pcategoryId;
 		} 
 	
 	private void flushPcategory(  )
@@ -693,6 +817,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( pcategoryStmt != null )
 			pcategoryStmt.close();
 	}	
+
+	/**
+	 * Pcategory
+	 * @param id Identificador unico de la Categoria
+	 * @param name Nombre de la Categoria
+	 * @param detail_pattern Patron para los detalles de Articulos
+	 * @param pcategory_group Identificador del Grupo de Categorias
+	 * @throws SQLException
+	*/
+	protected void insertPcategory(Integer id, String name, String detail_pattern, Integer pcategory_group)
+	throws SQLException {
+
+		Pcategory pcategory_ = new Pcategory();
+		pcategory_.id = id;
+		pcategory_.name = name;
+		pcategory_.detail_pattern = detail_pattern;
+		pcategory_.pcategory_group = pcategory_group;
+
+		pcategorys.add(pcategory_);
+		
+		int pcategoryCount = pcategorys.size();
+		
+		if ( 116 * pcategoryCount >=  this.maxAllowedPacket ){
+			insertPcategory(pcategorys);
+			pcategorys.clear();
+		} 
+	}
+
 
 	/**
 	 * Pcategory
@@ -722,6 +874,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int warehouseStmtSize = 0;
 
@@ -803,8 +956,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextWarehouseId() {
+		public int nextWarehouseId() {
 			return ++this.warehouseId;
+		} 
+
+		public void setWarehouseId(Integer warehouseId) {
+			this.warehouseId = warehouseId;
 		} 
 	
 	private void flushWarehouse(  )
@@ -814,6 +971,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( warehouseStmt != null )
 			warehouseStmt.close();
 	}	
+
+	/**
+	 * Warehouse
+	 * @param id Identificador unico del Almacen
+	 * @param name Nombre del Almacen
+	 * @throws SQLException
+	*/
+	protected void insertWarehouse(Integer id, String name)
+	throws SQLException {
+
+		Warehouse warehouse_ = new Warehouse();
+		warehouse_.id = id;
+		warehouse_.name = name;
+
+		warehouses.add(warehouse_);
+		
+		int warehouseCount = warehouses.size();
+		
+		if ( 42 * warehouseCount >=  this.maxAllowedPacket ){
+			insertWarehouse(warehouses);
+			warehouses.clear();
+		} 
+	}
+
 
 	/**
 	 * Warehouse
@@ -839,6 +1020,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int customerStmtSize = 0;
 
@@ -999,6 +1181,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int productionStmtSize = 0;
 
 	private int productionInserted = 0;
@@ -1109,8 +1293,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextProductionId() {
+		public int nextProductionId() {
 			return ++this.productionId;
+		} 
+
+		public void setProductionId(Integer productionId) {
+			this.productionId = productionId;
 		} 
 	
 	private void flushProduction(  )
@@ -1120,6 +1308,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( productionStmt != null )
 			productionStmt.close();
 	}	
+
+	/**
+	 * Production
+	 * @param id Identificador unico de la Produccion
+	 * @param description Descripcion de la Produccion
+	 * @param lot_code Codigo de lote de la Produccion
+	 * @param production_date Fecha de Produccion
+	 * @param item Identificador del Articulo producido
+	 * @param initial_quantity Cantidad inicial del Articulo en la Composicion
+	 * @param quantity Cantidad del Articulo producido
+	 * @param price Precio del Articulo producido
+	 * @throws SQLException
+	*/
+	protected void insertProduction(Integer id, String description, String lot_code, Date production_date, Integer item, Double initial_quantity, Double quantity, Double price)
+	throws SQLException {
+
+		Production production_ = new Production();
+		production_.id = id;
+		production_.description = description;
+		production_.lot_code = lot_code;
+		production_.production_date = production_date;
+		production_.item = item;
+		production_.initial_quantity = initial_quantity;
+		production_.quantity = quantity;
+		production_.price = price;
+
+		productions.add(production_);
+		
+		int productionCount = productions.size();
+		
+		if ( 152 * productionCount >=  this.maxAllowedPacket ){
+			insertProduction(productions);
+			productions.clear();
+		} 
+	}
+
 
 	/**
 	 * Production
@@ -1157,6 +1381,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int posStmtSize = 0;
 
@@ -1243,8 +1468,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPosId() {
+		public int nextPosId() {
 			return ++this.posId;
+		} 
+
+		public void setPosId(Integer posId) {
+			this.posId = posId;
 		} 
 	
 	private void flushPos(  )
@@ -1254,6 +1483,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( posStmt != null )
 			posStmt.close();
 	}	
+
+	/**
+	 * Pos
+	 * @param id Identificador unico del Centro de Venta
+	 * @param description Descripcion del Centro de Venta
+	 * @param raddress Identificador de la Direccion asociada al Centro de Venta
+	 * @throws SQLException
+	*/
+	protected void insertPos(Integer id, String description, Integer raddress)
+	throws SQLException {
+
+		Pos pos_ = new Pos();
+		pos_.id = id;
+		pos_.description = description;
+		pos_.raddress = raddress;
+
+		poss.add(pos_);
+		
+		int posCount = poss.size();
+		
+		if ( 148 * posCount >=  this.maxAllowedPacket ){
+			insertPos(poss);
+			poss.clear();
+		} 
+	}
+
 
 	/**
 	 * Pos
@@ -1282,6 +1537,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int message_contentStmtSize = 0;
 
 	private int message_contentInserted = 0;
@@ -1293,7 +1549,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private static class Message_content {
 		private Integer id; 
-		private InputStream content; 
+		private String content; 
 	}
 	
 	private void insertMessage_content( List<Message_content> message_contents )
@@ -1329,7 +1585,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( message_content.content == null )
 				message_contentStmt.setNull(offset++, -1);
 			else
-				message_contentStmt.setAsciiStream(offset++, message_content.content);
+				message_contentStmt.setString(offset++, message_content.content);
 		}
 		message_contentStmt.executeUpdate();
 		message_contentInserted += size;
@@ -1362,8 +1618,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextMessage_contentId() {
+		public int nextMessage_contentId() {
 			return ++this.message_contentId;
+		} 
+
+		public void setMessage_contentId(Integer message_contentId) {
+			this.message_contentId = message_contentId;
 		} 
 	
 	private void flushMessage_content(  )
@@ -1376,11 +1636,35 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Message_content
+	 * @param id Identificador unico
+	 * @param content Contenido del Mensaje
+	 * @throws SQLException
+	*/
+	protected void insertMessage_content(Integer id, String content)
+	throws SQLException {
+
+		Message_content message_content_ = new Message_content();
+		message_content_.id = id;
+		message_content_.content = content;
+
+		message_contents.add(message_content_);
+		
+		int message_contentCount = message_contents.size();
+		
+		if ( 10 * message_contentCount >=  this.maxAllowedPacket ){
+			insertMessage_content(message_contents);
+			message_contents.clear();
+		} 
+	}
+
+
+	/**
+	 * Message_content
 	 * @param content Contenido del Mensaje
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMessage_content(InputStream content)
+	protected int insertMessage_content(String content)
 	throws SQLException {
 		int id = nextMessage_contentId();
 
@@ -1398,6 +1682,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int invoice_taxStmtSize = 0;
 
@@ -1519,8 +1804,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInvoice_taxId() {
+		public int nextInvoice_taxId() {
 			return ++this.invoice_taxId;
+		} 
+
+		public void setInvoice_taxId(Integer invoice_taxId) {
+			this.invoice_taxId = invoice_taxId;
 		} 
 	
 	private void flushInvoice_tax(  )
@@ -1530,6 +1819,46 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( invoice_taxStmt != null )
 			invoice_taxStmt.close();
 	}	
+
+	/**
+	 * Invoice_tax
+	 * @param id Identificador unico del Impuesto de la Factura
+	 * @param invoice_detail Identificador del Detalle de la Factura
+	 * @param tax_type Tipo de Impuesto del Detalle de la Factura
+	 * @param percentage Porcentaje de Impuesto del Detalle de la Factura
+	 * @param surcharge Porcentaje del recargo de equivalencia del Detalle de la Factura
+	 * @param quota Cuota de Impuesto del Detalle de la Factura
+	 * @param surcharge_quota Cuota de recargo de equivalencia del Detalle de la Factura
+	 * @param vat_deduction_type Tipo de deduccion del IVA
+	 * @param withholding_type Tipo de retencion
+	 * @param deductible_quota Cuota deducible
+	 * @throws SQLException
+	*/
+	protected void insertInvoice_tax(Integer id, Integer invoice_detail, Short tax_type, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
+	throws SQLException {
+
+		Invoice_tax invoice_tax_ = new Invoice_tax();
+		invoice_tax_.id = id;
+		invoice_tax_.invoice_detail = invoice_detail;
+		invoice_tax_.tax_type = tax_type;
+		invoice_tax_.percentage = percentage;
+		invoice_tax_.surcharge = surcharge;
+		invoice_tax_.quota = quota;
+		invoice_tax_.surcharge_quota = surcharge_quota;
+		invoice_tax_.vat_deduction_type = vat_deduction_type;
+		invoice_tax_.withholding_type = withholding_type;
+		invoice_tax_.deductible_quota = deductible_quota;
+
+		invoice_taxs.add(invoice_tax_);
+		
+		int invoice_taxCount = invoice_taxs.size();
+		
+		if ( 125 * invoice_taxCount >=  this.maxAllowedPacket ){
+			insertInvoice_tax(invoice_taxs);
+			invoice_taxs.clear();
+		} 
+	}
+
 
 	/**
 	 * Invoice_tax
@@ -1571,6 +1900,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int iattachStmtSize = 0;
 
@@ -1672,8 +2002,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextIattachId() {
+		public int nextIattachId() {
 			return ++this.iattachId;
+		} 
+
+		public void setIattachId(Integer iattachId) {
+			this.iattachId = iattachId;
 		} 
 	
 	private void flushIattach(  )
@@ -1683,6 +2017,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( iattachStmt != null )
 			iattachStmt.close();
 	}	
+
+	/**
+	 * Iattach
+	 * @param id Identificador unico del Archivo Adjunto del Articulo
+	 * @param item Identificador de Articulo
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @throws SQLException
+	*/
+	protected void insertIattach(Integer id, Integer item, Short mimeType, String description, InputStream data, Short type)
+	throws SQLException {
+
+		Iattach iattach_ = new Iattach();
+		iattach_.id = id;
+		iattach_.item = item;
+		iattach_.mimeType = mimeType;
+		iattach_.description = description;
+		iattach_.data = data;
+		iattach_.type = type;
+
+		iattachs.add(iattach_);
+		
+		int iattachCount = iattachs.size();
+		
+		if ( 90 * iattachCount >=  this.maxAllowedPacket ){
+			insertIattach(iattachs);
+			iattachs.clear();
+		} 
+	}
+
 
 	/**
 	 * Iattach
@@ -1716,6 +2082,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int tas_itemStmtSize = 0;
 
@@ -1817,8 +2184,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTas_itemId() {
+		public int nextTas_itemId() {
 			return ++this.tas_itemId;
+		} 
+
+		public void setTas_itemId(Integer tas_itemId) {
+			this.tas_itemId = tas_itemId;
 		} 
 	
 	private void flushTas_item(  )
@@ -1828,6 +2199,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( tas_itemStmt != null )
 			tas_itemStmt.close();
 	}	
+
+	/**
+	 * Tas_item
+	 * @param id Identificador unico del Articulo
+	 * @param model Identificador del Modelo
+	 * @param publicCode Codigo publico del Articulo
+	 * @param privateCode Codigo privado del Articulo
+	 * @param description Descripcion del Articulo
+	 * @param add_info Informacion adicional del Articulo
+	 * @throws SQLException
+	*/
+	protected void insertTas_item(Integer id, Integer model, String publicCode, String privateCode, String description, String add_info)
+	throws SQLException {
+
+		Tas_item tas_item_ = new Tas_item();
+		tas_item_.id = id;
+		tas_item_.model = model;
+		tas_item_.publicCode = publicCode;
+		tas_item_.privateCode = privateCode;
+		tas_item_.description = description;
+		tas_item_.add_info = add_info;
+
+		tas_items.add(tas_item_);
+		
+		int tas_itemCount = tas_items.size();
+		
+		if ( 580 * tas_itemCount >=  this.maxAllowedPacket ){
+			insertTas_item(tas_items);
+			tas_items.clear();
+		} 
+	}
+
 
 	/**
 	 * Tas_item
@@ -1861,6 +2264,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int payment_conceptStmtSize = 0;
 
@@ -1952,8 +2356,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPayment_conceptId() {
+		public int nextPayment_conceptId() {
 			return ++this.payment_conceptId;
+		} 
+
+		public void setPayment_conceptId(Integer payment_conceptId) {
+			this.payment_conceptId = payment_conceptId;
 		} 
 	
 	private void flushPayment_concept(  )
@@ -1963,6 +2371,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( payment_conceptStmt != null )
 			payment_conceptStmt.close();
 	}	
+
+	/**
+	 * Payment_concept
+	 * @param id Identificador unico
+	 * @param code Codigo
+	 * @param description Descripcion
+	 * @param type Tipo de Percepcion Salarial
+	 * @throws SQLException
+	*/
+	protected void insertPayment_concept(Integer id, String code, String description, Short type)
+	throws SQLException {
+
+		Payment_concept payment_concept_ = new Payment_concept();
+		payment_concept_.id = id;
+		payment_concept_.code = code;
+		payment_concept_.description = description;
+		payment_concept_.type = type;
+
+		payment_concepts.add(payment_concept_);
+		
+		int payment_conceptCount = payment_concepts.size();
+		
+		if ( 82 * payment_conceptCount >=  this.maxAllowedPacket ){
+			insertPayment_concept(payment_concepts);
+			payment_concepts.clear();
+		} 
+	}
+
 
 	/**
 	 * Payment_concept
@@ -1992,6 +2428,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int tas_offerStmtSize = 0;
 
@@ -2078,8 +2515,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTas_offerId() {
+		public int nextTas_offerId() {
 			return ++this.tas_offerId;
+		} 
+
+		public void setTas_offerId(Integer tas_offerId) {
+			this.tas_offerId = tas_offerId;
 		} 
 	
 	private void flushTas_offer(  )
@@ -2089,6 +2530,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( tas_offerStmt != null )
 			tas_offerStmt.close();
 	}	
+
+	/**
+	 * Tas_offer
+	 * @param id Identificador unico de la Relacion de Ordenes de Reparacion y Presupuestos
+	 * @param support_order Identificador de la Orden de Reparacion
+	 * @param offer Identificador del Presupuesto
+	 * @throws SQLException
+	*/
+	protected void insertTas_offer(Integer id, Integer support_order, Integer offer)
+	throws SQLException {
+
+		Tas_offer tas_offer_ = new Tas_offer();
+		tas_offer_.id = id;
+		tas_offer_.support_order = support_order;
+		tas_offer_.offer = offer;
+
+		tas_offers.add(tas_offer_);
+		
+		int tas_offerCount = tas_offers.size();
+		
+		if ( 30 * tas_offerCount >=  this.maxAllowedPacket ){
+			insertTas_offer(tas_offers);
+			tas_offers.clear();
+		} 
+	}
+
 
 	/**
 	 * Tas_offer
@@ -2117,6 +2584,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int salaryStmtSize = 0;
 
 	private int salaryInserted = 0;
@@ -2128,6 +2596,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private static class Salary {
 		private Integer id; 
+		private Short type; 
 		private Integer contract; 
 		private Date start_date; 
 		private Date end_date; 
@@ -2149,10 +2618,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Double total_enterprise; 
 		private Date issue_date; 
 		private Double remuneration; 
-		private Double extra_pay_proration; 
-		private Double common_base; 
-		private Double professional_base; 
-		private Double overtime_base; 
+		private Double pro_ext_base; 
+		private Double it_base; 
+		private Double raw_cgc_base; 
+		private Double cgc_base; 
+		private Double hextra_base; 
+		private Double non_hextra_base; 
+		private Double cgp_base; 
 		private Double irpf_base; 
 		private Double social_security_contributions; 
 	}
@@ -2165,7 +2637,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( salaryStmt != null ) {
 				salaryStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -2174,7 +2646,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			salaryStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO salary (id,contract,start_date,end_date,enterprise_name,enterprise_address,enterprise_document,ccc,employee_name,social_security_number,employee_document,seniority_date,quote_group,category,registration,time_units,total_payment,total_deduction,total_liquid,total_enterprise,issue_date,remuneration,extra_pay_proration,common_base,professional_base,overtime_base,irpf_base,social_security_contributions)"  
+				"INSERT INTO salary (id,type,contract,start_date,end_date,enterprise_name,enterprise_address,enterprise_document,ccc,employee_name,social_security_number,employee_document,seniority_date,quote_group,category,registration,time_units,total_payment,total_deduction,total_liquid,total_enterprise,issue_date,remuneration,pro_ext_base,it_base,raw_cgc_base,cgc_base,hextra_base,non_hextra_base,cgp_base,irpf_base,social_security_contributions)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			salaryStmtSize = size;
@@ -2187,6 +2659,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salaryStmt.setNull(offset++, 4);
 			else
 				salaryStmt.setInt(offset++, salary.id);
+			if ( salary.type == null )
+				salaryStmt.setNull(offset++, -6);
+			else
+				salaryStmt.setShort(offset++, salary.type);
 			if ( salary.contract == null )
 				salaryStmt.setNull(offset++, 4);
 			else
@@ -2271,22 +2747,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salaryStmt.setNull(offset++, 8);
 			else
 				salaryStmt.setDouble(offset++, salary.remuneration);
-			if ( salary.extra_pay_proration == null )
+			if ( salary.pro_ext_base == null )
 				salaryStmt.setNull(offset++, 8);
 			else
-				salaryStmt.setDouble(offset++, salary.extra_pay_proration);
-			if ( salary.common_base == null )
+				salaryStmt.setDouble(offset++, salary.pro_ext_base);
+			if ( salary.it_base == null )
 				salaryStmt.setNull(offset++, 8);
 			else
-				salaryStmt.setDouble(offset++, salary.common_base);
-			if ( salary.professional_base == null )
+				salaryStmt.setDouble(offset++, salary.it_base);
+			if ( salary.raw_cgc_base == null )
 				salaryStmt.setNull(offset++, 8);
 			else
-				salaryStmt.setDouble(offset++, salary.professional_base);
-			if ( salary.overtime_base == null )
+				salaryStmt.setDouble(offset++, salary.raw_cgc_base);
+			if ( salary.cgc_base == null )
 				salaryStmt.setNull(offset++, 8);
 			else
-				salaryStmt.setDouble(offset++, salary.overtime_base);
+				salaryStmt.setDouble(offset++, salary.cgc_base);
+			if ( salary.hextra_base == null )
+				salaryStmt.setNull(offset++, 8);
+			else
+				salaryStmt.setDouble(offset++, salary.hextra_base);
+			if ( salary.non_hextra_base == null )
+				salaryStmt.setNull(offset++, 8);
+			else
+				salaryStmt.setDouble(offset++, salary.non_hextra_base);
+			if ( salary.cgp_base == null )
+				salaryStmt.setNull(offset++, 8);
+			else
+				salaryStmt.setDouble(offset++, salary.cgp_base);
 			if ( salary.irpf_base == null )
 				salaryStmt.setNull(offset++, 8);
 			else
@@ -2327,8 +2815,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSalaryId() {
+		public int nextSalaryId() {
 			return ++this.salaryId;
+		} 
+
+		public void setSalaryId(Integer salaryId) {
+			this.salaryId = salaryId;
 		} 
 	
 	private void flushSalary(  )
@@ -2341,6 +2833,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Salary
+	 * @param id Identificador unico
+	 * @param type Tipo de Nomina
 	 * @param contract Contrato
 	 * @param start_date Fecha de inicio liquidacin
 	 * @param end_date Fecha de finalizacion liquidacin
@@ -2362,21 +2856,23 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param total_enterprise Cuota total de la empresa
 	 * @param issue_date Fecha de emisin
 	 * @param remuneration Remuneracin mensual
-	 * @param extra_pay_proration Prorrateo de pagas extras
-	 * @param common_base Base de cotizacion por contingencias comunes
-	 * @param professional_base Base de cotizacion por contingencias profesionales
-	 * @param overtime_base Base de cotizacion adicional por horas extraordinarias
+	 * @param pro_ext_base Base prorraterreada de pagas extras
+	 * @param it_base Base de IT
+	 * @param raw_cgc_base Base efectiva de cotizacion por contingencias comunes 
+	 * @param cgc_base Base de cotizacion por contingencias comunes
+	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
+	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
+	 * @param cgp_base Base de cotizacion por contingencias profesionales
 	 * @param irpf_base Base sujeta a retencin I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
-	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSalary(Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Double total_enterprise, Date issue_date, Double remuneration, Double extra_pay_proration, Double common_base, Double professional_base, Double overtime_base, Double irpf_base, Double social_security_contributions)
+	protected void insertSalary(Integer id, Short type, Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Double total_enterprise, Date issue_date, Double remuneration, Double pro_ext_base, Double it_base, Double raw_cgc_base, Double cgc_base, Double hextra_base, Double non_hextra_base, Double cgp_base, Double irpf_base, Double social_security_contributions)
 	throws SQLException {
-		int id = nextSalaryId();
 
 		Salary salary_ = new Salary();
 		salary_.id = id;
+		salary_.type = type;
 		salary_.contract = contract;
 		salary_.start_date = start_date;
 		salary_.end_date = end_date;
@@ -2398,10 +2894,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		salary_.total_enterprise = total_enterprise;
 		salary_.issue_date = issue_date;
 		salary_.remuneration = remuneration;
-		salary_.extra_pay_proration = extra_pay_proration;
-		salary_.common_base = common_base;
-		salary_.professional_base = professional_base;
-		salary_.overtime_base = overtime_base;
+		salary_.pro_ext_base = pro_ext_base;
+		salary_.it_base = it_base;
+		salary_.raw_cgc_base = raw_cgc_base;
+		salary_.cgc_base = cgc_base;
+		salary_.hextra_base = hextra_base;
+		salary_.non_hextra_base = non_hextra_base;
+		salary_.cgp_base = cgp_base;
 		salary_.irpf_base = irpf_base;
 		salary_.social_security_contributions = social_security_contributions;
 
@@ -2409,12 +2908,98 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int salaryCount = salarys.size();
 		
-		if ( 578 * salaryCount >=  this.maxAllowedPacket ){
+		if ( 626 * salaryCount >=  this.maxAllowedPacket ){
+			insertSalary(salarys);
+			salarys.clear();
+		} 
+	}
+
+
+	/**
+	 * Salary
+	 * @param type Tipo de Nomina
+	 * @param contract Contrato
+	 * @param start_date Fecha de inicio liquidacin
+	 * @param end_date Fecha de finalizacion liquidacin
+	 * @param enterprise_name Nombre de la empresa
+	 * @param enterprise_address Domicilio de la empresa
+	 * @param enterprise_document Numero de Documento de la Empresa
+	 * @param ccc Valor del Codigo Cuenta Cotizacion
+	 * @param employee_name Nombre del trabajador
+	 * @param social_security_number Numero de la seguridad social
+	 * @param employee_document Numero de Documento de la Persona
+	 * @param seniority_date Fecha de antiguedad
+	 * @param quote_group Grupo de Cotizacin
+	 * @param category Categoria o grupo profesional
+	 * @param registration Nmero libro de matricula
+	 * @param time_units total dias/horas
+	 * @param total_payment Total devengado
+	 * @param total_deduction Total a deducir
+	 * @param total_liquid Liquido total a percibir
+	 * @param total_enterprise Cuota total de la empresa
+	 * @param issue_date Fecha de emisin
+	 * @param remuneration Remuneracin mensual
+	 * @param pro_ext_base Base prorraterreada de pagas extras
+	 * @param it_base Base de IT
+	 * @param raw_cgc_base Base efectiva de cotizacion por contingencias comunes 
+	 * @param cgc_base Base de cotizacion por contingencias comunes
+	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
+	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
+	 * @param cgp_base Base de cotizacion por contingencias profesionales
+	 * @param irpf_base Base sujeta a retencin I.R.P.F
+	 * @param social_security_contributions Aportaciones a la Seguridad Social
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertSalary(Short type, Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Double total_enterprise, Date issue_date, Double remuneration, Double pro_ext_base, Double it_base, Double raw_cgc_base, Double cgc_base, Double hextra_base, Double non_hextra_base, Double cgp_base, Double irpf_base, Double social_security_contributions)
+	throws SQLException {
+		int id = nextSalaryId();
+
+		Salary salary_ = new Salary();
+		salary_.id = id;
+		salary_.type = type;
+		salary_.contract = contract;
+		salary_.start_date = start_date;
+		salary_.end_date = end_date;
+		salary_.enterprise_name = enterprise_name;
+		salary_.enterprise_address = enterprise_address;
+		salary_.enterprise_document = enterprise_document;
+		salary_.ccc = ccc;
+		salary_.employee_name = employee_name;
+		salary_.social_security_number = social_security_number;
+		salary_.employee_document = employee_document;
+		salary_.seniority_date = seniority_date;
+		salary_.quote_group = quote_group;
+		salary_.category = category;
+		salary_.registration = registration;
+		salary_.time_units = time_units;
+		salary_.total_payment = total_payment;
+		salary_.total_deduction = total_deduction;
+		salary_.total_liquid = total_liquid;
+		salary_.total_enterprise = total_enterprise;
+		salary_.issue_date = issue_date;
+		salary_.remuneration = remuneration;
+		salary_.pro_ext_base = pro_ext_base;
+		salary_.it_base = it_base;
+		salary_.raw_cgc_base = raw_cgc_base;
+		salary_.cgc_base = cgc_base;
+		salary_.hextra_base = hextra_base;
+		salary_.non_hextra_base = non_hextra_base;
+		salary_.cgp_base = cgp_base;
+		salary_.irpf_base = irpf_base;
+		salary_.social_security_contributions = social_security_contributions;
+
+		salarys.add(salary_);
+		
+		int salaryCount = salarys.size();
+		
+		if ( 626 * salaryCount >=  this.maxAllowedPacket ){
 			insertSalary(salarys);
 			salarys.clear();
 		} 
 		return id;
 	}
+
 
 	private int commissionStmtSize = 0;
 
@@ -2506,8 +3091,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCommissionId() {
+		public int nextCommissionId() {
 			return ++this.commissionId;
+		} 
+
+		public void setCommissionId(Integer commissionId) {
+			this.commissionId = commissionId;
 		} 
 	
 	private void flushCommission(  )
@@ -2517,6 +3106,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( commissionStmt != null )
 			commissionStmt.close();
 	}	
+
+	/**
+	 * Commission
+	 * @param id Identificador unico
+	 * @param name Descripcion de la Comision
+	 * @param start_date Fecha de inicio de la Comision
+	 * @param end_date Fecha de fin de la Comision
+	 * @throws SQLException
+	*/
+	protected void insertCommission(Integer id, String name, Date start_date, Date end_date)
+	throws SQLException {
+
+		Commission commission_ = new Commission();
+		commission_.id = id;
+		commission_.name = name;
+		commission_.start_date = start_date;
+		commission_.end_date = end_date;
+
+		commissions.add(commission_);
+		
+		int commissionCount = commissions.size();
+		
+		if ( 62 * commissionCount >=  this.maxAllowedPacket ){
+			insertCommission(commissions);
+			commissions.clear();
+		} 
+	}
+
 
 	/**
 	 * Commission
@@ -2546,6 +3163,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int support_order_insuranceStmtSize = 0;
 
@@ -2652,8 +3270,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSupport_order_insuranceId() {
+		public int nextSupport_order_insuranceId() {
 			return ++this.support_order_insuranceId;
+		} 
+
+		public void setSupport_order_insuranceId(Integer support_order_insuranceId) {
+			this.support_order_insuranceId = support_order_insuranceId;
 		} 
 	
 	private void flushSupport_order_insurance(  )
@@ -2663,6 +3285,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( support_order_insuranceStmt != null )
 			support_order_insuranceStmt.close();
 	}	
+
+	/**
+	 * Support_order_insurance
+	 * @param id Identificador unico
+	 * @param support_order Identificador de la Orden de Reparacion
+	 * @param insurance Identificador de la Compaia de Seguros
+	 * @param appraiser Identificador del Perito
+	 * @param claim_number Numero de siniestro o reclamacion
+	 * @param policy_type Tipo de poliza
+	 * @param franchise Franquicia
+	 * @throws SQLException
+	*/
+	protected void insertSupport_order_insurance(Integer id, Integer support_order, Integer insurance, Integer appraiser, String claim_number, String policy_type, String franchise)
+	throws SQLException {
+
+		Support_order_insurance support_order_insurance_ = new Support_order_insurance();
+		support_order_insurance_.id = id;
+		support_order_insurance_.support_order = support_order;
+		support_order_insurance_.insurance = insurance;
+		support_order_insurance_.appraiser = appraiser;
+		support_order_insurance_.claim_number = claim_number;
+		support_order_insurance_.policy_type = policy_type;
+		support_order_insurance_.franchise = franchise;
+
+		support_order_insurances.add(support_order_insurance_);
+		
+		int support_order_insuranceCount = support_order_insurances.size();
+		
+		if ( 136 * support_order_insuranceCount >=  this.maxAllowedPacket ){
+			insertSupport_order_insurance(support_order_insurances);
+			support_order_insurances.clear();
+		} 
+	}
+
 
 	/**
 	 * Support_order_insurance
@@ -2698,6 +3354,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int supplierStmtSize = 0;
 
@@ -2816,6 +3473,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int user_scopeStmtSize = 0;
 
 	private int user_scopeInserted = 0;
@@ -2901,8 +3560,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextUser_scopeId() {
+		public int nextUser_scopeId() {
 			return ++this.user_scopeId;
+		} 
+
+		public void setUser_scopeId(Integer user_scopeId) {
+			this.user_scopeId = user_scopeId;
 		} 
 	
 	private void flushUser_scope(  )
@@ -2912,6 +3575,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( user_scopeStmt != null )
 			user_scopeStmt.close();
 	}	
+
+	/**
+	 * User_scope
+	 * @param id Identificador unico
+	 * @param user_id Identificador del Usuario
+	 * @param scope Identificador del Ambito
+	 * @throws SQLException
+	*/
+	protected void insertUser_scope(Integer id, Integer user_id, Integer scope)
+	throws SQLException {
+
+		User_scope user_scope_ = new User_scope();
+		user_scope_.id = id;
+		user_scope_.user_id = user_id;
+		user_scope_.scope = scope;
+
+		user_scopes.add(user_scope_);
+		
+		int user_scopeCount = user_scopes.size();
+		
+		if ( 30 * user_scopeCount >=  this.maxAllowedPacket ){
+			insertUser_scope(user_scopes);
+			user_scopes.clear();
+		} 
+	}
+
 
 	/**
 	 * User_scope
@@ -2939,6 +3628,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int assetStmtSize = 0;
 
@@ -3025,8 +3715,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAssetId() {
+		public int nextAssetId() {
 			return ++this.assetId;
+		} 
+
+		public void setAssetId(Integer assetId) {
+			this.assetId = assetId;
 		} 
 	
 	private void flushAsset(  )
@@ -3036,6 +3730,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( assetStmt != null )
 			assetStmt.close();
 	}	
+
+	/**
+	 * Asset
+	 * @param id Identificador unico
+	 * @param description Descripcion del Activo
+	 * @param name Nombre corto del Activo
+	 * @throws SQLException
+	*/
+	protected void insertAsset(Integer id, String description, String name)
+	throws SQLException {
+
+		Asset asset_ = new Asset();
+		asset_.id = id;
+		asset_.description = description;
+		asset_.name = name;
+
+		assets.add(asset_);
+		
+		int assetCount = assets.size();
+		
+		if ( 84 * assetCount >=  this.maxAllowedPacket ){
+			insertAsset(assets);
+			assets.clear();
+		} 
+	}
+
 
 	/**
 	 * Asset
@@ -3063,6 +3783,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int item_warehouseStmtSize = 0;
 
@@ -3164,8 +3885,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextItem_warehouseId() {
+		public int nextItem_warehouseId() {
 			return ++this.item_warehouseId;
+		} 
+
+		public void setItem_warehouseId(Integer item_warehouseId) {
+			this.item_warehouseId = item_warehouseId;
 		} 
 	
 	private void flushItem_warehouse(  )
@@ -3175,6 +3900,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( item_warehouseStmt != null )
 			item_warehouseStmt.close();
 	}	
+
+	/**
+	 * Item_warehouse
+	 * @param id Identificador unico
+	 * @param item Identificador de Articulo
+	 * @param warehouse Identificador de Almacen
+	 * @param stock_max Stock maximo del Articulo en el Almacen
+	 * @param stock_min Stock minimo del Articulo en el Almacen
+	 * @param location Localizacion del Articulo en el Almacen
+	 * @throws SQLException
+	*/
+	protected void insertItem_warehouse(Integer id, Integer item, Integer warehouse, Double stock_max, Double stock_min, String location)
+	throws SQLException {
+
+		Item_warehouse item_warehouse_ = new Item_warehouse();
+		item_warehouse_.id = id;
+		item_warehouse_.item = item;
+		item_warehouse_.warehouse = warehouse;
+		item_warehouse_.stock_max = stock_max;
+		item_warehouse_.stock_min = stock_min;
+		item_warehouse_.location = location;
+
+		item_warehouses.add(item_warehouse_);
+		
+		int item_warehouseCount = item_warehouses.size();
+		
+		if ( 92 * item_warehouseCount >=  this.maxAllowedPacket ){
+			insertItem_warehouse(item_warehouses);
+			item_warehouses.clear();
+		} 
+	}
+
 
 	/**
 	 * Item_warehouse
@@ -3209,6 +3966,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int rnoteStmtSize = 0;
 
 	private int rnoteInserted = 0;
@@ -3223,7 +3981,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer registry; 
 		private String description; 
 		private Date note_date; 
-		private InputStream comments; 
+		private String comments; 
 		private Short note_type; 
 		private Short security_level; 
 	}
@@ -3273,7 +4031,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( rnote.comments == null )
 				rnoteStmt.setNull(offset++, -1);
 			else
-				rnoteStmt.setAsciiStream(offset++, rnote.comments);
+				rnoteStmt.setString(offset++, rnote.comments);
 			if ( rnote.note_type == null )
 				rnoteStmt.setNull(offset++, -6);
 			else
@@ -3314,8 +4072,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRnoteId() {
+		public int nextRnoteId() {
 			return ++this.rnoteId;
+		} 
+
+		public void setRnoteId(Integer rnoteId) {
+			this.rnoteId = rnoteId;
 		} 
 	
 	private void flushRnote(  )
@@ -3328,6 +4090,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Rnote
+	 * @param id Identificador unico de la Nota de la Persona o Empresa
+	 * @param registry Identificador del Registro de la Persona o Empresa
+	 * @param description Descripcion de la Nota
+	 * @param note_date Fecha de la Nota
+	 * @param comments Comentarios de la Nota
+	 * @param note_type 
+	 * @param security_level Nivel de seguridad de la Nota
+	 * @throws SQLException
+	*/
+	protected void insertRnote(Integer id, Integer registry, String description, Date note_date, String comments, Short note_type, Short security_level)
+	throws SQLException {
+
+		Rnote rnote_ = new Rnote();
+		rnote_.id = id;
+		rnote_.registry = registry;
+		rnote_.description = description;
+		rnote_.note_date = note_date;
+		rnote_.comments = comments;
+		rnote_.note_type = note_type;
+		rnote_.security_level = security_level;
+
+		rnotes.add(rnote_);
+		
+		int rnoteCount = rnotes.size();
+		
+		if ( 100 * rnoteCount >=  this.maxAllowedPacket ){
+			insertRnote(rnotes);
+			rnotes.clear();
+		} 
+	}
+
+
+	/**
+	 * Rnote
 	 * @param registry Identificador del Registro de la Persona o Empresa
 	 * @param description Descripcion de la Nota
 	 * @param note_date Fecha de la Nota
@@ -3337,7 +4133,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRnote(Integer registry, String description, Date note_date, InputStream comments, Short note_type, Short security_level)
+	protected int insertRnote(Integer registry, String description, Date note_date, String comments, Short note_type, Short security_level)
 	throws SQLException {
 		int id = nextRnoteId();
 
@@ -3360,6 +4156,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int favoriteStmtSize = 0;
 
@@ -3456,8 +4253,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFavoriteId() {
+		public int nextFavoriteId() {
 			return ++this.favoriteId;
+		} 
+
+		public void setFavoriteId(Integer favoriteId) {
+			this.favoriteId = favoriteId;
 		} 
 	
 	private void flushFavorite(  )
@@ -3467,6 +4268,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( favoriteStmt != null )
 			favoriteStmt.close();
 	}	
+
+	/**
+	 * Favorite
+	 * @param id Identificador unico de Favorito
+	 * @param favorite_category Categoria a la que pertenece el Favorito
+	 * @param description Descripcion del Favorito
+	 * @param url Url del Favorito
+	 * @param user_id Usuario al que pertenece el Favorito
+	 * @throws SQLException
+	*/
+	protected void insertFavorite(Integer id, Integer favorite_category, String description, String url, Integer user_id)
+	throws SQLException {
+
+		Favorite favorite_ = new Favorite();
+		favorite_.id = id;
+		favorite_.favorite_category = favorite_category;
+		favorite_.description = description;
+		favorite_.url = url;
+		favorite_.user_id = user_id;
+
+		favorites.add(favorite_);
+		
+		int favoriteCount = favorites.size();
+		
+		if ( 286 * favoriteCount >=  this.maxAllowedPacket ){
+			insertFavorite(favorites);
+			favorites.clear();
+		} 
+	}
+
 
 	/**
 	 * Favorite
@@ -3499,6 +4330,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int daily_trackingStmtSize = 0;
 
 	private int daily_trackingInserted = 0;
@@ -3517,7 +4349,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer customer; 
 		private Integer dossier; 
 		private Integer activity; 
-		private InputStream comments; 
+		private String comments; 
 	}
 	
 	private void insertDaily_tracking( List<Daily_tracking> daily_trackings )
@@ -3581,7 +4413,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( daily_tracking.comments == null )
 				daily_trackingStmt.setNull(offset++, -1);
 			else
-				daily_trackingStmt.setAsciiStream(offset++, daily_tracking.comments);
+				daily_trackingStmt.setString(offset++, daily_tracking.comments);
 		}
 		daily_trackingStmt.executeUpdate();
 		daily_trackingInserted += size;
@@ -3614,8 +4446,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextDaily_trackingId() {
+		public int nextDaily_trackingId() {
 			return ++this.daily_trackingId;
+		} 
+
+		public void setDaily_trackingId(Integer daily_trackingId) {
+			this.daily_trackingId = daily_trackingId;
 		} 
 	
 	private void flushDaily_tracking(  )
@@ -3625,6 +4461,44 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( daily_trackingStmt != null )
 			daily_trackingStmt.close();
 	}	
+
+	/**
+	 * Daily_tracking
+	 * @param id Identificador unico del Parte
+	 * @param user_id Identificador del Usuario que realiza el Parte
+	 * @param tracking_date Fecha del Parte
+	 * @param tracking_duration Tiempo invertido en el Parte
+	 * @param job_type Tipo de Trabajo realizado en el Parte
+	 * @param customer Identificador del Cliente asociado al Parte
+	 * @param dossier Identificador del Expediente asociado al Parte
+	 * @param activity Identificador de la Actividad asociada al Parte
+	 * @param comments Comentarios del Parte
+	 * @throws SQLException
+	*/
+	protected void insertDaily_tracking(Integer id, Integer user_id, Date tracking_date, Double tracking_duration, Integer job_type, Integer customer, Integer dossier, Integer activity, String comments)
+	throws SQLException {
+
+		Daily_tracking daily_tracking_ = new Daily_tracking();
+		daily_tracking_.id = id;
+		daily_tracking_.user_id = user_id;
+		daily_tracking_.tracking_date = tracking_date;
+		daily_tracking_.tracking_duration = tracking_duration;
+		daily_tracking_.job_type = job_type;
+		daily_tracking_.customer = customer;
+		daily_tracking_.dossier = dossier;
+		daily_tracking_.activity = activity;
+		daily_tracking_.comments = comments;
+
+		daily_trackings.add(daily_tracking_);
+		
+		int daily_trackingCount = daily_trackings.size();
+		
+		if ( 92 * daily_trackingCount >=  this.maxAllowedPacket ){
+			insertDaily_tracking(daily_trackings);
+			daily_trackings.clear();
+		} 
+	}
+
 
 	/**
 	 * Daily_tracking
@@ -3639,7 +4513,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertDaily_tracking(Integer user_id, Date tracking_date, Double tracking_duration, Integer job_type, Integer customer, Integer dossier, Integer activity, InputStream comments)
+	protected int insertDaily_tracking(Integer user_id, Date tracking_date, Double tracking_duration, Integer job_type, Integer customer, Integer dossier, Integer activity, String comments)
 	throws SQLException {
 		int id = nextDaily_trackingId();
 
@@ -3664,6 +4538,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int loanStmtSize = 0;
 
@@ -3805,8 +4680,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextLoanId() {
+		public int nextLoanId() {
 			return ++this.loanId;
+		} 
+
+		public void setLoanId(Integer loanId) {
+			this.loanId = loanId;
 		} 
 	
 	private void flushLoan(  )
@@ -3816,6 +4695,54 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( loanStmt != null )
 			loanStmt.close();
 	}	
+
+	/**
+	 * Loan
+	 * @param id Identificador Unico
+	 * @param description Descripcion del Prestamo
+	 * @param loan_date Fecha de Concesion del Prestamo
+	 * @param term Plazo
+	 * @param interest Interes
+	 * @param review Revision
+	 * @param amount Importe
+	 * @param expenses Gastos asociados al Prestamo
+	 * @param rbank Banco por el que se paga el Prestamo
+	 * @param security_level Nivel de Seguridad
+	 * @param fee_amount Importe de la cuota
+	 * @param recurrence Periodicidad
+	 * @param pay_day Dia de Pago
+	 * @param status Estado
+	 * @throws SQLException
+	*/
+	protected void insertLoan(Integer id, String description, Date loan_date, String term, String interest, String review, Double amount, Double expenses, Integer rbank, Short security_level, Double fee_amount, Integer recurrence, Integer pay_day, Short status)
+	throws SQLException {
+
+		Loan loan_ = new Loan();
+		loan_.id = id;
+		loan_.description = description;
+		loan_.loan_date = loan_date;
+		loan_.term = term;
+		loan_.interest = interest;
+		loan_.review = review;
+		loan_.amount = amount;
+		loan_.expenses = expenses;
+		loan_.rbank = rbank;
+		loan_.security_level = security_level;
+		loan_.fee_amount = fee_amount;
+		loan_.recurrence = recurrence;
+		loan_.pay_day = pay_day;
+		loan_.status = status;
+
+		loans.add(loan_);
+		
+		int loanCount = loans.size();
+		
+		if ( 213 * loanCount >=  this.maxAllowedPacket ){
+			insertLoan(loans);
+			loans.clear();
+		} 
+	}
+
 
 	/**
 	 * Loan
@@ -3865,6 +4792,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int tas_deliveryStmtSize = 0;
 
@@ -3956,8 +4884,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTas_deliveryId() {
+		public int nextTas_deliveryId() {
 			return ++this.tas_deliveryId;
+		} 
+
+		public void setTas_deliveryId(Integer tas_deliveryId) {
+			this.tas_deliveryId = tas_deliveryId;
 		} 
 	
 	private void flushTas_delivery(  )
@@ -3967,6 +4899,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( tas_deliveryStmt != null )
 			tas_deliveryStmt.close();
 	}	
+
+	/**
+	 * Tas_delivery
+	 * @param id Identificador unico de la Relacion de Ordenes de Reparacion y Albaranes
+	 * @param support_order Identificador de la Orden de Reparacion
+	 * @param delivery Identificador del Albaran
+	 * @param offer Identificador del Presupuesto
+	 * @throws SQLException
+	*/
+	protected void insertTas_delivery(Integer id, Integer support_order, Integer delivery, Integer offer)
+	throws SQLException {
+
+		Tas_delivery tas_delivery_ = new Tas_delivery();
+		tas_delivery_.id = id;
+		tas_delivery_.support_order = support_order;
+		tas_delivery_.delivery = delivery;
+		tas_delivery_.offer = offer;
+
+		tas_deliverys.add(tas_delivery_);
+		
+		int tas_deliveryCount = tas_deliverys.size();
+		
+		if ( 40 * tas_deliveryCount >=  this.maxAllowedPacket ){
+			insertTas_delivery(tas_deliverys);
+			tas_deliverys.clear();
+		} 
+	}
+
 
 	/**
 	 * Tas_delivery
@@ -3996,6 +4956,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int question_valueStmtSize = 0;
 
@@ -4092,8 +5053,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextQuestion_valueId() {
+		public int nextQuestion_valueId() {
 			return ++this.question_valueId;
+		} 
+
+		public void setQuestion_valueId(Integer question_valueId) {
+			this.question_valueId = question_valueId;
 		} 
 	
 	private void flushQuestion_value(  )
@@ -4103,6 +5068,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( question_valueStmt != null )
 			question_valueStmt.close();
 	}	
+
+	/**
+	 * Question_value
+	 * @param id Identificador unico
+	 * @param question Identificador de la Pregunta
+	 * @param value_text Valor de tipo texto
+	 * @param value_number Valor de tipo numerico
+	 * @param value_date Valor de tipo fecha
+	 * @throws SQLException
+	*/
+	protected void insertQuestion_value(Integer id, Integer question, String value_text, Double value_number, Timestamp value_date)
+	throws SQLException {
+
+		Question_value question_value_ = new Question_value();
+		question_value_.id = id;
+		question_value_.question = question;
+		question_value_.value_text = value_text;
+		question_value_.value_number = value_number;
+		question_value_.value_date = value_date;
+
+		question_values.add(question_value_);
+		
+		int question_valueCount = question_values.size();
+		
+		if ( 1078 * question_valueCount >=  this.maxAllowedPacket ){
+			insertQuestion_value(question_values);
+			question_values.clear();
+		} 
+	}
+
 
 	/**
 	 * Question_value
@@ -4134,6 +5129,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int web_info_styleStmtSize = 0;
 
@@ -4220,8 +5216,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextWeb_info_styleId() {
+		public int nextWeb_info_styleId() {
 			return ++this.web_info_styleId;
+		} 
+
+		public void setWeb_info_styleId(Integer web_info_styleId) {
+			this.web_info_styleId = web_info_styleId;
 		} 
 	
 	private void flushWeb_info_style(  )
@@ -4231,6 +5231,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( web_info_styleStmt != null )
 			web_info_styleStmt.close();
 	}	
+
+	/**
+	 * Web_info_style
+	 * @param id Codigo del Estilo de la Pagina
+	 * @param variable Nombre de la variable del Estilo
+	 * @param value Valor de la variable del Estilo
+	 * @throws SQLException
+	*/
+	protected void insertWeb_info_style(Integer id, String variable, String value)
+	throws SQLException {
+
+		Web_info_style web_info_style_ = new Web_info_style();
+		web_info_style_.id = id;
+		web_info_style_.variable = variable;
+		web_info_style_.value = value;
+
+		web_info_styles.add(web_info_style_);
+		
+		int web_info_styleCount = web_info_styles.size();
+		
+		if ( 393 * web_info_styleCount >=  this.maxAllowedPacket ){
+			insertWeb_info_style(web_info_styles);
+			web_info_styles.clear();
+		} 
+	}
+
 
 	/**
 	 * Web_info_style
@@ -4258,6 +5284,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int salary_paymentStmtSize = 0;
 
@@ -4364,8 +5391,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSalary_paymentId() {
+		public int nextSalary_paymentId() {
 			return ++this.salary_paymentId;
+		} 
+
+		public void setSalary_paymentId(Integer salary_paymentId) {
+			this.salary_paymentId = salary_paymentId;
 		} 
 	
 	private void flushSalary_payment(  )
@@ -4375,6 +5406,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( salary_paymentStmt != null )
 			salary_paymentStmt.close();
 	}	
+
+	/**
+	 * Salary_payment
+	 * @param id Identificador unico
+	 * @param salary Recibo del pago de salarios
+	 * @param type Tipo de Percepcin Salarial
+	 * @param payment_concept Codigo del concepto
+	 * @param description Descripcion
+	 * @param expression Frmula
+	 * @param amount Importe
+	 * @throws SQLException
+	*/
+	protected void insertSalary_payment(Integer id, Integer salary, Short type, String payment_concept, String description, String expression, Double amount)
+	throws SQLException {
+
+		Salary_payment salary_payment_ = new Salary_payment();
+		salary_payment_.id = id;
+		salary_payment_.salary = salary;
+		salary_payment_.type = type;
+		salary_payment_.payment_concept = payment_concept;
+		salary_payment_.description = description;
+		salary_payment_.expression = expression;
+		salary_payment_.amount = amount;
+
+		salary_payments.add(salary_payment_);
+		
+		int salary_paymentCount = salary_payments.size();
+		
+		if ( 235 * salary_paymentCount >=  this.maxAllowedPacket ){
+			insertSalary_payment(salary_payments);
+			salary_payments.clear();
+		} 
+	}
+
 
 	/**
 	 * Salary_payment
@@ -4411,6 +5476,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int contract_dataStmtSize = 0;
 
 	private int contract_dataInserted = 0;
@@ -4430,6 +5496,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Date end_date; 
 		private String quote_group; 
 		private String category; 
+		private Integer registration; 
+		private Date seniority_date; 
 	}
 	
 	private void insertContract_data( List<Contract_data> contract_datas )
@@ -4440,7 +5508,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contract_dataStmt != null ) {
 				contract_dataStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -4449,7 +5517,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			contract_dataStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO contract_data (id,contract,code,description,conditions,start_date,end_date,quote_group,category)"  
+				"INSERT INTO contract_data (id,contract,code,description,conditions,start_date,end_date,quote_group,category,registration,seniority_date)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			contract_dataStmtSize = size;
@@ -4494,6 +5562,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_dataStmt.setNull(offset++, 12);
 			else
 				contract_dataStmt.setString(offset++, contract_data.category);
+			if ( contract_data.registration == null )
+				contract_dataStmt.setNull(offset++, 4);
+			else
+				contract_dataStmt.setInt(offset++, contract_data.registration);
+			if ( contract_data.seniority_date == null )
+				contract_dataStmt.setNull(offset++, 91);
+			else
+				contract_dataStmt.setDate(offset++, contract_data.seniority_date);
 		}
 		contract_dataStmt.executeUpdate();
 		contract_dataInserted += size;
@@ -4526,8 +5602,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextContract_dataId() {
+		public int nextContract_dataId() {
 			return ++this.contract_dataId;
+		} 
+
+		public void setContract_dataId(Integer contract_dataId) {
+			this.contract_dataId = contract_dataId;
 		} 
 	
 	private void flushContract_data(  )
@@ -4540,6 +5620,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Contract_data
+	 * @param id Identificador unico
 	 * @param contract Contrato
 	 * @param code Cdigo S.S (TC2)
 	 * @param description Descripcion
@@ -4548,10 +5629,53 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param end_date Fecha de finalizacion
 	 * @param quote_group Grupo de Cotizacin
 	 * @param category Categoria o grupo profesional
+	 * @param registration Nmero libro de matricula
+	 * @param seniority_date Fecha de antiguedad 
+	 * @throws SQLException
+	*/
+	protected void insertContract_data(Integer id, Integer contract, String code, String description, String conditions, Date start_date, Date end_date, String quote_group, String category, Integer registration, Date seniority_date)
+	throws SQLException {
+
+		Contract_data contract_data_ = new Contract_data();
+		contract_data_.id = id;
+		contract_data_.contract = contract;
+		contract_data_.code = code;
+		contract_data_.description = description;
+		contract_data_.conditions = conditions;
+		contract_data_.start_date = start_date;
+		contract_data_.end_date = end_date;
+		contract_data_.quote_group = quote_group;
+		contract_data_.category = category;
+		contract_data_.registration = registration;
+		contract_data_.seniority_date = seniority_date;
+
+		contract_datas.add(contract_data_);
+		
+		int contract_dataCount = contract_datas.size();
+		
+		if ( 257 * contract_dataCount >=  this.maxAllowedPacket ){
+			insertContract_data(contract_datas);
+			contract_datas.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract_data
+	 * @param contract Contrato
+	 * @param code Cdigo S.S (TC2)
+	 * @param description Descripcion
+	 * @param conditions Condiciones
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param quote_group Grupo de Cotizacin
+	 * @param category Categoria o grupo profesional
+	 * @param registration Nmero libro de matricula
+	 * @param seniority_date Fecha de antiguedad 
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_data(Integer contract, String code, String description, String conditions, Date start_date, Date end_date, String quote_group, String category)
+	protected int insertContract_data(Integer contract, String code, String description, String conditions, Date start_date, Date end_date, String quote_group, String category, Integer registration, Date seniority_date)
 	throws SQLException {
 		int id = nextContract_dataId();
 
@@ -4565,17 +5689,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_data_.end_date = end_date;
 		contract_data_.quote_group = quote_group;
 		contract_data_.category = category;
+		contract_data_.registration = registration;
+		contract_data_.seniority_date = seniority_date;
 
 		contract_datas.add(contract_data_);
 		
 		int contract_dataCount = contract_datas.size();
 		
-		if ( 237 * contract_dataCount >=  this.maxAllowedPacket ){
+		if ( 257 * contract_dataCount >=  this.maxAllowedPacket ){
 			insertContract_data(contract_datas);
 			contract_datas.clear();
 		} 
 		return id;
 	}
+
 
 	private int cv_workexperienceStmtSize = 0;
 
@@ -4677,8 +5804,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCv_workexperienceId() {
+		public int nextCv_workexperienceId() {
 			return ++this.cv_workexperienceId;
+		} 
+
+		public void setCv_workexperienceId(Integer cv_workexperienceId) {
+			this.cv_workexperienceId = cv_workexperienceId;
 		} 
 	
 	private void flushCv_workexperience(  )
@@ -4688,6 +5819,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( cv_workexperienceStmt != null )
 			cv_workexperienceStmt.close();
 	}	
+
+	/**
+	 * Cv_workexperience
+	 * @param id Identifador nico de la Experiencia Laboral
+	 * @param startingdate Fecha de inicio de la Experiencia Laboral
+	 * @param endingdate Fecha de finalizacin de la Experiencia Laboral
+	 * @param job Trabajo desempeado en la Experiencia Laboral
+	 * @param company Compaa donde se desempe la Experiencia Laboral
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @throws SQLException
+	*/
+	protected void insertCv_workexperience(Integer id, Date startingdate, Date endingdate, String job, String company, Integer curriculum)
+	throws SQLException {
+
+		Cv_workexperience cv_workexperience_ = new Cv_workexperience();
+		cv_workexperience_.id = id;
+		cv_workexperience_.startingdate = startingdate;
+		cv_workexperience_.endingdate = endingdate;
+		cv_workexperience_.job = job;
+		cv_workexperience_.company = company;
+		cv_workexperience_.curriculum = curriculum;
+
+		cv_workexperiences.add(cv_workexperience_);
+		
+		int cv_workexperienceCount = cv_workexperiences.size();
+		
+		if ( 168 * cv_workexperienceCount >=  this.maxAllowedPacket ){
+			insertCv_workexperience(cv_workexperiences);
+			cv_workexperiences.clear();
+		} 
+	}
+
 
 	/**
 	 * Cv_workexperience
@@ -4721,6 +5884,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int incidence_typeStmtSize = 0;
 
@@ -4812,8 +5976,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextIncidence_typeId() {
+		public int nextIncidence_typeId() {
 			return ++this.incidence_typeId;
+		} 
+
+		public void setIncidence_typeId(Integer incidence_typeId) {
+			this.incidence_typeId = incidence_typeId;
 		} 
 	
 	private void flushIncidence_type(  )
@@ -4823,6 +5991,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( incidence_typeStmt != null )
 			incidence_typeStmt.close();
 	}	
+
+	/**
+	 * Incidence_type
+	 * @param id Identificador unico de Tipo de Incidencia
+	 * @param alias Alias del Tipo de Incidencia
+	 * @param description Descripcin del Tipo de Incidencia
+	 * @param compute Indica la forma de computar las horas de la Incidencia
+	 * @throws SQLException
+	*/
+	protected void insertIncidence_type(Integer id, String alias, String description, Boolean compute)
+	throws SQLException {
+
+		Incidence_type incidence_type_ = new Incidence_type();
+		incidence_type_.id = id;
+		incidence_type_.alias = alias;
+		incidence_type_.description = description;
+		incidence_type_.compute = compute;
+
+		incidence_types.add(incidence_type_);
+		
+		int incidence_typeCount = incidence_types.size();
+		
+		if ( 45 * incidence_typeCount >=  this.maxAllowedPacket ){
+			insertIncidence_type(incidence_types);
+			incidence_types.clear();
+		} 
+	}
+
 
 	/**
 	 * Incidence_type
@@ -4852,6 +6048,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int item_posStmtSize = 0;
 
@@ -4953,8 +6150,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextItem_posId() {
+		public int nextItem_posId() {
 			return ++this.item_posId;
+		} 
+
+		public void setItem_posId(Integer item_posId) {
+			this.item_posId = item_posId;
 		} 
 	
 	private void flushItem_pos(  )
@@ -4964,6 +6165,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( item_posStmt != null )
 			item_posStmt.close();
 	}	
+
+	/**
+	 * Item_pos
+	 * @param id Identificador unico
+	 * @param item Identificador de Articulo
+	 * @param plu Codigo PLU del Articulo
+	 * @param barcode Codigo de barras del Articulo
+	 * @param desc_short Descripcion corta del Articulo
+	 * @param plu_product_type Tipo de Articulo en Balanza
+	 * @throws SQLException
+	*/
+	protected void insertItem_pos(Integer id, Integer item, String plu, String barcode, String desc_short, Short plu_product_type)
+	throws SQLException {
+
+		Item_pos item_pos_ = new Item_pos();
+		item_pos_.id = id;
+		item_pos_.item = item;
+		item_pos_.plu = plu;
+		item_pos_.barcode = barcode;
+		item_pos_.desc_short = desc_short;
+		item_pos_.plu_product_type = plu_product_type;
+
+		item_poss.add(item_pos_);
+		
+		int item_posCount = item_poss.size();
+		
+		if ( 62 * item_posCount >=  this.maxAllowedPacket ){
+			insertItem_pos(item_poss);
+			item_poss.clear();
+		} 
+	}
+
 
 	/**
 	 * Item_pos
@@ -4997,6 +6230,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int agreement_level_paymentStmtSize = 0;
 
@@ -5093,8 +6327,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAgreement_level_paymentId() {
+		public int nextAgreement_level_paymentId() {
 			return ++this.agreement_level_paymentId;
+		} 
+
+		public void setAgreement_level_paymentId(Integer agreement_level_paymentId) {
+			this.agreement_level_paymentId = agreement_level_paymentId;
 		} 
 	
 	private void flushAgreement_level_payment(  )
@@ -5104,6 +6342,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( agreement_level_paymentStmt != null )
 			agreement_level_paymentStmt.close();
 	}	
+
+	/**
+	 * Agreement_level_payment
+	 * @param id Identificador unico
+	 * @param agreement_level Nivel retributivo
+	 * @param type Tipo de Percepcin Salarial
+	 * @param expression Frmula
+	 * @param description Descripcion
+	 * @throws SQLException
+	*/
+	protected void insertAgreement_level_payment(Integer id, Integer agreement_level, Short type, String expression, String description)
+	throws SQLException {
+
+		Agreement_level_payment agreement_level_payment_ = new Agreement_level_payment();
+		agreement_level_payment_.id = id;
+		agreement_level_payment_.agreement_level = agreement_level;
+		agreement_level_payment_.type = type;
+		agreement_level_payment_.expression = expression;
+		agreement_level_payment_.description = description;
+
+		agreement_level_payments.add(agreement_level_payment_);
+		
+		int agreement_level_paymentCount = agreement_level_payments.size();
+		
+		if ( 215 * agreement_level_paymentCount >=  this.maxAllowedPacket ){
+			insertAgreement_level_payment(agreement_level_payments);
+			agreement_level_payments.clear();
+		} 
+	}
+
 
 	/**
 	 * Agreement_level_payment
@@ -5135,6 +6403,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int ec_paymethodStmtSize = 0;
 
@@ -5231,8 +6500,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEc_paymethodId() {
+		public int nextEc_paymethodId() {
 			return ++this.ec_paymethodId;
+		} 
+
+		public void setEc_paymethodId(Integer ec_paymethodId) {
+			this.ec_paymethodId = ec_paymethodId;
 		} 
 	
 	private void flushEc_paymethod(  )
@@ -5242,6 +6515,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( ec_paymethodStmt != null )
 			ec_paymethodStmt.close();
 	}	
+
+	/**
+	 * Ec_paymethod
+	 * @param id Identificador unico
+	 * @param pay_method Identificador de la Forma de Pago
+	 * @param user_name Nombre de Usuario
+	 * @param password Contrasea para la pasarela de pago
+	 * @param signature Identificador unico de la empresa para pasarela
+	 * @throws SQLException
+	*/
+	protected void insertEc_paymethod(Integer id, Integer pay_method, String user_name, String password, String signature)
+	throws SQLException {
+
+		Ec_paymethod ec_paymethod_ = new Ec_paymethod();
+		ec_paymethod_.id = id;
+		ec_paymethod_.pay_method = pay_method;
+		ec_paymethod_.user_name = user_name;
+		ec_paymethod_.password = password;
+		ec_paymethod_.signature = signature;
+
+		ec_paymethods.add(ec_paymethod_);
+		
+		int ec_paymethodCount = ec_paymethods.size();
+		
+		if ( 244 * ec_paymethodCount >=  this.maxAllowedPacket ){
+			insertEc_paymethod(ec_paymethods);
+			ec_paymethods.clear();
+		} 
+	}
+
 
 	/**
 	 * Ec_paymethod
@@ -5273,6 +6576,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int fs_renting_detailStmtSize = 0;
 
@@ -5404,8 +6708,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFs_renting_detailId() {
+		public int nextFs_renting_detailId() {
 			return ++this.fs_renting_detailId;
+		} 
+
+		public void setFs_renting_detailId(Integer fs_renting_detailId) {
+			this.fs_renting_detailId = fs_renting_detailId;
 		} 
 	
 	private void flushFs_renting_detail(  )
@@ -5415,6 +6723,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( fs_renting_detailStmt != null )
 			fs_renting_detailStmt.close();
 	}	
+
+	/**
+	 * Fs_renting_detail
+	 * @param id Identificador unico
+	 * @param fs_renting Identificador de la Declaracion
+	 * @param type Modalidad
+	 * @param document NIF
+	 * @param name Apellidos  y Nombre
+	 * @param paid_returns Rendimientos satisfechos
+	 * @param percent Porcentaje de retencion
+	 * @param account_deposit Ingresos a cuenta
+	 * @param accrual_period Periodo de devengo
+	 * @param address Direccion
+	 * @param city Municipio
+	 * @param province Provincia
+	 * @throws SQLException
+	*/
+	protected void insertFs_renting_detail(Integer id, Integer fs_renting, Short type, String document, String name, Double paid_returns, Double percent, Double account_deposit, Integer accrual_period, String address, String city, String province)
+	throws SQLException {
+
+		Fs_renting_detail fs_renting_detail_ = new Fs_renting_detail();
+		fs_renting_detail_.id = id;
+		fs_renting_detail_.fs_renting = fs_renting;
+		fs_renting_detail_.type = type;
+		fs_renting_detail_.document = document;
+		fs_renting_detail_.name = name;
+		fs_renting_detail_.paid_returns = paid_returns;
+		fs_renting_detail_.percent = percent;
+		fs_renting_detail_.account_deposit = account_deposit;
+		fs_renting_detail_.accrual_period = accrual_period;
+		fs_renting_detail_.address = address;
+		fs_renting_detail_.city = city;
+		fs_renting_detail_.province = province;
+
+		fs_renting_details.add(fs_renting_detail_);
+		
+		int fs_renting_detailCount = fs_renting_details.size();
+		
+		if ( 281 * fs_renting_detailCount >=  this.maxAllowedPacket ){
+			insertFs_renting_detail(fs_renting_details);
+			fs_renting_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Fs_renting_detail
@@ -5460,6 +6812,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int mk_actionStmtSize = 0;
 
@@ -5561,8 +6914,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextMk_actionId() {
+		public int nextMk_actionId() {
 			return ++this.mk_actionId;
+		} 
+
+		public void setMk_actionId(Integer mk_actionId) {
+			this.mk_actionId = mk_actionId;
 		} 
 	
 	private void flushMk_action(  )
@@ -5572,6 +6929,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( mk_actionStmt != null )
 			mk_actionStmt.close();
 	}	
+
+	/**
+	 * Mk_action
+	 * @param id Identificador unico
+	 * @param campaign Identificador de la Campaa
+	 * @param media_type Tipo de contacto de la Accion
+	 * @param start_date Fecha de inicio
+	 * @param end_date Fecha de finalizacion
+	 * @param survey Identificador del Cuestionario
+	 * @throws SQLException
+	*/
+	protected void insertMk_action(Integer id, Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey)
+	throws SQLException {
+
+		Mk_action mk_action_ = new Mk_action();
+		mk_action_.id = id;
+		mk_action_.campaign = campaign;
+		mk_action_.media_type = media_type;
+		mk_action_.start_date = start_date;
+		mk_action_.end_date = end_date;
+		mk_action_.survey = survey;
+
+		mk_actions.add(mk_action_);
+		
+		int mk_actionCount = mk_actions.size();
+		
+		if ( 78 * mk_actionCount >=  this.maxAllowedPacket ){
+			insertMk_action(mk_actions);
+			mk_actions.clear();
+		} 
+	}
+
 
 	/**
 	 * Mk_action
@@ -5605,6 +6994,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int fs_vat_detailStmtSize = 0;
 
@@ -5771,8 +7161,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFs_vat_detailId() {
+		public int nextFs_vat_detailId() {
 			return ++this.fs_vat_detailId;
+		} 
+
+		public void setFs_vat_detailId(Integer fs_vat_detailId) {
+			this.fs_vat_detailId = fs_vat_detailId;
 		} 
 	
 	private void flushFs_vat_detail(  )
@@ -5782,6 +7176,64 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( fs_vat_detailStmt != null )
 			fs_vat_detailStmt.close();
 	}	
+
+	/**
+	 * Fs_vat_detail
+	 * @param id Identificador unico
+	 * @param fs_vat Identificador de la Declaracion
+	 * @param vat_key Clave de la Declaracion
+	 * @param percent Porcentaje de Iva
+	 * @param taxable_base Base imponible
+	 * @param quota Cuota
+	 * @param deductible_quota Cuota deducible
+	 * @param adj_taxable_base Base imponible ajustada
+	 * @param adj_quota Cuota ajustada
+	 * @param adj_deductible_quota Cuota deducible ajustada
+	 * @param acu_taxable_base Base imponible acumulada
+	 * @param acu_quota Cuota acumulada
+	 * @param acu_deductible_quota Cuota deducible acumulada
+	 * @param dec_taxable_base Base imponible declarado
+	 * @param dec_quota Cuota declarado
+	 * @param dec_deductible_quota Cuota deducible declarado
+	 * @param res_taxable_base Base imponible resultado
+	 * @param res_quota Cuota resultado
+	 * @param res_deductible_quota Cuota deducible resultado
+	 * @throws SQLException
+	*/
+	protected void insertFs_vat_detail(Integer id, Integer fs_vat, Short vat_key, Double percent, Double taxable_base, Double quota, Double deductible_quota, Double adj_taxable_base, Double adj_quota, Double adj_deductible_quota, Double acu_taxable_base, Double acu_quota, Double acu_deductible_quota, Double dec_taxable_base, Double dec_quota, Double dec_deductible_quota, Double res_taxable_base, Double res_quota, Double res_deductible_quota)
+	throws SQLException {
+
+		Fs_vat_detail fs_vat_detail_ = new Fs_vat_detail();
+		fs_vat_detail_.id = id;
+		fs_vat_detail_.fs_vat = fs_vat;
+		fs_vat_detail_.vat_key = vat_key;
+		fs_vat_detail_.percent = percent;
+		fs_vat_detail_.taxable_base = taxable_base;
+		fs_vat_detail_.quota = quota;
+		fs_vat_detail_.deductible_quota = deductible_quota;
+		fs_vat_detail_.adj_taxable_base = adj_taxable_base;
+		fs_vat_detail_.adj_quota = adj_quota;
+		fs_vat_detail_.adj_deductible_quota = adj_deductible_quota;
+		fs_vat_detail_.acu_taxable_base = acu_taxable_base;
+		fs_vat_detail_.acu_quota = acu_quota;
+		fs_vat_detail_.acu_deductible_quota = acu_deductible_quota;
+		fs_vat_detail_.dec_taxable_base = dec_taxable_base;
+		fs_vat_detail_.dec_quota = dec_quota;
+		fs_vat_detail_.dec_deductible_quota = dec_deductible_quota;
+		fs_vat_detail_.res_taxable_base = res_taxable_base;
+		fs_vat_detail_.res_quota = res_quota;
+		fs_vat_detail_.res_deductible_quota = res_deductible_quota;
+
+		fs_vat_details.add(fs_vat_detail_);
+		
+		int fs_vat_detailCount = fs_vat_details.size();
+		
+		if ( 270 * fs_vat_detailCount >=  this.maxAllowedPacket ){
+			insertFs_vat_detail(fs_vat_details);
+			fs_vat_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Fs_vat_detail
@@ -5841,6 +7293,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int cv_languagesStmtSize = 0;
 
@@ -5942,8 +7395,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCv_languagesId() {
+		public int nextCv_languagesId() {
 			return ++this.cv_languagesId;
+		} 
+
+		public void setCv_languagesId(Integer cv_languagesId) {
+			this.cv_languagesId = cv_languagesId;
 		} 
 	
 	private void flushCv_languages(  )
@@ -5953,6 +7410,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( cv_languagesStmt != null )
 			cv_languagesStmt.close();
 	}	
+
+	/**
+	 * Cv_languages
+	 * @param id Identificador nico del Idioma
+	 * @param language Idioma
+	 * @param spoken Nivel oral del Idioma
+	 * @param wrote Nivel escrito del Idioma
+	 * @param read_level Nivel ledo del Idioma
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @throws SQLException
+	*/
+	protected void insertCv_languages(Integer id, Short language, Short spoken, Short wrote, Short read_level, Integer curriculum)
+	throws SQLException {
+
+		Cv_languages cv_languages_ = new Cv_languages();
+		cv_languages_.id = id;
+		cv_languages_.language = language;
+		cv_languages_.spoken = spoken;
+		cv_languages_.wrote = wrote;
+		cv_languages_.read_level = read_level;
+		cv_languages_.curriculum = curriculum;
+
+		cv_languagess.add(cv_languages_);
+		
+		int cv_languagesCount = cv_languagess.size();
+		
+		if ( 32 * cv_languagesCount >=  this.maxAllowedPacket ){
+			insertCv_languages(cv_languagess);
+			cv_languagess.clear();
+		} 
+	}
+
 
 	/**
 	 * Cv_languages
@@ -5986,6 +7475,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int offer_detail_commissionStmtSize = 0;
 
@@ -6087,8 +7577,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextOffer_detail_commissionId() {
+		public int nextOffer_detail_commissionId() {
 			return ++this.offer_detail_commissionId;
+		} 
+
+		public void setOffer_detail_commissionId(Integer offer_detail_commissionId) {
+			this.offer_detail_commissionId = offer_detail_commissionId;
 		} 
 	
 	private void flushOffer_detail_commission(  )
@@ -6098,6 +7592,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( offer_detail_commissionStmt != null )
 			offer_detail_commissionStmt.close();
 	}	
+
+	/**
+	 * Offer_detail_commission
+	 * @param id Identificador unico
+	 * @param offer_detail Identificador de la Linea de Presupuesto
+	 * @param commission Porcentaje de Comision
+	 * @param amount Importe de la Comision
+	 * @param status Estado de la Comision
+	 * @param pay_date Fecha de liquidacion
+	 * @throws SQLException
+	*/
+	protected void insertOffer_detail_commission(Integer id, Integer offer_detail, Double commission, Double amount, Short status, Date pay_date)
+	throws SQLException {
+
+		Offer_detail_commission offer_detail_commission_ = new Offer_detail_commission();
+		offer_detail_commission_.id = id;
+		offer_detail_commission_.offer_detail = offer_detail;
+		offer_detail_commission_.commission = commission;
+		offer_detail_commission_.amount = amount;
+		offer_detail_commission_.status = status;
+		offer_detail_commission_.pay_date = pay_date;
+
+		offer_detail_commissions.add(offer_detail_commission_);
+		
+		int offer_detail_commissionCount = offer_detail_commissions.size();
+		
+		if ( 77 * offer_detail_commissionCount >=  this.maxAllowedPacket ){
+			insertOffer_detail_commission(offer_detail_commissions);
+			offer_detail_commissions.clear();
+		} 
+	}
+
 
 	/**
 	 * Offer_detail_commission
@@ -6131,6 +7657,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int favorite_categoryStmtSize = 0;
 
@@ -6217,8 +7744,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFavorite_categoryId() {
+		public int nextFavorite_categoryId() {
 			return ++this.favorite_categoryId;
+		} 
+
+		public void setFavorite_categoryId(Integer favorite_categoryId) {
+			this.favorite_categoryId = favorite_categoryId;
 		} 
 	
 	private void flushFavorite_category(  )
@@ -6228,6 +7759,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( favorite_categoryStmt != null )
 			favorite_categoryStmt.close();
 	}	
+
+	/**
+	 * Favorite_category
+	 * @param id Identificador unico
+	 * @param description Descripcion de la Categoria
+	 * @param user_id Usuario al que pertenece la Categoria
+	 * @throws SQLException
+	*/
+	protected void insertFavorite_category(Integer id, String description, Integer user_id)
+	throws SQLException {
+
+		Favorite_category favorite_category_ = new Favorite_category();
+		favorite_category_.id = id;
+		favorite_category_.description = description;
+		favorite_category_.user_id = user_id;
+
+		favorite_categorys.add(favorite_category_);
+		
+		int favorite_categoryCount = favorite_categorys.size();
+		
+		if ( 84 * favorite_categoryCount >=  this.maxAllowedPacket ){
+			insertFavorite_category(favorite_categorys);
+			favorite_categorys.clear();
+		} 
+	}
+
 
 	/**
 	 * Favorite_category
@@ -6256,6 +7813,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int balance_detailStmtSize = 0;
 
 	private int balance_detailInserted = 0;
@@ -6270,7 +7828,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer balance; 
 		private String code; 
 		private String description; 
-		private InputStream accounts; 
+		private String accounts; 
 		private Integer sortKey; 
 		private Boolean title; 
 		private Boolean internal_calculation; 
@@ -6324,7 +7882,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( balance_detail.accounts == null )
 				balance_detailStmt.setNull(offset++, -1);
 			else
-				balance_detailStmt.setAsciiStream(offset++, balance_detail.accounts);
+				balance_detailStmt.setString(offset++, balance_detail.accounts);
 			if ( balance_detail.sortKey == null )
 				balance_detailStmt.setNull(offset++, 4);
 			else
@@ -6381,8 +7939,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextBalance_detailId() {
+		public int nextBalance_detailId() {
 			return ++this.balance_detailId;
+		} 
+
+		public void setBalance_detailId(Integer balance_detailId) {
+			this.balance_detailId = balance_detailId;
 		} 
 	
 	private void flushBalance_detail(  )
@@ -6392,6 +7954,49 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( balance_detailStmt != null )
 			balance_detailStmt.close();
 	}	
+
+	/**
+	 * Balance_detail
+	 * @param id Identificador unico
+	 * @param balance Identificador del Balance
+	 * @param code Codigo del Detalle en el Balance
+	 * @param description Descripcin del detalle de balance
+	 * @param accounts Cuentas separadas por comas, que forman el acumulado.
+	 * @param sortKey Orden el que aparecera en el listado.
+	 * @param title 
+	 * @param internal_calculation Indica si es un calculo interno, es decir si el contenido
+                de accounts son referencias a la columna -code- de esta tabla
+	 * @param visible Si aparece o no en la impresion.
+	 * @param zeroFlag Flag que se activa cuando la cuenta o cuentas tienen valor 0.
+	 * @param creditNature Si es verdadero se hace una haber menos debe de las cuentas indicadas
+	 * @throws SQLException
+	*/
+	protected void insertBalance_detail(Integer id, Integer balance, String code, String description, String accounts, Integer sortKey, Boolean title, Boolean internal_calculation, Boolean visible, Boolean zeroFlag, Boolean creditNature)
+	throws SQLException {
+
+		Balance_detail balance_detail_ = new Balance_detail();
+		balance_detail_.id = id;
+		balance_detail_.balance = balance;
+		balance_detail_.code = code;
+		balance_detail_.description = description;
+		balance_detail_.accounts = accounts;
+		balance_detail_.sortKey = sortKey;
+		balance_detail_.title = title;
+		balance_detail_.internal_calculation = internal_calculation;
+		balance_detail_.visible = visible;
+		balance_detail_.zeroFlag = zeroFlag;
+		balance_detail_.creditNature = creditNature;
+
+		balance_details.add(balance_detail_);
+		
+		int balance_detailCount = balance_details.size();
+		
+		if ( 174 * balance_detailCount >=  this.maxAllowedPacket ){
+			insertBalance_detail(balance_details);
+			balance_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Balance_detail
@@ -6409,7 +8014,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBalance_detail(Integer balance, String code, String description, InputStream accounts, Integer sortKey, Boolean title, Boolean internal_calculation, Boolean visible, Boolean zeroFlag, Boolean creditNature)
+	protected int insertBalance_detail(Integer balance, String code, String description, String accounts, Integer sortKey, Boolean title, Boolean internal_calculation, Boolean visible, Boolean zeroFlag, Boolean creditNature)
 	throws SQLException {
 		int id = nextBalance_detailId();
 
@@ -6436,6 +8041,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int invoice_tax_accountStmtSize = 0;
 
@@ -6522,8 +8128,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInvoice_tax_accountId() {
+		public int nextInvoice_tax_accountId() {
 			return ++this.invoice_tax_accountId;
+		} 
+
+		public void setInvoice_tax_accountId(Integer invoice_tax_accountId) {
+			this.invoice_tax_accountId = invoice_tax_accountId;
 		} 
 	
 	private void flushInvoice_tax_account(  )
@@ -6533,6 +8143,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( invoice_tax_accountStmt != null )
 			invoice_tax_accountStmt.close();
 	}	
+
+	/**
+	 * Invoice_tax_account
+	 * @param id Identificador unico
+	 * @param invoice_tax Identificador de la Linea de Impuesto
+	 * @param account Identificador de la Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertInvoice_tax_account(Integer id, Integer invoice_tax, String account)
+	throws SQLException {
+
+		Invoice_tax_account invoice_tax_account_ = new Invoice_tax_account();
+		invoice_tax_account_.id = id;
+		invoice_tax_account_.invoice_tax = invoice_tax;
+		invoice_tax_account_.account = account;
+
+		invoice_tax_accounts.add(invoice_tax_account_);
+		
+		int invoice_tax_accountCount = invoice_tax_accounts.size();
+		
+		if ( 32 * invoice_tax_accountCount >=  this.maxAllowedPacket ){
+			insertInvoice_tax_account(invoice_tax_accounts);
+			invoice_tax_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Invoice_tax_account
@@ -6560,6 +8196,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int product_accountStmtSize = 0;
 
@@ -6651,8 +8288,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextProduct_accountId() {
+		public int nextProduct_accountId() {
 			return ++this.product_accountId;
+		} 
+
+		public void setProduct_accountId(Integer product_accountId) {
+			this.product_accountId = product_accountId;
 		} 
 	
 	private void flushProduct_account(  )
@@ -6662,6 +8303,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( product_accountStmt != null )
 			product_accountStmt.close();
 	}	
+
+	/**
+	 * Product_account
+	 * @param id Identificador unico de la Cuenta Contable del Producto
+	 * @param product Identificador del Producto
+	 * @param account Identificador de la Cuenta Contable
+	 * @param type Tipo de Cuenta Contable del Producto
+	 * @throws SQLException
+	*/
+	protected void insertProduct_account(Integer id, Integer product, String account, Short type)
+	throws SQLException {
+
+		Product_account product_account_ = new Product_account();
+		product_account_.id = id;
+		product_account_.product = product;
+		product_account_.account = account;
+		product_account_.type = type;
+
+		product_accounts.add(product_account_);
+		
+		int product_accountCount = product_accounts.size();
+		
+		if ( 35 * product_accountCount >=  this.maxAllowedPacket ){
+			insertProduct_account(product_accounts);
+			product_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Product_account
@@ -6691,6 +8360,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int pcategory_treeStmtSize = 0;
 
@@ -6777,8 +8447,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPcategory_treeId() {
+		public int nextPcategory_treeId() {
 			return ++this.pcategory_treeId;
+		} 
+
+		public void setPcategory_treeId(Integer pcategory_treeId) {
+			this.pcategory_treeId = pcategory_treeId;
 		} 
 	
 	private void flushPcategory_tree(  )
@@ -6788,6 +8462,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( pcategory_treeStmt != null )
 			pcategory_treeStmt.close();
 	}	
+
+	/**
+	 * Pcategory_tree
+	 * @param id Identificador unico del Nodo del Arbol de Categorias
+	 * @param parent Identificador de la Categoria padre
+	 * @param child Identificador de la Categoria hijo
+	 * @throws SQLException
+	*/
+	protected void insertPcategory_tree(Integer id, Integer parent, Integer child)
+	throws SQLException {
+
+		Pcategory_tree pcategory_tree_ = new Pcategory_tree();
+		pcategory_tree_.id = id;
+		pcategory_tree_.parent = parent;
+		pcategory_tree_.child = child;
+
+		pcategory_trees.add(pcategory_tree_);
+		
+		int pcategory_treeCount = pcategory_trees.size();
+		
+		if ( 30 * pcategory_treeCount >=  this.maxAllowedPacket ){
+			insertPcategory_tree(pcategory_trees);
+			pcategory_trees.clear();
+		} 
+	}
+
 
 	/**
 	 * Pcategory_tree
@@ -6815,6 +8515,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_entry_detailStmtSize = 0;
 
@@ -6931,8 +8632,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_entry_detailId() {
+		public int nextAccount_entry_detailId() {
 			return ++this.account_entry_detailId;
+		} 
+
+		public void setAccount_entry_detailId(Integer account_entry_detailId) {
+			this.account_entry_detailId = account_entry_detailId;
 		} 
 	
 	private void flushAccount_entry_detail(  )
@@ -6942,6 +8647,44 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_entry_detailStmt != null )
 			account_entry_detailStmt.close();
 	}	
+
+	/**
+	 * Account_entry_detail
+	 * @param id Identificador unico del Apunte
+	 * @param account_entry Identificador del Asiento
+	 * @param line Numero de linea del Apunte dentro del Asiento
+	 * @param account Cuenta Contable del Apunte
+	 * @param concept Concepto del Apunte
+	 * @param balancing_account Contrapartida del Apunte
+	 * @param debit Debe del Apunte
+	 * @param credit Haber del Apunte
+	 * @param document_number Numero de documento asociado
+	 * @throws SQLException
+	*/
+	protected void insertAccount_entry_detail(Integer id, Integer account_entry, Integer line, String account, String concept, String balancing_account, Double debit, Double credit, String document_number)
+	throws SQLException {
+
+		Account_entry_detail account_entry_detail_ = new Account_entry_detail();
+		account_entry_detail_.id = id;
+		account_entry_detail_.account_entry = account_entry;
+		account_entry_detail_.line = line;
+		account_entry_detail_.account = account;
+		account_entry_detail_.concept = concept;
+		account_entry_detail_.balancing_account = balancing_account;
+		account_entry_detail_.debit = debit;
+		account_entry_detail_.credit = credit;
+		account_entry_detail_.document_number = document_number;
+
+		account_entry_details.add(account_entry_detail_);
+		
+		int account_entry_detailCount = account_entry_details.size();
+		
+		if ( 162 * account_entry_detailCount >=  this.maxAllowedPacket ){
+			insertAccount_entry_detail(account_entry_details);
+			account_entry_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_entry_detail
@@ -6981,6 +8724,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int tariff_catalogueStmtSize = 0;
 
@@ -7067,8 +8811,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTariff_catalogueId() {
+		public int nextTariff_catalogueId() {
 			return ++this.tariff_catalogueId;
+		} 
+
+		public void setTariff_catalogueId(Integer tariff_catalogueId) {
+			this.tariff_catalogueId = tariff_catalogueId;
 		} 
 	
 	private void flushTariff_catalogue(  )
@@ -7078,6 +8826,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( tariff_catalogueStmt != null )
 			tariff_catalogueStmt.close();
 	}	
+
+	/**
+	 * Tariff_catalogue
+	 * @param id Identificador unico
+	 * @param tariff Identificador de la Tarifa
+	 * @param catalogue Identificador del Catalogo
+	 * @throws SQLException
+	*/
+	protected void insertTariff_catalogue(Integer id, Integer tariff, Integer catalogue)
+	throws SQLException {
+
+		Tariff_catalogue tariff_catalogue_ = new Tariff_catalogue();
+		tariff_catalogue_.id = id;
+		tariff_catalogue_.tariff = tariff;
+		tariff_catalogue_.catalogue = catalogue;
+
+		tariff_catalogues.add(tariff_catalogue_);
+		
+		int tariff_catalogueCount = tariff_catalogues.size();
+		
+		if ( 30 * tariff_catalogueCount >=  this.maxAllowedPacket ){
+			insertTariff_catalogue(tariff_catalogues);
+			tariff_catalogues.clear();
+		} 
+	}
+
 
 	/**
 	 * Tariff_catalogue
@@ -7105,6 +8879,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int supplier_segmentStmtSize = 0;
 
@@ -7186,8 +8961,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSupplier_segmentId() {
+		public int nextSupplier_segmentId() {
 			return ++this.supplier_segmentId;
+		} 
+
+		public void setSupplier_segmentId(Integer supplier_segmentId) {
+			this.supplier_segmentId = supplier_segmentId;
 		} 
 	
 	private void flushSupplier_segment(  )
@@ -7197,6 +8976,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( supplier_segmentStmt != null )
 			supplier_segmentStmt.close();
 	}	
+
+	/**
+	 * Supplier_segment
+	 * @param id Identificador unico del Segmento
+	 * @param description Descripcion del Segmento
+	 * @throws SQLException
+	*/
+	protected void insertSupplier_segment(Integer id, String description)
+	throws SQLException {
+
+		Supplier_segment supplier_segment_ = new Supplier_segment();
+		supplier_segment_.id = id;
+		supplier_segment_.description = description;
+
+		supplier_segments.add(supplier_segment_);
+		
+		int supplier_segmentCount = supplier_segments.size();
+		
+		if ( 74 * supplier_segmentCount >=  this.maxAllowedPacket ){
+			insertSupplier_segment(supplier_segments);
+			supplier_segments.clear();
+		} 
+	}
+
 
 	/**
 	 * Supplier_segment
@@ -7222,6 +9025,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int amortization_detailStmtSize = 0;
 
@@ -7338,8 +9142,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAmortization_detailId() {
+		public int nextAmortization_detailId() {
 			return ++this.amortization_detailId;
+		} 
+
+		public void setAmortization_detailId(Integer amortization_detailId) {
+			this.amortization_detailId = amortization_detailId;
 		} 
 	
 	private void flushAmortization_detail(  )
@@ -7349,6 +9157,44 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( amortization_detailStmt != null )
 			amortization_detailStmt.close();
 	}	
+
+	/**
+	 * Amortization_detail
+	 * @param id Identificador unico
+	 * @param amortization Ficha de Amortizacion
+	 * @param from_date Desde fecha
+	 * @param to_date Hasta fecha
+	 * @param coefficient Coeficiente de Amortizacion
+	 * @param allocation Dotacion de la Amortizacion
+	 * @param status Estatus del Detalle de Amortizacion
+	 * @param account_entry Posicion del Apunte Contable
+	 * @param fiscal_allocation Dotacion fiscal
+	 * @throws SQLException
+	*/
+	protected void insertAmortization_detail(Integer id, Integer amortization, Date from_date, Date to_date, Double coefficient, Double allocation, Short status, Integer account_entry, Double fiscal_allocation)
+	throws SQLException {
+
+		Amortization_detail amortization_detail_ = new Amortization_detail();
+		amortization_detail_.id = id;
+		amortization_detail_.amortization = amortization;
+		amortization_detail_.from_date = from_date;
+		amortization_detail_.to_date = to_date;
+		amortization_detail_.coefficient = coefficient;
+		amortization_detail_.allocation = allocation;
+		amortization_detail_.status = status;
+		amortization_detail_.account_entry = account_entry;
+		amortization_detail_.fiscal_allocation = fiscal_allocation;
+
+		amortization_details.add(amortization_detail_);
+		
+		int amortization_detailCount = amortization_details.size();
+		
+		if ( 98 * amortization_detailCount >=  this.maxAllowedPacket ){
+			insertAmortization_detail(amortization_details);
+			amortization_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Amortization_detail
@@ -7389,6 +9235,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int noticeStmtSize = 0;
 
 	private int noticeInserted = 0;
@@ -7407,7 +9254,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private String source; 
 		private String company; 
 		private String phone; 
-		private InputStream subject; 
+		private String subject; 
 		private Short status; 
 		private Short type; 
 		private Short priority; 
@@ -7474,7 +9321,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( notice.subject == null )
 				noticeStmt.setNull(offset++, -1);
 			else
-				noticeStmt.setAsciiStream(offset++, notice.subject);
+				noticeStmt.setString(offset++, notice.subject);
 			if ( notice.status == null )
 				noticeStmt.setNull(offset++, -6);
 			else
@@ -7519,8 +9366,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextNoticeId() {
+		public int nextNoticeId() {
 			return ++this.noticeId;
+		} 
+
+		public void setNoticeId(Integer noticeId) {
+			this.noticeId = noticeId;
 		} 
 	
 	private void flushNotice(  )
@@ -7530,6 +9381,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( noticeStmt != null )
 			noticeStmt.close();
 	}	
+
+	/**
+	 * Notice
+	 * @param id Identificador unico del Aviso
+	 * @param date Fecha y hora en la que se produjo el Aviso
+	 * @param sender Remitente del Aviso
+	 * @param work_group Grupo de Trabajo al que va dirigida el Aviso
+	 * @param recipient Destinatario del Aviso
+	 * @param source Origen del Aviso
+	 * @param company Empresa para la que trabaja el origen del Aviso
+	 * @param phone Telefono para contactar con el origen del Aviso
+	 * @param subject Asunto del Aviso
+	 * @param status Estado del Aviso
+	 * @param type Tipo de Aviso
+	 * @param priority Prioridad del Aviso
+	 * @throws SQLException
+	*/
+	protected void insertNotice(Integer id, Timestamp date, Integer sender, Integer work_group, Integer recipient, String source, String company, String phone, String subject, Short status, Short type, Short priority)
+	throws SQLException {
+
+		Notice notice_ = new Notice();
+		notice_.id = id;
+		notice_.date = date;
+		notice_.sender = sender;
+		notice_.work_group = work_group;
+		notice_.recipient = recipient;
+		notice_.source = source;
+		notice_.company = company;
+		notice_.phone = phone;
+		notice_.subject = subject;
+		notice_.status = status;
+		notice_.type = type;
+		notice_.priority = priority;
+
+		notices.add(notice_);
+		
+		int noticeCount = notices.size();
+		
+		if ( 212 * noticeCount >=  this.maxAllowedPacket ){
+			insertNotice(notices);
+			notices.clear();
+		} 
+	}
+
 
 	/**
 	 * Notice
@@ -7547,7 +9442,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertNotice(Timestamp date, Integer sender, Integer work_group, Integer recipient, String source, String company, String phone, InputStream subject, Short status, Short type, Short priority)
+	protected int insertNotice(Timestamp date, Integer sender, Integer work_group, Integer recipient, String source, String company, String phone, String subject, Short status, Short type, Short priority)
 	throws SQLException {
 		int id = nextNoticeId();
 
@@ -7575,6 +9470,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int production_detailStmtSize = 0;
 
@@ -7681,8 +9577,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextProduction_detailId() {
+		public int nextProduction_detailId() {
 			return ++this.production_detailId;
+		} 
+
+		public void setProduction_detailId(Integer production_detailId) {
+			this.production_detailId = production_detailId;
 		} 
 	
 	private void flushProduction_detail(  )
@@ -7692,6 +9592,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( production_detailStmt != null )
 			production_detailStmt.close();
 	}	
+
+	/**
+	 * Production_detail
+	 * @param id Identificador unico del Detalle de la Produccion
+	 * @param production Identificador de la Produccion
+	 * @param item Identificador del Articulo subproducto
+	 * @param description Descripcion del Articulo subproducto
+	 * @param initial_quantity Cantidad inicial del Articulo subproducto en la Composicion
+	 * @param quantity Cantidad del Articulo subproducto
+	 * @param price Precio del Articulo subproducto
+	 * @throws SQLException
+	*/
+	protected void insertProduction_detail(Integer id, Integer production, Integer item, String description, Double initial_quantity, Double quantity, Double price)
+	throws SQLException {
+
+		Production_detail production_detail_ = new Production_detail();
+		production_detail_.id = id;
+		production_detail_.production = production;
+		production_detail_.item = item;
+		production_detail_.description = description;
+		production_detail_.initial_quantity = initial_quantity;
+		production_detail_.quantity = quantity;
+		production_detail_.price = price;
+
+		production_details.add(production_detail_);
+		
+		int production_detailCount = production_details.size();
+		
+		if ( 127 * production_detailCount >=  this.maxAllowedPacket ){
+			insertProduction_detail(production_details);
+			production_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Production_detail
@@ -7727,6 +9661,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int amortization_typeStmtSize = 0;
 
@@ -7828,8 +9763,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAmortization_typeId() {
+		public int nextAmortization_typeId() {
 			return ++this.amortization_typeId;
+		} 
+
+		public void setAmortization_typeId(Integer amortization_typeId) {
+			this.amortization_typeId = amortization_typeId;
 		} 
 	
 	private void flushAmortization_type(  )
@@ -7839,6 +9778,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( amortization_typeStmt != null )
 			amortization_typeStmt.close();
 	}	
+
+	/**
+	 * Amortization_type
+	 * @param id Identificador unico
+	 * @param fixed_asset_account Cuenta de inmovilizado
+	 * @param accumulated_account Cuenta de amortizacion acumulada
+	 * @param allocation_account Cuenta para la dotacion de la amortizacion
+	 * @param percentage Porcentaje de amortizacion
+	 * @param description Descripcion del Tipo de Amortizacion
+	 * @throws SQLException
+	*/
+	protected void insertAmortization_type(Integer id, String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, String description)
+	throws SQLException {
+
+		Amortization_type amortization_type_ = new Amortization_type();
+		amortization_type_.id = id;
+		amortization_type_.fixed_asset_account = fixed_asset_account;
+		amortization_type_.accumulated_account = accumulated_account;
+		amortization_type_.allocation_account = allocation_account;
+		amortization_type_.percentage = percentage;
+		amortization_type_.description = description;
+
+		amortization_types.add(amortization_type_);
+		
+		int amortization_typeCount = amortization_types.size();
+		
+		if ( 132 * amortization_typeCount >=  this.maxAllowedPacket ){
+			insertAmortization_type(amortization_types);
+			amortization_types.clear();
+		} 
+	}
+
 
 	/**
 	 * Amortization_type
@@ -7872,6 +9843,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int delivery_detailStmtSize = 0;
 
@@ -8003,8 +9975,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextDelivery_detailId() {
+		public int nextDelivery_detailId() {
 			return ++this.delivery_detailId;
+		} 
+
+		public void setDelivery_detailId(Integer delivery_detailId) {
+			this.delivery_detailId = delivery_detailId;
 		} 
 	
 	private void flushDelivery_detail(  )
@@ -8014,6 +9990,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( delivery_detailStmt != null )
 			delivery_detailStmt.close();
 	}	
+
+	/**
+	 * Delivery_detail
+	 * @param id Identificador unico del Detalle del Albaran de Venta
+	 * @param delivery Identificador del Albaran de Venta
+	 * @param line Numero de linea del Detalle dentro del Albaran
+	 * @param item Identificador del Articulo del Detalle de Albaran
+	 * @param description Descripcion del Detalle de Albaran
+	 * @param warehouse Identificador del Almacen
+	 * @param quantity Cantidad del Detalle de Albaran
+	 * @param price Precio del Detalle de Albaran
+	 * @param discount_expr Descuentos del Detalle de Albaran
+	 * @param type Tipo de Detalle de Albaran
+	 * @param source Origen del Detalle de Albaran
+	 * @param sales_detail Identificador del Detalle del Pedido de Venta asociado
+	 * @throws SQLException
+	*/
+	protected void insertDelivery_detail(Integer id, Integer delivery, Integer line, Integer item, String description, Integer warehouse, Double quantity, Double price, String discount_expr, Short type, Short source, Integer sales_detail)
+	throws SQLException {
+
+		Delivery_detail delivery_detail_ = new Delivery_detail();
+		delivery_detail_.id = id;
+		delivery_detail_.delivery = delivery;
+		delivery_detail_.line = line;
+		delivery_detail_.item = item;
+		delivery_detail_.description = description;
+		delivery_detail_.warehouse = warehouse;
+		delivery_detail_.quantity = quantity;
+		delivery_detail_.price = price;
+		delivery_detail_.discount_expr = discount_expr;
+		delivery_detail_.type = type;
+		delivery_detail_.source = source;
+		delivery_detail_.sales_detail = sales_detail;
+
+		delivery_details.add(delivery_detail_);
+		
+		int delivery_detailCount = delivery_details.size();
+		
+		if ( 1147 * delivery_detailCount >=  this.maxAllowedPacket ){
+			insertDelivery_detail(delivery_details);
+			delivery_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Delivery_detail
@@ -8059,6 +10079,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int catalogueStmtSize = 0;
 
@@ -8150,8 +10171,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCatalogueId() {
+		public int nextCatalogueId() {
 			return ++this.catalogueId;
+		} 
+
+		public void setCatalogueId(Integer catalogueId) {
+			this.catalogueId = catalogueId;
 		} 
 	
 	private void flushCatalogue(  )
@@ -8161,6 +10186,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( catalogueStmt != null )
 			catalogueStmt.close();
 	}	
+
+	/**
+	 * Catalogue
+	 * @param id Identificador unico
+	 * @param name Nombre del Catalogo
+	 * @param start_date Fecha de inicio del Catalogo
+	 * @param end_date Fecha de fin del Catalogo
+	 * @throws SQLException
+	*/
+	protected void insertCatalogue(Integer id, String name, Date start_date, Date end_date)
+	throws SQLException {
+
+		Catalogue catalogue_ = new Catalogue();
+		catalogue_.id = id;
+		catalogue_.name = name;
+		catalogue_.start_date = start_date;
+		catalogue_.end_date = end_date;
+
+		catalogues.add(catalogue_);
+		
+		int catalogueCount = catalogues.size();
+		
+		if ( 62 * catalogueCount >=  this.maxAllowedPacket ){
+			insertCatalogue(catalogues);
+			catalogues.clear();
+		} 
+	}
+
 
 	/**
 	 * Catalogue
@@ -8190,6 +10243,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int action_entryStmtSize = 0;
 
@@ -8281,8 +10335,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAction_entryId() {
+		public int nextAction_entryId() {
 			return ++this.action_entryId;
+		} 
+
+		public void setAction_entryId(Integer action_entryId) {
+			this.action_entryId = action_entryId;
 		} 
 	
 	private void flushAction_entry(  )
@@ -8292,6 +10350,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( action_entryStmt != null )
 			action_entryStmt.close();
 	}	
+
+	/**
+	 * Action_entry
+	 * @param id Identificador unico
+	 * @param executionDate Fecha de ejecucion
+	 * @param action_id Identificador de la Accion
+	 * @param session_id Identificador de la Sesion
+	 * @throws SQLException
+	*/
+	protected void insertAction_entry(Integer id, Timestamp executionDate, Integer action_id, Integer session_id)
+	throws SQLException {
+
+		Action_entry action_entry_ = new Action_entry();
+		action_entry_.id = id;
+		action_entry_.executionDate = executionDate;
+		action_entry_.action_id = action_id;
+		action_entry_.session_id = session_id;
+
+		action_entrys.add(action_entry_);
+		
+		int action_entryCount = action_entrys.size();
+		
+		if ( 49 * action_entryCount >=  this.maxAllowedPacket ){
+			insertAction_entry(action_entrys);
+			action_entrys.clear();
+		} 
+	}
+
 
 	/**
 	 * Action_entry
@@ -8322,6 +10408,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int absenceStmtSize = 0;
 
 	private int absenceInserted = 0;
@@ -8335,7 +10422,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer id; 
 		private Integer course_alumn; 
 		private Date absence_date; 
-		private InputStream comments; 
+		private String comments; 
 		private Short evaluation; 
 	}
 	
@@ -8380,7 +10467,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( absence.comments == null )
 				absenceStmt.setNull(offset++, -1);
 			else
-				absenceStmt.setAsciiStream(offset++, absence.comments);
+				absenceStmt.setString(offset++, absence.comments);
 			if ( absence.evaluation == null )
 				absenceStmt.setNull(offset++, -6);
 			else
@@ -8417,8 +10504,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAbsenceId() {
+		public int nextAbsenceId() {
 			return ++this.absenceId;
+		} 
+
+		public void setAbsenceId(Integer absenceId) {
+			this.absenceId = absenceId;
 		} 
 	
 	private void flushAbsence(  )
@@ -8431,6 +10522,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Absence
+	 * @param id Identificador unico
+	 * @param course_alumn Identificador del CursoAlumno
+	 * @param absence_date Fecha de la Ausencia
+	 * @param comments Comentarios de la Ausencia
+	 * @param evaluation Numero de Evaluacion en que se produjo la Ausencia
+	 * @throws SQLException
+	*/
+	protected void insertAbsence(Integer id, Integer course_alumn, Date absence_date, String comments, Short evaluation)
+	throws SQLException {
+
+		Absence absence_ = new Absence();
+		absence_.id = id;
+		absence_.course_alumn = course_alumn;
+		absence_.absence_date = absence_date;
+		absence_.comments = comments;
+		absence_.evaluation = evaluation;
+
+		absences.add(absence_);
+		
+		int absenceCount = absences.size();
+		
+		if ( 33 * absenceCount >=  this.maxAllowedPacket ){
+			insertAbsence(absences);
+			absences.clear();
+		} 
+	}
+
+
+	/**
+	 * Absence
 	 * @param course_alumn Identificador del CursoAlumno
 	 * @param absence_date Fecha de la Ausencia
 	 * @param comments Comentarios de la Ausencia
@@ -8438,7 +10559,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAbsence(Integer course_alumn, Date absence_date, InputStream comments, Short evaluation)
+	protected int insertAbsence(Integer course_alumn, Date absence_date, String comments, Short evaluation)
 	throws SQLException {
 		int id = nextAbsenceId();
 
@@ -8459,6 +10580,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int item_tariffStmtSize = 0;
 
@@ -8550,8 +10672,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextItem_tariffId() {
+		public int nextItem_tariffId() {
 			return ++this.item_tariffId;
+		} 
+
+		public void setItem_tariffId(Integer item_tariffId) {
+			this.item_tariffId = item_tariffId;
 		} 
 	
 	private void flushItem_tariff(  )
@@ -8561,6 +10687,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( item_tariffStmt != null )
 			item_tariffStmt.close();
 	}	
+
+	/**
+	 * Item_tariff
+	 * @param id Identificador unico de la Tarifa del Articulo
+	 * @param item Identificador de Articulo
+	 * @param tariff Identificador de Tarifa
+	 * @param percentage Porcentaje de descuento sobre el precio del Articulo
+	 * @throws SQLException
+	*/
+	protected void insertItem_tariff(Integer id, Integer item, Integer tariff, Double percentage)
+	throws SQLException {
+
+		Item_tariff item_tariff_ = new Item_tariff();
+		item_tariff_.id = id;
+		item_tariff_.item = item;
+		item_tariff_.tariff = tariff;
+		item_tariff_.percentage = percentage;
+
+		item_tariffs.add(item_tariff_);
+		
+		int item_tariffCount = item_tariffs.size();
+		
+		if ( 36 * item_tariffCount >=  this.maxAllowedPacket ){
+			insertItem_tariff(item_tariffs);
+			item_tariffs.clear();
+		} 
+	}
+
 
 	/**
 	 * Item_tariff
@@ -8590,6 +10744,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_entry_fbatchStmtSize = 0;
 
@@ -8676,8 +10831,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_entry_fbatchId() {
+		public int nextAccount_entry_fbatchId() {
 			return ++this.account_entry_fbatchId;
+		} 
+
+		public void setAccount_entry_fbatchId(Integer account_entry_fbatchId) {
+			this.account_entry_fbatchId = account_entry_fbatchId;
 		} 
 	
 	private void flushAccount_entry_fbatch(  )
@@ -8687,6 +10846,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_entry_fbatchStmt != null )
 			account_entry_fbatchStmt.close();
 	}	
+
+	/**
+	 * Account_entry_fbatch
+	 * @param id Identificador unico
+	 * @param account_entry Identificador de Asiento Contable
+	 * @param fbatch Identificador de Remesa
+	 * @throws SQLException
+	*/
+	protected void insertAccount_entry_fbatch(Integer id, Integer account_entry, Integer fbatch)
+	throws SQLException {
+
+		Account_entry_fbatch account_entry_fbatch_ = new Account_entry_fbatch();
+		account_entry_fbatch_.id = id;
+		account_entry_fbatch_.account_entry = account_entry;
+		account_entry_fbatch_.fbatch = fbatch;
+
+		account_entry_fbatchs.add(account_entry_fbatch_);
+		
+		int account_entry_fbatchCount = account_entry_fbatchs.size();
+		
+		if ( 30 * account_entry_fbatchCount >=  this.maxAllowedPacket ){
+			insertAccount_entry_fbatch(account_entry_fbatchs);
+			account_entry_fbatchs.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_entry_fbatch
@@ -8714,6 +10899,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int sellerStmtSize = 0;
 
@@ -8811,6 +10997,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int offer_attachStmtSize = 0;
 
 	private int offer_attachInserted = 0;
@@ -8906,8 +11094,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextOffer_attachId() {
+		public int nextOffer_attachId() {
 			return ++this.offer_attachId;
+		} 
+
+		public void setOffer_attachId(Integer offer_attachId) {
+			this.offer_attachId = offer_attachId;
 		} 
 	
 	private void flushOffer_attach(  )
@@ -8917,6 +11109,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( offer_attachStmt != null )
 			offer_attachStmt.close();
 	}	
+
+	/**
+	 * Offer_attach
+	 * @param id Identificador unico
+	 * @param offer Identificador del Presupuesto
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @throws SQLException
+	*/
+	protected void insertOffer_attach(Integer id, Integer offer, Short mimeType, String description, InputStream data)
+	throws SQLException {
+
+		Offer_attach offer_attach_ = new Offer_attach();
+		offer_attach_.id = id;
+		offer_attach_.offer = offer;
+		offer_attach_.mimeType = mimeType;
+		offer_attach_.description = description;
+		offer_attach_.data = data;
+
+		offer_attachs.add(offer_attach_);
+		
+		int offer_attachCount = offer_attachs.size();
+		
+		if ( 87 * offer_attachCount >=  this.maxAllowedPacket ){
+			insertOffer_attach(offer_attachs);
+			offer_attachs.clear();
+		} 
+	}
+
 
 	/**
 	 * Offer_attach
@@ -8949,6 +11171,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int process_detailStmtSize = 0;
 
 	private int process_detailInserted = 0;
@@ -8969,7 +11192,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer workgroup; 
 		private Short priority; 
 		private Short status; 
-		private InputStream comments; 
+		private String comments; 
 	}
 	
 	private void insertProcess_detail( List<Process_detail> process_details )
@@ -9041,7 +11264,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( process_detail.comments == null )
 				process_detailStmt.setNull(offset++, -1);
 			else
-				process_detailStmt.setAsciiStream(offset++, process_detail.comments);
+				process_detailStmt.setString(offset++, process_detail.comments);
 		}
 		process_detailStmt.executeUpdate();
 		process_detailInserted += size;
@@ -9074,8 +11297,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextProcess_detailId() {
+		public int nextProcess_detailId() {
 			return ++this.process_detailId;
+		} 
+
+		public void setProcess_detailId(Integer process_detailId) {
+			this.process_detailId = process_detailId;
 		} 
 	
 	private void flushProcess_detail(  )
@@ -9085,6 +11312,48 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( process_detailStmt != null )
 			process_detailStmt.close();
 	}	
+
+	/**
+	 * Process_detail
+	 * @param id Identificador unico del Detalle de Proceso
+	 * @param process Identificador del Proceso
+	 * @param description Descripcion del Detalle de Proceso
+	 * @param position Orden de ejecucion del Detalle dentro del Proceso
+	 * @param date_reference Referencia para el calculo de la fecha de vencimiento de la Tarea
+	 * @param days Numero de dias asociado a la referencia para el calculo de la fecha de vencimiento de la Tarea
+	 * @param alert_days Numero de dias, previos a la fecha de vencimiento de la Tarea, para el calculo de la fecha de generacion de la Alarma
+	 * @param workgroup Identificador del Grupo de Trabajo
+	 * @param priority Prioridad de la Tarea
+	 * @param status Estado de la Accion
+	 * @param comments Comentarios del Detalle de Proceso
+	 * @throws SQLException
+	*/
+	protected void insertProcess_detail(Integer id, Integer process, String description, Integer position, Short date_reference, Integer days, Integer alert_days, Integer workgroup, Short priority, Short status, String comments)
+	throws SQLException {
+
+		Process_detail process_detail_ = new Process_detail();
+		process_detail_.id = id;
+		process_detail_.process = process;
+		process_detail_.description = description;
+		process_detail_.position = position;
+		process_detail_.date_reference = date_reference;
+		process_detail_.days = days;
+		process_detail_.alert_days = alert_days;
+		process_detail_.workgroup = workgroup;
+		process_detail_.priority = priority;
+		process_detail_.status = status;
+		process_detail_.comments = comments;
+
+		process_details.add(process_detail_);
+		
+		int process_detailCount = process_details.size();
+		
+		if ( 133 * process_detailCount >=  this.maxAllowedPacket ){
+			insertProcess_detail(process_details);
+			process_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Process_detail
@@ -9101,7 +11370,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProcess_detail(Integer process, String description, Integer position, Short date_reference, Integer days, Integer alert_days, Integer workgroup, Short priority, Short status, InputStream comments)
+	protected int insertProcess_detail(Integer process, String description, Integer position, Short date_reference, Integer days, Integer alert_days, Integer workgroup, Short priority, Short status, String comments)
 	throws SQLException {
 		int id = nextProcess_detailId();
 
@@ -9128,6 +11397,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int relationshipStmtSize = 0;
 
@@ -9209,8 +11479,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRelationshipId() {
+		public int nextRelationshipId() {
 			return ++this.relationshipId;
+		} 
+
+		public void setRelationshipId(Integer relationshipId) {
+			this.relationshipId = relationshipId;
 		} 
 	
 	private void flushRelationship(  )
@@ -9220,6 +11494,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( relationshipStmt != null )
 			relationshipStmt.close();
 	}	
+
+	/**
+	 * Relationship
+	 * @param id Identificador unico del Tipo de Relacion
+	 * @param description Descripcion del Tipo de Relacion
+	 * @throws SQLException
+	*/
+	protected void insertRelationship(Integer id, String description)
+	throws SQLException {
+
+		Relationship relationship_ = new Relationship();
+		relationship_.id = id;
+		relationship_.description = description;
+
+		relationships.add(relationship_);
+		
+		int relationshipCount = relationships.size();
+		
+		if ( 42 * relationshipCount >=  this.maxAllowedPacket ){
+			insertRelationship(relationships);
+			relationships.clear();
+		} 
+	}
+
 
 	/**
 	 * Relationship
@@ -9245,6 +11543,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_budget_detailStmtSize = 0;
 
@@ -9356,8 +11655,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_budget_detailId() {
+		public int nextAccount_budget_detailId() {
 			return ++this.account_budget_detailId;
+		} 
+
+		public void setAccount_budget_detailId(Integer account_budget_detailId) {
+			this.account_budget_detailId = account_budget_detailId;
 		} 
 	
 	private void flushAccount_budget_detail(  )
@@ -9367,6 +11670,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_budget_detailStmt != null )
 			account_budget_detailStmt.close();
 	}	
+
+	/**
+	 * Account_budget_detail
+	 * @param id Identificador unico
+	 * @param account_budget Identificador del Presupuesto
+	 * @param account_period Ejercicio Contable del Presupuesto
+	 * @param account Cuenta Contable del Presupuesto
+	 * @param security_level Nivel de seguridad del Presupuesto
+	 * @param entry_date Fecha del Presupuesto
+	 * @param debit Debe del Presupuesto
+	 * @param credit Haber del Presupuesto
+	 * @throws SQLException
+	*/
+	protected void insertAccount_budget_detail(Integer id, Integer account_budget, String account_period, String account, Short security_level, Date entry_date, Double debit, Double credit)
+	throws SQLException {
+
+		Account_budget_detail account_budget_detail_ = new Account_budget_detail();
+		account_budget_detail_.id = id;
+		account_budget_detail_.account_budget = account_budget;
+		account_budget_detail_.account_period = account_period;
+		account_budget_detail_.account = account;
+		account_budget_detail_.security_level = security_level;
+		account_budget_detail_.entry_date = entry_date;
+		account_budget_detail_.debit = debit;
+		account_budget_detail_.credit = credit;
+
+		account_budget_details.add(account_budget_detail_);
+		
+		int account_budget_detailCount = account_budget_details.size();
+		
+		if ( 93 * account_budget_detailCount >=  this.maxAllowedPacket ){
+			insertAccount_budget_detail(account_budget_details);
+			account_budget_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_budget_detail
@@ -9404,6 +11743,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_entry_invoiceStmtSize = 0;
 
@@ -9490,8 +11830,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_entry_invoiceId() {
+		public int nextAccount_entry_invoiceId() {
 			return ++this.account_entry_invoiceId;
+		} 
+
+		public void setAccount_entry_invoiceId(Integer account_entry_invoiceId) {
+			this.account_entry_invoiceId = account_entry_invoiceId;
 		} 
 	
 	private void flushAccount_entry_invoice(  )
@@ -9501,6 +11845,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_entry_invoiceStmt != null )
 			account_entry_invoiceStmt.close();
 	}	
+
+	/**
+	 * Account_entry_invoice
+	 * @param id Identificador unico de Relacion
+	 * @param account_entry Identificador de Asiento
+	 * @param invoice Identificador de Factura
+	 * @throws SQLException
+	*/
+	protected void insertAccount_entry_invoice(Integer id, Integer account_entry, Integer invoice)
+	throws SQLException {
+
+		Account_entry_invoice account_entry_invoice_ = new Account_entry_invoice();
+		account_entry_invoice_.id = id;
+		account_entry_invoice_.account_entry = account_entry;
+		account_entry_invoice_.invoice = invoice;
+
+		account_entry_invoices.add(account_entry_invoice_);
+		
+		int account_entry_invoiceCount = account_entry_invoices.size();
+		
+		if ( 30 * account_entry_invoiceCount >=  this.maxAllowedPacket ){
+			insertAccount_entry_invoice(account_entry_invoices);
+			account_entry_invoices.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_entry_invoice
@@ -9528,6 +11898,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int tax_accountStmtSize = 0;
 
@@ -9619,8 +11990,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTax_accountId() {
+		public int nextTax_accountId() {
 			return ++this.tax_accountId;
+		} 
+
+		public void setTax_accountId(Integer tax_accountId) {
+			this.tax_accountId = tax_accountId;
 		} 
 	
 	private void flushTax_account(  )
@@ -9630,6 +12005,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( tax_accountStmt != null )
 			tax_accountStmt.close();
 	}	
+
+	/**
+	 * Tax_account
+	 * @param id Identificador unico de la Cuenta Contable del Impuesto
+	 * @param tax Identificador del Impuesto
+	 * @param account Identificador de la Cuenta Contable
+	 * @param type Tipo de Cuenta Contable del Impuesto
+	 * @throws SQLException
+	*/
+	protected void insertTax_account(Integer id, Integer tax, String account, Short type)
+	throws SQLException {
+
+		Tax_account tax_account_ = new Tax_account();
+		tax_account_.id = id;
+		tax_account_.tax = tax;
+		tax_account_.account = account;
+		tax_account_.type = type;
+
+		tax_accounts.add(tax_account_);
+		
+		int tax_accountCount = tax_accounts.size();
+		
+		if ( 35 * tax_accountCount >=  this.maxAllowedPacket ){
+			insertTax_account(tax_accounts);
+			tax_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Tax_account
@@ -9659,6 +12062,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int expenseStmtSize = 0;
 
@@ -9745,8 +12149,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextExpenseId() {
+		public int nextExpenseId() {
 			return ++this.expenseId;
+		} 
+
+		public void setExpenseId(Integer expenseId) {
+			this.expenseId = expenseId;
 		} 
 	
 	private void flushExpense(  )
@@ -9756,6 +12164,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( expenseStmt != null )
 			expenseStmt.close();
 	}	
+
+	/**
+	 * Expense
+	 * @param id Identificador unico
+	 * @param description Descripcion del Gasto
+	 * @param unit_price Precio unitario
+	 * @throws SQLException
+	*/
+	protected void insertExpense(Integer id, String description, Double unit_price)
+	throws SQLException {
+
+		Expense expense_ = new Expense();
+		expense_.id = id;
+		expense_.description = description;
+		expense_.unit_price = unit_price;
+
+		expenses.add(expense_);
+		
+		int expenseCount = expenses.size();
+		
+		if ( 89 * expenseCount >=  this.maxAllowedPacket ){
+			insertExpense(expenses);
+			expenses.clear();
+		} 
+	}
+
 
 	/**
 	 * Expense
@@ -9783,6 +12217,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int inventoryStmtSize = 0;
 
@@ -9874,8 +12309,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInventoryId() {
+		public int nextInventoryId() {
 			return ++this.inventoryId;
+		} 
+
+		public void setInventoryId(Integer inventoryId) {
+			this.inventoryId = inventoryId;
 		} 
 	
 	private void flushInventory(  )
@@ -9885,6 +12324,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( inventoryStmt != null )
 			inventoryStmt.close();
 	}	
+
+	/**
+	 * Inventory
+	 * @param id Identificador unico del Inventario
+	 * @param inventory_date Fecha de Inventario
+	 * @param warehouse Almacen Inventariado
+	 * @param description Descripcion del Inventario
+	 * @throws SQLException
+	*/
+	protected void insertInventory(Integer id, Date inventory_date, Integer warehouse, String description)
+	throws SQLException {
+
+		Inventory inventory_ = new Inventory();
+		inventory_.id = id;
+		inventory_.inventory_date = inventory_date;
+		inventory_.warehouse = warehouse;
+		inventory_.description = description;
+
+		inventorys.add(inventory_);
+		
+		int inventoryCount = inventorys.size();
+		
+		if ( 94 * inventoryCount >=  this.maxAllowedPacket ){
+			insertInventory(inventorys);
+			inventorys.clear();
+		} 
+	}
+
 
 	/**
 	 * Inventory
@@ -9915,6 +12382,189 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
+	private int contract_contextStmtSize = 0;
+
+	private int contract_contextInserted = 0;
+
+	private List<Contract_context> contract_contexts = 
+		new LinkedList<Contract_context>();
+
+	private PreparedStatement contract_contextStmt = null;
+
+	private static class Contract_context {
+		private Integer id; 
+		private String name; 
+		private Integer contract; 
+		private String expression; 
+		private Date start_date; 
+		private Date end_date; 
+	}
+	
+	private void insertContract_context( List<Contract_context> contract_contexts )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contract_contexts.size();
+		if ( contract_contextStmtSize != size ) {
+			if ( contract_contextStmt != null ) {
+				contract_contextStmt.close();
+			}
+			String values = "(?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contract_contextStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contract_context (id,name,contract,expression,start_date,end_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contract_contextStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contract_context contract_context : contract_contexts) {
+			if ( contract_context.id == null )
+				contract_contextStmt.setNull(offset++, 4);
+			else
+				contract_contextStmt.setInt(offset++, contract_context.id);
+			if ( contract_context.name == null )
+				contract_contextStmt.setNull(offset++, 12);
+			else
+				contract_contextStmt.setString(offset++, contract_context.name);
+			if ( contract_context.contract == null )
+				contract_contextStmt.setNull(offset++, 4);
+			else
+				contract_contextStmt.setInt(offset++, contract_context.contract);
+			if ( contract_context.expression == null )
+				contract_contextStmt.setNull(offset++, 12);
+			else
+				contract_contextStmt.setString(offset++, contract_context.expression);
+			if ( contract_context.start_date == null )
+				contract_contextStmt.setNull(offset++, 91);
+			else
+				contract_contextStmt.setDate(offset++, contract_context.start_date);
+			if ( contract_context.end_date == null )
+				contract_contextStmt.setNull(offset++, 91);
+			else
+				contract_contextStmt.setDate(offset++, contract_context.end_date);
+		}
+		contract_contextStmt.executeUpdate();
+		contract_contextInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contract_contexts in {} milliseconds.", size, contract_contextInserted, elapsed );		
+	}
+		
+		private int contract_contextId = -1;
+		
+		private void initContract_contextId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contract_context`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contract_contextId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContract_contextId() {
+			return ++this.contract_contextId;
+		} 
+
+		public void setContract_contextId(Integer contract_contextId) {
+			this.contract_contextId = contract_contextId;
+		} 
+	
+	private void flushContract_context(  )
+	throws SQLException {
+		if ( ! contract_contexts.isEmpty() )
+			insertContract_context(contract_contexts);
+		if ( contract_contextStmt != null )
+			contract_contextStmt.close();
+	}	
+
+	/**
+	 * Contract_context
+	 * @param id Identificador unico
+	 * @param name Nombre
+	 * @param contract Contrato
+	 * @param expression Expresion
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @throws SQLException
+	*/
+	protected void insertContract_context(Integer id, String name, Integer contract, String expression, Date start_date, Date end_date)
+	throws SQLException {
+
+		Contract_context contract_context_ = new Contract_context();
+		contract_context_.id = id;
+		contract_context_.name = name;
+		contract_context_.contract = contract;
+		contract_context_.expression = expression;
+		contract_context_.start_date = start_date;
+		contract_context_.end_date = end_date;
+
+		contract_contexts.add(contract_context_);
+		
+		int contract_contextCount = contract_contexts.size();
+		
+		if ( 184 * contract_contextCount >=  this.maxAllowedPacket ){
+			insertContract_context(contract_contexts);
+			contract_contexts.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract_context
+	 * @param name Nombre
+	 * @param contract Contrato
+	 * @param expression Expresion
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertContract_context(String name, Integer contract, String expression, Date start_date, Date end_date)
+	throws SQLException {
+		int id = nextContract_contextId();
+
+		Contract_context contract_context_ = new Contract_context();
+		contract_context_.id = id;
+		contract_context_.name = name;
+		contract_context_.contract = contract;
+		contract_context_.expression = expression;
+		contract_context_.start_date = start_date;
+		contract_context_.end_date = end_date;
+
+		contract_contexts.add(contract_context_);
+		
+		int contract_contextCount = contract_contexts.size();
+		
+		if ( 184 * contract_contextCount >=  this.maxAllowedPacket ){
+			insertContract_context(contract_contexts);
+			contract_contexts.clear();
+		} 
+		return id;
+	}
+
+
 	private int commercial_termStmtSize = 0;
 
 	private int commercial_termInserted = 0;
@@ -9928,7 +12578,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer id; 
 		private Integer line; 
 		private String name; 
-		private InputStream description; 
+		private String description; 
 		private Boolean term_general; 
 	}
 	
@@ -9973,7 +12623,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( commercial_term.description == null )
 				commercial_termStmt.setNull(offset++, -1);
 			else
-				commercial_termStmt.setAsciiStream(offset++, commercial_term.description);
+				commercial_termStmt.setString(offset++, commercial_term.description);
 			if ( commercial_term.term_general == null )
 				commercial_termStmt.setNull(offset++, -7);
 			else
@@ -10010,8 +12660,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCommercial_termId() {
+		public int nextCommercial_termId() {
 			return ++this.commercial_termId;
+		} 
+
+		public void setCommercial_termId(Integer commercial_termId) {
+			this.commercial_termId = commercial_termId;
 		} 
 	
 	private void flushCommercial_term(  )
@@ -10024,6 +12678,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Commercial_term
+	 * @param id Identificador unico
+	 * @param line Numero de linea de Condicion
+	 * @param name Nombre de la Condicion Comercial
+	 * @param description Descripcion de la Condicion Comercial
+	 * @param term_general Indica si la Condicin es particular o general
+	 * @throws SQLException
+	*/
+	protected void insertCommercial_term(Integer id, Integer line, String name, String description, Boolean term_general)
+	throws SQLException {
+
+		Commercial_term commercial_term_ = new Commercial_term();
+		commercial_term_.id = id;
+		commercial_term_.line = line;
+		commercial_term_.name = name;
+		commercial_term_.description = description;
+		commercial_term_.term_general = term_general;
+
+		commercial_terms.add(commercial_term_);
+		
+		int commercial_termCount = commercial_terms.size();
+		
+		if ( 79 * commercial_termCount >=  this.maxAllowedPacket ){
+			insertCommercial_term(commercial_terms);
+			commercial_terms.clear();
+		} 
+	}
+
+
+	/**
+	 * Commercial_term
 	 * @param line Numero de linea de Condicion
 	 * @param name Nombre de la Condicion Comercial
 	 * @param description Descripcion de la Condicion Comercial
@@ -10031,7 +12715,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCommercial_term(Integer line, String name, InputStream description, Boolean term_general)
+	protected int insertCommercial_term(Integer line, String name, String description, Boolean term_general)
 	throws SQLException {
 		int id = nextCommercial_termId();
 
@@ -10052,6 +12736,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int production_expenseStmtSize = 0;
 
@@ -10148,8 +12833,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextProduction_expenseId() {
+		public int nextProduction_expenseId() {
 			return ++this.production_expenseId;
+		} 
+
+		public void setProduction_expenseId(Integer production_expenseId) {
+			this.production_expenseId = production_expenseId;
 		} 
 	
 	private void flushProduction_expense(  )
@@ -10159,6 +12848,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( production_expenseStmt != null )
 			production_expenseStmt.close();
 	}	
+
+	/**
+	 * Production_expense
+	 * @param id Identificador unico del Gasto de la Produccion
+	 * @param production Identificador de la Produccion
+	 * @param description Descripcion del Gasto
+	 * @param quantity Cantidad del Gasto
+	 * @param price Precio del Gasto
+	 * @throws SQLException
+	*/
+	protected void insertProduction_expense(Integer id, Integer production, String description, Double quantity, Double price)
+	throws SQLException {
+
+		Production_expense production_expense_ = new Production_expense();
+		production_expense_.id = id;
+		production_expense_.production = production;
+		production_expense_.description = description;
+		production_expense_.quantity = quantity;
+		production_expense_.price = price;
+
+		production_expenses.add(production_expense_);
+		
+		int production_expenseCount = production_expenses.size();
+		
+		if ( 106 * production_expenseCount >=  this.maxAllowedPacket ){
+			insertProduction_expense(production_expenses);
+			production_expenses.clear();
+		} 
+	}
+
 
 	/**
 	 * Production_expense
@@ -10190,6 +12909,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int commercial_activityStmtSize = 0;
 
@@ -10271,8 +12991,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCommercial_activityId() {
+		public int nextCommercial_activityId() {
 			return ++this.commercial_activityId;
+		} 
+
+		public void setCommercial_activityId(Integer commercial_activityId) {
+			this.commercial_activityId = commercial_activityId;
 		} 
 	
 	private void flushCommercial_activity(  )
@@ -10282,6 +13006,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( commercial_activityStmt != null )
 			commercial_activityStmt.close();
 	}	
+
+	/**
+	 * Commercial_activity
+	 * @param id Identificador unico
+	 * @param name Nombre de la Actividad Comercial
+	 * @throws SQLException
+	*/
+	protected void insertCommercial_activity(Integer id, String name)
+	throws SQLException {
+
+		Commercial_activity commercial_activity_ = new Commercial_activity();
+		commercial_activity_.id = id;
+		commercial_activity_.name = name;
+
+		commercial_activitys.add(commercial_activity_);
+		
+		int commercial_activityCount = commercial_activitys.size();
+		
+		if ( 42 * commercial_activityCount >=  this.maxAllowedPacket ){
+			insertCommercial_activity(commercial_activitys);
+			commercial_activitys.clear();
+		} 
+	}
+
 
 	/**
 	 * Commercial_activity
@@ -10308,6 +13056,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int offer_termStmtSize = 0;
 
 	private int offer_termInserted = 0;
@@ -10322,7 +13071,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer offer; 
 		private Integer line; 
 		private String name; 
-		private InputStream description; 
+		private String description; 
 		private Boolean term_general; 
 	}
 	
@@ -10371,7 +13120,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( offer_term.description == null )
 				offer_termStmt.setNull(offset++, -1);
 			else
-				offer_termStmt.setAsciiStream(offset++, offer_term.description);
+				offer_termStmt.setString(offset++, offer_term.description);
 			if ( offer_term.term_general == null )
 				offer_termStmt.setNull(offset++, -7);
 			else
@@ -10408,8 +13157,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextOffer_termId() {
+		public int nextOffer_termId() {
 			return ++this.offer_termId;
+		} 
+
+		public void setOffer_termId(Integer offer_termId) {
+			this.offer_termId = offer_termId;
 		} 
 	
 	private void flushOffer_term(  )
@@ -10422,6 +13175,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Offer_term
+	 * @param id Identificador unico
+	 * @param offer Identificador del Presupuesto
+	 * @param line Numero de linea de la Condicion del Presupuesto
+	 * @param name Nombre de la Condicion Comercial
+	 * @param description Descripcion de la Condicion Comercial
+	 * @param term_general Indica si la Condicion es particular o general
+	 * @throws SQLException
+	*/
+	protected void insertOffer_term(Integer id, Integer offer, Integer line, String name, String description, Boolean term_general)
+	throws SQLException {
+
+		Offer_term offer_term_ = new Offer_term();
+		offer_term_.id = id;
+		offer_term_.offer = offer;
+		offer_term_.line = line;
+		offer_term_.name = name;
+		offer_term_.description = description;
+		offer_term_.term_general = term_general;
+
+		offer_terms.add(offer_term_);
+		
+		int offer_termCount = offer_terms.size();
+		
+		if ( 89 * offer_termCount >=  this.maxAllowedPacket ){
+			insertOffer_term(offer_terms);
+			offer_terms.clear();
+		} 
+	}
+
+
+	/**
+	 * Offer_term
 	 * @param offer Identificador del Presupuesto
 	 * @param line Numero de linea de la Condicion del Presupuesto
 	 * @param name Nombre de la Condicion Comercial
@@ -10430,7 +13215,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertOffer_term(Integer offer, Integer line, String name, InputStream description, Boolean term_general)
+	protected int insertOffer_term(Integer offer, Integer line, String name, String description, Boolean term_general)
 	throws SQLException {
 		int id = nextOffer_termId();
 
@@ -10452,6 +13237,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int rsegmentStmtSize = 0;
 
@@ -10538,8 +13324,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRsegmentId() {
+		public int nextRsegmentId() {
 			return ++this.rsegmentId;
+		} 
+
+		public void setRsegmentId(Integer rsegmentId) {
+			this.rsegmentId = rsegmentId;
 		} 
 	
 	private void flushRsegment(  )
@@ -10549,6 +13339,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( rsegmentStmt != null )
 			rsegmentStmt.close();
 	}	
+
+	/**
+	 * Rsegment
+	 * @param id Identificador unico
+	 * @param registry Identificador de Persona o Empresa
+	 * @param segment Identificador del Segmento
+	 * @throws SQLException
+	*/
+	protected void insertRsegment(Integer id, Integer registry, Integer segment)
+	throws SQLException {
+
+		Rsegment rsegment_ = new Rsegment();
+		rsegment_.id = id;
+		rsegment_.registry = registry;
+		rsegment_.segment = segment;
+
+		rsegments.add(rsegment_);
+		
+		int rsegmentCount = rsegments.size();
+		
+		if ( 30 * rsegmentCount >=  this.maxAllowedPacket ){
+			insertRsegment(rsegments);
+			rsegments.clear();
+		} 
+	}
+
 
 	/**
 	 * Rsegment
@@ -10576,6 +13392,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int delivery_detail_labourStmtSize = 0;
 
@@ -10667,8 +13484,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextDelivery_detail_labourId() {
+		public int nextDelivery_detail_labourId() {
 			return ++this.delivery_detail_labourId;
+		} 
+
+		public void setDelivery_detail_labourId(Integer delivery_detail_labourId) {
+			this.delivery_detail_labourId = delivery_detail_labourId;
 		} 
 	
 	private void flushDelivery_detail_labour(  )
@@ -10678,6 +13499,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( delivery_detail_labourStmt != null )
 			delivery_detail_labourStmt.close();
 	}	
+
+	/**
+	 * Delivery_detail_labour
+	 * @param id Identificador unico
+	 * @param delivery_detail Identificador de la Linea de Albaran
+	 * @param employee Identificador del Empleado
+	 * @param quantity Numero de horas de mano de obra
+	 * @throws SQLException
+	*/
+	protected void insertDelivery_detail_labour(Integer id, Integer delivery_detail, Integer employee, Double quantity)
+	throws SQLException {
+
+		Delivery_detail_labour delivery_detail_labour_ = new Delivery_detail_labour();
+		delivery_detail_labour_.id = id;
+		delivery_detail_labour_.delivery_detail = delivery_detail;
+		delivery_detail_labour_.employee = employee;
+		delivery_detail_labour_.quantity = quantity;
+
+		delivery_detail_labours.add(delivery_detail_labour_);
+		
+		int delivery_detail_labourCount = delivery_detail_labours.size();
+		
+		if ( 45 * delivery_detail_labourCount >=  this.maxAllowedPacket ){
+			insertDelivery_detail_labour(delivery_detail_labours);
+			delivery_detail_labours.clear();
+		} 
+	}
+
 
 	/**
 	 * Delivery_detail_labour
@@ -10707,6 +13556,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int process_transition_typeStmtSize = 0;
 
@@ -10788,8 +13638,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextProcess_transition_typeId() {
+		public int nextProcess_transition_typeId() {
 			return ++this.process_transition_typeId;
+		} 
+
+		public void setProcess_transition_typeId(Integer process_transition_typeId) {
+			this.process_transition_typeId = process_transition_typeId;
 		} 
 	
 	private void flushProcess_transition_type(  )
@@ -10799,6 +13653,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( process_transition_typeStmt != null )
 			process_transition_typeStmt.close();
 	}	
+
+	/**
+	 * Process_transition_type
+	 * @param id Identificador unico
+	 * @param description Descripcion del Tipo de Transicion
+	 * @throws SQLException
+	*/
+	protected void insertProcess_transition_type(Integer id, String description)
+	throws SQLException {
+
+		Process_transition_type process_transition_type_ = new Process_transition_type();
+		process_transition_type_.id = id;
+		process_transition_type_.description = description;
+
+		process_transition_types.add(process_transition_type_);
+		
+		int process_transition_typeCount = process_transition_types.size();
+		
+		if ( 74 * process_transition_typeCount >=  this.maxAllowedPacket ){
+			insertProcess_transition_type(process_transition_types);
+			process_transition_types.clear();
+		} 
+	}
+
 
 	/**
 	 * Process_transition_type
@@ -10824,6 +13702,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int deduction_conceptStmtSize = 0;
 
@@ -10915,8 +13794,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextDeduction_conceptId() {
+		public int nextDeduction_conceptId() {
 			return ++this.deduction_conceptId;
+		} 
+
+		public void setDeduction_conceptId(Integer deduction_conceptId) {
+			this.deduction_conceptId = deduction_conceptId;
 		} 
 	
 	private void flushDeduction_concept(  )
@@ -10926,6 +13809,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( deduction_conceptStmt != null )
 			deduction_conceptStmt.close();
 	}	
+
+	/**
+	 * Deduction_concept
+	 * @param id Identificador unico
+	 * @param code Codigo
+	 * @param description Descripcion
+	 * @param type Tipo de Deduccion Salarial
+	 * @throws SQLException
+	*/
+	protected void insertDeduction_concept(Integer id, String code, String description, Short type)
+	throws SQLException {
+
+		Deduction_concept deduction_concept_ = new Deduction_concept();
+		deduction_concept_.id = id;
+		deduction_concept_.code = code;
+		deduction_concept_.description = description;
+		deduction_concept_.type = type;
+
+		deduction_concepts.add(deduction_concept_);
+		
+		int deduction_conceptCount = deduction_concepts.size();
+		
+		if ( 82 * deduction_conceptCount >=  this.maxAllowedPacket ){
+			insertDeduction_concept(deduction_concepts);
+			deduction_concepts.clear();
+		} 
+	}
+
 
 	/**
 	 * Deduction_concept
@@ -10955,6 +13866,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int leasing_accountStmtSize = 0;
 
@@ -11041,8 +13953,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextLeasing_accountId() {
+		public int nextLeasing_accountId() {
 			return ++this.leasing_accountId;
+		} 
+
+		public void setLeasing_accountId(Integer leasing_accountId) {
+			this.leasing_accountId = leasing_accountId;
 		} 
 	
 	private void flushLeasing_account(  )
@@ -11052,6 +13968,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( leasing_accountStmt != null )
 			leasing_accountStmt.close();
 	}	
+
+	/**
+	 * Leasing_account
+	 * @param id Identificador Unico
+	 * @param leasing Leasing
+	 * @param account Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertLeasing_account(Integer id, Integer leasing, String account)
+	throws SQLException {
+
+		Leasing_account leasing_account_ = new Leasing_account();
+		leasing_account_.id = id;
+		leasing_account_.leasing = leasing;
+		leasing_account_.account = account;
+
+		leasing_accounts.add(leasing_account_);
+		
+		int leasing_accountCount = leasing_accounts.size();
+		
+		if ( 32 * leasing_accountCount >=  this.maxAllowedPacket ){
+			insertLeasing_account(leasing_accounts);
+			leasing_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Leasing_account
@@ -11079,6 +14021,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int contract_batchStmtSize = 0;
 
@@ -11180,8 +14123,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextContract_batchId() {
+		public int nextContract_batchId() {
 			return ++this.contract_batchId;
+		} 
+
+		public void setContract_batchId(Integer contract_batchId) {
+			this.contract_batchId = contract_batchId;
 		} 
 	
 	private void flushContract_batch(  )
@@ -11191,6 +14138,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( contract_batchStmt != null )
 			contract_batchStmt.close();
 	}	
+
+	/**
+	 * Contract_batch
+	 * @param id Identificador unico de la remesa de contratos
+	 * @param date Fecha de la ultima remesa en la que fue incluido
+	 * @param red_notify_date Fecha de notificacion al sistema red
+	 * @param red_notify_id Identificador de la notificacion
+	 * @param red_response_date Fecha de respuesta del sistema red
+	 * @param red_response_id Identificador de la respuesta
+	 * @throws SQLException
+	*/
+	protected void insertContract_batch(Integer id, Date date, Date red_notify_date, Date red_notify_id, Date red_response_date, Date red_response_id)
+	throws SQLException {
+
+		Contract_batch contract_batch_ = new Contract_batch();
+		contract_batch_.id = id;
+		contract_batch_.date = date;
+		contract_batch_.red_notify_date = red_notify_date;
+		contract_batch_.red_notify_id = red_notify_id;
+		contract_batch_.red_response_date = red_response_date;
+		contract_batch_.red_response_id = red_response_id;
+
+		contract_batchs.add(contract_batch_);
+		
+		int contract_batchCount = contract_batchs.size();
+		
+		if ( 60 * contract_batchCount >=  this.maxAllowedPacket ){
+			insertContract_batch(contract_batchs);
+			contract_batchs.clear();
+		} 
+	}
+
 
 	/**
 	 * Contract_batch
@@ -11224,6 +14203,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int cv_knowledgeStmtSize = 0;
 
@@ -11325,8 +14305,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCv_knowledgeId() {
+		public int nextCv_knowledgeId() {
 			return ++this.cv_knowledgeId;
+		} 
+
+		public void setCv_knowledgeId(Integer cv_knowledgeId) {
+			this.cv_knowledgeId = cv_knowledgeId;
 		} 
 	
 	private void flushCv_knowledge(  )
@@ -11336,6 +14320,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( cv_knowledgeStmt != null )
 			cv_knowledgeStmt.close();
 	}	
+
+	/**
+	 * Cv_knowledge
+	 * @param id Identificador unico del Conocimiento
+	 * @param name Nombre o descripcion del Conocimiento
+	 * @param level Nivel del Conocimiento
+	 * @param experience Experiencia en el Conocimiento
+	 * @param lastuse Ultimo uso del Conocimiento
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @throws SQLException
+	*/
+	protected void insertCv_knowledge(Integer id, String name, Short level, Short experience, Short lastuse, Integer curriculum)
+	throws SQLException {
+
+		Cv_knowledge cv_knowledge_ = new Cv_knowledge();
+		cv_knowledge_.id = id;
+		cv_knowledge_.name = name;
+		cv_knowledge_.level = level;
+		cv_knowledge_.experience = experience;
+		cv_knowledge_.lastuse = lastuse;
+		cv_knowledge_.curriculum = curriculum;
+
+		cv_knowledges.add(cv_knowledge_);
+		
+		int cv_knowledgeCount = cv_knowledges.size();
+		
+		if ( 93 * cv_knowledgeCount >=  this.maxAllowedPacket ){
+			insertCv_knowledge(cv_knowledges);
+			cv_knowledges.clear();
+		} 
+	}
+
 
 	/**
 	 * Cv_knowledge
@@ -11369,6 +14385,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int quality_skillStmtSize = 0;
 
@@ -11455,8 +14472,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextQuality_skillId() {
+		public int nextQuality_skillId() {
 			return ++this.quality_skillId;
+		} 
+
+		public void setQuality_skillId(Integer quality_skillId) {
+			this.quality_skillId = quality_skillId;
 		} 
 	
 	private void flushQuality_skill(  )
@@ -11466,6 +14487,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( quality_skillStmt != null )
 			quality_skillStmt.close();
 	}	
+
+	/**
+	 * Quality_skill
+	 * @param id Identificador unico de la Aptitud Calidad
+	 * @param code Codigo de la Aptitud Calidad
+	 * @param description Descripcion de la Aptitud Calidad
+	 * @throws SQLException
+	*/
+	protected void insertQuality_skill(Integer id, String code, String description)
+	throws SQLException {
+
+		Quality_skill quality_skill_ = new Quality_skill();
+		quality_skill_.id = id;
+		quality_skill_.code = code;
+		quality_skill_.description = description;
+
+		quality_skills.add(quality_skill_);
+		
+		int quality_skillCount = quality_skills.size();
+		
+		if ( 79 * quality_skillCount >=  this.maxAllowedPacket ){
+			insertQuality_skill(quality_skills);
+			quality_skills.clear();
+		} 
+	}
+
 
 	/**
 	 * Quality_skill
@@ -11493,6 +14540,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int ec_targetStmtSize = 0;
 
@@ -11594,8 +14642,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEc_targetId() {
+		public int nextEc_targetId() {
 			return ++this.ec_targetId;
+		} 
+
+		public void setEc_targetId(Integer ec_targetId) {
+			this.ec_targetId = ec_targetId;
 		} 
 	
 	private void flushEc_target(  )
@@ -11605,6 +14657,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( ec_targetStmt != null )
 			ec_targetStmt.close();
 	}	
+
+	/**
+	 * Ec_target
+	 * @param id Identificador unico
+	 * @param target Identificador del Cliente Potencial
+	 * @param login Login del Cliente Potencial
+	 * @param password Password del Cliente Potencial
+	 * @param type Tipo de conexion
+	 * @param last_access Ultima fecha de conexion
+	 * @throws SQLException
+	*/
+	protected void insertEc_target(Integer id, Integer target, String login, String password, Short type, Date last_access)
+	throws SQLException {
+
+		Ec_target ec_target_ = new Ec_target();
+		ec_target_.id = id;
+		ec_target_.target = target;
+		ec_target_.login = login;
+		ec_target_.password = password;
+		ec_target_.type = type;
+		ec_target_.last_access = last_access;
+
+		ec_targets.add(ec_target_);
+		
+		int ec_targetCount = ec_targets.size();
+		
+		if ( 113 * ec_targetCount >=  this.maxAllowedPacket ){
+			insertEc_target(ec_targets);
+			ec_targets.clear();
+		} 
+	}
+
 
 	/**
 	 * Ec_target
@@ -11638,6 +14722,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int balanceStmtSize = 0;
 
@@ -11729,8 +14814,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextBalanceId() {
+		public int nextBalanceId() {
 			return ++this.balanceId;
+		} 
+
+		public void setBalanceId(Integer balanceId) {
+			this.balanceId = balanceId;
 		} 
 	
 	private void flushBalance(  )
@@ -11740,6 +14829,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( balanceStmt != null )
 			balanceStmt.close();
 	}	
+
+	/**
+	 * Balance
+	 * @param id Identificador unico
+	 * @param name Nombre del Balance
+	 * @param removable Indica se puede ser borrado por el usuario
+	 * @param type Tipo de Balance
+	 * @throws SQLException
+	*/
+	protected void insertBalance(Integer id, String name, Boolean removable, Short type)
+	throws SQLException {
+
+		Balance balance_ = new Balance();
+		balance_.id = id;
+		balance_.name = name;
+		balance_.removable = removable;
+		balance_.type = type;
+
+		balances.add(balance_);
+		
+		int balanceCount = balances.size();
+		
+		if ( 77 * balanceCount >=  this.maxAllowedPacket ){
+			insertBalance(balances);
+			balances.clear();
+		} 
+	}
+
 
 	/**
 	 * Balance
@@ -11769,6 +14886,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int qualificationStmtSize = 0;
 
@@ -11865,8 +14983,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextQualificationId() {
+		public int nextQualificationId() {
 			return ++this.qualificationId;
+		} 
+
+		public void setQualificationId(Integer qualificationId) {
+			this.qualificationId = qualificationId;
 		} 
 	
 	private void flushQualification(  )
@@ -11876,6 +14998,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( qualificationStmt != null )
 			qualificationStmt.close();
 	}	
+
+	/**
+	 * Qualification
+	 * @param id Identificador unico de la Calificacion
+	 * @param code Codigo de la Calificacion
+	 * @param description Descripcion de la Calificacion
+	 * @param min_value Limite inferior de la Calificacion
+	 * @param max_value Limite superior de la Calificacion
+	 * @throws SQLException
+	*/
+	protected void insertQualification(Integer id, String code, String description, Double min_value, Double max_value)
+	throws SQLException {
+
+		Qualification qualification_ = new Qualification();
+		qualification_.id = id;
+		qualification_.code = code;
+		qualification_.description = description;
+		qualification_.min_value = min_value;
+		qualification_.max_value = max_value;
+
+		qualifications.add(qualification_);
+		
+		int qualificationCount = qualifications.size();
+		
+		if ( 109 * qualificationCount >=  this.maxAllowedPacket ){
+			insertQualification(qualifications);
+			qualifications.clear();
+		} 
+	}
+
 
 	/**
 	 * Qualification
@@ -11907,6 +15059,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int tax_detailStmtSize = 0;
 
@@ -12008,8 +15161,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTax_detailId() {
+		public int nextTax_detailId() {
 			return ++this.tax_detailId;
+		} 
+
+		public void setTax_detailId(Integer tax_detailId) {
+			this.tax_detailId = tax_detailId;
 		} 
 	
 	private void flushTax_detail(  )
@@ -12019,6 +15176,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( tax_detailStmt != null )
 			tax_detailStmt.close();
 	}	
+
+	/**
+	 * Tax_detail
+	 * @param id Identificador unico del Historico de Impuestos
+	 * @param tax Identificador del Impuesto
+	 * @param start_date Fecha de inicio de vigencia
+	 * @param end_date Fecha de fin de vigencia
+	 * @param value Porcentaje de recargo
+	 * @param surcharge Porcentaje de recargo de equivalencia
+	 * @throws SQLException
+	*/
+	protected void insertTax_detail(Integer id, Integer tax, Date start_date, Date end_date, Double value, Double surcharge)
+	throws SQLException {
+
+		Tax_detail tax_detail_ = new Tax_detail();
+		tax_detail_.id = id;
+		tax_detail_.tax = tax;
+		tax_detail_.start_date = start_date;
+		tax_detail_.end_date = end_date;
+		tax_detail_.value = value;
+		tax_detail_.surcharge = surcharge;
+
+		tax_details.add(tax_detail_);
+		
+		int tax_detailCount = tax_details.size();
+		
+		if ( 70 * tax_detailCount >=  this.maxAllowedPacket ){
+			insertTax_detail(tax_details);
+			tax_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Tax_detail
@@ -12053,150 +15242,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
-	private int contract_eventStmtSize = 0;
-
-	private int contract_eventInserted = 0;
-
-	private List<Contract_event> contract_events = 
-		new LinkedList<Contract_event>();
-
-	private PreparedStatement contract_eventStmt = null;
-
-	private static class Contract_event {
-		private Integer id; 
-		private String name; 
-		private Integer contract; 
-		private String expression; 
-		private Date start_date; 
-		private Date end_date; 
-	}
-	
-	private void insertContract_event( List<Contract_event> contract_events )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = contract_events.size();
-		if ( contract_eventStmtSize != size ) {
-			if ( contract_eventStmt != null ) {
-				contract_eventStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			contract_eventStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO contract_event (id,name,contract,expression,start_date,end_date)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			contract_eventStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Contract_event contract_event : contract_events) {
-			if ( contract_event.id == null )
-				contract_eventStmt.setNull(offset++, 4);
-			else
-				contract_eventStmt.setInt(offset++, contract_event.id);
-			if ( contract_event.name == null )
-				contract_eventStmt.setNull(offset++, 12);
-			else
-				contract_eventStmt.setString(offset++, contract_event.name);
-			if ( contract_event.contract == null )
-				contract_eventStmt.setNull(offset++, 4);
-			else
-				contract_eventStmt.setInt(offset++, contract_event.contract);
-			if ( contract_event.expression == null )
-				contract_eventStmt.setNull(offset++, 12);
-			else
-				contract_eventStmt.setString(offset++, contract_event.expression);
-			if ( contract_event.start_date == null )
-				contract_eventStmt.setNull(offset++, 91);
-			else
-				contract_eventStmt.setDate(offset++, contract_event.start_date);
-			if ( contract_event.end_date == null )
-				contract_eventStmt.setNull(offset++, 91);
-			else
-				contract_eventStmt.setDate(offset++, contract_event.end_date);
-		}
-		contract_eventStmt.executeUpdate();
-		contract_eventInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Contract_events in {} milliseconds.", size, contract_eventInserted, elapsed );		
-	}
-		
-		private int contract_eventId = -1;
-		
-		private void initContract_eventId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `contract_event`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.contract_eventId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		private int nextContract_eventId() {
-			return ++this.contract_eventId;
-		} 
-	
-	private void flushContract_event(  )
-	throws SQLException {
-		if ( ! contract_events.isEmpty() )
-			insertContract_event(contract_events);
-		if ( contract_eventStmt != null )
-			contract_eventStmt.close();
-	}	
-
-	/**
-	 * Contract_event
-	 * @param name Nombre
-	 * @param contract Contrato
-	 * @param expression Expresion
-	 * @param start_date Fecha de inicio 
-	 * @param end_date Fecha de finalizacion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertContract_event(String name, Integer contract, String expression, Date start_date, Date end_date)
-	throws SQLException {
-		int id = nextContract_eventId();
-
-		Contract_event contract_event_ = new Contract_event();
-		contract_event_.id = id;
-		contract_event_.name = name;
-		contract_event_.contract = contract;
-		contract_event_.expression = expression;
-		contract_event_.start_date = start_date;
-		contract_event_.end_date = end_date;
-
-		contract_events.add(contract_event_);
-		
-		int contract_eventCount = contract_events.size();
-		
-		if ( 184 * contract_eventCount >=  this.maxAllowedPacket ){
-			insertContract_event(contract_events);
-			contract_events.clear();
-		} 
-		return id;
-	}
 
 	private int supplier_accountStmtSize = 0;
 
@@ -12283,8 +15328,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSupplier_accountId() {
+		public int nextSupplier_accountId() {
 			return ++this.supplier_accountId;
+		} 
+
+		public void setSupplier_accountId(Integer supplier_accountId) {
+			this.supplier_accountId = supplier_accountId;
 		} 
 	
 	private void flushSupplier_account(  )
@@ -12294,6 +15343,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( supplier_accountStmt != null )
 			supplier_accountStmt.close();
 	}	
+
+	/**
+	 * Supplier_account
+	 * @param id Identificador unico de la Cuenta Contable del Proveedor
+	 * @param supplier Identificador del Proveedor
+	 * @param account Identificador de la Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertSupplier_account(Integer id, Integer supplier, String account)
+	throws SQLException {
+
+		Supplier_account supplier_account_ = new Supplier_account();
+		supplier_account_.id = id;
+		supplier_account_.supplier = supplier;
+		supplier_account_.account = account;
+
+		supplier_accounts.add(supplier_account_);
+		
+		int supplier_accountCount = supplier_accounts.size();
+		
+		if ( 32 * supplier_accountCount >=  this.maxAllowedPacket ){
+			insertSupplier_account(supplier_accounts);
+			supplier_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Supplier_account
@@ -12321,6 +15396,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int compositionStmtSize = 0;
 
@@ -12437,8 +15513,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCompositionId() {
+		public int nextCompositionId() {
 			return ++this.compositionId;
+		} 
+
+		public void setCompositionId(Integer compositionId) {
+			this.compositionId = compositionId;
 		} 
 	
 	private void flushComposition(  )
@@ -12448,6 +15528,44 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( compositionStmt != null )
 			compositionStmt.close();
 	}	
+
+	/**
+	 * Composition
+	 * @param id Identificador unico de la Composicion
+	 * @param type Tipo de Composicion
+	 * @param description Descripcion de la Composicion
+	 * @param item Identificador del Articulo a componer
+	 * @param quantity Cantidad de Articulo a componer
+	 * @param price Precio de la Composicion
+	 * @param expenses_percent Gastos porcentuales de la Composicion
+	 * @param expenses_fixed Gastos fijos de la Composicion
+	 * @param price_in_details Indica si el precio lo forman la suma de los detalles de la Composicion
+	 * @throws SQLException
+	*/
+	protected void insertComposition(Integer id, Short type, String description, Integer item, Double quantity, Double price, Double expenses_percent, Double expenses_fixed, Boolean price_in_details)
+	throws SQLException {
+
+		Composition composition_ = new Composition();
+		composition_.id = id;
+		composition_.type = type;
+		composition_.description = description;
+		composition_.item = item;
+		composition_.quantity = quantity;
+		composition_.price = price;
+		composition_.expenses_percent = expenses_percent;
+		composition_.expenses_fixed = expenses_fixed;
+		composition_.price_in_details = price_in_details;
+
+		compositions.add(composition_);
+		
+		int compositionCount = compositions.size();
+		
+		if ( 131 * compositionCount >=  this.maxAllowedPacket ){
+			insertComposition(compositions);
+			compositions.clear();
+		} 
+	}
+
 
 	/**
 	 * Composition
@@ -12487,6 +15605,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int bankStmtSize = 0;
 
@@ -12573,8 +15692,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextBankId() {
+		public int nextBankId() {
 			return ++this.bankId;
+		} 
+
+		public void setBankId(Integer bankId) {
+			this.bankId = bankId;
 		} 
 	
 	private void flushBank(  )
@@ -12584,6 +15707,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( bankStmt != null )
 			bankStmt.close();
 	}	
+
+	/**
+	 * Bank
+	 * @param id Identificador unico de la Entidad Bancaria
+	 * @param name Nombre de la Entidad Bancaria
+	 * @param code Codigo de la Entidad Bancaria
+	 * @throws SQLException
+	*/
+	protected void insertBank(Integer id, String name, String code)
+	throws SQLException {
+
+		Bank bank_ = new Bank();
+		bank_.id = id;
+		bank_.name = name;
+		bank_.code = code;
+
+		banks.add(bank_);
+		
+		int bankCount = banks.size();
+		
+		if ( 78 * bankCount >=  this.maxAllowedPacket ){
+			insertBank(banks);
+			banks.clear();
+		} 
+	}
+
 
 	/**
 	 * Bank
@@ -12611,6 +15760,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int activity_typeStmtSize = 0;
 
@@ -12697,8 +15847,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextActivity_typeId() {
+		public int nextActivity_typeId() {
 			return ++this.activity_typeId;
+		} 
+
+		public void setActivity_typeId(Integer activity_typeId) {
+			this.activity_typeId = activity_typeId;
 		} 
 	
 	private void flushActivity_type(  )
@@ -12708,6 +15862,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( activity_typeStmt != null )
 			activity_typeStmt.close();
 	}	
+
+	/**
+	 * Activity_type
+	 * @param id Identificador unico del Tipo de Actividad
+	 * @param description Descripcion del Tipo de Actividad
+	 * @param dossier_type Tipo de Dossier
+	 * @throws SQLException
+	*/
+	protected void insertActivity_type(Integer id, String description, Integer dossier_type)
+	throws SQLException {
+
+		Activity_type activity_type_ = new Activity_type();
+		activity_type_.id = id;
+		activity_type_.description = description;
+		activity_type_.dossier_type = dossier_type;
+
+		activity_types.add(activity_type_);
+		
+		int activity_typeCount = activity_types.size();
+		
+		if ( 84 * activity_typeCount >=  this.maxAllowedPacket ){
+			insertActivity_type(activity_types);
+			activity_types.clear();
+		} 
+	}
+
 
 	/**
 	 * Activity_type
@@ -12735,6 +15915,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int course_evaluationStmtSize = 0;
 
@@ -12831,8 +16012,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCourse_evaluationId() {
+		public int nextCourse_evaluationId() {
 			return ++this.course_evaluationId;
+		} 
+
+		public void setCourse_evaluationId(Integer course_evaluationId) {
+			this.course_evaluationId = course_evaluationId;
 		} 
 	
 	private void flushCourse_evaluation(  )
@@ -12842,6 +16027,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( course_evaluationStmt != null )
 			course_evaluationStmt.close();
 	}	
+
+	/**
+	 * Course_evaluation
+	 * @param id Identificador unico
+	 * @param course Identificador de Curso
+	 * @param quality_skill Identificador de Aptitudes Calidad
+	 * @param evaluation Evaluaciones
+	 * @param quantity Cantidad
+	 * @throws SQLException
+	*/
+	protected void insertCourse_evaluation(Integer id, Integer course, Integer quality_skill, Double evaluation, Integer quantity)
+	throws SQLException {
+
+		Course_evaluation course_evaluation_ = new Course_evaluation();
+		course_evaluation_.id = id;
+		course_evaluation_.course = course;
+		course_evaluation_.quality_skill = quality_skill;
+		course_evaluation_.evaluation = evaluation;
+		course_evaluation_.quantity = quantity;
+
+		course_evaluations.add(course_evaluation_);
+		
+		int course_evaluationCount = course_evaluations.size();
+		
+		if ( 55 * course_evaluationCount >=  this.maxAllowedPacket ){
+			insertCourse_evaluation(course_evaluations);
+			course_evaluations.clear();
+		} 
+	}
+
 
 	/**
 	 * Course_evaluation
@@ -12873,6 +16088,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_entry_linkStmtSize = 0;
 
@@ -12959,8 +16175,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_entry_linkId() {
+		public int nextAccount_entry_linkId() {
 			return ++this.account_entry_linkId;
+		} 
+
+		public void setAccount_entry_linkId(Integer account_entry_linkId) {
+			this.account_entry_linkId = account_entry_linkId;
 		} 
 	
 	private void flushAccount_entry_link(  )
@@ -12970,6 +16190,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_entry_linkStmt != null )
 			account_entry_linkStmt.close();
 	}	
+
+	/**
+	 * Account_entry_link
+	 * @param id Identificador unico
+	 * @param account_entry_from Asiento original
+	 * @param account_entry_to Asiento vinculado
+	 * @throws SQLException
+	*/
+	protected void insertAccount_entry_link(Integer id, Integer account_entry_from, Integer account_entry_to)
+	throws SQLException {
+
+		Account_entry_link account_entry_link_ = new Account_entry_link();
+		account_entry_link_.id = id;
+		account_entry_link_.account_entry_from = account_entry_from;
+		account_entry_link_.account_entry_to = account_entry_to;
+
+		account_entry_links.add(account_entry_link_);
+		
+		int account_entry_linkCount = account_entry_links.size();
+		
+		if ( 30 * account_entry_linkCount >=  this.maxAllowedPacket ){
+			insertAccount_entry_link(account_entry_links);
+			account_entry_links.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_entry_link
@@ -12998,6 +16244,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int support_orderStmtSize = 0;
 
 	private int support_orderInserted = 0;
@@ -13013,7 +16260,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer target; 
 		private String series; 
 		private Integer number; 
-		private InputStream description; 
+		private String description; 
 		private Date final_date; 
 		private Short status; 
 		private Date start_date; 
@@ -13073,7 +16320,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( support_order.description == null )
 				support_orderStmt.setNull(offset++, -1);
 			else
-				support_orderStmt.setAsciiStream(offset++, support_order.description);
+				support_orderStmt.setString(offset++, support_order.description);
 			if ( support_order.final_date == null )
 				support_orderStmt.setNull(offset++, 91);
 			else
@@ -13138,8 +16385,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSupport_orderId() {
+		public int nextSupport_orderId() {
 			return ++this.support_orderId;
+		} 
+
+		public void setSupport_orderId(Integer support_orderId) {
+			this.support_orderId = support_orderId;
 		} 
 	
 	private void flushSupport_order(  )
@@ -13149,6 +16400,54 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( support_orderStmt != null )
 			support_orderStmt.close();
 	}	
+
+	/**
+	 * Support_order
+	 * @param id Identificador unico de la Orden de Reparacion
+	 * @param tas_item Identificador del Articulo de la Orden de Reparacion
+	 * @param target Identificador del Cliente Potencial
+	 * @param series Serie de la Orden de Reparacion
+	 * @param number Numero de la Orden de Reparacion
+	 * @param description Descripcion de la Orden de Reparacion
+	 * @param final_date Fecha de finalizacion de la Orden de Reparacion
+	 * @param status Estado de la Orden de Reparacion
+	 * @param start_date Fecha de inicio de la Orden de Reparacion
+	 * @param employee Identificador del Empleado de la Orden de Reparacion
+	 * @param counterti Contador del Articulo de la Orden de Reparacion (p.e. Kilometraje)
+	 * @param levelti Nivel del Articulo de la Orden de Reparacion (p.e. Gasolina)
+	 * @param operation Operacion a realizar con la Orden de Reparacion
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @throws SQLException
+	*/
+	protected void insertSupport_order(Integer id, Integer tas_item, Integer target, String series, Integer number, String description, Date final_date, Short status, Date start_date, Integer employee, Double counterti, String levelti, Short operation, Integer workplace)
+	throws SQLException {
+
+		Support_order support_order_ = new Support_order();
+		support_order_.id = id;
+		support_order_.tas_item = tas_item;
+		support_order_.target = target;
+		support_order_.series = series;
+		support_order_.number = number;
+		support_order_.description = description;
+		support_order_.final_date = final_date;
+		support_order_.status = status;
+		support_order_.start_date = start_date;
+		support_order_.employee = employee;
+		support_order_.counterti = counterti;
+		support_order_.levelti = levelti;
+		support_order_.operation = operation;
+		support_order_.workplace = workplace;
+
+		support_orders.add(support_order_);
+		
+		int support_orderCount = support_orders.size();
+		
+		if ( 114 * support_orderCount >=  this.maxAllowedPacket ){
+			insertSupport_order(support_orders);
+			support_orders.clear();
+		} 
+	}
+
 
 	/**
 	 * Support_order
@@ -13168,7 +16467,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSupport_order(Integer tas_item, Integer target, String series, Integer number, InputStream description, Date final_date, Short status, Date start_date, Integer employee, Double counterti, String levelti, Short operation, Integer workplace)
+	protected int insertSupport_order(Integer tas_item, Integer target, String series, Integer number, String description, Date final_date, Short status, Date start_date, Integer employee, Double counterti, String levelti, Short operation, Integer workplace)
 	throws SQLException {
 		int id = nextSupport_orderId();
 
@@ -13198,6 +16497,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int process_detail_transitionStmtSize = 0;
 
@@ -13289,8 +16589,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextProcess_detail_transitionId() {
+		public int nextProcess_detail_transitionId() {
 			return ++this.process_detail_transitionId;
+		} 
+
+		public void setProcess_detail_transitionId(Integer process_detail_transitionId) {
+			this.process_detail_transitionId = process_detail_transitionId;
 		} 
 	
 	private void flushProcess_detail_transition(  )
@@ -13300,6 +16604,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( process_detail_transitionStmt != null )
 			process_detail_transitionStmt.close();
 	}	
+
+	/**
+	 * Process_detail_transition
+	 * @param id Identificador unico
+	 * @param process_detail Identificador del Detalle del Proceso.
+	 * @param process_transition_type Identificador del Tipo de Transicion.
+	 * @param next_process_detail Identificador del siguiente Detalle del Proceso.
+	 * @throws SQLException
+	*/
+	protected void insertProcess_detail_transition(Integer id, Integer process_detail, Integer process_transition_type, Integer next_process_detail)
+	throws SQLException {
+
+		Process_detail_transition process_detail_transition_ = new Process_detail_transition();
+		process_detail_transition_.id = id;
+		process_detail_transition_.process_detail = process_detail;
+		process_detail_transition_.process_transition_type = process_transition_type;
+		process_detail_transition_.next_process_detail = next_process_detail;
+
+		process_detail_transitions.add(process_detail_transition_);
+		
+		int process_detail_transitionCount = process_detail_transitions.size();
+		
+		if ( 40 * process_detail_transitionCount >=  this.maxAllowedPacket ){
+			insertProcess_detail_transition(process_detail_transitions);
+			process_detail_transitions.clear();
+		} 
+	}
+
 
 	/**
 	 * Process_detail_transition
@@ -13329,6 +16661,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int customer_feeStmtSize = 0;
 
@@ -13470,8 +16803,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCustomer_feeId() {
+		public int nextCustomer_feeId() {
 			return ++this.customer_feeId;
+		} 
+
+		public void setCustomer_feeId(Integer customer_feeId) {
+			this.customer_feeId = customer_feeId;
 		} 
 	
 	private void flushCustomer_fee(  )
@@ -13481,6 +16818,54 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( customer_feeStmt != null )
 			customer_feeStmt.close();
 	}	
+
+	/**
+	 * Customer_fee
+	 * @param id Identificador unico de la Cuota del Cliente
+	 * @param customer Identificador del Cliente
+	 * @param line Numero de linea de Cuota
+	 * @param item Identificador del Articulo
+	 * @param description Descripcion de la Cuota
+	 * @param quantity Cantidad de la Cuota
+	 * @param price Precio de la Cuota
+	 * @param discount_expr Descuentos de la Cuota
+	 * @param initial_date Fecha de inicio de la Cuota
+	 * @param final_date Fecha de finalizacion de la Cuota
+	 * @param billing_date Proxima fecha de facturacin de la Cuota
+	 * @param period Periodo de facturacion en meses de la Cuota
+	 * @param security_level Nivel de seguridad de la Cuota
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @throws SQLException
+	*/
+	protected void insertCustomer_fee(Integer id, Integer customer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Date initial_date, Date final_date, Date billing_date, Integer period, Short security_level, Integer workplace)
+	throws SQLException {
+
+		Customer_fee customer_fee_ = new Customer_fee();
+		customer_fee_.id = id;
+		customer_fee_.customer = customer;
+		customer_fee_.line = line;
+		customer_fee_.item = item;
+		customer_fee_.description = description;
+		customer_fee_.quantity = quantity;
+		customer_fee_.price = price;
+		customer_fee_.discount_expr = discount_expr;
+		customer_fee_.initial_date = initial_date;
+		customer_fee_.final_date = final_date;
+		customer_fee_.billing_date = billing_date;
+		customer_fee_.period = period;
+		customer_fee_.security_level = security_level;
+		customer_fee_.workplace = workplace;
+
+		customer_fees.add(customer_fee_);
+		
+		int customer_feeCount = customer_fees.size();
+		
+		if ( 1169 * customer_feeCount >=  this.maxAllowedPacket ){
+			insertCustomer_fee(customer_fees);
+			customer_fees.clear();
+		} 
+	}
+
 
 	/**
 	 * Customer_fee
@@ -13530,6 +16915,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int purchase_detailStmtSize = 0;
 
@@ -13656,8 +17042,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPurchase_detailId() {
+		public int nextPurchase_detailId() {
 			return ++this.purchase_detailId;
+		} 
+
+		public void setPurchase_detailId(Integer purchase_detailId) {
+			this.purchase_detailId = purchase_detailId;
 		} 
 	
 	private void flushPurchase_detail(  )
@@ -13667,6 +17057,48 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( purchase_detailStmt != null )
 			purchase_detailStmt.close();
 	}	
+
+	/**
+	 * Purchase_detail
+	 * @param id Identificador unico del Detalle del Pedido de Compra
+	 * @param purchase Identificador del Pedido de Compra
+	 * @param line Numero de linea del Detalle dentro del Pedido
+	 * @param item Identificador del Articulo del Detalle de Pedido
+	 * @param description Descripcion del Detalle de Pedido
+	 * @param quantity Cantidad del Detalle de Pedido
+	 * @param price Precio del Detalle de Pedido
+	 * @param discount_expr Descuentos del Detalle de Pedido
+	 * @param taxes Tasas del Detalle de Pedido
+	 * @param status Estado del Detalle de Pedido
+	 * @param delivered Cantidad entregada del Detalle de Pedido
+	 * @throws SQLException
+	*/
+	protected void insertPurchase_detail(Integer id, Integer purchase, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Double delivered)
+	throws SQLException {
+
+		Purchase_detail purchase_detail_ = new Purchase_detail();
+		purchase_detail_.id = id;
+		purchase_detail_.purchase = purchase;
+		purchase_detail_.line = line;
+		purchase_detail_.item = item;
+		purchase_detail_.description = description;
+		purchase_detail_.quantity = quantity;
+		purchase_detail_.price = price;
+		purchase_detail_.discount_expr = discount_expr;
+		purchase_detail_.taxes = taxes;
+		purchase_detail_.status = status;
+		purchase_detail_.delivered = delivered;
+
+		purchase_details.add(purchase_detail_);
+		
+		int purchase_detailCount = purchase_details.size();
+		
+		if ( 1175 * purchase_detailCount >=  this.maxAllowedPacket ){
+			insertPurchase_detail(purchase_details);
+			purchase_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Purchase_detail
@@ -13710,6 +17142,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int pm_type_detailStmtSize = 0;
 
@@ -13796,8 +17229,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPm_type_detailId() {
+		public int nextPm_type_detailId() {
 			return ++this.pm_type_detailId;
+		} 
+
+		public void setPm_type_detailId(Integer pm_type_detailId) {
+			this.pm_type_detailId = pm_type_detailId;
 		} 
 	
 	private void flushPm_type_detail(  )
@@ -13807,6 +17244,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( pm_type_detailStmt != null )
 			pm_type_detailStmt.close();
 	}	
+
+	/**
+	 * Pm_type_detail
+	 * @param id Identificador unico
+	 * @param type Tipo de Forma de Pago
+	 * @param description Descripcion del detalle
+	 * @throws SQLException
+	*/
+	protected void insertPm_type_detail(Integer id, Short type, String description)
+	throws SQLException {
+
+		Pm_type_detail pm_type_detail_ = new Pm_type_detail();
+		pm_type_detail_.id = id;
+		pm_type_detail_.type = type;
+		pm_type_detail_.description = description;
+
+		pm_type_details.add(pm_type_detail_);
+		
+		int pm_type_detailCount = pm_type_details.size();
+		
+		if ( 45 * pm_type_detailCount >=  this.maxAllowedPacket ){
+			insertPm_type_detail(pm_type_details);
+			pm_type_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Pm_type_detail
@@ -13834,6 +17297,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int holiday_detailStmtSize = 0;
 
@@ -13925,8 +17389,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextHoliday_detailId() {
+		public int nextHoliday_detailId() {
 			return ++this.holiday_detailId;
+		} 
+
+		public void setHoliday_detailId(Integer holiday_detailId) {
+			this.holiday_detailId = holiday_detailId;
 		} 
 	
 	private void flushHoliday_detail(  )
@@ -13936,6 +17404,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( holiday_detailStmt != null )
 			holiday_detailStmt.close();
 	}	
+
+	/**
+	 * Holiday_detail
+	 * @param id Identificador unico
+	 * @param holiday Identificador de Festividad
+	 * @param date Fecha Festiva
+	 * @param description Descripcion de Festividad
+	 * @throws SQLException
+	*/
+	protected void insertHoliday_detail(Integer id, Integer holiday, Date date, String description)
+	throws SQLException {
+
+		Holiday_detail holiday_detail_ = new Holiday_detail();
+		holiday_detail_.id = id;
+		holiday_detail_.holiday = holiday;
+		holiday_detail_.date = date;
+		holiday_detail_.description = description;
+
+		holiday_details.add(holiday_detail_);
+		
+		int holiday_detailCount = holiday_details.size();
+		
+		if ( 94 * holiday_detailCount >=  this.maxAllowedPacket ){
+			insertHoliday_detail(holiday_details);
+			holiday_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Holiday_detail
@@ -13965,6 +17461,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int target_itemStmtSize = 0;
 
@@ -14056,8 +17553,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTarget_itemId() {
+		public int nextTarget_itemId() {
 			return ++this.target_itemId;
+		} 
+
+		public void setTarget_itemId(Integer target_itemId) {
+			this.target_itemId = target_itemId;
 		} 
 	
 	private void flushTarget_item(  )
@@ -14067,6 +17568,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( target_itemStmt != null )
 			target_itemStmt.close();
 	}	
+
+	/**
+	 * Target_item
+	 * @param id Identificador unico
+	 * @param target Identificador del Cliente Potencial
+	 * @param item Identificador del Articulo
+	 * @param status Estado
+	 * @throws SQLException
+	*/
+	protected void insertTarget_item(Integer id, Integer target, Integer item, Short status)
+	throws SQLException {
+
+		Target_item target_item_ = new Target_item();
+		target_item_.id = id;
+		target_item_.target = target;
+		target_item_.item = item;
+		target_item_.status = status;
+
+		target_items.add(target_item_);
+		
+		int target_itemCount = target_items.size();
+		
+		if ( 33 * target_itemCount >=  this.maxAllowedPacket ){
+			insertTarget_item(target_items);
+			target_items.clear();
+		} 
+	}
+
 
 	/**
 	 * Target_item
@@ -14096,6 +17625,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int agreement_level_categoryStmtSize = 0;
 
@@ -14182,8 +17712,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAgreement_level_categoryId() {
+		public int nextAgreement_level_categoryId() {
 			return ++this.agreement_level_categoryId;
+		} 
+
+		public void setAgreement_level_categoryId(Integer agreement_level_categoryId) {
+			this.agreement_level_categoryId = agreement_level_categoryId;
 		} 
 	
 	private void flushAgreement_level_category(  )
@@ -14193,6 +17727,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( agreement_level_categoryStmt != null )
 			agreement_level_categoryStmt.close();
 	}	
+
+	/**
+	 * Agreement_level_category
+	 * @param id Identificador unico
+	 * @param agreement_level Nivel retributivo
+	 * @param description Descripcion
+	 * @throws SQLException
+	*/
+	protected void insertAgreement_level_category(Integer id, Integer agreement_level, String description)
+	throws SQLException {
+
+		Agreement_level_category agreement_level_category_ = new Agreement_level_category();
+		agreement_level_category_.id = id;
+		agreement_level_category_.agreement_level = agreement_level;
+		agreement_level_category_.description = description;
+
+		agreement_level_categorys.add(agreement_level_category_);
+		
+		int agreement_level_categoryCount = agreement_level_categorys.size();
+		
+		if ( 84 * agreement_level_categoryCount >=  this.maxAllowedPacket ){
+			insertAgreement_level_category(agreement_level_categorys);
+			agreement_level_categorys.clear();
+		} 
+	}
+
 
 	/**
 	 * Agreement_level_category
@@ -14220,6 +17780,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int holidayStmtSize = 0;
 
@@ -14311,8 +17872,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextHolidayId() {
+		public int nextHolidayId() {
 			return ++this.holidayId;
+		} 
+
+		public void setHolidayId(Integer holidayId) {
+			this.holidayId = holidayId;
 		} 
 	
 	private void flushHoliday(  )
@@ -14322,6 +17887,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( holidayStmt != null )
 			holidayStmt.close();
 	}	
+
+	/**
+	 * Holiday
+	 * @param id Identificador unico
+	 * @param description Descripcion de la Festividad
+	 * @param holiday Identificador de Festividad
+	 * @param editable Indica si es editable o no
+	 * @throws SQLException
+	*/
+	protected void insertHoliday(Integer id, String description, Integer holiday, Boolean editable)
+	throws SQLException {
+
+		Holiday holiday_ = new Holiday();
+		holiday_.id = id;
+		holiday_.description = description;
+		holiday_.holiday = holiday;
+		holiday_.editable = editable;
+
+		holidays.add(holiday_);
+		
+		int holidayCount = holidays.size();
+		
+		if ( 84 * holidayCount >=  this.maxAllowedPacket ){
+			insertHoliday(holidays);
+			holidays.clear();
+		} 
+	}
+
 
 	/**
 	 * Holiday
@@ -14351,6 +17944,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int pm_type_detail_accountStmtSize = 0;
 
@@ -14437,8 +18031,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPm_type_detail_accountId() {
+		public int nextPm_type_detail_accountId() {
 			return ++this.pm_type_detail_accountId;
+		} 
+
+		public void setPm_type_detail_accountId(Integer pm_type_detail_accountId) {
+			this.pm_type_detail_accountId = pm_type_detail_accountId;
 		} 
 	
 	private void flushPm_type_detail_account(  )
@@ -14448,6 +18046,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( pm_type_detail_accountStmt != null )
 			pm_type_detail_accountStmt.close();
 	}	
+
+	/**
+	 * Pm_type_detail_account
+	 * @param id Identificador unico
+	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
+	 * @param account Identificador de la Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertPm_type_detail_account(Integer id, Integer pm_type_detail, String account)
+	throws SQLException {
+
+		Pm_type_detail_account pm_type_detail_account_ = new Pm_type_detail_account();
+		pm_type_detail_account_.id = id;
+		pm_type_detail_account_.pm_type_detail = pm_type_detail;
+		pm_type_detail_account_.account = account;
+
+		pm_type_detail_accounts.add(pm_type_detail_account_);
+		
+		int pm_type_detail_accountCount = pm_type_detail_accounts.size();
+		
+		if ( 32 * pm_type_detail_accountCount >=  this.maxAllowedPacket ){
+			insertPm_type_detail_account(pm_type_detail_accounts);
+			pm_type_detail_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Pm_type_detail_account
@@ -14475,6 +18099,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int commission_categoryStmtSize = 0;
 
@@ -14571,8 +18196,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCommission_categoryId() {
+		public int nextCommission_categoryId() {
 			return ++this.commission_categoryId;
+		} 
+
+		public void setCommission_categoryId(Integer commission_categoryId) {
+			this.commission_categoryId = commission_categoryId;
 		} 
 	
 	private void flushCommission_category(  )
@@ -14582,6 +18211,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( commission_categoryStmt != null )
 			commission_categoryStmt.close();
 	}	
+
+	/**
+	 * Commission_category
+	 * @param id Identificador unico
+	 * @param commission Identificador de la Comision
+	 * @param category Identificador de la Categoria
+	 * @param quantity Cantidad a partir de la cual se aplica la Comision
+	 * @param rate Porcentaje de Comision
+	 * @throws SQLException
+	*/
+	protected void insertCommission_category(Integer id, Integer commission, Integer category, Double quantity, Double rate)
+	throws SQLException {
+
+		Commission_category commission_category_ = new Commission_category();
+		commission_category_.id = id;
+		commission_category_.commission = commission;
+		commission_category_.category = category;
+		commission_category_.quantity = quantity;
+		commission_category_.rate = rate;
+
+		commission_categorys.add(commission_category_);
+		
+		int commission_categoryCount = commission_categorys.size();
+		
+		if ( 58 * commission_categoryCount >=  this.maxAllowedPacket ){
+			insertCommission_category(commission_categorys);
+			commission_categorys.clear();
+		} 
+	}
+
 
 	/**
 	 * Commission_category
@@ -14613,6 +18272,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int academic_yearStmtSize = 0;
 
@@ -14694,8 +18354,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAcademic_yearId() {
+		public int nextAcademic_yearId() {
 			return ++this.academic_yearId;
+		} 
+
+		public void setAcademic_yearId(Integer academic_yearId) {
+			this.academic_yearId = academic_yearId;
 		} 
 	
 	private void flushAcademic_year(  )
@@ -14705,6 +18369,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( academic_yearStmt != null )
 			academic_yearStmt.close();
 	}	
+
+	/**
+	 * Academic_year
+	 * @param id Identificador unico del Ao Academico
+	 * @param description Descripcion del Ao Academico
+	 * @throws SQLException
+	*/
+	protected void insertAcademic_year(Integer id, String description)
+	throws SQLException {
+
+		Academic_year academic_year_ = new Academic_year();
+		academic_year_.id = id;
+		academic_year_.description = description;
+
+		academic_years.add(academic_year_);
+		
+		int academic_yearCount = academic_years.size();
+		
+		if ( 19 * academic_yearCount >=  this.maxAllowedPacket ){
+			insertAcademic_year(academic_years);
+			academic_years.clear();
+		} 
+	}
+
 
 	/**
 	 * Academic_year
@@ -14730,6 +18418,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int bank_concept_accountStmtSize = 0;
 
@@ -14816,8 +18505,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextBank_concept_accountId() {
+		public int nextBank_concept_accountId() {
 			return ++this.bank_concept_accountId;
+		} 
+
+		public void setBank_concept_accountId(Integer bank_concept_accountId) {
+			this.bank_concept_accountId = bank_concept_accountId;
 		} 
 	
 	private void flushBank_concept_account(  )
@@ -14827,6 +18520,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( bank_concept_accountStmt != null )
 			bank_concept_accountStmt.close();
 	}	
+
+	/**
+	 * Bank_concept_account
+	 * @param id Identificador unico
+	 * @param bank_concept Identificador del Concepto bancario
+	 * @param account Identificador de la Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertBank_concept_account(Integer id, Integer bank_concept, String account)
+	throws SQLException {
+
+		Bank_concept_account bank_concept_account_ = new Bank_concept_account();
+		bank_concept_account_.id = id;
+		bank_concept_account_.bank_concept = bank_concept;
+		bank_concept_account_.account = account;
+
+		bank_concept_accounts.add(bank_concept_account_);
+		
+		int bank_concept_accountCount = bank_concept_accounts.size();
+		
+		if ( 32 * bank_concept_accountCount >=  this.maxAllowedPacket ){
+			insertBank_concept_account(bank_concept_accounts);
+			bank_concept_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Bank_concept_account
@@ -14854,6 +18573,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int creditor_accountStmtSize = 0;
 
@@ -14940,8 +18660,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCreditor_accountId() {
+		public int nextCreditor_accountId() {
 			return ++this.creditor_accountId;
+		} 
+
+		public void setCreditor_accountId(Integer creditor_accountId) {
+			this.creditor_accountId = creditor_accountId;
 		} 
 	
 	private void flushCreditor_account(  )
@@ -14951,6 +18675,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( creditor_accountStmt != null )
 			creditor_accountStmt.close();
 	}	
+
+	/**
+	 * Creditor_account
+	 * @param id Identificador unico de la Cuenta Contable del Acreedor
+	 * @param creditor Identificador del Acreedor
+	 * @param account Identificador de la Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertCreditor_account(Integer id, Integer creditor, String account)
+	throws SQLException {
+
+		Creditor_account creditor_account_ = new Creditor_account();
+		creditor_account_.id = id;
+		creditor_account_.creditor = creditor;
+		creditor_account_.account = account;
+
+		creditor_accounts.add(creditor_account_);
+		
+		int creditor_accountCount = creditor_accounts.size();
+		
+		if ( 32 * creditor_accountCount >=  this.maxAllowedPacket ){
+			insertCreditor_account(creditor_accounts);
+			creditor_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Creditor_account
@@ -14979,6 +18729,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int finance_trackingStmtSize = 0;
 
 	private int finance_trackingInserted = 0;
@@ -14996,6 +18747,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private String description; 
 		private Integer pm_type_detail; 
 		private Integer rbank; 
+		private Integer bank_statement_link; 
 		private Double amount; 
 		private Boolean recorded; 
 	}
@@ -15008,7 +18760,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( finance_trackingStmt != null ) {
 				finance_trackingStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -15017,7 +18769,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			finance_trackingStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO finance_tracking (id,finance,tracking_date,type,description,pm_type_detail,rbank,amount,recorded)"  
+				"INSERT INTO finance_tracking (id,finance,tracking_date,type,description,pm_type_detail,rbank,bank_statement_link,amount,recorded)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			finance_trackingStmtSize = size;
@@ -15054,6 +18806,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				finance_trackingStmt.setNull(offset++, 4);
 			else
 				finance_trackingStmt.setInt(offset++, finance_tracking.rbank);
+			if ( finance_tracking.bank_statement_link == null )
+				finance_trackingStmt.setNull(offset++, 4);
+			else
+				finance_trackingStmt.setInt(offset++, finance_tracking.bank_statement_link);
 			if ( finance_tracking.amount == null )
 				finance_trackingStmt.setNull(offset++, 8);
 			else
@@ -15094,8 +18850,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFinance_trackingId() {
+		public int nextFinance_trackingId() {
 			return ++this.finance_trackingId;
+		} 
+
+		public void setFinance_trackingId(Integer finance_trackingId) {
+			this.finance_trackingId = finance_trackingId;
 		} 
 	
 	private void flushFinance_tracking(  )
@@ -15108,18 +18868,59 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Finance_tracking
+	 * @param id Identificador unico
 	 * @param finance Identificador de Vencimiento
 	 * @param tracking_date Fecha de Seguimiento
 	 * @param type Tipo de Seguimiento
 	 * @param description Descripcion del Seguimiento
 	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
 	 * @param rbank Identificador de la Cuenta Bancaria de la Compaia
+	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
+	 * @param amount Importe del Seguimiento
+	 * @param recorded Indica si esta contabilizado o no
+	 * @throws SQLException
+	*/
+	protected void insertFinance_tracking(Integer id, Integer finance, Date tracking_date, Short type, String description, Integer pm_type_detail, Integer rbank, Integer bank_statement_link, Double amount, Boolean recorded)
+	throws SQLException {
+
+		Finance_tracking finance_tracking_ = new Finance_tracking();
+		finance_tracking_.id = id;
+		finance_tracking_.finance = finance;
+		finance_tracking_.tracking_date = tracking_date;
+		finance_tracking_.type = type;
+		finance_tracking_.description = description;
+		finance_tracking_.pm_type_detail = pm_type_detail;
+		finance_tracking_.rbank = rbank;
+		finance_tracking_.bank_statement_link = bank_statement_link;
+		finance_tracking_.amount = amount;
+		finance_tracking_.recorded = recorded;
+
+		finance_trackings.add(finance_tracking_);
+		
+		int finance_trackingCount = finance_trackings.size();
+		
+		if ( 142 * finance_trackingCount >=  this.maxAllowedPacket ){
+			insertFinance_tracking(finance_trackings);
+			finance_trackings.clear();
+		} 
+	}
+
+
+	/**
+	 * Finance_tracking
+	 * @param finance Identificador de Vencimiento
+	 * @param tracking_date Fecha de Seguimiento
+	 * @param type Tipo de Seguimiento
+	 * @param description Descripcion del Seguimiento
+	 * @param pm_type_detail Identificador del Detalle por Tipo de Forma de Pago
+	 * @param rbank Identificador de la Cuenta Bancaria de la Compaia
+	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param amount Importe del Seguimiento
 	 * @param recorded Indica si esta contabilizado o no
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFinance_tracking(Integer finance, Date tracking_date, Short type, String description, Integer pm_type_detail, Integer rbank, Double amount, Boolean recorded)
+	protected int insertFinance_tracking(Integer finance, Date tracking_date, Short type, String description, Integer pm_type_detail, Integer rbank, Integer bank_statement_link, Double amount, Boolean recorded)
 	throws SQLException {
 		int id = nextFinance_trackingId();
 
@@ -15131,6 +18932,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		finance_tracking_.description = description;
 		finance_tracking_.pm_type_detail = pm_type_detail;
 		finance_tracking_.rbank = rbank;
+		finance_tracking_.bank_statement_link = bank_statement_link;
 		finance_tracking_.amount = amount;
 		finance_tracking_.recorded = recorded;
 
@@ -15138,12 +18940,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int finance_trackingCount = finance_trackings.size();
 		
-		if ( 132 * finance_trackingCount >=  this.maxAllowedPacket ){
+		if ( 142 * finance_trackingCount >=  this.maxAllowedPacket ){
 			insertFinance_tracking(finance_trackings);
 			finance_trackings.clear();
 		} 
 		return id;
 	}
+
 
 	private int rattachStmtSize = 0;
 
@@ -15163,6 +18966,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private InputStream data; 
 		private Short type; 
 		private Integer scope; 
+		private Short security_level; 
+		private Date attach_date; 
 	}
 	
 	private void insertRattach( List<Rattach> rattachs )
@@ -15173,7 +18978,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( rattachStmt != null ) {
 				rattachStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -15182,7 +18987,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			rattachStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO rattach (id,registry,category,mimeType,description,data,type,scope)"  
+				"INSERT INTO rattach (id,registry,category,mimeType,description,data,type,scope,security_level,attach_date)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			rattachStmtSize = size;
@@ -15223,6 +19028,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rattachStmt.setNull(offset++, 4);
 			else
 				rattachStmt.setInt(offset++, rattach.scope);
+			if ( rattach.security_level == null )
+				rattachStmt.setNull(offset++, -6);
+			else
+				rattachStmt.setShort(offset++, rattach.security_level);
+			if ( rattach.attach_date == null )
+				rattachStmt.setNull(offset++, 91);
+			else
+				rattachStmt.setDate(offset++, rattach.attach_date);
 		}
 		rattachStmt.executeUpdate();
 		rattachInserted += size;
@@ -15255,8 +19068,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRattachId() {
+		public int nextRattachId() {
 			return ++this.rattachId;
+		} 
+
+		public void setRattachId(Integer rattachId) {
+			this.rattachId = rattachId;
 		} 
 	
 	private void flushRattach(  )
@@ -15269,6 +19086,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Rattach
+	 * @param id Identificador unico del Archivo Adjunto de la Persona o Empresa
 	 * @param registry Identificador del Registro de la Persona o Empresa
 	 * @param category Categoria del Archivo Adjunto
 	 * @param mimeType Mime Type del Archivo Adjunto
@@ -15276,10 +19094,51 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param data Archivo Adjunto en binario
 	 * @param type Tipo de Archivo Adjunto
 	 * @param scope Ambito del Archivo Adjunto
+	 * @param security_level Nivel de seguridad del Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @throws SQLException
+	*/
+	protected void insertRattach(Integer id, Integer registry, Integer category, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	throws SQLException {
+
+		Rattach rattach_ = new Rattach();
+		rattach_.id = id;
+		rattach_.registry = registry;
+		rattach_.category = category;
+		rattach_.mimeType = mimeType;
+		rattach_.description = description;
+		rattach_.data = data;
+		rattach_.type = type;
+		rattach_.scope = scope;
+		rattach_.security_level = security_level;
+		rattach_.attach_date = attach_date;
+
+		rattachs.add(rattach_);
+		
+		int rattachCount = rattachs.size();
+		
+		if ( 123 * rattachCount >=  this.maxAllowedPacket ){
+			insertRattach(rattachs);
+			rattachs.clear();
+		} 
+	}
+
+
+	/**
+	 * Rattach
+	 * @param registry Identificador del Registro de la Persona o Empresa
+	 * @param category Categoria del Archivo Adjunto
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param scope Ambito del Archivo Adjunto
+	 * @param security_level Nivel de seguridad del Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRattach(Integer registry, Integer category, Short mimeType, String description, InputStream data, Short type, Integer scope)
+	protected int insertRattach(Integer registry, Integer category, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
 	throws SQLException {
 		int id = nextRattachId();
 
@@ -15292,17 +19151,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		rattach_.data = data;
 		rattach_.type = type;
 		rattach_.scope = scope;
+		rattach_.security_level = security_level;
+		rattach_.attach_date = attach_date;
 
 		rattachs.add(rattach_);
 		
 		int rattachCount = rattachs.size();
 		
-		if ( 110 * rattachCount >=  this.maxAllowedPacket ){
+		if ( 123 * rattachCount >=  this.maxAllowedPacket ){
 			insertRattach(rattachs);
 			rattachs.clear();
 		} 
 		return id;
 	}
+
 
 	private int sales_detailStmtSize = 0;
 
@@ -15439,8 +19301,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSales_detailId() {
+		public int nextSales_detailId() {
 			return ++this.sales_detailId;
+		} 
+
+		public void setSales_detailId(Integer sales_detailId) {
+			this.sales_detailId = sales_detailId;
 		} 
 	
 	private void flushSales_detail(  )
@@ -15450,6 +19316,52 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( sales_detailStmt != null )
 			sales_detailStmt.close();
 	}	
+
+	/**
+	 * Sales_detail
+	 * @param id Identificador unico del Detalle del Pedido de Venta
+	 * @param sales Identificador del Pedido de Venta
+	 * @param line Numero de lnea del Detalle dentro del Pedido
+	 * @param item Identificador del Articulo del Detalle de Pedido
+	 * @param description Descripcion del Detalle de Pedido
+	 * @param quantity Cantidad del Detalle de Pedido
+	 * @param price Precio del Detalle de Pedido
+	 * @param discount_expr Descuentos del Detalle de Pedido
+	 * @param taxes Tasas del Detalle de Pedido
+	 * @param status Estado del Detalle de Pedido
+	 * @param source Origen del Detalle de Pedido
+	 * @param offer_detail Identificador del Detalle del Presupuesto Origen
+	 * @param delivered Cantidad entregada del Detalle de Pedido
+	 * @throws SQLException
+	*/
+	protected void insertSales_detail(Integer id, Integer sales, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Short source, Integer offer_detail, Double delivered)
+	throws SQLException {
+
+		Sales_detail sales_detail_ = new Sales_detail();
+		sales_detail_.id = id;
+		sales_detail_.sales = sales;
+		sales_detail_.line = line;
+		sales_detail_.item = item;
+		sales_detail_.description = description;
+		sales_detail_.quantity = quantity;
+		sales_detail_.price = price;
+		sales_detail_.discount_expr = discount_expr;
+		sales_detail_.taxes = taxes;
+		sales_detail_.status = status;
+		sales_detail_.source = source;
+		sales_detail_.offer_detail = offer_detail;
+		sales_detail_.delivered = delivered;
+
+		sales_details.add(sales_detail_);
+		
+		int sales_detailCount = sales_details.size();
+		
+		if ( 1188 * sales_detailCount >=  this.maxAllowedPacket ){
+			insertSales_detail(sales_details);
+			sales_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Sales_detail
@@ -15497,6 +19409,216 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
+
+	private int system_deductionStmtSize = 0;
+
+	private int system_deductionInserted = 0;
+
+	private List<System_deduction> system_deductions = 
+		new LinkedList<System_deduction>();
+
+	private PreparedStatement system_deductionStmt = null;
+
+	private static class System_deduction {
+		private Integer id; 
+		private Short type; 
+		private Integer deduction_concept; 
+		private String description; 
+		private Short description_decorable; 
+		private String expression; 
+		private Date start_date; 
+		private Date end_date; 
+		private Short month; 
+	}
+	
+	private void insertSystem_deduction( List<System_deduction> system_deductions )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = system_deductions.size();
+		if ( system_deductionStmtSize != size ) {
+			if ( system_deductionStmt != null ) {
+				system_deductionStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			system_deductionStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO system_deduction (id,type,deduction_concept,description,description_decorable,expression,start_date,end_date,month)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			system_deductionStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (System_deduction system_deduction : system_deductions) {
+			if ( system_deduction.id == null )
+				system_deductionStmt.setNull(offset++, 4);
+			else
+				system_deductionStmt.setInt(offset++, system_deduction.id);
+			if ( system_deduction.type == null )
+				system_deductionStmt.setNull(offset++, -6);
+			else
+				system_deductionStmt.setShort(offset++, system_deduction.type);
+			if ( system_deduction.deduction_concept == null )
+				system_deductionStmt.setNull(offset++, 4);
+			else
+				system_deductionStmt.setInt(offset++, system_deduction.deduction_concept);
+			if ( system_deduction.description == null )
+				system_deductionStmt.setNull(offset++, 12);
+			else
+				system_deductionStmt.setString(offset++, system_deduction.description);
+			if ( system_deduction.description_decorable == null )
+				system_deductionStmt.setNull(offset++, -6);
+			else
+				system_deductionStmt.setShort(offset++, system_deduction.description_decorable);
+			if ( system_deduction.expression == null )
+				system_deductionStmt.setNull(offset++, 12);
+			else
+				system_deductionStmt.setString(offset++, system_deduction.expression);
+			if ( system_deduction.start_date == null )
+				system_deductionStmt.setNull(offset++, 91);
+			else
+				system_deductionStmt.setDate(offset++, system_deduction.start_date);
+			if ( system_deduction.end_date == null )
+				system_deductionStmt.setNull(offset++, 91);
+			else
+				system_deductionStmt.setDate(offset++, system_deduction.end_date);
+			if ( system_deduction.month == null )
+				system_deductionStmt.setNull(offset++, -6);
+			else
+				system_deductionStmt.setShort(offset++, system_deduction.month);
+		}
+		system_deductionStmt.executeUpdate();
+		system_deductionInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} System_deductions in {} milliseconds.", size, system_deductionInserted, elapsed );		
+	}
+		
+		private int system_deductionId = -1;
+		
+		private void initSystem_deductionId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `system_deduction`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.system_deductionId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextSystem_deductionId() {
+			return ++this.system_deductionId;
+		} 
+
+		public void setSystem_deductionId(Integer system_deductionId) {
+			this.system_deductionId = system_deductionId;
+		} 
+	
+	private void flushSystem_deduction(  )
+	throws SQLException {
+		if ( ! system_deductions.isEmpty() )
+			insertSystem_deduction(system_deductions);
+		if ( system_deductionStmt != null )
+			system_deductionStmt.close();
+	}	
+
+	/**
+	 * System_deduction
+	 * @param id Identificador unico
+	 * @param type Tipo de Deduccin
+	 * @param deduction_concept Identificador unico del concepto
+	 * @param description Descripcion
+	 * @param description_decorable 
+	 * @param expression Frmula
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param month Mes de la deduccin
+	 * @throws SQLException
+	*/
+	protected void insertSystem_deduction(Integer id, Short type, Integer deduction_concept, String description, Short description_decorable, String expression, Date start_date, Date end_date, Short month)
+	throws SQLException {
+
+		System_deduction system_deduction_ = new System_deduction();
+		system_deduction_.id = id;
+		system_deduction_.type = type;
+		system_deduction_.deduction_concept = deduction_concept;
+		system_deduction_.description = description;
+		system_deduction_.description_decorable = description_decorable;
+		system_deduction_.expression = expression;
+		system_deduction_.start_date = start_date;
+		system_deduction_.end_date = end_date;
+		system_deduction_.month = month;
+
+		system_deductions.add(system_deduction_);
+		
+		int system_deductionCount = system_deductions.size();
+		
+		if ( 241 * system_deductionCount >=  this.maxAllowedPacket ){
+			insertSystem_deduction(system_deductions);
+			system_deductions.clear();
+		} 
+	}
+
+
+	/**
+	 * System_deduction
+	 * @param type Tipo de Deduccin
+	 * @param deduction_concept Identificador unico del concepto
+	 * @param description Descripcion
+	 * @param description_decorable 
+	 * @param expression Frmula
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param month Mes de la deduccin
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertSystem_deduction(Short type, Integer deduction_concept, String description, Short description_decorable, String expression, Date start_date, Date end_date, Short month)
+	throws SQLException {
+		int id = nextSystem_deductionId();
+
+		System_deduction system_deduction_ = new System_deduction();
+		system_deduction_.id = id;
+		system_deduction_.type = type;
+		system_deduction_.deduction_concept = deduction_concept;
+		system_deduction_.description = description;
+		system_deduction_.description_decorable = description_decorable;
+		system_deduction_.expression = expression;
+		system_deduction_.start_date = start_date;
+		system_deduction_.end_date = end_date;
+		system_deduction_.month = month;
+
+		system_deductions.add(system_deduction_);
+		
+		int system_deductionCount = system_deductions.size();
+		
+		if ( 241 * system_deductionCount >=  this.maxAllowedPacket ){
+			insertSystem_deduction(system_deductions);
+			system_deductions.clear();
+		} 
+		return id;
+	}
+
 
 	private int curriculumStmtSize = 0;
 
@@ -15671,6 +19793,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int makeStmtSize = 0;
 
 	private int makeInserted = 0;
@@ -15751,8 +19875,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextMakeId() {
+		public int nextMakeId() {
 			return ++this.makeId;
+		} 
+
+		public void setMakeId(Integer makeId) {
+			this.makeId = makeId;
 		} 
 	
 	private void flushMake(  )
@@ -15762,6 +19890,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( makeStmt != null )
 			makeStmt.close();
 	}	
+
+	/**
+	 * Make
+	 * @param id Identificador unico del Fabricante
+	 * @param name Nombre del Fabricante
+	 * @throws SQLException
+	*/
+	protected void insertMake(Integer id, String name)
+	throws SQLException {
+
+		Make make_ = new Make();
+		make_.id = id;
+		make_.name = name;
+
+		makes.add(make_);
+		
+		int makeCount = makes.size();
+		
+		if ( 74 * makeCount >=  this.maxAllowedPacket ){
+			insertMake(makes);
+			makes.clear();
+		} 
+	}
+
 
 	/**
 	 * Make
@@ -15787,6 +19939,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int rbank_accountStmtSize = 0;
 
@@ -15873,8 +20026,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRbank_accountId() {
+		public int nextRbank_accountId() {
 			return ++this.rbank_accountId;
+		} 
+
+		public void setRbank_accountId(Integer rbank_accountId) {
+			this.rbank_accountId = rbank_accountId;
 		} 
 	
 	private void flushRbank_account(  )
@@ -15884,6 +20041,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( rbank_accountStmt != null )
 			rbank_accountStmt.close();
 	}	
+
+	/**
+	 * Rbank_account
+	 * @param id Identificador unico de la Cuenta Contable de la Cuenta Bancaria
+	 * @param rbank Identificador de la Cuenta Bancaria
+	 * @param account Identificador de la Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertRbank_account(Integer id, Integer rbank, String account)
+	throws SQLException {
+
+		Rbank_account rbank_account_ = new Rbank_account();
+		rbank_account_.id = id;
+		rbank_account_.rbank = rbank;
+		rbank_account_.account = account;
+
+		rbank_accounts.add(rbank_account_);
+		
+		int rbank_accountCount = rbank_accounts.size();
+		
+		if ( 32 * rbank_accountCount >=  this.maxAllowedPacket ){
+			insertRbank_account(rbank_accounts);
+			rbank_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Rbank_account
@@ -15911,6 +20094,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int modelStmtSize = 0;
 
@@ -15997,8 +20181,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextModelId() {
+		public int nextModelId() {
 			return ++this.modelId;
+		} 
+
+		public void setModelId(Integer modelId) {
+			this.modelId = modelId;
 		} 
 	
 	private void flushModel(  )
@@ -16008,6 +20196,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( modelStmt != null )
 			modelStmt.close();
 	}	
+
+	/**
+	 * Model
+	 * @param id Identificador unico del Modelo
+	 * @param make Identificador del Fabricante
+	 * @param name Nombre del Modelo
+	 * @throws SQLException
+	*/
+	protected void insertModel(Integer id, Integer make, String name)
+	throws SQLException {
+
+		Model model_ = new Model();
+		model_.id = id;
+		model_.make = make;
+		model_.name = name;
+
+		models.add(model_);
+		
+		int modelCount = models.size();
+		
+		if ( 84 * modelCount >=  this.maxAllowedPacket ){
+			insertModel(models);
+			models.clear();
+		} 
+	}
+
 
 	/**
 	 * Model
@@ -16035,6 +20249,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int cnaeStmtSize = 0;
 
@@ -16121,8 +20336,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCnaeId() {
+		public int nextCnaeId() {
 			return ++this.cnaeId;
+		} 
+
+		public void setCnaeId(Integer cnaeId) {
+			this.cnaeId = cnaeId;
 		} 
 	
 	private void flushCnae(  )
@@ -16132,6 +20351,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( cnaeStmt != null )
 			cnaeStmt.close();
 	}	
+
+	/**
+	 * Cnae
+	 * @param id Identificador unico
+	 * @param code Codigo del CNAE
+	 * @param title Titulo del CNAE
+	 * @throws SQLException
+	*/
+	protected void insertCnae(Integer id, String code, String title)
+	throws SQLException {
+
+		Cnae cnae_ = new Cnae();
+		cnae_.id = id;
+		cnae_.code = code;
+		cnae_.title = title;
+
+		cnaes.add(cnae_);
+		
+		int cnaeCount = cnaes.size();
+		
+		if ( 270 * cnaeCount >=  this.maxAllowedPacket ){
+			insertCnae(cnaes);
+			cnaes.clear();
+		} 
+	}
+
 
 	/**
 	 * Cnae
@@ -16159,6 +20404,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int departmentStmtSize = 0;
 
@@ -16245,8 +20491,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextDepartmentId() {
+		public int nextDepartmentId() {
 			return ++this.departmentId;
+		} 
+
+		public void setDepartmentId(Integer departmentId) {
+			this.departmentId = departmentId;
 		} 
 	
 	private void flushDepartment(  )
@@ -16256,6 +20506,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( departmentStmt != null )
 			departmentStmt.close();
 	}	
+
+	/**
+	 * Department
+	 * @param id Identificador unico del Departamento
+	 * @param parent Identificador del Departamento padre
+	 * @param description Descripcion del Departamento
+	 * @throws SQLException
+	*/
+	protected void insertDepartment(Integer id, Integer parent, String description)
+	throws SQLException {
+
+		Department department_ = new Department();
+		department_.id = id;
+		department_.parent = parent;
+		department_.description = description;
+
+		departments.add(department_);
+		
+		int departmentCount = departments.size();
+		
+		if ( 52 * departmentCount >=  this.maxAllowedPacket ){
+			insertDepartment(departments);
+			departments.clear();
+		} 
+	}
+
 
 	/**
 	 * Department
@@ -16283,6 +20559,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int target_profileStmtSize = 0;
 
@@ -16389,8 +20666,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTarget_profileId() {
+		public int nextTarget_profileId() {
 			return ++this.target_profileId;
+		} 
+
+		public void setTarget_profileId(Integer target_profileId) {
+			this.target_profileId = target_profileId;
 		} 
 	
 	private void flushTarget_profile(  )
@@ -16400,6 +20681,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( target_profileStmt != null )
 			target_profileStmt.close();
 	}	
+
+	/**
+	 * Target_profile
+	 * @param id Identificador unico
+	 * @param target Identificador del Cliente Potencial
+	 * @param last_update Fecha de la ultima modificacion del Perfil del Cliente Potencial
+	 * @param question Identificador de la Pregunta
+	 * @param value_text Valor de tipo texto
+	 * @param value_number Valor de tipo numerico
+	 * @param value_date Valor de tipo fecha
+	 * @throws SQLException
+	*/
+	protected void insertTarget_profile(Integer id, Integer target, Timestamp last_update, Integer question, String value_text, Double value_number, Timestamp value_date)
+	throws SQLException {
+
+		Target_profile target_profile_ = new Target_profile();
+		target_profile_.id = id;
+		target_profile_.target = target;
+		target_profile_.last_update = last_update;
+		target_profile_.question = question;
+		target_profile_.value_text = value_text;
+		target_profile_.value_number = value_number;
+		target_profile_.value_date = value_date;
+
+		target_profiles.add(target_profile_);
+		
+		int target_profileCount = target_profiles.size();
+		
+		if ( 1107 * target_profileCount >=  this.maxAllowedPacket ){
+			insertTarget_profile(target_profiles);
+			target_profiles.clear();
+		} 
+	}
+
 
 	/**
 	 * Target_profile
@@ -16435,6 +20750,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int purchaseStmtSize = 0;
 
@@ -16601,8 +20917,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPurchaseId() {
+		public int nextPurchaseId() {
 			return ++this.purchaseId;
+		} 
+
+		public void setPurchaseId(Integer purchaseId) {
+			this.purchaseId = purchaseId;
 		} 
 	
 	private void flushPurchase(  )
@@ -16612,6 +20932,64 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( purchaseStmt != null )
 			purchaseStmt.close();
 	}	
+
+	/**
+	 * Purchase
+	 * @param id Identificador unico del Pedido de Compra
+	 * @param supplier Identificador del Proveedor
+	 * @param series Serie del Pedido
+	 * @param number Numero del Pedido
+	 * @param address Identificador de la Direccion del Proveedor
+	 * @param discount_expr Descuentos del Pedido
+	 * @param issue_date Fecha de emision del Pedido
+	 * @param pay_method Identificador de la Forma de Pago
+	 * @param document_type Tipo de Pedido
+	 * @param security_level Nivel de seguridad del Pedido
+	 * @param status Estado del Pedido
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param scope Ambito del Pedido
+	 * @param number_of_pymnts Numero de Vencimientos
+	 * @param days_to_first_pymnt Dias al primer Vencimiento
+	 * @param days_between_pymnts Dias entre Vencimientos
+	 * @param pymnt_days Dias de pago
+	 * @param bank Identificador de la Entidad Bancaria
+	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @throws SQLException
+	*/
+	protected void insertPurchase(Integer id, Integer supplier, String series, Integer number, Integer address, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	throws SQLException {
+
+		Purchase purchase_ = new Purchase();
+		purchase_.id = id;
+		purchase_.supplier = supplier;
+		purchase_.series = series;
+		purchase_.number = number;
+		purchase_.address = address;
+		purchase_.discount_expr = discount_expr;
+		purchase_.issue_date = issue_date;
+		purchase_.pay_method = pay_method;
+		purchase_.document_type = document_type;
+		purchase_.security_level = security_level;
+		purchase_.status = status;
+		purchase_.workplace = workplace;
+		purchase_.scope = scope;
+		purchase_.number_of_pymnts = number_of_pymnts;
+		purchase_.days_to_first_pymnt = days_to_first_pymnt;
+		purchase_.days_between_pymnts = days_between_pymnts;
+		purchase_.pymnt_days = pymnt_days;
+		purchase_.bank = bank;
+		purchase_.bank_account = bank_account;
+
+		purchases.add(purchase_);
+		
+		int purchaseCount = purchases.size();
+		
+		if ( 189 * purchaseCount >=  this.maxAllowedPacket ){
+			insertPurchase(purchases);
+			purchases.clear();
+		} 
+	}
+
 
 	/**
 	 * Purchase
@@ -16672,6 +21050,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int web_infoStmtSize = 0;
 
 	private int web_infoInserted = 0;
@@ -16684,8 +21063,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private static class Web_info {
 		private Integer id; 
 		private Integer company; 
-		private InputStream commercial_description; 
-		private InputStream schedule; 
+		private String commercial_description; 
+		private String schedule; 
 		private String slogan; 
 	}
 	
@@ -16726,11 +21105,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( web_info.commercial_description == null )
 				web_infoStmt.setNull(offset++, -1);
 			else
-				web_infoStmt.setAsciiStream(offset++, web_info.commercial_description);
+				web_infoStmt.setString(offset++, web_info.commercial_description);
 			if ( web_info.schedule == null )
 				web_infoStmt.setNull(offset++, -1);
 			else
-				web_infoStmt.setAsciiStream(offset++, web_info.schedule);
+				web_infoStmt.setString(offset++, web_info.schedule);
 			if ( web_info.slogan == null )
 				web_infoStmt.setNull(offset++, 12);
 			else
@@ -16767,8 +21146,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextWeb_infoId() {
+		public int nextWeb_infoId() {
 			return ++this.web_infoId;
+		} 
+
+		public void setWeb_infoId(Integer web_infoId) {
+			this.web_infoId = web_infoId;
 		} 
 	
 	private void flushWeb_info(  )
@@ -16781,6 +21164,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Web_info
+	 * @param id Identificador Unico
+	 * @param company Empresa
+	 * @param commercial_description Descripcion comercial
+	 * @param schedule Horario
+	 * @param slogan Slogan
+	 * @throws SQLException
+	*/
+	protected void insertWeb_info(Integer id, Integer company, String commercial_description, String schedule, String slogan)
+	throws SQLException {
+
+		Web_info web_info_ = new Web_info();
+		web_info_.id = id;
+		web_info_.company = company;
+		web_info_.commercial_description = commercial_description;
+		web_info_.schedule = schedule;
+		web_info_.slogan = slogan;
+
+		web_infos.add(web_info_);
+		
+		int web_infoCount = web_infos.size();
+		
+		if ( 84 * web_infoCount >=  this.maxAllowedPacket ){
+			insertWeb_info(web_infos);
+			web_infos.clear();
+		} 
+	}
+
+
+	/**
+	 * Web_info
 	 * @param company Empresa
 	 * @param commercial_description Descripcion comercial
 	 * @param schedule Horario
@@ -16788,7 +21201,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWeb_info(Integer company, InputStream commercial_description, InputStream schedule, String slogan)
+	protected int insertWeb_info(Integer company, String commercial_description, String schedule, String slogan)
 	throws SQLException {
 		int id = nextWeb_infoId();
 
@@ -16809,6 +21222,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int lh_positionStmtSize = 0;
 
@@ -16920,8 +21334,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextLh_positionId() {
+		public int nextLh_positionId() {
 			return ++this.lh_positionId;
+		} 
+
+		public void setLh_positionId(Integer lh_positionId) {
+			this.lh_positionId = lh_positionId;
 		} 
 	
 	private void flushLh_position(  )
@@ -16931,6 +21349,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( lh_positionStmt != null )
 			lh_positionStmt.close();
 	}	
+
+	/**
+	 * Lh_position
+	 * @param id Identificador unico del Cargo
+	 * @param employee Identificador del Empleado
+	 * @param startingdate Fecha de inicio del Cargo
+	 * @param endingdate Fecha de finalizacion del Cargo
+	 * @param description Descripcion del Cargo
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param workactivity Identificador de la Actividad
+	 * @param calendar Identificador del Calendario Laboral
+	 * @throws SQLException
+	*/
+	protected void insertLh_position(Integer id, Integer employee, Date startingdate, Date endingdate, String description, Integer workplace, Integer workactivity, Integer calendar)
+	throws SQLException {
+
+		Lh_position lh_position_ = new Lh_position();
+		lh_position_.id = id;
+		lh_position_.employee = employee;
+		lh_position_.startingdate = startingdate;
+		lh_position_.endingdate = endingdate;
+		lh_position_.description = description;
+		lh_position_.workplace = workplace;
+		lh_position_.workactivity = workactivity;
+		lh_position_.calendar = calendar;
+
+		lh_positions.add(lh_position_);
+		
+		int lh_positionCount = lh_positions.size();
+		
+		if ( 134 * lh_positionCount >=  this.maxAllowedPacket ){
+			insertLh_position(lh_positions);
+			lh_positions.clear();
+		} 
+	}
+
 
 	/**
 	 * Lh_position
@@ -16968,6 +21422,198 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
+
+	private int bank_statement_linkStmtSize = 0;
+
+	private int bank_statement_linkInserted = 0;
+
+	private List<Bank_statement_link> bank_statement_links = 
+		new LinkedList<Bank_statement_link>();
+
+	private PreparedStatement bank_statement_linkStmt = null;
+
+	private static class Bank_statement_link {
+		private Integer id; 
+		private Integer bank_statement; 
+		private Short source; 
+		private Integer source_id; 
+		private Date source_date; 
+		private Double amount; 
+		private Short status; 
+	}
+	
+	private void insertBank_statement_link( List<Bank_statement_link> bank_statement_links )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = bank_statement_links.size();
+		if ( bank_statement_linkStmtSize != size ) {
+			if ( bank_statement_linkStmt != null ) {
+				bank_statement_linkStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			bank_statement_linkStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO bank_statement_link (id,bank_statement,source,source_id,source_date,amount,status)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			bank_statement_linkStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Bank_statement_link bank_statement_link : bank_statement_links) {
+			if ( bank_statement_link.id == null )
+				bank_statement_linkStmt.setNull(offset++, 4);
+			else
+				bank_statement_linkStmt.setInt(offset++, bank_statement_link.id);
+			if ( bank_statement_link.bank_statement == null )
+				bank_statement_linkStmt.setNull(offset++, 4);
+			else
+				bank_statement_linkStmt.setInt(offset++, bank_statement_link.bank_statement);
+			if ( bank_statement_link.source == null )
+				bank_statement_linkStmt.setNull(offset++, -6);
+			else
+				bank_statement_linkStmt.setShort(offset++, bank_statement_link.source);
+			if ( bank_statement_link.source_id == null )
+				bank_statement_linkStmt.setNull(offset++, 4);
+			else
+				bank_statement_linkStmt.setInt(offset++, bank_statement_link.source_id);
+			if ( bank_statement_link.source_date == null )
+				bank_statement_linkStmt.setNull(offset++, 91);
+			else
+				bank_statement_linkStmt.setDate(offset++, bank_statement_link.source_date);
+			if ( bank_statement_link.amount == null )
+				bank_statement_linkStmt.setNull(offset++, 8);
+			else
+				bank_statement_linkStmt.setDouble(offset++, bank_statement_link.amount);
+			if ( bank_statement_link.status == null )
+				bank_statement_linkStmt.setNull(offset++, -6);
+			else
+				bank_statement_linkStmt.setShort(offset++, bank_statement_link.status);
+		}
+		bank_statement_linkStmt.executeUpdate();
+		bank_statement_linkInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Bank_statement_links in {} milliseconds.", size, bank_statement_linkInserted, elapsed );		
+	}
+		
+		private int bank_statement_linkId = -1;
+		
+		private void initBank_statement_linkId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `bank_statement_link`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.bank_statement_linkId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextBank_statement_linkId() {
+			return ++this.bank_statement_linkId;
+		} 
+
+		public void setBank_statement_linkId(Integer bank_statement_linkId) {
+			this.bank_statement_linkId = bank_statement_linkId;
+		} 
+	
+	private void flushBank_statement_link(  )
+	throws SQLException {
+		if ( ! bank_statement_links.isEmpty() )
+			insertBank_statement_link(bank_statement_links);
+		if ( bank_statement_linkStmt != null )
+			bank_statement_linkStmt.close();
+	}	
+
+	/**
+	 * Bank_statement_link
+	 * @param id Identificador unico
+	 * @param bank_statement Identificador de Extracto bancario
+	 * @param source Origen
+	 * @param source_id Identificador del origen
+	 * @param source_date Fecha del origen
+	 * @param amount Importe
+	 * @param status Estado
+	 * @throws SQLException
+	*/
+	protected void insertBank_statement_link(Integer id, Integer bank_statement, Short source, Integer source_id, Date source_date, Double amount, Short status)
+	throws SQLException {
+
+		Bank_statement_link bank_statement_link_ = new Bank_statement_link();
+		bank_statement_link_.id = id;
+		bank_statement_link_.bank_statement = bank_statement;
+		bank_statement_link_.source = source;
+		bank_statement_link_.source_id = source_id;
+		bank_statement_link_.source_date = source_date;
+		bank_statement_link_.amount = amount;
+		bank_statement_link_.status = status;
+
+		bank_statement_links.add(bank_statement_link_);
+		
+		int bank_statement_linkCount = bank_statement_links.size();
+		
+		if ( 61 * bank_statement_linkCount >=  this.maxAllowedPacket ){
+			insertBank_statement_link(bank_statement_links);
+			bank_statement_links.clear();
+		} 
+	}
+
+
+	/**
+	 * Bank_statement_link
+	 * @param bank_statement Identificador de Extracto bancario
+	 * @param source Origen
+	 * @param source_id Identificador del origen
+	 * @param source_date Fecha del origen
+	 * @param amount Importe
+	 * @param status Estado
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertBank_statement_link(Integer bank_statement, Short source, Integer source_id, Date source_date, Double amount, Short status)
+	throws SQLException {
+		int id = nextBank_statement_linkId();
+
+		Bank_statement_link bank_statement_link_ = new Bank_statement_link();
+		bank_statement_link_.id = id;
+		bank_statement_link_.bank_statement = bank_statement;
+		bank_statement_link_.source = source;
+		bank_statement_link_.source_id = source_id;
+		bank_statement_link_.source_date = source_date;
+		bank_statement_link_.amount = amount;
+		bank_statement_link_.status = status;
+
+		bank_statement_links.add(bank_statement_link_);
+		
+		int bank_statement_linkCount = bank_statement_links.size();
+		
+		if ( 61 * bank_statement_linkCount >=  this.maxAllowedPacket ){
+			insertBank_statement_link(bank_statement_links);
+			bank_statement_links.clear();
+		} 
+		return id;
+	}
+
 
 	private int cv_evaluateStmtSize = 0;
 
@@ -17059,8 +21705,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCv_evaluateId() {
+		public int nextCv_evaluateId() {
 			return ++this.cv_evaluateId;
+		} 
+
+		public void setCv_evaluateId(Integer cv_evaluateId) {
+			this.cv_evaluateId = cv_evaluateId;
 		} 
 	
 	private void flushCv_evaluate(  )
@@ -17070,6 +21720,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( cv_evaluateStmt != null )
 			cv_evaluateStmt.close();
 	}	
+
+	/**
+	 * Cv_evaluate
+	 * @param id Identificador unico de la Evaluacion
+	 * @param type Tipo de Evaluacion
+	 * @param value Valor de la Evaluacion
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @throws SQLException
+	*/
+	protected void insertCv_evaluate(Integer id, Integer type, Short value, Integer curriculum)
+	throws SQLException {
+
+		Cv_evaluate cv_evaluate_ = new Cv_evaluate();
+		cv_evaluate_.id = id;
+		cv_evaluate_.type = type;
+		cv_evaluate_.value = value;
+		cv_evaluate_.curriculum = curriculum;
+
+		cv_evaluates.add(cv_evaluate_);
+		
+		int cv_evaluateCount = cv_evaluates.size();
+		
+		if ( 33 * cv_evaluateCount >=  this.maxAllowedPacket ){
+			insertCv_evaluate(cv_evaluates);
+			cv_evaluates.clear();
+		} 
+	}
+
 
 	/**
 	 * Cv_evaluate
@@ -17100,150 +21778,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
-	private int bank_statement_linkStmtSize = 0;
-
-	private int bank_statement_linkInserted = 0;
-
-	private List<Bank_statement_link> bank_statement_links = 
-		new LinkedList<Bank_statement_link>();
-
-	private PreparedStatement bank_statement_linkStmt = null;
-
-	private static class Bank_statement_link {
-		private Integer id; 
-		private Integer bank_statement; 
-		private Short source; 
-		private Integer source_id; 
-		private Double amount; 
-		private Short status; 
-	}
-	
-	private void insertBank_statement_link( List<Bank_statement_link> bank_statement_links )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = bank_statement_links.size();
-		if ( bank_statement_linkStmtSize != size ) {
-			if ( bank_statement_linkStmt != null ) {
-				bank_statement_linkStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			bank_statement_linkStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO bank_statement_link (id,bank_statement,source,source_id,amount,status)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			bank_statement_linkStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Bank_statement_link bank_statement_link : bank_statement_links) {
-			if ( bank_statement_link.id == null )
-				bank_statement_linkStmt.setNull(offset++, 4);
-			else
-				bank_statement_linkStmt.setInt(offset++, bank_statement_link.id);
-			if ( bank_statement_link.bank_statement == null )
-				bank_statement_linkStmt.setNull(offset++, 4);
-			else
-				bank_statement_linkStmt.setInt(offset++, bank_statement_link.bank_statement);
-			if ( bank_statement_link.source == null )
-				bank_statement_linkStmt.setNull(offset++, -6);
-			else
-				bank_statement_linkStmt.setShort(offset++, bank_statement_link.source);
-			if ( bank_statement_link.source_id == null )
-				bank_statement_linkStmt.setNull(offset++, 4);
-			else
-				bank_statement_linkStmt.setInt(offset++, bank_statement_link.source_id);
-			if ( bank_statement_link.amount == null )
-				bank_statement_linkStmt.setNull(offset++, 8);
-			else
-				bank_statement_linkStmt.setDouble(offset++, bank_statement_link.amount);
-			if ( bank_statement_link.status == null )
-				bank_statement_linkStmt.setNull(offset++, -6);
-			else
-				bank_statement_linkStmt.setShort(offset++, bank_statement_link.status);
-		}
-		bank_statement_linkStmt.executeUpdate();
-		bank_statement_linkInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Bank_statement_links in {} milliseconds.", size, bank_statement_linkInserted, elapsed );		
-	}
-		
-		private int bank_statement_linkId = -1;
-		
-		private void initBank_statement_linkId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `bank_statement_link`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.bank_statement_linkId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		private int nextBank_statement_linkId() {
-			return ++this.bank_statement_linkId;
-		} 
-	
-	private void flushBank_statement_link(  )
-	throws SQLException {
-		if ( ! bank_statement_links.isEmpty() )
-			insertBank_statement_link(bank_statement_links);
-		if ( bank_statement_linkStmt != null )
-			bank_statement_linkStmt.close();
-	}	
-
-	/**
-	 * Bank_statement_link
-	 * @param bank_statement Identificador de Extracto bancario
-	 * @param source Origen
-	 * @param source_id Identificador del origen
-	 * @param amount Importe
-	 * @param status Estado
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertBank_statement_link(Integer bank_statement, Short source, Integer source_id, Double amount, Short status)
-	throws SQLException {
-		int id = nextBank_statement_linkId();
-
-		Bank_statement_link bank_statement_link_ = new Bank_statement_link();
-		bank_statement_link_.id = id;
-		bank_statement_link_.bank_statement = bank_statement;
-		bank_statement_link_.source = source;
-		bank_statement_link_.source_id = source_id;
-		bank_statement_link_.amount = amount;
-		bank_statement_link_.status = status;
-
-		bank_statement_links.add(bank_statement_link_);
-		
-		int bank_statement_linkCount = bank_statement_links.size();
-		
-		if ( 51 * bank_statement_linkCount >=  this.maxAllowedPacket ){
-			insertBank_statement_link(bank_statement_links);
-			bank_statement_links.clear();
-		} 
-		return id;
-	}
 
 	private int course_alumnStmtSize = 0;
 
@@ -17335,8 +21869,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCourse_alumnId() {
+		public int nextCourse_alumnId() {
 			return ++this.course_alumnId;
+		} 
+
+		public void setCourse_alumnId(Integer course_alumnId) {
+			this.course_alumnId = course_alumnId;
 		} 
 	
 	private void flushCourse_alumn(  )
@@ -17346,6 +21884,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( course_alumnStmt != null )
 			course_alumnStmt.close();
 	}	
+
+	/**
+	 * Course_alumn
+	 * @param id Identificador unico
+	 * @param course Identificador del Curso
+	 * @param customer Identificador del Alumno
+	 * @param status Estado del alumno en el curso
+	 * @throws SQLException
+	*/
+	protected void insertCourse_alumn(Integer id, Integer course, Integer customer, Short status)
+	throws SQLException {
+
+		Course_alumn course_alumn_ = new Course_alumn();
+		course_alumn_.id = id;
+		course_alumn_.course = course;
+		course_alumn_.customer = customer;
+		course_alumn_.status = status;
+
+		course_alumns.add(course_alumn_);
+		
+		int course_alumnCount = course_alumns.size();
+		
+		if ( 33 * course_alumnCount >=  this.maxAllowedPacket ){
+			insertCourse_alumn(course_alumns);
+			course_alumns.clear();
+		} 
+	}
+
 
 	/**
 	 * Course_alumn
@@ -17376,6 +21942,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int fs_rentingStmtSize = 0;
 
 	private int fs_rentingInserted = 0;
@@ -17390,7 +21957,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer year; 
 		private Short period; 
 		private Short administration; 
-		private InputStream comments; 
+		private String comments; 
 		private Short status; 
 		private Short security_level; 
 		private Boolean complementary; 
@@ -17476,7 +22043,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( fs_renting.comments == null )
 				fs_rentingStmt.setNull(offset++, -1);
 			else
-				fs_rentingStmt.setAsciiStream(offset++, fs_renting.comments);
+				fs_rentingStmt.setString(offset++, fs_renting.comments);
 			if ( fs_renting.status == null )
 				fs_rentingStmt.setNull(offset++, -6);
 			else
@@ -17661,8 +22228,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFs_rentingId() {
+		public int nextFs_rentingId() {
 			return ++this.fs_rentingId;
+		} 
+
+		public void setFs_rentingId(Integer fs_rentingId) {
+			this.fs_rentingId = fs_rentingId;
 		} 
 	
 	private void flushFs_renting(  )
@@ -17672,6 +22243,112 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( fs_rentingStmt != null )
 			fs_rentingStmt.close();
 	}	
+
+	/**
+	 * Fs_renting
+	 * @param id Identificador unico
+	 * @param year Ejercicio de la Declaracion
+	 * @param period Periodo de la Declaracion
+	 * @param administration Administracion
+	 * @param comments Comentarios de la Declaracion
+	 * @param status Estado de la Declaracion
+	 * @param security_level Nivel de seguridad
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param lessor_count_accumulated Numero de arrendadores acumulado
+	 * @param lessor_count_declared Numero de arrendadores declarado
+	 * @param lessor_count_result Numero de arrendadores resultado
+	 * @param lessor_count_adjust Numero de arrendadores ajuste
+	 * @param lessor_count Numero de arrendadores
+	 * @param renting_amount_accumulated Importe de los arrendamientos acumulado
+	 * @param renting_amount_declared Importe de los arrendamientos declarado
+	 * @param renting_amount_result Importe de los arrendamientos resultado
+	 * @param renting_amount_adjust Importe de los arrendamientos ajuste
+	 * @param renting_amount Importe de los arrendamientos
+	 * @param retention_accumulated Importe de la retencion acumulado
+	 * @param retention_declared Importe de la retencion declarado
+	 * @param retention_result Importe de la retencion resultado
+	 * @param retention_adjust Importe de la retencion ajuste
+	 * @param retention Importe de la retencion
+	 * @param lessor_count_in_kind_accumulated Numero de arrendadores (especie) acumulado
+	 * @param lessor_count_in_kind_declared Numero de arrendadores (especie) declarado
+	 * @param lessor_count_in_kind_result Numero de arrendadores (especie) resultado
+	 * @param lessor_count_in_kind_adjust Numero de arrendadores (especie) ajuste
+	 * @param lessor_count_in_kind Numero de arrendadores (especie)
+	 * @param remuneration_in_kind_accumulated Retribucion en especie acumulado
+	 * @param remuneration_in_kind_declared Retribucion en especie declarado
+	 * @param remuneration_in_kind_result Retribucion en especie resultado
+	 * @param remuneration_in_kind_adjust Retribucion en especie ajuste
+	 * @param remuneration_in_kind Retribucion en especie
+	 * @param account_deposit_accumulated Ingresos a cuenta acumulado
+	 * @param account_deposit_declared Ingresos a cuenta declarado
+	 * @param account_deposit_result Ingresos a cuenta resultado
+	 * @param account_deposit_adjust Ingresos a cuenta ajuste
+	 * @param account_deposit Ingresos a cuenta
+	 * @param extra_charge Recargo
+	 * @param delay_interest Intereses de demora
+	 * @param total_tax_debt Total deuda tributaria
+	 * @param rbank Banco de la Compaia
+	 * @throws SQLException
+	*/
+	protected void insertFs_renting(Integer id, Integer year, Short period, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Double lessor_count_accumulated, Double lessor_count_declared, Double lessor_count_result, Double lessor_count_adjust, Double lessor_count, Double renting_amount_accumulated, Double renting_amount_declared, Double renting_amount_result, Double renting_amount_adjust, Double renting_amount, Double retention_accumulated, Double retention_declared, Double retention_result, Double retention_adjust, Double retention, Double lessor_count_in_kind_accumulated, Double lessor_count_in_kind_declared, Double lessor_count_in_kind_result, Double lessor_count_in_kind_adjust, Double lessor_count_in_kind, Double remuneration_in_kind_accumulated, Double remuneration_in_kind_declared, Double remuneration_in_kind_result, Double remuneration_in_kind_adjust, Double remuneration_in_kind, Double account_deposit_accumulated, Double account_deposit_declared, Double account_deposit_result, Double account_deposit_adjust, Double account_deposit, Double extra_charge, Double delay_interest, Double total_tax_debt, Integer rbank)
+	throws SQLException {
+
+		Fs_renting fs_renting_ = new Fs_renting();
+		fs_renting_.id = id;
+		fs_renting_.year = year;
+		fs_renting_.period = period;
+		fs_renting_.administration = administration;
+		fs_renting_.comments = comments;
+		fs_renting_.status = status;
+		fs_renting_.security_level = security_level;
+		fs_renting_.complementary = complementary;
+		fs_renting_.replacement = replacement;
+		fs_renting_.lessor_count_accumulated = lessor_count_accumulated;
+		fs_renting_.lessor_count_declared = lessor_count_declared;
+		fs_renting_.lessor_count_result = lessor_count_result;
+		fs_renting_.lessor_count_adjust = lessor_count_adjust;
+		fs_renting_.lessor_count = lessor_count;
+		fs_renting_.renting_amount_accumulated = renting_amount_accumulated;
+		fs_renting_.renting_amount_declared = renting_amount_declared;
+		fs_renting_.renting_amount_result = renting_amount_result;
+		fs_renting_.renting_amount_adjust = renting_amount_adjust;
+		fs_renting_.renting_amount = renting_amount;
+		fs_renting_.retention_accumulated = retention_accumulated;
+		fs_renting_.retention_declared = retention_declared;
+		fs_renting_.retention_result = retention_result;
+		fs_renting_.retention_adjust = retention_adjust;
+		fs_renting_.retention = retention;
+		fs_renting_.lessor_count_in_kind_accumulated = lessor_count_in_kind_accumulated;
+		fs_renting_.lessor_count_in_kind_declared = lessor_count_in_kind_declared;
+		fs_renting_.lessor_count_in_kind_result = lessor_count_in_kind_result;
+		fs_renting_.lessor_count_in_kind_adjust = lessor_count_in_kind_adjust;
+		fs_renting_.lessor_count_in_kind = lessor_count_in_kind;
+		fs_renting_.remuneration_in_kind_accumulated = remuneration_in_kind_accumulated;
+		fs_renting_.remuneration_in_kind_declared = remuneration_in_kind_declared;
+		fs_renting_.remuneration_in_kind_result = remuneration_in_kind_result;
+		fs_renting_.remuneration_in_kind_adjust = remuneration_in_kind_adjust;
+		fs_renting_.remuneration_in_kind = remuneration_in_kind;
+		fs_renting_.account_deposit_accumulated = account_deposit_accumulated;
+		fs_renting_.account_deposit_declared = account_deposit_declared;
+		fs_renting_.account_deposit_result = account_deposit_result;
+		fs_renting_.account_deposit_adjust = account_deposit_adjust;
+		fs_renting_.account_deposit = account_deposit;
+		fs_renting_.extra_charge = extra_charge;
+		fs_renting_.delay_interest = delay_interest;
+		fs_renting_.total_tax_debt = total_tax_debt;
+		fs_renting_.rbank = rbank;
+
+		fs_rentings.add(fs_renting_);
+		
+		int fs_rentingCount = fs_rentings.size();
+		
+		if ( 537 * fs_rentingCount >=  this.maxAllowedPacket ){
+			insertFs_renting(fs_rentings);
+			fs_rentings.clear();
+		} 
+	}
+
 
 	/**
 	 * Fs_renting
@@ -17720,7 +22397,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFs_renting(Integer year, Short period, Short administration, InputStream comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Double lessor_count_accumulated, Double lessor_count_declared, Double lessor_count_result, Double lessor_count_adjust, Double lessor_count, Double renting_amount_accumulated, Double renting_amount_declared, Double renting_amount_result, Double renting_amount_adjust, Double renting_amount, Double retention_accumulated, Double retention_declared, Double retention_result, Double retention_adjust, Double retention, Double lessor_count_in_kind_accumulated, Double lessor_count_in_kind_declared, Double lessor_count_in_kind_result, Double lessor_count_in_kind_adjust, Double lessor_count_in_kind, Double remuneration_in_kind_accumulated, Double remuneration_in_kind_declared, Double remuneration_in_kind_result, Double remuneration_in_kind_adjust, Double remuneration_in_kind, Double account_deposit_accumulated, Double account_deposit_declared, Double account_deposit_result, Double account_deposit_adjust, Double account_deposit, Double extra_charge, Double delay_interest, Double total_tax_debt, Integer rbank)
+	protected int insertFs_renting(Integer year, Short period, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Double lessor_count_accumulated, Double lessor_count_declared, Double lessor_count_result, Double lessor_count_adjust, Double lessor_count, Double renting_amount_accumulated, Double renting_amount_declared, Double renting_amount_result, Double renting_amount_adjust, Double renting_amount, Double retention_accumulated, Double retention_declared, Double retention_result, Double retention_adjust, Double retention, Double lessor_count_in_kind_accumulated, Double lessor_count_in_kind_declared, Double lessor_count_in_kind_result, Double lessor_count_in_kind_adjust, Double lessor_count_in_kind, Double remuneration_in_kind_accumulated, Double remuneration_in_kind_declared, Double remuneration_in_kind_result, Double remuneration_in_kind_adjust, Double remuneration_in_kind, Double account_deposit_accumulated, Double account_deposit_declared, Double account_deposit_result, Double account_deposit_adjust, Double account_deposit, Double extra_charge, Double delay_interest, Double total_tax_debt, Integer rbank)
 	throws SQLException {
 		int id = nextFs_rentingId();
 
@@ -17779,6 +22456,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int questionStmtSize = 0;
 
@@ -17875,8 +22553,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextQuestionId() {
+		public int nextQuestionId() {
 			return ++this.questionId;
+		} 
+
+		public void setQuestionId(Integer questionId) {
+			this.questionId = questionId;
 		} 
 	
 	private void flushQuestion(  )
@@ -17886,6 +22568,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( questionStmt != null )
 			questionStmt.close();
 	}	
+
+	/**
+	 * Question
+	 * @param id Identificador unico
+	 * @param active Indica si la Pregunta esta activa o no
+	 * @param question_text Texto de la Pregunta
+	 * @param type Tipo de Pregunta
+	 * @param argument Argumentacion de la Pregunta
+	 * @throws SQLException
+	*/
+	protected void insertQuestion(Integer id, Boolean active, String question_text, Short type, String argument)
+	throws SQLException {
+
+		Question question_ = new Question();
+		question_.id = id;
+		question_.active = active;
+		question_.question_text = question_text;
+		question_.type = type;
+		question_.argument = argument;
+
+		questions.add(question_);
+		
+		int questionCount = questions.size();
+		
+		if ( 523 * questionCount >=  this.maxAllowedPacket ){
+			insertQuestion(questions);
+			questions.clear();
+		} 
+	}
+
 
 	/**
 	 * Question
@@ -17917,6 +22629,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int record_dataStmtSize = 0;
 
@@ -18053,8 +22766,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRecord_dataId() {
+		public int nextRecord_dataId() {
 			return ++this.record_dataId;
+		} 
+
+		public void setRecord_dataId(Integer record_dataId) {
+			this.record_dataId = record_dataId;
 		} 
 	
 	private void flushRecord_data(  )
@@ -18064,6 +22781,52 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( record_dataStmt != null )
 			record_dataStmt.close();
 	}	
+
+	/**
+	 * Record_data
+	 * @param id Identificador unico del Dato Registral
+	 * @param registry Registro de la Empresa
+	 * @param creation_date Fecha de creacion del Dato Registral
+	 * @param description Descripcion del Dato Registral
+	 * @param notary Notario del Dato Registral
+	 * @param number Numero del Dato Registral
+	 * @param record_date Fecha de registro del Dato Registral
+	 * @param volume Tomo del Dato Registral
+	 * @param section Seccion del Dato Registral
+	 * @param page Folio del Dato Registral
+	 * @param sheet Hoja del Dato Registral
+	 * @param registration Inscripcion del Dato Registral
+	 * @param attach Archivo adjunto
+	 * @throws SQLException
+	*/
+	protected void insertRecord_data(Integer id, Integer registry, Date creation_date, String description, String notary, String number, Date record_date, String volume, String section, String page, String sheet, String registration, Integer attach)
+	throws SQLException {
+
+		Record_data record_data_ = new Record_data();
+		record_data_.id = id;
+		record_data_.registry = registry;
+		record_data_.creation_date = creation_date;
+		record_data_.description = description;
+		record_data_.notary = notary;
+		record_data_.number = number;
+		record_data_.record_date = record_date;
+		record_data_.volume = volume;
+		record_data_.section = section;
+		record_data_.page = page;
+		record_data_.sheet = sheet;
+		record_data_.registration = registration;
+		record_data_.attach = attach;
+
+		record_datas.add(record_data_);
+		
+		int record_dataCount = record_datas.size();
+		
+		if ( 322 * record_dataCount >=  this.maxAllowedPacket ){
+			insertRecord_data(record_datas);
+			record_datas.clear();
+		} 
+	}
+
 
 	/**
 	 * Record_data
@@ -18111,6 +22874,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int employeeStmtSize = 0;
 
@@ -18222,6 +22986,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int alumn_loanStmtSize = 0;
 
 	private int alumn_loanInserted = 0;
@@ -18322,8 +23088,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAlumn_loanId() {
+		public int nextAlumn_loanId() {
 			return ++this.alumn_loanId;
+		} 
+
+		public void setAlumn_loanId(Integer alumn_loanId) {
+			this.alumn_loanId = alumn_loanId;
 		} 
 	
 	private void flushAlumn_loan(  )
@@ -18333,6 +23103,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( alumn_loanStmt != null )
 			alumn_loanStmt.close();
 	}	
+
+	/**
+	 * Alumn_loan
+	 * @param id Identificador unico del Prestamo
+	 * @param customer Alumno al que se le realizo el Prestamo
+	 * @param material Material prestado
+	 * @param loan_date Fecha del Prestamo
+	 * @param end_date Fecha devolucion del material
+	 * @param comments Observaciones
+	 * @throws SQLException
+	*/
+	protected void insertAlumn_loan(Integer id, Integer customer, String material, Date loan_date, Date end_date, String comments)
+	throws SQLException {
+
+		Alumn_loan alumn_loan_ = new Alumn_loan();
+		alumn_loan_.id = id;
+		alumn_loan_.customer = customer;
+		alumn_loan_.material = material;
+		alumn_loan_.loan_date = loan_date;
+		alumn_loan_.end_date = end_date;
+		alumn_loan_.comments = comments;
+
+		alumn_loans.add(alumn_loan_);
+		
+		int alumn_loanCount = alumn_loans.size();
+		
+		if ( 120 * alumn_loanCount >=  this.maxAllowedPacket ){
+			insertAlumn_loan(alumn_loans);
+			alumn_loans.clear();
+		} 
+	}
+
 
 	/**
 	 * Alumn_loan
@@ -18366,6 +23168,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int activityStmtSize = 0;
 
@@ -18457,8 +23260,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextActivityId() {
+		public int nextActivityId() {
 			return ++this.activityId;
+		} 
+
+		public void setActivityId(Integer activityId) {
+			this.activityId = activityId;
 		} 
 	
 	private void flushActivity(  )
@@ -18468,6 +23275,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( activityStmt != null )
 			activityStmt.close();
 	}	
+
+	/**
+	 * Activity
+	 * @param id Identificador unico de la Actividad
+	 * @param dossier Identificador del Expendiente
+	 * @param activity_type Tipo de Actividad
+	 * @param workgroup Identificador del Grupo de Trabajo
+	 * @throws SQLException
+	*/
+	protected void insertActivity(Integer id, Integer dossier, Integer activity_type, Integer workgroup)
+	throws SQLException {
+
+		Activity activity_ = new Activity();
+		activity_.id = id;
+		activity_.dossier = dossier;
+		activity_.activity_type = activity_type;
+		activity_.workgroup = workgroup;
+
+		activitys.add(activity_);
+		
+		int activityCount = activitys.size();
+		
+		if ( 40 * activityCount >=  this.maxAllowedPacket ){
+			insertActivity(activitys);
+			activitys.clear();
+		} 
+	}
+
 
 	/**
 	 * Activity
@@ -18498,6 +23333,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int calendarStmtSize = 0;
 
 	private int calendarInserted = 0;
@@ -18510,11 +23346,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private static class Calendar {
 		private Integer id; 
 		private Integer holiday; 
-		private Short source; 
-		private Integer source_id; 
 		private Double anual_hours; 
 		private String description; 
-		private InputStream comments; 
+		private String comments; 
 		private Short monday; 
 		private Double monday_hours; 
 		private Short tuesday; 
@@ -18529,6 +23363,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Double saturday_hours; 
 		private Short sunday; 
 		private Double sunday_hours; 
+		private Boolean generic; 
+		private Integer calendar; 
 	}
 	
 	private void insertCalendar( List<Calendar> calendars )
@@ -18548,7 +23384,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			calendarStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO calendar (id,holiday,source,source_id,anual_hours,description,comments,monday,monday_hours,tuesday,tuesday_hours,wednesday,wednesday_hours,thursday,thursday_hours,friday,friday_hours,saturday,saturday_hours,sunday,sunday_hours)"  
+				"INSERT INTO calendar (id,holiday,anual_hours,description,comments,monday,monday_hours,tuesday,tuesday_hours,wednesday,wednesday_hours,thursday,thursday_hours,friday,friday_hours,saturday,saturday_hours,sunday,sunday_hours,generic,calendar)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			calendarStmtSize = size;
@@ -18565,14 +23401,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				calendarStmt.setNull(offset++, 4);
 			else
 				calendarStmt.setInt(offset++, calendar.holiday);
-			if ( calendar.source == null )
-				calendarStmt.setNull(offset++, -6);
-			else
-				calendarStmt.setShort(offset++, calendar.source);
-			if ( calendar.source_id == null )
-				calendarStmt.setNull(offset++, 4);
-			else
-				calendarStmt.setInt(offset++, calendar.source_id);
 			if ( calendar.anual_hours == null )
 				calendarStmt.setNull(offset++, 8);
 			else
@@ -18584,7 +23412,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( calendar.comments == null )
 				calendarStmt.setNull(offset++, -1);
 			else
-				calendarStmt.setAsciiStream(offset++, calendar.comments);
+				calendarStmt.setString(offset++, calendar.comments);
 			if ( calendar.monday == null )
 				calendarStmt.setNull(offset++, -6);
 			else
@@ -18641,6 +23469,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				calendarStmt.setNull(offset++, 8);
 			else
 				calendarStmt.setDouble(offset++, calendar.sunday_hours);
+			if ( calendar.generic == null )
+				calendarStmt.setNull(offset++, -7);
+			else
+				calendarStmt.setBoolean(offset++, calendar.generic);
+			if ( calendar.calendar == null )
+				calendarStmt.setNull(offset++, 4);
+			else
+				calendarStmt.setInt(offset++, calendar.calendar);
 		}
 		calendarStmt.executeUpdate();
 		calendarInserted += size;
@@ -18673,8 +23509,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCalendarId() {
+		public int nextCalendarId() {
 			return ++this.calendarId;
+		} 
+
+		public void setCalendarId(Integer calendarId) {
+			this.calendarId = calendarId;
 		} 
 	
 	private void flushCalendar(  )
@@ -18687,9 +23527,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Calendar
+	 * @param id Identificador unico
 	 * @param holiday Identificador de Festivos
-	 * @param source Origen
-	 * @param source_id Identificador unico de la fuente
 	 * @param anual_hours Horas anuales del Calendario
 	 * @param description Descripcion del Calendario
 	 * @param comments Comentarios
@@ -18707,18 +23546,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param saturday_hours Numero de horas laborables
 	 * @param sunday Tipo de dia
 	 * @param sunday_hours Numero de horas laborables
-	 * @returns auto-generated key
+	 * @param generic Indica si es editable o no
+	 * @param calendar Calendario del que se hereda
 	 * @throws SQLException
 	*/
-	protected int insertCalendar(Integer holiday, Short source, Integer source_id, Double anual_hours, String description, InputStream comments, Short monday, Double monday_hours, Short tuesday, Double tuesday_hours, Short wednesday, Double wednesday_hours, Short thursday, Double thursday_hours, Short friday, Double friday_hours, Short saturday, Double saturday_hours, Short sunday, Double sunday_hours)
+	protected void insertCalendar(Integer id, Integer holiday, Double anual_hours, String description, String comments, Short monday, Double monday_hours, Short tuesday, Double tuesday_hours, Short wednesday, Double wednesday_hours, Short thursday, Double thursday_hours, Short friday, Double friday_hours, Short saturday, Double saturday_hours, Short sunday, Double sunday_hours, Boolean generic, Integer calendar)
 	throws SQLException {
-		int id = nextCalendarId();
 
 		Calendar calendar_ = new Calendar();
 		calendar_.id = id;
 		calendar_.holiday = holiday;
-		calendar_.source = source;
-		calendar_.source_id = source_id;
 		calendar_.anual_hours = anual_hours;
 		calendar_.description = description;
 		calendar_.comments = comments;
@@ -18736,17 +23573,83 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		calendar_.saturday_hours = saturday_hours;
 		calendar_.sunday = sunday;
 		calendar_.sunday_hours = sunday_hours;
+		calendar_.generic = generic;
+		calendar_.calendar = calendar;
 
 		calendars.add(calendar_);
 		
 		int calendarCount = calendars.size();
 		
-		if ( 294 * calendarCount >=  this.maxAllowedPacket ){
+		if ( 291 * calendarCount >=  this.maxAllowedPacket ){
+			insertCalendar(calendars);
+			calendars.clear();
+		} 
+	}
+
+
+	/**
+	 * Calendar
+	 * @param holiday Identificador de Festivos
+	 * @param anual_hours Horas anuales del Calendario
+	 * @param description Descripcion del Calendario
+	 * @param comments Comentarios
+	 * @param monday Tipo de dia
+	 * @param monday_hours Numero de horas laborables
+	 * @param tuesday Tipo de dia
+	 * @param tuesday_hours Numero de horas laborables
+	 * @param wednesday Tipo de dia
+	 * @param wednesday_hours Numero de horas laborables
+	 * @param thursday Tipo de dia
+	 * @param thursday_hours Numero de horas laborables
+	 * @param friday Tipo de dia
+	 * @param friday_hours Numero de horas laborables
+	 * @param saturday Tipo de dia
+	 * @param saturday_hours Numero de horas laborables
+	 * @param sunday Tipo de dia
+	 * @param sunday_hours Numero de horas laborables
+	 * @param generic Indica si es editable o no
+	 * @param calendar Calendario del que se hereda
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCalendar(Integer holiday, Double anual_hours, String description, String comments, Short monday, Double monday_hours, Short tuesday, Double tuesday_hours, Short wednesday, Double wednesday_hours, Short thursday, Double thursday_hours, Short friday, Double friday_hours, Short saturday, Double saturday_hours, Short sunday, Double sunday_hours, Boolean generic, Integer calendar)
+	throws SQLException {
+		int id = nextCalendarId();
+
+		Calendar calendar_ = new Calendar();
+		calendar_.id = id;
+		calendar_.holiday = holiday;
+		calendar_.anual_hours = anual_hours;
+		calendar_.description = description;
+		calendar_.comments = comments;
+		calendar_.monday = monday;
+		calendar_.monday_hours = monday_hours;
+		calendar_.tuesday = tuesday;
+		calendar_.tuesday_hours = tuesday_hours;
+		calendar_.wednesday = wednesday;
+		calendar_.wednesday_hours = wednesday_hours;
+		calendar_.thursday = thursday;
+		calendar_.thursday_hours = thursday_hours;
+		calendar_.friday = friday;
+		calendar_.friday_hours = friday_hours;
+		calendar_.saturday = saturday;
+		calendar_.saturday_hours = saturday_hours;
+		calendar_.sunday = sunday;
+		calendar_.sunday_hours = sunday_hours;
+		calendar_.generic = generic;
+		calendar_.calendar = calendar;
+
+		calendars.add(calendar_);
+		
+		int calendarCount = calendars.size();
+		
+		if ( 291 * calendarCount >=  this.maxAllowedPacket ){
 			insertCalendar(calendars);
 			calendars.clear();
 		} 
 		return id;
 	}
+
 
 	private int ec_offer_pay_infoStmtSize = 0;
 
@@ -18838,8 +23741,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEc_offer_pay_infoId() {
+		public int nextEc_offer_pay_infoId() {
 			return ++this.ec_offer_pay_infoId;
+		} 
+
+		public void setEc_offer_pay_infoId(Integer ec_offer_pay_infoId) {
+			this.ec_offer_pay_infoId = ec_offer_pay_infoId;
 		} 
 	
 	private void flushEc_offer_pay_info(  )
@@ -18849,6 +23756,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( ec_offer_pay_infoStmt != null )
 			ec_offer_pay_infoStmt.close();
 	}	
+
+	/**
+	 * Ec_offer_pay_info
+	 * @param id Identificador unico
+	 * @param offer Identificador del Presupuesto
+	 * @param payment_status Estado del pago
+	 * @param authorization_number Numero de autorizacion
+	 * @throws SQLException
+	*/
+	protected void insertEc_offer_pay_info(Integer id, Integer offer, Short payment_status, Integer authorization_number)
+	throws SQLException {
+
+		Ec_offer_pay_info ec_offer_pay_info_ = new Ec_offer_pay_info();
+		ec_offer_pay_info_.id = id;
+		ec_offer_pay_info_.offer = offer;
+		ec_offer_pay_info_.payment_status = payment_status;
+		ec_offer_pay_info_.authorization_number = authorization_number;
+
+		ec_offer_pay_infos.add(ec_offer_pay_info_);
+		
+		int ec_offer_pay_infoCount = ec_offer_pay_infos.size();
+		
+		if ( 33 * ec_offer_pay_infoCount >=  this.maxAllowedPacket ){
+			insertEc_offer_pay_info(ec_offer_pay_infos);
+			ec_offer_pay_infos.clear();
+		} 
+	}
+
 
 	/**
 	 * Ec_offer_pay_info
@@ -18878,6 +23813,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int asset_activityStmtSize = 0;
 
@@ -18989,8 +23925,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAsset_activityId() {
+		public int nextAsset_activityId() {
 			return ++this.asset_activityId;
+		} 
+
+		public void setAsset_activityId(Integer asset_activityId) {
+			this.asset_activityId = asset_activityId;
 		} 
 	
 	private void flushAsset_activity(  )
@@ -19000,6 +23940,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( asset_activityStmt != null )
 			asset_activityStmt.close();
 	}	
+
+	/**
+	 * Asset_activity
+	 * @param id Identificador unico
+	 * @param asset Identificador del Activo
+	 * @param date Fecha de la Actividad
+	 * @param from_time Hora de inicio de la Actividad
+	 * @param to_time Hora final de la Actividad
+	 * @param who Quien solicita el Activo
+	 * @param why Motivo de solicitud del Activo
+	 * @param status Estado de la Solicitud
+	 * @throws SQLException
+	*/
+	protected void insertAsset_activity(Integer id, Integer asset, Date date, Timestamp from_time, Timestamp to_time, String who, String why, Short status)
+	throws SQLException {
+
+		Asset_activity asset_activity_ = new Asset_activity();
+		asset_activity_.id = id;
+		asset_activity_.asset = asset;
+		asset_activity_.date = date;
+		asset_activity_.from_time = from_time;
+		asset_activity_.to_time = to_time;
+		asset_activity_.who = who;
+		asset_activity_.why = why;
+		asset_activity_.status = status;
+
+		asset_activitys.add(asset_activity_);
+		
+		int asset_activityCount = asset_activitys.size();
+		
+		if ( 219 * asset_activityCount >=  this.maxAllowedPacket ){
+			insertAsset_activity(asset_activitys);
+			asset_activitys.clear();
+		} 
+	}
+
 
 	/**
 	 * Asset_activity
@@ -19037,6 +24013,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int calendar_periodStmtSize = 0;
 
@@ -19208,8 +24185,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCalendar_periodId() {
+		public int nextCalendar_periodId() {
 			return ++this.calendar_periodId;
+		} 
+
+		public void setCalendar_periodId(Integer calendar_periodId) {
+			this.calendar_periodId = calendar_periodId;
 		} 
 	
 	private void flushCalendar_period(  )
@@ -19219,6 +24200,66 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( calendar_periodStmt != null )
 			calendar_periodStmt.close();
 	}	
+
+	/**
+	 * Calendar_period
+	 * @param id Identificador unico
+	 * @param calendar Identificador del Calendario
+	 * @param description Descripcion del Periodo
+	 * @param month Mes del periodo
+	 * @param start_day Dia inicio del periodo
+	 * @param end_day Dia fin del periodo
+	 * @param monday Tipo de dia
+	 * @param monday_hours Numero de horas laborables
+	 * @param tuesday Tipo de dia
+	 * @param tuesday_hours Numero de horas laborables
+	 * @param wednesday Tipo de dia
+	 * @param wednesday_hours Numero de horas laborables
+	 * @param thursday Tipo de dia
+	 * @param thursday_hours Numero de horas laborables
+	 * @param friday Tipo de dia
+	 * @param friday_hours Numero de horas laborables
+	 * @param saturday Tipo de dia
+	 * @param saturday_hours Numero de horas laborables
+	 * @param sunday Tipo de dia
+	 * @param sunday_hours Numero de horas laborables
+	 * @throws SQLException
+	*/
+	protected void insertCalendar_period(Integer id, Integer calendar, String description, Short month, Short start_day, Short end_day, Short monday, Double monday_hours, Short tuesday, Double tuesday_hours, Short wednesday, Double wednesday_hours, Short thursday, Double thursday_hours, Short friday, Double friday_hours, Short saturday, Double saturday_hours, Short sunday, Double sunday_hours)
+	throws SQLException {
+
+		Calendar_period calendar_period_ = new Calendar_period();
+		calendar_period_.id = id;
+		calendar_period_.calendar = calendar;
+		calendar_period_.description = description;
+		calendar_period_.month = month;
+		calendar_period_.start_day = start_day;
+		calendar_period_.end_day = end_day;
+		calendar_period_.monday = monday;
+		calendar_period_.monday_hours = monday_hours;
+		calendar_period_.tuesday = tuesday;
+		calendar_period_.tuesday_hours = tuesday_hours;
+		calendar_period_.wednesday = wednesday;
+		calendar_period_.wednesday_hours = wednesday_hours;
+		calendar_period_.thursday = thursday;
+		calendar_period_.thursday_hours = thursday_hours;
+		calendar_period_.friday = friday;
+		calendar_period_.friday_hours = friday_hours;
+		calendar_period_.saturday = saturday;
+		calendar_period_.saturday_hours = saturday_hours;
+		calendar_period_.sunday = sunday;
+		calendar_period_.sunday_hours = sunday_hours;
+
+		calendar_periods.add(calendar_period_);
+		
+		int calendar_periodCount = calendar_periods.size();
+		
+		if ( 268 * calendar_periodCount >=  this.maxAllowedPacket ){
+			insertCalendar_period(calendar_periods);
+			calendar_periods.clear();
+		} 
+	}
+
 
 	/**
 	 * Calendar_period
@@ -19281,6 +24322,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int fbatchStmtSize = 0;
 
 	private int fbatchInserted = 0;
@@ -19297,6 +24339,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Short type; 
 		private Short status; 
 		private Integer rbank; 
+		private Integer bank_statement_link; 
 		private Boolean payment; 
 		private Short security_level; 
 	}
@@ -19309,7 +24352,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( fbatchStmt != null ) {
 				fbatchStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -19318,7 +24361,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			fbatchStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO fbatch (id,description,issue_date,type,status,rbank,payment,security_level)"  
+				"INSERT INTO fbatch (id,description,issue_date,type,status,rbank,bank_statement_link,payment,security_level)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			fbatchStmtSize = size;
@@ -19351,6 +24394,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				fbatchStmt.setNull(offset++, 4);
 			else
 				fbatchStmt.setInt(offset++, fbatch.rbank);
+			if ( fbatch.bank_statement_link == null )
+				fbatchStmt.setNull(offset++, 4);
+			else
+				fbatchStmt.setInt(offset++, fbatch.bank_statement_link);
 			if ( fbatch.payment == null )
 				fbatchStmt.setNull(offset++, -7);
 			else
@@ -19391,8 +24438,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFbatchId() {
+		public int nextFbatchId() {
 			return ++this.fbatchId;
+		} 
+
+		public void setFbatchId(Integer fbatchId) {
+			this.fbatchId = fbatchId;
 		} 
 	
 	private void flushFbatch(  )
@@ -19405,17 +24456,56 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Fbatch
+	 * @param id Identificador unico de la Remesa
 	 * @param description Descripcion de la Remesa
 	 * @param issue_date Fecha de emision de la Remesa
 	 * @param type Tipo de Remesa
 	 * @param status Estado de la Remesa
 	 * @param rbank Banco de la Compaia utilizado en la Remesa
+	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
+	 * @param payment Indica si es un pago o un cobro
+	 * @param security_level Nivel de seguridad
+	 * @throws SQLException
+	*/
+	protected void insertFbatch(Integer id, String description, Date issue_date, Short type, Short status, Integer rbank, Integer bank_statement_link, Boolean payment, Short security_level)
+	throws SQLException {
+
+		Fbatch fbatch_ = new Fbatch();
+		fbatch_.id = id;
+		fbatch_.description = description;
+		fbatch_.issue_date = issue_date;
+		fbatch_.type = type;
+		fbatch_.status = status;
+		fbatch_.rbank = rbank;
+		fbatch_.bank_statement_link = bank_statement_link;
+		fbatch_.payment = payment;
+		fbatch_.security_level = security_level;
+
+		fbatchs.add(fbatch_);
+		
+		int fbatchCount = fbatchs.size();
+		
+		if ( 81 * fbatchCount >=  this.maxAllowedPacket ){
+			insertFbatch(fbatchs);
+			fbatchs.clear();
+		} 
+	}
+
+
+	/**
+	 * Fbatch
+	 * @param description Descripcion de la Remesa
+	 * @param issue_date Fecha de emision de la Remesa
+	 * @param type Tipo de Remesa
+	 * @param status Estado de la Remesa
+	 * @param rbank Banco de la Compaia utilizado en la Remesa
+	 * @param bank_statement_link Identificador de la Linea del Extracto bancario
 	 * @param payment Indica si es un pago o un cobro
 	 * @param security_level Nivel de seguridad
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFbatch(String description, Date issue_date, Short type, Short status, Integer rbank, Boolean payment, Short security_level)
+	protected int insertFbatch(String description, Date issue_date, Short type, Short status, Integer rbank, Integer bank_statement_link, Boolean payment, Short security_level)
 	throws SQLException {
 		int id = nextFbatchId();
 
@@ -19426,6 +24516,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		fbatch_.type = type;
 		fbatch_.status = status;
 		fbatch_.rbank = rbank;
+		fbatch_.bank_statement_link = bank_statement_link;
 		fbatch_.payment = payment;
 		fbatch_.security_level = security_level;
 
@@ -19433,12 +24524,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int fbatchCount = fbatchs.size();
 		
-		if ( 71 * fbatchCount >=  this.maxAllowedPacket ){
+		if ( 81 * fbatchCount >=  this.maxAllowedPacket ){
 			insertFbatch(fbatchs);
 			fbatchs.clear();
 		} 
 		return id;
 	}
+
 
 	private int invoice_detail_accountStmtSize = 0;
 
@@ -19525,8 +24617,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInvoice_detail_accountId() {
+		public int nextInvoice_detail_accountId() {
 			return ++this.invoice_detail_accountId;
+		} 
+
+		public void setInvoice_detail_accountId(Integer invoice_detail_accountId) {
+			this.invoice_detail_accountId = invoice_detail_accountId;
 		} 
 	
 	private void flushInvoice_detail_account(  )
@@ -19536,6 +24632,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( invoice_detail_accountStmt != null )
 			invoice_detail_accountStmt.close();
 	}	
+
+	/**
+	 * Invoice_detail_account
+	 * @param id Identificador unico
+	 * @param invoice_detail Identificador de la Linea de Factura
+	 * @param account Identificador de la Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertInvoice_detail_account(Integer id, Integer invoice_detail, String account)
+	throws SQLException {
+
+		Invoice_detail_account invoice_detail_account_ = new Invoice_detail_account();
+		invoice_detail_account_.id = id;
+		invoice_detail_account_.invoice_detail = invoice_detail;
+		invoice_detail_account_.account = account;
+
+		invoice_detail_accounts.add(invoice_detail_account_);
+		
+		int invoice_detail_accountCount = invoice_detail_accounts.size();
+		
+		if ( 32 * invoice_detail_accountCount >=  this.maxAllowedPacket ){
+			insertInvoice_detail_account(invoice_detail_accounts);
+			invoice_detail_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Invoice_detail_account
@@ -19563,6 +24685,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int commission_typeStmtSize = 0;
 
@@ -19649,8 +24772,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCommission_typeId() {
+		public int nextCommission_typeId() {
 			return ++this.commission_typeId;
+		} 
+
+		public void setCommission_typeId(Integer commission_typeId) {
+			this.commission_typeId = commission_typeId;
 		} 
 	
 	private void flushCommission_type(  )
@@ -19660,6 +24787,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( commission_typeStmt != null )
 			commission_typeStmt.close();
 	}	
+
+	/**
+	 * Commission_type
+	 * @param id Identificador unico
+	 * @param name Descripcion del Tipo de Comision
+	 * @param rate Porcentaje de Comision
+	 * @throws SQLException
+	*/
+	protected void insertCommission_type(Integer id, String name, Double rate)
+	throws SQLException {
+
+		Commission_type commission_type_ = new Commission_type();
+		commission_type_.id = id;
+		commission_type_.name = name;
+		commission_type_.rate = rate;
+
+		commission_types.add(commission_type_);
+		
+		int commission_typeCount = commission_types.size();
+		
+		if ( 48 * commission_typeCount >=  this.maxAllowedPacket ){
+			insertCommission_type(commission_types);
+			commission_types.clear();
+		} 
+	}
+
 
 	/**
 	 * Commission_type
@@ -19687,6 +24840,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int enterprise_certificate_detailStmtSize = 0;
 
@@ -19783,8 +24937,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEnterprise_certificate_detailId() {
+		public int nextEnterprise_certificate_detailId() {
 			return ++this.enterprise_certificate_detailId;
+		} 
+
+		public void setEnterprise_certificate_detailId(Integer enterprise_certificate_detailId) {
+			this.enterprise_certificate_detailId = enterprise_certificate_detailId;
 		} 
 	
 	private void flushEnterprise_certificate_detail(  )
@@ -19794,6 +24952,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( enterprise_certificate_detailStmt != null )
 			enterprise_certificate_detailStmt.close();
 	}	
+
+	/**
+	 * Enterprise_certificate_detail
+	 * @param id Identificador unico del certificado de empresa de la remesa
+	 * @param enterprise_certificate Identificador unico del certificado de empresa
+	 * @param contract Identificador unico del contrato de empleado
+	 * @param expire_date Fecha de baja del empleado
+	 * @param suspension_cause Causa de la suspension del empleado
+	 * @throws SQLException
+	*/
+	protected void insertEnterprise_certificate_detail(Integer id, Integer enterprise_certificate, Integer contract, Date expire_date, String suspension_cause)
+	throws SQLException {
+
+		Enterprise_certificate_detail enterprise_certificate_detail_ = new Enterprise_certificate_detail();
+		enterprise_certificate_detail_.id = id;
+		enterprise_certificate_detail_.enterprise_certificate = enterprise_certificate;
+		enterprise_certificate_detail_.contract = contract;
+		enterprise_certificate_detail_.expire_date = expire_date;
+		enterprise_certificate_detail_.suspension_cause = suspension_cause;
+
+		enterprise_certificate_details.add(enterprise_certificate_detail_);
+		
+		int enterprise_certificate_detailCount = enterprise_certificate_details.size();
+		
+		if ( 42 * enterprise_certificate_detailCount >=  this.maxAllowedPacket ){
+			insertEnterprise_certificate_detail(enterprise_certificate_details);
+			enterprise_certificate_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Enterprise_certificate_detail
@@ -19826,6 +25014,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int alarmStmtSize = 0;
 
 	private int alarmInserted = 0;
@@ -19837,7 +25026,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private static class Alarm {
 		private Integer id; 
-		private InputStream description; 
+		private String description; 
 		private Timestamp alarm_date; 
 		private Short status; 
 		private Short source; 
@@ -19879,7 +25068,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( alarm.description == null )
 				alarmStmt.setNull(offset++, -1);
 			else
-				alarmStmt.setAsciiStream(offset++, alarm.description);
+				alarmStmt.setString(offset++, alarm.description);
 			if ( alarm.alarm_date == null )
 				alarmStmt.setNull(offset++, 93);
 			else
@@ -19936,8 +25125,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAlarmId() {
+		public int nextAlarmId() {
 			return ++this.alarmId;
+		} 
+
+		public void setAlarmId(Integer alarmId) {
+			this.alarmId = alarmId;
 		} 
 	
 	private void flushAlarm(  )
@@ -19947,6 +25140,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( alarmStmt != null )
 			alarmStmt.close();
 	}	
+
+	/**
+	 * Alarm
+	 * @param id Identificador unico de la Alarma
+	 * @param description Descripcion de la Alarma
+	 * @param alarm_date Fecha y hora de ejecucion de la Alarma
+	 * @param status Estado de la Alarma
+	 * @param source Origen de la Alarma
+	 * @param source_id Identificador del origen de la Alarma
+	 * @param user_id Identificador del Usuario asociado a la Alarma
+	 * @param priority Prioridad de la Alarma
+	 * @throws SQLException
+	*/
+	protected void insertAlarm(Integer id, String description, Timestamp alarm_date, Short status, Short source, Integer source_id, Integer user_id, Short priority)
+	throws SQLException {
+
+		Alarm alarm_ = new Alarm();
+		alarm_.id = id;
+		alarm_.description = description;
+		alarm_.alarm_date = alarm_date;
+		alarm_.status = status;
+		alarm_.source = source;
+		alarm_.source_id = source_id;
+		alarm_.user_id = user_id;
+		alarm_.priority = priority;
+
+		alarms.add(alarm_);
+		
+		int alarmCount = alarms.size();
+		
+		if ( 58 * alarmCount >=  this.maxAllowedPacket ){
+			insertAlarm(alarms);
+			alarms.clear();
+		} 
+	}
+
 
 	/**
 	 * Alarm
@@ -19960,7 +25189,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAlarm(InputStream description, Timestamp alarm_date, Short status, Short source, Integer source_id, Integer user_id, Short priority)
+	protected int insertAlarm(String description, Timestamp alarm_date, Short status, Short source, Integer source_id, Integer user_id, Short priority)
 	throws SQLException {
 		int id = nextAlarmId();
 
@@ -19984,6 +25213,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int pay_methodStmtSize = 0;
 
@@ -20070,8 +25300,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPay_methodId() {
+		public int nextPay_methodId() {
 			return ++this.pay_methodId;
+		} 
+
+		public void setPay_methodId(Integer pay_methodId) {
+			this.pay_methodId = pay_methodId;
 		} 
 	
 	private void flushPay_method(  )
@@ -20081,6 +25315,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( pay_methodStmt != null )
 			pay_methodStmt.close();
 	}	
+
+	/**
+	 * Pay_method
+	 * @param id Identificador unico de la Forma de Pago
+	 * @param name Nombre de Forma de Pago
+	 * @param type Tipo de Forma de Pago
+	 * @throws SQLException
+	*/
+	protected void insertPay_method(Integer id, String name, Short type)
+	throws SQLException {
+
+		Pay_method pay_method_ = new Pay_method();
+		pay_method_.id = id;
+		pay_method_.name = name;
+		pay_method_.type = type;
+
+		pay_methods.add(pay_method_);
+		
+		int pay_methodCount = pay_methods.size();
+		
+		if ( 45 * pay_methodCount >=  this.maxAllowedPacket ){
+			insertPay_method(pay_methods);
+			pay_methods.clear();
+		} 
+	}
+
 
 	/**
 	 * Pay_method
@@ -20108,6 +25368,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int ec_catalogueStmtSize = 0;
 
@@ -20209,8 +25470,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEc_catalogueId() {
+		public int nextEc_catalogueId() {
 			return ++this.ec_catalogueId;
+		} 
+
+		public void setEc_catalogueId(Integer ec_catalogueId) {
+			this.ec_catalogueId = ec_catalogueId;
 		} 
 	
 	private void flushEc_catalogue(  )
@@ -20220,6 +25485,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( ec_catalogueStmt != null )
 			ec_catalogueStmt.close();
 	}	
+
+	/**
+	 * Ec_catalogue
+	 * @param id Identificador unico
+	 * @param catalogue Identificador del Catalogo
+	 * @param catalogue_img Imagen para el Catalogo
+	 * @param catalogue_icon Icono del Catalogo
+	 * @param type Tipo de Catalogo
+	 * @param visible Indica si es visible en internet
+	 * @throws SQLException
+	*/
+	protected void insertEc_catalogue(Integer id, Integer catalogue, InputStream catalogue_img, InputStream catalogue_icon, Short type, Boolean visible)
+	throws SQLException {
+
+		Ec_catalogue ec_catalogue_ = new Ec_catalogue();
+		ec_catalogue_.id = id;
+		ec_catalogue_.catalogue = catalogue;
+		ec_catalogue_.catalogue_img = catalogue_img;
+		ec_catalogue_.catalogue_icon = catalogue_icon;
+		ec_catalogue_.type = type;
+		ec_catalogue_.visible = visible;
+
+		ec_catalogues.add(ec_catalogue_);
+		
+		int ec_catalogueCount = ec_catalogues.size();
+		
+		if ( 23 * ec_catalogueCount >=  this.maxAllowedPacket ){
+			insertEc_catalogue(ec_catalogues);
+			ec_catalogues.clear();
+		} 
+	}
+
 
 	/**
 	 * Ec_catalogue
@@ -20253,6 +25550,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int workactivityStmtSize = 0;
 
@@ -20349,8 +25647,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextWorkactivityId() {
+		public int nextWorkactivityId() {
 			return ++this.workactivityId;
+		} 
+
+		public void setWorkactivityId(Integer workactivityId) {
+			this.workactivityId = workactivityId;
 		} 
 	
 	private void flushWorkactivity(  )
@@ -20360,6 +25662,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( workactivityStmt != null )
 			workactivityStmt.close();
 	}	
+
+	/**
+	 * Workactivity
+	 * @param id Identificador unico de la Actividad
+	 * @param description Descripcion de la Actividad
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param enterpriseCCC Cuenta de Cotizacin asociada a la Actividad
+	 * @param active Indica si la Actividad esta activa o no
+	 * @throws SQLException
+	*/
+	protected void insertWorkactivity(Integer id, String description, Integer workplace, Integer enterpriseCCC, Boolean active)
+	throws SQLException {
+
+		Workactivity workactivity_ = new Workactivity();
+		workactivity_.id = id;
+		workactivity_.description = description;
+		workactivity_.workplace = workplace;
+		workactivity_.enterpriseCCC = enterpriseCCC;
+		workactivity_.active = active;
+
+		workactivitys.add(workactivity_);
+		
+		int workactivityCount = workactivitys.size();
+		
+		if ( 94 * workactivityCount >=  this.maxAllowedPacket ){
+			insertWorkactivity(workactivitys);
+			workactivitys.clear();
+		} 
+	}
+
 
 	/**
 	 * Workactivity
@@ -20392,6 +25724,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int ec_configStmtSize = 0;
 
 	private int ec_configInserted = 0;
@@ -20418,9 +25751,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer visa; 
 		private Integer paypal; 
 		private Integer bank_draft; 
-		private InputStream legal_note1; 
-		private InputStream legal_note2; 
-		private InputStream legal_note3; 
+		private String legal_note1; 
+		private String legal_note2; 
+		private String legal_note3; 
 		private Integer tariff; 
 		private String header_color; 
 		private String telephone; 
@@ -20530,15 +25863,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( ec_config.legal_note1 == null )
 				ec_configStmt.setNull(offset++, -1);
 			else
-				ec_configStmt.setAsciiStream(offset++, ec_config.legal_note1);
+				ec_configStmt.setString(offset++, ec_config.legal_note1);
 			if ( ec_config.legal_note2 == null )
 				ec_configStmt.setNull(offset++, -1);
 			else
-				ec_configStmt.setAsciiStream(offset++, ec_config.legal_note2);
+				ec_configStmt.setString(offset++, ec_config.legal_note2);
 			if ( ec_config.legal_note3 == null )
 				ec_configStmt.setNull(offset++, -1);
 			else
-				ec_configStmt.setAsciiStream(offset++, ec_config.legal_note3);
+				ec_configStmt.setString(offset++, ec_config.legal_note3);
 			if ( ec_config.tariff == null )
 				ec_configStmt.setNull(offset++, 4);
 			else
@@ -20627,8 +25960,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEc_configId() {
+		public int nextEc_configId() {
 			return ++this.ec_configId;
+		} 
+
+		public void setEc_configId(Integer ec_configId) {
+			this.ec_configId = ec_configId;
 		} 
 	
 	private void flushEc_config(  )
@@ -20638,6 +25975,92 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( ec_configStmt != null )
 			ec_configStmt.close();
 	}	
+
+	/**
+	 * Ec_config
+	 * @param id Identificador unico
+	 * @param active Indica si es la configuracion activa
+	 * @param name Nombre del Catalogo de internet
+	 * @param skin Tipo de skin a utilizar
+	 * @param header_img Imagen de cabecera
+	 * @param series Serie de los presupuestos que se van a grabar
+	 * @param commerce Indica si el ECommerce permite grabar un presupuesto
+	 * @param show_login Indica la forma de autenticarse en el ECommerce
+	 * @param price Indica la forma de mostrar los precios en el Catalogo
+	 * @param tax_in_price Indica si los precios van a mostrarse con Impuestos incluidos
+	 * @param discount Indica si adicionalmente se va a mostrar el precio original del Producto
+	 * @param bank_transfer Forma de pago por transferencia bancaria
+	 * @param cash_on_delivery Forma de pago por contrarreembolso
+	 * @param visa Forma de pago con tarjeta
+	 * @param paypal Forma de pago por paypal
+	 * @param bank_draft Forma de pago por giro bancario
+	 * @param legal_note1 Politica de privacidad
+	 * @param legal_note2 Nota legal
+	 * @param legal_note3 Proteccion de datos
+	 * @param tariff Identificador de Tarifa para Ecommerce
+	 * @param header_color Color del background del header
+	 * @param telephone Telefono de contacto
+	 * @param row_items Numero de articulos por fila
+	 * @param left_banner Banner de la izquierda
+	 * @param right_banner Banner de la derecha
+	 * @param welcome_banner Banner de bienvenida
+	 * @param ecommerce_status Estado del comercio electronico
+	 * @param shipping_costs Gastos de envio
+	 * @param free_shipping Gastos de envio gratis a partir de esta cantidad
+	 * @param title_note1 
+	 * @param title_note2 
+	 * @param title_note3 
+	 * @param email Email de contacto
+	 * @throws SQLException
+	*/
+	protected void insertEc_config(Integer id, Boolean active, String name, Short skin, InputStream header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, InputStream left_banner, InputStream right_banner, InputStream welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
+	throws SQLException {
+
+		Ec_config ec_config_ = new Ec_config();
+		ec_config_.id = id;
+		ec_config_.active = active;
+		ec_config_.name = name;
+		ec_config_.skin = skin;
+		ec_config_.header_img = header_img;
+		ec_config_.series = series;
+		ec_config_.commerce = commerce;
+		ec_config_.show_login = show_login;
+		ec_config_.price = price;
+		ec_config_.tax_in_price = tax_in_price;
+		ec_config_.discount = discount;
+		ec_config_.bank_transfer = bank_transfer;
+		ec_config_.cash_on_delivery = cash_on_delivery;
+		ec_config_.visa = visa;
+		ec_config_.paypal = paypal;
+		ec_config_.bank_draft = bank_draft;
+		ec_config_.legal_note1 = legal_note1;
+		ec_config_.legal_note2 = legal_note2;
+		ec_config_.legal_note3 = legal_note3;
+		ec_config_.tariff = tariff;
+		ec_config_.header_color = header_color;
+		ec_config_.telephone = telephone;
+		ec_config_.row_items = row_items;
+		ec_config_.left_banner = left_banner;
+		ec_config_.right_banner = right_banner;
+		ec_config_.welcome_banner = welcome_banner;
+		ec_config_.ecommerce_status = ecommerce_status;
+		ec_config_.shipping_costs = shipping_costs;
+		ec_config_.free_shipping = free_shipping;
+		ec_config_.title_note1 = title_note1;
+		ec_config_.title_note2 = title_note2;
+		ec_config_.title_note3 = title_note3;
+		ec_config_.email = email;
+
+		ec_configs.add(ec_config_);
+		
+		int ec_configCount = ec_configs.size();
+		
+		if ( 466 * ec_configCount >=  this.maxAllowedPacket ){
+			insertEc_config(ec_configs);
+			ec_configs.clear();
+		} 
+	}
+
 
 	/**
 	 * Ec_config
@@ -20676,7 +26099,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEc_config(Boolean active, String name, Short skin, InputStream header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, InputStream legal_note1, InputStream legal_note2, InputStream legal_note3, Integer tariff, String header_color, String telephone, Short row_items, InputStream left_banner, InputStream right_banner, InputStream welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
+	protected int insertEc_config(Boolean active, String name, Short skin, InputStream header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, InputStream left_banner, InputStream right_banner, InputStream welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
 	throws SQLException {
 		int id = nextEc_configId();
 
@@ -20725,6 +26148,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_budgetStmtSize = 0;
 
@@ -20816,8 +26240,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_budgetId() {
+		public int nextAccount_budgetId() {
 			return ++this.account_budgetId;
+		} 
+
+		public void setAccount_budgetId(Integer account_budgetId) {
+			this.account_budgetId = account_budgetId;
 		} 
 	
 	private void flushAccount_budget(  )
@@ -20827,6 +26255,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_budgetStmt != null )
 			account_budgetStmt.close();
 	}	
+
+	/**
+	 * Account_budget
+	 * @param id Identificador unico
+	 * @param account_period Ejercicio Contable del Presupuesto
+	 * @param account Cuenta Contable del Presupuesto
+	 * @param security_level Nivel de seguridad del Presupuesto
+	 * @throws SQLException
+	*/
+	protected void insertAccount_budget(Integer id, String account_period, String account, Short security_level)
+	throws SQLException {
+
+		Account_budget account_budget_ = new Account_budget();
+		account_budget_.id = id;
+		account_budget_.account_period = account_period;
+		account_budget_.account = account;
+		account_budget_.security_level = security_level;
+
+		account_budgets.add(account_budget_);
+		
+		int account_budgetCount = account_budgets.size();
+		
+		if ( 29 * account_budgetCount >=  this.maxAllowedPacket ){
+			insertAccount_budget(account_budgets);
+			account_budgets.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_budget
@@ -20856,6 +26312,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int course_observationStmtSize = 0;
 
@@ -20942,8 +26399,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCourse_observationId() {
+		public int nextCourse_observationId() {
 			return ++this.course_observationId;
+		} 
+
+		public void setCourse_observationId(Integer course_observationId) {
+			this.course_observationId = course_observationId;
 		} 
 	
 	private void flushCourse_observation(  )
@@ -20953,6 +26414,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( course_observationStmt != null )
 			course_observationStmt.close();
 	}	
+
+	/**
+	 * Course_observation
+	 * @param id Identificador unico
+	 * @param course Identificador de Curso
+	 * @param observation Observaciones
+	 * @throws SQLException
+	*/
+	protected void insertCourse_observation(Integer id, Integer course, String observation)
+	throws SQLException {
+
+		Course_observation course_observation_ = new Course_observation();
+		course_observation_.id = id;
+		course_observation_.course = course;
+		course_observation_.observation = observation;
+
+		course_observations.add(course_observation_);
+		
+		int course_observationCount = course_observations.size();
+		
+		if ( 84 * course_observationCount >=  this.maxAllowedPacket ){
+			insertCourse_observation(course_observations);
+			course_observations.clear();
+		} 
+	}
+
 
 	/**
 	 * Course_observation
@@ -20980,6 +26467,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int survey_responseStmtSize = 0;
 
@@ -21086,8 +26574,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSurvey_responseId() {
+		public int nextSurvey_responseId() {
 			return ++this.survey_responseId;
+		} 
+
+		public void setSurvey_responseId(Integer survey_responseId) {
+			this.survey_responseId = survey_responseId;
 		} 
 	
 	private void flushSurvey_response(  )
@@ -21097,6 +26589,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( survey_responseStmt != null )
 			survey_responseStmt.close();
 	}	
+
+	/**
+	 * Survey_response
+	 * @param id Identificador unico
+	 * @param creationDate Fecha de la creacion en el sistema de la Respuesta del Cuestionario
+	 * @param response_date Fecha de la Respuesta del Cuestionario
+	 * @param survey Identificador del Cuestionario
+	 * @param target Identificador del Cliente Potencial
+	 * @param user Identificador del Usuario
+	 * @param campaign_action Identificador de la Accion de la Campaa
+	 * @throws SQLException
+	*/
+	protected void insertSurvey_response(Integer id, Timestamp creationDate, Timestamp response_date, Integer survey, Integer target, Integer user, Integer campaign_action)
+	throws SQLException {
+
+		Survey_response survey_response_ = new Survey_response();
+		survey_response_.id = id;
+		survey_response_.creationDate = creationDate;
+		survey_response_.response_date = response_date;
+		survey_response_.survey = survey;
+		survey_response_.target = target;
+		survey_response_.user = user;
+		survey_response_.campaign_action = campaign_action;
+
+		survey_responses.add(survey_response_);
+		
+		int survey_responseCount = survey_responses.size();
+		
+		if ( 88 * survey_responseCount >=  this.maxAllowedPacket ){
+			insertSurvey_response(survey_responses);
+			survey_responses.clear();
+		} 
+	}
+
 
 	/**
 	 * Survey_response
@@ -21133,6 +26659,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int evaluation_observationStmtSize = 0;
 
 	private int evaluation_observationInserted = 0;
@@ -21146,7 +26673,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer id; 
 		private Integer alumn; 
 		private Short evaluation; 
-		private InputStream comments; 
+		private String comments; 
 	}
 	
 	private void insertEvaluation_observation( List<Evaluation_observation> evaluation_observations )
@@ -21190,7 +26717,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( evaluation_observation.comments == null )
 				evaluation_observationStmt.setNull(offset++, -1);
 			else
-				evaluation_observationStmt.setAsciiStream(offset++, evaluation_observation.comments);
+				evaluation_observationStmt.setString(offset++, evaluation_observation.comments);
 		}
 		evaluation_observationStmt.executeUpdate();
 		evaluation_observationInserted += size;
@@ -21223,8 +26750,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEvaluation_observationId() {
+		public int nextEvaluation_observationId() {
 			return ++this.evaluation_observationId;
+		} 
+
+		public void setEvaluation_observationId(Integer evaluation_observationId) {
+			this.evaluation_observationId = evaluation_observationId;
 		} 
 	
 	private void flushEvaluation_observation(  )
@@ -21237,13 +26768,41 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Evaluation_observation
+	 * @param id Identificador unico
+	 * @param alumn Identificador de Alumno
+	 * @param evaluation Numero de Evaluacion
+	 * @param comments Comentarios
+	 * @throws SQLException
+	*/
+	protected void insertEvaluation_observation(Integer id, Integer alumn, Short evaluation, String comments)
+	throws SQLException {
+
+		Evaluation_observation evaluation_observation_ = new Evaluation_observation();
+		evaluation_observation_.id = id;
+		evaluation_observation_.alumn = alumn;
+		evaluation_observation_.evaluation = evaluation;
+		evaluation_observation_.comments = comments;
+
+		evaluation_observations.add(evaluation_observation_);
+		
+		int evaluation_observationCount = evaluation_observations.size();
+		
+		if ( 23 * evaluation_observationCount >=  this.maxAllowedPacket ){
+			insertEvaluation_observation(evaluation_observations);
+			evaluation_observations.clear();
+		} 
+	}
+
+
+	/**
+	 * Evaluation_observation
 	 * @param alumn Identificador de Alumno
 	 * @param evaluation Numero de Evaluacion
 	 * @param comments Comentarios
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEvaluation_observation(Integer alumn, Short evaluation, InputStream comments)
+	protected int insertEvaluation_observation(Integer alumn, Short evaluation, String comments)
 	throws SQLException {
 		int id = nextEvaluation_observationId();
 
@@ -21263,6 +26822,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int personStmtSize = 0;
 
@@ -21395,6 +26955,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int contract_paymentStmtSize = 0;
 
 	private int contract_paymentInserted = 0;
@@ -21412,9 +26974,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private String description; 
 		private Short description_decorable; 
 		private String expression; 
+		private String irpf_expression; 
+		private String quote_expression; 
 		private Date start_date; 
 		private Short month; 
 		private Date end_date; 
+		private Short salary_type; 
 	}
 	
 	private void insertContract_payment( List<Contract_payment> contract_payments )
@@ -21425,7 +26990,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contract_paymentStmt != null ) {
 				contract_paymentStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -21434,7 +26999,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			contract_paymentStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO contract_payment (id,type,contract,payment_concept,description,description_decorable,expression,start_date,month,end_date)"  
+				"INSERT INTO contract_payment (id,type,contract,payment_concept,description,description_decorable,expression,irpf_expression,quote_expression,start_date,month,end_date,salary_type)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			contract_paymentStmtSize = size;
@@ -21471,6 +27036,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_paymentStmt.setNull(offset++, 12);
 			else
 				contract_paymentStmt.setString(offset++, contract_payment.expression);
+			if ( contract_payment.irpf_expression == null )
+				contract_paymentStmt.setNull(offset++, 12);
+			else
+				contract_paymentStmt.setString(offset++, contract_payment.irpf_expression);
+			if ( contract_payment.quote_expression == null )
+				contract_paymentStmt.setNull(offset++, 12);
+			else
+				contract_paymentStmt.setString(offset++, contract_payment.quote_expression);
 			if ( contract_payment.start_date == null )
 				contract_paymentStmt.setNull(offset++, 91);
 			else
@@ -21483,6 +27056,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_paymentStmt.setNull(offset++, 91);
 			else
 				contract_paymentStmt.setDate(offset++, contract_payment.end_date);
+			if ( contract_payment.salary_type == null )
+				contract_paymentStmt.setNull(offset++, -6);
+			else
+				contract_paymentStmt.setShort(offset++, contract_payment.salary_type);
 		}
 		contract_paymentStmt.executeUpdate();
 		contract_paymentInserted += size;
@@ -21515,8 +27092,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextContract_paymentId() {
+		public int nextContract_paymentId() {
 			return ++this.contract_paymentId;
+		} 
+
+		public void setContract_paymentId(Integer contract_paymentId) {
+			this.contract_paymentId = contract_paymentId;
 		} 
 	
 	private void flushContract_payment(  )
@@ -21529,19 +27110,68 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Contract_payment
+	 * @param id Identificador unico
 	 * @param type Tipo de Percepcin Salarial
 	 * @param contract Contrato
 	 * @param payment_concept Identificador unico del concepto
 	 * @param description Descripcion
 	 * @param description_decorable 
-	 * @param expression Frmula
+	 * @param expression Importe
+	 * @param irpf_expression Importe tributable
+	 * @param quote_expression Importe cotizable
 	 * @param start_date Fecha de inicio 
 	 * @param month Mes de la percepcion
 	 * @param end_date Fecha de finalizacion
+	 * @param salary_type Tipo de Nomina/Recibo
+	 * @throws SQLException
+	*/
+	protected void insertContract_payment(Integer id, Short type, Integer contract, Integer payment_concept, String description, Short description_decorable, String expression, String irpf_expression, String quote_expression, Date start_date, Short month, Date end_date, Short salary_type)
+	throws SQLException {
+
+		Contract_payment contract_payment_ = new Contract_payment();
+		contract_payment_.id = id;
+		contract_payment_.type = type;
+		contract_payment_.contract = contract;
+		contract_payment_.payment_concept = payment_concept;
+		contract_payment_.description = description;
+		contract_payment_.description_decorable = description_decorable;
+		contract_payment_.expression = expression;
+		contract_payment_.irpf_expression = irpf_expression;
+		contract_payment_.quote_expression = quote_expression;
+		contract_payment_.start_date = start_date;
+		contract_payment_.month = month;
+		contract_payment_.end_date = end_date;
+		contract_payment_.salary_type = salary_type;
+
+		contract_payments.add(contract_payment_);
+		
+		int contract_paymentCount = contract_payments.size();
+		
+		if ( 510 * contract_paymentCount >=  this.maxAllowedPacket ){
+			insertContract_payment(contract_payments);
+			contract_payments.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract_payment
+	 * @param type Tipo de Percepcin Salarial
+	 * @param contract Contrato
+	 * @param payment_concept Identificador unico del concepto
+	 * @param description Descripcion
+	 * @param description_decorable 
+	 * @param expression Importe
+	 * @param irpf_expression Importe tributable
+	 * @param quote_expression Importe cotizable
+	 * @param start_date Fecha de inicio 
+	 * @param month Mes de la percepcion
+	 * @param end_date Fecha de finalizacion
+	 * @param salary_type Tipo de Nomina/Recibo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_payment(Short type, Integer contract, Integer payment_concept, String description, Short description_decorable, String expression, Date start_date, Short month, Date end_date)
+	protected int insertContract_payment(Short type, Integer contract, Integer payment_concept, String description, Short description_decorable, String expression, String irpf_expression, String quote_expression, Date start_date, Short month, Date end_date, Short salary_type)
 	throws SQLException {
 		int id = nextContract_paymentId();
 
@@ -21553,20 +27183,332 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_payment_.description = description;
 		contract_payment_.description_decorable = description_decorable;
 		contract_payment_.expression = expression;
+		contract_payment_.irpf_expression = irpf_expression;
+		contract_payment_.quote_expression = quote_expression;
 		contract_payment_.start_date = start_date;
 		contract_payment_.month = month;
 		contract_payment_.end_date = end_date;
+		contract_payment_.salary_type = salary_type;
 
 		contract_payments.add(contract_payment_);
 		
 		int contract_paymentCount = contract_payments.size();
 		
-		if ( 251 * contract_paymentCount >=  this.maxAllowedPacket ){
+		if ( 510 * contract_paymentCount >=  this.maxAllowedPacket ){
 			insertContract_payment(contract_payments);
 			contract_payments.clear();
 		} 
 		return id;
 	}
+
+
+	private int cashflow_forecastStmtSize = 0;
+
+	private int cashflow_forecastInserted = 0;
+
+	private List<Cashflow_forecast> cashflow_forecasts = 
+		new LinkedList<Cashflow_forecast>();
+
+	private PreparedStatement cashflow_forecastStmt = null;
+
+	private static class Cashflow_forecast {
+		private Integer id; 
+		private Boolean payment; 
+		private String description; 
+		private Date start_date; 
+		private Date due_date; 
+		private Integer rbank; 
+		private Double amount; 
+		private Double payment_day; 
+		private Boolean january; 
+		private Boolean february; 
+		private Boolean march; 
+		private Boolean april; 
+		private Boolean may; 
+		private Boolean june; 
+		private Boolean july; 
+		private Boolean august; 
+		private Boolean september; 
+		private Boolean october; 
+		private Boolean november; 
+		private Boolean december; 
+	}
+	
+	private void insertCashflow_forecast( List<Cashflow_forecast> cashflow_forecasts )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = cashflow_forecasts.size();
+		if ( cashflow_forecastStmtSize != size ) {
+			if ( cashflow_forecastStmt != null ) {
+				cashflow_forecastStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			cashflow_forecastStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO cashflow_forecast (id,payment,description,start_date,due_date,rbank,amount,payment_day,january,february,march,april,may,june,july,august,september,october,november,december)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			cashflow_forecastStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Cashflow_forecast cashflow_forecast : cashflow_forecasts) {
+			if ( cashflow_forecast.id == null )
+				cashflow_forecastStmt.setNull(offset++, 4);
+			else
+				cashflow_forecastStmt.setInt(offset++, cashflow_forecast.id);
+			if ( cashflow_forecast.payment == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.payment);
+			if ( cashflow_forecast.description == null )
+				cashflow_forecastStmt.setNull(offset++, 12);
+			else
+				cashflow_forecastStmt.setString(offset++, cashflow_forecast.description);
+			if ( cashflow_forecast.start_date == null )
+				cashflow_forecastStmt.setNull(offset++, 91);
+			else
+				cashflow_forecastStmt.setDate(offset++, cashflow_forecast.start_date);
+			if ( cashflow_forecast.due_date == null )
+				cashflow_forecastStmt.setNull(offset++, 91);
+			else
+				cashflow_forecastStmt.setDate(offset++, cashflow_forecast.due_date);
+			if ( cashflow_forecast.rbank == null )
+				cashflow_forecastStmt.setNull(offset++, 4);
+			else
+				cashflow_forecastStmt.setInt(offset++, cashflow_forecast.rbank);
+			if ( cashflow_forecast.amount == null )
+				cashflow_forecastStmt.setNull(offset++, 8);
+			else
+				cashflow_forecastStmt.setDouble(offset++, cashflow_forecast.amount);
+			if ( cashflow_forecast.payment_day == null )
+				cashflow_forecastStmt.setNull(offset++, 8);
+			else
+				cashflow_forecastStmt.setDouble(offset++, cashflow_forecast.payment_day);
+			if ( cashflow_forecast.january == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.january);
+			if ( cashflow_forecast.february == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.february);
+			if ( cashflow_forecast.march == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.march);
+			if ( cashflow_forecast.april == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.april);
+			if ( cashflow_forecast.may == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.may);
+			if ( cashflow_forecast.june == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.june);
+			if ( cashflow_forecast.july == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.july);
+			if ( cashflow_forecast.august == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.august);
+			if ( cashflow_forecast.september == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.september);
+			if ( cashflow_forecast.october == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.october);
+			if ( cashflow_forecast.november == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.november);
+			if ( cashflow_forecast.december == null )
+				cashflow_forecastStmt.setNull(offset++, -7);
+			else
+				cashflow_forecastStmt.setBoolean(offset++, cashflow_forecast.december);
+		}
+		cashflow_forecastStmt.executeUpdate();
+		cashflow_forecastInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Cashflow_forecasts in {} milliseconds.", size, cashflow_forecastInserted, elapsed );		
+	}
+		
+		private int cashflow_forecastId = -1;
+		
+		private void initCashflow_forecastId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `cashflow_forecast`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.cashflow_forecastId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCashflow_forecastId() {
+			return ++this.cashflow_forecastId;
+		} 
+
+		public void setCashflow_forecastId(Integer cashflow_forecastId) {
+			this.cashflow_forecastId = cashflow_forecastId;
+		} 
+	
+	private void flushCashflow_forecast(  )
+	throws SQLException {
+		if ( ! cashflow_forecasts.isEmpty() )
+			insertCashflow_forecast(cashflow_forecasts);
+		if ( cashflow_forecastStmt != null )
+			cashflow_forecastStmt.close();
+	}	
+
+	/**
+	 * Cashflow_forecast
+	 * @param id Identificador unico
+	 * @param payment Indica si es un pago o un cobro
+	 * @param description Descripcion
+	 * @param start_date Fecha de inicio de aplicacion
+	 * @param due_date Fecha final de aplicacion
+	 * @param rbank Identificador de Banco de la Compaia
+	 * @param amount Importe
+	 * @param payment_day Dia de pago
+	 * @param january Aplicable en enero
+	 * @param february Aplicable en febrero
+	 * @param march Aplicable en marzo
+	 * @param april Aplicable en abril
+	 * @param may Aplicable en mayo
+	 * @param june Aplicable en junio
+	 * @param july Aplicable en julio
+	 * @param august Aplicable en agosto
+	 * @param september Aplicable en septiembre
+	 * @param october Aplicable en octubre
+	 * @param november Aplicable en noviembre
+	 * @param december Aplicable en diciembre
+	 * @throws SQLException
+	*/
+	protected void insertCashflow_forecast(Integer id, Boolean payment, String description, Date start_date, Date due_date, Integer rbank, Double amount, Double payment_day, Boolean january, Boolean february, Boolean march, Boolean april, Boolean may, Boolean june, Boolean july, Boolean august, Boolean september, Boolean october, Boolean november, Boolean december)
+	throws SQLException {
+
+		Cashflow_forecast cashflow_forecast_ = new Cashflow_forecast();
+		cashflow_forecast_.id = id;
+		cashflow_forecast_.payment = payment;
+		cashflow_forecast_.description = description;
+		cashflow_forecast_.start_date = start_date;
+		cashflow_forecast_.due_date = due_date;
+		cashflow_forecast_.rbank = rbank;
+		cashflow_forecast_.amount = amount;
+		cashflow_forecast_.payment_day = payment_day;
+		cashflow_forecast_.january = january;
+		cashflow_forecast_.february = february;
+		cashflow_forecast_.march = march;
+		cashflow_forecast_.april = april;
+		cashflow_forecast_.may = may;
+		cashflow_forecast_.june = june;
+		cashflow_forecast_.july = july;
+		cashflow_forecast_.august = august;
+		cashflow_forecast_.september = september;
+		cashflow_forecast_.october = october;
+		cashflow_forecast_.november = november;
+		cashflow_forecast_.december = december;
+
+		cashflow_forecasts.add(cashflow_forecast_);
+		
+		int cashflow_forecastCount = cashflow_forecasts.size();
+		
+		if ( 102 * cashflow_forecastCount >=  this.maxAllowedPacket ){
+			insertCashflow_forecast(cashflow_forecasts);
+			cashflow_forecasts.clear();
+		} 
+	}
+
+
+	/**
+	 * Cashflow_forecast
+	 * @param payment Indica si es un pago o un cobro
+	 * @param description Descripcion
+	 * @param start_date Fecha de inicio de aplicacion
+	 * @param due_date Fecha final de aplicacion
+	 * @param rbank Identificador de Banco de la Compaia
+	 * @param amount Importe
+	 * @param payment_day Dia de pago
+	 * @param january Aplicable en enero
+	 * @param february Aplicable en febrero
+	 * @param march Aplicable en marzo
+	 * @param april Aplicable en abril
+	 * @param may Aplicable en mayo
+	 * @param june Aplicable en junio
+	 * @param july Aplicable en julio
+	 * @param august Aplicable en agosto
+	 * @param september Aplicable en septiembre
+	 * @param october Aplicable en octubre
+	 * @param november Aplicable en noviembre
+	 * @param december Aplicable en diciembre
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertCashflow_forecast(Boolean payment, String description, Date start_date, Date due_date, Integer rbank, Double amount, Double payment_day, Boolean january, Boolean february, Boolean march, Boolean april, Boolean may, Boolean june, Boolean july, Boolean august, Boolean september, Boolean october, Boolean november, Boolean december)
+	throws SQLException {
+		int id = nextCashflow_forecastId();
+
+		Cashflow_forecast cashflow_forecast_ = new Cashflow_forecast();
+		cashflow_forecast_.id = id;
+		cashflow_forecast_.payment = payment;
+		cashflow_forecast_.description = description;
+		cashflow_forecast_.start_date = start_date;
+		cashflow_forecast_.due_date = due_date;
+		cashflow_forecast_.rbank = rbank;
+		cashflow_forecast_.amount = amount;
+		cashflow_forecast_.payment_day = payment_day;
+		cashflow_forecast_.january = january;
+		cashflow_forecast_.february = february;
+		cashflow_forecast_.march = march;
+		cashflow_forecast_.april = april;
+		cashflow_forecast_.may = may;
+		cashflow_forecast_.june = june;
+		cashflow_forecast_.july = july;
+		cashflow_forecast_.august = august;
+		cashflow_forecast_.september = september;
+		cashflow_forecast_.october = october;
+		cashflow_forecast_.november = november;
+		cashflow_forecast_.december = december;
+
+		cashflow_forecasts.add(cashflow_forecast_);
+		
+		int cashflow_forecastCount = cashflow_forecasts.size();
+		
+		if ( 102 * cashflow_forecastCount >=  this.maxAllowedPacket ){
+			insertCashflow_forecast(cashflow_forecasts);
+			cashflow_forecasts.clear();
+		} 
+		return id;
+	}
+
 
 	private int account_entryStmtSize = 0;
 
@@ -21584,7 +27526,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Short entry_type; 
 		private Integer journal; 
 		private Short security_level; 
-		private InputStream comments; 
+		private String comments; 
 	}
 	
 	private void insertAccount_entry( List<Account_entry> account_entrys )
@@ -21640,7 +27582,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( account_entry.comments == null )
 				account_entryStmt.setNull(offset++, -1);
 			else
-				account_entryStmt.setAsciiStream(offset++, account_entry.comments);
+				account_entryStmt.setString(offset++, account_entry.comments);
 		}
 		account_entryStmt.executeUpdate();
 		account_entryInserted += size;
@@ -21673,8 +27615,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_entryId() {
+		public int nextAccount_entryId() {
 			return ++this.account_entryId;
+		} 
+
+		public void setAccount_entryId(Integer account_entryId) {
+			this.account_entryId = account_entryId;
 		} 
 	
 	private void flushAccount_entry(  )
@@ -21687,6 +27633,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Account_entry
+	 * @param id Identificador unico del Asiento
+	 * @param account_period Ejercicio Contable del Asiento
+	 * @param entry_date Fecha del Asiento
+	 * @param entry_type Tipo de Asiento
+	 * @param journal Numero de diario del Asiento
+	 * @param security_level Nivel de seguridad del Asiento
+	 * @param comments Comentarios del Asiento
+	 * @throws SQLException
+	*/
+	protected void insertAccount_entry(Integer id, String account_period, Date entry_date, Short entry_type, Integer journal, Short security_level, String comments)
+	throws SQLException {
+
+		Account_entry account_entry_ = new Account_entry();
+		account_entry_.id = id;
+		account_entry_.account_period = account_period;
+		account_entry_.entry_date = entry_date;
+		account_entry_.entry_type = entry_type;
+		account_entry_.journal = journal;
+		account_entry_.security_level = security_level;
+		account_entry_.comments = comments;
+
+		account_entrys.add(account_entry_);
+		
+		int account_entryCount = account_entrys.size();
+		
+		if ( 40 * account_entryCount >=  this.maxAllowedPacket ){
+			insertAccount_entry(account_entrys);
+			account_entrys.clear();
+		} 
+	}
+
+
+	/**
+	 * Account_entry
 	 * @param account_period Ejercicio Contable del Asiento
 	 * @param entry_date Fecha del Asiento
 	 * @param entry_type Tipo de Asiento
@@ -21696,7 +27676,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_entry(String account_period, Date entry_date, Short entry_type, Integer journal, Short security_level, InputStream comments)
+	protected int insertAccount_entry(String account_period, Date entry_date, Short entry_type, Integer journal, Short security_level, String comments)
 	throws SQLException {
 		int id = nextAccount_entryId();
 
@@ -21719,6 +27699,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int geotreeStmtSize = 0;
 
@@ -21805,8 +27786,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextGeotreeId() {
+		public int nextGeotreeId() {
 			return ++this.geotreeId;
+		} 
+
+		public void setGeotreeId(Integer geotreeId) {
+			this.geotreeId = geotreeId;
 		} 
 	
 	private void flushGeotree(  )
@@ -21816,6 +27801,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( geotreeStmt != null )
 			geotreeStmt.close();
 	}	
+
+	/**
+	 * Geotree
+	 * @param id Identificador unico
+	 * @param parent Identificador de la Zona Geografica Padre
+	 * @param child Identificador de la Zona Geografica Hijo
+	 * @throws SQLException
+	*/
+	protected void insertGeotree(Integer id, Integer parent, Integer child)
+	throws SQLException {
+
+		Geotree geotree_ = new Geotree();
+		geotree_.id = id;
+		geotree_.parent = parent;
+		geotree_.child = child;
+
+		geotrees.add(geotree_);
+		
+		int geotreeCount = geotrees.size();
+		
+		if ( 30 * geotreeCount >=  this.maxAllowedPacket ){
+			insertGeotree(geotrees);
+			geotrees.clear();
+		} 
+	}
+
 
 	/**
 	 * Geotree
@@ -21843,6 +27854,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int sales_purchaseStmtSize = 0;
 
@@ -21929,8 +27941,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSales_purchaseId() {
+		public int nextSales_purchaseId() {
 			return ++this.sales_purchaseId;
+		} 
+
+		public void setSales_purchaseId(Integer sales_purchaseId) {
+			this.sales_purchaseId = sales_purchaseId;
 		} 
 	
 	private void flushSales_purchase(  )
@@ -21940,6 +27956,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( sales_purchaseStmt != null )
 			sales_purchaseStmt.close();
 	}	
+
+	/**
+	 * Sales_purchase
+	 * @param id Identificador unico de la Relacion de Pedidos de Compra y Venta
+	 * @param sales_detail Identificador del Detalle del Pedido de Venta
+	 * @param purchase_detail Identificador del Detalle del Pedido de Compra
+	 * @throws SQLException
+	*/
+	protected void insertSales_purchase(Integer id, Integer sales_detail, Integer purchase_detail)
+	throws SQLException {
+
+		Sales_purchase sales_purchase_ = new Sales_purchase();
+		sales_purchase_.id = id;
+		sales_purchase_.sales_detail = sales_detail;
+		sales_purchase_.purchase_detail = purchase_detail;
+
+		sales_purchases.add(sales_purchase_);
+		
+		int sales_purchaseCount = sales_purchases.size();
+		
+		if ( 30 * sales_purchaseCount >=  this.maxAllowedPacket ){
+			insertSales_purchase(sales_purchases);
+			sales_purchases.clear();
+		} 
+	}
+
 
 	/**
 	 * Sales_purchase
@@ -21967,6 +28009,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int item_supplierStmtSize = 0;
 
@@ -22063,8 +28106,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextItem_supplierId() {
+		public int nextItem_supplierId() {
 			return ++this.item_supplierId;
+		} 
+
+		public void setItem_supplierId(Integer item_supplierId) {
+			this.item_supplierId = item_supplierId;
 		} 
 	
 	private void flushItem_supplier(  )
@@ -22074,6 +28121,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( item_supplierStmt != null )
 			item_supplierStmt.close();
 	}	
+
+	/**
+	 * Item_supplier
+	 * @param id Identificador unico
+	 * @param item Identificador de Articulo
+	 * @param supplier Identificador de Proveedor
+	 * @param code Codigo del Producto en el Proveedor
+	 * @param priority Prioridad del Proveedor
+	 * @throws SQLException
+	*/
+	protected void insertItem_supplier(Integer id, Integer item, Integer supplier, String code, Short priority)
+	throws SQLException {
+
+		Item_supplier item_supplier_ = new Item_supplier();
+		item_supplier_.id = id;
+		item_supplier_.item = item;
+		item_supplier_.supplier = supplier;
+		item_supplier_.code = code;
+		item_supplier_.priority = priority;
+
+		item_suppliers.add(item_supplier_);
+		
+		int item_supplierCount = item_suppliers.size();
+		
+		if ( 48 * item_supplierCount >=  this.maxAllowedPacket ){
+			insertItem_supplier(item_suppliers);
+			item_suppliers.clear();
+		} 
+	}
+
 
 	/**
 	 * Item_supplier
@@ -22105,6 +28182,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int customer_accountStmtSize = 0;
 
@@ -22191,8 +28269,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCustomer_accountId() {
+		public int nextCustomer_accountId() {
 			return ++this.customer_accountId;
+		} 
+
+		public void setCustomer_accountId(Integer customer_accountId) {
+			this.customer_accountId = customer_accountId;
 		} 
 	
 	private void flushCustomer_account(  )
@@ -22202,6 +28284,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( customer_accountStmt != null )
 			customer_accountStmt.close();
 	}	
+
+	/**
+	 * Customer_account
+	 * @param id Identificador unico de la Cuenta Contable del Cliente
+	 * @param customer Identificador del Cliente
+	 * @param account Identificador de la Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertCustomer_account(Integer id, Integer customer, String account)
+	throws SQLException {
+
+		Customer_account customer_account_ = new Customer_account();
+		customer_account_.id = id;
+		customer_account_.customer = customer;
+		customer_account_.account = account;
+
+		customer_accounts.add(customer_account_);
+		
+		int customer_accountCount = customer_accounts.size();
+		
+		if ( 32 * customer_accountCount >=  this.maxAllowedPacket ){
+			insertCustomer_account(customer_accounts);
+			customer_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Customer_account
@@ -22229,6 +28337,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int dossierStmtSize = 0;
 
@@ -22330,8 +28439,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextDossierId() {
+		public int nextDossierId() {
 			return ++this.dossierId;
+		} 
+
+		public void setDossierId(Integer dossierId) {
+			this.dossierId = dossierId;
 		} 
 	
 	private void flushDossier(  )
@@ -22341,6 +28454,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( dossierStmt != null )
 			dossierStmt.close();
 	}	
+
+	/**
+	 * Dossier
+	 * @param id Identificador unico del Expediente
+	 * @param customer Identificador del Cliente
+	 * @param dossier_type Tipo de Expediente
+	 * @param number Numero de Expediente
+	 * @param location Ubicacion del Expediente
+	 * @param status Estado del Expediente
+	 * @throws SQLException
+	*/
+	protected void insertDossier(Integer id, Integer customer, Integer dossier_type, String number, String location, Short status)
+	throws SQLException {
+
+		Dossier dossier_ = new Dossier();
+		dossier_.id = id;
+		dossier_.customer = customer;
+		dossier_.dossier_type = dossier_type;
+		dossier_.number = number;
+		dossier_.location = location;
+		dossier_.status = status;
+
+		dossiers.add(dossier_);
+		
+		int dossierCount = dossiers.size();
+		
+		if ( 69 * dossierCount >=  this.maxAllowedPacket ){
+			insertDossier(dossiers);
+			dossiers.clear();
+		} 
+	}
+
 
 	/**
 	 * Dossier
@@ -22374,6 +28519,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int survey_questionStmtSize = 0;
 
@@ -22465,8 +28611,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSurvey_questionId() {
+		public int nextSurvey_questionId() {
 			return ++this.survey_questionId;
+		} 
+
+		public void setSurvey_questionId(Integer survey_questionId) {
+			this.survey_questionId = survey_questionId;
 		} 
 	
 	private void flushSurvey_question(  )
@@ -22476,6 +28626,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( survey_questionStmt != null )
 			survey_questionStmt.close();
 	}	
+
+	/**
+	 * Survey_question
+	 * @param id Identificador unico
+	 * @param survey Identificador del Cuestionario
+	 * @param question Identificador de la Pregunta
+	 * @param position Posicion de la Pregunta dentro del Cuestionario
+	 * @throws SQLException
+	*/
+	protected void insertSurvey_question(Integer id, Integer survey, Integer question, Integer position)
+	throws SQLException {
+
+		Survey_question survey_question_ = new Survey_question();
+		survey_question_.id = id;
+		survey_question_.survey = survey;
+		survey_question_.question = question;
+		survey_question_.position = position;
+
+		survey_questions.add(survey_question_);
+		
+		int survey_questionCount = survey_questions.size();
+		
+		if ( 40 * survey_questionCount >=  this.maxAllowedPacket ){
+			insertSurvey_question(survey_questions);
+			survey_questions.clear();
+		} 
+	}
+
 
 	/**
 	 * Survey_question
@@ -22505,6 +28683,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int cv_evaluate_summaryStmtSize = 0;
 
@@ -22606,8 +28785,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCv_evaluate_summaryId() {
+		public int nextCv_evaluate_summaryId() {
 			return ++this.cv_evaluate_summaryId;
+		} 
+
+		public void setCv_evaluate_summaryId(Integer cv_evaluate_summaryId) {
+			this.cv_evaluate_summaryId = cv_evaluate_summaryId;
 		} 
 	
 	private void flushCv_evaluate_summary(  )
@@ -22617,6 +28800,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( cv_evaluate_summaryStmt != null )
 			cv_evaluate_summaryStmt.close();
 	}	
+
+	/**
+	 * Cv_evaluate_summary
+	 * @param id Identificador unico del Resumen
+	 * @param strengths Fortalezas
+	 * @param weaknesses Debilidades
+	 * @param profile Perfil
+	 * @param comments Comentarios
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @throws SQLException
+	*/
+	protected void insertCv_evaluate_summary(Integer id, String strengths, String weaknesses, Short profile, String comments, Integer curriculum)
+	throws SQLException {
+
+		Cv_evaluate_summary cv_evaluate_summary_ = new Cv_evaluate_summary();
+		cv_evaluate_summary_.id = id;
+		cv_evaluate_summary_.strengths = strengths;
+		cv_evaluate_summary_.weaknesses = weaknesses;
+		cv_evaluate_summary_.profile = profile;
+		cv_evaluate_summary_.comments = comments;
+		cv_evaluate_summary_.curriculum = curriculum;
+
+		cv_evaluate_summarys.add(cv_evaluate_summary_);
+		
+		int cv_evaluate_summaryCount = cv_evaluate_summarys.size();
+		
+		if ( 791 * cv_evaluate_summaryCount >=  this.maxAllowedPacket ){
+			insertCv_evaluate_summary(cv_evaluate_summarys);
+			cv_evaluate_summarys.clear();
+		} 
+	}
+
 
 	/**
 	 * Cv_evaluate_summary
@@ -22650,6 +28865,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int courseStmtSize = 0;
 
@@ -22781,8 +28997,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCourseId() {
+		public int nextCourseId() {
 			return ++this.courseId;
+		} 
+
+		public void setCourseId(Integer courseId) {
+			this.courseId = courseId;
 		} 
 	
 	private void flushCourse(  )
@@ -22792,6 +29012,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( courseStmt != null )
 			courseStmt.close();
 	}	
+
+	/**
+	 * Course
+	 * @param id Identificador unico del Curso
+	 * @param code Alias del Curso
+	 * @param description Descripcion del Curso
+	 * @param start_date Fecha inicio del Curso
+	 * @param end_date Fecha fin del Curso
+	 * @param academic_year Ao Academico del Curso
+	 * @param subject Materia del Curso
+	 * @param level Nivel del Curso
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param alumn_limit Limite de Alumnos del Curso
+	 * @param status Estado del Curso
+	 * @param comments Comentarios sobre el Curso
+	 * @throws SQLException
+	*/
+	protected void insertCourse(Integer id, String code, String description, Date start_date, Date end_date, Integer academic_year, Integer subject, Integer level, Integer workplace, Integer alumn_limit, Short status, String comments)
+	throws SQLException {
+
+		Course course_ = new Course();
+		course_.id = id;
+		course_.code = code;
+		course_.description = description;
+		course_.start_date = start_date;
+		course_.end_date = end_date;
+		course_.academic_year = academic_year;
+		course_.subject = subject;
+		course_.level = level;
+		course_.workplace = workplace;
+		course_.alumn_limit = alumn_limit;
+		course_.status = status;
+		course_.comments = comments;
+
+		courses.add(course_);
+		
+		int courseCount = courses.size();
+		
+		if ( 275 * courseCount >=  this.maxAllowedPacket ){
+			insertCourse(courses);
+			courses.clear();
+		} 
+	}
+
 
 	/**
 	 * Course
@@ -22837,6 +29101,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int stockStmtSize = 0;
 
@@ -22928,8 +29193,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextStockId() {
+		public int nextStockId() {
 			return ++this.stockId;
+		} 
+
+		public void setStockId(Integer stockId) {
+			this.stockId = stockId;
 		} 
 	
 	private void flushStock(  )
@@ -22939,6 +29208,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( stockStmt != null )
 			stockStmt.close();
 	}	
+
+	/**
+	 * Stock
+	 * @param id Identificador unico del Stock
+	 * @param warehouse Identificador del Almacen
+	 * @param item Identificador del Articulo
+	 * @param quantity Cantidad del Articulo en el Almacen
+	 * @throws SQLException
+	*/
+	protected void insertStock(Integer id, Integer warehouse, Integer item, Double quantity)
+	throws SQLException {
+
+		Stock stock_ = new Stock();
+		stock_.id = id;
+		stock_.warehouse = warehouse;
+		stock_.item = item;
+		stock_.quantity = quantity;
+
+		stocks.add(stock_);
+		
+		int stockCount = stocks.size();
+		
+		if ( 45 * stockCount >=  this.maxAllowedPacket ){
+			insertStock(stocks);
+			stocks.clear();
+		} 
+	}
+
 
 	/**
 	 * Stock
@@ -22968,6 +29265,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int rbankStmtSize = 0;
 
@@ -23064,8 +29362,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRbankId() {
+		public int nextRbankId() {
 			return ++this.rbankId;
+		} 
+
+		public void setRbankId(Integer rbankId) {
+			this.rbankId = rbankId;
 		} 
 	
 	private void flushRbank(  )
@@ -23075,6 +29377,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( rbankStmt != null )
 			rbankStmt.close();
 	}	
+
+	/**
+	 * Rbank
+	 * @param id Identificador unico de la Cuenta Bancaria de la Persona o Empresa
+	 * @param registry Identificador del Registro de la Persona o Empresa
+	 * @param bank Identificador de la Entidad Bancaria
+	 * @param bank_account Numero de Cuenta Bancaria de la Persona o Empresa
+	 * @param sufix Sufijo de Cuenta Bancaria para Remesas
+	 * @throws SQLException
+	*/
+	protected void insertRbank(Integer id, Integer registry, Integer bank, String bank_account, String sufix)
+	throws SQLException {
+
+		Rbank rbank_ = new Rbank();
+		rbank_.id = id;
+		rbank_.registry = registry;
+		rbank_.bank = bank;
+		rbank_.bank_account = bank_account;
+		rbank_.sufix = sufix;
+
+		rbanks.add(rbank_);
+		
+		int rbankCount = rbanks.size();
+		
+		if ( 63 * rbankCount >=  this.maxAllowedPacket ){
+			insertRbank(rbanks);
+			rbanks.clear();
+		} 
+	}
+
 
 	/**
 	 * Rbank
@@ -23106,6 +29438,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int rpaymethodStmtSize = 0;
 
@@ -23217,8 +29550,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRpaymethodId() {
+		public int nextRpaymethodId() {
 			return ++this.rpaymethodId;
+		} 
+
+		public void setRpaymethodId(Integer rpaymethodId) {
+			this.rpaymethodId = rpaymethodId;
 		} 
 	
 	private void flushRpaymethod(  )
@@ -23228,6 +29565,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( rpaymethodStmt != null )
 			rpaymethodStmt.close();
 	}	
+
+	/**
+	 * Rpaymethod
+	 * @param id Identificador unico de la Forma de Pago de la Persona o Empresa
+	 * @param registry Identificador del Registro de la Persona o Empresa
+	 * @param pay_method Identificador de la Forma de Pago
+	 * @param rbank Identificador de la Entidad Bancaria
+	 * @param number_of_pymnts Numero de Vencimientos
+	 * @param days_to_first_pymnt Dias al primer Vencimiento
+	 * @param days_between_pymnts Dias entre Vencimientos
+	 * @param pymnt_days Dias de pago
+	 * @throws SQLException
+	*/
+	protected void insertRpaymethod(Integer id, Integer registry, Integer pay_method, Integer rbank, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days)
+	throws SQLException {
+
+		Rpaymethod rpaymethod_ = new Rpaymethod();
+		rpaymethod_.id = id;
+		rpaymethod_.registry = registry;
+		rpaymethod_.pay_method = pay_method;
+		rpaymethod_.rbank = rbank;
+		rpaymethod_.number_of_pymnts = number_of_pymnts;
+		rpaymethod_.days_to_first_pymnt = days_to_first_pymnt;
+		rpaymethod_.days_between_pymnts = days_between_pymnts;
+		rpaymethod_.pymnt_days = pymnt_days;
+
+		rpaymethods.add(rpaymethod_);
+		
+		int rpaymethodCount = rpaymethods.size();
+		
+		if ( 63 * rpaymethodCount >=  this.maxAllowedPacket ){
+			insertRpaymethod(rpaymethods);
+			rpaymethods.clear();
+		} 
+	}
+
 
 	/**
 	 * Rpaymethod
@@ -23265,6 +29638,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int salesStmtSize = 0;
 
@@ -23441,8 +29815,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSalesId() {
+		public int nextSalesId() {
 			return ++this.salesId;
+		} 
+
+		public void setSalesId(Integer salesId) {
+			this.salesId = salesId;
 		} 
 	
 	private void flushSales(  )
@@ -23452,6 +29830,68 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( salesStmt != null )
 			salesStmt.close();
 	}	
+
+	/**
+	 * Sales
+	 * @param id Identificador unico del Pedido de Venta
+	 * @param customer Identificador del Cliente
+	 * @param series Serie del Pedido
+	 * @param number Numero del Pedido
+	 * @param shipping_address Identificador de la Direccion de envio del Pedido
+	 * @param seller Identificador del Agente Comercial
+	 * @param discount_expr Descuentos del Pedido
+	 * @param issue_date Fecha de emision del Pedido
+	 * @param pay_method Identificador de la Forma de Pago
+	 * @param document_type Tipo de Pedido
+	 * @param security_level Nivel de seguridad del Pedido
+	 * @param status Estado del Pedido
+	 * @param pos Identificador del Centro de Venta que realizo el Pedido
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param scope Ambito del Pedido
+	 * @param number_of_pymnts Numero de Vencimientos
+	 * @param days_to_first_pymnt Dias al primer Vencimiento
+	 * @param days_between_pymnts Dias entre Vencimientos
+	 * @param pymnt_days Dias de pago
+	 * @param bank Identificador de la Entidad Bancaria
+	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @throws SQLException
+	*/
+	protected void insertSales(Integer id, Integer customer, String series, Integer number, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, Integer pos, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	throws SQLException {
+
+		Sales sales_ = new Sales();
+		sales_.id = id;
+		sales_.customer = customer;
+		sales_.series = series;
+		sales_.number = number;
+		sales_.shipping_address = shipping_address;
+		sales_.seller = seller;
+		sales_.discount_expr = discount_expr;
+		sales_.issue_date = issue_date;
+		sales_.pay_method = pay_method;
+		sales_.document_type = document_type;
+		sales_.security_level = security_level;
+		sales_.status = status;
+		sales_.pos = pos;
+		sales_.workplace = workplace;
+		sales_.scope = scope;
+		sales_.number_of_pymnts = number_of_pymnts;
+		sales_.days_to_first_pymnt = days_to_first_pymnt;
+		sales_.days_between_pymnts = days_between_pymnts;
+		sales_.pymnt_days = pymnt_days;
+		sales_.bank = bank;
+		sales_.bank_account = bank_account;
+
+		saless.add(sales_);
+		
+		int salesCount = saless.size();
+		
+		if ( 209 * salesCount >=  this.maxAllowedPacket ){
+			insertSales(saless);
+			saless.clear();
+		} 
+	}
+
 
 	/**
 	 * Sales
@@ -23515,6 +29955,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int incomeStmtSize = 0;
 
@@ -23671,8 +30112,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextIncomeId() {
+		public int nextIncomeId() {
 			return ++this.incomeId;
+		} 
+
+		public void setIncomeId(Integer incomeId) {
+			this.incomeId = incomeId;
 		} 
 	
 	private void flushIncome(  )
@@ -23682,6 +30127,60 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( incomeStmt != null )
 			incomeStmt.close();
 	}	
+
+	/**
+	 * Income
+	 * @param id Identificador unico del Albaran de Compra
+	 * @param series Serie del Albaran
+	 * @param number Numero del Albaran
+	 * @param supplier Identificador del Proveedor
+	 * @param address Identificador de la Direccion del Proveedor
+	 * @param issue_time Fecha de emision del Albaran
+	 * @param pay_method Identificador de la Forma de Pago
+	 * @param security_level Nivel de seguridad del Albaran
+	 * @param status Estado del Albaran
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param scope Ambito del Albaran
+	 * @param number_of_pymnts Numero de Vencimientos
+	 * @param days_to_first_pymnt Dias al primer Vencimiento
+	 * @param days_between_pymnts Dias entre Vencimientos
+	 * @param pymnt_days Dias de pago
+	 * @param bank Identificador de la Entidad Bancaria
+	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @throws SQLException
+	*/
+	protected void insertIncome(Integer id, String series, Integer number, Integer supplier, Integer address, Date issue_time, Integer pay_method, Short security_level, Short status, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	throws SQLException {
+
+		Income income_ = new Income();
+		income_.id = id;
+		income_.series = series;
+		income_.number = number;
+		income_.supplier = supplier;
+		income_.address = address;
+		income_.issue_time = issue_time;
+		income_.pay_method = pay_method;
+		income_.security_level = security_level;
+		income_.status = status;
+		income_.workplace = workplace;
+		income_.scope = scope;
+		income_.number_of_pymnts = number_of_pymnts;
+		income_.days_to_first_pymnt = days_to_first_pymnt;
+		income_.days_between_pymnts = days_between_pymnts;
+		income_.pymnt_days = pymnt_days;
+		income_.bank = bank;
+		income_.bank_account = bank_account;
+
+		incomes.add(income_);
+		
+		int incomeCount = incomes.size();
+		
+		if ( 154 * incomeCount >=  this.maxAllowedPacket ){
+			insertIncome(incomes);
+			incomes.clear();
+		} 
+	}
+
 
 	/**
 	 * Income
@@ -23737,6 +30236,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int enterprise_activityStmtSize = 0;
 
@@ -23833,8 +30333,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEnterprise_activityId() {
+		public int nextEnterprise_activityId() {
 			return ++this.enterprise_activityId;
+		} 
+
+		public void setEnterprise_activityId(Integer enterprise_activityId) {
+			this.enterprise_activityId = enterprise_activityId;
 		} 
 	
 	private void flushEnterprise_activity(  )
@@ -23844,6 +30348,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( enterprise_activityStmt != null )
 			enterprise_activityStmt.close();
 	}	
+
+	/**
+	 * Enterprise_activity
+	 * @param id Identificador unico
+	 * @param description Descripcion de la Actividad de la Empresa
+	 * @param enterprise Identificador de la Empresa
+	 * @param cnae Identificador del CNAE
+	 * @param type Tipo de Actividad de la Empresa
+	 * @throws SQLException
+	*/
+	protected void insertEnterprise_activity(Integer id, String description, Integer enterprise, Integer cnae, Short type)
+	throws SQLException {
+
+		Enterprise_activity enterprise_activity_ = new Enterprise_activity();
+		enterprise_activity_.id = id;
+		enterprise_activity_.description = description;
+		enterprise_activity_.enterprise = enterprise;
+		enterprise_activity_.cnae = cnae;
+		enterprise_activity_.type = type;
+
+		enterprise_activitys.add(enterprise_activity_);
+		
+		int enterprise_activityCount = enterprise_activitys.size();
+		
+		if ( 97 * enterprise_activityCount >=  this.maxAllowedPacket ){
+			insertEnterprise_activity(enterprise_activitys);
+			enterprise_activitys.clear();
+		} 
+	}
+
 
 	/**
 	 * Enterprise_activity
@@ -23875,6 +30409,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int web_info_page_resourceStmtSize = 0;
 
@@ -23966,8 +30501,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextWeb_info_page_resourceId() {
+		public int nextWeb_info_page_resourceId() {
 			return ++this.web_info_page_resourceId;
+		} 
+
+		public void setWeb_info_page_resourceId(Integer web_info_page_resourceId) {
+			this.web_info_page_resourceId = web_info_page_resourceId;
 		} 
 	
 	private void flushWeb_info_page_resource(  )
@@ -23977,6 +30516,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( web_info_page_resourceStmt != null )
 			web_info_page_resourceStmt.close();
 	}	
+
+	/**
+	 * Web_info_page_resource
+	 * @param id Codigo del Recurso de la Pagina
+	 * @param web_info_page Codigo de la Pagina
+	 * @param rattach Identificador del Archivo Adjunto calificado como Recurso
+	 * @param content Texto del Recurso
+	 * @throws SQLException
+	*/
+	protected void insertWeb_info_page_resource(Integer id, Integer web_info_page, Integer rattach, String content)
+	throws SQLException {
+
+		Web_info_page_resource web_info_page_resource_ = new Web_info_page_resource();
+		web_info_page_resource_.id = id;
+		web_info_page_resource_.web_info_page = web_info_page;
+		web_info_page_resource_.rattach = rattach;
+		web_info_page_resource_.content = content;
+
+		web_info_page_resources.add(web_info_page_resource_);
+		
+		int web_info_page_resourceCount = web_info_page_resources.size();
+		
+		if ( 285 * web_info_page_resourceCount >=  this.maxAllowedPacket ){
+			insertWeb_info_page_resource(web_info_page_resources);
+			web_info_page_resources.clear();
+		} 
+	}
+
 
 	/**
 	 * Web_info_page_resource
@@ -24006,6 +30573,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int fbatch_detailStmtSize = 0;
 
@@ -24102,8 +30670,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFbatch_detailId() {
+		public int nextFbatch_detailId() {
 			return ++this.fbatch_detailId;
+		} 
+
+		public void setFbatch_detailId(Integer fbatch_detailId) {
+			this.fbatch_detailId = fbatch_detailId;
 		} 
 	
 	private void flushFbatch_detail(  )
@@ -24113,6 +30685,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( fbatch_detailStmt != null )
 			fbatch_detailStmt.close();
 	}	
+
+	/**
+	 * Fbatch_detail
+	 * @param id Identificador unico del Detalle de la Remesa
+	 * @param fbatch Identificador de la Remesa
+	 * @param finance Identificador del Vencimiento
+	 * @param amount Importe del Detalle de la Remesa
+	 * @param status Estado del Detalle de la Remesa
+	 * @throws SQLException
+	*/
+	protected void insertFbatch_detail(Integer id, Integer fbatch, Integer finance, Double amount, Short status)
+	throws SQLException {
+
+		Fbatch_detail fbatch_detail_ = new Fbatch_detail();
+		fbatch_detail_.id = id;
+		fbatch_detail_.fbatch = fbatch;
+		fbatch_detail_.finance = finance;
+		fbatch_detail_.amount = amount;
+		fbatch_detail_.status = status;
+
+		fbatch_details.add(fbatch_detail_);
+		
+		int fbatch_detailCount = fbatch_details.size();
+		
+		if ( 48 * fbatch_detailCount >=  this.maxAllowedPacket ){
+			insertFbatch_detail(fbatch_details);
+			fbatch_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Fbatch_detail
@@ -24145,6 +30747,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int calendar_holidayStmtSize = 0;
 
 	private int calendar_holidayInserted = 0;
@@ -24159,6 +30762,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer calendar; 
 		private String description; 
 		private Date date; 
+		private Short day_type; 
+		private Double hours; 
 	}
 	
 	private void insertCalendar_holiday( List<Calendar_holiday> calendar_holidays )
@@ -24169,7 +30774,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( calendar_holidayStmt != null ) {
 				calendar_holidayStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -24178,7 +30783,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			calendar_holidayStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO calendar_holiday (id,calendar,description,date)"  
+				"INSERT INTO calendar_holiday (id,calendar,description,date,day_type,hours)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			calendar_holidayStmtSize = size;
@@ -24203,6 +30808,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				calendar_holidayStmt.setNull(offset++, 91);
 			else
 				calendar_holidayStmt.setDate(offset++, calendar_holiday.date);
+			if ( calendar_holiday.day_type == null )
+				calendar_holidayStmt.setNull(offset++, -6);
+			else
+				calendar_holidayStmt.setShort(offset++, calendar_holiday.day_type);
+			if ( calendar_holiday.hours == null )
+				calendar_holidayStmt.setNull(offset++, 8);
+			else
+				calendar_holidayStmt.setDouble(offset++, calendar_holiday.hours);
 		}
 		calendar_holidayStmt.executeUpdate();
 		calendar_holidayInserted += size;
@@ -24235,8 +30848,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCalendar_holidayId() {
+		public int nextCalendar_holidayId() {
 			return ++this.calendar_holidayId;
+		} 
+
+		public void setCalendar_holidayId(Integer calendar_holidayId) {
+			this.calendar_holidayId = calendar_holidayId;
 		} 
 	
 	private void flushCalendar_holiday(  )
@@ -24249,13 +30866,47 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Calendar_holiday
+	 * @param id Identificador unico
 	 * @param calendar Identificador del Calendario
 	 * @param description Descripcion del Festivo
 	 * @param date Fecha del festivo
+	 * @param day_type Tipo de dia
+	 * @param hours Numero de horas laborables
+	 * @throws SQLException
+	*/
+	protected void insertCalendar_holiday(Integer id, Integer calendar, String description, Date date, Short day_type, Double hours)
+	throws SQLException {
+
+		Calendar_holiday calendar_holiday_ = new Calendar_holiday();
+		calendar_holiday_.id = id;
+		calendar_holiday_.calendar = calendar;
+		calendar_holiday_.description = description;
+		calendar_holiday_.date = date;
+		calendar_holiday_.day_type = day_type;
+		calendar_holiday_.hours = hours;
+
+		calendar_holidays.add(calendar_holiday_);
+		
+		int calendar_holidayCount = calendar_holidays.size();
+		
+		if ( 119 * calendar_holidayCount >=  this.maxAllowedPacket ){
+			insertCalendar_holiday(calendar_holidays);
+			calendar_holidays.clear();
+		} 
+	}
+
+
+	/**
+	 * Calendar_holiday
+	 * @param calendar Identificador del Calendario
+	 * @param description Descripcion del Festivo
+	 * @param date Fecha del festivo
+	 * @param day_type Tipo de dia
+	 * @param hours Numero de horas laborables
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCalendar_holiday(Integer calendar, String description, Date date)
+	protected int insertCalendar_holiday(Integer calendar, String description, Date date, Short day_type, Double hours)
 	throws SQLException {
 		int id = nextCalendar_holidayId();
 
@@ -24264,17 +30915,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		calendar_holiday_.calendar = calendar;
 		calendar_holiday_.description = description;
 		calendar_holiday_.date = date;
+		calendar_holiday_.day_type = day_type;
+		calendar_holiday_.hours = hours;
 
 		calendar_holidays.add(calendar_holiday_);
 		
 		int calendar_holidayCount = calendar_holidays.size();
 		
-		if ( 94 * calendar_holidayCount >=  this.maxAllowedPacket ){
+		if ( 119 * calendar_holidayCount >=  this.maxAllowedPacket ){
 			insertCalendar_holiday(calendar_holidays);
 			calendar_holidays.clear();
 		} 
 		return id;
 	}
+
 
 	private int workgroupStmtSize = 0;
 
@@ -24361,8 +31015,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextWorkgroupId() {
+		public int nextWorkgroupId() {
 			return ++this.workgroupId;
+		} 
+
+		public void setWorkgroupId(Integer workgroupId) {
+			this.workgroupId = workgroupId;
 		} 
 	
 	private void flushWorkgroup(  )
@@ -24372,6 +31030,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( workgroupStmt != null )
 			workgroupStmt.close();
 	}	
+
+	/**
+	 * Workgroup
+	 * @param id Identificador unico del Grupo de Trabajo
+	 * @param description Descripcion del Grupo de Trabajo
+	 * @param status Estado del grupo de Trabajo
+	 * @throws SQLException
+	*/
+	protected void insertWorkgroup(Integer id, String description, Short status)
+	throws SQLException {
+
+		Workgroup workgroup_ = new Workgroup();
+		workgroup_.id = id;
+		workgroup_.description = description;
+		workgroup_.status = status;
+
+		workgroups.add(workgroup_);
+		
+		int workgroupCount = workgroups.size();
+		
+		if ( 77 * workgroupCount >=  this.maxAllowedPacket ){
+			insertWorkgroup(workgroups);
+			workgroups.clear();
+		} 
+	}
+
 
 	/**
 	 * Workgroup
@@ -24400,6 +31084,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int function_constantStmtSize = 0;
 
 	private int function_constantInserted = 0;
@@ -24415,6 +31100,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private String expression; 
 		private Date start_date; 
 		private Date end_date; 
+		private Boolean read_only; 
+		private String comments; 
 	}
 	
 	private void insertFunction_constant( List<Function_constant> function_constants )
@@ -24425,7 +31112,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( function_constantStmt != null ) {
 				function_constantStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -24434,7 +31121,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			function_constantStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO function_constant (id,name,expression,start_date,end_date)"  
+				"INSERT INTO function_constant (id,name,expression,start_date,end_date,read_only,comments)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			function_constantStmtSize = size;
@@ -24463,6 +31150,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				function_constantStmt.setNull(offset++, 91);
 			else
 				function_constantStmt.setDate(offset++, function_constant.end_date);
+			if ( function_constant.read_only == null )
+				function_constantStmt.setNull(offset++, -7);
+			else
+				function_constantStmt.setBoolean(offset++, function_constant.read_only);
+			if ( function_constant.comments == null )
+				function_constantStmt.setNull(offset++, 12);
+			else
+				function_constantStmt.setString(offset++, function_constant.comments);
 		}
 		function_constantStmt.executeUpdate();
 		function_constantInserted += size;
@@ -24495,8 +31190,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFunction_constantId() {
+		public int nextFunction_constantId() {
 			return ++this.function_constantId;
+		} 
+
+		public void setFunction_constantId(Integer function_constantId) {
+			this.function_constantId = function_constantId;
 		} 
 	
 	private void flushFunction_constant(  )
@@ -24509,14 +31208,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Function_constant
+	 * @param id Identificador unico
 	 * @param name Nombre
 	 * @param expression Expresion
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
+	 * @param read_only Modificable
+	 * @param comments Comentario de ayuda
+	 * @throws SQLException
+	*/
+	protected void insertFunction_constant(Integer id, String name, String expression, Date start_date, Date end_date, Boolean read_only, String comments)
+	throws SQLException {
+
+		Function_constant function_constant_ = new Function_constant();
+		function_constant_.id = id;
+		function_constant_.name = name;
+		function_constant_.expression = expression;
+		function_constant_.start_date = start_date;
+		function_constant_.end_date = end_date;
+		function_constant_.read_only = read_only;
+		function_constant_.comments = comments;
+
+		function_constants.add(function_constant_);
+		
+		int function_constantCount = function_constants.size();
+		
+		if ( 686 * function_constantCount >=  this.maxAllowedPacket ){
+			insertFunction_constant(function_constants);
+			function_constants.clear();
+		} 
+	}
+
+
+	/**
+	 * Function_constant
+	 * @param name Nombre
+	 * @param expression Expresion
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param read_only Modificable
+	 * @param comments Comentario de ayuda
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFunction_constant(String name, String expression, Date start_date, Date end_date)
+	protected int insertFunction_constant(String name, String expression, Date start_date, Date end_date, Boolean read_only, String comments)
 	throws SQLException {
 		int id = nextFunction_constantId();
 
@@ -24526,17 +31261,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		function_constant_.expression = expression;
 		function_constant_.start_date = start_date;
 		function_constant_.end_date = end_date;
+		function_constant_.read_only = read_only;
+		function_constant_.comments = comments;
 
 		function_constants.add(function_constant_);
 		
 		int function_constantCount = function_constants.size();
 		
-		if ( 174 * function_constantCount >=  this.maxAllowedPacket ){
+		if ( 686 * function_constantCount >=  this.maxAllowedPacket ){
 			insertFunction_constant(function_constants);
 			function_constants.clear();
 		} 
 		return id;
 	}
+
 
 	private int categoryStmtSize = 0;
 
@@ -24618,8 +31356,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCategoryId() {
+		public int nextCategoryId() {
 			return ++this.categoryId;
+		} 
+
+		public void setCategoryId(Integer categoryId) {
+			this.categoryId = categoryId;
 		} 
 	
 	private void flushCategory(  )
@@ -24629,6 +31371,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( categoryStmt != null )
 			categoryStmt.close();
 	}	
+
+	/**
+	 * Category
+	 * @param id Identificador unico de la Categoria
+	 * @param name Nombre de la Categoria
+	 * @throws SQLException
+	*/
+	protected void insertCategory(Integer id, String name)
+	throws SQLException {
+
+		Category category_ = new Category();
+		category_.id = id;
+		category_.name = name;
+
+		categorys.add(category_);
+		
+		int categoryCount = categorys.size();
+		
+		if ( 42 * categoryCount >=  this.maxAllowedPacket ){
+			insertCategory(categorys);
+			categorys.clear();
+		} 
+	}
+
 
 	/**
 	 * Category
@@ -24654,6 +31420,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int mk_action_targetStmtSize = 0;
 
@@ -24750,8 +31517,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextMk_action_targetId() {
+		public int nextMk_action_targetId() {
 			return ++this.mk_action_targetId;
+		} 
+
+		public void setMk_action_targetId(Integer mk_action_targetId) {
+			this.mk_action_targetId = mk_action_targetId;
 		} 
 	
 	private void flushMk_action_target(  )
@@ -24761,6 +31532,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( mk_action_targetStmt != null )
 			mk_action_targetStmt.close();
 	}	
+
+	/**
+	 * Mk_action_target
+	 * @param id Identificador unico
+	 * @param action Identificador de la Accion
+	 * @param target Identificador del Cliente Potencial
+	 * @param status Estado del Cliente Potencial de la Accion de Campaa
+	 * @param survey_response Identificador de la Respuesta de Cuestionario
+	 * @throws SQLException
+	*/
+	protected void insertMk_action_target(Integer id, Integer action, Integer target, Short status, Integer survey_response)
+	throws SQLException {
+
+		Mk_action_target mk_action_target_ = new Mk_action_target();
+		mk_action_target_.id = id;
+		mk_action_target_.action = action;
+		mk_action_target_.target = target;
+		mk_action_target_.status = status;
+		mk_action_target_.survey_response = survey_response;
+
+		mk_action_targets.add(mk_action_target_);
+		
+		int mk_action_targetCount = mk_action_targets.size();
+		
+		if ( 43 * mk_action_targetCount >=  this.maxAllowedPacket ){
+			insertMk_action_target(mk_action_targets);
+			mk_action_targets.clear();
+		} 
+	}
+
 
 	/**
 	 * Mk_action_target
@@ -24792,6 +31593,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int taxStmtSize = 0;
 
@@ -24903,8 +31705,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTaxId() {
+		public int nextTaxId() {
 			return ++this.taxId;
+		} 
+
+		public void setTaxId(Integer taxId) {
+			this.taxId = taxId;
 		} 
 	
 	private void flushTax(  )
@@ -24914,6 +31720,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( taxStmt != null )
 			taxStmt.close();
 	}	
+
+	/**
+	 * Tax
+	 * @param id Identificador unico del Impuesto
+	 * @param name Nombre del Impuesto
+	 * @param tax_type Tipo de Impuesto
+	 * @param percentage Porcentaje de recargo actual
+	 * @param surcharge Porcentaje de recargo de equivalencia actual
+	 * @param start_date Fecha de inicio de vigencia
+	 * @param vat_deduction_type Tipo de deduccion del IVA
+	 * @param withholding_type Tipo de retencion
+	 * @throws SQLException
+	*/
+	protected void insertTax(Integer id, String name, Short tax_type, Double percentage, Double surcharge, Date start_date, Short vat_deduction_type, Short withholding_type)
+	throws SQLException {
+
+		Tax tax_ = new Tax();
+		tax_.id = id;
+		tax_.name = name;
+		tax_.tax_type = tax_type;
+		tax_.percentage = percentage;
+		tax_.surcharge = surcharge;
+		tax_.start_date = start_date;
+		tax_.vat_deduction_type = vat_deduction_type;
+		tax_.withholding_type = withholding_type;
+
+		taxs.add(tax_);
+		
+		int taxCount = taxs.size();
+		
+		if ( 89 * taxCount >=  this.maxAllowedPacket ){
+			insertTax(taxs);
+			taxs.clear();
+		} 
+	}
+
 
 	/**
 	 * Tax
@@ -24951,6 +31793,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int sessionStmtSize = 0;
 
@@ -25062,8 +31905,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSessionId() {
+		public int nextSessionId() {
 			return ++this.sessionId;
+		} 
+
+		public void setSessionId(Integer sessionId) {
+			this.sessionId = sessionId;
 		} 
 	
 	private void flushSession(  )
@@ -25073,6 +31920,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( sessionStmt != null )
 			sessionStmt.close();
 	}	
+
+	/**
+	 * Session
+	 * @param id Identificador unico
+	 * @param endDate Fecha de finalizacion
+	 * @param remote_address IP remota
+	 * @param remote_host Equipo remoto
+	 * @param session_id Identificador web de la sesin
+	 * @param startDate Fecha de inicio
+	 * @param application_id Identificador de la Aplicacion
+	 * @param user_id Identificador del Usuario
+	 * @throws SQLException
+	*/
+	protected void insertSession(Integer id, Timestamp endDate, String remote_address, String remote_host, String session_id, Timestamp startDate, Integer application_id, Integer user_id)
+	throws SQLException {
+
+		Session session_ = new Session();
+		session_.id = id;
+		session_.endDate = endDate;
+		session_.remote_address = remote_address;
+		session_.remote_host = remote_host;
+		session_.session_id = session_id;
+		session_.startDate = startDate;
+		session_.application_id = application_id;
+		session_.user_id = user_id;
+
+		sessions.add(session_);
+		
+		int sessionCount = sessions.size();
+		
+		if ( 275 * sessionCount >=  this.maxAllowedPacket ){
+			insertSession(sessions);
+			sessions.clear();
+		} 
+	}
+
 
 	/**
 	 * Session
@@ -25110,6 +31993,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int cv_studiesStmtSize = 0;
 
@@ -25216,8 +32100,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCv_studiesId() {
+		public int nextCv_studiesId() {
 			return ++this.cv_studiesId;
+		} 
+
+		public void setCv_studiesId(Integer cv_studiesId) {
+			this.cv_studiesId = cv_studiesId;
 		} 
 	
 	private void flushCv_studies(  )
@@ -25227,6 +32115,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( cv_studiesStmt != null )
 			cv_studiesStmt.close();
 	}	
+
+	/**
+	 * Cv_studies
+	 * @param id Identificador nico del Estudio
+	 * @param startingdate Fecha de inicio del Estudio
+	 * @param endingdate Fecha de finalizacin del Estudio
+	 * @param degree Nivel de Estudios
+	 * @param speciality Especialidad de Estudios
+	 * @param centre Centro de Estudios
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @throws SQLException
+	*/
+	protected void insertCv_studies(Integer id, Date startingdate, Date endingdate, Short degree, String speciality, String centre, Integer curriculum)
+	throws SQLException {
+
+		Cv_studies cv_studies_ = new Cv_studies();
+		cv_studies_.id = id;
+		cv_studies_.startingdate = startingdate;
+		cv_studies_.endingdate = endingdate;
+		cv_studies_.degree = degree;
+		cv_studies_.speciality = speciality;
+		cv_studies_.centre = centre;
+		cv_studies_.curriculum = curriculum;
+
+		cv_studiess.add(cv_studies_);
+		
+		int cv_studiesCount = cv_studiess.size();
+		
+		if ( 171 * cv_studiesCount >=  this.maxAllowedPacket ){
+			insertCv_studies(cv_studiess);
+			cv_studiess.clear();
+		} 
+	}
+
 
 	/**
 	 * Cv_studies
@@ -25262,6 +32184,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int invoicing_groupStmtSize = 0;
 
@@ -25343,8 +32266,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInvoicing_groupId() {
+		public int nextInvoicing_groupId() {
 			return ++this.invoicing_groupId;
+		} 
+
+		public void setInvoicing_groupId(Integer invoicing_groupId) {
+			this.invoicing_groupId = invoicing_groupId;
 		} 
 	
 	private void flushInvoicing_group(  )
@@ -25354,6 +32281,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( invoicing_groupStmt != null )
 			invoicing_groupStmt.close();
 	}	
+
+	/**
+	 * Invoicing_group
+	 * @param id Identificador unico
+	 * @param parent Grupo de Facturacion
+	 * @throws SQLException
+	*/
+	protected void insertInvoicing_group(Integer id, Integer parent)
+	throws SQLException {
+
+		Invoicing_group invoicing_group_ = new Invoicing_group();
+		invoicing_group_.id = id;
+		invoicing_group_.parent = parent;
+
+		invoicing_groups.add(invoicing_group_);
+		
+		int invoicing_groupCount = invoicing_groups.size();
+		
+		if ( 20 * invoicing_groupCount >=  this.maxAllowedPacket ){
+			insertInvoicing_group(invoicing_groups);
+			invoicing_groups.clear();
+		} 
+	}
+
 
 	/**
 	 * Invoicing_group
@@ -25379,6 +32330,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int registryStmtSize = 0;
 
@@ -25490,8 +32442,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRegistryId() {
+		public int nextRegistryId() {
 			return ++this.registryId;
+		} 
+
+		public void setRegistryId(Integer registryId) {
+			this.registryId = registryId;
 		} 
 	
 	private void flushRegistry(  )
@@ -25501,6 +32457,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( registryStmt != null )
 			registryStmt.close();
 	}	
+
+	/**
+	 * Registry
+	 * @param id Identificador unico de la Persona o Empresa
+	 * @param document Numero de Documento de la Persona o Empresa
+	 * @param document_type Tipo de documento (NIF, CIF...)
+	 * @param document_country Pais del documento
+	 * @param name Nombre de la Persona o Empresa
+	 * @param alias Alias de la Persona o Empresa
+	 * @param type Tipo (Persona o Empresa)
+	 * @param nationality Nacionalidad
+	 * @throws SQLException
+	*/
+	protected void insertRegistry(Integer id, String document, Short document_type, String document_country, String name, String alias, Short type, String nationality)
+	throws SQLException {
+
+		Registry registry_ = new Registry();
+		registry_.id = id;
+		registry_.document = document;
+		registry_.document_type = document_type;
+		registry_.document_country = document_country;
+		registry_.name = name;
+		registry_.alias = alias;
+		registry_.type = type;
+		registry_.nationality = nationality;
+
+		registrys.add(registry_);
+		
+		int registryCount = registrys.size();
+		
+		if ( 132 * registryCount >=  this.maxAllowedPacket ){
+			insertRegistry(registrys);
+			registrys.clear();
+		} 
+	}
+
 
 	/**
 	 * Registry
@@ -25538,6 +32530,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int creditorStmtSize = 0;
 
@@ -25648,6 +32641,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			creditors.clear();
 		} 
 	}
+
+
 
 	private int deliveryStmtSize = 0;
 
@@ -25804,8 +32799,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextDeliveryId() {
+		public int nextDeliveryId() {
 			return ++this.deliveryId;
+		} 
+
+		public void setDeliveryId(Integer deliveryId) {
+			this.deliveryId = deliveryId;
 		} 
 	
 	private void flushDelivery(  )
@@ -25815,6 +32814,60 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( deliveryStmt != null )
 			deliveryStmt.close();
 	}	
+
+	/**
+	 * Delivery
+	 * @param id Identificador unico del Albaran de Venta
+	 * @param series Serie del Albaran
+	 * @param number Nmero del Albaran
+	 * @param customer Identificador del Cliente
+	 * @param address Identificador de la Direccion de envio del Albaran
+	 * @param issue_time Fecha de emision del Albaran
+	 * @param pay_method Identificador de la Forma de Pago
+	 * @param security_level Nivel de seguridad del Albaran
+	 * @param status Estado del Albaran
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param scope Ambito del Albaran
+	 * @param number_of_pymnts Numero de Vencimientos
+	 * @param days_to_first_pymnt Dias al primer Vencimiento
+	 * @param days_between_pymnts Dias entre Vencimientos
+	 * @param pymnt_days Dias de pago
+	 * @param bank Identificador de la Entidad Bancaria
+	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @throws SQLException
+	*/
+	protected void insertDelivery(Integer id, String series, Integer number, Integer customer, Integer address, Timestamp issue_time, Integer pay_method, Short security_level, Short status, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	throws SQLException {
+
+		Delivery delivery_ = new Delivery();
+		delivery_.id = id;
+		delivery_.series = series;
+		delivery_.number = number;
+		delivery_.customer = customer;
+		delivery_.address = address;
+		delivery_.issue_time = issue_time;
+		delivery_.pay_method = pay_method;
+		delivery_.security_level = security_level;
+		delivery_.status = status;
+		delivery_.workplace = workplace;
+		delivery_.scope = scope;
+		delivery_.number_of_pymnts = number_of_pymnts;
+		delivery_.days_to_first_pymnt = days_to_first_pymnt;
+		delivery_.days_between_pymnts = days_between_pymnts;
+		delivery_.pymnt_days = pymnt_days;
+		delivery_.bank = bank;
+		delivery_.bank_account = bank_account;
+
+		deliverys.add(delivery_);
+		
+		int deliveryCount = deliverys.size();
+		
+		if ( 163 * deliveryCount >=  this.maxAllowedPacket ){
+			insertDelivery(deliverys);
+			deliverys.clear();
+		} 
+	}
+
 
 	/**
 	 * Delivery
@@ -25870,6 +32923,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_periodStmtSize = 0;
 
@@ -25973,6 +33027,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			account_periods.clear();
 		} 
 	}
+
+
 
 	private int seriesStmtSize = 0;
 
@@ -26083,6 +33139,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			seriess.clear();
 		} 
 	}
+
+
 
 	private int fs_vat_declarationStmtSize = 0;
 
@@ -26259,8 +33317,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFs_vat_declarationId() {
+		public int nextFs_vat_declarationId() {
 			return ++this.fs_vat_declarationId;
+		} 
+
+		public void setFs_vat_declarationId(Integer fs_vat_declarationId) {
+			this.fs_vat_declarationId = fs_vat_declarationId;
 		} 
 	
 	private void flushFs_vat_declaration(  )
@@ -26270,6 +33332,68 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( fs_vat_declarationStmt != null )
 			fs_vat_declarationStmt.close();
 	}	
+
+	/**
+	 * Fs_vat_declaration
+	 * @param id Identificador unico
+	 * @param fs_vat Identificador de la Declaracion
+	 * @param without_activity Sin actividad
+	 * @param administration Administracion
+	 * @param percent Porcentaje atribuible
+	 * @param operations_volume Volumen de operaciones
+	 * @param quota Cuota atribuible
+	 * @param prev_year_compensate_quota Cuota a compensar de ejerc. anteriores
+	 * @param done_deposits Ingresos efectuados
+	 * @param done_refunds Devoluciones practicadas
+	 * @param extra_charge Recargo
+	 * @param delay_interest Intereses de demora
+	 * @param compensate A compensar
+	 * @param pay_back A devolver
+	 * @param deposit A ingresar
+	 * @param prev_deposit Ingresado anteriormente
+	 * @param prev_pay_back Devuelto anteriormente
+	 * @param total_tax_debt Total deuda tributaria
+	 * @param rbank Banco de la Compaia
+	 * @param compensable Compensar o devolver
+	 * @param status Estado de la Declaracion
+	 * @throws SQLException
+	*/
+	protected void insertFs_vat_declaration(Integer id, Integer fs_vat, Boolean without_activity, Short administration, Double percent, Double operations_volume, Double quota, Double prev_year_compensate_quota, Double done_deposits, Double done_refunds, Double extra_charge, Double delay_interest, Double compensate, Double pay_back, Double deposit, Double prev_deposit, Double prev_pay_back, Double total_tax_debt, Integer rbank, Boolean compensable, Short status)
+	throws SQLException {
+
+		Fs_vat_declaration fs_vat_declaration_ = new Fs_vat_declaration();
+		fs_vat_declaration_.id = id;
+		fs_vat_declaration_.fs_vat = fs_vat;
+		fs_vat_declaration_.without_activity = without_activity;
+		fs_vat_declaration_.administration = administration;
+		fs_vat_declaration_.percent = percent;
+		fs_vat_declaration_.operations_volume = operations_volume;
+		fs_vat_declaration_.quota = quota;
+		fs_vat_declaration_.prev_year_compensate_quota = prev_year_compensate_quota;
+		fs_vat_declaration_.done_deposits = done_deposits;
+		fs_vat_declaration_.done_refunds = done_refunds;
+		fs_vat_declaration_.extra_charge = extra_charge;
+		fs_vat_declaration_.delay_interest = delay_interest;
+		fs_vat_declaration_.compensate = compensate;
+		fs_vat_declaration_.pay_back = pay_back;
+		fs_vat_declaration_.deposit = deposit;
+		fs_vat_declaration_.prev_deposit = prev_deposit;
+		fs_vat_declaration_.prev_pay_back = prev_pay_back;
+		fs_vat_declaration_.total_tax_debt = total_tax_debt;
+		fs_vat_declaration_.rbank = rbank;
+		fs_vat_declaration_.compensable = compensable;
+		fs_vat_declaration_.status = status;
+
+		fs_vat_declarations.add(fs_vat_declaration_);
+		
+		int fs_vat_declarationCount = fs_vat_declarations.size();
+		
+		if ( 253 * fs_vat_declarationCount >=  this.maxAllowedPacket ){
+			insertFs_vat_declaration(fs_vat_declarations);
+			fs_vat_declarations.clear();
+		} 
+	}
+
 
 	/**
 	 * Fs_vat_declaration
@@ -26333,6 +33457,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int course_levelStmtSize = 0;
 
@@ -26414,8 +33539,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCourse_levelId() {
+		public int nextCourse_levelId() {
 			return ++this.course_levelId;
+		} 
+
+		public void setCourse_levelId(Integer course_levelId) {
+			this.course_levelId = course_levelId;
 		} 
 	
 	private void flushCourse_level(  )
@@ -26425,6 +33554,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( course_levelStmt != null )
 			course_levelStmt.close();
 	}	
+
+	/**
+	 * Course_level
+	 * @param id Identificador unico del Nivel
+	 * @param description Descripcion del Nivel
+	 * @throws SQLException
+	*/
+	protected void insertCourse_level(Integer id, String description)
+	throws SQLException {
+
+		Course_level course_level_ = new Course_level();
+		course_level_.id = id;
+		course_level_.description = description;
+
+		course_levels.add(course_level_);
+		
+		int course_levelCount = course_levels.size();
+		
+		if ( 74 * course_levelCount >=  this.maxAllowedPacket ){
+			insertCourse_level(course_levels);
+			course_levels.clear();
+		} 
+	}
+
 
 	/**
 	 * Course_level
@@ -26451,6 +33604,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int workplaceStmtSize = 0;
 
 	private int workplaceInserted = 0;
@@ -26467,6 +33621,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer address; 
 		private Short economicAgreement; 
 		private Boolean active; 
+		private Integer calendar; 
 		private Integer enterprise_activity; 
 		private Integer agreement; 
 	}
@@ -26479,7 +33634,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( workplaceStmt != null ) {
 				workplaceStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -26488,7 +33643,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			workplaceStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO workplace (id,enterprise,description,address,economicAgreement,active,enterprise_activity,agreement)"  
+				"INSERT INTO workplace (id,enterprise,description,address,economicAgreement,active,calendar,enterprise_activity,agreement)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			workplaceStmtSize = size;
@@ -26521,6 +33676,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				workplaceStmt.setNull(offset++, -7);
 			else
 				workplaceStmt.setBoolean(offset++, workplace.active);
+			if ( workplace.calendar == null )
+				workplaceStmt.setNull(offset++, 4);
+			else
+				workplaceStmt.setInt(offset++, workplace.calendar);
 			if ( workplace.enterprise_activity == null )
 				workplaceStmt.setNull(offset++, 4);
 			else
@@ -26561,8 +33720,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextWorkplaceId() {
+		public int nextWorkplaceId() {
 			return ++this.workplaceId;
+		} 
+
+		public void setWorkplaceId(Integer workplaceId) {
+			this.workplaceId = workplaceId;
 		} 
 	
 	private void flushWorkplace(  )
@@ -26575,17 +33738,56 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Workplace
+	 * @param id Identificador unico del Centro de Trabajo
 	 * @param enterprise Empresa asociada al Centro de Trabajo
 	 * @param description Descripcion del Centro de Trabajo
 	 * @param address Identificador de la Direccion
 	 * @param economicAgreement Concierto Economico del Centro de Trabajo
 	 * @param active Indica si el Centro de Trabajo esta activo o no
+	 * @param calendar Calendario
+	 * @param enterprise_activity Actividad
+	 * @param agreement Convenio
+	 * @throws SQLException
+	*/
+	protected void insertWorkplace(Integer id, Integer enterprise, String description, Integer address, Short economicAgreement, Boolean active, Integer calendar, Integer enterprise_activity, Integer agreement)
+	throws SQLException {
+
+		Workplace workplace_ = new Workplace();
+		workplace_.id = id;
+		workplace_.enterprise = enterprise;
+		workplace_.description = description;
+		workplace_.address = address;
+		workplace_.economicAgreement = economicAgreement;
+		workplace_.active = active;
+		workplace_.calendar = calendar;
+		workplace_.enterprise_activity = enterprise_activity;
+		workplace_.agreement = agreement;
+
+		workplaces.add(workplace_);
+		
+		int workplaceCount = workplaces.size();
+		
+		if ( 127 * workplaceCount >=  this.maxAllowedPacket ){
+			insertWorkplace(workplaces);
+			workplaces.clear();
+		} 
+	}
+
+
+	/**
+	 * Workplace
+	 * @param enterprise Empresa asociada al Centro de Trabajo
+	 * @param description Descripcion del Centro de Trabajo
+	 * @param address Identificador de la Direccion
+	 * @param economicAgreement Concierto Economico del Centro de Trabajo
+	 * @param active Indica si el Centro de Trabajo esta activo o no
+	 * @param calendar Calendario
 	 * @param enterprise_activity Actividad
 	 * @param agreement Convenio
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWorkplace(Integer enterprise, String description, Integer address, Short economicAgreement, Boolean active, Integer enterprise_activity, Integer agreement)
+	protected int insertWorkplace(Integer enterprise, String description, Integer address, Short economicAgreement, Boolean active, Integer calendar, Integer enterprise_activity, Integer agreement)
 	throws SQLException {
 		int id = nextWorkplaceId();
 
@@ -26596,6 +33798,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		workplace_.address = address;
 		workplace_.economicAgreement = economicAgreement;
 		workplace_.active = active;
+		workplace_.calendar = calendar;
 		workplace_.enterprise_activity = enterprise_activity;
 		workplace_.agreement = agreement;
 
@@ -26603,12 +33806,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int workplaceCount = workplaces.size();
 		
-		if ( 117 * workplaceCount >=  this.maxAllowedPacket ){
+		if ( 127 * workplaceCount >=  this.maxAllowedPacket ){
 			insertWorkplace(workplaces);
 			workplaces.clear();
 		} 
 		return id;
 	}
+
 
 	private int action_deniedStmtSize = 0;
 
@@ -26695,8 +33899,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAction_deniedId() {
+		public int nextAction_deniedId() {
 			return ++this.action_deniedId;
+		} 
+
+		public void setAction_deniedId(Integer action_deniedId) {
+			this.action_deniedId = action_deniedId;
 		} 
 	
 	private void flushAction_denied(  )
@@ -26706,6 +33914,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( action_deniedStmt != null )
 			action_deniedStmt.close();
 	}	
+
+	/**
+	 * Action_denied
+	 * @param id Identificador unico
+	 * @param action_id Identificador de la Accion
+	 * @param user_id Identificador del Usuario
+	 * @throws SQLException
+	*/
+	protected void insertAction_denied(Integer id, Integer action_id, Integer user_id)
+	throws SQLException {
+
+		Action_denied action_denied_ = new Action_denied();
+		action_denied_.id = id;
+		action_denied_.action_id = action_id;
+		action_denied_.user_id = user_id;
+
+		action_denieds.add(action_denied_);
+		
+		int action_deniedCount = action_denieds.size();
+		
+		if ( 30 * action_deniedCount >=  this.maxAllowedPacket ){
+			insertAction_denied(action_denieds);
+			action_denieds.clear();
+		} 
+	}
+
 
 	/**
 	 * Action_denied
@@ -26733,6 +33967,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int agreement_levelStmtSize = 0;
 
@@ -26819,8 +34054,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAgreement_levelId() {
+		public int nextAgreement_levelId() {
 			return ++this.agreement_levelId;
+		} 
+
+		public void setAgreement_levelId(Integer agreement_levelId) {
+			this.agreement_levelId = agreement_levelId;
 		} 
 	
 	private void flushAgreement_level(  )
@@ -26830,6 +34069,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( agreement_levelStmt != null )
 			agreement_levelStmt.close();
 	}	
+
+	/**
+	 * Agreement_level
+	 * @param id Identificador unico
+	 * @param agreement Convenio
+	 * @param description Descripcion
+	 * @throws SQLException
+	*/
+	protected void insertAgreement_level(Integer id, Integer agreement, String description)
+	throws SQLException {
+
+		Agreement_level agreement_level_ = new Agreement_level();
+		agreement_level_.id = id;
+		agreement_level_.agreement = agreement;
+		agreement_level_.description = description;
+
+		agreement_levels.add(agreement_level_);
+		
+		int agreement_levelCount = agreement_levels.size();
+		
+		if ( 84 * agreement_levelCount >=  this.maxAllowedPacket ){
+			insertAgreement_level(agreement_levels);
+			agreement_levels.clear();
+		} 
+	}
+
 
 	/**
 	 * Agreement_level
@@ -26858,6 +34123,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int contactStmtSize = 0;
 
 	private int contactInserted = 0;
@@ -26877,7 +34143,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private String fax; 
 		private String email; 
 		private String address; 
-		private InputStream note; 
+		private String note; 
 	}
 	
 	private void insertContact( List<Contact> contacts )
@@ -26945,7 +34211,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contact.note == null )
 				contactStmt.setNull(offset++, -1);
 			else
-				contactStmt.setAsciiStream(offset++, contact.note);
+				contactStmt.setString(offset++, contact.note);
 		}
 		contactStmt.executeUpdate();
 		contactInserted += size;
@@ -26978,8 +34244,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextContactId() {
+		public int nextContactId() {
 			return ++this.contactId;
+		} 
+
+		public void setContactId(Integer contactId) {
+			this.contactId = contactId;
 		} 
 	
 	private void flushContact(  )
@@ -26989,6 +34259,46 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( contactStmt != null )
 			contactStmt.close();
 	}	
+
+	/**
+	 * Contact
+	 * @param id Identificador unico del Contacto
+	 * @param user Usuario al que pertenece el Contacto
+	 * @param name Nombre del Contacto
+	 * @param organization Organizacion a la que pertenece el Contacto
+	 * @param phone Telefono del Contacto
+	 * @param cellular_phone Telefono movil del Contacto
+	 * @param fax Fax del Contacto
+	 * @param email Correo electronico del Contacto
+	 * @param address Direccion del Contacto
+	 * @param note Notas sobre el Contacto
+	 * @throws SQLException
+	*/
+	protected void insertContact(Integer id, Integer user, String name, String organization, String phone, String cellular_phone, String fax, String email, String address, String note)
+	throws SQLException {
+
+		Contact contact_ = new Contact();
+		contact_.id = id;
+		contact_.user = user;
+		contact_.name = name;
+		contact_.organization = organization;
+		contact_.phone = phone;
+		contact_.cellular_phone = cellular_phone;
+		contact_.fax = fax;
+		contact_.email = email;
+		contact_.address = address;
+		contact_.note = note;
+
+		contacts.add(contact_);
+		
+		int contactCount = contacts.size();
+		
+		if ( 532 * contactCount >=  this.maxAllowedPacket ){
+			insertContact(contacts);
+			contacts.clear();
+		} 
+	}
+
 
 	/**
 	 * Contact
@@ -27004,7 +34314,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContact(Integer user, String name, String organization, String phone, String cellular_phone, String fax, String email, String address, InputStream note)
+	protected int insertContact(Integer user, String name, String organization, String phone, String cellular_phone, String fax, String email, String address, String note)
 	throws SQLException {
 		int id = nextContactId();
 
@@ -27030,6 +34340,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int user_workgroupStmtSize = 0;
 
@@ -27116,8 +34427,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextUser_workgroupId() {
+		public int nextUser_workgroupId() {
 			return ++this.user_workgroupId;
+		} 
+
+		public void setUser_workgroupId(Integer user_workgroupId) {
+			this.user_workgroupId = user_workgroupId;
 		} 
 	
 	private void flushUser_workgroup(  )
@@ -27127,6 +34442,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( user_workgroupStmt != null )
 			user_workgroupStmt.close();
 	}	
+
+	/**
+	 * User_workgroup
+	 * @param id Identificador unico
+	 * @param user_id Identificador del Usuario
+	 * @param workgroup Identificador del Grupo de Trabajo
+	 * @throws SQLException
+	*/
+	protected void insertUser_workgroup(Integer id, Integer user_id, Integer workgroup)
+	throws SQLException {
+
+		User_workgroup user_workgroup_ = new User_workgroup();
+		user_workgroup_.id = id;
+		user_workgroup_.user_id = user_id;
+		user_workgroup_.workgroup = workgroup;
+
+		user_workgroups.add(user_workgroup_);
+		
+		int user_workgroupCount = user_workgroups.size();
+		
+		if ( 30 * user_workgroupCount >=  this.maxAllowedPacket ){
+			insertUser_workgroup(user_workgroups);
+			user_workgroups.clear();
+		} 
+	}
+
 
 	/**
 	 * User_workgroup
@@ -27154,6 +34495,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int course_scheduleStmtSize = 0;
 
@@ -27250,8 +34592,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCourse_scheduleId() {
+		public int nextCourse_scheduleId() {
 			return ++this.course_scheduleId;
+		} 
+
+		public void setCourse_scheduleId(Integer course_scheduleId) {
+			this.course_scheduleId = course_scheduleId;
 		} 
 	
 	private void flushCourse_schedule(  )
@@ -27261,6 +34607,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( course_scheduleStmt != null )
 			course_scheduleStmt.close();
 	}	
+
+	/**
+	 * Course_schedule
+	 * @param id Identificador unico del Horario
+	 * @param course Identificador del Curso
+	 * @param day_of_week Dia de la semana
+	 * @param start_time Hora de comienzo
+	 * @param end_time Hora de fin
+	 * @throws SQLException
+	*/
+	protected void insertCourse_schedule(Integer id, Integer course, Short day_of_week, Time start_time, Time end_time)
+	throws SQLException {
+
+		Course_schedule course_schedule_ = new Course_schedule();
+		course_schedule_.id = id;
+		course_schedule_.course = course;
+		course_schedule_.day_of_week = day_of_week;
+		course_schedule_.start_time = start_time;
+		course_schedule_.end_time = end_time;
+
+		course_schedules.add(course_schedule_);
+		
+		int course_scheduleCount = course_schedules.size();
+		
+		if ( 39 * course_scheduleCount >=  this.maxAllowedPacket ){
+			insertCourse_schedule(course_schedules);
+			course_schedules.clear();
+		} 
+	}
+
 
 	/**
 	 * Course_schedule
@@ -27292,6 +34668,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int rrelationshipStmtSize = 0;
 
@@ -27388,8 +34765,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRrelationshipId() {
+		public int nextRrelationshipId() {
 			return ++this.rrelationshipId;
+		} 
+
+		public void setRrelationshipId(Integer rrelationshipId) {
+			this.rrelationshipId = rrelationshipId;
 		} 
 	
 	private void flushRrelationship(  )
@@ -27399,6 +34780,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( rrelationshipStmt != null )
 			rrelationshipStmt.close();
 	}	
+
+	/**
+	 * Rrelationship
+	 * @param id Identificador unico de la Relacion
+	 * @param registry Identificador de la Persona o Empresa que tiene la Relacion
+	 * @param related_registry Identificador de la Persona o Empresa relacionada
+	 * @param relationship Identificador del Tipo de Relacin
+	 * @param comments Comentarios de la Relacion
+	 * @throws SQLException
+	*/
+	protected void insertRrelationship(Integer id, Integer registry, Integer related_registry, Integer relationship, String comments)
+	throws SQLException {
+
+		Rrelationship rrelationship_ = new Rrelationship();
+		rrelationship_.id = id;
+		rrelationship_.registry = registry;
+		rrelationship_.related_registry = related_registry;
+		rrelationship_.relationship = relationship;
+		rrelationship_.comments = comments;
+
+		rrelationships.add(rrelationship_);
+		
+		int rrelationshipCount = rrelationships.size();
+		
+		if ( 104 * rrelationshipCount >=  this.maxAllowedPacket ){
+			insertRrelationship(rrelationships);
+			rrelationships.clear();
+		} 
+	}
+
 
 	/**
 	 * Rrelationship
@@ -27431,6 +34842,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int annual_report_detailStmtSize = 0;
 
 	private int annual_report_detailInserted = 0;
@@ -27444,7 +34856,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer id; 
 		private Integer annual_report; 
 		private Integer sortKey; 
-		private InputStream content; 
+		private String content; 
 		private Short style; 
 	}
 	
@@ -27489,7 +34901,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( annual_report_detail.content == null )
 				annual_report_detailStmt.setNull(offset++, -1);
 			else
-				annual_report_detailStmt.setAsciiStream(offset++, annual_report_detail.content);
+				annual_report_detailStmt.setString(offset++, annual_report_detail.content);
 			if ( annual_report_detail.style == null )
 				annual_report_detailStmt.setNull(offset++, -6);
 			else
@@ -27526,8 +34938,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAnnual_report_detailId() {
+		public int nextAnnual_report_detailId() {
 			return ++this.annual_report_detailId;
+		} 
+
+		public void setAnnual_report_detailId(Integer annual_report_detailId) {
+			this.annual_report_detailId = annual_report_detailId;
 		} 
 	
 	private void flushAnnual_report_detail(  )
@@ -27540,6 +34956,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Annual_report_detail
+	 * @param id Identificador unico
+	 * @param annual_report Identificador de la Memoria
+	 * @param sortKey Orden el que aparecera en el listado
+	 * @param content Contenido del parrafo
+	 * @param style Estilo
+	 * @throws SQLException
+	*/
+	protected void insertAnnual_report_detail(Integer id, Integer annual_report, Integer sortKey, String content, Short style)
+	throws SQLException {
+
+		Annual_report_detail annual_report_detail_ = new Annual_report_detail();
+		annual_report_detail_.id = id;
+		annual_report_detail_.annual_report = annual_report;
+		annual_report_detail_.sortKey = sortKey;
+		annual_report_detail_.content = content;
+		annual_report_detail_.style = style;
+
+		annual_report_details.add(annual_report_detail_);
+		
+		int annual_report_detailCount = annual_report_details.size();
+		
+		if ( 33 * annual_report_detailCount >=  this.maxAllowedPacket ){
+			insertAnnual_report_detail(annual_report_details);
+			annual_report_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Annual_report_detail
 	 * @param annual_report Identificador de la Memoria
 	 * @param sortKey Orden el que aparecera en el listado
 	 * @param content Contenido del parrafo
@@ -27547,7 +34993,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAnnual_report_detail(Integer annual_report, Integer sortKey, InputStream content, Short style)
+	protected int insertAnnual_report_detail(Integer annual_report, Integer sortKey, String content, Short style)
 	throws SQLException {
 		int id = nextAnnual_report_detailId();
 
@@ -27568,6 +35014,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int web_info_pageStmtSize = 0;
 
@@ -27664,8 +35111,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextWeb_info_pageId() {
+		public int nextWeb_info_pageId() {
 			return ++this.web_info_pageId;
+		} 
+
+		public void setWeb_info_pageId(Integer web_info_pageId) {
+			this.web_info_pageId = web_info_pageId;
 		} 
 	
 	private void flushWeb_info_page(  )
@@ -27675,6 +35126,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( web_info_pageStmt != null )
 			web_info_pageStmt.close();
 	}	
+
+	/**
+	 * Web_info_page
+	 * @param id Codigo de la Pagina
+	 * @param name Nombre de la Pagina.
+	 * @param type Tipo de Pagina
+	 * @param position Posicion de la Pagina en el menu
+	 * @param active Indica si la Pagina esta activa o no
+	 * @throws SQLException
+	*/
+	protected void insertWeb_info_page(Integer id, String name, Short type, Short position, Boolean active)
+	throws SQLException {
+
+		Web_info_page web_info_page_ = new Web_info_page();
+		web_info_page_.id = id;
+		web_info_page_.name = name;
+		web_info_page_.type = type;
+		web_info_page_.position = position;
+		web_info_page_.active = active;
+
+		web_info_pages.add(web_info_page_);
+		
+		int web_info_pageCount = web_info_pages.size();
+		
+		if ( 80 * web_info_pageCount >=  this.maxAllowedPacket ){
+			insertWeb_info_page(web_info_pages);
+			web_info_pages.clear();
+		} 
+	}
+
 
 	/**
 	 * Web_info_page
@@ -27706,6 +35187,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int enterprise_certificateStmtSize = 0;
 
@@ -27802,8 +35284,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEnterprise_certificateId() {
+		public int nextEnterprise_certificateId() {
 			return ++this.enterprise_certificateId;
+		} 
+
+		public void setEnterprise_certificateId(Integer enterprise_certificateId) {
+			this.enterprise_certificateId = enterprise_certificateId;
 		} 
 	
 	private void flushEnterprise_certificate(  )
@@ -27813,6 +35299,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( enterprise_certificateStmt != null )
 			enterprise_certificateStmt.close();
 	}	
+
+	/**
+	 * Enterprise_certificate
+	 * @param id Identificador unico del certificado de empresa de la remesa
+	 * @param enterprise Identificador unico de la empresa
+	 * @param date Fecha de la ultima remesa en la que fue incluido
+	 * @param status Estado del certificado correspondiente a la ultima respuesta
+	 * @param sign Estado del certificado correspondiente a la ultima respuesta
+	 * @throws SQLException
+	*/
+	protected void insertEnterprise_certificate(Integer id, Integer enterprise, Date date, Integer status, String sign)
+	throws SQLException {
+
+		Enterprise_certificate enterprise_certificate_ = new Enterprise_certificate();
+		enterprise_certificate_.id = id;
+		enterprise_certificate_.enterprise = enterprise;
+		enterprise_certificate_.date = date;
+		enterprise_certificate_.status = status;
+		enterprise_certificate_.sign = sign;
+
+		enterprise_certificates.add(enterprise_certificate_);
+		
+		int enterprise_certificateCount = enterprise_certificates.size();
+		
+		if ( 72 * enterprise_certificateCount >=  this.maxAllowedPacket ){
+			insertEnterprise_certificate(enterprise_certificates);
+			enterprise_certificates.clear();
+		} 
+	}
+
 
 	/**
 	 * Enterprise_certificate
@@ -27844,6 +35360,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int campaignStmtSize = 0;
 
@@ -27960,8 +35477,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCampaignId() {
+		public int nextCampaignId() {
 			return ++this.campaignId;
+		} 
+
+		public void setCampaignId(Integer campaignId) {
+			this.campaignId = campaignId;
 		} 
 	
 	private void flushCampaign(  )
@@ -27971,6 +35492,44 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( campaignStmt != null )
 			campaignStmt.close();
 	}	
+
+	/**
+	 * Campaign
+	 * @param id Identificador unico de la Campaa
+	 * @param description Descripcion de la Campaa
+	 * @param process Identificador del Proceso
+	 * @param activity_type Identificador del Tipo de Actividad
+	 * @param start_date Fecha de inicio de la Campaa
+	 * @param end_date Fecha de finalizacion de la Campaa
+	 * @param workgroup Grupo de Trabajo supervisor de la Campaa
+	 * @param type Tipo de Campaa
+	 * @param status Estado de la Campaa
+	 * @throws SQLException
+	*/
+	protected void insertCampaign(Integer id, String description, Integer process, Integer activity_type, Date start_date, Date end_date, Integer workgroup, Short type, Short status)
+	throws SQLException {
+
+		Campaign campaign_ = new Campaign();
+		campaign_.id = id;
+		campaign_.description = description;
+		campaign_.process = process;
+		campaign_.activity_type = activity_type;
+		campaign_.start_date = start_date;
+		campaign_.end_date = end_date;
+		campaign_.workgroup = workgroup;
+		campaign_.type = type;
+		campaign_.status = status;
+
+		campaigns.add(campaign_);
+		
+		int campaignCount = campaigns.size();
+		
+		if ( 130 * campaignCount >=  this.maxAllowedPacket ){
+			insertCampaign(campaigns);
+			campaigns.clear();
+		} 
+	}
+
 
 	/**
 	 * Campaign
@@ -28011,6 +35570,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int fs_vatStmtSize = 0;
 
 	private int fs_vatInserted = 0;
@@ -28024,7 +35584,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer id; 
 		private Integer year; 
 		private Short period; 
-		private InputStream comments; 
+		private String comments; 
 		private Short status; 
 		private Short security_level; 
 		private Boolean complementary; 
@@ -28074,7 +35634,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( fs_vat.comments == null )
 				fs_vatStmt.setNull(offset++, -1);
 			else
-				fs_vatStmt.setAsciiStream(offset++, fs_vat.comments);
+				fs_vatStmt.setString(offset++, fs_vat.comments);
 			if ( fs_vat.status == null )
 				fs_vatStmt.setNull(offset++, -6);
 			else
@@ -28131,8 +35691,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFs_vatId() {
+		public int nextFs_vatId() {
 			return ++this.fs_vatId;
+		} 
+
+		public void setFs_vatId(Integer fs_vatId) {
+			this.fs_vatId = fs_vatId;
 		} 
 	
 	private void flushFs_vat(  )
@@ -28142,6 +35706,46 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( fs_vatStmt != null )
 			fs_vatStmt.close();
 	}	
+
+	/**
+	 * Fs_vat
+	 * @param id Identificador unico
+	 * @param year Ejercicio de la Declaracion
+	 * @param period Periodo de la Declaracion
+	 * @param comments Comentarios de la Declaracion
+	 * @param status Estado de la Declaracion
+	 * @param security_level Nivel de seguridad
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param tax_refund_registry Inscrito en registro de devolucion
+	 * @param number Numero de Decl. complementaria o sustitutiva
+	 * @throws SQLException
+	*/
+	protected void insertFs_vat(Integer id, Integer year, Short period, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Boolean tax_refund_registry, Integer number)
+	throws SQLException {
+
+		Fs_vat fs_vat_ = new Fs_vat();
+		fs_vat_.id = id;
+		fs_vat_.year = year;
+		fs_vat_.period = period;
+		fs_vat_.comments = comments;
+		fs_vat_.status = status;
+		fs_vat_.security_level = security_level;
+		fs_vat_.complementary = complementary;
+		fs_vat_.replacement = replacement;
+		fs_vat_.tax_refund_registry = tax_refund_registry;
+		fs_vat_.number = number;
+
+		fs_vats.add(fs_vat_);
+		
+		int fs_vatCount = fs_vats.size();
+		
+		if ( 39 * fs_vatCount >=  this.maxAllowedPacket ){
+			insertFs_vat(fs_vats);
+			fs_vats.clear();
+		} 
+	}
+
 
 	/**
 	 * Fs_vat
@@ -28157,7 +35761,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFs_vat(Integer year, Short period, InputStream comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Boolean tax_refund_registry, Integer number)
+	protected int insertFs_vat(Integer year, Short period, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Boolean tax_refund_registry, Integer number)
 	throws SQLException {
 		int id = nextFs_vatId();
 
@@ -28183,6 +35787,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int contract_deductionStmtSize = 0;
 
@@ -28304,8 +35909,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextContract_deductionId() {
+		public int nextContract_deductionId() {
 			return ++this.contract_deductionId;
+		} 
+
+		public void setContract_deductionId(Integer contract_deductionId) {
+			this.contract_deductionId = contract_deductionId;
 		} 
 	
 	private void flushContract_deduction(  )
@@ -28315,6 +35924,46 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( contract_deductionStmt != null )
 			contract_deductionStmt.close();
 	}	
+
+	/**
+	 * Contract_deduction
+	 * @param id Identificador unico
+	 * @param type Tipo de Deduccin
+	 * @param deduction_concept Identificador unico del concepto
+	 * @param contract Contrato
+	 * @param description Descripcion
+	 * @param description_decorable 
+	 * @param expression Frmula
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param month Mes de la percepcion
+	 * @throws SQLException
+	*/
+	protected void insertContract_deduction(Integer id, Short type, Integer deduction_concept, Integer contract, String description, Short description_decorable, String expression, Date start_date, Date end_date, Short month)
+	throws SQLException {
+
+		Contract_deduction contract_deduction_ = new Contract_deduction();
+		contract_deduction_.id = id;
+		contract_deduction_.type = type;
+		contract_deduction_.deduction_concept = deduction_concept;
+		contract_deduction_.contract = contract;
+		contract_deduction_.description = description;
+		contract_deduction_.description_decorable = description_decorable;
+		contract_deduction_.expression = expression;
+		contract_deduction_.start_date = start_date;
+		contract_deduction_.end_date = end_date;
+		contract_deduction_.month = month;
+
+		contract_deductions.add(contract_deduction_);
+		
+		int contract_deductionCount = contract_deductions.size();
+		
+		if ( 251 * contract_deductionCount >=  this.maxAllowedPacket ){
+			insertContract_deduction(contract_deductions);
+			contract_deductions.clear();
+		} 
+	}
+
 
 	/**
 	 * Contract_deduction
@@ -28357,6 +36006,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int noteStmtSize = 0;
 
 	private int noteInserted = 0;
@@ -28371,7 +36021,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private String subject; 
 		private Timestamp date; 
 		private Integer owner; 
-		private InputStream note; 
+		private String note; 
 	}
 	
 	private void insertNote( List<Note> notes )
@@ -28419,7 +36069,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( note.note == null )
 				noteStmt.setNull(offset++, -1);
 			else
-				noteStmt.setAsciiStream(offset++, note.note);
+				noteStmt.setString(offset++, note.note);
 		}
 		noteStmt.executeUpdate();
 		noteInserted += size;
@@ -28452,8 +36102,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextNoteId() {
+		public int nextNoteId() {
 			return ++this.noteId;
+		} 
+
+		public void setNoteId(Integer noteId) {
+			this.noteId = noteId;
 		} 
 	
 	private void flushNote(  )
@@ -28466,6 +36120,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Note
+	 * @param id Identificador unico de la Nota
+	 * @param subject Descripcion corta de la Nota
+	 * @param date Fecha de la Nota
+	 * @param owner Destinatario de la Nota
+	 * @param note Texto de la Nota
+	 * @throws SQLException
+	*/
+	protected void insertNote(Integer id, String subject, Timestamp date, Integer owner, String note)
+	throws SQLException {
+
+		Note note_ = new Note();
+		note_.id = id;
+		note_.subject = subject;
+		note_.date = date;
+		note_.owner = owner;
+		note_.note = note;
+
+		notes.add(note_);
+		
+		int noteCount = notes.size();
+		
+		if ( 103 * noteCount >=  this.maxAllowedPacket ){
+			insertNote(notes);
+			notes.clear();
+		} 
+	}
+
+
+	/**
+	 * Note
 	 * @param subject Descripcion corta de la Nota
 	 * @param date Fecha de la Nota
 	 * @param owner Destinatario de la Nota
@@ -28473,7 +36157,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertNote(String subject, Timestamp date, Integer owner, InputStream note)
+	protected int insertNote(String subject, Timestamp date, Integer owner, String note)
 	throws SQLException {
 		int id = nextNoteId();
 
@@ -28494,6 +36178,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int course_subjectStmtSize = 0;
 
@@ -28575,8 +36260,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCourse_subjectId() {
+		public int nextCourse_subjectId() {
 			return ++this.course_subjectId;
+		} 
+
+		public void setCourse_subjectId(Integer course_subjectId) {
+			this.course_subjectId = course_subjectId;
 		} 
 	
 	private void flushCourse_subject(  )
@@ -28586,6 +36275,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( course_subjectStmt != null )
 			course_subjectStmt.close();
 	}	
+
+	/**
+	 * Course_subject
+	 * @param id Identificador unico de la Materia
+	 * @param description Descripcion de la Materia
+	 * @throws SQLException
+	*/
+	protected void insertCourse_subject(Integer id, String description)
+	throws SQLException {
+
+		Course_subject course_subject_ = new Course_subject();
+		course_subject_.id = id;
+		course_subject_.description = description;
+
+		course_subjects.add(course_subject_);
+		
+		int course_subjectCount = course_subjects.size();
+		
+		if ( 74 * course_subjectCount >=  this.maxAllowedPacket ){
+			insertCourse_subject(course_subjects);
+			course_subjects.clear();
+		} 
+	}
+
 
 	/**
 	 * Course_subject
@@ -28611,6 +36324,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int observationStmtSize = 0;
 
@@ -28692,8 +36406,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextObservationId() {
+		public int nextObservationId() {
 			return ++this.observationId;
+		} 
+
+		public void setObservationId(Integer observationId) {
+			this.observationId = observationId;
 		} 
 	
 	private void flushObservation(  )
@@ -28703,6 +36421,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( observationStmt != null )
 			observationStmt.close();
 	}	
+
+	/**
+	 * Observation
+	 * @param id Identificador unico de la Observacion
+	 * @param description Descripcion de la Observacion
+	 * @throws SQLException
+	*/
+	protected void insertObservation(Integer id, String description)
+	throws SQLException {
+
+		Observation observation_ = new Observation();
+		observation_.id = id;
+		observation_.description = description;
+
+		observations.add(observation_);
+		
+		int observationCount = observations.size();
+		
+		if ( 266 * observationCount >=  this.maxAllowedPacket ){
+			insertObservation(observations);
+			observations.clear();
+		} 
+	}
+
 
 	/**
 	 * Observation
@@ -28728,6 +36470,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int action_favoriteStmtSize = 0;
 
@@ -28819,8 +36562,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAction_favoriteId() {
+		public int nextAction_favoriteId() {
 			return ++this.action_favoriteId;
+		} 
+
+		public void setAction_favoriteId(Integer action_favoriteId) {
+			this.action_favoriteId = action_favoriteId;
 		} 
 	
 	private void flushAction_favorite(  )
@@ -28830,6 +36577,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( action_favoriteStmt != null )
 			action_favoriteStmt.close();
 	}	
+
+	/**
+	 * Action_favorite
+	 * @param id Identificador unico
+	 * @param position Posicion dentro de las Acciones Favoritas
+	 * @param action_id Identificador de la Accion
+	 * @param user_id Identificador del Usuario
+	 * @throws SQLException
+	*/
+	protected void insertAction_favorite(Integer id, Integer position, Integer action_id, Integer user_id)
+	throws SQLException {
+
+		Action_favorite action_favorite_ = new Action_favorite();
+		action_favorite_.id = id;
+		action_favorite_.position = position;
+		action_favorite_.action_id = action_id;
+		action_favorite_.user_id = user_id;
+
+		action_favorites.add(action_favorite_);
+		
+		int action_favoriteCount = action_favorites.size();
+		
+		if ( 40 * action_favoriteCount >=  this.maxAllowedPacket ){
+			insertAction_favorite(action_favorites);
+			action_favorites.clear();
+		} 
+	}
+
 
 	/**
 	 * Action_favorite
@@ -28859,6 +36634,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int loan_accountStmtSize = 0;
 
@@ -28945,8 +36721,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextLoan_accountId() {
+		public int nextLoan_accountId() {
 			return ++this.loan_accountId;
+		} 
+
+		public void setLoan_accountId(Integer loan_accountId) {
+			this.loan_accountId = loan_accountId;
 		} 
 	
 	private void flushLoan_account(  )
@@ -28956,6 +36736,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( loan_accountStmt != null )
 			loan_accountStmt.close();
 	}	
+
+	/**
+	 * Loan_account
+	 * @param id Identificador Unico
+	 * @param loan Prestamo
+	 * @param account Cuenta Contable
+	 * @throws SQLException
+	*/
+	protected void insertLoan_account(Integer id, Integer loan, String account)
+	throws SQLException {
+
+		Loan_account loan_account_ = new Loan_account();
+		loan_account_.id = id;
+		loan_account_.loan = loan;
+		loan_account_.account = account;
+
+		loan_accounts.add(loan_account_);
+		
+		int loan_accountCount = loan_accounts.size();
+		
+		if ( 32 * loan_accountCount >=  this.maxAllowedPacket ){
+			insertLoan_account(loan_accounts);
+			loan_accounts.clear();
+		} 
+	}
+
 
 	/**
 	 * Loan_account
@@ -28983,6 +36789,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int survey_workflowStmtSize = 0;
 
@@ -29094,8 +36901,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSurvey_workflowId() {
+		public int nextSurvey_workflowId() {
 			return ++this.survey_workflowId;
+		} 
+
+		public void setSurvey_workflowId(Integer survey_workflowId) {
+			this.survey_workflowId = survey_workflowId;
 		} 
 	
 	private void flushSurvey_workflow(  )
@@ -29105,6 +36916,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( survey_workflowStmt != null )
 			survey_workflowStmt.close();
 	}	
+
+	/**
+	 * Survey_workflow
+	 * @param id Identificador unico
+	 * @param questionValue Identificador del Valor de la Pregunta
+	 * @param surveyQuestion Identificador de la Pregunta del Cuestionario
+	 * @param nextSurveyQuestion Identificador de la siguiente Pregunta del Cuestionario
+	 * @param operator Operador a utilizar con el Valor
+	 * @param value_text Valor de tipo texto
+	 * @param value_number Valor de tipo numerico
+	 * @param value_date Valor de tipo fecha
+	 * @throws SQLException
+	*/
+	protected void insertSurvey_workflow(Integer id, Integer questionValue, Integer surveyQuestion, Integer nextSurveyQuestion, Short operator, String value_text, Double value_number, Timestamp value_date)
+	throws SQLException {
+
+		Survey_workflow survey_workflow_ = new Survey_workflow();
+		survey_workflow_.id = id;
+		survey_workflow_.questionValue = questionValue;
+		survey_workflow_.surveyQuestion = surveyQuestion;
+		survey_workflow_.nextSurveyQuestion = nextSurveyQuestion;
+		survey_workflow_.operator = operator;
+		survey_workflow_.value_text = value_text;
+		survey_workflow_.value_number = value_number;
+		survey_workflow_.value_date = value_date;
+
+		survey_workflows.add(survey_workflow_);
+		
+		int survey_workflowCount = survey_workflows.size();
+		
+		if ( 1101 * survey_workflowCount >=  this.maxAllowedPacket ){
+			insertSurvey_workflow(survey_workflows);
+			survey_workflows.clear();
+		} 
+	}
+
 
 	/**
 	 * Survey_workflow
@@ -29142,6 +36989,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int productStmtSize = 0;
 
@@ -29268,8 +37116,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextProductId() {
+		public int nextProductId() {
 			return ++this.productId;
+		} 
+
+		public void setProductId(Integer productId) {
+			this.productId = productId;
 		} 
 	
 	private void flushProduct(  )
@@ -29279,6 +37131,48 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( productStmt != null )
 			productStmt.close();
 	}	
+
+	/**
+	 * Product
+	 * @param id Identificador unico del Producto
+	 * @param name Nombre del Producto
+	 * @param code Codigo del Producto
+	 * @param brand Marca Comercial del Producto
+	 * @param category Categoria del Producto
+	 * @param inventoriable Indica si el Producto es inventariable
+	 * @param status Estado del Producto
+	 * @param vat IVA del Producto
+	 * @param retention Retencion del Producto
+	 * @param type Tipo de Producto
+	 * @param composition Indica si el Producto es una Composicion
+	 * @throws SQLException
+	*/
+	protected void insertProduct(Integer id, String name, String code, Integer brand, Integer category, Boolean inventoriable, Short status, Integer vat, Integer retention, Short type, Boolean composition)
+	throws SQLException {
+
+		Product product_ = new Product();
+		product_.id = id;
+		product_.name = name;
+		product_.code = code;
+		product_.brand = brand;
+		product_.category = category;
+		product_.inventoriable = inventoriable;
+		product_.status = status;
+		product_.vat = vat;
+		product_.retention = retention;
+		product_.type = type;
+		product_.composition = composition;
+
+		products.add(product_);
+		
+		int productCount = products.size();
+		
+		if ( 135 * productCount >=  this.maxAllowedPacket ){
+			insertProduct(products);
+			products.clear();
+		} 
+	}
+
 
 	/**
 	 * Product
@@ -29322,6 +37216,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int processStmtSize = 0;
 
@@ -29408,8 +37303,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextProcessId() {
+		public int nextProcessId() {
 			return ++this.processId;
+		} 
+
+		public void setProcessId(Integer processId) {
+			this.processId = processId;
 		} 
 	
 	private void flushProcess(  )
@@ -29419,6 +37318,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( processStmt != null )
 			processStmt.close();
 	}	
+
+	/**
+	 * Process
+	 * @param id Identificador unico del Proceso
+	 * @param description Descripcion del Proceso.
+	 * @param status Estado del Proceso
+	 * @throws SQLException
+	*/
+	protected void insertProcess(Integer id, String description, Short status)
+	throws SQLException {
+
+		Process process_ = new Process();
+		process_.id = id;
+		process_.description = description;
+		process_.status = status;
+
+		processs.add(process_);
+		
+		int processCount = processs.size();
+		
+		if ( 43 * processCount >=  this.maxAllowedPacket ){
+			insertProcess(processs);
+			processs.clear();
+		} 
+	}
+
 
 	/**
 	 * Process
@@ -29447,6 +37372,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int itemStmtSize = 0;
 
 	private int itemInserted = 0;
@@ -29460,7 +37386,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer id; 
 		private Integer product; 
 		private String detail; 
-		private InputStream description; 
+		private String description; 
 		private Double price; 
 		private Short status; 
 		private Double expenses_percent; 
@@ -29512,7 +37438,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( item.description == null )
 				itemStmt.setNull(offset++, -1);
 			else
-				itemStmt.setAsciiStream(offset++, item.description);
+				itemStmt.setString(offset++, item.description);
 			if ( item.price == null )
 				itemStmt.setNull(offset++, 8);
 			else
@@ -29577,8 +37503,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextItemId() {
+		public int nextItemId() {
 			return ++this.itemId;
+		} 
+
+		public void setItemId(Integer itemId) {
+			this.itemId = itemId;
 		} 
 	
 	private void flushItem(  )
@@ -29588,6 +37518,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( itemStmt != null )
 			itemStmt.close();
 	}	
+
+	/**
+	 * Item
+	 * @param id Identificador unico del Articulo
+	 * @param product Identificador del Producto
+	 * @param detail Detalle del Articulo
+	 * @param description Descripcion del Articulo
+	 * @param price Precio del Articulo
+	 * @param status Estado del Articulo
+	 * @param expenses_percent Gastos porcentuales del Articulo
+	 * @param expenses_fixed Gastos fijos del Articulo
+	 * @param profit_percent Porcentaje de beneficio del Articulo
+	 * @param purchase_price Precio de compra del Articulo
+	 * @param internet Visible en internet
+	 * @param barcode Codigo de barras del Articulo
+	 * @throws SQLException
+	*/
+	protected void insertItem(Integer id, Integer product, String detail, String description, Double price, Short status, Double expenses_percent, Double expenses_fixed, Double profit_percent, Double purchase_price, Boolean internet, String barcode)
+	throws SQLException {
+
+		Item item_ = new Item();
+		item_.id = id;
+		item_.product = product;
+		item_.detail = detail;
+		item_.description = description;
+		item_.price = price;
+		item_.status = status;
+		item_.expenses_percent = expenses_percent;
+		item_.expenses_fixed = expenses_fixed;
+		item_.profit_percent = profit_percent;
+		item_.purchase_price = purchase_price;
+		item_.internet = internet;
+		item_.barcode = barcode;
+
+		items.add(item_);
+		
+		int itemCount = items.size();
+		
+		if ( 229 * itemCount >=  this.maxAllowedPacket ){
+			insertItem(items);
+			items.clear();
+		} 
+	}
+
 
 	/**
 	 * Item
@@ -29605,7 +37579,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertItem(Integer product, String detail, InputStream description, Double price, Short status, Double expenses_percent, Double expenses_fixed, Double profit_percent, Double purchase_price, Boolean internet, String barcode)
+	protected int insertItem(Integer product, String detail, String description, Double price, Short status, Double expenses_percent, Double expenses_fixed, Double profit_percent, Double purchase_price, Boolean internet, String barcode)
 	throws SQLException {
 		int id = nextItemId();
 
@@ -29633,6 +37607,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int accountStmtSize = 0;
 
@@ -29744,6 +37719,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int brandStmtSize = 0;
 
 	private int brandInserted = 0;
@@ -29824,8 +37801,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextBrandId() {
+		public int nextBrandId() {
 			return ++this.brandId;
+		} 
+
+		public void setBrandId(Integer brandId) {
+			this.brandId = brandId;
 		} 
 	
 	private void flushBrand(  )
@@ -29835,6 +37816,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( brandStmt != null )
 			brandStmt.close();
 	}	
+
+	/**
+	 * Brand
+	 * @param id Identificador unico de la Marca Comercial
+	 * @param name Nombre de la Marca Comercial
+	 * @throws SQLException
+	*/
+	protected void insertBrand(Integer id, String name)
+	throws SQLException {
+
+		Brand brand_ = new Brand();
+		brand_.id = id;
+		brand_.name = name;
+
+		brands.add(brand_);
+		
+		int brandCount = brands.size();
+		
+		if ( 74 * brandCount >=  this.maxAllowedPacket ){
+			insertBrand(brands);
+			brands.clear();
+		} 
+	}
+
 
 	/**
 	 * Brand
@@ -29860,6 +37865,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int target_sellerStmtSize = 0;
 
@@ -29961,8 +37967,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTarget_sellerId() {
+		public int nextTarget_sellerId() {
 			return ++this.target_sellerId;
+		} 
+
+		public void setTarget_sellerId(Integer target_sellerId) {
+			this.target_sellerId = target_sellerId;
 		} 
 	
 	private void flushTarget_seller(  )
@@ -29972,6 +37982,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( target_sellerStmt != null )
 			target_sellerStmt.close();
 	}	
+
+	/**
+	 * Target_seller
+	 * @param id Identificador unico
+	 * @param target Identificador del Cliente Potencial
+	 * @param seller Identificador del Comercial
+	 * @param start_date Fecha de Inicio
+	 * @param end_date Fecha de Fin
+	 * @param status Estado
+	 * @throws SQLException
+	*/
+	protected void insertTarget_seller(Integer id, Integer target, Integer seller, Date start_date, Date end_date, Short status)
+	throws SQLException {
+
+		Target_seller target_seller_ = new Target_seller();
+		target_seller_.id = id;
+		target_seller_.target = target;
+		target_seller_.seller = seller;
+		target_seller_.start_date = start_date;
+		target_seller_.end_date = end_date;
+		target_seller_.status = status;
+
+		target_sellers.add(target_seller_);
+		
+		int target_sellerCount = target_sellers.size();
+		
+		if ( 53 * target_sellerCount >=  this.maxAllowedPacket ){
+			insertTarget_seller(target_sellers);
+			target_sellers.clear();
+		} 
+	}
+
 
 	/**
 	 * Target_seller
@@ -30005,6 +38047,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int contract_bonusStmtSize = 0;
 
@@ -30106,8 +38149,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextContract_bonusId() {
+		public int nextContract_bonusId() {
 			return ++this.contract_bonusId;
+		} 
+
+		public void setContract_bonusId(Integer contract_bonusId) {
+			this.contract_bonusId = contract_bonusId;
 		} 
 	
 	private void flushContract_bonus(  )
@@ -30117,6 +38164,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( contract_bonusStmt != null )
 			contract_bonusStmt.close();
 	}	
+
+	/**
+	 * Contract_bonus
+	 * @param id Identificador unico
+	 * @param contract Contrato
+	 * @param description Descripcion
+	 * @param expression Frmula
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @throws SQLException
+	*/
+	protected void insertContract_bonus(Integer id, Integer contract, String description, String expression, Date start_date, Date end_date)
+	throws SQLException {
+
+		Contract_bonus contract_bonus_ = new Contract_bonus();
+		contract_bonus_.id = id;
+		contract_bonus_.contract = contract;
+		contract_bonus_.description = description;
+		contract_bonus_.expression = expression;
+		contract_bonus_.start_date = start_date;
+		contract_bonus_.end_date = end_date;
+
+		contract_bonuss.add(contract_bonus_);
+		
+		int contract_bonusCount = contract_bonuss.size();
+		
+		if ( 232 * contract_bonusCount >=  this.maxAllowedPacket ){
+			insertContract_bonus(contract_bonuss);
+			contract_bonuss.clear();
+		} 
+	}
+
 
 	/**
 	 * Contract_bonus
@@ -30150,6 +38229,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int financeStmtSize = 0;
 
@@ -30301,8 +38381,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextFinanceId() {
+		public int nextFinanceId() {
 			return ++this.financeId;
+		} 
+
+		public void setFinanceId(Integer financeId) {
+			this.financeId = financeId;
 		} 
 	
 	private void flushFinance(  )
@@ -30312,6 +38396,58 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( financeStmt != null )
 			financeStmt.close();
 	}	
+
+	/**
+	 * Finance
+	 * @param id Identificador unico del Vencimiento
+	 * @param payment Indica si es un pago o un cobro
+	 * @param registry Identificador del Cliente o Proveedor
+	 * @param rdocument Numero de Documento del Cliente o Proveedor
+	 * @param rname Nombre completo del Cliente o Proveedor
+	 * @param amount Importe del Vencimiento
+	 * @param expenses Gastos asociados al Vencimiento
+	 * @param concept Concepto del Vencimiento
+	 * @param invoice Identificador de la Factura
+	 * @param due_date Fecha de Vencimiento
+	 * @param pay_method Identificador de la Forma de Pago
+	 * @param bank Identificador de la Entidad Bancaria del Vencimiento
+	 * @param bank_account Numero de cuenta en la Entidad Bancaria del Vencimiento
+	 * @param status Estado del Vencimiento
+	 * @param security_level Nivel de seguridad del Vencimiento
+	 * @param scope Ambito del Vencimiento
+	 * @throws SQLException
+	*/
+	protected void insertFinance(Integer id, Boolean payment, Integer registry, String rdocument, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope)
+	throws SQLException {
+
+		Finance finance_ = new Finance();
+		finance_.id = id;
+		finance_.payment = payment;
+		finance_.registry = registry;
+		finance_.rdocument = rdocument;
+		finance_.rname = rname;
+		finance_.amount = amount;
+		finance_.expenses = expenses;
+		finance_.concept = concept;
+		finance_.invoice = invoice;
+		finance_.due_date = due_date;
+		finance_.pay_method = pay_method;
+		finance_.bank = bank;
+		finance_.bank_account = bank_account;
+		finance_.status = status;
+		finance_.security_level = security_level;
+		finance_.scope = scope;
+
+		finances.add(finance_);
+		
+		int financeCount = finances.size();
+		
+		if ( 319 * financeCount >=  this.maxAllowedPacket ){
+			insertFinance(finances);
+			finances.clear();
+		} 
+	}
+
 
 	/**
 	 * Finance
@@ -30365,6 +38501,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int dossier_typeStmtSize = 0;
 
@@ -30446,8 +38583,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextDossier_typeId() {
+		public int nextDossier_typeId() {
 			return ++this.dossier_typeId;
+		} 
+
+		public void setDossier_typeId(Integer dossier_typeId) {
+			this.dossier_typeId = dossier_typeId;
 		} 
 	
 	private void flushDossier_type(  )
@@ -30457,6 +38598,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( dossier_typeStmt != null )
 			dossier_typeStmt.close();
 	}	
+
+	/**
+	 * Dossier_type
+	 * @param id Identificador unico del Tipo de Expediente
+	 * @param description Descripcion del Tipo de Expediente
+	 * @throws SQLException
+	*/
+	protected void insertDossier_type(Integer id, String description)
+	throws SQLException {
+
+		Dossier_type dossier_type_ = new Dossier_type();
+		dossier_type_.id = id;
+		dossier_type_.description = description;
+
+		dossier_types.add(dossier_type_);
+		
+		int dossier_typeCount = dossier_types.size();
+		
+		if ( 74 * dossier_typeCount >=  this.maxAllowedPacket ){
+			insertDossier_type(dossier_types);
+			dossier_types.clear();
+		} 
+	}
+
 
 	/**
 	 * Dossier_type
@@ -30482,6 +38647,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int geozoneStmtSize = 0;
 
@@ -30573,8 +38739,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextGeozoneId() {
+		public int nextGeozoneId() {
 			return ++this.geozoneId;
+		} 
+
+		public void setGeozoneId(Integer geozoneId) {
+			this.geozoneId = geozoneId;
 		} 
 	
 	private void flushGeozone(  )
@@ -30584,6 +38754,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( geozoneStmt != null )
 			geozoneStmt.close();
 	}	
+
+	/**
+	 * Geozone
+	 * @param id Identificador unico de la Zona Geografica
+	 * @param name Nombre de la Zona Geografica
+	 * @param code Codigo de la Zona Geografica
+	 * @param system Indica si es una Zona Geografica del sistema
+	 * @throws SQLException
+	*/
+	protected void insertGeozone(Integer id, String name, String code, Boolean system)
+	throws SQLException {
+
+		Geozone geozone_ = new Geozone();
+		geozone_.id = id;
+		geozone_.name = name;
+		geozone_.code = code;
+		geozone_.system = system;
+
+		geozones.add(geozone_);
+		
+		int geozoneCount = geozones.size();
+		
+		if ( 45 * geozoneCount >=  this.maxAllowedPacket ){
+			insertGeozone(geozones);
+			geozones.clear();
+		} 
+	}
+
 
 	/**
 	 * Geozone
@@ -30613,6 +38811,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int pcategory_groupStmtSize = 0;
 
@@ -30694,8 +38893,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextPcategory_groupId() {
+		public int nextPcategory_groupId() {
 			return ++this.pcategory_groupId;
+		} 
+
+		public void setPcategory_groupId(Integer pcategory_groupId) {
+			this.pcategory_groupId = pcategory_groupId;
 		} 
 	
 	private void flushPcategory_group(  )
@@ -30705,6 +38908,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( pcategory_groupStmt != null )
 			pcategory_groupStmt.close();
 	}	
+
+	/**
+	 * Pcategory_group
+	 * @param id Identificador unico del Grupo de Categorias
+	 * @param name Nombre del Grupo de Categorias
+	 * @throws SQLException
+	*/
+	protected void insertPcategory_group(Integer id, String name)
+	throws SQLException {
+
+		Pcategory_group pcategory_group_ = new Pcategory_group();
+		pcategory_group_.id = id;
+		pcategory_group_.name = name;
+
+		pcategory_groups.add(pcategory_group_);
+		
+		int pcategory_groupCount = pcategory_groups.size();
+		
+		if ( 42 * pcategory_groupCount >=  this.maxAllowedPacket ){
+			insertPcategory_group(pcategory_groups);
+			pcategory_groups.clear();
+		} 
+	}
+
 
 	/**
 	 * Pcategory_group
@@ -30730,6 +38957,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int segmentStmtSize = 0;
 
@@ -30811,8 +39039,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSegmentId() {
+		public int nextSegmentId() {
 			return ++this.segmentId;
+		} 
+
+		public void setSegmentId(Integer segmentId) {
+			this.segmentId = segmentId;
 		} 
 	
 	private void flushSegment(  )
@@ -30822,6 +39054,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( segmentStmt != null )
 			segmentStmt.close();
 	}	
+
+	/**
+	 * Segment
+	 * @param id Identificador unico
+	 * @param name Nombre del Segmento
+	 * @throws SQLException
+	*/
+	protected void insertSegment(Integer id, String name)
+	throws SQLException {
+
+		Segment segment_ = new Segment();
+		segment_.id = id;
+		segment_.name = name;
+
+		segments.add(segment_);
+		
+		int segmentCount = segments.size();
+		
+		if ( 42 * segmentCount >=  this.maxAllowedPacket ){
+			insertSegment(segments);
+			segments.clear();
+		} 
+	}
+
 
 	/**
 	 * Segment
@@ -30847,6 +39103,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int salary_deductionStmtSize = 0;
 
@@ -30953,8 +39210,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSalary_deductionId() {
+		public int nextSalary_deductionId() {
 			return ++this.salary_deductionId;
+		} 
+
+		public void setSalary_deductionId(Integer salary_deductionId) {
+			this.salary_deductionId = salary_deductionId;
 		} 
 	
 	private void flushSalary_deduction(  )
@@ -30964,6 +39225,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( salary_deductionStmt != null )
 			salary_deductionStmt.close();
 	}	
+
+	/**
+	 * Salary_deduction
+	 * @param id Identificador unico
+	 * @param salary Recibo del pago de salarios
+	 * @param type Tipo de deduccin Salarial
+	 * @param deduction_concept Identificador unico del concepto
+	 * @param description Descripcion
+	 * @param expression Frmula
+	 * @param amount Importe
+	 * @throws SQLException
+	*/
+	protected void insertSalary_deduction(Integer id, Integer salary, Short type, Integer deduction_concept, String description, String expression, Double amount)
+	throws SQLException {
+
+		Salary_deduction salary_deduction_ = new Salary_deduction();
+		salary_deduction_.id = id;
+		salary_deduction_.salary = salary;
+		salary_deduction_.type = type;
+		salary_deduction_.deduction_concept = deduction_concept;
+		salary_deduction_.description = description;
+		salary_deduction_.expression = expression;
+		salary_deduction_.amount = amount;
+
+		salary_deductions.add(salary_deduction_);
+		
+		int salary_deductionCount = salary_deductions.size();
+		
+		if ( 240 * salary_deductionCount >=  this.maxAllowedPacket ){
+			insertSalary_deduction(salary_deductions);
+			salary_deductions.clear();
+		} 
+	}
+
 
 	/**
 	 * Salary_deduction
@@ -31000,6 +39295,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int invoiceStmtSize = 0;
 
 	private int invoiceInserted = 0;
@@ -31026,7 +39322,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Boolean taxFree; 
 		private Boolean surcharge; 
 		private Boolean withholding; 
-		private InputStream comments; 
+		private String comments; 
 		private Boolean investment; 
 		private Short transaction; 
 		private Boolean signed; 
@@ -31126,7 +39422,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoice.comments == null )
 				invoiceStmt.setNull(offset++, -1);
 			else
-				invoiceStmt.setAsciiStream(offset++, invoice.comments);
+				invoiceStmt.setString(offset++, invoice.comments);
 			if ( invoice.investment == null )
 				invoiceStmt.setNull(offset++, -7);
 			else
@@ -31175,8 +39471,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInvoiceId() {
+		public int nextInvoiceId() {
 			return ++this.invoiceId;
+		} 
+
+		public void setInvoiceId(Integer invoiceId) {
+			this.invoiceId = invoiceId;
 		} 
 	
 	private void flushInvoice(  )
@@ -31186,6 +39486,68 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( invoiceStmt != null )
 			invoiceStmt.close();
 	}	
+
+	/**
+	 * Invoice
+	 * @param id Identificador unico de la Factura
+	 * @param series Serie de la Factura
+	 * @param number Numero de la Factura
+	 * @param reference_code Codigo de referencia de la Factura
+	 * @param registry Identificador del Cliente o Proveedor
+	 * @param rdocument Numero de Documento del Cliente o Proveedor
+	 * @param rname Nombre completo del Cliente o Proveedor
+	 * @param raddress Identificador de la Direccion de envio de la Factura
+	 * @param issue_date Fecha de emision de la Factura
+	 * @param tax_date Fecha de Impuestos de la Factura
+	 * @param security_level Nivel de seguridad de la Factura
+	 * @param status Estado de la Factura
+	 * @param type Tipo de Factura (Compra o Venta)
+	 * @param taxFree Indica si la Factura esta exenta de Impuestos
+	 * @param surcharge Indica si la Factura tiene recargo de equivalencia
+	 * @param withholding Indica si la Factura aplica retencion de impuestos
+	 * @param comments Comentarios de la Factura
+	 * @param investment Indica si la Factura es una inversion
+	 * @param transaction Tipo de transaccion
+	 * @param signed Indica si la Factura esta firmada electronicamente
+	 * @param scope Ambito de la Factura
+	 * @throws SQLException
+	*/
+	protected void insertInvoice(Integer id, String series, Integer number, String reference_code, Integer registry, String rdocument, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope)
+	throws SQLException {
+
+		Invoice invoice_ = new Invoice();
+		invoice_.id = id;
+		invoice_.series = series;
+		invoice_.number = number;
+		invoice_.reference_code = reference_code;
+		invoice_.registry = registry;
+		invoice_.rdocument = rdocument;
+		invoice_.rname = rname;
+		invoice_.raddress = raddress;
+		invoice_.issue_date = issue_date;
+		invoice_.tax_date = tax_date;
+		invoice_.security_level = security_level;
+		invoice_.status = status;
+		invoice_.type = type;
+		invoice_.taxFree = taxFree;
+		invoice_.surcharge = surcharge;
+		invoice_.withholding = withholding;
+		invoice_.comments = comments;
+		invoice_.investment = investment;
+		invoice_.transaction = transaction;
+		invoice_.signed = signed;
+		invoice_.scope = scope;
+
+		invoices.add(invoice_);
+		
+		int invoiceCount = invoices.size();
+		
+		if ( 263 * invoiceCount >=  this.maxAllowedPacket ){
+			insertInvoice(invoices);
+			invoices.clear();
+		} 
+	}
+
 
 	/**
 	 * Invoice
@@ -31212,7 +39574,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice(String series, Integer number, String reference_code, Integer registry, String rdocument, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, InputStream comments, Boolean investment, Short transaction, Boolean signed, Integer scope)
+	protected int insertInvoice(String series, Integer number, String reference_code, Integer registry, String rdocument, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope)
 	throws SQLException {
 		int id = nextInvoiceId();
 
@@ -31249,6 +39611,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int invoice_attachStmtSize = 0;
 
@@ -31345,8 +39708,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInvoice_attachId() {
+		public int nextInvoice_attachId() {
 			return ++this.invoice_attachId;
+		} 
+
+		public void setInvoice_attachId(Integer invoice_attachId) {
+			this.invoice_attachId = invoice_attachId;
 		} 
 	
 	private void flushInvoice_attach(  )
@@ -31356,6 +39723,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( invoice_attachStmt != null )
 			invoice_attachStmt.close();
 	}	
+
+	/**
+	 * Invoice_attach
+	 * @param id Identificador unico
+	 * @param invoice Identificador de la Factura
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @throws SQLException
+	*/
+	protected void insertInvoice_attach(Integer id, Integer invoice, Short mimeType, String description, InputStream data)
+	throws SQLException {
+
+		Invoice_attach invoice_attach_ = new Invoice_attach();
+		invoice_attach_.id = id;
+		invoice_attach_.invoice = invoice;
+		invoice_attach_.mimeType = mimeType;
+		invoice_attach_.description = description;
+		invoice_attach_.data = data;
+
+		invoice_attachs.add(invoice_attach_);
+		
+		int invoice_attachCount = invoice_attachs.size();
+		
+		if ( 87 * invoice_attachCount >=  this.maxAllowedPacket ){
+			insertInvoice_attach(invoice_attachs);
+			invoice_attachs.clear();
+		} 
+	}
+
 
 	/**
 	 * Invoice_attach
@@ -31387,6 +39784,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int invoice_detailStmtSize = 0;
 
@@ -31523,8 +39921,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInvoice_detailId() {
+		public int nextInvoice_detailId() {
 			return ++this.invoice_detailId;
+		} 
+
+		public void setInvoice_detailId(Integer invoice_detailId) {
+			this.invoice_detailId = invoice_detailId;
 		} 
 	
 	private void flushInvoice_detail(  )
@@ -31534,6 +39936,52 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( invoice_detailStmt != null )
 			invoice_detailStmt.close();
 	}	
+
+	/**
+	 * Invoice_detail
+	 * @param id Identificador unico del Detalle de la Factura
+	 * @param invoice Identificador de la Factura
+	 * @param line Numero de lnea del Detalle dentro de la Factura
+	 * @param item Identificador del Articulo del Detalle de Factura
+	 * @param description Descripcion del Detalle de Factura
+	 * @param quantity Cantidad del Detalle de Factura
+	 * @param price Precio del Detalle de Factura
+	 * @param discount_expr Descuentos del Detalle de Factura
+	 * @param source Origen del Detalle de la Factura
+	 * @param source_id Identificador del Origen del Detalle de la Factura
+	 * @param taxable_base Base Imponible del Detalle de Factura
+	 * @param taxes Tasas del Detalle de Factura
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @throws SQLException
+	*/
+	protected void insertInvoice_detail(Integer id, Integer invoice, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer workplace)
+	throws SQLException {
+
+		Invoice_detail invoice_detail_ = new Invoice_detail();
+		invoice_detail_.id = id;
+		invoice_detail_.invoice = invoice;
+		invoice_detail_.line = line;
+		invoice_detail_.item = item;
+		invoice_detail_.description = description;
+		invoice_detail_.quantity = quantity;
+		invoice_detail_.price = price;
+		invoice_detail_.discount_expr = discount_expr;
+		invoice_detail_.source = source;
+		invoice_detail_.source_id = source_id;
+		invoice_detail_.taxable_base = taxable_base;
+		invoice_detail_.taxes = taxes;
+		invoice_detail_.workplace = workplace;
+
+		invoice_details.add(invoice_detail_);
+		
+		int invoice_detailCount = invoice_details.size();
+		
+		if ( 1188 * invoice_detailCount >=  this.maxAllowedPacket ){
+			insertInvoice_detail(invoice_details);
+			invoice_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Invoice_detail
@@ -31581,6 +40029,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int annual_reportStmtSize = 0;
 
@@ -31662,8 +40111,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAnnual_reportId() {
+		public int nextAnnual_reportId() {
 			return ++this.annual_reportId;
+		} 
+
+		public void setAnnual_reportId(Integer annual_reportId) {
+			this.annual_reportId = annual_reportId;
 		} 
 	
 	private void flushAnnual_report(  )
@@ -31673,6 +40126,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( annual_reportStmt != null )
 			annual_reportStmt.close();
 	}	
+
+	/**
+	 * Annual_report
+	 * @param id Identificador unico
+	 * @param name Nombre de la Memoria
+	 * @throws SQLException
+	*/
+	protected void insertAnnual_report(Integer id, String name)
+	throws SQLException {
+
+		Annual_report annual_report_ = new Annual_report();
+		annual_report_.id = id;
+		annual_report_.name = name;
+
+		annual_reports.add(annual_report_);
+		
+		int annual_reportCount = annual_reports.size();
+		
+		if ( 74 * annual_reportCount >=  this.maxAllowedPacket ){
+			insertAnnual_report(annual_reports);
+			annual_reports.clear();
+		} 
+	}
+
 
 	/**
 	 * Annual_report
@@ -31698,6 +40175,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int course_instructorStmtSize = 0;
 
@@ -31789,8 +40267,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCourse_instructorId() {
+		public int nextCourse_instructorId() {
 			return ++this.course_instructorId;
+		} 
+
+		public void setCourse_instructorId(Integer course_instructorId) {
+			this.course_instructorId = course_instructorId;
 		} 
 	
 	private void flushCourse_instructor(  )
@@ -31800,6 +40282,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( course_instructorStmt != null )
 			course_instructorStmt.close();
 	}	
+
+	/**
+	 * Course_instructor
+	 * @param id Identificador unico
+	 * @param course Identificador del Curso
+	 * @param employee Identificador del Profesor
+	 * @param type Tipo de Profesor
+	 * @throws SQLException
+	*/
+	protected void insertCourse_instructor(Integer id, Integer course, Integer employee, Short type)
+	throws SQLException {
+
+		Course_instructor course_instructor_ = new Course_instructor();
+		course_instructor_.id = id;
+		course_instructor_.course = course;
+		course_instructor_.employee = employee;
+		course_instructor_.type = type;
+
+		course_instructors.add(course_instructor_);
+		
+		int course_instructorCount = course_instructors.size();
+		
+		if ( 33 * course_instructorCount >=  this.maxAllowedPacket ){
+			insertCourse_instructor(course_instructors);
+			course_instructors.clear();
+		} 
+	}
+
 
 	/**
 	 * Course_instructor
@@ -31829,6 +40339,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_entry_finance_trackingStmtSize = 0;
 
@@ -31915,8 +40426,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_entry_finance_trackingId() {
+		public int nextAccount_entry_finance_trackingId() {
 			return ++this.account_entry_finance_trackingId;
+		} 
+
+		public void setAccount_entry_finance_trackingId(Integer account_entry_finance_trackingId) {
+			this.account_entry_finance_trackingId = account_entry_finance_trackingId;
 		} 
 	
 	private void flushAccount_entry_finance_tracking(  )
@@ -31926,6 +40441,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_entry_finance_trackingStmt != null )
 			account_entry_finance_trackingStmt.close();
 	}	
+
+	/**
+	 * Account_entry_finance_tracking
+	 * @param id Identificador unico
+	 * @param account_entry Identificador de Asiento Contable
+	 * @param finance_tracking Identificador de Seguimiento de Vencimientos
+	 * @throws SQLException
+	*/
+	protected void insertAccount_entry_finance_tracking(Integer id, Integer account_entry, Integer finance_tracking)
+	throws SQLException {
+
+		Account_entry_finance_tracking account_entry_finance_tracking_ = new Account_entry_finance_tracking();
+		account_entry_finance_tracking_.id = id;
+		account_entry_finance_tracking_.account_entry = account_entry;
+		account_entry_finance_tracking_.finance_tracking = finance_tracking;
+
+		account_entry_finance_trackings.add(account_entry_finance_tracking_);
+		
+		int account_entry_finance_trackingCount = account_entry_finance_trackings.size();
+		
+		if ( 30 * account_entry_finance_trackingCount >=  this.maxAllowedPacket ){
+			insertAccount_entry_finance_tracking(account_entry_finance_trackings);
+			account_entry_finance_trackings.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_entry_finance_tracking
@@ -31953,6 +40494,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int income_detailStmtSize = 0;
 
@@ -32084,8 +40626,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextIncome_detailId() {
+		public int nextIncome_detailId() {
 			return ++this.income_detailId;
+		} 
+
+		public void setIncome_detailId(Integer income_detailId) {
+			this.income_detailId = income_detailId;
 		} 
 	
 	private void flushIncome_detail(  )
@@ -32095,6 +40641,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( income_detailStmt != null )
 			income_detailStmt.close();
 	}	
+
+	/**
+	 * Income_detail
+	 * @param id Identificador unico del Detalle del Albaran de Compra
+	 * @param income Identificador del Albaran de Compra
+	 * @param line Numero de linea del Detalle dentro del Albaran
+	 * @param item Identificador del Articulo del Detalle de Albaran
+	 * @param description Descripcion del Detalle de Albaran
+	 * @param warehouse Identificador del Almacen
+	 * @param quantity Cantidad del Detalle de Albaran
+	 * @param price Precio del Detalle de Albaran
+	 * @param discount_expr Descuentos del Detalle de Albaran
+	 * @param type Tipo de Detalle de Albaran
+	 * @param source Origen del Detalle de Albaran
+	 * @param purchase_detail Identificador del Detalle del Pedido de Compra asociado
+	 * @throws SQLException
+	*/
+	protected void insertIncome_detail(Integer id, Integer income, Integer line, Integer item, String description, Integer warehouse, Double quantity, Double price, String discount_expr, Short type, Short source, Integer purchase_detail)
+	throws SQLException {
+
+		Income_detail income_detail_ = new Income_detail();
+		income_detail_.id = id;
+		income_detail_.income = income;
+		income_detail_.line = line;
+		income_detail_.item = item;
+		income_detail_.description = description;
+		income_detail_.warehouse = warehouse;
+		income_detail_.quantity = quantity;
+		income_detail_.price = price;
+		income_detail_.discount_expr = discount_expr;
+		income_detail_.type = type;
+		income_detail_.source = source;
+		income_detail_.purchase_detail = purchase_detail;
+
+		income_details.add(income_detail_);
+		
+		int income_detailCount = income_details.size();
+		
+		if ( 1147 * income_detailCount >=  this.maxAllowedPacket ){
+			insertIncome_detail(income_details);
+			income_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Income_detail
@@ -32140,6 +40730,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int rmediaStmtSize = 0;
 
@@ -32256,8 +40847,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRmediaId() {
+		public int nextRmediaId() {
 			return ++this.rmediaId;
+		} 
+
+		public void setRmediaId(Integer rmediaId) {
+			this.rmediaId = rmediaId;
 		} 
 	
 	private void flushRmedia(  )
@@ -32267,6 +40862,44 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( rmediaStmt != null )
 			rmediaStmt.close();
 	}	
+
+	/**
+	 * Rmedia
+	 * @param id Identificador unico del Medio de Contacto de la Persona o Empresa
+	 * @param registry Identificador del Registro de la Persona o Empresa
+	 * @param media Tipo de Medio de Contacto de la Persona o Empresa
+	 * @param value Valor del Medio de Contacto de la Persona o Empresa
+	 * @param comment Comentarios acerca del Medio de Contacto de la Persona o Empresa
+	 * @param administrative Indica si el Contacto es de caracter administrativo
+	 * @param commercial Indica si el Contacto es de caracter comercial
+	 * @param technical Indica si el Contacto es de caracter tecnico
+	 * @param raddress Direccion del contacto
+	 * @throws SQLException
+	*/
+	protected void insertRmedia(Integer id, Integer registry, Short media, String value, String comment, Boolean administrative, Boolean commercial, Boolean technical, Integer raddress)
+	throws SQLException {
+
+		Rmedia rmedia_ = new Rmedia();
+		rmedia_.id = id;
+		rmedia_.registry = registry;
+		rmedia_.media = media;
+		rmedia_.value = value;
+		rmedia_.comment = comment;
+		rmedia_.administrative = administrative;
+		rmedia_.commercial = commercial;
+		rmedia_.technical = technical;
+		rmedia_.raddress = raddress;
+
+		rmedias.add(rmedia_);
+		
+		int rmediaCount = rmedias.size();
+		
+		if ( 161 * rmediaCount >=  this.maxAllowedPacket ){
+			insertRmedia(rmedias);
+			rmedias.clear();
+		} 
+	}
+
 
 	/**
 	 * Rmedia
@@ -32306,6 +40939,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int commercial_trackingStmtSize = 0;
 
@@ -32427,8 +41061,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCommercial_trackingId() {
+		public int nextCommercial_trackingId() {
 			return ++this.commercial_trackingId;
+		} 
+
+		public void setCommercial_trackingId(Integer commercial_trackingId) {
+			this.commercial_trackingId = commercial_trackingId;
 		} 
 	
 	private void flushCommercial_tracking(  )
@@ -32438,6 +41076,46 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( commercial_trackingStmt != null )
 			commercial_trackingStmt.close();
 	}	
+
+	/**
+	 * Commercial_tracking
+	 * @param id Identificador unico
+	 * @param date Fecha del Seguimiento Comercial
+	 * @param seller Identificador del Comercial
+	 * @param target Identificador del Cliente Potencial
+	 * @param activity Identificador de la Actividad Comercial
+	 * @param comments Comentarios del Seguimiento Comercial
+	 * @param status Estado del Seguimiento Comercial
+	 * @param next_commercial_tracking Identificador del siguiente Seguimiento Comercial
+	 * @param end_date Fecha de cierre del Seguimiento Comercial
+	 * @param offer Identificador del Presupuesto
+	 * @throws SQLException
+	*/
+	protected void insertCommercial_tracking(Integer id, Date date, Integer seller, Integer target, Integer activity, String comments, Short status, Integer next_commercial_tracking, Date end_date, Integer offer)
+	throws SQLException {
+
+		Commercial_tracking commercial_tracking_ = new Commercial_tracking();
+		commercial_tracking_.id = id;
+		commercial_tracking_.date = date;
+		commercial_tracking_.seller = seller;
+		commercial_tracking_.target = target;
+		commercial_tracking_.activity = activity;
+		commercial_tracking_.comments = comments;
+		commercial_tracking_.status = status;
+		commercial_tracking_.next_commercial_tracking = next_commercial_tracking;
+		commercial_tracking_.end_date = end_date;
+		commercial_tracking_.offer = offer;
+
+		commercial_trackings.add(commercial_tracking_);
+		
+		int commercial_trackingCount = commercial_trackings.size();
+		
+		if ( 338 * commercial_trackingCount >=  this.maxAllowedPacket ){
+			insertCommercial_tracking(commercial_trackings);
+			commercial_trackings.clear();
+		} 
+	}
+
 
 	/**
 	 * Commercial_tracking
@@ -32479,6 +41157,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int raddressStmtSize = 0;
 
@@ -32615,8 +41294,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRaddressId() {
+		public int nextRaddressId() {
 			return ++this.raddressId;
+		} 
+
+		public void setRaddressId(Integer raddressId) {
+			this.raddressId = raddressId;
 		} 
 	
 	private void flushRaddress(  )
@@ -32626,6 +41309,52 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( raddressStmt != null )
 			raddressStmt.close();
 	}	
+
+	/**
+	 * Raddress
+	 * @param id Identificador unico de la Direccion de la Persona o Empresa
+	 * @param registry Identificador del Registro de la Persona o Empresa
+	 * @param type Tipo de Direccion
+	 * @param recipient Destinatario
+	 * @param street_type Tipo de via
+	 * @param address Primera parte de la Direccion
+	 * @param number Numero
+	 * @param address2 Segunda parte de la Direccion
+	 * @param address3 Tercera parte de la Direccion
+	 * @param zip Codigo Postal
+	 * @param city Localidad
+	 * @param geozone Identificador de la Zona Geografica
+	 * @param alias Alias
+	 * @throws SQLException
+	*/
+	protected void insertRaddress(Integer id, Integer registry, Short type, String recipient, String street_type, String address, String number, String address2, String address3, String zip, String city, Integer geozone, String alias)
+	throws SQLException {
+
+		Raddress raddress_ = new Raddress();
+		raddress_.id = id;
+		raddress_.registry = registry;
+		raddress_.type = type;
+		raddress_.recipient = recipient;
+		raddress_.street_type = street_type;
+		raddress_.address = address;
+		raddress_.number = number;
+		raddress_.address2 = address2;
+		raddress_.address3 = address3;
+		raddress_.zip = zip;
+		raddress_.city = city;
+		raddress_.geozone = geozone;
+		raddress_.alias = alias;
+
+		raddresss.add(raddress_);
+		
+		int raddressCount = raddresss.size();
+		
+		if ( 654 * raddressCount >=  this.maxAllowedPacket ){
+			insertRaddress(raddresss);
+			raddresss.clear();
+		} 
+	}
+
 
 	/**
 	 * Raddress
@@ -32673,6 +41402,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int actionStmtSize = 0;
 
@@ -32764,8 +41494,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextActionId() {
+		public int nextActionId() {
 			return ++this.actionId;
+		} 
+
+		public void setActionId(Integer actionId) {
+			this.actionId = actionId;
 		} 
 	
 	private void flushAction(  )
@@ -32775,6 +41509,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( actionStmt != null )
 			actionStmt.close();
 	}	
+
+	/**
+	 * Action
+	 * @param id Identificador unico
+	 * @param menu Indica si la Accion esta o no dentro del menu
+	 * @param name Nombre de la Accion
+	 * @param application_id Aplicacion a la que pertenece la Accion
+	 * @throws SQLException
+	*/
+	protected void insertAction(Integer id, Boolean menu, String name, Integer application_id)
+	throws SQLException {
+
+		Action action_ = new Action();
+		action_.id = id;
+		action_.menu = menu;
+		action_.name = name;
+		action_.application_id = application_id;
+
+		actions.add(action_);
+		
+		int actionCount = actions.size();
+		
+		if ( 84 * actionCount >=  this.maxAllowedPacket ){
+			insertAction(actions);
+			actions.clear();
+		} 
+	}
+
 
 	/**
 	 * Action
@@ -32804,6 +41566,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int surveyStmtSize = 0;
 
@@ -32895,8 +41658,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSurveyId() {
+		public int nextSurveyId() {
 			return ++this.surveyId;
+		} 
+
+		public void setSurveyId(Integer surveyId) {
+			this.surveyId = surveyId;
 		} 
 	
 	private void flushSurvey(  )
@@ -32906,6 +41673,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( surveyStmt != null )
 			surveyStmt.close();
 	}	
+
+	/**
+	 * Survey
+	 * @param id Identificador unico
+	 * @param active Indica si el Cuestionario esta activa o no
+	 * @param creationDate Fecha de creacion del Cuestionario
+	 * @param description Descripcion del Cuestionario
+	 * @throws SQLException
+	*/
+	protected void insertSurvey(Integer id, Boolean active, Timestamp creationDate, String description)
+	throws SQLException {
+
+		Survey survey_ = new Survey();
+		survey_.id = id;
+		survey_.active = active;
+		survey_.creationDate = creationDate;
+		survey_.description = description;
+
+		surveys.add(survey_);
+		
+		int surveyCount = surveys.size();
+		
+		if ( 93 * surveyCount >=  this.maxAllowedPacket ){
+			insertSurvey(surveys);
+			surveys.clear();
+		} 
+	}
+
 
 	/**
 	 * Survey
@@ -32935,6 +41730,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int survey_response_detailStmtSize = 0;
 
@@ -33036,8 +41832,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextSurvey_response_detailId() {
+		public int nextSurvey_response_detailId() {
 			return ++this.survey_response_detailId;
+		} 
+
+		public void setSurvey_response_detailId(Integer survey_response_detailId) {
+			this.survey_response_detailId = survey_response_detailId;
 		} 
 	
 	private void flushSurvey_response_detail(  )
@@ -33047,6 +41847,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( survey_response_detailStmt != null )
 			survey_response_detailStmt.close();
 	}	
+
+	/**
+	 * Survey_response_detail
+	 * @param id Identificador unico
+	 * @param value_text Valor de tipo texto
+	 * @param value_number Valor de tipo numerico
+	 * @param value_date Valor de tipo fecha
+	 * @param question Identificador de la Pregunta
+	 * @param surveyResponse Identificador de la Respuesta del Cuestionario
+	 * @throws SQLException
+	*/
+	protected void insertSurvey_response_detail(Integer id, String value_text, Double value_number, Timestamp value_date, Integer question, Integer surveyResponse)
+	throws SQLException {
+
+		Survey_response_detail survey_response_detail_ = new Survey_response_detail();
+		survey_response_detail_.id = id;
+		survey_response_detail_.value_text = value_text;
+		survey_response_detail_.value_number = value_number;
+		survey_response_detail_.value_date = value_date;
+		survey_response_detail_.question = question;
+		survey_response_detail_.surveyResponse = surveyResponse;
+
+		survey_response_details.add(survey_response_detail_);
+		
+		int survey_response_detailCount = survey_response_details.size();
+		
+		if ( 1088 * survey_response_detailCount >=  this.maxAllowedPacket ){
+			insertSurvey_response_detail(survey_response_details);
+			survey_response_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Survey_response_detail
@@ -33080,6 +41912,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int raddinfoStmtSize = 0;
 
@@ -33176,8 +42009,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRaddinfoId() {
+		public int nextRaddinfoId() {
 			return ++this.raddinfoId;
+		} 
+
+		public void setRaddinfoId(Integer raddinfoId) {
+			this.raddinfoId = raddinfoId;
 		} 
 	
 	private void flushRaddinfo(  )
@@ -33187,6 +42024,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( raddinfoStmt != null )
 			raddinfoStmt.close();
 	}	
+
+	/**
+	 * Raddinfo
+	 * @param id Identificador unico
+	 * @param registry Identificador de la Persona o Empresa
+	 * @param attribute Atributo adicional
+	 * @param value Valor del atributo adicional
+	 * @param value_date Fecha del valor del atributo
+	 * @throws SQLException
+	*/
+	protected void insertRaddinfo(Integer id, Integer registry, String attribute, String value, Date value_date)
+	throws SQLException {
+
+		Raddinfo raddinfo_ = new Raddinfo();
+		raddinfo_.id = id;
+		raddinfo_.registry = registry;
+		raddinfo_.attribute = attribute;
+		raddinfo_.value = value;
+		raddinfo_.value_date = value_date;
+
+		raddinfos.add(raddinfo_);
+		
+		int raddinfoCount = raddinfos.size();
+		
+		if ( 94 * raddinfoCount >=  this.maxAllowedPacket ){
+			insertRaddinfo(raddinfos);
+			raddinfos.clear();
+		} 
+	}
+
 
 	/**
 	 * Raddinfo
@@ -33218,6 +42085,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int invoicing_group_detailStmtSize = 0;
 
@@ -33309,8 +42177,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInvoicing_group_detailId() {
+		public int nextInvoicing_group_detailId() {
 			return ++this.invoicing_group_detailId;
+		} 
+
+		public void setInvoicing_group_detailId(Integer invoicing_group_detailId) {
+			this.invoicing_group_detailId = invoicing_group_detailId;
 		} 
 	
 	private void flushInvoicing_group_detail(  )
@@ -33320,6 +42192,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( invoicing_group_detailStmt != null )
 			invoicing_group_detailStmt.close();
 	}	
+
+	/**
+	 * Invoicing_group_detail
+	 * @param id Identificador Unico
+	 * @param invoicing_group Grupo de Facturacion al que pertenece
+	 * @param child Componente asociado a un Grupo de Facturacion
+	 * @param grouped Indica si agrupa facturas o no
+	 * @throws SQLException
+	*/
+	protected void insertInvoicing_group_detail(Integer id, Integer invoicing_group, Integer child, Boolean grouped)
+	throws SQLException {
+
+		Invoicing_group_detail invoicing_group_detail_ = new Invoicing_group_detail();
+		invoicing_group_detail_.id = id;
+		invoicing_group_detail_.invoicing_group = invoicing_group;
+		invoicing_group_detail_.child = child;
+		invoicing_group_detail_.grouped = grouped;
+
+		invoicing_group_details.add(invoicing_group_detail_);
+		
+		int invoicing_group_detailCount = invoicing_group_details.size();
+		
+		if ( 30 * invoicing_group_detailCount >=  this.maxAllowedPacket ){
+			insertInvoicing_group_detail(invoicing_group_details);
+			invoicing_group_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Invoicing_group_detail
@@ -33349,6 +42249,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int commission_itemStmtSize = 0;
 
@@ -33450,8 +42351,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCommission_itemId() {
+		public int nextCommission_itemId() {
 			return ++this.commission_itemId;
+		} 
+
+		public void setCommission_itemId(Integer commission_itemId) {
+			this.commission_itemId = commission_itemId;
 		} 
 	
 	private void flushCommission_item(  )
@@ -33461,6 +42366,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( commission_itemStmt != null )
 			commission_itemStmt.close();
 	}	
+
+	/**
+	 * Commission_item
+	 * @param id Identificador unico
+	 * @param commission Identificador de la Comision
+	 * @param item Identificador del Articulo
+	 * @param quantity Cantidad a partir de la cual se aplica la Comision
+	 * @param amount Importe de la Comision
+	 * @param rate Porcentaje de Comision
+	 * @throws SQLException
+	*/
+	protected void insertCommission_item(Integer id, Integer commission, Integer item, Double quantity, Double amount, Double rate)
+	throws SQLException {
+
+		Commission_item commission_item_ = new Commission_item();
+		commission_item_.id = id;
+		commission_item_.commission = commission;
+		commission_item_.item = item;
+		commission_item_.quantity = quantity;
+		commission_item_.amount = amount;
+		commission_item_.rate = rate;
+
+		commission_items.add(commission_item_);
+		
+		int commission_itemCount = commission_items.size();
+		
+		if ( 80 * commission_itemCount >=  this.maxAllowedPacket ){
+			insertCommission_item(commission_items);
+			commission_items.clear();
+		} 
+	}
+
 
 	/**
 	 * Commission_item
@@ -33494,6 +42431,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int catalogue_itemStmtSize = 0;
 
@@ -33595,8 +42533,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCatalogue_itemId() {
+		public int nextCatalogue_itemId() {
 			return ++this.catalogue_itemId;
+		} 
+
+		public void setCatalogue_itemId(Integer catalogue_itemId) {
+			this.catalogue_itemId = catalogue_itemId;
 		} 
 	
 	private void flushCatalogue_item(  )
@@ -33606,6 +42548,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( catalogue_itemStmt != null )
 			catalogue_itemStmt.close();
 	}	
+
+	/**
+	 * Catalogue_item
+	 * @param id Identificador unico
+	 * @param catalogue Identificador del Catalogo
+	 * @param item Identificador del Articulo
+	 * @param quantity Cantidad a partir de la cual se aplica el precio o descuento
+	 * @param price Precio del Articulo en el Catalogo
+	 * @param discount Descuento del Articulo en el Catalogo
+	 * @throws SQLException
+	*/
+	protected void insertCatalogue_item(Integer id, Integer catalogue, Integer item, Double quantity, Double price, Double discount)
+	throws SQLException {
+
+		Catalogue_item catalogue_item_ = new Catalogue_item();
+		catalogue_item_.id = id;
+		catalogue_item_.catalogue = catalogue;
+		catalogue_item_.item = item;
+		catalogue_item_.quantity = quantity;
+		catalogue_item_.price = price;
+		catalogue_item_.discount = discount;
+
+		catalogue_items.add(catalogue_item_);
+		
+		int catalogue_itemCount = catalogue_items.size();
+		
+		if ( 80 * catalogue_itemCount >=  this.maxAllowedPacket ){
+			insertCatalogue_item(catalogue_items);
+			catalogue_items.clear();
+		} 
+	}
+
 
 	/**
 	 * Catalogue_item
@@ -33639,6 +42613,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int academic_skillStmtSize = 0;
 
@@ -33725,8 +42700,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAcademic_skillId() {
+		public int nextAcademic_skillId() {
 			return ++this.academic_skillId;
+		} 
+
+		public void setAcademic_skillId(Integer academic_skillId) {
+			this.academic_skillId = academic_skillId;
 		} 
 	
 	private void flushAcademic_skill(  )
@@ -33736,6 +42715,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( academic_skillStmt != null )
 			academic_skillStmt.close();
 	}	
+
+	/**
+	 * Academic_skill
+	 * @param id Identificador unico de la Aptitud Academica
+	 * @param code Codigo de la Aptitud Academica
+	 * @param description Descripcion de la Aptitud Academica
+	 * @throws SQLException
+	*/
+	protected void insertAcademic_skill(Integer id, String code, String description)
+	throws SQLException {
+
+		Academic_skill academic_skill_ = new Academic_skill();
+		academic_skill_.id = id;
+		academic_skill_.code = code;
+		academic_skill_.description = description;
+
+		academic_skills.add(academic_skill_);
+		
+		int academic_skillCount = academic_skills.size();
+		
+		if ( 79 * academic_skillCount >=  this.maxAllowedPacket ){
+			insertAcademic_skill(academic_skills);
+			academic_skills.clear();
+		} 
+	}
+
 
 	/**
 	 * Academic_skill
@@ -33763,6 +42768,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int appraiserStmtSize = 0;
 
@@ -33846,6 +42852,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int contractStmtSize = 0;
 
 	private int contractInserted = 0;
@@ -33862,6 +42870,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer ccc; 
 		private Date start_date; 
 		private Date end_date; 
+		private Integer calendar; 
 		private InputStream document; 
 		private String description; 
 		private Short status; 
@@ -33875,7 +42884,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contractStmt != null ) {
 				contractStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -33884,7 +42893,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			contractStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO contract (id,person,workplace,ccc,start_date,end_date,document,description,status)"  
+				"INSERT INTO contract (id,person,workplace,ccc,start_date,end_date,calendar,document,description,status)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			contractStmtSize = size;
@@ -33917,6 +42926,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contractStmt.setNull(offset++, 91);
 			else
 				contractStmt.setDate(offset++, contract.end_date);
+			if ( contract.calendar == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.calendar);
 			if ( contract.document == null )
 				contractStmt.setNull(offset++, -4);
 			else
@@ -33961,8 +42974,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextContractId() {
+		public int nextContractId() {
 			return ++this.contractId;
+		} 
+
+		public void setContractId(Integer contractId) {
+			this.contractId = contractId;
 		} 
 	
 	private void flushContract(  )
@@ -33975,18 +42992,59 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Contract
+	 * @param id Identificador unico
 	 * @param person Identificador de la Persona
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param ccc Identificador de la Cuota de Cotizacion
 	 * @param start_date Fecha de inicio del Contrato
 	 * @param end_date Fecha de finalizacion del Contrato
-	 * @param document Impreso (.pdf) del comtrato.
+	 * @param calendar Calendario
+	 * @param document Impreso (.pdf) del contrato.
+	 * @param description Descripcion
+	 * @param status Estado de notificacion del contrato
+	 * @throws SQLException
+	*/
+	protected void insertContract(Integer id, Integer person, Integer workplace, Integer ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status)
+	throws SQLException {
+
+		Contract contract_ = new Contract();
+		contract_.id = id;
+		contract_.person = person;
+		contract_.workplace = workplace;
+		contract_.ccc = ccc;
+		contract_.start_date = start_date;
+		contract_.end_date = end_date;
+		contract_.calendar = calendar;
+		contract_.document = document;
+		contract_.description = description;
+		contract_.status = status;
+
+		contracts.add(contract_);
+		
+		int contractCount = contracts.size();
+		
+		if ( 137 * contractCount >=  this.maxAllowedPacket ){
+			insertContract(contracts);
+			contracts.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract
+	 * @param person Identificador de la Persona
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param ccc Identificador de la Cuota de Cotizacion
+	 * @param start_date Fecha de inicio del Contrato
+	 * @param end_date Fecha de finalizacion del Contrato
+	 * @param calendar Calendario
+	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract(Integer person, Integer workplace, Integer ccc, Date start_date, Date end_date, InputStream document, String description, Short status)
+	protected int insertContract(Integer person, Integer workplace, Integer ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status)
 	throws SQLException {
 		int id = nextContractId();
 
@@ -33997,6 +43055,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_.ccc = ccc;
 		contract_.start_date = start_date;
 		contract_.end_date = end_date;
+		contract_.calendar = calendar;
 		contract_.document = document;
 		contract_.description = description;
 		contract_.status = status;
@@ -34005,12 +43064,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int contractCount = contracts.size();
 		
-		if ( 127 * contractCount >=  this.maxAllowedPacket ){
+		if ( 137 * contractCount >=  this.maxAllowedPacket ){
 			insertContract(contracts);
 			contracts.clear();
 		} 
 		return id;
 	}
+
 
 	private int offer_detailStmtSize = 0;
 
@@ -34127,8 +43187,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextOffer_detailId() {
+		public int nextOffer_detailId() {
 			return ++this.offer_detailId;
+		} 
+
+		public void setOffer_detailId(Integer offer_detailId) {
+			this.offer_detailId = offer_detailId;
 		} 
 	
 	private void flushOffer_detail(  )
@@ -34138,6 +43202,44 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( offer_detailStmt != null )
 			offer_detailStmt.close();
 	}	
+
+	/**
+	 * Offer_detail
+	 * @param id Identificador unico del Detalle de Presupuesto
+	 * @param offer Identificador del Presupuesto
+	 * @param line Numero de lnea del Detalle dentro del Presupuesto
+	 * @param item Identificador del Articulo
+	 * @param description Descripcin del Articulo
+	 * @param quantity Cantidad del Articulo
+	 * @param price Precio del Articulo
+	 * @param discount_expr Descuentos del Articulo
+	 * @param status Estado del Detalle del Presupuesto
+	 * @throws SQLException
+	*/
+	protected void insertOffer_detail(Integer id, Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
+	throws SQLException {
+
+		Offer_detail offer_detail_ = new Offer_detail();
+		offer_detail_.id = id;
+		offer_detail_.offer = offer;
+		offer_detail_.line = line;
+		offer_detail_.item = item;
+		offer_detail_.description = description;
+		offer_detail_.quantity = quantity;
+		offer_detail_.price = price;
+		offer_detail_.discount_expr = discount_expr;
+		offer_detail_.status = status;
+
+		offer_details.add(offer_detail_);
+		
+		int offer_detailCount = offer_details.size();
+		
+		if ( 1124 * offer_detailCount >=  this.maxAllowedPacket ){
+			insertOffer_detail(offer_details);
+			offer_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Offer_detail
@@ -34177,6 +43279,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int expendituresStmtSize = 0;
 
@@ -34273,8 +43376,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextExpendituresId() {
+		public int nextExpendituresId() {
 			return ++this.expendituresId;
+		} 
+
+		public void setExpendituresId(Integer expendituresId) {
+			this.expendituresId = expendituresId;
 		} 
 	
 	private void flushExpenditures(  )
@@ -34284,6 +43391,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( expendituresStmt != null )
 			expendituresStmt.close();
 	}	
+
+	/**
+	 * Expenditures
+	 * @param id Identificador unico del Coste
+	 * @param resource Identificador del Recurso de Empresa
+	 * @param expenditures_item Identificador del Tipo de Coste
+	 * @param date Fecha del Coste
+	 * @param amount Importe del Coste
+	 * @throws SQLException
+	*/
+	protected void insertExpenditures(Integer id, Integer resource, Integer expenditures_item, Date date, Double amount)
+	throws SQLException {
+
+		Expenditures expenditures_ = new Expenditures();
+		expenditures_.id = id;
+		expenditures_.resource = resource;
+		expenditures_.expenditures_item = expenditures_item;
+		expenditures_.date = date;
+		expenditures_.amount = amount;
+
+		expendituress.add(expenditures_);
+		
+		int expendituresCount = expendituress.size();
+		
+		if ( 55 * expendituresCount >=  this.maxAllowedPacket ){
+			insertExpenditures(expendituress);
+			expendituress.clear();
+		} 
+	}
+
 
 	/**
 	 * Expenditures
@@ -34316,6 +43453,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int amortizationStmtSize = 0;
 
 	private int amortizationInserted = 0;
@@ -34334,7 +43472,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Double amount; 
 		private Short fee_period; 
 		private Double sale_amount; 
-		private InputStream comments; 
+		private String comments; 
 		private String fixed_asset_account; 
 		private String accumulated_account; 
 		private String allocation_account; 
@@ -34403,7 +43541,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( amortization.comments == null )
 				amortizationStmt.setNull(offset++, -1);
 			else
-				amortizationStmt.setAsciiStream(offset++, amortization.comments);
+				amortizationStmt.setString(offset++, amortization.comments);
 			if ( amortization.fixed_asset_account == null )
 				amortizationStmt.setNull(offset++, 1);
 			else
@@ -34456,8 +43594,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAmortizationId() {
+		public int nextAmortizationId() {
 			return ++this.amortizationId;
+		} 
+
+		public void setAmortizationId(Integer amortizationId) {
+			this.amortizationId = amortizationId;
 		} 
 	
 	private void flushAmortization(  )
@@ -34467,6 +43609,54 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( amortizationStmt != null )
 			amortizationStmt.close();
 	}	
+
+	/**
+	 * Amortization
+	 * @param id Identificador unico
+	 * @param description Descripcion del inmovilizado
+	 * @param amortization_type Tipo de Amortizacion
+	 * @param initial_date Fecha de inicio de la Amortizacion
+	 * @param deadline Fecha de baja de la Amortizacion
+	 * @param amount Importe a amortizar.
+	 * @param fee_period Periodo de las cuotas de Amortizacion
+	 * @param sale_amount Importe de la venta
+	 * @param comments Comentarios
+	 * @param fixed_asset_account Cuenta de inmovilizado
+	 * @param accumulated_account Cuenta de Amortizacion acumulada
+	 * @param allocation_account Cuenta para la dotacion de la Amortizacion
+	 * @param percentage Porcentaje de Amortizacion
+	 * @param security_level Nivel de seguridad
+	 * @throws SQLException
+	*/
+	protected void insertAmortization(Integer id, String description, Integer amortization_type, Date initial_date, Date deadline, Double amount, Short fee_period, Double sale_amount, String comments, String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, Short security_level)
+	throws SQLException {
+
+		Amortization amortization_ = new Amortization();
+		amortization_.id = id;
+		amortization_.description = description;
+		amortization_.amortization_type = amortization_type;
+		amortization_.initial_date = initial_date;
+		amortization_.deadline = deadline;
+		amortization_.amount = amount;
+		amortization_.fee_period = fee_period;
+		amortization_.sale_amount = sale_amount;
+		amortization_.comments = comments;
+		amortization_.fixed_asset_account = fixed_asset_account;
+		amortization_.accumulated_account = accumulated_account;
+		amortization_.allocation_account = allocation_account;
+		amortization_.percentage = percentage;
+		amortization_.security_level = security_level;
+
+		amortizations.add(amortization_);
+		
+		int amortizationCount = amortizations.size();
+		
+		if ( 212 * amortizationCount >=  this.maxAllowedPacket ){
+			insertAmortization(amortizations);
+			amortizations.clear();
+		} 
+	}
+
 
 	/**
 	 * Amortization
@@ -34486,7 +43676,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAmortization(String description, Integer amortization_type, Date initial_date, Date deadline, Double amount, Short fee_period, Double sale_amount, InputStream comments, String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, Short security_level)
+	protected int insertAmortization(String description, Integer amortization_type, Date initial_date, Date deadline, Double amount, Short fee_period, Double sale_amount, String comments, String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, Short security_level)
 	throws SQLException {
 		int id = nextAmortizationId();
 
@@ -34517,6 +43707,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int enterpriseStmtSize = 0;
 
 	private int enterpriseInserted = 0;
@@ -34529,6 +43720,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private static class Enterprise {
 		private Integer registry; 
 		private Integer scope; 
+		private Integer calendar; 
 		private Integer agreement; 
 	}
 	
@@ -34540,7 +43732,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( enterpriseStmt != null ) {
 				enterpriseStmt.close();
 			}
-			String values = "(?,?,?)";
+			String values = "(?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -34549,7 +43741,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			enterpriseStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO enterprise (registry,scope,agreement)"  
+				"INSERT INTO enterprise (registry,scope,calendar,agreement)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			enterpriseStmtSize = size;
@@ -34566,6 +43758,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				enterpriseStmt.setNull(offset++, 4);
 			else
 				enterpriseStmt.setInt(offset++, enterprise.scope);
+			if ( enterprise.calendar == null )
+				enterpriseStmt.setNull(offset++, 4);
+			else
+				enterpriseStmt.setInt(offset++, enterprise.calendar);
 			if ( enterprise.agreement == null )
 				enterpriseStmt.setNull(offset++, 4);
 			else
@@ -34592,26 +43788,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Enterprise
 	 * @param registry Registro de la Empresa
 	 * @param scope Identificador del Ambito
+	 * @param calendar Calendario
 	 * @param agreement Convenio
 	 * @throws SQLException
 	*/
-	protected void insertEnterprise(Integer registry, Integer scope, Integer agreement)
+	protected void insertEnterprise(Integer registry, Integer scope, Integer calendar, Integer agreement)
 	throws SQLException {
 
 		Enterprise enterprise_ = new Enterprise();
 		enterprise_.registry = registry;
 		enterprise_.scope = scope;
+		enterprise_.calendar = calendar;
 		enterprise_.agreement = agreement;
 
 		enterprises.add(enterprise_);
 		
 		int enterpriseCount = enterprises.size();
 		
-		if ( 30 * enterpriseCount >=  this.maxAllowedPacket ){
+		if ( 40 * enterpriseCount >=  this.maxAllowedPacket ){
 			insertEnterprise(enterprises);
 			enterprises.clear();
 		} 
 	}
+
+
 
 	private int markStmtSize = 0;
 
@@ -34708,8 +43908,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextMarkId() {
+		public int nextMarkId() {
 			return ++this.markId;
+		} 
+
+		public void setMarkId(Integer markId) {
+			this.markId = markId;
 		} 
 	
 	private void flushMark(  )
@@ -34719,6 +43923,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( markStmt != null )
 			markStmt.close();
 	}	
+
+	/**
+	 * Mark
+	 * @param id Identificador unico
+	 * @param subject Identificador de Asignatura
+	 * @param alumn Identificador de Alumno
+	 * @param evaluation Numero de evaluacion
+	 * @param mark Nota
+	 * @throws SQLException
+	*/
+	protected void insertMark(Integer id, Integer subject, Integer alumn, Short evaluation, Double mark)
+	throws SQLException {
+
+		Mark mark_ = new Mark();
+		mark_.id = id;
+		mark_.subject = subject;
+		mark_.alumn = alumn;
+		mark_.evaluation = evaluation;
+		mark_.mark = mark;
+
+		marks.add(mark_);
+		
+		int markCount = marks.size();
+		
+		if ( 48 * markCount >=  this.maxAllowedPacket ){
+			insertMark(marks);
+			marks.clear();
+		} 
+	}
+
 
 	/**
 	 * Mark
@@ -34751,6 +43985,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int expense_accountStmtSize = 0;
 
 	private int expense_accountInserted = 0;
@@ -34767,7 +44002,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Short status; 
 		private Date issue_date; 
 		private String description; 
-		private InputStream comments; 
+		private String comments; 
 	}
 	
 	private void insertExpense_account( List<Expense_account> expense_accounts )
@@ -34823,7 +44058,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( expense_account.comments == null )
 				expense_accountStmt.setNull(offset++, -1);
 			else
-				expense_accountStmt.setAsciiStream(offset++, expense_account.comments);
+				expense_accountStmt.setString(offset++, expense_account.comments);
 		}
 		expense_accountStmt.executeUpdate();
 		expense_accountInserted += size;
@@ -34856,8 +44091,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextExpense_accountId() {
+		public int nextExpense_accountId() {
 			return ++this.expense_accountId;
+		} 
+
+		public void setExpense_accountId(Integer expense_accountId) {
+			this.expense_accountId = expense_accountId;
 		} 
 	
 	private void flushExpense_account(  )
@@ -34870,6 +44109,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Expense_account
+	 * @param id Identificador unico
+	 * @param registry Registry que realiza los Gastos
+	 * @param expense_holder_type Tipo de Registry
+	 * @param status Estado del Gasto
+	 * @param issue_date Fecha del Gasto
+	 * @param description Descripcion del Gasto
+	 * @param comments Comentarios acerca del Gasto
+	 * @throws SQLException
+	*/
+	protected void insertExpense_account(Integer id, Integer registry, Short expense_holder_type, Short status, Date issue_date, String description, String comments)
+	throws SQLException {
+
+		Expense_account expense_account_ = new Expense_account();
+		expense_account_.id = id;
+		expense_account_.registry = registry;
+		expense_account_.expense_holder_type = expense_holder_type;
+		expense_account_.status = status;
+		expense_account_.issue_date = issue_date;
+		expense_account_.description = description;
+		expense_account_.comments = comments;
+
+		expense_accounts.add(expense_account_);
+		
+		int expense_accountCount = expense_accounts.size();
+		
+		if ( 100 * expense_accountCount >=  this.maxAllowedPacket ){
+			insertExpense_account(expense_accounts);
+			expense_accounts.clear();
+		} 
+	}
+
+
+	/**
+	 * Expense_account
 	 * @param registry Registry que realiza los Gastos
 	 * @param expense_holder_type Tipo de Registry
 	 * @param status Estado del Gasto
@@ -34879,7 +44152,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertExpense_account(Integer registry, Short expense_holder_type, Short status, Date issue_date, String description, InputStream comments)
+	protected int insertExpense_account(Integer registry, Short expense_holder_type, Short status, Date issue_date, String description, String comments)
 	throws SQLException {
 		int id = nextExpense_accountId();
 
@@ -34902,6 +44175,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int catalogue_categoryStmtSize = 0;
 
@@ -34998,8 +44272,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCatalogue_categoryId() {
+		public int nextCatalogue_categoryId() {
 			return ++this.catalogue_categoryId;
+		} 
+
+		public void setCatalogue_categoryId(Integer catalogue_categoryId) {
+			this.catalogue_categoryId = catalogue_categoryId;
 		} 
 	
 	private void flushCatalogue_category(  )
@@ -35009,6 +44287,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( catalogue_categoryStmt != null )
 			catalogue_categoryStmt.close();
 	}	
+
+	/**
+	 * Catalogue_category
+	 * @param id Identificador unico
+	 * @param catalogue Identificador del Catalogo
+	 * @param category Identificador de la Categoria
+	 * @param quantity Cantidad a partir de la cual se aplica el descuento
+	 * @param discount Descuento de la Categoria en el Catalogo
+	 * @throws SQLException
+	*/
+	protected void insertCatalogue_category(Integer id, Integer catalogue, Integer category, Double quantity, Double discount)
+	throws SQLException {
+
+		Catalogue_category catalogue_category_ = new Catalogue_category();
+		catalogue_category_.id = id;
+		catalogue_category_.catalogue = catalogue;
+		catalogue_category_.category = category;
+		catalogue_category_.quantity = quantity;
+		catalogue_category_.discount = discount;
+
+		catalogue_categorys.add(catalogue_category_);
+		
+		int catalogue_categoryCount = catalogue_categorys.size();
+		
+		if ( 58 * catalogue_categoryCount >=  this.maxAllowedPacket ){
+			insertCatalogue_category(catalogue_categorys);
+			catalogue_categorys.clear();
+		} 
+	}
+
 
 	/**
 	 * Catalogue_category
@@ -35040,6 +44348,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int lh_contractStmtSize = 0;
 
@@ -35141,8 +44450,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextLh_contractId() {
+		public int nextLh_contractId() {
 			return ++this.lh_contractId;
+		} 
+
+		public void setLh_contractId(Integer lh_contractId) {
+			this.lh_contractId = lh_contractId;
 		} 
 	
 	private void flushLh_contract(  )
@@ -35152,6 +44465,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( lh_contractStmt != null )
 			lh_contractStmt.close();
 	}	
+
+	/**
+	 * Lh_contract
+	 * @param id Identificador unico del Contrato
+	 * @param employee Identificador del Empleado
+	 * @param startingdate Fecha de inicio del Contrato
+	 * @param endingdate Fecha de finalizacion del Contrato
+	 * @param contract_type Tipo de Contrato
+	 * @param gross_salary Salario bruto del Contrato
+	 * @throws SQLException
+	*/
+	protected void insertLh_contract(Integer id, Integer employee, Date startingdate, Date endingdate, Short contract_type, Double gross_salary)
+	throws SQLException {
+
+		Lh_contract lh_contract_ = new Lh_contract();
+		lh_contract_.id = id;
+		lh_contract_.employee = employee;
+		lh_contract_.startingdate = startingdate;
+		lh_contract_.endingdate = endingdate;
+		lh_contract_.contract_type = contract_type;
+		lh_contract_.gross_salary = gross_salary;
+
+		lh_contracts.add(lh_contract_);
+		
+		int lh_contractCount = lh_contracts.size();
+		
+		if ( 58 * lh_contractCount >=  this.maxAllowedPacket ){
+			insertLh_contract(lh_contracts);
+			lh_contracts.clear();
+		} 
+	}
+
 
 	/**
 	 * Lh_contract
@@ -35185,6 +44530,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_summaryStmtSize = 0;
 
@@ -35291,8 +44637,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_summaryId() {
+		public int nextAccount_summaryId() {
 			return ++this.account_summaryId;
+		} 
+
+		public void setAccount_summaryId(Integer account_summaryId) {
+			this.account_summaryId = account_summaryId;
 		} 
 	
 	private void flushAccount_summary(  )
@@ -35302,6 +44652,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_summaryStmt != null )
 			account_summaryStmt.close();
 	}	
+
+	/**
+	 * Account_summary
+	 * @param id Identificador unico del Acumulado
+	 * @param account_period Ejercicio Contable del Acumulado
+	 * @param account Cuenta Contable del Acumulado
+	 * @param security_level Nivel de seguridad del Acumulado
+	 * @param entry_date Fecha del Acumulado
+	 * @param debit Debe del Acumulado
+	 * @param credit Haber del Acumulado
+	 * @throws SQLException
+	*/
+	protected void insertAccount_summary(Integer id, String account_period, String account, Short security_level, Date entry_date, Double debit, Double credit)
+	throws SQLException {
+
+		Account_summary account_summary_ = new Account_summary();
+		account_summary_.id = id;
+		account_summary_.account_period = account_period;
+		account_summary_.account = account;
+		account_summary_.security_level = security_level;
+		account_summary_.entry_date = entry_date;
+		account_summary_.debit = debit;
+		account_summary_.credit = credit;
+
+		account_summarys.add(account_summary_);
+		
+		int account_summaryCount = account_summarys.size();
+		
+		if ( 83 * account_summaryCount >=  this.maxAllowedPacket ){
+			insertAccount_summary(account_summarys);
+			account_summarys.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_summary
@@ -35337,6 +44721,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int lh_courseStmtSize = 0;
 
@@ -35433,8 +44818,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextLh_courseId() {
+		public int nextLh_courseId() {
 			return ++this.lh_courseId;
+		} 
+
+		public void setLh_courseId(Integer lh_courseId) {
+			this.lh_courseId = lh_courseId;
 		} 
 	
 	private void flushLh_course(  )
@@ -35444,6 +44833,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( lh_courseStmt != null )
 			lh_courseStmt.close();
 	}	
+
+	/**
+	 * Lh_course
+	 * @param id Identificador unico del Curso
+	 * @param employee Identificador del Empleado
+	 * @param startingdate Fecha de inicio del Curso
+	 * @param endingdate Fecha de finalizacion del Curso
+	 * @param description Descripcion del Curso
+	 * @throws SQLException
+	*/
+	protected void insertLh_course(Integer id, Integer employee, Date startingdate, Date endingdate, String description)
+	throws SQLException {
+
+		Lh_course lh_course_ = new Lh_course();
+		lh_course_.id = id;
+		lh_course_.employee = employee;
+		lh_course_.startingdate = startingdate;
+		lh_course_.endingdate = endingdate;
+		lh_course_.description = description;
+
+		lh_courses.add(lh_course_);
+		
+		int lh_courseCount = lh_courses.size();
+		
+		if ( 104 * lh_courseCount >=  this.maxAllowedPacket ){
+			insertLh_course(lh_courses);
+			lh_courses.clear();
+		} 
+	}
+
 
 	/**
 	 * Lh_course
@@ -35475,6 +44894,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int companyStmtSize = 0;
 
@@ -35586,6 +45006,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int account_entry_bank_statementStmtSize = 0;
 
 	private int account_entry_bank_statementInserted = 0;
@@ -35671,8 +45093,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_entry_bank_statementId() {
+		public int nextAccount_entry_bank_statementId() {
 			return ++this.account_entry_bank_statementId;
+		} 
+
+		public void setAccount_entry_bank_statementId(Integer account_entry_bank_statementId) {
+			this.account_entry_bank_statementId = account_entry_bank_statementId;
 		} 
 	
 	private void flushAccount_entry_bank_statement(  )
@@ -35682,6 +45108,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_entry_bank_statementStmt != null )
 			account_entry_bank_statementStmt.close();
 	}	
+
+	/**
+	 * Account_entry_bank_statement
+	 * @param id Identificador unico
+	 * @param account_entry Identificador de Asiento
+	 * @param bank_statement Identificador de Extracto bancario
+	 * @throws SQLException
+	*/
+	protected void insertAccount_entry_bank_statement(Integer id, Integer account_entry, Integer bank_statement)
+	throws SQLException {
+
+		Account_entry_bank_statement account_entry_bank_statement_ = new Account_entry_bank_statement();
+		account_entry_bank_statement_.id = id;
+		account_entry_bank_statement_.account_entry = account_entry;
+		account_entry_bank_statement_.bank_statement = bank_statement;
+
+		account_entry_bank_statements.add(account_entry_bank_statement_);
+		
+		int account_entry_bank_statementCount = account_entry_bank_statements.size();
+		
+		if ( 30 * account_entry_bank_statementCount >=  this.maxAllowedPacket ){
+			insertAccount_entry_bank_statement(account_entry_bank_statements);
+			account_entry_bank_statements.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_entry_bank_statement
@@ -35709,6 +45161,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int lh_workStmtSize = 0;
 
@@ -35805,8 +45258,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextLh_workId() {
+		public int nextLh_workId() {
 			return ++this.lh_workId;
+		} 
+
+		public void setLh_workId(Integer lh_workId) {
+			this.lh_workId = lh_workId;
 		} 
 	
 	private void flushLh_work(  )
@@ -35816,6 +45273,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( lh_workStmt != null )
 			lh_workStmt.close();
 	}	
+
+	/**
+	 * Lh_work
+	 * @param id Identificador unico del Trabajo
+	 * @param employee Identificador del Empleado
+	 * @param startingdate Fecha de inicio del Trabajo
+	 * @param endingdate Fecha de finalizacion del Trabajo
+	 * @param description Descripcion del Trabajo
+	 * @throws SQLException
+	*/
+	protected void insertLh_work(Integer id, Integer employee, Date startingdate, Date endingdate, String description)
+	throws SQLException {
+
+		Lh_work lh_work_ = new Lh_work();
+		lh_work_.id = id;
+		lh_work_.employee = employee;
+		lh_work_.startingdate = startingdate;
+		lh_work_.endingdate = endingdate;
+		lh_work_.description = description;
+
+		lh_works.add(lh_work_);
+		
+		int lh_workCount = lh_works.size();
+		
+		if ( 104 * lh_workCount >=  this.maxAllowedPacket ){
+			insertLh_work(lh_works);
+			lh_works.clear();
+		} 
+	}
+
 
 	/**
 	 * Lh_work
@@ -35847,6 +45334,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int scaleStmtSize = 0;
 
@@ -35978,8 +45466,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextScaleId() {
+		public int nextScaleId() {
 			return ++this.scaleId;
+		} 
+
+		public void setScaleId(Integer scaleId) {
+			this.scaleId = scaleId;
 		} 
 	
 	private void flushScale(  )
@@ -35989,6 +45481,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( scaleStmt != null )
 			scaleStmt.close();
 	}	
+
+	/**
+	 * Scale
+	 * @param id Identificador unico de la Transferencia de datos entre Balanzas y Aon
+	 * @param scale_model Modelo de Balanza
+	 * @param program_path Ruta donde se encuentra la base de datos de la Balanza
+	 * @param inidate Fecha de inicio de Transferencia de datos
+	 * @param enddate Fecha de fin de Transferencia de datos
+	 * @param serie Serie de Albaran para la importacion de albaranes
+	 * @param code1 Primer codigo de control de Balanza
+	 * @param code2 Segundo codigo de control de Balanza
+	 * @param code3 Tercer codigo de control de Balanza
+	 * @param code4 Cuarto codigo de control de Balanza
+	 * @param code5 Quinto codigo de control de la Balanza
+	 * @param verified Indica si esta verificado o no
+	 * @throws SQLException
+	*/
+	protected void insertScale(Integer id, Short scale_model, String program_path, Date inidate, Date enddate, String serie, String code1, String code2, String code3, String code4, String code5, Boolean verified)
+	throws SQLException {
+
+		Scale scale_ = new Scale();
+		scale_.id = id;
+		scale_.scale_model = scale_model;
+		scale_.program_path = program_path;
+		scale_.inidate = inidate;
+		scale_.enddate = enddate;
+		scale_.serie = serie;
+		scale_.code1 = code1;
+		scale_.code2 = code2;
+		scale_.code3 = code3;
+		scale_.code4 = code4;
+		scale_.code5 = code5;
+		scale_.verified = verified;
+
+		scales.add(scale_);
+		
+		int scaleCount = scales.size();
+		
+		if ( 360 * scaleCount >=  this.maxAllowedPacket ){
+			insertScale(scales);
+			scales.clear();
+		} 
+	}
+
 
 	/**
 	 * Scale
@@ -36034,6 +45570,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int commission_type_commissionStmtSize = 0;
 
@@ -36120,8 +45657,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCommission_type_commissionId() {
+		public int nextCommission_type_commissionId() {
 			return ++this.commission_type_commissionId;
+		} 
+
+		public void setCommission_type_commissionId(Integer commission_type_commissionId) {
+			this.commission_type_commissionId = commission_type_commissionId;
 		} 
 	
 	private void flushCommission_type_commission(  )
@@ -36131,6 +45672,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( commission_type_commissionStmt != null )
 			commission_type_commissionStmt.close();
 	}	
+
+	/**
+	 * Commission_type_commission
+	 * @param id Identificador unico
+	 * @param commission_type Identificador del Tipo de Comision
+	 * @param commission Identificador de la Comision
+	 * @throws SQLException
+	*/
+	protected void insertCommission_type_commission(Integer id, Integer commission_type, Integer commission)
+	throws SQLException {
+
+		Commission_type_commission commission_type_commission_ = new Commission_type_commission();
+		commission_type_commission_.id = id;
+		commission_type_commission_.commission_type = commission_type;
+		commission_type_commission_.commission = commission;
+
+		commission_type_commissions.add(commission_type_commission_);
+		
+		int commission_type_commissionCount = commission_type_commissions.size();
+		
+		if ( 30 * commission_type_commissionCount >=  this.maxAllowedPacket ){
+			insertCommission_type_commission(commission_type_commissions);
+			commission_type_commissions.clear();
+		} 
+	}
+
 
 	/**
 	 * Commission_type_commission
@@ -36158,6 +45725,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int inventory_detailStmtSize = 0;
 
@@ -36259,8 +45827,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInventory_detailId() {
+		public int nextInventory_detailId() {
 			return ++this.inventory_detailId;
+		} 
+
+		public void setInventory_detailId(Integer inventory_detailId) {
+			this.inventory_detailId = inventory_detailId;
 		} 
 	
 	private void flushInventory_detail(  )
@@ -36270,6 +45842,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( inventory_detailStmt != null )
 			inventory_detailStmt.close();
 	}	
+
+	/**
+	 * Inventory_detail
+	 * @param id Identificador unico del Detalle del Inventario
+	 * @param inventory Identificador de Inventario
+	 * @param item Articulo Inventariado
+	 * @param actual_quantity Cantidad actual del Articulo Inventariado
+	 * @param real_quantity Cantidad real del Articulo Inventariado
+	 * @param cost Coste del Articulo Inventariado
+	 * @throws SQLException
+	*/
+	protected void insertInventory_detail(Integer id, Integer inventory, Integer item, Double actual_quantity, Double real_quantity, Double cost)
+	throws SQLException {
+
+		Inventory_detail inventory_detail_ = new Inventory_detail();
+		inventory_detail_.id = id;
+		inventory_detail_.inventory = inventory;
+		inventory_detail_.item = item;
+		inventory_detail_.actual_quantity = actual_quantity;
+		inventory_detail_.real_quantity = real_quantity;
+		inventory_detail_.cost = cost;
+
+		inventory_details.add(inventory_detail_);
+		
+		int inventory_detailCount = inventory_details.size();
+		
+		if ( 75 * inventory_detailCount >=  this.maxAllowedPacket ){
+			insertInventory_detail(inventory_details);
+			inventory_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Inventory_detail
@@ -36303,6 +45907,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int scopeStmtSize = 0;
 
@@ -36384,8 +45989,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextScopeId() {
+		public int nextScopeId() {
 			return ++this.scopeId;
+		} 
+
+		public void setScopeId(Integer scopeId) {
+			this.scopeId = scopeId;
 		} 
 	
 	private void flushScope(  )
@@ -36395,6 +46004,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( scopeStmt != null )
 			scopeStmt.close();
 	}	
+
+	/**
+	 * Scope
+	 * @param id Identificador unico
+	 * @param description Descripcion del Ambito
+	 * @throws SQLException
+	*/
+	protected void insertScope(Integer id, String description)
+	throws SQLException {
+
+		Scope scope_ = new Scope();
+		scope_.id = id;
+		scope_.description = description;
+
+		scopes.add(scope_);
+		
+		int scopeCount = scopes.size();
+		
+		if ( 26 * scopeCount >=  this.maxAllowedPacket ){
+			insertScope(scopes);
+			scopes.clear();
+		} 
+	}
+
 
 	/**
 	 * Scope
@@ -36420,6 +46053,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int target_supplierStmtSize = 0;
 
@@ -36551,8 +46185,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTarget_supplierId() {
+		public int nextTarget_supplierId() {
 			return ++this.target_supplierId;
+		} 
+
+		public void setTarget_supplierId(Integer target_supplierId) {
+			this.target_supplierId = target_supplierId;
 		} 
 	
 	private void flushTarget_supplier(  )
@@ -36562,6 +46200,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( target_supplierStmt != null )
 			target_supplierStmt.close();
 	}	
+
+	/**
+	 * Target_supplier
+	 * @param id Identificador unico
+	 * @param target Identificador del Cliente Potencial
+	 * @param supplier Identificador del Proveedor
+	 * @param target_external_code Codigo del Cliente Potencial para el Proveedor
+	 * @param tariff Identificador de Tarifa
+	 * @param pay_method Identificador de la Forma de Pago
+	 * @param number_of_pymnts Numero de Vencimientos
+	 * @param days_to_first_pymnt Dias al primer Vencimiento
+	 * @param days_between_pymnts Dias entre Vencimientos
+	 * @param pymnt_days Dias de pago
+	 * @param bank Identificador de la Entidad Bancaria
+	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @throws SQLException
+	*/
+	protected void insertTarget_supplier(Integer id, Integer target, Integer supplier, String target_external_code, Integer tariff, Integer pay_method, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	throws SQLException {
+
+		Target_supplier target_supplier_ = new Target_supplier();
+		target_supplier_.id = id;
+		target_supplier_.target = target;
+		target_supplier_.supplier = supplier;
+		target_supplier_.target_external_code = target_external_code;
+		target_supplier_.tariff = tariff;
+		target_supplier_.pay_method = pay_method;
+		target_supplier_.number_of_pymnts = number_of_pymnts;
+		target_supplier_.days_to_first_pymnt = days_to_first_pymnt;
+		target_supplier_.days_between_pymnts = days_between_pymnts;
+		target_supplier_.pymnt_days = pymnt_days;
+		target_supplier_.bank = bank;
+		target_supplier_.bank_account = bank_account;
+
+		target_suppliers.add(target_supplier_);
+		
+		int target_supplierCount = target_suppliers.size();
+		
+		if ( 128 * target_supplierCount >=  this.maxAllowedPacket ){
+			insertTarget_supplier(target_suppliers);
+			target_suppliers.clear();
+		} 
+	}
+
 
 	/**
 	 * Target_supplier
@@ -36607,6 +46289,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int customer_segmentStmtSize = 0;
 
@@ -36688,8 +46371,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCustomer_segmentId() {
+		public int nextCustomer_segmentId() {
 			return ++this.customer_segmentId;
+		} 
+
+		public void setCustomer_segmentId(Integer customer_segmentId) {
+			this.customer_segmentId = customer_segmentId;
 		} 
 	
 	private void flushCustomer_segment(  )
@@ -36699,6 +46386,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( customer_segmentStmt != null )
 			customer_segmentStmt.close();
 	}	
+
+	/**
+	 * Customer_segment
+	 * @param id Identificador unico del Segmento
+	 * @param description Descripcion del Segmento
+	 * @throws SQLException
+	*/
+	protected void insertCustomer_segment(Integer id, String description)
+	throws SQLException {
+
+		Customer_segment customer_segment_ = new Customer_segment();
+		customer_segment_.id = id;
+		customer_segment_.description = description;
+
+		customer_segments.add(customer_segment_);
+		
+		int customer_segmentCount = customer_segments.size();
+		
+		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
+			insertCustomer_segment(customer_segments);
+			customer_segments.clear();
+		} 
+	}
+
 
 	/**
 	 * Customer_segment
@@ -36724,6 +46435,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int contract_batch_detailStmtSize = 0;
 
@@ -36810,8 +46522,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextContract_batch_detailId() {
+		public int nextContract_batch_detailId() {
 			return ++this.contract_batch_detailId;
+		} 
+
+		public void setContract_batch_detailId(Integer contract_batch_detailId) {
+			this.contract_batch_detailId = contract_batch_detailId;
 		} 
 	
 	private void flushContract_batch_detail(  )
@@ -36821,6 +46537,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( contract_batch_detailStmt != null )
 			contract_batch_detailStmt.close();
 	}	
+
+	/**
+	 * Contract_batch_detail
+	 * @param id Identificador unico del detalle de la remesa
+	 * @param contract_batch Identificador unico de la remesa de contratos
+	 * @param contract Identificador unico del contrato
+	 * @throws SQLException
+	*/
+	protected void insertContract_batch_detail(Integer id, Integer contract_batch, Integer contract)
+	throws SQLException {
+
+		Contract_batch_detail contract_batch_detail_ = new Contract_batch_detail();
+		contract_batch_detail_.id = id;
+		contract_batch_detail_.contract_batch = contract_batch;
+		contract_batch_detail_.contract = contract;
+
+		contract_batch_details.add(contract_batch_detail_);
+		
+		int contract_batch_detailCount = contract_batch_details.size();
+		
+		if ( 30 * contract_batch_detailCount >=  this.maxAllowedPacket ){
+			insertContract_batch_detail(contract_batch_details);
+			contract_batch_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Contract_batch_detail
@@ -36848,6 +46590,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int auto_conceptStmtSize = 0;
 
@@ -36929,8 +46672,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAuto_conceptId() {
+		public int nextAuto_conceptId() {
 			return ++this.auto_conceptId;
+		} 
+
+		public void setAuto_conceptId(Integer auto_conceptId) {
+			this.auto_conceptId = auto_conceptId;
 		} 
 	
 	private void flushAuto_concept(  )
@@ -36940,6 +46687,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( auto_conceptStmt != null )
 			auto_conceptStmt.close();
 	}	
+
+	/**
+	 * Auto_concept
+	 * @param id Identificador unico del Concepto Automatico
+	 * @param description Descripcion del Concepto Automatico
+	 * @throws SQLException
+	*/
+	protected void insertAuto_concept(Integer id, String description)
+	throws SQLException {
+
+		Auto_concept auto_concept_ = new Auto_concept();
+		auto_concept_.id = id;
+		auto_concept_.description = description;
+
+		auto_concepts.add(auto_concept_);
+		
+		int auto_conceptCount = auto_concepts.size();
+		
+		if ( 42 * auto_conceptCount >=  this.maxAllowedPacket ){
+			insertAuto_concept(auto_concepts);
+			auto_concepts.clear();
+		} 
+	}
+
 
 	/**
 	 * Auto_concept
@@ -36966,6 +46737,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int web_info_page_detailStmtSize = 0;
 
 	private int web_info_page_detailInserted = 0;
@@ -36980,7 +46752,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer web_info_page; 
 		private String title; 
 		private Integer layout; 
-		private InputStream content; 
+		private String content; 
 		private String extra; 
 	}
 	
@@ -37029,7 +46801,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( web_info_page_detail.content == null )
 				web_info_page_detailStmt.setNull(offset++, -1);
 			else
-				web_info_page_detailStmt.setAsciiStream(offset++, web_info_page_detail.content);
+				web_info_page_detailStmt.setString(offset++, web_info_page_detail.content);
 			if ( web_info_page_detail.extra == null )
 				web_info_page_detailStmt.setNull(offset++, 12);
 			else
@@ -37066,8 +46838,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextWeb_info_page_detailId() {
+		public int nextWeb_info_page_detailId() {
 			return ++this.web_info_page_detailId;
+		} 
+
+		public void setWeb_info_page_detailId(Integer web_info_page_detailId) {
+			this.web_info_page_detailId = web_info_page_detailId;
 		} 
 	
 	private void flushWeb_info_page_detail(  )
@@ -37080,6 +46856,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Web_info_page_detail
+	 * @param id Codigo del Detalle de la Pagina
+	 * @param web_info_page Identificador de la Pagina a la que corresponde el detalle
+	 * @param title Titulo del contenido de la Pagina
+	 * @param layout Tipo de plantilla
+	 * @param content Texto del contenido de la Pagina
+	 * @param extra Campo reservado a otros datos de la Pagina
+	 * @throws SQLException
+	*/
+	protected void insertWeb_info_page_detail(Integer id, Integer web_info_page, String title, Integer layout, String content, String extra)
+	throws SQLException {
+
+		Web_info_page_detail web_info_page_detail_ = new Web_info_page_detail();
+		web_info_page_detail_.id = id;
+		web_info_page_detail_.web_info_page = web_info_page;
+		web_info_page_detail_.title = title;
+		web_info_page_detail_.layout = layout;
+		web_info_page_detail_.content = content;
+		web_info_page_detail_.extra = extra;
+
+		web_info_page_details.add(web_info_page_detail_);
+		
+		int web_info_page_detailCount = web_info_page_details.size();
+		
+		if ( 540 * web_info_page_detailCount >=  this.maxAllowedPacket ){
+			insertWeb_info_page_detail(web_info_page_details);
+			web_info_page_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Web_info_page_detail
 	 * @param web_info_page Identificador de la Pagina a la que corresponde el detalle
 	 * @param title Titulo del contenido de la Pagina
 	 * @param layout Tipo de plantilla
@@ -37088,7 +46896,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWeb_info_page_detail(Integer web_info_page, String title, Integer layout, InputStream content, String extra)
+	protected int insertWeb_info_page_detail(Integer web_info_page, String title, Integer layout, String content, String extra)
 	throws SQLException {
 		int id = nextWeb_info_page_detailId();
 
@@ -37110,6 +46918,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int job_typeStmtSize = 0;
 
@@ -37191,8 +47000,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextJob_typeId() {
+		public int nextJob_typeId() {
 			return ++this.job_typeId;
+		} 
+
+		public void setJob_typeId(Integer job_typeId) {
+			this.job_typeId = job_typeId;
 		} 
 	
 	private void flushJob_type(  )
@@ -37202,6 +47015,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( job_typeStmt != null )
 			job_typeStmt.close();
 	}	
+
+	/**
+	 * Job_type
+	 * @param id Identificador unico del Tipo de Trabajo
+	 * @param description Descripcion del Tipo de Trabajo
+	 * @throws SQLException
+	*/
+	protected void insertJob_type(Integer id, String description)
+	throws SQLException {
+
+		Job_type job_type_ = new Job_type();
+		job_type_.id = id;
+		job_type_.description = description;
+
+		job_types.add(job_type_);
+		
+		int job_typeCount = job_types.size();
+		
+		if ( 74 * job_typeCount >=  this.maxAllowedPacket ){
+			insertJob_type(job_types);
+			job_types.clear();
+		} 
+	}
+
 
 	/**
 	 * Job_type
@@ -37227,6 +47064,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int scale_relationStmtSize = 0;
 
@@ -37328,8 +47166,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextScale_relationId() {
+		public int nextScale_relationId() {
 			return ++this.scale_relationId;
+		} 
+
+		public void setScale_relationId(Integer scale_relationId) {
+			this.scale_relationId = scale_relationId;
 		} 
 	
 	private void flushScale_relation(  )
@@ -37339,6 +47181,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( scale_relationStmt != null )
 			scale_relationStmt.close();
 	}	
+
+	/**
+	 * Scale_relation
+	 * @param id Identificador unico de la Relacion entre tablas de Balanzas y Aon
+	 * @param aon_id Identificador de la tabla en Aon
+	 * @param scale_id1 Primer identificador de la tabla en la Balanza
+	 * @param scale_id2 Segundo identificador de la tabla en la Balanza
+	 * @param type Indica el tipo de tabla que se esta relacionando
+	 * @param scale_model Modelo de Balanza
+	 * @throws SQLException
+	*/
+	protected void insertScale_relation(Integer id, Integer aon_id, String scale_id1, String scale_id2, String type, Short scale_model)
+	throws SQLException {
+
+		Scale_relation scale_relation_ = new Scale_relation();
+		scale_relation_.id = id;
+		scale_relation_.aon_id = aon_id;
+		scale_relation_.scale_id1 = scale_id1;
+		scale_relation_.scale_id2 = scale_id2;
+		scale_relation_.type = type;
+		scale_relation_.scale_model = scale_model;
+
+		scale_relations.add(scale_relation_);
+		
+		int scale_relationCount = scale_relations.size();
+		
+		if ( 44 * scale_relationCount >=  this.maxAllowedPacket ){
+			insertScale_relation(scale_relations);
+			scale_relations.clear();
+		} 
+	}
+
 
 	/**
 	 * Scale_relation
@@ -37372,6 +47246,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int campaign_dossierStmtSize = 0;
 
@@ -37458,8 +47333,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCampaign_dossierId() {
+		public int nextCampaign_dossierId() {
 			return ++this.campaign_dossierId;
+		} 
+
+		public void setCampaign_dossierId(Integer campaign_dossierId) {
+			this.campaign_dossierId = campaign_dossierId;
 		} 
 	
 	private void flushCampaign_dossier(  )
@@ -37469,6 +47348,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( campaign_dossierStmt != null )
 			campaign_dossierStmt.close();
 	}	
+
+	/**
+	 * Campaign_dossier
+	 * @param id Identificador unico de la Relacion de Campaas y Expedientes
+	 * @param campaign Identificador de la Campaa
+	 * @param dossier Identificador del Expediente
+	 * @throws SQLException
+	*/
+	protected void insertCampaign_dossier(Integer id, Integer campaign, Integer dossier)
+	throws SQLException {
+
+		Campaign_dossier campaign_dossier_ = new Campaign_dossier();
+		campaign_dossier_.id = id;
+		campaign_dossier_.campaign = campaign;
+		campaign_dossier_.dossier = dossier;
+
+		campaign_dossiers.add(campaign_dossier_);
+		
+		int campaign_dossierCount = campaign_dossiers.size();
+		
+		if ( 30 * campaign_dossierCount >=  this.maxAllowedPacket ){
+			insertCampaign_dossier(campaign_dossiers);
+			campaign_dossiers.clear();
+		} 
+	}
+
 
 	/**
 	 * Campaign_dossier
@@ -37496,6 +47401,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int tariffStmtSize = 0;
 
@@ -37577,8 +47483,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTariffId() {
+		public int nextTariffId() {
 			return ++this.tariffId;
+		} 
+
+		public void setTariffId(Integer tariffId) {
+			this.tariffId = tariffId;
 		} 
 	
 	private void flushTariff(  )
@@ -37588,6 +47498,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( tariffStmt != null )
 			tariffStmt.close();
 	}	
+
+	/**
+	 * Tariff
+	 * @param id Identificador unico de la Tarifa
+	 * @param name Nombre de la Tarifa
+	 * @throws SQLException
+	*/
+	protected void insertTariff(Integer id, String name)
+	throws SQLException {
+
+		Tariff tariff_ = new Tariff();
+		tariff_.id = id;
+		tariff_.name = name;
+
+		tariffs.add(tariff_);
+		
+		int tariffCount = tariffs.size();
+		
+		if ( 42 * tariffCount >=  this.maxAllowedPacket ){
+			insertTariff(tariffs);
+			tariffs.clear();
+		} 
+	}
+
 
 	/**
 	 * Tariff
@@ -37613,6 +47547,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int invoice_addressStmtSize = 0;
 
@@ -37719,8 +47654,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextInvoice_addressId() {
+		public int nextInvoice_addressId() {
 			return ++this.invoice_addressId;
+		} 
+
+		public void setInvoice_addressId(Integer invoice_addressId) {
+			this.invoice_addressId = invoice_addressId;
 		} 
 	
 	private void flushInvoice_address(  )
@@ -37730,6 +47669,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( invoice_addressStmt != null )
 			invoice_addressStmt.close();
 	}	
+
+	/**
+	 * Invoice_address
+	 * @param id Identificador unico
+	 * @param invoice Identificador de la Factura
+	 * @param address Primera parte de la Direccion
+	 * @param address2 Segunda parte de la Direccion
+	 * @param zip Codigo Postal
+	 * @param city Localidad
+	 * @param geozone Identificador de la Zona Geografica
+	 * @throws SQLException
+	*/
+	protected void insertInvoice_address(Integer id, Integer invoice, String address, String address2, String zip, String city, Integer geozone)
+	throws SQLException {
+
+		Invoice_address invoice_address_ = new Invoice_address();
+		invoice_address_.id = id;
+		invoice_address_.invoice = invoice;
+		invoice_address_.address = address;
+		invoice_address_.address2 = address2;
+		invoice_address_.zip = zip;
+		invoice_address_.city = city;
+		invoice_address_.geozone = geozone;
+
+		invoice_addresss.add(invoice_address_);
+		
+		int invoice_addressCount = invoice_addresss.size();
+		
+		if ( 181 * invoice_addressCount >=  this.maxAllowedPacket ){
+			insertInvoice_address(invoice_addresss);
+			invoice_addresss.clear();
+		} 
+	}
+
 
 	/**
 	 * Invoice_address
@@ -37765,6 +47738,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int message_logStmtSize = 0;
 
@@ -37876,8 +47850,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextMessage_logId() {
+		public int nextMessage_logId() {
 			return ++this.message_logId;
+		} 
+
+		public void setMessage_logId(Integer message_logId) {
+			this.message_logId = message_logId;
 		} 
 	
 	private void flushMessage_log(  )
@@ -37887,6 +47865,42 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( message_logStmt != null )
 			message_logStmt.close();
 	}	
+
+	/**
+	 * Message_log
+	 * @param id Identificador unico
+	 * @param message_id Identificador del Mensaje para el servidor de Esendex
+	 * @param message_content Identificador del Contenido del Mensaje
+	 * @param recipient Destinatario del Mensaje
+	 * @param type Tipo de Mensaje
+	 * @param sent_date Fecha y hora de envio del Mensaje
+	 * @param message_parts Numero de partes que componen el Mensaje
+	 * @param username Usuario que envia el mensaje
+	 * @throws SQLException
+	*/
+	protected void insertMessage_log(Integer id, String message_id, Integer message_content, String recipient, String type, Timestamp sent_date, Short message_parts, String username)
+	throws SQLException {
+
+		Message_log message_log_ = new Message_log();
+		message_log_.id = id;
+		message_log_.message_id = message_id;
+		message_log_.message_content = message_content;
+		message_log_.recipient = recipient;
+		message_log_.type = type;
+		message_log_.sent_date = sent_date;
+		message_log_.message_parts = message_parts;
+		message_log_.username = username;
+
+		message_logs.add(message_log_);
+		
+		int message_logCount = message_logs.size();
+		
+		if ( 212 * message_logCount >=  this.maxAllowedPacket ){
+			insertMessage_log(message_logs);
+			message_logs.clear();
+		} 
+	}
+
 
 	/**
 	 * Message_log
@@ -37924,6 +47938,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int applicationStmtSize = 0;
 
@@ -38010,8 +48025,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextApplicationId() {
+		public int nextApplicationId() {
 			return ++this.applicationId;
+		} 
+
+		public void setApplicationId(Integer applicationId) {
+			this.applicationId = applicationId;
 		} 
 	
 	private void flushApplication(  )
@@ -38021,6 +48040,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( applicationStmt != null )
 			applicationStmt.close();
 	}	
+
+	/**
+	 * Application
+	 * @param id Identificador unico
+	 * @param audit_level Nivel de auditoria
+	 * @param name Nombre de la Aplicacion
+	 * @throws SQLException
+	*/
+	protected void insertApplication(Integer id, Short audit_level, String name)
+	throws SQLException {
+
+		Application application_ = new Application();
+		application_.id = id;
+		application_.audit_level = audit_level;
+		application_.name = name;
+
+		applications.add(application_);
+		
+		int applicationCount = applications.size();
+		
+		if ( 77 * applicationCount >=  this.maxAllowedPacket ){
+			insertApplication(applications);
+			applications.clear();
+		} 
+	}
+
 
 	/**
 	 * Application
@@ -38048,6 +48093,180 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
+
+	private int contract_calendar_eventStmtSize = 0;
+
+	private int contract_calendar_eventInserted = 0;
+
+	private List<Contract_calendar_event> contract_calendar_events = 
+		new LinkedList<Contract_calendar_event>();
+
+	private PreparedStatement contract_calendar_eventStmt = null;
+
+	private static class Contract_calendar_event {
+		private Integer id; 
+		private Integer contract; 
+		private Date date; 
+		private Short type; 
+		private Double duration; 
+	}
+	
+	private void insertContract_calendar_event( List<Contract_calendar_event> contract_calendar_events )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contract_calendar_events.size();
+		if ( contract_calendar_eventStmtSize != size ) {
+			if ( contract_calendar_eventStmt != null ) {
+				contract_calendar_eventStmt.close();
+			}
+			String values = "(?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contract_calendar_eventStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contract_calendar_event (id,contract,date,type,duration)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contract_calendar_eventStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contract_calendar_event contract_calendar_event : contract_calendar_events) {
+			if ( contract_calendar_event.id == null )
+				contract_calendar_eventStmt.setNull(offset++, 4);
+			else
+				contract_calendar_eventStmt.setInt(offset++, contract_calendar_event.id);
+			if ( contract_calendar_event.contract == null )
+				contract_calendar_eventStmt.setNull(offset++, 4);
+			else
+				contract_calendar_eventStmt.setInt(offset++, contract_calendar_event.contract);
+			if ( contract_calendar_event.date == null )
+				contract_calendar_eventStmt.setNull(offset++, 91);
+			else
+				contract_calendar_eventStmt.setDate(offset++, contract_calendar_event.date);
+			if ( contract_calendar_event.type == null )
+				contract_calendar_eventStmt.setNull(offset++, -6);
+			else
+				contract_calendar_eventStmt.setShort(offset++, contract_calendar_event.type);
+			if ( contract_calendar_event.duration == null )
+				contract_calendar_eventStmt.setNull(offset++, 8);
+			else
+				contract_calendar_eventStmt.setDouble(offset++, contract_calendar_event.duration);
+		}
+		contract_calendar_eventStmt.executeUpdate();
+		contract_calendar_eventInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contract_calendar_events in {} milliseconds.", size, contract_calendar_eventInserted, elapsed );		
+	}
+		
+		private int contract_calendar_eventId = -1;
+		
+		private void initContract_calendar_eventId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contract_calendar_event`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contract_calendar_eventId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContract_calendar_eventId() {
+			return ++this.contract_calendar_eventId;
+		} 
+
+		public void setContract_calendar_eventId(Integer contract_calendar_eventId) {
+			this.contract_calendar_eventId = contract_calendar_eventId;
+		} 
+	
+	private void flushContract_calendar_event(  )
+	throws SQLException {
+		if ( ! contract_calendar_events.isEmpty() )
+			insertContract_calendar_event(contract_calendar_events);
+		if ( contract_calendar_eventStmt != null )
+			contract_calendar_eventStmt.close();
+	}	
+
+	/**
+	 * Contract_calendar_event
+	 * @param id Identificador unico
+	 * @param contract Identificador del Contrato
+	 * @param date Fecha de la incidencia
+	 * @param type Tipo de incidencia
+	 * @param duration Duracion de la incidencia
+	 * @throws SQLException
+	*/
+	protected void insertContract_calendar_event(Integer id, Integer contract, Date date, Short type, Double duration)
+	throws SQLException {
+
+		Contract_calendar_event contract_calendar_event_ = new Contract_calendar_event();
+		contract_calendar_event_.id = id;
+		contract_calendar_event_.contract = contract;
+		contract_calendar_event_.date = date;
+		contract_calendar_event_.type = type;
+		contract_calendar_event_.duration = duration;
+
+		contract_calendar_events.add(contract_calendar_event_);
+		
+		int contract_calendar_eventCount = contract_calendar_events.size();
+		
+		if ( 55 * contract_calendar_eventCount >=  this.maxAllowedPacket ){
+			insertContract_calendar_event(contract_calendar_events);
+			contract_calendar_events.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract_calendar_event
+	 * @param contract Identificador del Contrato
+	 * @param date Fecha de la incidencia
+	 * @param type Tipo de incidencia
+	 * @param duration Duracion de la incidencia
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertContract_calendar_event(Integer contract, Date date, Short type, Double duration)
+	throws SQLException {
+		int id = nextContract_calendar_eventId();
+
+		Contract_calendar_event contract_calendar_event_ = new Contract_calendar_event();
+		contract_calendar_event_.id = id;
+		contract_calendar_event_.contract = contract;
+		contract_calendar_event_.date = date;
+		contract_calendar_event_.type = type;
+		contract_calendar_event_.duration = duration;
+
+		contract_calendar_events.add(contract_calendar_event_);
+		
+		int contract_calendar_eventCount = contract_calendar_events.size();
+		
+		if ( 55 * contract_calendar_eventCount >=  this.maxAllowedPacket ){
+			insertContract_calendar_event(contract_calendar_events);
+			contract_calendar_events.clear();
+		} 
+		return id;
+	}
+
 
 	private int rdir_staffStmtSize = 0;
 
@@ -38179,8 +48398,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextRdir_staffId() {
+		public int nextRdir_staffId() {
 			return ++this.rdir_staffId;
+		} 
+
+		public void setRdir_staffId(Integer rdir_staffId) {
+			this.rdir_staffId = rdir_staffId;
 		} 
 	
 	private void flushRdir_staff(  )
@@ -38190,6 +48413,50 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( rdir_staffStmt != null )
 			rdir_staffStmt.close();
 	}	
+
+	/**
+	 * Rdir_staff
+	 * @param id Identificador unico de la Relacion entre Empresas y sus Directivos
+	 * @param registry Identificador de la Empresa
+	 * @param document Numero de Documento del Directivo
+	 * @param name Nombre del Directivo
+	 * @param shareholder Indica si el Directivo es socio
+	 * @param representative Indica si el Directivo es representante legal
+	 * @param director Indica si el Directivo es administrador
+	 * @param percent_share Porcentaje de acciones (solo para socios)
+	 * @param share_number Numero de Acciones
+	 * @param nominal_value Valor Nominal
+	 * @param due_date Fecha de vencimiento del cargo
+	 * @param representative_labor Indica si el Directivo es representante laboral
+	 * @throws SQLException
+	*/
+	protected void insertRdir_staff(Integer id, Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor)
+	throws SQLException {
+
+		Rdir_staff rdir_staff_ = new Rdir_staff();
+		rdir_staff_.id = id;
+		rdir_staff_.registry = registry;
+		rdir_staff_.document = document;
+		rdir_staff_.name = name;
+		rdir_staff_.shareholder = shareholder;
+		rdir_staff_.representative = representative;
+		rdir_staff_.director = director;
+		rdir_staff_.percent_share = percent_share;
+		rdir_staff_.share_number = share_number;
+		rdir_staff_.nominal_value = nominal_value;
+		rdir_staff_.due_date = due_date;
+		rdir_staff_.representative_labor = representative_labor;
+
+		rdir_staffs.add(rdir_staff_);
+		
+		int rdir_staffCount = rdir_staffs.size();
+		
+		if ( 221 * rdir_staffCount >=  this.maxAllowedPacket ){
+			insertRdir_staff(rdir_staffs);
+			rdir_staffs.clear();
+		} 
+	}
+
 
 	/**
 	 * Rdir_staff
@@ -38236,6 +48503,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int taskStmtSize = 0;
 
 	private int taskInserted = 0;
@@ -38260,7 +48528,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer dossier; 
 		private Integer activity; 
 		private Integer sender; 
-		private InputStream comments; 
+		private String comments; 
 		private Short repeat_period; 
 	}
 	
@@ -38349,7 +48617,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( task.comments == null )
 				taskStmt.setNull(offset++, -1);
 			else
-				taskStmt.setAsciiStream(offset++, task.comments);
+				taskStmt.setString(offset++, task.comments);
 			if ( task.repeat_period == null )
 				taskStmt.setNull(offset++, -6);
 			else
@@ -38386,8 +48654,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextTaskId() {
+		public int nextTaskId() {
 			return ++this.taskId;
+		} 
+
+		public void setTaskId(Integer taskId) {
+			this.taskId = taskId;
 		} 
 	
 	private void flushTask(  )
@@ -38397,6 +48669,58 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( taskStmt != null )
 			taskStmt.close();
 	}	
+
+	/**
+	 * Task
+	 * @param id Identificador unico de la Tarea
+	 * @param description Descripcion de la Tarea
+	 * @param start_date Fecha de inicio de la Tarea
+	 * @param end_date Fecha de finalizacion de la Tarea
+	 * @param due_date Fecha de vencimiento de la Tarea
+	 * @param priority Prioridad de la Tarea
+	 * @param status Estado de la Tarea
+	 * @param percent Porcentaje de realizacion de la Tarea
+	 * @param user_id Identificador del Usuario asociado a la Tarea
+	 * @param workgroup Identificador del Grupo de Trabajo asociado a la Tarea
+	 * @param source Origen de la Tarea
+	 * @param dossier Identificador del Expediente
+	 * @param activity Identificador de la Actividad
+	 * @param sender Remitente de la Tarea
+	 * @param comments Comentarios de la Tarea
+	 * @param repeat_period Periodo de repeticion de la Tarea
+	 * @throws SQLException
+	*/
+	protected void insertTask(Integer id, String description, Date start_date, Date end_date, Date due_date, Short priority, Short status, Short percent, Integer user_id, Integer workgroup, Short source, Integer dossier, Integer activity, Integer sender, String comments, Short repeat_period)
+	throws SQLException {
+
+		Task task_ = new Task();
+		task_.id = id;
+		task_.description = description;
+		task_.start_date = start_date;
+		task_.end_date = end_date;
+		task_.due_date = due_date;
+		task_.priority = priority;
+		task_.status = status;
+		task_.percent = percent;
+		task_.user_id = user_id;
+		task_.workgroup = workgroup;
+		task_.source = source;
+		task_.dossier = dossier;
+		task_.activity = activity;
+		task_.sender = sender;
+		task_.comments = comments;
+		task_.repeat_period = repeat_period;
+
+		tasks.add(task_);
+		
+		int taskCount = tasks.size();
+		
+		if ( 233 * taskCount >=  this.maxAllowedPacket ){
+			insertTask(tasks);
+			tasks.clear();
+		} 
+	}
+
 
 	/**
 	 * Task
@@ -38418,7 +48742,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTask(String description, Date start_date, Date end_date, Date due_date, Short priority, Short status, Short percent, Integer user_id, Integer workgroup, Short source, Integer dossier, Integer activity, Integer sender, InputStream comments, Short repeat_period)
+	protected int insertTask(String description, Date start_date, Date end_date, Date due_date, Short priority, Short status, Short percent, Integer user_id, Integer workgroup, Short source, Integer dossier, Integer activity, Integer sender, String comments, Short repeat_period)
 	throws SQLException {
 		int id = nextTaskId();
 
@@ -38450,6 +48774,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int resourceStmtSize = 0;
 
@@ -38551,8 +48876,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextResourceId() {
+		public int nextResourceId() {
 			return ++this.resourceId;
+		} 
+
+		public void setResourceId(Integer resourceId) {
+			this.resourceId = resourceId;
 		} 
 	
 	private void flushResource(  )
@@ -38562,6 +48891,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( resourceStmt != null )
 			resourceStmt.close();
 	}	
+
+	/**
+	 * Resource
+	 * @param id Identificador unico del Recurso
+	 * @param employee Identificador del Empleado
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param workactivity Identificador de la Actividad
+	 * @param startingdate Fecha inicial del Recurso
+	 * @param endingdate Fecha final del Recurso
+	 * @throws SQLException
+	*/
+	protected void insertResource(Integer id, Integer employee, Integer workplace, Integer workactivity, Date startingdate, Date endingdate)
+	throws SQLException {
+
+		Resource resource_ = new Resource();
+		resource_.id = id;
+		resource_.employee = employee;
+		resource_.workplace = workplace;
+		resource_.workactivity = workactivity;
+		resource_.startingdate = startingdate;
+		resource_.endingdate = endingdate;
+
+		resources.add(resource_);
+		
+		int resourceCount = resources.size();
+		
+		if ( 60 * resourceCount >=  this.maxAllowedPacket ){
+			insertResource(resources);
+			resources.clear();
+		} 
+	}
+
 
 	/**
 	 * Resource
@@ -38596,6 +48957,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int agreementStmtSize = 0;
 
 	private int agreementInserted = 0;
@@ -38607,6 +48969,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private static class Agreement {
 		private Integer id; 
+		private Integer calendar; 
 		private String description; 
 	}
 	
@@ -38618,7 +48981,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( agreementStmt != null ) {
 				agreementStmt.close();
 			}
-			String values = "(?,?)";
+			String values = "(?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -38627,7 +48990,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			agreementStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO agreement (id,description)"  
+				"INSERT INTO agreement (id,calendar,description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			agreementStmtSize = size;
@@ -38640,6 +49003,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreementStmt.setNull(offset++, 4);
 			else
 				agreementStmt.setInt(offset++, agreement.id);
+			if ( agreement.calendar == null )
+				agreementStmt.setNull(offset++, 4);
+			else
+				agreementStmt.setInt(offset++, agreement.calendar);
 			if ( agreement.description == null )
 				agreementStmt.setNull(offset++, 12);
 			else
@@ -38676,8 +49043,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAgreementId() {
+		public int nextAgreementId() {
 			return ++this.agreementId;
+		} 
+
+		public void setAgreementId(Integer agreementId) {
+			this.agreementId = agreementId;
 		} 
 	
 	private void flushAgreement(  )
@@ -38690,28 +49061,57 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Agreement
+	 * @param id Identificador unico
+	 * @param calendar Calendario
 	 * @param description Descripcion
-	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAgreement(String description)
+	protected void insertAgreement(Integer id, Integer calendar, String description)
 	throws SQLException {
-		int id = nextAgreementId();
 
 		Agreement agreement_ = new Agreement();
 		agreement_.id = id;
+		agreement_.calendar = calendar;
 		agreement_.description = description;
 
 		agreements.add(agreement_);
 		
 		int agreementCount = agreements.size();
 		
-		if ( 74 * agreementCount >=  this.maxAllowedPacket ){
+		if ( 84 * agreementCount >=  this.maxAllowedPacket ){
+			insertAgreement(agreements);
+			agreements.clear();
+		} 
+	}
+
+
+	/**
+	 * Agreement
+	 * @param calendar Calendario
+	 * @param description Descripcion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertAgreement(Integer calendar, String description)
+	throws SQLException {
+		int id = nextAgreementId();
+
+		Agreement agreement_ = new Agreement();
+		agreement_.id = id;
+		agreement_.calendar = calendar;
+		agreement_.description = description;
+
+		agreements.add(agreement_);
+		
+		int agreementCount = agreements.size();
+		
+		if ( 84 * agreementCount >=  this.maxAllowedPacket ){
 			insertAgreement(agreements);
 			agreements.clear();
 		} 
 		return id;
 	}
+
 
 	private int offerStmtSize = 0;
 
@@ -38747,7 +49147,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer bank; 
 		private String bank_account; 
 		private Boolean signed; 
-		private InputStream comments; 
+		private String comments; 
 	}
 	
 	private void insertOffer( List<Offer> offers )
@@ -38875,7 +49275,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( offer.comments == null )
 				offerStmt.setNull(offset++, -1);
 			else
-				offerStmt.setAsciiStream(offset++, offer.comments);
+				offerStmt.setString(offset++, offer.comments);
 		}
 		offerStmt.executeUpdate();
 		offerInserted += size;
@@ -38908,8 +49308,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextOfferId() {
+		public int nextOfferId() {
 			return ++this.offerId;
+		} 
+
+		public void setOfferId(Integer offerId) {
+			this.offerId = offerId;
 		} 
 	
 	private void flushOffer(  )
@@ -38919,6 +49323,76 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( offerStmt != null )
 			offerStmt.close();
 	}	
+
+	/**
+	 * Offer
+	 * @param id Identificador unico del Presupuesto
+	 * @param target Identificador del Cliente Potencial
+	 * @param series Serie del Presupuesto
+	 * @param number Numero del Presupuesto
+	 * @param version Numero de version de Presupuesto
+	 * @param address Identificador de la Direccion de envio del Presupuesto
+	 * @param tariff Identificador de la Tarifa del Presupuesto
+	 * @param seller Agente Comercial del Presupuesto
+	 * @param supplier Identificador del Proveedor
+	 * @param discount_expr Descuentos del Presupuesto
+	 * @param issue_date Fecha de emision del Presupuesto
+	 * @param pay_method Forma de Pago del Presupuesto
+	 * @param security_level Nivel de seguridad del Presupuesto
+	 * @param status Estado del Presupuesto
+	 * @param type Tipo de Presupuesto
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param scope Ambito del Presupuesto
+	 * @param number_of_pymnts Numero de Vencimientos
+	 * @param days_to_first_pymnt Dias al primer Vencimiento
+	 * @param days_between_pymnts Dias entre Vencimientos
+	 * @param pymnt_days Dias de pago
+	 * @param bank Identificador de la Entidad Bancaria
+	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param signed Indica si el Presupuesto esta firmada electronicamente
+	 * @param comments Comentarios del Presupuesto
+	 * @throws SQLException
+	*/
+	protected void insertOffer(Integer id, Integer target, String series, Integer number, Integer version, Integer address, Integer tariff, Integer seller, Integer supplier, String discount_expr, Date issue_date, Integer pay_method, Short security_level, Short status, Short type, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean signed, String comments)
+	throws SQLException {
+
+		Offer offer_ = new Offer();
+		offer_.id = id;
+		offer_.target = target;
+		offer_.series = series;
+		offer_.number = number;
+		offer_.version = version;
+		offer_.address = address;
+		offer_.tariff = tariff;
+		offer_.seller = seller;
+		offer_.supplier = supplier;
+		offer_.discount_expr = discount_expr;
+		offer_.issue_date = issue_date;
+		offer_.pay_method = pay_method;
+		offer_.security_level = security_level;
+		offer_.status = status;
+		offer_.type = type;
+		offer_.workplace = workplace;
+		offer_.scope = scope;
+		offer_.number_of_pymnts = number_of_pymnts;
+		offer_.days_to_first_pymnt = days_to_first_pymnt;
+		offer_.days_between_pymnts = days_between_pymnts;
+		offer_.pymnt_days = pymnt_days;
+		offer_.bank = bank;
+		offer_.bank_account = bank_account;
+		offer_.signed = signed;
+		offer_.comments = comments;
+
+		offers.add(offer_);
+		
+		int offerCount = offers.size();
+		
+		if ( 224 * offerCount >=  this.maxAllowedPacket ){
+			insertOffer(offers);
+			offers.clear();
+		} 
+	}
+
 
 	/**
 	 * Offer
@@ -38949,7 +49423,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertOffer(Integer target, String series, Integer number, Integer version, Integer address, Integer tariff, Integer seller, Integer supplier, String discount_expr, Date issue_date, Integer pay_method, Short security_level, Short status, Short type, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean signed, InputStream comments)
+	protected int insertOffer(Integer target, String series, Integer number, Integer version, Integer address, Integer tariff, Integer seller, Integer supplier, String discount_expr, Date issue_date, Integer pay_method, Short security_level, Short status, Short type, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean signed, String comments)
 	throws SQLException {
 		int id = nextOfferId();
 
@@ -38990,6 +49464,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int composition_expenseStmtSize = 0;
 
@@ -39086,8 +49561,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextComposition_expenseId() {
+		public int nextComposition_expenseId() {
 			return ++this.composition_expenseId;
+		} 
+
+		public void setComposition_expenseId(Integer composition_expenseId) {
+			this.composition_expenseId = composition_expenseId;
 		} 
 	
 	private void flushComposition_expense(  )
@@ -39097,6 +49576,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( composition_expenseStmt != null )
 			composition_expenseStmt.close();
 	}	
+
+	/**
+	 * Composition_expense
+	 * @param id Identificador unico del Gasto de la Composicion
+	 * @param composition Identificador de la Composicion
+	 * @param description Descripcion del Gasto
+	 * @param quantity Cantidad del Gasto
+	 * @param price Importe del Gasto
+	 * @throws SQLException
+	*/
+	protected void insertComposition_expense(Integer id, Integer composition, String description, Double quantity, Double price)
+	throws SQLException {
+
+		Composition_expense composition_expense_ = new Composition_expense();
+		composition_expense_.id = id;
+		composition_expense_.composition = composition;
+		composition_expense_.description = description;
+		composition_expense_.quantity = quantity;
+		composition_expense_.price = price;
+
+		composition_expenses.add(composition_expense_);
+		
+		int composition_expenseCount = composition_expenses.size();
+		
+		if ( 106 * composition_expenseCount >=  this.maxAllowedPacket ){
+			insertComposition_expense(composition_expenses);
+			composition_expenses.clear();
+		} 
+	}
+
 
 	/**
 	 * Composition_expense
@@ -39128,6 +49637,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int account_helperStmtSize = 0;
 
@@ -39219,8 +49729,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextAccount_helperId() {
+		public int nextAccount_helperId() {
 			return ++this.account_helperId;
+		} 
+
+		public void setAccount_helperId(Integer account_helperId) {
+			this.account_helperId = account_helperId;
 		} 
 	
 	private void flushAccount_helper(  )
@@ -39230,6 +49744,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( account_helperStmt != null )
 			account_helperStmt.close();
 	}	
+
+	/**
+	 * Account_helper
+	 * @param id Identificador unico
+	 * @param counter Contador, veces que se ha usado
+	 * @param account Cuenta contable
+	 * @param balancing_account Contrapartida
+	 * @throws SQLException
+	*/
+	protected void insertAccount_helper(Integer id, Integer counter, String account, String balancing_account)
+	throws SQLException {
+
+		Account_helper account_helper_ = new Account_helper();
+		account_helper_.id = id;
+		account_helper_.counter = counter;
+		account_helper_.account = account;
+		account_helper_.balancing_account = balancing_account;
+
+		account_helpers.add(account_helper_);
+		
+		int account_helperCount = account_helpers.size();
+		
+		if ( 44 * account_helperCount >=  this.maxAllowedPacket ){
+			insertAccount_helper(account_helpers);
+			account_helpers.clear();
+		} 
+	}
+
 
 	/**
 	 * Account_helper
@@ -39259,6 +49801,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int bank_conceptStmtSize = 0;
 
@@ -39340,8 +49883,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextBank_conceptId() {
+		public int nextBank_conceptId() {
 			return ++this.bank_conceptId;
+		} 
+
+		public void setBank_conceptId(Integer bank_conceptId) {
+			this.bank_conceptId = bank_conceptId;
 		} 
 	
 	private void flushBank_concept(  )
@@ -39351,6 +49898,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( bank_conceptStmt != null )
 			bank_conceptStmt.close();
 	}	
+
+	/**
+	 * Bank_concept
+	 * @param id Identificador unico
+	 * @param name Nombre del Concepto
+	 * @throws SQLException
+	*/
+	protected void insertBank_concept(Integer id, String name)
+	throws SQLException {
+
+		Bank_concept bank_concept_ = new Bank_concept();
+		bank_concept_.id = id;
+		bank_concept_.name = name;
+
+		bank_concepts.add(bank_concept_);
+		
+		int bank_conceptCount = bank_concepts.size();
+		
+		if ( 42 * bank_conceptCount >=  this.maxAllowedPacket ){
+			insertBank_concept(bank_concepts);
+			bank_concepts.clear();
+		} 
+	}
+
 
 	/**
 	 * Bank_concept
@@ -39376,6 +49947,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int course_academicskillStmtSize = 0;
 
@@ -39467,8 +50039,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextCourse_academicskillId() {
+		public int nextCourse_academicskillId() {
 			return ++this.course_academicskillId;
+		} 
+
+		public void setCourse_academicskillId(Integer course_academicskillId) {
+			this.course_academicskillId = course_academicskillId;
 		} 
 	
 	private void flushCourse_academicskill(  )
@@ -39478,6 +50054,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( course_academicskillStmt != null )
 			course_academicskillStmt.close();
 	}	
+
+	/**
+	 * Course_academicskill
+	 * @param id Identificador Unico
+	 * @param course Curso
+	 * @param academic_skill Aptitud Academica
+	 * @param weight Peso de la Aptitud para calcular la Nota media
+	 * @throws SQLException
+	*/
+	protected void insertCourse_academicskill(Integer id, Integer course, Integer academic_skill, Integer weight)
+	throws SQLException {
+
+		Course_academicskill course_academicskill_ = new Course_academicskill();
+		course_academicskill_.id = id;
+		course_academicskill_.course = course;
+		course_academicskill_.academic_skill = academic_skill;
+		course_academicskill_.weight = weight;
+
+		course_academicskills.add(course_academicskill_);
+		
+		int course_academicskillCount = course_academicskills.size();
+		
+		if ( 40 * course_academicskillCount >=  this.maxAllowedPacket ){
+			insertCourse_academicskill(course_academicskills);
+			course_academicskills.clear();
+		} 
+	}
+
 
 	/**
 	 * Course_academicskill
@@ -39507,6 +50111,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int enterprise_cccStmtSize = 0;
 
@@ -39603,8 +50208,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextEnterprise_cccId() {
+		public int nextEnterprise_cccId() {
 			return ++this.enterprise_cccId;
+		} 
+
+		public void setEnterprise_cccId(Integer enterprise_cccId) {
+			this.enterprise_cccId = enterprise_cccId;
 		} 
 	
 	private void flushEnterprise_ccc(  )
@@ -39614,6 +50223,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( enterprise_cccStmt != null )
 			enterprise_cccStmt.close();
 	}	
+
+	/**
+	 * Enterprise_ccc
+	 * @param id Identificador unico
+	 * @param ccc Valor del Codigo Cuenta Cotizacion
+	 * @param type Tipo de Cuenta Cotizacion
+	 * @param enterprise_activity Identificador de la Actividad de Empresa
+	 * @param geozone Identificador de la Zona Geografica
+	 * @throws SQLException
+	*/
+	protected void insertEnterprise_ccc(Integer id, String ccc, Short type, Integer enterprise_activity, Integer geozone)
+	throws SQLException {
+
+		Enterprise_ccc enterprise_ccc_ = new Enterprise_ccc();
+		enterprise_ccc_.id = id;
+		enterprise_ccc_.ccc = ccc;
+		enterprise_ccc_.type = type;
+		enterprise_ccc_.enterprise_activity = enterprise_activity;
+		enterprise_ccc_.geozone = geozone;
+
+		enterprise_cccs.add(enterprise_ccc_);
+		
+		int enterprise_cccCount = enterprise_cccs.size();
+		
+		if ( 44 * enterprise_cccCount >=  this.maxAllowedPacket ){
+			insertEnterprise_ccc(enterprise_cccs);
+			enterprise_cccs.clear();
+		} 
+	}
+
 
 	/**
 	 * Enterprise_ccc
@@ -39645,6 +50284,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int targetStmtSize = 0;
 
@@ -39770,6 +50410,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int mk_campaignStmtSize = 0;
 
 	private int mk_campaignInserted = 0;
@@ -39855,8 +50497,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextMk_campaignId() {
+		public int nextMk_campaignId() {
 			return ++this.mk_campaignId;
+		} 
+
+		public void setMk_campaignId(Integer mk_campaignId) {
+			this.mk_campaignId = mk_campaignId;
 		} 
 	
 	private void flushMk_campaign(  )
@@ -39866,6 +50512,32 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( mk_campaignStmt != null )
 			mk_campaignStmt.close();
 	}	
+
+	/**
+	 * Mk_campaign
+	 * @param id Identificador unico
+	 * @param active Indica si la Campaa esta activa o no
+	 * @param description Descripcion de la Campaa
+	 * @throws SQLException
+	*/
+	protected void insertMk_campaign(Integer id, Boolean active, String description)
+	throws SQLException {
+
+		Mk_campaign mk_campaign_ = new Mk_campaign();
+		mk_campaign_.id = id;
+		mk_campaign_.active = active;
+		mk_campaign_.description = description;
+
+		mk_campaigns.add(mk_campaign_);
+		
+		int mk_campaignCount = mk_campaigns.size();
+		
+		if ( 74 * mk_campaignCount >=  this.maxAllowedPacket ){
+			insertMk_campaign(mk_campaigns);
+			mk_campaigns.clear();
+		} 
+	}
+
 
 	/**
 	 * Mk_campaign
@@ -39893,6 +50565,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int activity_processStmtSize = 0;
 
@@ -39989,8 +50662,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextActivity_processId() {
+		public int nextActivity_processId() {
 			return ++this.activity_processId;
+		} 
+
+		public void setActivity_processId(Integer activity_processId) {
+			this.activity_processId = activity_processId;
 		} 
 	
 	private void flushActivity_process(  )
@@ -40000,6 +50677,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( activity_processStmt != null )
 			activity_processStmt.close();
 	}	
+
+	/**
+	 * Activity_process
+	 * @param id Identificador unico de la Relacion entre Campaas, Actividades y Tareas
+	 * @param campaign Identificador de la Campaa
+	 * @param activity Identificador de la Actividad
+	 * @param process_detail Identificador del Detalle de Proceso
+	 * @param task Identificador de la Tarea
+	 * @throws SQLException
+	*/
+	protected void insertActivity_process(Integer id, Integer campaign, Integer activity, Integer process_detail, Integer task)
+	throws SQLException {
+
+		Activity_process activity_process_ = new Activity_process();
+		activity_process_.id = id;
+		activity_process_.campaign = campaign;
+		activity_process_.activity = activity;
+		activity_process_.process_detail = process_detail;
+		activity_process_.task = task;
+
+		activity_processs.add(activity_process_);
+		
+		int activity_processCount = activity_processs.size();
+		
+		if ( 50 * activity_processCount >=  this.maxAllowedPacket ){
+			insertActivity_process(activity_processs);
+			activity_processs.clear();
+		} 
+	}
+
 
 	/**
 	 * Activity_process
@@ -40032,6 +50739,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 	}
 
+
 	private int bank_statementStmtSize = 0;
 
 	private int bank_statementInserted = 0;
@@ -40056,6 +50764,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private String description; 
 		private Short reliability; 
 		private Short status; 
+		private String comments; 
 	}
 	
 	private void insertBank_statement( List<Bank_statement> bank_statements )
@@ -40066,7 +50775,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( bank_statementStmt != null ) {
 				bank_statementStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -40075,7 +50784,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			bank_statementStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO bank_statement (id,rbank,lot_number,operation_date,common_concept,own_concept,payment,amount,document,reference1,reference2,description,reliability,status)"  
+				"INSERT INTO bank_statement (id,rbank,lot_number,operation_date,common_concept,own_concept,payment,amount,document,reference1,reference2,description,reliability,status,comments)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			bank_statementStmtSize = size;
@@ -40140,6 +50849,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bank_statementStmt.setNull(offset++, -6);
 			else
 				bank_statementStmt.setShort(offset++, bank_statement.status);
+			if ( bank_statement.comments == null )
+				bank_statementStmt.setNull(offset++, -1);
+			else
+				bank_statementStmt.setString(offset++, bank_statement.comments);
 		}
 		bank_statementStmt.executeUpdate();
 		bank_statementInserted += size;
@@ -40172,8 +50885,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextBank_statementId() {
+		public int nextBank_statementId() {
 			return ++this.bank_statementId;
+		} 
+
+		public void setBank_statementId(Integer bank_statementId) {
+			this.bank_statementId = bank_statementId;
 		} 
 	
 	private void flushBank_statement(  )
@@ -40183,6 +50900,56 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( bank_statementStmt != null )
 			bank_statementStmt.close();
 	}	
+
+	/**
+	 * Bank_statement
+	 * @param id Identificador unico
+	 * @param rbank Identificador de Banco de la Compaia
+	 * @param lot_number Numero de lote
+	 * @param operation_date Fecha de operacion
+	 * @param common_concept Concepto comun
+	 * @param own_concept Concepto propio
+	 * @param payment Indica si es un pago
+	 * @param amount Importe
+	 * @param document Numero de documento
+	 * @param reference1 Referencia 1
+	 * @param reference2 Referencia 2
+	 * @param description Descripcion
+	 * @param reliability Fiabilidad del punteo
+	 * @param status Estado
+	 * @param comments Comentarios
+	 * @throws SQLException
+	*/
+	protected void insertBank_statement(Integer id, Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, Integer document, String reference1, String reference2, String description, Short reliability, Short status, String comments)
+	throws SQLException {
+
+		Bank_statement bank_statement_ = new Bank_statement();
+		bank_statement_.id = id;
+		bank_statement_.rbank = rbank;
+		bank_statement_.lot_number = lot_number;
+		bank_statement_.operation_date = operation_date;
+		bank_statement_.common_concept = common_concept;
+		bank_statement_.own_concept = own_concept;
+		bank_statement_.payment = payment;
+		bank_statement_.amount = amount;
+		bank_statement_.document = document;
+		bank_statement_.reference1 = reference1;
+		bank_statement_.reference2 = reference2;
+		bank_statement_.description = description;
+		bank_statement_.reliability = reliability;
+		bank_statement_.status = status;
+		bank_statement_.comments = comments;
+
+		bank_statements.add(bank_statement_);
+		
+		int bank_statementCount = bank_statements.size();
+		
+		if ( 187 * bank_statementCount >=  this.maxAllowedPacket ){
+			insertBank_statement(bank_statements);
+			bank_statements.clear();
+		} 
+	}
+
 
 	/**
 	 * Bank_statement
@@ -40199,10 +50966,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion
 	 * @param reliability Fiabilidad del punteo
 	 * @param status Estado
+	 * @param comments Comentarios
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBank_statement(Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, Integer document, String reference1, String reference2, String description, Short reliability, Short status)
+	protected int insertBank_statement(Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, Integer document, String reference1, String reference2, String description, Short reliability, Short status, String comments)
 	throws SQLException {
 		int id = nextBank_statementId();
 
@@ -40221,6 +50989,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		bank_statement_.description = description;
 		bank_statement_.reliability = reliability;
 		bank_statement_.status = status;
+		bank_statement_.comments = comments;
 
 		bank_statements.add(bank_statement_);
 		
@@ -40232,6 +51001,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int item_alternativeStmtSize = 0;
 
@@ -40323,8 +51093,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextItem_alternativeId() {
+		public int nextItem_alternativeId() {
 			return ++this.item_alternativeId;
+		} 
+
+		public void setItem_alternativeId(Integer item_alternativeId) {
+			this.item_alternativeId = item_alternativeId;
 		} 
 	
 	private void flushItem_alternative(  )
@@ -40334,6 +51108,34 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( item_alternativeStmt != null )
 			item_alternativeStmt.close();
 	}	
+
+	/**
+	 * Item_alternative
+	 * @param id Identificador unico
+	 * @param item Identificador de Articulo
+	 * @param alternative_item Identificador de Articulo Alternativo
+	 * @param priority Prioridad del Articulo Alternativo
+	 * @throws SQLException
+	*/
+	protected void insertItem_alternative(Integer id, Integer item, Integer alternative_item, Short priority)
+	throws SQLException {
+
+		Item_alternative item_alternative_ = new Item_alternative();
+		item_alternative_.id = id;
+		item_alternative_.item = item;
+		item_alternative_.alternative_item = alternative_item;
+		item_alternative_.priority = priority;
+
+		item_alternatives.add(item_alternative_);
+		
+		int item_alternativeCount = item_alternatives.size();
+		
+		if ( 33 * item_alternativeCount >=  this.maxAllowedPacket ){
+			insertItem_alternative(item_alternatives);
+			item_alternatives.clear();
+		} 
+	}
+
 
 	/**
 	 * Item_alternative
@@ -40363,6 +51165,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int userStmtSize = 0;
 
@@ -40469,8 +51272,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextUserId() {
+		public int nextUserId() {
 			return ++this.userId;
+		} 
+
+		public void setUserId(Integer userId) {
+			this.userId = userId;
 		} 
 	
 	private void flushUser(  )
@@ -40480,6 +51287,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( userStmt != null )
 			userStmt.close();
 	}	
+
+	/**
+	 * User
+	 * @param id Identificador unico
+	 * @param name Nombre del Usuario
+	 * @param login Login del Usuario
+	 * @param enterprise Identificador de la Empresa
+	 * @param registry Identificador del Registry
+	 * @param active Indica si el Usuario esta activo o no
+	 * @param password Contrasea del Usuario
+	 * @throws SQLException
+	*/
+	protected void insertUser(Integer id, String name, String login, Integer enterprise, Integer registry, Boolean active, String password)
+	throws SQLException {
+
+		User user_ = new User();
+		user_.id = id;
+		user_.name = name;
+		user_.login = login;
+		user_.enterprise = enterprise;
+		user_.registry = registry;
+		user_.active = active;
+		user_.password = password;
+
+		users.add(user_);
+		
+		int userCount = users.size();
+		
+		if ( 238 * userCount >=  this.maxAllowedPacket ){
+			insertUser(users);
+			users.clear();
+		} 
+	}
+
 
 	/**
 	 * User
@@ -40515,6 +51356,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int expense_account_detailStmtSize = 0;
 
@@ -40616,8 +51458,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextExpense_account_detailId() {
+		public int nextExpense_account_detailId() {
 			return ++this.expense_account_detailId;
+		} 
+
+		public void setExpense_account_detailId(Integer expense_account_detailId) {
+			this.expense_account_detailId = expense_account_detailId;
 		} 
 	
 	private void flushExpense_account_detail(  )
@@ -40627,6 +51473,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( expense_account_detailStmt != null )
 			expense_account_detailStmt.close();
 	}	
+
+	/**
+	 * Expense_account_detail
+	 * @param id Identificador unico
+	 * @param expense_account Identidicador del Gasto
+	 * @param expense Gasto
+	 * @param quantity Cantidad del Gasto
+	 * @param price Precio unitario del Gasto
+	 * @param amount Precio total del Gasto
+	 * @throws SQLException
+	*/
+	protected void insertExpense_account_detail(Integer id, Integer expense_account, Integer expense, Double quantity, Double price, Double amount)
+	throws SQLException {
+
+		Expense_account_detail expense_account_detail_ = new Expense_account_detail();
+		expense_account_detail_.id = id;
+		expense_account_detail_.expense_account = expense_account;
+		expense_account_detail_.expense = expense;
+		expense_account_detail_.quantity = quantity;
+		expense_account_detail_.price = price;
+		expense_account_detail_.amount = amount;
+
+		expense_account_details.add(expense_account_detail_);
+		
+		int expense_account_detailCount = expense_account_details.size();
+		
+		if ( 75 * expense_account_detailCount >=  this.maxAllowedPacket ){
+			insertExpense_account_detail(expense_account_details);
+			expense_account_details.clear();
+		} 
+	}
+
 
 	/**
 	 * Expense_account_detail
@@ -40660,6 +51538,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	private int app_paramStmtSize = 0;
 
@@ -40750,6 +51629,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 	}
 
+
+
 	private int expenditures_itemsStmtSize = 0;
 
 	private int expenditures_itemsInserted = 0;
@@ -40830,8 +51711,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int nextExpenditures_itemsId() {
+		public int nextExpenditures_itemsId() {
 			return ++this.expenditures_itemsId;
+		} 
+
+		public void setExpenditures_itemsId(Integer expenditures_itemsId) {
+			this.expenditures_itemsId = expenditures_itemsId;
 		} 
 	
 	private void flushExpenditures_items(  )
@@ -40841,6 +51726,30 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( expenditures_itemsStmt != null )
 			expenditures_itemsStmt.close();
 	}	
+
+	/**
+	 * Expenditures_items
+	 * @param id Identificador unico del Tipo de Coste
+	 * @param name Nombre del Tipo de Coste
+	 * @throws SQLException
+	*/
+	protected void insertExpenditures_items(Integer id, String name)
+	throws SQLException {
+
+		Expenditures_items expenditures_items_ = new Expenditures_items();
+		expenditures_items_.id = id;
+		expenditures_items_.name = name;
+
+		expenditures_itemss.add(expenditures_items_);
+		
+		int expenditures_itemsCount = expenditures_itemss.size();
+		
+		if ( 74 * expenditures_itemsCount >=  this.maxAllowedPacket ){
+			insertExpenditures_items(expenditures_itemss);
+			expenditures_itemss.clear();
+		} 
+	}
+
 
 	/**
 	 * Expenditures_items
@@ -40866,6 +51775,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		} 
 		return id;
 	}
+
 
 	protected void finish() 
 	throws SQLException {
@@ -40937,6 +51847,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushTax_account();
 		flushExpense();
 		flushInventory();
+		flushContract_context();
 		flushCommercial_term();
 		flushProduction_expense();
 		flushCommercial_activity();
@@ -40953,7 +51864,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushBalance();
 		flushQualification();
 		flushTax_detail();
-		flushContract_event();
 		flushSupplier_account();
 		flushComposition();
 		flushBank();
@@ -40977,6 +51887,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushFinance_tracking();
 		flushRattach();
 		flushSales_detail();
+		flushSystem_deduction();
 		flushCurriculum();
 		flushMake();
 		flushRbank_account();
@@ -40987,8 +51898,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushPurchase();
 		flushWeb_info();
 		flushLh_position();
-		flushCv_evaluate();
 		flushBank_statement_link();
+		flushCv_evaluate();
 		flushCourse_alumn();
 		flushFs_renting();
 		flushQuestion();
@@ -41015,6 +51926,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushEvaluation_observation();
 		flushPerson();
 		flushContract_payment();
+		flushCashflow_forecast();
 		flushAccount_entry();
 		flushGeotree();
 		flushSales_purchase();
@@ -41129,6 +52041,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushInvoice_address();
 		flushMessage_log();
 		flushApplication();
+		flushContract_calendar_event();
 		flushRdir_staff();
 		flushTask();
 		flushResource();
@@ -41338,6 +52251,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initInventoryId();
 		initMaxAllowedPacket();
+		initContract_contextId();
+		initMaxAllowedPacket();
 		initCommercial_termId();
 		initMaxAllowedPacket();
 		initProduction_expenseId();
@@ -41369,8 +52284,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initQualificationId();
 		initMaxAllowedPacket();
 		initTax_detailId();
-		initMaxAllowedPacket();
-		initContract_eventId();
 		initMaxAllowedPacket();
 		initSupplier_accountId();
 		initMaxAllowedPacket();
@@ -41418,6 +52331,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initSales_detailId();
 		initMaxAllowedPacket();
+		initSystem_deductionId();
+		initMaxAllowedPacket();
 		initMaxAllowedPacket();
 		initMakeId();
 		initMaxAllowedPacket();
@@ -41437,9 +52352,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initLh_positionId();
 		initMaxAllowedPacket();
-		initCv_evaluateId();
-		initMaxAllowedPacket();
 		initBank_statement_linkId();
+		initMaxAllowedPacket();
+		initCv_evaluateId();
 		initMaxAllowedPacket();
 		initCourse_alumnId();
 		initMaxAllowedPacket();
@@ -41490,6 +52405,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initMaxAllowedPacket();
 		initContract_paymentId();
+		initMaxAllowedPacket();
+		initCashflow_forecastId();
 		initMaxAllowedPacket();
 		initAccount_entryId();
 		initMaxAllowedPacket();
@@ -41711,6 +52628,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMessage_logId();
 		initMaxAllowedPacket();
 		initApplicationId();
+		initMaxAllowedPacket();
+		initContract_calendar_eventId();
 		initMaxAllowedPacket();
 		initRdir_staffId();
 		initMaxAllowedPacket();

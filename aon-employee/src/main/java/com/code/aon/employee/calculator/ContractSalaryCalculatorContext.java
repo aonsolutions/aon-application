@@ -30,6 +30,8 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
+import static com.code.aon.employee.calculator.ContractSalaryCalculator.*;
+
 public class ContractSalaryCalculatorContext extends SalaryCalculatorContext implements IContractSalaryCalculatorContext{
 	
 	
@@ -174,14 +176,14 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext imp
 			new LinkedList<IExpression>();
 		
 		ExpressionImpl monthDays = new ExpressionImpl();
-		monthDays.setName("dias_mes");
+		monthDays.setName(MONTH_DAYS);
 		monthDays.setScope(ExpressionScope.SYSTEM);
 		monthDays.setExpression(Long.toString(CommonUtil.getDaysBetweenDates(getStartDate(), getEndDate()) + 1));
 		systemExpressions.add(monthDays);
 
 		Contract contract = getContract();
 		ExpressionImpl jobDays = new ExpressionImpl();
-		jobDays.setName("dias_trabajados");
+		jobDays.setName(WORKED_DAYS);
 		jobDays.setScope(ExpressionScope.SYSTEM);
 		Date startDate = contract.getStartDate().after( getStartDate() )?contract.getStartDate():getStartDate();
 		Date endDate = contract.getEndDate() != null && contract.getEndDate().before( getEndDate() )?contract.getEndDate():getEndDate();
@@ -225,6 +227,7 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext imp
 		
 		return up2DatePayments;
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	public Collection<IContractDeduction> getContractDeductions() 

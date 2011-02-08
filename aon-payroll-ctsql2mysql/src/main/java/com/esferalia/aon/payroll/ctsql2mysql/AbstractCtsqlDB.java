@@ -6552,6 +6552,28 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _noitca_ea_kfStmt = null;
+		
+	private void initNoitca_ea_kfStmt() 
+	throws SQLException{
+		this._noitca_ea_kfStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "id" 
+				+ ",menu" 
+				+ ",name" 
+				+ ",application_id" 
+				+ " FROM action"
+				+ " WHERE" 
+				+ " id = ?  " 			); 
+	}
+
+	private void closeNoitca_ea_kfStmt() 
+	throws SQLException{
+		if ( _noitca_ea_kfStmt != null ) { 
+			_noitca_ea_kfStmt.close();
+			_noitca_ea_kfStmt = null;	
+		}
+	}
 	private PreparedStatement _noisses_ea_kfStmt = null;
 		
 	private void initNoisses_ea_kfStmt() 
@@ -6629,6 +6651,30 @@ public class AbstractCtsqlDB {
 			return rs.getInt(4);
 		}
 
+		/**
+		 * Visit Action that's parent of this Action_entry. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFk_ae_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _noitca_ea_kfStmt == null )
+					 initNoitca_ea_kfStmt();
+				
+				_noitca_ea_kfStmt.setInt(1, this.getAction_id()); 
+				rs = _noitca_ea_kfStmt.executeQuery();
+				Action action = new Action(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFk_ae_action(this, action);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 		/**
 		 * Visit Session that's parent of this Action_entry. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -8498,6 +8544,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -8518,9 +8565,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -8842,6 +8892,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -8862,9 +8913,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -9339,6 +9393,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -9359,9 +9414,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -11614,6 +11672,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -11634,9 +11693,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -12146,6 +12208,8 @@ public class AbstractCtsqlDB {
 				+ ",retanualb" 
 				+ ",difret" 
 				+ ",irpfanual" 
+				+ ",prcredhipoteca" 
+				+ ",impredhipoteca" 
 				+ " FROM calculo"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -12184,6 +12248,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -12204,9 +12269,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -17138,6 +17206,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -17158,9 +17227,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -17684,10 +17756,14 @@ public class AbstractCtsqlDB {
 				+ ",ascminus_65" 
 				+ ",movilidad" 
 				+ ",prolongacion" 
+				+ ",hipoteca" 
 				+ ",descme3" 
 				+ ",descme3e" 
 				+ ",descma3" 
 				+ ",descma3e" 
+				+ ",computo1" 
+				+ ",computo2" 
+				+ ",computo3" 
 				+ ",descdi33" 
 				+ ",descdi33e" 
 				+ ",descdimr" 
@@ -19113,6 +19189,30 @@ public class AbstractCtsqlDB {
 	
 
 	
+		
+	private PreparedStatement fk_rem_cert_emprStmt = null;
+		
+	private void initFk_rem_cert_emprStmt() 
+	throws SQLException{
+		this.fk_rem_cert_emprStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "id" 
+				+ ",rem_cert_empr" 
+				+ ",empleado" 
+				+ ",fecha_baja" 
+				+ ",causa_suspension" 
+				+ " FROM rem_cert_empr_det"
+				+ " WHERE" 
+				+ " rem_cert_empr = ?  " 			); 
+	}
+
+	private void closeFk_rem_cert_emprStmt() 
+	throws SQLException{
+		if ( fk_rem_cert_emprStmt != null ) { 
+			fk_rem_cert_emprStmt.close();
+			fk_rem_cert_emprStmt = null;	
+		}
+	}
 
 	private PreparedStatement _rpme_mer_trec_kfStmt = null;
 		
@@ -19250,6 +19350,31 @@ public class AbstractCtsqlDB {
 			}
 		}
 
+		
+		/**
+		 * Visit Rem_cert_empr_det that're children of this Rem_cert_empr. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFk_rem_cert_empr(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( fk_rem_cert_emprStmt == null )
+					 initFk_rem_cert_emprStmt();
+				
+				fk_rem_cert_emprStmt.setInt(1, this.getId()); 
+				rs = fk_rem_cert_emprStmt.executeQuery();
+				Rem_cert_empr_det rem_cert_empr_det = new Rem_cert_empr_det(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFk_rem_cert_empr(rem_cert_empr_det, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -19453,6 +19578,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -19473,9 +19599,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -21367,6 +21496,41 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _artc_lac_lerStmt = null;
+		
+	private void initArtc_lac_lerStmt() 
+	throws SQLException{
+		this._artc_lac_lerStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "codact" 
+				+ ",cdg" 
+				+ ",domicilio" 
+				+ ",superficie" 
+				+ ",pelectri" 
+				+ ",horario" 
+				+ ",maquina" 
+				+ ",toxicos" 
+				+ ",inddia" 
+				+ ",codcon" 
+				+ ",represen" 
+				+ ",jornada" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",fiestas" 
+				+ ",envioss" 
+				+ " FROM emprctra"
+				+ " WHERE" 
+				+ " codact = ?  "  + "AND" 				+ " cdg = ?  "  + "AND" 				+ " domicilio = ?  " 			); 
+	}
+
+	private void closeArtc_lac_lerStmt() 
+	throws SQLException{
+		if ( _artc_lac_lerStmt != null ) { 
+			_artc_lac_lerStmt.close();
+			_artc_lac_lerStmt = null;	
+		}
+	}
 
 	/**
 	 * Calendar
@@ -21436,6 +21600,32 @@ public class AbstractCtsqlDB {
 			return rs.getInt(6);
 		}
 
+		/**
+		 * Visit Emprctra that's parent of this Calendar. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_cal_ctra(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _artc_lac_lerStmt == null )
+					 initArtc_lac_lerStmt();
+				
+				_artc_lac_lerStmt.setInt(1, this.getCodact()); 
+				_artc_lac_lerStmt.setInt(2, this.getCodemp()); 
+				_artc_lac_lerStmt.setInt(3, this.getDomicilio()); 
+				rs = _artc_lac_lerStmt.executeQuery();
+				Emprctra emprctra = new Emprctra(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_cal_ctra(this, emprctra);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -25139,6 +25329,30 @@ public class AbstractCtsqlDB {
 			rel_epp_cccStmt = null;	
 		}
 	}
+		
+	private PreparedStatement formcont_emprcccStmt = null;
+		
+	private void initFormcont_emprcccStmt() 
+	throws SQLException{
+		this.formcont_emprcccStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipccc" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",importe" 
+				+ " FROM formcont"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " tipccc = ?  " 			); 
+	}
+
+	private void closeFormcont_emprcccStmt() 
+	throws SQLException{
+		if ( formcont_emprcccStmt != null ) { 
+			formcont_emprcccStmt.close();
+			formcont_emprcccStmt = null;	
+		}
+	}
 
 	private PreparedStatement _tum_ccc_lerStmt = null;
 		
@@ -25356,6 +25570,32 @@ public class AbstractCtsqlDB {
 				Emprper emprper = new Emprper(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitRel_epp_ccc(emprper, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Formcont that're children of this Emprccc. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFormcont_emprccc(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( formcont_emprcccStmt == null )
+					 initFormcont_emprcccStmt();
+				
+				formcont_emprcccStmt.setInt(1, this.getCdg()); 
+				formcont_emprcccStmt.setString(2, this.getTipccc()); 
+				rs = formcont_emprcccStmt.executeQuery();
+				Formcont formcont = new Formcont(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFormcont_emprccc(formcont, this);
 				}
 			}
 			finally {
@@ -29697,7 +29937,7 @@ public class AbstractCtsqlDB {
 			return rs.getString(22);
 		}
 		/**
-		 * $column.remarks
+		 * Causa de la alta
 		 * @return the column 'causa_alta' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -29706,7 +29946,7 @@ public class AbstractCtsqlDB {
 			return rs.getString(23);
 		}
 		/**
-		 * Fecha de accidente de trabajo o enfermedad profesional
+		 * Fecha de aente de trabajo o enfermedad profesional
 		 * @return the column 'fecha_at' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -29966,6 +30206,122 @@ public class AbstractCtsqlDB {
 			return rs.getString(20);
 		}
 
+
+	}
+	
+
+	
+
+	private PreparedStatement _cccrpme_tnocmrofStmt = null;
+		
+	private void initCccrpme_tnocmrofStmt() 
+	throws SQLException{
+		this._cccrpme_tnocmrofStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",tipccc" 
+				+ ",descripcion" 
+				+ ",mutuaccc" 
+				+ ",indss" 
+				+ ",concol" 
+				+ ",seguro" 
+				+ " FROM emprccc"
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				+ " tipccc = ?  " 			); 
+	}
+
+	private void closeCccrpme_tnocmrofStmt() 
+	throws SQLException{
+		if ( _cccrpme_tnocmrofStmt != null ) { 
+			_cccrpme_tnocmrofStmt.close();
+			_cccrpme_tnocmrofStmt = null;	
+		}
+	}
+
+	/**
+	 * Formcont
+	 * 
+	 */
+	public class Formcont {
+		
+		private ResultSet rs;
+		
+		private Formcont (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Código de actividad
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getCdg()
+		throws SQLException {
+			return rs.getInt(1);
+		}
+		/**
+		 * Tipo cuenta de cotización
+		 * @return the column 'tipccc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getTipccc()
+		throws SQLException {
+			return rs.getString(2);
+		}
+		/**
+		 * Mes
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getMes()
+		throws SQLException {
+			return rs.getInt(3);
+		}
+		/**
+		 * Año
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAnio()
+		throws SQLException {
+			return rs.getInt(4);
+		}
+		/**
+		 * Importe
+		 * @return the column 'importe' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImporte()
+		throws SQLException {
+			return rs.getBigDecimal(5);
+		}
+
+		/**
+		 * Visit Emprccc that's parent of this Formcont. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFormcont_emprccc(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _cccrpme_tnocmrofStmt == null )
+					 initCccrpme_tnocmrofStmt();
+				
+				_cccrpme_tnocmrofStmt.setInt(1, this.getCdg()); 
+				_cccrpme_tnocmrofStmt.setString(2, this.getTipccc()); 
+				rs = _cccrpme_tnocmrofStmt.executeQuery();
+				Emprccc emprccc = new Emprccc(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFormcont_emprccc(this, emprccc);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 
 	}
 	
@@ -30484,13 +30840,22 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(19);
 		}
 		/**
+		 * Total Devengos Especie
+		 * @return the column 'total_devengos_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getTotal_devengos_e()
+		throws SQLException {
+			return rs.getBigDecimal(20);
+		}
+		/**
 		 * Total a Deducir
 		 * @return the column 'total_deducir' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getTotal_deducir()
 		throws SQLException {
-			return rs.getBigDecimal(20);
+			return rs.getBigDecimal(21);
 		}
 		/**
 		 * Total Liquido
@@ -30499,7 +30864,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getTotal_liquido()
 		throws SQLException {
-			return rs.getBigDecimal(21);
+			return rs.getBigDecimal(22);
 		}
 		/**
 		 * Fecha de Cobro
@@ -30508,7 +30873,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFeccob()
 		throws SQLException {
-			return rs.getDate(22);
+			return rs.getDate(23);
 		}
 		/**
 		 * Contingencias Comunes
@@ -30517,7 +30882,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_concom()
 		throws SQLException {
-			return rs.getBigDecimal(23);
+			return rs.getBigDecimal(24);
 		}
 		/**
 		 * Accidentes Trabajo
@@ -30526,7 +30891,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acctra()
 		throws SQLException {
-			return rs.getBigDecimal(24);
+			return rs.getBigDecimal(25);
 		}
 		/**
 		 * Prorrata Pagas Extras
@@ -30535,7 +30900,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_proext()
 		throws SQLException {
-			return rs.getBigDecimal(25);
+			return rs.getBigDecimal(26);
 		}
 		/**
 		 * Contingencias Comunes IT
@@ -30544,7 +30909,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_con_it()
 		throws SQLException {
-			return rs.getBigDecimal(26);
+			return rs.getBigDecimal(27);
 		}
 		/**
 		 * Accidentes Trabajo IT
@@ -30553,7 +30918,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_it()
 		throws SQLException {
-			return rs.getBigDecimal(27);
+			return rs.getBigDecimal(28);
 		}
 		/**
 		 * Contingencias Comunes Maternidad
@@ -30562,7 +30927,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_con_mat()
 		throws SQLException {
-			return rs.getBigDecimal(28);
+			return rs.getBigDecimal(29);
 		}
 		/**
 		 * Accidentes Trabajo Maternidad
@@ -30571,7 +30936,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_mat()
 		throws SQLException {
-			return rs.getBigDecimal(29);
+			return rs.getBigDecimal(30);
 		}
 		/**
 		 * Contingencias Comunes Maternidad No Aporta
@@ -30580,7 +30945,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_con_mat_no()
 		throws SQLException {
-			return rs.getBigDecimal(30);
+			return rs.getBigDecimal(31);
 		}
 		/**
 		 * Accidentes Trabajo no Aporta
@@ -30589,7 +30954,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_mat_no()
 		throws SQLException {
-			return rs.getBigDecimal(31);
+			return rs.getBigDecimal(32);
 		}
 		/**
 		 * Fondo Garantia Salarial
@@ -30598,7 +30963,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_fogasa()
 		throws SQLException {
-			return rs.getBigDecimal(32);
+			return rs.getBigDecimal(33);
 		}
 		/**
 		 * Formacion Profesional
@@ -30607,7 +30972,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_fp()
 		throws SQLException {
-			return rs.getBigDecimal(33);
+			return rs.getBigDecimal(34);
 		}
 		/**
 		 * Desempleo
@@ -30616,7 +30981,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_desempleo()
 		throws SQLException {
-			return rs.getBigDecimal(34);
+			return rs.getBigDecimal(35);
 		}
 		/**
 		 * Horas Estras Estructurales
@@ -30625,7 +30990,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_hextras()
 		throws SQLException {
-			return rs.getBigDecimal(35);
+			return rs.getBigDecimal(36);
 		}
 		/**
 		 * Horas Extras No Extructurales
@@ -30634,7 +30999,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_hextras_no()
 		throws SQLException {
-			return rs.getBigDecimal(36);
+			return rs.getBigDecimal(37);
 		}
 		/**
 		 * Exceso Extrasalariales
@@ -30643,7 +31008,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_exceso()
 		throws SQLException {
-			return rs.getBigDecimal(37);
+			return rs.getBigDecimal(38);
 		}
 		/**
 		 * No cotiza a S.S.
@@ -30652,43 +31017,70 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_nocotiza()
 		throws SQLException {
-			return rs.getBigDecimal(38);
+			return rs.getBigDecimal(39);
 		}
 		/**
-		 * Base en Especie
+		 * Base en Especie Repercutida
 		 * @return the column 'base_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getBase_especie()
 		throws SQLException {
-			return rs.getBigDecimal(39);
+			return rs.getBigDecimal(40);
 		}
 		/**
-		 * Base IRPF
+		 * Base en Especie no Repercutida
+		 * @return the column 'base_especie_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_especie_no()
+		throws SQLException {
+			return rs.getBigDecimal(41);
+		}
+		/**
+		 * Base IRPF Dinararia
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getBase_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(40);
+			return rs.getBigDecimal(42);
 		}
 		/**
-		 * IRPF en Especie
+		 * IRPF en Especie Repercutido
 		 * @return the column 'base_irpf_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getBase_irpf_especie()
 		throws SQLException {
-			return rs.getBigDecimal(41);
+			return rs.getBigDecimal(43);
 		}
 		/**
-		 * IRPF no Cotiza
+		 * IRPF en Especie no Repercutido
+		 * @return the column 'base_irpf_espec_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_irpf_espec_no()
+		throws SQLException {
+			return rs.getBigDecimal(44);
+		}
+		/**
+		 * IRPF no Cotiza Dinerario
 		 * @return the column 'base_irpf_nocotiza' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getBase_irpf_nocotiza()
 		throws SQLException {
-			return rs.getBigDecimal(42);
+			return rs.getBigDecimal(45);
+		}
+		/**
+		 * IRPF no Cotiza Especie
+		 * @return the column 'base_irpf_nocoti_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_irpf_nocoti_e()
+		throws SQLException {
+			return rs.getBigDecimal(46);
 		}
 		/**
 		 * Horas Complementarias
@@ -30697,7 +31089,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_horascom()
 		throws SQLException {
-			return rs.getBigDecimal(43);
+			return rs.getBigDecimal(47);
 		}
 		/**
 		 * Percepcion por Desempleo
@@ -30706,7 +31098,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_perdes()
 		throws SQLException {
-			return rs.getBigDecimal(44);
+			return rs.getBigDecimal(48);
 		}
 		/**
 		 * Remuneracion
@@ -30715,7 +31107,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getRemuneracion()
 		throws SQLException {
-			return rs.getBigDecimal(45);
+			return rs.getBigDecimal(49);
 		}
 		/**
 		 * Base IT
@@ -30724,7 +31116,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_it()
 		throws SQLException {
-			return rs.getBigDecimal(46);
+			return rs.getBigDecimal(50);
 		}
 		/**
 		 * Total 1
@@ -30733,7 +31125,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getTotal_1()
 		throws SQLException {
-			return rs.getBigDecimal(47);
+			return rs.getBigDecimal(51);
 		}
 		/**
 		 * Grupo de Tarifa
@@ -30742,7 +31134,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodbas()
 		throws SQLException {
-			return rs.getString(48);
+			return rs.getString(52);
 		}
 		/**
 		 * Contingencias Generales
@@ -30751,7 +31143,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_cg()
 		throws SQLException {
-			return rs.getBigDecimal(49);
+			return rs.getBigDecimal(53);
 		}
 		/**
 		 * Accidentes Trabajo - Enfermedad Profesional
@@ -30760,7 +31152,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc()
 		throws SQLException {
-			return rs.getBigDecimal(50);
+			return rs.getBigDecimal(54);
 		}
 		/**
 		 * Porcentaje Contingencias Generales
@@ -30769,7 +31161,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_cg()
 		throws SQLException {
-			return rs.getBigDecimal(51);
+			return rs.getBigDecimal(55);
 		}
 		/**
 		 * Porcentaje Accidentes
@@ -30778,7 +31170,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_acc()
 		throws SQLException {
-			return rs.getBigDecimal(52);
+			return rs.getBigDecimal(56);
 		}
 		/**
 		 * Porcentaje Horas Extras Estructurales
@@ -30787,7 +31179,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_hex()
 		throws SQLException {
-			return rs.getBigDecimal(53);
+			return rs.getBigDecimal(57);
 		}
 		/**
 		 * Porcentaje Horas Extras NO Estructurales
@@ -30796,7 +31188,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_hexno()
 		throws SQLException {
-			return rs.getBigDecimal(54);
+			return rs.getBigDecimal(58);
 		}
 		/**
 		 * Importe Contingencias Comunes
@@ -30805,7 +31197,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cg()
 		throws SQLException {
-			return rs.getBigDecimal(55);
+			return rs.getBigDecimal(59);
 		}
 		/**
 		 * Importe Accidentes Trabajo
@@ -30814,7 +31206,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_acc()
 		throws SQLException {
-			return rs.getBigDecimal(56);
+			return rs.getBigDecimal(60);
 		}
 		/**
 		 * Importe Horas Extras Estructurales
@@ -30823,7 +31215,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_hex()
 		throws SQLException {
-			return rs.getBigDecimal(57);
+			return rs.getBigDecimal(61);
 		}
 		/**
 		 * Importe Horas Extras NO Estructurales
@@ -30832,7 +31224,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_hexno()
 		throws SQLException {
-			return rs.getBigDecimal(58);
+			return rs.getBigDecimal(62);
 		}
 		/**
 		 * Tope Minimo para C.G.
@@ -30841,7 +31233,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMincg()
 		throws SQLException {
-			return rs.getBigDecimal(59);
+			return rs.getBigDecimal(63);
 		}
 		/**
 		 * Tope Maximo para C.G.
@@ -30850,7 +31242,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMaxcg()
 		throws SQLException {
-			return rs.getBigDecimal(60);
+			return rs.getBigDecimal(64);
 		}
 		/**
 		 * Tope Minimo para Accidentes
@@ -30859,7 +31251,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMinacc()
 		throws SQLException {
-			return rs.getBigDecimal(61);
+			return rs.getBigDecimal(65);
 		}
 		/**
 		 * Tope Maximo para Accidentes
@@ -30868,7 +31260,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMaxacc()
 		throws SQLException {
-			return rs.getBigDecimal(62);
+			return rs.getBigDecimal(66);
 		}
 		/**
 		 * Cuota Total de la Emrpesa
@@ -30877,7 +31269,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCuota_empresa()
 		throws SQLException {
-			return rs.getBigDecimal(63);
+			return rs.getBigDecimal(67);
 		}
 		/**
 		 * Accidentes Trabajo Sin Horas Extras
@@ -30886,7 +31278,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_sin_hex()
 		throws SQLException {
-			return rs.getBigDecimal(64);
+			return rs.getBigDecimal(68);
 		}
 		/**
 		 * Importe Cuotas Deducciones
@@ -30895,7 +31287,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cuotas()
 		throws SQLException {
-			return rs.getBigDecimal(65);
+			return rs.getBigDecimal(69);
 		}
 		/**
 		 * Porcentaje IRPF
@@ -30904,7 +31296,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(66);
+			return rs.getBigDecimal(70);
 		}
 		/**
 		 * Importe IRPF
@@ -30913,7 +31305,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(67);
+			return rs.getBigDecimal(71);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -30922,7 +31314,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(68);
+			return rs.getDate(72);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -30931,7 +31323,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(69);
+			return rs.getTime(73);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -30940,7 +31332,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(70);
+			return rs.getDate(74);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -30949,7 +31341,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(71);
+			return rs.getTime(75);
 		}
 		/**
 		 * Dias Trabajados
@@ -30958,7 +31350,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiastrab()
 		throws SQLException {
-			return rs.getInt(72);
+			return rs.getInt(76);
 		}
 		/**
 		 * Dias Efectivos
@@ -30967,7 +31359,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiasefec()
 		throws SQLException {
-			return rs.getInt(73);
+			return rs.getInt(77);
 		}
 		/**
 		 * Base Calculo Antiguedad
@@ -30976,7 +31368,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBaseant()
 		throws SQLException {
-			return rs.getBigDecimal(74);
+			return rs.getBigDecimal(78);
 		}
 		/**
 		 * Prorrateo Retribucion
@@ -30985,7 +31377,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProret()
 		throws SQLException {
-			return rs.getString(75);
+			return rs.getString(79);
 		}
 		/**
 		 * Prorrateo Cotizacion
@@ -30994,7 +31386,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProcot()
 		throws SQLException {
-			return rs.getString(76);
+			return rs.getString(80);
 		}
 		/**
 		 * Codigo Convenio
@@ -31003,7 +31395,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodcon()
 		throws SQLException {
-			return rs.getString(77);
+			return rs.getString(81);
 		}
 		/**
 		 * Asimilado a % Cotizacion
@@ -31012,7 +31404,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodpct()
 		throws SQLException {
-			return rs.getString(78);
+			return rs.getString(82);
 		}
 		/**
 		 * Fecha Cobro Real
@@ -31021,7 +31413,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFeccobreal()
 		throws SQLException {
-			return rs.getDate(79);
+			return rs.getDate(83);
 		}
 		/**
 		 * Tipo de divisa
@@ -31030,7 +31422,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDivisa()
 		throws SQLException {
-			return rs.getString(80);
+			return rs.getString(84);
 		}
 		/**
 		 * Base Imponible IRPF de ejercicios anteriores
@@ -31039,7 +31431,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_irpf_ant()
 		throws SQLException {
-			return rs.getBigDecimal(81);
+			return rs.getBigDecimal(85);
 		}
 		/**
 		 * Importe de IRPF de ejercicios anteriores
@@ -31048,7 +31440,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf_ant()
 		throws SQLException {
-			return rs.getBigDecimal(82);
+			return rs.getBigDecimal(86);
 		}
 		/**
 		 * Importe de cuotas S.S. de ejercicios anteriores
@@ -31057,7 +31449,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cuotas_ant()
 		throws SQLException {
-			return rs.getBigDecimal(83);
+			return rs.getBigDecimal(87);
 		}
 		/**
 		 * Base de Contingencias Generales en Pesetas
@@ -31066,7 +31458,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_cg_pts()
 		throws SQLException {
-			return rs.getBigDecimal(84);
+			return rs.getBigDecimal(88);
 		}
 		/**
 		 * Base de Accidentes de Trabajo en Pesetas
@@ -31075,7 +31467,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_pts()
 		throws SQLException {
-			return rs.getBigDecimal(85);
+			return rs.getBigDecimal(89);
 		}
 		/**
 		 * Base de Accidentes de Trabajo sin Horas Extras en Pesetas
@@ -31084,7 +31476,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_sin_h_pts()
 		throws SQLException {
-			return rs.getBigDecimal(86);
+			return rs.getBigDecimal(90);
 		}
 		/**
 		 * Codigo de Nomina Resumen de Atrasos
@@ -31093,7 +31485,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getCdgnom()
 		throws SQLException {
-			return rs.getInt(87);
+			return rs.getInt(91);
 		}
 
 		/**
@@ -31531,13 +31923,22 @@ public class AbstractCtsqlDB {
 			return rs.getBigDecimal(19);
 		}
 		/**
+		 * Total Devengos Especie
+		 * @return the column 'total_devengos_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getTotal_devengos_e()
+		throws SQLException {
+			return rs.getBigDecimal(20);
+		}
+		/**
 		 * Total a Deducir
 		 * @return the column 'total_deducir' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getTotal_deducir()
 		throws SQLException {
-			return rs.getBigDecimal(20);
+			return rs.getBigDecimal(21);
 		}
 		/**
 		 * Total Liquido
@@ -31546,7 +31947,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getTotal_liquido()
 		throws SQLException {
-			return rs.getBigDecimal(21);
+			return rs.getBigDecimal(22);
 		}
 		/**
 		 * Fecha de Cobro
@@ -31555,7 +31956,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFeccob()
 		throws SQLException {
-			return rs.getDate(22);
+			return rs.getDate(23);
 		}
 		/**
 		 * Contingencias Comunes
@@ -31564,7 +31965,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_concom()
 		throws SQLException {
-			return rs.getBigDecimal(23);
+			return rs.getBigDecimal(24);
 		}
 		/**
 		 * Accidentes Trabajo
@@ -31573,7 +31974,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acctra()
 		throws SQLException {
-			return rs.getBigDecimal(24);
+			return rs.getBigDecimal(25);
 		}
 		/**
 		 * Prorrata Pagas Extras
@@ -31582,7 +31983,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_proext()
 		throws SQLException {
-			return rs.getBigDecimal(25);
+			return rs.getBigDecimal(26);
 		}
 		/**
 		 * Contingencias Comunes IT
@@ -31591,7 +31992,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_con_it()
 		throws SQLException {
-			return rs.getBigDecimal(26);
+			return rs.getBigDecimal(27);
 		}
 		/**
 		 * Accidentes Trabajo IT
@@ -31600,7 +32001,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_it()
 		throws SQLException {
-			return rs.getBigDecimal(27);
+			return rs.getBigDecimal(28);
 		}
 		/**
 		 * Contingencias Comunes Maternidad
@@ -31609,7 +32010,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_con_mat()
 		throws SQLException {
-			return rs.getBigDecimal(28);
+			return rs.getBigDecimal(29);
 		}
 		/**
 		 * Accidentes Trabajo Maternidad
@@ -31618,7 +32019,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_mat()
 		throws SQLException {
-			return rs.getBigDecimal(29);
+			return rs.getBigDecimal(30);
 		}
 		/**
 		 * Contingencias Comunes Maternidad No Aporta
@@ -31627,7 +32028,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_con_mat_no()
 		throws SQLException {
-			return rs.getBigDecimal(30);
+			return rs.getBigDecimal(31);
 		}
 		/**
 		 * Accidentes Trabajo no Aporta
@@ -31636,7 +32037,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_mat_no()
 		throws SQLException {
-			return rs.getBigDecimal(31);
+			return rs.getBigDecimal(32);
 		}
 		/**
 		 * Fondo Garantia Salarial
@@ -31645,7 +32046,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_fogasa()
 		throws SQLException {
-			return rs.getBigDecimal(32);
+			return rs.getBigDecimal(33);
 		}
 		/**
 		 * Formacion Profesional
@@ -31654,7 +32055,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_fp()
 		throws SQLException {
-			return rs.getBigDecimal(33);
+			return rs.getBigDecimal(34);
 		}
 		/**
 		 * Desempleo
@@ -31663,7 +32064,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_desempleo()
 		throws SQLException {
-			return rs.getBigDecimal(34);
+			return rs.getBigDecimal(35);
 		}
 		/**
 		 * Horas Estras Estructurales
@@ -31672,7 +32073,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_hextras()
 		throws SQLException {
-			return rs.getBigDecimal(35);
+			return rs.getBigDecimal(36);
 		}
 		/**
 		 * Horas Extras No Extructurales
@@ -31681,7 +32082,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_hextras_no()
 		throws SQLException {
-			return rs.getBigDecimal(36);
+			return rs.getBigDecimal(37);
 		}
 		/**
 		 * Exceso Extrasalariales
@@ -31690,7 +32091,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_exceso()
 		throws SQLException {
-			return rs.getBigDecimal(37);
+			return rs.getBigDecimal(38);
 		}
 		/**
 		 * No cotiza a S.S.
@@ -31699,43 +32100,70 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_nocotiza()
 		throws SQLException {
-			return rs.getBigDecimal(38);
+			return rs.getBigDecimal(39);
 		}
 		/**
-		 * Base en Especie
+		 * Base en Especie Repercutida
 		 * @return the column 'base_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getBase_especie()
 		throws SQLException {
-			return rs.getBigDecimal(39);
+			return rs.getBigDecimal(40);
 		}
 		/**
-		 * Base IRPF
+		 * Base en Especie no Repercutida
+		 * @return the column 'base_especie_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_especie_no()
+		throws SQLException {
+			return rs.getBigDecimal(41);
+		}
+		/**
+		 * Base IRPF Dinararia
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getBase_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(40);
+			return rs.getBigDecimal(42);
 		}
 		/**
-		 * IRPF en Especie
+		 * IRPF en Especie Repercutido
 		 * @return the column 'base_irpf_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getBase_irpf_especie()
 		throws SQLException {
-			return rs.getBigDecimal(41);
+			return rs.getBigDecimal(43);
 		}
 		/**
-		 * IRPF no Cotiza
+		 * IRPF en Especie no Repercutido
+		 * @return the column 'base_irpf_espec_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_irpf_espec_no()
+		throws SQLException {
+			return rs.getBigDecimal(44);
+		}
+		/**
+		 * IRPF no Cotiza Dinerario
 		 * @return the column 'base_irpf_nocotiza' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getBase_irpf_nocotiza()
 		throws SQLException {
-			return rs.getBigDecimal(42);
+			return rs.getBigDecimal(45);
+		}
+		/**
+		 * IRPF no Cotiza Especie
+		 * @return the column 'base_irpf_nocoti_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getBase_irpf_nocoti_e()
+		throws SQLException {
+			return rs.getBigDecimal(46);
 		}
 		/**
 		 * Horas Complementarias
@@ -31744,7 +32172,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_horascom()
 		throws SQLException {
-			return rs.getBigDecimal(43);
+			return rs.getBigDecimal(47);
 		}
 		/**
 		 * Percepcion por Desempleo
@@ -31753,7 +32181,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_perdes()
 		throws SQLException {
-			return rs.getBigDecimal(44);
+			return rs.getBigDecimal(48);
 		}
 		/**
 		 * Remuneracion
@@ -31762,7 +32190,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getRemuneracion()
 		throws SQLException {
-			return rs.getBigDecimal(45);
+			return rs.getBigDecimal(49);
 		}
 		/**
 		 * Base IT
@@ -31771,7 +32199,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_it()
 		throws SQLException {
-			return rs.getBigDecimal(46);
+			return rs.getBigDecimal(50);
 		}
 		/**
 		 * Total 1
@@ -31780,7 +32208,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getTotal_1()
 		throws SQLException {
-			return rs.getBigDecimal(47);
+			return rs.getBigDecimal(51);
 		}
 		/**
 		 * Grupo de Tarifa
@@ -31789,7 +32217,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodbas()
 		throws SQLException {
-			return rs.getString(48);
+			return rs.getString(52);
 		}
 		/**
 		 * Contingencias Generales
@@ -31798,7 +32226,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_cg()
 		throws SQLException {
-			return rs.getBigDecimal(49);
+			return rs.getBigDecimal(53);
 		}
 		/**
 		 * Accidentes Trabajo - Enfermedad Profesional
@@ -31807,7 +32235,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc()
 		throws SQLException {
-			return rs.getBigDecimal(50);
+			return rs.getBigDecimal(54);
 		}
 		/**
 		 * Porcentaje Contingencias Generales
@@ -31816,7 +32244,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_cg()
 		throws SQLException {
-			return rs.getBigDecimal(51);
+			return rs.getBigDecimal(55);
 		}
 		/**
 		 * Porcentaje Accidentes
@@ -31825,7 +32253,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_acc()
 		throws SQLException {
-			return rs.getBigDecimal(52);
+			return rs.getBigDecimal(56);
 		}
 		/**
 		 * Porcentaje Horas Extras Estructurales
@@ -31834,7 +32262,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_hex()
 		throws SQLException {
-			return rs.getBigDecimal(53);
+			return rs.getBigDecimal(57);
 		}
 		/**
 		 * Porcentaje Horas Extras NO Estructurales
@@ -31843,7 +32271,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_hexno()
 		throws SQLException {
-			return rs.getBigDecimal(54);
+			return rs.getBigDecimal(58);
 		}
 		/**
 		 * Importe Contingencias Comunes
@@ -31852,7 +32280,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cg()
 		throws SQLException {
-			return rs.getBigDecimal(55);
+			return rs.getBigDecimal(59);
 		}
 		/**
 		 * Importe Accidentes Trabajo
@@ -31861,7 +32289,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_acc()
 		throws SQLException {
-			return rs.getBigDecimal(56);
+			return rs.getBigDecimal(60);
 		}
 		/**
 		 * Importe Horas Extras Estructurales
@@ -31870,7 +32298,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_hex()
 		throws SQLException {
-			return rs.getBigDecimal(57);
+			return rs.getBigDecimal(61);
 		}
 		/**
 		 * Importe Horas Extras NO Estructurales
@@ -31879,7 +32307,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_hexno()
 		throws SQLException {
-			return rs.getBigDecimal(58);
+			return rs.getBigDecimal(62);
 		}
 		/**
 		 * Tope Minimo para C.G.
@@ -31888,7 +32316,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMincg()
 		throws SQLException {
-			return rs.getBigDecimal(59);
+			return rs.getBigDecimal(63);
 		}
 		/**
 		 * Tope Maximo para C.G.
@@ -31897,7 +32325,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMaxcg()
 		throws SQLException {
-			return rs.getBigDecimal(60);
+			return rs.getBigDecimal(64);
 		}
 		/**
 		 * Tope Minimo para Accidentes
@@ -31906,7 +32334,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMinacc()
 		throws SQLException {
-			return rs.getBigDecimal(61);
+			return rs.getBigDecimal(65);
 		}
 		/**
 		 * Tope Maximo para Accidentes
@@ -31915,7 +32343,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getMaxacc()
 		throws SQLException {
-			return rs.getBigDecimal(62);
+			return rs.getBigDecimal(66);
 		}
 		/**
 		 * Cuota Total de la Emrpesa
@@ -31924,7 +32352,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getCuota_empresa()
 		throws SQLException {
-			return rs.getBigDecimal(63);
+			return rs.getBigDecimal(67);
 		}
 		/**
 		 * Accidentes Trabajo Sin Horas Extras
@@ -31933,7 +32361,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_sin_hex()
 		throws SQLException {
-			return rs.getBigDecimal(64);
+			return rs.getBigDecimal(68);
 		}
 		/**
 		 * Importe Cuotas Deducciones
@@ -31942,7 +32370,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cuotas()
 		throws SQLException {
-			return rs.getBigDecimal(65);
+			return rs.getBigDecimal(69);
 		}
 		/**
 		 * Porcentaje IRPF
@@ -31951,7 +32379,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getPrc_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(66);
+			return rs.getBigDecimal(70);
 		}
 		/**
 		 * Importe IRPF
@@ -31960,7 +32388,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf()
 		throws SQLException {
-			return rs.getBigDecimal(67);
+			return rs.getBigDecimal(71);
 		}
 		/**
 		 * Fecha Creacion Fila
@@ -31969,7 +32397,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecnew()
 		throws SQLException {
-			return rs.getDate(68);
+			return rs.getDate(72);
 		}
 		/**
 		 * Hora Creacion Fila
@@ -31978,7 +32406,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHornew()
 		throws SQLException {
-			return rs.getTime(69);
+			return rs.getTime(73);
 		}
 		/**
 		 * Fecha Modificacion Fila
@@ -31987,7 +32415,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFecmod()
 		throws SQLException {
-			return rs.getDate(70);
+			return rs.getDate(74);
 		}
 		/**
 		 * Hora Modificacion Fila
@@ -31996,7 +32424,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Time getHormod()
 		throws SQLException {
-			return rs.getTime(71);
+			return rs.getTime(75);
 		}
 		/**
 		 * Dias Trabajados
@@ -32005,7 +32433,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiastrab()
 		throws SQLException {
-			return rs.getInt(72);
+			return rs.getInt(76);
 		}
 		/**
 		 * Dias Efectivos
@@ -32014,7 +32442,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDiasefec()
 		throws SQLException {
-			return rs.getInt(73);
+			return rs.getInt(77);
 		}
 		/**
 		 * Base Calculo Antiguedad
@@ -32023,7 +32451,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBaseant()
 		throws SQLException {
-			return rs.getBigDecimal(74);
+			return rs.getBigDecimal(78);
 		}
 		/**
 		 * Prorrateo Retribucion
@@ -32032,7 +32460,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProret()
 		throws SQLException {
-			return rs.getString(75);
+			return rs.getString(79);
 		}
 		/**
 		 * Prorrateo Cotizacion
@@ -32041,7 +32469,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getProcot()
 		throws SQLException {
-			return rs.getString(76);
+			return rs.getString(80);
 		}
 		/**
 		 * Codigo Convenio
@@ -32050,7 +32478,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodcon()
 		throws SQLException {
-			return rs.getString(77);
+			return rs.getString(81);
 		}
 		/**
 		 * Asimilado a % Cotizacion
@@ -32059,7 +32487,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getCodpct()
 		throws SQLException {
-			return rs.getString(78);
+			return rs.getString(82);
 		}
 		/**
 		 * Fecha Cobro Real
@@ -32068,7 +32496,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Date getFeccobreal()
 		throws SQLException {
-			return rs.getDate(79);
+			return rs.getDate(83);
 		}
 		/**
 		 * Tipo de divisa
@@ -32077,7 +32505,7 @@ public class AbstractCtsqlDB {
 		 */
 		public String getDivisa()
 		throws SQLException {
-			return rs.getString(80);
+			return rs.getString(84);
 		}
 		/**
 		 * Base Imponible IRPF de ejercicios anteriores
@@ -32086,7 +32514,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_irpf_ant()
 		throws SQLException {
-			return rs.getBigDecimal(81);
+			return rs.getBigDecimal(85);
 		}
 		/**
 		 * Importe de IRPF de ejercicios anteriores
@@ -32095,7 +32523,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_irpf_ant()
 		throws SQLException {
-			return rs.getBigDecimal(82);
+			return rs.getBigDecimal(86);
 		}
 		/**
 		 * Importe de cuotas S.S. de ejercicios anteriores
@@ -32104,7 +32532,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getImporte_cuotas_ant()
 		throws SQLException {
-			return rs.getBigDecimal(83);
+			return rs.getBigDecimal(87);
 		}
 		/**
 		 * Base de Contingencias Generales en Pesetas
@@ -32113,7 +32541,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_cg_pts()
 		throws SQLException {
-			return rs.getBigDecimal(84);
+			return rs.getBigDecimal(88);
 		}
 		/**
 		 * Base de Accidentes de Trabajo en Pesetas
@@ -32122,7 +32550,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_pts()
 		throws SQLException {
-			return rs.getBigDecimal(85);
+			return rs.getBigDecimal(89);
 		}
 		/**
 		 * Base de Accidentes de Trabajo sin Horas Extras en Pesetas
@@ -32131,7 +32559,7 @@ public class AbstractCtsqlDB {
 		 */
 		public BigDecimal getBase_acc_sin_h_pts()
 		throws SQLException {
-			return rs.getBigDecimal(86);
+			return rs.getBigDecimal(90);
 		}
 
 		/**
@@ -32411,6 +32839,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -32431,9 +32860,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -40347,6 +40779,28 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _noitca_fa_kfStmt = null;
+		
+	private void initNoitca_fa_kfStmt() 
+	throws SQLException{
+		this._noitca_fa_kfStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "id" 
+				+ ",menu" 
+				+ ",name" 
+				+ ",application_id" 
+				+ " FROM action"
+				+ " WHERE" 
+				+ " id = ?  " 			); 
+	}
+
+	private void closeNoitca_fa_kfStmt() 
+	throws SQLException{
+		if ( _noitca_fa_kfStmt != null ) { 
+			_noitca_fa_kfStmt.close();
+			_noitca_fa_kfStmt = null;	
+		}
+	}
 	private PreparedStatement _resu_fa_kfStmt = null;
 		
 	private void initResu_fa_kfStmt() 
@@ -40423,6 +40877,30 @@ public class AbstractCtsqlDB {
 			return rs.getInt(4);
 		}
 
+		/**
+		 * Visit Action that's parent of this Action_favorite. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFk_af_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _noitca_fa_kfStmt == null )
+					 initNoitca_fa_kfStmt();
+				
+				_noitca_fa_kfStmt.setInt(1, this.getAction_id()); 
+				rs = _noitca_fa_kfStmt.executeQuery();
+				Action action = new Action(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFk_af_action(this, action);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 		/**
 		 * Visit Usuario that's parent of this Action_favorite. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -40517,6 +40995,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -40537,9 +41016,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -43946,6 +44428,29 @@ public class AbstractCtsqlDB {
 
 	
 
+	private PreparedStatement _rpme_trec_mer_kfStmt = null;
+		
+	private void initRpme_trec_mer_kfStmt() 
+	throws SQLException{
+		this._rpme_trec_mer_kfStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "id" 
+				+ ",empresa" 
+				+ ",fecha" 
+				+ ",estado" 
+				+ ",huella" 
+				+ " FROM rem_cert_empr"
+				+ " WHERE" 
+				+ " id = ?  " 			); 
+	}
+
+	private void closeRpme_trec_mer_kfStmt() 
+	throws SQLException{
+		if ( _rpme_trec_mer_kfStmt != null ) { 
+			_rpme_trec_mer_kfStmt.close();
+			_rpme_trec_mer_kfStmt = null;	
+		}
+	}
 	private PreparedStatement _pme_asemer_trec_kfStmt = null;
 		
 	private void initPme_asemer_trec_kfStmt() 
@@ -44045,6 +44550,30 @@ public class AbstractCtsqlDB {
 		}
 
 		/**
+		 * Visit Rem_cert_empr that's parent of this Rem_cert_empr_det. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFk_rem_cert_empr(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _rpme_trec_mer_kfStmt == null )
+					 initRpme_trec_mer_kfStmt();
+				
+				_rpme_trec_mer_kfStmt.setInt(1, this.getRem_cert_empr()); 
+				rs = _rpme_trec_mer_kfStmt.executeQuery();
+				Rem_cert_empr rem_cert_empr = new Rem_cert_empr(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFk_rem_cert_empr(this, rem_cert_empr);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
 		 * Visit Emprper that's parent of this Rem_cert_empr_det. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -44073,6 +44602,31 @@ public class AbstractCtsqlDB {
 	
 
 	
+		
+	private PreparedStatement rel_cal_ctraStmt = null;
+		
+	private void initRel_cal_ctraStmt() 
+	throws SQLException{
+		this.rel_cal_ctraStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",feccal" 
+				+ ",tipdia" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",domicilio" 
+				+ " FROM calendar"
+				+ " WHERE" 
+				+ " codact = ?  "  + "AND" 				+ " codemp = ?  "  + "AND" 				+ " domicilio = ?  " 			); 
+	}
+
+	private void closeRel_cal_ctraStmt() 
+	throws SQLException{
+		if ( rel_cal_ctraStmt != null ) { 
+			rel_cal_ctraStmt.close();
+			rel_cal_ctraStmt = null;	
+		}
+	}
 
 	private PreparedStatement _oinevnoc_artcrpmeStmt = null;
 		
@@ -44499,6 +45053,33 @@ public class AbstractCtsqlDB {
 			}
 		}
 
+		
+		/**
+		 * Visit Calendar that're children of this Emprctra. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitRel_cal_ctra(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( rel_cal_ctraStmt == null )
+					 initRel_cal_ctraStmt();
+				
+				rel_cal_ctraStmt.setInt(1, this.getCodact()); 
+				rel_cal_ctraStmt.setInt(2, this.getCdg()); 
+				rel_cal_ctraStmt.setInt(3, this.getDomicilio()); 
+				rs = rel_cal_ctraStmt.executeQuery();
+				Calendar calendar = new Calendar(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitRel_cal_ctra(calendar, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 	}
 	
 
@@ -45704,6 +46285,24 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getBigDecimal(50);
 		}
+		/**
+		 * Porcentaje reduccion hipoteca
+		 * @return the column 'prcredhipoteca' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getPrcredhipoteca()
+		throws SQLException {
+			return rs.getBigDecimal(51);
+		}
+		/**
+		 * Importe retenciones reducción hipoteca
+		 * @return the column 'impredhipoteca' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getImpredhipoteca()
+		throws SQLException {
+			return rs.getBigDecimal(52);
+		}
 
 		/**
 		 * Visit Emprper that's parent of this Calculo. 
@@ -45734,6 +46333,52 @@ public class AbstractCtsqlDB {
 	
 
 	
+		
+	private PreparedStatement fk_af_actionStmt = null;
+		
+	private void initFk_af_actionStmt() 
+	throws SQLException{
+		this.fk_af_actionStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "id" 
+				+ ",position" 
+				+ ",action_id" 
+				+ ",user_id" 
+				+ " FROM action_favorite"
+				+ " WHERE" 
+				+ " action_id = ?  " 			); 
+	}
+
+	private void closeFk_af_actionStmt() 
+	throws SQLException{
+		if ( fk_af_actionStmt != null ) { 
+			fk_af_actionStmt.close();
+			fk_af_actionStmt = null;	
+		}
+	}
+		
+	private PreparedStatement fk_ae_actionStmt = null;
+		
+	private void initFk_ae_actionStmt() 
+	throws SQLException{
+		this.fk_ae_actionStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "id" 
+				+ ",executiondate" 
+				+ ",action_id" 
+				+ ",session_id" 
+				+ " FROM action_entry"
+				+ " WHERE" 
+				+ " action_id = ?  " 			); 
+	}
+
+	private void closeFk_ae_actionStmt() 
+	throws SQLException{
+		if ( fk_ae_actionStmt != null ) { 
+			fk_ae_actionStmt.close();
+			fk_ae_actionStmt = null;	
+		}
+	}
 		
 	private PreparedStatement fk_ad_actionStmt = null;
 		
@@ -45854,6 +46499,56 @@ public class AbstractCtsqlDB {
 			}
 		}
 
+		
+		/**
+		 * Visit Action_favorite that're children of this Action. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFk_af_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( fk_af_actionStmt == null )
+					 initFk_af_actionStmt();
+				
+				fk_af_actionStmt.setInt(1, this.getId()); 
+				rs = fk_af_actionStmt.executeQuery();
+				Action_favorite action_favorite = new Action_favorite(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFk_af_action(action_favorite, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Action_entry that're children of this Action. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFk_ae_action(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( fk_ae_actionStmt == null )
+					 initFk_ae_actionStmt();
+				
+				fk_ae_actionStmt.setInt(1, this.getId()); 
+				rs = fk_ae_actionStmt.executeQuery();
+				Action_entry action_entry = new Action_entry(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFk_ae_action(action_entry, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 		
 		/**
 		 * Visit Action_denied that're children of this Action. 
@@ -47682,13 +48377,22 @@ public class AbstractCtsqlDB {
 			return rs.getString(36);
 		}
 		/**
+		 * Hipoteca
+		 * @return the column 'hipoteca' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getHipoteca()
+		throws SQLException {
+			return rs.getString(37);
+		}
+		/**
 		 * Descendientes Menores de 3 años
 		 * @return the column 'descme3' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public Integer getDescme3()
 		throws SQLException {
-			return rs.getInt(37);
+			return rs.getInt(38);
 		}
 		/**
 		 * Descendientes Menores de 3 años Enteros
@@ -47697,7 +48401,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescme3e()
 		throws SQLException {
-			return rs.getInt(38);
+			return rs.getInt(39);
 		}
 		/**
 		 * Descendientes Mayores de 3 años
@@ -47706,7 +48410,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescma3()
 		throws SQLException {
-			return rs.getInt(39);
+			return rs.getInt(40);
 		}
 		/**
 		 * Descendientes Mayores de 3 años Enteros
@@ -47715,7 +48419,34 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescma3e()
 		throws SQLException {
-			return rs.getInt(40);
+			return rs.getInt(41);
+		}
+		/**
+		 * Cómputo 1º
+		 * @return the column 'computo1' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getComputo1()
+		throws SQLException {
+			return rs.getInt(42);
+		}
+		/**
+		 * Cómputo 2º
+		 * @return the column 'computo2' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getComputo2()
+		throws SQLException {
+			return rs.getInt(43);
+		}
+		/**
+		 * Cómputo 3º
+		 * @return the column 'computo3' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getComputo3()
+		throws SQLException {
+			return rs.getInt(44);
 		}
 		/**
 		 * Descendientes Discapacitados >=33% <65%
@@ -47724,7 +48455,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdi33()
 		throws SQLException {
-			return rs.getInt(41);
+			return rs.getInt(45);
 		}
 		/**
 		 * Descendientes Discapacitados >=33% <65% Enteros
@@ -47733,7 +48464,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdi33e()
 		throws SQLException {
-			return rs.getInt(42);
+			return rs.getInt(46);
 		}
 		/**
 		 * Descendientes Discapacitados Movilidad Reducida
@@ -47742,7 +48473,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdimr()
 		throws SQLException {
-			return rs.getInt(43);
+			return rs.getInt(47);
 		}
 		/**
 		 * Descendientes Discapacitados Movilidad Reducida Enteros
@@ -47751,7 +48482,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdimre()
 		throws SQLException {
-			return rs.getInt(44);
+			return rs.getInt(48);
 		}
 		/**
 		 * Descendientes Discapacitados >65%
@@ -47760,7 +48491,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdi65()
 		throws SQLException {
-			return rs.getInt(45);
+			return rs.getInt(49);
 		}
 		/**
 		 * Descendientes Discapacitados >65% Enteros
@@ -47769,7 +48500,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getDescdi65e()
 		throws SQLException {
-			return rs.getInt(46);
+			return rs.getInt(50);
 		}
 		/**
 		 * Ascendientes Menores de 75 años
@@ -47778,7 +48509,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscme75()
 		throws SQLException {
-			return rs.getInt(47);
+			return rs.getInt(51);
 		}
 		/**
 		 * Ascendientes Menores de 75 años Enteros
@@ -47787,7 +48518,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscme75e()
 		throws SQLException {
-			return rs.getInt(48);
+			return rs.getInt(52);
 		}
 		/**
 		 * Ascendientes Mayores de 75 años
@@ -47796,7 +48527,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscma75()
 		throws SQLException {
-			return rs.getInt(49);
+			return rs.getInt(53);
 		}
 		/**
 		 * Ascendientes Mayores de 75 años Enteros
@@ -47805,7 +48536,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscma75e()
 		throws SQLException {
-			return rs.getInt(50);
+			return rs.getInt(54);
 		}
 		/**
 		 * Ascendientes Discapacitados >=33% <65%
@@ -47814,7 +48545,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdi33()
 		throws SQLException {
-			return rs.getInt(51);
+			return rs.getInt(55);
 		}
 		/**
 		 * Ascendientes Discapacitados >=33% <65% Enteros
@@ -47823,7 +48554,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdi33e()
 		throws SQLException {
-			return rs.getInt(52);
+			return rs.getInt(56);
 		}
 		/**
 		 * Ascendientes Discapacitados Movilidad Reducida
@@ -47832,7 +48563,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdimr()
 		throws SQLException {
-			return rs.getInt(53);
+			return rs.getInt(57);
 		}
 		/**
 		 * Ascendientes Discapacitados Movilidad Reducida Enteros
@@ -47841,7 +48572,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdimre()
 		throws SQLException {
-			return rs.getInt(54);
+			return rs.getInt(58);
 		}
 		/**
 		 * Ascendientes Discapacitados >65%
@@ -47850,7 +48581,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdi65()
 		throws SQLException {
-			return rs.getInt(55);
+			return rs.getInt(59);
 		}
 		/**
 		 * Ascendientes Discapacitados >65% Enteros
@@ -47859,7 +48590,7 @@ public class AbstractCtsqlDB {
 		 */
 		public Integer getAscdi65e()
 		throws SQLException {
-			return rs.getInt(56);
+			return rs.getInt(60);
 		}
 
 		/**
@@ -51800,6 +52531,29 @@ public class AbstractCtsqlDB {
 
 	
 		
+	private PreparedStatement fk_action_appStmt = null;
+		
+	private void initFk_action_appStmt() 
+	throws SQLException{
+		this.fk_action_appStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "id" 
+				+ ",menu" 
+				+ ",name" 
+				+ ",application_id" 
+				+ " FROM action"
+				+ " WHERE" 
+				+ " application_id = ?  " 			); 
+	}
+
+	private void closeFk_action_appStmt() 
+	throws SQLException{
+		if ( fk_action_appStmt != null ) { 
+			fk_action_appStmt.close();
+			fk_action_appStmt = null;	
+		}
+	}
+		
 	private PreparedStatement fk_applicationStmt = null;
 		
 	private void initFk_applicationStmt() 
@@ -51824,29 +52578,6 @@ public class AbstractCtsqlDB {
 		if ( fk_applicationStmt != null ) { 
 			fk_applicationStmt.close();
 			fk_applicationStmt = null;	
-		}
-	}
-		
-	private PreparedStatement fk_action_appStmt = null;
-		
-	private void initFk_action_appStmt() 
-	throws SQLException{
-		this.fk_action_appStmt = ctsqlConnection.prepareStatement(
-				"SELECT "
-				+ "id" 
-				+ ",menu" 
-				+ ",name" 
-				+ ",application_id" 
-				+ " FROM action"
-				+ " WHERE" 
-				+ " application_id = ?  " 			); 
-	}
-
-	private void closeFk_action_appStmt() 
-	throws SQLException{
-		if ( fk_action_appStmt != null ) { 
-			fk_action_appStmt.close();
-			fk_action_appStmt = null;	
 		}
 	}
 
@@ -51895,31 +52626,6 @@ public class AbstractCtsqlDB {
 
 		
 		/**
-		 * Visit Session that're children of this Application. 
-		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
-		 * @throws SQLException
-		 */
-		public void visitFk_application(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
-			ResultSet 			rs 	= null;
-			try {
-				
-				if ( fk_applicationStmt == null )
-					 initFk_applicationStmt();
-				
-				fk_applicationStmt.setInt(1, this.getId()); 
-				rs = fk_applicationStmt.executeQuery();
-				Session session = new Session(rs); 
-				while ( rs.next() ) {
-					ctsqlDBVisitor.visitFk_application(session, this);
-				}
-			}
-			finally {
-				if ( rs != null )
-					rs.close();
-			}
-		}
-		
-		/**
 		 * Visit Action that're children of this Application. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -51936,6 +52642,31 @@ public class AbstractCtsqlDB {
 				Action action = new Action(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitFk_action_app(action, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Session that're children of this Application. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitFk_application(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( fk_applicationStmt == null )
+					 initFk_applicationStmt();
+				
+				fk_applicationStmt.setInt(1, this.getId()); 
+				rs = fk_applicationStmt.executeQuery();
+				Session session = new Session(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitFk_application(session, this);
 				}
 			}
 			finally {
@@ -59470,6 +60201,38 @@ public class AbstractCtsqlDB {
 
 
 	/**
+	 * Visit all Formcont's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFormcont(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "cdg" 
+				+ ",tipccc" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",importe" 
+				+ " FROM formcont");
+			Formcont formcont = new Formcont(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFormcont(formcont);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+
+	/**
 	 * Visit all Httcomplemento's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 	 * @throws SQLException
@@ -59536,6 +60299,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -59556,9 +60320,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -59650,6 +60417,7 @@ public class AbstractCtsqlDB {
 				+ ",fecfin" 
 				+ ",diasnomina" 
 				+ ",total_devengos" 
+				+ ",total_devengos_e" 
 				+ ",total_deducir" 
 				+ ",total_liquido" 
 				+ ",feccob" 
@@ -59670,9 +60438,12 @@ public class AbstractCtsqlDB {
 				+ ",base_exceso" 
 				+ ",base_nocotiza" 
 				+ ",base_especie" 
+				+ ",base_especie_no" 
 				+ ",base_irpf" 
 				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
 				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
 				+ ",base_horascom" 
 				+ ",base_perdes" 
 				+ ",remuneracion" 
@@ -61994,6 +62765,8 @@ public class AbstractCtsqlDB {
 				+ ",retanualb" 
 				+ ",difret" 
 				+ ",irpfanual" 
+				+ ",prcredhipoteca" 
+				+ ",impredhipoteca" 
 				+ " FROM calculo");
 			Calculo calculo = new Calculo(rs); 
 			while ( rs.next() ) {
@@ -62365,10 +63138,14 @@ public class AbstractCtsqlDB {
 				+ ",ascminus_65" 
 				+ ",movilidad" 
 				+ ",prolongacion" 
+				+ ",hipoteca" 
 				+ ",descme3" 
 				+ ",descme3e" 
 				+ ",descma3" 
 				+ ",descma3e" 
+				+ ",computo1" 
+				+ ",computo2" 
+				+ ",computo3" 
 				+ ",descdi33" 
 				+ ",descdi33e" 
 				+ ",descdimr" 
@@ -63613,6 +64390,7 @@ public class AbstractCtsqlDB {
 		closeUnnif_unotdnifStmt();
 		closeRel_lpl_pluStmt();
 		closeIva_tth_lerStmt();
+		closeNoitca_ea_kfStmt();
 		closeNoisses_ea_kfStmt();
 		closeRel_lba_basStmt();
 		closeRel_cat_comStmt();
@@ -63733,6 +64511,7 @@ public class AbstractCtsqlDB {
 		closeAsivid_unnifStmt();
 		closeUlp_lpl_lerStmt();
 		closeMoc_lpl_lerStmt();
+		closeFk_rem_cert_emprStmt();
 		closeRpme_mer_trec_kfStmt();
 		closeReprpme_ograbmeStmt();
 		closeFdanimon_vedfdmonStmt();
@@ -63752,6 +64531,7 @@ public class AbstractCtsqlDB {
 		closeFinrpme_ucodigerStmt();
 		closeTcarpme_ucodigerStmt();
 		closeGerpit_ucodigerStmt();
+		closeArtc_lac_lerStmt();
 		closeRel_per_nacStmt();
 		closeLinirpf_elemirpfStmt();
 		closeRep_otd_lerStmt();
@@ -63779,6 +64559,7 @@ public class AbstractCtsqlDB {
 		closeReprpme_ojabartStmt();
 		closeJlincnae2009Stmt();
 		closeRel_epp_cccStmt();
+		closeFormcont_emprcccStmt();
 		closeTum_ccc_lerStmt();
 		closeTcarpme_cccrpmeStmt();
 		closeRel_epp_perStmt();
@@ -63826,6 +64607,7 @@ public class AbstractCtsqlDB {
 		closeSetsoc_acifinoblStmt();
 		closeParteconf_parteitStmt();
 		closePpe_tip_lerStmt();
+		closeCccrpme_tnocmrofStmt();
 		closeMoc_tth_lerStmt();
 		closeNomdfdev_nominadfStmt();
 		closeNomdfdto_nominadfStmt();
@@ -63893,6 +64675,7 @@ public class AbstractCtsqlDB {
 		closeRel_fid_finStmt();
 		closePpe_nif_lerStmt();
 		closeAsivid_otiuqinifStmt();
+		closeNoitca_fa_kfStmt();
 		closeResu_fa_kfStmt();
 		closeAnimon_crpStmt();
 		closeNomdtoex_nominaexStmt();
@@ -63917,7 +64700,9 @@ public class AbstractCtsqlDB {
 		closeRel_lpr_preStmt();
 		closeMod_erp_lerStmt();
 		closeSomonotuatuajStmt();
+		closeRpme_trec_mer_kfStmt();
 		closePme_asemer_trec_kfStmt();
+		closeRel_cal_ctraStmt();
 		closeOinevnoc_artcrpmeStmt();
 		closeTcarpme_artcrpmeStmt();
 		closeFinrpme_artcrpmeStmt();
@@ -63927,6 +64712,8 @@ public class AbstractCtsqlDB {
 		closePpe_pcp_lerStmt();
 		closeMoc_pcp_lerStmt();
 		closeReprpme_oluclacStmt();
+		closeFk_af_actionStmt();
+		closeFk_ae_actionStmt();
 		closeFk_ad_actionStmt();
 		closePpa_noitca_kfStmt();
 		closePercniv_nivelStmt();
@@ -63967,8 +64754,8 @@ public class AbstractCtsqlDB {
 		closePit_cni_lerStmt();
 		closeReprpme_icnibartStmt();
 		closeFdxeanimon_lerStmt();
-		closeFk_applicationStmt();
 		closeFk_action_appStmt();
+		closeFk_applicationStmt();
 		closeLcomunica_costesStmt();
 		closeLbonifica_costesStmt();
 		closeSab_soc_lerStmt();

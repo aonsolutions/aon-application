@@ -132,6 +132,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdtoex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lbonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteit;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calen;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Formcont;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httcomplemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomina;
@@ -7061,6 +7062,64 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 	/**
+	 * Fk_ae_action shows join between Action and Action_entry
+	 */
+	public static class Fk_ae_action extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer actionId;  
+		
+		/**
+		 * Identificador unico
+		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAction_Id() {
+			return actionId;
+		}
+		
+		private Integer actionMenu;  
+		
+		/**
+		 * Indica si la Accion esta o no dentro del menu
+		 * @return the column 'menu' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAction_Menu() {
+			return actionMenu;
+		}
+		
+		private String actionName;  
+		
+		/**
+		 * Nombre de la Accion
+		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getAction_Name() {
+			return actionName;
+		}
+		
+		private Integer actionApplication_id;  
+		
+		/**
+		 * Aplicacion a la que pertenece la Accion
+		 * @return the column 'application_id' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAction_Application_id() {
+			return actionApplication_id;
+		}
+		public void visitFk_ae_action(Action_entry action_entry, Action action)
+		throws SQLException {
+			actionId = action.getId();  
+			actionMenu = action.getMenu();  
+			actionName = action.getName();  
+			actionApplication_id = action.getApplication_id();  
+		}
+	
+	}
+	/**
 	 * Fk_ae_session shows join between Session and Action_entry
 	 */
 	public static class Fk_ae_session extends  DefaultCtsqlDBVisitor {
@@ -7803,6 +7862,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaTotal_devengos;
 		}
 		
+		private BigDecimal nominaTotal_devengos_e;  
+		
+		/**
+		 * Total Devengos Especie
+		 * @return the column 'total_devengos_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_devengos_e() {
+			return nominaTotal_devengos_e;
+		}
+		
 		private BigDecimal nominaTotal_deducir;  
 		
 		/**
@@ -8015,7 +8085,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominaBase_especie;  
 		
 		/**
-		 * Base en Especie
+		 * Base en Especie Repercutida
 		 * @return the column 'base_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -8023,10 +8093,21 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaBase_especie;
 		}
 		
+		private BigDecimal nominaBase_especie_no;  
+		
+		/**
+		 * Base en Especie no Repercutida
+		 * @return the column 'base_especie_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_especie_no() {
+			return nominaBase_especie_no;
+		}
+		
 		private BigDecimal nominaBase_irpf;  
 		
 		/**
-		 * Base IRPF
+		 * Base IRPF Dinararia
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -8037,7 +8118,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominaBase_irpf_especie;  
 		
 		/**
-		 * IRPF en Especie
+		 * IRPF en Especie Repercutido
 		 * @return the column 'base_irpf_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -8045,15 +8126,37 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaBase_irpf_especie;
 		}
 		
+		private BigDecimal nominaBase_irpf_espec_no;  
+		
+		/**
+		 * IRPF en Especie no Repercutido
+		 * @return the column 'base_irpf_espec_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_espec_no() {
+			return nominaBase_irpf_espec_no;
+		}
+		
 		private BigDecimal nominaBase_irpf_nocotiza;  
 		
 		/**
-		 * IRPF no Cotiza
+		 * IRPF no Cotiza Dinerario
 		 * @return the column 'base_irpf_nocotiza' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getNomina_Base_irpf_nocotiza() {
 			return nominaBase_irpf_nocotiza;
+		}
+		
+		private BigDecimal nominaBase_irpf_nocoti_e;  
+		
+		/**
+		 * IRPF no Cotiza Especie
+		 * @return the column 'base_irpf_nocoti_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_nocoti_e() {
+			return nominaBase_irpf_nocoti_e;
 		}
 		
 		private BigDecimal nominaBase_horascom;  
@@ -8560,6 +8663,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaFecfin = nomina.getFecfin();  
 			nominaDiasnomina = nomina.getDiasnomina();  
 			nominaTotal_devengos = nomina.getTotal_devengos();  
+			nominaTotal_devengos_e = nomina.getTotal_devengos_e();  
 			nominaTotal_deducir = nomina.getTotal_deducir();  
 			nominaTotal_liquido = nomina.getTotal_liquido();  
 			nominaFeccob = nomina.getFeccob();  
@@ -8580,9 +8684,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaBase_exceso = nomina.getBase_exceso();  
 			nominaBase_nocotiza = nomina.getBase_nocotiza();  
 			nominaBase_especie = nomina.getBase_especie();  
+			nominaBase_especie_no = nomina.getBase_especie_no();  
 			nominaBase_irpf = nomina.getBase_irpf();  
 			nominaBase_irpf_especie = nomina.getBase_irpf_especie();  
+			nominaBase_irpf_espec_no = nomina.getBase_irpf_espec_no();  
 			nominaBase_irpf_nocotiza = nomina.getBase_irpf_nocotiza();  
+			nominaBase_irpf_nocoti_e = nomina.getBase_irpf_nocoti_e();  
 			nominaBase_horascom = nomina.getBase_horascom();  
 			nominaBase_perdes = nomina.getBase_perdes();  
 			nominaRemuneracion = nomina.getRemuneracion();  
@@ -14685,6 +14792,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaTotal_devengos;
 		}
 		
+		private BigDecimal nominaTotal_devengos_e;  
+		
+		/**
+		 * Total Devengos Especie
+		 * @return the column 'total_devengos_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_devengos_e() {
+			return nominaTotal_devengos_e;
+		}
+		
 		private BigDecimal nominaTotal_deducir;  
 		
 		/**
@@ -14897,7 +15015,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominaBase_especie;  
 		
 		/**
-		 * Base en Especie
+		 * Base en Especie Repercutida
 		 * @return the column 'base_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -14905,10 +15023,21 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaBase_especie;
 		}
 		
+		private BigDecimal nominaBase_especie_no;  
+		
+		/**
+		 * Base en Especie no Repercutida
+		 * @return the column 'base_especie_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_especie_no() {
+			return nominaBase_especie_no;
+		}
+		
 		private BigDecimal nominaBase_irpf;  
 		
 		/**
-		 * Base IRPF
+		 * Base IRPF Dinararia
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -14919,7 +15048,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominaBase_irpf_especie;  
 		
 		/**
-		 * IRPF en Especie
+		 * IRPF en Especie Repercutido
 		 * @return the column 'base_irpf_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -14927,15 +15056,37 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaBase_irpf_especie;
 		}
 		
+		private BigDecimal nominaBase_irpf_espec_no;  
+		
+		/**
+		 * IRPF en Especie no Repercutido
+		 * @return the column 'base_irpf_espec_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_espec_no() {
+			return nominaBase_irpf_espec_no;
+		}
+		
 		private BigDecimal nominaBase_irpf_nocotiza;  
 		
 		/**
-		 * IRPF no Cotiza
+		 * IRPF no Cotiza Dinerario
 		 * @return the column 'base_irpf_nocotiza' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getNomina_Base_irpf_nocotiza() {
 			return nominaBase_irpf_nocotiza;
+		}
+		
+		private BigDecimal nominaBase_irpf_nocoti_e;  
+		
+		/**
+		 * IRPF no Cotiza Especie
+		 * @return the column 'base_irpf_nocoti_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_nocoti_e() {
+			return nominaBase_irpf_nocoti_e;
 		}
 		
 		private BigDecimal nominaBase_horascom;  
@@ -15442,6 +15593,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaFecfin = nomina.getFecfin();  
 			nominaDiasnomina = nomina.getDiasnomina();  
 			nominaTotal_devengos = nomina.getTotal_devengos();  
+			nominaTotal_devengos_e = nomina.getTotal_devengos_e();  
 			nominaTotal_deducir = nomina.getTotal_deducir();  
 			nominaTotal_liquido = nomina.getTotal_liquido();  
 			nominaFeccob = nomina.getFeccob();  
@@ -15462,9 +15614,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaBase_exceso = nomina.getBase_exceso();  
 			nominaBase_nocotiza = nomina.getBase_nocotiza();  
 			nominaBase_especie = nomina.getBase_especie();  
+			nominaBase_especie_no = nomina.getBase_especie_no();  
 			nominaBase_irpf = nomina.getBase_irpf();  
 			nominaBase_irpf_especie = nomina.getBase_irpf_especie();  
+			nominaBase_irpf_espec_no = nomina.getBase_irpf_espec_no();  
 			nominaBase_irpf_nocotiza = nomina.getBase_irpf_nocotiza();  
+			nominaBase_irpf_nocoti_e = nomina.getBase_irpf_nocoti_e();  
 			nominaBase_horascom = nomina.getBase_horascom();  
 			nominaBase_perdes = nomina.getBase_perdes();  
 			nominaRemuneracion = nomina.getRemuneracion();  
@@ -16999,6 +17154,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException{
 	}
 
+	public void visitFk_rem_cert_empr(Rem_cert_empr_det rem_cert_empr_det, Rem_cert_empr rem_cert_empr)
+	throws SQLException {
+	}
 
 	/**
 	 * Fk_cert_rem_empr shows join between Emprnif and Rem_cert_empr
@@ -17883,6 +18041,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfTotal_devengos;
 		}
 		
+		private BigDecimal nominadfTotal_devengos_e;  
+		
+		/**
+		 * Total Devengos Especie
+		 * @return the column 'total_devengos_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Total_devengos_e() {
+			return nominadfTotal_devengos_e;
+		}
+		
 		private BigDecimal nominadfTotal_deducir;  
 		
 		/**
@@ -18095,7 +18264,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominadfBase_especie;  
 		
 		/**
-		 * Base en Especie
+		 * Base en Especie Repercutida
 		 * @return the column 'base_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -18103,10 +18272,21 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfBase_especie;
 		}
 		
+		private BigDecimal nominadfBase_especie_no;  
+		
+		/**
+		 * Base en Especie no Repercutida
+		 * @return the column 'base_especie_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_especie_no() {
+			return nominadfBase_especie_no;
+		}
+		
 		private BigDecimal nominadfBase_irpf;  
 		
 		/**
-		 * Base IRPF
+		 * Base IRPF Dinararia
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -18117,7 +18297,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominadfBase_irpf_especie;  
 		
 		/**
-		 * IRPF en Especie
+		 * IRPF en Especie Repercutido
 		 * @return the column 'base_irpf_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -18125,15 +18305,37 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfBase_irpf_especie;
 		}
 		
+		private BigDecimal nominadfBase_irpf_espec_no;  
+		
+		/**
+		 * IRPF en Especie no Repercutido
+		 * @return the column 'base_irpf_espec_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_irpf_espec_no() {
+			return nominadfBase_irpf_espec_no;
+		}
+		
 		private BigDecimal nominadfBase_irpf_nocotiza;  
 		
 		/**
-		 * IRPF no Cotiza
+		 * IRPF no Cotiza Dinerario
 		 * @return the column 'base_irpf_nocotiza' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getNominadf_Base_irpf_nocotiza() {
 			return nominadfBase_irpf_nocotiza;
+		}
+		
+		private BigDecimal nominadfBase_irpf_nocoti_e;  
+		
+		/**
+		 * IRPF no Cotiza Especie
+		 * @return the column 'base_irpf_nocoti_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_irpf_nocoti_e() {
+			return nominadfBase_irpf_nocoti_e;
 		}
 		
 		private BigDecimal nominadfBase_horascom;  
@@ -18651,6 +18853,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominadfFecfin = nominadf.getFecfin();  
 			nominadfDiasnomina = nominadf.getDiasnomina();  
 			nominadfTotal_devengos = nominadf.getTotal_devengos();  
+			nominadfTotal_devengos_e = nominadf.getTotal_devengos_e();  
 			nominadfTotal_deducir = nominadf.getTotal_deducir();  
 			nominadfTotal_liquido = nominadf.getTotal_liquido();  
 			nominadfFeccob = nominadf.getFeccob();  
@@ -18671,9 +18874,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominadfBase_exceso = nominadf.getBase_exceso();  
 			nominadfBase_nocotiza = nominadf.getBase_nocotiza();  
 			nominadfBase_especie = nominadf.getBase_especie();  
+			nominadfBase_especie_no = nominadf.getBase_especie_no();  
 			nominadfBase_irpf = nominadf.getBase_irpf();  
 			nominadfBase_irpf_especie = nominadf.getBase_irpf_especie();  
+			nominadfBase_irpf_espec_no = nominadf.getBase_irpf_espec_no();  
 			nominadfBase_irpf_nocotiza = nominadf.getBase_irpf_nocotiza();  
+			nominadfBase_irpf_nocoti_e = nominadf.getBase_irpf_nocoti_e();  
 			nominadfBase_horascom = nominadf.getBase_horascom();  
 			nominadfBase_perdes = nominadf.getBase_perdes();  
 			nominadfRemuneracion = nominadf.getRemuneracion();  
@@ -21084,6 +21290,220 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 
+	/**
+	 * Rel_cal_ctra shows join between Emprctra and Calendar
+	 */
+	public static class Rel_cal_ctra extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer emprctraCodact;  
+		
+		/**
+		 * Codigo de Actividad
+		 * @return the column 'codact' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprctra_Codact() {
+			return emprctraCodact;
+		}
+		
+		private Integer emprctraCdg;  
+		
+		/**
+		 * Codigo de Empresa
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprctra_Cdg() {
+			return emprctraCdg;
+		}
+		
+		private Integer emprctraDomicilio;  
+		
+		/**
+		 * Codigo de Domicilio
+		 * @return the column 'domicilio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprctra_Domicilio() {
+			return emprctraDomicilio;
+		}
+		
+		private Integer emprctraSuperficie;  
+		
+		/**
+		 * Superficie
+		 * @return the column 'superficie' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprctra_Superficie() {
+			return emprctraSuperficie;
+		}
+		
+		private BigDecimal emprctraPelectri;  
+		
+		/**
+		 * Potencia electrica
+		 * @return the column 'pelectri' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getEmprctra_Pelectri() {
+			return emprctraPelectri;
+		}
+		
+		private String emprctraHorario;  
+		
+		/**
+		 * Horario
+		 * @return the column 'horario' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Horario() {
+			return emprctraHorario;
+		}
+		
+		private String emprctraMaquina;  
+		
+		/**
+		 * Maquinaria instalada
+		 * @return the column 'maquina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Maquina() {
+			return emprctraMaquina;
+		}
+		
+		private String emprctraToxicos;  
+		
+		/**
+		 * Toxicos
+		 * @return the column 'toxicos' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Toxicos() {
+			return emprctraToxicos;
+		}
+		
+		private String emprctraInddia;  
+		
+		/**
+		 * Indicador Dias Descuento
+		 * @return the column 'inddia' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Inddia() {
+			return emprctraInddia;
+		}
+		
+		private String emprctraCodcon;  
+		
+		/**
+		 * Codigo de Convenio
+		 * @return the column 'codcon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Codcon() {
+			return emprctraCodcon;
+		}
+		
+		private String emprctraRepresen;  
+		
+		/**
+		 * Representante Legal Trabajadores
+		 * @return the column 'represen' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Represen() {
+			return emprctraRepresen;
+		}
+		
+		private Integer emprctraJornada;  
+		
+		/**
+		 * Minutos Jornada Semanal
+		 * @return the column 'jornada' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprctra_Jornada() {
+			return emprctraJornada;
+		}
+		
+		private String emprctraIndcal;  
+		
+		/**
+		 * Calendario Laboral
+		 * @return the column 'indcal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Indcal() {
+			return emprctraIndcal;
+		}
+		
+		private String emprctraIndnom;  
+		
+		/**
+		 * Nomina de Empresa
+		 * @return the column 'indnom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Indnom() {
+			return emprctraIndnom;
+		}
+		
+		private String emprctraIndcoste;  
+		
+		/**
+		 * Estudio Costes
+		 * @return the column 'indcoste' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Indcoste() {
+			return emprctraIndcoste;
+		}
+		
+		private String emprctraFiestas;  
+		
+		/**
+		 * Fiestas Locales
+		 * @return the column 'fiestas' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Fiestas() {
+			return emprctraFiestas;
+		}
+		
+		private String emprctraEnvioss;  
+		
+		/**
+		 * Envio de Seguros Sociales
+		 * @return the column 'envioss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprctra_Envioss() {
+			return emprctraEnvioss;
+		}
+		public void visitRel_cal_ctra(Calendar calendar, Emprctra emprctra)
+		throws SQLException {
+			emprctraCodact = emprctra.getCodact();  
+			emprctraCdg = emprctra.getCdg();  
+			emprctraDomicilio = emprctra.getDomicilio();  
+			emprctraSuperficie = emprctra.getSuperficie();  
+			emprctraPelectri = emprctra.getPelectri();  
+			emprctraHorario = emprctra.getHorario();  
+			emprctraMaquina = emprctra.getMaquina();  
+			emprctraToxicos = emprctra.getToxicos();  
+			emprctraInddia = emprctra.getInddia();  
+			emprctraCodcon = emprctra.getCodcon();  
+			emprctraRepresen = emprctra.getRepresen();  
+			emprctraJornada = emprctra.getJornada();  
+			emprctraIndcal = emprctra.getIndcal();  
+			emprctraIndnom = emprctra.getIndnom();  
+			emprctraIndcoste = emprctra.getIndcoste();  
+			emprctraFiestas = emprctra.getFiestas();  
+			emprctraEnvioss = emprctra.getEnvioss();  
+		}
+	
+	}
 
 	public void visitNacion(Nacion nacion)
 	throws SQLException{
@@ -23122,6 +23542,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 	public void visitRel_epp_ccc(Emprper emprper, Emprccc emprccc)
+	throws SQLException {
+	}
+	public void visitFormcont_emprccc(Formcont formcont, Emprccc emprccc)
 	throws SQLException {
 	}
 
@@ -28766,6 +29189,106 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 
+	public void visitFormcont(Formcont formcont)
+	throws SQLException{
+	}
+
+
+	/**
+	 * Formcont_emprccc shows join between Emprccc and Formcont
+	 */
+	public static class Formcont_emprccc extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer emprcccCdg;  
+		
+		/**
+		 * Codigo de Actividad
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getEmprccc_Cdg() {
+			return emprcccCdg;
+		}
+		
+		private String emprcccTipccc;  
+		
+		/**
+		 * Tipo Cuenta Cotizacion
+		 * @return the column 'tipccc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprccc_Tipccc() {
+			return emprcccTipccc;
+		}
+		
+		private String emprcccDescripcion;  
+		
+		/**
+		 * Numero Cuenta Cotizacion
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprccc_Descripcion() {
+			return emprcccDescripcion;
+		}
+		
+		private String emprcccMutuaccc;  
+		
+		/**
+		 * Mutua Patronal
+		 * @return the column 'mutuaccc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprccc_Mutuaccc() {
+			return emprcccMutuaccc;
+		}
+		
+		private String emprcccIndss;  
+		
+		/**
+		 * Indica si cotiza o no a S.S.
+		 * @return the column 'indss' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprccc_Indss() {
+			return emprcccIndss;
+		}
+		
+		private String emprcccConcol;  
+		
+		/**
+		 * Codigo Convenio Colectivo TC2
+		 * @return the column 'concol' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprccc_Concol() {
+			return emprcccConcol;
+		}
+		
+		private String emprcccSeguro;  
+		
+		/**
+		 * Seguro convenio
+		 * @return the column 'seguro' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprccc_Seguro() {
+			return emprcccSeguro;
+		}
+		public void visitFormcont_emprccc(Formcont formcont, Emprccc emprccc)
+		throws SQLException {
+			emprcccCdg = emprccc.getCdg();  
+			emprcccTipccc = emprccc.getTipccc();  
+			emprcccDescripcion = emprccc.getDescripcion();  
+			emprcccMutuaccc = emprccc.getMutuaccc();  
+			emprcccIndss = emprccc.getIndss();  
+			emprcccConcol = emprccc.getConcol();  
+			emprcccSeguro = emprccc.getSeguro();  
+		}
+	
+	}
+
 	public void visitHttcomplemento(Httcomplemento httcomplemento)
 	throws SQLException{
 	}
@@ -30425,6 +30948,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfTotal_devengos;
 		}
 		
+		private BigDecimal nominadfTotal_devengos_e;  
+		
+		/**
+		 * Total Devengos Especie
+		 * @return the column 'total_devengos_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Total_devengos_e() {
+			return nominadfTotal_devengos_e;
+		}
+		
 		private BigDecimal nominadfTotal_deducir;  
 		
 		/**
@@ -30637,7 +31171,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominadfBase_especie;  
 		
 		/**
-		 * Base en Especie
+		 * Base en Especie Repercutida
 		 * @return the column 'base_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -30645,10 +31179,21 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfBase_especie;
 		}
 		
+		private BigDecimal nominadfBase_especie_no;  
+		
+		/**
+		 * Base en Especie no Repercutida
+		 * @return the column 'base_especie_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_especie_no() {
+			return nominadfBase_especie_no;
+		}
+		
 		private BigDecimal nominadfBase_irpf;  
 		
 		/**
-		 * Base IRPF
+		 * Base IRPF Dinararia
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -30659,7 +31204,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominadfBase_irpf_especie;  
 		
 		/**
-		 * IRPF en Especie
+		 * IRPF en Especie Repercutido
 		 * @return the column 'base_irpf_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -30667,15 +31212,37 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominadfBase_irpf_especie;
 		}
 		
+		private BigDecimal nominadfBase_irpf_espec_no;  
+		
+		/**
+		 * IRPF en Especie no Repercutido
+		 * @return the column 'base_irpf_espec_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_irpf_espec_no() {
+			return nominadfBase_irpf_espec_no;
+		}
+		
 		private BigDecimal nominadfBase_irpf_nocotiza;  
 		
 		/**
-		 * IRPF no Cotiza
+		 * IRPF no Cotiza Dinerario
 		 * @return the column 'base_irpf_nocotiza' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getNominadf_Base_irpf_nocotiza() {
 			return nominadfBase_irpf_nocotiza;
+		}
+		
+		private BigDecimal nominadfBase_irpf_nocoti_e;  
+		
+		/**
+		 * IRPF no Cotiza Especie
+		 * @return the column 'base_irpf_nocoti_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNominadf_Base_irpf_nocoti_e() {
+			return nominadfBase_irpf_nocoti_e;
 		}
 		
 		private BigDecimal nominadfBase_horascom;  
@@ -31193,6 +31760,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominadfFecfin = nominadf.getFecfin();  
 			nominadfDiasnomina = nominadf.getDiasnomina();  
 			nominadfTotal_devengos = nominadf.getTotal_devengos();  
+			nominadfTotal_devengos_e = nominadf.getTotal_devengos_e();  
 			nominadfTotal_deducir = nominadf.getTotal_deducir();  
 			nominadfTotal_liquido = nominadf.getTotal_liquido();  
 			nominadfFeccob = nominadf.getFeccob();  
@@ -31213,9 +31781,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominadfBase_exceso = nominadf.getBase_exceso();  
 			nominadfBase_nocotiza = nominadf.getBase_nocotiza();  
 			nominadfBase_especie = nominadf.getBase_especie();  
+			nominadfBase_especie_no = nominadf.getBase_especie_no();  
 			nominadfBase_irpf = nominadf.getBase_irpf();  
 			nominadfBase_irpf_especie = nominadf.getBase_irpf_especie();  
+			nominadfBase_irpf_espec_no = nominadf.getBase_irpf_espec_no();  
 			nominadfBase_irpf_nocotiza = nominadf.getBase_irpf_nocotiza();  
+			nominadfBase_irpf_nocoti_e = nominadf.getBase_irpf_nocoti_e();  
 			nominadfBase_horascom = nominadf.getBase_horascom();  
 			nominadfBase_perdes = nominadf.getBase_perdes();  
 			nominadfRemuneracion = nominadf.getRemuneracion();  
@@ -33116,6 +33687,64 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 	/**
+	 * Fk_af_action shows join between Action and Action_favorite
+	 */
+	public static class Fk_af_action extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer actionId;  
+		
+		/**
+		 * Identificador unico
+		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAction_Id() {
+			return actionId;
+		}
+		
+		private Integer actionMenu;  
+		
+		/**
+		 * Indica si la Accion esta o no dentro del menu
+		 * @return the column 'menu' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAction_Menu() {
+			return actionMenu;
+		}
+		
+		private String actionName;  
+		
+		/**
+		 * Nombre de la Accion
+		 * @return the column 'name' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getAction_Name() {
+			return actionName;
+		}
+		
+		private Integer actionApplication_id;  
+		
+		/**
+		 * Aplicacion a la que pertenece la Accion
+		 * @return the column 'application_id' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getAction_Application_id() {
+			return actionApplication_id;
+		}
+		public void visitFk_af_action(Action_favorite action_favorite, Action action)
+		throws SQLException {
+			actionId = action.getId();  
+			actionMenu = action.getMenu();  
+			actionName = action.getName();  
+			actionApplication_id = action.getApplication_id();  
+		}
+	
+	}
+	/**
 	 * Fk_af_user shows join between Usuario and Action_favorite
 	 */
 	public static class Fk_af_user extends  DefaultCtsqlDBVisitor {
@@ -33436,6 +34065,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaTotal_devengos;
 		}
 		
+		private BigDecimal nominaTotal_devengos_e;  
+		
+		/**
+		 * Total Devengos Especie
+		 * @return the column 'total_devengos_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_devengos_e() {
+			return nominaTotal_devengos_e;
+		}
+		
 		private BigDecimal nominaTotal_deducir;  
 		
 		/**
@@ -33648,7 +34288,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominaBase_especie;  
 		
 		/**
-		 * Base en Especie
+		 * Base en Especie Repercutida
 		 * @return the column 'base_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -33656,10 +34296,21 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaBase_especie;
 		}
 		
+		private BigDecimal nominaBase_especie_no;  
+		
+		/**
+		 * Base en Especie no Repercutida
+		 * @return the column 'base_especie_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_especie_no() {
+			return nominaBase_especie_no;
+		}
+		
 		private BigDecimal nominaBase_irpf;  
 		
 		/**
-		 * Base IRPF
+		 * Base IRPF Dinararia
 		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -33670,7 +34321,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private BigDecimal nominaBase_irpf_especie;  
 		
 		/**
-		 * IRPF en Especie
+		 * IRPF en Especie Repercutido
 		 * @return the column 'base_irpf_especie' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -33678,15 +34329,37 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			return nominaBase_irpf_especie;
 		}
 		
+		private BigDecimal nominaBase_irpf_espec_no;  
+		
+		/**
+		 * IRPF en Especie no Repercutido
+		 * @return the column 'base_irpf_espec_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_espec_no() {
+			return nominaBase_irpf_espec_no;
+		}
+		
 		private BigDecimal nominaBase_irpf_nocotiza;  
 		
 		/**
-		 * IRPF no Cotiza
+		 * IRPF no Cotiza Dinerario
 		 * @return the column 'base_irpf_nocotiza' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
 		public BigDecimal getNomina_Base_irpf_nocotiza() {
 			return nominaBase_irpf_nocotiza;
+		}
+		
+		private BigDecimal nominaBase_irpf_nocoti_e;  
+		
+		/**
+		 * IRPF no Cotiza Especie
+		 * @return the column 'base_irpf_nocoti_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_nocoti_e() {
+			return nominaBase_irpf_nocoti_e;
 		}
 		
 		private BigDecimal nominaBase_horascom;  
@@ -34193,6 +34866,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaFecfin = nomina.getFecfin();  
 			nominaDiasnomina = nomina.getDiasnomina();  
 			nominaTotal_devengos = nomina.getTotal_devengos();  
+			nominaTotal_devengos_e = nomina.getTotal_devengos_e();  
 			nominaTotal_deducir = nomina.getTotal_deducir();  
 			nominaTotal_liquido = nomina.getTotal_liquido();  
 			nominaFeccob = nomina.getFeccob();  
@@ -34213,9 +34887,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			nominaBase_exceso = nomina.getBase_exceso();  
 			nominaBase_nocotiza = nomina.getBase_nocotiza();  
 			nominaBase_especie = nomina.getBase_especie();  
+			nominaBase_especie_no = nomina.getBase_especie_no();  
 			nominaBase_irpf = nomina.getBase_irpf();  
 			nominaBase_irpf_especie = nomina.getBase_irpf_especie();  
+			nominaBase_irpf_espec_no = nomina.getBase_irpf_espec_no();  
 			nominaBase_irpf_nocotiza = nomina.getBase_irpf_nocotiza();  
+			nominaBase_irpf_nocoti_e = nomina.getBase_irpf_nocoti_e();  
 			nominaBase_horascom = nomina.getBase_horascom();  
 			nominaBase_perdes = nomina.getBase_perdes();  
 			nominaRemuneracion = nomina.getRemuneracion();  
@@ -35223,7 +35900,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private String parteitCausa_alta;  
 		
 		/**
-		 * $col.remarks
+		 * Causa de la alta
 		 * @return the column 'causa_alta' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -35234,7 +35911,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		private Date parteitFecha_at;  
 		
 		/**
-		 * Fecha de accidente de trabajo o enfermedad profesional
+		 * Fecha de aente de trabajo o enfermedad profesional
 		 * @return the column 'fecha_at' value; if the value is SQL NULL, the value returned is null
 		 * @throws SQLException
 		 */
@@ -37613,6 +38290,76 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 
 
 	/**
+	 * Fk_rem_cert_empr shows join between Rem_cert_empr and Rem_cert_empr_det
+	 */
+	public static class Fk_rem_cert_empr extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer rem_cert_emprId;  
+		
+		/**
+		 * Identificador unico del certificado de empresa de la remesa
+		 * @return the column 'id' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getRem_cert_empr_Id() {
+			return rem_cert_emprId;
+		}
+		
+		private Integer rem_cert_emprEmpresa;  
+		
+		/**
+		 * Identificador unico de la empresa
+		 * @return the column 'empresa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getRem_cert_empr_Empresa() {
+			return rem_cert_emprEmpresa;
+		}
+		
+		private Date rem_cert_emprFecha;  
+		
+		/**
+		 * Fecha de la ultima remesa en la que fue incluido
+		 * @return the column 'fecha' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getRem_cert_empr_Fecha() {
+			return rem_cert_emprFecha;
+		}
+		
+		private Integer rem_cert_emprEstado;  
+		
+		/**
+		 * Estado del certificado correspondiente a la ultima respuesta
+		 * @return the column 'estado' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getRem_cert_empr_Estado() {
+			return rem_cert_emprEstado;
+		}
+		
+		private String rem_cert_emprHuella;  
+		
+		/**
+		 * Huella digital del archivo de respuesta
+		 * @return the column 'huella' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getRem_cert_empr_Huella() {
+			return rem_cert_emprHuella;
+		}
+		public void visitFk_rem_cert_empr(Rem_cert_empr_det rem_cert_empr_det, Rem_cert_empr rem_cert_empr)
+		throws SQLException {
+			rem_cert_emprId = rem_cert_empr.getId();  
+			rem_cert_emprEmpresa = rem_cert_empr.getEmpresa();  
+			rem_cert_emprFecha = rem_cert_empr.getFecha();  
+			rem_cert_emprEstado = rem_cert_empr.getEstado();  
+			rem_cert_emprHuella = rem_cert_empr.getHuella();  
+		}
+	
+	}
+	/**
 	 * Fk_cert_remesa_emp shows join between Emprper and Rem_cert_empr_det
 	 */
 	public static class Fk_cert_remesa_emp extends  DefaultCtsqlDBVisitor {
@@ -37867,6 +38614,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException{
 	}
 
+	public void visitRel_cal_ctra(Calendar calendar, Emprctra emprctra)
+	throws SQLException {
+	}
 
 	/**
 	 * Emprctra_convenio shows join between Convenio and Emprctra
@@ -39985,6 +40735,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException{
 	}
 
+	public void visitFk_af_action(Action_favorite action_favorite, Action action)
+	throws SQLException {
+	}
+	public void visitFk_ae_action(Action_entry action_entry, Action action)
+	throws SQLException {
+	}
 	public void visitFk_ad_action(Action_denied action_denied, Action action)
 	throws SQLException {
 	}
@@ -43780,10 +44536,10 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException{
 	}
 
-	public void visitFk_application(Session session, Application application)
+	public void visitFk_action_app(Action action, Application application)
 	throws SQLException {
 	}
-	public void visitFk_action_app(Action action, Application application)
+	public void visitFk_application(Session session, Application application)
 	throws SQLException {
 	}
 

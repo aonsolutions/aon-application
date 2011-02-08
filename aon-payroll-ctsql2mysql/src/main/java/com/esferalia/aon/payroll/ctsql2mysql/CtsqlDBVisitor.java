@@ -125,6 +125,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdtoex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Lbonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteit;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calen;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Formcont;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Httcomplemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomina;
@@ -791,6 +792,9 @@ public interface CtsqlDBVisitor {
 	public void visitRem_cert_empr(Rem_cert_empr rem_cert_empr)
 	throws SQLException;
 
+	public void visitFk_rem_cert_empr(Rem_cert_empr_det rem_cert_empr_det, Rem_cert_empr rem_cert_empr)
+	throws SQLException;
+
 
 	public void visitEmbargo(Embargo embargo)
 	throws SQLException;
@@ -954,6 +958,9 @@ public interface CtsqlDBVisitor {
 	public void visitRel_epp_ccc(Emprper emprper, Emprccc emprccc)
 	throws SQLException;
 
+	public void visitFormcont_emprccc(Formcont formcont, Emprccc emprccc)
+	throws SQLException;
+
 
 	public void visitNszepig(Nszepig nszepig)
 	throws SQLException;
@@ -1064,6 +1071,10 @@ public interface CtsqlDBVisitor {
 
 
 	public void visitCalen(Calen calen)
+	throws SQLException;
+
+
+	public void visitFormcont(Formcont formcont)
 	throws SQLException;
 
 
@@ -1455,6 +1466,9 @@ public interface CtsqlDBVisitor {
 	public void visitEmprctra(Emprctra emprctra)
 	throws SQLException;
 
+	public void visitRel_cal_ctra(Calendar calendar, Emprctra emprctra)
+	throws SQLException;
+
 
 	public void visitNszprov(Nszprov nszprov)
 	throws SQLException;
@@ -1477,6 +1491,12 @@ public interface CtsqlDBVisitor {
 
 
 	public void visitAction(Action action)
+	throws SQLException;
+
+	public void visitFk_af_action(Action_favorite action_favorite, Action action)
+	throws SQLException;
+
+	public void visitFk_ae_action(Action_entry action_entry, Action action)
 	throws SQLException;
 
 	public void visitFk_ad_action(Action_denied action_denied, Action action)
@@ -1632,10 +1652,10 @@ public interface CtsqlDBVisitor {
 	public void visitApplication(Application application)
 	throws SQLException;
 
-	public void visitFk_application(Session session, Application application)
+	public void visitFk_action_app(Action action, Application application)
 	throws SQLException;
 
-	public void visitFk_action_app(Action action, Application application)
+	public void visitFk_application(Session session, Application application)
 	throws SQLException;
 
 

@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.LinkedList;
 
+import java.io.Reader;
 import java.io.InputStream;
 
 import org.slf4j.Logger;
@@ -104,10 +105,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				${table.name}Stmt.setInt(offset++, ${table.name}.${column.name});
 #elseif ($column.type == -4 )
 				${table.name}Stmt.setBinaryStream(offset++, ${table.name}.${column.name});
-#elseif ($column.type == -1 )
-				${table.name}Stmt.setAsciiStream(offset++, ${table.name}.${column.name});
-#elseif ($column.type == -16 )
-				${table.name}Stmt.setCharacterStream(offset++, ${table.name}.${column.name});
 #else
 				${table.name}Stmt.set${column.javaClass}(offset++, ${table.name}.${column.name});
 #end
@@ -145,8 +142,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			}
 		}
 
-		private int next${table}Id() {
+		public int next${table}Id() {
 			return ++this.${table.name}Id;
+		} 
+
+		public void set${table}Id(Integer ${table.name}Id) {
+			this.${table.name}Id = ${table.name}Id;
 		} 
 #end
 	
@@ -158,6 +159,36 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			${table.name}Stmt.close();
 	}	
 
+	/**
+	 * $table
+#foreach ($column in $table.columns)
+	 * @param $column.name $column.remarks
+#end
+	 * @throws SQLException
+	*/
+#set($colCount = 0)
+	protected void insert$table(#foreach ($column in $table.columns)
+#if( $colCount > 0 ), #end$column.javaClass $column.name #set($colCount = $colCount + 1)
+#end)
+	throws SQLException {
+
+		${table} ${table.name}_ = new ${table}();
+#foreach ($column in $table.columns)
+		${table.name}_.${column.name} = ${column.name};
+#end		  
+
+		${table.name}s.add(${table.name}_);
+		
+		int ${table.name}Count = ${table.name}s.size();
+		
+		if ( ${table.size} * ${table.name}Count >=  this.maxAllowedPacket ){
+			insert${table}(${table.name}s);
+			${table.name}s.clear();
+		} 
+	}
+
+
+#if($table.isAutoIncrement())
 	/**
 	 * $table
 #foreach ($column in $table.columns)
@@ -196,6 +227,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		return id;
 #end
 	}
+
+#end
 #end
 
 	protected void finish() 

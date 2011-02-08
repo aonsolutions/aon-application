@@ -5,6 +5,7 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 
 public interface ISalaryCalculator{
+	
 
 	boolean accept(ISalaryCalculatorContext ctx);
 	void setSalaryBuilder(ISalaryBuilder salaryBuilder);

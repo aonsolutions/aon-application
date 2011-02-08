@@ -6,7 +6,6 @@ import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public interface ISalaryCalculatorContext {
-
 	
 	public Date getIssueDate();
 	

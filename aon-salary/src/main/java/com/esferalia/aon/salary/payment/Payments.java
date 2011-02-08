@@ -27,10 +27,10 @@ public class Payments {
 	}
 
 	public IPayment getOvertimeHours() {
-		return map.get(PaymentType.OVERTIME_HOURS);
+		return map.get(PaymentType.NON_STRUCTURAL_HOURS);
 	}
 	public void setOvertimeHours(IPayment p) {
-		put(PaymentType.OVERTIME_HOURS, p);
+		put(PaymentType.NON_STRUCTURAL_HOURS, p);
 	}
 
 	public IPayment getSpecialBonuses() {

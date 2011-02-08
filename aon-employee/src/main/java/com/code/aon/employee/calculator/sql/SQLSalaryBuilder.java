@@ -1,4 +1,4 @@
-package com.code.aon.employee;
+package com.code.aon.employee.calculator.sql;
 
 import java.util.Date;
 
@@ -8,211 +8,195 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
-public class SalaryBuilder implements ISalaryBuilder {
+public class SQLSalaryBuilder implements ISalaryBuilder {
 
-	
-	private Salary salary;
-	
 	@Override
 	public ISalary getSalary() {
-		return this.salary;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void createNewSalary() {
-		this.salary = new Salary();
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setContract(Object contract) {
-		this.salary.setContract((Contract)contract);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setCcc(String ccc) {
-		this.salary.setCcc(ccc);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setEnterpriseName(String enterpriseName) {
-		this.salary.setEnterpriseName(enterpriseName);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setEnterpriseAddress(String enterpriseAddress) {
-		this.salary.setEnterpriseAddress(enterpriseAddress);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setEnterpriseDocument(String enterpriseDocument) {
-		this.salary.setEnterpriseDocument(enterpriseDocument);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setRegistration(Integer registration) {
-		this.salary.setRegistration(registration);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setEmployeeName(String employeeName) {
-		this.salary.setEmployeeName(employeeName);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setEmployeeDocument(String employeeDocument) {
-		this.salary.setEmployeeDocument(employeeDocument);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setSocialSecurityNumber(String socialSecurityNumber) {
-		this.salary.setSocialSecurityNumber(socialSecurityNumber);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setCategory(String category) {
-		this.salary.setCategory(category);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setQuoteGroup(String quoteGroup) {
-		this.salary.setQuoteGroup(quoteGroup);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setSeniorityDate(Date seniorityDate) {
-		this.salary.setSeniorityDate(seniorityDate);
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setType(SalaryType type) {
-		this.salary.setType(type);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setIssueDate(Date issueDate) {
-		this.salary.setIssueDate(issueDate);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setStartDate(Date startDate) {
-		this.salary.setStartDate(startDate);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setEndDate(Date endDate) {
-		this.salary.setEndDate(endDate);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setTimeUnits(Integer timeUnits) {
-		this.salary.setTimeUnits(timeUnits);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setCommonBase(Double commonBase) {
-		this.salary.setCommonBase(commonBase);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setProfessionalBase(Double professionalBase) {
-		this.salary.setProfessionalBase(professionalBase);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setRemuneration(Double remuneration) {
-		this.salary.setRemuneration(remuneration);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setExtraPayProration(Double extraPayProration) {
-		this.salary.setExtraPayProration(extraPayProration);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setIrpfBase(Double irpfBase) {
-		this.salary.setIrpfBase(irpfBase);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setNonStructuralBase(Double overtimeBase) {
-		this.salary.setOvertimeBase(overtimeBase);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setTotalLiquid(Double totalLiquid) {
-		this.salary.setTotalLiquid(totalLiquid);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setTotalPayment(Double totalPayment) {
-		this.salary.setTotalPayment(totalPayment);
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setTotalDeduction(Double totalDeduction) {
-		this.salary.setTotalDeduction(totalDeduction);
+		// TODO Auto-generated method stub
+
 	}
-	
+
 	@Override
-	public void setSocialSecurityContributions(Double socialSecurityContributions){
-		this.salary.setSocialSecurityContributions(socialSecurityContributions);
+	public void setSocialSecurityContributions(
+			Double socialSecurityContributions) {
+		// TODO Auto-generated method stub
+
 	}
-	
+
 	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
 			String description, String expression) {
-		
-		SalaryPayment payment = new SalaryPayment();
-		
-		payment.setType(type);
-		payment.setPaymentConcept(concept);
-		payment.setAmount(amount);
-		payment.setDescription(description);
-		payment.setExpression(expression);
-		 
-		this.salary.getSalaryPayments().add(payment);
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void addDeduction(DeductionType type, String concept, Double amount,
 			String description, String expression) {
-		
-		SalaryDeduction deduction = new SalaryDeduction();
-		
-		deduction.setType(type);
-		deduction.setAmount(amount);
-		deduction.setDescription(description);
-		deduction.setExpression(expression);
-		
-		this.salary.getSalaryDeductions().add(deduction);
-		
+		// TODO Auto-generated method stub
+
 	}
-	
-	
-	
-	
+
 }

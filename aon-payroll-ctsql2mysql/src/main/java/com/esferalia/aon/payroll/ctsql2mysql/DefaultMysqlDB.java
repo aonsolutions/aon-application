@@ -6,9 +6,12 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -118,7 +121,13 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				put("T",MaritalStatus.SINGLE); 
 			}
 		};
-
+	
+	
+	final static DateFormat DATE_FORMAT = 
+		new SimpleDateFormat("EEEE, d MMMM yyyy", SPANISH);
+	public static String format (Date date) {
+		return DATE_FORMAT.format(date);
+	}
 
 	protected static <K,V> boolean save( Map<K, Set<V>> map, K key, V value){
 		Set<V> set ; 
@@ -357,7 +366,10 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				alias, 
 				type, 
 				country != null ? country.getValue() : null);
-		super.insertEnterprise(registry, scope, null);
+		super.insertEnterprise(registry, 
+				scope, 
+				null,		// TODO: ¿ Calendar ? 
+				null);
 		super.insertCustomer(registry,null, false, false,false,null,status,null,  scope,false, true,true);
 		
 		return registry;
@@ -480,7 +492,6 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		return countries.get(oldCdg);
 	}
 
-
 	private Pattern overtimePattern = 
 		Pattern.compile("HORAS\\s+EXTRA", Pattern.CASE_INSENSITIVE);
 	private Pattern baseSalaryPattern = 
@@ -495,29 +506,38 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		Pattern.compile("INDEMNIZACION.*DESPIDO", Pattern.CASE_INSENSITIVE);
 
 	
-	public PaymentType getPaymentType(String description, String dinEsp ) {
-
-		PaymentType paymetType = null;
+	public PaymentType getPaymentType(String description, String dinEsp, String tipCot) {
 		
-		if ( "E".equalsIgnoreCase(dinEsp)){
-			paymetType = PaymentType.SALARY_IN_KIND;
-		}else if (baseSalaryPattern.matcher(description).find()) {
-			paymetType = PaymentType.BASE_SALARY;
-		}else if (overtimePattern.matcher(description).find()) {
-			paymetType = PaymentType.OVERTIME_HOURS;
-		}else if (noticePattern.matcher(description).find()) {
-			paymetType = PaymentType.MOVING_COMPENSATION;
-		}else if (movingPattern.matcher(description).find()) {
-			paymetType = PaymentType.MOVING_COMPENSATION;
-		}else if (dismissalPattern.matcher(description).find()) {
-			paymetType = PaymentType.MOVING_COMPENSATION;
-		}else if (compensationPattern.matcher(description).find()) {
-			paymetType = PaymentType.COMPENSATION_OR_PREPAID_EXPENSES;
-		}else {
-			paymetType = PaymentType.SALARY_SUPPLEMENTS;
+		if ( "5".equals(tipCot )) {
+			return PaymentType.STRUCTURAL_HOURS;
+		}
+
+		if ( "6".equals(tipCot )) {
+			return PaymentType.NON_STRUCTURAL_HOURS;
 		}
 		
-		return paymetType;
+		if ( "E".equalsIgnoreCase(dinEsp)){
+			return  PaymentType.SALARY_IN_KIND;
+		}
+
+		if ( description == null  ) {
+			return  PaymentType.SALARY_SUPPLEMENTS;
+		}
+		if (baseSalaryPattern.matcher(description).find()) {
+			return  PaymentType.BASE_SALARY;
+		}else if (overtimePattern.matcher(description).find()) {
+			return  PaymentType.NON_STRUCTURAL_HOURS;
+		}else if (noticePattern.matcher(description).find()) {
+			return  PaymentType.MOVING_COMPENSATION;
+		}else if (movingPattern.matcher(description).find()) {
+			return  PaymentType.MOVING_COMPENSATION;
+		}else if (dismissalPattern.matcher(description).find()) {
+			return  PaymentType.MOVING_COMPENSATION;
+		}else if (compensationPattern.matcher(description).find()) {
+			return  PaymentType.COMPENSATION_OR_PREPAID_EXPENSES;
+		}
+		return  PaymentType.SALARY_SUPPLEMENTS;
+
 	}
 
 	public String getFunction(BigDecimal importe, BigDecimal impuni, BigDecimal unidades) {
@@ -529,6 +549,26 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		return String.format("%.3f", importe );
 	}
 	
-	
+	public Integer getDeductionConceptId(String code) throws SQLException {
+		ResultSet rs = null; 
+		PreparedStatement stmt = null ;
+		try {
+			stmt = mysqlConnection.prepareStatement("SELECT id FROM deduction_concept WHERE code = ?");
+			stmt.setString(1, code);
+			rs = stmt.executeQuery();
+			if ( rs.next() ){
+				return rs.getInt("id");
+			}
+			else {
+				return null;
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 }

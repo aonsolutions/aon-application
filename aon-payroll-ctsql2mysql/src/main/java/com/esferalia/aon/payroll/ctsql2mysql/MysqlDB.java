@@ -90,7 +90,6 @@ public class MysqlDB extends DefaultMysqlDB{
 	}
 
 	
-	
 	public void writeAll(CtsqlDB ctsqlReader) throws SQLException {
 		start();
 
@@ -104,21 +103,29 @@ public class MysqlDB extends DefaultMysqlDB{
 		MyContract myContract= 
 			new MyContract(this, 
 					myEnterprise, 
-					myPerson, 
+					myPerson,
 					fromDate);
+		MyHoliday myHoliday =
+			new MyHoliday(this, 
+						"Aplicación Total");
+		MyCalendar myCalendar = 
+			new MyCalendar(this, 
+					myHoliday, 
+					myEnterprise);
 		
 		ctsqlReader.visitPais(this);
 		ctsqlReader.visitTipdoc(this);
+		ctsqlReader.visit(myHoliday);
 		
 		ctsqlReader.visit(myPerson);
 		ctsqlReader.visit(myAgreement);
 		ctsqlReader.visit(myEnterprise);
+		ctsqlReader.visit(myCalendar);
 		ctsqlReader.visit(myContract);
 
 		finish();
 		//ctsqlReader.visit(new MyTraverse());
 	}
-	
 	
 	
 	

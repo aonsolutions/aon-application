@@ -183,14 +183,15 @@ CREATE TABLE `system_deduction` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
 INSERT INTO `system_deduction` 
-	(type	,deduction_concept	,expression				,start_date		,description_decorable	 )
+	(type	,deduction_concept	,expression							,start_date		,description_decorable	 )
 VALUES
-	(0		,1					,"BASE_CGC * 4.70/100"	,'2010-01-01'	,1), 
+	(0		,1					,"BASE_CGC * 4.70/100"				,'2010-01-01'	,1), 
 	(2		,3					,"BASE_CGP * (INDEFINIDO ? 1.55 : 1,60 )/100"
-														,'2010-01-01'	,1), 
-	(3		,4					,"BASE_CGP * 0.10/100"	,'2010-01-01'	,1),  
-	(4		,5					,"BASE_NESTR * 4.70/100",'2010-01-01'	,1), 
-	(5		,6					,"BASE_NESTR * 2.00/100",'2010-01-01'	,1);
+																	,'2010-01-01'	,1), 
+	(3		,4					,"BASE_CGP * 0.10/100"				,'2010-01-01'	,1),  
+	(4		,5					,"BASE_NESTR * 4.70/100"			,'2010-01-01'	,1), 
+	(5		,6					,"BASE_ESTR * 2.00/100"				,'2010-01-01'	,1),
+	(6		,7					,"BASE_IRPF * PORCENTAJE_IRPF/100"	,'2010-01-01'	,1);
 
 CREATE TABLE `contract_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -229,30 +230,19 @@ CREATE TABLE `contract_payment` (
   `payment_concept` int(4) COMMENT 'Identificador unico del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `description_decorable` tinyint(2) default '0' COMMENT '',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe',
+  `irpf_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe tributable',
+  `quote_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe cotizable',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `month` tinyint(2) default null COMMENT 'Mes de la percepcion',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  `salary_type` tinyint(2) COMMENT 'Tipo de Nomina/Recibo',
   PRIMARY KEY  (`id`),
   KEY `IDX_PAYMENT_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_PAYMENT_PAYMENT_CONCEPT` (`payment_concept`),
   CONSTRAINT `FK_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
-
-CREATE TABLE `contract_extra_pay` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `contract` int(4) NOT NULL COMMENT 'Contrato',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `description_decorable` tinyint(2) default '0' COMMENT '',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
-  `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
-  `month` tinyint(2) default null COMMENT 'Mes de la paga extra',
-  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_EXTRA_PAY_CONTRACT` (`contract`),
-  CONSTRAINT `FK_EXTRA_PAY_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pagas extras';
 
 CREATE TABLE `contract_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -272,7 +262,7 @@ CREATE TABLE `contract_deduction` (
   CONSTRAINT `FK_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
-CREATE TABLE `contract_event` (
+CREATE TABLE `contract_context` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
@@ -282,7 +272,7 @@ CREATE TABLE `contract_event` (
   KEY `IDX_CONTRACT_CONSTANT_CONTRACT` (`contract`),
   CONSTRAINT `FK_CONTRACT_CONSTANT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
 
 
 CREATE TABLE `salary` (
@@ -309,10 +299,13 @@ CREATE TABLE `salary` (
   `total_enterprise` double(15,3) NOT NULL default '0.000'  COMMENT 'Cuota total de la empresa',
   `issue_date` date NOT NULL COMMENT 'Fecha de emisión',
   `remuneration` double(15,3) NOT NULL default '0.000'  COMMENT 'Remuneración mensual',
-  `extra_pay_proration` double(15,3) NOT NULL default '0.000'  COMMENT 'Prorrateo de pagas extras',
-  `common_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion por contingencias comunes',
-  `professional_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion por contingencias profesionales',
-  `overtime_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion adicional por horas extraordinarias',
+  `pro_ext_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base prorraterreada de pagas extras',
+  `it_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de IT',
+  `raw_cgc_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base efectiva de cotizacion por contingencias comunes ',
+  `cgc_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion por contingencias comunes',
+  `hextra_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion adicional por horas extraordinarias estructurales',
+  `non_hextra_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion adicional por horas extraordinarias no estructurales',
+  `cgp_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion por contingencias profesionales',
   `irpf_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base sujeta a retención I.R.P.F',
   `social_security_contributions` double(15,3) NOT NULL default '0.000'  COMMENT 'Aportaciones a la Seguridad Social',
   PRIMARY KEY  (`id`),
@@ -405,7 +398,7 @@ CREATE TABLE `function_constant` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto de las funciones';
 
 INSERT INTO `function_constant` 
-	(name			,expression					,start_date	,end_date	,read_only	,comments		)
+	(name			,expression					,start_date	,end_date		,read_only	,comments		)
 VALUES
 	('BASE_CGC_MIN'	,"[	1 : 1031.70,
 						2 : 855.90, 
@@ -418,7 +411,7 @@ VALUES
 						9 : 24.63*DIAS_MES,
 						10: 24.63*DIAS_MES,
 						11: 24.63*DIAS_MES]"
-												,'2010-01-01',NULL		,1			,'Bases minimas'), 
+												,'2010-01-01',NULL			,1			,'Bases minimas'), 
 	('BASE_CGC_MAX'	,"[	1 : 3198.00,
 						2 : 3198.00, 
 						3 : 3198.00, 
@@ -430,7 +423,11 @@ VALUES
 						9 : 106.60*DIAS_MES,
 						10: 106.60*DIAS_MES,
 						11: 106.60*DIAS_MES]"
-												,'2010-01-01',NULL		,1			,'Bases maximas');
+												,'2010-01-01',NULL			,1			,'Bases maximas'),
+	('IPREM'		,"516.90"					,'2008-01-01','2008-12-31'	,1			,'Indicador Público de Renta de Efectos Múltiples (IPREM) '), 
+	('IPREM'		,"527.24"					,'2009-01-01','2009-12-31'	,1			,'Indicador Público de Renta de Efectos Múltiples (IPREM) '), 
+	('IPREM'		,"531.51"					,'2010-01-01','2010-12-31'	,1			,'Indicador Público de Renta de Efectos Múltiples (IPREM) '), 
+	('IPREM'		,"531.51"					,'2011-01-01',NULL			,1			,'Indicador Público de Renta de Efectos Múltiples (IPREM) ');
 
 
 INSERT INTO `cnae` ( id, code, title ) 

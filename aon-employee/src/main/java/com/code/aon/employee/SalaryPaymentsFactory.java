@@ -64,7 +64,8 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 			payments.setBaseSalary(sp);
 		} else if (sp.getType() == PaymentType.SALARY_SUPPLEMENTS) {
 			payments.addSalarySupplements(sp);
-		} else if (sp.getType() == PaymentType.OVERTIME_HOURS) {
+		} else if (sp.getType() == PaymentType.STRUCTURAL_HOURS) {
+		} else if (sp.getType() == PaymentType.NON_STRUCTURAL_HOURS) {
 			payments.setOvertimeHours(sp);
 		} else if (sp.getType() == PaymentType.SPECIAL_BONUSES) {
 			payments.setSpecialBonuses(sp);

@@ -66,8 +66,10 @@ public class DBContext extends VelocityContext{
 				
 				put(Types.CHAR, "String");
 				put(Types.VARCHAR, "String");
-				put(Types.LONGVARCHAR, "InputStream");
-				put(Types.LONGNVARCHAR, "InputStream");
+				put(Types.LONGVARCHAR, "String");
+				put(Types.LONGNVARCHAR, "String");
+				//put(Types.LONGVARCHAR, "InputStream");
+				//put(Types.LONGNVARCHAR, "InputStream");
 				
 
 				put(Types.BIGINT, "Long");

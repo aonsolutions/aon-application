@@ -8,11 +8,14 @@ import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
 import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calendar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cliente;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Domicilio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empract;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprban;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
@@ -44,25 +47,24 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	private Map<String, Integer> 				cifs;
 	private Map<Integer, Integer> 				enterprises;
 	
+	private Map<Integer, String> 				ingespemps ;
 	private Map<Integer, Integer> 				activities ;
 	private Map<Integer, Map<Integer, Integer>> cnae_activity ;
 	private Map<Integer, Map<Integer, Integer>> raddresses ;
 
-	private Map<Integer, Map<Integer, Map<Integer,Integer>>> workplaces = 
-		new HashMap<Integer, Map<Integer, Map<Integer,Integer>>>();
-
-	
+	private Map<Integer, Map<Integer,Integer>> workplaces ;
 
 	public MyEnterprise(DefaultMysqlDB mysqlDB, MyAgreement myAgreement) {
 		this.mysqlDB = mysqlDB;
 		this.myAgreement = myAgreement;
+		this.ingespemps = new HashMap<Integer, String>();
 		this.activities = new HashMap<Integer, Integer>();
 		this.cifs= new HashMap<String, Integer>();
 		this.enterprises = new HashMap<Integer, Integer>();
 		this.cccs = new HashMap<Integer, Map<String, Integer>>();
 		this.cnae_activity = new HashMap<Integer, Map<Integer, Integer>>();
 		this.raddresses = new HashMap<Integer, Map<Integer, Integer>>();
-		this.workplaces = new HashMap<Integer, Map<Integer, Map<Integer,Integer>>>();
+		this.workplaces = new HashMap<Integer, Map<Integer,Integer>>();
 	}
 	
 
@@ -132,7 +134,6 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 			cifs.get(emprnif.getNumdoc());
 	
 		if ( registry != null ) {
-			cifs.put(emprnif.getNumdoc(), registry);
 			enterprises.put(emprnif.getCdg(), registry);
 			return;
 		}
@@ -153,7 +154,9 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 				status);
 		
 		
+		cifs.put(emprnif.getNumdoc(), registry);
 		enterprises.put(emprnif.getCdg(), registry);
+
 		
 		Integer userId = 
 			mysqlDB.insertUser(
@@ -168,6 +171,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		
 		emprnif.visitEmpract_emprnif(this);
 	}
+	
 
 	@Override
 	public void visitEmpract_emprnif(Empract empract, Emprnif emprnif) throws SQLException {
@@ -186,7 +190,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		
 		Integer enterprise = enterprises.get(empract.getCodemp());
 		// TODO : Cómo elegimos el tipo de actividad ?
-		
+
 		Integer activityId  = DefaultMysqlDB.get(cnae_activity, enterprise, cnae);
 		if ( activityId == null ) {
 			activityId = 
@@ -197,6 +201,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 			DefaultMysqlDB.save(cnae_activity, enterprise, cnae, activityId);
 		}
 		activities.put(empract.getCdg(), activityId);
+		ingespemps.put(empract.getCdg(), empract.getIngespemp());
 		
 		empract.visitEmprccc_empract(this);
 	}
@@ -312,7 +317,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		String tipoDom = emprdom.getTipdom();
 		if ( tipoDom != null && "T".equalsIgnoreCase(tipoDom.trim()) ){ 
 			
-			Integer workplace = DefaultMysqlDB.get(workplaces, emprdom.getCodemp(), emprdom.getCoddom(),emprdom.getCodact());
+			Integer workplace = DefaultMysqlDB.get(workplaces, emprdom.getCodemp(), emprdom.getCoddom());
 			
 			if ( workplace == null ){
 				String description = 
@@ -321,7 +326,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 					description = domicilio.getNomvia(); 
 				}
 				
-				Integer activity = activities.get(emprdom.getCodact());
+				
 				
 				Integer agreement = null; 
 				
@@ -331,25 +336,29 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 						raddress, 
 						null,				// TODO:  Concierto Económico del Centro de Trabajo
 						true,
-						activity,
+						null,				// TODO: ¿ Calendar ?
+						null,
 						agreement);
 				
-				DefaultMysqlDB.save(workplaces, emprdom.getCodemp(), emprdom.getCoddom(),emprdom.getCodact(), workplace);
+				DefaultMysqlDB.save(workplaces, emprdom.getCodemp(), emprdom.getCoddom(),workplace);
 			}
 		}
 	}
 
-	
 	public Integer getEnterprise(Integer oldCdg) {
 		return enterprises.get(oldCdg);
 	}
 	
+	public String getIngEspEmp( Integer oldCdgAct) {
+		return this.ingespemps.get(oldCdgAct);
+	}
+
 	public Integer getCCC( Integer oldCdgAct, String oldCdgCCC) {
 		return DefaultMysqlDB.get(cccs, oldCdgAct, oldCdgCCC);
 	}
 	
-	public Integer getWorkplace(Integer oldCdgEmp, Integer oldCdgDomicilio, Integer oldCdgAct) {
-		return DefaultMysqlDB.get( workplaces, oldCdgEmp, oldCdgDomicilio, oldCdgAct);
+	public Integer getWorkplace(Integer oldCdgEmp, Integer oldCdgDomicilio) {
+		return DefaultMysqlDB.get( workplaces, oldCdgEmp, oldCdgDomicilio);
 	}
 
 	

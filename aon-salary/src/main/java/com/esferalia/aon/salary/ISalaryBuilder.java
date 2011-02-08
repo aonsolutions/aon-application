@@ -67,7 +67,7 @@ public interface ISalaryBuilder {
 	
 	public void setIrpfBase(Double irpfBase);
 	
-	public void setOvertimeBase(Double overtimeBase);
+	public void setNonStructuralBase(Double nonStructuralBase);
 
 	// ------------------------------------------------------------------------
 	// Totals 
