@@ -102,7 +102,7 @@
 		<mapping class="com.code.aon.employee.ContractCalendarEvent"/>
 		<mapping class="com.code.aon.employee.ContractData"/>
 		<mapping class="com.code.aon.employee.ContractDeduction"/>
-		<mapping class="com.code.aon.employee.ContractEvent"/>
+		<mapping class="com.code.aon.employee.ContractContext"/>
 		<mapping class="com.code.aon.employee.ContractPayment"/>
 		<mapping class="com.code.aon.employee.ContractType"/>
 		<mapping class="com.code.aon.employee.DeductionConcept"/>
@@ -111,10 +111,6 @@
 		<mapping class="com.code.aon.employee.Salary"/>
 		<mapping class="com.code.aon.employee.SalaryPayment"/>
 		<mapping class="com.code.aon.employee.SalaryDeduction"/>
-
-		<!-- AON-PAYROLL Mapping files -->	
-		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificate"/>
-		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificateDetail"/>
 
 	</session-factory>
 
