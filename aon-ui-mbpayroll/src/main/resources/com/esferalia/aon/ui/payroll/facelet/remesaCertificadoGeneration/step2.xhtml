@@ -15,7 +15,7 @@
 
 	<ui:define name="step_content">
 	
-	<aon:dataTable id="remesasData" value="#{remesaCertificadoGenerationWizard.listaRemesas}"
+	<aon:dataTable id="remesasData" value="#{remesaCertificadoGenerationWizard.remesasModel}"
 			var="to" rows="20" 
 			columnClasses="
 			aon-editDataTable-textColumn, 
@@ -26,14 +26,14 @@
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_empresa}" />
 				</f:facet>
-				<aon:outputText value="#{to.empresa.name}" />
+				<aon:outputText value="#{to.remesa.empresa.name}" />
 			</aon:column>
 			
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_fecha}" />
 				</f:facet>
-				<aon:outputText value="#{to.fecha}" >
+				<aon:outputText value="#{to.remesa.fecha}" >
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
@@ -43,9 +43,9 @@
 				<f:facet name="header">
 					<aon:outputText value="#{payrollBundle.payroll_estado}" />
 				</f:facet>
-				<aon:outputText value="#{to.estado}"  />
+				<aon:outputText value="#{to.remesa.estado}"  />
 			</aon:column>
-			
+
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/remesaCertificadoGeneration/listaEmpleadosRemesa.xhtml" />
 			
 		</aon:dataTable>

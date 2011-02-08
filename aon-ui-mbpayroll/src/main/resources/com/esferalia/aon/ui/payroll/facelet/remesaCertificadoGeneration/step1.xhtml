@@ -17,9 +17,9 @@
 	
 	<aon:div id="empleadoData">
 		<aon:div styleClass="aon-text-right">
-			<aon:panel rendered="#{remesaCertificadoGenerationWizard.anyEmpleadoSelected}">
-				<rich:inplaceSelect disabled="#{!remesaCertificadoGenerationWizard.anyEmpleadoSelected}" 
-				 	id="causaSuspensionAplyAll" 
+			<aon:panel>
+				<rich:inplaceSelect rendered="#{remesaCertificadoGenerationWizard.anyEmpleadoSelected}" 
+				 	id="causaSuspensionAplyAll"
 				 	value="#{remesaCertificadoGenerationWizard.suspensionCauseForAll}"
 				 	listHeight="300px" listWidth="300px"
 				 	style="width:300px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
@@ -34,7 +34,7 @@
 				</aon:commandButton>
 			</aon:panel>
 		</aon:div>
-		<aon:div styleClass="aon-scroll-area">
+		<aon:div>
 			<aon:dataTable id="empleadoList" value="#{remesaCertificadoGenerationWizard.model}"
 				var="to" rows="20" rendered="#{remesaCertificadoGenerationWizard.model.rowCount > 0}"
 				columnClasses="

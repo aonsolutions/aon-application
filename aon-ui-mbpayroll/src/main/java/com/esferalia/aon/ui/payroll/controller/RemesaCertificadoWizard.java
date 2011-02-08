@@ -49,7 +49,7 @@ public class RemesaCertificadoWizard implements Serializable {
 	private DataModel selectedModel;
 	private IRemesaCertificadoEmpresa remesa;
 	private List<RemesableCertificate> selectedRemesas;
-	private List<IRemesaCertificadoEmpresaDetalle> detailList;
+//	private List<IRemesaCertificadoEmpresaDetalle> detailList;
 	private RemesaCertificadoEmpresaParams params;
 	
 	
@@ -80,16 +80,16 @@ public class RemesaCertificadoWizard implements Serializable {
 		this.selectedRemesas = selectedRemesas;
 	}
 	
-	public List<IRemesaCertificadoEmpresaDetalle> getDetailList() {
-		if(detailList==null){
-			detailList = new ArrayList<IRemesaCertificadoEmpresaDetalle>();
-		}
-		return detailList;
-	}
-
-	public void setDetailList(List<IRemesaCertificadoEmpresaDetalle> detailList) {
-		this.detailList = detailList;
-	}
+//	public List<IRemesaCertificadoEmpresaDetalle> getDetailList() {
+//		if(detailList==null){
+//			detailList = new ArrayList<IRemesaCertificadoEmpresaDetalle>();
+//		}
+//		return detailList;
+//	}
+//
+//	public void setDetailList(List<IRemesaCertificadoEmpresaDetalle> detailList) {
+//		this.detailList = detailList;
+//	}
 
 	private CertificateWriter getCertificateWriter() {
 		if (certificateWriter == null) {
@@ -195,16 +195,29 @@ public class RemesaCertificadoWizard implements Serializable {
 	@SuppressWarnings("unchecked")
 	private void generateRemesasList() throws PayrollException{
 		setSelectedRemesas(null);
-		setDetailList(null);
+//		setDetailList(null);
 		List<RemesableCertificate> list = new LinkedList<RemesableCertificate>();
 		for (RemesableCertificate remesable : (List<RemesableCertificate>) getModel().getWrappedData()) {
 			if (remesable.isSelected()) {
 				list.add(remesable);
-				getDetailList().addAll(getEmpresaDAO().getDetalleRemesaCertificados(remesable.getRemesa()));
+//				getDetailList().addAll(getEmpresaDAO().getDetalleRemesaCertificados(remesable.getRemesa()));
+				remesable.setEmpleadosList(generateRemesableEmpleadosList(getEmpresaDAO().getDetalleRemesaCertificados(remesable.getRemesa())));
 			}
 		}
 		setSelectedRemesas(list);
 		setSelectedModel(new ListDataModel(list));
+	}
+	
+	private List<RemesableEmpleadoCertificate> generateRemesableEmpleadosList(List<IRemesaCertificadoEmpresaDetalle> list){
+		List<RemesableEmpleadoCertificate> remesableList = new LinkedList<RemesableEmpleadoCertificate>();
+		for(IRemesaCertificadoEmpresaDetalle d: list){
+			RemesableEmpleadoCertificate remesable = new RemesableEmpleadoCertificate();
+			remesable.setCausaSuspension(d.getCausaSuspension());
+			remesable.setEmpleado(d.getEmpleado());
+			
+			remesableList.add(remesable);
+		}
+		return remesableList;
 	}
 
 	// ***************************************************
@@ -319,8 +332,13 @@ public class RemesaCertificadoWizard implements Serializable {
 				
 				remesable.getRemesa().setEstado(FileStatus.GENERADO);
 				getEmpresaDAO().accept(remesable.getRemesa());
+				int delay=1;
+				try {
+					Thread.sleep( delay );
+				} catch (InterruptedException e) {
+					// NADA, que siga la ejecucion
+				} 
 			}
-			
 			out.close();
 			FileOutput output = new FileOutput();
 			output.setFile(file);
@@ -359,7 +377,6 @@ public class RemesaCertificadoWizard implements Serializable {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
-		
 	}
 	
 }

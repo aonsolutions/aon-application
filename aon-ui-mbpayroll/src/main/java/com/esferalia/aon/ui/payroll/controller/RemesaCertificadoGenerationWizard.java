@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,20 +37,36 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			"remesaCertificadoGenerationWizard_step2" };
 	private RemesaCertificadoEmpresaParams params;
 	private DataModel model;
-	private DataModel selectedModel;
 	private IEmpresaDAO empresaDAO;
-	private List<IRemesaCertificadoEmpresa> listaRemesas;
 	private List<IRemesaCertificadoEmpresa> savedRemesas;
 	private boolean remesable;
 	private CausaSuspension suspensionCauseForAll;
+	private List<RemesableCertificate> remesasList;
+	private DataModel remesasModel;
 	
+	public DataModel getRemesasModel() {
+		remesasModel = new ListDataModel(getRemesasList());
+		return remesasModel;
+	}
+
+	public void setRemesasModel(DataModel remesasModel) {
+		this.remesasModel = remesasModel;
+	}
+	
+	public List<RemesableCertificate> getRemesasList() {
+		return remesasList;
+	}
+
+	public void setRemesasList(List<RemesableCertificate> remesasList) {
+		this.remesasList = remesasList;
+	}
+
 	public CausaSuspension getSuspensionCauseForAll() {
 		return suspensionCauseForAll;
 	}
 
 	public void setSuspensionCauseForAll(CausaSuspension suspensionCauseForAll) {
 		this.suspensionCauseForAll = suspensionCauseForAll;
-//		aplyAllSuspensionCause(suspensionCauseForAll);
 	}
 
 	public boolean isRemesable() {
@@ -72,17 +87,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	public void setParams(RemesaCertificadoEmpresaParams params) {
 		this.params = params;
 	}
-
-	public List<IRemesaCertificadoEmpresa> getListaRemesas() {
-		if (listaRemesas == null) {
-			listaRemesas = new ArrayList<IRemesaCertificadoEmpresa>();
-		}
-		return listaRemesas;
-	}
-
-	public void setListaRemesas(List<IRemesaCertificadoEmpresa> listaRemesas) {
-		this.listaRemesas = listaRemesas;
-	}
+	
 	public List<IRemesaCertificadoEmpresa> getSavedRemesas() {
 		if (savedRemesas == null) {
 			savedRemesas = new ArrayList<IRemesaCertificadoEmpresa>();
@@ -116,14 +121,10 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		return model;
 	}
 
-	public DataModel getSelectedModel() {
-		return selectedModel;
+	private boolean isCausaSuspensionSelected(RemesableEmpleadoCertificate remesable) {
+		return remesable.getCausaSuspension()!=null;
 	}
-
-	public void setSelectedModel(DataModel selectedModel) {
-		this.selectedModel = selectedModel;
-	}
-
+	
 	private void initializeModel() throws PayrollException {
 		List<RemesableEmpleadoCertificate> list = transformList(getEmpresaDAO()
 				.getEmpleados(params));
@@ -183,9 +184,9 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		setParams(null);
 		getParams().setFechaHasta(Calendar.getInstance().getTime());
 		setModel(null);
-		setSelectedModel(null);
-		setListaRemesas(null);
+		setRemesasList(null);
 		setRemesable(true);
+		setSuspensionCauseForAll(null);
 		setCurrentStep(0);
 	}
 
@@ -204,9 +205,7 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	
 	@SuppressWarnings("unchecked")
 	private void generateRemesasList() throws PayrollException{
-		IEmpleado empleado;
-		setListaRemesas(null);
-		List<RemesableEmpleadoCertificate> list = new LinkedList<RemesableEmpleadoCertificate>();
+		List<RemesableEmpleadoCertificate> remesableEmpleadosList = new LinkedList<RemesableEmpleadoCertificate>();
 		for (RemesableEmpleadoCertificate remesable : (List<RemesableEmpleadoCertificate>) getModel().getWrappedData()) {
 			if (remesable.isSelected()) {
 				if (!isCausaSuspensionSelected(remesable)) {
@@ -214,27 +213,92 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				}
-				list.add(remesable);
-				empleado = remesable.getEmpleado();
-				addEmpresaToRemesasList(empleado);
+				remesableEmpleadosList.add(remesable);
 			}
 		}
-		setSelectedModel(new ListDataModel(list));
+		
+		setRemesasList(new LinkedList<RemesableCertificate>());
+		RemesableCertificate remesa = null;
+		for (RemesableEmpleadoCertificate remesable : remesableEmpleadosList) {
+			RemesableCertificate searchedRemesa = searchRemesa(remesable);
+			if(searchedRemesa==null){
+				remesa = new RemesableCertificate();
+				remesa.setRemesa(getEmpresaDAO().getNewRemesa(remesable.getEmpleado()));
+				remesa.addEmpleado(remesable, false);
+				getRemesasList().add(remesa);
+			} else {
+				remesa = searchedRemesa;
+				remesa.addEmpleado(remesable, false);
+				if(!isRemesaAdded(remesa)){
+					getRemesasList().add(remesa);
+					addExistingEmpleadosRemesa(remesa);
+				}
+			}
+		}
 	}
-	
-	private void addEmpresaToRemesasList(IEmpleado empleado) throws PayrollException {
-		if (!isEmpresaInList(empleado.getEmpresa())) {
-			List<IRemesaCertificadoEmpresa> remesas = getExistingRemesas(empleado);
-			if(remesas.size()>0){
-				IRemesaCertificadoEmpresa remesa = findRemesa(remesas, empleado);
-				if(remesa!=null){
-					getListaRemesas().add(remesa);
-				} else {
-					getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado));
+
+	private boolean isRemesaAdded(RemesableCertificate remesa) {
+		for(RemesableCertificate rc: getRemesasList()){
+			if(remesa.getRemesa().getId()!=null){
+				if(rc.getRemesa().getId()!=null && rc.getRemesa().getId().equals(remesa.getRemesa().getId())){
+					return true;
 				}
 			} else {
-				getListaRemesas().add(getEmpresaDAO().getNewRemesa(empleado));
+				if(rc.getRemesa().equals(remesa.getRemesa())){
+					return true;
+				}
 			}
+		}
+		return false;
+	}
+
+	private boolean isEmpresaInRemesasList(IEmpresa empresa) {
+		for(RemesableCertificate c: getRemesasList()){
+			if(c.getEmpresa().getId().equals(empresa.getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private RemesableCertificate getExistingEmpresaRemesa(IEmpresa empresa, RemesableEmpleadoCertificate remesable) {
+		for(RemesableCertificate c: getRemesasList()){
+			if(c.getEmpresa().getId().equals(empresa.getId()) && !c.existEmpleado(remesable)){
+				return c;
+			}
+		}
+		return null;
+	}
+	
+	private RemesableCertificate searchRemesa(RemesableEmpleadoCertificate remesable) throws PayrollException {
+		IRemesaCertificadoEmpresa remesa = null;
+		if (!isEmpresaInRemesasList(remesable.getEmpleado().getEmpresa())) {
+			List<IRemesaCertificadoEmpresa> existingRemesas = getExistingRemesas(remesable.getEmpleado());
+			if(existingRemesas.size()>0){
+				remesa = findRemesa(existingRemesas, remesable.getEmpleado());
+				if(remesa==null){
+					remesa = getEmpresaDAO().getNewRemesa(remesable.getEmpleado());
+				}
+			} else {
+				return null;
+			}
+		} else {
+			return getExistingEmpresaRemesa(remesable.getEmpleado().getEmpresa(), remesable);
+		}
+		if(remesa!=null){
+			RemesableCertificate remesaCertificate = new RemesableCertificate();
+			remesaCertificate.setRemesa(remesa);
+			return remesaCertificate;
+		}
+		return null;
+	}
+
+	private void addExistingEmpleadosRemesa(RemesableCertificate rc) throws PayrollException {
+		for(IRemesaCertificadoEmpresaDetalle detalle: getEmpresaDAO().getDetalleRemesaCertificados(rc.getRemesa())){
+			RemesableEmpleadoCertificate remesable = new RemesableEmpleadoCertificate();
+			remesable.setCausaSuspension(detalle.getCausaSuspension());
+			remesable.setEmpleado(detalle.getEmpleado());
+			rc.addEmpleado(remesable, true);
 		}
 	}
 	
@@ -262,27 +326,11 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 		return getEmpresaDAO().getRemesaCertificados(params);
 	}
 
-	private boolean isCausaSuspensionSelected(RemesableEmpleadoCertificate remesable) {
-		return remesable.getCausaSuspension()!=null;
-	}
-
 	public boolean isAnyEmpleadoSelected() {
 		for (int i = 0; i < getModel().getRowCount(); i++) {
 			getModel().setRowIndex(i);
 			RemesableEmpleadoCertificate r = (RemesableEmpleadoCertificate) getModel().getRowData();
 			if(r.isSelected()){
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isEmpresaInList(IEmpresa empresa) {
-		Iterator<?> iterator = getListaRemesas().iterator();
-		while (iterator.hasNext()) {
-			IRemesaCertificadoEmpresa remesa = (IRemesaCertificadoEmpresa) iterator
-					.next();
-			if (remesa.getEmpresa().getId().equals(empresa.getId())) {
 				return true;
 			}
 		}
@@ -299,11 +347,10 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
-				for (IRemesaCertificadoEmpresa r : getListaRemesas()) {
-					IRemesaCertificadoEmpresa remesa = getEmpresaDAO()
-							.accept(r);
+				for (RemesableCertificate r : getRemesasList()) {
+					IRemesaCertificadoEmpresa remesa = getEmpresaDAO().accept(r.getRemesa());
 					getSavedRemesas().add(remesa);
-					List<IRemesaCertificadoEmpresaDetalle> list = getRemesaDetalleList(remesa);
+					List<IRemesaCertificadoEmpresaDetalle> list = getRemesaDetalleList(remesa, r.getEmpleadosList());
 					for (IRemesaCertificadoEmpresaDetalle d : list) {
 						getEmpresaDAO().accept(d);
 					}
@@ -327,18 +374,13 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-
 		onStart(event);
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<IRemesaCertificadoEmpresaDetalle> getRemesaDetalleList(
-			IRemesaCertificadoEmpresa remesa) {
+			IRemesaCertificadoEmpresa remesa, List<RemesableEmpleadoCertificate> empleadosList) {
 		List<IRemesaCertificadoEmpresaDetalle> list = new ArrayList<IRemesaCertificadoEmpresaDetalle>();
-
-		for (RemesableEmpleadoCertificate d : (List<RemesableEmpleadoCertificate>) getSelectedModel()
-				.getWrappedData()) {
-			if (d.getEmpleado().getEmpresa().getId().equals(remesa.getEmpresa().getId())) {
+		for (RemesableEmpleadoCertificate d : empleadosList) {
 				IRemesaCertificadoEmpresaDetalle detalle = getEmpresaDAO()
 						.getNewRemesaDetalle(d.getEmpleado());
 				detalle.setRemesaCertificado(remesa);
@@ -346,7 +388,6 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 				detalle.setFechaBaja(d.getEmpleado().getFechaFin());
 				detalle.setCausaSuspension(d.getCausaSuspension());
 				list.add(detalle);
-			}
 		}
 		return list;
 	}
@@ -358,7 +399,6 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 	private void onSearch(ActionEvent event) {
 		try {
 			initializeModel();
-			setListaRemesas(null);
 		} catch (PayrollException e) {
 			// NADA
 		}
@@ -411,5 +451,5 @@ public class RemesaCertificadoGenerationWizard implements Serializable {
 			}
 		}
 	}
-
+	
 }
