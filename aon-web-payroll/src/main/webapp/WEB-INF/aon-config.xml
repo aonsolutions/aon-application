@@ -22,22 +22,22 @@
 		/>
 	</company:config>
 	
-	<employee:config version="1.1" xmlns:employee="http://www.esferalia.com/employee">
-		<employee:employee 
+	<payroll:config version="1.1" xmlns:payroll="http://www.esferalia.com/payroll">
+		<payroll:payroll 
 			showPaymentEditionTab="true" 
 			showDeductionEditionTab="true"
 		/>
-		<employee:salary 
+		<payroll:salary 
 			showEnterpriseColumn="true" 
 			showPersonColumn="true"
 			showIssueDateColumn="true"
 		/>		
-		<employee:salaryDraft
+		<payroll:salaryDraft
 			showEnterpriseInSearch="true" 
 		/>
-		<employee:paymentUpdate
+		<payroll:paymentUpdate
 			showEnterpriseInSearch="true" 
 		/>
-	</employee:config>
+	</payroll:config>
 
 </config>

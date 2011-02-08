@@ -96,21 +96,20 @@
 		<mapping class="com.code.aon.audit.Session"/>		
 		
 		<!-- AON-EMPLOYEE Mapping files -->
-		<mapping class="com.code.aon.employee.Contract"/>
-		<mapping class="com.code.aon.employee.ContractBatch"/>
-		<mapping class="com.code.aon.employee.ContractBatchDetail"/>
-		<mapping class="com.code.aon.employee.ContractCalendarEvent"/>
-		<mapping class="com.code.aon.employee.ContractData"/>
-		<mapping class="com.code.aon.employee.ContractDeduction"/>
-		<mapping class="com.code.aon.employee.ContractContext"/>
-		<mapping class="com.code.aon.employee.ContractPayment"/>
-		<mapping class="com.code.aon.employee.ContractType"/>
-		<mapping class="com.code.aon.employee.DeductionConcept"/>
-		<mapping class="com.code.aon.employee.FunctionConstant"/>
-		<mapping class="com.code.aon.employee.PaymentConcept"/>
-		<mapping class="com.code.aon.employee.Salary"/>
-		<mapping class="com.code.aon.employee.SalaryPayment"/>
-		<mapping class="com.code.aon.employee.SalaryDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.Contract"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatch"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.ContractCalendarEvent"/>
+		<mapping class="com.esferalia.aon.payroll.ContractData"/>
+		<mapping class="com.esferalia.aon.payroll.ContractDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.ContractPayment"/>
+		<mapping class="com.esferalia.aon.payroll.ContractType"/>
+		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
+		<mapping class="com.esferalia.aon.payroll.FunctionConstant"/>
+		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
+		<mapping class="com.esferalia.aon.payroll.Salary"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryPayment"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryDeduction"/>
 
 	</session-factory>
 

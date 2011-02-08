@@ -12,7 +12,7 @@
 		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
 		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
 		<resource-bundle>
-			<base-name>com.code.aon.ui.payroll.i18n.messages</base-name>
+			<base-name>com.code.aon.web.payroll.i18n.messages</base-name>
 			<var>appBundle</var>
 		</resource-bundle>
 	</application>
@@ -24,12 +24,6 @@
 			com.code.aon.ui.resources.bean.ResourceResolver
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<!-- 
-		<managed-property>
-			<property-name>resourceContextPath</property-name>
-			<value>aon-desktop</value>
-		</managed-property>
-		-->
 	</managed-bean>
 
 	<!--  **** AON CONFIGURATION **** -->
