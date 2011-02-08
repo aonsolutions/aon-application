@@ -36,6 +36,9 @@ import com.esferalia.aon.calendar.enumeration.CalendarSource;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController;
 import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
+import com.esferalia.aon.ui.payroll.controller.IEmployeeConstants;
+import com.esferalia.aon.ui.payroll.controller.SalaryController;
+import com.esferalia.aon.ui.payroll.controller.SalaryDraftController;
 
 public class ManagerController implements IEmployeeConstants {
 	

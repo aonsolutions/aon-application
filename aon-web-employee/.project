@@ -3,14 +3,9 @@
 	<name>aon-web-employee</name>
 	<comment></comment>
 	<projects>
-		<project>aon-config</project>
-		<project>aon-ui-resources</project>
-		<project>aon-company</project>
-		<project>aon-ui-form</project>
-		<project>aon-ui-company</project>
-		<project>aon-ui-employee</project>
-		<project>aon-registry</project>
-		<project>aon-ui-config</project>
+		<project>aon-payroll</project>
+		<project>aon-salary</project>
+		<project>aon-ui-payroll</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
