@@ -41,6 +41,7 @@
 							
 						<aon:column id="stateColumn" label="#{webmailBundle.webmail_message_selectEmail}"
 							styleClass="aon-nopadding aon-nomargin" width="70px" >
+ 							<rich:dragSupport dragIndicator="messageIndicator" dragType="MESSAGE" dragValue="#{to}" />							
 							<f:facet name="header" >
 								<aon:div layout="none">
  
@@ -63,7 +64,6 @@
 							</f:facet>
 							<aon:div  
 								onmouseover="disableRowSelector();" onmouseout="enableRowSelector();">
-	 							<rich:dragSupport dragIndicator="messageIndicator" dragType="MESSAGE" dragValue="#{to}" />
 								<aon:graphicImage height="18" width="10"
 									styleClass="aon-vertical-align-middle aon-nopadding aon-nomargin"
 									url="#{aonResource.resolve['/richCss/images/aon-icon/aon-icon-dnd.gif']}" >
