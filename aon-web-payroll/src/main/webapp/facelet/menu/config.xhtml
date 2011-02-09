@@ -74,7 +74,7 @@
 									<aon:commandLink id="contractMode"
 										actionListener="#{contractModel.onReset}"
 										action="contractOption_list" 
-										value="#{employeeBundle.contract_mode_module}">
+										value="#{payrollBundle.contract_mode_module}">
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -130,21 +130,21 @@
 									<aon:commandLink id="functionConstant"
 										action="functionConstant_grid" 
 										actionListener="#{functionConstant.onSearch}"
-										value="#{employeeBundle.employee_functionConstant_module}">
+										value="#{payrollBundle.payroll_functionConstant_module}">
 									</aon:commandLink>
 								</aon:div>		
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="paymentConcept" 
 										action="paymentConcept_search" 
 										actionListener="#{paymentConcept.onEditSearch}"
-										value="#{employeeBundle.employee_paymentConcept_module}">
+										value="#{payrollBundle.payroll_paymentConcept_module}">
 									</aon:commandLink>
 								</aon:div>		
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="deductionConcept" 
 										action="deductionConcept_search" 
 										actionListener="#{deductionConcept.onEditSearch}"
-										value="#{employeeBundle.employee_deductionConcept_module}">
+										value="#{payrollBundle.payroll_deductionConcept_module}">
 									</aon:commandLink>
 								</aon:div>	
 							</aon:div>
