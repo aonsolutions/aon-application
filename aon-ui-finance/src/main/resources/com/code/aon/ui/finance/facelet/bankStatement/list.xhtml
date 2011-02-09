@@ -20,8 +20,18 @@
 					<ui:param name="skipSearchButton" value="false" />
 
 					<ui:define name="additionalToolbarContent">
+						<aon:commandButton id="removeStatement"
+							value="#{bundle.aon_remove}"
+							title="#{financeBundle.finance_remove_selected}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							rendered="#{!controller.new and controller.to == null}"
+							actionListener="#{controller.onRemoveSelected}"
+							reRender="#{dataTableId}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						<aon:commandButton id="import-Popup"
 							value="#{financeBundle.finance_bank_statement_import}"
+							title="#{financeBundle.finance_bank_statement_import}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							rendered="#{!controller.new and controller.to == null}"
 							actionListener="#{controller.onImportFileShow}"
@@ -31,6 +41,7 @@
 						</aon:commandButton>
 						<aon:commandButton id="checkLinks"
 							value="#{financeBundle.finance_bank_statement_check_auto}"
+							title="#{financeBundle.finance_bank_statement_check_auto}"
 							styleClass="aon-finding-toolbar-item aon-icon-attach-file"
 							rendered="#{!controller.new and controller.to == null}"
 							actionListener="#{controller.onCheckLinks}"
@@ -38,14 +49,24 @@
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						<c:if test="#{aonRole.accountingOperator}">
-							<aon:commandButton id="recordLinks"
-								value="#{financeBundle.finance_record_selected}"
+							<aon:commandButton id="recordStatement"
+								value="#{financeBundle.finance_record}"
+								title="#{financeBundle.finance_record_selected}"
 								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
 								rendered="#{!controller.new and controller.to == null}"
-								actionListener="#{controller.onRecordLinks}"
+								actionListener="#{controller.onRecordStatement}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandButton id="unrecordStatement"
+								value="#{financeBundle.finance_unrecord}"
+								title="#{financeBundle.finance_unrecord_selected}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+								rendered="#{!controller.new and controller.to == null}"
+								actionListener="#{controller.onUnrecordStatement}"
+								reRender="#{dataTableId}"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						</c:if>
  					</ui:define>
 				</ui:decorate>

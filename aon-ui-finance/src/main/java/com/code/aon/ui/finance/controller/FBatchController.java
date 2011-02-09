@@ -360,37 +360,15 @@ public class FBatchController extends BasicController implements ICollectionProv
         loadDetails(fBatch);
     }
 
-	@SuppressWarnings("unchecked")
     public void onUnrecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fBatch = (FinanceBatch)this.getTo();
-
-        IManagerBean fbatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-        Criteria criteria = new Criteria();
-        criteria.addEqualExpression(fbatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fBatch.getId());
-        criteria.addEqualExpression(fbatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
-        if (fbatchDetailBean.getCount(criteria) > 0) {
+        if (getWriter().canRemoveAccountEntryFinanceBatch(fBatch)) {
+            getWriter().removeAccountEntryFinanceBatch(fBatch);
+            loadDetails(fBatch);
+        } else {
             AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
             throw new AbortProcessingException();
         }
-
-        getWriter().removeAccountEntryFinanceBatch(fBatch);
-
-        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-        Iterator iterator = fBatch.getDetailList().iterator();
-        while (iterator.hasNext()) {
-            FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)iterator.next();
-            fbatchDetail.setStatus(FinanceStatus.BATCHED);
-            fbatchDetailBean.update(fbatchDetail);
-
-            fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.BATCHED);
-            financeBean.update(fbatchDetail.getFinance());
-
-            FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.PAID);
-        }
-        
-        fBatch.setFinanceBatchStatus((fBatch.getFinanceBatchType() == FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
-        getManagerBean().update(fBatch);
-        loadDetails(fBatch);
     }
 
 }

@@ -66,10 +66,26 @@
 									</aon:panelGrid>
 								</aon:div>
 
+								<aon:div id="statementLinkHeader" rendered="#{linkManager.currentStatement != null}">
+									<aon:panelGrid columns="4" style="width:100%;"
+										columnClasses="aon-italic aon-bold aon-width-100,aon-italic aon-bold aon-width-100,
+											aon-italic aon-bold aon-width-150,aon-italic aon-bold aon-italic aon-width-auto">
+										<aon:outputText value="&#160;" />
+										<aon:outputText value="#{linkManager.currentStatement.operationDate}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>
+										<aon:outputText value="#{linkManager.currentStatement.commonConcept}" />
+										<aon:outputText value="#{linkManager.currentStatement.description}">
+											<aon:abbreviateConverter maxWidth="50" />
+										</aon:outputText>
+									</aon:panelGrid>
+								</aon:div>
+
 								<aon:div id="statementLinkCheckDiv" styleClass="aon-scroll-area">
 									<aon:panelTabSet id="statementLinkTabSet" selectedTab="#{linkManager.selectedTab}">
-										<aon:panelTab id="statementLinkTab" rendered="#{bankStatementLink.model.rowCount > 0}"
-											label="#{financeBundle.finance_checked_concepts}">
+										<aon:panelTab id="statementLinkTab" label="#{financeBundle.finance_checked_concepts}"
+											rendered="#{bankStatementLink.model.rowCount > 0}">
 											<aon:div styleClass="aon-toolbar">
 												<aon:commandButton title="#{bundle.aon_check_all}"
 													styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -149,8 +165,8 @@
 											</aon:div>
 										</aon:panelTab>
 
-										<aon:panelTab id="financeLinkTab" rendered="#{!linkManager.batchSource}"
-											label="#{financeBundle.finance_unchecked_finances}">
+										<aon:panelTab id="financeLinkTab" label="#{financeBundle.finance_unchecked_finances}"
+											rendered="#{!linkManager.batchSource}">
 											<aon:div styleClass="aon-toolbar">
 												<aon:commandButton title="#{bundle.aon_check_all}"
 													styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -189,12 +205,14 @@
 											<aon:div id="financeListDiv">
 												<aon:panel rendered="#{financeList.model.rowCount > 0 or financeTrackingList.model.rowCount == 0}">
 													<f:facet name="header">
-														<aon:outputLabel for="financeData" 
-															value="#{financeBundle.finance_unpaid_finances}"
-															rendered="#{!linkManager.returnSource}" />
-														<aon:outputLabel for="financeData" 
-															value="#{financeBundle.finance_paid_finances}"
-															rendered="#{linkManager.returnSource}" />
+														<aon:div>
+															<aon:outputLabel for="financeData" 
+																value="#{financeBundle.finance_unpaid_finances}"
+																rendered="#{!linkManager.returnSource}" />
+															<aon:outputLabel for="financeData" 
+																value="#{financeBundle.finance_paid_finances}"
+																rendered="#{linkManager.returnSource}" />
+														</aon:div>
 													</f:facet>
 
 													<aon:dataTable id="financeData"	value="#{financeList.model}" 
@@ -265,12 +283,14 @@
 											<aon:div id="trackingListDiv" styleClass="aon-padding-top">
 												<aon:panel rendered="#{financeTrackingList.model.rowCount > 0}">
 													<f:facet name="header">
-														<aon:outputLabel for="financeTrackingData" 
-															value="#{financeBundle.finance_paid_finances}"
-															rendered="#{!linkManager.returnSource}" />
-														<aon:outputLabel for="financeTrackingData" 
-															value="#{financeBundle.finance_returned_finances}"
-															rendered="#{linkManager.returnSource}" />
+														<aon:div>
+															<aon:outputLabel for="financeTrackingData" 
+																value="#{financeBundle.finance_paid_finances}"
+																rendered="#{!linkManager.returnSource}" />
+															<aon:outputLabel for="financeTrackingData" 
+																value="#{financeBundle.finance_returned_finances}"
+																rendered="#{linkManager.returnSource}" />
+														</aon:div>
 													</f:facet>
 
 													<aon:dataTable id="financeTrackingData" value="#{financeTrackingList.model}" 
@@ -339,8 +359,8 @@
 											</aon:div>
 										</aon:panelTab>
 
-										<aon:panelTab id="fbatchLinkTab" rendered="#{linkManager.batchSource}"
-											label="#{financeBundle.finance_unchecked_fbatches}">
+										<aon:panelTab id="fbatchLinkTab" label="#{financeBundle.finance_unchecked_fbatches}"
+											rendered="#{linkManager.batchSource and !linkManager.batchLinked}">
 											<aon:div styleClass="aon-toolbar" rendered="#{fbatchList.model.rowCount > 0}">
 												<aon:commandButton title="#{financeBundle.finance_check_selected}"
 													styleClass="aon-finding-toolbar-item aon-icon-newFolder"

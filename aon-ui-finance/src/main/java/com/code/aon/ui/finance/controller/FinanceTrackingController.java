@@ -145,4 +145,12 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		return (fBatchDetailBean.getCount(criteria));
 	}
 
+	public void onLoadBankStatement(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+			BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
+			statementController.onLoadBankStatement(event, tracking.getBankStatementLink().getBankStatement(), FINANCE_FORM_NAME);
+		}
+	}
+
 }

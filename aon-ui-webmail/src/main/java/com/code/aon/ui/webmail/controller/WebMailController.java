@@ -1,6 +1,9 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.webmail.bean.AonFolder.INBOX_FOLDER_NAME;
+
 import java.util.Collections;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -8,6 +11,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.mail.MessagingException;
 import javax.mail.Quota;
 import javax.naming.Name;
@@ -39,6 +43,7 @@ import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
@@ -246,5 +251,22 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		}
 		return true;
 	}	
+	
+	private AonFolder getInboxFolder() {
+		FolderController folderController = getFolderController();
+		AonFolder folder = folderController.getFolder();
+		if ( (folder != null) && INBOX_FOLDER_NAME.equals(folder.getName())  ) {
+			return folder;
+		}
+		return getServer().getAonFolder( INBOX_FOLDER_NAME );	
+	}
+	
+	public void poll( ActionEvent event ) {
+		LOGGER.info( "Poll: {}", new Date() );
+		AonFolder folder = getInboxFolder();
+		if ( folder != null ) {
+			folder.getUnreadMessageCount();
+		}
+	}
 	
 }

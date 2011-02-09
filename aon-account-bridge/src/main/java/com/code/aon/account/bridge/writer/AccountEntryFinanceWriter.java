@@ -30,7 +30,9 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
+import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
@@ -197,8 +199,20 @@ public class AccountEntryFinanceWriter {
 		return (AccountEntryFinanceBatch) accountEntryFinanceBatchBean.insert(accEntryBatch);
 	}
 
-	@SuppressWarnings("unchecked")
+	public boolean canRemoveAccountEntryFinanceBatch(FinanceBatch fBatch) throws ManagerBeanException {
+        IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+        Criteria criteria = new Criteria();
+        criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fBatch.getId());
+        criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
+        return (fBatchDetailBean.getCount(criteria) == 0);
+	}
+
 	public void removeAccountEntryFinanceBatch(FinanceBatch fBatch) throws ManagerBeanException {
+		removeAccountEntryFinanceBatch(fBatch, true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void removeAccountEntryFinanceBatch(FinanceBatch fBatch, boolean removeAccountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryFinanceBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryFinanceBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fBatch.getId());
@@ -206,9 +220,29 @@ public class AccountEntryFinanceWriter {
 		if (iterator.hasNext()) {
 			AccountEntryFinanceBatch accountEntryFinanceBatch = (AccountEntryFinanceBatch)iterator.next();
 			accountEntryFinanceBatchBean.remove(accountEntryFinanceBatch);
-			removeAccountEntryDetails(accountEntryFinanceBatch.getAccountEntry());
-			removeAccountEntry(accountEntryFinanceBatch.getAccountEntry());
+			if (removeAccountEntry) {
+				removeAccountEntryDetails(accountEntryFinanceBatch.getAccountEntry());
+				removeAccountEntry(accountEntryFinanceBatch.getAccountEntry());
+			}
 		}
+
+        IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+        iterator = fBatch.getDetailList().iterator();
+        while (iterator.hasNext()) {
+            FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)iterator.next();
+            fbatchDetail.setStatus(FinanceStatus.BATCHED);
+            fBatchDetailBean.update(fbatchDetail);
+
+            fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.BATCHED);
+            financeBean.update(fbatchDetail.getFinance());
+
+            FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.PAID);
+        }
+        
+        IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
+        fBatch.setFinanceBatchStatus((fBatch.getFinanceBatchType() == FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
+        fBatchBean.update(fBatch);
 	}
 
 
@@ -592,8 +626,12 @@ public class AccountEntryFinanceWriter {
 		return (AccountEntryFinanceTracking) accountEntryFinanceTrackingBean.insert(accEntryTracking);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void removeAccountEntryFinanceTracking(FinanceTracking tracking) throws ManagerBeanException {
+		removeAccountEntryFinanceTracking(tracking, true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void removeAccountEntryFinanceTracking(FinanceTracking tracking, boolean removeAccountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
@@ -601,8 +639,10 @@ public class AccountEntryFinanceWriter {
 		if (iterator.hasNext()) {
 			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
 			accountEntryFinanceTrackingBean.remove(accountEntryFinanceTracking);
-			removeAccountEntryDetails(accountEntryFinanceTracking.getAccountEntry());
-			removeAccountEntry(accountEntryFinanceTracking.getAccountEntry());
+			if (removeAccountEntry) {
+				removeAccountEntryDetails(accountEntryFinanceTracking.getAccountEntry());
+				removeAccountEntry(accountEntryFinanceTracking.getAccountEntry());
+			}
 		}
 	}
 
@@ -656,8 +696,12 @@ public class AccountEntryFinanceWriter {
 		return (AccountEntryBankStatement) accountEntryBankStatementBean.insert(accEntryStatement);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void removeAccountEntryBankStatement(BankStatement statement) throws ManagerBeanException {
+		removeAccountEntryBankStatement(statement, true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void removeAccountEntryBankStatement(BankStatement statement, boolean removeAccountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryBankStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryBankStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID), statement.getId());
@@ -665,8 +709,10 @@ public class AccountEntryFinanceWriter {
 		while (iterator.hasNext()) {
 			AccountEntryBankStatement accountEntryBankStatement= (AccountEntryBankStatement)iterator.next();
 			accountEntryBankStatementBean.remove(accountEntryBankStatement);
-			removeAccountEntryDetails(accountEntryBankStatement.getAccountEntry());
-			removeAccountEntry(accountEntryBankStatement.getAccountEntry());
+			if (removeAccountEntry) {
+				removeAccountEntryDetails(accountEntryBankStatement.getAccountEntry());
+				removeAccountEntry(accountEntryBankStatement.getAccountEntry());
+			}
 		}
 	}
 
