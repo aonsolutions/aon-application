@@ -14,7 +14,7 @@
 			<aon:div ajaxRendered="true" layout="none">
 			
 				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{payrollBundle.employee_contractType_module}" />
+					<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractType_module}" />
 					<ui:param name="controller" value="#{contractType}" />
 				</ui:include>			
 
@@ -64,18 +64,18 @@
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
 									<aon:outputLabel for="ContractType_duration"
-										value="#{payrollBundle.employee_contractType_duration}" />
+										value="#{payrollBundle.payroll_contractType_duration}" />
 								</f:facet>
 								<aon:outputText value="#{to.duration}"
 									rendered="#{formList}" />
 								<aon:selectOneMenu id="ContractType_duration" required="true"
 									value="#{controller.to.duration}" rendered="#{formEdit}">
-									<f:selectItems value="#{employeeCollections.contractDurations}" />
+									<f:selectItems value="#{payrollCollections.contractDurations}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu id="ContractType_duration-New" required="true"
 										value="#{controller.to.duration}" rendered="#{formNew}">
-										<f:selectItems value="#{employeeCollections.contractDurations}" />
+										<f:selectItems value="#{payrollCollections.contractDurations}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
@@ -83,18 +83,18 @@
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
 									<aon:outputLabel for="ContractType_workingDay"
-										value="#{payrollBundle.employee_contractType_workingDay}" />
+										value="#{payrollBundle.payroll_contractType_workingDay}" />
 								</f:facet>
 								<aon:outputText value="#{to.workingDay}"
 									rendered="#{formList}" />
 								<aon:selectOneMenu id="ContractType_workingDay" required="true"
 									value="#{controller.to.workingDay}" rendered="#{formEdit}">
-									<f:selectItems value="#{employeeCollections.contractWorkingDays}" />
+									<f:selectItems value="#{payrollCollections.contractWorkingDays}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu id="ContractType_workingDay-New" required="true"
 										value="#{controller.to.workingDay}" rendered="#{formNew}">
-										<f:selectItems value="#{employeeCollections.contractWorkingDays}" />
+										<f:selectItems value="#{payrollCollections.contractWorkingDays}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>

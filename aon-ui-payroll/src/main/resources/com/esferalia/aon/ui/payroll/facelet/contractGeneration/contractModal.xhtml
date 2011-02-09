@@ -50,13 +50,13 @@
 											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="prev"
-										value="#{payrollBundle.employee_back}"
+										value="#{payrollBundle.payroll_back}"
 										reRender="showContractDetailWindow"
 										rendered="#{contractGenerationWizard.lastModalPage}"
 										actionListener="#{contractGenerationWizard.onFirstModalPage}"
 										styleClass="aon-finding-toolbar-item aon-icon-previous" />
 									<aon:commandButton id="next"
-										value="#{payrollBundle.employee_forward}"
+										value="#{payrollBundle.payroll_forward}"
 										reRender="showContractDetailWindow"
 										rendered="#{!contractGenerationWizard.lastModalPage}"
 										actionListener="#{contractGenerationWizard.onChangeModalPage}"

@@ -44,7 +44,7 @@
 
 	<aon:outputLabel for="Contract_id"
 		rendered="#{calendar.new}"
-		value="#{employeeBundle.employee_contract}" />
+		value="#{payrollBundle.payroll_contract}" />
 	<aon:div styleClass="aon-lookup" rendered="#{calendar.new}">
 		<aon:lookupInputText id="Contract_id" rendered="#{calendar.new}"
 			disabled="#{calendar.workPlace==null or calendar.workPlace.id==null}"
@@ -53,7 +53,7 @@
 			value="#{calendar.contract.id}" size="5" />
 		<aon:lookupButton rendered="#{calendar.new}"
 			disabled="#{calendar.workPlace==null or calendar.workPlace.id==null}"
-			windowTitle="#{employeeBundle.employee_contract_selection}"
+			windowTitle="#{payrollBundle.payroll_contract_selection}"
 			selectReRender="Contract_id,Contract_full_name"
 			lookup="#{contractLookup}" lookupChangeListener="#{calendar.onContractChanged}"
 			minHeight="460" minWidth="650" actionType="list"

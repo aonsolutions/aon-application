@@ -17,12 +17,12 @@
 				<aon:outputText value="#{to.type}" rendered="#{formList}" />
 				<aon:selectOneMenu id="AgreementLevelPayment_type" required="true"
 					value="#{controller.to.type}" rendered="#{formEdit}">
-					<f:selectItems value="#{employeeCollections.paymentTypes}" />
+					<f:selectItems value="#{payrollCollections.paymentTypes}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="AgreementLevelPayment_type-New" required="true"
 						value="#{controller.to.type}" rendered="#{formNew}">
-						<f:selectItems value="#{employeeCollections.paymentTypes}" />
+						<f:selectItems value="#{payrollCollections.paymentTypes}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
@@ -44,7 +44,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="AgreementLevelPayment_expression" value="#{employeeBundle.employee_salary_expression}" />
+					<aon:outputLabel for="AgreementLevelPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
 				</f:facet>
 				<aon:outputText value="#{to.expression}" rendered="#{formList}" />
 				<aon:inputText id="AgreementLevelPayment_expression"

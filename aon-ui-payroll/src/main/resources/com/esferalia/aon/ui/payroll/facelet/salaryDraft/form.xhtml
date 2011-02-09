@@ -11,7 +11,7 @@
 		<aon:form id="salaryDraftForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_salaryDraft_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salaryDraft_module}" />
 				<ui:param name="controller" value="#{salaryDraft}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSaveButton" value="true" />
@@ -20,7 +20,7 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="currentSalary-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{payrollBundle.employee_salary_draft}"
+						value="#{payrollBundle.payroll_salary_draft}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="currentSalaryDraftReport" />
 						<f:param name="outputFormat" value="PDF" />
@@ -37,7 +37,7 @@
 				<c:if test="#{!salaryDraft.new}">
 					<aon:div>
 						<aon:panelTabSet>
-							<aon:panelTab id="paymentsTab" label="#{payrollBundle.employee_salary_payment}">
+							<aon:panelTab id="paymentsTab" label="#{payrollBundle.payroll_salary_payment}">
 								<aon:div style="width: 840px; margin-top: 10px;">
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/gridContent.xhtml" >
 										<ui:param name="controller" value="#{salaryDraft.salary.payments}" />
@@ -58,7 +58,7 @@
 							</c:if>								
 						</aon:panelTabSet>
 						<aon:panelTabSet>
-							<aon:panelTab id="deductionsTab" label="#{payrollBundle.employee_salary_deduction}">
+							<aon:panelTab id="deductionsTab" label="#{payrollBundle.payroll_salary_deduction}">
 								<aon:div style="width: 840px; margin-top: 10px;">
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
 										<ui:param name="controller" value="#{salaryDraft.salary.deductions}" />

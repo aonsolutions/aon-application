@@ -26,7 +26,7 @@ public class ContractModelController {
 
 	public DataModel getModel() {
 		if (model == null) {
-			EmployeeCollectionsController ecc = (EmployeeCollectionsController) AonUtil.getRegisteredBean("employeeCollections");
+			PayrollCollectionsController ecc = (PayrollCollectionsController) AonUtil.getRegisteredBean("payrollCollections");
 			model = new ListDataModel( ecc.getContractModels() ); 
 		}
 		return model;
@@ -45,7 +45,7 @@ public class ContractModelController {
 		ContractModel cm = (ContractModel) item.getValue();
 		try {
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, IEmployeeConstants.MODEL_PATH, cm + ".pdf");
+			URL[] urls = Classpath.search(cl, IPayrollConstants.MODEL_PATH, cm + ".pdf");
 			URL url = urls!= null && urls.length > 0?urls[0]:null;
 			return (url != null);
 		} catch (IOException e) {
@@ -62,7 +62,7 @@ public class ContractModelController {
 			SelectItem item = (SelectItem) getModel().getRowData();
 			ContractModel cm = (ContractModel) item.getValue();
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, IEmployeeConstants.MODEL_PATH, cm + ".pdf");
+			URL[] urls = Classpath.search(cl, IPayrollConstants.MODEL_PATH, cm + ".pdf");
 			URL url = urls[0];
 			InputStream is = url.openStream();
 			buf = new BufferedInputStream(is);

@@ -14,7 +14,7 @@
 
 			<aon:panel style="background-color: #F6F6F6;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.employee_enterprise}" />
+					<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
 				</f:facet>	
 
 				<aon:div styleClass="aon-padding">
@@ -33,7 +33,7 @@
 							value="#{controller.salary.enterpriseDocument}" />
 					</aon:div>
 					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.employee_salary_ccc}:"/>
+						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_ccc}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.ccc}" />
 					</aon:div>
 				</aon:div>
@@ -41,7 +41,7 @@
 
 			<aon:panel style="background-color: #F6F6F6;">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.employee_name}" />
+					<aon:outputText value="#{payrollBundle.payroll_employee_name}" />
 				</f:facet>	
 				<aon:div styleClass="aon-padding">
 					<aon:div styleClass="aon-bold">
@@ -50,21 +50,21 @@
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{bundle.aon_person_document}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.employeeDocument}" />
-						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.employee_salary_registration}:"/>
+						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_registration}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.registration}" />
 					</aon:div>
 					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.employee_salary_ss_number}:"/>
+						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_ss_number}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.socialSecurityNumber}" />
 					</aon:div>
 					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.employee_salary_category}:"/>
+						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_category}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.category}" />
 					</aon:div>
 					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.employee_salary_group_category}:"/>
+						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_group_category}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.quoteGroup}"/>
-						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.employee_salary_seniority_date}:"/>
+						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_seniority_date}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.seniorityDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
@@ -77,7 +77,7 @@
 		<aon:div styleClass="aon-margin-top aon-text-right" style="width: 100%;">
 			<h:panelGrid columns="4" style="width: 100%;">
 				<aon:div>
-					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.employee_salary_simulation_date}"/>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_simulation_date}"/>
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
 					<aon:selectOneMenu id="Contract_month" value="#{controller.month}">
 						<f:selectItems value="#{commonCollections.months}"  />
@@ -92,16 +92,16 @@
 	   			</rich:inputNumberSpinner>
 
 				<aon:div>
-					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.employee_salary_period}"/>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period}"/>
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
-					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.employee_salary_period_from}"/>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period_from}"/>
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
 					<aon:outputText value="#{controller.salary.startDate}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>		
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
-					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.employee_salary_period_to}"/>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period_to}"/>
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
 					<aon:outputText value="#{controller.salary.endDate}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -111,7 +111,7 @@
 				
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
-					<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.employee_salary_days}:"/>
+					<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_days}:"/>
 					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" value="#{controller.salary.timeUnits}"/>
 				</aon:div>
 			</h:panelGrid>

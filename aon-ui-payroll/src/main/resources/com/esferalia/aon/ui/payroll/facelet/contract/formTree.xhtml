@@ -12,7 +12,7 @@
 		<aon:form id="contractForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_salary_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_module}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="person"
@@ -25,7 +25,7 @@
 							target="#{person.backActionListener}" value="person.onBack" />													
 					</aon:commandButton>
 					<aon:commandButton id="contract"
-						value="#{payrollBundle.employee_contract}"
+						value="#{payrollBundle.payroll_contract}"
 						action="contract_form" actionListener="#{contract.onEdit}"
 						styleClass="aon-finding-toolbar-item aon-icon-category" >
 						<f:setPropertyActionListener
@@ -78,7 +78,7 @@
 							<aon:outputText value="#{registryBundle.registry_person_nss}" />
 							<aon:outputText value="#{enterpriseTree.contract.person.socialSecurityNumber}" />
 		
-							<aon:outputText value="#{payrollBundle.employee_contract}" />
+							<aon:outputText value="#{payrollBundle.payroll_contract}" />
 							<aon:panelGroup>
 								<aon:outputText value="#{bundle.aon_start_date}" styleClass="aon-italic"/>
 								<aon:inputText value="#{enterpriseTree.contract.startDate}"

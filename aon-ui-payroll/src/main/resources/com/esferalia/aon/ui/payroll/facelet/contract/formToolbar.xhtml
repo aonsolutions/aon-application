@@ -8,13 +8,13 @@
 
 	<c:if test="#{!contract.new}" >
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-			<ui:param name="toolbarTitle" value="#{payrollBundle.employee_contract_module}" />
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
 			<ui:param name="controller" value="#{contract}" />
 			<ui:param name="skipSaveButton" value="true" />
 			<ui:param name="skipRemoveButton" value="true" />
 			<ui:define name="beforeSpinToolbarContent">
 				<aon:commandButton 
-					value="#{payrollBundle.employee_contractCalendarEvent}"
+					value="#{payrollBundle.payroll_contractCalendarEvent}"
 					styleClass="aon-finding-toolbar-item aon-icon-contract-calendar"
 					rendered="#{!contract.new}"
 					action="contractCalendarEvent_form" />
@@ -23,7 +23,7 @@
 	</c:if>
 	<c:if test="#{contract.new}" >
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-			<ui:param name="toolbarTitle" value="#{payrollBundle.employee_contract_module}" />
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
 			<ui:param name="controller" value="#{contract}" />
 			<ui:param name="skipRemoveButton" value="true" />
 		</ui:decorate>

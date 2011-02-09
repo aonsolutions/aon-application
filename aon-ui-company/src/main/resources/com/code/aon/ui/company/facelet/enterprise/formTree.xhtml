@@ -28,7 +28,7 @@
 					</c:if>
 					<aon:commandButton id="salary"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						value="#{employeeBundle.employee_salary_module}"
+						value="#{payrollBundle.payroll_salary_module}"
 						actionListener="#{salaryPrint.onInit}"
 						action="salaryPrint_list">
 					</aon:commandButton>						
@@ -36,7 +36,7 @@
 						reRender="showSalaryExpenseWindow"
 						actionListener="#{salaryExpense.onInitialize}"
 						styleClass="aon-finding-toolbar-item aon-icon-return"
-						value="#{employeeBundle.employee_salary_expense}" >
+						value="#{payrollBundle.payroll_salary_expense}" >
 						<f:setPropertyActionListener target="#{salaryExpense.showSalaryExpenseWindow}"
 							value="#{true}" />								
 					</aon:commandButton>

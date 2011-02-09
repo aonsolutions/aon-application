@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="contractTrackingSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_contractCalendarEvent_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractCalendarEvent_module}" />
 				<ui:param name="controller" value="#{contract}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
@@ -56,13 +56,13 @@
 					</aon:div>
 										
 					<aon:outputLabel for="ContractType_id"
-						value="#{payrollBundle.employee_contractType}" />
+						value="#{payrollBundle.payroll_contractType}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="ContractType_id" lookup="#{contractTypeLookup}"
 							reRender="ContractType_detail"
 							value="#{contractSearch.contractType.id}" size="5" />
 						<aon:lookupButton 
-							windowTitle="#{payrollBundle.employee_contractType_selection}"
+							windowTitle="#{payrollBundle.payroll_contractType_selection}"
 							selectReRender="ContractType_id,ContractType_detail"
 							lookup="#{contractTypeLookup}" minHeight="460" minWidth="650"
 							property="#{contractSearch.contractType}">

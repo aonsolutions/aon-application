@@ -41,7 +41,7 @@ import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.payroll.Salary;
 
-public class SalaryController extends BasicController implements IEmployeeConstants {
+public class SalaryController extends BasicController implements IPayrollConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryController.class);
 	

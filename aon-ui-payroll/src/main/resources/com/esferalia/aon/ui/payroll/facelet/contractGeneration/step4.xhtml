@@ -19,7 +19,7 @@
 			<aon:div styleClass="aon-text-center" style="font-size: 1.5em;margin-top: 20px; ">
 				
 				<aon:outputText 
-					value="#{payrollBundle.employee_contract_save_ok}" />
+					value="#{payrollBundle.payroll_contract_save_ok}" />
 			</aon:div>
 			
 			<rich:separator lineType="solid" style="margin-top: 20px; margin-bottom: 20px;"/>
@@ -27,10 +27,10 @@
 			<h:commandLink target="_blank" 
 				actionListener="#{contractGenerationWizard.onDownloadContract}"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf"
-				value="#{payrollBundle.employee_contract}" />
+				value="#{payrollBundle.payroll_contract}" />
 			<h:commandLink target="_blank" action="#{report.onExecute}"
 				disabled="true"
-				value="#{payrollBundle.employee_contract_basic_copy}"
+				value="#{payrollBundle.payroll_contract_basic_copy}"
 				style="border-width: 0px 0px 0px 0px;"
 				styleClass="aon-finding-toolbar-item aon-icon-mail-save" >
 				<f:param name="reportKey" value="contractBasicCopyReport" />

@@ -46,7 +46,7 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
-public class SalaryPrintController implements ICollectionProvider, IEmployeeConstants {
+public class SalaryPrintController implements ICollectionProvider, IPayrollConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryPrintController.class);
 	

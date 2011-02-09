@@ -10,11 +10,11 @@
 		</resource-bundle>
 	</application>
 	
-	<!-- ************** EMPLOYEE COLLECTIONS ****************** -->
+	<!-- ************** PAYROLL COLLECTIONS ****************** -->
 	<managed-bean>
-		<managed-bean-name>employeeCollections</managed-bean-name>
+		<managed-bean-name>payrollCollections</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.EmployeeCollectionsController
+			com.esferalia.aon.ui.payroll.controller.PayrollCollectionsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>

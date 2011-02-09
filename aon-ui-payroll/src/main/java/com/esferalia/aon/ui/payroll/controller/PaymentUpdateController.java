@@ -1,7 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller;
 
-import static com.esferalia.aon.ui.payroll.controller.IEmployeeConstants.PAYMENT_UPDATE_CONTROLLER;
-import static com.esferalia.aon.ui.payroll.controller.IEmployeeConstants.SHOW_ENTERPRISE_IN_SEARCH;
+import static com.esferalia.aon.ui.payroll.controller.IPayrollConstants.PAYMENT_UPDATE_CONTROLLER;
+import static com.esferalia.aon.ui.payroll.controller.IPayrollConstants.SHOW_ENTERPRISE_IN_SEARCH;
 
 import java.util.Calendar;
 import java.util.Collections;

@@ -10,7 +10,7 @@
 
 	<aon:panel>
 		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.employee_contract_header}" />
+			<aon:outputText value="#{payrollBundle.payroll_contract_header}" />
 		</f:facet>
 		<aon:panelGrid columns="4" dir="true" width="100%">
 
@@ -36,13 +36,13 @@
 			<aon:outputText
 				value="#{contractGenerationWizard.contract.person.registry.document}" />
 <!--  
-			<aon:outputText value="#{payrollBundle.employee_fecha}" />
+			<aon:outputText value="#{payrollBundle.payroll_fecha}" />
 			<aon:outputText value="#{certificateFileGenerationWizard.batch.date}" >
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
 			
-			<aon:outputText value="#{payrollBundle.employee_estado}" />
+			<aon:outputText value="#{payrollBundle.payroll_estado}" />
 			<aon:outputText value="#{certificateFileGenerationWizard.batch.status}" />
 -->
 

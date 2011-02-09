@@ -68,12 +68,12 @@
 					size="50" disabled="true" />							
 			</aon:div>
 			
-			<aon:outputText value="#{payrollBundle.employee_contract_autonomous}" />
+			<aon:outputText value="#{payrollBundle.payroll_contract_autonomous}" />
 			<aon:selectBooleanCheckbox disabled="true" 
 				value="#{contract.autonomous}" />
 			
 			<aon:outputLabel 
-				value="#{payrollBundle.employee_contract_period}" />
+				value="#{payrollBundle.payroll_contract_period}" />
 			<aon:div>
 				<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.aon_start_date}:" />
@@ -96,17 +96,17 @@
 				
 				
 			<aon:outputLabel for="contractOption"
-				value="#{payrollBundle.employee_contract_contract_option}" />
+				value="#{payrollBundle.payroll_contract_contract_option}" />
 			<aon:selectOneMenu id="contractOption"
 				value="#{contract.contractOption}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{employeeCollections.contractOptions}" />
+				<f:selectItems value="#{payrollCollections.contractOptions}" />
 				<a4j:support event="onchange" reRender="contractType, contractCode" />
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="contractType"
 				styleClass="aon-italic aon-margin-left"
-				value="#{payrollBundle.employee_contract_contract_type}" />
+				value="#{payrollBundle.payroll_contract_contract_type}" />
 			<aon:selectOneMenu id="contractType"
 				disabled="#{contract.contractOption==null}"
 				value="#{contract.contractType}" >
@@ -117,7 +117,7 @@
 
 			<aon:outputLabel for="contractCode"
 				styleClass="aon-italic aon-margin-left"
-				value="#{payrollBundle.employee_contract_work_time}" />
+				value="#{payrollBundle.payroll_contract_work_time}" />
 			<aon:selectOneMenu id="contractCode"
 				disabled="#{contract.contractType.codes==null}"
 				value="#{contract.contractData.code}" >
@@ -134,27 +134,27 @@
 				value="#{contract.contractData.description}" />
 			
 			<aon:outputLabel for="quote_group"
-				value="#{payrollBundle.employee_contract_quote_group}" />
+				value="#{payrollBundle.payroll_contract_quote_group}" />
 			<aon:selectOneMenu id="quote_group"
 				value="#{contract.contractData.quoteGroup}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{employeeCollections.quoteGroups}" />
+				<f:selectItems value="#{payrollCollections.quoteGroups}" />
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel for="category"
-				value="#{payrollBundle.employee_contract_category}" />
+				value="#{payrollBundle.payroll_contract_category}" />
 			<aon:inputText id="category" size="40" maxlength="64"
 				value="#{contract.contractData.category}" />
 				
 			<aon:outputLabel for="irpf"
-				value="#{payrollBundle.employee_contract_irpf_percent}" />
+				value="#{payrollBundle.payroll_contract_irpf_percent}" />
 			<aon:inputText id="irpf" size="10" 
 				value="#{contract.irpf}" >
 				<f:validateDoubleRange />
 			</aon:inputText>
 			
 			<aon:outputLabel
-				value="#{payrollBundle.employee_file_attach}" />
+				value="#{payrollBundle.payroll_file_attach}" />
 			<aon:panelGrid columns="2" style="width:100%;"
 				columnClasses="
 				aon-panelGrid-even aon-noborder aon-width-100,
@@ -181,7 +181,7 @@
 			</aon:panelGrid>
 			
 			<aon:outputLabel for="Contract_conditions"
-				value="#{payrollBundle.employee_contract_conditions}" />
+				value="#{payrollBundle.payroll_contract_conditions}" />
 			<aon:inputTextarea id="Contract_conditions"
 				value="#{contract.contractData.conditions}" cols="60" rows="5">
 				<f:validateLength maximum="64" />

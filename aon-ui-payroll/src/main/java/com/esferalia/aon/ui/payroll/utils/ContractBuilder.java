@@ -23,14 +23,14 @@ import com.code.aon.ui.registry.controller.RegistryDirStaffLinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
-import com.esferalia.aon.ui.payroll.controller.IEmployeeConstants;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 
 
-public class ContractBuilder implements IEmployeeConstants {
+public class ContractBuilder implements IPayrollConstants {
 	
 	private static ContractBuilder instance;
 	private List<ContractField> contractFields;

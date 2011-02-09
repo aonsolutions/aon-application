@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="paymentConceptSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_paymentConcept_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_paymentConcept_module}" />
 				<ui:param name="controller" value="#{paymentConcept}" />
 			</ui:include>
 			
@@ -28,7 +28,7 @@
 						converter="aon.EnumConverter"
 						valueChangeListener="#{paymentConcept.addEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{employeeCollections.paymentTypes}" />
+						<f:selectItems value="#{payrollCollections.paymentTypes}" />
 					</aon:selectOneMenu>	
 
 					<aon:outputLabel for="PaymentConcept_description"

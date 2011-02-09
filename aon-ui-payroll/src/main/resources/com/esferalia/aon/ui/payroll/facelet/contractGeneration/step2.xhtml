@@ -33,16 +33,16 @@
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="contractOption"
-				value="#{payrollBundle.employee_contract_contract_option}" />
+				value="#{payrollBundle.payroll_contract_contract_option}" />
 			<aon:selectOneMenu id="contractOption"
 				value="#{contractGenerationWizard.contractOption}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{employeeCollections.contractOptions}" />
+				<f:selectItems value="#{payrollCollections.contractOptions}" />
 				<a4j:support event="onchange" reRender="contractType, contractCode" />
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="contractType"
-				value="#{payrollBundle.employee_contract_contract_type}" />
+				value="#{payrollBundle.payroll_contract_contract_type}" />
 			<aon:selectOneMenu id="contractType"
 				disabled="#{contractGenerationWizard.contractOption==null}"
 				value="#{contractGenerationWizard.contractType}" >
@@ -52,7 +52,7 @@
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="contractCode"
-				value="#{payrollBundle.employee_contract_work_time}" />
+				value="#{payrollBundle.payroll_contract_work_time}" />
 			<aon:selectOneMenu id="contractCode"
 				disabled="#{contractGenerationWizard.contractType.codes==null}"
 				value="#{contractGenerationWizard.contractData.code}" >
@@ -61,7 +61,7 @@
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel 
-				value="#{payrollBundle.employee_contract_period}" />
+				value="#{payrollBundle.payroll_contract_period}" />
 			<aon:div>
 				<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.aon_start_date}:" />
@@ -82,15 +82,15 @@
 			</aon:div>
 			
 			<aon:outputLabel for="quote_group"
-				value="#{payrollBundle.employee_contract_quote_group}" />
+				value="#{payrollBundle.payroll_contract_quote_group}" />
 			<aon:selectOneMenu id="quote_group"
 				value="#{contractGenerationWizard.contractData.quoteGroup}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{employeeCollections.quoteGroups}" />
+				<f:selectItems value="#{payrollCollections.quoteGroups}" />
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel for="agreement"
-				value="#{payrollBundle.employee_contract_agreement}" />
+				value="#{payrollBundle.payroll_contract_agreement}" />
 			<aon:div rendered="#{contractGenerationWizard.agreement.id==null}">
 				<aon:outputText value=" - " />
 			</aon:div>
@@ -110,7 +110,7 @@
 				
 				<aon:outputLabel for="category"
 					styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{payrollBundle.employee_contract_agreement_category}:" />
+					value="#{payrollBundle.payroll_contract_agreement_category}:" />
 				<aon:selectOneMenu id="category"
 					disabled="#{contractGenerationWizard.agreementLevel==null}"
 					value="#{contractGenerationWizard.category}" >
@@ -120,7 +120,7 @@
 			</aon:div>
 				
 			<aon:outputLabel for="gross_salary"
-				value="#{payrollBundle.employee_contract_gross_salary}" />
+				value="#{payrollBundle.payroll_contract_gross_salary}" />
 			<aon:div id="salary">
 				<aon:selectBooleanCheckbox id="gross_salary_check"
 					value="#{contractGenerationWizard.agreementSalary}"
@@ -128,7 +128,7 @@
 					<a4j:support event="onclick" reRender="salary"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{payrollBundle.employee_contract_like_agreement}&#160;" />
+					value="#{payrollBundle.payroll_contract_like_agreement}&#160;" />
 				<aon:inputText id="gross_salary"
 					disabled="#{contractGenerationWizard.agreementSalary}"
 					value="#{contractGenerationWizard.salary}" />

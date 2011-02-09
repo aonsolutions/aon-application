@@ -16,7 +16,7 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{payrollBundle.employee_contractBatchWizard_module}" />
+						<aon:outputText value="#{payrollBundle.payroll_contractBatchWizard_module}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -25,22 +25,22 @@
 
 					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="prev" immediate="true"
-							value="#{payrollBundle.employee_back}"
+							value="#{payrollBundle.payroll_back}"
 							action="#{contractBatchWizard.previous}"
 							actionListener="#{contractBatchWizard.onPrevious}"
 							styleClass="aon-finding-toolbar-item aon-icon-previous"
 							rendered="#{contractBatchWizard.previousAvailable}" />
 						<aon:commandButton id="next"
-							value="#{payrollBundle.employee_forward}"
+							value="#{payrollBundle.payroll_forward}"
 							action="#{contractBatchWizard.next}"
 							actionListener="#{contractBatchWizard.onNext}"
 							rendered="#{contractBatchWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-next" />
 						<aon:commandButton id="end"
-							value="#{payrollBundle.employee_finalice}"
+							value="#{payrollBundle.payroll_finalice}"
 							action="#{contractBatchWizard.next}"
 							actionListener="#{contractBatchWizard.onNext}"
-							onclick="if (!confirm('#{payrollBundle.employee_finalice}?')) { return false;}"
+							onclick="if (!confirm('#{payrollBundle.payroll_finalice}?')) { return false;}"
 							rendered="#{!contractBatchWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
 

@@ -16,10 +16,10 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.common.util.ImageUtil;
-import com.esferalia.aon.ui.payroll.controller.IEmployeeConstants;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.PdfToImage;
 
-public class ImageServlet extends HttpServlet implements IEmployeeConstants{
+public class ImageServlet extends HttpServlet implements IPayrollConstants{
 	private static final long serialVersionUID = 1L;
 
 	public ImageServlet() {

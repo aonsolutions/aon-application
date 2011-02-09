@@ -14,7 +14,7 @@
 		<aon:form id="salaryPrintList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salary_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_module}" />
 				<ui:param name="toolbarDescription" value="#{salaryPrint.enterprise.registry.fullName}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="search"
@@ -39,7 +39,7 @@
 					<aon:htmlCommandLink id="currentSalary-report"
 						rendered="#{!salaryPrint.selectionEmpty}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{employeeBundle.employee_salary}"
+						value="#{payrollBundle.payroll_salary}"
 						action="#{salaryPrint.onPrint}">
 					</aon:htmlCommandLink>								
 					<aon:commandButton id="back"
@@ -119,7 +119,7 @@
 								</a4j:region>
 							</aon:column>
 							
-							<ui:include src="/com/code/aon/ui/employee/facelet/salary/listContent.xhtml" />
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/listContent.xhtml" />
 
 						</ui:define>
 					</ui:decorate>

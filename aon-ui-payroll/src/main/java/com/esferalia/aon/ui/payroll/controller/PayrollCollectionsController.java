@@ -18,7 +18,7 @@ import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
-public class EmployeeCollectionsController {
+public class PayrollCollectionsController {
 
 	private List<SelectItem> contractDurations;
 	private List<SelectItem> contractWorkingDays;

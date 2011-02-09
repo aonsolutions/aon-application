@@ -14,7 +14,7 @@
 			<aon:div id="menuExt"> 
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="#{payrollBundle.employee_contractCalendarEvent_module}" />
+					<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractCalendarEvent_module}" />
 					<ui:param name="controller" value="#{contractCalendarEvent}" />
 					<ui:param name="skipRemoveButton" value="true" />
 					<ui:param name="skipResetButton" value="true" />
@@ -30,7 +30,7 @@
 					
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:commandButton id="multiple_tracking"
-							value="#{payrollBundle.employee_multiple_tracking}"
+							value="#{payrollBundle.payroll_multiple_tracking}"
 							immediate="#{true}" 
 							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
 							actionListener="#{contractCalendarEvent.onMultipleTrackingShow}"
@@ -43,7 +43,7 @@
 <!--  
 					<ui:define name="additionalToolbarContent">
 						<aon:commandButton id="multiple_tracking"
-							value="#{employeeBundle.employee_multiple_tracking}"
+							value="#{payrollBundle.payroll_multiple_tracking}"
 							immediate="#{true}" 
 							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
 							actionListener="#{contractTracking.onMultipleTrackingShow}"
@@ -63,10 +63,10 @@
 				<aon:div styleClass="aon-scroll-area">
 					<aon:panelGrid columns="8" dir="true" width="100%">
 						
-						<aon:outputLabel value="#{payrollBundle.employee_name}" />
+						<aon:outputLabel value="#{payrollBundle.payroll_employee_name}" />
 						<aon:outputText value="#{contract.to.person.registry.fullName}" />
 
-						<aon:outputLabel value="#{payrollBundle.employee_enterprise}" />
+						<aon:outputLabel value="#{payrollBundle.payroll_enterprise}" />
 						<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" />
 
 						<aon:outputLabel value="#{bundle.aon_start_date}" />
@@ -127,13 +127,13 @@
 								<aon:selectOneMenu id="ContractCalendarEvent_type" required="true"
 									rendered="#{formEdit}" 
 									value="#{to.type}" >
-									<f:selectItems value="#{employeeCollections.contractCalendarEventTypes}" />
+									<f:selectItems value="#{payrollCollections.contractCalendarEventTypes}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu id="ContractCalendarEvent_type-New" required="true"
 										rendered="#{formNew}"
 										value="#{controller.to.type}" >
-										<f:selectItems value="#{employeeCollections.contractCalendarEventTypes}" />
+										<f:selectItems value="#{payrollCollections.contractCalendarEventTypes}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
@@ -141,7 +141,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
 									<aon:outputLabel for="ContractCalendarEvent_duration"
-										value="#{payrollBundle.employee_contractCalendarEvent_duration}" />
+										value="#{payrollBundle.payroll_contractCalendarEvent_duration}" />
 								</f:facet>
 								<aon:outputText value="#{to.duration}" 
 									rendered="#{formList}" />

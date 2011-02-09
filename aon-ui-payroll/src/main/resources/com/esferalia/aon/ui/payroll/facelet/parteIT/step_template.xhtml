@@ -26,30 +26,30 @@
 
 					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="prev" immediate="true"
-							value="#{payrollBundle.employee_back}"
+							value="#{payrollBundle.payroll_back}"
 							action="#{parteITWizard.previous}"
 							actionListener="#{parteITWizard.onPrevious}"
 							styleClass="aon-finding-toolbar-item aon-icon-previous"
 							rendered="#{parteITWizard.previousAvailable}" />
 						<aon:commandButton id="next"
-							value="#{payrollBundle.employee_forward}"
+							value="#{payrollBundle.payroll_forward}"
 							action="#{parteITWizard.next}"
 							actionListener="#{parteITWizard.onNext}"
 							rendered="#{parteITWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-next" />
 						<aon:commandButton id="end1"
-							value="#{payrollBundle.employee_finalice_and_datosIT}"
+							value="#{payrollBundle.payroll_finalice_and_datosIT}"
 							action="#{parteITWizard.next}"
 							actionListener="#{parteITWizard.onContinue}"
-							onclick="if (!confirm('#{payrollBundle.employee_finalice}?')) { return false;}"
+							onclick="if (!confirm('#{payrollBundle.payroll_finalice}?')) { return false;}"
 							rendered="#{!parteITWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept" >
 						</aon:commandButton>
 						<aon:commandButton id="end2"
-							value="#{payrollBundle.employee_finalice_and_search}"
+							value="#{payrollBundle.payroll_finalice_and_search}"
 							action="#{parteITWizard.next}"
 							actionListener="#{parteITWizard.onNext}"
-							onclick="if (!confirm('#{payrollBundle.employee_finalice}?')) { return false;}"
+							onclick="if (!confirm('#{payrollBundle.payroll_finalice}?')) { return false;}"
 							rendered="#{!parteITWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept" >
 						</aon:commandButton>

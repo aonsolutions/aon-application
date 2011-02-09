@@ -1,6 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
-public interface IEmployeeConstants {
+public interface IPayrollConstants {
 	
 	// ************************************************************
 	// MESSAGES

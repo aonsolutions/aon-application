@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="deductionConceptSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_deductionConcept_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_deductionConcept_module}" />
 				<ui:param name="controller" value="#{deductionConcept}" />
 			</ui:include>
 			
@@ -33,7 +33,7 @@
 						converter="aon.EnumConverter"
 						valueChangeListener="#{deductionConcept.addEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{employeeCollections.deductionTypes}" />
+						<f:selectItems value="#{payrollCollections.deductionTypes}" />
 					</aon:selectOneMenu>	
 						
 				</ui:define>

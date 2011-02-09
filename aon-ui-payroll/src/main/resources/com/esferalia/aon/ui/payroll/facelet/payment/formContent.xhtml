@@ -16,7 +16,7 @@
 	<aon:selectInputDate id="ContractPayment_endDate" value="#{controller.to.endDate}"
 		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-	<aon:outputLabel for="ContractPayment_month" value="#{payrollBundle.employee_salary_payment_month}" />
+	<aon:outputLabel for="ContractPayment_month" value="#{payrollBundle.payroll_salary_payment_month}" />
 	<aon:selectOneMenu id="ContractPayment_month" value="#{controller.to.month}">
 		<f:selectItem value="#{null}" itemLabel=" - " />
 		<c:if test="#{!skipCurrentMonth}">
@@ -31,7 +31,7 @@
 	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" required="true">
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
 		<f:selectItem value="#{null}" itemLabel=" - " />
-		<f:selectItems value="#{employeeCollections.paymentTypes}" />
+		<f:selectItems value="#{payrollCollections.paymentTypes}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ContractPayment_PaymentConcept" value="#{bundle.aon_concept}" />
@@ -45,7 +45,7 @@
 	<aon:inputText id="ContractPayment_description" size="40" maxlength="64" required="true"
 		value="#{controller.to.description}" />
 	
-	<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.employee_salary_expression}" />
+	<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
 	<aon:inputTextarea id="ContractPayment_expression" cols="38" rows="2" maxlength="128"
 		value="#{controller.to.expression}" required="true">
 		<f:validateLength maximum="128"/>
@@ -74,6 +74,6 @@
 	<aon:outputText value="&#160;"/>
 	<aon:panelGroup>
 		<aon:selectBooleanCheckbox id="ContractPayment_decorateDescription" value="#{controller.to.descriptionDecorable}" />
-		<aon:outputLabel for="ContractPayment_decorateDescription" value="#{payrollBundle.employee_salary_show_expression}" />
+		<aon:outputLabel for="ContractPayment_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
 	</aon:panelGroup>
 </ui:composition>
