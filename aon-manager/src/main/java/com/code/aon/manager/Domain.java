@@ -24,6 +24,7 @@ import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.manager.enumeration.DomainType;
 
 @EntryObject(baseDN="ou=domains",mainObjectClass=DOMAIN, objectClasses={TOP})
 public class Domain implements ILdapTransferObject {
@@ -46,7 +47,7 @@ public class Domain implements ILdapTransferObject {
 	
 	private Domain parentDomain;
 	
-	private boolean dnsManagement;
+	private DomainType type;
 	
 	private boolean userManagement;
 	
@@ -60,6 +61,7 @@ public class Domain implements ILdapTransferObject {
 	
 	public Domain() {
 		this.status = 0;
+		this.type = DomainType.ENTERPRISE;
 	}
 
 	@Id
@@ -117,13 +119,13 @@ public class Domain implements ILdapTransferObject {
 		this.mobile = mobile;
 	}
 
-	@Attribute(name=DNS_MANAGEMENT_ATTRIBUTE)
-	public Boolean getDnsManagement() {
-		return dnsManagement;
+	@Attribute(name=DOMAIN_TYPE_ATTRIBUTE)
+	public DomainType getType() {
+		return type;
 	}
 
-	public void setDnsManagement(Boolean dnsManagement) {
-		this.dnsManagement = dnsManagement;
+	public void setType(DomainType type) {
+		this.type = type;
 	}
 
 	@Attribute(name=STATUS_ATTRIBUTE)
@@ -238,7 +240,7 @@ public class Domain implements ILdapTransferObject {
 		if (o.getCommonName() == null && getCommonName() == null) {
 			return new EqualsBuilder()
 				.append(this.commonName, o.commonName)
-				.append(this.dnsManagement, o.dnsManagement)		
+				.append(this.type, o.type)		
 				.append(this.documentManagement, o.documentManagement)
 				.append(this.domainManagement, o.domainManagement)				
 				.append(this.host, o.host)				
@@ -259,7 +261,7 @@ public class Domain implements ILdapTransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(commonName)
-			.append(dnsManagement)
+			.append(type)
 			.append(documentManagement)
 			.append(domainManagement)
 			.append(host)
@@ -278,7 +280,7 @@ public class Domain implements ILdapTransferObject {
 	public String toString() {
 		return new ToStringBuilder(this).
 			append("commonName", commonName ).
-			append("dnsManagement", dnsManagement ).
+			append("type", type ).
 			append("documentManagement", documentManagement ).
 			append("domainManagement", domainManagement ).
 			append("host", host ).

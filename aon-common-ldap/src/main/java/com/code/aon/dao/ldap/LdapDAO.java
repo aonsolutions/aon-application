@@ -15,8 +15,10 @@ import javax.naming.ldap.Rdn;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -229,6 +231,10 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 				IDAO dao = getDAO(info);
 				result = dao.getId( (ITransferObject) result );
 			}
+			if ( info.getBaseClass().isEnum() ) {
+				Object[] values = info.getBaseClass().getEnumConstants();
+				result = ArrayUtils.indexOf( values, value );
+			}
 			if ( result instanceof Boolean ) {
 				result = Entry.convertToString( (Boolean) result );
 			} else if (! ((result instanceof byte[]) || (result instanceof Date)) ) {
@@ -356,6 +362,9 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			result = Entry.convertToBoolean(value.toString());
 		} else if (  Date.class.isAssignableFrom(info.getBaseClass()) ) {
 			result = Entry.convertToDate(value.toString());
+		} else if (  info.getBaseClass().isEnum() ) {
+			int index = NumberUtils.toInt(value.toString());
+			result = info.getBaseClass().getEnumConstants()[index];
 		} else {
 			result = ConvertUtils.convert(value, info.getBaseClass());	
 		}

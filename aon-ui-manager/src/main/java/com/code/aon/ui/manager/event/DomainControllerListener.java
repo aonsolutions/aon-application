@@ -55,6 +55,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			domainController.insertOrUpdateAccessPolicy();
 			DBConnnection dbc = domainController.createAndRegister(domain);
 			domainController.registerApplication(AON_DESKTOP, dbc);
+			domainController.registerApplication(AON_MANAGER, dbc);
 			domainController.registerApplication(AON_WEBMAIL, null);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);

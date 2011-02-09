@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.faces.convert.Converter;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Context;
 import javax.naming.Name;
@@ -27,6 +28,7 @@ import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.manager.enumeration.AccessPolicyType;
+import com.code.aon.manager.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
@@ -46,6 +48,8 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	private String selectedTab;
 	
 	private List<SelectItem> parentDomains;
+	
+	private List<SelectItem> domainTypes;
 	
 	private Converter converter;
 	
@@ -186,6 +190,31 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 			this.converter = new TransferObjectConverter(controller);			
 		}
 		return converter;
+	}
+
+	public List<SelectItem> getDomainTypes() {
+		if ( domainTypes == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			domainTypes = new LinkedList<SelectItem>();
+			for (DomainType type : DomainType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				domainTypes.add(item);
+			}		
+		}
+		return domainTypes;
 	}	
+	
+	public void documentManagementChanged( ValueChangeEvent event ) {
+		LOGGER.info( "New value: " + event );
+	}
+
+	public void userManagementChanged( ValueChangeEvent event ) {
+		LOGGER.info( "New value: " + event );
+	}
+
+	public void domainManagementChanged( ValueChangeEvent event ) {
+		LOGGER.info( "New value: " + event );
+	}
 	
 }
