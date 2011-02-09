@@ -15,7 +15,7 @@
 				minWidth="380" minHeight="360" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{employeeBundle.employee_multiple_tracking}" />
+						<aon:outputText value="#{payrollBundle.employee_multiple_tracking}" />
 					</aon:div>
 				</f:facet>
 				
@@ -82,7 +82,7 @@
 									<f:selectItems value="#{employeeCollections.contractCalendarEventTypes}" />
 								</aon:selectOneMenu>
 <!--  
-								<aon:outputLabel for="ContractTracking_fullTime" value="#{employeeBundle.employee_contractTracking_fullTime}" />
+								<aon:outputLabel for="ContractTracking_fullTime" value="#{payrollBundle.employee_contractTracking_fullTime}" />
 								<aon:selectBooleanCheckbox id="ContractTracking_fullTime"
 									value="#{contractTracking.fullTime}" >
 									<a4j:support event="onclick" reRender="ContractTrackingData"
@@ -91,7 +91,7 @@
 -->								
 			
 								<aon:outputLabel for="ContractCalendarEvent_duration" 
-									value="#{employeeBundle.employee_contractCalendarEvent_duration}" />
+									value="#{payrollBundle.employee_contractCalendarEvent_duration}" />
 								<aon:inputText id="ContractCalendarEvent_duration" required="true"
 									disabled="#{contractCalendarEvent.fullTime}"
 									size="2" maxlength="2"

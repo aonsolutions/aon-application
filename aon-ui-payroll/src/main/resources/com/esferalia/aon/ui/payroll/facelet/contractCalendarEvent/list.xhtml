@@ -11,7 +11,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contractCalendarEvent_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_contractCalendarEvent_module}" />
 				<ui:param name="controller" value="#{contractCalendarEvent}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:decorate>
@@ -28,7 +28,7 @@
 						<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<h:outputText value="#{employeeBundle.employee_name}" />
+								<h:outputText value="#{payrollBundle.employee_name}" />
 							</f:facet>
 							<aon:outputText value="#{to.person.registry.fullName}" />
 						</aon:column>
@@ -36,7 +36,7 @@
 						<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<h:outputText value="#{employeeBundle.employee_enterprise}" />
+								<h:outputText value="#{payrollBundle.employee_enterprise}" />
 							</f:facet>
 							<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}" />
 						</aon:column>

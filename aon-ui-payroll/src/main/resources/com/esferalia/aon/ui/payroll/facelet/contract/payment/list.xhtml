@@ -5,17 +5,17 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/com/code/aon/ui/employee/facelet/contract/form.xhtml">
+	template="/com/esferalia/aon/ui/payroll/facelet/contract/form.xhtml">
 
 	<ui:define name="contractDetail">
 		<aon:form id="contractPaymentForm">
 			<aon:div id="paymentGrid" styleClass="aon-scroll-area">
-				<ui:include src="/com/code/aon/ui/employee/facelet/payment/editGridContent.xhtml" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
 					<ui:param name="controller" value="#{contractPayment}" />
 				</ui:include>
 			</aon:div>
 		</aon:form>
-		<ui:include src="/com/code/aon/ui/employee/facelet/payment/modalPayment.xhtml">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
 			<ui:param name="controller" value="#{contractPayment}" />
 			<ui:param name="container" value="paymentGrid" />
 			<ui:param name="skipCurrentMonth" value="#{true}" />

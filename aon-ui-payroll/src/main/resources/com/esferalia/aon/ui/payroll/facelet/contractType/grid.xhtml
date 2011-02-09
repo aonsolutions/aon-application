@@ -14,7 +14,7 @@
 			<aon:div ajaxRendered="true" layout="none">
 			
 				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contractType_module}" />
+					<ui:param name="toolbarTitle" value="#{payrollBundle.employee_contractType_module}" />
 					<ui:param name="controller" value="#{contractType}" />
 				</ui:include>			
 
@@ -64,7 +64,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
 									<aon:outputLabel for="ContractType_duration"
-										value="#{employeeBundle.employee_contractType_duration}" />
+										value="#{payrollBundle.employee_contractType_duration}" />
 								</f:facet>
 								<aon:outputText value="#{to.duration}"
 									rendered="#{formList}" />
@@ -83,7 +83,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
 									<aon:outputLabel for="ContractType_workingDay"
-										value="#{employeeBundle.employee_contractType_workingDay}" />
+										value="#{payrollBundle.employee_contractType_workingDay}" />
 								</f:facet>
 								<aon:outputText value="#{to.workingDay}"
 									rendered="#{formList}" />

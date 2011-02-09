@@ -14,7 +14,7 @@
 				minWidth="600" showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{employeeBundle.employee_salary_payment}" />
+						<aon:outputText value="#{payrollBundle.employee_salary_payment}" />
 					</aon:div>
 				</f:facet>
 				<aon:form id="paymentModalForm">
@@ -47,7 +47,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 										<aon:panelGrid id="paymentMenuGrid" columns="2" dir="true" style="width: 80%;">
-											<ui:include src="/com/code/aon/ui/employee/facelet/payment/formContent.xhtml">
+											<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/formContent.xhtml">
 												<ui:param name="controller" value="#{controller}" />
 												<ui:param name="containerID" value="paymentMenuGrid" />
 												<ui:param name="skipCurrentMonth" value="#{skipCurrentMonth}" />
