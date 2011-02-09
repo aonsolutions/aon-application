@@ -11,14 +11,14 @@
 			<aon:methodParam name="searchAction" value="salaryDraft_search" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salaryDraft_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_salaryDraft_module}" />
 				<ui:param name="controller" value="#{salaryDraft}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<ui:include src="/com/code/aon/ui/employee/facelet/salaryDraft/listContent.xhtml" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listContent.xhtml" >
 					<ui:param name="controller" value="#{salaryDraft}" />
 					<ui:param name="skipStartDateColumn" value="false" />
 				</ui:include>

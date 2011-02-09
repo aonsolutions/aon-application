@@ -7,25 +7,25 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/employee/facelet/contractGeneration/step_template.xhtml">
+	template="/com/code/aon/ui/payroll/facelet/contractGeneration/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{employeeBundle.contractGeneration_step1}" />
+		<aon:outputText value="#{payrollBundle.contractGeneration_step1}" />
 	</ui:define>
 
 	<ui:define name="step_content">
 		<aon:div id="personContent">
 			<c:if test="#{!contractGenerationWizard.personListEnabled}">
-				<ui:include src="/com/code/aon/ui/employee/facelet/contractGeneration/personSearchContent.xhtml" />
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/personSearchContent.xhtml" />
 			</c:if>
 			<c:if test="#{contractGenerationWizard.personListEnabled}">
-				<ui:include src="/com/code/aon/ui/employee/facelet/contractGeneration/personListContent.xhtml" />
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/personListContent.xhtml" />
 			</c:if>
 		</aon:div>
 	</ui:define>
 	
 	<ui:define name="after_form">
-		<ui:include src="/com/code/aon/ui/employee/facelet/contractGeneration/personModal.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/personModal.xhtml" />
 	</ui:define>
 
 </ui:composition>

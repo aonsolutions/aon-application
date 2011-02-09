@@ -7,26 +7,26 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/employee/facelet/contractBatch/step_template.xhtml">
+	template="/com/esferalia/aon/ui/payroll/facelet/contractBatch/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{employeeBundle.contractBatch_step3}" />
+		<aon:outputText value="#{payrollBundle.contractBatch_step3}" />
 	</ui:define>
 
 	<ui:define name="step_content">
 		<aon:div styleClass="aon-text-center">
 			<aon:div styleClass="aon-text-center" style="font-size: 1.5em;margin-top: 20px; ">
 				<aon:outputText rendered="#{contractBatchWizard.diskOk}"
-					value="#{employeeBundle.employee_remesa_disk_ok}" />
+					value="#{payrollBundle.employee_remesa_disk_ok}" />
 				<aon:outputText rendered="#{!contractBatchWizard.diskOk}"
-					value="#{employeeBundle.employee_remesa_disk_ko}" />
+					value="#{payrollBundle.employee_remesa_disk_ko}" />
 			</aon:div>
 			
 			<rich:separator lineType="solid" style="margin-top: 20px; margin-bottom: 20px;"/>
 			
 			<h:commandLink target="_blank"
-				title="#{contractBatchWizard.diskOk?(employeeBundle.download_disk):(employeeBundle.download_error)}"
-				value="#{contractBatchWizard.diskOk?(employeeBundle.download_disk):(employeeBundle.download_error)}"
+				title="#{contractBatchWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
+				value="#{contractBatchWizard.diskOk?(payrollBundle.download_disk):(payrollBundle.download_error)}"
 				style="border-width: 0px 0px 0px 0px;"
 				actionListener="#{contractBatchWizard.onDownloadDisk}"
 				rendered="#{contractBatchWizard.fileOutput!=null}"

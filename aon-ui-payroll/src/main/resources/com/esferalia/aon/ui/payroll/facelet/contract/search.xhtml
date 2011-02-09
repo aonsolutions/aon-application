@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="contractSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contract_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_contract_module}" />
 				<ui:param name="controller" value="#{contract}" />
 			</ui:include>
 			
@@ -17,7 +17,7 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{contract}" />
 				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/employee/facelet/contract/searchContent.xhtml" />
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/searchContent.xhtml" />
 				</ui:define>
 			</ui:decorate>
 			

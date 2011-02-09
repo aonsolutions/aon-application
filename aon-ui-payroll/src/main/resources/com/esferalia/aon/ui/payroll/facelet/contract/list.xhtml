@@ -10,12 +10,12 @@
 		<aon:form>
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_contract_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_contract_module}" />
 				<ui:param name="controller" value="#{contract}" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<ui:include src="/com/code/aon/ui/employee/facelet/contract/listContent.xhtml">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/listContent.xhtml">
 					<ui:param name="skipWorkPlaceColumn" value="true" />
 				</ui:include>
 			</aon:div>

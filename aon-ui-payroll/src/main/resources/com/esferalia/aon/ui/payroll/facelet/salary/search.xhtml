@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="salarySearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salary_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_salary_module}" />
 				<ui:param name="controller" value="#{salary}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
@@ -68,17 +68,17 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 <!--  
-					<aon:outputText value="#{employeeBundle.employee_salary_totalPayment}" />
+					<aon:outputText value="#{payrollBundle.employee_salary_totalPayment}" />
 					<aon:outputText value="#{controller.to.totalPayment}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 			
-					<aon:outputText value="#{employeeBundle.employee_salary_totalLiquid}" />
+					<aon:outputText value="#{payrollBundle.employee_salary_totalLiquid}" />
 					<aon:outputText value="#{controller.to.totalLiquid}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 			
-					<aon:outputText value="#{employeeBundle.employee_salary_totalDeduction}" />
+					<aon:outputText value="#{payrollBundle.employee_salary_totalDeduction}" />
 					<aon:outputText value="#{controller.to.totalDeduction}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>

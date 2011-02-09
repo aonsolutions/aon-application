@@ -11,30 +11,30 @@
 		<aon:form id="salaryForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{employeeBundle.employee_salary_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.employee_salary_module}" />
 				<ui:param name="controller" value="#{salary}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipRemoveButton" value="true" />
 				<ui:param name="skipSaveButton" value="true" />
 				
 				<ui:define name="beforeSpinToolbarContent">
-					<ui:include src="/com/code/aon/ui/employee/facelet/salary/buttons.xhtml" />
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/buttons.xhtml" />
 				</ui:define>
 			</ui:decorate>
 
 			<aon:div style="width: 840px; margin-top: 10px;">
-				<ui:include src="/com/code/aon/ui/employee/facelet/salary/formEditContent.xhtml" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formEditContent.xhtml" >
 					<ui:param name="controller" value="#{salary}" />
 				</ui:include>
-				<ui:include src="/com/code/aon/ui/employee/facelet/payment/gridContent.xhtml" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/gridContent.xhtml" >
 					<ui:param name="controller" value="#{salary.to.payments}" />
 					<ui:param name="totalPayment" value="#{salary.to.totalPayment}" />
 				</ui:include>
-				<ui:include src="/com/code/aon/ui/employee/facelet/deduction/gridContent.xhtml" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
 					<ui:param name="controller" value="#{salary.to.deductions}" />
 					<ui:param name="totalDeduction" value="#{salary.to.totalDeduction}" />
 				</ui:include>
-				<ui:include src="/com/code/aon/ui/employee/facelet/salary/formBases.xhtml" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formBases.xhtml" >
 					<ui:param name="salaryTO" value="#{salary.to}" />
 				</ui:include>
 			</aon:div>

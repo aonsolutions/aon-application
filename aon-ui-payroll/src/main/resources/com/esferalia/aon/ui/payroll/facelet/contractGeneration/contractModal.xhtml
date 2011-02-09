@@ -16,7 +16,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{employeeBundle.contractGeneration_step4}" />
+						<aon:outputText value="#{payrollBundle.contractGeneration_step4}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -50,13 +50,13 @@
 											value="#{false}" />
 									</aon:commandButton>
 									<aon:commandButton id="prev"
-										value="#{employeeBundle.employee_back}"
+										value="#{payrollBundle.employee_back}"
 										reRender="showContractDetailWindow"
 										rendered="#{contractGenerationWizard.lastModalPage}"
 										actionListener="#{contractGenerationWizard.onFirstModalPage}"
 										styleClass="aon-finding-toolbar-item aon-icon-previous" />
 									<aon:commandButton id="next"
-										value="#{employeeBundle.employee_forward}"
+										value="#{payrollBundle.employee_forward}"
 										reRender="showContractDetailWindow"
 										rendered="#{!contractGenerationWizard.lastModalPage}"
 										actionListener="#{contractGenerationWizard.onChangeModalPage}"

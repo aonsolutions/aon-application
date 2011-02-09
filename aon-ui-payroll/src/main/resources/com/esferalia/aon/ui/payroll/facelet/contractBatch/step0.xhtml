@@ -7,10 +7,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/employee/facelet/contractBatch/step_template.xhtml">
+	template="/com/esferalia/aon/ui/payroll/facelet/contractBatch/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{employeeBundle.contractBatch_step0}" />
+		<aon:outputText value="#{payrollBundle.contractBatch_step0}" />
 	</ui:define>
 
 	<ui:define name="step_content">
@@ -56,13 +56,13 @@
 				</aon:div>
 									
 				<aon:outputLabel for="ContractType_id"
-					value="#{employeeBundle.employee_contractType}" />
+					value="#{payrollBundle.employee_contractType}" />
 				<aon:div styleClass="aon-lookup">
 					<aon:lookupInputText id="ContractType_id" lookup="#{contractTypeLookup}"
 						reRender="ContractType_detail"
 						value="#{contractSearch.contractType.id}" size="5" />
 					<aon:lookupButton 
-						windowTitle="#{employeeBundle.employee_contractType_selection}"
+						windowTitle="#{payrollBundle.employee_contractType_selection}"
 						selectReRender="ContractType_id,ContractType_detail"
 						lookup="#{contractTypeLookup}" minHeight="460" minWidth="650"
 						property="#{contractSearch.contractType}">

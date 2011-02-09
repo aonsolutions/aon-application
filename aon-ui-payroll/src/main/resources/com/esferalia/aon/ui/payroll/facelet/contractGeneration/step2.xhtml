@@ -7,14 +7,14 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/employee/facelet/contractGeneration/step_template.xhtml">
+	template="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{employeeBundle.contractGeneration_step2}" />
+		<aon:outputText value="#{payrollBundle.contractGeneration_step2}" />
 	</ui:define>
 
 	<ui:define name="step_content">
-		<ui:include src="/com/code/aon/ui/employee/facelet/contractGeneration/contractHeader.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/contractHeader.xhtml" />
 
 		<aon:panelGrid columns="2" style="width: 50%;" >
 			<aon:outputLabel for="workplace"
@@ -33,7 +33,7 @@
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="contractOption"
-				value="#{employeeBundle.employee_contract_contract_option}" />
+				value="#{payrollBundle.employee_contract_contract_option}" />
 			<aon:selectOneMenu id="contractOption"
 				value="#{contractGenerationWizard.contractOption}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
@@ -42,7 +42,7 @@
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="contractType"
-				value="#{employeeBundle.employee_contract_contract_type}" />
+				value="#{payrollBundle.employee_contract_contract_type}" />
 			<aon:selectOneMenu id="contractType"
 				disabled="#{contractGenerationWizard.contractOption==null}"
 				value="#{contractGenerationWizard.contractType}" >
@@ -52,7 +52,7 @@
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="contractCode"
-				value="#{employeeBundle.employee_contract_work_time}" />
+				value="#{payrollBundle.employee_contract_work_time}" />
 			<aon:selectOneMenu id="contractCode"
 				disabled="#{contractGenerationWizard.contractType.codes==null}"
 				value="#{contractGenerationWizard.contractData.code}" >
@@ -61,7 +61,7 @@
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel 
-				value="#{employeeBundle.employee_contract_period}" />
+				value="#{payrollBundle.employee_contract_period}" />
 			<aon:div>
 				<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.aon_start_date}:" />
@@ -82,7 +82,7 @@
 			</aon:div>
 			
 			<aon:outputLabel for="quote_group"
-				value="#{employeeBundle.employee_contract_quote_group}" />
+				value="#{payrollBundle.employee_contract_quote_group}" />
 			<aon:selectOneMenu id="quote_group"
 				value="#{contractGenerationWizard.contractData.quoteGroup}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
@@ -90,7 +90,7 @@
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel for="agreement"
-				value="#{employeeBundle.employee_contract_agreement}" />
+				value="#{payrollBundle.employee_contract_agreement}" />
 			<aon:div rendered="#{contractGenerationWizard.agreement.id==null}">
 				<aon:outputText value=" - " />
 			</aon:div>
@@ -110,7 +110,7 @@
 				
 				<aon:outputLabel for="category"
 					styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{employeeBundle.employee_contract_agreement_category}:" />
+					value="#{payrollBundle.employee_contract_agreement_category}:" />
 				<aon:selectOneMenu id="category"
 					disabled="#{contractGenerationWizard.agreementLevel==null}"
 					value="#{contractGenerationWizard.category}" >
@@ -120,7 +120,7 @@
 			</aon:div>
 				
 			<aon:outputLabel for="gross_salary"
-				value="#{employeeBundle.employee_contract_gross_salary}" />
+				value="#{payrollBundle.employee_contract_gross_salary}" />
 			<aon:div id="salary">
 				<aon:selectBooleanCheckbox id="gross_salary_check"
 					value="#{contractGenerationWizard.agreementSalary}"
@@ -128,7 +128,7 @@
 					<a4j:support event="onclick" reRender="salary"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{employeeBundle.employee_contract_like_agreement}&#160;" />
+					value="#{payrollBundle.employee_contract_like_agreement}&#160;" />
 				<aon:inputText id="gross_salary"
 					disabled="#{contractGenerationWizard.agreementSalary}"
 					value="#{contractGenerationWizard.salary}" />

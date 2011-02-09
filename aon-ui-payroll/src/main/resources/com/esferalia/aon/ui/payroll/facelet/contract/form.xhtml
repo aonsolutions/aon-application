@@ -10,16 +10,16 @@
 	<ui:define name="content">
 		<aon:form id="contractForm">
 
-			<ui:include src="/com/code/aon/ui/employee/facelet/contract/formToolbar.xhtml" />
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formToolbar.xhtml" />
 			
 			<c:if test="#{!contract.new}" >
 				<aon:div styleClass="aon-scroll-area">		
-					<ui:include src="/com/code/aon/ui/employee/facelet/contract/formContent.xhtml" />
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 				</aon:div>
 			</c:if>
 			<c:if test="#{contract.new}" >
 				<aon:div styleClass="aon-scroll-area">		
-					<ui:include src="/com/code/aon/ui/employee/facelet/contract/formNewContent.xhtml" />
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formNewContent.xhtml" />
 				</aon:div>
 			</c:if>
 			

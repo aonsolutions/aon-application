@@ -7,10 +7,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/employee/facelet/contractGeneration/step_template.xhtml">
+	template="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{employeeBundle.contractGeneration_step3}" />
+		<aon:outputText value="#{payrollBundle.contractGeneration_step3}" />
 	</ui:define>
 
 	<ui:define name="step_content">
@@ -39,7 +39,7 @@
 							</aon:commandButton>
 						</aon:div>
 				-->
-						<aon:outputText value="#{employeeBundle.employee_contract_page}" />
+						<aon:outputText value="#{payrollBundle.employee_contract_page}" />
 						<aon:div styleClass="aon-spin-control-element"> 
 							<aon:commandButton id="contractDetail-prev2"  
 								ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"

@@ -10,7 +10,7 @@
 		<aon:column alias="Salary.issueDate"
 			styleClass="aon-editDataTable-dateColumn aon-width-130">
 			<f:facet name="header">
-				<aon:outputText value="#{employeeBundle.employee_salary_issue_date}" />
+				<aon:outputText value="#{payrollBundle.employee_salary_issue_date}" />
 			</f:facet>
 			<aon:outputText value="#{to.month}" />
 			<aon:outputText value="/" />
@@ -29,7 +29,7 @@
 		<aon:column alias="Salary.contract.person.registry.fullName"
 			styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
-				<aon:outputText value="#{employeeBundle.employee_name}" />
+				<aon:outputText value="#{payrollBundle.employee_name}" />
 			</f:facet>
 			<aon:outputText value="#{to.employeeName}">
 				<aon:abbreviateConverter maxWidth="40" />
@@ -77,7 +77,7 @@
 	
 	<aon:column alias="Salary.totalPayment" styleClass="aon-editDataTable-numberColumn aon-width-100">
 		<f:facet name="header">
-			<aon:outputText value="#{employeeBundle.employee_salary_totalPayment_abbr}" />
+			<aon:outputText value="#{payrollBundle.employee_salary_totalPayment_abbr}" />
 		</f:facet>
 		<aon:outputText value="#{to.totalPayment}">
 			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -86,7 +86,7 @@
 
 	<aon:column alias="Salary.totalDeduction" styleClass="aon-editDataTable-numberColumn aon-width-100">
 		<f:facet name="header">
-			<aon:outputText value="#{employeeBundle.employee_salary_totalDeduction_abbr}" />
+			<aon:outputText value="#{payrollBundle.employee_salary_totalDeduction_abbr}" />
 		</f:facet>
 		<aon:outputText value="#{to.totalDeduction}">
 			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -95,7 +95,7 @@
 
 	<aon:column alias="Salary.totalLiquid" styleClass="aon-editDataTable-numberColumn aon-width-100">
 		<f:facet name="header">
-			<aon:outputText value="#{employeeBundle.employee_salary_totalLiquid_abbr}" />
+			<aon:outputText value="#{payrollBundle.employee_salary_totalLiquid_abbr}" />
 		</f:facet>
 		<aon:outputText value="#{to.totalLiquid}">
 			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

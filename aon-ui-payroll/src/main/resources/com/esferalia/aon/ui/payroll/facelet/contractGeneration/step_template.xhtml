@@ -16,7 +16,7 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{employeeBundle.employee_contractGenerationWizard_module}" />
+						<aon:outputText value="#{payrollBundle.employee_contractGenerationWizard_module}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -25,13 +25,13 @@
 
 					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="prev" immediate="true"
-							value="#{employeeBundle.employee_back}"
+							value="#{payrollBundle.employee_back}"
 							action="#{contractGenerationWizard.previous}"
 							actionListener="#{contractGenerationWizard.onPrevious}"
 							styleClass="aon-finding-toolbar-item aon-icon-previous"
 							rendered="#{contractGenerationWizard.previousAvailable}" />
 						<aon:commandButton id="next"
-							value="#{employeeBundle.employee_forward}"
+							value="#{payrollBundle.employee_forward}"
 							action="#{contractGenerationWizard.next}"
 							actionListener="#{contractGenerationWizard.onNext}"
 							rendered="#{contractGenerationWizard.nextAvailable}"
@@ -46,10 +46,10 @@
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
 -->
 						<aon:commandButton id="end"
-							value="#{employeeBundle.employee_finalice}"
+							value="#{payrollBundle.employee_finalice}"
 							action="#{contractGenerationWizard.next}"
 							actionListener="#{contractGenerationWizard.onNext}"
-							onclick="if (!confirm('#{employeeBundle.employee_finalice}?')) { return false;}"
+							onclick="if (!confirm('#{payrollBundle.employee_finalice}?')) { return false;}"
 							rendered="#{contractGenerationWizard.last}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
 
@@ -118,33 +118,33 @@ Botones report
 						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{contractGenerationWizard.currentStep==0?'color:#1160c6;':'border-color:#666;color:#666;'}">
 							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{contractGenerationWizard.currentStep==0?'background-color:#1160c6;color:white;':'border-color:#666;'}"
 								value="01" />
-							<aon:outputText style="padding-left: 5px;" value="#{employeeBundle.contractGeneration_step0}" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.contractGeneration_step0}" />
 						</aon:div>
 						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{contractGenerationWizard.currentStep==1?'color:#1160c6;':'border-color:#666;color:#666;'}">
 							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{contractGenerationWizard.currentStep==1?'background-color:#1160c6;color:white;':'border-color:#666;'}"
 								value="02" />
-							<aon:outputText style="padding-left: 5px;" value="#{employeeBundle.contractGeneration_step1}" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.contractGeneration_step1}" />
 						</aon:div>
 						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{contractGenerationWizard.currentStep==2?'color:#1160c6;':'border-color:#666;color:#666;'}">
 							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{contractGenerationWizard.currentStep==2?'background-color:#1160c6;color:white;':'border-color:#666;'}"
 								value="03" />
-							<aon:outputText style="padding-left: 5px;" value="#{employeeBundle.contractGeneration_step2}" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.contractGeneration_step2}" />
 						</aon:div>
 						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{contractGenerationWizard.currentStep==3?'color:#1160c6;':'border-color:#666;color:#666;'}">
 							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{contractGenerationWizard.currentStep==3?'background-color:#1160c6;color:white;':'border-color:#666;'}"
 								value="04" />
-							<aon:outputText style="padding-left: 5px;" value="#{employeeBundle.contractGeneration_step3}" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.contractGeneration_step3}" />
 						</aon:div>
 						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{contractGenerationWizard.currentStep==4?'color:#1160c6;':'border-color:#666;color:#666;'}">
 							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{contractGenerationWizard.currentStep==4?'background-color:#1160c6;color:white;':'border-color:#666;'}"
 								value="05" />
-							<aon:outputText style="padding-left: 5px;" value="#{employeeBundle.contractGeneration_step4}" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.contractGeneration_step4}" />
 						</aon:div>
 <!--  
 						<aon:div style="margin-right:10px;border-bottom: solid 1px #1160c6;#{contractGenerationWizard.currentStep==5?'color:#1160c6;':'border-color:#666;color:#666;'}">
 							<aon:outputText style="padding:0 2px;border: solid 1px #1160c6;#{contractGenerationWizard.currentStep==5?'background-color:#1160c6;color:white;':'border-color:#666;'}"
 								value="06" />
-							<aon:outputText style="padding-left: 5px;" value="#{employeeBundle.contractGeneration_step5}" />
+							<aon:outputText style="padding-left: 5px;" value="#{payrollBundle.contractGeneration_step5}" />
 						</aon:div>
 -->						
 					</h:panelGrid>

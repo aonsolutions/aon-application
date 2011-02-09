@@ -8,7 +8,7 @@
 
 	<aon:div>
 		<aon:panelGrid columns="4" style="width:100%">
-			<aon:outputText value="#{employeeBundle.employee_name}" />
+			<aon:outputText value="#{payrollBundle.employee_name}" />
 			<aon:outputText value="#{controller.to.person.registry.fullName}" />
 			
 			<aon:outputText value="&#160;" />
@@ -17,7 +17,7 @@
 			<aon:outputText value="#{companyBundle.company_enterprise}" />
 			<aon:outputText value="#{controller.to.workPlace.enterprise.registry.fullName}" />
 			
-			<aon:outputLabel value="#{employeeBundle.employee_salary_totalPayment}" />
+			<aon:outputLabel value="#{payrollBundle.employee_salary_totalPayment}" />
 			<aon:outputText value="#{controller.to.salary.totalPayment}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
@@ -25,7 +25,7 @@
 			<aon:outputText value="#{companyBundle.company_workplace}" />
 			<aon:outputText value="#{controller.to.workPlace.description}" />
 			
-			<aon:outputLabel value="#{employeeBundle.employee_salary_totalDeduction}" />
+			<aon:outputLabel value="#{payrollBundle.employee_salary_totalDeduction}" />
 			<aon:outputText value="#{controller.to.salary.totalDeduction}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
@@ -36,7 +36,7 @@
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
 
-			<aon:outputLabel value="#{employeeBundle.employee_salary_totalLiquid}" />
+			<aon:outputLabel value="#{payrollBundle.employee_salary_totalLiquid}" />
 			<aon:outputText value="#{controller.to.salary.totalLiquid}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>

@@ -7,10 +7,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	template="/com/code/aon/ui/employee/facelet/contractBatch/step_template.xhtml">
+	template="/com/esferalia/aon/ui/payroll/facelet/contractBatch/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{employeeBundle.contractBatch_step2}" />
+		<aon:outputText value="#{payrollBundle.contractBatch_step2}" />
 	</ui:define>
 
 	<ui:define name="step_content">
@@ -44,7 +44,7 @@
 			aon-editDataTable-dateColumn,
 			aon-editDataTable-textColumn aon-width-250">
 			
-			<ui:include src="/com/code/aon/ui/employee/facelet/contractBatch/columns.xhtml" />
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractBatch/columns.xhtml" />
 	
 		</aon:dataTable>
 	
