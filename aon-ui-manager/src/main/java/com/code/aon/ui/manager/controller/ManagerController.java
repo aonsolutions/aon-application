@@ -30,6 +30,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
@@ -124,6 +125,14 @@ public class ManagerController implements IManagerConstants {
 
 	public boolean isAdministrator() {
 		return this.userType == UserType.ESFERALIA;
+	}
+
+	public boolean isUserManagement() {
+		return isAdministrator() || getCurrentDomain().getUserManagement();
+	}
+
+	public boolean isDomainManagement() {
+		return isAdministrator() || getCurrentDomain().getDomainManagement();
 	}
 	
 	public String getHomeTemplate() {
@@ -262,6 +271,8 @@ public class ManagerController implements IManagerConstants {
 			dbConnection.configure(configuration);
 	   		configuration.buildMappings();
 			sessionFactory = configuration.buildSessionFactory();
+            DAOConstantsResolver resolver = new DAOConstantsResolver(configuration);
+            resolver.createDAOConstants();			
 		}
 		return sessionFactory;
 	}

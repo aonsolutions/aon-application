@@ -57,6 +57,8 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			domainController.registerApplication(AON_DESKTOP, dbc);
 			domainController.registerApplication(AON_MANAGER, dbc);
 			domainController.registerApplication(AON_WEBMAIL, null);
+			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
+			duc.createUser(ADMIN_USER, USUARIO_PROFILE, "----");		
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			domainController.removeDomain( domain );

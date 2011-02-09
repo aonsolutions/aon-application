@@ -192,11 +192,14 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 	
 	public void onResetPassword( ActionEvent event ) {
-		DomainUser user = getDomainUser();
+		resetPassword( getDomainUser() );
+	}	
+	
+	public void resetPassword( DomainUser user ) {
 		user.setPasswordExpirationTimestamp( DateUtils.addDays(new Date(), -1) );
 		String newPassword = getSHAPassword(user.getUid());
 		user.setPasswordString( newPassword );
-	}	
+	}		
 	
 	public boolean isShowChangePasswordWindow() {
 		return showChangePasswordWindow;
@@ -376,6 +379,22 @@ public class DomainUserController extends LdapBasicController implements IManage
 			dbUser.setActive(false);
 			bean.update(dbUser);
 		}
+	}
+	
+	public void createUser( String uid, String name, String surname ) throws ManagerBeanException, LdapException {
+		DomainUser user = new DomainUser();
+		user.setUid(uid);
+		user.setName(name);
+		user.setSurname(surname);
+		resetPassword(user);
+		getManagerBean().insert(user);
+		registerUserInApplication(user, AON_DESKTOP, ADMINISTRADOR_PROFILE);
+		registerUserInApplication(user, AON_MANAGER, ADMINISTRADOR_PROFILE);
+		registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
+		registerScopeInDBs(user.getUid(), GENERAL_SCOPE);
+		createMailAccount(user);
+		Signature signature = addDefaultSignature(user);
+		addDefaultMailAccount(user, signature);		
 	}
 	
 }

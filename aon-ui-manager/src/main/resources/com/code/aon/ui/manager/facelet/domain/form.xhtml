@@ -13,9 +13,9 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{managerBundle.manager_domains}" />
 				<ui:param name="controller" value="#{domain}" />
-				<ui:param name="skipResetButton" value="#{!manager.config.showDomainReset}" />
+				<ui:param name="skipResetButton" value="#{!manager.domainManagement}" />
 				<ui:param name="skipSearchButton" value="#{!manager.config.showDomainSearch}" />
-				<ui:param name="skipRemoveButton" value="#{!manager.config.showDomainRemove}" />
+				<ui:param name="skipRemoveButton" value="#{!manager.domainManagement}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="domainApplications" rendered="#{!domain.new}"
 						value="#{managerBundle.manager_applications}"
