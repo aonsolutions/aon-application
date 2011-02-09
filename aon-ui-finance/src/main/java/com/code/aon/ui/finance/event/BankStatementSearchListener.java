@@ -23,6 +23,7 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 	private Boolean payment;
 	private String amount;
 	private String description;
+	private String comments;
 	private StatementReliability[] statementReliabilities;
 	private StatementStatus[] statementStatuses;
 	
@@ -82,6 +83,14 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		this.description = description;
 	}
 
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
 	public StatementReliability[] getStatementReliabilities() {
 		return statementReliabilities;
 	}
@@ -111,6 +120,7 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		setPayment(null);
 		setAmount(null);
 		setDescription(null);
+		setComments(null);
 		setStatementReliabilities(new StatementReliability[0]);
 		StatementStatus[] defaultStatementStatus = {StatementStatus.PENDING};
 		setStatementStatuses(defaultStatementStatus);
@@ -138,6 +148,9 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		}
 		if (StringUtils.isNotEmpty(getDescription())) {
 			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), getDescription());			
+		}
+		if (StringUtils.isNotEmpty(getComments())) {
+			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_COMMENTS), getComments());			
 		}
 		if (!ArrayUtils.isEmpty(getStatementReliabilities())) {
 			String reliability = getController().resolveAlias(IFinanceAlias.BANK_STATEMENT_RELIABILITY);

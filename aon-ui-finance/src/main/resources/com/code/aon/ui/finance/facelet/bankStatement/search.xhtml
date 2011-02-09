@@ -21,6 +21,7 @@
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="import-Popup"
 						value="#{financeBundle.finance_bank_statement_import}"
+						title="#{financeBundle.finance_bank_statement_import}"
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 						actionListener="#{controller.onImportFileShow}"
 						action="bankStatement_list">
@@ -83,6 +84,12 @@
 						value="#{bundle.aon_concept}" />
 					<aon:inputText id="BankStatement_description"
 						value="#{bankStatementSearch.description}"
+						size="50" />
+
+					<aon:outputLabel for="BankStatement_comments" 
+						value="#{bundle.aon_comment}" />
+					<aon:inputText id="BankStatement_comments"
+						value="#{bankStatementSearch.comments}"
 						size="50" />
 
 					<aon:outputLabel for="BankStatement_commonConcept"

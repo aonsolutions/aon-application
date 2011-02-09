@@ -20,6 +20,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
@@ -170,6 +171,7 @@ public class BankStatement implements ITransferObject {
 
 	@Column(name="comments")
 	@Lob
+	@Type(type="stringClob")
 	public String getComments() {
 		return comments;
 	}

@@ -121,6 +121,14 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		return (currentStatement != null && currentStatement.isCollectionBatch());
 	}
 
+	public boolean isBatchLinked() throws ManagerBeanException {
+		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), getCurrentStatement().getId());
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.FINANCE_BATCH);
+		return (statementLinkBean.getCount(criteria) > 0);
+	}
+
 	public void setStatementLinkTab() {
 		setSelectedTab(STATEMENT_LINK_TAB);
 	}

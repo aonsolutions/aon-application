@@ -24,6 +24,8 @@ import org.richfaces.event.UploadEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryBankStatement;
+import com.code.aon.account.bridge.AccountEntryFinanceBatch;
+import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.BankConceptAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
@@ -62,6 +64,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.event.BankStatementSearchListener;
 import com.code.aon.ui.finance.event.FinanceListSearchListener;
 import com.code.aon.ui.finance.event.FinanceTrackingListSearchListener;
@@ -377,6 +380,17 @@ public class BankStatementController extends BasicController implements IFinance
 			statement.setShowBankStatementLink(false);
 			statement.setShowAccountEntry(false);
 		}
+	}
+
+	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
+		for (BankStatement statement : getCheckedBankStatement()) {
+			if (statement.getStatus() == StatementStatus.PENDING) {
+				getManagerBean().remove(statement);
+			} else {
+				getErrors().put(statement.getId(), "No se puede borrar la línea del Extracto ya que no esta pendiente.");
+			}
+		}
+		onSearch(null);
 	}
 
 	public void onFullReset(ActionEvent event) {
@@ -1158,7 +1172,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onRecordLinks(ActionEvent event) throws ManagerBeanException {
+	public void onRecordStatement(ActionEvent event) throws ManagerBeanException {
 		for (BankStatement statement : getCheckedBankStatement()) {
 			if (statement.isChecked()) {
 				boolean financeTrackingMode = false;
@@ -1270,6 +1284,71 @@ public class BankStatementController extends BasicController implements IFinance
 		getManagerBean().update(statement);
 	}
 
+	public void onUnrecordStatement(ActionEvent event) throws ManagerBeanException {
+		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
+		for (BankStatement statement : getCheckedBankStatement()) {
+			if (statement.isRecorded()) {
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+				if (statementLinkBean.getCount(criteria) > 0) {
+					IManagerBean accEntryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
+					criteria = new Criteria();
+					String alias = accEntryStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID);
+					criteria.addEqualExpression(alias, statement.getId());
+					for (ITransferObject ito : accEntryStatementBean.getList(criteria)) {
+						AccountEntryBankStatement accEntryStatement = (AccountEntryBankStatement)ito;
+						AccountEntry accEntry = accEntryStatement.getAccountEntry();
+
+						IManagerBean accEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
+						criteria = new Criteria();
+						alias = accEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID);
+						criteria.addEqualExpression(alias, accEntry.getId());
+						for (ITransferObject fto : accEntryFBatchBean.getList(criteria)) {
+							AccountEntryFinanceBatch accEntryFBatch = (AccountEntryFinanceBatch)fto;
+							FinanceBatch fBatch = accEntryFBatch.getFinanceBatch();
+					        if (getWriter().canRemoveAccountEntryFinanceBatch(fBatch)) {
+								getWriter().removeAccountEntryFinanceBatch(fBatch, false);
+					        } else {
+					            AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
+					            throw new AbortProcessingException();
+					        }
+						}
+
+				        IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+						IManagerBean accEntryTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+						criteria = new Criteria();
+						alias = accEntryTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID);
+						criteria.addEqualExpression(alias, accEntry.getId());
+						for (ITransferObject fto : accEntryTrackingBean.getList(criteria)) {
+							AccountEntryFinanceTracking accEntryTracking = (AccountEntryFinanceTracking)fto;
+							FinanceTracking tracking = accEntryTracking.getFinanceTracking();
+							getWriter().removeAccountEntryFinanceTracking(tracking, false);
+
+							tracking.setDescription(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_PENDING));
+							tracking.setRecorded(false);
+					        trackingBean.update(tracking);
+						}
+					}
+
+					unrecordBankStatement(statement, true);
+				} else {
+					unrecordBankStatement(statement, false);
+				}
+			}
+		}
+
+		onSearch(null);
+		clearCheckedBankStatement();
+	}
+
+	public void unrecordBankStatement(BankStatement statement, boolean hasLinks) throws ManagerBeanException {
+		getWriter().removeAccountEntryBankStatement(statement, hasLinks);
+
+		statement.setStatus((hasLinks) ? StatementStatus.CHECKED : StatementStatus.PENDING);
+		statement.setShowBankStatementLink(false);
+		getManagerBean().update(statement);
+	}
+
 	public AccountEntry getAccountEntry() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			BankStatement to = (BankStatement)getModel().getRowData();
@@ -1311,6 +1390,25 @@ public class BankStatementController extends BasicController implements IFinance
 			}
 		}
 		return false;
+	}
+
+	public void onLoadBankStatement(ActionEvent event, BankStatement statement, String backAction) throws ManagerBeanException {
+		BankStatementSearchListener statementSearch = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
+
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), statement.getId());
+		statementSearch.setFromDate(statement.getOperationDate());
+		statementSearch.setToDate(statement.getOperationDate());
+		statementSearch.setPayment(statement.isPayment());
+		statementSearch.setAmount(Double.toString(statement.getAmount()));
+		statementSearch.setDescription(statement.getDescription());
+		statementSearch.setCommonConcept(statement.getCommonConcept());
+		statementSearch.setLotNumber(Integer.toString(statement.getLotNumber()));
+		statementSearch.setStatementStatuses(null);
+		onSearch(event);
+
+		setBackAction(backAction);
+		setBackActionListener(BANK_STATEMENT_CONTROLLER_NAME + ".onBack");
 	}
 
 	/**

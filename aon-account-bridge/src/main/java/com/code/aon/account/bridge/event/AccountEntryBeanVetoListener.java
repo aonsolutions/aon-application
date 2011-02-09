@@ -11,6 +11,8 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.finance.BankStatement;
+import com.code.aon.finance.BankStatementLink;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
 
@@ -29,7 +31,10 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 				accEntryStatementBean.remove(ito);
 
 				BankStatement statement = accEntryStatement.getBankStatement();
-				statement.setStatus(StatementStatus.CHECKED);
+				IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+				statement.setStatus((statementLinkBean.getCount(criteria) > 0) ? StatementStatus.CHECKED : StatementStatus.PENDING);
 				statementBean.update(statement);
 			}
 		} catch (ManagerBeanException e) {
