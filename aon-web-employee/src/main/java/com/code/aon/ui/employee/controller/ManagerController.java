@@ -36,11 +36,11 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController;
 import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
-import com.esferalia.aon.ui.payroll.controller.IEmployeeConstants;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.SalaryController;
 import com.esferalia.aon.ui.payroll.controller.SalaryDraftController;
 
-public class ManagerController implements IEmployeeConstants {
+public class ManagerController implements IPayrollConstants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ManagerController.class);
 	
@@ -135,7 +135,7 @@ public class ManagerController implements IEmployeeConstants {
 	}
 
 	private void initSalaryDraft() {
-		SalaryDraftController controller = (SalaryDraftController) AonUtil.getRegisteredBean(IEmployeeConstants.SALARY_DRAFT_CONTROLLER);
+		SalaryDraftController controller = (SalaryDraftController) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 		List<Expression> initExpressions = new LinkedList<Expression>();
 		try {
 			String enterpriseId = controller.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
@@ -180,7 +180,7 @@ public class ManagerController implements IEmployeeConstants {
 	}
 	
 	private void initWorkerSalaries( Contract contract ) {
-		SalaryController controller = (SalaryController) AonUtil.getRegisteredBean(IEmployeeConstants.SALARY_CONTROLLER);
+		SalaryController controller = (SalaryController) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_CONTROLLER);
 		try {		
 			Criteria criteria = controller.getCriteria();
 			String contractId = controller.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID);
