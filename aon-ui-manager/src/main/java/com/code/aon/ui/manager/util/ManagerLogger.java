@@ -1,5 +1,8 @@
 package com.code.aon.ui.manager.util;
 
+import static com.code.aon.ui.manager.controller.IManagerConstants.BUNDLE_NAME;
+import static com.code.aon.ui.manager.controller.IManagerConstants.NEED_MAIL_ACCOUNT;
+
 import java.util.Date;
 
 import javax.mail.Address;
@@ -17,6 +20,7 @@ import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
+import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
@@ -38,8 +42,12 @@ public class ManagerLogger {
 		try {
 			to = InternetAddress.parse(toEmails);
 			MailAccount account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), loggedUser.getShortName());
-			Address from = InternetAddress.parse(account.getEmail())[0];
-			this.sender = new EmailSender(from, account);
+			if ( account != null ) {
+				Address from = InternetAddress.parse(account.getEmail())[0];
+				this.sender = new EmailSender(from, account);				
+			} else {
+				AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, NEED_MAIL_ACCOUNT, loggedUser.getShortName());				
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e );
 		} catch (AddressException e) {
@@ -47,13 +55,19 @@ public class ManagerLogger {
 		}
 	}
 	
+	public boolean isConfigured() {
+		return this.sender != null;
+	}
+	
 	private void sendEmail( String subject, String content ) {
-		try {		
-			sender.connect();
-			sender.sendMessage(to, subject, content);
-			sender.disconnect();
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e );
+		if ( this.sender != null ) {
+			try {		
+				sender.connect();
+				sender.sendMessage(to, subject, content);
+				sender.disconnect();
+			} catch (Throwable e) {
+				LOGGER.error(e.getMessage(), e );
+			}
 		}
 	}
 	

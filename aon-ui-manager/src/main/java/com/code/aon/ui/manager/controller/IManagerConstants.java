@@ -41,6 +41,7 @@ public interface IManagerConstants {
 	String DB_DUPLICATED = "manager_db_duplicated";
 	String DB_NOT_EXIST = "manager_db_not_exist";
 	String NEW_PASSWORD_ERROR = "manager_new_passwd_error";
+	String NEED_MAIL_ACCOUNT = "manager_need_mail_account";
 
 	// Properties
 	

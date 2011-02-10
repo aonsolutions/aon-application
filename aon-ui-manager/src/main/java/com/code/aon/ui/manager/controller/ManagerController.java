@@ -90,9 +90,13 @@ public class ManagerController implements IManagerConstants {
 		this.dbManager = new DBManager();
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
 		this.currentDomain = calculateCurrentDomain();
-		this.userType = calculateUserType();
-		init( this.userType );
 		this.logger = new ManagerLogger( this.properties.getProperty(NOTIFICATION_EMAIL) );
+		if ( this.logger.isConfigured() ) {
+			this.userType = calculateUserType();	
+		} else {
+			this.userType = UserType.NORMAL;
+		}
+		init( this.userType );
 	}
 	
 	public Properties getProperties() {
@@ -297,9 +301,9 @@ public class ManagerController implements IManagerConstants {
 	}
 	
 	private UserType calculateUserType() {
-		UserType type = UserType.NORMAL;
-		if ( currentDomain.getDomainManagement() ) {
-			type = UserType.PARENT;
+		UserType type = UserType.PARENT;
+		if ( currentDomain.getParentDomain() != null ) {
+			type = UserType.NORMAL;
 		}
 		return type;
 	}
