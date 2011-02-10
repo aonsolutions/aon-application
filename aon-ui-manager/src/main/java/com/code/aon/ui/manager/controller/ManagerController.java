@@ -126,6 +126,10 @@ public class ManagerController implements IManagerConstants {
 	public Domain getCurrentDomain() {
 		return currentDomain;
 	}
+	
+	public void setCurrentDomain(Domain currentDomain) {
+		this.currentDomain = currentDomain;
+	}
 
 	public boolean isAdministrator() {
 		return this.userType == UserType.ESFERALIA;
@@ -374,8 +378,6 @@ public class ManagerController implements IManagerConstants {
             LOGGER.info( "Executing: {}", StringUtils.join(commandLine, " ") );
             Process pr = rt.exec( commandLine );
 
-            StringBuffer result = new StringBuffer();
-            
             Reader reader = new InputStreamReader(pr.getInputStream());
             BufferedReader in = new BufferedReader(reader);
 

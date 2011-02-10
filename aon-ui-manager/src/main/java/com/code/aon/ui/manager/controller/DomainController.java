@@ -1,5 +1,6 @@
 package com.code.aon.ui.manager.controller;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -52,6 +53,12 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	private List<SelectItem> domainTypes;
 	
 	private Converter converter;
+	
+	private boolean userManagementChanged;
+	
+	private boolean domainManagementChanged;
+	
+	private boolean documentManagementChanged;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -115,7 +122,14 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		bean.insertOrUpdate(accessPolicy);
 	}
 
-	public void initAccessPolicy() throws ManagerBeanException {
+	public void init() throws ManagerBeanException {
+		this.documentManagementChanged = false;
+		this.userManagementChanged = false;
+		this.domainManagementChanged = false;	
+		initAccessPolicy();
+	}
+	
+	private void initAccessPolicy() throws ManagerBeanException {
 		this.accessPolicy = new AccessPolicy();
 		if (! isNew() ) {
 			BasicManagerBean bean = getAccessPolicyManagerBean( getDomain().getCommonName() );
@@ -144,6 +158,22 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 			LOGGER.error( e.getMessage(), e);
 		} finally {
 			ldap.closeSession();
+		}
+	}	
+
+	public void removeDBs( Domain domain ) throws ManagerBeanException {
+		BasicLdap ldap = new BasicLdap();
+		Name bdsDN = NameResolver.getDomainBDsDN(domain.getCommonName());
+		if ( ldap.exists(bdsDN, ORGANIZATIONAL_UNIT) ) {
+			DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+			ddbc.updateBaseDN(domain.getId());
+			for (ITransferObject to : ddbc.getManagerBean().getList(null) ) {
+				try {
+					getManager().removeDB( (DBConnnection) to );
+				} catch ( SQLException sqle ) {
+					LOGGER.error(sqle.getMessage(), sqle);
+				}
+			}
 		}
 	}	
 	
@@ -205,16 +235,28 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		return domainTypes;
 	}	
 	
+	public boolean isUserManagementChanged() {
+		return userManagementChanged;
+	}
+
+	public boolean isDomainManagementChanged() {
+		return domainManagementChanged;
+	}
+
+	public boolean isDocumentManagementChanged() {
+		return documentManagementChanged;
+	}
+
 	public void documentManagementChanged( ValueChangeEvent event ) {
-		LOGGER.info( "New value: " + event );
+		this.documentManagementChanged = true;
 	}
 
 	public void userManagementChanged( ValueChangeEvent event ) {
-		LOGGER.info( "New value: " + event );
+		this.userManagementChanged = true;
 	}
 
 	public void domainManagementChanged( ValueChangeEvent event ) {
-		LOGGER.info( "New value: " + event );
+		this.domainManagementChanged = true;
 	}
 	
 }

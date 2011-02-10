@@ -20,7 +20,6 @@ import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
-import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
@@ -117,4 +116,20 @@ public class ManagerLogger {
 		String subject = "REMOVED: User " + user.getCommonName() + " in Application " + user.getAppplication() + " in Domain " + user.getDomain();
 		sendEmail( subject, getContent() );
 	}	
+	
+	public void multiUser( Domain domain ) {
+		String subject = "Domain " + domain.getCommonName() + " Multiuser: " + domain.getUserManagement();
+		sendEmail( subject, getContent() );		
+	}
+	
+	public void multiDomain( Domain domain ) {
+		String subject = "Domain " + domain.getCommonName() + " MultiDomain: " + domain.getDomainManagement();
+		sendEmail( subject, getContent() );		
+	}
+
+	public void documental( Domain domain ) {
+		String subject = "Domain " + domain.getCommonName() + " Documental: " + domain.isDocumentManagement();
+		sendEmail( subject, getContent() );		
+	}
+	
 }

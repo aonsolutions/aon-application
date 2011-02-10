@@ -1,7 +1,6 @@
 package com.code.aon.ui.manager.event;
 
-import java.sql.SQLException;
-
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		DomainController domainController = (DomainController) event.getController();
 		Domain domain = domainController.getDomain();
 		try {
-			domainController.initAccessPolicy();
+			domainController.init();
 			if ( getManager().getUserType() == UserType.PARENT ) {
 				domain.setParentDomain( getManager().getCurrentDomain() );
 			}
@@ -58,7 +57,8 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			domainController.registerApplication(AON_MANAGER, dbc);
 			domainController.registerApplication(AON_WEBMAIL, null);
 			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
-			duc.createUser(ADMIN_USER, USUARIO_PROFILE, "----");		
+			duc.createUser(ADMIN_USER, USUARIO_PROFILE, "----");
+			updateDomainManagement(domainController);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			domainController.removeDomain( domain );
@@ -70,15 +70,9 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+		DomainController domainController = (DomainController) event.getController();
 		try {		
-			for (DBConnnection dbc : ddbc.getDBConnnections()) {
-				try {
-					getManager().removeDB( dbc );
-				} catch ( SQLException sqle ) {
-					LOGGER.error(sqle.getMessage(), sqle);
-				}
-			}
+			domainController.removeDBs( domainController.getDomain() );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -98,8 +92,9 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		DomainController domainController = (DomainController) event.getController();
 		updateDomain(domainController.getDomain());
 		try {
-			domainController.initAccessPolicy();
+			domainController.init();
 			domainController.updateParentDomains();
+			updateCurrentDomain(domainController.getDomain());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -112,10 +107,18 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		DomainController domainController = (DomainController) event.getController();
 		try {
 			domainController.insertOrUpdateAccessPolicy();
+			updateDomainManagement(domainController);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
+	}
+
+	private void updateCurrentDomain( Domain selectedDomain ) {
+		Domain currentDomain = getManager().getCurrentDomain();
+		if ( StringUtils.equals(selectedDomain.getCommonName(), currentDomain.getCommonName()) ) {
+			getManager().setCurrentDomain(selectedDomain);
+		}
 	}
 	
 	private void updateDomain( Domain domain ) {
@@ -127,4 +130,17 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		ddbc.updateBaseDN(domain.getId());		
 	}
 
+	private void updateDomainManagement( DomainController domainController ) {
+		Domain domain = domainController.getDomain();
+		if ( domainController.isDocumentManagementChanged() ) {
+			getManager().getLogger().documental(domain);
+		}
+		if ( domainController.isUserManagementChanged() ) {
+			getManager().getLogger().multiUser(domain);
+		}
+		if ( domainController.isDomainManagementChanged() ) {
+			getManager().getLogger().multiDomain(domain);
+		}
+	}
+	
 }

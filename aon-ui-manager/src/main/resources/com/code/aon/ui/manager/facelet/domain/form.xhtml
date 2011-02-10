@@ -134,11 +134,13 @@
 				                	valueChangeListener="#{domain.userManagementChanged}"
 									value="#{domain.to.userManagement}"/>
 			
-								<aon:outputLabel for="Domain_domainManagement"
-									value="#{managerBundle.manager_domain_domainManagement}" />
-				                <aon:selectBooleanCheckbox id="Domain_domainManagement"
-				                	valueChangeListener="#{domain.domainManagementChanged}"
-									value="#{domain.to.domainManagement}"/>
+								<c:if test="#{domain.new || (domain.to.parentDomain.id == null)}" >			
+									<aon:outputLabel for="Domain_domainManagement"
+										value="#{managerBundle.manager_domain_domainManagement}" />
+					                <aon:selectBooleanCheckbox id="Domain_domainManagement"
+					                	valueChangeListener="#{domain.domainManagementChanged}"
+										value="#{domain.to.domainManagement}"/>
+								</c:if>
 	
 							</aon:panelGrid>
 							
