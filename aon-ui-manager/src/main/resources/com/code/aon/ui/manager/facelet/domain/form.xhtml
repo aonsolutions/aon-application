@@ -39,10 +39,18 @@
 					<aon:outputLabel for="Domain_commonName"
 						value="#{bundle.aon_name}" />
 					<c:if test="#{domain.new}" >
-						<aon:inputText id="Domain_commonName"
-							validator="#{domain.idCheck}" required="true"
-							size="40" maxlength="#{domain.domainNameMaxLength}" 
-							value="#{domain.to.commonName}" />
+						<aon:div>
+							<aon:inputText id="Domain_commonName"
+								validator="#{domain.idCheck}" required="true"
+								size="40" maxlength="#{domain.domainNameMaxLength}" 
+								value="#{domain.to.commonName}" />
+							<c:if test="#{domain.addDomainSuffix}" >								
+								<aon:outputText value="."
+									styleClass="aon-bold aon-margin-left aon-margin-right" />								
+								<aon:inputText size="20" disabled="true"
+									value="#{manager.currentDomain.subDomainSuffix}" />
+							</c:if>			
+						</aon:div>
 					</c:if>
 					<c:if test="#{!domain.new}" >
 						<aon:inputText id="Domain_commonName"
@@ -82,12 +90,18 @@
 						<c:if test="#{!domain.to.domainManagement}" >					
 							<aon:outputLabel for="Domain_parentDomain"
 								value="#{managerBundle.manager_domain_parent}" />
-							<aon:selectOneMenu id="Domain_parentDomain"
-								converter="#{domain.converter}"
-								value="#{domain.to.parentDomain}">
-								<f:selectItem itemLabel="-" value="#{null}"/>
-								<f:selectItems value="#{domain.parentDomains}" />
-							</aon:selectOneMenu>								
+							<c:if test="#{manager.administrator}" >								
+								<aon:selectOneMenu id="Domain_parentDomain"
+									converter="#{domain.converter}"
+									value="#{domain.to.parentDomain}">
+									<f:selectItem itemLabel="-" value="#{null}"/>
+									<f:selectItems value="#{domain.parentDomains}" />
+								</aon:selectOneMenu>
+							</c:if>								
+							<c:if test="#{!manager.administrator}" >	
+								<aon:inputText id="Domain_parentDomain" size="40" disabled="true"
+									value="#{domain.to.parentDomain.commonName}" />
+							</c:if>								
 						</c:if>
 					</c:if>
 
@@ -134,7 +148,7 @@
 				                	valueChangeListener="#{domain.userManagementChanged}"
 									value="#{domain.to.userManagement}"/>
 			
-								<c:if test="#{domain.new || (domain.to.parentDomain.id == null)}" >			
+								<c:if test="#{(domain.new and manager.administrator) or (domain.to.parentDomain.id == null)}" >			
 									<aon:outputLabel for="Domain_domainManagement"
 										value="#{managerBundle.manager_domain_domainManagement}" />
 					                <aon:selectBooleanCheckbox id="Domain_domainManagement"

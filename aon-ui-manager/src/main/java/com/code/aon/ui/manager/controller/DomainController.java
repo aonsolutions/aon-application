@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Context;
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -257,6 +260,23 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 
 	public void domainManagementChanged( ValueChangeEvent event ) {
 		this.domainManagementChanged = true;
+	}
+
+	public boolean isAddDomainSuffix() {
+		return (!getManager().isAdministrator()) &&
+			(!StringUtils.isEmpty(getManager().getCurrentDomain().getSubDomainSuffix()));  
+	}
+	
+	public String getDomainName( String domainName ) {
+		if ( isAddDomainSuffix() ) {
+			return domainName + "." + getManager().getCurrentDomain().getSubDomainSuffix();	
+		}
+		return domainName;
+	}
+
+	@Override
+	protected void idCheck(String id) {
+		super.idCheck( getDomainName(id) );
 	}
 	
 }

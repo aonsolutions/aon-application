@@ -87,18 +87,21 @@ public abstract class LdapBasicController extends BasicController {
 	}
 	
 	public void idCheck(FacesContext context, UIComponent component, Object value) {
-		String name = value.toString();
-		if (! isValidName(name) ) {
-			throw new ValidatorException(new FacesMessage(getInvalidMessage(name)));
+		idCheck( value.toString() );
+	}	
+	
+	protected void idCheck( String id ) {
+		if (! isValidName(id) ) {
+			throw new ValidatorException(new FacesMessage(getInvalidMessage(id)));
 		}
 		try {
-			if ( isDuplicated(name) ) {
-				throw new ValidatorException(new FacesMessage(getDuplicatedMessage(name)));			
+			if ( isDuplicated(id) ) {
+				throw new ValidatorException(new FacesMessage(getDuplicatedMessage(id)));			
 			}
 		} catch (DAOException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
-	}	
+	}		
 	
 	@Override
 	public void accept(ActionEvent event) {		
