@@ -3,7 +3,9 @@ package com.esferalia.aon.payroll.enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public enum ContractVariables {
+import com.code.aon.common.enumeration.IResourceable;
+
+public enum ContractVariables implements IResourceable{
 	
 	YEAR_DAYS("DIAS_AÑO"),
 	MONTH_DAYS("DIAS_MES"),
@@ -47,6 +49,11 @@ public enum ContractVariables {
 		return name;
 	}
 	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     
@@ -61,6 +68,7 @@ public enum ContractVariables {
      * 
      * @return String a <code>String</code>.
      */
+    @Override
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
