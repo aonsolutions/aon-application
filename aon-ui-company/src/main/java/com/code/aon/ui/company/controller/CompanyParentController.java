@@ -15,6 +15,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.naming.Name;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -45,6 +48,8 @@ import com.code.aon.ui.util.AonUtil;
  * Controller used in the company maintenance.
  */
 public class CompanyParentController extends BasicController implements ICompanyController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyParentController.class.getName());
 	
 	public static final String PRINT_HEADER_PARAM = "APP_PRINT_HEADER_PARAM";
 	
@@ -670,5 +675,16 @@ public class CompanyParentController extends BasicController implements ICompany
 		}
 		return ( (Company) getTo()).isEInvoice();
 	}
+
+	public void onChangeDocument(ActionEvent event) {
+		try {
+			if (isNew()) {
+				Company company = (Company) getTo();
+				RegistryController.validateDocument(company, getManagerBean());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.warn("unable to check Document.",e);
+		}
+	}	
 	
 }

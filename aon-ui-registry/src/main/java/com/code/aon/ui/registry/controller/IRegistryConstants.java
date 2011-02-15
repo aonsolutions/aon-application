@@ -25,6 +25,8 @@ public interface IRegistryConstants {
 	
 	String REGISTRY_FAX = "registry_fax";
 	
+	String REGISTRY_DOCUMENT_ERROR = "registry_document_error";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

@@ -39,7 +39,7 @@
 				</ui:define>				
 			</ui:decorate>
 	
-			<aon:panelGrid id="listData" columns="2" cellpadding="0" cellspacing="10" styleClass="aon-panelGrid-formatting"
+			<aon:panelGrid id="listData" columns="2" cellspacing="10" styleClass="aon-panelGrid-formatting"
 			columnClasses="aon-width-50percent,aon-width-50percent aon-vertical-align-top">
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
@@ -48,81 +48,8 @@
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
 							<aon:panelGrid columns="2" style="width:100%">
-								<aon:outputLabel for="Company_name" value="#{bundle.aon_name}" />
-								<aon:inputText id="Company_name" value="#{company.to.name}"
-									required="true" maxlength="64" size="64" >
-									<f:validateLength minimum="1" maximum="64" />
-								</aon:inputText>
-				
-								<aon:outputLabel for="Company_alias"
-									value="#{bundle.aon_company_alias}" />
-								<aon:inputText id="Company_alias" value="#{company.to.alias}"
-									size="32" maxlength="32" >
-									<f:validateLength minimum="1" maximum="32" />
-								</aon:inputText>
-	
 								<ui:include
-									src="/com/code/aon/ui/registry/facelet/registry/formDocument.xhtml" >
-									<ui:param name="controller" value="#{company}" />
-									<ui:param name="registry" value="#{company.to}" />
-								</ui:include>	
-				
-								<aon:outputLabel for="Company_address"
-									value="#{registryBundle.registry_address}" />
-								<aon:div>
-									<aon:inputText id="Company_address" required="true"
-										style="display:block" value="#{company.mainAddress.address}"
-										valueChangeListener="#{company.addressChanged}" maxlength="128" size="45" />
-									<aon:inputText id="Company_address2"
-										value="#{company.mainAddress.address2}" style="display:block"
-										valueChangeListener="#{company.addressChanged}" maxlength="128" size="45" />
-									<aon:inputText id="Company_address3"
-										value="#{company.mainAddress.address3}" style="display:block"
-										valueChangeListener="#{company.addressChanged}" maxlength="128" size="45" />
-								</aon:div>
-				
-								<aon:outputLabel for="Company_address_city"
-									value="#{registryBundle.registry_city}" />
-								<aon:inputText id="Company_address_city"
-									value="#{company.mainAddress.city}" maxlength="64"
-									valueChangeListener="#{company.addressChanged}" size="30" />
-				
-								<aon:outputLabel for="Company_address_zip"
-									value="#{registryBundle.registry_zip}" />
-								<aon:inputText id="Company_address_zip"
-									value="#{company.mainAddress.zip}" maxlength="16"
-									valueChangeListener="#{company.addressChanged}" size="16" />
-				
-								<aon:outputLabel for="Company_address_geozone"
-									value="#{registryBundle.registry_geozone}" />
-								<aon:selectOneMenu id="Company_address_geozone"
-									value="#{company.mainAddress.geozone}"
-									styleClass="aon-form-selectOneMenu-field"
-									valueChangeListener="#{company.addressChanged}">
-									<f:selectItems value="#{geozoneCollections.geoTrees}" />
-								</aon:selectOneMenu>
-				
-								<aon:outputLabel for="Company_telephone"
-									value="#{registryBundle.registry_phone}" />
-								<aon:inputText id="Company_telephone" value="#{company.phone.value}"
-									valueChangeListener="#{company.phoneChanged}" maxlength="64" size="15" />
-				
-								<aon:outputLabel for="Company_fax"
-									value="#{registryBundle.registry_fax}" />
-								<aon:inputText id="Company_fax" value="#{company.fax.value}"
-									valueChangeListener="#{company.faxChanged}" maxlength="64" size="15" />
-				
-								<aon:outputLabel for="Company_email"
-									value="#{registryBundle.registry_email}" />
-								<aon:inputText id="Company_email" value="#{company.email.value}"
-									onblur="toLowerCase(this);" maxlength="64"
-									valueChangeListener="#{company.emailChanged}" size="45" />
-				
-								<aon:outputLabel for="Company_web"
-									value="#{registryBundle.registry_web}" />
-								<aon:inputText id="Company_web" value="#{company.web.value}"
-									onblur="toLowerCase(this);" maxlength="64"
-									valueChangeListener="#{company.webChanged}" size="45" />
+									src="/com/code/aon/ui/company/facelet/company/formNewContent.xhtml" />							
 							</aon:panelGrid>
 						</aon:div>
 					</aon:div>

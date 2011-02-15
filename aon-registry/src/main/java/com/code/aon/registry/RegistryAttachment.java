@@ -77,6 +77,7 @@ public class RegistryAttachment implements IAttachment, IScopable, IConfidential
      * The empty constructor.
      */
     public RegistryAttachment() {
+    	this.securityLevel = SecurityLevel.OFFICIAL;
     }
 
     /**
