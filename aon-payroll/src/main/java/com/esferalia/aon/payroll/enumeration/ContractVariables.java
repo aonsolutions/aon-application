@@ -1,0 +1,69 @@
+package com.esferalia.aon.payroll.enumeration;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+public enum ContractVariables {
+	
+	YEAR_DAYS("DIAS_AÑO"),
+	MONTH_DAYS("DIAS_MES"),
+	HOLIDAYS("DIAS_VACACIONES"),
+	WORKED_DAYS("DIAS_TRABAJADOS"),
+	ACTUAL_DAYS("DIAS_EFECTIVOS"),
+	SPECIAL_DAYS("DIAS_ESPECIALES"),
+	SENIOR_BASE("BASE_ANTIGUEDAD"),
+	
+	CGC_CODE("CGC"),
+	FP_CODE("FP"),
+	UNEMPLOYMENT_CODE("DESMP"),
+	NON_STRUCTURAL_OVERTIME_CODE("NESTR"),
+	STRUCTURAL_OVERTIME_CODE("ESTR"),
+	IRPF_CODE("IRPF"),
+
+	CGC_BASE("BASE_CGC"),
+	CGP_BASE("BASE_CGP"),
+	STRUCTURAL_OVERTIME_BASE("BASE_ESTR"),
+	NON_STRUCTURAL_OVERTIME_BASE("BASE_NESTR"),
+	IRPF_BASE("BASE_IRPF"),
+
+	CGC_BASE_MIN("BASE_CGC_MIN"),
+	CGC_BASE_MAX("BASE_CGC_MAX"),
+	
+	AMOUNT("IMPORTE"),
+
+	IRPF_PERCENT("PORCENTAJE_IRPF"),
+	QUOTE_GROUP("GRUPO_COTIZACION"),
+	TC2("TC2"),
+	CATEGORY("CATEGORIA");
+	
+	private final String name;
+	
+	private ContractVariables(String name){
+		this.name= name;
+	}
+	
+	
+	public String getName() {
+		return name;
+	}
+	
+	/** Message file base path. */
+    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
+    
+    /** Message key prefix. */
+    private static final String MSG_KEY_PREFIX = "aon_enum_contract_variables_";
+
+    /**
+     * Returns a <code>String</code> with the transalation <code>Locale</code>
+     * for the locale.
+     * 
+     * @param locale Required Locale.
+     * 
+     * @return String a <code>String</code>.
+     */
+    public String getName(Locale locale) {
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
+		return bundle.getString(MSG_KEY_PREFIX + toString());
+    }
+	
+}
