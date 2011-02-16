@@ -51,6 +51,8 @@ ALTER TABLE `person` ADD COLUMN `name` varchar(64) collate latin1_spanish_ci def
 ALTER TABLE `person` ADD COLUMN `first_surname` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Primer Apellido ';
 ALTER TABLE `person` ADD COLUMN `second_surname` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Segundo Apellido';
 
+UPDATE `registry` SET `name` = `surname`, `surname` = '' WHERE `name` IS NULL OR TRIM(`name`) = '';
+UPDATE `registry` SET `name` = CONCAT(RTRIM(`surname`),', ',RTRIM(`name`)) WHERE `surname` IS NOT NULL AND TRIM(`surname`) != '';
 ALTER TABLE `registry` DROP COLUMN `surname` ;
 ALTER TABLE `registry` ADD COLUMN `document_type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de documento (NIF, CIF...)' AFTER `document`;
 ALTER TABLE `registry` ADD COLUMN `document_country` varchar(2) DEFAULT NULL COMMENT 'Pais del documento' AFTER `document_type`;
