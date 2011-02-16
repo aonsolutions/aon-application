@@ -152,8 +152,21 @@ public class DBConnnection implements ILdapTransferObject, Cloneable {
 				.append(this.userPassword, o.userPassword)				
 				.isEquals();
 		}
-		return ObjectUtils.equals(getCommonName(), o.getCommonName());		
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
+	
+	public boolean equalsDB(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DBConnnection o = (DBConnnection) obj;
+		return new EqualsBuilder()
+			.append(this.driverClassName, o.driverClassName)
+			.append(this.labeledURI, o.labeledURI)				
+			.append(this.uid, o.uid)
+			.append(this.userPassword, o.userPassword)				
+			.isEquals();
+	}	
 	
 	@Override
 	public int hashCode() {

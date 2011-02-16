@@ -20,6 +20,7 @@ public interface IManagerConstants {
 	String SCOPE_CONTROLLER_NAME = "scope";
 	String USER_WORK_GROUP_CONTROLLER_NAME = "userWorkgroup";
 	String USER_SCOPE_CONTROLLER_NAME = "userScope";
+	String COMPANY_BASIC_CONTROLLER_NAME = "companyBasic";
 	
 	// Applications
 	String AON_DESKTOP = "aon-desktop";

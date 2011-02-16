@@ -1,5 +1,7 @@
 package com.code.aon.ui.manager.event;
 
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -74,6 +77,11 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 		getManager().getLogger().domainAddded(domain);
+		if (! getManager().isAdministrator() ) {
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+			companyController.onLoad(null);
+			domainController.setShowCompanyWindow(true);
+		}
 	}
 
 	@Override

@@ -10,10 +10,11 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.master.IConstants;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.manager.controller.DBBasicController;
 import com.code.aon.ui.manager.controller.DomainApplicationController;
 import com.code.aon.ui.manager.controller.DomainApplicationUserController;
 import com.code.aon.ui.manager.controller.DomainDBConnectionController;
@@ -93,9 +94,9 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 				manager.changeDbConnection(dbc);
 				if ( manager.getDBManager().existsTable(dbc, "user") ) {
 					dac.setAonDB(true);
-					DBBasicController uwg = (DBBasicController) AonUtil.getRegisteredBean(WORK_GROUP_CONTROLLER_NAME);
+					IController uwg = FormUtil.getController(WORK_GROUP_CONTROLLER_NAME);
 					uwg.onSearch(null);			
-					DBBasicController scopes = (DBBasicController) AonUtil.getRegisteredBean(SCOPE_CONTROLLER_NAME);
+					IController scopes = FormUtil.getController(SCOPE_CONTROLLER_NAME);
 					scopes.onSearch(null);			
 				}
 			}

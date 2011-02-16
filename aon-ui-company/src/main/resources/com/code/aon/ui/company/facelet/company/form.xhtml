@@ -49,7 +49,9 @@
 						<aon:div styleClass="aon-group-body-internal">
 							<aon:panelGrid columns="2" style="width:100%">
 								<ui:include
-									src="/com/code/aon/ui/company/facelet/company/formNewContent.xhtml" />							
+									src="/com/code/aon/ui/company/facelet/company/formNewContent.xhtml" >
+									<ui:param name="controller" value="#{company}" />									
+								</ui:include>							
 							</aon:panelGrid>
 						</aon:div>
 					</aon:div>

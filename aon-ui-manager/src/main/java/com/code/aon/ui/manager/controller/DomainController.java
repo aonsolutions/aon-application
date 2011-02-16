@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Context;
@@ -62,6 +61,8 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	private boolean domainManagementChanged;
 	
 	private boolean documentManagementChanged;
+	
+	private boolean showCompanyWindow;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -186,6 +187,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		ddbcc.init( dbc, domain.getCommonName() );
 		ddbcc.getManagerBean().insert(dbc);
 		getManager().createDB(dbc);
+		getManager().changeDbConnection(dbc);
 		return dbc;
 	}
 	
@@ -197,7 +199,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		dac.getManagerBean().insert(application);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateParentDomains() {
 		this.parentDomains = new LinkedList<SelectItem>();
 		try {
@@ -277,6 +279,14 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	@Override
 	protected void idCheck(String id) {
 		super.idCheck( getDomainName(id) );
+	}
+	
+	public boolean isShowCompanyWindow() {
+		return showCompanyWindow;
+	}
+
+	public void setShowCompanyWindow(boolean showCompanyWindow) {
+		this.showCompanyWindow = showCompanyWindow;
 	}
 	
 }

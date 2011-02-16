@@ -54,13 +54,22 @@
 					</c:if>
 					<c:if test="#{!domain.new}" >
 						<aon:inputText id="Domain_commonName"
-							size="60" disabled="true" value="#{domain.to.commonName}" />
+							size="60" disabled="true" value="#{domain.to.commonName}" />							
 					</c:if>
 
 					<aon:outputLabel for="Domain_organizationName"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Domain_organizationName" required="true"
 						size="95" value="#{domain.to.organizationName}" />
+
+					<c:if test="#{domain.new}">
+						<aon:outputText value="#{managerBundle.manager_domain_administrator}" />
+						<aon:div>
+							<!-- 
+							<aon:inputText id="Domain_commonName" />
+							-->
+						</aon:div>					
+					</c:if>
 
 					<c:if test="#{manager.administrator}">
 						<aon:outputLabel for="Domain_status"
@@ -202,6 +211,6 @@
 								
 			</aon:div>
 		</aon:form>
-
+		<ui:include src="/com/code/aon/ui/manager/facelet/domain/companyPopup.xhtml" />
 	</ui:define>
 </ui:composition>

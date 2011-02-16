@@ -32,6 +32,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -97,13 +98,6 @@ public class DomainUserController extends LdapBasicController implements IManage
 		String domain = NameResolver.getValue(parent, 0);
 		Name baseDN = NameResolver.getUsersDN(domain);
 		getLdapDAO().setBaseDN(baseDN);
-	}
-	
-	public IManagerBean getBDUserManagerBean() {
-		if ( this.userWrapper == null ) {
-			this.userWrapper = new ManagerBeanWrapper(User.class);	
-		}
-		return this.userWrapper.getManagerBean();
 	}
 	
 	public Signature addDefaultSignature( DomainUser user ) throws ManagerBeanException {
@@ -264,7 +258,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 	
 	private void registerScope( String userUid, String scopeName ) throws ManagerBeanException {
-		DBBasicController scopeController = (DBBasicController) AonUtil.getRegisteredBean(SCOPE_CONTROLLER_NAME);
+		IController scopeController = FormUtil.getController(SCOPE_CONTROLLER_NAME);
 		Criteria scopeCriteria = new Criteria();
 		scopeCriteria.addEqualExpression(scopeController.getFieldName(IConfigAlias.SCOPE_DESCRIPTION), scopeName);
 		List<ITransferObject> scopes = scopeController.getManagerBean().getList(scopeCriteria);
@@ -309,7 +303,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	
 	public User ensureDBUser( String uid ) throws ManagerBeanException {
 		User user = null;
-		IManagerBean bean = getBDUserManagerBean();
+		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), uid);
 		List<ITransferObject> list = bean.getList(criteria);
@@ -370,7 +364,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 	
 	private void deactiveDBUser( String uid ) throws ManagerBeanException {
-		IManagerBean bean = getBDUserManagerBean();
+		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), uid);
 		List<ITransferObject> list = bean.getList(criteria);
