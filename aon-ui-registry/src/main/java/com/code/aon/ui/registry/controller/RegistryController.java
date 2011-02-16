@@ -62,7 +62,7 @@ public class RegistryController extends BasicController {
 		try {
 			if (isNew()) {
 				IRegistry iRegistry = (IRegistry) getTo();
-				RegistryController.validateDocument(iRegistry.getRegistry(), getManagerBean());
+				RegistryController.validateDocument(iRegistry, getManagerBean());
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.warn("unable to check Document.",e);
@@ -76,21 +76,19 @@ public class RegistryController extends BasicController {
 		registry.setDocumentType(DocumentType.CIF);		
 	}	
 	
-	public static void validateDocument(Registry registry, IManagerBean bean) throws ManagerBeanException {
+	public static void validateDocument(IRegistry iRegistry, IManagerBean bean) throws ManagerBeanException {
+		validateDocument(iRegistry.getRegistry(), ClassUtils.getShortClassName(bean.getPOJOClass()) + "_registry", bean);
+	}
+	
+	public static void validateDocument(Registry registry, String preffix, IManagerBean bean) throws ManagerBeanException {
 		String document = registry.getDocument();
 		Country country = registry.getDocumentCountry();
 		DocumentType type = registry.getDocumentType();
 		if (StringUtils.isNotEmpty(document)) {
 			Criteria criteria = new Criteria();
-			String alias1 = bean.getFieldName(
-					ClassUtils.getShortClassName(bean.getPOJOClass())
-					+ "_registry_documentCountry");
-			String alias2 = bean.getFieldName(
-					ClassUtils.getShortClassName(bean.getPOJOClass())
-					+ "_registry_documentType");
-			String alias3 = bean.getFieldName(
-					ClassUtils.getShortClassName(bean.getPOJOClass())
-					+ "_registry_document");
+			String alias1 = bean.getFieldName( preffix + "_documentCountry");
+			String alias2 = bean.getFieldName( preffix + "_documentType");
+			String alias3 = bean.getFieldName( preffix + "_document");
 			criteria.addEqualExpression(alias1, country);
 			criteria.addEqualExpression(alias2, type);
 			criteria.addEqualExpression(alias3, document);
@@ -100,6 +98,6 @@ public class RegistryController extends BasicController {
 				AonUtil.addWarningMessage(msg + " " + document);
 			}
 		}
-	}
+	}	
 	
 }

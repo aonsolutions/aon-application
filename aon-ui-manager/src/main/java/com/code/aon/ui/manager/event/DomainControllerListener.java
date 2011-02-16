@@ -41,6 +41,9 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 				domain.setParentDomain( getManager().getCurrentDomain() );
 			}
 			domainController.updateParentDomains();
+			domainController.setUserUid(ADMIN_USER);
+			domainController.setUserName(USUARIO_PROFILE);
+			domainController.setUserSurname(null);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -59,28 +62,28 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		DomainController domainController = (DomainController) event.getController();
-		Domain domain = domainController.getDomain();
+		DomainController dc = (DomainController) event.getController();
+		Domain domain = dc.getDomain();
 		try {
 			updateDomain(domain);
-			domainController.insertOrUpdateAccessPolicy();
-			DBConnnection dbc = domainController.createAndRegister(domain);
-			domainController.registerApplication(AON_DESKTOP, dbc);
-			domainController.registerApplication(AON_MANAGER, dbc);
-			domainController.registerApplication(AON_WEBMAIL, null);
+			dc.insertOrUpdateAccessPolicy();
+			DBConnnection dbc = dc.createAndRegister(domain);
+			dc.registerApplication(AON_DESKTOP, dbc);
+			dc.registerApplication(AON_MANAGER, dbc);
+			dc.registerApplication(AON_WEBMAIL, null);
 			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
-			duc.createUser(ADMIN_USER, USUARIO_PROFILE, "----");
-			updateDomainManagement(domainController);
+			duc.createUser(dc.getUserUid(), dc.getUserName(), dc.getUserSurname());
+			updateDomainManagement(dc);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
-			domainController.removeDomain( domain );
+			dc.removeDomain( domain );
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 		getManager().getLogger().domainAddded(domain);
 		if (! getManager().isAdministrator() ) {
 			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
 			companyController.onLoad(null);
-			domainController.setShowCompanyWindow(true);
+			dc.setShowCompanyWindow(true);
 		}
 	}
 

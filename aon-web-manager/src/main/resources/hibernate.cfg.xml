@@ -28,7 +28,19 @@
 		<mapping class="com.code.aon.config.WorkGroup"/>
 		
 		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.Agreement"/>
+		<mapping class="com.code.aon.company.AgreementLevel"/>
+		<mapping class="com.code.aon.company.AgreementLevelCategory"/>
+		<mapping class="com.code.aon.company.AgreementLevelPayment"/>
+		<mapping class="com.code.aon.company.CNAE"/>
 		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Enterprise"/>
+		<mapping class="com.code.aon.company.EnterpriseActivity"/>
+		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
 
 		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>		
@@ -44,6 +56,10 @@
 		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Segment"/>			
+		
+		<!-- AON-CALENDAR Mapping files -->		
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
 		
 	</session-factory>
 

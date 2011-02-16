@@ -17,7 +17,7 @@ public class RegistryRichLookupBean extends RichLookupBean {
 		try {
 			if (isNew()) {
 				IRegistry iRegistry = (IRegistry) getTo();
-				RegistryController.validateDocument(iRegistry.getRegistry(),getController().getManagerBean());
+				RegistryController.validateDocument(iRegistry, getController().getManagerBean());
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.warn("unable to check Document.",e);

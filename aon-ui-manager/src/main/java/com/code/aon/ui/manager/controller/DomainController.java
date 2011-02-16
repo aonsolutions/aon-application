@@ -64,6 +64,12 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	
 	private boolean showCompanyWindow;
 	
+	private String userUid;
+	
+	private String userName;
+	
+	private String userSurname;
+	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -287,6 +293,30 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 
 	public void setShowCompanyWindow(boolean showCompanyWindow) {
 		this.showCompanyWindow = showCompanyWindow;
+	}
+
+	public String getUserUid() {
+		return userUid;
+	}
+
+	public void setUserUid(String userUid) {
+		this.userUid = userUid;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserSurname() {
+		return userSurname;
+	}
+
+	public void setUserSurname(String userSurname) {
+		this.userSurname = userSurname;
 	}
 	
 }

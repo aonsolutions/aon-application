@@ -680,7 +680,7 @@ public class CompanyParentController extends BasicController implements ICompany
 		try {
 			if (isNew()) {
 				Company company = (Company) getTo();
-				RegistryController.validateDocument(company, getManagerBean());
+				RegistryController.validateDocument(company, getPojoShortName(), getManagerBean());
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.warn("unable to check Document.",e);
