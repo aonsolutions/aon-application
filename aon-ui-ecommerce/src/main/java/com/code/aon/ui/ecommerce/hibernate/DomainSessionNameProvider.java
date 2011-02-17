@@ -10,7 +10,7 @@ public class DomainSessionNameProvider implements ISessionFactoryNameProvider {
 
 	@Override
 	public String getName(String pojoClass) {
-    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainConfigurationFactory.DOMAIN_RESOLVER);
+    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
     	String domain = resolver.getDomain();
     	FacesContext ctx = FacesContext.getCurrentInstance();
     	String context = ctx.getExternalContext().getRequestContextPath();

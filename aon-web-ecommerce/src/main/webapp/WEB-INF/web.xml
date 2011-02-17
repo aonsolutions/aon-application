@@ -16,6 +16,7 @@
 		<url-pattern>/aonResource/*</url-pattern>
 	</servlet-mapping>
 	<!-- Paypal Servlet -->
+<!--  
 	<servlet>
 		<servlet-name>PaypalPaypalfunctionsServlet</servlet-name>
 		<servlet-class>com.code.aon.ui.ecommerce.paypal.Paypalfunctions</servlet-class>
@@ -28,6 +29,7 @@
 		<servlet-name>PaypalExpresscheckoutServlet</servlet-name>
 		<url-pattern>/aonPaypal/*</url-pattern>
 	</servlet-mapping>
+-->	
 	<!-- Qb tpv Servlet -->
 	<servlet>
 		<servlet-name>QbServlet</servlet-name>
@@ -302,7 +304,7 @@
     </welcome-file-list>
     
      <!-- Security Constraint -->  
-	<!--  
+<!--  
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>facelet</web-resource-name>
@@ -325,10 +327,10 @@
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Invitado</role-name>
+			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
-	-->
+-->
 
 <!-- 
 	<login-config>
@@ -338,12 +340,14 @@
 			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jaas</form-error-page>
 		</form-login-config>
 	</login-config>
+-->
 
-	<security-role><role-name>Invitado</role-name></security-role>
- -->
+<!--  
+ 	<security-role><role-name>User</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>Admin</role-name></security-role>
+-->
     
-    <!--  
-    -->
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonECOMMERCE</resource-env-ref-name>
 	  <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>

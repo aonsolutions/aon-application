@@ -26,7 +26,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.commercial</artifactId>
+			<artifactId>aon.ui.sign</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
