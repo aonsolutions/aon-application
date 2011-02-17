@@ -224,5 +224,8 @@
 			</aon:div>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/manager/facelet/domain/companyPopup.xhtml" />
+		<c:if test="#{manager.currentDomain.type == 'CONSULTANCY'}" >
+			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
 	</ui:define>
 </ui:composition>

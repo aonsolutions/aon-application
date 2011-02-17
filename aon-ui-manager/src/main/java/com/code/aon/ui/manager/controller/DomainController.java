@@ -1,5 +1,7 @@
 package com.code.aon.ui.manager.controller;
 
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.faces.convert.Converter;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -18,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BasicManagerBean;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.dao.ldap.LdapDAO;
@@ -33,6 +38,9 @@ import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.manager.enumeration.AccessPolicyType;
 import com.code.aon.manager.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.config.event.BankAccountValidationListener;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
@@ -69,6 +77,10 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	private String userName;
 	
 	private String userSurname;
+	
+	private RegistryBank registryBank;
+	
+	private boolean enterpriseRecipient;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -318,5 +330,42 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	public void setUserSurname(String userSurname) {
 		this.userSurname = userSurname;
 	}
+
+	public boolean isEnterpriseRecipient() {
+		return enterpriseRecipient;
+	}
+
+	public void setEnterpriseRecipient(boolean enterpriseRecipient) {
+		this.enterpriseRecipient = enterpriseRecipient;
+	}
+
+	public RegistryBank getRegistryBank() {
+		return registryBank;
+	}
+
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
+	
+	public void onCompanySave( ActionEvent event ) {
+		boolean saveRegistryBank = isEnterpriseRecipient() &&
+			(getManager().getCurrentDomain().getType() == DomainType.CONSULTANCY);
+		try {
+			if ( saveRegistryBank ) {
+				BankAccountValidationListener.checkBankAccount( getRegistryBank(), false );
+			}
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+			companyController.accept(event);
+			if ( saveRegistryBank ) {
+				IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
+				getRegistryBank().setRegistry(companyController.obtainCompany());
+				bean.insert( getRegistryBank() );
+			}
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onBeforeCompanyAccept ",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}		
 	
 }

@@ -7,8 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -44,6 +47,11 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			domainController.setUserUid(ADMIN_USER);
 			domainController.setUserName(USUARIO_PROFILE);
 			domainController.setUserSurname(null);
+			domainController.setEnterpriseRecipient(false);
+			RegistryBank registryBank = new RegistryBank();
+			registryBank.setBank( new Bank() );
+			registryBank.setBankAccount( new BankAccount() );
+			domainController.setRegistryBank( registryBank );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
