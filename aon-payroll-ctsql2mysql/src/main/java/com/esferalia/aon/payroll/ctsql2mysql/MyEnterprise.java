@@ -26,7 +26,13 @@ import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidTelephoneExce
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.NullCNAEException;
 
 public class MyEnterprise extends DefaultCtsqlDBVisitor {
-
+	
+	public static class Activity {
+		Integer	id;
+		String 	ingespemp;
+		String	indregimen;
+	}
+	
 	// --------------------------------------------------------------
 	// constants
 	// --------------------------------------------------------------
@@ -47,8 +53,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	private Map<String, Integer> 				cifs;
 	private Map<Integer, Integer> 				enterprises;
 	
-	private Map<Integer, String> 				ingespemps ;
-	private Map<Integer, Integer> 				activities ;
+	private Map<Integer, Activity> 				activities ;
 	private Map<Integer, Map<Integer, Integer>> cnae_activity ;
 	private Map<Integer, Map<Integer, Integer>> raddresses ;
 
@@ -57,8 +62,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	public MyEnterprise(DefaultMysqlDB mysqlDB, MyAgreement myAgreement) {
 		this.mysqlDB = mysqlDB;
 		this.myAgreement = myAgreement;
-		this.ingespemps = new HashMap<Integer, String>();
-		this.activities = new HashMap<Integer, Integer>();
+		this.activities = new HashMap<Integer, Activity>();
 		this.cifs= new HashMap<String, Integer>();
 		this.enterprises = new HashMap<Integer, Integer>();
 		this.cccs = new HashMap<Integer, Map<String, Integer>>();
@@ -198,10 +202,14 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 										enterprise, 
 										cnae, 
 										DefaultMysqlDB.enum2short(EnterpriseActivityType.PRINCIPAL));
-			DefaultMysqlDB.save(cnae_activity, enterprise, cnae, activityId);
 		}
-		activities.put(empract.getCdg(), activityId);
-		ingespemps.put(empract.getCdg(), empract.getIngespemp());
+		DefaultMysqlDB.save(cnae_activity, enterprise, cnae, activityId);
+
+		Activity activity = new Activity();
+		activity.id = activityId ;
+		activity.ingespemp = empract.getIngespemp();
+		activity.indregimen = empract.getIndregimen();
+		activities.put(empract.getCdg(), activity );
 		
 		empract.visitEmprccc_empract(this);
 	}
@@ -211,6 +219,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	@Override
 	public void visitEmprccc_empract(Emprccc emprccc, Empract empract) throws SQLException {
 		
+		String tipccc = emprccc.getTipccc();
 		String ccc = emprccc.getDescripcion();
 		
 		Integer geozone = null;
@@ -225,12 +234,14 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 			}
 		}
 		else {
+			if ( "A".equals(tipccc) ) // Altos cargos
+				return;
+			
 			mysqlDB.debug("emprecc[{}] : Null CCC", emprccc.getCdg() );
 		}
 		
 
 		Short type = null ;
-		String tipccc = emprccc.getTipccc();
 		if ( "P".equals(tipccc))
 			type = DefaultMysqlDB.enum2short(CCCType.PRINCIPAL);
 		else if ( "R".equals(tipccc))
@@ -240,14 +251,14 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		else if ( "A".equals(tipccc))
 			type = DefaultMysqlDB.enum2short(CCCType.TRADE_REPRESENTATIVE);
 		
-		Integer activity = activities.get(empract.getCdg());
+		Activity activity = activities.get(empract.getCdg());
 		
 		Integer cccId = mysqlDB.insertEnterprise_ccc(ccc, 
 				type, 
-				activity, 
+				activity.id, 
 				geozone);
 		
-		DefaultMysqlDB.save(cccs, emprccc.getCdg(), emprccc.getTipccc(), cccId );
+		DefaultMysqlDB.save(cccs, emprccc.getCdg()/**/, tipccc, cccId );
 		
 	}
 	
@@ -349,8 +360,23 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		return enterprises.get(oldCdg);
 	}
 	
+	public Activity getActivity( Integer oldCdgAct) {
+		return this.activities.get(oldCdgAct);
+	}
+
+	public Integer getActivityId( Integer oldCdgAct) {
+		Activity activity = this.activities.get(oldCdgAct);
+		return activity != null ? activity.id: null ;
+	}
+
 	public String getIngEspEmp( Integer oldCdgAct) {
-		return this.ingespemps.get(oldCdgAct);
+		Activity activity = this.activities.get(oldCdgAct);
+		return activity != null ? activity.ingespemp : null ;
+	}
+
+	public String getIndRegimen( Integer oldCdgAct) {
+		Activity activity = this.activities.get(oldCdgAct);
+		return activity != null ? activity.indregimen: null ;
 	}
 
 	public Integer getCCC( Integer oldCdgAct, String oldCdgCCC) {

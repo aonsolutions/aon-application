@@ -11,10 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.naming.PartialResultException;
+
 
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
@@ -23,15 +27,18 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdtoex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomina;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadev;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaex;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteit;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Parteitnu;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabajo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabdto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabinci;
+import com.esferalia.aon.payroll.ctsql2mysql.MyEnterprise.Activity;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
-import static com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.*;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
 
@@ -42,26 +49,26 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	private static final Map<String, String>QUOTE_EXPRESSIONS = 
 		new HashMap<String, String>() {
 		{
-			put ( "1", AMOUNT );
+			put ( "1", ""+AMOUNT );
 			put ( "2", "0" );
-			put ( "3", AMOUNT + " - (IPREM * 20/100)" );
+			put ( "3", "extra(" + AMOUNT + ", IPREM * 0.20 )" );
 			put ( "4", "0" );
-			put ( "5", AMOUNT );
-			put ( "6", AMOUNT );
-			put ( "7", AMOUNT );
+			put ( "5", ""+AMOUNT );
+			put ( "6", ""+AMOUNT );
+			put ( "7", ""+AMOUNT );
 		}
 	};
 	
 	private static final Map<String, String>IRPF_EXPRESSIONS = 
 		new HashMap<String, String>() {
 		{
-			put ( "1", AMOUNT );
-			put ( "2", AMOUNT );
-			put ( "3", AMOUNT );
+			put ( "1", ""+AMOUNT );
+			put ( "2", ""+AMOUNT );
+			put ( "3", ""+AMOUNT );
 			put ( "4", "0" );
-			put ( "5", AMOUNT );
-			put ( "6", AMOUNT );
-			put ( "7", AMOUNT );
+			put ( "5", ""+AMOUNT );
+			put ( "6", ""+AMOUNT );
+			put ( "7", ""+AMOUNT );
 		}
 	};
 	
@@ -109,7 +116,11 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	private List<ContractData> contractDatas;
 	private Map<String, Concept<PaymentType>> paymentConcepts ;
 	
+	private Integer registration ;
+	private java.sql.Date seniorityDate ;
+	
 
+	
 	public MyContract(DefaultMysqlDB mysqlDB, MyEnterprise myEnterprise, MyPerson myPerson) {
 		this ( mysqlDB, myEnterprise, myPerson, null );
 	}
@@ -232,7 +243,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	@Override
 	public void visit(AbstractCtsqlDB ctsqlDB) throws SQLException {
 		this.irpfConceptId = 
-			mysqlDB.getDeductionConceptId(IRPF_CODE);
+			mysqlDB.getDeductionConceptId(IRPF_CODE.getName());
 		ctsqlDB.visitComplemento(this);
 		ctsqlDB.visitEmprper(this);
 	}
@@ -279,9 +290,39 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		Integer ccc = 
 			myEnterprise.getCCC(emprper.getCodact(), emprper.getCodccc());
 		if ( ccc == null ){
-			mysqlDB.error("emprper[{}] : Not found CCC {}/{}", 
+			mysqlDB.debug("emprper[{}] : Without CCC {}/{}", 
 					emprper.getCdg(), emprper.getCodact(), emprper.getCodccc());
-			return ;
+		}
+		
+		Integer activityId = myEnterprise.getActivityId(emprper.getCodact());
+		
+		
+		registration = null;
+		seniorityDate = null;
+		emprper.visitTrabajo_emprper(new DefaultCtsqlDBVisitor(){
+			@Override
+			public void visitTrabajo_emprper(Trabajo trabajo, Emprper emprper)
+					throws SQLException {
+				if ( outOfDate(trabajo.getFecfin()) ) 
+					return;
+				registration = trabajo.getNummat();	
+				seniorityDate = trabajo.getFecant();	
+			}
+		});
+		
+		String codCCC = emprper.getCodccc();
+		SSRegimeType ssRegimeType;
+		if ( ccc == null && "A".equalsIgnoreCase(codCCC) ) {
+			ssRegimeType = SSRegimeType.SELF_EMPLOYED;
+		} else {
+			String indRegimen = myEnterprise.getIndRegimen(emprper.getCodact());
+			if ( "A".equalsIgnoreCase(indRegimen)) {
+				ssRegimeType = SSRegimeType.AGRICULTURAL;
+			}else if ( "M".equalsIgnoreCase(indRegimen)) {
+				ssRegimeType = SSRegimeType.SEA_WORKERS;
+			} else {
+				ssRegimeType = SSRegimeType.GENERAL;
+			}
 		}
 		
 		this.contractId = 
@@ -293,7 +334,11 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					null,					// TODO: ¿ Calendar ?
 					null,
 					null,
-					enum2short(ContractStatus.PROCESSED));
+					enum2short(ContractStatus.PROCESSED),
+					registration,
+					seniorityDate,
+					activityId,
+					enum2short(ssRegimeType));
 		
 		
 		String numDoc = 
@@ -311,6 +356,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					PASSWORD);
 		}
 		contractDatas.clear();
+
 		emprper.visitTrabajo_emprper(this);
 		emprper.visitRel_pcp_epp(this);
 		emprper.visitRel_dto_per(this);
@@ -320,6 +366,9 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		//emprper.visitRel_fin_epp(this);
 		
 		emprper.visitTrabinci_emprper(this);
+		
+		emprper.visitRel_pit_epp(this);
+		emprper.visitPitnu_emprper(this);
 	}
 	
 	private String getIRPFExpression(BigDecimal percentage) {
@@ -364,21 +413,26 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			trabajo.getFecini();
 			
 		
-		String description = trabajo.getDestc2();
-		
-		mysqlDB.insertContract_data(
+		mysqlDB.insertContract_data(CATEGORY.getName(), 
 				this.contractId, 
-				trabajo.getCodtc2(), 
-				description, 
-				conditions, 
+				String.format("\"%s\"", trabajo.getCodcat()), 
 				trabajo.getFecini(), 
-				endDate,
-				trabajo.getCodbas(),
-				trabajo.getDescat(),
-				trabajo.getNummat(),
-				trabajo.getFecant());
+				endDate);
+
+		mysqlDB.insertContract_data(TC2.getName(), 
+				this.contractId, 
+				String.format("\"%s\"", trabajo.getCodtc2()), 
+				trabajo.getFecini(), 
+				endDate);
+
+		mysqlDB.insertContract_data(QUOTE_GROUP.getName(), 
+				this.contractId, 
+				String.format("\"%s\"", trabajo.getCodbas()), 
+				trabajo.getFecini(), 
+				endDate);
 		
 		BigDecimal irpf = trabajo.getIrpf();
+
 		/*
 		String irpfFunction = getIRPFExpression(irpf);
 		
@@ -393,7 +447,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 				endDate,
 				null );
 		*/
-		mysqlDB.insertContract_context(IRPF_PERCENT, 
+		mysqlDB.insertContract_data(IRPF_PERCENT.getName(), 
 				this.contractId, 
 				String.format("%.2f",irpf), 
 				trabajo.getFecini(), 
@@ -456,7 +510,9 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		
 		Double ssContributions = toDouble(nomina.getImporte_cuotas());
 
-		Double irpfBase = toDouble(nomina.getBase_irpf());
+		Double moneyIrpfBase = toDouble(nomina.getBase_irpf());
+		Double kindIrpfBase = toDouble(nomina.getBase_especie());
+		Double irpfBase = moneyIrpfBase + kindIrpfBase;
 		
 		Double totalDeduction = toDouble(nomina.getTotal_deducir());
 
@@ -510,6 +566,8 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					hextraBase,
 					nonHextraBase,
 					cgpBase,
+					moneyIrpfBase,
+					kindIrpfBase,
 					irpfBase,
 					ssContributions);
 		
@@ -661,8 +719,8 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	
 	private String getPorQuote(String porCot , String expr) {
 		return "M".equalsIgnoreCase(porCot) ? 
-				expr.replace(AMOUNT, "(" + AMOUNT + "/12)") : 
-					expr.replace(AMOUNT, "(" + AMOUNT + "*" + WORKED_DAYS + "/" + YEAR_DAYS + ")");
+				expr.replace(AMOUNT.getName(), "(" + AMOUNT + "/12)") : 
+					expr.replace(AMOUNT.getName(), "(" + AMOUNT + "*" + WORKED_DAYS + "/" + YEAR_DAYS + ")");
 	}
 
 	@Override
@@ -900,6 +958,8 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					0.00, 
 					0.00, 
 					0.00, 
+					baseIRPF, 
+					0.00, 
 					baseIRPF,
 					0.00);
 		
@@ -972,10 +1032,10 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		String expression = null;
 		String codinc = trabinci.getCodinc();
 		if ( codinc.contains("EFECTIVOS")) {
-			name = ACTUAL_DAYS;
+			name = ACTUAL_DAYS.getName();
 			expression = String.format("%d", trabinci.getCantidad());
 		}else if ( codinc.contains("ESPECIALES")) {
-			name = SPECIAL_DAYS;
+			name = SPECIAL_DAYS.getName();
 			expression = String.format("%d", trabinci.getCantidad());
 		}else {
 			name = codinc;
@@ -984,12 +1044,80 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		java.sql.Date endDate = 
 			getEndDate(trabinci.getFecfin(), emprper);
 		
-		mysqlDB.insertContract_context(name, 
+		mysqlDB.insertContract_data(name, 
 				this.contractId, 
 				expression, 
 				trabinci.getFecini(), 
 				endDate);
 	}
 
-
+	
+	private LeaveType getLeaveType(String tipoIt, String riesgo ) {
+		if ( "E".equalsIgnoreCase(tipoIt) ) {
+			return LeaveType.COMMON_DISEASE;
+		}
+		if ( "A".equalsIgnoreCase(tipoIt) ) {
+			return LeaveType.OCCUPATIONAL_DISEASE;
+		}
+		if ( "M".equalsIgnoreCase(tipoIt) ) {
+			return LeaveType.MATERNITY;
+		}
+		if ( "S".equalsIgnoreCase(riesgo)) {
+			return LeaveType.PREGNANCY_RISK;
+		}
+		return null;
+	}
+	
+	@Override
+	public void visitRel_pit_epp(Parteit parteit, Emprper emprper)
+			throws SQLException {
+		
+		java.sql.Date endDate = 
+			getEndDate(parteit.getFecfin(), emprper);
+		
+		boolean relapse = "S".equals(parteit.getRecaida());
+		
+		Double dailyCgcBase = toDouble(parteit.getBasediacg());
+		Double dailyCgpBase = toDouble(parteit.getBasediaacc());
+		
+		Short type = 
+			enum2short(getLeaveType(parteit.getTipoit(), parteit.getRiesgo()));
+		
+		
+		
+		mysqlDB.insertContract_leave(
+				type, 
+				this.contractId, 
+				relapse, 
+				null, 
+				parteit.getFecini(), 
+				endDate, 
+				dailyCgcBase, 
+				dailyCgpBase);
+	}
+	
+	@Override
+	public void visitPitnu_emprper(Parteitnu parteitnu, Emprper emprper)
+			throws SQLException {
+		java.sql.Date endDate = 
+			getEndDate(parteitnu.getFecfin(), emprper);
+		
+		boolean relapse = "S".equals(parteitnu.getRecaida());
+		
+		Double dailyCgcBase = toDouble(parteitnu.getBasediacg());
+		Double dailyCgpBase = toDouble(parteitnu.getBasediaacc());
+		
+		Short type = 
+			enum2short(getLeaveType(parteitnu.getTipoit(), parteitnu.getRiesgo()));
+		
+		mysqlDB.insertContract_leave(
+				type, 
+				this.contractId, 
+				relapse, 
+				null, 
+				parteitnu.getFecini(), 
+				endDate, 
+				dailyCgcBase, 
+				dailyCgpBase);
+	}
 }

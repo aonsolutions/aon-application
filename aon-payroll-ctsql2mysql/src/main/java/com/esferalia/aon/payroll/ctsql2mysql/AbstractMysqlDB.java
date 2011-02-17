@@ -2625,6 +2625,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Double hextra_base; 
 		private Double non_hextra_base; 
 		private Double cgp_base; 
+		private Double money_irpf_base; 
+		private Double inkind_irpf_base; 
 		private Double irpf_base; 
 		private Double social_security_contributions; 
 	}
@@ -2637,7 +2639,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( salaryStmt != null ) {
 				salaryStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -2646,7 +2648,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			salaryStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO salary (id,type,contract,start_date,end_date,enterprise_name,enterprise_address,enterprise_document,ccc,employee_name,social_security_number,employee_document,seniority_date,quote_group,category,registration,time_units,total_payment,total_deduction,total_liquid,total_enterprise,issue_date,remuneration,pro_ext_base,it_base,raw_cgc_base,cgc_base,hextra_base,non_hextra_base,cgp_base,irpf_base,social_security_contributions)"  
+				"INSERT INTO salary (id,type,contract,start_date,end_date,enterprise_name,enterprise_address,enterprise_document,ccc,employee_name,social_security_number,employee_document,seniority_date,quote_group,category,registration,time_units,total_payment,total_deduction,total_liquid,total_enterprise,issue_date,remuneration,pro_ext_base,it_base,raw_cgc_base,cgc_base,hextra_base,non_hextra_base,cgp_base,money_irpf_base,inkind_irpf_base,irpf_base,social_security_contributions)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			salaryStmtSize = size;
@@ -2775,6 +2777,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salaryStmt.setNull(offset++, 8);
 			else
 				salaryStmt.setDouble(offset++, salary.cgp_base);
+			if ( salary.money_irpf_base == null )
+				salaryStmt.setNull(offset++, 8);
+			else
+				salaryStmt.setDouble(offset++, salary.money_irpf_base);
+			if ( salary.inkind_irpf_base == null )
+				salaryStmt.setNull(offset++, 8);
+			else
+				salaryStmt.setDouble(offset++, salary.inkind_irpf_base);
 			if ( salary.irpf_base == null )
 				salaryStmt.setNull(offset++, 8);
 			else
@@ -2863,11 +2873,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
 	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
 	 * @param cgp_base Base de cotizacion por contingencias profesionales
+	 * @param money_irpf_base Salario en dinero sujeto a retencin I.R.P.F
+	 * @param inkind_irpf_base Salario en especie sujeto a retencin I.R.P.F
 	 * @param irpf_base Base sujeta a retencin I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
 	 * @throws SQLException
 	*/
-	protected void insertSalary(Integer id, Short type, Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Double total_enterprise, Date issue_date, Double remuneration, Double pro_ext_base, Double it_base, Double raw_cgc_base, Double cgc_base, Double hextra_base, Double non_hextra_base, Double cgp_base, Double irpf_base, Double social_security_contributions)
+	protected void insertSalary(Integer id, Short type, Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Double total_enterprise, Date issue_date, Double remuneration, Double pro_ext_base, Double it_base, Double raw_cgc_base, Double cgc_base, Double hextra_base, Double non_hextra_base, Double cgp_base, Double money_irpf_base, Double inkind_irpf_base, Double irpf_base, Double social_security_contributions)
 	throws SQLException {
 
 		Salary salary_ = new Salary();
@@ -2901,6 +2913,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		salary_.hextra_base = hextra_base;
 		salary_.non_hextra_base = non_hextra_base;
 		salary_.cgp_base = cgp_base;
+		salary_.money_irpf_base = money_irpf_base;
+		salary_.inkind_irpf_base = inkind_irpf_base;
 		salary_.irpf_base = irpf_base;
 		salary_.social_security_contributions = social_security_contributions;
 
@@ -2908,7 +2922,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int salaryCount = salarys.size();
 		
-		if ( 626 * salaryCount >=  this.maxAllowedPacket ){
+		if ( 656 * salaryCount >=  this.maxAllowedPacket ){
 			insertSalary(salarys);
 			salarys.clear();
 		} 
@@ -2946,12 +2960,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param hextra_base Base de cotizacion adicional por horas extraordinarias estructurales
 	 * @param non_hextra_base Base de cotizacion adicional por horas extraordinarias no estructurales
 	 * @param cgp_base Base de cotizacion por contingencias profesionales
+	 * @param money_irpf_base Salario en dinero sujeto a retencin I.R.P.F
+	 * @param inkind_irpf_base Salario en especie sujeto a retencin I.R.P.F
 	 * @param irpf_base Base sujeta a retencin I.R.P.F
 	 * @param social_security_contributions Aportaciones a la Seguridad Social
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSalary(Short type, Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Double total_enterprise, Date issue_date, Double remuneration, Double pro_ext_base, Double it_base, Double raw_cgc_base, Double cgc_base, Double hextra_base, Double non_hextra_base, Double cgp_base, Double irpf_base, Double social_security_contributions)
+	protected int insertSalary(Short type, Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Double total_enterprise, Date issue_date, Double remuneration, Double pro_ext_base, Double it_base, Double raw_cgc_base, Double cgc_base, Double hextra_base, Double non_hextra_base, Double cgp_base, Double money_irpf_base, Double inkind_irpf_base, Double irpf_base, Double social_security_contributions)
 	throws SQLException {
 		int id = nextSalaryId();
 
@@ -2986,6 +3002,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		salary_.hextra_base = hextra_base;
 		salary_.non_hextra_base = non_hextra_base;
 		salary_.cgp_base = cgp_base;
+		salary_.money_irpf_base = money_irpf_base;
+		salary_.inkind_irpf_base = inkind_irpf_base;
 		salary_.irpf_base = irpf_base;
 		salary_.social_security_contributions = social_security_contributions;
 
@@ -2993,7 +3011,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int salaryCount = salarys.size();
 		
-		if ( 626 * salaryCount >=  this.maxAllowedPacket ){
+		if ( 656 * salaryCount >=  this.maxAllowedPacket ){
 			insertSalary(salarys);
 			salarys.clear();
 		} 
@@ -5488,16 +5506,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private static class Contract_data {
 		private Integer id; 
+		private String name; 
 		private Integer contract; 
-		private String code; 
-		private String description; 
-		private String conditions; 
+		private String expression; 
 		private Date start_date; 
 		private Date end_date; 
-		private String quote_group; 
-		private String category; 
-		private Integer registration; 
-		private Date seniority_date; 
 	}
 	
 	private void insertContract_data( List<Contract_data> contract_datas )
@@ -5508,7 +5521,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contract_dataStmt != null ) {
 				contract_dataStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -5517,7 +5530,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			contract_dataStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO contract_data (id,contract,code,description,conditions,start_date,end_date,quote_group,category,registration,seniority_date)"  
+				"INSERT INTO contract_data (id,name,contract,expression,start_date,end_date)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			contract_dataStmtSize = size;
@@ -5530,22 +5543,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_dataStmt.setNull(offset++, 4);
 			else
 				contract_dataStmt.setInt(offset++, contract_data.id);
+			if ( contract_data.name == null )
+				contract_dataStmt.setNull(offset++, 12);
+			else
+				contract_dataStmt.setString(offset++, contract_data.name);
 			if ( contract_data.contract == null )
 				contract_dataStmt.setNull(offset++, 4);
 			else
 				contract_dataStmt.setInt(offset++, contract_data.contract);
-			if ( contract_data.code == null )
+			if ( contract_data.expression == null )
 				contract_dataStmt.setNull(offset++, 12);
 			else
-				contract_dataStmt.setString(offset++, contract_data.code);
-			if ( contract_data.description == null )
-				contract_dataStmt.setNull(offset++, 12);
-			else
-				contract_dataStmt.setString(offset++, contract_data.description);
-			if ( contract_data.conditions == null )
-				contract_dataStmt.setNull(offset++, 12);
-			else
-				contract_dataStmt.setString(offset++, contract_data.conditions);
+				contract_dataStmt.setString(offset++, contract_data.expression);
 			if ( contract_data.start_date == null )
 				contract_dataStmt.setNull(offset++, 91);
 			else
@@ -5554,22 +5563,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_dataStmt.setNull(offset++, 91);
 			else
 				contract_dataStmt.setDate(offset++, contract_data.end_date);
-			if ( contract_data.quote_group == null )
-				contract_dataStmt.setNull(offset++, 12);
-			else
-				contract_dataStmt.setString(offset++, contract_data.quote_group);
-			if ( contract_data.category == null )
-				contract_dataStmt.setNull(offset++, 12);
-			else
-				contract_dataStmt.setString(offset++, contract_data.category);
-			if ( contract_data.registration == null )
-				contract_dataStmt.setNull(offset++, 4);
-			else
-				contract_dataStmt.setInt(offset++, contract_data.registration);
-			if ( contract_data.seniority_date == null )
-				contract_dataStmt.setNull(offset++, 91);
-			else
-				contract_dataStmt.setDate(offset++, contract_data.seniority_date);
 		}
 		contract_dataStmt.executeUpdate();
 		contract_dataInserted += size;
@@ -5621,39 +5614,29 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Contract_data
 	 * @param id Identificador unico
+	 * @param name Nombre
 	 * @param contract Contrato
-	 * @param code Cdigo S.S (TC2)
-	 * @param description Descripcion
-	 * @param conditions Condiciones
+	 * @param expression Expresion
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
-	 * @param quote_group Grupo de Cotizacin
-	 * @param category Categoria o grupo profesional
-	 * @param registration Nmero libro de matricula
-	 * @param seniority_date Fecha de antiguedad 
 	 * @throws SQLException
 	*/
-	protected void insertContract_data(Integer id, Integer contract, String code, String description, String conditions, Date start_date, Date end_date, String quote_group, String category, Integer registration, Date seniority_date)
+	protected void insertContract_data(Integer id, String name, Integer contract, String expression, Date start_date, Date end_date)
 	throws SQLException {
 
 		Contract_data contract_data_ = new Contract_data();
 		contract_data_.id = id;
+		contract_data_.name = name;
 		contract_data_.contract = contract;
-		contract_data_.code = code;
-		contract_data_.description = description;
-		contract_data_.conditions = conditions;
+		contract_data_.expression = expression;
 		contract_data_.start_date = start_date;
 		contract_data_.end_date = end_date;
-		contract_data_.quote_group = quote_group;
-		contract_data_.category = category;
-		contract_data_.registration = registration;
-		contract_data_.seniority_date = seniority_date;
 
 		contract_datas.add(contract_data_);
 		
 		int contract_dataCount = contract_datas.size();
 		
-		if ( 257 * contract_dataCount >=  this.maxAllowedPacket ){
+		if ( 184 * contract_dataCount >=  this.maxAllowedPacket ){
 			insertContract_data(contract_datas);
 			contract_datas.clear();
 		} 
@@ -5662,41 +5645,31 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	/**
 	 * Contract_data
+	 * @param name Nombre
 	 * @param contract Contrato
-	 * @param code Cdigo S.S (TC2)
-	 * @param description Descripcion
-	 * @param conditions Condiciones
+	 * @param expression Expresion
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
-	 * @param quote_group Grupo de Cotizacin
-	 * @param category Categoria o grupo profesional
-	 * @param registration Nmero libro de matricula
-	 * @param seniority_date Fecha de antiguedad 
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_data(Integer contract, String code, String description, String conditions, Date start_date, Date end_date, String quote_group, String category, Integer registration, Date seniority_date)
+	protected int insertContract_data(String name, Integer contract, String expression, Date start_date, Date end_date)
 	throws SQLException {
 		int id = nextContract_dataId();
 
 		Contract_data contract_data_ = new Contract_data();
 		contract_data_.id = id;
+		contract_data_.name = name;
 		contract_data_.contract = contract;
-		contract_data_.code = code;
-		contract_data_.description = description;
-		contract_data_.conditions = conditions;
+		contract_data_.expression = expression;
 		contract_data_.start_date = start_date;
 		contract_data_.end_date = end_date;
-		contract_data_.quote_group = quote_group;
-		contract_data_.category = category;
-		contract_data_.registration = registration;
-		contract_data_.seniority_date = seniority_date;
 
 		contract_datas.add(contract_data_);
 		
 		int contract_dataCount = contract_datas.size();
 		
-		if ( 257 * contract_dataCount >=  this.maxAllowedPacket ){
+		if ( 184 * contract_dataCount >=  this.maxAllowedPacket ){
 			insertContract_data(contract_datas);
 			contract_datas.clear();
 		} 
@@ -12378,188 +12351,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 94 * inventoryCount >=  this.maxAllowedPacket ){
 			insertInventory(inventorys);
 			inventorys.clear();
-		} 
-		return id;
-	}
-
-
-	private int contract_contextStmtSize = 0;
-
-	private int contract_contextInserted = 0;
-
-	private List<Contract_context> contract_contexts = 
-		new LinkedList<Contract_context>();
-
-	private PreparedStatement contract_contextStmt = null;
-
-	private static class Contract_context {
-		private Integer id; 
-		private String name; 
-		private Integer contract; 
-		private String expression; 
-		private Date start_date; 
-		private Date end_date; 
-	}
-	
-	private void insertContract_context( List<Contract_context> contract_contexts )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = contract_contexts.size();
-		if ( contract_contextStmtSize != size ) {
-			if ( contract_contextStmt != null ) {
-				contract_contextStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			contract_contextStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO contract_context (id,name,contract,expression,start_date,end_date)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			contract_contextStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Contract_context contract_context : contract_contexts) {
-			if ( contract_context.id == null )
-				contract_contextStmt.setNull(offset++, 4);
-			else
-				contract_contextStmt.setInt(offset++, contract_context.id);
-			if ( contract_context.name == null )
-				contract_contextStmt.setNull(offset++, 12);
-			else
-				contract_contextStmt.setString(offset++, contract_context.name);
-			if ( contract_context.contract == null )
-				contract_contextStmt.setNull(offset++, 4);
-			else
-				contract_contextStmt.setInt(offset++, contract_context.contract);
-			if ( contract_context.expression == null )
-				contract_contextStmt.setNull(offset++, 12);
-			else
-				contract_contextStmt.setString(offset++, contract_context.expression);
-			if ( contract_context.start_date == null )
-				contract_contextStmt.setNull(offset++, 91);
-			else
-				contract_contextStmt.setDate(offset++, contract_context.start_date);
-			if ( contract_context.end_date == null )
-				contract_contextStmt.setNull(offset++, 91);
-			else
-				contract_contextStmt.setDate(offset++, contract_context.end_date);
-		}
-		contract_contextStmt.executeUpdate();
-		contract_contextInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Contract_contexts in {} milliseconds.", size, contract_contextInserted, elapsed );		
-	}
-		
-		private int contract_contextId = -1;
-		
-		private void initContract_contextId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `contract_context`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.contract_contextId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextContract_contextId() {
-			return ++this.contract_contextId;
-		} 
-
-		public void setContract_contextId(Integer contract_contextId) {
-			this.contract_contextId = contract_contextId;
-		} 
-	
-	private void flushContract_context(  )
-	throws SQLException {
-		if ( ! contract_contexts.isEmpty() )
-			insertContract_context(contract_contexts);
-		if ( contract_contextStmt != null )
-			contract_contextStmt.close();
-	}	
-
-	/**
-	 * Contract_context
-	 * @param id Identificador unico
-	 * @param name Nombre
-	 * @param contract Contrato
-	 * @param expression Expresion
-	 * @param start_date Fecha de inicio 
-	 * @param end_date Fecha de finalizacion
-	 * @throws SQLException
-	*/
-	protected void insertContract_context(Integer id, String name, Integer contract, String expression, Date start_date, Date end_date)
-	throws SQLException {
-
-		Contract_context contract_context_ = new Contract_context();
-		contract_context_.id = id;
-		contract_context_.name = name;
-		contract_context_.contract = contract;
-		contract_context_.expression = expression;
-		contract_context_.start_date = start_date;
-		contract_context_.end_date = end_date;
-
-		contract_contexts.add(contract_context_);
-		
-		int contract_contextCount = contract_contexts.size();
-		
-		if ( 184 * contract_contextCount >=  this.maxAllowedPacket ){
-			insertContract_context(contract_contexts);
-			contract_contexts.clear();
-		} 
-	}
-
-
-	/**
-	 * Contract_context
-	 * @param name Nombre
-	 * @param contract Contrato
-	 * @param expression Expresion
-	 * @param start_date Fecha de inicio 
-	 * @param end_date Fecha de finalizacion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertContract_context(String name, Integer contract, String expression, Date start_date, Date end_date)
-	throws SQLException {
-		int id = nextContract_contextId();
-
-		Contract_context contract_context_ = new Contract_context();
-		contract_context_.id = id;
-		contract_context_.name = name;
-		contract_context_.contract = contract;
-		contract_context_.expression = expression;
-		contract_context_.start_date = start_date;
-		contract_context_.end_date = end_date;
-
-		contract_contexts.add(contract_context_);
-		
-		int contract_contextCount = contract_contexts.size();
-		
-		if ( 184 * contract_contextCount >=  this.maxAllowedPacket ){
-			insertContract_context(contract_contexts);
-			contract_contexts.clear();
 		} 
 		return id;
 	}
@@ -30748,6 +30539,215 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int contract_leaveStmtSize = 0;
+
+	private int contract_leaveInserted = 0;
+
+	private List<Contract_leave> contract_leaves = 
+		new LinkedList<Contract_leave>();
+
+	private PreparedStatement contract_leaveStmt = null;
+
+	private static class Contract_leave {
+		private Integer id; 
+		private Short type; 
+		private Integer contract; 
+		private Boolean relapse; 
+		private String description; 
+		private Date start_date; 
+		private Date end_date; 
+		private Double daily_cgc_base; 
+		private Double daily_cgp_base; 
+	}
+	
+	private void insertContract_leave( List<Contract_leave> contract_leaves )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contract_leaves.size();
+		if ( contract_leaveStmtSize != size ) {
+			if ( contract_leaveStmt != null ) {
+				contract_leaveStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contract_leaveStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contract_leave (id,type,contract,relapse,description,start_date,end_date,daily_cgc_base,daily_cgp_base)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contract_leaveStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contract_leave contract_leave : contract_leaves) {
+			if ( contract_leave.id == null )
+				contract_leaveStmt.setNull(offset++, 4);
+			else
+				contract_leaveStmt.setInt(offset++, contract_leave.id);
+			if ( contract_leave.type == null )
+				contract_leaveStmt.setNull(offset++, -6);
+			else
+				contract_leaveStmt.setShort(offset++, contract_leave.type);
+			if ( contract_leave.contract == null )
+				contract_leaveStmt.setNull(offset++, 4);
+			else
+				contract_leaveStmt.setInt(offset++, contract_leave.contract);
+			if ( contract_leave.relapse == null )
+				contract_leaveStmt.setNull(offset++, -7);
+			else
+				contract_leaveStmt.setBoolean(offset++, contract_leave.relapse);
+			if ( contract_leave.description == null )
+				contract_leaveStmt.setNull(offset++, 12);
+			else
+				contract_leaveStmt.setString(offset++, contract_leave.description);
+			if ( contract_leave.start_date == null )
+				contract_leaveStmt.setNull(offset++, 91);
+			else
+				contract_leaveStmt.setDate(offset++, contract_leave.start_date);
+			if ( contract_leave.end_date == null )
+				contract_leaveStmt.setNull(offset++, 91);
+			else
+				contract_leaveStmt.setDate(offset++, contract_leave.end_date);
+			if ( contract_leave.daily_cgc_base == null )
+				contract_leaveStmt.setNull(offset++, 8);
+			else
+				contract_leaveStmt.setDouble(offset++, contract_leave.daily_cgc_base);
+			if ( contract_leave.daily_cgp_base == null )
+				contract_leaveStmt.setNull(offset++, 8);
+			else
+				contract_leaveStmt.setDouble(offset++, contract_leave.daily_cgp_base);
+		}
+		contract_leaveStmt.executeUpdate();
+		contract_leaveInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contract_leaves in {} milliseconds.", size, contract_leaveInserted, elapsed );		
+	}
+		
+		private int contract_leaveId = -1;
+		
+		private void initContract_leaveId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contract_leave`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contract_leaveId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContract_leaveId() {
+			return ++this.contract_leaveId;
+		} 
+
+		public void setContract_leaveId(Integer contract_leaveId) {
+			this.contract_leaveId = contract_leaveId;
+		} 
+	
+	private void flushContract_leave(  )
+	throws SQLException {
+		if ( ! contract_leaves.isEmpty() )
+			insertContract_leave(contract_leaves);
+		if ( contract_leaveStmt != null )
+			contract_leaveStmt.close();
+	}	
+
+	/**
+	 * Contract_leave
+	 * @param id Identificador unico
+	 * @param type Tipo de Baja
+	 * @param contract Contrato
+	 * @param relapse Recaida
+	 * @param description Descripcion
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param daily_cgc_base Base de cotizacion por contingencias comunes
+	 * @param daily_cgp_base Base de cotizacion por contingencias profesionales
+	 * @throws SQLException
+	*/
+	protected void insertContract_leave(Integer id, Short type, Integer contract, Boolean relapse, String description, Date start_date, Date end_date, Double daily_cgc_base, Double daily_cgp_base)
+	throws SQLException {
+
+		Contract_leave contract_leave_ = new Contract_leave();
+		contract_leave_.id = id;
+		contract_leave_.type = type;
+		contract_leave_.contract = contract;
+		contract_leave_.relapse = relapse;
+		contract_leave_.description = description;
+		contract_leave_.start_date = start_date;
+		contract_leave_.end_date = end_date;
+		contract_leave_.daily_cgc_base = daily_cgc_base;
+		contract_leave_.daily_cgp_base = daily_cgp_base;
+
+		contract_leaves.add(contract_leave_);
+		
+		int contract_leaveCount = contract_leaves.size();
+		
+		if ( 137 * contract_leaveCount >=  this.maxAllowedPacket ){
+			insertContract_leave(contract_leaves);
+			contract_leaves.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract_leave
+	 * @param type Tipo de Baja
+	 * @param contract Contrato
+	 * @param relapse Recaida
+	 * @param description Descripcion
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param daily_cgc_base Base de cotizacion por contingencias comunes
+	 * @param daily_cgp_base Base de cotizacion por contingencias profesionales
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	protected int insertContract_leave(Short type, Integer contract, Boolean relapse, String description, Date start_date, Date end_date, Double daily_cgc_base, Double daily_cgp_base)
+	throws SQLException {
+		int id = nextContract_leaveId();
+
+		Contract_leave contract_leave_ = new Contract_leave();
+		contract_leave_.id = id;
+		contract_leave_.type = type;
+		contract_leave_.contract = contract;
+		contract_leave_.relapse = relapse;
+		contract_leave_.description = description;
+		contract_leave_.start_date = start_date;
+		contract_leave_.end_date = end_date;
+		contract_leave_.daily_cgc_base = daily_cgc_base;
+		contract_leave_.daily_cgp_base = daily_cgp_base;
+
+		contract_leaves.add(contract_leave_);
+		
+		int contract_leaveCount = contract_leaves.size();
+		
+		if ( 137 * contract_leaveCount >=  this.maxAllowedPacket ){
+			insertContract_leave(contract_leaves);
+			contract_leaves.clear();
+		} 
+		return id;
+	}
+
+
 	private int calendar_holidayStmtSize = 0;
 
 	private int calendar_holidayInserted = 0;
@@ -42867,13 +42867,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Integer id; 
 		private Integer person; 
 		private Integer workplace; 
-		private Integer ccc; 
+		private Integer enterprise_ccc; 
 		private Date start_date; 
 		private Date end_date; 
 		private Integer calendar; 
 		private InputStream document; 
 		private String description; 
 		private Short status; 
+		private Integer registration; 
+		private Date seniority_date; 
+		private Integer enterprise_activity; 
+		private Short ss_regime; 
 	}
 	
 	private void insertContract( List<Contract> contracts )
@@ -42884,7 +42888,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contractStmt != null ) {
 				contractStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -42893,7 +42897,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			contractStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO contract (id,person,workplace,ccc,start_date,end_date,calendar,document,description,status)"  
+				"INSERT INTO contract (id,person,workplace,enterprise_ccc,start_date,end_date,calendar,document,description,status,registration,seniority_date,enterprise_activity,ss_regime)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			contractStmtSize = size;
@@ -42914,10 +42918,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contractStmt.setNull(offset++, 4);
 			else
 				contractStmt.setInt(offset++, contract.workplace);
-			if ( contract.ccc == null )
+			if ( contract.enterprise_ccc == null )
 				contractStmt.setNull(offset++, 4);
 			else
-				contractStmt.setInt(offset++, contract.ccc);
+				contractStmt.setInt(offset++, contract.enterprise_ccc);
 			if ( contract.start_date == null )
 				contractStmt.setNull(offset++, 91);
 			else
@@ -42942,6 +42946,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contractStmt.setNull(offset++, -6);
 			else
 				contractStmt.setShort(offset++, contract.status);
+			if ( contract.registration == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.registration);
+			if ( contract.seniority_date == null )
+				contractStmt.setNull(offset++, 91);
+			else
+				contractStmt.setDate(offset++, contract.seniority_date);
+			if ( contract.enterprise_activity == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.enterprise_activity);
+			if ( contract.ss_regime == null )
+				contractStmt.setNull(offset++, -6);
+			else
+				contractStmt.setShort(offset++, contract.ss_regime);
 		}
 		contractStmt.executeUpdate();
 		contractInserted += size;
@@ -42995,35 +43015,43 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param person Identificador de la Persona
 	 * @param workplace Identificador del Centro de Trabajo
-	 * @param ccc Identificador de la Cuota de Cotizacion
+	 * @param enterprise_ccc CCC
 	 * @param start_date Fecha de inicio del Contrato
 	 * @param end_date Fecha de finalizacion del Contrato
 	 * @param calendar Calendario
 	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
+	 * @param registration Nmero libro de matricula
+	 * @param seniority_date Fecha de antiguedad 
+	 * @param enterprise_activity Actividad
+	 * @param ss_regime Regimen de la Seguridad Social
 	 * @throws SQLException
 	*/
-	protected void insertContract(Integer id, Integer person, Integer workplace, Integer ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status)
+	protected void insertContract(Integer id, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime)
 	throws SQLException {
 
 		Contract contract_ = new Contract();
 		contract_.id = id;
 		contract_.person = person;
 		contract_.workplace = workplace;
-		contract_.ccc = ccc;
+		contract_.enterprise_ccc = enterprise_ccc;
 		contract_.start_date = start_date;
 		contract_.end_date = end_date;
 		contract_.calendar = calendar;
 		contract_.document = document;
 		contract_.description = description;
 		contract_.status = status;
+		contract_.registration = registration;
+		contract_.seniority_date = seniority_date;
+		contract_.enterprise_activity = enterprise_activity;
+		contract_.ss_regime = ss_regime;
 
 		contracts.add(contract_);
 		
 		int contractCount = contracts.size();
 		
-		if ( 137 * contractCount >=  this.maxAllowedPacket ){
+		if ( 170 * contractCount >=  this.maxAllowedPacket ){
 			insertContract(contracts);
 			contracts.clear();
 		} 
@@ -43034,17 +43062,21 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Contract
 	 * @param person Identificador de la Persona
 	 * @param workplace Identificador del Centro de Trabajo
-	 * @param ccc Identificador de la Cuota de Cotizacion
+	 * @param enterprise_ccc CCC
 	 * @param start_date Fecha de inicio del Contrato
 	 * @param end_date Fecha de finalizacion del Contrato
 	 * @param calendar Calendario
 	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
 	 * @param status Estado de notificacion del contrato
+	 * @param registration Nmero libro de matricula
+	 * @param seniority_date Fecha de antiguedad 
+	 * @param enterprise_activity Actividad
+	 * @param ss_regime Regimen de la Seguridad Social
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract(Integer person, Integer workplace, Integer ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status)
+	protected int insertContract(Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime)
 	throws SQLException {
 		int id = nextContractId();
 
@@ -43052,19 +43084,23 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_.id = id;
 		contract_.person = person;
 		contract_.workplace = workplace;
-		contract_.ccc = ccc;
+		contract_.enterprise_ccc = enterprise_ccc;
 		contract_.start_date = start_date;
 		contract_.end_date = end_date;
 		contract_.calendar = calendar;
 		contract_.document = document;
 		contract_.description = description;
 		contract_.status = status;
+		contract_.registration = registration;
+		contract_.seniority_date = seniority_date;
+		contract_.enterprise_activity = enterprise_activity;
+		contract_.ss_regime = ss_regime;
 
 		contracts.add(contract_);
 		
 		int contractCount = contracts.size();
 		
-		if ( 137 * contractCount >=  this.maxAllowedPacket ){
+		if ( 170 * contractCount >=  this.maxAllowedPacket ){
 			insertContract(contracts);
 			contracts.clear();
 		} 
@@ -51847,7 +51883,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushTax_account();
 		flushExpense();
 		flushInventory();
-		flushContract_context();
 		flushCommercial_term();
 		flushProduction_expense();
 		flushCommercial_activity();
@@ -51944,6 +51979,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushEnterprise_activity();
 		flushWeb_info_page_resource();
 		flushFbatch_detail();
+		flushContract_leave();
 		flushCalendar_holiday();
 		flushWorkgroup();
 		flushFunction_constant();
@@ -52251,8 +52287,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initInventoryId();
 		initMaxAllowedPacket();
-		initContract_contextId();
-		initMaxAllowedPacket();
 		initCommercial_termId();
 		initMaxAllowedPacket();
 		initProduction_expenseId();
@@ -52441,6 +52475,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initWeb_info_page_resourceId();
 		initMaxAllowedPacket();
 		initFbatch_detailId();
+		initMaxAllowedPacket();
+		initContract_leaveId();
 		initMaxAllowedPacket();
 		initCalendar_holidayId();
 		initMaxAllowedPacket();
