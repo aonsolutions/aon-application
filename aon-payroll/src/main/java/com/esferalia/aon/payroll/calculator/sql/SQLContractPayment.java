@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import java.sql.ResultSet;
+import java.util.Date;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
@@ -14,6 +15,8 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	public static final String MONTH 			= "month";
 	public static final String CONCEPT 			= "concept";
 	public static final String EXPRESSION 		= "expression";
+	public static final String START_DATE 		= "start_date";
+	public static final String END_DATE 		= "end_date";
 	public static final String DESCRIPTION 		= "description";
 	public static final String IRPF_EXPRESSION 	= "irpf_expression";
 	public static final String QUOTE_EXPRESSION = "quote_expression";
@@ -91,6 +94,16 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	@Override
 	public String getQuoteExpression() {
 		return getString(QUOTE_EXPRESSION);
+	}
+
+	@Override
+	public Date getStartDate() {
+		return getDate(START_DATE);
+	}
+
+	@Override
+	public Date getEndDate() {
+		return getDate(END_DATE);
 	}
 	
 }

@@ -57,17 +57,23 @@ public interface ISalaryBuilder {
 	
 	// ------------------------------------------------------------------------
 	// Bases 
-	public void setCommonBase(Double commonBase);
+	public void setItBase(Double itBase);
+
+	public void setRawCgcBase(Double rawCgcBase);
+
+	public void setCgcBase(Double cgcBase);
 	
-	public void setProfessionalBase(Double professionalBase);
+	public void setCgpBase(Double cgpBase);
 
 	public void setRemuneration(Double remuneration);
 	
-	public void setExtraPayProration(Double extraPayProration);
+	public void setProExtBase(Double proExtBase);
 	
 	public void setIrpfBase(Double irpfBase);
 	
-	public void setNonStructuralBase(Double nonStructuralBase);
+	public void setHExtraBase(Double hExtraBase);
+
+	public void setNonHExtraBase(Double nonHExtraBase);
 
 	// ------------------------------------------------------------------------
 	// Totals 

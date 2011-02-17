@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import com.code.aon.common.AonException;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 
 public interface IContractSalaryCalculatorContext extends ISalaryCalculatorContext {
@@ -16,6 +17,8 @@ public interface IContractSalaryCalculatorContext extends ISalaryCalculatorConte
 	public String getEnterpriseAddress();
 	
 	public String getEnterpriseDocument();
+	
+	public SSRegimeType getSSRegime();
 	
 	
 	public String getCategory();

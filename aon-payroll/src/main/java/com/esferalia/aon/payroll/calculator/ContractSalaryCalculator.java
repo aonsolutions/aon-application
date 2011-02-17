@@ -4,11 +4,13 @@ package com.esferalia.aon.payroll.calculator;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -18,53 +20,13 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.Period;
 
-import static com.esferalia.aon.salary.enumeration.PaymentType.*;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 public class ContractSalaryCalculator implements ISalaryCalculator{
 
-	public static final String YEAR_DAYS 	= "DIAS_AÑO";
-	public static final String MONTH_DAYS 	= "DIAS_MES";
-	public static final String HOLIDAYS 	= "DIAS_VACACIONES";
-	public static final String WORKED_DAYS 	= "DIAS_TRABAJADOS";
-	public static final String ACTUAL_DAYS 	= "DIAS_EFECTIVOS";
-	public static final String SPECIAL_DAYS = "DIAS_ESPECIALES";
-	public static final String SENIOR_BASE 	= "BASE_ANTIGUEDAD";
-	
-	public static final String CGC_CODE 					= "CGC";
-	public static final String FP_CODE 						= "FP";
-	public static final String UNEMPLOYMENT_CODE 			= "DESMP";
-	public static final String NON_STRUCTURAL_OVERTIME_CODE	= "NESTR";
-	public static final String STRUCTURAL_OVERTIME_CODE 	= "ESTR";
-	public static final String IRPF_CODE 					= "IRPF";
-	public static final String IRPF_PERCENT 				= "PORCENTAJE_IRPF";
-
-	public static final String CGC_BASE 					= "BASE_CGC";
-	public static final String CGP_BASE 					= "BASE_CGP";
-	public static final String STRUCTURAL_OVERTIME_BASE 	= "BASE_ESTR";
-	public static final String NON_STRUCTURAL_OVERTIME_BASE = "BASE_NESTR";
-	public static final String IRPF_BASE 					= "BASE_IRPF";
-
-	public static final String CGC_BASE_MIN 				= "BASE_CGC_MIN";
-	public static final String CGC_BASE_MAX 				= "BASE_CGC_MAX";
-	
-	public static final String AMOUNT 						= "IMPORTE";
-
-	private class SalaryBases {
-		
-		double cgcBase = 0 ;
-		double cgpBase = 0 ;
-		double irpfBase = 0 ;
-		
-		double structuralBase = 0;
-		double nonStructuralBase = 0;
-
-		double renumeration = 0;
-		double totalPayment = 0;
-		
-	}
-	
-	
 	private ISalaryBuilder salaryBuilder ;
 	
 	
@@ -132,35 +94,103 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			ctx.getExpressionContext();
 		try {
 			
-			SalaryBases salaryBases = new SalaryBases();
+			double irpfBase = 0 ;
+
+			double cgcBase = 0 ;
+			double cgpBase = 0 ;
 			
+			double structuralBase = 0;
+			double nonStructuralBase = 0;
+
+			double renumeration = 0;
+
+			double totalPayment = 0;
+			
+			Date start  = ctx.getStartDate();
+			Date end  = ctx.getEndDate();
 			Month issueMonth = getMonth(ctx.getIssueDate());
+			
+			SSRegimeType ssRegimen = ctx.getSSRegime();
 			
 			Collection<IContractPayment> payments =  ctx.getContractPayments();
 			for (IContractPayment contractPayment : payments) {
-				resolvePayment(expressionContext, contractPayment, issueMonth, salaryBases);
+				
+				Date paymentStart = Period.max(contractPayment.getStartDate(), start);
+				Date paymentEnd= Period.min(contractPayment.getEndDate(), end );
+				
+				
+				List<ITimedObject<Double>> amounts = 
+					expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
+				
+				Double amount = sum(amounts);
+				// TODO: ¿ Deberiamos crear un contexto nuevo ?
+				expressionContext.addVariable(AMOUNT, amount, paymentStart, paymentEnd );
+				
+				PaymentType type = contractPayment.getType();
+				
+				if ( ssRegimen != SSRegimeType.SELF_EMPLOYED ) {
+					String quoteExpr = contractPayment.getQuoteExpression();
+					List<ITimedObject<Double>> quotes = expressionContext.eval(quoteExpr, paymentStart, paymentEnd, Double.class) ;
+					Double quote = sum(quotes);
+					if ( type == PaymentType.STRUCTURAL_HOURS ){
+						structuralBase += quote;
+					}else if ( type == PaymentType.NON_STRUCTURAL_HOURS){
+							nonStructuralBase += quote;
+					}else {
+						cgcBase += quote;
+					}
+					cgpBase += quote;
+				} // TODO : Esto es muy primitivo, demasiado if 
+				
+				Month month = contractPayment.getMonth();
+				if ( month != null && month != issueMonth ) {
+					continue;
+				}
+					
+				renumeration += amount; 
+				if ( type != PaymentType.SALARY_IN_KIND ) {
+					totalPayment += amount;
+				}
+				
+				String irpfExpr = contractPayment.getIrpfExpression();
+				List<ITimedObject<Double>> irpfs = 
+					expressionContext.eval(irpfExpr, paymentStart, paymentEnd, Double.class);
+				double irpf = sum(irpfs);
+				irpfBase += irpf;
+
+				String concept = contractPayment.getName(); 
+				String description  = null;
+				try  {
+					Object result = expressionContext.eval(contractPayment.getDescription(),paymentStart, paymentEnd );
+					description = result != null ? result.toString() : null;
+				} catch (ExpressionException e ) {
+					description = contractPayment.getDescription();
+				}
+				
+				String expression = contractPayment.getExpression() ;
+				salaryBuilder.addPayment(type, concept, amount, description, expression);
 			}
-			salaryBuilder.setRemuneration(salaryBases.renumeration);
-			salaryBuilder.setTotalPayment(salaryBases.totalPayment);
 
-			salaryBuilder.setIrpfBase(salaryBases.irpfBase); 
-			expressionContext.put(IRPF_BASE, salaryBases.irpfBase);
+			salaryBuilder.setRemuneration(renumeration);
+			salaryBuilder.setTotalPayment(totalPayment);
 
-			double cgcBase = salaryBases.cgcBase ;
-			salaryBuilder.setCommonBase(cgcBase); 
-			expressionContext.put(CGC_BASE, cgcBase);
+			salaryBuilder.setIrpfBase(irpfBase); 
+			expressionContext.addVariable(IRPF_BASE, irpfBase, start, end );
+
+			salaryBuilder.setRawCgcBase(cgcBase); 
 			
-			double cgpBase = salaryBases.cgpBase ;
-			salaryBuilder.setProfessionalBase(cgpBase);
-			expressionContext.put(CGP_BASE, cgpBase);
-
-			salaryBuilder.setNonStructuralBase(salaryBases.nonStructuralBase); 
-			expressionContext.put(NON_STRUCTURAL_OVERTIME_BASE, salaryBases.nonStructuralBase);
+			expressionContext.addVariable(CGC_BASE, cgcBase, start, end );
 			
-			expressionContext.put(STRUCTURAL_OVERTIME_BASE, salaryBases.structuralBase);
+			salaryBuilder.setCgpBase(cgpBase);
+			expressionContext.addVariable(CGP_BASE, cgpBase, start, end );
+
+			salaryBuilder.setNonHExtraBase(nonStructuralBase); 
+			expressionContext.addVariable(NON_STRUCTURAL_OVERTIME_BASE, nonStructuralBase, start, end );
+			
+			expressionContext.addVariable(STRUCTURAL_OVERTIME_BASE, structuralBase, start, end );
 
 
-			return salaryBases.totalPayment ;
+			return totalPayment ;
 		}catch ( ExpressionException e ) {
 			throw new SalaryException(e.getMessage(),e);			
 		}catch (AonException e) {
@@ -198,74 +228,20 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		return Month.getMonthByValue(monthValue);
 	}
 	
-	private void taxPayment(ExpressionContext ctx,IContractPayment cp, SalaryBases bases) throws ExpressionException {
-		String irpfExpr = cp.getIrpfExpression();
-		double irpf = ctx.eval(irpfExpr, Double.class);
-		bases.irpfBase += irpf;
-	}
-
-	private void quotePayment(ExpressionContext ctx,IContractPayment cp, SalaryBases bases) throws ExpressionException {
-		String quoteExpr = cp.getQuoteExpression();
-		double quote = ctx.eval(quoteExpr, Double.class) ;
-		switch (cp.getType()) {
-			case STRUCTURAL_HOURS:
-				bases.structuralBase += quote;
-				break;
-			case NON_STRUCTURAL_HOURS:
-				bases.nonStructuralBase += quote;
-				break;
-			default:
-				bases.cgcBase += quote;
-		}
-		bases.cgpBase += quote;
-	}
-	
-	private void resolvePayment(ExpressionContext ctx,IContractPayment cp, Month salaryMonth, SalaryBases bases) throws ExpressionException {
-		
-		String expression = cp.getExpression() ;
-		PaymentType type = cp.getType();
-		Double amount = ctx.resolve(cp) ;
-		
-		// TODO: ¿ Deberiamos crear un contexto nuevo ?
-		ctx.put(AMOUNT, amount);
-		
-		quotePayment(ctx, cp, bases);
-
-		Month month = cp.getMonth();
-		if ( month != null && month != salaryMonth ) {
-			return;
-		}
-			
-		taxPayment(ctx, cp, bases);
-		
-		bases.renumeration += amount; 
-		if ( type != SALARY_IN_KIND ) {
-			bases.totalPayment += amount;
-		}
-		
-		String concept = cp.getName(); 
-		String description  = null;
-		try  {
-			Object result = ctx.eval(cp.getDescription());
-			description = result != null ? result.toString() : null;
-		} catch (ExpressionException e ) {
-			description = cp.getDescription();
-		}
-		
-		salaryBuilder.addPayment(type, concept, amount, description, expression);
-		
-	}
-	
 	
 	
 	private Double resolveDeduction(ExpressionContext ctx,IContractDeduction d) throws ExpressionException {
 		String concept = d.getName();
 		String expression = d.getExpression() ;
 		DeductionType type = d.getType()  ;
-		Double amount = ctx.resolve(d);
+		Date start = d.getStartDate();
+		Date end = d.getEndDate();
+		List<ITimedObject<Double>> amounts =  
+			ctx.addExpression(d, start, end, Double.class);
+		Double amount = sum(amounts);
 		String description  = null;
 		try  {
-			Object result = ctx.eval(d.getDescription());
+			Object result = ctx.eval(d.getDescription(), start, end);
 			description = result != null ? result.toString() : null;
 		} catch (ExpressionException e ) {
 			description = d.getDescription();
@@ -276,4 +252,11 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		return amount ;
 	}
 	
+	private static Double sum(List<ITimedObject<Double>> list) {
+		double  sum = 0.00;
+		for (ITimedObject<Double> timedObject : list) {
+			 sum += timedObject.getValue();
+		}
+		return sum;
+	}
 }

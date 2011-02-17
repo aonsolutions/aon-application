@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.calculator;
 
+import java.util.Date;
+
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
@@ -14,6 +16,10 @@ public class SimpleContractDeduction implements IContractDeduction {
 	private boolean readOnly;
 	private String expression;
 	private ExpressionScope scope;
+	
+	private Date startDate;
+	private Date endDate;
+	
 	
 	
 	@Override
@@ -64,6 +70,14 @@ public class SimpleContractDeduction implements IContractDeduction {
 	}
 	public void setScope(ExpressionScope scope) {
 		this.scope = scope;
+	}
+	@Override
+	public Date getStartDate() {
+		return startDate;
+	}
+	@Override
+	public Date getEndDate() {
+		return endDate;
 	}
 	
 }

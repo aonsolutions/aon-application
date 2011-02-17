@@ -25,6 +25,14 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class SalaryBuilderTester implements ISalaryBuilder {
 
+	private static final String CGC_BASE 		= "cgc_base";
+	private static final String CGP_BASE 		= "cgp_base";
+	private static final String IRPF_BASE 		= "irpf_base";
+	private static final String RAW_CGC_BASE 	= "raw_cgc_base";
+	private static final String TOTAL_LIQUID 	= "total_liquid";
+	private static final String TOTAL_PAYMENT 	= "total_payment";
+	private static final String TOTAL_DEDUCTION = "total_deduction";
+	
 	private static final String SALARY_SQL = "SELECT *"
 									+ " FROM salary"
 									+ " WHERE contract = ? "
@@ -165,46 +173,63 @@ public class SalaryBuilderTester implements ISalaryBuilder {
 	}
 
 	@Override
-	public void setCommonBase(Double commonBase) {
-		addField("raw_cgc_base", commonBase);
+	public void setCgcBase(Double cgcBase) {
+		addField(CGC_BASE, cgcBase);
 	}
 
 	@Override
-	public void setProfessionalBase(Double professionalBase) {
-		addField("cgp_base", professionalBase);
+	public void setRawCgcBase(Double rawCgcBase) {
+		addField(RAW_CGC_BASE, rawCgcBase);
+	}
+
+
+	@Override
+	public void setCgpBase(Double professionalBase) {
+		addField(CGP_BASE, professionalBase);
 	}
 
 	@Override
 	public void setRemuneration(Double remuneration) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void setExtraPayProration(Double extraPayProration) {
+	public void setProExtBase(Double extraPayProration) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void setIrpfBase(Double irpfBase) {
-		addField("irpf_base", irpfBase);
+		addField(IRPF_BASE, irpfBase);
 	}
 
 	@Override
-	public void setNonStructuralBase(Double overtimeBase) {
+	public void setNonHExtraBase(Double overtimeBase) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
+	public void setItBase(Double itBase) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setHExtraBase(Double hExtraBase) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void setTotalLiquid(Double totalLiquid) {
-		addField("total_liquid", totalLiquid);
+		addField(TOTAL_LIQUID, totalLiquid);
 	}
 
 	@Override
 	public void setTotalPayment(Double totalPayment) {
-		addField("total_payment", totalPayment);
+		addField(TOTAL_PAYMENT, totalPayment);
 	}
 
 	@Override
@@ -247,9 +272,9 @@ public class SalaryBuilderTester implements ISalaryBuilder {
 				return;
 			}
 			
-			assertDoubleField("total_payment", rs);
-			assertDoubleField("irpf_base", rs);
-			assertDoubleField("raw_cgc_base", rs); 
+			assertDoubleField(TOTAL_PAYMENT, rs);
+			assertDoubleField(IRPF_BASE, rs);
+			assertDoubleField(RAW_CGC_BASE, rs); 
 
 			//double sqlTotalLiquid = rs.getDouble("total_liquid");
 			//assertEquals(sqlTotalLiquid, this.totalLiquid, 0.00);
@@ -289,5 +314,7 @@ public class SalaryBuilderTester implements ISalaryBuilder {
 	private void addField(String field, Object value) {
 		this.fields.put(field, value);
 	}
+
+	
 	
 }

@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.calculator;
 
-import static com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.MONTH_DAYS;
-import static com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 import java.util.Collection;
 import java.util.Date;
@@ -9,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.omg.CORBA.CTX_RESTRICT_SCOPE;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
@@ -25,6 +25,7 @@ import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.FunctionConstant;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -51,13 +52,6 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext imp
 		return false;
 	}
 	
-	private void putExpressions(Collection<IExpression> expressions)
-	throws ExpressionException{
-		ExpressionContext expressionContext = getExpressionContext();
-		for (IExpression expression : expressions) {
-			expressionContext.put(expression);
-		}
-	}
 	
 	public ContractSalaryCalculatorContext(Contract contract) 
 	throws AonException {
@@ -69,14 +63,15 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext imp
 	public ExpressionContext getExpressionContext() {
 		ExpressionContext ctx = super.getExpressionContext();
 		if ( ctx == null ) {
-			setExpressionContext(new ExpressionContext());
+			ctx = new ExpressionContext();
 			try {
-				putExpressions(getSystemExpressions());
-				putExpressions(getApplicationExpressions());
-				putExpressions(getCrontactExpressions());
+				loadSystemExpressions(ctx);
+				loadApplicationExpressions(ctx);
+				loadCrontactExpressions(ctx);
 			} catch ( Exception e ) {}
+			setExpressionContext(ctx);
 		}
-		return super.getExpressionContext();
+		return ctx;
 	}
 	
 	@Override
@@ -128,12 +123,16 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext imp
 	public Date getSeniorityDate() {
 		return getContract().getStartDate();
 	}
+	
+	
+	@Override
+	public SSRegimeType getSSRegime() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	
-	public Collection<IExpression> getCrontactExpressions() throws AonException {
-		Collection<IExpression> contractExpressions = 
-			new LinkedList<IExpression>();
-
+	public void loadCrontactExpressions(ExpressionContext expressionContext) throws AonException {
 		Contract contract = getContract();
 		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 		Criteria criteria = new Criteria();
@@ -145,16 +144,12 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext imp
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to: list) {
 			ContractData ce = (ContractData) to;
-			contractExpressions.add(ce);
+			expressionContext.addExpression(ce, ce.getStartDate(), ce.getEndDate());
 		}
-		
-		return contractExpressions;
 	}
 	
-	public Collection<IExpression> getApplicationExpressions()
+	public void loadApplicationExpressions(ExpressionContext expressionContext)
 			throws AonException {
-		Collection<IExpression> appExpressions = 
-			new LinkedList<IExpression>();
 
 		IManagerBean bean = BeanManager.getManagerBean(FunctionConstant.class);
 		Criteria c = new Criteria();
@@ -165,32 +160,29 @@ public class ContractSalaryCalculatorContext extends SalaryCalculatorContext imp
 		List<ITransferObject> list = bean.getList(c);
 		for (ITransferObject to: list) {
 			FunctionConstant fc = (FunctionConstant) to;
-			appExpressions.add(fc);
+			expressionContext.addExpression(fc, fc.getStartDate(), fc.getEndDate());
 		}
 		
-		return appExpressions;
 	}
 	
-	public Collection<IExpression> getSystemExpressions() throws AonException{
-		Collection<IExpression> systemExpressions = 
-			new LinkedList<IExpression>();
+	public void loadSystemExpressions(ExpressionContext expressionContext) throws AonException{
 		
 		ExpressionImpl monthDays = new ExpressionImpl();
-		monthDays.setName(MONTH_DAYS);
+		monthDays.setName(MONTH_DAYS.getName());
 		monthDays.setScope(ExpressionScope.SYSTEM);
 		monthDays.setExpression(Long.toString(CommonUtil.getDaysBetweenDates(getStartDate(), getEndDate()) + 1));
-		systemExpressions.add(monthDays);
-
+		
+		expressionContext.addExpression(monthDays, getStartDate(), getEndDate());
+		
 		Contract contract = getContract();
 		ExpressionImpl jobDays = new ExpressionImpl();
-		jobDays.setName(WORKED_DAYS);
+		jobDays.setName(WORKED_DAYS.getName());
 		jobDays.setScope(ExpressionScope.SYSTEM);
 		Date startDate = contract.getStartDate().after( getStartDate() )?contract.getStartDate():getStartDate();
 		Date endDate = contract.getEndDate() != null && contract.getEndDate().before( getEndDate() )?contract.getEndDate():getEndDate();
 		jobDays.setExpression(Long.toString(CommonUtil.getDaysBetweenDates(startDate, endDate) + 1));
-		systemExpressions.add(jobDays);
 
-		return systemExpressions;
+		expressionContext.addExpression(jobDays, getStartDate(), getEndDate());
 	}
 	@Override
 	@SuppressWarnings("unchecked")

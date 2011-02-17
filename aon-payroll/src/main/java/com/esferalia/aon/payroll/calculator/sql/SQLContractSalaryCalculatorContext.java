@@ -14,10 +14,14 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractDeduction;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractPayment;
+import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -25,8 +29,9 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.Period;
 
-import static com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.*;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 public class SQLContractSalaryCalculatorContext implements
 		IContractSalaryCalculatorContext {
@@ -38,6 +43,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private static final String END_DATE				= "end_date";
 	
 	private static final String CCC						= "ccc";
+	private static final String SS_REGIME				= "ss_regime";
 	private static final String ENTERPRISE_NAME			= "enterprise_name";
 	private static final String ENTERPRISE_DOC			= "enterprise_doc";
 	
@@ -52,9 +58,9 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	private static final String MAIN_SQL = "SELECT "
 		+ "contract.id AS " + ID 
-		+", contract_data.start_date AS " + START_DATE
-		+", contract_data.end_date AS " + END_DATE
-		+", contract_data.category AS " + CATEGORY
+		+", contract.start_date AS " + START_DATE
+		+", contract.end_date AS " + END_DATE
+		+", contract.ss_regime AS " + SS_REGIME
 		+", person.name AS " + EMPLOYEE_NAME
 		+", person.first_surname AS " + EMPLOYEE_FIRST_SURNAME
 		+", person.second_surname AS " + EMPLOYEE_SECOND_SURNAME
@@ -63,26 +69,23 @@ public class SQLContractSalaryCalculatorContext implements
 		+", enterprise_ccc.ccc AS " + CCC
 		+", enterprise_registry.name AS " + ENTERPRISE_NAME
 		+", enterprise_registry.document AS " + ENTERPRISE_DOC
-		+" FROM contract_data"
-		+", contract"
+		+" FROM contract"
+		+ " LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
 		+", person"
 		+", registry AS person_registry"
-		+", enterprise_ccc"
 		+", workplace"
 		+", enterprise"
 		+", registry AS enterprise_registry"
 		+", raddress "
-		+" WHERE contract_data.contract = contract.id"			// INNER JOIN: contract es NOT NULL
-		+" AND contract.person = person.registry"				// INNER JOIN: person es NOT NULL
+		+" WHERE contract.person = person.registry"				// INNER JOIN: person es NOT NULL
 		+" AND person.registry = person_registry.id"			// INNER JOIN: registry es NOT NULL
-		+" AND contract.ccc = enterprise_ccc.id"				// INNER JOIN: ccc es NOT NULL
 		+" AND contract.workplace = workplace.id"				// INNER JOIN: workplace es NOT NULL
 		+" AND workplace.enterprise = enterprise.registry"		// INNER JOIN: enterprise es NOT NULL
 		+" AND enterprise.registry = enterprise_registry.id"	// INNER JOIN: registry es NOT NULL
 		+" AND workplace.address = raddress.id"					// INNER JOIN: address es NOT NULL
-		+" AND contract_data.start_date <= ? "					 
-		+" AND ( contract_data.end_date  IS NULL"
-		+" OR contract_data.end_date >= ? )";
+		+" AND contract.start_date <= ? "					 
+		+" AND ( contract.end_date  IS NULL"
+		+" OR contract.end_date >= ? )";
 	
 	private static final String PAYMENT_SQL =
 		"SELECT payment_concept AS " + SQLContractPayment.CONCEPT
@@ -92,6 +95,8 @@ public class SQLContractSalaryCalculatorContext implements
 		+", contract_payment.quote_expression AS " +  SQLContractPayment.QUOTE_EXPRESSION
 		+", contract_payment.type AS " +  SQLContractPayment.TYPE
 		+", contract_payment.month AS " +  SQLContractPayment.MONTH
+		+", contract_payment.start_date AS " +  SQLContractPayment.START_DATE
+		+", contract_payment.end_date AS " +  SQLContractPayment.END_DATE
 		+" FROM contract_payment"
 		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
 		+"	ON contract_payment.payment_concept = payment_concept.id"	
@@ -101,10 +106,12 @@ public class SQLContractSalaryCalculatorContext implements
 		+" OR contract_payment.end_date >= ? )";
 
 	private static final String DEDUCTION_SQL =
-		"SELECT deduction_concept AS " + SQLContractPayment.CONCEPT
-		+", contract_deduction.description AS " +  SQLContractPayment.DESCRIPTION
-		+", contract_deduction.expression AS " +  SQLContractPayment.EXPRESSION
-		+", contract_deduction.type AS " +  SQLContractPayment.TYPE
+		"SELECT deduction_concept AS " + SQLContractDeduction.CONCEPT
+		+", contract_deduction.description AS " +  SQLContractDeduction.DESCRIPTION
+		+", contract_deduction.expression AS " +  SQLContractDeduction.EXPRESSION
+		+", contract_deduction.type AS " +  SQLContractDeduction.TYPE
+		+", contract_deduction.start_date AS " +  SQLContractDeduction.START_DATE
+		+", contract_deduction.end_date AS " +  SQLContractDeduction.END_DATE
 		+" FROM contract_deduction"
 		+" LEFT JOIN  deduction_concept" 							// LEFT JOIN: deduction_concept puede ser NULL
 		+"	ON contract_deduction.deduction_concept = deduction_concept.id"	
@@ -115,25 +122,33 @@ public class SQLContractSalaryCalculatorContext implements
 		+" AND ( contract_deduction.month IS NULL " 
 		+" OR contract_deduction.month BETWEEN ? AND ?  )";
 	
-	private static final String FCONSTANT_NAME = "name";
-	private static final String FCONSTANT_EXPR = "expr";
+	private static final String FCONSTANT_NAME 			= "name";
+	private static final String FCONSTANT_EXPR 			= "expr";
+	private static final String FCONSTANT_START_DATE 	= "start_date";
+	private static final String FCONSTANT_END_DATE 		= "end_date";
 	
 	private static final String FCONSTANTS_SQL =
 		"SELECT name AS " + FCONSTANT_NAME
 		+", expression AS " + FCONSTANT_EXPR
+		+", start_date AS " + FCONSTANT_START_DATE
+		+", end_date AS " + FCONSTANT_END_DATE
 		+" FROM function_constant"
 		+" WHERE start_date <= ? "
 		+" AND ( end_date IS NULL "
 		+" OR end_date >= ? )";
 
-	private static final String CCONTEXT_NAME = "name";
-	private static final String CCONTEXT_EXPR = "expr";
+	private static final String CDATA_NAME = "name";
+	private static final String CDATA_EXPR = "expr";
+	private static final String CDATA_START_DATE 	= "start_date";
+	private static final String CDATA_END_DATE 		= "end_date";
 	
-	private static final String CCONTEXT_SQL =
-		"SELECT name AS " + CCONTEXT_NAME
-		+", expression AS " + CCONTEXT_EXPR
-		+" FROM contract_context"
-		+" WHERE contract_context.contract = ? " 
+	private static final String CDATA_SQL =
+		"SELECT name AS " + CDATA_NAME
+		+", expression AS " + CDATA_EXPR
+		+", start_date AS " + CDATA_START_DATE
+		+", end_date AS " + CDATA_END_DATE
+		+" FROM contract_data"
+		+" WHERE contract_data.contract = ? " 
 		+ "AND start_date <= ? "
 		+" AND ( end_date IS NULL "
 		+" OR end_date >= ? )";
@@ -237,10 +252,16 @@ public class SQLContractSalaryCalculatorContext implements
 	public String getEnterpriseDocument() {
 		return getString(ENTERPRISE_DOC );
 	}
+	
+	@Override
+	public SSRegimeType getSSRegime() {
+		int ordinal =  getInt(SS_REGIME); // 'ss_regime' is NOT NULL
+		return SSRegimeType.values()[ordinal];
+	}
 
 	@Override
 	public String getCategory() {
-		return getString(CATEGORY);
+		return null;
 	}
 
 	@Override
@@ -337,29 +358,6 @@ public class SQLContractSalaryCalculatorContext implements
 	// don't look it's private
 	//----------------------------------------------------------------------------------------
 	
-	private Date max ( Date date, Date anotherDate) {
-		if ( date == null ) {
-			return anotherDate;
-		}
-		
-		if (date.compareTo(anotherDate) < 0 ) {
-			return anotherDate;
-		}
-		
-		return date;
-	}
-
-	private Date min ( Date date, Date anotherDate) {
-		if ( date == null ) {
-			return anotherDate;
-		}
-		
-		if (date.compareTo(date) > 0 ) {
-			return anotherDate;
-		}
-		
-		return date;
-	}
 	
 	private void initResultSet() 
 	throws SQLException {
@@ -404,7 +402,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private void initCeventStmt()
 	throws SQLException {
 		this.ceventStmt  = 
-			this.connection.prepareStatement(CCONTEXT_SQL);
+			this.connection.prepareStatement(CDATA_SQL);
 		java.sql.Date sqlEndDate = 
 			new java.sql.Date(this.endDate.getTime());
 		this.ceventStmt.setDate(2, sqlEndDate);
@@ -414,7 +412,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private IExpression getYearDays() {
 		ExpressionImpl yearDaysExpr = 
 			new ExpressionImpl();
-		yearDaysExpr.setName(YEAR_DAYS);
+		yearDaysExpr.setName(YEAR_DAYS.getName());
 		yearDaysExpr.setScope(ExpressionScope.SYSTEM);
 		Date startDate = CommonUtil.getYearFirstDay(this.startDate);
 		Date endDate = CommonUtil.getYearLastDay(this.endDate);
@@ -428,7 +426,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private IExpression getMonthDays() {
 		ExpressionImpl monthDaysExpr = 
 			new ExpressionImpl();
-		monthDaysExpr.setName(MONTH_DAYS);
+		monthDaysExpr.setName(MONTH_DAYS.getName());
 		monthDaysExpr.setScope(ExpressionScope.SYSTEM);
 		Date startDate = CommonUtil.getMonthFirstDay(this.startDate);
 		Date endDate = CommonUtil.getMonthLastDay(this.endDate);
@@ -454,14 +452,14 @@ public class SQLContractSalaryCalculatorContext implements
 			new ExpressionContext();
 		
 		IExpression yearDaysExpr = getYearDays(); 
-		systemExpressionContext.put(yearDaysExpr);
+		systemExpressionContext.addExpression(yearDaysExpr, startDate, endDate);
 
 		IExpression monthDaysExpr = getMonthDays(); 
-		systemExpressionContext.put(monthDaysExpr);
+		systemExpressionContext.addExpression(monthDaysExpr, startDate, endDate);
 		
 		IExpression holidays = 
-			getZeroExpression (HOLIDAYS, ExpressionScope.SYSTEM);
-		systemExpressionContext.put(holidays);
+			getZeroExpression (HOLIDAYS.getName(), ExpressionScope.SYSTEM);
+		systemExpressionContext.addExpression(holidays, startDate, endDate);
 		
 		loadFunctionConstants(systemExpressionContext);
 	}
@@ -484,7 +482,9 @@ public class SQLContractSalaryCalculatorContext implements
 				expr.setName(rs.getString(FCONSTANT_NAME));
 				expr.setExpression(rs.getString(FCONSTANT_EXPR));
 				expr.setScope(ExpressionScope.APPLICATION);
-				expressionCtx.put(expr);
+				Date start = Period.max(rs.getDate(FCONSTANT_START_DATE), startDate);
+				Date end = Period.min ( rs.getDate(FCONSTANT_END_DATE), endDate );
+				expressionCtx.addExpression(expr, start, end );
 			}
 		}finally {
 			if ( rs != null )
@@ -497,13 +497,13 @@ public class SQLContractSalaryCalculatorContext implements
 	private IExpression getWorkedDays() {
 		ExpressionImpl workedDaysExpr = 
 			new ExpressionImpl();
-		workedDaysExpr.setName(WORKED_DAYS);
+		workedDaysExpr.setName(WORKED_DAYS.getName());
 		workedDaysExpr.setScope(ExpressionScope.CONTRACT);
-		Date startDate = max ( this.startDate, getDate(START_DATE));
-		Date endDate = min ( this.endDate, getDate(END_DATE));
+		Date start = Period.max ( this.startDate, getDate(START_DATE));
+		Date end = Period.min ( this.endDate, getDate(END_DATE));
 		long workedDays = 
-			CommonUtil.getDaysBetweenDates(startDate, 
-					endDate);
+			CommonUtil.getDaysBetweenDates(start, 
+					end);
 		workedDays += 1;
 		workedDaysExpr.setExpression(Long.toString(workedDays));
 		return workedDaysExpr;
@@ -516,7 +516,7 @@ public class SQLContractSalaryCalculatorContext implements
 		
 		IExpression workedDaysExpression = 
 			getWorkedDays();
-		this.contractExpressionContext.put(workedDaysExpression);
+		this.contractExpressionContext.addExpression(workedDaysExpression, startDate, endDate);
 		
 		ResultSet rs = null;
 		try{ 
@@ -525,10 +525,15 @@ public class SQLContractSalaryCalculatorContext implements
 			while ( rs.next() ) {
 				ExpressionImpl expr = 
 					new ExpressionImpl();
-				expr.setName(rs.getString(CCONTEXT_NAME));
-				expr.setExpression(rs.getString(CCONTEXT_EXPR));
+				expr.setName(rs.getString(CDATA_NAME));
+				expr.setExpression(rs.getString(CDATA_EXPR));
 				expr.setScope(ExpressionScope.CONTRACT );
-				this.contractExpressionContext.put(expr);
+				Date start = Period.max ( rs.getDate(CDATA_START_DATE), startDate );
+				Date end = Period.min( rs.getDate(CDATA_END_DATE), endDate );
+				try {
+					this.contractExpressionContext.addExpression(expr, start, end );
+				} catch (Exception e) {
+				}
 			}
 			
 		}finally {
@@ -540,6 +545,7 @@ public class SQLContractSalaryCalculatorContext implements
 		
 	}
 	
+
 	private int getInt(String columnLabel) {
 		try {
 			return this.resultSet.getInt(columnLabel);

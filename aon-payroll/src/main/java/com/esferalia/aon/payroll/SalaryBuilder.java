@@ -2,6 +2,10 @@ package com.esferalia.aon.payroll;
 
 import java.util.Date;
 
+import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -125,13 +129,13 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void setCommonBase(Double commonBase) {
+	public void setCgcBase(Double commonBase) {
 		this.salary.setCommonBase(commonBase);
 		
 	}
 
 	@Override
-	public void setProfessionalBase(Double professionalBase) {
+	public void setCgpBase(Double professionalBase) {
 		this.salary.setProfessionalBase(professionalBase);
 		
 	}
@@ -143,7 +147,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void setExtraPayProration(Double extraPayProration) {
+	public void setProExtBase(Double extraPayProration) {
 		this.salary.setExtraPayProration(extraPayProration);
 		
 	}
@@ -155,10 +159,27 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void setNonStructuralBase(Double overtimeBase) {
-		this.salary.setOvertimeBase(overtimeBase);
+	public void setNonHExtraBase(Double overtimeBase) {
 		
 	}
+	
+	@Override
+	public void setItBase(Double itBase) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setRawCgcBase(Double rawCgcBase) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setHExtraBase(Double hExtraBase) {
+		this.salary.setOvertimeBase(hExtraBase);
+	}
+	
+	
 
 	@Override
 	public void setTotalLiquid(Double totalLiquid) {
@@ -211,8 +232,6 @@ public class SalaryBuilder implements ISalaryBuilder {
 		this.salary.getSalaryDeductions().add(deduction);
 		
 	}
-	
-	
-	
+
 	
 }

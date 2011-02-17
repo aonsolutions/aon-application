@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 
@@ -121,6 +122,14 @@ public abstract class SQLCollection <E>  implements Collection<E>, Iterator<E> {
 		try {
 			Object value = this.resultSet.getObject(columnLabel);
 			return value == null? null : this.resultSet.getInt(columnLabel);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	protected Date getDate(String columnLabel) {
+		try {
+			return  this.resultSet.getDate(columnLabel);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

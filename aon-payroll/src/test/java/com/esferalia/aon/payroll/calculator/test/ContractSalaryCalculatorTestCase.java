@@ -10,6 +10,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -92,7 +95,7 @@ public class ContractSalaryCalculatorTestCase {
 	 * Test method for {@link com.esferalia.aon.payroll.calculator.ContractSalaryCalculator#calculate(com.esferalia.aon.salary.calculator.ISalaryCalculatorContext)}.
 	 */
 	@Test
-	public void testCalculate() throws SQLException, ExpressionException, SalaryException {
+	public void testCalculate() throws SQLException, ExpressionException, SalaryException, ParseException {
 		
 		SalaryBuilderTester salaryBuilderTester = 
 			new SalaryBuilderTester(connection);
@@ -101,15 +104,18 @@ public class ContractSalaryCalculatorTestCase {
 			new ContractSalaryCalculator();
 		calculator.setSalaryBuilder(salaryBuilderTester);
 		
-		Date startAndEndDate [] = getStartAndEndDate();
+		//Date startAndEndDate [] = getStartAndEndDate();
 		
-		Date startDate = startAndEndDate[0];
-		Date endDate = startAndEndDate[1];
+		SimpleDateFormat dateFormat = 
+			new SimpleDateFormat("dd/MM/yyyy");
+		
+		Date startDate =  dateFormat.parse("01/10/2010");// startAndEndDate[0];
+		Date endDate = dateFormat.parse("31/10/2010"); //startAndEndDate[1];
 		
 		info("testCalculate {}:{}",startDate, endDate);
 		
 		Criteria criteria = new Criteria();
-		//criteria.addEqualExpression("person_registry.document", "X2835073R");
+		criteria.addEqualExpression("person_registry.document", "50931576P");
 		
 		SQLContractSalaryCalculatorContext sqlCtx = 
 			new SQLContractSalaryCalculatorContext(connection, 
@@ -118,18 +124,19 @@ public class ContractSalaryCalculatorTestCase {
 					Calendar.getInstance().getTime(),
 					criteria );
 		
-		for ( int i = 0;  sqlCtx.next() ; i++ ) {
+		int count ;
+		for ( count = 0;  sqlCtx.next() ; count++ ) {
 			try {
 				calculator.calculate(sqlCtx);
 				debug("{} [{}] {}, {} ", 
-						i,
+						count,
 						sqlCtx.getEmployeeDocument(),
 						sqlCtx.getEnterpriseName(),
 						sqlCtx.getEmployeeName());
 				salaryBuilderTester.test();
 			}catch ( SalaryException e ) {
 				error("{} [{}] {}, {} : {}",
-						i,
+						count,
 						sqlCtx.getEmployeeDocument(),
 						sqlCtx.getEnterpriseName(),
 						sqlCtx.getEmployeeName(),
@@ -137,11 +144,14 @@ public class ContractSalaryCalculatorTestCase {
 			}
 	
 		}
+		info("salarys {} ",count);
+
 	}
 	
 	
 	private Date [] getStartAndEndDate() 
 	throws SQLException {
+		
 		ResultSet rs = null;
 		Statement stmt = null;
 		try {
