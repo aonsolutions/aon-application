@@ -31,7 +31,14 @@ public class ExpressionContext {
 		variables = new Variables(expressionContext.variables);
 	}
 	
-	
+	public Collection<IExpression> getValues() {
+		throw new UnsupportedOperationException();
+	}
+
+	public double resolve(IExpression expression) throws ExpressionException {	
+		throw new UnsupportedOperationException();
+	}
+
 	public void addVariable(Object name, ITimedObject<?> timedObject) {
 		variables.put(name.toString(), timedObject);
 	}
