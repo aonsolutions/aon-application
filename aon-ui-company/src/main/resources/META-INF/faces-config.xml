@@ -574,7 +574,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Enterprise_registry_surname,Enterprise_registry_name</value>
+			<value>Enterprise_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -583,6 +583,7 @@
 				<value>#{enterpriseSearch}</value>
 				<value>#{enterpriseForm}</value>
 				<value>#{enterpriseScopeListener}</value>
+				<value>#{enterpriseControllerListener}</value>				
 				<value>#{enterpriseWorkplaceChildListener}</value>
 				<value>#{enterpriseActivityChildListener}</value>
 				<value>#{enterpriseAddressListener}</value>
@@ -777,6 +778,15 @@
 			</map-entries>
 		</managed-property>		
 		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAddress_addressType</key>
+					<value>! #{registryCollections.addressTypes[0].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>			
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -813,7 +823,7 @@
 	<!--  **** ENTERPRISE MEDIA **** -->
 	<managed-bean>
 		<managed-bean-name>enterpriseMedia</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class> 
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryMediaController</managed-bean-class> 
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -1141,20 +1151,7 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{enterpriseWorkplaceListener}</value>
-			</list-entries>
-		</managed-property>
 	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>enterpriseWorkplaceListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.company.event.WorkPlaceControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>enterpriseWorkplaceChildListener</managed-bean-name>
@@ -1341,6 +1338,213 @@
 			<value>cnae</value>
 		</managed-property>
 	</managed-bean>	
+	
+	
+	<!-- ************ AGREEMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>agreement</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.company.controller.AgreementController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.Agreement</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>agreement</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Agreement_description</value>
+		</managed-property>	
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{agreementLevelListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ AGREEMENT LEVEL LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLevelListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>agreementLevel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AgreementLevel_agreement_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ AGREEMENT LEVEL ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLevel</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.AgreementLevel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>agreementLevel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>agreement</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>agreement.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>	
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AgreementLevel_description</value>
+		</managed-property>	
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{agreementLevelCategoryChildListener}</value>
+				<value>#{agreementLevelPaymentChildListener}</value>
+				<value>#{agreementLevelControllerListener}</value>
+			</list-entries>
+		</managed-property>	
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>agreementLevelControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.event.AgreementLevelControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	<!-- ************ AGREEMENT LEVEL CATEGORY LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLevelCategoryChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>agreementLevelCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AgreementLevelCategory_level_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ AGREEMENT LEVEL CATEGORY ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLevelCategory</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.AgreementLevelCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>agreementLevelCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>agreementLevel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>level.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+	<!-- ************ AGREEMENT LEVEL Payment LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLevelPaymentChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>agreementLevelPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AgreementLevelPayment_level_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ AGREEMENT LEVEL Payment ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLevelPayment</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.AgreementLevelPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>agreementLevelPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>agreementLevel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>level.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+	
 
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
@@ -1361,7 +1565,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Enterprise_registry_surname,Enterprise_registry_name</value>
+			<value>Enterprise_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
@@ -1372,15 +1576,10 @@
 			<value>/com/code/aon/ui/company/facelet/enterprise/searchBasicContent.xhtml</value>
 		</managed-property>
 		<managed-property>
-			<property-name>newPagePath</property-name>
-			<value>/com/code/aon/ui/company/facelet/enterprise/formNewContent.xhtml</value>
-		</managed-property>
-		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{enterpriseSearch}</value>
-				<value>#{enterpriseForm}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
@@ -1412,6 +1611,33 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ AGREEMENT LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>agreementLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.company.Agreement</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Agreement_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/company/facelet/agreement/listContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/company/facelet/agreement/searchLookupContent.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
 	<!-- =================== Company ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -1438,6 +1664,10 @@
 			<from-outcome>enterprise_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/search.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterprise_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/formTree.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
 	<!-- =================== Work Place ========================== -->
@@ -1447,12 +1677,8 @@
 			<to-view-id>/com/code/aon/ui/company/facelet/workplace/grid.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>enterpriseWorkplace_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/workplace/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>contractView_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/workplace/contractView.xhtml</to-view-id>
+			<from-outcome>enterpriseWorkplace_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/workplace/formTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 
@@ -1466,14 +1692,52 @@
 			<from-outcome>enterpriseActivity_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/enterpriseActivity/list.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterpriseActivity_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/enterpriseActivity/formTree.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
 	<!-- =================== CNAE ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>cnae</from-outcome>
+			<from-outcome>cnae_grid</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/cnae/grid.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>	
+		<navigation-case>
+			<from-outcome>cnae_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/cnae/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	
+	<!-- =================== Agreement ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>agreement_form</from-outcome>
+    		<to-view-id>/com/code/aon/ui/company/facelet/agreement/form.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>agreement_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/company/facelet/agreement/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>agreement_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/company/facelet/agreement/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>agreement_grid</from-outcome>
+    		<to-view-id>/com/code/aon/ui/company/facelet/agreement/grid.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== AgreementLevel ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>agreementLevel_form</from-outcome>
+    		<to-view-id>/com/code/aon/ui/company/facelet/agreementLevel/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+		
 			
 </faces-config>

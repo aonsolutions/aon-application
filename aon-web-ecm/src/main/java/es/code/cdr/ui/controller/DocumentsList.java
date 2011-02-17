@@ -77,7 +77,7 @@ public class DocumentsList implements Widget {
 	 */
 	public DataModel getVersionHistoryModel() {
 		try {
-			versionHistoryModel = new CDRDataModel( selected.getVersionHistory() );
+			versionHistoryModel = new CDRDataModel( selected==null?null:selected.getVersionHistory() );
 		} catch (RepositoryException e) {
 			versionHistoryModel = new CDRDataModel();
 			ECMUtil.addErrorMessage( e.getMessage() );

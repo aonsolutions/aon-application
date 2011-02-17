@@ -8,38 +8,27 @@
 
 	<aon:form id="enterpriseTreeForm">
 		<rich:tree id="enterpriseTree"
+			styleClass="aon-width-350" style="overflow:hidden;"
 			selectedClass="aon-tree-node-active"
 			highlightedClass="aon-tree-node-highlighted"			
 			adviseNodeSelected="#{enterpriseTree.adviseNodeSelected}" 
 			adviseNodeOpened="#{enterpriseTree.adviseNodeOpened}"
+			componentState="#{enterpriseTree.state}"
 			nodeSelectListener="#{enterpriseTree.processSelection}" 
-			switchType="server"
-			value="#{enterpriseTree.rootNode}" var="enterpriseNode"
-			nodeFace="#{enterpriseNode.typeName}">
+			value="#{enterpriseTree.rootNode}" var="enterpriseNode" >
 			
-			<rich:treeNode type="ENTERPRISE" 
-				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-root.png']}"
-				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-root.png']}">
-				<aon:commandLink action="enterprise_form" value="#{enterpriseNode.label}" />
+			<rich:treeNode styleClass="aon-width-all"
+				icon="#{enterpriseNode.type.icon}"
+				iconLeaf="#{enterpriseNode.type.icon}" >
+				<a4j:support event="onselected" reRender="aonContent"
+					action="#{enterpriseNode.type.action}" 
+					actionListener="#{enterpriseNode.actionListener}" />
+				<aon:outputText style="font-size: 0.8em;"
+					value="#{enterpriseNode.label}" >
+					<aon:abbreviateConverter maxWidth="45" />
+				</aon:outputText>
 			</rich:treeNode>
-			<rich:treeNode type="WORKPLACE"
-				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree.png']}" 
-				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree.png']}">
-				<aon:commandLink value="#{enterpriseNode.label}"
-					action="enterpriseWorkplace_form"
-					actionListener="#{enterpriseTree.onSelectWorkPlace}"/>
-			</rich:treeNode>
-			<rich:treeNode type="CONTRACT"
-				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-contact.png']}" 
-				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-contact.png']}">
-				<aon:commandLink
-					action="contractView_form"
-					actionListener="#{enterpriseTree.onSelectContract}">
-					<aon:outputText value="#{enterpriseNode.label}" >
-						<aon:abbreviateConverter maxWidth="20" />
-					</aon:outputText>
-				</aon:commandLink>
-			</rich:treeNode>				
+
 		</rich:tree>
 	</aon:form>	
 	

@@ -11,14 +11,22 @@
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
+		<resource-bundle>
+			<base-name>es.code.ecm.ui.i18n.messages</base-name>
+			<var>appBundle</var>
+		</resource-bundle>
+		<resource-bundle>
+			<base-name>es.code.ecm.ui.i18n.menu</base-name>
+			<var>menuBundle</var>
+		</resource-bundle>
 	</application>
-
+<!-- 
 	<lifecycle>
 		<phase-listener>
 			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
 		</phase-listener>
 	</lifecycle>
-
+ -->
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
 	<managed-bean>
 		<managed-bean-name>aonResource</managed-bean-name>
@@ -36,9 +44,7 @@
 		</managed-property>		
 	</managed-bean>
 
-	<!--  *************** 
-		AON CONFIGURATION
-		***************** -->
+	<!--  **** AON CONFIGURATION **** -->
 	<managed-bean>
 		<managed-bean-name>aonConfiguration</managed-bean-name>
 		<managed-bean-class>
@@ -48,30 +54,9 @@
 		<managed-property>
 			<property-name>styleSheets</property-name>
 			<list-entries>
-				<value>/#{aonResource.resolve['/aon-richCss.css']}</value>
-				<value>#{aonResource.resolveLocal['/css/ecm.css']}</value>
+				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/smb.css']}</value>
 			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>applicationBundles</property-name>
-			<map-entries>
-				<map-entry>
-					<key>bundle</key>
-					<value>com.code.aon.ui.common.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>appBundle</key>
-					<value>es.code.ecm.ui.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>menuBundle</key>
-					<value>es.code.ecm.ui.i18n.menu</value>
-				</map-entry>
-				<map-entry>
-					<key>securityBundle</key>
-					<value>com.code.aon.bridge.i18n.messages</value>
-				</map-entry>
-			</map-entries>
 		</managed-property>
 	</managed-bean>
 

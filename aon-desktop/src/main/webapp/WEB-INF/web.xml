@@ -125,9 +125,6 @@
 		<param-name>com.sun.faces.displayConfiguration</param-name>
 		<param-value>false</param-value>
 	</context-param>
-
-	<!-- JSF-FACELETS CONFIGURATION -->
-
 	<context-param>
 		<description>
 			When a page is requested, what interval in seconds should 
@@ -139,7 +136,6 @@
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
-
 	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
@@ -209,6 +205,45 @@
 		<param-value>richFaces3.3.3.Final/</param-value>
 	</context-param>	
 
+	<!-- Sessions Filter -->
+	<filter>
+		<description>Enables and Registers session for concurrent sessions</description>
+		<filter-name>SessionFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
+	</filter>
+	
+	<!-- Enables and Registers session for concurrent sessions -->
+	<filter-mapping>
+		<filter-name>SessionFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+
+	<!-- Listener, that enables Concurrent Sessions per User. -->
+	<listener>
+		<listener-class>
+			com.code.aon.bridge.session.ConcurrentSessionListener
+		</listener-class>
+	</listener>
+	
+	<!-- Document Servlet -->
+	<servlet>
+		<servlet-name>CorporateIdentityDocument</servlet-name>
+		<servlet-class>
+			com.code.aon.desktop.servlet.CorporateIdentityDocumentServlet
+		</servlet-class>
+		<init-param>
+			<param-name>pojo</param-name>
+			<param-value>
+				com.code.aon.registry.RegistryAttachment
+			</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CorporateIdentityDocument</servlet-name>
+		<url-pattern>*.cidocument</url-pattern>
+	</servlet-mapping>
+
+	<!-- RichFaces Filter -->
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -223,22 +258,6 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
-	<!-- Sessions Filter -->
-	<filter>
-		<description>Enables and Registers session for concurrent sessions</description>
-	   <filter-name>SessionFilter</filter-name>
-	   <filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>SessionFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-	</filter-mapping>
-
-  	<!-- Listener, that enables Concurrent Sessions per User. -->
-	<listener>
-		<listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
-	</listener>
-
 	<!-- Bean Loader Listener -->
     <listener>
        <listener-class>
@@ -248,9 +267,7 @@
 
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
-		<listener-class>
-			com.sun.faces.config.ConfigureListener
-		</listener-class>
+		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
 	</listener>
     
     <welcome-file-list>

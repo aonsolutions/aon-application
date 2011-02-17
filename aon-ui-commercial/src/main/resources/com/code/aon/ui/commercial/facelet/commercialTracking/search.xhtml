@@ -48,7 +48,7 @@
 							value="#{commercialTrackingSearch.seller.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="CommercialTracking_seller_lookup"
-							windowTitle="#{appBundle.aon_lookup_seller}"
+							windowTitle="#{salesBundle.sales_seller_selection}"
 							selectReRender="CommercialTracking_seller_id,CommercialTracking_seller_name"
 							lookup="#{sellerLookup}" minHeight="440"
 							property="#{commercialTrackingSearch.seller}">
@@ -67,7 +67,7 @@
 							value="#{commercialTrackingSearch.target.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="CommercialTracking_target_lookup"
-							windowTitle="#{appBundle.aon_lookup_target}" actionType="search"
+							windowTitle="#{commercialBundle.commercial_target_selection}" actionType="search"
 							selectReRender="CommercialTracking_target_id,CommercialTracking_target_name"
 							lookup="#{targetLookup}" minHeight="460" minWidth="650"
 							property="#{commercialTrackingSearch.target}">

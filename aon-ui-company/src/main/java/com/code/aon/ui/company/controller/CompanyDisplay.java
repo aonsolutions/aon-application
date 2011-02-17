@@ -63,7 +63,7 @@ public class CompanyDisplay {
 		return logo.getData();
 	}
 
-	public boolean hasLogo() {
+	public boolean isLogoDefined() {
 		return (getLogo() != null) && (! ArrayUtils.isEmpty(getCompanyLogo()));
 	}
 	
@@ -80,7 +80,7 @@ public class CompanyDisplay {
 	}
 
 	public boolean isShow() {
-		return !StringUtils.isEmpty(this.companyLabel) || hasLogo();
+		return !StringUtils.isEmpty(this.companyLabel) || isLogoDefined();
 	}
 	
 	public boolean isBigLogo() {
@@ -92,21 +92,24 @@ public class CompanyDisplay {
 	}
 
 	public void createLogoContent(OutputStream out, Object data) throws IOException {
-		if ( hasLogo() ) {
+		if ( isLogoDefined() ) {
 			out.write( getCompanyLogo() );
 		}
 	}
 
 	private Configuration getConfiguration( Properties dbs ) {
-		AnnotationConfiguration configuration = new AnnotationConfiguration();
+		AnnotationConfiguration configuration = null;
 		Properties properties = (dbs != null) ? dbs : DataSourceUtil.getDBProperties();
-		configuration.addProperties(properties);
-		configuration.configure(HIBERNATE_CONFIGURATION_FILE);
+		if (! properties.isEmpty() ) {
+			configuration = new AnnotationConfiguration();
+			configuration.addProperties(properties);
+			configuration.configure(HIBERNATE_CONFIGURATION_FILE);			
+		}
 		return configuration;
 	}
 	
 	private boolean calculateBigLog() {
-		if ( hasLogo() ) {
+		if ( isLogoDefined() ) {
 			InputStream in = new ByteArrayInputStream( getCompanyLogo() );
 			try {
 				BufferedImage image = ImageIO.read(in);
@@ -136,23 +139,24 @@ public class CompanyDisplay {
 		SessionFactory factory = null;
 		try {
 			Configuration configuration = getConfiguration(dbProperties);
-			factory =  configuration.buildSessionFactory();
-			
-			StatelessSession session = factory.openStatelessSession();
-			Criteria companyCriteria = session.createCriteria(Company.class);
-			List<?> companyList = companyCriteria.list();
-			if (! companyList.isEmpty() ) {
-				Company company = (Company) companyList.get(0); 
-				this.companyLabel = company.getName();
-				Criteria logoCriteria = session.createCriteria(RegistryAttachment.class);
-				logoCriteria.add(Restrictions.eq("registry.id", company.getId()));
-				logoCriteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
-				logoCriteria.add(Restrictions.isNotNull("data"));
-				List<?> logoList = logoCriteria.list();
-				RegistryAttachment logo = logoList.isEmpty() ? null : (RegistryAttachment) logoList.get(0);
-				update(company, logo);
+			if ( configuration != null ) {
+				factory = configuration.buildSessionFactory();
+				
+				StatelessSession session = factory.openStatelessSession();
+				Criteria companyCriteria = session.createCriteria(Company.class);
+				List<?> companyList = companyCriteria.list();
+				if (! companyList.isEmpty() ) {
+					Company company = (Company) companyList.get(0); 
+					Criteria logoCriteria = session.createCriteria(RegistryAttachment.class);
+					logoCriteria.add(Restrictions.eq("registry.id", company.getId()));
+					logoCriteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
+					logoCriteria.add(Restrictions.isNotNull("data"));
+					List<?> logoList = logoCriteria.list();
+					RegistryAttachment logo = logoList.isEmpty() ? null : (RegistryAttachment) logoList.get(0);
+					update(company, logo);
+				}
+				session.close();				
 			}
-			session.close();
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting company name and logo", th );
 		} finally {

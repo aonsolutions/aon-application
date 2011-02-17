@@ -3,11 +3,9 @@
 	<name>aon-web-payroll</name>
 	<comment></comment>
 	<projects>
-		<project>aon-ui-company</project>
-		<project>aon-ui-registry</project>
-		<project>aon-ui-webmail</project>
-		<project>aon-ui-resources</project>
-		<project>aon-company</project>
+		<project>aon-payroll</project>
+		<project>aon-ui-payroll</project>
+		<project>aon-salary</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -4,30 +4,199 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include
-		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+	<aon:outputLabel for="Person_id" rendered="#{!controller.new}" 
+		value="#{bundle.aon_id}" />
+	<aon:inputText id="Person_id" value="#{controller.to.id}"
+		rendered="#{!controller.new}" size="15" disabled="true" />
 
-	<aon:outputLabel for="Person_socialSecurityNumber"
-		value="#{registryBundle.registry_person_nss}" />
-	<aon:inputText id="Person_socialSecurityNumber"
-		value="#{controller.to.socialSecurityNumber}"
+	<aon:outputLabel for="Person_document" value="#{bundle.aon_document}" />
+	<aon:panelGroup id="registryDocumentPanel">
+		<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic"/>
+		<aon:selectOneMenu id="Person_document_country" value="#{controller.to.registry.documentCountry}"
+			styleClass="aon-margin-left">
+			<f:selectItem value="#{null}" itemLabel="-"/>
+			<f:selectItems value="#{commonCollections.countryCodes}" />
+			<a4j:support event="onchange" focus="Person_document_type"
+				actionListener="#{controller.onChangeDocument}"
+				ajaxSingle="true" limitToList="true"
+				reRender="registryDocumentPanel"/>
+		</aon:selectOneMenu>
+		<aon:outputText value="#{bundle.aon_type}" styleClass="aon-margin-left aon-italic"/>
+		<aon:selectOneMenu id="Person_document_type" value="#{controller.to.registry.documentType}"	styleClass="aon-margin-left">
+			<f:selectItem value="#{null}" itemLabel="-"/>
+			<f:selectItems value="#{registryCollections.documentTypes}" />
+			<a4j:support event="onchange" focus="Person_document"
+				actionListener="#{controller.onChangeDocument}" 
+				ajaxSingle="true" limitToList="true"
+				reRender="registryDocumentPanel"/>
+		</aon:selectOneMenu>
+		<aon:inputText id="Person_document" maxlength="16" style="margin-left: 5px;"
+			value="#{controller.to.registry.document}" size="16">
+			<f:validateLength minimum="1" maximum="16" />
+			<a4j:support event="onchange" focus="Person_name"
+				actionListener="#{controller.onChangeDocument}" 
+				ajaxSingle="true" limitToList="true"
+				reRender="registryDocumentPanel"/>
+		</aon:inputText>
+		<aon:outputText 
+			rendered="#{!controller.to.registry.documentValidable}"
+			styleClass="aon-icon-info"
+			style="padding-left: 15px;"
+			value="&#160;" />
+		<aon:outputText 
+			rendered="#{controller.to.registry.documentValidable and controller.to.registry.validDocument}"
+			styleClass="aon-icon-predetermine"
+			style="padding-left: 15px;"
+			value="&#160;" />
+		<aon:outputText 
+			rendered="#{controller.to.registry.documentValidable and !controller.to.registry.validDocument}"
+			styleClass="aon-icon-exception"
+			style="padding-left: 15px;"
+			value="&#160;" />
+		</aon:panelGroup>
+
+	<aon:outputLabel for="Person_name"
+		value="#{bundle.aon_name}" />
+	<aon:inputText id="Person_name" maxlength="64"
+		value="#{controller.to.name}" size="64">
+		<f:validateLength minimum="1" maximum="64" />
+	</aon:inputText>
+
+	<aon:outputLabel for="Person_firstSurname"
+		value="#{registryBundle.registry_person_firstSurname}" />
+	<aon:inputText id="Person_firstSurname" maxlength="64"
+		value="#{controller.to.firstSurname}" size="64">
+		<f:validateLength minimum="1" maximum="64" />
+	</aon:inputText>
+
+	<aon:outputLabel for="Person_secondSurname"
+		value="#{registryBundle.registry_person_secondSurname}" />
+	<aon:inputText id="Person_secondSurname" maxlength="64"
+		value="#{controller.to.secondSurname}" size="64">
+		<f:validateLength minimum="1" maximum="64" />
+	</aon:inputText>
+				
+	<aon:outputLabel for="Person_alias"
+		value="#{bundle.aon_alias}" />
+	<aon:inputText id="Person_alias" maxlength="32"
+		value="#{controller.to.registry.alias}" size="32">
+		<f:validateLength minimum="1" maximum="32" />
+	</aon:inputText>
+
+	<aon:outputLabel for="Person_birthDate"
+		value="#{registryBundle.registry_person_birthDate}" />
+	<aon:div>
+		<aon:selectInputDate id="Person_birthDate" 
+			value="#{controller.to.birthDate}"
+			inputSize="10" renderAsPopup="true" enableManualInput="true"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}">
+		</aon:selectInputDate>
+		<aon:outputText value="#{registryBundle.registry_nationality}" styleClass="aon-margin-left aon-italic"/>
+		<aon:selectOneMenu id="Person_nationality" value="#{controller.to.registry.nationality}"
+			styleClass="aon-margin-left">
+			<f:selectItem value="#{null}" itemLabel="-"/>
+			<f:selectItems value="#{commonCollections.countries}" />
+		</aon:selectOneMenu>
+	</aon:div>
+
+	<aon:outputLabel for="Person_socialSecurityNumber" value="#{registryBundle.registry_person_nss}" />
+	<aon:inputText id="Person_socialSecurityNumber" value="#{controller.to.socialSecurityNumber}"
 		size="32" maxlength="32" />
 
-	<aon:outputLabel for="Person_gender"
-		value="#{registryBundle.registry_person_gender}" />
+	<aon:outputLabel for="Person_gender" value="#{registryBundle.registry_person_gender}" />
 	<aon:selectOneMenu id="Person_gender"
 		value="#{controller.to.gender}" requiered="true">
 		<f:selectItems value="#{registryCollections.genders}" />
 	</aon:selectOneMenu>
-				
-	<aon:outputLabel for="Person_maritalStatus"
-		value="#{registryBundle.registry_person_marital_status}" />
+					
+	<aon:outputLabel for="Person_maritalStatus" value="#{registryBundle.registry_person_marital_status}" />
 	<aon:selectOneMenu id="Person_maritalStatus"
 		value="#{controller.to.maritalStatus}" requiered="true">
 		<f:selectItems value="#{registryCollections.maritalStatuses}" />
 	</aon:selectOneMenu>
+	
+	<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
+		<ui:param name="controllerLookupListener" value="#{personForm}"/>
+	</ui:include>	
 
+	<aon:outputLabel for="RegistryPayMethod_payment" value="#{configBundle.config_pay_method}" />
+	<aon:selectOneMenu id="RegistryPayMethod_payment" 
+		reRender="personForm" focus="RegistryPayMethod_bank"
+		value="#{personPayMethodForm.registryPayMethod.payment}">
+		<f:selectItem value="#{null}" />
+		<f:selectItems value="#{configCollections.payMethods}" />
+	</aon:selectOneMenu>				
+
+	<c:if test="#{personPayMethodForm.registryPayMethod.payment.type != null}">
+		<c:if test="#{personPayMethodForm.showCompanyBanks}">
+			<aon:outputLabel for="RegistryPayMethod_bank" value="#{configBundle.config_bank}" />
+			<aon:selectOneMenu id="RegistryPayMethod_bank"
+				value="#{personPayMethodForm.registryBank}">
+				<f:selectItem value="#{null}" />
+				<f:selectItems value="#{companyCollections.companyBanks}" />
+			</aon:selectOneMenu>
+		</c:if>					
+		<c:if test="#{!personPayMethodForm.showCompanyBanks and !personPayMethodForm.cash}">
+			<aon:outputLabel for="RegistryPayMethod_bank" value="#{configBundle.config_bank}" />
+			<aon:panelGroup>
+				<aon:lookupInputText id="RegistryPayMethod_bank" property="#{personPayMethodForm.registryBank.bank}"
+					reRender="RegistryBank_name" lookup="#{bankLookup}"
+					value="#{personPayMethodForm.registryBank.bank.code}" size="5">
+					<aon:joinProperty alias="Bank_code" value="#{personPayMethodForm.registryBank.bank.code}" />
+				</aon:lookupInputText>
+				<aon:lookupButton 
+					windowTitle="#{configBundle.config_bank_selection}"
+					selectReRender="RegistryPayMethod_bank,RegistryBank_name" actionType="search"
+					lookup="#{bankLookup}" minHeight="460" minWidth="650"
+					property="#{personPayMethodForm.registryBank.bank}">
+				</aon:lookupButton>
+				<aon:inputText id="RegistryBank_name"
+					value="#{personPayMethodForm.registryBank.bank.name}"
+					size="20" disabled="true" />
+				<aon:inputText label="#{configBundle.config_bank_code}" 
+					value="#{personPayMethodForm.registryBank.bankAccount.office}"
+					required="true" size="4" maxlength="4">
+					<f:validateLength minimum="4" maximum="4" />
+				</aon:inputText>
+				<aon:inputText label="#{configBundle.config_bank_control}"
+					value="#{personPayMethodForm.registryBank.bankAccount.control}"
+					required="true" size="2" maxlength="2">
+					<f:validateLength minimum="2" maximum="2" />
+				</aon:inputText>
+				<aon:inputText label="#{configBundle.config_bank_account}"
+					value="#{personPayMethodForm.registryBank.bankAccount.account}"
+					required="true" size="10" maxlength="10">
+					<f:validateLength minimum="10" maximum="10" />
+				</aon:inputText>
+			</aon:panelGroup>
+		</c:if>
+	</c:if>			
+	<c:if test="#{personPayMethodForm.registryPayMethod.payment.type != null}">				
+		<aon:outputLabel for="RegistryPayMethod_numberOfPayments" 
+			value="#{registryBundle.registry_number_of_payments}" />
+		<aon:inputText id="RegistryPayMethod_numberOfPayments"
+			value="#{personPayMethodForm.registryPayMethod.numberOfPayments}" required="true" size="5" >
+			<f:validateLongRange minimum="1" />
+		</aon:inputText>	
+		
+		<aon:outputLabel for="RegistryPayMethod_daysToFirstPayment" 
+			value="#{registryBundle.registry_days_to_first_payment}" />
+		<aon:inputText id="RegistryPayMethod_daysToFirstPayment"
+			value="#{personPayMethodForm.registryPayMethod.daysToFirstPayment}" required="true" size="5" />
+	
+		<aon:outputLabel for="RegistryPayMethod_daysBetweenPayments" 
+			value="#{registryBundle.registry_days_between_payments}" />
+		<aon:inputText id="RegistryPayMethod_daysBetweenPayments"
+			value="#{personPayMethodForm.registryPayMethod.daysBetweenPayments}" required="true" size="5" />
+	
+		<aon:outputLabel for="RegistryPayMethod_paymentDays"
+			value="#{registryBundle.registry_payment_days}" />
+		<aon:inputText id="RegistryPayMethod_paymentDays"
+			value="#{personPayMethodForm.registryPayMethod.paymentDays}" size="5" />
+	</c:if>
 </ui:composition>
 

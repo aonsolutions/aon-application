@@ -14,7 +14,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.config.Tariff;
 import com.code.aon.ebackoffice.Ecconfig;
 import com.code.aon.ebackoffice.enumeration.DiscountFormat;
 import com.code.aon.ebackoffice.enumeration.LoginType;
@@ -155,9 +154,6 @@ public class ConfigController {
 			to.setName("default");
 			to.setSkin(SkinType.BASICO1);
 			to.setEmail("your@email.com");
-			Tariff tariff = new Tariff();
-			tariff.setId(1);
-			to.setTariff(tariff);
 			bean.insert(to);
 			configList = bean.getList(null);
 		} catch (ManagerBeanException e) {
@@ -180,9 +176,8 @@ public class ConfigController {
 	}
 	
 	public void searchCurrentCompany(){
-		((CompanyController)FormUtil.getController("company")).onSearch(null);
-		((CompanyController)FormUtil.getController("company")).onSelectFirst(null);
-		setCompany(((Company)FormUtil.getController("company").getTo()));
+		CompanyController controller = (CompanyController)FormUtil.getController("company"); 
+		setCompany((Company)controller.getTo());
 	}
 	
 	public List<SelectItem> getPayMethodList(){

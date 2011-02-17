@@ -1,5 +1,6 @@
 package com.code.aon.registry;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
@@ -34,64 +37,29 @@ public class RegistryAddress implements ITransferObject, IAddress {
 
 	private static final long serialVersionUID = -104685154793784862L;
 
-	/** The id. */
-    private Integer id;
-
-    /** The registry. */
+	private Integer id;
     private Registry registry;
-
-    /** The type. */
     private AddressType type;
-
-    /** The recipient. */
     private String recipient;
-
-    /** The street type. */
     private StreetType streetType;
-
-    /** The 1st part of the address. */
     private String address;
-
-    /** The 2nd part of the address. */
+    private String number;
     private String address2;
-
-    /** The 3rd part of the address. */
     private String address3;
-
-    /** The zip code. */
     private String zip;
-
-    /** The city. */
     private String city;
-
-    /** The geozone. */
     private GeoZone geozone;
+    private String alias;
 
-    /**
-     * Gets the id.
-     * 
-     * @return the id
-     */
     @Id
     @GeneratedValue
 	public Integer getId() {
         return id;
     }
-
-    /**
-     * Sets the id.
-     * 
-     * @param id the id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Gets the registry.
-     * 
-     * @return the registry
-     */
     @ManyToOne
     @JoinColumn(name="registry", nullable = false, updatable = false)    
     @ForeignKey(name = "FK_RADDRESS_REGISTRY")
@@ -99,59 +67,34 @@ public class RegistryAddress implements ITransferObject, IAddress {
     public Registry getRegistry() {
         return registry;
     }
-
-    /**
-     * Sets the registry.
-     * 
-     * @param registry the registry
-     */
     public void setRegistry(Registry registry) {
         this.registry = registry;
     }
 
-    /**
-     * Gets the address.
-     * 
-     * @return the address
-     */
     @Column(length=128)
 	public String getAddress() {
         return address;
     }
-
-    /**
-     * Sets the address.
-     * 
-     * @param address the address
-     */
     public void setAddress(String address) {
         this.address = address;
     }
 
-    /**
-     * Gets the address2.
-     * 
-     * @return the address2
-     */
+	public String getNumber() {
+        return number;
+    }
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
     @Column(length=128)
 	public String getAddress2() {
         return address2;
     }
 
-    /**
-     * Sets the address2.
-     * 
-     * @param address2 the address2
-     */
     public void setAddress2(String address2) {
         this.address2 = address2;
     }
 
-    /**
-     * Gets the address3.
-     * 
-     * @return the address3
-     */
     @Column(length=128)
 	public String getAddress3() {
         return address3;
@@ -159,63 +102,44 @@ public class RegistryAddress implements ITransferObject, IAddress {
     
     @Transient
     public String getFullAddress() {
-    	return getAddress() +
-    		( StringUtils.isEmpty(getAddress2())?"":" " + getAddress2() ) +
-    		( StringUtils.isEmpty(getAddress3())?"":" " + getAddress3() );
-    }    
+    	StringBuffer buf = new StringBuffer();
+    	buf.append(getStreetType()==null?"":getStreetType());
+    	buf.append(getStreetType()==null?"":" ");
+    	buf.append(getAddress());
+    	buf.append(StringUtils.isEmpty(getNumber())?"":" ");
+    	buf.append(StringUtils.isEmpty(getNumber())?"":getNumber());
+    	buf.append(StringUtils.isEmpty(getAddress2())?"":" ");
+    	buf.append(StringUtils.isEmpty(getAddress2())?"":getAddress2() );
+    	buf.append(StringUtils.isEmpty(getAddress3())?"":" (");
+    	buf.append(StringUtils.isEmpty(getAddress3())?"":getAddress3() );
+    	buf.append(StringUtils.isEmpty(getAddress3())?"":")");
+    	return buf.toString();
+    }
+    @Transient
+    public String getShortAddress() {
+  		return StringUtils.isEmpty(getAlias())?StringUtils.abbreviate(getFullAddress(), 20): getAlias();
+    }
 
-    /**
-     * Sets the address3.
-     * 
-     * @param address3 the address3
-     */
     public void setAddress3(String address3) {
         this.address3 = address3;
     }
 
-    /**
-     * Gets the address type.
-     * 
-     * @return the address type
-     */
     @Column(name="type", nullable = false)
     public AddressType getAddressType() {
         return type;
     }
-
-    /**
-     * Sets the address type.
-     * 
-     * @param type the type
-     */
     public void setAddressType(AddressType type) {
         this.type = type;
     }
 
-    /**
-     * Gets the city.
-     * 
-     * @return the city
-     */
     @Column(length=64)
 	public String getCity() {
         return city;
     }
-
-    /**
-     * Sets the city.
-     * 
-     * @param city the city
-     */
     public void setCity(String city) {
         this.city = city;
     }
 
-	/**
-	 * Gets the geozone.
-	 * 
-	 * @return the geozone
-	 */
 	@ManyToOne
     @JoinColumn( name="geozone" )
     @ForeignKey(name = "FK_RADDRESS_GEOZONE")
@@ -223,74 +147,44 @@ public class RegistryAddress implements ITransferObject, IAddress {
     public GeoZone getGeozone() {
         return geozone;
     }
-
-    /**
-     * Sets the geozone.
-     * 
-     * @param geozone the geozone
-     */
     public void setGeozone(GeoZone geozone) {
         this.geozone = geozone;
     }
 
-    /**
-     * Gets the recipient.
-     * 
-     * @return the recipient
-     */
     @Column(length=128)
 	public String getRecipient() {
         return recipient;
     }
-
-    /**
-     * Sets the recipient.
-     * 
-     * @param recipient the recipient
-     */
     public void setRecipient(String recipient) {
         this.recipient = recipient;
     }
 
-    /**
-     * Gets the street type.
-     * 
-     * @return the street type
-     */
     @Column(name="street_type")
+   	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.registry.enumeration.StreetType") })
     public StreetType getStreetType() {
         return streetType;
     }
-
-    /**
-     * Sets the street type.
-     * 
-     * @param streetType the street type
-     */
     public void setStreetType(StreetType streetType) {
         this.streetType = streetType;
     }
 
-    /**
-     * Gets the zip code.
-     * 
-     * @return the zip code
-     */
     @Column(length=16)
 	public String getZip() {
         return zip;
     }
-
-    /**
-     * Sets the zip code.
-     * 
-     * @param zip the zip code
-     */
     public void setZip(String zip) {
         this.zip = zip;
     }
 
-	@Override
+    @Column(length=15)
+	public String getAlias() {
+        return alias;
+    }
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    @Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;

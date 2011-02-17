@@ -2,6 +2,7 @@ package com.code.aon.registry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -50,6 +51,8 @@ public class RegistryMedia implements ITransferObject {
 	private boolean commercial;
 
 	private boolean technical;
+
+    private RegistryAddress address;
 
 	/**
      * Gets the id.
@@ -178,7 +181,18 @@ public class RegistryMedia implements ITransferObject {
 		this.technical = technical;
 	}
 
-	@Override
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="raddress")
+    @ForeignKey(name = "FK_RMEDIA_RADDRESS")
+    @Index(name = "IDX_RMEDIA_RADDRESS")
+    public RegistryAddress getAddress() {
+        return address;
+    }
+    public void setAddress(RegistryAddress address) {
+        this.address = address;
+    }
+
+    @Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;
@@ -193,6 +207,7 @@ public class RegistryMedia implements ITransferObject {
 				.append(this.administrative, o.administrative)
 				.append(this.commercial, o.commercial)
 				.append(this.technical, o.technical)
+				.append(this.address ,o.address)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -209,6 +224,7 @@ public class RegistryMedia implements ITransferObject {
 			.append(administrative)
 			.append(commercial)
 			.append(technical)
+			.append(address)
 			.toHashCode();
 	}
 

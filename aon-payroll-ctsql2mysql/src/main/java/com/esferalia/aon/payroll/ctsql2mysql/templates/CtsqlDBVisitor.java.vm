@@ -1,12 +1,3 @@
-package com.esferalia.aon.payroll.ctsql2mysql;
-
-
-import java.sql.SQLException;
-
-#foreach($table in $tables)
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.$table;
-#end
-
 /********************************************************************
 * Copyright (c) 2010, esferalia NETWORKS S.A
 *
@@ -19,17 +10,27 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.$table;
 * under which the program has been supplied.
 *********************************************************************
 */
+package com.esferalia.aon.payroll.ctsql2mysql;
+
+import java.sql.SQLException;
+
+#foreach($table in $tables)
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.$table;
+#end
 
 public interface CtsqlDBVisitor {
 	
-	public boolean visit ( CtsqlDB ctsqlDB ) throws SQLException;
+	public void visit ( AbstractCtsqlDB ctsqlDB ) 
+	throws SQLException;
 	
 #foreach($table in $tables)
 
-	public boolean visit$table($table $table.name)throws SQLException;
+	public void visit$table($table $table.name)
+	throws SQLException;
 
 #foreach ($child in $table.childs)
-	public boolean visit${child.table}($child.table $child.table.name, $table $table.name)throws SQLException;
+	public void visit${child}($child.table $child.table.name, $table $table.name)
+	throws SQLException;
 
 #end	
 #end

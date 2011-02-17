@@ -1,16 +1,3 @@
-package com.esferalia.aon.payroll.ctsql2mysql;
-
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import java.math.BigDecimal;
-
 /********************************************************************
 * Copyright (c) 2010, esferalia NETWORKS S.A
 *
@@ -24,6 +11,19 @@ import java.math.BigDecimal;
 *********************************************************************
 */
 
+package com.esferalia.aon.payroll.ctsql2mysql;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import java.math.BigDecimal;
+
 /**
 * AbstractCtsqlDB
 * 
@@ -35,8 +35,69 @@ public class AbstractCtsqlDB {
 	private Connection ctsqlConnection;
 
 
+	public AbstractCtsqlDB( Connection ctsqlConnection) {
+		this.ctsqlConnection = ctsqlConnection;
+	}
+
 #foreach($table in $tables)
 	
+#foreach ($child in $table.childs)
+		
+	private PreparedStatement ${child.name}Stmt = null;
+		
+	private void init${child}Stmt() 
+	throws SQLException{
+		this.${child.name}Stmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+#foreach ($column in $child.table.columns)
+				+ "#if( $velocityCount > 1 ),#end${column.name}" 
+#end
+				+ " FROM ${child.table.name}"
+				+ " WHERE" 
+#foreach ($col in $child.fkColumns) 
+				+ " $col.name = ?  " #if( $velocityHasNext ) + "AND" #end  
+#end
+			); 
+	}
+
+	private void close${child}Stmt() 
+	throws SQLException{
+		if ( ${child.name}Stmt != null ) { 
+			${child.name}Stmt.close();
+			${child.name}Stmt = null;	
+		}
+	}
+#end
+
+#foreach ($parent in $table.parents)
+#set( $tnerap = $StringUtils.reverse($parent.name) )
+#set( $Tnerap = $StringUtils.capitalize($tnerap) )
+	private PreparedStatement _${tnerap}Stmt = null;
+		
+	private void init${Tnerap}Stmt() 
+	throws SQLException{
+		this._${tnerap}Stmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+#foreach ($column in $parent.table.columns)
+				+ "#if( $velocityCount > 1 ),#end${column.name}" 
+#end
+				+ " FROM ${parent.table.name}"
+				+ " WHERE" 
+#foreach ($col in $parent.pkColumns) 
+				+ " $col.name = ?  " #if( $velocityHasNext ) + "AND" #end  
+#end
+			); 
+	}
+
+	private void close${Tnerap}Stmt() 
+	throws SQLException{
+		if ( _${tnerap}Stmt != null ) { 
+			_${tnerap}Stmt.close();
+			_${tnerap}Stmt = null;	
+		}
+	}
+#end
+
 	/**
 	 * $table
 	 * $table.remarks
@@ -59,65 +120,112 @@ public class AbstractCtsqlDB {
 		public ${column.javaClass} get${column}()
 		throws SQLException {
 #if ($column.javaClass.equals("Integer"))
-			return rs.getInt("${column.name}");
+			return rs.getInt(${velocityCount});
 #else
-			return rs.get${column.javaClass}("${column.name}");
+			return rs.get${column.javaClass}(${velocityCount});
 #end
 		}
 #end
 
-#foreach ($child in $table.childs)
-		public void visit${child.table}(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+#foreach ($parent in $table.parents)
+#set( $tnerap = $StringUtils.reverse($parent.name) )
+#set( $Tnerap = $StringUtils.capitalize($tnerap) )
+		/**
+		 * Visit ${parent.table} that's parent of this ${table}. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visit${parent}(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 			ResultSet 			rs 	= null;
-			PreparedStatement	stmt 	= null;
-			boolean				resume 	= true;
-	
 			try {
-				stmt = ctsqlConnection.prepareStatement(
-					"SELECT * FROM ${child.table.name} WHERE" 
-#foreach ($col in $child.fkColumns) 
-					+ " $col.name = ?  " #if( $velocityHasNext ) + "AND" #end  
-#end
-				);
-#foreach ($col in $child.pkColumns)
+				
+				if ( _${tnerap}Stmt == null )
+					 init${Tnerap}Stmt();
+				
+#foreach ($col in $parent.fkColumns)
 #if ($col.javaClass.equals("Integer"))
-				stmt.setInt($velocityCount, this.get${col}() ); 
+				_${tnerap}Stmt.setInt($velocityCount, this.get${col}()); 
 #else
-				stmt.set${col.javaClass}($velocityCount, this.get${col}() ); 
+				_${tnerap}Stmt.set${col.javaClass}($velocityCount, this.get${col}()); 
 #end
 #end
-				rs = stmt.executeQuery();
-				${child.table} ${child.table.name} = new ${child.table}(rs); 
-				while ( resume && rs.next() ) {
-					resume = ctsqlDBVisitor.visit${child.table}(${child.table.name}, this);
+				rs = _${tnerap}Stmt.executeQuery();
+				${parent.table} ${parent.table.name} = new ${parent.table}(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visit${parent}(this, ${parent.table.name});
 				}
 			}
 			finally {
 				if ( rs != null )
 					rs.close();
-				if ( stmt != null )
-					stmt.close();
+			}
+		}
+#end
+
+#foreach ($child in $table.childs)
+		
+		/**
+		 * Visit ${child.table} that're children of this ${table}. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visit${child}(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( ${child.name}Stmt == null )
+					 init${child}Stmt();
+				
+#foreach ($col in $child.pkColumns)
+#if ($col.javaClass.equals("Integer"))
+				${child.name}Stmt.setInt($velocityCount, this.get${col}()); 
+#else
+				${child.name}Stmt.set${col.javaClass}($velocityCount, this.get${col}()); 
+#end
+#end
+				rs = ${child.name}Stmt.executeQuery();
+				${child.table} ${child.table.name} = new ${child.table}(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visit${child}(${child.table.name}, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
 			}
 		}
 #end
 	}
 	
+
 #end
 
-#foreach($table in $tables)
+	public void visit (CtsqlDBVisitor ctsqlDBVisitor) 
+	throws SQLException
+	{
+		ctsqlDBVisitor.visit(this);
+	}
 
+#foreach($table in $tables)
+	/**
+	 * Visit all ${table}'s .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
 	public void visit$table(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
 		ResultSet rs 	= null;
 		Statement stmt 	= null;
-		boolean	resume 	= true;
-
 		try {
 			
 			stmt = ctsqlConnection.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM $table" );
+			rs = stmt.executeQuery("SELECT "
+#foreach ($column in $table.columns)
+				+ "#if( $velocityCount > 1 ),#end${column.name}" 
+#end
+				+ " FROM ${table.name}");
 			$table $table.name = new $table(rs); 
-			while ( resume && rs.next() ) {
-				resume = ctsqlDBVisitor.visit$table($table.name);
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visit$table($table.name);
 			}
 		}
 		finally {
@@ -131,10 +239,20 @@ public class AbstractCtsqlDB {
 
 #end
 
-	public AbstractCtsqlDB( Connection ctsqlConnection) {
-		this.ctsqlConnection = ctsqlConnection;
+	@Override
+	protected void finalize() throws Throwable {
+#foreach($table in $tables)
+#foreach ($child in $table.childs)
+		close${child}Stmt();
+#end	
+#foreach ($parent in $table.parents)
+#set( $tnerap = $StringUtils.reverse($parent.name) )
+#set( $Tnerap = $StringUtils.capitalize($tnerap) )
+		close${Tnerap}Stmt();
+#end	
+#end
+		super.finalize();
 	}
-
 
 
 

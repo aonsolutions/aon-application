@@ -7,7 +7,7 @@ public class FAB {
 	
 	private String accion;
 	private String situacion;
-	private String fechaReal;
+	private Integer fechaReal;
 	private String grupoCotizacion;
 	private String claveContratoTrabajo;
 	private String condicionDesempleado;
@@ -42,10 +42,10 @@ public class FAB {
 	public void setSituacion(String situacion) {
 		this.situacion = situacion;
 	}
-	public String getFechaReal() {
+	public Integer getFechaReal() {
 		return fechaReal;
 	}
-	public void setFechaReal(String fechaReal) {
+	public void setFechaReal(Integer fechaReal) {
 		this.fechaReal = fechaReal;
 	}
 	public String getGrupoCotizacion() {

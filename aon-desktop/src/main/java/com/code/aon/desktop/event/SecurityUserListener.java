@@ -88,9 +88,8 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		User user = (User) event.getController().getTo();
-		user.setAvailable(this.active);
+		user.setActive(this.active);
 		user.setName(this.name + " " + this.surname);
-		user.setStatus(0);
 		UserController uc = (UserController) event.getController();
 		UserManager userManager = uc.getUserManager();
 		userManager.setPassword( user.getLogin() );		
@@ -109,7 +108,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		User user = (User) event.getController().getTo();
-		user.setAvailable(this.active);
+		user.setActive(this.active);
 		user.setName(this.name + " " + this.surname);
 	}
 

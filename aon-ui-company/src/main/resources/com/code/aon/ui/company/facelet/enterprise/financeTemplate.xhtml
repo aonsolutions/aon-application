@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+
+	<aon:panel>
+		<f:facet name="header">
+			<aon:outputText value="#{registryBundle.registry_banks_module}" />
+		</f:facet>
+		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
+			<ui:param name="controller" value="#{enterpriseRbank}" />
+		</ui:include>
+	</aon:panel>
+	<aon:panel>
+		<f:facet name="header">
+			<aon:outputText	value="#{configBundle.config_predef_paymethod}" />
+		</f:facet>
+		<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
+			<ui:param name="controller" value="#{enterpriseRPayMethod}" />
+		</ui:include>
+	</aon:panel>
+	
+</ui:composition>

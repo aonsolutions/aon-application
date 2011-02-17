@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div styleClass="aon-group">
+		<aon:div styleClass="aon-group-title">
+			<aon:outputText value="#{companyBundle.company_data_module}"/>
+		</aon:div>
+		<aon:div styleClass="aon-group-body"> 
+			<aon:div styleClass="aon-group-body-internal">
+				<aon:panelGrid columns="2" style="width:100%">
+					<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+				
+					<ui:insert name="dataPanel"/>
+					
+				</aon:panelGrid>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+					
+	<aon:div>
+		<c:if test="#{!skipSecurityPanel}">
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{bundle.aon_security}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 
+					<aon:div styleClass="aon-group-body-internal">
+						<aon:panelGrid columns="2" style="width:100%">		
+									
+							<ui:insert name="securityPanel"/>
+							
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</c:if>
+		
+		<c:if test="#{!skipLogoPanel}">
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{companyBundle.company_logo}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 
+					<aon:div styleClass="aon-group-body-internal">
+						<aon:panelGrid columns="2" style="width:100%">
+							<aon:outputLabel for="attach_file"
+								value="#{companyBundle.company_logo}" />
+							<a4j:region>
+								<h:panelGrid id="attachGrid" columns="2">
+								
+									<ui:insert name="logoPanel"/>
+									
+								</h:panelGrid>
+							</a4j:region>
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
+			</aon:div>			
+		</c:if>
+
+		<c:if test="#{!skipOtherDataPanel}">
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{companyBundle.company_other_data}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 	
+					<aon:div styleClass="aon-group-body-internal">
+						<a4j:region>
+							<aon:panelGrid id="companyOtherData" columns="2" style="width:100%">		
+								
+								<ui:insert name="othersPanel"/>
+								
+							</aon:panelGrid>
+						</a4j:region>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</c:if>
+	</aon:div>
+
+</ui:composition>

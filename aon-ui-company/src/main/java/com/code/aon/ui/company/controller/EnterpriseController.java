@@ -1,70 +1,133 @@
 package com.code.aon.ui.company.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.event.ValueChangeEvent;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.CNAE;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
+import com.code.aon.company.Agreement;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.EnterpriseCCC;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
-import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryDirStaff;
+import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.registry.controller.RegistryController;
 
 public class EnterpriseController extends RegistryController implements ICompanyConstants {
 	
-	private EnterpriseActivity activity;
-	
-	private EnterpriseCCC ccc;
-	
-	private boolean activityDirty;
-	
-	private boolean cccDirty;
+	private RegistryInfo info = new RegistryInfo();
 
-    public EnterpriseActivity getActivity() {
+	private boolean showActivityNode;
+	private EnterpriseActivity activity;	
+	private EnterpriseCCC ccc;
+	private WorkPlace workplace;
+	private RegistryDirStaff dirStaff;
+	
+	private boolean treeView;
+	
+	private AonFile aonFile;
+	private RegistryAttachment attach;
+	
+	private Agreement agreement;
+
+    public boolean isTreeView() {
+		return treeView;
+	}
+
+	public void setTreeView(boolean treeView) {
+		this.treeView = treeView;
+	}
+	
+	public boolean isShowActivityNode() {
+		return showActivityNode;
+	}
+
+	public EnterpriseActivity getActivity() {
 		return activity;
 	}
 
 	public void setActivity(EnterpriseActivity activity) {
 		this.activity = activity;
 	}
+	
+	public RegistryAddress getMainAddress() {
+		return info.getAddress();
+	}
+	
+	public WorkPlace getWorkplace() {
+		return workplace;
+	}
 
-	public EnterpriseCCC getCCC() {
+	public void setWorkplace(WorkPlace workplace) {
+		this.workplace = workplace;
+	}
+
+	public RegistryDirStaff getDirStaff() {
+		return dirStaff;
+	}
+
+	public void setDirStaff(RegistryDirStaff dirStaff) {
+		this.dirStaff = dirStaff;
+	}
+	    
+    public RegistryMedia getPhone() {
+		return info.getPhone();
+	}
+
+	public RegistryMedia getFax() {
+		return info.getFax();
+	}
+
+	public RegistryMedia getEmail() {
+		return info.getEmail();
+	}
+
+	public RegistryMedia getWeb() {
+		return info.getWeb();
+	}
+
+	public EnterpriseCCC getCcc() {
 		return ccc;
 	}
 
-	public void setCCC(EnterpriseCCC ccc) {
+	public void setCcc(EnterpriseCCC ccc) {
 		this.ccc = ccc;
 	}
 	
-	public boolean isActivityDirty() {
-		return activityDirty;
+	public Agreement getAgreement() {
+		return agreement;
 	}
 
-	public void setActivityDirty(boolean activityDirty) {
-		this.activityDirty = activityDirty;
-	}
-
-	public boolean isCCCDirty() {
-		return cccDirty;
-	}
-
-	public void setCCCDirty(boolean cccDirty) {
-		this.cccDirty = cccDirty;
+	public void setAgreement(Agreement agreement) {
+		this.agreement = agreement;
 	}
 
 	/**
@@ -104,16 +167,15 @@ public class EnterpriseController extends RegistryController implements ICompany
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to : list) {
 			EnterpriseCCC ccc = (EnterpriseCCC)to;
-			cccs.add(new SelectItem(ccc, ccc.getCCC()));
+			cccs.add(new SelectItem(ccc, ccc.getCcc()));
 		}
     	return cccs;
     }	    
 
 	private void loadMainActivity() throws ManagerBeanException {
-		Enterprise enterprise = (Enterprise) getTo();
 		IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
+		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
 		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_TYPE), EnterpriseActivityType.PRINCIPAL);
 		List<ITransferObject> activities = activityBean.getList(criteria);
 		if (! activities.isEmpty() ) {
@@ -124,74 +186,156 @@ public class EnterpriseController extends RegistryController implements ICompany
 			cccCriteria.addEqualExpression(cccBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
 			List<ITransferObject> cccs = cccBean.getList(cccCriteria);
 			if (! cccs.isEmpty() ) {
-				setCCC( (EnterpriseCCC) cccs.get(0) );
+				setCcc( (EnterpriseCCC) cccs.get(0) );
 			}
+			this.showActivityNode = (activities.size() > 1) || (cccs.size() > 1);
 		}
 	}    
 	
-	public void saveMainActivity() throws ManagerBeanException {
-		Enterprise enterprise = (Enterprise) getTo();
-		if ( isActivityDirty() ) {
-			IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
-			getActivity().setEnterprise(enterprise);
-			activityBean.insertOrUpdate(getActivity());
-			setActivityDirty(false);
-		}
-		if ( isCCCDirty() ) {
-			IManagerBean cccBean = BeanManager.getManagerBean(EnterpriseCCC.class);	
-			getCCC().setActivity(getActivity());
-			if ( getCCC().getGeozone() == null ) {
-				getCCC().setGeozone(getMainGeoZone(enterprise));
-			}
-			cccBean.insertOrUpdate(getCCC());
-			setCCCDirty(false);
-		}
-	}    	
-	
-	public void resetMainActivity() {
-		setActivity( new EnterpriseActivity() );
-		getActivity().setType( EnterpriseActivityType.PRINCIPAL );
-		getActivity().setCnae( new CNAE() );
-		setCCC( new EnterpriseCCC() );    		
-		getCCC().setType( CCCType.PRINCIPAL );
-    	setActivityDirty(false);
-    	setCCCDirty(false);		
+	public void reset() {
+    	this.showActivityNode = false;
+    	setActivity(null);
+    	setCcc(null);
+    	setWorkplace(null);
+    	setDirStaff(null);
+    	setAonFile(null);
+    	this.info.reset();
+    	setAgreement(new Agreement());
 	}
     
     public void initMainActiviy() throws ManagerBeanException {
-    	resetMainActivity();
     	if (! isNew() ) {
     		loadMainActivity();
     	}
     }
     
-    public void onCNAEChanged( LookupChangeEvent event ) {
-    	setActivityDirty(true);
-    	if ( event.getNewValue() != null ) {
-    		CNAE cnae = (CNAE) event.getNewValue();
-    		getActivity().setDescription( cnae.getTitle() );
+    public Enterprise getEnterprise() {
+    	return (Enterprise) getTo();
+    }
+    
+    public void initRegistryInfo() throws ManagerBeanException {
+    	this.info.init( getEnterprise().getRegistry() );
+    }
+    
+    public void saveMainAddress() throws ManagerBeanException {
+    	IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
+    	if(! StringUtils.isEmpty(getMainAddress().getAddress()) ){
+    		bean.insertOrUpdate(getMainAddress());
     	}
     }
+    
+    public void initMainWorkPlace() throws ManagerBeanException {
+    	WorkPlace workPlace = null;
+    	IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId() );
+    	if ( (getMainAddress() != null) && (getMainAddress().getId() != null) ) {
+    		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ADDRESS_ID), getMainAddress().getId() );
+    	}
+    	List<ITransferObject> list = bean.getList(criteria);
+    	if (! list.isEmpty() ) {
+    		workPlace = (WorkPlace) list.get(0);	
+    	}
+		setWorkplace(workPlace);
+    }
+    
+    public void initMainDirStaff() throws ManagerBeanException {
+    	RegistryDirStaff dirStaff = null;
+    	IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), getEnterprise().getRegistry().getId() );
+    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR), true );
+    	List<ITransferObject> list = bean.getList(criteria);
+    	if (! list.isEmpty() ) {
+    		dirStaff = (RegistryDirStaff) list.get(0);	
+    	}
+    	setDirStaff(dirStaff);
+    }
+    
+    public void onTreeViewSelect(ActionEvent event){
+    	setTreeView(true);
+    }
+    
+    public void onBasicViewSelect(ActionEvent event){
+    	setTreeView(false);
+    }
+    
+    public boolean isRegistryTypeLegal(){
+    	return ((Enterprise)this.getTo()).getRegistry().getType()==RegistryType.LEGAL;
+    }
+ 
+	public AonFile getAonFile() {
+		return this.aonFile;
+	}
 
-    public void activityChanged( ValueChangeEvent event ) {
-    	setActivityDirty(true);
-    }
-    
-    public void cccChanged( ValueChangeEvent event ) {
-    	setCCCDirty(true);
-    }
-    
-    private GeoZone getMainGeoZone( Enterprise enterprise ) throws ManagerBeanException {
-    	GeoZone geoZone = null;
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
+	public void setAonFile(AonFile aonFile) {
+		this.aonFile = aonFile;
+	}
+	
+	public void initLogo() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), enterprise.getRegistry().getId());
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
-		List<ITransferObject> addresses = bean.getList(criteria);
-		if (! addresses.isEmpty() ) {
-			geoZone = ((RegistryAddress) addresses.get(0)).getGeozone();
+		String alias = bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		criteria.addEqualExpression(alias, getEnterprise().getId());
+		String type = bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			attach = (RegistryAttachment) list.get(0);
+			AonFile f = new AonFile();
+			f.setData(attach.getData());
+			f.setFileName(attach.getDescription());
+			f.setMimeType(attach.getMimeType());
+			setAonFile(f);
+		} else {
+			attach = new RegistryAttachment();
+			attach.setRegistryAttachmentType(RegistryAttachmentType.LOGO);
+			attach.setRegistry( getEnterprise().getRegistry() );
+			attach.setDescription("aon-logo");
 		}
-    	return geoZone;
-    }
+	}	
+	
+    public void saveLogo() throws ManagerBeanException {
+    	if (getAonFile() != null && getAonFile().getData() != null) {
+			attach.setData(getAonFile().getData());
+			MimeType mt = CompanyImagesController.getMimeType(getAonFile().getFileName(), getAonFile().getData());
+			attach.setMimeType(mt);
+			IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+			bean.insertOrUpdate(attach);
+    	}
+    }	
     
+	public void createCurrentLogoContent(OutputStream out, Object data) throws IOException {
+		if (getAonFile() != null && getAonFile().getData() != null) {
+			out.write(getAonFile().getData());
+		}
+	}
+ 
+	public void fileUploaded(UploadEvent event) {
+		try {
+			UploadItem item = event.getUploadItem();
+			AonFile f = new AonFile();
+			File file = item.getFile();
+			if (file != null) {
+				FileInputStream in = new FileInputStream(file);
+				byte[] data = IOUtils.toByteArray(in);
+				f.setData(data);
+				file.delete();
+			}
+			f.setFileName( item.getFileName() );
+			f.setMimeType( MimeType.get(item.getContentType()) );
+			setAonFile(f);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+
+	public void onAgreementChanged( LookupChangeEvent event ) {
+		Agreement a = null;
+		if ( event.getNewValue() != null ) {
+			a = ((Agreement) event.getNewValue());
+		}
+		getEnterprise().setAgreement(a);
+	}	
+	
 }

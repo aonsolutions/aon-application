@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+
+	<ui:define name="content">	
+
+		<aon:form id="enterpriseForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					<c:if test="#{!aonConfiguration.bean.enterprise.standalone}">
+						<aon:commandButton id="edit"
+							value="#{bundle.aon_edit}"
+							action="enterprise_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" >
+							<f:setPropertyActionListener
+								target="#{enterprise.backAction}" value="enterprise_formTree" />						
+							<f:setPropertyActionListener
+								target="#{enterprise.backActionListener}" value="enterprise.onBack" />
+						</aon:commandButton>
+					</c:if>
+					<aon:commandButton id="salary"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{payrollBundle.payroll_salary_module}"
+						actionListener="#{salaryPrint.onInit}"
+						action="salaryPrint_list">
+					</aon:commandButton>						
+					<aon:commandButton id="salaryExpensePopupButton"
+						reRender="showSalaryExpenseWindow"
+						actionListener="#{salaryExpense.onInitialize}"
+						styleClass="aon-finding-toolbar-item aon-icon-return"
+						value="#{payrollBundle.payroll_salary_expense}" >
+						<f:setPropertyActionListener target="#{salaryExpense.showSalaryExpenseWindow}"
+							value="#{true}" />								
+					</aon:commandButton>
+					<aon:commandButton id="calendar"
+						value="#{calendarBundle.aon_calendar_calendar}"
+						action="calendar_form" 
+						styleClass="aon-finding-toolbar-item aon-icon-calendar">
+						<f:setPropertyActionListener target="#{calendar.sourceKey}" value="1" />
+						<f:setPropertyActionListener target="#{calendar.sourceId}" value="#{enterprise.to.registry.id}" />
+						<aon:actionListener method="#{calendar.onInitialize}" />						
+						<f:setPropertyActionListener
+							target="#{calendar.backAction}" value="enterprise_formTree" />						
+						<f:setPropertyActionListener
+							target="#{calendar.backActionListener}" value="calendar.onBack" />						
+					</aon:commandButton>	
+					<c:if test="#{!aonConfiguration.bean.enterprise.standalone}">
+						<aon:commandButton id="back"
+							title="#{bundle.aon_key_cancel_accelerator}"
+							value="#{bundle.aon_back}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							action="enterprise_list"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</c:if>										
+					<aon:spin id="enterpriseSpin" controller="#{enterprise}" />
+				</ui:define>				
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
+							
+					<aon:outputText value="#{companyBundle.company_enterprise}" />
+					<aon:outputText value="#{enterprise.to.registry.name}" />
+						
+					<aon:outputText value="#{bundle.aon_id}" />
+					<aon:outputText value="#{enterprise.to.id}" />
+
+					<aon:outputText value="#{bundle.aon_scope}" />
+					<aon:outputText value="#{enterprise.to.scope.description}" />
+
+					<aon:outputText value="#{bundle.aon_document_type}" />
+					<aon:outputText value="#{enterprise.to.registry.documentType}" />
+
+					<aon:outputText value="#{bundle.aon_document_country}" />
+					<aon:outputText value="#{enterprise.to.registry.documentCountry}" />
+
+					<aon:outputText value="#{bundle.aon_document}" />
+					<aon:outputText value="#{enterprise.to.registry.document}" />
+
+					<aon:outputText value="#{registryBundle.registry_address}" />
+					<aon:outputText value="#{enterprise.mainAddress.fullAddress}"  />
+		
+					<aon:outputText value="#{registryBundle.registry_zip}" />
+					<aon:outputText value="#{enterprise.mainAddress.zip}"  />
+
+					<aon:outputText value="#{registryBundle.registry_city}" />
+					<aon:outputText value="#{enterprise.mainAddress.city}"  />
+
+					<aon:outputText value="#{registryBundle.registry_geozone}" />
+					<aon:outputText value="#{enterprise.mainAddress.geozone.name}"  />
+
+					<aon:outputText value="#{bundle.aon_scope}" />
+					<aon:outputText value="#{enterprise.to.scope.description}" />
+
+					<c:if test="#{enterprise.to.agreement != null and enterprise.to.agreement.id != null}" >
+						<aon:outputText value="#{companyBundle.company_agreement}" />
+						<aon:outputText value="#{enterprise.to.agreement.description}" />
+					</c:if>
+				
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />				
+				
+					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" >
+						<ui:param name="controller" value="#{enterprise}" />
+					</ui:include>
+
+				</aon:panelGrid>
+	
+			</aon:div>
+		</aon:form>		
+		
+		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/expenseModal.xhtml" />
+	
+		
+	</ui:define>
+
+</ui:composition>

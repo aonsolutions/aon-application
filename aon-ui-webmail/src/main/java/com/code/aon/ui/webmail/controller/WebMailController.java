@@ -198,25 +198,29 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		this.rejectedExtensions = Collections.emptyList();
 		BasicLdap ldap = new BasicLdap();
 		Name userDN = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
-		Entry user = ldap.get( userDN, IAonObjectClasses.USER, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
-		if ( (user != null) && user.hasObjectClass(WEBMAIL_CONFIG) ) {
-			if ( user.containsKey(REJECTED_EXTENSIONS) ) {
-				this.rejectedExtensions = (List) user.get(REJECTED_EXTENSIONS);
-			}
-			if ( user.containsKey(MAX_ATTACHMENT_SIZE) ) {
-				this.maxAttachmentSize = user.toInteger(MAX_ATTACHMENT_SIZE);
-			}
+		if ( ldap.exists(userDN, IAonObjectClasses.USER) ) {
+			Entry user = ldap.get( userDN, IAonObjectClasses.USER, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
+			if ( (user != null) && user.hasObjectClass(WEBMAIL_CONFIG) ) {
+				if ( user.containsKey(REJECTED_EXTENSIONS) ) {
+					this.rejectedExtensions = (List) user.get(REJECTED_EXTENSIONS);
+				}
+				if ( user.containsKey(MAX_ATTACHMENT_SIZE) ) {
+					this.maxAttachmentSize = user.toInteger(MAX_ATTACHMENT_SIZE);
+				}
+			}			
 		}
 		if ( (maxAttachmentSize == -1) || rejectedExtensions.isEmpty() ) {
-			Name domainDN = NameResolver.getDomainDN(principal.getDomain());			
-			Entry domain = ldap.get( domainDN, IAonObjectClasses.DOMAIN, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
-			if ( (domain != null) && domain.hasObjectClass(WEBMAIL_CONFIG) ) {
-				if ( rejectedExtensions.isEmpty() && domain.containsKey(REJECTED_EXTENSIONS) ) {
-					this.rejectedExtensions = (List) domain.get(REJECTED_EXTENSIONS);
-				}
-				if ( (maxAttachmentSize == -1) && domain.containsKey(MAX_ATTACHMENT_SIZE) ) {
-					this.maxAttachmentSize = domain.toInteger(MAX_ATTACHMENT_SIZE);
-				}
+			Name domainDN = NameResolver.getDomainDN(principal.getDomain());	
+			if ( ldap.exists(domainDN, IAonObjectClasses.DOMAIN) ) {
+				Entry domain = ldap.get( domainDN, IAonObjectClasses.DOMAIN, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
+				if ( (domain != null) && domain.hasObjectClass(WEBMAIL_CONFIG) ) {
+					if ( rejectedExtensions.isEmpty() && domain.containsKey(REJECTED_EXTENSIONS) ) {
+						this.rejectedExtensions = (List) domain.get(REJECTED_EXTENSIONS);
+					}
+					if ( (maxAttachmentSize == -1) && domain.containsKey(MAX_ATTACHMENT_SIZE) ) {
+						this.maxAttachmentSize = domain.toInteger(MAX_ATTACHMENT_SIZE);
+					}
+				}				
 			}
 		}
 		for( int i = 0; i < rejectedExtensions.size(); i++ ) {

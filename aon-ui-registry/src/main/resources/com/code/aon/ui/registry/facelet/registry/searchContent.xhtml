@@ -14,16 +14,38 @@
 		value="#{bundle.aon_company_name}" />
 	<aon:inputText id="#{controller.pojoShortName}_registry_name" size="40"
 		valueChangeListener="#{controller.addExpression}" />
-
-	<aon:outputLabel for="#{controller.pojoShortName}_registry_surname"
-		value="#{registryBundle.registry_surname}" />
-	<aon:inputText id="#{controller.pojoShortName}_registry_surname" size="40"
-		valueChangeListener="#{controller.addExpression}" />
-
+	
+	<aon:outputLabel for="#{controller.pojoShortName}_registry_nationality"
+		value="#{registryBundle.registry_nationality}" />
+	<aon:selectOneMenu id="#{controller.pojoShortName}_registry_nationality"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addExpression}" >
+		<f:selectItem value="#{null}" itemLabel="-"/>
+		<f:selectItems value="#{commonCollections.countries}" />
+	</aon:selectOneMenu>
+		
 	<aon:outputLabel for="#{controller.pojoShortName}_registry_document"
-		value="#{bundle.aon_company_document}" />
+		value="#{bundle.aon_document}" />
 	<aon:inputText id="#{controller.pojoShortName}_registry_document" size="12"
 		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel value="#{bundle.aon_document_country}"
+		for="#{controller.pojoShortName}_registry_documentCountry" />
+	<aon:selectOneMenu id="#{controller.pojoShortName}_registry_documentCountry"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addExpression}" >
+		<f:selectItem value="#{null}" itemLabel="-"/>
+		<f:selectItems value="#{commonCollections.countries}" />
+	</aon:selectOneMenu>
+	
+	<aon:outputLabel value="#{bundle.aon_type}"
+		for="#{controller.pojoShortName}_registry_documentType" />
+	<aon:selectOneMenu id="#{controller.pojoShortName}_registry_documentType"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addExpression}" >
+		<f:selectItem value="#{null}" itemLabel="-"/>
+		<f:selectItems value="#{registryCollections.documentTypes}" />
+	</aon:selectOneMenu>
 
 	<aon:outputLabel for="#{controller.pojoShortName}_registry_id"
 		value="#{bundle.aon_id}" />

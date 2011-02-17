@@ -8,9 +8,10 @@ import org.apache.commons.beanutils.PropertyUtils;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class UserLinesController extends DBBasicController implements IManagerConstants {
+public class UserLinesController extends BasicController implements IManagerConstants {
 	
 	@Override
 	public void accept(ActionEvent event) {

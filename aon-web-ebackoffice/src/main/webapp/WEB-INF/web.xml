@@ -299,7 +299,7 @@
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Invitado</role-name>
+			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -311,7 +311,9 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role><role-name>Invitado</role-name></security-role>
+	<security-role><role-name>User</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>Admin</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonEcommerce</resource-env-ref-name>

@@ -1,19 +1,28 @@
 package com.code.aon.ui.manager.controller;
 
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
 import javax.faces.convert.Converter;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Context;
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BasicManagerBean;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.dao.ldap.LdapDAO;
@@ -27,7 +36,11 @@ import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.manager.enumeration.AccessPolicyType;
+import com.code.aon.manager.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.config.event.BankAccountValidationListener;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
@@ -47,7 +60,27 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	
 	private List<SelectItem> parentDomains;
 	
+	private List<SelectItem> domainTypes;
+	
 	private Converter converter;
+	
+	private boolean userManagementChanged;
+	
+	private boolean domainManagementChanged;
+	
+	private boolean documentManagementChanged;
+	
+	private boolean showCompanyWindow;
+	
+	private String userUid;
+	
+	private String userName;
+	
+	private String userSurname;
+	
+	private RegistryBank registryBank;
+	
+	private boolean enterpriseRecipient;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -111,7 +144,14 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		bean.insertOrUpdate(accessPolicy);
 	}
 
-	public void initAccessPolicy() throws ManagerBeanException {
+	public void init() throws ManagerBeanException {
+		this.documentManagementChanged = false;
+		this.userManagementChanged = false;
+		this.domainManagementChanged = false;	
+		initAccessPolicy();
+	}
+	
+	private void initAccessPolicy() throws ManagerBeanException {
 		this.accessPolicy = new AccessPolicy();
 		if (! isNew() ) {
 			BasicManagerBean bean = getAccessPolicyManagerBean( getDomain().getCommonName() );
@@ -142,6 +182,22 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 			ldap.closeSession();
 		}
 	}	
+
+	public void removeDBs( Domain domain ) throws ManagerBeanException {
+		BasicLdap ldap = new BasicLdap();
+		Name bdsDN = NameResolver.getDomainBDsDN(domain.getCommonName());
+		if ( ldap.exists(bdsDN, ORGANIZATIONAL_UNIT) ) {
+			DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+			ddbc.updateBaseDN(domain.getId());
+			for (ITransferObject to : ddbc.getManagerBean().getList(null) ) {
+				try {
+					getManager().removeDB( (DBConnnection) to );
+				} catch ( SQLException sqle ) {
+					LOGGER.error(sqle.getMessage(), sqle);
+				}
+			}
+		}
+	}	
 	
 	public DBConnnection createAndRegister( Domain domain ) throws ManagerBeanException {
 		DBConnnection dbc = new DBConnnection();
@@ -149,6 +205,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		ddbcc.init( dbc, domain.getCommonName() );
 		ddbcc.getManagerBean().insert(dbc);
 		getManager().createDB(dbc);
+		getManager().changeDbConnection(dbc);
 		return dbc;
 	}
 	
@@ -160,7 +217,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		dac.getManagerBean().insert(application);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateParentDomains() {
 		this.parentDomains = new LinkedList<SelectItem>();
 		try {
@@ -186,6 +243,129 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 			this.converter = new TransferObjectConverter(controller);			
 		}
 		return converter;
+	}
+
+	public List<SelectItem> getDomainTypes() {
+		if ( domainTypes == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			domainTypes = new LinkedList<SelectItem>();
+			for (DomainType type : DomainType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				domainTypes.add(item);
+			}		
+		}
+		return domainTypes;
 	}	
+	
+	public boolean isUserManagementChanged() {
+		return userManagementChanged;
+	}
+
+	public boolean isDomainManagementChanged() {
+		return domainManagementChanged;
+	}
+
+	public boolean isDocumentManagementChanged() {
+		return documentManagementChanged;
+	}
+
+	public void documentManagementChanged( ValueChangeEvent event ) {
+		this.documentManagementChanged = true;
+	}
+
+	public void userManagementChanged( ValueChangeEvent event ) {
+		this.userManagementChanged = true;
+	}
+
+	public void domainManagementChanged( ValueChangeEvent event ) {
+		this.domainManagementChanged = true;
+	}
+
+	public boolean isAddDomainSuffix() {
+		return (!getManager().isAdministrator()) &&
+			(!StringUtils.isEmpty(getManager().getCurrentDomain().getSubDomainSuffix()));  
+	}
+	
+	public String getDomainName( String domainName ) {
+		if ( isAddDomainSuffix() ) {
+			return domainName + "." + getManager().getCurrentDomain().getSubDomainSuffix();	
+		}
+		return domainName;
+	}
+
+	@Override
+	protected void idCheck(String id) {
+		super.idCheck( getDomainName(id) );
+	}
+	
+	public boolean isShowCompanyWindow() {
+		return showCompanyWindow;
+	}
+
+	public void setShowCompanyWindow(boolean showCompanyWindow) {
+		this.showCompanyWindow = showCompanyWindow;
+	}
+
+	public String getUserUid() {
+		return userUid;
+	}
+
+	public void setUserUid(String userUid) {
+		this.userUid = userUid;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserSurname() {
+		return userSurname;
+	}
+
+	public void setUserSurname(String userSurname) {
+		this.userSurname = userSurname;
+	}
+
+	public boolean isEnterpriseRecipient() {
+		return enterpriseRecipient;
+	}
+
+	public void setEnterpriseRecipient(boolean enterpriseRecipient) {
+		this.enterpriseRecipient = enterpriseRecipient;
+	}
+
+	public RegistryBank getRegistryBank() {
+		return registryBank;
+	}
+
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
+	
+	public void onCompanySave( ActionEvent event ) {
+		boolean saveRegistryBank = isEnterpriseRecipient() &&
+			(getManager().getCurrentDomain().getType() == DomainType.CONSULTANCY);
+		try {
+			if ( saveRegistryBank ) {
+				BankAccountValidationListener.checkBankAccount( getRegistryBank(), false );
+			}
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+			companyController.accept(event);
+			if ( saveRegistryBank ) {
+				IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
+				getRegistryBank().setRegistry(companyController.obtainCompany());
+				bean.insert( getRegistryBank() );
+			}
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onBeforeCompanyAccept ",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}		
 	
 }

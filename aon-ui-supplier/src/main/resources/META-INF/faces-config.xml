@@ -34,7 +34,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Supplier_registry_surname,Supplier_registry_name</value>
+			<value>Supplier_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -147,7 +147,7 @@
 	<!--  **** MEDIA **** -->
 	<managed-bean>
 		<managed-bean-name>supplierMedia</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryMediaController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -538,7 +538,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Supplier_registry_surname,Supplier_registry_name</value>
+			<value>Supplier_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>

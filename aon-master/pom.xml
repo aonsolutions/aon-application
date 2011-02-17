@@ -3,15 +3,14 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.9.1-SNAPSHOT</version>
+		<version>6.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-master</artifactId>
-	<version>5.9.1-SNAPSHOT</version>
+	<version>6.0.0-SNAPSHOT</version>
 	<description>AON MASTER</description>
 	<name>AON-MASTER</name>
-	<packaging>maven-plugin</packaging>
 
 	<scm>
 		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-master</developerConnection>
@@ -38,11 +37,6 @@
 			<version>1.5.11</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>2.0</version>
-		</dependency>		
 		<!-- TEST DEPENDENCIES -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -79,8 +73,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<doCheck>true</doCheck>
-					<doUpdate>true</doUpdate>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -158,11 +152,9 @@
 											</excludes>
 										</source>
 									</sources>
-									<!-- 
 									<filemode>755</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
-									-->
 									<directory>/usr/share/aon-master/bin</directory>
 								</mapping>
 
@@ -206,7 +198,7 @@
 									<fromDir>${project.basedir}/target/rpm/${project.artifactId}/RPMS/</fromDir>
 									<includes>**/*.rpm</includes>
 									<url>scp://dev.esferalia.com</url>
-									<toDir>/var/www/aon-inetserver</toDir>
+									<toDir>/var/www/aon-payroll</toDir>
 								</configuration>
 							</execution>
 						</executions>
@@ -220,4 +212,3 @@
 
 </project>
  
-

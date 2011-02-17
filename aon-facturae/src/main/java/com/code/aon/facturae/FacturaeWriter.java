@@ -263,8 +263,9 @@ public class FacturaeWriter {
 	private IndividualType getIndividual( Registry registry, String name, RegistryAddress registryAddress ) throws ManagerBeanException {
 		IndividualType individualType = new IndividualType();
 		individualType.setName( Util.toTextMax40Type(name) );
-		String surname = StringUtils.defaultString(registry.getSurname());
-		individualType.setFirstSurname( Util.toTextMax40Type(surname) );
+                // commented out by rtrepiana. surname has been removed from regitry ( now only at person )
+		//String surname = StringUtils.defaultString(registry.getSurname());
+		//individualType.setFirstSurname( Util.toTextMax40Type(surname) );
 		CountryType country = getCountry(registryAddress.getGeozone());
 		if ( CountryType.ESP.equals(country) ) {
 			individualType.setAddressInSpain( getAddress(registryAddress, country) );	

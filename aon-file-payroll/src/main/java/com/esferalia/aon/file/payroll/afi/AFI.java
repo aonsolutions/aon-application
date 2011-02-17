@@ -15,7 +15,6 @@ import com.code.aon.file.format.model.Fd0Exception;
 import com.esferalia.aon.file.payroll.afi.data.ETI;
 import com.esferalia.aon.file.payroll.afi.data.EMP;
 import com.esferalia.aon.file.payroll.afi.data.TRA;
-//import com.esferalia.aon.file.payroll.fdi.data.DIT;
 
 public class AFI extends AbstractFileFiller{
 
@@ -23,11 +22,7 @@ public class AFI extends AbstractFileFiller{
 	 * Etiqueta de inicio
 	 */
 	private static String ETI = "ETI";
-	/**
-	 * Etiqueta de fin
-	 */
-	private static String ETF = "ETF";
-
+	
 	/**
 	 * Identificacion de empresa
 	 */
@@ -98,6 +93,11 @@ public class AFI extends AbstractFileFiller{
 	 */
 	private static String PIT = "PIT";
 	
+	/**
+	 * Etiqueta de fin
+	 */
+	private static String ETF = "ETF";
+	
 	
 	private ETI eti;
 	
@@ -107,23 +107,43 @@ public class AFI extends AbstractFileFiller{
 			throw new IllegalArgumentException("El registro ETI no puede ser nulo!");
 		}
 		this.eti = eti;
-		InputStream input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/DEC.xml");
+		InputStream input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/ETI.xml");
 		DiskRegisterLoader.load(input, manager);
-//		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/DIT.xml");
+		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/EMP.xml");
+		DiskRegisterLoader.load(input, manager);
+		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/RZS.xml");
+		DiskRegisterLoader.load(input, manager);
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/EXC.xml");
 //		DiskRegisterLoader.load(input, manager);
-//		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/DOM.xml");
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/FCE.xml");
 //		DiskRegisterLoader.load(input, manager);
-//		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/EMP.xml");
+		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/TRA.xml");
+		DiskRegisterLoader.load(input, manager);
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/AYN.xml");
 //		DiskRegisterLoader.load(input, manager);
-//		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/ETF.xml");
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/DAP.xml");
 //		DiskRegisterLoader.load(input, manager);
-//		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/ETI.xml");
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/CUE.xml");
 //		DiskRegisterLoader.load(input, manager);
-//		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/LDD.xml");
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/DUE.xml");
 //		DiskRegisterLoader.load(input, manager);
-//		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/ODP.xml");
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/DOM.xml");
 //		DiskRegisterLoader.load(input, manager);
-//		input = FDI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fdi/xml/TRA.xml");
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/LDD.xml");
+//		DiskRegisterLoader.load(input, manager);
+		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/FAB.xml");
+		DiskRegisterLoader.load(input, manager);
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/DAM.xml");
+//		DiskRegisterLoader.load(input, manager);
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/DSC.xml");
+//		DiskRegisterLoader.load(input, manager);
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/DRA.xml");
+//		DiskRegisterLoader.load(input, manager);
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/FCT.xml");
+//		DiskRegisterLoader.load(input, manager);
+//		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/PIT.xml");
+//		DiskRegisterLoader.load(input, manager);
+		input = AFI.class.getResourceAsStream("/com/esferalia/aon/file/payroll/afi/xml/ETF.xml");
 		DiskRegisterLoader.load(input, manager);
 	}
 	
@@ -144,48 +164,26 @@ public class AFI extends AbstractFileFiller{
 					++numTotal;
 					empresa = emp.getNumero();
 				}
-//				for (TRA tra: emp.getTrabajadores()) {
-//					properties.put(TRA , tra);
-//					createLine(TRA,properties);
-//					++numTotal;
-//					if (tra.getDom() != null) {
-//						properties.put(DOM , tra.getDom());
-//						createLine(DOM,properties);
-//						++numTotal;
-//					}
-//					if (tra.getLdd() != null) {
-//						properties.put(LDD , tra.getLdd());
-//						createLine(LDD ,properties);
-//						++numTotal;
-//					}
-//					if (tra.getDatosIT() != null) {
-//						for (DIT dit: tra.getDatosIT()) {
-//							properties.put(DIT , dit);
-//							createLine(DIT,properties);
-//							++numTotal;
-//							if ("PB ".equals(dit.getAccion())) {
-//								if (dit.getDec() != null) {
-//									properties.put(DEC , dit.getDec());
-//									createLine(DEC ,properties);
-//									++numTotal;
-//								}
-//							}
-//							if ("PC ".equals(dit.getAccion())) {
-//								if (dit.getOdp() != null) {
-//									properties.put(ODP , dit.getOdp());
-//									createLine(ODP ,properties);
-//									++numTotal;
-//								}
-//							}
-//						}
-//					}
-//				}
+				if (emp.getRzs() != null) {
+					properties.put(RZS , emp.getRzs());
+					createLine(RZS,properties);
+					++numTotal;
+				}
+				for (TRA tra: emp.getTrabajadores()) {
+					properties.put(TRA , tra);
+					createLine(TRA,properties);
+					++numTotal;
+					if (tra.getFab() != null) {
+						properties.put(FAB , tra.getFab());
+						createLine(FAB ,properties);
+						++numTotal;
+					}
+				}
 			}
 			eti.getEtf().setContador(numEmp);
 			eti.getEtf().setContadorTotal(numTotal);
 			properties.put(ETF, eti.getEtf());
 			createLine(ETF,properties);
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			if ( ex instanceof Fd0Exception ) {

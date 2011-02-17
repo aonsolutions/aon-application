@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="enterpriseWorkPlaceForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{companyBundle.company_workplace}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="calendar"
+						value="#{calendarBundle.aon_calendar_calendar}"
+						action="calendar_form" 
+						styleClass="aon-finding-toolbar-item aon-icon-calendar">
+						<f:setPropertyActionListener target="#{calendar.sourceKey}"
+							value="2" />
+						<f:setPropertyActionListener target="#{calendar.sourceId}"
+							value="#{enterpriseTree.workPlace.id}" />
+						<aon:actionListener method="#{calendar.onInitialize}" />
+						<f:setPropertyActionListener
+							target="#{calendar.backAction}" value="enterpriseWorkplace_formTree" />						
+						<f:setPropertyActionListener
+							target="#{calendar.backActionListener}" value="calendar.onBack" />												
+					</aon:commandButton>	
+				</ui:define>				
+			</ui:decorate>		
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
+					
+					<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+					<aon:outputText value="#{enterprise.to.registry.name}" />
+
+					<aon:outputText value="#{companyBundle.company_workplace}" />
+					<aon:outputText value="#{enterpriseTree.workPlace.description}" />
+
+					<aon:outputText value="#{registryBundle.registry_address}" />
+					<aon:outputText value="#{enterpriseTree.workPlace.address.fullAddress}"  />
+		
+					<aon:outputText value="#{registryBundle.registry_zip}" />
+					<aon:outputText value="#{enterpriseTree.workPlace.address.zip}"  />
+
+					<aon:outputText value="#{registryBundle.registry_city}" />
+					<aon:outputText value="#{enterpriseTree.workPlace.address.city}"  />
+
+					<aon:outputText value="#{registryBundle.registry_geozone}" />
+					<aon:outputText value="#{enterpriseTree.workPlace.address.geozone.name}"  />
+
+					<aon:outputText value="#{companyBundle.company_workplace_economic_agreement}" />
+					<aon:outputText value="#{enterpriseTree.workPlace.economicAgreement}" />
+
+				</aon:panelGrid>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

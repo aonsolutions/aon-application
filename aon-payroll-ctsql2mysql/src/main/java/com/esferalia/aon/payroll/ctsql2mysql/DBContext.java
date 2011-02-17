@@ -14,8 +14,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -28,9 +31,7 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.VelocityException;
 
 /********************************************************************
 * Copyright (c) 2010, esferalia NETWORKS S.A
@@ -65,8 +66,10 @@ public class DBContext extends VelocityContext{
 				
 				put(Types.CHAR, "String");
 				put(Types.VARCHAR, "String");
-				put(Types.LONGVARCHAR, "InputStream");
-				put(Types.LONGNVARCHAR, "InputStream");
+				put(Types.LONGVARCHAR, "String");
+				put(Types.LONGNVARCHAR, "String");
+				//put(Types.LONGVARCHAR, "InputStream");
+				//put(Types.LONGNVARCHAR, "InputStream");
 				
 
 				put(Types.BIGINT, "Long");
@@ -91,11 +94,12 @@ public class DBContext extends VelocityContext{
 		
 	
 	private DatabaseMetaData dbMetaData;
-	
+	private HashMap<String, Table> tables ;
 	
 	public class Column {
 		
 		private int type;
+		private int size;
 		private String name;
 		private String remarks;
 		private boolean isAutoIncrement;
@@ -104,6 +108,7 @@ public class DBContext extends VelocityContext{
 		private void init (ResultSet rs) throws SQLException
 		{
 			this.type= rs.getInt("DATA_TYPE");
+			this.size = rs.getInt("COLUMN_SIZE");
 			this.name = rs.getString("COLUMN_NAME");
 			this.remarks = rs.getString("REMARKS");
 			try {
@@ -111,16 +116,6 @@ public class DBContext extends VelocityContext{
 			} catch (Exception e) {
 				this.isAutoIncrement = false;
 			}
-		}
-		public Column( String table, String name) 
-		throws SQLException {
-			this.name = name;
-			ResultSet rs = 
-				dbMetaData.getColumns(null, null, table, name);
-			if  (rs.next() ){
-				init(rs);
-			}
-			rs.close();
 		}
 
 		public Column( ResultSet rs ) throws SQLException {
@@ -135,6 +130,10 @@ public class DBContext extends VelocityContext{
 			return type;
 		}
 		
+		public int getSize(){
+			return size;
+		}
+
 		public String getRemarks() {
 			return remarks;
 		}
@@ -160,8 +159,11 @@ public class DBContext extends VelocityContext{
 
 	public class Table  {
 		private String name;
+		private int size;
 		private String remarks;
-		private ArrayList<Column> columns;
+		private Map<String,Column> columns;
+		private ArrayList<ForeignKey> childs; 
+		private ArrayList<ForeignKey> parents; 
 		private boolean isAutoIncrement = false;
 		
 		public Table( String name, String remarks) throws SQLException {
@@ -171,21 +173,32 @@ public class DBContext extends VelocityContext{
 		}
 		
 		private void initColumns() throws SQLException{
-			this.columns = new ArrayList<Column>();
-			
-			ResultSet rs = dbMetaData.getColumns(null, null, name, null);
+			this.columns = new LinkedHashMap<String, Column>();
+			this.size = 0;
+			ResultSet rs ;
+			rs = dbMetaData.getColumns(null, null, name, null);
 			while  (rs.next() ){
+				String name = rs.getString("COLUMN_NAME");
 				Column column = new Column(rs);
-				columns.add(column);
+				columns.put(name, column);
+				if ( column.type != Types.BLOB && 
+					column.type != Types.LONGVARCHAR &&	
+					column.type != Types.LONGNVARCHAR &&	
+					column.type != Types.LONGVARBINARY){
+					this.size += column.size;
+				}
 				this.isAutoIncrement |= column.isAutoIncrement();
 			}
 			rs.close();
+		}
+
+		public int getSize() {
+			return this.size;
 		}
 		
 		public String getName() {
 			return name;
 		}
-		
 		
 		public String getRemarks() {
 			return remarks;
@@ -201,54 +214,66 @@ public class DBContext extends VelocityContext{
 			return StringUtils.capitalize(name);
 		}
 		
-		public List<Column> getColumns() throws SQLException {
-			return this.columns; 
+		public int getColumnCount() {
+			return this.columns.size();
+		}
+
+		public Column getColumn( String name ) {
+			return this.columns.get(name);
+		}
+
+		public Column [] getColumns() throws SQLException {
+			return this.columns.values().toArray(new Column[]{}); 
 		}
 		
 		public ForeignKey [] getChilds() throws SQLException {
-			ArrayList<ForeignKey> foreignKeys = 
-				new ArrayList<ForeignKey>();
-			ResultSet rs = 
-				dbMetaData.getExportedKeys(null,null, name);
-			ForeignKey foreignKey = null;
-			String previousTable = null;
-			while ( rs.next() )
-			{
-				String fkName = rs.getString("FK_NAME");
-				String fkTable = rs.getString("FKTABLE_NAME");
-				if ( ! fkTable.equals(previousTable) ) {
-					foreignKey = new ForeignKey(fkName, fkTable);
-					foreignKeys.add(foreignKey);
-					previousTable = fkTable;
+			if ( childs == null ){
+				childs = 
+					new ArrayList<ForeignKey>();
+				ResultSet rs = 
+					dbMetaData.getExportedKeys(null,null, name);
+				ForeignKey foreignKey = null;
+				String previousFK = null;
+				while ( rs.next() )
+				{
+					String fkName = rs.getString("FK_NAME");
+					String fkTable = rs.getString("FKTABLE_NAME");
+					if ( ! fkName.equals(previousFK) ) {
+						foreignKey = new ForeignKey(fkName, fkTable);
+						childs.add(foreignKey);
+						previousFK = fkName;
+					}
+					foreignKey.addFkColumn(fkTable, rs.getString("FKCOLUMN_NAME"));
+					foreignKey.addPkColumn(this.name, rs.getString("PKCOLUMN_NAME"));
 				}
-				foreignKey.addFkColumn(fkName, rs.getString("FKCOLUMN_NAME"));
-				foreignKey.addPkColumn(this.name, rs.getString("PKCOLUMN_NAME"));
+				rs.close();
 			}
-			rs.close();
-			return foreignKeys.toArray(new ForeignKey[]{});
+			return childs.toArray(new ForeignKey[]{});
 		}
 	
 		public ForeignKey [] getParents() throws SQLException {
-			ArrayList<ForeignKey> foreignKeys = 
-				new ArrayList<ForeignKey>();
-			ResultSet rs = 
-				dbMetaData.getImportedKeys(null,null, name);
-			ForeignKey foreignKey = null;
-			String previousTable = null;
-			while ( rs.next() )
-			{
-				String fkName = rs.getString("FK_NAME");
-				String fkTable = rs.getString("FKTABLE_NAME");
-				if ( ! fkTable.equals(previousTable) ) {
-					foreignKey = new ForeignKey(fkName, fkTable);
-					foreignKeys.add(foreignKey);
-					previousTable = fkTable;
+			if ( parents == null ){
+				parents = 
+					new ArrayList<ForeignKey>();
+				ResultSet rs = 
+					dbMetaData.getImportedKeys(null,null, name);
+				ForeignKey foreignKey = null;
+				String previousTable = null;
+				while ( rs.next() )
+				{
+					String fkName = rs.getString("FK_NAME");
+					String pkTable = rs.getString("PKTABLE_NAME");
+					if ( ! pkTable.equals(previousTable) ) {
+						foreignKey = new ForeignKey(fkName, pkTable);
+						parents.add(foreignKey);
+						previousTable = pkTable;
+					}
+					foreignKey.addFkColumn(this.name, rs.getString("FKCOLUMN_NAME"));
+					foreignKey.addPkColumn(pkTable, rs.getString("PKCOLUMN_NAME"));
 				}
-				foreignKey.addFkColumn(fkName, rs.getString("FKCOLUMN_NAME"));
-				foreignKey.addPkColumn(this.name, rs.getString("PKCOLUMN_NAME"));
+				rs.close();
 			}
-			rs.close();
-			return foreignKeys.toArray(new ForeignKey[]{});
+			return parents.toArray(new ForeignKey[]{});
 		}
 	}
 
@@ -262,7 +287,7 @@ public class DBContext extends VelocityContext{
 				String table ) throws SQLException 
 		{
 			this.name = name;
-			this.table = new Table (table, "");
+			this.table = tables.get(table); //new Table (table, "");
 			this.fkColumns = new ArrayList<Column>();
 			this.pkColumns = new ArrayList<Column>();
 		}
@@ -276,20 +301,22 @@ public class DBContext extends VelocityContext{
 			return table;
 		}
 		
-		public void addFkColumn ( String table, String column ) throws SQLException{
-			fkColumns.add(new Column( table, column));
-		}
-		
-		public void addPkColumn ( String table, String column ) throws SQLException{
-			pkColumns.add(new Column(table, column));
-		}
-
 		public List<Column> getFkColumns() {
 			return fkColumns;
 		}
 		
 		public List<Column> getPkColumns() {
 			return pkColumns;
+		}
+
+		public void addFkColumn ( String table, String column ) 
+		throws SQLException{
+			fkColumns.add(tables.get(table).getColumn(column));
+		}
+		
+		public void addPkColumn ( String table, String column ) 
+		throws SQLException{
+			pkColumns.add(tables.get(table).getColumn(column));
 		}
 
 		@Override
@@ -302,21 +329,40 @@ public class DBContext extends VelocityContext{
 		super();
 		
 		this.dbMetaData = dbMetaData;
+		this.tables = new HashMap<String, Table>();
 		
-		ArrayList<Table> tables = new ArrayList<Table>();
 		ResultSet rs = 
 			dbMetaData.getTables(null, null, null, new String [] {"TABLE"});
 		while ( rs.next() ) {
-			tables.add(new Table(rs.getString("TABLE_NAME"), rs.getString("REMARKS")));
+			String name  = rs.getString("TABLE_NAME");
+			String remarks = rs.getString("REMARKS");
+			Table table = new Table(name, remarks);
+			tables.put(name, table);
 		}
 		rs.close();
 		
-		put(TABLES, tables.toArray(new Table []{}));
+		put("StringUtils", this );
+		put(TABLES, tables.values().toArray(new Table []{}));
 	}
 	
 	
+	public String reverse(String str ) { 
+		return StringUtils.reverse(str);
+	}
+	
+	public String capitalize(String str ) { 
+		return StringUtils.capitalize(str);
+	}
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException, ParseErrorException, MethodInvocationException, ResourceNotFoundException, IOException {
+	public static boolean evaluate( DBContext context, Writer writer,String logTag, Reader reader )
+    throws IOException
+    {
+    	return Velocity.evaluate(context, writer, logTag, reader);
+    }
+	
+
+	public static void main(String[] args) 
+	throws ClassNotFoundException, SQLException, IOException {
 		// create the command line parser
     	CommandLineParser parser = new PosixParser();   
     	
@@ -416,7 +462,10 @@ public class DBContext extends VelocityContext{
             // oops, something went wrong
             System.err.println( "Error : " + exp.getMessage() );
         	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
-        } 
+        }
+        catch ( VelocityException exp ) {
+            System.err.println( "Error : " + exp.getMessage() );
+        }
         finally{
         	if ( connection != null )
         		connection.close();

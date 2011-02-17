@@ -211,11 +211,11 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			public int compare(Object o1, Object o2) {
 				if (o1 instanceof CustomerFee && o2 instanceof CustomerFee) {
 					CustomerFee fee1 = (CustomerFee)o1;
-					String surname1 = (fee1.getCustomer().getRegistry().getSurname() != null) ? fee1.getCustomer().getRegistry().getSurname() : "";
+					String surname1 = "";
 					String name1 = (fee1.getCustomer().getRegistry().getName() != null) ? fee1.getCustomer().getRegistry().getName() : "";
 					int line1 = fee1.getLine();
 					CustomerFee fee2 = (CustomerFee)o2;
-					String surname2 = (fee2.getCustomer().getRegistry().getSurname() != null) ? fee2.getCustomer().getRegistry().getSurname() : "";
+					String surname2 = "";
 					String name2 = (fee2.getCustomer().getRegistry().getName() != null) ? fee2.getCustomer().getRegistry().getName() : "";
 					int line2 = fee2.getLine();
 
@@ -334,7 +334,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Registry registry = customerFee.getCustomer().getRegistry();
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
-		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) + " " + (registry.getSurname()==null?"":registry.getSurname()));
+		invoice.setRegistryName((registry.getName() == null?"":registry.getName()));
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
@@ -349,7 +349,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setIssueDate(params.getInvoiceDate());
 		invoice.setRegistry(group.getParent());
 		invoice.setRegistryDocument(group.getParent().getDocument());
-		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) + " " + (group.getParent().getSurname()==null?"":group.getParent().getSurname()));
+		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) );
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
@@ -388,7 +388,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			description = description.replace("${YEAR}", Integer.toString(params.getYear()));
 		}
 		if (!invoice.getRegistry().getId().equals(customerFee.getCustomer().getId())) {
-        	description += " - " + customerFee.getCustomer().getRegistry().getName() + " " + customerFee.getCustomer().getRegistry().getSurname();
+        	description += " - " + customerFee.getCustomer().getRegistry().getName() ;
         }
 		return (description.length()>1024)?description.substring(0, 1024):description;
 	}

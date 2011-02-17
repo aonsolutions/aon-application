@@ -20,14 +20,18 @@ public interface IManagerConstants {
 	String SCOPE_CONTROLLER_NAME = "scope";
 	String USER_WORK_GROUP_CONTROLLER_NAME = "userWorkgroup";
 	String USER_SCOPE_CONTROLLER_NAME = "userScope";
+	String COMPANY_BASIC_CONTROLLER_NAME = "companyBasic";
 	
 	// Applications
 	String AON_DESKTOP = "aon-desktop";
 	String AON_WEBMAIL = "aon-webmail";
+	String AON_MANAGER = "aon-manager";
 	String AON_CMS = "aon-cms";
 	String AON_PUBLISHER = "aon-publisher";
 	
 	String USUARIO_PROFILE = "Usuario";
+	String ADMINISTRADOR_PROFILE = "Administrador";
+	String ADMIN_USER = "admin";
 	String GENERAL_SCOPE = "GENERAL";
 	
 	// Messages
@@ -38,6 +42,8 @@ public interface IManagerConstants {
 	String DB_DUPLICATED = "manager_db_duplicated";
 	String DB_NOT_EXIST = "manager_db_not_exist";
 	String NEW_PASSWORD_ERROR = "manager_new_passwd_error";
+	String NEED_MAIL_ACCOUNT = "manager_need_mail_account";
+	String WRONG_MAIL_ACCOUNT = "manager_wrong_mail_account";
 
 	// Properties
 	
@@ -49,3 +55,4 @@ public interface IManagerConstants {
 	String MAIL_ACCOUNT_DELETE_SCRIPT = "MailAccount_delete_script";
 	
 }
+

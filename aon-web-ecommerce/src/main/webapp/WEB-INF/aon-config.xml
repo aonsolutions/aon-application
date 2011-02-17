@@ -15,6 +15,7 @@
 			showFinanceData="false" 
 			showAddInfo="true"
 			showDirStaff="false"
+			standalone="false"
 		/>				
 	</company:config>
 	

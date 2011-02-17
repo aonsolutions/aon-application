@@ -53,58 +53,52 @@ public interface ICustomerAlias {
 	String  CUSTOMER_REGISTRY_NAME = CUSTOMER_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: Customer_registry_surname
-	* Hibernate value: Customer.registry.surname
-	*/
-	String  CUSTOMER_REGISTRY_SURNAME = CUSTOMER_ENTRY.getAliasNames()[6];
-
-	/** 
 	* Alias value: Customer_registry_alias
 	* Hibernate value: Customer.registry.alias
 	*/
-	String  CUSTOMER_REGISTRY_ALIAS = CUSTOMER_ENTRY.getAliasNames()[7];
+	String  CUSTOMER_REGISTRY_ALIAS = CUSTOMER_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Customer_registry_document
 	* Hibernate value: Customer.registry.document
 	*/
-	String  CUSTOMER_REGISTRY_DOCUMENT = CUSTOMER_ENTRY.getAliasNames()[8];
+	String  CUSTOMER_REGISTRY_DOCUMENT = CUSTOMER_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Customer_withholding
 	* Hibernate value: Customer.withholding
 	*/
-	String  CUSTOMER_WITHHOLDING = CUSTOMER_ENTRY.getAliasNames()[9];
+	String  CUSTOMER_WITHHOLDING = CUSTOMER_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Customer_transaction
 	* Hibernate value: Customer.transaction
 	*/
-	String  CUSTOMER_TRANSACTION = CUSTOMER_ENTRY.getAliasNames()[10];
+	String  CUSTOMER_TRANSACTION = CUSTOMER_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Customer_scope_id
 	* Hibernate value: Customer.scope.id
 	*/
-	String  CUSTOMER_SCOPE_ID = CUSTOMER_ENTRY.getAliasNames()[11];
+	String  CUSTOMER_SCOPE_ID = CUSTOMER_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Customer_eInvoice
 	* Hibernate value: Customer.eInvoice
 	*/
-	String  CUSTOMER_E_INVOICE = CUSTOMER_ENTRY.getAliasNames()[12];
+	String  CUSTOMER_E_INVOICE = CUSTOMER_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Customer_deliveryGrouped
 	* Hibernate value: Customer.deliveryGrouped
 	*/
-	String  CUSTOMER_DELIVERY_GROUPED = CUSTOMER_ENTRY.getAliasNames()[13];
+	String  CUSTOMER_DELIVERY_GROUPED = CUSTOMER_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Customer_deliveryValuated
 	* Hibernate value: Customer.deliveryValuated
 	*/
-	String  CUSTOMER_DELIVERY_VALUATED = CUSTOMER_ENTRY.getAliasNames()[14];
+	String  CUSTOMER_DELIVERY_VALUATED = CUSTOMER_ENTRY.getAliasNames()[13];
 
 
 }

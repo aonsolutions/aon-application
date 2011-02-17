@@ -106,10 +106,6 @@ public class TaskManager implements IServices, IDesktopConstants {
 	}
 
 //************************************** IServices methods implementation ***********************************
-	public boolean isExecutable() {
-		return app != null && app.isExecutable();
-	}
-
 	public boolean isInfobarEnabled() {
 		return app != null && app.isInfobarEnabled();
 	}

@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:div id="enterpriseList" styleClass="aon-scroll-area">
+		<aon:methodParam name="rowSelectorAction" value="contractGenerationWizard_step1" />
+		<aon:methodParam name="rowSelectorActionListener" value="#{contractGenerationWizard.onSelectEnterprise}" type="actionListener" />
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="controller" value="#{enterprise}" />
+			<ui:define name="columns">
+				<ui:include 
+					src="/com/code/aon/ui/company/facelet/enterprise/listBasic.xhtml" />
+				<aon:column alias="enterprise.registry.alias"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_company_alias}" />
+					</f:facet>
+					<aon:outputText value="#{to.registry.alias}" />
+				</aon:column>
+			</ui:define>
+		</ui:decorate>
+	</aon:div>
+
+</ui:composition>

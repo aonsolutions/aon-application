@@ -25,9 +25,11 @@ import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
+import com.esferalia.aon.calendar.Calendar;
 import com.code.aon.registry.RegistryAttachment;
 
 /**
@@ -36,7 +38,7 @@ import com.code.aon.registry.RegistryAttachment;
 @Entity
 @Table(name="enterprise")
 @PrimaryKeyJoinColumn(name="registry")
-public class Enterprise implements ITransferObject, IRegistry {
+public class Enterprise implements ITransferObject, IRegistry, IScopable {
 
 	private static final long serialVersionUID = -6717039049819608334L;
 	
@@ -45,6 +47,10 @@ public class Enterprise implements ITransferObject, IRegistry {
 	private Registry registry;
 	
 	private Scope scope;
+	
+	private Agreement agreement;
+	
+	private Calendar calendar;
 	
 	private Set<EnterpriseActivity> activities = new HashSet<EnterpriseActivity>();
 	
@@ -76,8 +82,8 @@ public class Enterprise implements ITransferObject, IRegistry {
 	
 	@ManyToOne
     @JoinColumn(name="scope", nullable=false)
-    @ForeignKey(name = "FK_CUSTOMER_SCOPE")
-    @Index(name = "IDX_CUSTOMER_SCOPE")
+    @ForeignKey(name = "FK_ENTERPRISE_SCOPE")
+    @Index(name = "IDX_ENTERPRISE_SCOPE")
 	public Scope getScope() {
 		return scope;
 	}
@@ -93,6 +99,29 @@ public class Enterprise implements ITransferObject, IRegistry {
 
 	public void setActivities(Set<EnterpriseActivity> activities) {
 		this.activities = activities;
+	}
+
+	@ManyToOne
+    @JoinColumn(name="agreement")
+    @ForeignKey(name = "FK_ENTERPRISE_AGREEMENT")
+    @Index(name = "FK_ENTERPRISE_AGREEMENT")
+	public Agreement getAgreement() {
+		return agreement;
+	}
+
+	public void setAgreement(Agreement agreement) {
+		this.agreement = agreement;
+	}
+	
+	@ManyToOne
+    @JoinColumn( name="calendar")	
+	@ForeignKey(name = "FK_ENTERPRISE_CALENDAR")
+	@Index(name = "FK_ENTERPRISE_CALENDAR")
+	public Calendar getCalendar() {
+		return calendar;
+	}
+	public void setCalendar(Calendar calendar) {
+		this.calendar = calendar;
 	}
 
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
@@ -114,6 +143,7 @@ public class Enterprise implements ITransferObject, IRegistry {
 			return new EqualsBuilder()
 				.append(this.registry, o.registry)
 				.append(this.scope, o.scope)
+				.append(this.calendar, o.calendar)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -125,6 +155,7 @@ public class Enterprise implements ITransferObject, IRegistry {
 			.append(id)
 			.append(registry)
 			.append(scope)
+			.append(calendar)
 			.toHashCode();
 	}
 

@@ -9,7 +9,7 @@
 		</resource-bundle>
 	</application>
 	
-		<!--  *************** COLLECTIONS ***************** -->
+	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>calendarCollections</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.calendar.controller.CalendarCollections</managed-bean-class>
@@ -56,7 +56,7 @@
 			com.esferalia.aon.ui.calendar.event.CalendarControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-
+	
 	<managed-bean>
 		<managed-bean-name>calendarHolidayListener</managed-bean-name>
 		<managed-bean-class>
@@ -135,12 +135,28 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{calendarHolidayControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>calendarHolidayControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.calendar.event.CalendarHolidayControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************CALENDAR PERIOD************* -->
 	<managed-bean>
 		<managed-bean-name>calendarPeriod</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.esferalia.aon.ui.calendar.controller.CalendarPeriodController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pageLimit</property-name>
@@ -213,11 +229,19 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+					<value>#{holidayControllerListener}</value>
 					<value>#{holidayDetailListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-
+	
+	<managed-bean>
+		<managed-bean-name>holidayControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.calendar.event.HolidayControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>holidayDetailListener</managed-bean-name>
 		<managed-bean-class>
@@ -276,6 +300,38 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{holidayDetailControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>holidayDetailControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.calendar.event.HolidayDetailControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ CALENDAR HOLIDAY DATA ************* -->
+	<managed-bean>
+		<managed-bean-name>calendarHolidayData</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ CALENDAR PRINT ************* -->
+	<managed-bean>
+		<managed-bean-name>calendarPrint</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.calendar.print.CalendarPrintController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ************ HOLIDAY LOOKUP ************** -->
@@ -304,6 +360,51 @@
 			<value>/com/esferalia/aon/ui/calendar/facelet/lookup/holiday/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************ CALENDAR LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>calendarLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>calendarLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.calendar.Calendar</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Calendar_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/calendar/facelet/lookup/calendar/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/calendar/facelet/lookup/calendar/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{calendarLookupListener}</value>
+			</list-entries>
+		</managed-property>
+<!--  
+-->		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>calendarLookupListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.calendar.event.CalendarLookupListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+<!--  
+-->	
+	
 
 
 	<!-- =================== Calendar ========================== -->
@@ -319,10 +420,6 @@
 		<navigation-case>
 			<from-outcome>calendar_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/calendar/facelet/calendar/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>calendar_calendar</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/calendar/facelet/calendar/calendar.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

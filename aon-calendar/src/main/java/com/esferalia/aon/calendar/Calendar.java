@@ -11,11 +11,14 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
-import com.esferalia.aon.calendar.enumeration.CalendarSource;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
 @Entity
@@ -25,13 +28,13 @@ public class Calendar implements ITransferObject{
 	private static final long serialVersionUID = -3190986972412754073L;
 
 	private Integer id;
+	
+	private Calendar calendar;
+	
+	private boolean generic;
 
 	private Holiday holiday;
 	
-	private CalendarSource source;
-
-	private Integer sourceId;
-
     private String description;
     
     private String comments;
@@ -93,7 +96,27 @@ public class Calendar implements ITransferObject{
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	@ManyToOne
+    @JoinColumn(name="calendar", nullable = true)
+    @ForeignKey(name="FK_CALENDAR_CALENDAR")
+    @Index(name="IDX_CALENDAR_CALENDAR")
+	public Calendar getCalendar() {
+		return calendar;
+	}
+
+	public void setCalendar(Calendar calendar) {
+		this.calendar = calendar;
+	}
 	
+	public boolean isGeneric() {
+		return generic;
+	}
+
+	public void setGeneric(boolean generic) {
+		this.generic = generic;
+	}
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn( name="holiday")	
 	@ForeignKey(name = "FK_CALENDAR_HOLIDAY")
@@ -106,25 +129,6 @@ public class Calendar implements ITransferObject{
 		this.holiday = holiday;
 	}
 	
-	@Column(name = "source")
-	public CalendarSource getSource() {
-		return source;
-	}
-
-	public void setSource(CalendarSource source) {
-		this.source = source;
-	}
-
-	@Column(name = "source_id")
-	@Index(name = "IDX_CALENDAR_SOURCE")
-	public Integer getSourceId() {
-		return sourceId;
-	}
-
-	public void setSourceId(Integer sourceId) {
-		this.sourceId = sourceId;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -263,5 +267,77 @@ public class Calendar implements ITransferObject{
 	public void setAnualHours(double anualHours) {
 		this.anualHours = anualHours;
 	}
+	
+//	@Transient
+//	public Calendar getCalendar() {
+//		return this;
+//	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Calendar o = (Calendar) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)	
+				.append(this.calendar, o.calendar)
+				.append(this.generic, o.generic)
+				.append(this.holiday, o.holiday)
+				.append(this.description, o.description)
+				.append(this.comments, o.comments)
+				.append(this.monday, o.monday)
+				.append(this.mondayHours, o.mondayHours)
+				.append(this.tuesday, o.tuesday)
+				.append(this.tuesdayHours, o.tuesdayHours)
+				.append(this.wednesday, o.wednesday)
+				.append(this.wednesdayHours, o.wednesdayHours)
+				.append(this.thursday, o.thursday)
+				.append(this.thursdayHours, o.thursdayHours)
+				.append(this.friday, o.friday)
+				.append(this.fridayHours, o.fridayHours)
+				.append(this.saturday, o.saturday)
+				.append(this.saturdayHours, o.saturdayHours)
+				.append(this.sunday, o.sunday)
+				.append(this.sundayHours, o.sundayHours)
+				.append(this.anualHours, o.anualHours)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)
+			.append(holiday)
+			.append(calendar)
+			.append(generic)
+			.append(description)
+			.append(comments)
+			.append(monday)
+			.append(mondayHours)
+			.append(tuesday)
+			.append(tuesdayHours)
+			.append(wednesday)
+			.append(wednesdayHours)
+			.append(thursday)
+			.append(thursdayHours)
+			.append(friday)
+			.append(fridayHours)
+			.append(saturday)
+			.append(saturdayHours)
+			.append(sunday)
+			.append(sundayHours)
+			.append(anualHours)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 	
 }

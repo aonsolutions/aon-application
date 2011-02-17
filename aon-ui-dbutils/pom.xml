@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.9.1-SNAPSHOT</version>
+		<version>6.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.dbutils</artifactId>
-	<version>5.9.1-SNAPSHOT</version>
-	<description>AON DB DUMPER</description>
-	<name>AON DB DUMPER</name>
+	<version>6.0.0-SNAPSHOT</version>
+	<description>AON UI DBUTILS</description>
+	<name>AON UI DBUTILS</name>
 	<dependencies> 
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -51,4 +51,3 @@
 	</dependencies>
 </project>
  
-

@@ -1,8 +1,15 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.SQLException;
+
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -12,9 +19,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 /********************************************************************
 * Copyright (c) 2010, esferalia NETWORKS S.A
@@ -29,8 +33,8 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 *********************************************************************
 */
 
-public class CtsqlDB extends AbstractCtsqlDB{
-	
+public class CtsqlDB extends AbstractCtsqlDB
+{
 	
 	public CtsqlDB( Connection ctsqlConnection) {
 		super(ctsqlConnection);
@@ -38,7 +42,7 @@ public class CtsqlDB extends AbstractCtsqlDB{
 	
 	
 	
-	public static void main(String[] args) throws ClassNotFoundException, ParseErrorException, MethodInvocationException, ResourceNotFoundException, SQLException, IOException {
+	public static void main(String[] args) throws ClassNotFoundException, SQLException , IOException {
 		
 		// create the command line parser
     	CommandLineParser parser = new PosixParser();   
@@ -94,50 +98,33 @@ public class CtsqlDB extends AbstractCtsqlDB{
             	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
             
             String url = line.getOptionValue(ctsqlURLOption.getOpt(), 
-            		"jdbc:ctsql://192.168.2.100:1101/empre055;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true");
+            		"jdbc:ctsql://192.168.2.100:1101/empre056;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true");
             String user = line.getOptionValue(ctsqlUserOption.getOpt(), "ctl");
             String passwd = line.getOptionValue(ctsqlPasswdOption.getOpt(), "ctl");
             
-            String ctsqlDBArgs [] = {
-            		"-url", url,
-            		"-user", user,
-            		"-passwd", passwd,
-            		"-out" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/AbstractCtsqlDB.java", 
-            		"-template" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDB.java.vm" 
-            };
-            
-
-            DBContext.main(ctsqlDBArgs);
-
-            String ctsqlDBVisitorArgs [] = {
-            		"-url", url,
-            		"-user", user,
-            		"-passwd", passwd,
-            		"-out" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/CtsqlDBVisitor.java", 
-            		"-template" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDBVisitor.java.vm" 
-            };
+            Connection connection =  DriverManager.getConnection(url, user, passwd);
+    		DatabaseMetaData dbMetaData = connection.getMetaData(); 
+    		DBContext dbContext = new DBContext(dbMetaData);
     		
-            DBContext.main(ctsqlDBVisitorArgs);
+            Writer out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/AbstractCtsqlDB.java");
+            Reader in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDB.java.vm");
+    		DBContext.evaluate(dbContext, out, "DBContext", in);
+    		in.close();
+    		out.close();
 
-            String defCtsqlDBVisitorArgs [] = {
-            		"-url", url,
-            		"-user", user,
-            		"-passwd", passwd,
-            		"-out" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/DefaultCtsqlDBVisitor.java", 
-            		"-template" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/DefaultCtsqlDBVisitor.java.vm" 
-            };
 
-            DBContext.main(defCtsqlDBVisitorArgs);
+            out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/CtsqlDBVisitor.java");
+            in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/CtsqlDBVisitor.java.vm");
+            DBContext.evaluate(dbContext, out, "DBContext", in);
+    		in.close();
+    		out.close();
+
+            out = new FileWriter("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/DefaultCtsqlDBVisitor.java");
+            in =  new FileReader("src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/DefaultCtsqlDBVisitor.java.vm");
+            DBContext.evaluate(dbContext, out, "DBContext", in);
+    		in.close();
+    		out.close();
             
-//            String stateCtsqlDBVisitorArgs [] = {
-//            		"-url", url,
-//            		"-user", user,
-//            		"-passwd", passwd,
-//            		"-out" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/StateCtsqlDBVisitor.java", 
-//            		"-template" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/StateCtsqlDBVisitor.java.vm" 
-//            };
-//
-//            DBContext.main(stateCtsqlDBVisitorArgs);
     	}
         catch( ParseException exp ) {
             // oops, something went wrong

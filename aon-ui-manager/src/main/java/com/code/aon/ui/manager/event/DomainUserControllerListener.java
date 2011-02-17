@@ -46,7 +46,7 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();
-		duc.onResetPassword(null);
+		duc.resetPassword( duc.getDomainUser() );
 	}
 
 	@Override

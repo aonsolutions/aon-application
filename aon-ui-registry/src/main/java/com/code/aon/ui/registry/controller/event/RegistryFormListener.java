@@ -12,6 +12,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -85,11 +86,12 @@ public class RegistryFormListener extends ControllerAdapter {
 		return StringUtils.isEmpty(media.getValue());
 	}
 	
-	private void updateRegistryMedia(Registry registry, RegistryMedia media) throws ManagerBeanException {
+	private void updateRegistryMedia(Registry registry, RegistryMedia media, RegistryAddress address) throws ManagerBeanException {
 		IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		if (media != null) {
 			if (!isEmpty(media)) {
 				media.setRegistry(registry);
+				media.setAddress(address);
 				registryMediaBean.insertOrUpdate(media);
 			} else if (media.getId() != null) {
 				registryMediaBean.remove(media);
@@ -97,16 +99,17 @@ public class RegistryFormListener extends ControllerAdapter {
 		}
 	}
 	
-	private void updateRegistryAddress( Registry registry, RegistryAddress address ) throws ManagerBeanException {
+	private RegistryAddress updateRegistryAddress( Registry registry, RegistryAddress address ) throws ManagerBeanException {
 		IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		if (address != null) {
 			if (!isEmpty(address) ) {
 				address.setRegistry(registry);
-				registryAddressBean.insertOrUpdate(address);
+				return (RegistryAddress) registryAddressBean.insertOrUpdate(address);
 			} else if ( address.getId() != null ) {
 				registryAddressBean.remove(address);
 			}
 		}
+		return null;
 	}	
 	
 	@Override
@@ -114,6 +117,7 @@ public class RegistryFormListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		setMainAddress( new RegistryAddress() );
 		getMainAddress().setAddressType( AddressType.MAIN );
+		getMainAddress().setStreetType(StreetType.CL);
 		try {
 			getMainAddress().setGeozone( CompanyUtil.getCompanyGeoZone() );
 		} catch( ManagerBeanException e ) {
@@ -130,11 +134,11 @@ public class RegistryFormListener extends ControllerAdapter {
 	}
 	
 	protected void updateRegistryLines( Registry registry ) throws ManagerBeanException {
-		updateRegistryAddress(registry, getMainAddress());
-		updateRegistryMedia(registry, phone);
-		updateRegistryMedia(registry, fax);
-		updateRegistryMedia(registry, email);
-		updateRegistryMedia(registry, web);
+		RegistryAddress address = updateRegistryAddress(registry, getMainAddress());
+		updateRegistryMedia(registry, phone, address);
+		updateRegistryMedia(registry, fax, address);
+		updateRegistryMedia(registry, email, address);
+		updateRegistryMedia(registry, web, address);
 	}
 	
 	private Registry getRegistry( ControllerEvent event ) {

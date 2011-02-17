@@ -13,18 +13,16 @@ import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.jcr.RepositoryException;
+import javax.naming.Name;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.jaas.client.ast.IDomain;
-import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
-import com.code.aon.ldap.LdapException;
-import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.NameResolver;
 
 import es.code.ecm.ContentRepository;
 import es.code.ecm.IConstants;
@@ -379,18 +377,9 @@ public class ECMUtil {
 	 */
 	public static final Entry getAonUser(String domain, String userId) {
 		domain = ( domain.equals( ContentRepository.DEFAULT_WORKSPACE ) )? IDomain.DEFAULT_DOMAIN_NAME: domain;
-		Entry entry = null;
 		BasicLdap ldap = new BasicLdap();
-		try {
-			DistinguishedName dn = AonDN.getUserDN( domain, userId );
-			String filter = LdapSession.getObjectClass("aonUser");
-			entry = ldap.getLdapSession().get(dn.toString(), filter);
-		} catch ( LdapException e ) {
-			throw new AbortProcessingException( "Error getting user for " + userId + ". " + e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
-		}
-		return entry;
+		Name dn = NameResolver.getUserDN( domain, userId );
+		return ldap.get(dn, IAonObjectClasses.USER);
 	}		
     
 }

@@ -1,7 +1,5 @@
 package com.code.aon.ui.manager.controller;
 
-import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +18,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Scope;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
-import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.Application;
 import com.code.aon.manager.BasicProfile;
@@ -74,7 +71,7 @@ public class DomainApplicationController extends LdapBasicController implements 
 	}
 	
 	private boolean isRegistableApplication( List<DomainApplication> das, Application application ) {
-		if ( application.getContratable() ) {
+		if ( application.isContratable() ) {
 			for( DomainApplication da : das ) {
 				if ( StringUtils.equals(da.getCommonName(), application.getCommonName()) ) {
 					return false;

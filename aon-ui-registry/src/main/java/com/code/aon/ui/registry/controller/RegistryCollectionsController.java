@@ -26,6 +26,7 @@ import com.code.aon.registry.Relationship;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -39,19 +40,14 @@ import com.code.aon.registry.enumeration.StreetType;
 public class RegistryCollectionsController {
 
 	private List<SelectItem> addressTypes;
-	
 	private List<SelectItem> streetTypes;
-	
+	private List<SelectItem> mediaTypes;
 	private List<SelectItem> registryTypes;
-	
 	private List<SelectItem> genders;
-	
 	private List<SelectItem> maritalStatuses;
-	
 	private List<SelectItem> registryAttachmentTypes;
-	
 	private List<SelectItem> noteTypes;
-	
+	private List<SelectItem> documentTypes;
 	private RegistryBank rBank; // No Borrar. Euke.
 								// Se utiliza como selector 
 								// en la pantalla de alta de vencimientos.
@@ -80,14 +76,16 @@ public class RegistryCollectionsController {
      * @return the street types
      */
     public List<SelectItem> getStreetTypes() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-        for( StreetType type : StreetType.values() ) {
-            String name = type.getName(locale); 
-            SelectItem item = new SelectItem(type, name);
-            types.add( item );
-        }
-        return types;
+    	if ( streetTypes == null ) {
+	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	        streetTypes = new LinkedList<SelectItem>();
+	        for( StreetType type : StreetType.values() ) {
+	            String name = type.getName(locale); 
+	            SelectItem item = new SelectItem(type, name);
+	            streetTypes.add( item );
+	        }
+    	}
+        return streetTypes;
     }
 
     /**
@@ -97,16 +95,16 @@ public class RegistryCollectionsController {
      */
     @SuppressWarnings("unchecked")
     public List getMediaTypes() {
-    	if ( streetTypes == null ) {
+    	if ( mediaTypes == null ) {
 	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	        streetTypes = new LinkedList<SelectItem>();
+	        mediaTypes = new LinkedList<SelectItem>();
 	        for( MediaType type : MediaType.values() ) {
 	            String name = type.getName(locale); 
 	            SelectItem item = new SelectItem(type, name);
-	            streetTypes.add( item );
+	            mediaTypes.add( item );
 	        }
     	}
-        return streetTypes;
+        return mediaTypes;
     }
     
     /**
@@ -200,6 +198,19 @@ public class RegistryCollectionsController {
 			}
 		}
 		return noteTypes;
+	}
+	
+	public List<SelectItem> getDocumentTypes() {
+		if ( documentTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			documentTypes = new LinkedList<SelectItem>();
+			for( DocumentType type : DocumentType.values() ) {
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					documentTypes.add(item);
+			}
+		}
+		return documentTypes;
 	}
 	
     @SuppressWarnings("unchecked")

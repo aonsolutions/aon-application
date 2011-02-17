@@ -88,7 +88,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		return this.sender;
 	}
 	
-	public String[] getEmails( Registry registry ) throws ManagerBeanException {
+	public static String[] getEmails( Registry registry ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
 		String type = bean.getFieldName( IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE );
@@ -108,8 +108,8 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		}
 		return null;
 	}	
-
-	protected void initMessageController( MessageController messageController, String[] emails, String body  )  {
+	
+	public static void initMessageController( MessageController messageController, String[] emails  )  {
 		if (! ArrayUtils.isEmpty(emails) ) {
 			messageController.setRecipientsTo( emails[0] );
 			if ( emails.length > 1 ) { 
@@ -117,6 +117,10 @@ public class CompanyEmailUtil implements ICompanyConstants {
 				messageController.setRecipientsCc( recipientsCc );
 			}
 		}
+	}
+
+	protected void initMessageController( MessageController messageController, String[] emails, String body  )  {
+		initMessageController(messageController, emails);
 		messageController.setContent( getEmailContent(body) );
 	}
 

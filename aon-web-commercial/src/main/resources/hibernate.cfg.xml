@@ -23,25 +23,41 @@
  
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Application"/>
+		<mapping class="com.code.aon.audit.Session"/>		
+
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
 
-		<!-- AON-REGISTRY Mapping files -->
-		<mapping class="com.code.aon.registry.Category"/>
-		<mapping class="com.code.aon.registry.RegistryBank"/>
-		<mapping class="com.code.aon.registry.RecordData"/>
-		<mapping class="com.code.aon.registry.Registry"/>
-		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
-		<mapping class="com.code.aon.registry.RegistryAddress"/>
-		<mapping class="com.code.aon.registry.RegistryAttachment"/>
-		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
-		<mapping class="com.code.aon.registry.RegistryMedia"/>
-		<mapping class="com.code.aon.registry.RegistryNote"/>
-		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
-		<mapping class="com.code.aon.registry.RegistryRelationship"/>
-		<mapping class="com.code.aon.registry.RegistrySegment"/>
-		<mapping class="com.code.aon.registry.Relationship"/>
-		<mapping class="com.code.aon.registry.Segment"/>
+		<!-- AON-CALENDAR Mapping files -->		
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>	
+		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
+		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>			
+
+		<!-- AON-CONFIG Mapping files -->		
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+				
+		<!-- AON-CUSTOMER Mapping files -->		
+		<mapping class="com.code.aon.customer.Customer"/>
 						
 		<!-- AON-COMMERCIAL Mapping files -->
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
@@ -64,6 +80,25 @@
 		<mapping class="com.code.aon.commercial.TargetSeller"/>		
 		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
+		<!-- AON-COMPANY Mapping files -->
+		<mapping class="com.code.aon.company.Agreement"/>
+		<mapping class="com.code.aon.company.AgreementLevel"/>
+		<mapping class="com.code.aon.company.AgreementLevelCategory"/>
+		<mapping class="com.code.aon.company.AgreementLevelPayment"/>
+		<mapping class="com.code.aon.company.CNAE"/>
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Enterprise"/>
+		<mapping class="com.code.aon.company.EnterpriseActivity"/>
+		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoTree"/>
+		<mapping class="com.code.aon.geozone.GeoZone"/>			
+	
 		<!-- AON-MARKETING Mapping files -->
 		<mapping class="com.code.aon.marketing.MarketingAction"/>
 		<mapping class="com.code.aon.marketing.ActionTarget"/>
@@ -78,31 +113,10 @@
 		<mapping class="com.code.aon.marketing.TargetProfile"/>
 		<mapping class="com.code.aon.marketing.MarketingTarget"/>		
 		
-		<!-- AON-CONFIG Mapping files -->		
-		<mapping class="com.code.aon.config.ApplicationParameter"/>
-		<mapping class="com.code.aon.config.Bank"/>
-		<mapping class="com.code.aon.config.CommissionType"/>
-		<mapping class="com.code.aon.config.PayMethod"/>
-		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
-		<mapping class="com.code.aon.config.Series"/>
-		<mapping class="com.code.aon.config.Scope"/>
-		<mapping class="com.code.aon.config.Tariff"/>
-		<mapping class="com.code.aon.config.Tax"/>
-		<mapping class="com.code.aon.config.TaxDetail"/>
-		<mapping class="com.code.aon.config.User"/>
-		<mapping class="com.code.aon.config.UserScope"/>
-		<mapping class="com.code.aon.config.WorkGroup"/>
-				
-		<!-- AON-CUSTOMER Mapping files -->		
-		<mapping class="com.code.aon.customer.Customer"/>
-		
-		<!-- AON-SUPPLIER Mapping files -->	
-		<mapping class="com.code.aon.supplier.Supplier"/>
+		<!-- AON-MESSAGING Mapping files -->
+		<mapping class="com.code.aon.messaging.Message"/>
+		<mapping class="com.code.aon.messaging.MessageContent"/>
 
-		<!-- AON-GEOZONE Mapping files -->		
-		<mapping class="com.code.aon.geozone.GeoTree"/>
-		<mapping class="com.code.aon.geozone.GeoZone"/>			
-	
 		<!-- AON-PRODUCT Mapping files -->
 		<mapping class="com.code.aon.product.Brand"/>
 		<mapping class="com.code.aon.product.Catalogue"/>
@@ -118,36 +132,33 @@
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
-				
+
+		<!-- AON-REGISTRY Mapping files -->
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryBank"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.Segment"/>
+
+		<!-- AON-SUPPLIER Mapping files -->	
+		<mapping class="com.code.aon.supplier.Supplier"/>
+
 		<!-- AON-SALES Mapping files -->
 		<mapping class="com.code.aon.sales.Sales"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>
 
 		<!-- AON-SELLER Mapping files -->
 		<mapping class="com.code.aon.seller.Seller"/>
-				
-		<!-- AON-COMPANY Mapping files -->
-		<mapping class="com.code.aon.company.CNAE"/>
-		<mapping class="com.code.aon.company.Company"/>
-		<mapping class="com.code.aon.company.Enterprise"/>
-		<mapping class="com.code.aon.company.EnterpriseActivity"/>
-		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
-		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.WorkActivity"/>
-		<mapping class="com.code.aon.company.resources.Resource"/>
-		<mapping class="com.code.aon.company.resources.Employee"/>
-
-		<!-- AON-MESSAGING Mapping files -->
-		<mapping class="com.code.aon.messaging.Message"/>
-		<mapping class="com.code.aon.messaging.MessageContent"/>
-						
-		<!-- AON-AUDIT Mapping files -->
-		<mapping class="com.code.aon.audit.Action"/>
-		<mapping class="com.code.aon.audit.ActionDenied"/>
-		<mapping class="com.code.aon.audit.ActionEntry"/>
-		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Application"/>
-		<mapping class="com.code.aon.audit.Session"/>		
 				
 	</session-factory>
 

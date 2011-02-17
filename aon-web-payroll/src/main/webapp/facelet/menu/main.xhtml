@@ -1,0 +1,140 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="mainMenu">
+		
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+				<aon:panelGroup>
+					<aon:panelGrid id="group_main_payroll"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-config aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.labor_menu_group}"/>
+						</f:facet>					
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="salaryDraft" 
+									action="salaryDraft_search" 
+									actionListener="#{salaryDraft.onEditSearch}"
+									value="#{payrollBundle.payroll_salaryDraft_module}">
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="paymentUpdate" 
+									action="paymentUpdate_search" 
+									actionListener="#{paymentUpdate.onEditSearch}"
+									value="#{payrollBundle.payroll_payment_update_module}">
+								</aon:commandLink>
+							</aon:div>
+<!--  
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="calendar" action="contractCalendarEvent_search"
+									actionListener="#{contractCalendarEvent.onEditSearch}"
+									value="#{calendarBundle.aon_calendar_menu}" />
+							</aon:div>
+-->
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="salary" 
+									action="salary_search" 
+									actionListener="#{salary.onEditSearch}"
+									value="#{payrollBundle.payroll_salary_module}">
+								</aon:commandLink>
+							</aon:div>				
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contract" 
+									action="contract_search" 
+									actionListener="#{contract.onEditSearch}"
+									value="#{payrollBundle.payroll_contract_module}">
+								</aon:commandLink>
+							</aon:div>		
+						</aon:div>
+					</aon:panelGrid>
+					<aon:panelGrid id="group_entity_payroll"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-config aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.entity_menu_group}"/>
+						</f:facet>					
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="enterprise" 
+									action="enterprise_search" 
+									value="#{companyBundle.company_enterprise_module}">
+									<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
+									<aon:actionListener method="#{enterprise.onEditSearch}" />
+								</aon:commandLink>
+							</aon:div>	
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="person" 
+									action="person_search" actionListener="#{person.onEditSearch}"
+									value="#{registryBundle.registry_person_module}">
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="creditor" 
+									disabled="true" 
+									action="contract_search-creditor" actionListener="#{contract.onEditSearch}"
+									value="PRofesionales(Acreedores) -i18n-">
+								</aon:commandLink>
+							</aon:div>	
+						</aon:div>
+					</aon:panelGrid>
+				</aon:panelGroup>
+				
+				<aon:panelGroup>
+					<aon:panelGrid id="group_calendar_payroll"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-config aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.calendar_menu_group}"/>
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="calendar" action="calendar_search"
+									value="#{calendarBundle.aon_calendar_generic_menu}" >
+									<f:setPropertyActionListener target="#{calendar.sourceKey}" value="4" />
+									<aon:actionListener method="#{calendar.onEditSearch}" />
+									<aon:actionListener method="#{calendar.onInitialize}" />
+								</aon:commandLink>
+							</aon:div>					
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="holiday" action="holiday_search"
+									value="#{calendarBundle.aon_calendar_holiday}" />
+							</aon:div>
+						</aon:div>
+					</aon:panelGrid>
+					<aon:panelGrid id="group_agreement_payroll"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-config aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.agreement_menu_group}"/>
+						</f:facet>					
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="agreement"
+									action="agreement_search" actionListener="#{agreement.onEditSearch}"
+									value="#{companyBundle.company_agreement_module}">
+								</aon:commandLink>
+							</aon:div>	
+						</aon:div>
+					</aon:panelGrid>
+				</aon:panelGroup>
+					
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

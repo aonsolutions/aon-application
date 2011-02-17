@@ -1,5 +1,6 @@
 package com.code.aon.desktop.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -7,6 +8,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.validator.ValidatorException;
 import javax.naming.Context;
 import javax.naming.Name;
@@ -79,6 +82,8 @@ public class DomainController extends BasicController implements IDesktopConstan
 	private DBManager manager;
 	
 	private ApplicationsManager.App selectedApplication;
+	
+	private DataModel registeredDomains;
 
 	public DomainController() {
 		AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
@@ -100,8 +105,8 @@ public class DomainController extends BasicController implements IDesktopConstan
 	}
 
 	public String getCurrentDomainApplicationURL() throws ManagerBeanException {
-		if ( getModel().isRowAvailable() ) {
-			Domain domain = (Domain) getModel().getRowData();
+		if ( getRegisteredDomains().isRowAvailable() ) {
+			Domain domain = (Domain) getRegisteredDomains().getRowData();
 			StringBuffer url = new StringBuffer( "http://" );
 			url.append( domain.getCommonName() );
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -283,7 +288,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 		return newDBConnection;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<DomainApplication> getCurrentDomainApplications() throws ManagerBeanException {
 		Name dn = NameResolver.getDomainApplicationsDN(getCurrentDomain());
 		IManagerBean bean = getDomainApplicationManagerBean();
@@ -407,6 +412,32 @@ public class DomainController extends BasicController implements IDesktopConstan
 				AonUtil.addErrorMessage( "Error sincronizando el dominio " + domain );
 			}
 		}
+	}
+
+	public void onInitRegisteredDomains( ActionEvent event ) throws ManagerBeanException {
+		List<Domain> domains = new ArrayList<Domain>();
+		AonDomainController domainController = (AonDomainController) AonUtil.getRegisteredBean(CURRENT_DOMAIN_CONTROLLER_NAME);
+		Domain domain = domainController.getDomain();
+		domains.add( domain );
+		clearCriteria();
+		Criteria criteria = getCriteria();
+		criteria.addEqualExpression(getFieldName(IDesktopAlias.DOMAIN_PARENT_DOMAIN), domain.getId());
+		List<ITransferObject> list = getManagerBean().getList(criteria);
+		if (! list.isEmpty() ) {
+			BasicLdap ldap = new BasicLdap();
+			for( ITransferObject to : list ) {
+				Domain childDomain = (Domain) to;
+				Name dn = NameResolver.getDomainApplicationUsersDN(childDomain.getCommonName(), selectedApplication.getId());
+				if ( ldap.exists(dn, IAonObjectClasses.ORGANIZATIONAL_UNIT) ) {
+					domains.add( childDomain );
+				}
+			}					
+		}
+		this.registeredDomains = new ListDataModel(domains);
+	}
+	
+	public DataModel getRegisteredDomains() {
+		return registeredDomains;
 	}
 	
 }

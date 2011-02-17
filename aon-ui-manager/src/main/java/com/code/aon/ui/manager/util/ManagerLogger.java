@@ -1,8 +1,13 @@
 package com.code.aon.ui.manager.util;
 
+import static com.code.aon.ui.manager.controller.IManagerConstants.BUNDLE_NAME;
+import static com.code.aon.ui.manager.controller.IManagerConstants.NEED_MAIL_ACCOUNT;
+import static com.code.aon.ui.manager.controller.IManagerConstants.WRONG_MAIL_ACCOUNT;
+
 import java.util.Date;
 
 import javax.mail.Address;
+import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
@@ -17,6 +22,7 @@ import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
+import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
@@ -32,14 +38,31 @@ public class ManagerLogger {
 	
 	private Address[] to;
 	
+	private boolean configured;
+	
 	public ManagerLogger( String toEmails ) {
 		LoggedUser _loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
 		loggedUser = _loggedUser.getPrincipal();
 		try {
 			to = InternetAddress.parse(toEmails);
 			MailAccount account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), loggedUser.getShortName());
-			Address from = InternetAddress.parse(account.getEmail())[0];
-			this.sender = new EmailSender(from, account);
+			if ( account != null ) {
+				Address from = InternetAddress.parse(account.getEmail())[0];
+				this.sender = new EmailSender(from, account);			
+				try {
+					this.sender.connect();
+					this.configured = true;
+				} catch (MessagingException e) {
+					AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, WRONG_MAIL_ACCOUNT, e.getMessage());
+				} finally {
+					this.sender.disconnect();	
+					if (! this.configured ) {
+						this.sender = null;
+					}
+				}
+			} else {
+				AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, NEED_MAIL_ACCOUNT, loggedUser.getShortName());				
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e );
 		} catch (AddressException e) {
@@ -47,13 +70,19 @@ public class ManagerLogger {
 		}
 	}
 	
+	public boolean isConfigured() {
+		return this.configured;
+	}
+	
 	private void sendEmail( String subject, String content ) {
-		try {		
-			sender.connect();
-			sender.sendMessage(to, subject, content);
-			sender.disconnect();
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e );
+		if ( isConfigured() ) {
+			try {		
+				sender.connect();
+				sender.sendMessage(to, subject, content);
+				sender.disconnect();
+			} catch (Throwable e) {
+				LOGGER.error(e.getMessage(), e );
+			}
 		}
 	}
 	
@@ -103,4 +132,20 @@ public class ManagerLogger {
 		String subject = "REMOVED: User " + user.getCommonName() + " in Application " + user.getAppplication() + " in Domain " + user.getDomain();
 		sendEmail( subject, getContent() );
 	}	
+	
+	public void multiUser( Domain domain ) {
+		String subject = "Domain " + domain.getCommonName() + " Multiuser: " + domain.getUserManagement();
+		sendEmail( subject, getContent() );		
+	}
+	
+	public void multiDomain( Domain domain ) {
+		String subject = "Domain " + domain.getCommonName() + " MultiDomain: " + domain.getDomainManagement();
+		sendEmail( subject, getContent() );		
+	}
+
+	public void documental( Domain domain ) {
+		String subject = "Domain " + domain.getCommonName() + " Documental: " + domain.isDocumentManagement();
+		sendEmail( subject, getContent() );		
+	}
+	
 }

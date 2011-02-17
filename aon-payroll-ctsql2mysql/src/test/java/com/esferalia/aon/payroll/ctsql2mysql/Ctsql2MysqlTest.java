@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 
 
 import junit.framework.Test;
@@ -40,17 +41,16 @@ public class Ctsql2MysqlTest
      * @throws SQLException 
      * @throws ClassNotFoundException 
      */
-    public void testCtsql2Mysql() throws SQLException, ClassNotFoundException
+    public void testCtsql2Mysql() throws SQLException, ClassNotFoundException,ParseException
     {
-	/*
+    	/**
     	String args [] = {
-    			"-dryrun",
-    			"-mysqlurl", "jdbc:mysql://127.0.0.1:3306/rtrepiana-esferalia-com",
-    			"-ctsqlurl", "jdbc:ctsql://192.168.2.100:1101/empre055;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true"
+  			"-dryrun",
+    			"-mysqlurl", "jdbc:mysql://127.0.0.1:3306/payroll-esferalia-org",
+    			"-ctsqlurl", "jdbc:ctsql://192.168.2.100:1101/empre056;DBPATH=/usr/share/ctsql/data;RTRIMCHAR=true"
     	} ;
     	Ctsql2Mysql.main(args);
-	*/
+    	*/
     }
-     
     
 }

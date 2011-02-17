@@ -148,28 +148,40 @@ public interface IRegistryAlias {
 	String  REGISTRY_DOCUMENT = REGISTRY_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: Registry_documentCountry
+	* Hibernate value: Registry.documentCountry
+	*/
+	String  REGISTRY_DOCUMENT_COUNTRY = REGISTRY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Registry_documentType
+	* Hibernate value: Registry.documentType
+	*/
+	String  REGISTRY_DOCUMENT_TYPE = REGISTRY_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: Registry_id
 	* Hibernate value: Registry.id
 	*/
-	String  REGISTRY_ID = REGISTRY_ENTRY.getAliasNames()[2];
+	String  REGISTRY_ID = REGISTRY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Registry_name
 	* Hibernate value: Registry.name
 	*/
-	String  REGISTRY_NAME = REGISTRY_ENTRY.getAliasNames()[3];
+	String  REGISTRY_NAME = REGISTRY_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: Registry_surname
-	* Hibernate value: Registry.surname
+	* Alias value: Registry_nationality
+	* Hibernate value: Registry.nationality
 	*/
-	String  REGISTRY_SURNAME = REGISTRY_ENTRY.getAliasNames()[4];
+	String  REGISTRY_NATIONALITY = REGISTRY_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Registry_type
 	* Hibernate value: Registry.type
 	*/
-	String  REGISTRY_TYPE = REGISTRY_ENTRY.getAliasNames()[5];
+	String  REGISTRY_TYPE = REGISTRY_ENTRY.getAliasNames()[7];
 
 
 
@@ -240,46 +252,58 @@ public interface IRegistryAlias {
 	String  REGISTRY_ADDRESS_ADDRESS_TYPE = REGISTRY_ADDRESS_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: RegistryAddress_alias
+	* Hibernate value: RegistryAddress.alias
+	*/
+	String  REGISTRY_ADDRESS_ALIAS = REGISTRY_ADDRESS_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: RegistryAddress_city
 	* Hibernate value: RegistryAddress.city
 	*/
-	String  REGISTRY_ADDRESS_CITY = REGISTRY_ADDRESS_ENTRY.getAliasNames()[4];
+	String  REGISTRY_ADDRESS_CITY = REGISTRY_ADDRESS_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: RegistryAddress_geozone_id
 	* Hibernate value: RegistryAddress.geozone.id
 	*/
-	String  REGISTRY_ADDRESS_GEOZONE_ID = REGISTRY_ADDRESS_ENTRY.getAliasNames()[5];
+	String  REGISTRY_ADDRESS_GEOZONE_ID = REGISTRY_ADDRESS_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: RegistryAddress_id
 	* Hibernate value: RegistryAddress.id
 	*/
-	String  REGISTRY_ADDRESS_ID = REGISTRY_ADDRESS_ENTRY.getAliasNames()[6];
+	String  REGISTRY_ADDRESS_ID = REGISTRY_ADDRESS_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: RegistryAddress_number
+	* Hibernate value: RegistryAddress.number
+	*/
+	String  REGISTRY_ADDRESS_NUMBER = REGISTRY_ADDRESS_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: RegistryAddress_recipient
 	* Hibernate value: RegistryAddress.recipient
 	*/
-	String  REGISTRY_ADDRESS_RECIPIENT = REGISTRY_ADDRESS_ENTRY.getAliasNames()[7];
+	String  REGISTRY_ADDRESS_RECIPIENT = REGISTRY_ADDRESS_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: RegistryAddress_registry_id
 	* Hibernate value: RegistryAddress.registry.id
 	*/
-	String  REGISTRY_ADDRESS_REGISTRY_ID = REGISTRY_ADDRESS_ENTRY.getAliasNames()[8];
+	String  REGISTRY_ADDRESS_REGISTRY_ID = REGISTRY_ADDRESS_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: RegistryAddress_streetType
 	* Hibernate value: RegistryAddress.streetType
 	*/
-	String  REGISTRY_ADDRESS_STREET_TYPE = REGISTRY_ADDRESS_ENTRY.getAliasNames()[9];
+	String  REGISTRY_ADDRESS_STREET_TYPE = REGISTRY_ADDRESS_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: RegistryAddress_zip
 	* Hibernate value: RegistryAddress.zip
 	*/
-	String  REGISTRY_ADDRESS_ZIP = REGISTRY_ADDRESS_ENTRY.getAliasNames()[10];
+	String  REGISTRY_ADDRESS_ZIP = REGISTRY_ADDRESS_ENTRY.getAliasNames()[12];
 
 
 
@@ -453,16 +477,22 @@ public interface IRegistryAlias {
 	String  REGISTRY_DIR_STAFF_REPRESENTATIVE = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[8];
 
 	/** 
+	* Alias value: RegistryDirStaff_representativeLabor
+	* Hibernate value: RegistryDirStaff.representativeLabor
+	*/
+	String  REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[9];
+
+	/** 
 	* Alias value: RegistryDirStaff_shareHolder
 	* Hibernate value: RegistryDirStaff.shareHolder
 	*/
-	String  REGISTRY_DIR_STAFF_SHARE_HOLDER = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[9];
+	String  REGISTRY_DIR_STAFF_SHARE_HOLDER = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: RegistryDirStaff_shareNumber
 	* Hibernate value: RegistryDirStaff.shareNumber
 	*/
-	String  REGISTRY_DIR_STAFF_SHARE_NUMBER = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[10];
+	String  REGISTRY_DIR_STAFF_SHARE_NUMBER = REGISTRY_DIR_STAFF_ENTRY.getAliasNames()[11];
 
 
 
@@ -472,52 +502,58 @@ public interface IRegistryAlias {
 	DAOConstantsEntry REGISTRY_MEDIA_ENTRY = DAOConstants.getDAOConstant(RegistryMedia.class);
 
 	/** 
+	* Alias value: RegistryMedia_address_id
+	* Hibernate value: RegistryMedia.address.id
+	*/
+	String  REGISTRY_MEDIA_ADDRESS_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: RegistryMedia_administrative
 	* Hibernate value: RegistryMedia.administrative
 	*/
-	String  REGISTRY_MEDIA_ADMINISTRATIVE = REGISTRY_MEDIA_ENTRY.getAliasNames()[0];
+	String  REGISTRY_MEDIA_ADMINISTRATIVE = REGISTRY_MEDIA_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: RegistryMedia_comment
 	* Hibernate value: RegistryMedia.comment
 	*/
-	String  REGISTRY_MEDIA_COMMENT = REGISTRY_MEDIA_ENTRY.getAliasNames()[1];
+	String  REGISTRY_MEDIA_COMMENT = REGISTRY_MEDIA_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RegistryMedia_commercial
 	* Hibernate value: RegistryMedia.commercial
 	*/
-	String  REGISTRY_MEDIA_COMMERCIAL = REGISTRY_MEDIA_ENTRY.getAliasNames()[2];
+	String  REGISTRY_MEDIA_COMMERCIAL = REGISTRY_MEDIA_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: RegistryMedia_id
 	* Hibernate value: RegistryMedia.id
 	*/
-	String  REGISTRY_MEDIA_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[3];
+	String  REGISTRY_MEDIA_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: RegistryMedia_mediaType
 	* Hibernate value: RegistryMedia.mediaType
 	*/
-	String  REGISTRY_MEDIA_MEDIA_TYPE = REGISTRY_MEDIA_ENTRY.getAliasNames()[4];
+	String  REGISTRY_MEDIA_MEDIA_TYPE = REGISTRY_MEDIA_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: RegistryMedia_registry_id
 	* Hibernate value: RegistryMedia.registry.id
 	*/
-	String  REGISTRY_MEDIA_REGISTRY_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[5];
+	String  REGISTRY_MEDIA_REGISTRY_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: RegistryMedia_technical
 	* Hibernate value: RegistryMedia.technical
 	*/
-	String  REGISTRY_MEDIA_TECHNICAL = REGISTRY_MEDIA_ENTRY.getAliasNames()[6];
+	String  REGISTRY_MEDIA_TECHNICAL = REGISTRY_MEDIA_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: RegistryMedia_value
 	* Hibernate value: RegistryMedia.value
 	*/
-	String  REGISTRY_MEDIA_VALUE = REGISTRY_MEDIA_ENTRY.getAliasNames()[7];
+	String  REGISTRY_MEDIA_VALUE = REGISTRY_MEDIA_ENTRY.getAliasNames()[8];
 
 
 
@@ -767,10 +803,40 @@ public interface IRegistryAlias {
 	String  PERSON_SOCIAL_SECURITY_NUMBER = PERSON_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: Person_name
+	* Hibernate value: Person.name
+	*/
+	String  PERSON_NAME = PERSON_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Person_firstSurname
+	* Hibernate value: Person.firstSurname
+	*/
+	String  PERSON_FIRST_SURNAME = PERSON_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Person_secondSurname
+	* Hibernate value: Person.secondSurname
+	*/
+	String  PERSON_SECOND_SURNAME = PERSON_ENTRY.getAliasNames()[8];
+
+	/** 
 	* Alias value: Person_registry_document
 	* Hibernate value: Person.registry.document
 	*/
-	String  PERSON_REGISTRY_DOCUMENT = PERSON_ENTRY.getAliasNames()[6];
+	String  PERSON_REGISTRY_DOCUMENT = PERSON_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Person_registry_documentCountry
+	* Hibernate value: Person.registry.documentCountry
+	*/
+	String  PERSON_REGISTRY_DOCUMENT_COUNTRY = PERSON_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Person_registry_documentType
+	* Hibernate value: Person.registry.documentType
+	*/
+	String  PERSON_REGISTRY_DOCUMENT_TYPE = PERSON_ENTRY.getAliasNames()[11];
 
 
 }

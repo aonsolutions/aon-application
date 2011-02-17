@@ -204,10 +204,10 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			public int compare(Object o1, Object o2) {
 				if (o1 instanceof Delivery && o2 instanceof Delivery) {
 					Delivery delivery1 = (Delivery)o1;
-					String surname1 = (delivery1.getCustomer().getRegistry().getSurname() != null) ? delivery1.getCustomer().getRegistry().getSurname() : "";
+					String surname1 = "";
 					String name1 = (delivery1.getCustomer().getRegistry().getName() != null) ? delivery1.getCustomer().getRegistry().getName() : "";
 					Delivery delivery2 = (Delivery)o2;
-					String surname2 = (delivery2.getCustomer().getRegistry().getSurname() != null) ? delivery2.getCustomer().getRegistry().getSurname() : "";
+					String surname2 = "";
 					String name2 = (delivery2.getCustomer().getRegistry().getName() != null) ? delivery2.getCustomer().getRegistry().getName() : "";
 					return (surname1.compareTo(surname2) == 0) ? name1.compareTo(name2) : surname1.compareTo(surname2);
 				}
@@ -386,7 +386,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		invoice.setIssueDate(params.getInvoiceDate());
 		invoice.setRegistry(group.getParent());
 		invoice.setRegistryDocument(group.getParent().getDocument());
-		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) + " " + (group.getParent().getSurname()==null?"":group.getParent().getSurname()));
+		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) );
 		if (group.getParent().getId().equals(delivery.getCustomer().getId())) {
 			invoice.setRegistryAddress(delivery.getRegistryAddress());
 		}
@@ -405,7 +405,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		Registry registry = delivery.getCustomer().getRegistry();
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
-		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) + " " + (registry.getSurname()==null?"":registry.getSurname()));
+		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) );
 		invoice.setRegistryAddress(delivery.getRegistryAddress());
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
 		invoice.setType(InvoiceType.SALES);

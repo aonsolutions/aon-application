@@ -12,8 +12,10 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
@@ -56,6 +58,12 @@ public class Person implements ITransferObject, IRegistry {
 
 	/** Social Security number */
 	private String socialSecurityNumber;
+	
+	private String name;
+
+	private String firstSurname;
+
+	private String secondSurname;
 
 	/**
 	 * Gets the id.
@@ -169,6 +177,37 @@ public class Person implements ITransferObject, IRegistry {
 		this.socialSecurityNumber = socialSecurityNumber;
 	}
 	
+	@Column(length=64)
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	@Column(name="first_surname", length = 64)
+	public String getFirstSurname() {
+		return firstSurname;
+	}
+
+	public void setFirstSurname(String firstSurname) {
+		this.firstSurname = firstSurname;
+	}
+
+	@Column(name="second_surname", length = 64)
+	public String getSecondSurname() {
+		return secondSurname;
+	}
+
+	public void setSecondSurname(String secondSurname) {
+		this.secondSurname = secondSurname;
+	}
+	
+	@Transient
+    public String getFullName() {
+    	return ((StringUtils.isEmpty(getFirstSurname())) ? "" : getFirstSurname() + " ") + ((StringUtils.isEmpty(getSecondSurname())) ? "" : getSecondSurname() + ", ") + ((StringUtils.isEmpty(getName())) ? "" : getName());
+    }
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -182,6 +221,9 @@ public class Person implements ITransferObject, IRegistry {
 				.append(this.maritalStatus, o.maritalStatus)
 				.append(this.registry, o.registry)
 				.append(this.socialSecurityNumber, o.socialSecurityNumber)
+				.append(this.name, o.name)
+				.append(this.firstSurname, o.firstSurname)
+				.append(this.secondSurname, o.secondSurname)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -196,6 +238,9 @@ public class Person implements ITransferObject, IRegistry {
 			.append(maritalStatus)
 			.append(registry)
 			.append(socialSecurityNumber)
+			.append(name)
+			.append(firstSurname)
+			.append(secondSurname)
 			.toHashCode();
 	}
 

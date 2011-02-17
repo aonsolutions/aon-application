@@ -2,6 +2,7 @@ package com.esferalia.aon.calendar;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,10 +13,15 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.calendar.enumeration.DayType;
 
 
 @Entity
@@ -36,6 +42,10 @@ public class CalendarHoliday implements ITransferObject {
     /** The date. */
     private Date date;
     
+    private DayType dayType;
+    
+    private double hours;
+    
     @Id
     @GeneratedValue
 	public Integer getId() {
@@ -46,6 +56,7 @@ public class CalendarHoliday implements ITransferObject {
 		this.id = id;
 	}
 	
+	@Column(length=64)
 	public String getDescription() {
 		return description;
 	}
@@ -74,5 +85,58 @@ public class CalendarHoliday implements ITransferObject {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+	
+	@Column(name="day_type")
+	public DayType getDayType() {
+		return dayType;
+	}
+
+	public void setDayType(DayType dayType) {
+		this.dayType = dayType;
+	}
+	
+	public double getHours() {
+		return hours;
+	}
+
+	public void setHours(double hours) {
+		this.hours = hours;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final CalendarHoliday o = (CalendarHoliday) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)
+			    .append(this.calendar, o.calendar)
+			    .append(this.date, o.date)
+			    .append(this.dayType, o.dayType)
+			    .append(this.hours, o.hours)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)
+			.append(description)
+		    .append(calendar)
+		    .append(date)
+		    .append(dayType)
+		    .append(hours)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+
 
 }

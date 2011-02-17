@@ -18,7 +18,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
@@ -27,9 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.AonException;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
@@ -37,6 +38,7 @@ import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.manager.BeanManagerEx;
 import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.DBManager;
 import com.code.aon.ui.manager.util.ManagerLogger;
@@ -86,12 +88,17 @@ public class ManagerController implements IManagerConstants {
 	private boolean termsOfServiceAccepted;
 	
 	public ManagerController() {
+		BeanManager.setManager(BeanManagerEx.getInstance());
 		this.dbManager = new DBManager();
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
 		this.currentDomain = calculateCurrentDomain();
-		this.userType = calculateUserType();
-		init( this.userType );
 		this.logger = new ManagerLogger( this.properties.getProperty(NOTIFICATION_EMAIL) );
+		if ( this.logger.isConfigured() ) {
+			this.userType = calculateUserType();	
+		} else {
+			this.userType = UserType.NORMAL;
+		}
+		init( this.userType );
 	}
 	
 	public Properties getProperties() {
@@ -121,9 +128,21 @@ public class ManagerController implements IManagerConstants {
 	public Domain getCurrentDomain() {
 		return currentDomain;
 	}
+	
+	public void setCurrentDomain(Domain currentDomain) {
+		this.currentDomain = currentDomain;
+	}
 
 	public boolean isAdministrator() {
 		return this.userType == UserType.ESFERALIA;
+	}
+
+	public boolean isUserManagement() {
+		return isAdministrator() || getCurrentDomain().getUserManagement();
+	}
+
+	public boolean isDomainManagement() {
+		return isAdministrator() || getCurrentDomain().getDomainManagement();
 	}
 	
 	public String getHomeTemplate() {
@@ -245,24 +264,29 @@ public class ManagerController implements IManagerConstants {
 	}	
 	
 	public boolean changeDbConnection(DBConnnection dbc) {
-		if (! ObjectUtils.equals(dbConnection, dbc) ) {
+		if (! dbc.equalsDB(this.dbConnection) ) {
 			this.dbConnection = dbc;	
 			if ( this.sessionFactory != null ) {
 				this.sessionFactory.close();
-				this.sessionFactory = null;				
 			}
+			this.sessionFactory = initSessionFactory(this.dbConnection);				
 			return true;
 		}
 		return false;
 	}
 
+	private SessionFactory initSessionFactory( DBConnnection dbc ) {
+		AnnotationConfiguration configuration = new AnnotationConfiguration();
+		dbc.configure(configuration);
+   		configuration.buildMappings();
+		SessionFactory sessionFactory = configuration.buildSessionFactory();
+		BeanManagerEx.getInstance().update(sessionFactory);
+        DAOConstantsResolver resolver = new DAOConstantsResolver(configuration);
+        resolver.createDAOConstants();
+        return sessionFactory;
+	}
+	
 	public SessionFactory getSessionFactory() {
-		if ( sessionFactory == null )  {
-			AnnotationConfiguration configuration = new AnnotationConfiguration();
-			dbConnection.configure(configuration);
-	   		configuration.buildMappings();
-			sessionFactory = configuration.buildSessionFactory();
-		}
 		return sessionFactory;
 	}
 	
@@ -286,9 +310,9 @@ public class ManagerController implements IManagerConstants {
 	}
 	
 	private UserType calculateUserType() {
-		UserType type = UserType.NORMAL;
-		if ( currentDomain.getDomainManagement() ) {
-			type = UserType.PARENT;
+		UserType type = UserType.PARENT;
+		if ( currentDomain.getParentDomain() != null ) {
+			type = UserType.NORMAL;
 		}
 		return type;
 	}
@@ -359,8 +383,6 @@ public class ManagerController implements IManagerConstants {
             LOGGER.info( "Executing: {}", StringUtils.join(commandLine, " ") );
             Process pr = rt.exec( commandLine );
 
-            StringBuffer result = new StringBuffer();
-            
             Reader reader = new InputStreamReader(pr.getInputStream());
             BufferedReader in = new BufferedReader(reader);
 

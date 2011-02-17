@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.9.1-SNAPSHOT</version>
+		<version>6.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.ecommerce</artifactId>
-	<version>5.9.1-SNAPSHOT</version>
+	<version>6.0.0-SNAPSHOT</version>
 	<description>AON UI ECOMMERCE</description>
 	<name>AON UI ECOMMERCE</name>
 	<dependencies>
@@ -26,7 +26,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.commercial</artifactId>
+			<artifactId>aon.ui.sign</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -89,4 +89,3 @@
 	</dependencies>
 </project>
  
-

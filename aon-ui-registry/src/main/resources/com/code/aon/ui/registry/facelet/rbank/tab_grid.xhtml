@@ -16,83 +16,33 @@
 				</f:facet>
 				<aon:outputText value="#{to.bank.name}" rendered="#{formList}" />
 
-				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-					<aon:lookupInputText id="RegistryBank_code" property="#{controller.to.bank}"
-						reRender="RegistryBank_name" lookup="#{bankLookup}"
-						value="#{controller.to.bank.code}" size="5">
-						<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
-					</aon:lookupInputText>
-					<aon:lookupButton 
-						windowTitle="#{configBundle.config_bank_selection}"
-						selectReRender="RegistryBank_code,RegistryBank_name" actionType="search"
-						lookup="#{bankLookup}" minHeight="460" minWidth="650"
-						property="#{controller.to.bank}">
-					</aon:lookupButton>
-					<aon:inputText id="RegistryBank_name"
-						value="#{controller.to.bank.name}"
-						size="50" disabled="true" />							
-				</aon:div>
+				<ui:include src="bankLookup.xhtml">
+					<ui:param name="bankTo" value="#{controller.to.bank}" />
+					<ui:param name="renderBankLookup" value="#{formEdit}" />
+				</ui:include>
 				<f:facet name="footer">
-					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-						<aon:lookupInputText id="RegistryBank_code-New" property="#{controller.to.bank}"
-							reRender="RegistryBank_name-New" lookup="#{bankLookup}"
-							value="#{controller.to.bank.code}" size="5">
-							<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
-						</aon:lookupInputText>
-						<aon:lookupButton 
-							windowTitle="#{configBundle.config_bank_selection}"
-							selectReRender="RegistryBank_code-New,RegistryBank_name-New" actionType="search"
-							lookup="#{bankLookup}" minHeight="460" minWidth="650"
-							property="#{controller.to.bank}">
-						</aon:lookupButton>
-						<aon:inputText id="RegistryBank_name-New"
-							value="#{controller.to.bank.name}"
-							size="50" disabled="true" />							
-					</aon:div>
+					<ui:include src="bankLookup.xhtml">
+						<ui:param name="bankTo" value="#{controller.to.bank}" />
+						<ui:param name="renderBankLookup" value="#{formNew}" />
+						<ui:param name="bankSuffix" value="-New" />
+					</ui:include>
 				</f:facet>
 			</aon:column>
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryBank_bankAccount" value="#{configBundle.config_bank_account}" />
+					<aon:outputText value="#{configBundle.config_bank_account}" />
 				</f:facet>
 				<aon:outputText value="#{to.bankAccount}" rendered="#{formList}" />
-				<aon:div rendered="#{formEdit}">
-					<aon:inputText label="#{configBundle.config_bank_code}"
-						value="#{controller.to.bankAccount.office}" required="true"
-						size="4" maxlength="4">
-						<f:validateLength minimum="4" maximum="4" />
-					</aon:inputText>
-					<aon:inputText label="#{configBundle.config_bank_control}"
-						value="#{controller.to.bankAccount.control}" required="true"
-						size="2" maxlength="2">
-						<f:validateLength minimum="2" maximum="2" />
-					</aon:inputText>
-					<aon:inputText id="RegistryBank_bankAccount"
-						value="#{controller.to.bankAccount.account}" required="true"
-						size="10" maxlength="10">
-						<f:validateLength minimum="10" maximum="10" />
-					</aon:inputText>
-				</aon:div>
-
+				<ui:include src="bankAccount.xhtml">
+					<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
+					<ui:param name="renderBankAccount" value="#{formEdit}" />
+				</ui:include>
 				<f:facet name="footer">
-					<aon:div rendered="#{formNew}">
-						<aon:inputText label="#{configBundle.config_bank_code}"
-							value="#{controller.to.bankAccount.office}" required="true"
-							size="4" maxlength="4">
-							<f:validateLength minimum="4" maximum="4" />
-						</aon:inputText>
-						<aon:inputText label="#{configBundle.config_bank_control}"
-							value="#{controller.to.bankAccount.control}" required="true"
-							size="2" maxlength="2">
-							<f:validateLength minimum="2" maximum="2" />
-						</aon:inputText>
-						<aon:inputText id="RegistryBank_bankAccount-New"
-							value="#{controller.to.bankAccount.account}" required="true"
-							size="10" maxlength="10">
-							<f:validateLength minimum="10" maximum="10" />
-						</aon:inputText>
-					</aon:div>
+					<ui:include src="bankAccount.xhtml">
+						<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
+						<ui:param name="renderBankAccount" value="#{formNew}" />
+					</ui:include>
 				</f:facet>
 			</aon:column>
 			

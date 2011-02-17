@@ -6,19 +6,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:panelGrid columns="2" 	
-		columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
-
-		<c:if test="#{lookup != null}">
-			<ui:param name="controller" value="#{lookup}"/>
-		</c:if>
-
-		<ui:include	src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml" />
-
-		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
-			<ui:param name="controllerLookupListener" value="#{personForm}"/>
+	<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
+		<ui:include	src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
 		</ui:include>
-
 	</aon:panelGrid>
 
 </ui:composition>

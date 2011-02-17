@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+
+	<aon:div>
+		<aon:panelGrid columns="4" style="width:100%">
+			<aon:outputText value="#{payrollBundle.payroll_name}" />
+			<aon:outputText value="#{controller.to.person.registry.fullName}" />
+			
+			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" />
+				
+			<aon:outputText value="#{companyBundle.company_enterprise}" />
+			<aon:outputText value="#{controller.to.workPlace.enterprise.registry.fullName}" />
+			
+			<aon:outputLabel value="#{payrollBundle.payroll_salary_totalPayment}" />
+			<aon:outputText value="#{controller.to.salary.totalPayment}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		
+			<aon:outputText value="#{companyBundle.company_workplace}" />
+			<aon:outputText value="#{controller.to.workPlace.description}" />
+			
+			<aon:outputLabel value="#{payrollBundle.payroll_salary_totalDeduction}" />
+			<aon:outputText value="#{controller.to.salary.totalDeduction}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+			<aon:outputText value="#{bundle.aon_end_date}" />
+			<aon:outputText value="#{controller.to.endDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+
+			<aon:outputLabel value="#{payrollBundle.payroll_salary_totalLiquid}" />
+			<aon:outputText value="#{controller.to.salary.totalLiquid}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			
+		</aon:panelGrid>
+	</aon:div>
+
+</ui:composition>

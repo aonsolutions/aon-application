@@ -172,6 +172,14 @@ public class NameResolver implements ILdapConstants {
 	public static Name getDomainBDsDN( String domain ) {
 		return getName( ou(BDS), getDomainDN(domain) );
 	}
+
+	public static Name getDomainAccountsDN( String domain ) {
+		return getName( ou(ACCOUNTS), getDomainDN(domain) );
+	}
+
+	public static Name getDomainSignaturesDN( String domain ) {
+		return getName( ou(SIGNATURES), getDomainDN(domain) );
+	}
 	
 	public static Name getDomainApplicationsDN( String domainName ) {
 		return getName( ou(APPLICATIONS), getDomainDN(domainName) );

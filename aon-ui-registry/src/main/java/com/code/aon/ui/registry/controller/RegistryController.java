@@ -1,5 +1,8 @@
 package com.code.aon.ui.registry.controller;
 
+import static com.code.aon.ui.registry.controller.IRegistryConstants.BUNDLE_NAME;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_DOCUMENT_ERROR;
+
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -13,8 +16,11 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.Registry;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -56,26 +62,42 @@ public class RegistryController extends BasicController {
 		try {
 			if (isNew()) {
 				IRegistry iRegistry = (IRegistry) getTo();
-				RegistryController.validateDocument(iRegistry,getManagerBean());
+				RegistryController.validateDocument(iRegistry, getManagerBean());
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.warn("unable to check Document.",e);
 		}
 	}
 	
+	public void initDocument() {
+		Registry registry = ((IRegistry) getTo()).getRegistry();
+		registry.setNationality(Country.ES);
+		registry.setDocumentCountry(Country.ES);
+		registry.setDocumentType(DocumentType.CIF);		
+	}	
+	
 	public static void validateDocument(IRegistry iRegistry, IManagerBean bean) throws ManagerBeanException {
-		String document = iRegistry.getRegistry().getDocument();
+		validateDocument(iRegistry.getRegistry(), ClassUtils.getShortClassName(bean.getPOJOClass()) + "_registry", bean);
+	}
+	
+	public static void validateDocument(Registry registry, String preffix, IManagerBean bean) throws ManagerBeanException {
+		String document = registry.getDocument();
+		Country country = registry.getDocumentCountry();
+		DocumentType type = registry.getDocumentType();
 		if (StringUtils.isNotEmpty(document)) {
 			Criteria criteria = new Criteria();
-			String alias = bean.getFieldName(
-					ClassUtils.getShortClassName(bean.getPOJOClass())
-					+ "_registry_document");
-			criteria.addEqualExpression(alias, document);
+			String alias1 = bean.getFieldName( preffix + "_documentCountry");
+			String alias2 = bean.getFieldName( preffix + "_documentType");
+			String alias3 = bean.getFieldName( preffix + "_document");
+			criteria.addEqualExpression(alias1, country);
+			criteria.addEqualExpression(alias2, type);
+			criteria.addEqualExpression(alias3, document);
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list.size() > 0 ) {
-				String msg = AonUtil.getMessage("registryBundle", "registry_document_error"); 
+				String msg = AonUtil.getMessage(BUNDLE_NAME, REGISTRY_DOCUMENT_ERROR); 
 				AonUtil.addWarningMessage(msg + " " + document);
 			}
 		}
-	}
+	}	
+	
 }

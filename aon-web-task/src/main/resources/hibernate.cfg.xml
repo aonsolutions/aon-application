@@ -63,7 +63,18 @@
 		<mapping class="com.code.aon.commercial.TargetSeller"/>		
 		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 
+		<!-- AON-CALENDAR Mapping files -->		
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>	
+		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
+		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>			
+
 		<!-- AON-COMPANY Mapping files -->
+		<mapping class="com.code.aon.company.Agreement"/>
+		<mapping class="com.code.aon.company.AgreementLevel"/>
+		<mapping class="com.code.aon.company.AgreementLevelCategory"/>
+		<mapping class="com.code.aon.company.AgreementLevelPayment"/>
 		<mapping class="com.code.aon.company.CNAE"/>
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>

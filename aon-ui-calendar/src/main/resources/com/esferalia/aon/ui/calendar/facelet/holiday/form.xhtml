@@ -21,10 +21,22 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panelGrid columns="2">
+					<aon:outputLabel value="#{bundle.aon_year}" />
+					<rich:inputNumberSpinner value="#{holiday.year}" 
+						inputSize="4" minValue="2000" maxValue="2100"
+						enableManualInput="true" step="1"
+						ignoreDupResponses="true"
+						cycled="false"  style="width:5px;height:5px;" >
+						<a4j:support event="onchange" reRender="tabPanel"
+							actionListener="#{holiday.onChangeYear}"
+							ignoreDupResponses="true" />
+					</rich:inputNumberSpinner>
+					
 					<aon:outputLabel value="#{bundle.aon_description}" />
 					<aon:inputText id="Holiday_description" size="40" maxlength="32"
 						value="#{holiday.to.description}" required="true" />
-					<aon:outputLabel value="#{bundle.aon_description}" />
+					
+					<aon:outputLabel value="#{calendarBundle.aon_calendar_editable}" />
 					<aon:selectBooleanCheckbox value="#{holiday.to.editable}">
 					</aon:selectBooleanCheckbox>
 
@@ -49,7 +61,7 @@
 
 				<c:if test="#{!holiday.new}">
 					<aon:div>
-						<aon:panelTabSet>
+						<aon:panelTabSet id="tabPanel">
 							<aon:panelTab label="#{calendarBundle.aon_calendar_holidays}">
 								<ui:include src="grid.xhtml" />
 							</aon:panelTab>

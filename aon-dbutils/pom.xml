@@ -3,21 +3,20 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>5.9.1-SNAPSHOT</version>
+		<version>6.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-dbutils</artifactId>
-	<version>5.9.1-SNAPSHOT</version>
-	<description>AON DB DUMPER</description>
-	<name>AON DB DUMPER</name>
+	<version>6.0.0-SNAPSHOT</version>
+	<description>AON DBUTILS</description>
+	<name>AON DB DBUTILS</name>
 
-        <scm>
-                <url>http://dev.esferalia.com/websvn/wsvn/aon-dbutils</url>
-                <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-dbutils</connection>
-                <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-dbutils</developerConnection>
-        </scm>
-
+    <scm>
+            <url>http://dev.esferalia.com/websvn/wsvn/aon-dbutils</url>
+            <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-dbutils</connection>
+            <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-dbutils</developerConnection>
+    </scm>
 
 	<dependencies>
 		<dependency>
@@ -154,4 +153,3 @@
 
 </project>
  
-

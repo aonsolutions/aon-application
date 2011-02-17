@@ -4,9 +4,11 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
+import com.code.aon.ui.form.IController;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.TagAttribute;
@@ -72,9 +74,22 @@ public class SpinHandler extends TagHandler implements IRichFacesTags {
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 	
+	private boolean isRendered(FaceletContext ctx, UIComponent parent) {
+		boolean rendered = false;
+		if ( FaceletUtil.isRendered(ctx, tag) && parent.isRendered() ) {
+			IController controller = (IController) controllerTag.getObject(ctx);
+			try {
+				rendered = (controller.getModel().getRowCount() > 1);
+			} catch (ManagerBeanException e) {
+				rendered = true;
+			}
+		}
+		return rendered;
+	}
+	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) {
-		if ( FaceletUtil.isRendered(ctx, tag) && parent.isRendered() ) {
+		if ( isRendered(ctx, parent) ) {
 			insertTemplate( ctx, parent );
 		}
 	}

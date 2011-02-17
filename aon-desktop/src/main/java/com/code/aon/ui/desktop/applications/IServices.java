@@ -5,5 +5,5 @@ public interface IServices {
 	boolean isToolbarEnabled();
 	boolean isSidebarEnabled();
 	boolean isInfobarEnabled();
-	boolean isExecutable();
+
 }

@@ -104,7 +104,6 @@ public class AccessManagerImpl implements AccessManager, PermissionListener {
 		initialized = true;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean isGranted(ItemId id, int permissions)
 			throws ItemNotFoundException, RepositoryException {

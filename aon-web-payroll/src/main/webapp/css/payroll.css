@@ -87,3 +87,30 @@
 	color: #285E9C; 
 	text-decoration: underline;
 }
+
+.aon-icon-winsuite{
+	background:transparent url(images/aon-icon/aon-icon-winsuite.png) no-repeat scroll center left;
+}
+.aon-icon-redtrabaja{
+	background:transparent url(images/aon-icon/aon-icon-redtrabaja.png) no-repeat scroll center left;
+}
+.aon-icon-pdf-disabled{
+	background:transparent url(images/aon-icon/aon-icon-pdf-disabled.png) no-repeat scroll center left;
+}
+.aon-icon-zoom-increase{
+	background:transparent url(images/aon-icon/aon-icon-zoom-increase.png) no-repeat scroll center left;
+}
+.aon-icon-zoom-decrease{
+	background:transparent url(images/aon-icon/aon-icon-zoom-decrease.png) no-repeat scroll center left;
+}
+.aon-icon-calendar{
+	background:transparent url(images/aon-icon/aon-icon-calendar.png) scroll left center no-repeat;	
+}
+.aon-icon-contract-calendar{
+	background:transparent url(images/aon-icon/aon-icon-contract-calendar.png) scroll left center no-repeat;	
+}
+.aon-background-shadow{
+	height:100%;
+	background-image:url(images/background-shadow.jpg);
+	background-repeat: repeat-x;
+}

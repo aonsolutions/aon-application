@@ -617,7 +617,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ActionTarget_target_registry_surname,ActionTarget_target_registry_name</value>
+			<value>ActionTarget_target_registry_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>cascadeDelete</property-name>

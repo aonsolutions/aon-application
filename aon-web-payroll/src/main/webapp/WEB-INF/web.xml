@@ -15,6 +15,16 @@
 		<servlet-name>ResourceServlet</servlet-name>
 		<url-pattern>/aonResource/*</url-pattern>
 	</servlet-mapping>
+	
+	<!-- Contract Image Servlet -->
+	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>com.code.aon.ui.employee.servlet.ImageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>*.contractImage</url-pattern>
+	</servlet-mapping>
 
 	<!-- JSF STANDARD CONFIGURATION -->
     <context-param>
@@ -117,7 +127,6 @@
 	</context-param>
 
 	<!-- JSF-FACELETS CONFIGURATION -->
-	<!-- 
 	<context-param>
 		<description>
 			When a page is requested, what interval in seconds should 
@@ -128,8 +137,10 @@
 		</description>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
+<!--  
+		<param-value>0</param-value>
+-->
 	</context-param>
-	-->
 	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
@@ -199,6 +210,10 @@
 		<param-value>../aon-desktop/richFaces3.3.3.Final/</param-value>
 	</context-param>
 	-->
+	<context-param>
+		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
+		<param-value>richFaces3.3.3.Final/</param-value>
+	</context-param>
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -259,7 +274,7 @@
            com.code.aon.ui.common.listener.BeanRegisterContextListener
        </listener-class>
     </listener>
-
+    
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
 		<listener-class>

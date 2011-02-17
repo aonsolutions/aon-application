@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns="http://www.esferalia.com/payroll" targetNamespace="http://www.esferalia.com/payroll"
+		elementFormDefault="qualified">
+	<xs:element name="config">	
+		<xs:complexType>
+		    <xs:sequence>
+		      <xs:element ref="payroll" />
+		      <xs:element ref="salary" />
+		      <xs:element ref="salaryDraft" />
+		      <xs:element ref="paymentUpdate" />
+		    </xs:sequence>		
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.1"/>		    
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="payroll">
+		<xs:complexType>
+			<xs:attribute name="showPaymentEditionTab" type="xs:boolean" use="required"/>
+			<xs:attribute name="showDeductionEditionTab" type="xs:boolean" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="salary">
+		<xs:complexType>
+			<xs:attribute name="showEnterpriseColumn" type="xs:boolean" use="required"/>
+			<xs:attribute name="showPersonColumn" type="xs:boolean" use="required"/>
+			<xs:attribute name="showIssueDateColumn" type="xs:boolean" use="required"/>
+		</xs:complexType>		
+	</xs:element>
+	<xs:element name="salaryDraft">
+		<xs:complexType>
+			<xs:attribute name="showEnterpriseInSearch" type="xs:boolean" use="required"/>
+		</xs:complexType>		
+	</xs:element>
+	<xs:element name="paymentUpdate">
+		<xs:complexType>
+			<xs:attribute name="showEnterpriseInSearch" type="xs:boolean" use="required"/>
+		</xs:complexType>		
+	</xs:element>
+</xs:schema>

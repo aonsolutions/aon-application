@@ -5,16 +5,16 @@ package com.esferalia.aon.file.payroll.afi.data;
  */
 public class RZS {
 	
-	private String identificador;
+	private String indicador;
 	private String tipoAlfabeticoEmpresario;
-	private String razonSocial;
-	private String autorizacion;
+//	private String razonSocial;
+//	private String autorizacion;
 	
-	public String getIdentificador() {
-		return identificador;
+	public String getIndicador() {
+		return indicador;
 	}
-	public void setIdentificador(String identificador) {
-		this.identificador = identificador;
+	public void setIndicador(String indicador) {
+		this.indicador = indicador;
 	}
 	public String getTipoAlfabeticoEmpresario() {
 		return tipoAlfabeticoEmpresario;
@@ -22,18 +22,18 @@ public class RZS {
 	public void setTipoAlfabeticoEmpresario(String tipoAlfabeticoEmpresario) {
 		this.tipoAlfabeticoEmpresario = tipoAlfabeticoEmpresario;
 	}
-	public String getRazonSocial() {
-		return razonSocial;
-	}
-	public void setRazonSocial(String razonSocial) {
-		this.razonSocial = razonSocial;
-	}
-	public String getAutorizacion() {
-		return autorizacion;
-	}
-	public void setAutorizacion(String autorizacion) {
-		this.autorizacion = autorizacion;
-	}
+//	public String getRazonSocial() {
+//		return razonSocial;
+//	}
+//	public void setRazonSocial(String razonSocial) {
+//		this.razonSocial = razonSocial;
+//	}
+//	public String getAutorizacion() {
+//		return autorizacion;
+//	}
+//	public void setAutorizacion(String autorizacion) {
+//		this.autorizacion = autorizacion;
+//	}
 	
 	
 }

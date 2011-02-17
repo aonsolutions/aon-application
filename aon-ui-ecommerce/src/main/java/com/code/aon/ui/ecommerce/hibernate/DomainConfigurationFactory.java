@@ -28,8 +28,6 @@ public class DomainConfigurationFactory extends DefaultConfigurationFactory impl
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomainConfigurationFactory.class.getName());
 	
 	private static final IConfigurationFactory SINGLETON = new DomainConfigurationFactory();
-
-    public static final String DOMAIN_RESOLVER = "domainResolver";
     	
     /**
      * Instantiates a new default configuration factory.
@@ -91,7 +89,7 @@ public class DomainConfigurationFactory extends DefaultConfigurationFactory impl
      * @param configuration the configuration
      */
     protected void completeConfiguration( Configuration configuration ) {
-    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER);
+    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
     	String domain = resolver.getDomain();
     	FacesContext ctx = FacesContext.getCurrentInstance();
     	String context = ctx.getExternalContext().getRequestContextPath();

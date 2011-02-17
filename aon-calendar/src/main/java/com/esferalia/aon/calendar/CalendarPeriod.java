@@ -9,10 +9,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
@@ -23,48 +27,25 @@ public class CalendarPeriod implements ITransferObject{
 	private static final long serialVersionUID = 5550862489620324713L;
 
 	private Integer id;
-    
     private Calendar calendar;
-
     private String description;
-
 	private Month month;
-    
     private Integer startDay;
-    
     private Integer endDay;
-    
     private DayType monday;
-    
-    private double mondayHours;
-    
     private DayType tuesday;
-    
-    private double tuesdayHours;
-    
     private DayType wednesday;
-    
-    private double wednesdayHours;
-    
     private DayType thursday;
-    
-    private double thursdayHours;
-    
     private DayType friday;
-    
-    private double fridayHours;
-    
     private DayType saturday;
-    
-    private double saturdayHours;
-    
     private DayType sunday;
-    
+    private double mondayHours;
+    private double tuesdayHours;
+    private double wednesdayHours;
+    private double thursdayHours;
+    private double fridayHours;
+    private double saturdayHours;
     private double sundayHours;
-    
-//    private Date fromDate;
-//    
-//    private Date toDate;   
     
     @Id
     @GeneratedValue
@@ -235,26 +216,67 @@ public class CalendarPeriod implements ITransferObject{
 		this.sundayHours = sundayHours;
 	}
 	
-//	@Column(name="from_date")
-//	@Temporal(TemporalType.DATE)
-//	public Date getFromDate() {
-//		return fromDate;
-//	}
-//
-//	public void setFromDate(Date fromDate) {
-//		this.fromDate = fromDate;
-//	}
-//	
-//	@Column(name="to_date")
-//	@Temporal(TemporalType.DATE)
-//	public Date getToDate() {
-//		return toDate;
-//	}
-//
-//	public void setToDate(Date toDate) {
-//		this.toDate = toDate;
-//	}
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final CalendarPeriod o = (CalendarPeriod) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.calendar, o.calendar)
+				.append(this.description, o.description)
+				.append(this.month, o.month)
+				.append(this.startDay, o.startDay)
+				.append(this.endDay, o.endDay)
+				.append(this.monday, o.monday)
+				.append(this.tuesday, o.tuesday)
+				.append(this.wednesday, o.wednesday)
+				.append(this.thursday, o.thursday)
+				.append(this.friday, o.friday)
+				.append(this.saturday, o.saturday)
+				.append(this.sunday, o.sunday)
+				.append(this.mondayHours, o.mondayHours)
+				.append(this.tuesdayHours, o.tuesdayHours)
+				.append(this.wednesdayHours, o.wednesdayHours)
+				.append(this.thursdayHours, o.thursdayHours)
+				.append(this.fridayHours, o.fridayHours)
+				.append(this.saturdayHours, o.saturdayHours)
+				.append(this.sundayHours, o.sundayHours)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
 	
-	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)
+			.append(calendar)
+			.append(description)
+			.append(month)
+			.append(startDay)
+			.append(endDay)
+			.append(monday)
+			.append(tuesday)
+			.append(wednesday)
+			.append(thursday)
+			.append(friday)
+			.append(saturday)
+			.append(sunday)
+			.append(mondayHours)
+			.append(tuesdayHours)
+			.append(wednesdayHours)
+			.append(thursdayHours)
+			.append(fridayHours)
+			.append(saturdayHours)
+			.append(sundayHours)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

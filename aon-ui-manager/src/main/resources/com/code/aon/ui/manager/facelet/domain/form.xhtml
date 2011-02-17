@@ -13,9 +13,13 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{managerBundle.manager_domains}" />
 				<ui:param name="controller" value="#{domain}" />
-				<ui:param name="skipResetButton" value="#{!manager.config.showDomainReset}" />
+				<ui:param name="skipResetButton" value="#{!manager.domainManagement}" />
 				<ui:param name="skipSearchButton" value="#{!manager.config.showDomainSearch}" />
-				<ui:param name="skipRemoveButton" value="#{!manager.config.showDomainRemove}" />
+				<ui:param name="skipRemoveButton" value="#{!manager.domainManagement}" />
+				<ui:param name="saveOnClick" value="Richfaces.showModalPanel('waitProccess')" />
+				<ui:param name="saveOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				
+				<ui:param name="removeOnClick" value="Richfaces.showModalPanel('waitProccess')" />
+				<ui:param name="removeOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="domainApplications" rendered="#{!domain.new}"
 						value="#{managerBundle.manager_applications}"
@@ -39,20 +43,67 @@
 					<aon:outputLabel for="Domain_commonName"
 						value="#{bundle.aon_name}" />
 					<c:if test="#{domain.new}" >
-						<aon:inputText id="Domain_commonName"
-							validator="#{domain.idCheck}" required="true"
-							size="40" maxlength="#{domain.domainNameMaxLength}" 
-							value="#{domain.to.commonName}" />
+						<aon:div>
+							<aon:inputText id="Domain_commonName"
+								validator="#{domain.idCheck}" required="true"
+								size="40" maxlength="#{domain.domainNameMaxLength}" 
+								value="#{domain.to.commonName}" />
+							<c:if test="#{domain.addDomainSuffix}" >								
+								<aon:outputText value="."
+									styleClass="aon-bold aon-margin-left aon-margin-right" />								
+								<aon:inputText size="20" disabled="true"
+									value="#{manager.currentDomain.subDomainSuffix}" />
+							</c:if>			
+						</aon:div>
 					</c:if>
 					<c:if test="#{!domain.new}" >
 						<aon:inputText id="Domain_commonName"
-							size="60" disabled="true" value="#{domain.to.commonName}" />
+							size="60" disabled="true" value="#{domain.to.commonName}" />							
 					</c:if>
 
 					<aon:outputLabel for="Domain_organizationName"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Domain_organizationName" required="true"
 						size="95" value="#{domain.to.organizationName}" />
+
+					<c:if test="#{domain.new}">
+						<aon:outputText value="#{managerBundle.manager_domain_administrator}" />
+						<aon:div>
+							<aon:outputLabel for="Domain_userUid"
+								value="#{bundle.aon_login}" styleClass="aon-italic"/>						
+							<aon:inputText id="Domain_userUid" required="true"
+								styleClass="aon-inputText aon-margin-left"
+								size="20" maxlength="256" value="#{domain.userUid}" />
+							<aon:outputLabel for="Domain_userName" styleClass="aon-margin-left aon-italic"
+								value="#{bundle.aon_name}" />						
+							<aon:inputText id="Domain_userName" required="true"
+								styleClass="aon-inputText aon-margin-left"
+								size="20" value="#{domain.userName}" />
+							<aon:outputLabel for="Domain_userSurname" styleClass="aon-margin-left aon-italic"
+								value="#{bundle.aon_surname}" />						
+							<aon:inputText id="Domain_userSurname" required="true"
+								styleClass="aon-inputText aon-margin-left"
+								size="20" value="#{domain.userSurname}" />
+						</aon:div>					
+					</c:if>
+
+					<c:if test="#{manager.administrator}">
+						<aon:outputLabel for="Domain_status"
+							value="#{bundle.aon_status}" />
+						<aon:selectOneMenu id="Domain_status"
+							value="#{domain.to.status}">
+							<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="0" />
+							<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="11" />
+						</aon:selectOneMenu>								
+
+						<aon:outputLabel for="Domain_type"
+							value="#{bundle.aon_type}" />
+						<aon:selectOneMenu id="Domain_type" 
+							value="#{domain.to.type}">
+							<f:selectItems value="#{domain.domainTypes}" />
+						</aon:selectOneMenu>										
+					
+					</c:if>
 
 					<c:if test="#{manager.config.showDomainSubDomainSuffix}" >
 						<c:if test="#{domain.to.domainManagement}" >					
@@ -64,12 +115,18 @@
 						<c:if test="#{!domain.to.domainManagement}" >					
 							<aon:outputLabel for="Domain_parentDomain"
 								value="#{managerBundle.manager_domain_parent}" />
-							<aon:selectOneMenu id="Domain_parentDomain"
-								converter="#{domain.converter}"
-								value="#{domain.to.parentDomain}">
-								<f:selectItem itemLabel="-" value="#{null}"/>
-								<f:selectItems value="#{domain.parentDomains}" />
-							</aon:selectOneMenu>								
+							<c:if test="#{manager.administrator}" >								
+								<aon:selectOneMenu id="Domain_parentDomain"
+									converter="#{domain.converter}"
+									value="#{domain.to.parentDomain}">
+									<f:selectItem itemLabel="-" value="#{null}"/>
+									<f:selectItems value="#{domain.parentDomains}" />
+								</aon:selectOneMenu>
+							</c:if>								
+							<c:if test="#{!manager.administrator}" >	
+								<aon:inputText id="Domain_parentDomain" size="40" disabled="true"
+									value="#{domain.to.parentDomain.commonName}" />
+							</c:if>								
 						</c:if>
 					</c:if>
 
@@ -96,86 +153,84 @@
 					
 				</aon:panelGrid>
 				
-				<aon:panelTabSet selectedTab="#{domain.selectedTab}"
-					rendered="#{manager.administrator}">
-				
-					<aon:panelTab name="domainManagament"
-						label="#{managerBundle.manager_domain_management}">
-						
-						<aon:panelGrid columns="2">
-							<aon:outputLabel for="Domain_status"
-								value="#{bundle.aon_status}" />
-							<aon:selectOneMenu id="User_available"
-								value="#{domain.to.status}">
-								<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="0" />
-								<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="11" />
-							</aon:selectOneMenu>								
-
-							<aon:outputLabel for="Domain_documentManagement"
-								value="#{managerBundle.manager_domain_documentManagement}" />
-			                <aon:selectBooleanCheckbox id="Domain_documentManagement"
-								value="#{domain.to.documentManagement}"/>
-		
-							<aon:outputLabel for="Domain_userManagement"
-								value="#{managerBundle.manager_domain_userManagement}" />
-			                <aon:selectBooleanCheckbox id="Domain_userManagement"
-								value="#{domain.to.userManagement}"/>
-		
-							<aon:outputLabel for="Domain_domainManagement"
-								value="#{managerBundle.manager_domain_domainManagement}" />
-			                <aon:selectBooleanCheckbox id="Domain_domainManagement"
-								value="#{domain.to.domainManagement}"/>
-
-							<aon:outputLabel for="Domain_dnsManagement"
-								value="#{managerBundle.manager_domain_dnsManagement}" />
-			                <aon:selectBooleanCheckbox id="Domain_dnsManagement"
-								value="#{domain.to.dnsManagement}"/>
-		
-						</aon:panelGrid>
-						
-                    </aon:panelTab>
-
-					<aon:panelTab name="accessPolicy"
-						label="#{managerBundle.manager_access_policy}">
-						
-						<aon:panelGrid columns="2">
-							<aon:outputLabel for="AccessPolicy_commonName"
-								value="#{bundle.aon_type}" />
-							<aon:selectOneMenu id="AccessPolicy_commonName" 
-								value="#{domain.accessPolicy.commonName}">
-								<f:selectItems value="#{domain.accessPolicies}" />
-							</aon:selectOneMenu>									
-
-							<aon:outputLabel for="AccessPolicy_maxDefinedUsers"
-								value="#{managerBundle.manager_access_policy_maxDefinedUsers}" />
-							<aon:inputText id="AccessPolicy_maxDefinedUsers"
-								size="10" maxlength="20"
-								value="#{domain.accessPolicy.maxDefinedUsers}" />
-		
-							<aon:outputLabel for="AccessPolicy_maxAllowedUsers"
-								value="#{managerBundle.manager_access_policy_maxAllowedUsers}" />
-							<aon:inputText id="AccessPolicy_maxAllowedUsers"
-								size="10" maxlength="20"
-								value="#{domain.accessPolicy.maxAllowedUsers}" />
-
-							<aon:outputLabel for="AccessPolicy_maxSessions4User"
-								value="#{managerBundle.manager_access_policy_maxSessions4User}" />
-							<aon:inputText id="AccessPolicy_maxSessions4User"
-								size="10" maxlength="20"
-								value="#{domain.accessPolicy.maxSessions4User}" />
-		
-							<aon:outputLabel for="AccessPolicy_exceptionThrowableIfMaximumExceeded"
-								value="#{managerBundle.manager_access_policy_exceptionThrowableIfMaximumExceeded}" />
-							<aon:selectBooleanCheckbox id="AccessPolicy_exceptionThrowableIfMaximumExceeded" 
-								value="#{domain.accessPolicy.exceptionThrowableIfMaximumExceeded}" />
-						</aon:panelGrid>
-												
-                    </aon:panelTab>
-
-				</aon:panelTabSet>		
+				<c:if test="#{manager.config.showDomainManagement || manager.administrator}" >
+					<aon:panelTabSet selectedTab="#{domain.selectedTab}" >
+					
+						<aon:panelTab name="domainManagament" rendered="#{manager.config.showDomainManagement}"
+							label="#{managerBundle.manager_domain_management}">
+							
+							<aon:panelGrid columns="2">
+	
+								<aon:outputLabel for="Domain_documentManagement"
+									value="#{managerBundle.manager_domain_documentManagement}" />
+				                <aon:selectBooleanCheckbox id="Domain_documentManagement"
+				                	valueChangeListener="#{domain.documentManagementChanged}"
+									value="#{domain.to.documentManagement}"/>
+			
+								<aon:outputLabel for="Domain_userManagement"
+									value="#{managerBundle.manager_domain_userManagement}" />
+				                <aon:selectBooleanCheckbox id="Domain_userManagement"
+				                	valueChangeListener="#{domain.userManagementChanged}"
+									value="#{domain.to.userManagement}"/>
+			
+								<c:if test="#{(domain.new and manager.administrator) or (domain.to.parentDomain.id == null)}" >			
+									<aon:outputLabel for="Domain_domainManagement"
+										value="#{managerBundle.manager_domain_domainManagement}" />
+					                <aon:selectBooleanCheckbox id="Domain_domainManagement"
+					                	valueChangeListener="#{domain.domainManagementChanged}"
+										value="#{domain.to.domainManagement}"/>
+								</c:if>
+	
+							</aon:panelGrid>
+							
+	                    </aon:panelTab>
+	
+						<aon:panelTab name="accessPolicy" rendered="#{manager.administrator}"
+							label="#{managerBundle.manager_access_policy}">
+							
+							<aon:panelGrid columns="2">
+								<aon:outputLabel for="AccessPolicy_commonName"
+									value="#{bundle.aon_type}" />
+								<aon:selectOneMenu id="AccessPolicy_commonName" 
+									value="#{domain.accessPolicy.commonName}">
+									<f:selectItems value="#{domain.accessPolicies}" />
+								</aon:selectOneMenu>									
+	
+								<aon:outputLabel for="AccessPolicy_maxDefinedUsers"
+									value="#{managerBundle.manager_access_policy_maxDefinedUsers}" />
+								<aon:inputText id="AccessPolicy_maxDefinedUsers"
+									size="10" maxlength="20"
+									value="#{domain.accessPolicy.maxDefinedUsers}" />
+			
+								<aon:outputLabel for="AccessPolicy_maxAllowedUsers"
+									value="#{managerBundle.manager_access_policy_maxAllowedUsers}" />
+								<aon:inputText id="AccessPolicy_maxAllowedUsers"
+									size="10" maxlength="20"
+									value="#{domain.accessPolicy.maxAllowedUsers}" />
+	
+								<aon:outputLabel for="AccessPolicy_maxSessions4User"
+									value="#{managerBundle.manager_access_policy_maxSessions4User}" />
+								<aon:inputText id="AccessPolicy_maxSessions4User"
+									size="10" maxlength="20"
+									value="#{domain.accessPolicy.maxSessions4User}" />
+			
+								<aon:outputLabel for="AccessPolicy_exceptionThrowableIfMaximumExceeded"
+									value="#{managerBundle.manager_access_policy_exceptionThrowableIfMaximumExceeded}" />
+								<aon:selectBooleanCheckbox id="AccessPolicy_exceptionThrowableIfMaximumExceeded" 
+									value="#{domain.accessPolicy.exceptionThrowableIfMaximumExceeded}" />
+							</aon:panelGrid>
+													
+	                    </aon:panelTab>
+	
+					</aon:panelTabSet>
+				</c:if>		
 								
 			</aon:div>
 		</aon:form>
-
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/manager/facelet/domain/companyPopup.xhtml" />
+		<c:if test="#{manager.currentDomain.type == 'CONSULTANCY'}" >
+			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
 	</ui:define>
 </ui:composition>

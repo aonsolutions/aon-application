@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +40,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
 public class EcconfigController extends BasicController {
 
@@ -67,19 +69,37 @@ public class EcconfigController extends BasicController {
 
 	public boolean isEcParam() {
 		try {
-
 			ecParam = getEcommerceParam();
 			if (ecParam == false) {
 				IManagerBean bean = BeanManager.getManagerBean(Ecconfig.class);
+				List<ITransferObject> list = bean.getList(null);
+				if(list.isEmpty()){
+					createDefaultConfig();
+				}
 				Ecconfig c = (Ecconfig) bean.getList(null).get(0);
 				c.setCommerce(false);
 				bean.update(c);
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			AonUtil.addErrorMessage("Imposible acceder a la configuracion.");
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		return ecParam;
+	}
+	
+	private void createDefaultConfig(){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Ecconfig.class);
+			Ecconfig to = new Ecconfig();
+			to.setActive(true);
+			to.setName("default");
+			to.setSkin(SkinType.BASICO1);
+			to.setEmail("your@email.com");
+			bean.insert(to);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Imposible acceder a la configuracion.");
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 
 	public void setEcParam(boolean ecParam) {
@@ -139,10 +159,8 @@ public class EcconfigController extends BasicController {
 				String name = e.getName(locale);
 				SelectItem item = new SelectItem(e, name);
 				skins.add(item);
-
 			}
 		}
-
 		return skins;
 	}
 
@@ -155,10 +173,8 @@ public class EcconfigController extends BasicController {
 				String name = e.getName(locale);
 				SelectItem item = new SelectItem(e, name);
 				loginTypes.add(item);
-
 			}
 		}
-
 		return loginTypes;
 	}
 
@@ -171,10 +187,8 @@ public class EcconfigController extends BasicController {
 				String name = e.getName(locale);
 				SelectItem item = new SelectItem(e, name);
 				priceTypes.add(item);
-
 			}
 		}
-
 		return priceTypes;
 	}
 
@@ -187,10 +201,8 @@ public class EcconfigController extends BasicController {
 				String name = e.getName(locale);
 				SelectItem item = new SelectItem(e, name);
 				taxPriceTypes.add(item);
-
 			}
 		}
-
 		return taxPriceTypes;
 	}
 
@@ -203,10 +215,8 @@ public class EcconfigController extends BasicController {
 				String name = e.getName(locale);
 				SelectItem item = new SelectItem(e, name);
 				discountTypes.add(item);
-
 			}
 		}
-
 		return discountTypes;
 	}
 
@@ -272,7 +282,6 @@ public class EcconfigController extends BasicController {
 	}
 
 	public boolean checkTPVData(Integer id) throws ManagerBeanException {
-
 		IManagerBean ecpaymethodBean = BeanManager.getManagerBean(EcPaymethod.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(ecpaymethodBean.getFieldName(IEbackofficeAlias.EC_PAYMETHOD_PAYMETHOD_ID),id);
@@ -280,8 +289,9 @@ public class EcconfigController extends BasicController {
 		lista = ecpaymethodBean.getList(criteria);
 		if (lista.size()==0){
 			return false;
-		}else
+		} else {
 			return true;
+		}
 	}
 
 	public void refreshCashOnDeliverys() throws ManagerBeanException {
@@ -537,7 +547,6 @@ public class EcconfigController extends BasicController {
 
 	@Override
 	public void onSelectFirst(ActionEvent event) {
-		// TODO Auto-generated method stub
 		super.onSelectFirst(event);
 		setShowPrice(((Ecconfig) this.getTo()).getPrice() == ShowPrice.NO);
 		setLogin(((Ecconfig) this.getTo()).getShowLogin() == LoginType.NEVER);
@@ -569,14 +578,15 @@ public class EcconfigController extends BasicController {
 		criteria.addEqualExpression(param
 				.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME),
 				"EC_SALES_ALLOWED");
-		if (param.getList(criteria).isEmpty()
+		if (param.getList(criteria).isEmpty() 
 				|| ((ApplicationParameter) param.getList(criteria).get(0))
 						.getValue() == "false") {
 			return false;
 		} else if (((ApplicationParameter) param.getList(criteria).get(0))
 				.getValue().equals("true")) {
 			return true;
-		} else
+		} else {
 			return false;
+		}
 	}
 }

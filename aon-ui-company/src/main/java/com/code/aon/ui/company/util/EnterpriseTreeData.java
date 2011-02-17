@@ -1,22 +1,35 @@
 package com.code.aon.ui.company.util;
 
+import java.io.Serializable;
+
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 public class EnterpriseTreeData {
 
-	private Integer id;
+	public static final String ENTERPRISE_ICON = "/images/aon-icon/aon-icon-tree-root.png";
+	
+	public static final String WORKPLACE_ICON = "/images/aon-icon/aon-icon-tree.png";
+	
+	public static final String CONTRACT_ICON = "/images/aon-icon/aon-icon-contact.png";
+	
+	public static final String ACTIVITY_ICON = "/images/aon-icon/aon-icon-menu-top-item.png";
+	
+	private Serializable id;
 	
 	private String label;
 	
 	private EnterpriseTreeType type;
 
-	public EnterpriseTreeData(Integer id, String label, EnterpriseTreeType type) {
+	public EnterpriseTreeData(Serializable id, String label, EnterpriseTreeType type) {
 		this.id = id;
 		this.label = label;
 		this.type = type;
 	}
 
-	public Integer getId() {
+	public Serializable getId() {
 		return id;
 	}
 
@@ -31,7 +44,14 @@ public class EnterpriseTreeData {
 	public String getTypeName() {
 		return type.toString();
 	}
-
+	
+	public void actionListener( ActionEvent event ) {
+		if ( this.type.getActionListener() != null ) {
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			this.type.getActionListener().invoke(ctx.getELContext(), new Object[]{event});			
+		}
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -40,6 +60,7 @@ public class EnterpriseTreeData {
 		final EnterpriseTreeData o = (EnterpriseTreeData) obj;
 		return new EqualsBuilder()
 			.append(this.id, o.id)
+			.append(this.label, o.label)
 			.append(this.type, o.type)
 			.isEquals();
 	}

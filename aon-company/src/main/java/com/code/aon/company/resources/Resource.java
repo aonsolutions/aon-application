@@ -181,7 +181,7 @@ public class Resource implements ITransferObject {
 	 */
 	@Transient
 	public String getOwner() {
-		return this.employee.getRegistry().getName() + " " + this.employee.getRegistry().getSurname();
+		return this.employee.getRegistry().getFullName();
 	}
 
 }

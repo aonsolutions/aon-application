@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:outputLabel for="Enterprise_id"
+		rendered="#{calendar.new}"
+		value="#{companyBundle.company_enterprise}" />
+	<aon:div styleClass="aon-lookup" rendered="#{calendar.new}">
+		<aon:lookupInputText id="Enterprise_id" rendered="#{calendar.new}"
+			lookup="#{enterpriseLookup}" lookupChangeListener="#{calendar.onEnterpriseChanged}"
+			reRender="Enterprise_full_name,calendar_data"
+			value="#{calendar.enterprise.id}" size="5" />
+		<aon:lookupButton rendered="#{calendar.new}"
+			windowTitle="#{companyBundle.company_enterprise_selection}"
+			selectReRender="Enterprise_id,Enterprise_full_name,calendar_data"
+			lookup="#{enterpriseLookup}" lookupChangeListener="#{calendar.onEnterpriseChanged}"
+			minHeight="460" minWidth="650" actionType="search"
+			property="#{calendar.enterprise}">
+		</aon:lookupButton>
+		<aon:inputText id="Enterprise_full_name" rendered="#{calendar.new}"
+			value="#{(calendar.enterprise.registry.fullName!=null)?(calendar.enterprise.registry.fullName):('')}"
+			size="50" disabled="true" />							
+	</aon:div>
+	
+	<aon:outputLabel for="workPlace"
+	rendered="#{calendar.new}"
+		value="#{companyBundle.company_workplace}" />
+	<aon:selectOneMenu id="workPlace"
+		rendered="#{calendar.new}" 
+		disabled="#{calendar.enterprise==null or calendar.enterprise.id==null}"
+		value="#{calendar.workPlace}" >
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{calendar.workPlaces}" />
+		<a4j:support event="onchange" reRender="calendar_data" >
+			<aon:actionListener method="#{calendar.onWorkPlaceChanged}" />
+		</a4j:support>
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Contract_id"
+		rendered="#{calendar.new}"
+		value="#{payrollBundle.payroll_contract}" />
+	<aon:div styleClass="aon-lookup" rendered="#{calendar.new}">
+		<aon:lookupInputText id="Contract_id" rendered="#{calendar.new}"
+			disabled="#{calendar.workPlace==null or calendar.workPlace.id==null}"
+			lookup="#{contractLookup}" lookupChangeListener="#{calendar.onContractChanged}"
+			reRender="Enterprise_full_name"
+			value="#{calendar.contract.id}" size="5" />
+		<aon:lookupButton rendered="#{calendar.new}"
+			disabled="#{calendar.workPlace==null or calendar.workPlace.id==null}"
+			windowTitle="#{payrollBundle.payroll_contract_selection}"
+			selectReRender="Contract_id,Contract_full_name"
+			lookup="#{contractLookup}" lookupChangeListener="#{calendar.onContractChanged}"
+			minHeight="460" minWidth="650" actionType="list"
+			property="#{calendar.contract}">
+		</aon:lookupButton>
+		<aon:inputText id="Contract_full_name" rendered="#{calendar.new}"
+			value="#{(calendar.contract.person.fullName!=null)?(calendar.contract.person.fullName):('')}"
+			size="50" disabled="true" />							
+	</aon:div>
+								
+								
+<!--  
+							<aon:outputLabel rendered="#{calendar.new}"
+								value="#{calendarBundle.aon_calendar_entity}" />
+							<aon:selectOneMenu id="calendarSource"
+								rendered="#{calendar.new}"
+								value="#{calendar.to.source}" >
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{calendarCollections.calendarSources}" />
+							</aon:selectOneMenu>
+-->							
+							
+</ui:composition>

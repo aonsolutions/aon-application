@@ -29,29 +29,19 @@ public class EnterpriseCCC implements ITransferObject {
 	
 	private static final long serialVersionUID = -8232319254583226675L;
 
+	private Integer id;
+	
+    private String ccc;
+	
+	private CCCType type;
+	
+	private GeoZone geozone;
+
+    private EnterpriseActivity activity; 
+
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	private Integer id;
-	
-	@Column(name="ccc", length = 11, nullable = false)
-    private String ccc;
-	
-	@Column( nullable = false )
-	private CCCType type;
-	
-	@ManyToOne
-    @JoinColumn( name="geozone", nullable = false)
-    @ForeignKey(name = "FK_ENTERPRICE_CCC_GEOZONE")
-    @Index(name = "IDX_ENTERPRICE_CCC_GEOZONE")	
-	private GeoZone geozone;
-
-	@OneToOne
-    @JoinColumn(name="enterprise_activity", nullable = false)
-    @ForeignKey(name = "FK_ENTERPRICE_CCC_ENTERPRISEACTIVITY")
-    @Index(name = "IDX_ENTERPRICE_CCC_ENTERPRISEACTIVITY")    
-    private EnterpriseActivity activity; 
-
 	public Integer getId() {
 		return id;
 	}
@@ -60,14 +50,16 @@ public class EnterpriseCCC implements ITransferObject {
 		this.id = id;
 	}
 	
-	public String getCCC() {
+	@Column(name="ccc", length = 11)
+	public String getCcc() {
 		return ccc;
 	}
 
-	public void setCCC(String ccc) {
+	public void setCcc(String ccc) {
 		this.ccc = ccc;
 	}
 
+	@Column( nullable = false )
 	public CCCType getType() {
 		return type;
 	}
@@ -76,6 +68,10 @@ public class EnterpriseCCC implements ITransferObject {
 		this.type = type;
 	}
 
+	@ManyToOne
+	@JoinColumn( name="geozone")
+	@ForeignKey(name = "FK_ENTERPRICE_CCC_GEOZONE")
+	@Index(name = "IDX_ENTERPRICE_CCC_GEOZONE")	
 	public GeoZone getGeozone() {
 		return geozone;
 	}
@@ -84,6 +80,10 @@ public class EnterpriseCCC implements ITransferObject {
 		this.geozone = geozone;
 	}
 
+	@OneToOne
+	@JoinColumn(name="enterprise_activity", nullable = false)
+	@ForeignKey(name = "FK_ENTERPRICE_CCC_ENTERPRISEACTIVITY")
+	@Index(name = "IDX_ENTERPRICE_CCC_ENTERPRISEACTIVITY")    
 	public EnterpriseActivity getActivity() {
 		return activity;
 	}

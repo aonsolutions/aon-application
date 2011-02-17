@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:outputLabel for="ContractDeduction_startDate" value="#{bundle.aon_start_date}" />
+	<aon:selectInputDate id="ContractDeduction_startDate" value="#{controller.to.startDate}" required="true"
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+	<aon:outputLabel for="ContractDeduction_endDate" value="#{bundle.aon_end_date}" />
+	<aon:selectInputDate id="ContractDeduction_endDate" value="#{controller.to.endDate}"
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+	<aon:outputLabel for="ContractDeduction_month" value="#{payrollBundle.payroll_salary_deduction_month}" />
+	<aon:selectOneMenu id="ContractDeduction_month" value="#{controller.to.month}">
+		<f:selectItem value="#{null}" itemLabel=" - " />
+		<c:if test="#{!skipCurrentMonth}">
+			<f:selectItem value="#{controller.currentMonth}"  />
+		</c:if>
+		<c:if test="#{skipCurrentMonth}">
+			<f:selectItems value="#{commonCollections.months}"  />
+		</c:if>
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ContractDeduction_type" value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="ContractDeduction_type" value="#{controller.to.type}" required="true">
+		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractDeduction_DeductionConcept" ajaxSingle="true"/>
+		<f:selectItem value="#{null}" itemLabel=" - " />
+		<f:selectItems value="#{payrollCollections.deductionTypes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ContractDeduction_DeductionConcept" value="#{payrollBundle.payroll_salary_deduction_type}" />
+	<aon:selectOneMenu id="ContractDeduction_DeductionConcept" value="#{controller.to.deductionConcept}" style="width: 300px;">
+		<a4j:support event="onchange" actionListener="#{controller.onDeductionConceptChange}" reRender="ContractDeduction_description" ajaxSingle="true"/>
+		<f:selectItem value="#{null}" itemLabel=" - " />
+		<f:selectItems value="#{controller.concepts}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ContractDeduction_description" value="#{bundle.aon_description}" />
+	<aon:inputText id="ContractDeduction_description" size="40" maxlength="64" required="true"
+		value="#{controller.to.description}" />
+	
+	<aon:outputLabel for="ContractDeduction_expression" value="#{payrollBundle.payroll_salary_expression}" />
+	<aon:inputTextarea id="ContractDeduction_expression" cols="38" rows="2" maxlength="128"
+		value="#{controller.to.expression}" required="true">
+		<f:validateLength maximum="128"/>
+		<c:if test="#{!contextDisabled}">
+			<a4j:region>
+				<rich:suggestionbox id="ContractDeduction_expression_suggestion"
+					for="ContractDeduction_expression"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%()"
+					fetchValue="#{exp.name}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="ContractDeduction_expressionSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
+						<aon:outputText value=" (#{exp.expression})"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</c:if>
+	</aon:inputTextarea>
+
+	<aon:outputText value="&#160;"/>
+	<aon:panelGroup>
+		<aon:selectBooleanCheckbox id="ContractDeduction_decorateDescription" value="#{controller.to.descriptionDecorable}" />
+		<aon:outputLabel for="ContractDeduction_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
+	</aon:panelGroup>
+</ui:composition>

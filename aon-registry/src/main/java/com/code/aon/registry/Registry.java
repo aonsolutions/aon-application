@@ -20,15 +20,19 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 
@@ -41,17 +45,19 @@ import com.code.aon.registry.enumeration.RegistryType;
 @Entity
 @Table(name="registry")
 @Inheritance(strategy=InheritanceType.JOINED )
-@org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REGISTRY", columnNames={"name","surname"})})
+@org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REGISTRY", columnNames={"name"})})
 public class Registry implements ITransferObject {
 	
 	private static final long serialVersionUID = 8635760095705923309L;
 
 	private Integer id;
 	private String document;
+	private DocumentType documentType;
+	private Country documentCountry;
 	private String name;
-	private String surname;
 	private String alias;
 	private RegistryType type;
+	private Country nationality;
 	private Set<RegistryAddress> addresses = new HashSet<RegistryAddress>();
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();
 	private Set<RegistryPayMethod> payMethods = new HashSet<RegistryPayMethod>();
@@ -88,14 +94,42 @@ public class Registry implements ITransferObject {
 	}
 	
 	@Transient
-	public boolean isValidDocument() {
+	public RegistryDocument getRegistryDocument() {
 		if (registryDocument == null) {
 			registryDocument = new RegistryDocument();
 		}
 		registryDocument.setDocument(getDocument());
-		return registryDocument.isValid();
+		registryDocument.setType(getDocumentType());
+		registryDocument.setCountry(getDocumentCountry());
+		return registryDocument;
+	}
+
+	@Transient
+	public boolean isValidDocument() {
+		return getRegistryDocument().isValid();
+	}
+	@Transient
+	public boolean isDocumentValidable() {
+		return getRegistryDocument().isValidable();
 	}
 	
+	@Column(name="document_type")
+	public DocumentType getDocumentType() {
+		return documentType;
+	}
+	public void setDocumentType(DocumentType documentType) {
+		this.documentType = documentType;
+	}
+	
+	@Column(name="document_country")
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.common.enumeration.Country") })
+	public Country getDocumentCountry() {
+		return documentCountry;
+	}
+	public void setDocumentCountry(Country documentCountry) {
+		this.documentCountry = documentCountry;
+	}
+
 	@Column(length=64)
 	public String getName() {
 		return name;
@@ -104,19 +138,19 @@ public class Registry implements ITransferObject {
 		this.name = name;
 	}
 
-	@Column(length=64)
-	public String getSurname() {
-		return surname;
-	}
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
 	public RegistryType getType() {
 		return type;
 	}
 	public void setType(RegistryType type) {
 		this.type = type;
+	}
+
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.common.enumeration.Country") })
+	public Country getNationality() {
+		return nationality;
+	}
+	public void setNationality(Country nationality) {
+		this.nationality = nationality;
 	}
 
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
@@ -161,7 +195,8 @@ public class Registry implements ITransferObject {
 
     @Transient
     public String getFullName() {
-    	return ((StringUtils.isEmpty(getSurname())) ? "" : getSurname() + ", ") + ((StringUtils.isEmpty(getName())) ? "" : getName());
+//    	return ((StringUtils.isEmpty(getSurname())) ? "" : getSurname() + ", ") + ((StringUtils.isEmpty(getName())) ? "" : getName());
+    	return (StringUtils.isEmpty(getName())) ? "" : getName();
     }
 
 	@Transient
@@ -234,9 +269,11 @@ public class Registry implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.alias, o.alias)
 				.append(this.document, o.document)				
+				.append(this.documentType, o.documentType)
+				.append(documentCountry, o.documentCountry)
 				.append(this.name, o.name)
-				.append(this.surname, o.surname)				
 				.append(this.type, o.type)
+				.append(nationality, o.nationality)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -247,10 +284,12 @@ public class Registry implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(alias)
 			.append(document)
+			.append(documentType)
+			.append(documentCountry)
 			.append(id)	
 			.append(name)			
-			.append(surname)
 			.append(type)
+			.append(nationality)
 			.toHashCode();
 	}
 
@@ -274,5 +313,4 @@ public class Registry implements ITransferObject {
 		}
 		return (phones=="")?"":phones.substring(0, phones.length()-2);
 	}
-
 }

@@ -4,40 +4,67 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-
-	<ui:include
-		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+	
+	<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContentEx.xhtml">
+		<ui:param name="skipSecurityPanel" value="true"/>
 		
-	<aon:outputLabel for="Enterprise_scope_id" value="#{bundle.aon_scope}" />
-	<aon:selectOneMenu id="Enterprise_scope_id" value="#{controller.to.scope}">
-		<f:selectItems value="#{configCollections.currentUserScopes}" />
-	</aon:selectOneMenu>
+		<ui:define name="dataPanel">
+
+			<aon:outputLabel for="Enterprise_scope_id" value="#{bundle.aon_scope}" />
+			<aon:selectOneMenu id="Enterprise_scope_id" value="#{controller.to.scope}">
+				<f:selectItems value="#{configCollections.currentUserScopes}" />
+			</aon:selectOneMenu>
 			
-	<aon:outputLabel for="Enterprise_cnae_id"
-		value="#{companyBundle.company_activity}" />
-	<aon:div styleClass="aon-lookup">
-		<aon:lookupInputText id="Enterprise_cnae_id"
-			lookup="#{cnaeLookup}" lookupChangeListener="#{enterprise.onCNAEChanged}"
-			reRender="Enterprise_cnae_detail" required="true"
-			value="#{enterprise.activity.cnae.id}" maxlength="5" size="5" />
-		<aon:lookupButton
-			windowTitle="#{companyBundle.company_cnae_selection}"
-			selectReRender="Enterprise_cnae_id,Enterprise_cnae_detail"
-			lookup="#{cnaeLookup}" lookupChangeListener="#{enterprise.onCNAEChanged}"
-			minHeight="460" minWidth="650" actionType="search"
-			property="#{enterprise.activity.cnae}">
-		</aon:lookupButton>
-		<aon:inputText id="Enterprise_cnae_detail" label="#{companyBundle.company_activity_description}"
-			value="#{enterprise.activity.description}" required="true"
-			valueChangeListener="#{controller.activityChanged}" maxlength="32" size="32" />							
-	</aon:div>			
-
-	<aon:outputLabel for="Enterprise_ccc"
-		value="#{companyBundle.company_enterprise_ccc}" />
-	<aon:inputText id="Enterprise_ccc"
-		value="#{controller.CCC.CCC}" required="true" 
-		valueChangeListener="#{controller.cccChanged}" maxlength="11" size="15" />
-
+			<aon:outputLabel for="Enterprise_agreement_id"
+				value="#{companyBundle.company_agreement}" />
+			<aon:div styleClass="aon-lookup">
+				<aon:lookupInputText id="Enterprise_agreement_id"
+					lookup="#{agreementLookup}"
+					lookupChangeListener="#{controller.onAgreementChanged}"
+					reRender="Enterprise_agreement_description"
+					value="#{controller.to.agreement.id}" size="5" />
+				<aon:lookupButton 
+					windowTitle="#{companyBundle.company_agreement_selection}"
+					selectReRender="Enterprise_agreement_id,Enterprise_agreement_description"
+					lookupChangeListener="#{controller.onAgreementChanged}"
+					lookup="#{agreementLookup}" minHeight="460" minWidth="650"
+					actionType="search"
+					property="#{controller.to.agreement}">
+				</aon:lookupButton>
+				<aon:inputText id="Enterprise_agreement_description"
+					value="#{controller.to.agreement.description}"
+					size="50" disabled="true" />							
+			</aon:div>
+								
+			<ui:include src="/com/code/aon/ui/registry/facelet/raddress/form.xhtml" />
+				
+			<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" />
+			
+		</ui:define>
+		
+		<ui:define name="logoPanel">
+			<a4j:mediaOutput element="img" cacheable="false"
+				style="width: 100px;" value="#{company.aonFile.key}"
+				rendered="#{controller.aonFile.size > 0}"
+				mimeType="#{controller.aonFile.mimeType}"
+				createContent="#{controller.createCurrentLogoContent}">
+			</a4j:mediaOutput>
+			<aon:fileUpload id="attach_file"
+				fileUploadListener="#{controller.fileUploaded}" >
+				<f:facet name="label">
+					<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+				</f:facet>
+				<a4j:support event="onuploadcomplete" reRender="attachGrid" />
+			</aon:fileUpload>
+		</ui:define>
+		
+		<ui:define name="othersPanel">
+			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />
+		</ui:define>
+		
+	</ui:decorate>
+	
 </ui:composition>
 

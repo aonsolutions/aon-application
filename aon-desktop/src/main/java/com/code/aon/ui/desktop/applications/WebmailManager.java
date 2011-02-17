@@ -28,7 +28,7 @@ public class WebmailManager implements IServices, IDesktopConstants {
 	public WebmailManager() throws DeploymentException, IOException {
 		ApplicationsManager apps = (ApplicationsManager) AonUtil.getRegisteredBean( APPLICATIONS_CONTROLLER_NAME );
 		app = apps.getApplication( "aon-webmail" );
-		if ( app != null && isExecutable() ) {
+		if ( app != null ) {
 			try {
 				AuthPrincipal user = Utils.getAuthPrincipal();
 				MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
@@ -65,10 +65,6 @@ public class WebmailManager implements IServices, IDesktopConstants {
     }
 
  // ************************************** IServices methods implementation *************************************
-	public boolean isExecutable() {
-		return app != null && app.isExecutable();
-	}
-
 	public boolean isInfobarEnabled() {
 		return app != null && app.isInfobarEnabled();
 	}

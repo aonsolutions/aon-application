@@ -20,14 +20,12 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:define name="searchContent">
-
-					<aon:outputLabel value="#{bundle.aon_description}" />
-					<aon:inputText id="Calendar_description"
-					valueChangeListener="#{controller.addExpression}"
-						size="50" />
+				
+					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/search_content.xhtml" />
+						
 				</ui:define>
 			</ui:decorate>
+			
 		</aon:form>
 	</ui:define>
-
 </ui:composition>

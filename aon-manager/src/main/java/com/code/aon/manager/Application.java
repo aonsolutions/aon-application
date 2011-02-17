@@ -33,7 +33,7 @@ public class Application implements ILdapTransferObject {
 	
 	private String serverId;
 	
-	private Boolean contratable;
+	private boolean contratable;
 	
 	@Id
 	public Name getId() {
@@ -73,11 +73,11 @@ public class Application implements ILdapTransferObject {
 	}
 
 	@Attribute(name="contratable")
-	public Boolean getContratable() {
+	public boolean isContratable() {
 		return contratable;
 	}
 
-	public void setContratable(Boolean contratable) {
+	public void setContratable(boolean contratable) {
 		this.contratable = contratable;
 	}
 

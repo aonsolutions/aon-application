@@ -1,8 +1,12 @@
 @TypeDefs({
 	@TypeDef(
-		name="stringClob",
-        typeClass = com.code.aon.common.dao.hibernate.type.StringClobEnhancedType.class
-    )
+            name="stringEnum",
+            typeClass = com.code.aon.common.dao.hibernate.type.StringEnumUserType.class
+    ),
+    @TypeDef(
+			name="stringClob",
+	        typeClass = com.code.aon.common.dao.hibernate.type.StringClobEnhancedType.class
+	    )
 })
 package com.code.aon.common.dao.hibernate.type;
 

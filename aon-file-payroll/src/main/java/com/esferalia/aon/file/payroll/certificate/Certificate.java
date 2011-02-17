@@ -21,8 +21,8 @@ public class Certificate {
 	private static final String CERTIFICADO_EMPRESA = "Certificado_empresa";
 	
 	private Integer fecha;
-	private Integer hora;
-	private String fichero;
+	private Integer hour;
+	private String file;
 	private Locale locale;
 	private ArrayList<Integer> errors;// = new ArrayList<Integer>();
 
@@ -33,10 +33,10 @@ public class Certificate {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		String f = formatter.format(date);
 		fecha = Integer.parseInt(f);
-		formatter = new SimpleDateFormat("HHmmss");
+		formatter = new SimpleDateFormat("HHmm");
 		String t = formatter.format(date);
-		hora = Integer.parseInt(t);
-		fichero = cif + fecha.toString() + hora.toString();
+		hour = Integer.parseInt(t);
+		file = cif + fecha.toString() + hour.toString();
 	}
 
 	public Integer getFecha() {
@@ -47,20 +47,20 @@ public class Certificate {
 		this.fecha = fecha;
 	}
 
-	public Integer getHora() {
-		return hora;
+	public Integer getHour() {
+		return hour;
 	}
 
-	public void setHora(Integer hora) {
-		this.hora = hora;
+	public void setHour(Integer hour) {
+		this.hour = hour;
 	}
 
-	public String getFichero() {
-		return fichero;
+	public String getFile() {
+		return file;
 	}
 
-	public void setFichero(String fichero) {
-		this.fichero = fichero;
+	public void setFile(String file) {
+		this.file = file;
 	}
 	
 	public Locale getLocale() {
@@ -238,7 +238,7 @@ public class Certificate {
 	public ArrayList<Exception> getExceptions() {
 		List<Exception> list = new ArrayList<Exception>();
 		if (!errors.isEmpty()) {
-			setFichero("ERROR - " + getFichero());
+			setFile("ERROR - " + getFile());
 			for (Integer i : errors) {
 				list.add(new Exception(i.toString()));
 			}

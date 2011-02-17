@@ -6,19 +6,27 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:panelGrid columns="2" 	
+	<c:if test="#{lookup != null}">
+		<ui:param name="controller" value="#{lookup}"/>
+	</c:if>
+
+	<aon:panelGrid columns="2"
 		columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
 
-		<c:if test="#{lookup != null}">
-			<ui:param name="controller" value="#{lookup}"/>
-		</c:if>
+		<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
+			<ui:param name="skipId" value="true"/>
+		</ui:decorate>
 
-		<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/formContent.xhtml" />
+		<aon:outputLabel for="Enterprise_scope_id" value="#{bundle.aon_scope}" />
+		<aon:selectOneMenu id="Enterprise_scope_id" value="#{controller.to.scope}">
+			<f:selectItems value="#{configCollections.currentUserScopes}" />
+		</aon:selectOneMenu>
 
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formAddressMedia.xhtml">
 			<ui:param name="controllerLookupListener" value="#{enterpriseForm}"/>
+			<ui:param name="addressRequired" value="#{true}"/>
 		</ui:include>
-
+		
 	</aon:panelGrid>
 
 </ui:composition>

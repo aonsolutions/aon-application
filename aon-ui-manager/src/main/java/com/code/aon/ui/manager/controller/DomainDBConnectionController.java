@@ -60,8 +60,8 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	public void updateDataSources() {
 		this.dataSources = new LinkedList<SelectItem>();
 		try {
-			List<DBConnnection> list = (List) getManagerBean().getList(null);
-			for (DBConnnection dbc : list) {
+			initializeModel();
+			for (DBConnnection dbc : getDBConnnections()) {
 				SelectItem item = new SelectItem(dbc, dbc.getCommonName() );
 				this.dataSources.add(item);
 			}

@@ -32,6 +32,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -97,13 +98,6 @@ public class DomainUserController extends LdapBasicController implements IManage
 		String domain = NameResolver.getValue(parent, 0);
 		Name baseDN = NameResolver.getUsersDN(domain);
 		getLdapDAO().setBaseDN(baseDN);
-	}
-	
-	public IManagerBean getBDUserManagerBean() {
-		if ( this.userWrapper == null ) {
-			this.userWrapper = new ManagerBeanWrapper(User.class);	
-		}
-		return this.userWrapper.getManagerBean();
 	}
 	
 	public Signature addDefaultSignature( DomainUser user ) throws ManagerBeanException {
@@ -192,11 +186,14 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 	
 	public void onResetPassword( ActionEvent event ) {
-		DomainUser user = getDomainUser();
+		resetPassword( getDomainUser() );
+	}	
+	
+	public void resetPassword( DomainUser user ) {
 		user.setPasswordExpirationTimestamp( DateUtils.addDays(new Date(), -1) );
 		String newPassword = getSHAPassword(user.getUid());
 		user.setPasswordString( newPassword );
-	}	
+	}		
 	
 	public boolean isShowChangePasswordWindow() {
 		return showChangePasswordWindow;
@@ -261,7 +258,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 	
 	private void registerScope( String userUid, String scopeName ) throws ManagerBeanException {
-		DBBasicController scopeController = (DBBasicController) AonUtil.getRegisteredBean(SCOPE_CONTROLLER_NAME);
+		IController scopeController = FormUtil.getController(SCOPE_CONTROLLER_NAME);
 		Criteria scopeCriteria = new Criteria();
 		scopeCriteria.addEqualExpression(scopeController.getFieldName(IConfigAlias.SCOPE_DESCRIPTION), scopeName);
 		List<ITransferObject> scopes = scopeController.getManagerBean().getList(scopeCriteria);
@@ -286,17 +283,11 @@ public class DomainUserController extends LdapBasicController implements IManage
 			}					
 		}
 	}
-	
-	private void resetDBUser( User user ) throws ManagerBeanException {
-		user.setValidate(true);
-		user.setAvailable(true);
-		user.setStatus(0);		
-	}
 
 	private User initDBUser( String uid ) throws ManagerBeanException {
 		User user = new User();
 		user.setLogin(uid);
-		resetDBUser(user);
+		user.setActive(true);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression("uid", uid);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
@@ -312,7 +303,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	
 	public User ensureDBUser( String uid ) throws ManagerBeanException {
 		User user = null;
-		IManagerBean bean = getBDUserManagerBean();
+		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), uid);
 		List<ITransferObject> list = bean.getList(criteria);
@@ -321,7 +312,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 			bean.insert(user);
 		} else {
 			user = (User) list.get(0);
-			resetDBUser(user);
+			user.setActive(true);
 			bean.update(user);
 		}
 		return user;
@@ -373,16 +364,31 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 	
 	private void deactiveDBUser( String uid ) throws ManagerBeanException {
-		IManagerBean bean = getBDUserManagerBean();
+		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), uid);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
 			User dbUser = (User) list.get(0);
-			dbUser.setAvailable(false);
-			dbUser.setStatus(-1);
+			dbUser.setActive(false);
 			bean.update(dbUser);
 		}
+	}
+	
+	public void createUser( String uid, String name, String surname ) throws ManagerBeanException, LdapException {
+		DomainUser user = new DomainUser();
+		user.setUid(uid);
+		user.setName(name);
+		user.setSurname(surname);
+		resetPassword(user);
+		getManagerBean().insert(user);
+		registerUserInApplication(user, AON_DESKTOP, ADMINISTRADOR_PROFILE);
+		registerUserInApplication(user, AON_MANAGER, ADMINISTRADOR_PROFILE);
+		registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
+		registerScopeInDBs(user.getUid(), GENERAL_SCOPE);
+		createMailAccount(user);
+		Signature signature = addDefaultSignature(user);
+		addDefaultMailAccount(user, signature);		
 	}
 	
 }

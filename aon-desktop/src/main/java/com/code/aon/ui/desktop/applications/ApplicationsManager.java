@@ -12,29 +12,36 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import com.code.aon.desktop.IDesktopConstants;
+import com.code.aon.desktop.controller.AonDomainController;
 import com.code.aon.desktop.controller.AonUserController;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class ApplicationsManager implements IDesktopConstants {
 
+	private static final String SERVICES_PROPERTIES = "services.properties";
+	
+	private static final String AON_MANAGER = "aon-manager";
+	
 	private List<App> applicationList;
 
-	@SuppressWarnings("unchecked")
 	public ApplicationsManager() throws DeploymentException, IOException {
 		Properties services = new Properties();
-		InputStream is = ApplicationsManager.class.getResourceAsStream( "services.properties" );
+		InputStream is = ApplicationsManager.class.getResourceAsStream( SERVICES_PROPERTIES );
 		services.load(is);
 		applicationList = new ArrayList<App>();
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		
 		String thisIp = InetAddress.getLocalHost().getHostAddress();
-
+		
+		AonDomainController domainController = (AonDomainController) AonUtil.getRegisteredBean(CURRENT_DOMAIN_CONTROLLER_NAME);
+		boolean showDomainList = domainController.isDomainManagement();
 		
 		AonUserController aonUserController = (AonUserController) FormUtil.getController( "currentUser" );
-		List list = aonUserController.getUserManager().getUserApplications();
+		List<?> list = aonUserController.getUserManager().getUserApplications();
         for (int i = 0; i < list.size(); i++) {
 			IApplication app = (IApplication) list.get(i);
 			String context = app.getContext() + "/?aonDesktop=true";
@@ -52,6 +59,7 @@ public class ApplicationsManager implements IDesktopConstants {
 			} else {
 				application = new App( app.getId(), app.getDescription(), context, new char[] {'1','0','0'}, true );
 			}
+			application.setShowDomainList(showDomainList && (!AON_MANAGER.equals(app.getId())) );
 			applicationList.add(application);
         }
         Collections.sort( applicationList );
@@ -81,7 +89,7 @@ public class ApplicationsManager implements IDesktopConstants {
 		private boolean infobar;
 		private boolean sidebar;
 		private boolean toolbar;
-		private boolean executable = true;
+		private boolean showDomainList;
 
 		public App(String cn, String name, String context, char[] bar, boolean role) {
 			this.id = cn;
@@ -104,10 +112,6 @@ public class ApplicationsManager implements IDesktopConstants {
 			return context;
 		}
 
-		public boolean isExecutable() {
-			return executable;
-		}
-
 		public boolean isInfobarEnabled() {
 			return infobar;
 		}
@@ -118,6 +122,14 @@ public class ApplicationsManager implements IDesktopConstants {
 
 		public boolean isToolbarEnabled() {
 			return toolbar;
+		}
+
+		public boolean isShowDomainList() {
+			return showDomainList;
+		}
+
+		public void setShowDomainList(boolean showDomainList) {
+			this.showDomainList = showDomainList;
 		}
 
 		@Override

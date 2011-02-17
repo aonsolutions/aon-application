@@ -10,18 +10,15 @@
 
 		<aon:form id="domainList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.desktop_domain_selection}" />
 				<ui:param name="toolbarDescription" value="#{domain.selectedApplication.name}" />
-				<ui:param name="controller" value="#{domain}" />
-				<ui:param name="skipResetButton" value="true" />
-				<aon:methodParam name="searchAction" value="domain_selectSearch" />
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="domainDataList" value="#{domain.model}"
-					var="to" rows="20" rendered="#{domain.model.rowCount > 0}">
+				<aon:dataTable id="domainDataList" value="#{domain.registeredDomains}"
+					var="to" rows="20" rendered="#{domain.registeredDomains.rowCount > 0}">
 
 					<aon:column>
 						<f:facet name="header">

@@ -10,23 +10,35 @@
 		<ui:param name="controller" value="#{lookup}"/>
 	</c:if>
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml" />
+	<aon:outputLabel for="Person_firstSurname" value="#{registryBundle.registry_person_firstSurname}" />
+	<aon:inputText id="Person_firstSurname" size="40" valueChangeListener="#{controller.addExpression}" />
 
-	<aon:outputLabel for="Person_socialSecurityNumber"
-		value="#{registryBundle.registry_person_nss}" />
-	<aon:inputText id="Person_socialSecurityNumber" size="40"
-		valueChangeListener="#{controller.addExpression}" />
+	<aon:outputLabel for="Person_secondSurname"	value="#{registryBundle.registry_person_secondSurname}" />
+	<aon:inputText id="Person_secondSurname" size="40" valueChangeListener="#{controller.addExpression}" />
 
-	<aon:outputLabel for="Person_gender"
-		value="#{registryBundle.registry_person_gender}" />
+	<aon:outputLabel for="Person_name"	value="#{bundle.aon_name}" />
+	<aon:inputText id="Person_name" size="40" valueChangeListener="#{controller.addExpression}" />
+	
+	<aon:outputLabel for="Person_registry_alias" value="#{bundle.aon_alias}" />
+	<aon:inputText id="Person_registry_alias" size="40" valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Person_registry_document"	value="#{bundle.aon_document}" />
+	<aon:inputText id="#{controller.pojoShortName}_registry_document" size="12"	valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Person_registry_id" value="#{bundle.aon_id}" />
+	<aon:inputText id="#{controller.pojoShortName}_registry_id" size="12" valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Person_socialSecurityNumber"	value="#{registryBundle.registry_person_nss}" />
+	<aon:inputText id="Person_socialSecurityNumber" size="20"	valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Person_gender" value="#{registryBundle.registry_person_gender}" />
 	<aon:selectOneMenu id="Person_gender" converter="aon.EnumConverter"
 		valueChangeListener="#{controller.addEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{registryCollections.genders}" />
 	</aon:selectOneMenu>
 				
-	<aon:outputLabel for="Person_maritalStatus"
-		value="#{registryBundle.registry_person_marital_status}" />
+	<aon:outputLabel for="Person_maritalStatus"	value="#{registryBundle.registry_person_marital_status}" />
 	<aon:selectOneMenu id="Person_maritalStatus" converter="aon.EnumConverter"
 		valueChangeListener="#{controller.addEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />

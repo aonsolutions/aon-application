@@ -13,8 +13,8 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{managerBundle.manager_domains}" />
 				<ui:param name="controller" value="#{domain}" />
-				<ui:param name="skipResetButton" value="#{!manager.config.showDomainReset}" />
-				<ui:param name="skipSearchButton" value="#{!manager.config.showDomainSearch}" />
+				<ui:param name="skipResetButton" value="#{!manager.domainManagement}" />
+				<ui:param name="skipSearchButton" value="#{!manager.domainManagement}" />
 			</ui:include>
 
 			<!--  aon-region-body -->

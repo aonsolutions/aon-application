@@ -3,6 +3,9 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -12,6 +15,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+
 
 
 
@@ -38,8 +42,9 @@ public class Ctsql2Mysql
 {
 	
 
-	public static void main( String[] args ) throws SQLException, ClassNotFoundException
+	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException
     {
+		
 		// create the command line parser
     	CommandLineParser parser = new PosixParser();   
     	
@@ -98,6 +103,13 @@ public class Ctsql2Mysql
     	OptionBuilder.withDescription(  "clave para conectarse a mysql." );
     	Option mysqlPasswdOption = OptionBuilder.create( "mysqlpasswd" );
     	
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArg(true);
+    	OptionBuilder.withArgName( "date" );
+    	OptionBuilder.withType(String.class);
+    	OptionBuilder.withDescription(  "trapasar los datos a partir de esta fecha" );
+    	Option fromDateOption = OptionBuilder.create( "from" );
+
     	options.addOption(helpOption);
     	options.addOption(dryRunOption);
     	options.addOption(ctsqlURLOption);
@@ -106,6 +118,7 @@ public class Ctsql2Mysql
     	options.addOption(mysqlUserOption);
     	options.addOption(ctsqlPasswdOption);
     	options.addOption(mysqlPasswdOption);
+    	options.addOption(fromDateOption);
     	
     	
     	HelpFormatter helpFormatter = new HelpFormatter();
@@ -136,15 +149,27 @@ public class Ctsql2Mysql
             
             boolean dryRun=  line.hasOption(dryRunOption.getOpt());
             
+            
             mysqlConnection.setAutoCommit(false);
             
             MysqlDB mysqlWriter = new MysqlDB(mysqlConnection);
+          
+            String fromString = line.getOptionValue(fromDateOption.getOpt());
+            if ( fromString != null ) {
+            	
+            	Date fromDate = DateFormat.getDateInstance(DateFormat.SHORT).parse(fromString);
+            	mysqlWriter.setFromDate(fromDate);
+            }
+            
             CtsqlDB ctsqlReader = new CtsqlDB(ctsqlConnection);
             mysqlWriter.writeAll(ctsqlReader);
             
             if ( !dryRun ) {
             	mysqlConnection.commit(); 
             }
+            
+            mysqlConnection.close();
+            ctsqlConnection.close();
     	
     	}
         catch( ParseException exp ) {

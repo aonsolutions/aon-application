@@ -15,6 +15,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.naming.Name;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -38,12 +41,15 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the company maintenance.
  */
 public class CompanyParentController extends BasicController implements ICompanyController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyParentController.class.getName());
 	
 	public static final String PRINT_HEADER_PARAM = "APP_PRINT_HEADER_PARAM";
 	
@@ -379,21 +385,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		addressDirty = true;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void loadMainAddress() throws ManagerBeanException {
-		Integer id = ((Company)this.getModel().getRowData()).getId();
-		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
-		Iterator iter = rAddressBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			this.mainAddress = (RegistryAddress)iter.next();
-		}else{
+		Company company = (Company)this.getModel().getRowData();
+		this.mainAddress = RegistryInfo.getMainAddress(company);
+		if ( this.mainAddress == null ) {
 			this.mainAddress = new RegistryAddress();
-			this.mainAddress.setRegistry(((Company)this.getModel().getRowData()));
+			this.mainAddress.setRegistry( company );
 			this.mainAddress.setGeozone(new GeoZone());
-			this.mainAddress.setAddressType(AddressType.MAIN);
+			this.mainAddress.setAddressType(AddressType.MAIN);			
 		}
 	}
 	
@@ -676,5 +675,16 @@ public class CompanyParentController extends BasicController implements ICompany
 		}
 		return ( (Company) getTo()).isEInvoice();
 	}
+
+	public void onChangeDocument(ActionEvent event) {
+		try {
+			if (isNew()) {
+				Company company = (Company) getTo();
+				RegistryController.validateDocument(company, getPojoShortName(), getManagerBean());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.warn("unable to check Document.",e);
+		}
+	}	
 	
 }
