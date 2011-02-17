@@ -122,7 +122,6 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		try {
 			domainController.init();
 			domainController.updateParentDomains();
-			updateCurrentDomain(domainController.getDomain());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -135,6 +134,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		DomainController domainController = (DomainController) event.getController();
 		try {
 			domainController.insertOrUpdateAccessPolicy();
+			updateCurrentDomain(domainController.getDomain());
 			updateDomainManagement(domainController);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);

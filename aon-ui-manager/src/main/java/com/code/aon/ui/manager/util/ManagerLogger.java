@@ -2,10 +2,12 @@ package com.code.aon.ui.manager.util;
 
 import static com.code.aon.ui.manager.controller.IManagerConstants.BUNDLE_NAME;
 import static com.code.aon.ui.manager.controller.IManagerConstants.NEED_MAIL_ACCOUNT;
+import static com.code.aon.ui.manager.controller.IManagerConstants.WRONG_MAIL_ACCOUNT;
 
 import java.util.Date;
 
 import javax.mail.Address;
+import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
@@ -20,6 +22,7 @@ import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
+import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
@@ -35,6 +38,8 @@ public class ManagerLogger {
 	
 	private Address[] to;
 	
+	private boolean configured;
+	
 	public ManagerLogger( String toEmails ) {
 		LoggedUser _loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
 		loggedUser = _loggedUser.getPrincipal();
@@ -43,7 +48,18 @@ public class ManagerLogger {
 			MailAccount account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), loggedUser.getShortName());
 			if ( account != null ) {
 				Address from = InternetAddress.parse(account.getEmail())[0];
-				this.sender = new EmailSender(from, account);				
+				this.sender = new EmailSender(from, account);			
+				try {
+					this.sender.connect();
+					this.configured = true;
+				} catch (MessagingException e) {
+					AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, WRONG_MAIL_ACCOUNT, e.getMessage());
+				} finally {
+					this.sender.disconnect();	
+					if (! this.configured ) {
+						this.sender = null;
+					}
+				}
 			} else {
 				AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, NEED_MAIL_ACCOUNT, loggedUser.getShortName());				
 			}
@@ -55,11 +71,11 @@ public class ManagerLogger {
 	}
 	
 	public boolean isConfigured() {
-		return this.sender != null;
+		return this.configured;
 	}
 	
 	private void sendEmail( String subject, String content ) {
-		if ( this.sender != null ) {
+		if ( isConfigured() ) {
 			try {		
 				sender.connect();
 				sender.sendMessage(to, subject, content);

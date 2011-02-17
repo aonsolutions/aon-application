@@ -84,8 +84,10 @@ public class EmailSender {
 	}
 	
 	public void disconnect() {
-		server.disconnect();
-		server = null;
+		if ( (server != null) && server.isConnected() ) {
+			server.disconnect();
+			server = null;			
+		}
 	}
 
 }

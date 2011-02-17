@@ -16,6 +16,10 @@
 				<ui:param name="skipResetButton" value="#{!manager.domainManagement}" />
 				<ui:param name="skipSearchButton" value="#{!manager.config.showDomainSearch}" />
 				<ui:param name="skipRemoveButton" value="#{!manager.domainManagement}" />
+				<ui:param name="saveOnClick" value="Richfaces.showModalPanel('waitProccess')" />
+				<ui:param name="saveOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				
+				<ui:param name="removeOnClick" value="Richfaces.showModalPanel('waitProccess')" />
+				<ui:param name="removeOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="domainApplications" rendered="#{!domain.new}"
 						value="#{managerBundle.manager_applications}"
@@ -223,6 +227,7 @@
 								
 			</aon:div>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/manager/facelet/domain/companyPopup.xhtml" />
 		<c:if test="#{manager.currentDomain.type == 'CONSULTANCY'}" >
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
