@@ -111,28 +111,30 @@ public class AonMessageUtils {
     }
     
     public static String decodeText(String content) {
-		Matcher tagMatcher = ENCODED_PATTERN.matcher(content);
-		if ( tagMatcher.find() ) {
-			StringBuffer sb = new StringBuffer(content);
-			int offset = 0;
-			do {
-				String encodedText = tagMatcher.group();
-				int start = tagMatcher.start() + offset;
-				int end = tagMatcher.end() + offset;
-				String newText = null;
-				try {
-					newText = MimeUtility.decodeWord(encodedText);
-				} catch (Throwable e) {
-					LOGGER.debug( "Error decoding text", e );
-					newText = tagMatcher.group(1);
-				}
-				if (! StringUtils.isEmpty(newText) ) {
-					sb.replace( start, end, newText);
-					offset += (newText.length() - encodedText.length());					
-				}
-			} while( tagMatcher.find() );
-			return sb.toString();
-		}
+    	if (! StringUtils.isEmpty(content) ) {
+			Matcher tagMatcher = ENCODED_PATTERN.matcher(content);
+			if ( tagMatcher.find() ) {
+				StringBuffer sb = new StringBuffer(content);
+				int offset = 0;
+				do {
+					String encodedText = tagMatcher.group();
+					int start = tagMatcher.start() + offset;
+					int end = tagMatcher.end() + offset;
+					String newText = null;
+					try {
+						newText = MimeUtility.decodeWord(encodedText);
+					} catch (Throwable e) {
+						LOGGER.debug( "Error decoding text", e );
+						newText = tagMatcher.group(1);
+					}
+					if (! StringUtils.isEmpty(newText) ) {
+						sb.replace( start, end, newText);
+						offset += (newText.length() - encodedText.length());					
+					}
+				} while( tagMatcher.find() );
+				return sb.toString();
+			}
+    	}
 		return content;
     }	    
 
