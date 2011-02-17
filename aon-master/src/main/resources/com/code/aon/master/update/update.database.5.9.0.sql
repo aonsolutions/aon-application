@@ -18,9 +18,6 @@ ALTER TABLE `enterprise` ADD CONSTRAINT `FK_ENTERPRISE_CALENDAR` FOREIGN KEY (`c
 ALTER TABLE `workplace` ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
 ALTER TABLE `workplace` ADD KEY `IDX_WORKPLACE_CALENDAR` (`calendar`);
 ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
-ALTER TABLE `contract` ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
-ALTER TABLE `contract` ADD KEY `IDX_CONTRACT_CALENDAR` (`calendar`);
-ALTER TABLE `contract` ADD CONSTRAINT `FK_CONTRACT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
 
 CREATE TABLE `contract_calendar_event` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -92,10 +89,22 @@ ALTER TABLE `contract`  DROP COLUMN `type`;
 DROP TABLE `contract_type`;
 DROP TABLE `contract_tracking`;
 
-ALTER TABLE `contract` 	ADD COLUMN `document` mediumblob COMMENT 'Impreso (.pdf) del contrato.';
-ALTER TABLE `contract` ADD `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion';
-ALTER TABLE `contract` ADD `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de notificacion del contrato';
-
+ALTER TABLE `contract` ADD COLUMN `calendar` int(4) default NULL COMMENT 'Calendario';
+ALTER TABLE `contract` ADD KEY `IDX_CONTRACT_CALENDAR` (`calendar`);
+ALTER TABLE `contract` ADD CONSTRAINT `FK_CONTRACT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`);
+ALTER TABLE `contract` ADD COLUMN `document` mediumblob COMMENT 'Impreso (.pdf) del contrato.';
+ALTER TABLE `contract` ADD COLUMN `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion';
+ALTER TABLE `contract` ADD COLUMN `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de notificacion del contrato';
+ALTER TABLE `contract` ADD COLUMN `registration` int(4)   NOT NULL COMMENT 'Número libro de matricula';
+ALTER TABLE `contract` ADD COLUMN `seniority_date` date NOT NULL COMMENT 'Fecha de antiguedad ';
+ALTER TABLE `contract` ADD COLUMN `enterprise_activity` int(4) default NULL COMMENT 'Actividad';
+ALTER TABLE `contract` ADD KEY `IDX_CONTRACT_ENTERPRISE_ACTIVITY` (`calendar`);
+ALTER TABLE `contract` ADD CONSTRAINT `FK_CONTRACT_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`);
+ALTER TABLE `contract` DROP FOREIGN KEY `FK_CONTRACT_CCC`;
+ALTER TABLE `contract` CHANGE COLUMN `ccc` `enterprise_ccc` int(4) default NULL COMMENT 'CCC';
+ALTER TABLE `contract` ADD KEY `IDX_CONTRACT_ENTERPRISE_CCC` (`enterprise_ccc`);
+ALTER TABLE `contract` ADD CONSTRAINT `FK_CONTRACT_ENTERPRISE_CCC` FOREIGN KEY (`enterprise_ccc`) REFERENCES `enterprise_ccc` (`id`);
+ALTER TABLE `contract` ADD COLUMN `ss_regime` tinyint(2) NOT NULL  DEFAULT '0' COMMENT 'Regimen de la Seguridad Social';
 
 CREATE TABLE `agreement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -195,22 +204,6 @@ VALUES
 	(5		,6					,"BASE_ESTR * 2.00/100"				,'2010-01-01'	,1),
 	(6		,7					,"BASE_IRPF * PORCENTAJE_IRPF/100"	,'2010-01-01'	,1);
 
-CREATE TABLE `contract_data` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `contract` int(4) NOT NULL COMMENT 'Contrato',
-  `code` varchar(3) collate latin1_spanish_ci NOT NULL COMMENT 'Código S.S (TC2)',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `conditions` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Condiciones',
-  `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
-  `end_date` date default NULL COMMENT 'Fecha de finalizacion',  
-  `quote_group` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Grupo de Cotización',
-  `category` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Categoria o grupo profesional',
-  `registration` int(4)   NOT NULL COMMENT 'Número libro de matricula',
-  `seniority_date` date NOT NULL COMMENT 'Fecha de antiguedad ',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_DATA_CONTRACT`(`contract`),
-  CONSTRAINT `FK_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del contrato';
 
 
 CREATE TABLE `contract_bonus` (
@@ -264,7 +257,7 @@ CREATE TABLE `contract_deduction` (
   CONSTRAINT `FK_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
-CREATE TABLE `contract_context` (
+CREATE TABLE `contract_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
@@ -276,6 +269,21 @@ CREATE TABLE `contract_context` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
 
+
+CREATE TABLE `contract_leave` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `type` tinyint(2) COMMENT 'Tipo de Baja',
+  `contract` int(4) NOT NULL COMMENT 'Contrato',
+  `relapse` tinyint(1) DEFAULT 0 COMMENT 'Recaida',
+  `description` varchar(64) collate latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
+  `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
+  `daily_cgc_base` double(15,3) DEFAULT NULL COMMENT 'Base de cotizacion por contingencias comunes',
+  `daily_cgp_base` double(15,3) DEFAULT NULL COMMENT 'Base de cotizacion por contingencias profesionales',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_LEAVE_CONTRACT` (`contract`),
+  CONSTRAINT `FK_LEAVE_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bajas';
 
 CREATE TABLE `salary` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
@@ -308,6 +316,8 @@ CREATE TABLE `salary` (
   `hextra_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion adicional por horas extraordinarias estructurales',
   `non_hextra_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion adicional por horas extraordinarias no estructurales',
   `cgp_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base de cotizacion por contingencias profesionales',
+  `money_irpf_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Salario en dinero sujeto a retención I.R.P.F',
+  `inkind_irpf_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Salario en especie sujeto a retención I.R.P.F',
   `irpf_base` double(15,3) NOT NULL default '0.000'  COMMENT 'Base sujeta a retención I.R.P.F',
   `social_security_contributions` double(15,3) NOT NULL default '0.000'  COMMENT 'Aportaciones a la Seguridad Social',
   PRIMARY KEY  (`id`),
