@@ -86,12 +86,8 @@ public class RegistryController extends BasicController {
 		DocumentType type = registry.getDocumentType();
 		if (StringUtils.isNotEmpty(document)) {
 			Criteria criteria = new Criteria();
-			String alias1 = bean.getFieldName( preffix + "_documentCountry");
-			String alias2 = bean.getFieldName( preffix + "_documentType");
-			String alias3 = bean.getFieldName( preffix + "_document");
-			criteria.addEqualExpression(alias1, country);
-			criteria.addEqualExpression(alias2, type);
-			criteria.addEqualExpression(alias3, document);
+			String alias = bean.getFieldName( preffix + "_document");
+			criteria.addEqualExpression(alias, document);
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list.size() > 0 ) {
 				String msg = AonUtil.getMessage(BUNDLE_NAME, REGISTRY_DOCUMENT_ERROR); 

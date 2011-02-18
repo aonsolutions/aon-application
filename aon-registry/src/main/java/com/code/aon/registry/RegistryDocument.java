@@ -19,7 +19,33 @@ public class RegistryDocument {
 	public RegistryDocument() {
 	}
 
+	/**
+	 * Este método se debe borrar en el versión 6.1.X
+	 * @param document
+	 */
+	@Deprecated 
 	public RegistryDocument(String document) {
+		setDocument(document);
+		enuserCountryType();
+	}
+	
+	@Deprecated 
+	private void enuserCountryType() {
+		setCountry(Country.ES);
+		setType(DocumentType.CIF);
+		if (doc != null && doc.length > 0) {
+			String first = new String(doc,0,1);
+			if (first.matches("[0-9|K|L|M]")) {
+				setType(DocumentType.NIF);
+			} else  if (first.matches("[X|Y|Z]")) {
+				setType(DocumentType.NIE);
+			} 
+		}
+	}
+
+	public RegistryDocument(Country country, DocumentType type, String document) {
+		setCountry(country);
+		setType(type);
 		setDocument(document);
 	}
 
@@ -55,18 +81,26 @@ public class RegistryDocument {
 		if (isValidable()) {
 			if (doc.length == 9) {
 				String first = new String(doc,0,1);
-				return first.matches("[0-9|K|L|M|X|Y|Z]")? isValidDNI() : isValidNIF();
+				if (first.matches("[0-9|K|L|M]")) {
+					return isValidNIF();
+				}
+				if (first.matches("[X|Y|Z]")) {
+					return isValidNIE();
+				}
+				return isValidCIF();
 			}
 		}
 		return false;
 	}
 
-	public boolean isValidDNI() {
+	public boolean isValidNIE() {
 		if (doc == null || doc.length == 0) {
 			return false;
 		}
-		doc[0] = (doc[0] == 'X' || doc[0] == 'K' || doc[0] == 'L' || doc[0] == 'M') ? '0'
-				: doc[0];
+		if (country != Country.ES || type != DocumentType.NIE) {
+			return false;
+		}
+		doc[0] = (doc[0] == 'X') ? '0' : doc[0];
 		doc[0] = (doc[0] == 'Y') ? '1' : doc[0];
 		doc[0] = (doc[0] == 'Z') ? '2' : doc[0];
 		String numbers = new String(doc, 0, 8);
@@ -78,6 +112,24 @@ public class RegistryDocument {
 
 	public boolean isValidNIF() {
 		if (doc == null || doc.length == 0) {
+			return false;
+		}
+		if (country != Country.ES || type != DocumentType.NIF) {
+			return false;
+		}
+		doc[0] = (doc[0] == 'K' || doc[0] == 'L' || doc[0] == 'M') ? '0' : doc[0];
+		String numbers = new String(doc, 0, 8);
+		if (!StringUtils.isNumeric(numbers)) {
+			return false;
+		}
+		return (doc[8] == DNI_LETTERS[(Integer.parseInt(numbers) % 23)]);
+	}
+
+	public boolean isValidCIF() {
+		if (doc == null || doc.length == 0) {
+			return false;
+		}
+		if (country != Country.ES || type != DocumentType.CIF) {
 			return false;
 		}
 		int lInDC = 0;
@@ -112,7 +164,7 @@ public class RegistryDocument {
 	}
 
 	public boolean isValidable() {
-		return ((getCountry() == null || getCountry() == Country.ES) && (getType() == null || getType() == DocumentType.NIF || getType() == DocumentType.NIE || getType() == DocumentType.CIF));
+		return ((getCountry() == Country.ES) && ( getType() == DocumentType.NIF || getType() == DocumentType.NIE || getType() == DocumentType.CIF));
 	}
 
 }
