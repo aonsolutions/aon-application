@@ -14,7 +14,6 @@
 		<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic"/>
 		<aon:selectOneMenu id="#{pojoName}_document_country" value="#{registry.documentCountry}"
 			styleClass="aon-margin-left">
-			<f:selectItem value="#{null}" itemLabel="-"/>
 			<f:selectItems value="#{commonCollections.countryCodes}" />
 			<a4j:support event="onchange" focus="#{pojoName}_document_type"
 				actionListener="#{controller.onChangeDocument}"
@@ -23,7 +22,6 @@
 		</aon:selectOneMenu>
 		<aon:outputText value="#{bundle.aon_type}" styleClass="aon-margin-left aon-italic"/>
 		<aon:selectOneMenu id="#{pojoName}_document_type" value="#{registry.documentType}"	styleClass="aon-margin-left">
-			<f:selectItem value="#{null}" itemLabel="-"/>
 			<f:selectItems value="#{registryCollections.documentTypes}" />
 			<a4j:support event="onchange" focus="#{pojoName}_document"
 				actionListener="#{controller.onChangeDocument}" 
@@ -40,7 +38,7 @@
 		</aon:inputText>
 		<aon:outputText 
 			rendered="#{!registry.documentValidable}"
-			styleClass="aon-icon-info"
+			styleClass="aon-icon-question"
 			style="padding-left: 15px;"
 			value="&#160;" />
 		<aon:outputText 
