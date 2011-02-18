@@ -73,8 +73,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{customerBundle.customer_customer}" />
 						</f:facet>
-						<aon:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
-						<aon:outputText value="#{to.customer.registry.name}" />
+						<aon:outputText value="#{to.customer.registry.fullName}" />
 					</aon:column>
 
 					<aon:column>

@@ -42,7 +42,7 @@ public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFin
 						"FROM Customer customer " +
 						"WHERE customer.id NOT IN (SELECT rPayMethod.registry.id FROM RegistryPayMethod rPayMethod) " +
 						obtainPrintCondition() +
-						"ORDER BY customer.registry.name, customer.registry.surname";
+						"ORDER BY customer.registry.name";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -56,7 +56,7 @@ public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFin
 						"AND rPayMethod.payment.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " + 
 						"AND customer.id NOT IN (SELECT rBank.registry.id FROM RegistryBank rBank) " +
 						obtainPrintCondition() +
-						"ORDER BY customer.registry.name, customer.registry.surname";
+						"ORDER BY customer.registry.name";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -70,7 +70,7 @@ public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFin
 						"AND customer.id = rPayMethod.registry.id " +
 						"AND rPayMethod.payment.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
 						obtainPrintCondition() +
-						"ORDER BY customer.registry.name, customer.registry.surname";
+						"ORDER BY customer.registry.name";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
