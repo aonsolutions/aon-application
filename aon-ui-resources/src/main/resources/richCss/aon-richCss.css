@@ -696,9 +696,13 @@ color:#000;
 .aon-icon-message{
 	background:transparent url(images/aon-icon/aon-icon-message.png) scroll left center no-repeat;
 	}
- .aon-icon-info{
+.aon-icon-info{
 	background:transparent url(images/aon-icon/aon-icon-info.png) scroll left center no-repeat;
- }
+	}
+.aon-icon-question{
+	background:transparent url(images/aon-icon/aon-icon-question.png) scroll left center no-repeat;
+	}
+ 
 /* portlet icons */
 .aon-icon-new{
 	background:transparent url(images/aon-icon/aon-icon-reset.png) scroll left center no-repeat;
