@@ -324,7 +324,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice}.getRegistry().getId()+" "+ $F{invoice}.getRegistry().getName()+ " "+ $F{invoice}.getRegistry().getSurname()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice}.getRegistry().getId()+" "+ $F{invoice}.getRegistryName()]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-31" x="383" y="97" width="82" height="14"/>
