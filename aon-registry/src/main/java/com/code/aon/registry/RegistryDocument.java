@@ -112,7 +112,7 @@ public class RegistryDocument {
 	}
 
 	public boolean isValidable() {
-		return (getCountry() == Country.ES && (getType() == DocumentType.NIF || getType() == DocumentType.NIE || getType() == DocumentType.CIF));
+		return ((getCountry() == null || getCountry() == Country.ES) && (getType() == null || getType() == DocumentType.NIF || getType() == DocumentType.NIE || getType() == DocumentType.CIF));
 	}
 
 }

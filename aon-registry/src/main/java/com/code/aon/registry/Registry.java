@@ -63,6 +63,12 @@ public class Registry implements ITransferObject {
 	private Set<RegistryPayMethod> payMethods = new HashSet<RegistryPayMethod>();
 	private Set<RegistrySegment> segments = new HashSet<RegistrySegment>();
 	
+	public Registry() {
+		this.documentType = DocumentType.NIF;
+		this.documentCountry  = Country.ES;
+		this.nationality = Country.ES;
+	}
+	
 	@Transient
 	private RegistryDocument registryDocument;
 
