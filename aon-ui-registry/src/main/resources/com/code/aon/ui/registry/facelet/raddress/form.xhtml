@@ -9,6 +9,9 @@
 	<aon:valueParam name="registryAddress" default="#{controller.mainAddress}"/>
 	
 	<aon:outputLabel for="#{pojoName}_address" value="#{registryBundle.registry_address}" />
+	<aon:inputText id="#{pojoName}_address" required="#{addressRequired}"
+		value="#{registryAddress.address}" maxlength="128" size="32" />
+<!-- 
 	<aon:div>
 		<aon:selectOneMenu id="#{pojoName}_streetType" required="#{addressRequired}"
 			label="#{registryBundle.registry_street_type}"
@@ -22,7 +25,8 @@
 			value="#{bundle.aon_number}" />
 		<aon:inputText id="#{pojoName}_number" style="margin-left: 5px;" required="#{addressRequired}"
 			value="#{registryAddress.number}" maxlength="8" size="5" />
-	</aon:div>
+ 	</aon:div>
+ -->
 
 	<aon:outputLabel for="#{pojoName}_address2" value="#{registryBundle.registry_address_detail}" />
 	<aon:div>
