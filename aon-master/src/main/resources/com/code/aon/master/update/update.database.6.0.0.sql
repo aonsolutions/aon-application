@@ -8,9 +8,9 @@
 
 BEGIN;
 
-UPDATE `registry` SET `document_type` = 2 WHERE SUBSTR(`document`, 1, 1) IN ('K','L','M','X','Y','Z');
+UPDATE `registry` SET `document_type` = 2 WHERE SUBSTR(`document`, 1, 1) IN ('X','Y','Z');
 
-UPDATE `registry` SET `document_type` = 1 WHERE SUBSTR(`document`, 1, 1) IN ('A','B','C','D','E','F','G','H','I','J');
+UPDATE `registry` SET `document_type` = 1 WHERE SUBSTR(`document`, 1, 1) BETWEEN 'A' AND 'J' OR SUBSTR(`document`, 1, 1) BETWEEN 'N' AND 'W';
 
 UPDATE `registry` SET `document_type` = 0 WHERE `document_type` IS NULL;
 
