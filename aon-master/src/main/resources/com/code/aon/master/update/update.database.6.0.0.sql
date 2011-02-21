@@ -28,6 +28,10 @@ UPDATE `registry` SET `type` = 0 WHERE `document_type` != 1;
 
 UPDATE `registry` SET `type` = 1 WHERE `document_type` = 1; 
 
+ALTER TABLE `contract_leave` DROP COLUMN   `relapse` ;
+ALTER TABLE `contract_leave` ADD COLUMN   `parent` int(4) DEFAULT NULL  'Baja origen, si es recaida' ;
+ALTER TABLE `contract_leave` ADD KEY `IDX_CONTRACT_LEAVE_CONTRACT_LEAVE` (`parent`);
+ALTER TABLE `contract_leave` ADD CONSTRAINT `FK_CONTRACT_LEAVE_CONTRACT_LEAVE` FOREIGN KEY (`parent`) REFERENCES `contract_leave` (`id`);
 
 UPDATE `db_version` SET `version_number` = '6.0.1';
 
