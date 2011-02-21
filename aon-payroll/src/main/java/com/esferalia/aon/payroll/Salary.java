@@ -106,7 +106,8 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	private Double extraPayProration; // Prorrata de pagas extraordinarias
 	private Double commonBase; //Base de cotización por contigencias comunes
 	private Double professionalBase; //Base de cotización por contigencias profesionales (A.T. y E.P.) y conceptos de recaudación conjunta (Desemp., F.P., F.G.S.)
-	private Double overtimeBase; //Base de cotización adicional por horas extraordinarias
+	private Double overtimeBase; //Base de cotización adicional por horas extraordinarias estructurales
+	private Double nonEstructuralOvertimeBase; //Base de cotización adicional por horas extraordinarias no estructurales
 	private Double irpfBase; //Base sujeta a retención del I.R.P.F.
 
 	// OTHERS
@@ -414,7 +415,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	}
 
 	@Override
-	@Column(name = "extra_pay_proration", precision = 15, scale = 3, nullable = false)
+	@Column(name = "pro_ext_base", precision = 15, scale = 3, nullable = false)
 	public Double getExtraPayProration() {
 		return extraPayProration;
 	}
@@ -423,7 +424,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	}
 
 	@Override
-	@Column(name = "common_base", precision = 15, scale = 3, nullable = false)
+	@Column(name = "cgc_base", precision = 15, scale = 3, nullable = false)
 	public Double getCommonBase() {
 		return commonBase;
 	}
@@ -432,21 +433,30 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	}
 
 	@Override
-	@Column(name = "professional_base", precision = 15, scale = 3, nullable = false)
+	@Column(name = "cgp_base", precision = 15, scale = 3, nullable = false)
 	public Double getProfessionalBase() {
 		return professionalBase;
 	}
 	public void setProfessionalBase(Double professionalBase) {
 		this.professionalBase = professionalBase;
 	}
-
+	
 	@Override
-	@Column(name = "overtime_base", precision = 15, scale = 3, nullable = false)
+	@Column(name = "hextra_base", precision = 15, scale = 3, nullable = false)
 	public Double getOvertimeBase() {
 		return overtimeBase;
 	}
 	public void setOvertimeBase(Double overtimeBase) {
 		this.overtimeBase = overtimeBase;
+	}
+	
+	@Override
+	@Column(name = "non_hextra_base", precision = 15, scale = 3, nullable = false)
+	public Double getNonEstructuralOvertimeBase() {
+		return nonEstructuralOvertimeBase;
+	}
+	public void setNonEstructuralOvertimeBase(Double nonEstructuralOvertimeBase) {
+		this.nonEstructuralOvertimeBase = nonEstructuralOvertimeBase;
 	}
 
 	@Override
@@ -490,9 +500,10 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 				.append(this.totalLiquid,o.totalLiquid)
 				.append(this.remuneration,o.remuneration)
 				.append(this.extraPayProration,o.extraPayProration)
-				.append(this.commonBase,o.commonBase)
+//				.append(this.commonBase,o.commonBase)
 				.append(this.professionalBase,o.professionalBase)
 				.append(this.overtimeBase,o.overtimeBase)
+				.append(this.nonEstructuralOvertimeBase,o.nonEstructuralOvertimeBase)
 				.append(this.irpfBase,o.irpfBase)
 				.isEquals();			
 		}
@@ -525,9 +536,10 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 			.append(totalLiquid)
 			.append(remuneration)
 			.append(extraPayProration)
-			.append(commonBase)
+//			.append(commonBase)
 			.append(professionalBase)
 			.append(overtimeBase)
+			.append(nonEstructuralOvertimeBase)
 			.append(irpfBase)
 			.toHashCode();
 	}

@@ -104,7 +104,7 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	}
 
 	@ManyToOne
-    @JoinColumn( name="ccc")	
+    @JoinColumn( name="enterprise_ccc")	
 	@ForeignKey(name = "FK_CONTRACT_CCC")
 	@Index(name = "IDX_CONTRACT_CCC")
 	public EnterpriseCCC getEnterpriseCCC() {
