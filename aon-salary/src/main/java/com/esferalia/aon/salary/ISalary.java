@@ -52,8 +52,10 @@ public interface ISalary {
 	Double getCommonBase();
 	//Base de cotización por contigencias profesionales (A.T. y E.P.) y conceptos de recaudación conjunta (Desemp., F.P., F.G.S.)
 	Double getProfessionalBase();
-	//Base de cotización adicional por horas extraordinarias
+	//Base de cotización adicional por horas extraordinarias estructurales
 	Double getOvertimeBase();
+	//Base de cotización adicional por horas extraordinarias no estructurales
+	Double getNonEstructuralOvertimeBase();
 	//Base sujeta a retención del I.R.P.F.
 	Double getIrpfBase();
 	
