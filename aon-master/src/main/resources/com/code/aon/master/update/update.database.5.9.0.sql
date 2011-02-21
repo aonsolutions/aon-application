@@ -1082,7 +1082,7 @@ ALTER TABLE `user` DROP COLUMN `validate`;
 
 ALTER TABLE `user` DROP COLUMN `available`;
 
-ALTER TABLE `user` ADD `enterprise` int(4) NOT NULL default '1' COMMENT 'Identificador de la Empresa';
+ALTER TABLE `user` ADD `enterprise` int(4) default NULL COMMENT 'Identificador de la Empresa';
 
 ALTER TABLE `user` ADD KEY `IDX_USER_ENTERPRISE` (`enterprise`);
 
