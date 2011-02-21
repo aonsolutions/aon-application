@@ -203,6 +203,7 @@ public class AccountEntryController extends BasicController {
             super.onSelect(null);
         } else {
 			AonUtil.addInfoMessage( AonUtil.getMessage("aon_search_no_results") );
+			onEditSearch(event);
         }
     }
 
@@ -262,7 +263,6 @@ public class AccountEntryController extends BasicController {
 		return c.getNavigationKey();
 	}
 
-    @SuppressWarnings("unchecked")
     public void refreshTotals() {
         if (this.getTo() != null ) {
 	        try {
@@ -273,7 +273,7 @@ public class AccountEntryController extends BasicController {
 				ProjectionList pl = new ProjectionList();
 				pl.add(Projection.sum(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT)));
 				pl.add(Projection.sum(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT)));
-				List dets = detailsBean.getList(pl, criteria);
+				List<?> dets = detailsBean.getList(pl, criteria);
 	        	setTotalDebit(IAccountingConstants.ZERO);
 	        	setTotalCredit(IAccountingConstants.ZERO);
 				if (dets.size() > 0) {
