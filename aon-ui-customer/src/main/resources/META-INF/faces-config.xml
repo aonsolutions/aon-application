@@ -875,8 +875,8 @@
 		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>registryPayMethodType</property-name>
-			<value>#{configCollections.payMethodTypes[1].value}</value>
+			<property-name>customerMode</property-name>
+			<value>true</value>
 		</managed-property>
 	</managed-bean>	
 

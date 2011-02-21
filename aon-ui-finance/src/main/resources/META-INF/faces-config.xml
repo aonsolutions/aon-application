@@ -3138,6 +3138,10 @@
 		<managed-bean-name>creditorForm</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>customerMode</property-name>
+			<value>false</value>
+		</managed-property>
 	</managed-bean>	
 	
 

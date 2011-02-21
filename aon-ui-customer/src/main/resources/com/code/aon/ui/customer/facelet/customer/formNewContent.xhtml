@@ -31,7 +31,7 @@
 		
 	</aon:panelGrid>
 	
-	<c:if test="#{aonConfiguration.bean.supplier.showFinanceData}">
+	<c:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 		<ui:include src="/com/code/aon/ui/registry/facelet/lookup/registry/formPayMethod.xhtml">
 			<ui:param name="controllerLookupListener" value="#{customerForm}"/>
 		</ui:include>

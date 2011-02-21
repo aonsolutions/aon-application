@@ -970,9 +970,14 @@
 	
 	<managed-bean>
 		<managed-bean-name>targetForm</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryPayMethodFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
+		<managed-property>
+			<property-name>customerMode</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+
 	
 	<!-- ****** OFFER ****** -->
 	<managed-bean>

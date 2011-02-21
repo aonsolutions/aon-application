@@ -20,8 +20,8 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	
 	private RegistryPayMethod registryPayMethod;
 	
-	private PayMethodType registryPayMethodType = PayMethodType.BANK_TRANSFER;	
-	
+	private boolean customerMode;
+
 
 	public RegistryPayMethod getRegistryPayMethod() {
 		return registryPayMethod;
@@ -39,12 +39,12 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		this.registryPayMethod.setRegistryBank( registryBank );
 	}
 	
-	public PayMethodType getRegistryPayMethodType() {
-		return registryPayMethodType;
+	public boolean isCustomerMode() {
+		return customerMode;
 	}
 
-	public void setRegistryPayMethodType(PayMethodType registryPayMethodType) {
-		this.registryPayMethodType = registryPayMethodType;
+	public void setCustomerMode(boolean customerMode) {
+		this.customerMode = customerMode;
 	}
 
 	@Override
@@ -111,7 +111,8 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	}
 	
 	public boolean isShowCompanyBanks() {
-		return (registryPayMethod.getPayment() != null) && (registryPayMethod.getPayment().getType() == PayMethodType.BANK_TRANSFER);
+		PayMethodType type = (registryPayMethod.getPayment() != null) ? registryPayMethod.getPayment().getType() : null;
+		return (isCustomerMode() && type != PayMethodType.NEGOTIABLE_DOCUMENT) || (!isCustomerMode() && type != PayMethodType.BANK_TRANSFER);
 	}
 
 	public boolean isCash() {
