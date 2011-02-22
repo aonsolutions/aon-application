@@ -26,8 +26,8 @@ USE `aon_master`;
 # Table structure for table `absence`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `absence` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `course_alumn` int(4) NOT NULL COMMENT 'Identificador del CursoAlumno',
@@ -38,41 +38,41 @@ CREATE TABLE `absence` (
   KEY `course_alumn` (`course_alumn`),
   CONSTRAINT `absence_fk_1` FOREIGN KEY (`course_alumn`) REFERENCES `course_alumn` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ausencias';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `academic_skill`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `academic_skill` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Aptitud Academica',
   `code` char(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Aptitud Academica',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Aptitud Academica',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aptitudes Academicas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `academic_year`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `academic_year` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del AÒo Academico',
-  `description` varchar(9) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del AÒo Academico',
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del A√±o Academico',
+  `description` varchar(9) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del A√±o Academico',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='AÒo Academico';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='A√±o Academico';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account` (
   `id` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Identificador unico de la Cuenta',
   `description` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Cuenta',
@@ -81,14 +81,14 @@ CREATE TABLE `account` (
   `level` tinyint(2) NOT NULL default '0' COMMENT 'Nivel de la Cuenta',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_budget`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_budget` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `account_period` char(4) collate latin1_spanish_ci NOT NULL COMMENT 'Ejercicio Contable del Presupuesto',
@@ -100,14 +100,14 @@ CREATE TABLE `account_budget` (
   CONSTRAINT `fk_account_budget_account` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
   CONSTRAINT `fk_account_budget_period` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuesto de Cuentas Contables';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_budget_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_budget_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `account_budget` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
@@ -125,14 +125,14 @@ CREATE TABLE `account_budget_detail` (
   CONSTRAINT `fk_account_budget_detail_account_detail` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
   CONSTRAINT `fk_account_budget_detail_period_detail` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuesto de Cuentas Contables';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_entry`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_entry` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Asiento',
   `account_period` char(4) collate latin1_spanish_ci NOT NULL COMMENT 'Ejercicio Contable del Asiento',
@@ -145,14 +145,14 @@ CREATE TABLE `account_entry` (
   KEY `account_entry_account_period_idx` (`account_period`),
   CONSTRAINT `account_entry_ibfk_1` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asientos Contables';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_entry_bank_statement`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_entry_bank_statement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador de Asiento',
@@ -163,14 +163,14 @@ CREATE TABLE `account_entry_bank_statement` (
   CONSTRAINT `FK_ACC_ENTRY_BANK_STATEMENT_ACC_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `FK_ACC_ENTRY_BANK_STATEMENT_BANK_STATEMENT` FOREIGN KEY (`bank_statement`) REFERENCES `bank_statement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Extractos bancarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_entry_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_entry_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Apunte',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador del Asiento',
@@ -189,14 +189,14 @@ CREATE TABLE `account_entry_detail` (
   CONSTRAINT `account_entry_detail_ibfk_3` FOREIGN KEY (`balancing_account`) REFERENCES `account` (`id`),
   CONSTRAINT `account_entry_detail_ibfk_4` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Apuntes Contables';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_entry_fbatch`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_entry_fbatch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador de Asiento Contable',
@@ -207,14 +207,14 @@ CREATE TABLE `account_entry_fbatch` (
   CONSTRAINT `account_entry_fbatch_fk` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `account_entry_fbatch_fk1` FOREIGN KEY (`fbatch`) REFERENCES `fbatch` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Remesas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_entry_finance_tracking`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_entry_finance_tracking` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador de Asiento Contable',
@@ -225,14 +225,14 @@ CREATE TABLE `account_entry_finance_tracking` (
   CONSTRAINT `account_entry_finance_tracking_fk` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `account_entry_finance_tracking_fk1` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Seguimiento de Vencimientos y Asientos Contab';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_entry_invoice`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_entry_invoice` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de Relacion',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador de Asiento',
@@ -243,14 +243,14 @@ CREATE TABLE `account_entry_invoice` (
   CONSTRAINT `account_entry_invoice_fk_2` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `account_entry_invoice_ibfk_1` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Facturas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_entry_link`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_entry_link` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `account_entry_from` int(4) NOT NULL COMMENT 'Asiento original',
@@ -261,14 +261,14 @@ CREATE TABLE `account_entry_link` (
   CONSTRAINT `FK_ACCOUNT_ENTRY_LINK_FROM` FOREIGN KEY (`account_entry_from`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_LINK_TO` FOREIGN KEY (`account_entry_to`) REFERENCES `account_entry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_helper`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_helper` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `counter` int(4) NOT NULL default '0' COMMENT 'Contador, veces que se ha usado',
@@ -280,29 +280,29 @@ CREATE TABLE `account_helper` (
   CONSTRAINT `FK_ACCOUNT_HELPER_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_ACCOUNT_HELPER_BALANCING_ACCOUNT` FOREIGN KEY (`balancing_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ayuda a la introduccion de apuntes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_period`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_period` (
-  `id` char(4) collate latin1_spanish_ci NOT NULL COMMENT 'CÛdigo del Ejercicio',
+  `id` char(4) collate latin1_spanish_ci NOT NULL COMMENT 'C√≥digo del Ejercicio',
   `initiation_date` date NOT NULL COMMENT 'Fecha de inicio del Ejercicio',
   `deadline` date NOT NULL COMMENT 'Fecha final del Ejercicio',
   `status` tinyint(2) default '0' COMMENT 'Estado del Ejercicio',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ejercicios Contables';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `account_summary`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account_summary` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Acumulado',
   `account_period` char(4) collate latin1_spanish_ci NOT NULL COMMENT 'Ejercicio Contable del Acumulado',
@@ -317,14 +317,14 @@ CREATE TABLE `account_summary` (
   CONSTRAINT `account_summary_ibfk_1` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`),
   CONSTRAINT `account_summary_ibfk_2` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acumulado de Cuentas Contables';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `action`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `action` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `menu` tinyint(1) NOT NULL default '0' COMMENT 'Indica si la Accion esta o no dentro del menu',
@@ -336,14 +336,14 @@ CREATE TABLE `action` (
   KEY `IDX_ACTION_APPLICATION` (`application_id`),
   CONSTRAINT `FK_ACTION_APPLICATION` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de una Applicacion';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `action_denied`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `action_denied` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `action_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Accion',
@@ -354,14 +354,14 @@ CREATE TABLE `action_denied` (
   CONSTRAINT `FK_ACTION_DENIED_ACTION_ID` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_DENIED_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Accion no permitida para el Usuario';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `action_entry`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `action_entry` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `executionDate` datetime NOT NULL COMMENT 'Fecha de ejecucion',
@@ -373,14 +373,14 @@ CREATE TABLE `action_entry` (
   CONSTRAINT `FK_ACTION_ENTRY_ACTION_ID` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_ENTRY_SESSION_ID` FOREIGN KEY (`session_id`) REFERENCES `session` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Entrada de la ejecucion de una Accion';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `action_favorite`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `action_favorite` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `position` int(4) NOT NULL COMMENT 'Posicion dentro de las Acciones Favoritas',
@@ -392,14 +392,14 @@ CREATE TABLE `action_favorite` (
   CONSTRAINT `FK_ACTION_FAVORITE_ACTION_ID` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_FAVORITE_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Accion Favorita del Usuario';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `activity`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Actividad',
   `dossier` int(4) NOT NULL COMMENT 'Identificador del Expendiente',
@@ -413,17 +413,17 @@ CREATE TABLE `activity` (
   CONSTRAINT `activity_ibfk_1` FOREIGN KEY (`activity_type`) REFERENCES `activity_type` (`id`),
   CONSTRAINT `activity_ibfk_2` FOREIGN KEY (`dossier`) REFERENCES `dossier` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `activity_process`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `activity_process` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion entre CampaÒas, Actividades y Tareas',
-  `campaign` int(4) NOT NULL COMMENT 'Identificador de la CampaÒa',
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion entre Campa√±as, Actividades y Tareas',
+  `campaign` int(4) NOT NULL COMMENT 'Identificador de la Campa√±a',
   `activity` int(4) default NULL COMMENT 'Identificador de la Actividad',
   `process_detail` int(4) NOT NULL COMMENT 'Identificador del Detalle de Proceso',
   `task` int(4) NOT NULL COMMENT 'Identificador de la Tarea',
@@ -436,15 +436,15 @@ CREATE TABLE `activity_process` (
   CONSTRAINT `activity_process_fk_2` FOREIGN KEY (`activity`) REFERENCES `activity` (`id`),
   CONSTRAINT `activity_process_fk_3` FOREIGN KEY (`process_detail`) REFERENCES `process_detail` (`id`),
   CONSTRAINT `activity_process_fk_4` FOREIGN KEY (`task`) REFERENCES `task` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre CampaÒas, Actividades y Tareas';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campa√±as, Actividades y Tareas';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `activity_type`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `activity_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Actividad',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Actividad',
@@ -453,14 +453,14 @@ CREATE TABLE `activity_type` (
   KEY `dossier_type` (`dossier_type`),
   CONSTRAINT `activity_type_fk` FOREIGN KEY (`dossier_type`) REFERENCES `dossier_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Actividades';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `agreement`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `agreement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `calendar` int(4) default NULL COMMENT 'Calendario',
@@ -469,14 +469,14 @@ CREATE TABLE `agreement` (
   KEY `IDX_AGREEMENT_CALENDAR` (`calendar`),
   CONSTRAINT `FK_AGREEMENT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Convenios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `agreement_level`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `agreement_level` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `agreement` int(4) NOT NULL COMMENT 'Convenio',
@@ -485,14 +485,14 @@ CREATE TABLE `agreement_level` (
   KEY `IDX_LEVEL_AGREEMENT` (`agreement`),
   CONSTRAINT `FK_LEVEL_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Niveles retributivos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `agreement_level_category`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `agreement_level_category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `agreement_level` int(4) NOT NULL COMMENT 'Nivel retributivo',
@@ -501,32 +501,32 @@ CREATE TABLE `agreement_level_category` (
   KEY `IDX_CATEGORY_AGREEMENT_LEVEL` (`agreement_level`),
   CONSTRAINT `FK_CATEGORY_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias profesionales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `agreement_level_payment`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `agreement_level_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `agreement_level` int(4) NOT NULL COMMENT 'Nivel retributivo',
-  `type` tinyint(2) default NULL COMMENT 'Tipo de PercepciÛn Salarial',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'FÛrmula',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Percepci¬ùn Salarial',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'F¬ùrmula',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
   KEY `IDX_PAYMENT_AGREEMENT_LEVEL` (`agreement_level`),
   CONSTRAINT `FK_PAYMENT_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `alarm`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `alarm` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Alarma',
   `description` text collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Alarma',
@@ -540,14 +540,14 @@ CREATE TABLE `alarm` (
   KEY `user` (`user_id`),
   CONSTRAINT `alarm_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Alarmas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `alumn_loan`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `alumn_loan` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Prestamo',
   `customer` int(4) NOT NULL COMMENT 'Alumno al que se le realizo el Prestamo',
@@ -559,14 +559,14 @@ CREATE TABLE `alumn_loan` (
   KEY `customer` (`customer`),
   CONSTRAINT `alumn_loan_fk1` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prestamos a Alumnos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `amortization`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `amortization` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del inmovilizado',
@@ -592,14 +592,14 @@ CREATE TABLE `amortization` (
   CONSTRAINT `fk_amortization_amortization_type` FOREIGN KEY (`amortization_type`) REFERENCES `amortization_type` (`id`),
   CONSTRAINT `FK_AMORTIZATION_FIXED_ASSET_ACCOUNT` FOREIGN KEY (`fixed_asset_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fichas de Amortizacion Contables';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `amortization_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `amortization_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `amortization` int(4) NOT NULL COMMENT 'Ficha de Amortizacion',
@@ -616,14 +616,14 @@ CREATE TABLE `amortization_detail` (
   CONSTRAINT `fk_amortization_detail_account_entry` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `fk_amortization_detail_amortization` FOREIGN KEY (`amortization`) REFERENCES `amortization` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Ficha de Amortizacion Contable';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `amortization_type`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `amortization_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `fixed_asset_account` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Cuenta de inmovilizado',
@@ -639,27 +639,27 @@ CREATE TABLE `amortization_type` (
   CONSTRAINT `fk_amortization_type_account2` FOREIGN KEY (`accumulated_account`) REFERENCES `account` (`id`),
   CONSTRAINT `fk_amortization_type_account3` FOREIGN KEY (`allocation_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Amortizacion';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `annual_report`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `annual_report` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Memoria',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Memoria';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `annual_report_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `annual_report_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `annual_report` int(4) NOT NULL COMMENT 'Identificador de la Memoria',
@@ -670,27 +670,27 @@ CREATE TABLE `annual_report_detail` (
   KEY `IDX_ANNUAL_REPORT_DETAIL_ANNUAL_REPORT` (`annual_report`),
   CONSTRAINT `FK_ANNUAL_REPORT_DETAIL_ANNUAL_REPORT` FOREIGN KEY (`annual_report`) REFERENCES `annual_report` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Memoria';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `app_param`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `app_param` (
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Parametro',
   `value` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor del Parametro',
   PRIMARY KEY  (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Parametros de la Aplicacion';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `application`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `application` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `audit_level` tinyint(2) NOT NULL default '0' COMMENT 'Nivel de auditoria',
@@ -698,41 +698,41 @@ CREATE TABLE `application` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `appraiser`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `appraiser` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Perito',
   PRIMARY KEY  (`registry`),
   CONSTRAINT `appraiser_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Peritos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `asset`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `asset` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Activo',
   `name` varchar(10) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre corto del Activo',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Activos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `asset_activity`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `asset_activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `asset` int(4) NOT NULL COMMENT 'Identificador del Activo',
@@ -746,47 +746,47 @@ CREATE TABLE `asset_activity` (
   KEY `asset` (`asset`),
   CONSTRAINT `asset_activity_fk1` FOREIGN KEY (`asset`) REFERENCES `asset` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades sobre el Activo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `auto_concept`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `auto_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Concepto Automatico',
   `description` char(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Concepto Automatico',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos Automaticos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `balance`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `balance` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre del Balance',
   `removable` tinyint(1) default '0' COMMENT 'Indica se puede ser borrado por el usuario',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Balance',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Balances';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Balances';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `balance_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `balance_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `balance` int(4) NOT NULL COMMENT 'Identificador del Balance',
   `code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo del Detalle en el Balance',
-  `description` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'DescripciÛn del detalle de balance',
+  `description` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Descripci√≥n del detalle de balance',
   `accounts` text collate latin1_spanish_ci COMMENT 'Cuentas separadas por comas, que forman el acumulado.',
   `sortKey` int(4) default '0' COMMENT 'Orden el que aparecera en el listado.',
   `title` tinyint(1) NOT NULL default '0',
@@ -797,42 +797,42 @@ CREATE TABLE `balance_detail` (
   PRIMARY KEY  (`id`),
   KEY `idx_balance` (`balance`),
   CONSTRAINT `fk_balance_detail_balance` FOREIGN KEY (`balance`) REFERENCES `balance` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=308 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Balace';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Balace';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `bank`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bank` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Entidad Bancaria',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Entidad Bancaria',
   `code` varchar(4) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Entidad Bancaria',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=204 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Entidades Bancarias';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Entidades Bancarias';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `bank_concept`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bank_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Concepto',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos bancarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `bank_concept_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bank_concept_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `bank_concept` int(4) NOT NULL default '0' COMMENT 'Identificador del Concepto bancario',
@@ -843,17 +843,17 @@ CREATE TABLE `bank_concept_account` (
   CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` FOREIGN KEY (`bank_concept`) REFERENCES `bank_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Conceptos bancarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `bank_statement`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bank_statement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `rbank` int(4) NOT NULL COMMENT 'Identificador de Banco de la CompaÒia',
+  `rbank` int(4) NOT NULL COMMENT 'Identificador de Banco de la Compa√±ia',
   `lot_number` int(4) NOT NULL default '0' COMMENT 'Numero de lote',
   `operation_date` date NOT NULL COMMENT 'Fecha de operacion',
   `common_concept` tinyint(2) NOT NULL default '0' COMMENT 'Concepto comun',
@@ -871,14 +871,14 @@ CREATE TABLE `bank_statement` (
   KEY `IDX_BANK_STATEMENT_RBANK` (`rbank`),
   CONSTRAINT `FK_BANK_STATEMENT_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Extractos bancarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `bank_statement_link`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bank_statement_link` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `bank_statement` int(4) NOT NULL COMMENT 'Identificador de Extracto bancario',
@@ -891,27 +891,27 @@ CREATE TABLE `bank_statement_link` (
   KEY `IDX_BANK_STATEMENT_LINK_BANK_STATEMENT` (`bank_statement`),
   CONSTRAINT `FK_BANK_STATEMENT_LINK_BANK_STATEMENT` FOREIGN KEY (`bank_statement`) REFERENCES `bank_statement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Enlaces del Extracto bancario';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `brand`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `brand` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Marca Comercial',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Marca Comercial',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Marcas Comerciales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `calendar`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calendar` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `holiday` int(4) default NULL COMMENT 'Identificador de Festivos',
@@ -940,14 +940,14 @@ CREATE TABLE `calendar` (
   CONSTRAINT `FK_CALENDAR_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
   CONSTRAINT `FK_CALENDAR_HOLIDAY` FOREIGN KEY (`holiday`) REFERENCES `holiday` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Calendarios Laborales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `calendar_holiday`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calendar_holiday` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `calendar` int(4) NOT NULL default '0' COMMENT 'Identificador del Calendario',
@@ -959,14 +959,14 @@ CREATE TABLE `calendar_holiday` (
   KEY `IDX_CALENDAR_HOLIDAY_CALENDAR` (`calendar`),
   CONSTRAINT `FK_CALENDAR_HOLIDAY_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Festivos de Calendarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `calendar_period`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `calendar_period` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `calendar` int(4) NOT NULL COMMENT 'Identificador del Calendario',
@@ -992,24 +992,24 @@ CREATE TABLE `calendar_period` (
   KEY `IDX_CALENDAR_PERIOD_CALENDAR` (`calendar`),
   CONSTRAINT `FK_CALENDAR_PERIOD_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Periodos de Calendarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `campaign`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `campaign` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la CampaÒa',
-  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la CampaÒa',
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Campa√±a',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campa√±a',
   `process` int(4) NOT NULL COMMENT 'Identificador del Proceso',
   `activity_type` int(4) default NULL COMMENT 'Identificador del Tipo de Actividad',
-  `start_date` date NOT NULL COMMENT 'Fecha de inicio de la CampaÒa',
-  `end_date` date NOT NULL COMMENT 'Fecha de finalizacion de la CampaÒa',
-  `workgroup` int(4) NOT NULL COMMENT 'Grupo de Trabajo supervisor de la CampaÒa',
-  `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de CampaÒa',
-  `status` tinyint(2) default NULL COMMENT 'Estado de la CampaÒa',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio de la Campa√±a',
+  `end_date` date NOT NULL COMMENT 'Fecha de finalizacion de la Campa√±a',
+  `workgroup` int(4) NOT NULL COMMENT 'Grupo de Trabajo supervisor de la Campa√±a',
+  `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Campa√±a',
+  `status` tinyint(2) default NULL COMMENT 'Estado de la Campa√±a',
   PRIMARY KEY  (`id`),
   KEY `process` (`process`),
   KEY `activity_type` (`activity_type`),
@@ -1017,40 +1017,40 @@ CREATE TABLE `campaign` (
   CONSTRAINT `campaign_ibfk_1` FOREIGN KEY (`process`) REFERENCES `process` (`id`),
   CONSTRAINT `campaign_ibfk_2` FOREIGN KEY (`activity_type`) REFERENCES `activity_type` (`id`),
   CONSTRAINT `campaign_ibfk_3` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CampaÒas';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campa√±as';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `campaign_dossier`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `campaign_dossier` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion de CampaÒas y Expedientes',
-  `campaign` int(4) NOT NULL COMMENT 'Identificador de la CampaÒa',
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion de Campa√±as y Expedientes',
+  `campaign` int(4) NOT NULL COMMENT 'Identificador de la Campa√±a',
   `dossier` int(4) NOT NULL COMMENT 'Identificador del Expediente',
   PRIMARY KEY  (`id`),
   KEY `campaign` (`campaign`),
   KEY `dossier` (`dossier`),
   CONSTRAINT `campaign_dossier_fk_1` FOREIGN KEY (`campaign`) REFERENCES `campaign` (`id`),
   CONSTRAINT `campaign_dossier_fk_2` FOREIGN KEY (`dossier`) REFERENCES `dossier` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre CampaÒas y Expedientes';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campa√±as y Expedientes';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `cashflow_forecast`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cashflow_forecast` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago o un cobro',
   `description` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio de aplicacion',
   `due_date` date default NULL COMMENT 'Fecha final de aplicacion',
-  `rbank` int(4) default NULL COMMENT 'Identificador de Banco de la CompaÒia',
+  `rbank` int(4) default NULL COMMENT 'Identificador de Banco de la Compa√±ia',
   `amount` double(15,2) NOT NULL default '0.00' COMMENT 'Importe',
   `payment_day` double(15,2) NOT NULL default '1.00' COMMENT 'Dia de pago',
   `january` tinyint(1) NOT NULL default '0' COMMENT 'Aplicable en enero',
@@ -1069,14 +1069,14 @@ CREATE TABLE `cashflow_forecast` (
   KEY `IDX_CASHFLOW_FORECAST_RBANK` (`rbank`),
   CONSTRAINT `FK_CASHFLOW_FORECAST_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prevision de tesoreria';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `catalogue`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `catalogue` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Catalogo',
@@ -1084,14 +1084,14 @@ CREATE TABLE `catalogue` (
   `end_date` date default NULL COMMENT 'Fecha de fin del Catalogo',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Catalogos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `catalogue_category`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `catalogue_category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `catalogue` int(4) NOT NULL COMMENT 'Identificador del Catalogo',
@@ -1104,14 +1104,14 @@ CREATE TABLE `catalogue_category` (
   CONSTRAINT `catalogue_category_fk1` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `catalogue_category_fk2` FOREIGN KEY (`category`) REFERENCES `pcategory` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias del Catalogo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `catalogue_item`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `catalogue_item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `catalogue` int(4) NOT NULL COMMENT 'Identificador del Catalogo',
@@ -1125,70 +1125,70 @@ CREATE TABLE `catalogue_item` (
   CONSTRAINT `catalogue_item_fk1` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `catalogue_item_fk2` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos del Catalogo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `category`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Categoria',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Categoria',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `cnae`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cnae` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `code` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
   `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9901 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `commercial_activity`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `commercial_activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Actividad Comercial',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades Comerciales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `commercial_term`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `commercial_term` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `line` smallint(2) default '1' COMMENT 'Numero de linea de Condicion',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Condicion Comercial',
   `description` text collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Condicion Comercial',
-  `term_general` tinyint(1) default '0' COMMENT 'Indica si la CondiciÛn es particular o general',
+  `term_general` tinyint(1) default '0' COMMENT 'Indica si la Condici√≥n es particular o general',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones Comerciales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `commercial_tracking`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `commercial_tracking` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `date` date NOT NULL COMMENT 'Fecha del Seguimiento Comercial',
@@ -1212,14 +1212,14 @@ CREATE TABLE `commercial_tracking` (
   CONSTRAINT `commercial_tracking_fk3` FOREIGN KEY (`next_commercial_tracking`) REFERENCES `commercial_tracking` (`id`),
   CONSTRAINT `FK_COMMERCIAL_TRACKING_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Seguimientos Comerciales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `commission`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `commission` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Comision',
@@ -1227,14 +1227,14 @@ CREATE TABLE `commission` (
   `end_date` date default NULL COMMENT 'Fecha de fin de la Comision',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `commission_category`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `commission_category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `commission` int(4) NOT NULL COMMENT 'Identificador de la Comision',
@@ -1247,14 +1247,14 @@ CREATE TABLE `commission_category` (
   CONSTRAINT `FK_COMMISSION_CATEGORY_CATEGORY` FOREIGN KEY (`category`) REFERENCES `pcategory` (`id`),
   CONSTRAINT `FK_COMMISSION_CATEGORY_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Categoria';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `commission_item`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `commission_item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `commission` int(4) NOT NULL COMMENT 'Identificador de la Comision',
@@ -1268,28 +1268,28 @@ CREATE TABLE `commission_item` (
   CONSTRAINT `FK_COMMISSION_ITEM_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`),
   CONSTRAINT `FK_COMMISSION_ITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Articulo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `commission_type`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `commission_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Comision',
   `rate` double(6,2) default '0.00' COMMENT 'Porcentaje de Comision',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Comisiones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `commission_type_commission`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `commission_type_commission` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `commission_type` int(4) NOT NULL COMMENT 'Identificador del Tipo de Comision',
@@ -1300,31 +1300,31 @@ CREATE TABLE `commission_type_commission` (
   CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`),
   CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Tipo de Comision';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `company`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `company` (
-  `registry` int(4) NOT NULL default '1' COMMENT 'Registro de la CompaÒia',
-  `active` tinyint(1) default '0' COMMENT 'Indica si la CompaÒia es activa o inactiva',
-  `surcharge` tinyint(1) default '0' COMMENT 'Indica si la CompaÒia tiene de recargo de equivalencia',
-  `withholding` tinyint(1) default '0' COMMENT 'Indica si la CompaÒia aplica retencion de impuestos',
-  `e_invoice` tinyint(1) default '0' COMMENT 'Indica si la CompaÒia desea emitir Facturas electronicas',
+  `registry` int(4) NOT NULL default '1' COMMENT 'Registro de la Compa√±ia',
+  `active` tinyint(1) default '0' COMMENT 'Indica si la Compa√±ia es activa o inactiva',
+  `surcharge` tinyint(1) default '0' COMMENT 'Indica si la Compa√±ia tiene de recargo de equivalencia',
+  `withholding` tinyint(1) default '0' COMMENT 'Indica si la Compa√±ia aplica retencion de impuestos',
+  `e_invoice` tinyint(1) default '0' COMMENT 'Indica si la Compa√±ia desea emitir Facturas electronicas',
   PRIMARY KEY  (`registry`),
   CONSTRAINT `fk_comp_rgty` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos Corporativos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `composition`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `composition` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Composicion',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Composicion',
@@ -1339,14 +1339,14 @@ CREATE TABLE `composition` (
   KEY `idx_cpst_item` (`item`),
   CONSTRAINT `composition_ibfk_1` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Composicion de Articulos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `composition_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `composition_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de la Composicion',
   `composition` int(4) NOT NULL default '0' COMMENT 'Identificador de la Composicion',
@@ -1360,14 +1360,14 @@ CREATE TABLE `composition_detail` (
   CONSTRAINT `composition_detail_ibfk_1` FOREIGN KEY (`composition`) REFERENCES `composition` (`id`) ON DELETE CASCADE,
   CONSTRAINT `composition_detail_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Composicion de Articulos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `composition_expense`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `composition_expense` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Gasto de la Composicion',
   `composition` int(4) NOT NULL default '0' COMMENT 'Identificador de la Composicion',
@@ -1378,14 +1378,14 @@ CREATE TABLE `composition_expense` (
   KEY `idx_cpse_cpst` (`composition`),
   CONSTRAINT `composition_expense_ibfk_1` FOREIGN KEY (`composition`) REFERENCES `composition` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Gastos de la Composicion de Articulos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contact`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contact` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Contacto',
   `user` int(4) NOT NULL COMMENT 'Usuario al que pertenece el Contacto',
@@ -1401,14 +1401,14 @@ CREATE TABLE `contact` (
   KEY `contact_fk` (`user`),
   CONSTRAINT `contact_fk` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contactos de Usuario';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contract`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contract` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `person` int(4) NOT NULL COMMENT 'Identificador de la Persona',
@@ -1420,7 +1420,7 @@ CREATE TABLE `contract` (
   `document` mediumblob COMMENT 'Impreso (.pdf) del contrato.',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `status` tinyint(2) default '0' COMMENT 'Estado de notificacion del contrato',
-  `registration` int(4) NOT NULL COMMENT 'N˙mero libro de matricula',
+  `registration` int(4) NOT NULL COMMENT 'N¬ùmero libro de matricula',
   `seniority_date` date NOT NULL COMMENT 'Fecha de antiguedad ',
   `enterprise_activity` int(4) default NULL COMMENT 'Actividad',
   `ss_regime` tinyint(2) NOT NULL default '0' COMMENT 'Regimen de la Seguridad Social',
@@ -1438,14 +1438,14 @@ CREATE TABLE `contract` (
   CONSTRAINT `FK_CONTRACT_PERSON` FOREIGN KEY (`person`) REFERENCES `person` (`registry`),
   CONSTRAINT `FK_CONTRACT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contratos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contract_batch`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contract_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la remesa de contratos',
   `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
@@ -1455,14 +1455,14 @@ CREATE TABLE `contract_batch` (
   `red_response_id` date default NULL COMMENT 'Identificador de la respuesta',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de contratos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contract_batch_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contract_batch_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del detalle de la remesa',
   `contract_batch` int(4) NOT NULL COMMENT 'Identificador unico de la remesa de contratos',
@@ -1473,33 +1473,33 @@ CREATE TABLE `contract_batch_detail` (
   CONSTRAINT `FK_CONTRACT_BATCH_DETAIL_CONTRACT_BATCH` FOREIGN KEY (`contract_batch`) REFERENCES `contract_batch` (`id`),
   CONSTRAINT `FK_CONTRACT_BATCH_DETAIL_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de contratos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contract_bonus`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contract_bonus` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'FÛrmula',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'F¬ùrmula',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_BONUS_CONTRACT` (`contract`),
   CONSTRAINT `FK_BONUS_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bonificaciones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contract_calendar_event`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contract_calendar_event` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `contract` int(4) NOT NULL COMMENT 'Identificador del Contrato',
@@ -1510,14 +1510,14 @@ CREATE TABLE `contract_calendar_event` (
   KEY `IDX_CONTRACT_CALENDAR_EVENT_CONTRACT` (`contract`),
   CONSTRAINT `FK_CONTRACT_CALENDAR_EVENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias de calendario en Contratos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contract_data`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contract_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
@@ -1529,22 +1529,22 @@ CREATE TABLE `contract_data` (
   KEY `IDX_CONTRACT_CONSTANT_CONTRACT` (`contract`),
   CONSTRAINT `FK_CONTRACT_CONSTANT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contract_deduction`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contract_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `type` tinyint(2) default NULL COMMENT 'Tipo de DeducciÛn',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Deducci¬ùn',
   `deduction_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `description_decorable` tinyint(2) default '0',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'FÛrmula',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'F¬ùrmula',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   `month` tinyint(2) default NULL COMMENT 'Mes de la percepcion',
@@ -1554,14 +1554,14 @@ CREATE TABLE `contract_deduction` (
   CONSTRAINT `FK_DEDUCTION_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contract_leave`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contract_leave` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Baja',
@@ -1578,17 +1578,17 @@ CREATE TABLE `contract_leave` (
   CONSTRAINT `FK_CONTRACT_LEAVE_CONTRACT_LEAVE` FOREIGN KEY (`parent`) REFERENCES `contract_leave` (`id`),
   CONSTRAINT `FK_LEAVE_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bajas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `contract_payment`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `contract_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `type` tinyint(2) default NULL COMMENT 'Tipo de PercepciÛn Salarial',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Percepci¬ùn Salarial',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `payment_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
@@ -1606,21 +1606,21 @@ CREATE TABLE `contract_payment` (
   CONSTRAINT `FK_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `course`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Curso',
   `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Alias del Curso',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Curso',
   `start_date` date NOT NULL COMMENT 'Fecha inicio del Curso',
   `end_date` date NOT NULL COMMENT 'Fecha fin del Curso',
-  `academic_year` int(4) NOT NULL COMMENT 'AÒo Academico del Curso',
+  `academic_year` int(4) NOT NULL COMMENT 'A√±o Academico del Curso',
   `subject` int(4) NOT NULL COMMENT 'Materia del Curso',
   `level` int(4) NOT NULL COMMENT 'Nivel del Curso',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
@@ -1637,14 +1637,14 @@ CREATE TABLE `course` (
   CONSTRAINT `course_fk2` FOREIGN KEY (`academic_year`) REFERENCES `academic_year` (`id`),
   CONSTRAINT `course_fk3` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cursos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `course_academicskill`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course_academicskill` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
   `course` int(4) NOT NULL COMMENT 'Curso',
@@ -1656,14 +1656,14 @@ CREATE TABLE `course_academicskill` (
   CONSTRAINT `course_academic_skill_fk_1` FOREIGN KEY (`academic_skill`) REFERENCES `academic_skill` (`id`),
   CONSTRAINT `course_academic_skill_fk_2` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Aptitudes Academicas por Curso';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `course_alumn`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course_alumn` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `course` int(4) NOT NULL COMMENT 'Identificador del Curso',
@@ -1675,14 +1675,14 @@ CREATE TABLE `course_alumn` (
   CONSTRAINT `course_alumns_fk` FOREIGN KEY (`course`) REFERENCES `course` (`id`),
   CONSTRAINT `course_alumns_fk1` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Alumnos por Curso';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `course_evaluation`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course_evaluation` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `course` int(4) NOT NULL COMMENT 'Identificador de Curso',
@@ -1695,14 +1695,14 @@ CREATE TABLE `course_evaluation` (
   CONSTRAINT `course_evaluation_skill_fk_1` FOREIGN KEY (`quality_skill`) REFERENCES `quality_skill` (`id`),
   CONSTRAINT `course_evaluation_skill_fk_2` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Evaluaciones por Curso';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `course_instructor`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course_instructor` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `course` int(4) NOT NULL COMMENT 'Identificador del Curso',
@@ -1714,27 +1714,27 @@ CREATE TABLE `course_instructor` (
   CONSTRAINT `course-instructor_fk` FOREIGN KEY (`course`) REFERENCES `course` (`id`),
   CONSTRAINT `course-instructor_fk1` FOREIGN KEY (`employee`) REFERENCES `employee` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Profesores por Curso';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `course_level`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course_level` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Nivel',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Nivel',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Niveles de Cursos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `course_observation`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course_observation` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `course` int(4) NOT NULL COMMENT 'Identificador de Curso',
@@ -1743,14 +1743,14 @@ CREATE TABLE `course_observation` (
   KEY `course` (`course`),
   CONSTRAINT `course_observation_skill_fk_1` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Observaciones por Curso';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `course_schedule`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course_schedule` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Horario',
   `course` int(4) NOT NULL COMMENT 'Identificador del Curso',
@@ -1761,27 +1761,27 @@ CREATE TABLE `course_schedule` (
   KEY `course` (`course`),
   CONSTRAINT `course_schedule_fk` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Horarios de Cursos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `course_subject`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `course_subject` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Materia',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Materia',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Materias de Cursos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `creditor`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `creditor` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Acreedor',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Acreedor aplica retencion de impuestos',
@@ -1793,14 +1793,14 @@ CREATE TABLE `creditor` (
   CONSTRAINT `creditor_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `creditor_ibfk_2` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acreedores';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `creditor_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `creditor_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Acreedor',
   `creditor` int(4) NOT NULL default '0' COMMENT 'Identificador del Acreedor',
@@ -1811,14 +1811,14 @@ CREATE TABLE `creditor_account` (
   CONSTRAINT `creditor_account_ibfk_1` FOREIGN KEY (`creditor`) REFERENCES `creditor` (`registry`),
   CONSTRAINT `creditor_account_ibfk_2` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Acreedores';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `curriculum`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `curriculum` (
   `registry` int(4) NOT NULL COMMENT 'Registro de la Persona',
   `entrydate` date NOT NULL COMMENT 'Fecha de registro del Curriculum',
@@ -1839,14 +1839,14 @@ CREATE TABLE `curriculum` (
   CONSTRAINT `curriculum_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `curriculum_ibfk_2` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Curricula Vitae';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `customer`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `customer` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente',
   `tariff` int(4) default NULL COMMENT 'Tarifa asociada al Cliente',
@@ -1869,14 +1869,14 @@ CREATE TABLE `customer` (
   CONSTRAINT `customer_ibfk_2` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
   CONSTRAINT `customer_ibfk_3` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `customer_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `customer_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Cliente',
   `customer` int(4) NOT NULL default '0' COMMENT 'Identificador del Cliente',
@@ -1887,14 +1887,14 @@ CREATE TABLE `customer_account` (
   CONSTRAINT `customer_account_ibfk_1` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `customer_account_ibfk_2` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Clientes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `customer_fee`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `customer_fee` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuota del Cliente',
   `customer` int(4) default NULL COMMENT 'Identificador del Cliente',
@@ -1906,7 +1906,7 @@ CREATE TABLE `customer_fee` (
   `discount_expr` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descuentos de la Cuota',
   `initial_date` date default NULL COMMENT 'Fecha de inicio de la Cuota',
   `final_date` date default NULL COMMENT 'Fecha de finalizacion de la Cuota',
-  `billing_date` date default NULL COMMENT 'Proxima fecha de facturaciÛn de la Cuota',
+  `billing_date` date default NULL COMMENT 'Proxima fecha de facturaci√≥n de la Cuota',
   `period` smallint(2) default '1' COMMENT 'Periodo de facturacion en meses de la Cuota',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad de la Cuota',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
@@ -1918,27 +1918,27 @@ CREATE TABLE `customer_fee` (
   CONSTRAINT `customer_fee_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `customer_fee_ibfk_3` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuotas de Clientes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `customer_segment`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `customer_segment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Segmento',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Segmento',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentaciones de Clientes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `cv_evaluate`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cv_evaluate` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Evaluacion',
   `type` int(4) default NULL COMMENT 'Tipo de Evaluacion',
@@ -1950,14 +1950,14 @@ CREATE TABLE `cv_evaluate` (
   CONSTRAINT `cv_evaluate_ibfk_1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`registry`),
   CONSTRAINT `cv_evaluate_ibfk_2` FOREIGN KEY (`type`) REFERENCES `cv_evaluate_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Evaluaciones del Curriculum Vitae';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `cv_evaluate_summary`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cv_evaluate_summary` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Resumen',
   `strengths` varchar(256) collate latin1_spanish_ci default NULL COMMENT 'Fortalezas',
@@ -1969,27 +1969,27 @@ CREATE TABLE `cv_evaluate_summary` (
   KEY `curriculum` (`curriculum`),
   CONSTRAINT `cv_evaluate_summary_ibfk_1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Resumenes de Evaluaciones del Curriculum Vitae';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `cv_evaluate_type`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cv_evaluate_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Evaluacion',
   `name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre del Tipo de Evaluacion',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Evaluaciones del Curriculum Vitae';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `cv_knowledge`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cv_knowledge` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Conocimiento',
   `name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre o descripcion del Conocimiento',
@@ -2001,37 +2001,37 @@ CREATE TABLE `cv_knowledge` (
   KEY `curriculum` (`curriculum`),
   CONSTRAINT `cv_knowledge_ibfk_1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conocimientos del Curriculum Vitae';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `cv_languages`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cv_languages` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador ˙nico del Idioma',
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador √∫nico del Idioma',
   `language` tinyint(2) default NULL COMMENT 'Idioma',
   `spoken` tinyint(2) default NULL COMMENT 'Nivel oral del Idioma',
   `wrote` tinyint(2) default NULL COMMENT 'Nivel escrito del Idioma',
-  `read_level` tinyint(2) default NULL COMMENT 'Nivel leÌdo del Idioma',
+  `read_level` tinyint(2) default NULL COMMENT 'Nivel le√≠do del Idioma',
   `curriculum` int(4) default NULL COMMENT 'Identificador del Curriculum Vitae',
   PRIMARY KEY  (`id`),
   KEY `curriculum` (`curriculum`),
   CONSTRAINT `cv_languages_ibfk_1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Idiomas del Curriculum Vitae';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `cv_studies`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cv_studies` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador ˙nico del Estudio',
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador √∫nico del Estudio',
   `startingdate` date default NULL COMMENT 'Fecha de inicio del Estudio',
-  `endingdate` date default NULL COMMENT 'Fecha de finalizaciÛn del Estudio',
+  `endingdate` date default NULL COMMENT 'Fecha de finalizaci√≥n del Estudio',
   `degree` tinyint(2) default NULL COMMENT 'Nivel de Estudios',
   `speciality` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Especialidad de Estudios',
   `centre` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Centro de Estudios',
@@ -2040,33 +2040,33 @@ CREATE TABLE `cv_studies` (
   KEY `curriculum` (`curriculum`),
   CONSTRAINT `cv_studies_ibfk_1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Estudios del Curriculum Vitae';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `cv_workexperience`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cv_workexperience` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identifador ˙nico de la Experiencia Laboral',
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identifador √∫nico de la Experiencia Laboral',
   `startingdate` date default NULL COMMENT 'Fecha de inicio de la Experiencia Laboral',
-  `endingdate` date default NULL COMMENT 'Fecha de finalizaciÛn de la Experiencia Laboral',
-  `job` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Trabajo desempeÒado en la Experiencia Laboral',
-  `company` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'CompaÒÌa donde se desempeÒÛ la Experiencia Laboral',
+  `endingdate` date default NULL COMMENT 'Fecha de finalizaci√≥n de la Experiencia Laboral',
+  `job` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Trabajo desempe√±ado en la Experiencia Laboral',
+  `company` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Compa√±√≠a donde se desempe√±√≥ la Experiencia Laboral',
   `curriculum` int(4) default NULL COMMENT 'Identificador del Curriculum Vitae',
   PRIMARY KEY  (`id`),
   KEY `curriculum` (`curriculum`),
   CONSTRAINT `cv_workexperience_ibfk_1` FOREIGN KEY (`curriculum`) REFERENCES `curriculum` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Experiencia laboral del Curriculum Vitae';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `daily_tracking`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `daily_tracking` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Parte',
   `user_id` int(4) NOT NULL COMMENT 'Identificador del Usuario que realiza el Parte',
@@ -2089,26 +2089,26 @@ CREATE TABLE `daily_tracking` (
   CONSTRAINT `daily_tracking_fk_4` FOREIGN KEY (`job_type`) REFERENCES `job_type` (`id`),
   CONSTRAINT `daily_tracking_fk_5` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Parte Diario de Trabajo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `db_version`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `db_version` (
   `version_number` varchar(10) collate latin1_spanish_ci NOT NULL COMMENT 'Numero de Version de la Base de Datos',
   PRIMARY KEY  (`version_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Version de la Base de Datos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `deduction_concept`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `deduction_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
@@ -2116,18 +2116,18 @@ CREATE TABLE `deduction_concept` (
   `type` tinyint(2) default NULL COMMENT 'Tipo de Deduccion Salarial',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de deducciones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `delivery`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `delivery` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Albaran de Venta',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Albaran',
-  `number` int(4) NOT NULL default '0' COMMENT 'N˙mero del Albaran',
+  `number` int(4) NOT NULL default '0' COMMENT 'N√∫mero del Albaran',
   `customer` int(4) NOT NULL default '0' COMMENT 'Identificador del Cliente',
   `address` int(4) default NULL COMMENT 'Identificador de la Direccion de envio del Albaran',
   `issue_time` datetime default NULL COMMENT 'Fecha de emision del Albaran',
@@ -2156,14 +2156,14 @@ CREATE TABLE `delivery` (
   CONSTRAINT `FK_DELIVERY_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_DELIVERY_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Albaranes de Venta';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `delivery_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `delivery_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Albaran de Venta',
   `delivery` int(4) NOT NULL COMMENT 'Identificador del Albaran de Venta',
@@ -2187,14 +2187,14 @@ CREATE TABLE `delivery_detail` (
   CONSTRAINT `delivery_detail_ibfk_3` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `delivery_detail_ibfk_4` FOREIGN KEY (`sales_detail`) REFERENCES `sales_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Albaran de Venta';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `delivery_detail_labour`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `delivery_detail_labour` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `delivery_detail` int(4) NOT NULL COMMENT 'Identificador de la Linea de Albaran',
@@ -2206,14 +2206,14 @@ CREATE TABLE `delivery_detail_labour` (
   CONSTRAINT `delivery_detail_labour_fk1` FOREIGN KEY (`delivery_detail`) REFERENCES `delivery_detail` (`id`),
   CONSTRAINT `delivery_detail_labour_fk2` FOREIGN KEY (`employee`) REFERENCES `employee` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Horas de mano de obra asociadas a una Linea de Albaran';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `department`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `department` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Departamento',
   `parent` int(4) default NULL COMMENT 'Identificador del Departamento padre',
@@ -2222,14 +2222,14 @@ CREATE TABLE `department` (
   KEY `parent` (`parent`),
   CONSTRAINT `department_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `department` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `dossier`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dossier` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Expediente',
   `customer` int(4) NOT NULL COMMENT 'Identificador del Cliente',
@@ -2244,27 +2244,27 @@ CREATE TABLE `dossier` (
   CONSTRAINT `dossier_ibfk_1` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `dossier_ibfk_2` FOREIGN KEY (`dossier_type`) REFERENCES `dossier_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Expedientes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `dossier_type`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `dossier_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Expediente',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Expediente',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Expedientes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `ec_catalogue`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ec_catalogue` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `catalogue` int(4) NOT NULL COMMENT 'Identificador del Catalogo',
@@ -2276,14 +2276,14 @@ CREATE TABLE `ec_catalogue` (
   UNIQUE KEY `IDX_ECCATALOGUE_CATALOGUE` (`catalogue`),
   CONSTRAINT `FK_ECCATALOGUE_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Catalogos del ECommerce';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `ec_config`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ec_config` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `active` tinyint(1) default '0' COMMENT 'Indica si es la configuracion activa',
@@ -2332,14 +2332,14 @@ CREATE TABLE `ec_config` (
   CONSTRAINT `FK_ECCONFIG_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
   CONSTRAINT `FK_ECCONFIG_VISA` FOREIGN KEY (`visa`) REFERENCES `pay_method` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Configuracion del ECommerce';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `ec_offer_pay_info`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ec_offer_pay_info` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
@@ -2349,32 +2349,32 @@ CREATE TABLE `ec_offer_pay_info` (
   UNIQUE KEY `IDX_EC_OFFER_PAY_INFO_OFFER` (`offer`),
   CONSTRAINT `FK_EC_OFFER_PAY_INFO_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion acerca de los Pagos en el ECommerce ';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `ec_paymethod`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ec_paymethod` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `pay_method` int(4) NOT NULL COMMENT 'Identificador de la Forma de Pago',
   `user_name` varchar(64) collate latin1_spanish_ci default 'Null' COMMENT 'Nombre de Usuario',
-  `password` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'ContraseÒa para la pasarela de pago',
+  `password` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Contrase√±a para la pasarela de pago',
   `signature` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Identificador unico de la empresa para pasarela',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_ECPAYMETHOD_PAYMETHOD` (`pay_method`),
   CONSTRAINT `FK_ECPAYMETHOD_PAYMETHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Formas de Pago del ECommerce';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `ec_target`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ec_target` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
@@ -2387,18 +2387,18 @@ CREATE TABLE `ec_target` (
   KEY `IDX_ECTARGET_TARGET` (`target`),
   CONSTRAINT `FK_ECTARGET_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales del ECommerce';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `employee`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `employee` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Empleado',
   `workactivity` int(4) default NULL COMMENT 'Identificador de Actividad',
-  `social_security_num` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'N˙mero de Seguridad Social del Empleado',
+  `social_security_num` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'N√∫mero de Seguridad Social del Empleado',
   `agreement_time` int(4) default '0' COMMENT 'Horas del Convenio',
   `active` tinyint(1) default NULL COMMENT 'Indica si el Empleado sigue vinculado a la Empresa o no',
   PRIMARY KEY  (`registry`),
@@ -2407,14 +2407,14 @@ CREATE TABLE `employee` (
   CONSTRAINT `employee_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_EMPLOYEE_WORKACTIVITY` FOREIGN KEY (`workactivity`) REFERENCES `workactivity` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Empleados';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `enterprise`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enterprise` (
   `registry` int(4) NOT NULL default '1' COMMENT 'Registro de la Empresa',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
@@ -2429,14 +2429,14 @@ CREATE TABLE `enterprise` (
   CONSTRAINT `FK_ENTERPRISE_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_ENTERPRISE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Empresa';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `enterprise_activity`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enterprise_activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa',
@@ -2449,14 +2449,14 @@ CREATE TABLE `enterprise_activity` (
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE` FOREIGN KEY (`cnae`) REFERENCES `cnae` (`id`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `enterprise_ccc`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enterprise_ccc` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `ccc` char(11) collate latin1_spanish_ci default NULL COMMENT 'Valor del Codigo Cuenta Cotizacion',
@@ -2469,14 +2469,14 @@ CREATE TABLE `enterprise_ccc` (
   CONSTRAINT `FK_ENTERPRISE_CCC_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_ENTERPRISE_CCC_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Codigo Cuenta Cotizacion';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `enterprise_certificate`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enterprise_certificate` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del certificado de empresa de la remesa',
   `enterprise` int(4) NOT NULL COMMENT 'Identificador unico de la empresa',
@@ -2487,14 +2487,14 @@ CREATE TABLE `enterprise_certificate` (
   KEY `IDX_ENTERPRISE_CERTIFICATE_ENTERPRISE` (`enterprise`),
   CONSTRAINT `FK_ENTERPRISE_CERTIFICATE_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de certificados de empresa';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `enterprise_certificate_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `enterprise_certificate_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del certificado de empresa de la remesa',
   `enterprise_certificate` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa',
@@ -2507,14 +2507,14 @@ CREATE TABLE `enterprise_certificate_detail` (
   CONSTRAINT `FK_ENTERPRISE_CERTIFICATE_DETAIL_ENTERPRISE_CERTIFICATE` FOREIGN KEY (`enterprise_certificate`) REFERENCES `enterprise_certificate` (`id`),
   CONSTRAINT `FK_ENTERPRISE_CERTIFICATE_DETAIL_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de certificados de empresa';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `evaluation_observation`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `evaluation_observation` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `alumn` int(4) NOT NULL COMMENT 'Identificador de Alumno',
@@ -2524,14 +2524,14 @@ CREATE TABLE `evaluation_observation` (
   KEY `alumn` (`alumn`),
   CONSTRAINT `evaluation_observation_ibfk_1` FOREIGN KEY (`alumn`) REFERENCES `course_alumn` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Observaciones por Evaluacion';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `expenditures`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `expenditures` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Coste',
   `resource` int(4) default NULL COMMENT 'Identificador del Recurso de Empresa',
@@ -2544,41 +2544,41 @@ CREATE TABLE `expenditures` (
   CONSTRAINT `expenditures_ibfk_1` FOREIGN KEY (`expenditures_item`) REFERENCES `expenditures_items` (`id`),
   CONSTRAINT `expenditures_ibfk_2` FOREIGN KEY (`resource`) REFERENCES `resource` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci ROW_FORMAT=FIXED COMMENT='Costes por Empleado';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `expenditures_items`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `expenditures_items` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Coste',
   `name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre del Tipo de Coste',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci ROW_FORMAT=DYNAMIC COMMENT='Tipos de Costes por Empleado';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `expense`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `expense` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Gasto',
   `unit_price` double(15,3) default '0.000' COMMENT 'Precio unitario',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Gastos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `expense_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `expense_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `registry` int(4) default NULL COMMENT 'Registry que realiza los Gastos',
@@ -2591,14 +2591,14 @@ CREATE TABLE `expense_account` (
   KEY `registry` (`registry`),
   CONSTRAINT `FK_EXPENSE_ACCOUNT_REGISTRY_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Gastos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `expense_account_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `expense_account_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `expense_account` int(4) NOT NULL COMMENT 'Identidicador del Gasto',
@@ -2612,14 +2612,14 @@ CREATE TABLE `expense_account_detail` (
   CONSTRAINT `FK_EXPENSE_ACCOUNT_DETAIL_EXPENSE` FOREIGN KEY (`expense`) REFERENCES `expense` (`id`),
   CONSTRAINT `FK_EXPENSE_ACCOUNT_DETAIL_EXPENSE_ACCOUNT` FOREIGN KEY (`expense_account`) REFERENCES `expense_account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Gasto';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `favorite`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `favorite` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de Favorito',
   `favorite_category` int(4) NOT NULL COMMENT 'Categoria a la que pertenece el Favorito',
@@ -2632,14 +2632,14 @@ CREATE TABLE `favorite` (
   CONSTRAINT `favorite_fk` FOREIGN KEY (`favorite_category`) REFERENCES `favorite_category` (`id`),
   CONSTRAINT `favorite_fk1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Favoritos de Usuario';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `favorite_category`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `favorite_category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Categoria',
@@ -2648,21 +2648,21 @@ CREATE TABLE `favorite_category` (
   KEY `user` (`user_id`),
   CONSTRAINT `favorite_category_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Favoritos de Usuario';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `fbatch`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fbatch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Remesa',
   `description` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Remesa',
   `issue_date` date default NULL COMMENT 'Fecha de emision de la Remesa',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Remesa',
   `status` tinyint(2) default NULL COMMENT 'Estado de la Remesa',
-  `rbank` int(4) default NULL COMMENT 'Banco de la CompaÒia utilizado en la Remesa',
+  `rbank` int(4) default NULL COMMENT 'Banco de la Compa√±ia utilizado en la Remesa',
   `bank_statement_link` int(4) default NULL COMMENT 'Identificador de la Linea del Extracto bancario',
   `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago o un cobro',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
@@ -2672,14 +2672,14 @@ CREATE TABLE `fbatch` (
   CONSTRAINT `fbatch_fk_1` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`),
   CONSTRAINT `FK_FBATCH_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `fbatch_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fbatch_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de la Remesa',
   `fbatch` int(4) NOT NULL COMMENT 'Identificador de la Remesa',
@@ -2692,14 +2692,14 @@ CREATE TABLE `fbatch_detail` (
   CONSTRAINT `fbatch_detail_ibfk_1` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
   CONSTRAINT `fbatch_detail_ibfk_2` FOREIGN KEY (`fbatch`) REFERENCES `fbatch` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Remesa';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `finance`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `finance` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Vencimiento',
   `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago o un cobro',
@@ -2730,14 +2730,14 @@ CREATE TABLE `finance` (
   CONSTRAINT `finance_ibfk_4` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_FINANCE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vencimientos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `finance_tracking`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `finance_tracking` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `finance` int(4) NOT NULL COMMENT 'Identificador de Vencimiento',
@@ -2745,7 +2745,7 @@ CREATE TABLE `finance_tracking` (
   `type` tinyint(4) NOT NULL COMMENT 'Tipo de Seguimiento',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Seguimiento',
   `pm_type_detail` int(4) default NULL COMMENT 'Identificador del Detalle por Tipo de Forma de Pago',
-  `rbank` int(4) default NULL COMMENT 'Identificador de la Cuenta Bancaria de la CompaÒia',
+  `rbank` int(4) default NULL COMMENT 'Identificador de la Cuenta Bancaria de la Compa√±ia',
   `bank_statement_link` int(4) default NULL COMMENT 'Identificador de la Linea del Extracto bancario',
   `amount` double(15,3) default NULL COMMENT 'Importe del Seguimiento',
   `recorded` tinyint(1) NOT NULL default '0' COMMENT 'Indica si esta contabilizado o no',
@@ -2759,14 +2759,14 @@ CREATE TABLE `finance_tracking` (
   CONSTRAINT `FK_FINANCE_TRACKING_PM_TYPE_DETAIL` FOREIGN KEY (`pm_type_detail`) REFERENCES `pm_type_detail` (`id`),
   CONSTRAINT `FK_FINANCE_TRACKING_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Seguimiento de Vencimientos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `fs_renting`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fs_renting` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
@@ -2810,19 +2810,19 @@ CREATE TABLE `fs_renting` (
   `extra_charge` double(15,3) default '0.000' COMMENT 'Recargo',
   `delay_interest` double(15,3) default '0.000' COMMENT 'Intereses de demora',
   `total_tax_debt` double(15,3) default '0.000' COMMENT 'Total deuda tributaria',
-  `rbank` int(4) default NULL COMMENT 'Banco de la CompaÒia',
+  `rbank` int(4) default NULL COMMENT 'Banco de la Compa√±ia',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_RENTING_RBANK` (`rbank`),
   CONSTRAINT `FK_FS_RENTING_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaracion de IRPF';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `fs_renting_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fs_renting_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `fs_renting` int(4) NOT NULL default '0' COMMENT 'Identificador de la Declaracion',
@@ -2840,14 +2840,14 @@ CREATE TABLE `fs_renting_detail` (
   KEY `IDX_FS_RENTING_DETAIL_FS_RENTING` (`fs_renting`),
   CONSTRAINT `FK_FS_RENTING_DETAIL_FS_RENTING` FOREIGN KEY (`fs_renting`) REFERENCES `fs_renting` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de la Declaracion de IRPF';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `fs_vat`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fs_vat` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
@@ -2861,14 +2861,14 @@ CREATE TABLE `fs_vat` (
   `number` int(4) default '0' COMMENT 'Numero de Decl. complementaria o sustitutiva',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaracion de Iva';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `fs_vat_declaration`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fs_vat_declaration` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `fs_vat` int(4) NOT NULL default '0' COMMENT 'Identificador de la Declaracion',
@@ -2888,7 +2888,7 @@ CREATE TABLE `fs_vat_declaration` (
   `prev_deposit` double(15,3) default '0.000' COMMENT 'Ingresado anteriormente',
   `prev_pay_back` double(15,3) default '0.000' COMMENT 'Devuelto anteriormente',
   `total_tax_debt` double(15,3) default '0.000' COMMENT 'Total deuda tributaria',
-  `rbank` int(4) default NULL COMMENT 'Banco de la CompaÒia',
+  `rbank` int(4) default NULL COMMENT 'Banco de la Compa√±ia',
   `compensable` tinyint(1) default '0' COMMENT 'Compensar o devolver',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la Declaracion',
   PRIMARY KEY  (`id`),
@@ -2897,14 +2897,14 @@ CREATE TABLE `fs_vat_declaration` (
   CONSTRAINT `FK_FS_VAT_DECLARATION_FS_VAT` FOREIGN KEY (`fs_vat`) REFERENCES `fs_vat` (`id`),
   CONSTRAINT `FK_FS_VAT_DECLARATION_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Resultado de la Declaracion de Iva';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `fs_vat_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fs_vat_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `fs_vat` int(4) NOT NULL default '0' COMMENT 'Identificador de la Declaracion',
@@ -2929,14 +2929,14 @@ CREATE TABLE `fs_vat_detail` (
   KEY `IDX_FS_DETAIL_FS_VAT` (`fs_vat`),
   CONSTRAINT `FK_FS_DETAIL_FS_VAT` FOREIGN KEY (`fs_vat`) REFERENCES `fs_vat` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Declaracion de Iva';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `function_constant`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `function_constant` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
@@ -2947,14 +2947,14 @@ CREATE TABLE `function_constant` (
   `comments` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Comentario de ayuda',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto de las funciones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `geotree`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `geotree` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `parent` int(4) default NULL COMMENT 'Identificador de la Zona Geografica Padre',
@@ -2964,30 +2964,30 @@ CREATE TABLE `geotree` (
   KEY `child` (`child`),
   CONSTRAINT `geotree_fk1` FOREIGN KEY (`parent`) REFERENCES `geozone` (`id`),
   CONSTRAINT `geotree_fk2` FOREIGN KEY (`child`) REFERENCES `geozone` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Jerarquia de Zonas Geograficas';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Jerarquia de Zonas Geograficas';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `geozone`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `geozone` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Zona Geografica',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Zona Geografica',
   `code` varchar(3) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Zona Geografica',
   `system` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es una Zona Geografica del sistema',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Zonas Geograficas';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Zonas Geograficas';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `holiday`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `holiday` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Festividad',
@@ -2997,14 +2997,14 @@ CREATE TABLE `holiday` (
   KEY `IDX_HOLIDAY_HOLIDAY` (`holiday`),
   CONSTRAINT `FK_HOLIDAY_HOLIDAY` FOREIGN KEY (`holiday`) REFERENCES `holiday` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Festividades';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `holiday_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `holiday_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `holiday` int(4) NOT NULL COMMENT 'Identificador de Festividad',
@@ -3014,14 +3014,14 @@ CREATE TABLE `holiday_detail` (
   KEY `IDX_HOLIDAY_DETAIL_HOLIDAY` (`holiday`),
   CONSTRAINT `FK_HOLIDAY_DETAIL_HOLIDAY` FOREIGN KEY (`holiday`) REFERENCES `holiday` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Festividades';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `iattach`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `iattach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Archivo Adjunto del Articulo',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
@@ -3033,29 +3033,29 @@ CREATE TABLE `iattach` (
   KEY `item` (`item`),
   CONSTRAINT `iattach_ibfk_1` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Articulos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `incidence_type`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `incidence_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de Tipo de Incidencia',
   `alias` varchar(3) collate latin1_spanish_ci NOT NULL COMMENT 'Alias del Tipo de Incidencia',
-  `description` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'DescripciÛn del Tipo de Incidencia',
+  `description` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripci√≥n del Tipo de Incidencia',
   `compute` tinyint(1) default '0' COMMENT 'Indica la forma de computar las horas de la Incidencia',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Incidencias Laborales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `income`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `income` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Albaran de Compra',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Albaran',
@@ -3087,14 +3087,14 @@ CREATE TABLE `income` (
   CONSTRAINT `income_ibfk_1` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
   CONSTRAINT `income_ibfk_2` FOREIGN KEY (`address`) REFERENCES `raddress` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Albaranes de Compra';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `income_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `income_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Albaran de Compra',
   `income` int(4) NOT NULL default '0' COMMENT 'Identificador del Albaran de Compra',
@@ -3118,14 +3118,14 @@ CREATE TABLE `income_detail` (
   CONSTRAINT `income_detail_ibfk_4` FOREIGN KEY (`purchase_detail`) REFERENCES `purchase_detail` (`id`),
   CONSTRAINT `income_detail_ibfk_5` FOREIGN KEY (`income`) REFERENCES `income` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Albaran de Compra';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `inventory`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `inventory` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Inventario',
   `inventory_date` date NOT NULL default '0000-00-00' COMMENT 'Fecha de Inventario',
@@ -3133,14 +3133,14 @@ CREATE TABLE `inventory` (
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Inventario',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Inventarios de Almacenes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `inventory_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `inventory_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Inventario',
   `inventory` int(4) NOT NULL default '0' COMMENT 'Identificador de Inventario',
@@ -3154,14 +3154,14 @@ CREATE TABLE `inventory_detail` (
   CONSTRAINT `inventory_detail_ibfk_1` FOREIGN KEY (`inventory`) REFERENCES `inventory` (`id`),
   CONSTRAINT `inventory_detail_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Inventarios de Almacenes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `invoice`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `invoice` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Factura',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie de la Factura',
@@ -3196,14 +3196,14 @@ CREATE TABLE `invoice` (
   CONSTRAINT `invoice_ibfk_3` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `invoice_ibfk_4` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Facturas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `invoice_address`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `invoice_address` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `invoice` int(4) NOT NULL COMMENT 'Identificador de la Factura',
@@ -3218,14 +3218,14 @@ CREATE TABLE `invoice_address` (
   CONSTRAINT `invoice_address_fk` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `invoice_address_fk1` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de la Factura';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `invoice_attach`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `invoice_attach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `invoice` int(4) NOT NULL COMMENT 'Identificador de la Factura',
@@ -3236,18 +3236,18 @@ CREATE TABLE `invoice_attach` (
   KEY `IDX_INVOICE_ATTACH_INVOICE` (`invoice`),
   CONSTRAINT `FK_INVOICE_ATTACH_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Facturas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `invoice_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `invoice_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de la Factura',
   `invoice` int(4) NOT NULL default '0' COMMENT 'Identificador de la Factura',
-  `line` smallint(2) default '1' COMMENT 'Numero de lÌnea del Detalle dentro de la Factura',
+  `line` smallint(2) default '1' COMMENT 'Numero de l√≠nea del Detalle dentro de la Factura',
   `item` int(4) default NULL COMMENT 'Identificador del Articulo del Detalle de Factura',
   `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Detalle de Factura',
   `quantity` double default '0' COMMENT 'Cantidad del Detalle de Factura',
@@ -3267,14 +3267,14 @@ CREATE TABLE `invoice_detail` (
   CONSTRAINT `invoice_detail_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `invoice_detail_ibfk_3` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Factura';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `invoice_detail_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `invoice_detail_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `invoice_detail` int(4) NOT NULL default '0' COMMENT 'Identificador de la Linea de Factura',
@@ -3285,14 +3285,14 @@ CREATE TABLE `invoice_detail_account` (
   CONSTRAINT `invoice_detail_account_ibfk_1` FOREIGN KEY (`invoice_detail`) REFERENCES `invoice_detail` (`id`),
   CONSTRAINT `invoice_detail_account_ibfk_2` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables asociadas a Lineas de Facturas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `invoice_tax`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `invoice_tax` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Impuesto de la Factura',
   `invoice_detail` int(4) NOT NULL default '0' COMMENT 'Identificador del Detalle de la Factura',
@@ -3308,14 +3308,14 @@ CREATE TABLE `invoice_tax` (
   KEY `invoice_detail` (`invoice_detail`),
   CONSTRAINT `invoice_tax_ibfk_1` FOREIGN KEY (`invoice_detail`) REFERENCES `invoice_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos del Detalle de la Factura';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `invoice_tax_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `invoice_tax_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `invoice_tax` int(4) NOT NULL default '0' COMMENT 'Identificador de la Linea de Impuesto',
@@ -3326,14 +3326,14 @@ CREATE TABLE `invoice_tax_account` (
   CONSTRAINT `invoice_tax_account_ibfk_1` FOREIGN KEY (`invoice_tax`) REFERENCES `invoice_tax` (`id`),
   CONSTRAINT `invoice_tax_account_ibfk_2` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables asociadas a Impuestos de Facturas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `invoicing_group`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `invoicing_group` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `parent` int(4) NOT NULL COMMENT 'Grupo de Facturacion',
@@ -3341,14 +3341,14 @@ CREATE TABLE `invoicing_group` (
   UNIQUE KEY `parent_unique` (`parent`),
   CONSTRAINT `invoicing_group_fk` FOREIGN KEY (`parent`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Facturacion';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `invoicing_group_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `invoicing_group_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
   `invoicing_group` int(4) NOT NULL COMMENT 'Grupo de Facturacion al que pertenece',
@@ -3360,14 +3360,14 @@ CREATE TABLE `invoicing_group_detail` (
   CONSTRAINT `invoicing_group_detail_fk` FOREIGN KEY (`invoicing_group`) REFERENCES `invoicing_group` (`id`),
   CONSTRAINT `invoicing_group_detail_fk1` FOREIGN KEY (`child`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de los Grupos de Facturacion';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `item`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Articulo',
   `product` int(4) NOT NULL default '0' COMMENT 'Identificador del Producto',
@@ -3385,14 +3385,14 @@ CREATE TABLE `item` (
   KEY `idx_item_prdt` (`product`),
   CONSTRAINT `item_ibfk_1` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `item_alternative`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item_alternative` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
@@ -3405,14 +3405,14 @@ CREATE TABLE `item_alternative` (
   CONSTRAINT `FK_ITEM_ALTERNATIVE_ALTERNATIVE` FOREIGN KEY (`alternative_item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_ITEM_ALTERNATIVE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulo Alternativos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `item_pos`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item_pos` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
@@ -3425,14 +3425,14 @@ CREATE TABLE `item_pos` (
   UNIQUE KEY `item_plu` (`plu`),
   CONSTRAINT `intempos_item_ibfk` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del Articulo para el Punto de Venta';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `item_supplier`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item_supplier` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
@@ -3446,14 +3446,14 @@ CREATE TABLE `item_supplier` (
   CONSTRAINT `FK_ITEM_SUPPLIER_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_ITEM_SUPPLIER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del Articulo por Proveedor';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `item_tariff`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item_tariff` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Tarifa del Articulo',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
@@ -3465,14 +3465,14 @@ CREATE TABLE `item_tariff` (
   CONSTRAINT `item_tariff_ibfk_1` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
   CONSTRAINT `item_tariff_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas de Articulos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `item_warehouse`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `item_warehouse` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
@@ -3487,27 +3487,27 @@ CREATE TABLE `item_warehouse` (
   CONSTRAINT `FK_ITEM_WAREHOUSE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_ITEM_WAREHOUSE_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del Articulo por Almacen';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `job_type`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `job_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Trabajo',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Trabajo',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Trabajos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `leasing`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `leasing` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
   `leasing_date` date NOT NULL COMMENT 'Fecha de Concesion',
@@ -3528,14 +3528,14 @@ CREATE TABLE `leasing` (
   CONSTRAINT `leasing_fk` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`),
   CONSTRAINT `leasing_fk1` FOREIGN KEY (`fixed_asset_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Leasing';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `leasing_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `leasing_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
   `leasing` int(4) NOT NULL COMMENT 'Leasing',
@@ -3546,14 +3546,14 @@ CREATE TABLE `leasing_account` (
   CONSTRAINT `leasing_account_fk` FOREIGN KEY (`leasing`) REFERENCES `leasing` (`id`),
   CONSTRAINT `leasing_account_fk1` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas contables de Leasings';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `lh_contract`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lh_contract` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Contrato',
   `employee` int(4) NOT NULL COMMENT 'Identificador del Empleado',
@@ -3565,14 +3565,14 @@ CREATE TABLE `lh_contract` (
   KEY `employee` (`employee`),
   CONSTRAINT `lh_contract_ibfk_1` FOREIGN KEY (`employee`) REFERENCES `employee` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Historial Laboral (Contratos)';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `lh_course`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lh_course` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Curso',
   `employee` int(4) NOT NULL COMMENT 'Identificador del Empleado',
@@ -3583,14 +3583,14 @@ CREATE TABLE `lh_course` (
   KEY `employee` (`employee`),
   CONSTRAINT `lh_course_ibfk_1` FOREIGN KEY (`employee`) REFERENCES `employee` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Historia Laboral (Cursos)';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `lh_position`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lh_position` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Cargo',
   `employee` int(4) NOT NULL COMMENT 'Identificador del Empleado',
@@ -3610,14 +3610,14 @@ CREATE TABLE `lh_position` (
   CONSTRAINT `lh_position_ibfk_4` FOREIGN KEY (`workactivity`) REFERENCES `workactivity` (`id`),
   CONSTRAINT `lh_position_ibfk_5` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Historia Laboral (Cargos)';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `lh_work`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lh_work` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Trabajo',
   `employee` int(4) NOT NULL COMMENT 'Identificador del Empleado',
@@ -3628,14 +3628,14 @@ CREATE TABLE `lh_work` (
   KEY `employee` (`employee`),
   CONSTRAINT `lh_work_ibfk_1` FOREIGN KEY (`employee`) REFERENCES `employee` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Historia Laboral (Trabajos desarrollados)';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `loan`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `loan` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Prestamo',
@@ -3655,14 +3655,14 @@ CREATE TABLE `loan` (
   KEY `rbank` (`rbank`),
   CONSTRAINT `loan_fk` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prestamos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `loan_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `loan_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
   `loan` int(4) NOT NULL COMMENT 'Prestamo',
@@ -3673,27 +3673,27 @@ CREATE TABLE `loan_account` (
   CONSTRAINT `loan_account_fk` FOREIGN KEY (`loan`) REFERENCES `loan` (`id`),
   CONSTRAINT `loan_account_fk1` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Prestamos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `make`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `make` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Fabricante',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Fabricante',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fabricantes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `mark`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `mark` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `subject` int(4) NOT NULL COMMENT 'Identificador de Asignatura',
@@ -3707,27 +3707,27 @@ CREATE TABLE `mark` (
   CONSTRAINT `mark_ibfk_1` FOREIGN KEY (`alumn`) REFERENCES `course_alumn` (`id`),
   CONSTRAINT `mark_subject_fk` FOREIGN KEY (`subject`) REFERENCES `course_academicskill` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Notas de Alumnos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `message_content`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `message_content` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `content` text collate latin1_spanish_ci NOT NULL COMMENT 'Contenido del Mensaje',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contenido de Mensajes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `message_log`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `message_log` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `message_id` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Identificador del Mensaje para el servidor de Esendex',
@@ -3741,17 +3741,17 @@ CREATE TABLE `message_log` (
   KEY `message_content` (`message_content`),
   CONSTRAINT `message_log_fk1` FOREIGN KEY (`message_content`) REFERENCES `message_content` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Log de Mensajes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `mk_action`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `mk_action` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `campaign` int(11) NOT NULL COMMENT 'Identificador de la CampaÒa',
+  `campaign` int(11) NOT NULL COMMENT 'Identificador de la Campa√±a',
   `media_type` int(4) NOT NULL COMMENT 'Tipo de contacto de la Accion',
   `start_date` datetime NOT NULL COMMENT 'Fecha de inicio',
   `end_date` datetime default NULL COMMENT 'Fecha de finalizacion',
@@ -3762,19 +3762,19 @@ CREATE TABLE `mk_action` (
   CONSTRAINT `FK_MK_ACTION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`),
   CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de Marketing';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `mk_action_target`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `mk_action_target` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `action` int(4) NOT NULL COMMENT 'Identificador de la Accion',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
-  `status` tinyint(2) NOT NULL COMMENT 'Estado del Cliente Potencial de la Accion de CampaÒa',
+  `status` tinyint(2) NOT NULL COMMENT 'Estado del Cliente Potencial de la Accion de Campa√±a',
   `survey_response` int(4) default NULL COMMENT 'Identificador de la Respuesta de Cuestionario',
   PRIMARY KEY  (`id`),
   KEY `action` (`action`),
@@ -3784,28 +3784,28 @@ CREATE TABLE `mk_action_target` (
   CONSTRAINT `MK_ACTION_TARGET_MK_ACTION` FOREIGN KEY (`action`) REFERENCES `mk_action` (`id`),
   CONSTRAINT `MK_ACTION_TARGET_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales de la Accion de Marketing';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `mk_campaign`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `mk_campaign` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `active` tinyint(1) NOT NULL COMMENT 'Indica si la CampaÒa esta activa o no',
-  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la CampaÒa',
+  `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campa√±a esta activa o no',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campa√±a',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CampaÒas de Marketing';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campa√±as de Marketing';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `model`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `model` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Modelo',
   `make` int(4) NOT NULL COMMENT 'Identificador del Fabricante',
@@ -3814,14 +3814,14 @@ CREATE TABLE `model` (
   KEY `make` (`make`),
   CONSTRAINT `model_ibfk_1` FOREIGN KEY (`make`) REFERENCES `make` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modelos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `note`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `note` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Nota',
   `subject` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion corta de la Nota',
@@ -3832,14 +3832,14 @@ CREATE TABLE `note` (
   KEY `owner` (`owner`),
   CONSTRAINT `note_fk` FOREIGN KEY (`owner`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `notice`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notice` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Aviso',
   `date` datetime NOT NULL COMMENT 'Fecha y hora en la que se produjo el Aviso',
@@ -3861,27 +3861,27 @@ CREATE TABLE `notice` (
   CONSTRAINT `notice_fk1` FOREIGN KEY (`recipient`) REFERENCES `user` (`id`),
   CONSTRAINT `notice_fk2` FOREIGN KEY (`work_group`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Avisos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `observation`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `observation` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Observacion',
   `description` varchar(256) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Observacion',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Observaciones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `offer`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `offer` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Presupuesto',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
@@ -3927,14 +3927,14 @@ CREATE TABLE `offer` (
   CONSTRAINT `offer_ibfk_4` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
   CONSTRAINT `offer_ibfk_5` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuestos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `offer_attach`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `offer_attach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
@@ -3945,20 +3945,20 @@ CREATE TABLE `offer_attach` (
   KEY `IDX_OFFER_ATTACH_OFFER` (`offer`),
   CONSTRAINT `FK_OFFER_ATTACH_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Presupuestos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `offer_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `offer_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de Presupuesto',
   `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
-  `line` smallint(2) default '1' COMMENT 'Numero de lÌnea del Detalle dentro del Presupuesto',
+  `line` smallint(2) default '1' COMMENT 'Numero de l√≠nea del Detalle dentro del Presupuesto',
   `item` int(4) default NULL COMMENT 'Identificador del Articulo',
-  `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'DescripciÛn del Articulo',
+  `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Descripci√≥n del Articulo',
   `quantity` double(15,3) default '0.000' COMMENT 'Cantidad del Articulo',
   `price` double(15,3) default '0.000' COMMENT 'Precio del Articulo',
   `discount_expr` varchar(32) collate latin1_spanish_ci default '0' COMMENT 'Descuentos del Articulo',
@@ -3969,14 +3969,14 @@ CREATE TABLE `offer_detail` (
   CONSTRAINT `offer_detail_ibfk_1` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`),
   CONSTRAINT `offer_detail_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Presupuesto';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `offer_detail_commission`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `offer_detail_commission` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `offer_detail` int(4) NOT NULL default '0' COMMENT 'Identificador de la Linea de Presupuesto',
@@ -3988,14 +3988,14 @@ CREATE TABLE `offer_detail_commission` (
   KEY `IDX_OFFER_DETAIL_COMMISSION_OFFER_DETAIL` (`offer_detail`),
   CONSTRAINT `FK_OFFER_DETAIL_COMMISSION_OFFER_DETAIL` FOREIGN KEY (`offer_detail`) REFERENCES `offer_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones asociadas a Lineas de Presupuestos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `offer_term`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `offer_term` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
@@ -4007,28 +4007,28 @@ CREATE TABLE `offer_term` (
   KEY `IDX_OFFER_TERM_OFFER` (`offer`),
   CONSTRAINT `FK_OFFER_TERM_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones del Presupuesto';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `pay_method`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pay_method` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Forma de Pago',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de Forma de Pago',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Forma de Pago',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Formas de Pago';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Formas de Pago';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `payment_concept`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `payment_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
@@ -4036,14 +4036,14 @@ CREATE TABLE `payment_concept` (
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepcion Salarial',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `pcategory`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pcategory` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Categoria',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Categoria',
@@ -4052,28 +4052,28 @@ CREATE TABLE `pcategory` (
   PRIMARY KEY  (`id`),
   KEY `pcategory_group` (`pcategory_group`),
   CONSTRAINT `pcategory_fk_1` FOREIGN KEY (`pcategory_group`) REFERENCES `pcategory_group` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Productos';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Productos';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `pcategory_group`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pcategory_group` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Grupo de Categorias',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Grupo de Categorias',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Categorias de Productos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `pcategory_tree`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pcategory_tree` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Nodo del Arbol de Categorias',
   `parent` int(4) default NULL COMMENT 'Identificador de la Categoria padre',
@@ -4084,14 +4084,14 @@ CREATE TABLE `pcategory_tree` (
   CONSTRAINT `pcategory_tree_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `pcategory` (`id`),
   CONSTRAINT `pcategory_tree_ibfk_2` FOREIGN KEY (`child`) REFERENCES `pcategory` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Arbol de Categorias de Productos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `person`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `person` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro de la Persona',
   `birth_date` date default NULL COMMENT 'Fecha de nacimiento de la Persona',
@@ -4104,28 +4104,28 @@ CREATE TABLE `person` (
   PRIMARY KEY  (`registry`),
   CONSTRAINT `person_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Personas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `pm_type_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pm_type_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Forma de Pago',
   `description` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del detalle',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles por Tipo de Forma de Pago';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `pm_type_detail_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pm_type_detail_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `pm_type_detail` int(4) NOT NULL default '0' COMMENT 'Identificador del Detalle por Tipo de Forma de Pago',
@@ -4136,14 +4136,14 @@ CREATE TABLE `pm_type_detail_account` (
   CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_DETAIL` FOREIGN KEY (`pm_type_detail`) REFERENCES `pm_type_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Entidades Bancarias';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `pos`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pos` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Centro de Venta',
   `description` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Centro de Venta',
@@ -4152,28 +4152,28 @@ CREATE TABLE `pos` (
   KEY `raddress` (`raddress`),
   CONSTRAINT `pos_ibfk_1` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Centros de Venta';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `process`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `process` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Proceso',
   `description` varchar(30) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Proceso.',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado del Proceso',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Procesos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `process_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `process_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de Proceso',
   `process` int(4) NOT NULL COMMENT 'Identificador del Proceso',
@@ -4192,14 +4192,14 @@ CREATE TABLE `process_detail` (
   CONSTRAINT `process_detail_fk_2` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`),
   CONSTRAINT `process_detail_ibfk_1` FOREIGN KEY (`process`) REFERENCES `process` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Procesos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `process_detail_transition`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `process_detail_transition` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `process_detail` int(11) NOT NULL COMMENT 'Identificador del Detalle del Proceso.',
@@ -4213,27 +4213,27 @@ CREATE TABLE `process_detail_transition` (
   CONSTRAINT `fk_process_detail_transition_process_detail` FOREIGN KEY (`process_detail`) REFERENCES `process_detail` (`id`),
   CONSTRAINT `fk_process_detail_transition_process_transition_type` FOREIGN KEY (`process_transition_type`) REFERENCES `process_transition_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Transiciones entre Detalles de Procesos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `process_transition_type`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `process_transition_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Tipo de Transicion',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Transiciones entre Detalles de Procesos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `product`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `product` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Producto',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Producto',
@@ -4258,14 +4258,14 @@ CREATE TABLE `product` (
   CONSTRAINT `product_ibfk_2` FOREIGN KEY (`brand`) REFERENCES `brand` (`id`),
   CONSTRAINT `product_ibfk_3` FOREIGN KEY (`vat`) REFERENCES `tax` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `product_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `product_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Producto',
   `product` int(4) NOT NULL default '0' COMMENT 'Identificador del Producto',
@@ -4277,14 +4277,14 @@ CREATE TABLE `product_account` (
   CONSTRAINT `product_account_ibfk_1` FOREIGN KEY (`product`) REFERENCES `product` (`id`),
   CONSTRAINT `product_account_ibfk_2` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Productos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `production`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `production` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Produccion',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Produccion',
@@ -4298,14 +4298,14 @@ CREATE TABLE `production` (
   KEY `idx_prtn_item` (`item`),
   CONSTRAINT `production_ibfk_1` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Produccion de Articulos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `production_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `production_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de la Produccion',
   `production` int(4) NOT NULL default '0' COMMENT 'Identificador de la Produccion',
@@ -4320,14 +4320,14 @@ CREATE TABLE `production_detail` (
   CONSTRAINT `production_detail_ibfk_1` FOREIGN KEY (`production`) REFERENCES `production` (`id`) ON DELETE CASCADE,
   CONSTRAINT `production_detail_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Produccion de Articulos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `production_expense`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `production_expense` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Gasto de la Produccion',
   `production` int(4) NOT NULL default '0' COMMENT 'Identificador de la Produccion',
@@ -4338,14 +4338,14 @@ CREATE TABLE `production_expense` (
   KEY `idx_prte_prtn` (`production`),
   CONSTRAINT `production_expense_ibfk_1` FOREIGN KEY (`production`) REFERENCES `production` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Gastos de la Produccion de Articulos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `purchase`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `purchase` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Pedido de Compra',
   `supplier` int(4) NOT NULL default '0' COMMENT 'Identificador del Proveedor',
@@ -4379,14 +4379,14 @@ CREATE TABLE `purchase` (
   CONSTRAINT `purchase_ibfk_2` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `purchase_ibfk_3` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pedidos de Compra';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `purchase_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `purchase_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Pedido de Compra',
   `purchase` int(4) NOT NULL default '0' COMMENT 'Identificador del Pedido de Compra',
@@ -4405,14 +4405,14 @@ CREATE TABLE `purchase_detail` (
   CONSTRAINT `purchase_detail_ibfk_1` FOREIGN KEY (`purchase`) REFERENCES `purchase` (`id`),
   CONSTRAINT `purchase_detail_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Pedido de Compra';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `qualification`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `qualification` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Calificacion',
   `code` char(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Calificacion',
@@ -4421,28 +4421,28 @@ CREATE TABLE `qualification` (
   `max_value` double(15,3) NOT NULL default '0.000' COMMENT 'Limite superior de la Calificacion',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Calificaciones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `quality_skill`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `quality_skill` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Aptitud Calidad',
   `code` char(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Aptitud Calidad',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Aptitud Calidad',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aptitudes Calidad';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `question`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `question` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `active` tinyint(1) NOT NULL COMMENT 'Indica si la Pregunta esta activa o no',
@@ -4451,14 +4451,14 @@ CREATE TABLE `question` (
   `argument` tinytext collate latin1_spanish_ci COMMENT 'Argumentacion de la Pregunta',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Preguntas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `question_value`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `question_value` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `question` int(4) NOT NULL COMMENT 'Identificador de la Pregunta',
@@ -4469,14 +4469,14 @@ CREATE TABLE `question_value` (
   KEY `question` (`question`),
   CONSTRAINT `FK_QUESTION_VALUE_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Valores de Preguntas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `raddinfo`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `raddinfo` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `registry` int(4) NOT NULL COMMENT 'Identificador de la Persona o Empresa',
@@ -4487,14 +4487,14 @@ CREATE TABLE `raddinfo` (
   KEY `IDX_RADDINFO_REGISTRY` (`registry`),
   CONSTRAINT `FK_RADDINFO_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion adicional de la Persona o Empresa';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `raddress`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `raddress` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Direccion de la Persona o Empresa',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
@@ -4515,14 +4515,14 @@ CREATE TABLE `raddress` (
   CONSTRAINT `raddress_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `raddress_ibfk_2` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de Personas o Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `rattach`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rattach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Archivo Adjunto de la Persona o Empresa',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
@@ -4542,14 +4542,14 @@ CREATE TABLE `rattach` (
   CONSTRAINT `rattach_ibfk_1` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
   CONSTRAINT `rattach_ibfk_2` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `rbank`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rbank` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Bancaria de la Persona o Empresa',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
@@ -4562,14 +4562,14 @@ CREATE TABLE `rbank` (
   CONSTRAINT `rbank_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `rbank_ibfk_2` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de Cuentas Bancarias de Personas o Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `rbank_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rbank_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable de la Cuenta Bancaria',
   `rbank` int(4) NOT NULL default '0' COMMENT 'Identificador de la Cuenta Bancaria',
@@ -4580,14 +4580,14 @@ CREATE TABLE `rbank_account` (
   CONSTRAINT `rbank_account_ibfk_1` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`),
   CONSTRAINT `rbank_account_ibfk_2` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Entidades Bancarias';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `rdir_staff`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rdir_staff` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion entre Empresas y sus Directivos',
   `registry` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
@@ -4605,14 +4605,14 @@ CREATE TABLE `rdir_staff` (
   KEY `registry` (`registry`),
   CONSTRAINT `rdir_staff_fk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Empresas y sus Directivos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `record_data`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `record_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Dato Registral',
   `registry` int(4) NOT NULL COMMENT 'Registro de la Empresa',
@@ -4633,14 +4633,14 @@ CREATE TABLE `record_data` (
   CONSTRAINT `record_data_fk` FOREIGN KEY (`attach`) REFERENCES `rattach` (`id`),
   CONSTRAINT `record_data_fk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos Registrales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `registry`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `registry` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Persona o Empresa',
   `document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento de la Persona o Empresa',
@@ -4654,27 +4654,27 @@ CREATE TABLE `registry` (
   KEY `idx_rgty_name` (`name`),
   KEY `idx_rgty_document` (`document`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `relationship`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `relationship` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Relacion',
   `description` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Relacion',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Relaciones entre Personas y/o Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `resource`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `resource` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Recurso',
   `employee` int(4) NOT NULL COMMENT 'Identificador del Empleado',
@@ -4691,14 +4691,14 @@ CREATE TABLE `resource` (
   CONSTRAINT `resource_ibfk_2` FOREIGN KEY (`workactivity`) REFERENCES `workactivity` (`id`),
   CONSTRAINT `resource_ibfk_3` FOREIGN KEY (`employee`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recursos de Empresa';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `rmedia`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rmedia` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Medio de Contacto de la Persona o Empresa',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
@@ -4715,14 +4715,14 @@ CREATE TABLE `rmedia` (
   CONSTRAINT `FK_RMEDIA_RADDRESS` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`),
   CONSTRAINT `rmedia_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Medios de Contacto de Personas o Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `rnote`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rnote` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Nota de la Persona o Empresa',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
@@ -4735,14 +4735,14 @@ CREATE TABLE `rnote` (
   KEY `registry` (`registry`),
   CONSTRAINT `rnote_fk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notas de Personas o Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `rpaymethod`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rpaymethod` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Forma de Pago de la Persona o Empresa',
   `registry` int(4) NOT NULL COMMENT 'Identificador del Registro de la Persona o Empresa',
@@ -4760,19 +4760,19 @@ CREATE TABLE `rpaymethod` (
   CONSTRAINT `rpaymethod_ibfk_2` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`),
   CONSTRAINT `rpaymethod_ibfk_3` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de la Forma de Pago de la Persona o Empresa';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `rrelationship`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rrelationship` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion',
   `registry` int(4) NOT NULL COMMENT 'Identificador de la Persona o Empresa que tiene la Relacion',
   `related_registry` int(4) NOT NULL COMMENT 'Identificador de la Persona o Empresa relacionada',
-  `relationship` int(4) NOT NULL COMMENT 'Identificador del Tipo de RelaciÛn',
+  `relationship` int(4) NOT NULL COMMENT 'Identificador del Tipo de Relaci√≥n',
   `comments` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Comentarios de la Relacion',
   PRIMARY KEY  (`id`),
   KEY `registry` (`registry`),
@@ -4780,14 +4780,14 @@ CREATE TABLE `rrelationship` (
   CONSTRAINT `rrelationship_fk` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `rrelationship_fk1` FOREIGN KEY (`related_registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relaciones entre Personas y/o Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `rsegment`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rsegment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `registry` int(4) NOT NULL COMMENT 'Identificador de Persona o Empresa',
@@ -4798,20 +4798,20 @@ CREATE TABLE `rsegment` (
   CONSTRAINT `FK_REGISTRY_SEGMENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_REGISTRY_SEGMENT_SEGMENT` FOREIGN KEY (`segment`) REFERENCES `segment` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos de Personas o Empresas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `salary`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `salary` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Nomina',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
-  `start_date` date NOT NULL COMMENT 'Fecha de inicio liquidaciÛn',
-  `end_date` date NOT NULL COMMENT 'Fecha de finalizacion liquidaciÛn',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio liquidaci¬ùn',
+  `end_date` date NOT NULL COMMENT 'Fecha de finalizacion liquidaci¬ùn',
   `enterprise_name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre de la empresa',
   `enterprise_address` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Domicilio de la empresa',
   `enterprise_document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento de la Empresa',
@@ -4820,16 +4820,16 @@ CREATE TABLE `salary` (
   `social_security_number` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Numero de la seguridad social',
   `employee_document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento de la Persona',
   `seniority_date` date default NULL COMMENT 'Fecha de antiguedad',
-  `quote_group` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Grupo de CotizaciÛn',
+  `quote_group` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Grupo de Cotizaci¬ùn',
   `category` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Categoria o grupo profesional',
-  `registration` int(4) NOT NULL COMMENT 'N˙mero libro de matricula',
+  `registration` int(4) NOT NULL COMMENT 'N¬ùmero libro de matricula',
   `time_units` int(4) NOT NULL COMMENT 'total dias/horas',
   `total_payment` double(15,3) NOT NULL default '0.000' COMMENT 'Total devengado',
   `total_deduction` double(15,3) NOT NULL default '0.000' COMMENT 'Total a deducir',
   `total_liquid` double(15,3) NOT NULL default '0.000' COMMENT 'Liquido total a percibir',
   `total_enterprise` double(15,3) NOT NULL default '0.000' COMMENT 'Cuota total de la empresa',
-  `issue_date` date NOT NULL COMMENT 'Fecha de emisiÛn',
-  `remuneration` double(15,3) NOT NULL default '0.000' COMMENT 'RemuneraciÛn mensual',
+  `issue_date` date NOT NULL COMMENT 'Fecha de emisi¬ùn',
+  `remuneration` double(15,3) NOT NULL default '0.000' COMMENT 'Remuneraci¬ùn mensual',
   `pro_ext_base` double(15,3) NOT NULL default '0.000' COMMENT 'Base prorraterreada de pagas extras',
   `it_base` double(15,3) NOT NULL default '0.000' COMMENT 'Base de IT',
   `raw_cgc_base` double(15,3) NOT NULL default '0.000' COMMENT 'Base efectiva de cotizacion por contingencias comunes ',
@@ -4837,62 +4837,62 @@ CREATE TABLE `salary` (
   `hextra_base` double(15,3) NOT NULL default '0.000' COMMENT 'Base de cotizacion adicional por horas extraordinarias estructurales',
   `non_hextra_base` double(15,3) NOT NULL default '0.000' COMMENT 'Base de cotizacion adicional por horas extraordinarias no estructurales',
   `cgp_base` double(15,3) NOT NULL default '0.000' COMMENT 'Base de cotizacion por contingencias profesionales',
-  `money_irpf_base` double(15,3) NOT NULL default '0.000' COMMENT 'Salario en dinero sujeto a retenciÛn I.R.P.F',
-  `inkind_irpf_base` double(15,3) NOT NULL default '0.000' COMMENT 'Salario en especie sujeto a retenciÛn I.R.P.F',
-  `irpf_base` double(15,3) NOT NULL default '0.000' COMMENT 'Base sujeta a retenciÛn I.R.P.F',
+  `money_irpf_base` double(15,3) NOT NULL default '0.000' COMMENT 'Salario en dinero sujeto a retenci¬ùn I.R.P.F',
+  `inkind_irpf_base` double(15,3) NOT NULL default '0.000' COMMENT 'Salario en especie sujeto a retenci¬ùn I.R.P.F',
+  `irpf_base` double(15,3) NOT NULL default '0.000' COMMENT 'Base sujeta a retenci¬ùn I.R.P.F',
   `social_security_contributions` double(15,3) NOT NULL default '0.000' COMMENT 'Aportaciones a la Seguridad Social',
   PRIMARY KEY  (`id`),
   KEY `IDX_SALARY_RECCEIPT_CONTRACT` (`contract`),
   CONSTRAINT `FK_SALARY_RECCEIPT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `salary_deduction`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `salary_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
-  `type` tinyint(2) default NULL COMMENT 'Tipo de deducciÛn Salarial',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de deducci¬ùn Salarial',
   `deduction_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'FÛrmula',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'F¬ùrmula',
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
   PRIMARY KEY  (`id`),
   KEY `IDX_DEDUCTION_SALARY` (`salary`),
   CONSTRAINT `FK_DEDUCTION_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `salary_payment`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `salary_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
-  `type` tinyint(2) default NULL COMMENT 'Tipo de PercepciÛn Salarial',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Percepci¬ùn Salarial',
   `payment_concept` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'FÛrmula',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'F¬ùrmula',
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
   PRIMARY KEY  (`id`),
   KEY `IDX_PAYMENT_SALARY` (`salary`),
   CONSTRAINT `FK_PAYMENT_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones salariales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `sales`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sales` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Pedido de Venta',
   `customer` int(4) NOT NULL default '0' COMMENT 'Identificador del Cliente',
@@ -4935,18 +4935,18 @@ CREATE TABLE `sales` (
   CONSTRAINT `sales_ibfk_5` FOREIGN KEY (`pos`) REFERENCES `pos` (`id`),
   CONSTRAINT `sales_ibfk_6` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pedidos de Venta';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `sales_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sales_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Pedido de Venta',
   `sales` int(4) NOT NULL default '0' COMMENT 'Identificador del Pedido de Venta',
-  `line` smallint(2) default '1' COMMENT 'Numero de lÌnea del Detalle dentro del Pedido',
+  `line` smallint(2) default '1' COMMENT 'Numero de l√≠nea del Detalle dentro del Pedido',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador del Articulo del Detalle de Pedido',
   `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Detalle de Pedido',
   `quantity` double default '0' COMMENT 'Cantidad del Detalle de Pedido',
@@ -4965,14 +4965,14 @@ CREATE TABLE `sales_detail` (
   CONSTRAINT `sales_detail_ibfk_1` FOREIGN KEY (`sales`) REFERENCES `sales` (`id`),
   CONSTRAINT `sales_detail_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Pedido de Venta';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `sales_purchase`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sales_purchase` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion de Pedidos de Compra y Venta',
   `sales_detail` int(4) NOT NULL COMMENT 'Identificador del Detalle del Pedido de Venta',
@@ -4983,14 +4983,14 @@ CREATE TABLE `sales_purchase` (
   CONSTRAINT `sales_purchase_ibfk_1` FOREIGN KEY (`sales_detail`) REFERENCES `sales_detail` (`id`),
   CONSTRAINT `sales_purchase_ibfk_2` FOREIGN KEY (`purchase_detail`) REFERENCES `purchase_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Pedidos de Compra y Venta';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `scale`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `scale` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Transferencia de datos entre Balanzas y Aon',
   `scale_model` tinyint(2) default NULL COMMENT 'Modelo de Balanza',
@@ -5006,14 +5006,14 @@ CREATE TABLE `scale` (
   `verified` tinyint(1) default '0' COMMENT 'Indica si esta verificado o no',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Transferencias de datos entre Balanzas y Aon';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `scale_relation`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `scale_relation` (
   `id` int(5) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion entre tablas de Balanzas y Aon',
   `aon_id` int(4) default NULL COMMENT 'Identificador de la tabla en Aon',
@@ -5023,40 +5023,40 @@ CREATE TABLE `scale_relation` (
   `scale_model` tinyint(2) default NULL COMMENT 'Modelo de Balanza',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relaciones entre tablas de Balanzas y Aon';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `scope`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `scope` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Ambito',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `segment`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `segment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Segmento',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos Comerciales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `seller`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `seller` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Agente Comercial',
   `commission_type` int(4) default NULL COMMENT 'Identificador del Tipo de Comision',
@@ -5066,14 +5066,14 @@ CREATE TABLE `seller` (
   CONSTRAINT `FK_SELLER_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
   CONSTRAINT `seller_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agentes Comerciales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `series`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `series` (
   `id` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Identificador unico',
   `description` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Serie',
@@ -5084,20 +5084,20 @@ CREATE TABLE `series` (
   KEY `workplace` (`workplace`),
   CONSTRAINT `series_fk` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Series';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `session`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `session` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `endDate` datetime default NULL COMMENT 'Fecha de finalizacion',
   `remote_address` varchar(15) collate latin1_spanish_ci NOT NULL default '' COMMENT 'IP remota',
   `remote_host` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Equipo remoto',
-  `session_id` varchar(128) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Identificador web de la sesiÛn',
+  `session_id` varchar(128) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Identificador web de la sesi√≥n',
   `startDate` datetime NOT NULL COMMENT 'Fecha de inicio',
   `application_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Aplicacion',
   `user_id` int(4) NOT NULL default '0' COMMENT 'Identificador del Usuario',
@@ -5107,14 +5107,14 @@ CREATE TABLE `session` (
   CONSTRAINT `FK_SESSION_APPLICATION_ID` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`),
   CONSTRAINT `FK_SESSION_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Sesion web';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `stock`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stock` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Stock',
   `warehouse` int(4) default NULL COMMENT 'Identificador del Almacen',
@@ -5127,14 +5127,14 @@ CREATE TABLE `stock` (
   CONSTRAINT `stock_ibfk_1` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`),
   CONSTRAINT `stock_ibfk_2` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Stocks de Almacenes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `supplier`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `supplier` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Proveedor',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Proveedor aplica retencion de impuestos',
@@ -5149,14 +5149,14 @@ CREATE TABLE `supplier` (
   CONSTRAINT `supplier_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `supplier_ibfk_2` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `supplier_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `supplier_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Proveedor',
   `supplier` int(4) NOT NULL default '0' COMMENT 'Identificador del Proveedor',
@@ -5167,27 +5167,27 @@ CREATE TABLE `supplier_account` (
   CONSTRAINT `supplier_account_ibfk_1` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
   CONSTRAINT `supplier_account_ibfk_2` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Proveedores';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `supplier_segment`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `supplier_segment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Segmento',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Segmento',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentacion de Proveedores';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `support_order`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `support_order` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Orden de Reparacion',
   `tas_item` int(4) NOT NULL COMMENT 'Identificador del Articulo de la Orden de Reparacion',
@@ -5214,18 +5214,18 @@ CREATE TABLE `support_order` (
   CONSTRAINT `support_order_ibfk_3` FOREIGN KEY (`employee`) REFERENCES `employee` (`registry`),
   CONSTRAINT `support_order_ibfk_4` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ordenes de Reparacion';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `support_order_insurance`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `support_order_insurance` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `support_order` int(4) NOT NULL COMMENT 'Identificador de la Orden de Reparacion',
-  `insurance` int(4) NOT NULL COMMENT 'Identificador de la CompaÒia de Seguros',
+  `insurance` int(4) NOT NULL COMMENT 'Identificador de la Compa√±ia de Seguros',
   `appraiser` int(4) default NULL COMMENT 'Identificador del Perito',
   `claim_number` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Numero de siniestro o reclamacion',
   `policy_type` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Tipo de poliza',
@@ -5237,15 +5237,15 @@ CREATE TABLE `support_order_insurance` (
   CONSTRAINT `support_order_insurance_fk1` FOREIGN KEY (`support_order`) REFERENCES `support_order` (`id`),
   CONSTRAINT `support_order_insurance_fk2` FOREIGN KEY (`insurance`) REFERENCES `customer` (`registry`),
   CONSTRAINT `support_order_insurance_fk3` FOREIGN KEY (`appraiser`) REFERENCES `appraiser` (`registry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CompaÒias de Seguros asociadas a Ordenes de Reparacion';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Compa√±ias de Seguros asociadas a Ordenes de Reparacion';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `survey`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `survey` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `active` tinyint(1) NOT NULL COMMENT 'Indica si el Cuestionario esta activa o no',
@@ -5253,14 +5253,14 @@ CREATE TABLE `survey` (
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Cuestionario',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuestionarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `survey_question`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `survey_question` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `survey` int(4) NOT NULL COMMENT 'Identificador del Cuestionario',
@@ -5272,14 +5272,14 @@ CREATE TABLE `survey_question` (
   CONSTRAINT `FK_SURVEY_QUESTION_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`),
   CONSTRAINT `FK_SURVEY_QUESTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Preguntas de Cuestionarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `survey_response`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `survey_response` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `creationDate` datetime NOT NULL COMMENT 'Fecha de la creacion en el sistema de la Respuesta del Cuestionario',
@@ -5287,7 +5287,7 @@ CREATE TABLE `survey_response` (
   `survey` int(4) NOT NULL COMMENT 'Identificador del Cuestionario',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
   `user` int(4) NOT NULL COMMENT 'Identificador del Usuario',
-  `campaign_action` int(4) default NULL COMMENT 'Identificador de la Accion de la CampaÒa',
+  `campaign_action` int(4) default NULL COMMENT 'Identificador de la Accion de la Campa√±a',
   PRIMARY KEY  (`id`),
   KEY `survey` (`survey`),
   KEY `target` (`target`),
@@ -5298,14 +5298,14 @@ CREATE TABLE `survey_response` (
   CONSTRAINT `FK_SURVEY_RESPONSE_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `FK_SURVEY_RESPONSE_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Respuestas de Cuestionarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `survey_response_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `survey_response_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `value_text` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
@@ -5319,14 +5319,14 @@ CREATE TABLE `survey_response_detail` (
   CONSTRAINT `FK_SURVEY_RESPONSE_DETAIL_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`),
   CONSTRAINT `FK_SURVEY_RESPONSE_DETAIL_SURVEY_RESPONSE` FOREIGN KEY (`surveyResponse`) REFERENCES `survey_response` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Respuestas de Cuestionarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `survey_workflow`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `survey_workflow` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `questionValue` int(4) default NULL COMMENT 'Identificador del Valor de la Pregunta',
@@ -5344,36 +5344,36 @@ CREATE TABLE `survey_workflow` (
   CONSTRAINT `FK_SURVEY_WORKFLOW_QUESTION_VALUE` FOREIGN KEY (`questionValue`) REFERENCES `question_value` (`id`),
   CONSTRAINT `FK_SURVEY_WORKFLOW_SURVEY_QUESTION` FOREIGN KEY (`surveyQuestion`) REFERENCES `survey_question` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Secuencias de Cuestionarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `system_deduction`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `type` tinyint(2) default NULL COMMENT 'Tipo de DeducciÛn',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Deducci¬ùn',
   `deduction_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `description_decorable` tinyint(2) default '0',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'FÛrmula',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'F¬ùrmula',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
-  `month` tinyint(2) default NULL COMMENT 'Mes de la deducciÛn',
+  `month` tinyint(2) default NULL COMMENT 'Mes de la deducci¬ùn',
   PRIMARY KEY  (`id`),
   KEY `IDX_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT` (`deduction_concept`),
   CONSTRAINT `FK_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `target`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `target` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente Potencial',
   `tariff` int(4) default NULL COMMENT 'Tarifa asociada al Cliente Potencial',
@@ -5387,14 +5387,14 @@ CREATE TABLE `target` (
   CONSTRAINT `FK_TARGET_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
   CONSTRAINT `target_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `target_item`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `target_item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
@@ -5406,14 +5406,14 @@ CREATE TABLE `target_item` (
   CONSTRAINT `target_item_fk` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `target_item_fk1` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos interesados por Cliente Potencial';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `target_profile`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `target_profile` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
@@ -5428,14 +5428,14 @@ CREATE TABLE `target_profile` (
   CONSTRAINT `FK_TARGET_PROFILE_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`),
   CONSTRAINT `FK_TARGET_PROFILE_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Perfiles de Clientes Potenciales';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `target_seller`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `target_seller` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
@@ -5449,14 +5449,14 @@ CREATE TABLE `target_seller` (
   CONSTRAINT `target_seller_fk` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `target_seller_fk1` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comerciales relacionado con Cliente Potencial';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `target_supplier`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `target_supplier` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
@@ -5482,27 +5482,27 @@ CREATE TABLE `target_supplier` (
   CONSTRAINT `FK_TARGET_SUPPLIER_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `FK_TARGET_SUPPLIER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion de Clientes Potenciales con Proveedores';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `tariff`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tariff` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Tarifa',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Tarifa',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `tariff_catalogue`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tariff_catalogue` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `tariff` int(4) NOT NULL COMMENT 'Identificador de la Tarifa',
@@ -5513,14 +5513,14 @@ CREATE TABLE `tariff_catalogue` (
   CONSTRAINT `tariff_catalogue_fk1` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
   CONSTRAINT `tariff_catalogue_fk2` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas por Catalogo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `tas_delivery`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tas_delivery` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion de Ordenes de Reparacion y Albaranes',
   `support_order` int(4) NOT NULL COMMENT 'Identificador de la Orden de Reparacion',
@@ -5534,14 +5534,14 @@ CREATE TABLE `tas_delivery` (
   CONSTRAINT `tas_delivery_ibfk_2` FOREIGN KEY (`delivery`) REFERENCES `delivery` (`id`),
   CONSTRAINT `tas_delivery_ibfk_3` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Ordenes de Reparacion y Albaranes';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `tas_item`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tas_item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Articulo',
   `model` int(4) NOT NULL COMMENT 'Identificador del Modelo',
@@ -5555,14 +5555,14 @@ CREATE TABLE `tas_item` (
   KEY `model` (`model`),
   CONSTRAINT `tas_item_ibfk_1` FOREIGN KEY (`model`) REFERENCES `model` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulo susceptible de Asistencia Tecnica';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `tas_offer`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tas_offer` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion de Ordenes de Reparacion y Presupuestos',
   `support_order` int(4) NOT NULL COMMENT 'Identificador de la Orden de Reparacion',
@@ -5573,14 +5573,14 @@ CREATE TABLE `tas_offer` (
   CONSTRAINT `tas_offer_ibfk_1` FOREIGN KEY (`support_order`) REFERENCES `support_order` (`id`),
   CONSTRAINT `tas_offer_ibfk_2` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Ordenes de Reparacion y Presupuestos';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `task`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `task` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Tarea',
   `description` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Tarea',
@@ -5610,14 +5610,14 @@ CREATE TABLE `task` (
   CONSTRAINT `task_fk_4` FOREIGN KEY (`sender`) REFERENCES `user` (`id`),
   CONSTRAINT `task_fk_5` FOREIGN KEY (`activity`) REFERENCES `activity` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tareas';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `tax`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tax` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Impuesto',
   `name` varchar(30) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Impuesto',
@@ -5628,15 +5628,15 @@ CREATE TABLE `tax` (
   `vat_deduction_type` tinyint(2) default '0' COMMENT 'Tipo de deduccion del IVA',
   `withholding_type` tinyint(2) default '0' COMMENT 'Tipo de retencion',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `tax_account`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tax_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Impuesto',
   `tax` int(4) NOT NULL default '0' COMMENT 'Identificador del Impuesto',
@@ -5648,14 +5648,14 @@ CREATE TABLE `tax_account` (
   CONSTRAINT `tax_account_ibfk_1` FOREIGN KEY (`tax`) REFERENCES `tax` (`id`),
   CONSTRAINT `tax_account_ibfk_2` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Impuestos de la Factura';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `tax_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tax_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Historico de Impuestos',
   `tax` int(4) NOT NULL default '0' COMMENT 'Identificador del Impuesto',
@@ -5666,35 +5666,35 @@ CREATE TABLE `tax_detail` (
   PRIMARY KEY  (`id`),
   KEY `tax` (`tax`),
   CONSTRAINT `tax_detail_ibfk_1` FOREIGN KEY (`tax`) REFERENCES `tax` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historico de Impuestos';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historico de Impuestos';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `user`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Usuario',
   `login` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Login del Usuario',
-  `enterprise` int(4) default NULL COMMENT 'Identificador de la Empresa',
+  `enterprise` int(4) NOT NULL default '1' COMMENT 'Identificador de la Empresa',
   `registry` int(4) default NULL COMMENT 'Identificador del Registry',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si el Usuario esta activo o no',
-  `password` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'ContraseÒa del Usuario',
+  `password` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Contrase¬ùa del Usuario',
   PRIMARY KEY  (`id`),
   KEY `IDX_USER_ENTERPRISE` (`enterprise`),
   CONSTRAINT `FK_USER_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Usuarios';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `user_scope`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_scope` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `user_id` int(4) NOT NULL COMMENT 'Identificador del Usuario',
@@ -5705,14 +5705,14 @@ CREATE TABLE `user_scope` (
   CONSTRAINT `user_scope_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `user_scope_fk1` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos de Usuario';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `user_workgroup`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_workgroup` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `user_id` int(4) NOT NULL COMMENT 'Identificador del Usuario',
@@ -5723,27 +5723,27 @@ CREATE TABLE `user_workgroup` (
   CONSTRAINT `user_workgroup_fk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `user_workgroup_fk_2` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Usuarios y Grupos de Trabajo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `warehouse`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `warehouse` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Almacen',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Almacen',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Almacenes';
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Almacenes';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `web_info`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `web_info` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
   `company` int(4) NOT NULL COMMENT 'Empresa',
@@ -5754,14 +5754,14 @@ CREATE TABLE `web_info` (
   KEY `company` (`company`),
   CONSTRAINT `web_info_fk` FOREIGN KEY (`company`) REFERENCES `company` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion de la empresa que se mostrara en la ficha web';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `web_info_page`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `web_info_page` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Codigo de la Pagina',
   `name` varchar(64) character set latin1 collate latin1_spanish_ci default NULL COMMENT 'Nombre de la Pagina.',
@@ -5770,14 +5770,14 @@ CREATE TABLE `web_info_page` (
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si la Pagina esta activa o no',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Paginas pertenecientes a la ficha web';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `web_info_page_detail`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `web_info_page_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Codigo del Detalle de la Pagina',
   `web_info_page` int(4) NOT NULL COMMENT 'Identificador de la Pagina a la que corresponde el detalle',
@@ -5789,14 +5789,14 @@ CREATE TABLE `web_info_page_detail` (
   KEY `web_info_page` (`web_info_page`),
   CONSTRAINT `web_info_page_detail_fk1` FOREIGN KEY (`web_info_page`) REFERENCES `web_info_page` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalles de la pagina perteneciente a la ficha web';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `web_info_page_resource`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `web_info_page_resource` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Codigo del Recurso de la Pagina',
   `web_info_page` int(4) NOT NULL COMMENT 'Codigo de la Pagina',
@@ -5808,33 +5808,33 @@ CREATE TABLE `web_info_page_resource` (
   CONSTRAINT `web_info_page_resource_fk1` FOREIGN KEY (`web_info_page`) REFERENCES `web_info_page` (`id`),
   CONSTRAINT `web_info_page_resource_fk2` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Recursos de la pagina perteneciente a la ficha web';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `web_info_style`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `web_info_style` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Codigo del Estilo de la Pagina',
   `variable` varchar(128) character set latin1 collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la variable del Estilo',
   `value` varchar(255) character set latin1 collate latin1_spanish_ci default NULL COMMENT 'Valor de la variable del Estilo',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Estilos a utilizar en las plantillas para generar ficha web';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `workactivity`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `workactivity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Actividad',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
-  `enterpriseCCC` int(4) NOT NULL COMMENT 'Cuenta de CotizaciÛn asociada a la Actividad',
+  `enterpriseCCC` int(4) NOT NULL COMMENT 'Cuenta de Cotizaci√≥n asociada a la Actividad',
   `active` tinyint(1) default '1' COMMENT 'Indica si la Actividad esta activa o no',
   PRIMARY KEY  (`id`),
   KEY `workplace` (`workplace`),
@@ -5842,28 +5842,28 @@ CREATE TABLE `workactivity` (
   CONSTRAINT `FK_WORKACTIVITY_ENTERPRISECCC` FOREIGN KEY (`enterpriseCCC`) REFERENCES `enterprise_ccc` (`id`),
   CONSTRAINT `workactivity_ibfk_1` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades del Centro de Trabajo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `workgroup`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `workgroup` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Grupo de Trabajo',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Grupo de Trabajo',
   `status` tinyint(2) default NULL COMMENT 'Estado del grupo de Trabajo',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Trabajo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 #
 # Table structure for table `workplace`
 #
 
-
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `workplace` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Centro de Trabajo',
   `enterprise` int(4) NOT NULL default '1' COMMENT 'Empresa asociada al Centro de Trabajo',
@@ -5886,10 +5886,12 @@ CREATE TABLE `workplace` (
   CONSTRAINT `FK_WORKPLACE_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `workplace_ibfk_1` FOREIGN KEY (`address`) REFERENCES `raddress` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Centros de Trabajo';
-
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+# Dump completed on 2011-02-22 16:17:55
