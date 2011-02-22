@@ -1,4 +1,4 @@
-package com.code.aon.ui.employee.controller;
+package com.esferalia.aon.web.employee.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME;
@@ -195,15 +195,16 @@ public class ManagerController implements IPayrollConstants {
 
 	private void initWorkerCalendar( Contract contract ) {
 		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICalendarConstants.CALENDAR_CONTROLLER_NAME);
-		controller.setSource(CalendarSource.CONTRACT);
-		controller.setSourceId( contract.getId() );
+		// TODO cargar el id de calendar, no el de contract
+//		controller.setSource(CalendarSource.CONTRACT);
+//		controller.setSourceId( contract.getId() );
 		controller.onInitialize(null);
 		CalendarHolidayDataController chdc = (CalendarHolidayDataController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME);
 		chdc.getHolidayDataModels();
 	}
 	
 	private void initWorker() {
-		this.homeTemplate = "/com/code/aon/ui/employee/facelet/salary/list.xhtml";
+		this.homeTemplate = "/com/esferalia/aon/ui/payroll/facelet/salary/list.xhtml";
 		Contract contract = getContract();
 		initWorkerSalaries( contract );
 		initWorkerCalendar( contract );

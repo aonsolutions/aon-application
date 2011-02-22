@@ -14,7 +14,7 @@
 				actionListener="#{enterpriseTree.onInit}"
 				styleClass="aon-top-menu-item aon-icon-payroll" />
 			<aon:commandLink id="paymentUpdate"
-				value="#{employeeBundle.employee_payment_update_module}"
+				value="#{payrollBundle.payroll_payment_update_module}"
 				action="paymentUpdate_search"
 				actionListener="#{paymentUpdate.onEditSearch}"
 				styleClass="aon-top-menu-item aon-icon-utilities" >
@@ -25,13 +25,13 @@
 			<aon:commandLink id="salaryDraft" 
 				action="salaryDraft_list" 
 				actionListener="#{salaryDraft.onEditSearch}"
-				value="#{employeeBundle.employee_salaryDraft_module}"
+				value="#{payrollBundle.payroll_salaryDraft_module}"
 				styleClass="aon-top-menu-item aon-icon-config" />
 		</c:if>
 		<c:if test="#{!manager.enterprise}">
 			<aon:commandLink id="salary" 
 				action="salary_list" 
-				value="#{employeeBundle.employee_salary_module}"
+				value="#{payrollBundle.payroll_salary_module}"
 				styleClass="aon-top-menu-item aon-icon-payroll" />
 			<aon:htmlCommandLink id="calendarReport_list" 
  				action="#{report.onExecute}"
