@@ -14,22 +14,22 @@
 				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_delivery_module}" />
 				<ui:param name="controller" value="#{delivery}" />
 				<ui:define name="additionalToolbarContent">
-					<aon:htmlCommandLink id="deliveryList2-excel-report" value="&#160;" 
+					<aon:htmlCommandLink id="deliveryList-excel-report" value="&#160;" 
 						target="_new" rendered="#{!delivery.new}"
 						action="#{report.onExecute}" 
 						disabled="#{deliveryDetail.to != null}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel">
-						<f:param name="reportKey" value="deliveryList2" />
+						<f:param name="reportKey" value="deliveryList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
-					<aon:htmlCommandLink id="deliveryList2-report" value="#{bundle.aon_listing}"
+					<aon:htmlCommandLink id="deliveryList-report" value="#{bundle.aon_listing}"
 						target="_new" rendered="#{!delivery.new}"
 						action="#{report.onExecute}" 
 						disabled="#{deliveryDetail.to != null}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
-						<f:param name="reportKey" value="deliveryList2" />
+						<f:param name="reportKey" value="deliveryList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="deliveryDetailledList-excel-report" value="&#160;"
@@ -77,7 +77,7 @@
 							</aon:outputText>
 						</aon:column>
 
-						<aon:column alias="Delivery.customer.registry.surname,Delivery.customer.registry.name"
+						<aon:column alias="Delivery.customer.registry.name"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<h:outputText value="#{customerBundle.customer_customer}" />

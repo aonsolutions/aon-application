@@ -105,7 +105,7 @@
 	
 	<!--  *********  Listado Detallado Factura de Ventas  ********* -->
 
-	<report id="deliveryList2" description="Listado de delivery">
+	<report id="deliveryList" description="Listado de delivery">
 		<template path="/com/code/aon/ui/warehouse/report/deliveryList.jasper" />
 		<bean key="com.code.aon.warehouse.Delivery" />
 		<criteria provider="#{delivery}"/>
@@ -159,8 +159,8 @@
 	
 	<!--  *********  Listado Detallado Albaran de Compras  ********* -->
 
-	<report id="incomeList2" description="Listado de income">
-		<template path="/com/code/aon/ui/warehouse/report/incomeList2.jasper" />
+	<report id="incomeList" description="Listado de income">
+		<template path="/com/code/aon/ui/warehouse/report/incomeList.jasper" />
 		<bean key="com.code.aon.warehouse.Income" />
 		<criteria provider="#{income}"/>
 		<params>

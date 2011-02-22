@@ -14,22 +14,22 @@
 				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_income_module}" />
 				<ui:param name="controller" value="#{income}" />
 				<ui:define name="additionalToolbarContent">
-					<aon:htmlCommandLink id="incomeList2-excel-report" value="&#160;" 
+					<aon:htmlCommandLink id="incomeList-excel-report" value="&#160;" 
 						target="_new" rendered="#{!delivery.new}"
 						action="#{report.onExecute}" 
 						disabled="#{deliveryDetail.to != null}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel">
-						<f:param name="reportKey" value="incomeList2" />
+						<f:param name="reportKey" value="incomeList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
-					<aon:htmlCommandLink id="incomeList2-report" value="#{bundle.aon_listing}"
+					<aon:htmlCommandLink id="incomeList-report" value="#{bundle.aon_listing}"
 						target="_new" rendered="#{!income.new}"
 						action="#{report.onExecute}" 
 						disabled="#{incomeDetail.to != null}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
-						<f:param name="reportKey" value="incomeList2" />
+						<f:param name="reportKey" value="incomeList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="incomeDetailledList-excel-report" value="&#160;"
@@ -77,7 +77,7 @@
 							</aon:outputText>
 						</aon:column>
 
-						<aon:column alias="Income.supplier.registry.surname,Income.supplier.registry.name"
+						<aon:column alias="Income.supplier.registry.name"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<h:outputText value="#{supplierBundle.supplier_supplier}" />
