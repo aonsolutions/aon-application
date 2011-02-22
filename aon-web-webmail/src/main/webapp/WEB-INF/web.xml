@@ -4,13 +4,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 	<context-param>
-		<param-name>javax.faces.CONFIG_FILES</param-name>
-		<param-value>
-			/WEB-INF/faces-config.xml
-		</param-value>
-	</context-param>
-
-	<context-param>
 		<description>
 			State saving method: "client" or "server" (= default) See
 			JSF Specification 2.5.2
@@ -276,12 +269,5 @@
 	<security-role><role-name>User</role-name></security-role>
 	<security-role><role-name>Guest</role-name></security-role>
 	<security-role><role-name>Admin</role-name></security-role>
-	
-	<resource-env-ref>
-		<resource-env-ref-name>jdbc/AonWebmail</resource-env-ref-name>
-		<resource-env-ref-type>
-			javax.sql.DataSource
-		</resource-env-ref-type>
-	</resource-env-ref>
 	
 </web-app>

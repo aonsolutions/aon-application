@@ -150,7 +150,7 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 	}
 
 	public void updateCurrentMailAccount() {
-		if ( WebMailController.isConnected() ) {
+		if ( WebMailController.isConnectable() ) {
 			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 			if ( webmail.isLogged() ) {
 				this.accountId = webmail.getServer().getAccount().getId();			
@@ -203,7 +203,7 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		if ( account.isDefault() ) {
 			return false;
 		}
-		if ( WebMailController.isConnected() ) {
+		if ( WebMailController.isConnectable() ) {
 			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 			if ( webmail.isLogged() ) {
 				return ! this.accountId.equals(account.getId());

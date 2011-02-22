@@ -21,10 +21,5 @@
 	application. It may be given here for standalone wars.
 	-->
 	<context-root>/aon-webmail</context-root>
-	
-	<resource-env-ref>
-	  <resource-env-ref-name>jdbc/AonWebmail</resource-env-ref-name>
-	  <jndi-name>java:/AonWebmailDS</jndi-name>
-	</resource-env-ref>
 
 </jboss-web>

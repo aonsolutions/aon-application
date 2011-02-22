@@ -1,4 +1,4 @@
-package com.code.aon.ui.manager.util;
+package com.code.aon.common.util;
 
 import java.io.BufferedInputStream;
 import java.io.File;

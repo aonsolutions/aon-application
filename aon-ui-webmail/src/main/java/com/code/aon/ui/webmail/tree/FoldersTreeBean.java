@@ -1,5 +1,8 @@
 package com.code.aon.ui.webmail.tree;
 
+import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
+import static com.code.aon.webmail.bean.IMailConstants.OTHER_FOLDER_NAME;
+
 import java.util.ArrayList;
 
 import javax.faces.FacesException;
@@ -21,6 +24,7 @@ import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
+import com.code.aon.webmail.bean.IMailConstants;
 
 public class FoldersTreeBean implements IWebMailConstants {
 
@@ -43,7 +47,7 @@ public class FoldersTreeBean implements IWebMailConstants {
 				TreeNodeImpl nodeImpl = new TreeNodeImpl();
 				nodeImpl.setData(aonFolder);
 				String id = aonFolder.getFolderTypeName();
-				if ( AonFolder.OTHER_FOLDER_NAME.equals(id) ) {
+				if ( OTHER_FOLDER_NAME.equals(id) ) {
 					id = name + i;
 				}
 				node.addChild(id, nodeImpl);
@@ -58,7 +62,7 @@ public class FoldersTreeBean implements IWebMailConstants {
 
 	public void initTree( AonServer server ) {
 		loadTree( server );
-		setCurrent( (AonFolder) rootNode.getChild(AonFolder.INBOX_FOLDER_NAME).getData() );
+		setCurrent( (AonFolder) rootNode.getChild(INBOX_FOLDER_NAME).getData() );
 		getFolderController().nodeSelected( getCurrent() );
 	}
 	
@@ -130,10 +134,6 @@ public class FoldersTreeBean implements IWebMailConstants {
    		MessageController message = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
    		message.moveSelectedMessage(destinyFolder);
    		getFolderController().updateModel();
-	}
-	
-	public boolean isTreeLoaded(){
-		return rootNode==null?false:true;
 	}
 
 	public FolderController getFolderController() {

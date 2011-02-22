@@ -31,6 +31,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.DAOConstantsResolver;
+import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
@@ -42,7 +43,6 @@ import com.code.aon.ui.manager.BeanManagerEx;
 import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.DBManager;
 import com.code.aon.ui.manager.util.ManagerLogger;
-import com.code.aon.ui.manager.util.PropertiesUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ManagerController implements IManagerConstants {
