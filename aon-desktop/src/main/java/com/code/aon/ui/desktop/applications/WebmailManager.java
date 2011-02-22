@@ -1,5 +1,7 @@
 package com.code.aon.ui.desktop.applications;
 
+import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +45,7 @@ public class WebmailManager implements IServices, IDesktopConstants {
     public List<AonFolder> getMailSummaryModel() {
     	List<AonFolder> result = new ArrayList<AonFolder>();
 		if ( webmailServer != null ) {
-			AonFolder folder = webmailServer.getAonFolder( AonFolder.INBOX_FOLDER_NAME );
+			AonFolder folder = webmailServer.getAonFolder( INBOX_FOLDER_NAME );
 			result.add(folder);
 			return result;
 		}
@@ -53,7 +55,7 @@ public class WebmailManager implements IServices, IDesktopConstants {
     public boolean isMailActive() {
     	try {
 	    	if ( (webmailServer != null) && (webmailServer.isConnected()) ) {
-				AonFolder folder = webmailServer.getAonFolder( AonFolder.INBOX_FOLDER_NAME );
+				AonFolder folder = webmailServer.getAonFolder( INBOX_FOLDER_NAME );
 				if ( folder != null ) {
 					return true;
 				}

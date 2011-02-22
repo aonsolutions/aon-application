@@ -1,14 +1,16 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
+
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
+import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
-import javax.mail.Flags.Flag;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -369,7 +371,7 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 		Map<String, String> parameters = context.getExternalContext().getRequestParameterMap();
 		if ( parameters.containsKey("aonDesktop") && (getFolder() != null) ) {
 			String name = getFolder().getName();
-			if ( AonFolder.INBOX_FOLDER_NAME.equals(name) ) {
+			if ( INBOX_FOLDER_NAME.equals(name) ) {
 				try {
 					if ( getFolder().getMessageCount() != getFolder().getMessageListCount() ) {
 						getFolder().refresh();

@@ -225,19 +225,6 @@
   
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>logout</from-outcome>
-			<to-view-id>/</to-view-id> 
-			<redirect/>
-		</navigation-case>
-	</navigation-rule>
-  
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>login</from-outcome>
-			<to-view-id>/home.xhtml</to-view-id>
-			<redirect/>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>folder</from-outcome>
 			<to-view-id>/com/code/aon/ui/webmail/facelet/webmailFolder/folderView.xhtml</to-view-id>
 		</navigation-case>

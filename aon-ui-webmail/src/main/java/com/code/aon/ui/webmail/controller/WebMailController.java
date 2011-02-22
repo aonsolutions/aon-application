@@ -1,9 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
-import static com.code.aon.webmail.bean.AonFolder.INBOX_FOLDER_NAME;
-
 import java.util.Collections;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -43,7 +40,6 @@ import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.WebmailUtil;
-import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
@@ -80,9 +76,22 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
     }
 	
 	public boolean isLogged() {
-		return (getServer() != null) && getServer().isConnected();
+		return (server != null) && server.isConnected();
 	}
 
+	public boolean isReady() {
+		if ( server != null ) {
+			try {
+				server.ensureConnection();
+				return true;
+			} catch (MessagingException e) {
+				LOGGER.error( "Error reconnecting to the Server", e);
+				initErrorMessage = e.getMessage();	
+			}			
+		}
+		return false;
+	}
+	
 	public String getInitErrorMessage() {
 		return initErrorMessage;
 	}
@@ -240,7 +249,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		return null;
 	}
 	
-	public static boolean isConnected() {
+	public static boolean isConnectable() {
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		if ( cc.getBean() != null ) {
 			Map<String,Object> map = cc.getBean().get(BEAN_WEBMAIL);
@@ -252,21 +261,8 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		return true;
 	}	
 	
-	private AonFolder getInboxFolder() {
-		FolderController folderController = getFolderController();
-		AonFolder folder = folderController.getFolder();
-		if ( (folder != null) && INBOX_FOLDER_NAME.equals(folder.getName())  ) {
-			return folder;
-		}
-		return getServer().getAonFolder( INBOX_FOLDER_NAME );	
-	}
-	
 	public void poll( ActionEvent event ) {
-		LOGGER.info( "Poll: {}", new Date() );
-		AonFolder folder = getInboxFolder();
-		if ( folder != null ) {
-			folder.getUnreadMessageCount();
-		}
+		LOGGER.debug( "Connection ready: ", isReady() );
 	}
 	
 }

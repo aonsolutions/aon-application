@@ -13,14 +13,14 @@
 <ui:composition>
 
 	<aon:div id="noFolderSelected"
-		rendered="#{!webmailFolder.folderSelected and webmail.logged}">
+		rendered="#{!webmailFolder.folderSelected}">
 		<aon:div styleClass="aon-content-home">
 			<aon:outputText value="NO FOLDER SELECTED" />
 		</aon:div>
 	</aon:div>
 
 	<aon:div id="folderSelected"
-		rendered="#{webmailFolder.folderSelected and webmail.logged}">
+		rendered="#{webmailFolder.folderSelected}">
 
 		<aon:div id="messageGrid">
 
@@ -41,10 +41,10 @@
 							
 						<aon:column id="stateColumn" label="#{webmailBundle.webmail_message_selectEmail}"
 							styleClass="aon-nopadding aon-nomargin" width="70px" >
- 							<rich:dragSupport dragIndicator="messageIndicator" dragType="MESSAGE" dragValue="#{to}" />							
+ 							<rich:dragSupport id="messageDrag"
+ 								dragIndicator="messageIndicator" dragType="MESSAGE" dragValue="#{to}" />							
 							<f:facet name="header" >
 								<aon:div layout="none">
- 
 									<aon:outputLabel id="selectButton"
 										onclick="aonSelectAllMessages();"
 										value="&#160;" style="padding-right: 16px;"
@@ -58,11 +58,10 @@
 									<rich:jQuery name="aonSelectAllMessages" timing="onJScall"
 										selector="#messageDataTable :checkbox" query="attr('checked', true);" />
 									<rich:jQuery name="aonDeselectAllMessages" timing="onJScall"
-										selector="#messageDataTable :checkbox:checked" query="removeAttr('checked');" />																				
-															
+										selector="#messageDataTable :checkbox:checked" query="removeAttr('checked');" />
 								</aon:div>
 							</f:facet>
-							<aon:div  
+							<aon:div id="stateDiv" 
 								onmouseover="disableRowSelector();" onmouseout="enableRowSelector();">
 								<aon:graphicImage height="18" width="10"
 									styleClass="aon-vertical-align-middle aon-nopadding aon-nomargin"

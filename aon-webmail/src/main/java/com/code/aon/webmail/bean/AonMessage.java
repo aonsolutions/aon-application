@@ -650,16 +650,12 @@ public class AonMessage implements IMimeType, BundleConstants {
 	//**************************************************************************
 	private boolean isAttachment( Part part ) throws MessagingException {
 		String disposition = part.getDisposition();
-		if (! StringUtils.isEmpty(disposition) ) {
-			return StringUtils.endsWithIgnoreCase(disposition, Part.ATTACHMENT);
+		if ( StringUtils.endsWithIgnoreCase(disposition, Part.ATTACHMENT) ) {
+			return true;
 		}
 		if (part.getFileName() != null) {
 			String contentId = WebmailUtil.getContentId(part);
-			if ( StringUtils.isEmpty(contentId) ) {
-				if (! part.isMimeType(APPLICATION_APPLEFILE) ) {
-					return part.isMimeType(IMAGE_ANY) || part.isMimeType(APPLICATION_ANY);	
-				}				
-			}
+			return StringUtils.isEmpty(contentId); 
 		}
 		return false;
 	}

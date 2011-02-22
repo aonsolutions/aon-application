@@ -1,5 +1,8 @@
 package com.code.aon.webmail.bean;
 
+import static javax.mail.Folder.HOLDS_MESSAGES;
+import static javax.mail.Folder.READ_WRITE;
+
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -14,7 +17,6 @@ import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Transport;
-import javax.mail.URLName;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -23,19 +25,16 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.sun.mail.imap.IMAPStore;
 
-public class AonServer {
+public class AonServer implements IMailConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonServer.class);
-	
-	private static final String X_MAILER = "X-Mailer";
-	
-	private static final String WEBMAIL_MAILER = "OfficeWeb - AonWebMail 4.11.0";
-	
-	private static final String IMAP = "imap";
+
+	private Properties properties;
 	
     private Store store;
 
@@ -43,14 +42,12 @@ public class AonServer {
 
     private MailAccount account;
     
-    private boolean ensure_connection;
-    
     private boolean quotaAware;
     
     /** Creates a new instance of Server */
     public AonServer(MailAccount account){
         setAccount( account );
-        this.ensure_connection = true;
+        this.properties = calculateProperties();
     }
     
     public boolean isQuotaAware() {
@@ -62,7 +59,7 @@ public class AonServer {
     		IMAPStore imapStore = (IMAPStore) store;
         	try {    		
 				if ( imapStore.hasCapability("QUOTA") ) {
-					Quota[] quotas = imapStore.getQuota(AonFolder.INBOX_FOLDER_NAME);
+					Quota[] quotas = imapStore.getQuota(INBOX_FOLDER_NAME);
 					return ! ArrayUtils.isEmpty(quotas);
 				}
     		} catch (MessagingException e) {
@@ -75,7 +72,7 @@ public class AonServer {
     public Quota.Resource getQuotaResource() {
     	IMAPStore imapStore = (IMAPStore) store;
     	try {
-			Quota[] quotas = imapStore.getQuota(AonFolder.INBOX_FOLDER_NAME);
+			Quota[] quotas = imapStore.getQuota(INBOX_FOLDER_NAME);
 			for( Quota quota : quotas ) {
 				for( Quota.Resource resource : quota.resources ) {
 					return resource;	
@@ -103,6 +100,27 @@ public class AonServer {
         return store != null && store.isConnected();
     }
 
+    private Properties calculateProperties() {
+        Properties values = System.getProperties();
+        if (account.isIncomingSsl()) {
+        	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
+        	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_FALLBACK, "false");
+        	values.setProperty(MAIL_IMAP_PORT, String.valueOf(account.getIncomingPort()));
+        	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_PORT, String.valueOf(account.getIncomingPort()));
+        } else {
+            // otherwise log on using http, avoid using incomingSsl properties as
+            // it will botch the connection .
+        	values.remove(MAIL_IMAP_SOCKET_FACTORY_CLASS);
+        	values.remove(MAIL_IMAP_SOCKET_FACTORY_FALLBACK);
+        	values.remove(MAIL_IMAP_PORT);
+        	values.remove(MAIL_IMAP_SOCKET_FACTORY_PORT);
+        }
+        values.setProperty(MAIL_HOST, account.getHost());
+        Properties override = PropertiesUtil.getProperties(WEBMAIL_PROPERTIES, DEFAULT_PROPERTIES);
+        values.putAll(override);
+    	return values;
+    }
+    
 	/**
      * Connects the incoming mail server information specified by the MailAccount
      * class.  This method will return true if the connection has already made
@@ -112,32 +130,10 @@ public class AonServer {
 	 * @throws MessagingException 
      */
 	public void connect() throws MessagingException {
-        Properties mailProperties = System.getProperties();
-
-        // mailProperties.setProperty("mail.debug", "true");
-        // setup SSL connection factory
-        mailProperties.setProperty( "mail.mime.decodetext.strict", "false" );
-        if (account.isIncomingSsl()) {
-            mailProperties.setProperty("mail.imap.socketFactory.class",
-                    "javax.net.ssl.SSLSocketFactory");
-            mailProperties.setProperty("mail.imap.socketFactory.fallback",
-                    "false");
-            mailProperties.setProperty("mail.imap.port",
-                    String.valueOf(account.getIncomingPort()));
-            mailProperties.setProperty("mail.imap.socketFactory.port",
-                    String.valueOf(account.getIncomingPort()));
-        } else {
-            // otherwise log on using http, avoid using incomingSsl properties as
-            // it will botch the connection .
-            mailProperties.remove("mail.imap.socketFactory.class");
-            mailProperties.remove("mail.imap.socketFactory.fallback");
-            mailProperties.remove("mail.imap.port");
-            mailProperties.remove("mail.imap.socketFactory.port");
-        }
-        URLName url = new URLName(IMAP, account.getHost(), -1, "INBOX", account.getMailUsername(),account.getPasswordString());
-        session = Session.getInstance(mailProperties, null);
-        store = session.getStore(url);
-        store.connect();
+		LOGGER.info( "Connecting {}", account.getHost() );
+        session = Session.getInstance(properties);
+        store = session.getStore();
+        store.connect(account.getMailUsername(),account.getPasswordString());
         quotaAware = calculateQuotaAware();
     }
 	
@@ -146,14 +142,15 @@ public class AonServer {
      */
     public void disconnect() {
     	try {
-    		store.close();
+    		this.store.close();
+    		this.store = null;
     	} catch (MessagingException e) {
     		LOGGER.error("Messaging Exception on disconnect method",e);
     	}
     }
 
-    private void ensureConnection() throws MessagingException {
-        if (ensure_connection && (! isConnected())) {
+    public void ensureConnection() throws MessagingException {
+        if ( ! isConnected() ) {
         	connect();
         }
     }
@@ -221,19 +218,19 @@ public class AonServer {
         try {
             Transport transport;
             if (account.isOutgoingSsl()) {
-                transport = session.getTransport("smtps");
+                transport = session.getTransport(SMTPS);
             } else {
-                transport = session.getTransport("smtp");
+                transport = session.getTransport(SMTP);
             }
             if (account.isOutgoingVerification()) {
-            	session.getProperties().put("mail.smtp.auth", "true");
+            	session.getProperties().put(MAIL_SMTP_AUTH, "true");
                 transport.connect(
                 		account.getOutgoingHost(),
                 		account.getOutgoingPort(),
                 		account.getMailUsername(),
                 		account.getPasswordString());
             } else {
-            	session.getProperties().put("mail.smtp.auth", "false");
+            	session.getProperties().put(MAIL_SMTP_AUTH, "false");
                 transport.connect(
                 		account.getOutgoingHost(),
                 		account.getOutgoingPort(),
@@ -271,39 +268,39 @@ public class AonServer {
 
 	public void createBasicFolders() throws MessagingException{
 		if (!getRoot().getFolder(getSentFolderName()).exists()){
-			createAonFolder(null, getSentFolderName(), Folder.HOLDS_MESSAGES);
+			createAonFolder(null, getSentFolderName(), HOLDS_MESSAGES);
 		}
 		if (!getRoot().getFolder(getTrashFolderName()).exists()){
-			createAonFolder(null, getTrashFolderName(), Folder.HOLDS_MESSAGES);
+			createAonFolder(null, getTrashFolderName(), HOLDS_MESSAGES);
 		}
 		if (!getRoot().getFolder(getDraftFolderName()).exists()){
-			createAonFolder(null, getDraftFolderName(), Folder.HOLDS_MESSAGES);
+			createAonFolder(null, getDraftFolderName(), HOLDS_MESSAGES);
 		}
 		if ( account.isDefault() || (!StringUtils.isEmpty(account.getSpamFolder())) ) {
 			if (!getRoot().getFolder(getSpamFolderName()).exists()){
-				createAonFolder(null, getSpamFolderName(), Folder.HOLDS_MESSAGES);
+				createAonFolder(null, getSpamFolderName(), HOLDS_MESSAGES);
 			}
 		}
 	}
 	
 	public String getSentFolderName() {
-		return StringUtils.defaultIfEmpty(account.getSentFolder(), AonFolder.SENT_FOLDER_NAME);
+		return StringUtils.defaultIfEmpty(account.getSentFolder(), SENT_FOLDER_NAME);
 	}
 
 	public String getDraftFolderName() {
-		return StringUtils.defaultIfEmpty(account.getDraftFolder(), AonFolder.DRAFT_FOLDER_NAME);
+		return StringUtils.defaultIfEmpty(account.getDraftFolder(), DRAFT_FOLDER_NAME);
 	}
 	
 	public String getTrashFolderName() {
-		return StringUtils.defaultIfEmpty(account.getTrashFolder(), AonFolder.TRASH_FOLDER_NAME);
+		return StringUtils.defaultIfEmpty(account.getTrashFolder(), TRASH_FOLDER_NAME);
 	}
 
 	public String getSpamFolderName() {
-		return StringUtils.defaultIfEmpty(account.getSpamFolder(), AonFolder.SPAM_FOLDER_NAME);
+		return StringUtils.defaultIfEmpty(account.getSpamFolder(), SPAM_FOLDER_NAME);
 	}
 	
     public void importMessage( byte[] data, AonFolder destinationFolder ) throws MessagingException {
-    	destinationFolder.open(Folder.READ_WRITE);
+    	destinationFolder.open(READ_WRITE);
     	Folder folder = destinationFolder.getFolder();
     	folder.appendMessages(new Message[]{createMessage(data)});
     	destinationFolder.close(true);    	

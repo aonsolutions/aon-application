@@ -1,5 +1,12 @@
 package com.code.aon.webmail.bean;
 
+import static com.code.aon.webmail.bean.IMailConstants.DRAFT_FOLDER_NAME;
+import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
+import static com.code.aon.webmail.bean.IMailConstants.OTHER_FOLDER_NAME;
+import static com.code.aon.webmail.bean.IMailConstants.SENT_FOLDER_NAME;
+import static com.code.aon.webmail.bean.IMailConstants.SPAM_FOLDER_NAME;
+import static com.code.aon.webmail.bean.IMailConstants.TRASH_FOLDER_NAME;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,23 +26,6 @@ import com.code.aon.webmail.WebmailException;
 
 public class AonFolder extends AonMessageSortableList {
 
-    public static final String OTHER_FOLDER_NAME = "other";
-
-	// Draft folder
-    public static final String DRAFT_FOLDER_NAME = "Borrador";
-
-    // Trash folder
-    public static final String TRASH_FOLDER_NAME = "Papelera";
-
-    // Sent Items folder decloration
-    public static final String SENT_FOLDER_NAME = "Enviados";
-
-    // Sent Items folder decloration
-    public static final String INBOX_FOLDER_NAME = "INBOX";
-
-    // Spam folder decloration
-    public static final String SPAM_FOLDER_NAME = "spam";
-	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonFolder.class);
 	
 	private AonServer server;
@@ -122,7 +112,6 @@ public class AonFolder extends AonMessageSortableList {
 			return true;
 		} catch (MessagingException e) {
 			LOGGER.error("Error opening folder {} in mode {}: {}",folder.getName(),mode);
-			LOGGER.error("Error opening folder", e);
 		}
 		return false;
     }
@@ -132,7 +121,6 @@ public class AonFolder extends AonMessageSortableList {
 	    	folder.close(mode);
 		} catch (MessagingException e) {
 			LOGGER.error("Error closing folder {} in mode ",folder.getName(),mode);
-			LOGGER.error("Error closing folder", e);
 		}
 		return false;
     }
