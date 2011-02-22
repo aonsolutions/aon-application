@@ -15,6 +15,7 @@ import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.payroll.enumeration.SalaryTemplate;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
@@ -30,6 +31,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> contractModels;
 	private List<SelectItem> contractOptions;
 	private List<SelectItem> quoteGroups;
+	private List<SelectItem> salaryTemplates;
 	
 	private List<SelectItem> streetTypes;
 	
@@ -170,6 +172,21 @@ public class PayrollCollectionsController {
 			}
 		}
 		return quoteGroups;
+	}
+	
+	public List<SelectItem> getSalaryTemplates() {
+		if (salaryTemplates == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+			.getLocale();
+			salaryTemplates = new LinkedList<SelectItem>();
+			SalaryTemplate[] templates = SalaryTemplate.values();
+			for (SalaryTemplate t : templates) {
+				String name = t.getName(locale);
+				SelectItem item = new SelectItem(t, name);
+				salaryTemplates.add(item);
+			}
+		}
+		return salaryTemplates;
 	}
 	
 	

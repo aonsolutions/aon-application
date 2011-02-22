@@ -1,12 +1,15 @@
 package com.esferalia.aon.ui.payroll.controller;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,9 +30,11 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
@@ -156,6 +161,46 @@ public class SalaryController extends BasicController implements IPayrollConstan
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}
+	
+	
+	/**
+	 * Gets the attach as input stream.
+	 * 
+	 * @return the attach as input stream
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 * @throws IOException the IO exception
+	 */
+	public InputStream getAttachAsInputStream() throws IOException, ManagerBeanException{
+		RegistryAttachment attach = obtainCompanyLogo();
+		if(attach != null){
+			return new ByteArrayInputStream(attach.getData());
+		}
+		return null;
+	}
+	
+	/**
+	 * Obtains enterprise logo.
+	 * 
+	 * @return the registry attachment
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	@SuppressWarnings("unchecked")
+	public RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
+		Integer id = ((Salary)getTo()).getContract().getWorkPlace().getEnterprise().getId();
+		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String alias = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		criteria.addEqualExpression(alias, id);
+		String type = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
+		Iterator iter = registryAttachBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (RegistryAttachment)iter.next();
+		}
+		return null;
 	}
 
 }

@@ -33,32 +33,21 @@ public class EnterpriseActivity implements ITransferObject {
 	
 	private static final long serialVersionUID = 296257685693582905L;
 
+	private Integer id;
+	
+    private String description;
+
+    private Enterprise enterprise; 
+
+	private CNAE cnae; 
+	
+	private EnterpriseActivityType type;
+
+	private Set<EnterpriseCCC> cccs = new HashSet<EnterpriseCCC>();
+	
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	private Integer id;
-	
-	@Column(length = 32, nullable = false)
-    private String description;
-
-	@OneToOne
-    @JoinColumn(name="enterprise", nullable = false, updatable = false )
-    @ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_ENTERPRISE")
-    @Index(name = "IDX_ENTERPRICE_ACTIVITY_ENTERPRISE")    
-    private Enterprise enterprise; 
-
-	@ManyToOne
-    @JoinColumn(name="cnae", nullable = false, updatable = false )
-    @ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_CNAE")
-    @Index(name = "IDX_ENTERPRICE_ACTIVITY_CNAE")    
-    private CNAE cnae; 
-	
-	@Column( nullable = false )
-	private EnterpriseActivityType type;
-
-	@OneToMany(mappedBy = "activity", cascade={CascadeType.REMOVE})
-	private Set<EnterpriseCCC> cccs = new HashSet<EnterpriseCCC>();
-	
 	public Integer getId() {
 		return id;
 	}
@@ -67,6 +56,7 @@ public class EnterpriseActivity implements ITransferObject {
 		this.id = id;
 	}
 	
+	@Column(length = 32, nullable = false)
     public String getDescription() {
 		return description;
 	}
@@ -75,6 +65,10 @@ public class EnterpriseActivity implements ITransferObject {
 		this.description = description;
 	}
 
+	@OneToOne
+	@JoinColumn(name="enterprise", nullable = false, updatable = false )
+	@ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_ENTERPRISE")
+	@Index(name = "IDX_ENTERPRICE_ACTIVITY_ENTERPRISE")    
 	public Enterprise getEnterprise() {
 		return enterprise;
 	}
@@ -83,7 +77,11 @@ public class EnterpriseActivity implements ITransferObject {
 		this.enterprise = enterprise;
 	}
 
-	public CNAE getCnae() {
+	@ManyToOne
+    @JoinColumn(name="cnae", nullable = false, updatable = false )
+    @ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_CNAE")
+    @Index(name = "IDX_ENTERPRICE_ACTIVITY_CNAE")    
+    public CNAE getCnae() {
 		return cnae;
 	}
 
@@ -91,6 +89,7 @@ public class EnterpriseActivity implements ITransferObject {
 		this.cnae = cnae;
 	}
 	
+	@Column( nullable = false )
 	public EnterpriseActivityType getType() {
 		return type;
 	}
@@ -99,6 +98,7 @@ public class EnterpriseActivity implements ITransferObject {
 		this.type = type;
 	}
 
+	@OneToMany(mappedBy = "activity", cascade={CascadeType.REMOVE})
 	public Set<EnterpriseCCC> getCccs() {
 		return cccs;
 	}

@@ -105,7 +105,6 @@
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="calendar" action="calendar_search"
 									value="#{calendarBundle.aon_calendar_generic_menu}" >
-									<f:setPropertyActionListener target="#{calendar.sourceKey}" value="4" />
 									<aon:actionListener method="#{calendar.onEditSearch}" />
 									<aon:actionListener method="#{calendar.onInitialize}" />
 								</aon:commandLink>

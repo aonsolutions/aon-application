@@ -40,18 +40,17 @@
 						<f:setPropertyActionListener target="#{salaryExpense.showSalaryExpenseWindow}"
 							value="#{true}" />								
 					</aon:commandButton>
-					<aon:commandButton id="calendar"
+					<aon:htmlCommandLink id="calendarReport_list"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{calendarBundle.aon_calendar_calendar}"
-						action="calendar_form" 
-						styleClass="aon-finding-toolbar-item aon-icon-calendar">
-						<f:setPropertyActionListener target="#{calendar.sourceKey}" value="1" />
-						<f:setPropertyActionListener target="#{calendar.sourceId}" value="#{enterprise.to.registry.id}" />
-						<aon:actionListener method="#{calendar.onInitialize}" />						
-						<f:setPropertyActionListener
-							target="#{calendar.backAction}" value="enterprise_formTree" />						
-						<f:setPropertyActionListener
-							target="#{calendar.backActionListener}" value="calendar.onBack" />						
-					</aon:commandButton>	
+						rendered="#{enterprise.to.calendar.id!=null}"
+						action="#{report.onExecute}">
+						<aon:actionListener method="#{enterprise.onLoadCalendar}" />						
+						<aon:actionListener method="#{calendarPrint.onLoad}" />						
+						<f:param name="reportKey" value="calendarReport" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>	
+					
 					<c:if test="#{!aonConfiguration.bean.enterprise.standalone}">
 						<aon:commandButton id="back"
 							title="#{bundle.aon_key_cancel_accelerator}"
@@ -101,16 +100,21 @@
 					<aon:outputText value="#{bundle.aon_scope}" />
 					<aon:outputText value="#{enterprise.to.scope.description}" />
 
+<!--  
 					<c:if test="#{enterprise.to.agreement != null and enterprise.to.agreement.id != null}" >
 						<aon:outputText value="#{companyBundle.company_agreement}" />
 						<aon:outputText value="#{enterprise.to.agreement.description}" />
 					</c:if>
+-->
 				
 					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />				
 				
 					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" >
 						<ui:param name="controller" value="#{enterprise}" />
 					</ui:include>
+
+					<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
+					<aon:outputText value="#{enterprise.to.calendar.description}" />
 
 				</aon:panelGrid>
 	

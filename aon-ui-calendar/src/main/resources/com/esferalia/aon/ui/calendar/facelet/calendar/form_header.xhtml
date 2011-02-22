@@ -11,16 +11,16 @@
 	<aon:outputText 
 		value="#{companyBundle.company_enterprise}:" />
 	<aon:outputText 
-		value="#{calendar.enterprise.registry.fullName}" />
+		value="#{calendar.enterpriseName}" />
 	
 	<aon:outputText rendered="#{calendar.workPlaceSource or calendar.contractSource}"
 		value="#{companyBundle.company_workplace}:" />
 	<aon:outputText rendered="#{calendar.workPlaceSource or calendar.contractSource}"
-		value="#{calendar.workPlace.description}" />
+		value="#{calendar.workPlaceName}" />
 	
 	<aon:outputText rendered="#{calendar.contractSource}"
 		value="#{payrollBundle.payroll_contract}:" />
 	<aon:outputText rendered="#{calendar.contractSource}"
-		value="#{calendar.contract.person.fullName}" />
+		value="#{calendar.contractName}" />
 		
 </ui:composition>

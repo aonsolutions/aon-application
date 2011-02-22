@@ -96,7 +96,6 @@ public class CalendarFactory {
 		return getMonthList().get(Month.DECEMBER.ordinal());
 	}
 	
-	
 	public void buildCalendar(){
 		this.loadHolidays();
 		this.loadInheritDays();
@@ -110,7 +109,6 @@ public class CalendarFactory {
 	@SuppressWarnings("unchecked")
 	private void loadPeriodDays() {
 		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
-//		periodList = new LinkedList<CalPeriod>();
 		try {
 			List<ITransferObject> list = (List<ITransferObject>) FormUtil.getController(CALENDAR_PERIOD_CONTROLLER_NAME).getModel().getWrappedData();
 			CalPeriod period;
@@ -137,7 +135,6 @@ public class CalendarFactory {
 
 	private void loadInheritPeriodDays(){
 		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
-		
 		periodList = new LinkedList<CalPeriod>();
 		CalPeriod period;
 		for(ITransferObject to: controller.getInheritPeriods()){
@@ -156,40 +153,40 @@ public class CalendarFactory {
 				d++;
 			}
 		}
-		
 	}
 	
 	private void loadHolidays(){
 		dayList = new LinkedList<CalendarDay>();
 		CalendarHolidayDataController controller = (CalendarHolidayDataController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME);
-		for(String key: controller.getHolidays().keySet()){
-			CalendarDay day = new CalendarDay();
-			day.setDescription(key);
-			day.setDate(null);
-			dayList.add(day);
-			for(ITransferObject to: controller.getHolidays().get(key)){
-				HolidayDetail h = (HolidayDetail) to;
-				day = new CalendarDay();
-				day.setDescription(h.getDescription());
-				day.setDate(h.getDate());
-				day.setType(DayType.HOLIDAY);
+		if(controller.getHolidays()!=null){
+			for(String key: controller.getHolidays().keySet()){
+				CalendarDay day = new CalendarDay();
+				day.setDescription(key);
+				day.setDate(null);
 				dayList.add(day);
+				for(ITransferObject to: controller.getHolidays().get(key)){
+					HolidayDetail h = (HolidayDetail) to;
+					day = new CalendarDay();
+					day.setDescription(h.getDescription());
+					day.setDate(h.getDate());
+					day.setType(DayType.HOLIDAY);
+					dayList.add(day);
+				}
 			}
 		}
 	}
 	
 	private void loadInheritDays(){
-//		try {
-			CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
-//			IController controller = (IController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_CONTROLLER_NAME);
-//			List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(CALENDAR_CONTROLLER_NAME);
+		List<ITransferObject> list = controller.getInheritHolidays();
+		if(!list.isEmpty()){
 			CalendarDay day = new CalendarDay();
 			Locale locale = AonUtil.getCurrentLocale();
 			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.calendar.i18n.messages", locale);	
 			day.setDescription(bundle.getString("aon_enum_daytype_full_OTHER"));
 			day.setDate(null);
 			dayList.add(day);
-			for(ITransferObject to: controller.getInheritHolidays()){
+			for(ITransferObject to: list){
 				CalendarHoliday h = (CalendarHoliday) to;
 				day = new CalendarDay();
 				day.setDescription(h.getDescription());
@@ -199,9 +196,7 @@ public class CalendarFactory {
 				searchExistingDay(day);
 				dayList.add(day);
 			}
-//		} catch (ManagerBeanException e) {
-//			LOGGER.error(e.getMessage(), e);
-//		}
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -210,11 +205,6 @@ public class CalendarFactory {
 			IController controller = (IController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_CONTROLLER_NAME);
 			List<ITransferObject> list = (List<ITransferObject>) controller.getModel().getWrappedData();
 			CalendarDay day = new CalendarDay();
-//			Locale locale = AonUtil.getCurrentLocale();
-//			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.calendar.i18n.messages", locale);	
-//			day.setDescription(bundle.getString("aon_enum_daytype_full_OTHER"));
-//			day.setDate(null);
-//			dayList.add(day);
 			for(ITransferObject to: list){
 				CalendarHoliday h = (CalendarHoliday) to;
 				day = new CalendarDay();

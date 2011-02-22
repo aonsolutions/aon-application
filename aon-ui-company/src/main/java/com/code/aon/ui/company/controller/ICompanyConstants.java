@@ -78,6 +78,8 @@ public interface ICompanyConstants {
 	
 	String SALARY_CONTROLLER_NAME = "salary";	
 
+	String CALENDAR_CONTROLLER_NAME = "calendar";
+
 	// ************************************************************
 	// CONFIGURATION
 	// ************************************************************

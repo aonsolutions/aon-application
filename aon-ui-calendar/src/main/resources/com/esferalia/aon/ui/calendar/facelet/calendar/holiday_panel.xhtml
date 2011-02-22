@@ -8,10 +8,12 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panel  
-		header="#{calendarBundle.aon_calendar_extended_holidays}">
+	
+	<aon:panelCollapsible expanded="false" 
+		label="#{calendarBundle.aon_calendar_holiday}">
 		<c:forEach items="#{calendarHolidayData.holidayDataModels}" var="data">
-			<aon:panelCollapsible expanded="true" label="#{data.description}">
+			<aon:panelCollapsible expanded="false" label="#{data.description}"
+				styleClass="aon-width-250 aon-float-left aon-margin-right" >
 				<aon:dataTable value="#{data.model}" var="to"
 					columnClasses="
 					aon-editDataTable-dateColumn aon-width-80,
@@ -23,11 +25,13 @@
 						</aon:outputText>
 					</aon:column>
 					<aon:column>
-						<aon:outputText value="#{to.description}"/>
+						<aon:outputText value="#{to.description}">
+							<aon:abbreviateConverter maxWidth="18" />
+						</aon:outputText>
 					</aon:column>
 				</aon:dataTable>
 			</aon:panelCollapsible>
 		</c:forEach>
-	</aon:panel>
+	</aon:panelCollapsible>
 	
 </ui:composition>

@@ -458,7 +458,7 @@
 	<managed-bean>
 		<managed-bean-name>workplace</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.company.controller.WorkPlaceController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>

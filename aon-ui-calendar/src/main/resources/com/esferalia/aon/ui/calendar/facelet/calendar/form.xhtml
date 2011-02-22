@@ -16,7 +16,10 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{calendarBundle.aon_calendar_menu}" />
 				<ui:param name="controller" value="#{calendar}" />
+<!--  
 				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+-->
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="calendarReport_list"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
@@ -31,73 +34,22 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<h:panelGrid columns="3"
+				<aon:panelGrid columns="2" style="width:100%;" 
 					columnClasses="
-					aon-vertical-align-top, 
-					aon-vertical-align-top,
-					aon-vertical-align-top">
+					aon-panelGrid-even aon-noborder aon-vertical-align-top, 
+					aon-panelGrid-even aon-noborder aon-vertical-align-top">
 				
 					<aon:div>
-						<aon:panel rendered="#{!calendar.missingSource}">
-							<aon:panelGrid columns="2" id="calendar_header" style="width:100%;"
-								columnClasses="aon-panelGrid-even aon-noborder aon-bold,
-								aon-panelGrid-even aon-noborder">
-								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/form_header.xhtml" />
-							</aon:panelGrid>
-						</aon:panel>
-						
-						<aon:panel rendered="#{calendar.new}"> 
-						<aon:panelGrid columns="2" id="calendar_data_new"
-							columnClasses="aon-panelGrid-even aon-noborder aon-bold,
-								aon-panelGrid-even aon-noborder">
-
-							<aon:div>
-								<aon:outputText value="#{calendarBundle.aon_calendar_use_existing}"
-									style="padding-right:5px;" 
-									rendered="#{calendar.new or calendar.usingExisting}" />
-								<aon:selectBooleanCheckbox value="#{calendar.usingExisting}"
-									rendered="#{calendar.new or calendar.usingExisting}">
-									<a4j:support event="onclick" reRender="calendarForm" >
-										<aon:actionListener method="#{calendar.onChangeUsingExisting}" />
-									</a4j:support>
-								</aon:selectBooleanCheckbox>
-							</aon:div>
-							<aon:div styleClass="aon-lookup" 
-								rendered="#{calendar.usingExisting}">
-								<aon:lookupInputText id="Calendar_masterCalendar_id-new"
-									disabled="#{!calendar.usingExisting}"
-									value="#{calendar.masterCalendar.id}" size="5"
-									lookup="#{calendarLookup}" 
-									lookupChangeListener="#{calendar.onCalendarLookupChanged}"
-									reRender="Calendar_masterCalendar_name-new,calendar_data,calendar_data_new" />
-								<aon:lookupButton
-									disabled="#{!calendar.usingExisting}"
-									windowTitle="#{calendarBundle.aon_calendar_calendar_select}"
-									minHeight="460" minWidth="650" 
-									lookup="#{calendarLookup}"
-									lookupChangeListener="#{calendar.onCalendarLookupChanged}"
-									selectReRender="Calendar_masterCalendar_id-new,Calendar_masterCalendar_name-new,calendar_data,calendar_data_new"
-									actionType="search"
-									property="#{calendar.masterCalendar}">
-								</aon:lookupButton>
-								<aon:inputText id="Calendar_masterCalendar_name-new"
-									value="#{calendar.masterCalendar.description}"
-									disabled="true" size="60" />
-							</aon:div>
-							
-						</aon:panelGrid>
-						</aon:panel>
 
 						<aon:panelGrid columns="2" id="calendar_data" style="width:100%;"
-							rendered="#{!(calendar.new and calendar.usingExisting)}">
+							rendered="#{!calendar.new}">
 							
 							<aon:outputLabel for="Calendar_masterCalendar_id"
-								value="#{calendarBundle.aon_calendar_inherit_from}" />
-							<aon:div>
-							<aon:div styleClass="aon-lookup" 
-								rendered="#{calendar.editable}">
+								value="#{calendarBundle.aon_calendar_base_calendar}" />
+
+							<aon:div styleClass="aon-lookup">
 								<aon:lookupInputText id="Calendar_masterCalendar_id"
-									value="#{calendar.masterCalendar.id}" size="5"
+									value="#{calendar.to.calendar.id}" size="5"
 									lookup="#{calendarLookup}" 
 									lookupChangeListener="#{calendar.onCalendarLookupChanged}"
 									reRender="Calendar_masterCalendar_name,calendar_data" />
@@ -108,14 +60,11 @@
 									lookupChangeListener="#{calendar.onCalendarLookupChanged}"
 									selectReRender="Calendar_masterCalendar_id,Calendar_masterCalendar_name,calendar_data"
 									actionType="search"
-									property="#{calendar.masterCalendar}">
+									property="#{calendar.to.calendar}">
 								</aon:lookupButton>
 								<aon:inputText id="Calendar_masterCalendar_name"
-									value="#{calendar.masterCalendar.description}"
+									value="#{calendar.to.calendar.description}"
 									disabled="true" size="60" />
-							</aon:div>
-							<aon:outputText value="#{calendar.to.calendar.description}"
-								rendered="#{!calendar.editable}" />
 							</aon:div>
 								
 							<aon:outputLabel rendered="#{!calendar.new}"
@@ -134,24 +83,16 @@
 							<aon:outputLabel for="Calendar_description"
 								value="#{bundle.aon_description}" />
 							<aon:inputText id="Calendar_description" size="40" maxlength="32"
-								rendered="#{calendar.editable}"
-								value="#{calendar.to.description}"  />
-							<aon:outputText id="Calendar_description_edit" size="40" 
-								rendered="#{!calendar.editable}"
 								value="#{calendar.to.description}"  />
 							
 							<aon:outputLabel for="Calendar_anualHours"
 								value="#{calendarBundle.aon_calendar_anual_hours}" />
 							<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
-								rendered="#{calendar.editable}"
-								value="#{calendar.to.anualHours}" />
-							<aon:outputText id="Calendar_anualHours_edit" size="10" 
-								rendered="#{!calendar.editable}"
 								value="#{calendar.to.anualHours}" />
 								
 							<aon:outputLabel for="Holiday_id"
 								value="#{calendarBundle.aon_calendar_holiday}" />
-							<aon:div styleClass="aon-lookup" rendered="#{calendar.editable}">
+							<aon:div styleClass="aon-lookup" >
 								<aon:lookupInputText id="Holiday_id"
 									value="#{calendar.to.holiday.id}" size="5"
 									lookup="#{holidayLookup}" reRender="Holiday_name" />
@@ -166,65 +107,38 @@
 									value="#{calendar.to.holiday.description}"
 									disabled="true" size="60" />
 							</aon:div>
-							<aon:outputText id="Holiday_name_edit" size="60" 
-								rendered="#{!calendar.editable}"
-								value="#{calendar.to.holiday.description}" />
 							
 							<aon:outputLabel for="Calendar_comments"
 								value="#{bundle.aon_comment}" />
 							<aon:inputTextarea id="Calendar_comments"
-								disabled="#{!calendar.editable}"
-								value="#{calendar.to.comments}" cols="60" rows="5">
+								value="#{calendar.to.comments}" cols="77" rows="5">
 								<f:validateLength maximum="1024" />
 							</aon:inputTextarea>
 						</aon:panelGrid>
 					</aon:div>
 					
-					<aon:div id="schedule" styleClass="aon-scroll-area"
-						rendered="#{!(calendar.new and calendar.usingExisting)}">
+					<aon:div id="schedule" 
+						rendered="#{!(calendar.new)}">
 						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/schedule_panel.xhtml" />
 					</aon:div>
-					
-					<aon:div styleClass="aon-scroll-area">
-						<c:if test="#{!calendar.new}" >
-							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/holiday_panel.xhtml" />
-						</c:if>
-					</aon:div>
 
-				</h:panelGrid>
+				</aon:panelGrid>
 				
 				<c:if test="#{!calendar.new}">
-					<aon:div>
 						<aon:panelTabSet id="tabPanel">
-							<aon:panelTab label="#{calendarBundle.aon_calendar_holidays}">
-<!--  
--->
+							<aon:panelTab label="#{calendarBundle.aon_calendar_days}">
+								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/holiday_panel.xhtml" />
 								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/inheritHolidays.xhtml" />
-								<c:if test="#{calendar.editable}">
-									<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarHoliday/tab_grid.xhtml" />
-								</c:if>
-								<c:if test="#{!calendar.editable}">
-									<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarHoliday/tab_list.xhtml" />
-								</c:if>
+								<aon:panel 
+									header="#{calendarBundle.aon_calendar_days}">
+										<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarHoliday/tab_grid.xhtml" />
+								</aon:panel>
 							</aon:panelTab>
 							<aon:panelTab label="#{calendarBundle.aon_calendar_periods}">
-<!--  
--->
 								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/inheritPeriods.xhtml" />
-								<c:if test="#{calendar.editable}">
 									<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarPeriod/tab_grid.xhtml" />
-								</c:if>
-								<c:if test="#{!calendar.editable}">
-									<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarPeriod/tab_list.xhtml" />
-								</c:if>
-							</aon:panelTab>
-							<aon:panelTab label="#{calendarBundle.aon_calendar_inherited}"
-								rendered="#{calendar.masterCalendar!=null and calendar.masterCalendar.id!=null}">
-								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/inheritHolidays.xhtml" />
-								<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/inheritPeriods.xhtml" />
 							</aon:panelTab>
 						</aon:panelTabSet>
-					</aon:div>
 				</c:if>
 			</aon:div>
 		</aon:form>

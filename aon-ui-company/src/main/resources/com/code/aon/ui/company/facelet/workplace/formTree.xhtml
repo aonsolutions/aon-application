@@ -15,20 +15,16 @@
 				<ui:param name="toolbarTitle" value="#{companyBundle.company_workplace}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="calendar"
+					<aon:htmlCommandLink id="calendarReport_list"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{calendarBundle.aon_calendar_calendar}"
-						action="calendar_form" 
-						styleClass="aon-finding-toolbar-item aon-icon-calendar">
-						<f:setPropertyActionListener target="#{calendar.sourceKey}"
-							value="2" />
-						<f:setPropertyActionListener target="#{calendar.sourceId}"
-							value="#{enterpriseTree.workPlace.id}" />
-						<aon:actionListener method="#{calendar.onInitialize}" />
-						<f:setPropertyActionListener
-							target="#{calendar.backAction}" value="enterpriseWorkplace_formTree" />						
-						<f:setPropertyActionListener
-							target="#{calendar.backActionListener}" value="calendar.onBack" />												
-					</aon:commandButton>	
+						rendered="#{enterpriseTree.workPlace.calendar.id!=null}"
+						action="#{report.onExecute}">
+						<aon:actionListener method="#{enterpriseTree.onLoadWorkPlaceCalendar}" />						
+						<aon:actionListener method="#{calendarPrint.onLoad}" />						
+						<f:param name="reportKey" value="calendarReport" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>	
 				</ui:define>				
 			</ui:decorate>		
 
@@ -56,6 +52,9 @@
 
 					<aon:outputText value="#{companyBundle.company_workplace_economic_agreement}" />
 					<aon:outputText value="#{enterpriseTree.workPlace.economicAgreement}" />
+					
+					<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
+					<aon:outputText value="#{enterpriseTree.workPlace.calendar.description}" />
 
 				</aon:panelGrid>
 

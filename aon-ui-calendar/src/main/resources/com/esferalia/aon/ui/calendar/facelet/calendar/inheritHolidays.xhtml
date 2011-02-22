@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelCollapsible expanded="false" 
-		label="#{calendarBundle.aon_calendar_inherit_holidays}&#160;#{calendar.masterCalendar.description}"
+		label="#{calendarBundle.aon_calendar_days_of}&#160;#{calendar.masterCalendar.description}"
 		rendered="#{calendar.to.calendar!=null and calendar.inheritHolidaysModel.rowCount>0}">
 		<aon:dataTable value="#{calendar.inheritHolidaysModel}" var="to"
 			columnClasses="aon-editDataTable-date aon-width-100, 
@@ -48,35 +48,6 @@
 	 				
 	 			</h:panelGrid>
 	 		</aon:column>
-<!--  
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.date}" />
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_day_type}" />
-				</f:facet>
-				<aon:outputText value="#{to.dayType}" />
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_hours}" />
-				</f:facet>
-				<aon:outputText value="#{to.hours}" />
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.description}" />
-			</aon:column>
--->
 		</aon:dataTable>
 	</aon:panelCollapsible>
 

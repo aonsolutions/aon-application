@@ -35,6 +35,7 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class EnterpriseTree implements ICompanyConstants {
 
@@ -185,7 +186,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		return selected;
 	}	
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public Boolean adviseNodeOpened(UITree tree) {
 		ListRowKey treeRowKey = (ListRowKey) tree.getRowKey();
         if (treeRowKey == null || treeRowKey.depth() <= 1) {
@@ -268,5 +269,16 @@ public class EnterpriseTree implements ICompanyConstants {
 	public void setState(DataComponentState state) {
 		this.state = state;
 	}
+	
+	public void onLoadWorkPlaceCalendar( ActionEvent event ) {
+		// TODO implementar la busqueda del calendario. si la entidad no tiene calendario, 
+		// buscar el calendario en sus entidades superiores
+		WorkPlace wp = getWorkPlace();
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICompanyConstants.CALENDAR_CONTROLLER_NAME);
+		controller.setEnterpriseName(wp.getEnterprise().getRegistry().getFullName());
+		controller.setWorkPlaceName(wp.getDescription());
+		controller.setCalendarId(wp.getCalendar().getId());
+		controller.onInitialize(event);
+	}	
 	
 }

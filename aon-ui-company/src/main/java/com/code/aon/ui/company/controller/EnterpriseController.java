@@ -40,6 +40,8 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.registry.controller.RegistryController;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class EnterpriseController extends RegistryController implements ICompanyConstants {
 	
@@ -331,11 +333,17 @@ public class EnterpriseController extends RegistryController implements ICompany
 	}
 
 	public void onAgreementChanged( LookupChangeEvent event ) {
-		Agreement a = null;
-		if ( event.getNewValue() != null ) {
-			a = ((Agreement) event.getNewValue());
-		}
-		getEnterprise().setAgreement(a);
+		// TODO a la espera del company-payroll-bridge
+	}	
+	
+	public void onLoadCalendar( ActionEvent event ) {
+		// TODO implementar la busqueda del calendario. si la entidad no tiene calendario, 
+		// buscar el calendario en sus entidades superiores: contract -> workplace -> enterprise -> agreement
+		Enterprise e =(Enterprise)getTo();
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICompanyConstants.CALENDAR_CONTROLLER_NAME);
+		controller.setEnterpriseName(e.getRegistry().getFullName());
+		controller.setCalendarId(e.getCalendar().getId());
+		controller.onInitialize(event);
 	}	
 	
 }

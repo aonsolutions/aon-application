@@ -65,18 +65,16 @@ public class CalendarHolidayDataController {
 			criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
 			criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
 			list = bean.getList(criteria);
-			if(!list.isEmpty()){
+			holidays.put(holiday.getDescription(), list);
+			holiday = holiday.getHoliday();
+			while(holiday!=null && holiday.getId()!=null){
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
+				criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
+				criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
+				list = bean.getList(criteria);
 				holidays.put(holiday.getDescription(), list);
 				holiday = holiday.getHoliday();
-				while(holiday!=null && holiday.getId()!=null){
-					criteria = new Criteria();
-					criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
-					criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
-					criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
-					list = bean.getList(criteria);
-					holidays.put(holiday.getDescription(), list);
-					holiday = holiday.getHoliday();
-				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);

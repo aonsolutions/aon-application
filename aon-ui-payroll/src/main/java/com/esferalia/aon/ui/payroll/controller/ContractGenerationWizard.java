@@ -17,7 +17,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -333,12 +332,13 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	
 	public List<SelectItem> getAgreements(){
 		List<SelectItem> agreements = null;
-		if(getEnterprise().getAgreement()!=null && getEnterprise().getAgreement().getId()!=null){
-			agreements = new LinkedList<SelectItem>();
-			String name = getEnterprise().getAgreement().getDescription();
-			SelectItem item = new SelectItem(getEnterprise().getAgreement(), name);
-			agreements.add(item);			
-		}
+		// TODO a la espera del company-payroll-bridge
+//		if(getEnterprise().getAgreement()!=null && getEnterprise().getAgreement().getId()!=null){
+//			agreements = new LinkedList<SelectItem>();
+//			String name = getEnterprise().getAgreement().getDescription();
+//			SelectItem item = new SelectItem(getEnterprise().getAgreement(), name);
+//			agreements.add(item);			
+//		}
 		return agreements;
 	}
 	public List<SelectItem> getAgreementLevels(){
@@ -471,7 +471,8 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		EnterpriseController enterpriseC = (EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER);
 		enterpriseC.onSelect(event);
 		setEnterprise((Enterprise) enterpriseC.getTo());
-		setAgreement(getEnterprise().getAgreement());
+		// TODO a la espera del company-payroll-bridge
+//		setAgreement(getEnterprise().getAgreement());
 		if(enterpriseC.getCcc()==null){
 			String msg = "La empresa no dispone de ninguna cuenta de cotizacion";
 			AonUtil.addErrorMessage(msg);
