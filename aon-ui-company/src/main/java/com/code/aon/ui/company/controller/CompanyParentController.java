@@ -1,6 +1,5 @@
 package com.code.aon.ui.company.controller;
 
-import static com.code.aon.bridge.session.LoggedUser.LOGGED_USER;
 import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
 import static com.code.aon.ldap.ILdapConstants.DOCUMENT_MANAGEMENT_ATTRIBUTE;
 
@@ -18,7 +17,7 @@ import javax.naming.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.LoggedUser;
+import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -641,8 +640,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 
 	public boolean obtainDocumentManagement() throws ManagerBeanException {
-		LoggedUser _loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER);
-		String domain = _loggedUser.getPrincipal().getDomain();
+    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+    	String domain = resolver.getDomain();
 		Name domainDN = NameResolver.getDomainDN(domain);
 		BasicLdap ldap = new BasicLdap();
 		Entry entry = ldap.get(domainDN, DOMAIN, DOCUMENT_MANAGEMENT_ATTRIBUTE);
