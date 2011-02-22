@@ -11,21 +11,15 @@
 			<aon:outputLabel for="RegistryAddress_alias" value="#{bundle.aon_alias}"/>
 			<aon:inputText id="RegistryAddress_alias#{sufix}"	value="#{controller.to.alias}" size="18" maxlength="15" styleClass="aon-margin-left aon-form-input-text"/>
 
-<!-- 
 			<aon:outputLabel for="RegistryAddress_streetType" value="#{registryBundle.registry_street_type}" styleClass="aon-italic"/>
--->
 			<aon:outputLabel for="RegistryAddress_streetType" value="#{registryBundle.registry_address}" styleClass="aon-italic"/>
 			<aon:div>
-<!-- 
 				<aon:selectOneMenu id="RegistryAddress_streetType#{sufix}"	value="#{controller.to.streetType}" styleClass="aon-margin-left aon-form-input-text">
 					<f:selectItems value="#{registryCollections.streetTypes}" />
 				</aon:selectOneMenu>
--->
 				<aon:inputText id="RegistryAddress_address#{sufix}"  value="#{controller.to.address}" required="true" size="40" styleClass="aon-margin-left aon-form-input-text"/>
-<!-- 
 				<aon:outputLabel for="RegistryAddress_number" value="#{bundle.aon_number}" styleClass="aon-italic aon-margin-left"/>
 				<aon:inputText id="RegistryAddress_number#{sufix}"	value="#{controller.to.number}" size="10" maxlength="5" styleClass="aon-margin-left aon-form-input-text"/>
--->
 			</aon:div>
 			
 			<aon:outputText value="#{registryBundle.registry_address_detail}" styleClass="aon-italic"/>
