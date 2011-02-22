@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 6.0.1
+# Version: 6.0.0
 # Created by: girazu
-# Creation Date: 22/02/2011 19:24
+# Creation Date: 22/02/2011 19:20
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -109,12 +109,12 @@ CREATE TABLE `agreement` (
 CREATE TABLE `registry` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Persona o Empresa',
   `document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento de la Persona o Empresa',
-  `document_type` tinyint(2) default '0' COMMENT 'Tipo de documento (NIF, CIF...)',
-  `document_country` varchar(2) collate latin1_spanish_ci default 'ES' COMMENT 'Pais del documento',
+  `document_type` tinyint(2) default NULL COMMENT 'Tipo de documento (NIF, CIF...)',
+  `document_country` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Pais del documento',
   `name` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre de la Persona o Empresa',
   `alias` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Alias de la Persona o Empresa',
   `type` tinyint(2) default NULL COMMENT 'Tipo (Persona o Empresa)',
-  `nationality` varchar(2) collate latin1_spanish_ci default 'ES' COMMENT 'Nacionalidad',
+  `nationality` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Nacionalidad',
   PRIMARY KEY  (`id`),
   KEY `idx_rgty_name` (`name`),
   KEY `idx_rgty_document` (`document`)
@@ -2123,16 +2123,14 @@ CREATE TABLE `contract_leave` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Baja',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
+  `relapse` tinyint(1) default '0' COMMENT 'Recaida',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   `daily_cgc_base` double(15,3) default NULL COMMENT 'Base de cotizacion por contingencias comunes',
   `daily_cgp_base` double(15,3) default NULL COMMENT 'Base de cotizacion por contingencias profesionales',
-  `parent` int(4) default NULL COMMENT 'Baja origen, si es recaida',
   PRIMARY KEY  (`id`),
   KEY `IDX_LEAVE_CONTRACT` (`contract`),
-  KEY `IDX_CONTRACT_LEAVE_CONTRACT_LEAVE` (`parent`),
-  CONSTRAINT `FK_CONTRACT_LEAVE_CONTRACT_LEAVE` FOREIGN KEY (`parent`) REFERENCES `contract_leave` (`id`),
   CONSTRAINT `FK_LEAVE_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bajas';
 
@@ -5033,7 +5031,7 @@ CREATE TABLE `web_info_style` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Estilos a utilizar en las plantillas para generar ficha web';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('6.0.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('6.0.0');
 
 COMMIT;
 
