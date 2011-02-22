@@ -968,58 +968,52 @@ public interface ICommercialAlias {
 	String  TARGET_REGISTRY_NAME = TARGET_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Target_registry_surname
-	* Hibernate value: Target.registry.surname
-	*/
-	String  TARGET_REGISTRY_SURNAME = TARGET_ENTRY.getAliasNames()[3];
-
-	/** 
 	* Alias value: Target_registry_alias
 	* Hibernate value: Target.registry.alias
 	*/
-	String  TARGET_REGISTRY_ALIAS = TARGET_ENTRY.getAliasNames()[4];
+	String  TARGET_REGISTRY_ALIAS = TARGET_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Target_registry_document
 	* Hibernate value: Target.registry.document
 	*/
-	String  TARGET_REGISTRY_DOCUMENT = TARGET_ENTRY.getAliasNames()[5];
+	String  TARGET_REGISTRY_DOCUMENT = TARGET_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Target_tariff_id
 	* Hibernate value: Target.tariff.id
 	*/
-	String  TARGET_TARIFF_ID = TARGET_ENTRY.getAliasNames()[6];
+	String  TARGET_TARIFF_ID = TARGET_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Target_advertising
 	* Hibernate value: Target.advertising
 	*/
-	String  TARGET_ADVERTISING = TARGET_ENTRY.getAliasNames()[7];
+	String  TARGET_ADVERTISING = TARGET_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Target_surcharge
 	* Hibernate value: Target.surcharge
 	*/
-	String  TARGET_SURCHARGE = TARGET_ENTRY.getAliasNames()[8];
+	String  TARGET_SURCHARGE = TARGET_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Target_withholding
 	* Hibernate value: Target.withholding
 	*/
-	String  TARGET_WITHHOLDING = TARGET_ENTRY.getAliasNames()[9];
+	String  TARGET_WITHHOLDING = TARGET_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Target_transaction
 	* Hibernate value: Target.transaction
 	*/
-	String  TARGET_TRANSACTION = TARGET_ENTRY.getAliasNames()[10];
+	String  TARGET_TRANSACTION = TARGET_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Target_status
 	* Hibernate value: Target.status
 	*/
-	String  TARGET_STATUS = TARGET_ENTRY.getAliasNames()[11];
+	String  TARGET_STATUS = TARGET_ENTRY.getAliasNames()[10];
 
 
 
@@ -1127,64 +1121,58 @@ public interface ICommercialAlias {
 	String  TARGET_SUPPLIER_SUPPLIER_REGISTRY_NAME = TARGET_SUPPLIER_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: TargetSupplier_supplier_registry_surname
-	* Hibernate value: TargetSupplier.supplier.registry.surname
-	*/
-	String  TARGET_SUPPLIER_SUPPLIER_REGISTRY_SURNAME = TARGET_SUPPLIER_ENTRY.getAliasNames()[4];
-
-	/** 
 	* Alias value: TargetSupplier_targetExternalCode
 	* Hibernate value: TargetSupplier.targetExternalCode
 	*/
-	String  TARGET_SUPPLIER_TARGET_EXTERNAL_CODE = TARGET_SUPPLIER_ENTRY.getAliasNames()[5];
+	String  TARGET_SUPPLIER_TARGET_EXTERNAL_CODE = TARGET_SUPPLIER_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: TargetSupplier_tariff_id
 	* Hibernate value: TargetSupplier.tariff.id
 	*/
-	String  TARGET_SUPPLIER_TARIFF_ID = TARGET_SUPPLIER_ENTRY.getAliasNames()[6];
+	String  TARGET_SUPPLIER_TARIFF_ID = TARGET_SUPPLIER_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: TargetSupplier_payMethod_id
 	* Hibernate value: TargetSupplier.payMethod.id
 	*/
-	String  TARGET_SUPPLIER_PAY_METHOD_ID = TARGET_SUPPLIER_ENTRY.getAliasNames()[7];
+	String  TARGET_SUPPLIER_PAY_METHOD_ID = TARGET_SUPPLIER_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: TargetSupplier_numberOfPayments
 	* Hibernate value: TargetSupplier.numberOfPayments
 	*/
-	String  TARGET_SUPPLIER_NUMBER_OF_PAYMENTS = TARGET_SUPPLIER_ENTRY.getAliasNames()[8];
+	String  TARGET_SUPPLIER_NUMBER_OF_PAYMENTS = TARGET_SUPPLIER_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: TargetSupplier_daysToFirstPayment
 	* Hibernate value: TargetSupplier.daysToFirstPayment
 	*/
-	String  TARGET_SUPPLIER_DAYS_TO_FIRST_PAYMENT = TARGET_SUPPLIER_ENTRY.getAliasNames()[9];
+	String  TARGET_SUPPLIER_DAYS_TO_FIRST_PAYMENT = TARGET_SUPPLIER_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: TargetSupplier_daysBetweenPayments
 	* Hibernate value: TargetSupplier.daysBetweenPayments
 	*/
-	String  TARGET_SUPPLIER_DAYS_BETWEEN_PAYMENTS = TARGET_SUPPLIER_ENTRY.getAliasNames()[10];
+	String  TARGET_SUPPLIER_DAYS_BETWEEN_PAYMENTS = TARGET_SUPPLIER_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: TargetSupplier_paymentDays
 	* Hibernate value: TargetSupplier.paymentDays
 	*/
-	String  TARGET_SUPPLIER_PAYMENT_DAYS = TARGET_SUPPLIER_ENTRY.getAliasNames()[11];
+	String  TARGET_SUPPLIER_PAYMENT_DAYS = TARGET_SUPPLIER_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: TargetSupplier_bank_id
 	* Hibernate value: TargetSupplier.bank.id
 	*/
-	String  TARGET_SUPPLIER_BANK_ID = TARGET_SUPPLIER_ENTRY.getAliasNames()[12];
+	String  TARGET_SUPPLIER_BANK_ID = TARGET_SUPPLIER_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: TargetSupplier_bankAccount
 	* Hibernate value: TargetSupplier.bankAccount
 	*/
-	String  TARGET_SUPPLIER_BANK_ACCOUNT = TARGET_SUPPLIER_ENTRY.getAliasNames()[13];
+	String  TARGET_SUPPLIER_BANK_ACCOUNT = TARGET_SUPPLIER_ENTRY.getAliasNames()[12];
 
 
 }

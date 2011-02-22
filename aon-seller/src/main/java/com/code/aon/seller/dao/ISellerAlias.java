@@ -47,22 +47,16 @@ public interface ISellerAlias {
 	String  SELLER_REGISTRY_NAME = SELLER_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: Seller_registry_surname
-	* Hibernate value: Seller.registry.surname
-	*/
-	String  SELLER_REGISTRY_SURNAME = SELLER_ENTRY.getAliasNames()[5];
-
-	/** 
 	* Alias value: Seller_registry_alias
 	* Hibernate value: Seller.registry.alias
 	*/
-	String  SELLER_REGISTRY_ALIAS = SELLER_ENTRY.getAliasNames()[6];
+	String  SELLER_REGISTRY_ALIAS = SELLER_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Seller_registry_document
 	* Hibernate value: Seller.registry.document
 	*/
-	String  SELLER_REGISTRY_DOCUMENT = SELLER_ENTRY.getAliasNames()[7];
+	String  SELLER_REGISTRY_DOCUMENT = SELLER_ENTRY.getAliasNames()[6];
 
 
 }

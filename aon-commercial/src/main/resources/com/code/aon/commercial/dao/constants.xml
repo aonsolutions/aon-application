@@ -9,12 +9,12 @@
 		<hibernate names="amount,commission,id,offerDetail.id,offerDetail.item.id,offerDetail.item.product.type,offerDetail.description,offerDetail.status,offerDetail.offer.id,offerDetail.offer.issueDate,offerDetail.offer.number,offerDetail.offer.scope.id,offerDetail.offer.securityLevel,offerDetail.offer.seller.id,offerDetail.offer.series,offerDetail.offer.status,offerDetail.offer.target.id,offerDetail.offer.supplier.id,offerDetail.offer.type,offerDetail.offer.signed,offerDetail.offer.workPlace.id,payDate,status"/>
 	</bean>
 	<bean class="com.code.aon.commercial.Target" sqlName="target">
-		<alias names="id,registry_id,registry_name,registry_surname,registry_alias,registry_document,tariff_id,advertising,surcharge,withholding,transaction,status"/>
-		<hibernate names="id,registry.id,registry.name,registry.surname,registry.alias,registry.document,tariff.id,advertising,surcharge,withholding,transaction,status"/>
+		<alias names="id,registry_id,registry_name,registry_alias,registry_document,tariff_id,advertising,surcharge,withholding,transaction,status"/>
+		<hibernate names="id,registry.id,registry.name,registry.alias,registry.document,tariff.id,advertising,surcharge,withholding,transaction,status"/>
 	</bean>	
 	<bean class="com.code.aon.commercial.TargetSupplier" sqlName="target_supplier">
-		<alias names="id,target_id,supplier_id,supplier_registry_name,supplier_registry_surname,targetExternalCode,tariff_id,payMethod_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank_id,bankAccount"/>
-		<hibernate names="id,target.id,supplier.id,supplier.registry.name,supplier.registry.surname,targetExternalCode,tariff.id,payMethod.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank.id,bankAccount"/>
+		<alias names="id,target_id,supplier_id,supplier_registry_name,targetExternalCode,tariff_id,payMethod_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank_id,bankAccount"/>
+		<hibernate names="id,target.id,supplier.id,supplier.registry.name,targetExternalCode,tariff.id,payMethod.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank.id,bankAccount"/>
 	</bean>
 	<bean class="com.code.aon.commercial.CommissionTypeCommission" sqlName="commission_type_commission">
 		<alias names="id,commissionType_id,commission_id,commission_name,commission_startDate,commission_endDate"/>

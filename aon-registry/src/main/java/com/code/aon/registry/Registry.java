@@ -201,7 +201,6 @@ public class Registry implements ITransferObject {
 
     @Transient
     public String getFullName() {
-//    	return ((StringUtils.isEmpty(getSurname())) ? "" : getSurname() + ", ") + ((StringUtils.isEmpty(getName())) ? "" : getName());
     	return (StringUtils.isEmpty(getName())) ? "" : getName();
     }
 

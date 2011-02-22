@@ -343,100 +343,94 @@ public interface IFinanceAlias {
 	String  CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME = CUSTOMER_FEE_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: CustomerFee_customer_registry_surname
-	* Hibernate value: CustomerFee.customer.registry.surname
-	*/
-	String  CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME = CUSTOMER_FEE_ENTRY.getAliasNames()[3];
-
-	/** 
 	* Alias value: CustomerFee_customer_status
 	* Hibernate value: CustomerFee.customer.status
 	*/
-	String  CUSTOMER_FEE_CUSTOMER_STATUS = CUSTOMER_FEE_ENTRY.getAliasNames()[4];
+	String  CUSTOMER_FEE_CUSTOMER_STATUS = CUSTOMER_FEE_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: CustomerFee_customer_scope_id
 	* Hibernate value: CustomerFee.customer.scope.id
 	*/
-	String  CUSTOMER_FEE_CUSTOMER_SCOPE_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[5];
+	String  CUSTOMER_FEE_CUSTOMER_SCOPE_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: CustomerFee_line
 	* Hibernate value: CustomerFee.line
 	*/
-	String  CUSTOMER_FEE_LINE = CUSTOMER_FEE_ENTRY.getAliasNames()[6];
+	String  CUSTOMER_FEE_LINE = CUSTOMER_FEE_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: CustomerFee_item_id
 	* Hibernate value: CustomerFee.item.id
 	*/
-	String  CUSTOMER_FEE_ITEM_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[7];
+	String  CUSTOMER_FEE_ITEM_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: CustomerFee_item_product_category_id
 	* Hibernate value: CustomerFee.item.product.category.id
 	*/
-	String  CUSTOMER_FEE_ITEM_PRODUCT_CATEGORY_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[8];
+	String  CUSTOMER_FEE_ITEM_PRODUCT_CATEGORY_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: CustomerFee_description
 	* Hibernate value: CustomerFee.description
 	*/
-	String  CUSTOMER_FEE_DESCRIPTION = CUSTOMER_FEE_ENTRY.getAliasNames()[9];
+	String  CUSTOMER_FEE_DESCRIPTION = CUSTOMER_FEE_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: CustomerFee_quantity
 	* Hibernate value: CustomerFee.quantity
 	*/
-	String  CUSTOMER_FEE_QUANTITY = CUSTOMER_FEE_ENTRY.getAliasNames()[10];
+	String  CUSTOMER_FEE_QUANTITY = CUSTOMER_FEE_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: CustomerFee_price
 	* Hibernate value: CustomerFee.price
 	*/
-	String  CUSTOMER_FEE_PRICE = CUSTOMER_FEE_ENTRY.getAliasNames()[11];
+	String  CUSTOMER_FEE_PRICE = CUSTOMER_FEE_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: CustomerFee_discountExpression
 	* Hibernate value: CustomerFee.discountExpression
 	*/
-	String  CUSTOMER_FEE_DISCOUNT_EXPRESSION = CUSTOMER_FEE_ENTRY.getAliasNames()[12];
+	String  CUSTOMER_FEE_DISCOUNT_EXPRESSION = CUSTOMER_FEE_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: CustomerFee_initialDate
 	* Hibernate value: CustomerFee.initialDate
 	*/
-	String  CUSTOMER_FEE_INITIAL_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[13];
+	String  CUSTOMER_FEE_INITIAL_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: CustomerFee_finalDate
 	* Hibernate value: CustomerFee.finalDate
 	*/
-	String  CUSTOMER_FEE_FINAL_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[14];
+	String  CUSTOMER_FEE_FINAL_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: CustomerFee_billingDate
 	* Hibernate value: CustomerFee.billingDate
 	*/
-	String  CUSTOMER_FEE_BILLING_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[15];
+	String  CUSTOMER_FEE_BILLING_DATE = CUSTOMER_FEE_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: CustomerFee_period
 	* Hibernate value: CustomerFee.period
 	*/
-	String  CUSTOMER_FEE_PERIOD = CUSTOMER_FEE_ENTRY.getAliasNames()[16];
+	String  CUSTOMER_FEE_PERIOD = CUSTOMER_FEE_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: CustomerFee_securityLevel
 	* Hibernate value: CustomerFee.securityLevel
 	*/
-	String  CUSTOMER_FEE_SECURITY_LEVEL = CUSTOMER_FEE_ENTRY.getAliasNames()[17];
+	String  CUSTOMER_FEE_SECURITY_LEVEL = CUSTOMER_FEE_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: CustomerFee_workPlace_id
 	* Hibernate value: CustomerFee.workPlace.id
 	*/
-	String  CUSTOMER_FEE_WORK_PLACE_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[18];
+	String  CUSTOMER_FEE_WORK_PLACE_ID = CUSTOMER_FEE_ENTRY.getAliasNames()[17];
 
 
 
@@ -1150,40 +1144,34 @@ public interface IFinanceAlias {
 	String  CREDITOR_REGISTRY_NAME = CREDITOR_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Creditor_registry_surname
-	* Hibernate value: Creditor.registry.surname
-	*/
-	String  CREDITOR_REGISTRY_SURNAME = CREDITOR_ENTRY.getAliasNames()[4];
-
-	/** 
 	* Alias value: Creditor_registry_alias
 	* Hibernate value: Creditor.registry.alias
 	*/
-	String  CREDITOR_REGISTRY_ALIAS = CREDITOR_ENTRY.getAliasNames()[5];
+	String  CREDITOR_REGISTRY_ALIAS = CREDITOR_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Creditor_registry_document
 	* Hibernate value: Creditor.registry.document
 	*/
-	String  CREDITOR_REGISTRY_DOCUMENT = CREDITOR_ENTRY.getAliasNames()[6];
+	String  CREDITOR_REGISTRY_DOCUMENT = CREDITOR_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Creditor_withholding
 	* Hibernate value: Creditor.withholding
 	*/
-	String  CREDITOR_WITHHOLDING = CREDITOR_ENTRY.getAliasNames()[7];
+	String  CREDITOR_WITHHOLDING = CREDITOR_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Creditor_transaction
 	* Hibernate value: Creditor.transaction
 	*/
-	String  CREDITOR_TRANSACTION = CREDITOR_ENTRY.getAliasNames()[8];
+	String  CREDITOR_TRANSACTION = CREDITOR_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Creditor_scope_id
 	* Hibernate value: Creditor.scope.id
 	*/
-	String  CREDITOR_SCOPE_ID = CREDITOR_ENTRY.getAliasNames()[9];
+	String  CREDITOR_SCOPE_ID = CREDITOR_ENTRY.getAliasNames()[8];
 
 
 
@@ -1386,16 +1374,10 @@ public interface IFinanceAlias {
 	String  INVOICING_GROUP_PARENT_ID = INVOICING_GROUP_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: InvoicingGroup_parent_surname
-	* Hibernate value: InvoicingGroup.parent.surname
-	*/
-	String  INVOICING_GROUP_PARENT_SURNAME = INVOICING_GROUP_ENTRY.getAliasNames()[2];
-
-	/** 
 	* Alias value: InvoicingGroup_parent_name
 	* Hibernate value: InvoicingGroup.parent.name
 	*/
-	String  INVOICING_GROUP_PARENT_NAME = INVOICING_GROUP_ENTRY.getAliasNames()[3];
+	String  INVOICING_GROUP_PARENT_NAME = INVOICING_GROUP_ENTRY.getAliasNames()[2];
 
 
 
@@ -1423,22 +1405,16 @@ public interface IFinanceAlias {
 	String  INVOICING_GROUP_DETAIL_CHILD_ID = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: InvoicingGroupDetail_child_surname
-	* Hibernate value: InvoicingGroupDetail.child.surname
-	*/
-	String  INVOICING_GROUP_DETAIL_CHILD_SURNAME = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[3];
-
-	/** 
 	* Alias value: InvoicingGroupDetail_child_name
 	* Hibernate value: InvoicingGroupDetail.child.name
 	*/
-	String  INVOICING_GROUP_DETAIL_CHILD_NAME = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[4];
+	String  INVOICING_GROUP_DETAIL_CHILD_NAME = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: InvoicingGroupDetail_grouped
 	* Hibernate value: InvoicingGroupDetail.grouped
 	*/
-	String  INVOICING_GROUP_DETAIL_GROUPED = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[5];
+	String  INVOICING_GROUP_DETAIL_GROUPED = INVOICING_GROUP_DETAIL_ENTRY.getAliasNames()[4];
 
 
 }

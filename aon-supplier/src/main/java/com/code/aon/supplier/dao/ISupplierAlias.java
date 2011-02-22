@@ -47,40 +47,34 @@ public interface ISupplierAlias {
 	String  SUPPLIER_REGISTRY_NAME = SUPPLIER_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: Supplier_registry_surname
-	* Hibernate value: Supplier.registry.surname
-	*/
-	String  SUPPLIER_REGISTRY_SURNAME = SUPPLIER_ENTRY.getAliasNames()[5];
-
-	/** 
 	* Alias value: Supplier_registry_type
 	* Hibernate value: Supplier.registry.type
 	*/
-	String  SUPPLIER_REGISTRY_TYPE = SUPPLIER_ENTRY.getAliasNames()[6];
+	String  SUPPLIER_REGISTRY_TYPE = SUPPLIER_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Supplier_scope_id
 	* Hibernate value: Supplier.scope.id
 	*/
-	String  SUPPLIER_SCOPE_ID = SUPPLIER_ENTRY.getAliasNames()[7];
+	String  SUPPLIER_SCOPE_ID = SUPPLIER_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Supplier_status
 	* Hibernate value: Supplier.status
 	*/
-	String  SUPPLIER_STATUS = SUPPLIER_ENTRY.getAliasNames()[8];
+	String  SUPPLIER_STATUS = SUPPLIER_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Supplier_withholding
 	* Hibernate value: Supplier.withholding
 	*/
-	String  SUPPLIER_WITHHOLDING = SUPPLIER_ENTRY.getAliasNames()[9];
+	String  SUPPLIER_WITHHOLDING = SUPPLIER_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Supplier_transaction
 	* Hibernate value: Supplier.transaction
 	*/
-	String  SUPPLIER_TRANSACTION = SUPPLIER_ENTRY.getAliasNames()[10];
+	String  SUPPLIER_TRANSACTION = SUPPLIER_ENTRY.getAliasNames()[9];
 
 
 }
