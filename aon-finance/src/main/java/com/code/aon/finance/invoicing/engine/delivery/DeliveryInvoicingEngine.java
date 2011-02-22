@@ -204,12 +204,10 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			public int compare(Object o1, Object o2) {
 				if (o1 instanceof Delivery && o2 instanceof Delivery) {
 					Delivery delivery1 = (Delivery)o1;
-					String surname1 = "";
-					String name1 = (delivery1.getCustomer().getRegistry().getName() != null) ? delivery1.getCustomer().getRegistry().getName() : "";
+					String name1 = delivery1.getCustomer().getRegistry().getFullName();
 					Delivery delivery2 = (Delivery)o2;
-					String surname2 = "";
-					String name2 = (delivery2.getCustomer().getRegistry().getName() != null) ? delivery2.getCustomer().getRegistry().getName() : "";
-					return (surname1.compareTo(surname2) == 0) ? name1.compareTo(name2) : surname1.compareTo(surname2);
+					String name2 = delivery2.getCustomer().getRegistry().getFullName();
+					return name1.compareTo(name2);
 				}
 				return 0;
 			}
