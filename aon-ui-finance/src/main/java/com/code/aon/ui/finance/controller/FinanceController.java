@@ -70,10 +70,10 @@ public class FinanceController extends FinanceListController implements IFinance
 	private boolean showFinancePaymentWindow;
 	private boolean showFinanceReturnWindow;
 	private List<SelectItem> payMethodTypeDetailList;
-	private List<?> orderedList;
 	private Double totalFinanceAmount;
 	private String invoiceViewer;
 	private boolean purchase;
+	private List<?> orderedList;
 
 	public Company getCompany() {
 		if (company == null) {
@@ -212,7 +212,15 @@ public class FinanceController extends FinanceListController implements IFinance
 	public void setShowFinanceReturnWindow(boolean value) {
 		this.showFinanceReturnWindow = value;
 	}
-	
+
+	public List<SelectItem> getPayMethodTypeDetailList() {
+		return payMethodTypeDetailList;
+	}
+
+	public void setPayMethodTypeDetailList(List<SelectItem> payMethodTypeDetailList) {
+		this.payMethodTypeDetailList = payMethodTypeDetailList;
+	}
+
 	public Double getTotalFinanceAmount() {
 		return totalFinanceAmount;
 	}
@@ -260,8 +268,6 @@ public class FinanceController extends FinanceListController implements IFinance
 			Finance finance = (Finance)getTo();
 			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
-
-			payMethodTypeDetailList = null;
 		}
 	}
 
@@ -332,12 +338,13 @@ public class FinanceController extends FinanceListController implements IFinance
 
 		setPaymentDate(finance.getDueDate());
 		setPaymentAmount(finance.getTotalAmount());
-		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS || finance.getPayMethod().getType() == PayMethodType.OTHER) {
-			setPaymentRegistryBank(null);
-		} else {
+		if (finance.getPayMethod().getType() != PayMethodType.CASH_BASIS && finance.getPayMethod().getType() != PayMethodType.OTHER) {
 			setPaymentRegistryBank(obtainPaymentRegistryBank(getCompany(), finance.getBank(), finance.getBankAccount()));
+			setPaymentPayMethodTypeDetail(null);
+		} else {
+			setPaymentRegistryBank(null);
+			setPaymentPayMethodTypeDetail(obtainPayMethodTypeDetail(finance.getPayMethod().getType()));
 		}
-		setPaymentPayMethodTypeDetail(null);
 		setPaymentRecordable(AonUtil.getRoleManager().isAccountingOperator());
 	}
 
@@ -368,14 +375,19 @@ public class FinanceController extends FinanceListController implements IFinance
 		Finance finance = (Finance)getTo();
 		setReturnDate(new Date());
 		setReturnExpenses(finance.getExpenses());
-		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS || finance.getPayMethod().getType() == PayMethodType.OTHER) {
-			setReturnDeposit(1);
-			setReturnRegistryBank(null);
-		} else {
+		if (finance.getPayMethod().getType() != PayMethodType.CASH_BASIS && finance.getPayMethod().getType() != PayMethodType.OTHER) {
 			setReturnDeposit(0);
 			setReturnRegistryBank(obtainReturnRegistryBank(getCompany(), finance));
+			setReturnPayMethodTypeDetail(null);
+		} else if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS) {
+			setReturnDeposit(1);
+			setReturnRegistryBank(null);
+			setReturnPayMethodTypeDetail(obtainPayMethodTypeDetail(PayMethodType.CASH_BASIS));
+		} else if (finance.getPayMethod().getType() == PayMethodType.OTHER) {
+			setReturnDeposit(2);
+			setReturnRegistryBank(null);
+			setReturnPayMethodTypeDetail(obtainPayMethodTypeDetail(PayMethodType.OTHER));
 		}
-		setReturnPayMethodTypeDetail(null);
 		setReturnRecordable(AonUtil.getRoleManager().isAccountingOperator());
 	}
 
@@ -396,26 +408,42 @@ public class FinanceController extends FinanceListController implements IFinance
 		return obtainPaymentRegistryBank(registry, bank, bankAccount);
 	}
 
-	public List<SelectItem> getPayMethodTypeDetails() throws ManagerBeanException {
-		if (payMethodTypeDetailList == null) {
-			payMethodTypeDetailList = new LinkedList<SelectItem>();
-			Finance to = (Finance)this.getTo();
-			IManagerBean payMethodTypeDetailBean = BeanManager.getManagerBean(PayMethodTypeDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_TYPE), to.getPayMethod().getType());
-			criteria.addOrder(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_DESCRIPTION));
-			Iterator<?> iter = payMethodTypeDetailBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				PayMethodTypeDetail payMethodTypeDetail = (PayMethodTypeDetail) iter.next();
-				SelectItem item = new SelectItem(payMethodTypeDetail, payMethodTypeDetail.getDescription());
-				payMethodTypeDetailList.add(item);
-			}
+	private PayMethodTypeDetail obtainPayMethodTypeDetail(PayMethodType type) throws ManagerBeanException {
+		refreshPayMethodTypeDetailList(type);
+
+		PayMethodTypeDetail payMethodTypeDetail = null;
+		if (getPayMethodTypeDetailsSize() == 1) {
+			SelectItem selectItem = getPayMethodTypeDetailList().get(0);
+			payMethodTypeDetail = (PayMethodTypeDetail)selectItem.getValue();
 		}
-		return payMethodTypeDetailList;
+		return payMethodTypeDetail;
 	}
 
-	public int getPayMethodTypeDetailsSize() throws ManagerBeanException {
-		return getPayMethodTypeDetails().size();
+	private void refreshPayMethodTypeDetailList(PayMethodType type) throws ManagerBeanException {
+		payMethodTypeDetailList = new LinkedList<SelectItem>();
+		IManagerBean payMethodTypeDetailBean = BeanManager.getManagerBean(PayMethodTypeDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_TYPE), type);
+		criteria.addOrder(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_DESCRIPTION));
+		Iterator<?> iter = payMethodTypeDetailBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			PayMethodTypeDetail payMethodTypeDetail = (PayMethodTypeDetail) iter.next();
+			SelectItem item = new SelectItem(payMethodTypeDetail, payMethodTypeDetail.getDescription());
+			payMethodTypeDetailList.add(item);
+		}
+	}
+
+	public int getPayMethodTypeDetailsSize() {
+		return getPayMethodTypeDetailList().size();
+	}
+
+	public void onDepositChanged(ValueChangeEvent event) throws ManagerBeanException {
+		int deposit = ((Integer)event.getNewValue()).intValue();
+		if (deposit == 1) {
+			setReturnPayMethodTypeDetail(obtainPayMethodTypeDetail(PayMethodType.CASH_BASIS));
+		} else if (deposit == 2) {
+			setReturnPayMethodTypeDetail(obtainPayMethodTypeDetail(PayMethodType.OTHER));
+		}
 	}
 
 	public void onFinancePayment(ActionEvent event) throws ManagerBeanException {
@@ -463,7 +491,7 @@ public class FinanceController extends FinanceListController implements IFinance
 
 	public void onFinanceReturn(ActionEvent event) throws ManagerBeanException {
 		setReturnRegistryBank((getReturnDeposit()==0) ? getReturnRegistryBank() : null);
-		setReturnPayMethodTypeDetail((getReturnDeposit()==1) ? getReturnPayMethodTypeDetail() : null);
+		setReturnPayMethodTypeDetail((getReturnDeposit()!=0) ? getReturnPayMethodTypeDetail() : null);
 
 		Finance finance = (Finance)this.getTo();
 		finance.setExpenses(getReturnExpenses());

@@ -81,9 +81,11 @@
 										<aon:selectOneRadio id="Finance_returnDeposit"
 											style="display:inline;" ajaxSingle="true"
 											value="#{finance.returnDeposit}"
+											valueChangeListener="#{finance.onDepositChanged}"
 											reRender="menuGrid">
 											<f:selectItem itemLabel="#{configBundle.config_bank}" itemValue="0" />
 											<f:selectItem itemLabel="#{financeBundle.finance_cash}" itemValue="1" />
+											<f:selectItem itemLabel="#{bundle.aon_other}" itemValue="2" />
 										</aon:selectOneRadio>
 
 										<aon:outputLabel for="Finance_returnRegistryBank"
@@ -95,12 +97,12 @@
 											<f:selectItems value="#{companyCollections.companyBanks}" />
 										</aon:selectOneMenu>
 										<aon:outputLabel for="Finance_returnPayMethodTypeDetail"
-											value="#{financeBundle.finance_cash}"
-											rendered="#{finance.returnDeposit == 1 and finance.payMethodTypeDetailsSize > 1}" />
+											value="#{financeBundle.finance_details}"
+											rendered="#{finance.returnDeposit > 0 and finance.payMethodTypeDetailsSize > 1}" />
 										<aon:selectOneMenu id="Finance_returnPayMethodTypeDetail"
 											value="#{finance.returnPayMethodTypeDetail}"
-											rendered="#{finance.returnDeposit == 1 and finance.payMethodTypeDetailsSize > 1}">
-											<f:selectItems value="#{finance.payMethodTypeDetails}" />
+											rendered="#{finance.returnDeposit > 0 and finance.payMethodTypeDetailsSize > 1}">
+											<f:selectItems value="#{finance.payMethodTypeDetailList}" />
 										</aon:selectOneMenu>
 
 										<c:if test="#{aonRole.accountingOperator}">

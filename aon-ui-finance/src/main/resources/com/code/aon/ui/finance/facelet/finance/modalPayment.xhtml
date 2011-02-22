@@ -85,12 +85,12 @@
 											<f:selectItems value="#{companyCollections.companyBanks}" />
 										</aon:selectOneMenu>
 										<aon:outputLabel for="Finance_paymentPayMethodTypeDetail"
-											value="#{financeBundle.finance_cash}"
+											value="#{financeBundle.finance_details}"
 											rendered="#{finance.paymentRegistryBank == null and finance.payMethodTypeDetailsSize > 1}" />
 										<aon:selectOneMenu id="Finance_paymentPayMethodTypeDetail"
 											value="#{finance.paymentPayMethodTypeDetail}"
 											rendered="#{finance.paymentRegistryBank == null and finance.payMethodTypeDetailsSize > 1}">
-											<f:selectItems value="#{finance.payMethodTypeDetails}" />
+											<f:selectItems value="#{finance.payMethodTypeDetailList}" />
 										</aon:selectOneMenu>
 
 										<aon:outputLabel for="Finance_paymentPayMethod"
