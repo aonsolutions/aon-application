@@ -14,7 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{customerBundle.customer_module}" />
 				<ui:param name="controller" value="#{customer}" />
 					<ui:define name="beforeSpinToolbarContent">
-					<c:if test="#{aonConfiguration.bean.customer.showHistory and !customer.new}">
+					<c:if test="#{!customer.new and aonConfiguration.bean.customer.showHistory}">
 						<aon:commandButton id="CustomerHistory" 
 							action="registry_stats" actionListener="#{customer.onCustomerHistory}"
 							value="#{bundle.aon_history}"
@@ -80,7 +80,12 @@
 							</aon:selectOneRadio>
 						</c:if>
 	
-						<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount and !customer.new}">
+						<c:if test="#{!customer.new and customer.invoicingGroup != null}">
+							<aon:outputLabel value="#{customerBundle.customer_invoicingGroup}" />
+							<aon:outputText	value="#{customer.invoicingGroup.parent.fullName}" />
+						</c:if>
+	
+						<c:if test="#{!customer.new and aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount}">
 							<aon:outputLabel for="Customer_account" value="#{accountBundle.account_accounting}" />
 							<h:panelGrid columns="2" id="accountContainer">
 								<ui:include
@@ -138,8 +143,7 @@
 								label="#{registryBundle.registry_finance_data_module}">
 								<aon:panel>
 									<f:facet name="header">
-										<aon:outputText
-											value="#{registryBundle.registry_banks_module}" />
+										<aon:outputText	value="#{registryBundle.registry_banks_module}" />
 									</f:facet>
 									<ui:include
 										src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">

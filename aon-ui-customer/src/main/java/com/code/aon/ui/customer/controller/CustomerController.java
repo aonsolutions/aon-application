@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.InvoicingGroup;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
@@ -19,8 +20,18 @@ public class CustomerController extends RegistryController {
     private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_customer_report";
-	
-	public String getReportTitle(){
+
+    private InvoicingGroup invoicingGroup;
+
+    public InvoicingGroup getInvoicingGroup() {
+    	return invoicingGroup;
+    }
+
+    public void setInvoicingGroup(InvoicingGroup invoicingGroup) {
+    	this.invoicingGroup = invoicingGroup;
+    }
+
+    public String getReportTitle(){
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX);
@@ -31,5 +42,5 @@ public class CustomerController extends RegistryController {
 		controller.setRegistry(((Customer)this.getTo()).getRegistry());
 		controller.getRegistryData();
 	}
-		
+
 }

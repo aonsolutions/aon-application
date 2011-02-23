@@ -44,6 +44,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerSearch}</value>
+				<value>#{customerControllerListener}</value>
 				<value>#{customerForm}</value>
 				<value>#{customerAddressListener}</value>
 				<value>#{customerMediaListener}</value>
@@ -78,6 +79,12 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>customerControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.event.CustomerControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>customerScopeListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
