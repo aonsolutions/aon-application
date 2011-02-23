@@ -621,9 +621,9 @@ $R{aon_over}+" "+$F{base}]]></textFieldExpression>
 			<line>
 				<reportElement key="line-9" positionType="Float" x="3" y="0" width="530" height="1"/>
 			</line>
-			<textField pattern="" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-24" mode="Transparent" x="21" y="11" width="489" height="10" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{printRecordData}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -634,15 +634,13 @@ $R{aon_over}+" "+$F{base}]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue()
-+", "+
-$R{aon_fax} + ": " + $P{fax}.getValue()
-+", "+
-$R{aon_email} + ": " + $P{email}.getValue()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($P{phone}!=null)?($R{aon_telephone} + ": " + $P{phone}.getValue()+", "):(" "))+
+(($P{fax}!=null)?($R{aon_fax} + ": " + $P{fax}.getValue()+", "):(" "))+
+(($P{email}!=null)?($R{aon_email} + ": " + $P{email}.getValue()):(" "))]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-25" mode="Transparent" x="21" y="21" width="489" height="10" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{printRecordData}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -653,11 +651,11 @@ $R{aon_email} + ": " + $P{email}.getValue()]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{web}.getValue()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{web}!=null)?($P{web}.getValue()):(" - ")]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-26" mode="Transparent" x="21" y="1" width="489" height="10" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{printRecordData}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

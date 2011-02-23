@@ -85,7 +85,6 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
-		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
 		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
 		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE));
 		return criteria;
@@ -211,27 +210,12 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			public int compare(Object o1, Object o2) {
 				if (o1 instanceof CustomerFee && o2 instanceof CustomerFee) {
 					CustomerFee fee1 = (CustomerFee)o1;
-					String surname1 = "";
-					String name1 = (fee1.getCustomer().getRegistry().getName() != null) ? fee1.getCustomer().getRegistry().getName() : "";
-					int line1 = fee1.getLine();
+					String name1 = fee1.getCustomer().getRegistry().getFullName();
+					Integer line1 = new Integer(fee1.getLine());
 					CustomerFee fee2 = (CustomerFee)o2;
-					String surname2 = "";
-					String name2 = (fee2.getCustomer().getRegistry().getName() != null) ? fee2.getCustomer().getRegistry().getName() : "";
-					int line2 = fee2.getLine();
-
-					if (surname1.compareTo(surname2) == 0) {
-						if (name1.compareTo(name2) == 0) {
-							if (line1 > line2) {
-								return 1;
-							} else if (line1 < line2) {
-								return -1;
-							}
-						} else {
-							return name1.compareTo(name2);
-						}
-					} else {
-						return surname1.compareTo(surname2);
-					}
+					String name2 = fee2.getCustomer().getRegistry().getFullName();
+					Integer line2 = new Integer(fee2.getLine());
+					return (name1.compareTo(name2) == 0) ? line1.compareTo(line2) : name1.compareTo(name2);
 				}
 				return 0;
 			}

@@ -265,8 +265,7 @@ public class StatEngine {
 
 		try {
 			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT r.id,r.name,COUNT(DISTINCT i.id),SUM(id.taxable_base),r.surname");
+			stmt.append("SELECT r.id,r.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
@@ -287,9 +286,7 @@ public class StatEngine {
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -301,7 +298,7 @@ public class StatEngine {
 			while (rs.next()) {
 				Stat stat = new Stat();
 				stat.setKey(rs.getInt(1));
-				stat.setName(rs.getString(2) + rs.getString(5));
+				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
 				double amount = rs.getInt(4);
 				stat.setNumInvoice(count);
