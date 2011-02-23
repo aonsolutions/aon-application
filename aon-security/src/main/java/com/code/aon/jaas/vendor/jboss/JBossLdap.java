@@ -35,7 +35,6 @@ import com.code.aon.jaas.storage.ApplicationsStorage;
 import com.code.aon.jaas.storage.StorageException;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 
 /**
@@ -164,11 +163,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		}
 		Name dn = NameResolver.getApplicationProfileDN(appId, relation.getId());
 		if ( this.ldap.exists(dn, PROFILE) ) {
-			try {
-				this.ldap.delete(dn);
-			} catch (LdapException e) {
-				throw new StorageException( e.getMessage(), e );
-			}
+			this.ldap.delete(dn);
 		} else {
 			IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
 			domainApplication.removeProfile(relation);

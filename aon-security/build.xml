@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.9.4" />
+	<property name="version" value="1.9.7" />
 	<property name="vendor" value="Consulting &amp; Development" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
@@ -47,7 +47,7 @@
 	<property name="org.jboss.slf4j.jar" value="slf4j-jboss-logging-1.0.2.GA.jar" />
 	
 	<!-- AON -->
-	<property name="aon.ldap.version" value="5.7.2" />
+	<property name="aon.ldap.version" value="6.0.0" />
 	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/${aon.ldap.version}" />
 
 	<!-- The classpath required to build classes. -->
@@ -470,31 +470,13 @@
 		<mkdir dir="${ldap.dir}" />
 		<copy file="${resources.dir}/META-INF/jboss-service.xml.ldap"
 			tofile="${ldap.dir}/META-INF/jboss-service.xml"/>
-		<jar jarfile="${jboss.server.home}/deploy/${mgr}-ldap.sar">
+		<jar jarfile="${jboss.server.home}/deploy/${mgr}-ldap-${version}.sar">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Implementation-Title" value="${mgr}"/>
 				<attribute name="Implementation-Version" value="${version}"/> 
 				<attribute name="Implementation-Vendor" value="${vendor}"/>
 			</manifest>
-    		<fileset dir="${commons.beanutils.home}">
-				<include name="${commons.beanutils.jar}"/>
-			</fileset>
-       		<fileset dir="${commons.digester.home}">
-   				<include name="${commons.digester.jar}"/>
-   			</fileset>
-    		<fileset dir="${commons.lang.home}">
-				<include name="${commons.lang.jar}"/>
-			</fileset>
-    		<fileset dir="${commons.io.home}">
-				<include name="${commons.io.jar}"/>
-			</fileset>
-    		<fileset dir="${org.slf4j.api.home}">
-				<include name="${org.slf4j.api.jar}"/>
-			</fileset>
-    		<fileset dir="${org.jboss.slf4j.home}">
-				<include name="${org.jboss.slf4j.jar}"/>
-			</fileset>
     		<fileset dir="${aon.ldap.home}">
 				<include name="aon.ldap-${aon.ldap.version}.jar"/>
 			</fileset>
