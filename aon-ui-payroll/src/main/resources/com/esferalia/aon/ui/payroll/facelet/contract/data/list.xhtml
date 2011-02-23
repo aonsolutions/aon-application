@@ -10,21 +10,46 @@
 	<ui:define name="contractDetail">
 		<aon:form id="contractDataForm">
 			<aon:div id="dataGrid" styleClass="aon-scroll-area">
-			<aon:outputText value="CONTRACT DATA" />
-<!--  
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
-					<ui:param name="controller" value="#{contractDeduction}" />
-				</ui:include>
--->
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+					<ui:param name="controller" value="#{contractData}" />
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputLabel for="ContractData_name"
+									value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" rendered="#{formList}" />
+							<aon:inputText id="ContractData_name" required="true"
+								rendered="#{formEdit}" size="16"
+								value="#{controller.to.name}" maxlength="16" />
+							<f:facet name="footer">
+								<aon:inputText id="ContractData_name-New" required="true"
+									rendered="#{formNew}" size="16"
+									value="#{controller.to.name}" maxlength="16" />
+							</f:facet>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputLabel for="ContractData_expression"
+									value="#{payrollBundle.payroll_salary_expression}" />
+							</f:facet>
+							<aon:outputText value="#{to.expression}" rendered="#{formList}" />
+							<aon:inputText id="ContractData_expression" required="true"
+								rendered="#{formEdit}" size="20"
+								value="#{controller.to.expression}" maxlength="64" />
+							<f:facet name="footer">
+								<aon:inputText id="ContractData_expression-New" required="true"
+									rendered="#{formNew}" size="20"
+									value="#{controller.to.expression}" maxlength="64" />
+							</f:facet>
+						</aon:column>
+
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 		</aon:form>
-<!--  
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/modalDeduction.xhtml">
-			<ui:param name="controller" value="#{contractDeduction}" />
-			<ui:param name="container" value="deductionGrid" />
-			<ui:param name="skipCurrentMonth" value="#{true}" />
-			<ui:param name="contextDisabled" value="#{true}" />
-		</ui:include>
--->		
 	</ui:define>
 </ui:composition>

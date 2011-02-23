@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
+	<bean class="com.esferalia.aon.payroll.AgreementLevelCategory">
+		<alias names="description,id,level_id,level_agreement_id"/>
+		<hibernate names="description,id,level.id,level.agreement.id"/>
+	</bean>
 	<bean class="com.esferalia.aon.payroll.Contract">
 		<alias     names="ccc_id,contractType_id,endDate,id,person_id,person_registry_document,person_registry_name,person_firstSurname,person_secondSurname,startDate,status,workPlace_id,workPlace_enterprise_id,workPlace_enterprise_registry_name,registration,seniorityDate"/>
 		<hibernate names="ccc.id,contractType.id,endDate,id,person.id,person.registry.document,person.registry.name,person.firstSurname,person.secondSurname,startDate,status,workPlace.id,workPlace.enterprise.id,workPlace.enterprise.registry.name,registration,seniorityDate"/>
 	</bean>
-	<bean class="com.esferalia.aon.payroll.Salary">
-		<alias     names="id,address,broadcastDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
-		<hibernate names="id,address,broadcastDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
-	</bean>
 	<bean class="com.esferalia.aon.payroll.EnterpriseCertificate" sqlName="enterprise_certificate">
 		<alias 	   names="date,enterprise_id,enterprise_registry_name,id,sign,status" />
 		<hibernate names="date,enterprise.id,enterprise.registry.name,id,sign,status" />
+	</bean>
+	<bean class="com.esferalia.aon.payroll.Salary">
+		<alias     names="id,address,broadcastDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
+		<hibernate names="id,address,broadcastDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
 	</bean>
 </dao>

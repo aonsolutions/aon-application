@@ -47,13 +47,14 @@ public class SalaryDraftPaymentControllerListener extends ControllerAdapter {
 		SalaryDraftController sc =  (SalaryDraftController) l.getMasterController();
 		ContractPayment cp = (ContractPayment) l.getTo();
 		Contract contract = (Contract) sc.getTo();
-		try {
-			contract.getSalaryCalculatorContext().getExpressionContext().resolve( cp );
-		} catch (ExpressionException e) {
-			throw new ControllerListenerException("Error al evaluar la expresión. [" + e.getMessage() + "]", e);
-		} catch (SalaryException e) {
-			throw new ControllerListenerException("Error al evaluar la expresión. [" + e.getMessage() + "]", e);
-		}
+		//TODO ¿¿??
+//		try {
+//			contract.getSalaryCalculatorContext().getExpressionContext().resolve( cp );
+//		} catch (ExpressionException e) {
+//			throw new ControllerListenerException("Error al evaluar la expresión. [" + e.getMessage() + "]", e);
+//		} catch (SalaryException e) {
+//			throw new ControllerListenerException("Error al evaluar la expresión. [" + e.getMessage() + "]", e);
+//		}
 	}
 
 	@Override

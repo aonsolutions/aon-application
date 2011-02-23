@@ -30,12 +30,6 @@
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.salary</artifactId>
-			<version>${pom.version}</version>
-			<scope>compile</scope>
-		</dependency>
   	</dependencies>
 </project>
  

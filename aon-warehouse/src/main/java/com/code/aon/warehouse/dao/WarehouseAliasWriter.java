@@ -7,7 +7,6 @@ import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.DeliveryDetailLabour;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Inventory;
@@ -27,11 +26,10 @@ public class WarehouseAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-TRUNK/aon-warehouse/src/main/java/com/code/aon/warehouse/dao/IWarehouseAlias.java");
+		File file = new File("/home/ecastellano/AON-6.0.0/aon-warehouse/src/main/java/com/code/aon/warehouse/dao/IWarehouseAlias.java");
 		String[] classes = new String[] { 
 			Delivery.class.getName(),
 			DeliveryDetail.class.getName(),
-			DeliveryDetailLabour.class.getName(),
 			Income.class.getName(),
 			IncomeDetail.class.getName(),
 			Inventory.class.getName(),

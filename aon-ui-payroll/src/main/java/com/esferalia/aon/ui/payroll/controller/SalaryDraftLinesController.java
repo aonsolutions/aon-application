@@ -36,7 +36,7 @@ public abstract class SalaryDraftLinesController extends LinesController {
 			Contract contract = (Contract) master.getTo();
 			ExpressionContext ec = contract.getSalaryCalculatorContext().getExpressionContext();
 			String filter = (String) suggest;
-			for (IExpression exp:ec.getValues() ){
+			for (IExpression exp:ec.getExpressionVariables() ){
 				if (exp.getName().startsWith(filter)) {
 					list.add(exp);		
 				}

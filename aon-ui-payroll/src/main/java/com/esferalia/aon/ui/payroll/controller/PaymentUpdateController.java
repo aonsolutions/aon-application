@@ -34,6 +34,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -186,12 +187,9 @@ public class PaymentUpdateController {
 		setColumns( new LinkedList<String>());
 		SalaryCalculatorManager factoryManager = SalaryCalculatorManager.getInstance();
 		for (PaymentUpdate pu: dataList) {
-			SalaryCalculatorContext scc = pu.getContract().getSalaryCalculatorContext();
-			scc.setIssueDate(date);
 			Date startDate= CommonUtil.getMonthFirstDay(date);
-			scc.setStartDate(startDate);
 			Date endDate = CommonUtil.getMonthLastDay(date);
-			scc.setEndDate( endDate);
+			ISalaryCalculatorContext scc = pu.getContract().getSalaryCalculatorContext(startDate,endDate,date);
 			factoryManager.getCalculator(scc);  // Fuerza a inicializar el contexto.
 			List<IExpression> exps = scc.getExpressionContext().getExpressionVariables();
 			for (IExpression exp: exps) {
@@ -208,7 +206,7 @@ public class PaymentUpdateController {
 		
 	}
 
-	private ContractData getContractContext(PaymentUpdate pu, IExpression exp, SalaryCalculatorContext scc) throws SalaryException {
+	private ContractData getContractContext(PaymentUpdate pu, IExpression exp, ISalaryCalculatorContext scc) throws SalaryException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();

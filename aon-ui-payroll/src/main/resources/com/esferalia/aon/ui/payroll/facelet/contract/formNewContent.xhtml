@@ -11,51 +11,11 @@
 
 		<aon:panelGrid columns="2" style="width: 80%;" >
 			
-			<aon:outputLabel for="Enterprise_id"
-				value="#{companyBundle.company_enterprise}" />
-			<aon:div styleClass="aon-lookup" >
-				<aon:lookupInputText id="Enterprise_id" 
-					lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
-					reRender="Enterprise_full_name,contract_new_panel"
-					value="#{contract.enterprise.id}" size="5" />
-				<aon:lookupButton 
-					windowTitle="#{companyBundle.company_enterprise_selection}"
-					selectReRender="Enterprise_id,Enterprise_full_name,contract_new_panel"
-					lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
-					minHeight="460" minWidth="650" actionType="search"
-					property="#{contract.enterprise}">
-				</aon:lookupButton>
-				<aon:inputText id="Enterprise_full_name" 
-					value="#{(contract.enterprise.registry.fullName!=null)?(contract.enterprise.registry.fullName):('')}"
-					size="50" disabled="true" />							
-			</aon:div>
-			
-			<aon:outputLabel for="workPlace"
-				styleClass="aon-italic aon-margin-left"
-				value="#{companyBundle.company_workplace}" />
-			<aon:selectOneMenu id="workPlace"
-				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
-				value="#{contract.to.workPlace}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contract.workPlaces}" />
-				<a4j:support event="onchange" reRender="contract_new_panel" >
-					<aon:actionListener method="#{contract.onWorkPlaceChanged}" />
-				</a4j:support>
-			</aon:selectOneMenu>
-			
-			<aon:outputText value="#{companyBundle.company_enterprise_ccc}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
-			<aon:selectOneMenu id="enterpriseCCCs"
-				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
-				value="#{contract.to.enterpriseCCC}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contract.enterpriseCCCs}" />
-			</aon:selectOneMenu>
-			
 			<aon:outputLabel for="Person_id"
 				value="#{registryBundle.registry_person}" />
 			<aon:div styleClass="aon-lookup">
 				<aon:lookupInputText id="Person_id" lookup="#{personLookup}"
-					reRender="Person_full_name"
+					reRender="Person_full_name" required="true"
 					value="#{contract.to.person.id}" size="5" />
 				<aon:lookupButton 
 					windowTitle="#{registryBundle.registry_person_selection}"
@@ -67,21 +27,73 @@
 					value="#{(contract.to.person.registry.fullName!=null)?(contract.to.person.registry.fullName):('')}"
 					size="50" disabled="true" />							
 			</aon:div>
+
+			<aon:outputLabel for="ssRegime"
+				value="#{payrollBundle.payroll_contract_regime}" />
+			<aon:selectOneMenu id="ssRegime" required="true"
+				value="#{contract.to.regimeType}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.ssRegimes}" />
+			</aon:selectOneMenu>
+
+			<aon:outputLabel for="Enterprise_id"
+				value="#{companyBundle.company_enterprise}" />
+			<aon:div styleClass="aon-lookup" >
+				<aon:lookupInputText id="Enterprise_id" required="true" 
+					lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
+					reRender="Enterprise_full_name,workPlace,enterpriseActivities"
+					value="#{contract.enterprise.id}" size="5" />
+				<aon:lookupButton 
+					windowTitle="#{companyBundle.company_enterprise_selection}"
+					selectReRender="Enterprise_id,Enterprise_full_name,workPlace,enterpriseActivities"
+					lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
+					minHeight="460" minWidth="650" actionType="search"
+					property="#{contract.enterprise}">
+				</aon:lookupButton>
+				<aon:inputText id="Enterprise_full_name" 
+					value="#{contract.enterprise.registry.fullName}"
+					size="50" disabled="true" />							
+			</aon:div>
 			
-			<aon:outputText value="#{payrollBundle.payroll_contract_autonomous}" />
-			<aon:selectBooleanCheckbox disabled="true" 
-				value="#{contract.autonomous}" />
+			<aon:outputLabel for="workPlace" styleClass="aon-italic aon-margin-left"
+				style="font-size: 0.9em" value="#{companyBundle.company_workplace}" />
+			<aon:selectOneMenu id="workPlace" required="true"
+				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
+				value="#{contract.to.workPlace}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contract.workPlaces}" />
+			</aon:selectOneMenu>
 			
-			<aon:outputLabel 
-				value="#{payrollBundle.payroll_contract_period}" />
+			<aon:outputLabel for="enterpriseActivities" value="#{companyBundle.company_activity}" 
+				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+			<aon:selectOneMenu id="enterpriseActivities"
+				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
+				value="#{contract.to.activity}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contract.activities}" />
+				<a4j:support event="onchange" actionListener="#{contract.onActivityChanged}" ajaxSingle="true" reRender="enterpriseCCCs"/>
+			</aon:selectOneMenu>
+
+			<aon:outputLabel for="enterpriseCCCs" value="#{companyBundle.company_enterprise_ccc}"
+				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+			<aon:selectOneMenu id="enterpriseCCCs"
+				disabled="#{contract.to.activity==null or contract.to.activity.id==null}"
+				value="#{contract.to.enterpriseCCC}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contract.enterpriseCCCs}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel value="#{payrollBundle.payroll_contract_period}"/>
 			<aon:div>
 				<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.aon_start_date}:" />
 				<aon:selectInputDate id="startDate" 
-					value="#{contract.to.startDate}"
+					value="#{contract.to.startDate}" required="true"
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
+					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
 				</aon:selectInputDate>
 				<aon:outputLabel for="endDate" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.aon_end_date}:" />
@@ -93,15 +105,29 @@
 				</aon:selectInputDate>
 			</aon:div>
 			
-				
-				
+			<aon:outputLabel value="#{payrollBundle.payroll_salary_seniority_date}"
+				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+			<aon:panelGroup id="seniorityDateContainer">
+				<aon:selectInputDate id="seniorityDate"
+					value="#{contract.to.seniorityDate}" required="true"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
+					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
+				</aon:selectInputDate>
+				<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
+					styleClass="aon-icon-info"
+					rendered="#{contract.to.seniorityDateDifferent}" />
+			</aon:panelGroup>
+
 			<aon:outputLabel for="contractOption"
 				value="#{payrollBundle.payroll_contract_contract_option}" />
 			<aon:selectOneMenu id="contractOption"
 				value="#{contract.contractOption}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.contractOptions}" />
-				<a4j:support event="onchange" reRender="contractType, contractCode" />
+				<a4j:support event="onchange" reRender="contractType, contractCode" ajaxSingle="true"/>
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="contractType"
@@ -111,8 +137,10 @@
 				disabled="#{contract.contractOption==null}"
 				value="#{contract.contractType}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contract.contractTypes}" />
-				<a4j:support event="onchange" reRender="contractCode" />
+				<c:if test="#{contract.contractOption!=null}">
+					<f:selectItems value="#{payrollCollections.contractTypesMap[contract.contractOption]}" />
+				</c:if>
+				<a4j:support event="onchange" reRender="contractCode" ajaxSingle="true"/>
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="contractCode"
@@ -120,31 +148,33 @@
 				value="#{payrollBundle.payroll_contract_work_time}" />
 			<aon:selectOneMenu id="contractCode"
 				disabled="#{contract.contractType.codes==null}"
-				value="#{contract.contractData.code}" >
+				value="#{contract.contractCode}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contract.contractCodes}" />
-				<a4j:support event="onchange" reRender="description" >
-					<aon:actionListener method="#{contract.onChangeContractCode}" />
-				</a4j:support>
+				<c:if test="#{contract.contractType!=null}">
+					<f:selectItems value="#{payrollCollections.contractCodesMap[contract.contractType]}" />
+				</c:if>
 			</aon:selectOneMenu>
 			
-			<aon:outputLabel for="description"
-				value="#{bundle.aon_description}" />
-			<aon:inputText id="description" size="64" maxlength="64"
-				value="#{contract.contractData.description}" />
+			<aon:outputLabel for="registration" value="#{payrollBundle.payroll_salary_registration}" />
+			<aon:inputText id="registration" size="10" required="true" value="#{contract.to.registration}">
+				<f:validateDoubleRange />
+			</aon:inputText>
 			
+
 			<aon:outputLabel for="quote_group"
 				value="#{payrollBundle.payroll_contract_quote_group}" />
 			<aon:selectOneMenu id="quote_group"
-				value="#{contract.contractData.quoteGroup}" >
+				value="#{contract.quoteGroup}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.quoteGroups}" />
 			</aon:selectOneMenu>
 			
+<!--  			
 			<aon:outputLabel for="category"
 				value="#{payrollBundle.payroll_contract_category}" />
 			<aon:inputText id="category" size="40" maxlength="64"
 				value="#{contract.contractData.category}" />
+ -->			
 				
 			<aon:outputLabel for="irpf"
 				value="#{payrollBundle.payroll_contract_irpf_percent}" />
@@ -179,14 +209,7 @@
 				<aon:outputText value="#{contract.aonFile.fileName}"
 					rendered="#{contract.aonFile.size > 0}" />
 			</aon:panelGrid>
-			
-			<aon:outputLabel for="Contract_conditions"
-				value="#{payrollBundle.payroll_contract_conditions}" />
-			<aon:inputTextarea id="Contract_conditions"
-				value="#{contract.contractData.conditions}" cols="60" rows="5">
-				<f:validateLength maximum="64" />
-			</aon:inputTextarea>
-			
+
 		</aon:panelGrid>
 		
 	</aon:div>

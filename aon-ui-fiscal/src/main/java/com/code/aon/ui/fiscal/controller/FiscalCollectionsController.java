@@ -9,12 +9,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
-import com.code.aon.fiscal.enumeration.Administration;
+import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.Model347ReportOrder;
 import com.code.aon.fiscal.enumeration.Model347Type;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RentingStatus;
-import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
@@ -30,7 +29,6 @@ public class FiscalCollectionsController {
 	private List<SelectItem> rentingStatuses;
 	private List<SelectItem> vatTaxStatuses;
 	private List<SelectItem> vatTaxDeclarationStatuses;
-	private List<SelectItem> administrations;
 
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> invoiceOrders;
@@ -76,19 +74,6 @@ public class FiscalCollectionsController {
 			}
 		}
 		return vatTaxDeclarationStatuses;
-	}
-
-	public List<SelectItem> getAdministrations() {
-		if (administrations == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			administrations = new LinkedList<SelectItem>();
-			for (Administration administration:Administration.values()) {
-				String name = administration.getName(locale);
-				SelectItem item = new SelectItem(administration, name);
-				administrations.add(item);
-			}
-		}
-		return administrations;
 	}
 
 	public List<SelectItem> getVatTypes() {

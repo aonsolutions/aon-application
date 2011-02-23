@@ -17,9 +17,10 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 
 public class SalaryDraftController extends BasicController {
 
@@ -83,21 +84,39 @@ public class SalaryDraftController extends BasicController {
 		return true;
 	}
 	
+//	public ISalary getSalary() {
+//		try {
+//			if (salary == null) {
+//				Contract contract = (Contract) getTo();
+//				SalaryCalculatorContext ctx = contract.getSalaryCalculatorContext();
+//				ctx.setIssueDate(getIssueDate());
+//				ctx.setStartDate(getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate());
+//				ctx.setEndDate((contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate());
+//				salary = contract.getSalary();
+//			}
+//			return salary;
+//		} catch (SalaryException e) {
+//			throw new AbortProcessingException("Imposible mostrar el borrador de la nómina");
+//		}
+//	}
+	
 	public ISalary getSalary() {
 		try {
 			if (salary == null) {
 				Contract contract = (Contract) getTo();
-				SalaryCalculatorContext ctx = contract.getSalaryCalculatorContext();
-				ctx.setIssueDate(getIssueDate());
-				ctx.setStartDate(getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate());
-				ctx.setEndDate((contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate());
-				salary = contract.getSalary();
+				Date startDate = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate(); 
+				Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate(); 
+				Date issueDate = getIssueDate(); 
+				ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate);
+				salary = ctx.getSalaryProxy().getSalary();
 			}
 			return salary;
 		} catch (SalaryException e) {
+			e.printStackTrace();
 			throw new AbortProcessingException("Imposible mostrar el borrador de la nómina");
 		}
 	}
+	
 
 	public void setSalary(ISalary salary) {
 		this.salary = salary;

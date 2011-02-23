@@ -54,7 +54,7 @@ public class SalaryDeductionsFactory implements IDeductionsFactory {
 				}
 			}
 			deductions.setTotal(salary.getTotalDeduction());
-			deductions.setSocialSecurityContributions(salary.getSocialSecurityContributions());
+//			deductions.setSocialSecurityContributions(salary.getSocialSecurityContributions());
 			return deductions;
 		} catch (ManagerBeanException  e) {
 			throw new SalaryException(e.getMessage(),e);

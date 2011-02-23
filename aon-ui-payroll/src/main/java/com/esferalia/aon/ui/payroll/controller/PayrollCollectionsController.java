@@ -1,11 +1,15 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
@@ -13,8 +17,10 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
+import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.SalaryTemplate;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -28,9 +34,12 @@ public class PayrollCollectionsController {
 	private List<SelectItem> deductionTypes;
 	
 	private List<SelectItem> contractCodes;
+	private Map<ContractType,List<SelectItem>> contractCodesMap;
 	private List<SelectItem> contractModels;
 	private List<SelectItem> contractOptions;
+	private Map<ContractOption,List<SelectItem>> contractTypesMap;
 	private List<SelectItem> quoteGroups;
+	private List<SelectItem> ssRegimes;
 	private List<SelectItem> salaryTemplates;
 	
 	private List<SelectItem> streetTypes;
@@ -144,10 +153,53 @@ public class PayrollCollectionsController {
 		return contractModels;
 	}
 	
+	public Map<ContractType,List<SelectItem>> getContractCodesMap() {
+		if (contractCodesMap == null) {
+			contractCodesMap = new HashMap<ContractType, List<SelectItem>>();
+			List<SelectItem> list = new LinkedList<SelectItem>();
+			SelectItem item = new SelectItem(null, "-");
+			list.add(item);
+			contractCodesMap.put(null, list);
+			for (ContractType contractType:ContractType.values()) {
+				list = new LinkedList<SelectItem>();
+				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+				for (ContractCode c : contractType.getCodes()) {
+					String name = c.getName(locale);
+					item = new SelectItem(c, StringUtils.abbreviate(name,100));
+					list.add(item);
+				}
+				contractCodesMap.put(contractType, list);
+			}
+		}
+		return contractCodesMap;
+	}
+	
+	public Map<ContractOption, List<SelectItem>> getContractTypesMap() {
+		if (contractTypesMap == null) {
+			contractTypesMap = new HashMap<ContractOption, List<SelectItem>>();
+			List<SelectItem> list = new LinkedList<SelectItem>();
+			SelectItem item = new SelectItem(null, "-");
+			list.add(item);
+			contractTypesMap.put(null, list);
+			for (ContractOption contractOption:ContractOption.values()) {
+				list = new LinkedList<SelectItem>();
+				if(contractOption!=null){
+					Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+					for (ContractType t : contractOption.getTypes()) {
+						String name = t.getName(locale);
+						item = new SelectItem(t, StringUtils.abbreviate(name,100));
+						list.add(item);
+					}
+				}
+				contractTypesMap.put(contractOption, list);
+			}
+		}
+		return contractTypesMap;
+	}
+
 	public List<SelectItem> getStreetTypes() {
 		if (streetTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-			.getLocale();
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			streetTypes = new LinkedList<SelectItem>();
 			StreetType[] models = StreetType.values();
 			for (StreetType cm : models) {
@@ -189,5 +241,19 @@ public class PayrollCollectionsController {
 		return salaryTemplates;
 	}
 	
-	
+	public List<SelectItem> getSsRegimes() {
+		if (ssRegimes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+			.getLocale();
+			ssRegimes = new LinkedList<SelectItem>();
+			SSRegimeType[] models = SSRegimeType.values();
+			for (SSRegimeType ss : models) {
+				String name = ss.getName(locale);
+				SelectItem item = new SelectItem(ss, name);
+				ssRegimes.add(item);
+			}
+		}
+		return ssRegimes;
+	}
+		
 }

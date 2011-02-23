@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.code.aon.company;
 
 import javax.persistence.Column;
@@ -30,13 +27,9 @@ public class EnterpriseCCC implements ITransferObject {
 	private static final long serialVersionUID = -8232319254583226675L;
 
 	private Integer id;
-	
     private String ccc;
-	
 	private CCCType type;
-	
 	private GeoZone geozone;
-
     private EnterpriseActivity activity; 
 
 	@Id
@@ -45,7 +38,6 @@ public class EnterpriseCCC implements ITransferObject {
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -54,7 +46,6 @@ public class EnterpriseCCC implements ITransferObject {
 	public String getCcc() {
 		return ccc;
 	}
-
 	public void setCcc(String ccc) {
 		this.ccc = ccc;
 	}
@@ -63,7 +54,6 @@ public class EnterpriseCCC implements ITransferObject {
 	public CCCType getType() {
 		return type;
 	}
-
 	public void setType(CCCType type) {
 		this.type = type;
 	}
@@ -75,7 +65,6 @@ public class EnterpriseCCC implements ITransferObject {
 	public GeoZone getGeozone() {
 		return geozone;
 	}
-
 	public void setGeozone(GeoZone geozone) {
 		this.geozone = geozone;
 	}
@@ -87,7 +76,6 @@ public class EnterpriseCCC implements ITransferObject {
 	public EnterpriseActivity getActivity() {
 		return activity;
 	}
-
 	public void setActivity(EnterpriseActivity activity) {
 		this.activity = activity;
 	}

@@ -30,7 +30,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
-import com.esferalia.aon.calendar.enumeration.CalendarSource;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;

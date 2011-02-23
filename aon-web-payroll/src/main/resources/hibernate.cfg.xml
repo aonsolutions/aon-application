@@ -36,23 +36,16 @@
 		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>
 		
 		<!-- AON-COMPANY Mapping files -->	
-		<mapping class="com.code.aon.company.Agreement"/>
-		<mapping class="com.code.aon.company.AgreementLevel"/>
-		<mapping class="com.code.aon.company.AgreementLevelCategory"/>
-		<mapping class="com.code.aon.company.AgreementLevelPayment"/>
-		<mapping class="com.code.aon.company.CNAE"/>
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseActivity"/>
 		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.WorkActivity"/>
-		<mapping class="com.code.aon.company.resources.Resource"/>
-		<mapping class="com.code.aon.company.resources.Employee"/>
 
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CNAE"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
@@ -96,7 +89,11 @@
 		<mapping class="com.code.aon.audit.Application"/>
 		<mapping class="com.code.aon.audit.Session"/>		
 		
-		<!-- AON-EMPLOYEE Mapping files -->
+		<!-- AON-PAYROLL Mapping files -->
+		<mapping class="com.esferalia.aon.payroll.Agreement"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevel"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevelCategory"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevelPayment"/>
 		<mapping class="com.esferalia.aon.payroll.Contract"/>
 		<mapping class="com.esferalia.aon.payroll.ContractBatch"/>
 		<mapping class="com.esferalia.aon.payroll.ContractBatchDetail"/>
@@ -104,7 +101,9 @@
 		<mapping class="com.esferalia.aon.payroll.ContractData"/>
 		<mapping class="com.esferalia.aon.payroll.ContractDeduction"/>
 		<mapping class="com.esferalia.aon.payroll.ContractPayment"/>
-		<mapping class="com.esferalia.aon.payroll.ContractType"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseAgreement"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificate"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificateDetail"/>
 		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
 		<mapping class="com.esferalia.aon.payroll.FunctionConstant"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>

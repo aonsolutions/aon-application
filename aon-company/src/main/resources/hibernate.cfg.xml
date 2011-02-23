@@ -16,20 +16,13 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- Mapping files -->
-		<mapping class="com.code.aon.company.Agreement"/>
-		<mapping class="com.code.aon.company.AgreementLevel"/>
-		<mapping class="com.code.aon.company.AgreementLevelCategory"/>
-		<mapping class="com.code.aon.company.AgreementLevelPayment"/>
-		<mapping class="com.code.aon.company.CNAE"/>
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseActivity"/>
 		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.WorkActivity"/>
-		<mapping class="com.code.aon.company.resources.Resource"/>
-		<mapping class="com.code.aon.company.resources.Employee"/>
 
+		<!-- AON REGISTRY -->
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
@@ -43,12 +36,16 @@
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
 		
+		<!-- AON CONFIG -->
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.CNAE"/>
 		
+		<!-- AON GEOZONE -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 		
+		<!-- AON CALENDAR -->
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>
 		<mapping class="com.esferalia.aon.calendar.Holiday"/>
 	</session-factory>

@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
-	<bean class="com.code.aon.company.resources.Employee">
-		<alias names="id,registry_id,registry_name,registry_surname,registry_alias,registry_document,workActivity_id,socialSecurityNumber,agreementTime,active"/>
-		<hibernate names="id,registry.id,registry.name,registry.surname,registry.alias,registry.document,workActivity.id,socialSecurityNumber,agreementTime,active"/>
-	</bean>
 	<bean class="com.code.aon.company.EnterpriseCCC">
 		<alias names="activity_id,ccc,geozone_id,id,type,activity_enterprise_id"/>
 		<hibernate names="activity.id,ccc,geozone.id,id,type,activity.enterprise.id"/>
@@ -12,8 +8,4 @@
 		<alias names="id,registry_id,scope_id,registry_document,registry_documentCountry,registry_documentType"/>
 		<hibernate names="id,registry.id,scope.id,,registry.document,registry.documentCountry,registry.documentType"/>
 	</bean>		
-	<bean class="com.code.aon.company.AgreementLevelCategory">
-		<alias names="description,id,level_id,level_agreement_id"/>
-		<hibernate names="description,id,level.id,level.agreement.id"/>
-	</bean>
 </dao>

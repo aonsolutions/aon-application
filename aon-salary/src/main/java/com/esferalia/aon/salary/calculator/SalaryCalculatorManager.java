@@ -34,7 +34,7 @@ public class SalaryCalculatorManager {
 		getCalculators().add(calculator);
 	}
 	
-	public ISalaryCalculator getCalculator( SalaryCalculatorContext ctx) throws SalaryException{
+	public ISalaryCalculator getCalculator( ISalaryCalculatorContext ctx) throws SalaryException{
 		try {
 			for (ISalaryCalculator calculator: getCalculators()) {
 				if (calculator.accept(ctx)) {

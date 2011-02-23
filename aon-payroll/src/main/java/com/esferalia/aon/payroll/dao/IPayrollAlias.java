@@ -2,6 +2,10 @@ package com.esferalia.aon.payroll.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.esferalia.aon.payroll.Agreement;
+import com.esferalia.aon.payroll.AgreementLevel;
+import com.esferalia.aon.payroll.AgreementLevelCategory;
+import com.esferalia.aon.payroll.AgreementLevelPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
@@ -9,8 +13,10 @@ import com.esferalia.aon.payroll.ContractCalendarEvent;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractPayment;
-import com.esferalia.aon.payroll.ContractType;
 import com.esferalia.aon.payroll.DeductionConcept;
+import com.esferalia.aon.payroll.EnterpriseAgreement;
+import com.esferalia.aon.payroll.EnterpriseCertificate;
+import com.esferalia.aon.payroll.EnterpriseCertificateDetail;
 import com.esferalia.aon.payroll.FunctionConstant;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
@@ -21,6 +27,124 @@ import com.esferalia.aon.payroll.SalaryDeduction;
 * Interface for holding entity properties constants.
 */ 
 public interface IPayrollAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for Agreement entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_ENTRY = DAOConstants.getDAOConstant(Agreement.class);
+
+	/** 
+	* Alias value: Agreement_calendar_id
+	* Hibernate value: Agreement.calendar.id
+	*/
+	String  AGREEMENT_CALENDAR_ID = AGREEMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Agreement_description
+	* Hibernate value: Agreement.description
+	*/
+	String  AGREEMENT_DESCRIPTION = AGREEMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Agreement_id
+	* Hibernate value: Agreement.id
+	*/
+	String  AGREEMENT_ID = AGREEMENT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for AgreementLevel entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_LEVEL_ENTRY = DAOConstants.getDAOConstant(AgreementLevel.class);
+
+	/** 
+	* Alias value: AgreementLevel_agreement_id
+	* Hibernate value: AgreementLevel.agreement.id
+	*/
+	String  AGREEMENT_LEVEL_AGREEMENT_ID = AGREEMENT_LEVEL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AgreementLevel_description
+	* Hibernate value: AgreementLevel.description
+	*/
+	String  AGREEMENT_LEVEL_DESCRIPTION = AGREEMENT_LEVEL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementLevel_id
+	* Hibernate value: AgreementLevel.id
+	*/
+	String  AGREEMENT_LEVEL_ID = AGREEMENT_LEVEL_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for AgreementLevelCategory entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_LEVEL_CATEGORY_ENTRY = DAOConstants.getDAOConstant(AgreementLevelCategory.class);
+
+	/** 
+	* Alias value: AgreementLevelCategory_description
+	* Hibernate value: AgreementLevelCategory.description
+	*/
+	String  AGREEMENT_LEVEL_CATEGORY_DESCRIPTION = AGREEMENT_LEVEL_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AgreementLevelCategory_id
+	* Hibernate value: AgreementLevelCategory.id
+	*/
+	String  AGREEMENT_LEVEL_CATEGORY_ID = AGREEMENT_LEVEL_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementLevelCategory_level_id
+	* Hibernate value: AgreementLevelCategory.level.id
+	*/
+	String  AGREEMENT_LEVEL_CATEGORY_LEVEL_ID = AGREEMENT_LEVEL_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AgreementLevelCategory_level_agreement_id
+	* Hibernate value: AgreementLevelCategory.level.agreement.id
+	*/
+	String  AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID = AGREEMENT_LEVEL_CATEGORY_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for AgreementLevelPayment entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_LEVEL_PAYMENT_ENTRY = DAOConstants.getDAOConstant(AgreementLevelPayment.class);
+
+	/** 
+	* Alias value: AgreementLevelPayment_description
+	* Hibernate value: AgreementLevelPayment.description
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_DESCRIPTION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AgreementLevelPayment_expression
+	* Hibernate value: AgreementLevelPayment.expression
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_EXPRESSION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementLevelPayment_id
+	* Hibernate value: AgreementLevelPayment.id
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AgreementLevelPayment_level_id
+	* Hibernate value: AgreementLevelPayment.level.id
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_LEVEL_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AgreementLevelPayment_type
+	* Hibernate value: AgreementLevelPayment.type
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_TYPE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[4];
 
 
 
@@ -428,43 +552,6 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for ContractType entity.
-	*/ 
-	DAOConstantsEntry CONTRACT_TYPE_ENTRY = DAOConstants.getDAOConstant(ContractType.class);
-
-	/** 
-	* Alias value: ContractType_CCCType
-	* Hibernate value: ContractType.CCCType
-	*/
-	String  CONTRACT_TYPE_CCCTYPE = CONTRACT_TYPE_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: ContractType_description
-	* Hibernate value: ContractType.description
-	*/
-	String  CONTRACT_TYPE_DESCRIPTION = CONTRACT_TYPE_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: ContractType_duration
-	* Hibernate value: ContractType.duration
-	*/
-	String  CONTRACT_TYPE_DURATION = CONTRACT_TYPE_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: ContractType_id
-	* Hibernate value: ContractType.id
-	*/
-	String  CONTRACT_TYPE_ID = CONTRACT_TYPE_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: ContractType_workingDay
-	* Hibernate value: ContractType.workingDay
-	*/
-	String  CONTRACT_TYPE_WORKING_DAY = CONTRACT_TYPE_ENTRY.getAliasNames()[4];
-
-
-
-	/** 
 	* DAOConstantsEntry for DeductionConcept entity.
 	*/ 
 	DAOConstantsEntry DEDUCTION_CONCEPT_ENTRY = DAOConstants.getDAOConstant(DeductionConcept.class);
@@ -492,6 +579,111 @@ public interface IPayrollAlias {
 	* Hibernate value: DeductionConcept.type
 	*/
 	String  DEDUCTION_CONCEPT_TYPE = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for EnterpriseAgreement entity.
+	*/ 
+	DAOConstantsEntry ENTERPRISE_AGREEMENT_ENTRY = DAOConstants.getDAOConstant(EnterpriseAgreement.class);
+
+	/** 
+	* Alias value: EnterpriseAgreement_agreement_id
+	* Hibernate value: EnterpriseAgreement.agreement.id
+	*/
+	String  ENTERPRISE_AGREEMENT_AGREEMENT_ID = ENTERPRISE_AGREEMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: EnterpriseAgreement_enterprise_id
+	* Hibernate value: EnterpriseAgreement.enterprise.id
+	*/
+	String  ENTERPRISE_AGREEMENT_ENTERPRISE_ID = ENTERPRISE_AGREEMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EnterpriseAgreement_id
+	* Hibernate value: EnterpriseAgreement.id
+	*/
+	String  ENTERPRISE_AGREEMENT_ID = ENTERPRISE_AGREEMENT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for EnterpriseCertificate entity.
+	*/ 
+	DAOConstantsEntry ENTERPRISE_CERTIFICATE_ENTRY = DAOConstants.getDAOConstant(EnterpriseCertificate.class);
+
+	/** 
+	* Alias value: EnterpriseCertificate_date
+	* Hibernate value: EnterpriseCertificate.date
+	*/
+	String  ENTERPRISE_CERTIFICATE_DATE = ENTERPRISE_CERTIFICATE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: EnterpriseCertificate_enterprise_id
+	* Hibernate value: EnterpriseCertificate.enterprise.id
+	*/
+	String  ENTERPRISE_CERTIFICATE_ENTERPRISE_ID = ENTERPRISE_CERTIFICATE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EnterpriseCertificate_enterprise_registry_name
+	* Hibernate value: EnterpriseCertificate.enterprise.registry.name
+	*/
+	String  ENTERPRISE_CERTIFICATE_ENTERPRISE_REGISTRY_NAME = ENTERPRISE_CERTIFICATE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: EnterpriseCertificate_id
+	* Hibernate value: EnterpriseCertificate.id
+	*/
+	String  ENTERPRISE_CERTIFICATE_ID = ENTERPRISE_CERTIFICATE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: EnterpriseCertificate_sign
+	* Hibernate value: EnterpriseCertificate.sign
+	*/
+	String  ENTERPRISE_CERTIFICATE_SIGN = ENTERPRISE_CERTIFICATE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: EnterpriseCertificate_status
+	* Hibernate value: EnterpriseCertificate.status
+	*/
+	String  ENTERPRISE_CERTIFICATE_STATUS = ENTERPRISE_CERTIFICATE_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for EnterpriseCertificateDetail entity.
+	*/ 
+	DAOConstantsEntry ENTERPRISE_CERTIFICATE_DETAIL_ENTRY = DAOConstants.getDAOConstant(EnterpriseCertificateDetail.class);
+
+	/** 
+	* Alias value: EnterpriseCertificateDetail_contract_id
+	* Hibernate value: EnterpriseCertificateDetail.contract.id
+	*/
+	String  ENTERPRISE_CERTIFICATE_DETAIL_CONTRACT_ID = ENTERPRISE_CERTIFICATE_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: EnterpriseCertificateDetail_enterpriseCertificate_id
+	* Hibernate value: EnterpriseCertificateDetail.enterpriseCertificate.id
+	*/
+	String  ENTERPRISE_CERTIFICATE_DETAIL_ENTERPRISE_CERTIFICATE_ID = ENTERPRISE_CERTIFICATE_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EnterpriseCertificateDetail_expireDate
+	* Hibernate value: EnterpriseCertificateDetail.expireDate
+	*/
+	String  ENTERPRISE_CERTIFICATE_DETAIL_EXPIRE_DATE = ENTERPRISE_CERTIFICATE_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: EnterpriseCertificateDetail_id
+	* Hibernate value: EnterpriseCertificateDetail.id
+	*/
+	String  ENTERPRISE_CERTIFICATE_DETAIL_ID = ENTERPRISE_CERTIFICATE_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: EnterpriseCertificateDetail_suspensionCause
+	* Hibernate value: EnterpriseCertificateDetail.suspensionCause
+	*/
+	String  ENTERPRISE_CERTIFICATE_DETAIL_SUSPENSION_CAUSE = ENTERPRISE_CERTIFICATE_DETAIL_ENTRY.getAliasNames()[4];
 
 
 

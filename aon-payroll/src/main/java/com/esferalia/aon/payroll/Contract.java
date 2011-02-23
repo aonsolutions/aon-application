@@ -22,12 +22,14 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
@@ -35,11 +37,12 @@ import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
-import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
 
 @Entity
@@ -65,11 +68,13 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	private Calendar calendar;
 	private Integer registration;
 	private Date seniorityDate;	
-	
+	private EnterpriseActivity activity;
+	private SSRegimeType regimeType;
+
 	private Set<ContractPayment> contractPayments = new HashSet<ContractPayment>();
 	private Set<ContractDeduction> contractDeductions = new HashSet<ContractDeduction>();
 	@Transient
-	private SalaryCalculatorContext ctx;
+	private ISalaryCalculatorContext ctx;
 
 	@Id
 	@GeneratedValue
@@ -112,6 +117,17 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	}
 	public void setEnterpriseCCC(EnterpriseCCC ccc) {
 		this.ccc = ccc;
+	}
+
+	@ManyToOne
+    @JoinColumn( name="enterprise_activity")	
+	@ForeignKey(name = "FK_CONTRACT_ACTIVITY")
+	@Index(name = "IDX_CONTRACT_ACTIVITY")
+	public EnterpriseActivity getActivity() {
+		return activity;
+	}
+	public void setActivity(EnterpriseActivity activity) {
+		this.activity = activity;
 	}
 
 	@Temporal(TemporalType.DATE)
@@ -206,6 +222,14 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		this.seniorityDate = seniorityDate;
 	}
 
+	@Column(name="ss_regime", nullable=false)
+	public SSRegimeType getRegimeType() {
+		return regimeType;
+	}
+	public void setRegimeType(SSRegimeType regimeType) {
+		this.regimeType = regimeType;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -219,10 +243,12 @@ public class Contract implements ITransferObject, ISalaryProxy {
 				.append(this.ccc, o.ccc)
 				.append(this.startDate, o.startDate)
 				.append(this.endDate, o.endDate)
+				.append(this.document, o.document)
 				.append(this.status, o.status)
 				.append(this.calendar, o.calendar)
 				.append(this.registration, o.registration)
 				.append(this.seniorityDate, o.seniorityDate)
+				.append(this.regimeType, o.regimeType)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -232,15 +258,17 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)
-			.append(person)
+			.append(person)			
 			.append(workPlace)
 			.append(ccc)
 			.append(startDate)
 			.append(endDate)
+			.append(document)
 			.append(status)
 			.append(calendar)
 			.append(registration)
 			.append(seniorityDate)
+			.append(regimeType)
 			.toHashCode();
 	}
 
@@ -249,6 +277,10 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		return new PojoToStringBuilder(this).toString();
 	}
 
+	@Transient
+	public boolean isSeniorityDateDifferent() {
+		return !DateUtils.isSameDay(getStartDate(), getSeniorityDate());
+	}
 
 	@Override
 	@Transient
@@ -257,19 +289,28 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		ISalaryCalculator sc = factoryManager.getCalculator(getSalaryCalculatorContext());
 		sc.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = sc.calculate( getSalaryCalculatorContext() );
-		
 		return salary;
 	}
 
 	@Override
 	@Transient
-	public SalaryCalculatorContext getSalaryCalculatorContext() throws SalaryException {
+	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate) throws SalaryException {
 		if (ctx == null) {
 			try {
-				ctx = new ContractSalaryCalculatorContext(this);
+				ctx = new ContractSalaryCalculatorContext(this,startDate,endDate,issueDate);
 			} catch (AonException e) {
 				throw new SalaryException(e.getMessage(), e);
 			}
+		}
+		return ctx;
+	}
+	
+	@Override
+	@Transient
+	public ISalaryCalculatorContext getSalaryCalculatorContext() throws SalaryException {
+		if (ctx == null) {
+			// TODO tratar esto.
+			throw new SalaryException("Contexto no inicializado!");
 		}
 		return ctx;
 	}

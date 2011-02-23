@@ -13,6 +13,15 @@ public class SalaryCalculatorContext implements ISalaryCalculatorContext{
 	private Date endDate;
 	private ExpressionContext ExpressionContext; 
 
+	public SalaryCalculatorContext() {
+		
+	}
+
+	public SalaryCalculatorContext(Date startDate, Date endDate, Date issueDate) {
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.issueDate = issueDate;
+	}
 	public ISalaryProxy getSalaryProxy() {
 		return salaryProxy;
 	}

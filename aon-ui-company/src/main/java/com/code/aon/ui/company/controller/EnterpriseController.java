@@ -22,7 +22,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.company.Agreement;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.EnterpriseCCC;
@@ -38,7 +37,6 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
@@ -58,7 +56,8 @@ public class EnterpriseController extends RegistryController implements ICompany
 	private AonFile aonFile;
 	private RegistryAttachment attach;
 	
-	private Agreement agreement;
+	// TODO EnterpriseAgreement
+	// private Agreement agreement;
 
     public boolean isTreeView() {
 		return treeView;
@@ -124,13 +123,14 @@ public class EnterpriseController extends RegistryController implements ICompany
 		this.ccc = ccc;
 	}
 	
-	public Agreement getAgreement() {
-		return agreement;
-	}
-
-	public void setAgreement(Agreement agreement) {
-		this.agreement = agreement;
-	}
+	// TODO EnterpriseAgreement
+//	public Agreement getAgreement() {
+//		return agreement;
+//	}
+//
+//	public void setAgreement(Agreement agreement) {
+//		this.agreement = agreement;
+//	}
 
 	/**
      * Gets the addresses of the enterprise.
@@ -202,7 +202,8 @@ public class EnterpriseController extends RegistryController implements ICompany
     	setDirStaff(null);
     	setAonFile(null);
     	this.info.reset();
-    	setAgreement(new Agreement());
+   	// TODO EnterpriseAgreement    	
+//    	setAgreement(new Agreement());
 	}
     
     public void initMainActiviy() throws ManagerBeanException {
@@ -332,9 +333,9 @@ public class EnterpriseController extends RegistryController implements ICompany
 		}
 	}
 
-	public void onAgreementChanged( LookupChangeEvent event ) {
-		// TODO a la espera del company-payroll-bridge
-	}	
+//	public void onAgreementChanged( LookupChangeEvent event ) {
+//		// TODO a la espera del company-payroll-bridge
+//	}	
 	
 	public void onLoadCalendar( ActionEvent event ) {
 		// TODO implementar la busqueda del calendario. si la entidad no tiene calendario, 

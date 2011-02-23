@@ -16,7 +16,6 @@ import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.CCCType;
-import com.code.aon.company.enumeration.EconomicAgreement;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -25,24 +24,8 @@ import com.code.aon.registry.dao.IRegistryAlias;
 
 public class CompanyCollectionsController {
 
-	private List<SelectItem> economicAgreements;
-	
 	private List<SelectItem> cccTypes;
-	
 	private List<SelectItem> enterpriseActivityTypes;
-	
-	public List<SelectItem> getEconomicAgreements() {
-		if (economicAgreements == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			economicAgreements = new LinkedList<SelectItem>();
-			for( EconomicAgreement economicAgreement : EconomicAgreement.values() ) {
-				String name = economicAgreement.getName(locale);
-				SelectItem item = new SelectItem(economicAgreement, name);
-				economicAgreements.add(item);			
-			}
-		}
-		return economicAgreements;
-	}
 	
 	public List<SelectItem> getCCCTypes() {
 		if (cccTypes == null) {
@@ -70,12 +53,6 @@ public class CompanyCollectionsController {
 		return enterpriseActivityTypes;
 	}	
 	
-    /**
-     * Gets the addresses of the company.
-     * 
-     * @return the addresses of the company
-     * @throws ManagerBeanException 
-     */
 	@SuppressWarnings("unchecked")
     public List<SelectItem> getCompanyAddresses() throws ManagerBeanException {
     	LinkedList<SelectItem> addresses = new LinkedList<SelectItem>();

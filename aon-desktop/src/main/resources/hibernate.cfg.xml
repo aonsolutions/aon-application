@@ -24,6 +24,7 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.person.Person"/>
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RegistryBank"/>
 		<mapping class="com.code.aon.registry.RecordData"/>
@@ -42,29 +43,22 @@
 		
 		<!-- AON-CALENDAR Mapping files -->		
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>
-		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>	
+		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>
 		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
-		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
-		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>			
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>
+		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>
 
-		<!-- AON-COMPANY Mapping files -->
-		<mapping class="com.code.aon.company.Agreement"/>
-		<mapping class="com.code.aon.company.AgreementLevel"/>
-		<mapping class="com.code.aon.company.AgreementLevelCategory"/>
-		<mapping class="com.code.aon.company.AgreementLevelPayment"/>
-		<mapping class="com.code.aon.company.CNAE"/>
+		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseActivity"/>
 		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.WorkActivity"/>
-		<mapping class="com.code.aon.company.resources.Resource"/>
-		<mapping class="com.code.aon.company.resources.Employee"/>
 		
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.CNAE"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>

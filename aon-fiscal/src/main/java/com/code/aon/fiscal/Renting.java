@@ -21,7 +21,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.fiscal.enumeration.Administration;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.registry.RegistryBank;

@@ -13,6 +13,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.Numeric;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
@@ -23,7 +24,6 @@ import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.dao.IFiscalAlias;
-import com.code.aon.fiscal.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -31,7 +31,6 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.fiscal.controller.VatTaxDeclarationController;
 import com.code.aon.ui.util.AonUtil;
 
 public class MOD303Writer implements IFinanceConstants{

@@ -30,6 +30,7 @@ import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
@@ -467,8 +468,6 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	public void setIrpfBase(Double irpfBase) {
 		this.irpfBase = irpfBase;
 	}
-	
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -609,6 +608,12 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 		ctx.setIssueDate(this.getIssueDate());
 		ctx.setStartDate(this.getStartDate());
 		ctx.setEndDate(this.getEndDate());
+		return ctx;
+	}
+	@Override
+	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate)
+			throws SalaryException {
+		SalaryCalculatorContext ctx = new SalaryCalculatorContext(getStartDate(),getEndDate(),getIssueDate());
 		return ctx;
 	}
 }

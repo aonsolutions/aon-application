@@ -19,7 +19,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.fiscal.enumeration.Administration;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.registry.RegistryBank;
 

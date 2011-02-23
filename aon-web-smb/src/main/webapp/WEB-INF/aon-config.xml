@@ -35,7 +35,7 @@
 			showFinanceFeeData="true" 
 			showTaxInfoData="true"
 			showAccount="true"
-			showTariff="false" 
+			showTariff="true" 
 			showSegment="true"
 			showNote="true"
 			showRelationship="false"
@@ -107,7 +107,7 @@
 			showSeller="true"
 			showAddInfo="true"
 			showSupplier="true"
-			showTariff="false"
+			showTariff="true"
 			showFinanceData="true"
 			showNote="true"
 		/>

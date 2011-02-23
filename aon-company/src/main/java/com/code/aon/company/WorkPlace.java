@@ -18,87 +18,49 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.company.enumeration.EconomicAgreement;
-
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.registry.RegistryAddress;
 import com.esferalia.aon.calendar.Calendar;
 
-/**
- * Transfer Object that represents the workPlace.
- * 
- */
 @Entity
 @Table(name="workplace")
-public class WorkPlace implements ITransferObject, IEntity {
+public class WorkPlace implements ITransferObject {
 
 	private static final long serialVersionUID = 5078033612665053464L;
 
 	/** Working place identifier */
 	private Integer id;
-
 	/** Working place description */
 	private String description;
-	
 	/** Indicates the enterprise that this Working place belongs to */
     private Enterprise enterprise; 	
-
 	/** Working place address */
     private RegistryAddress address;
-
 	/** Economic Agreement */
-    private EconomicAgreement economicAgreement;
-    
+    private Administration economicAgreement;
     /** Indicates if the working place is currently active. */
 	private boolean active;
-	
 	/** Calendar */
 	private Calendar calendar;
 
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
     @Id
 	@GeneratedValue
 	@Column(nullable=false)
 	public Integer getId() {
 		return id;
 	}
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the id
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 	
-	/**
-	 * Gets the description.
-	 * 
-	 * @return the description
-	 */
 	@Column(name="description", length = 64, nullable = false)
 	public String getDescription() {
 		return description;
 	}
-
-	/**
-	 * Sets the description.
-	 * 
-	 * @param description the description
-	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	/**
-	 * Gets the enterprise.
-	 * 
-	 * @return the enterprise
-	 */
 	@ManyToOne
     @JoinColumn(name="enterprise", nullable = false, updatable = false)
     @ForeignKey(name = "FK_WORKPLACE_ENTERPRISE")
@@ -106,21 +68,10 @@ public class WorkPlace implements ITransferObject, IEntity {
     public Enterprise getEnterprise() {
 		return enterprise;
 	}
-
-	/**
-	 * Sets the enterprise.
-	 * 
-	 * @param enterprise the new enterprise
-	 */
 	public void setEnterprise(Enterprise enterprise) {
 		this.enterprise = enterprise;
 	}
 	
-	/**
-	 * Gets the address.
-	 * 
-	 * @return the address
-	 */
 	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JoinColumn(name="address", nullable = false)
@@ -129,49 +80,23 @@ public class WorkPlace implements ITransferObject, IEntity {
 	public RegistryAddress getAddress() {
 		return address;
 	}
-
-	/**
-	 * Sets the address.
-	 * 
-	 * @param address the address
-	 */
 	public void setAddress(RegistryAddress address) {
 		this.address = address;
 	}
 
-    /**
-     * Returns if the employee is currently in the company.
-     * 
-	 * @return the active
-	 */
 	@Column(nullable = true)
 	public boolean isActive() {
 		return active;
 	}
-
-	/**
-	 * @param active the active to set
-	 */
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 	
-	/**
-	 * Gets the economic agreement.
-	 * 
-	 * @return the economic agreement
-	 */
 	@Column(name="economicAgreement", nullable = true)
-	public EconomicAgreement getEconomicAgreement() {
+	public Administration getEconomicAgreement() {
 		return economicAgreement;
 	}
-
-	/**
-	 * Sets the economic agreement.
-	 * 
-	 * @param economicAgreement the new economic agreement
-	 */
-	public void setEconomicAgreement(EconomicAgreement economicAgreement) {
+	public void setEconomicAgreement(Administration economicAgreement) {
 		this.economicAgreement = economicAgreement;
 	}
 	
@@ -182,16 +107,8 @@ public class WorkPlace implements ITransferObject, IEntity {
 	public Calendar getCalendar() {
 		return calendar;
 	}
-
 	public void setCalendar(Calendar calendar) {
 		this.calendar = calendar;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.code.aon.employee.INode#accept(com.code.aon.employee.INodeVisitor)
-	 */
-	public void accept(IEntityVisitor visitor) {
-		visitor.visitWorkPlace( this );
 	}
 	
 	@Override

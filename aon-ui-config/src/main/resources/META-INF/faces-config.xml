@@ -511,6 +511,51 @@
 		</managed-property>				
 	</managed-bean>
 
+	<!-- ************ CNAE ************** -->
+	<managed-bean>
+		<managed-bean-name>cnae</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.CNAE</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!-- ************ CNAE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>cnaeLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnaeLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.CNAE</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CNAE_title</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/cnae/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/cnae/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
   <!-- *************************************** -->
   <!-- ************ NAVIGATION *************** -->
   <!-- *************************************** -->
@@ -545,6 +590,18 @@
 			<description>BANK NAVIGATION SEARCH</description>
 			<from-outcome>bank_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/config/facelet/bank/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== CNAE ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cnae_grid</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>cnae_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

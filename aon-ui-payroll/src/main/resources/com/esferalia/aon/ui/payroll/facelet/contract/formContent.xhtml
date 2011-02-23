@@ -11,72 +11,94 @@
 					  ,aon-panelGrid-even aon-width-auto
 					  ,aon-panelGrid-even aon-width-150">
 	
-		<aon:outputText value="#{companyBundle.company_enterprise}" />
-		<aon:div>
-			<aon:outputText value="#{contract.to.workPlace.enterprise.registry.document}" />
-			<aon:outputText value=" - " />	
-			<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" styleClass="aon-bold"/>
-		</aon:div>
-		<aon:htmlCommandLink target="_blank" 
-			disabled="#{contract.to.document==null}"
-			title="#{(contract.to.document!=null)?('pdf'):('disabled')}"
-			actionListener="#{contract.onDownloadSelected}"
-			styleClass="aon-editDataTable-button #{(contract.to.document!=null)?('aon-icon-pdf'):('aon-icon-pdf-disabled')}"
-			style="padding-left: 20px;"
-			value="#{contract.contractData.code.value}" />
-
-		<aon:outputText value="#{companyBundle.company_workplace}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
-		<aon:outputText value="#{contract.to.workPlace.description}" style="margin-left: 50px;"/>
-		<aon:div>
-			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-orange" rendered="#{contract.to.pending}"/>	
-			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-green"  rendered="#{contract.to.processed}"/>
-			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-yellow" rendered="#{contract.to.blocked}"/>
-		</aon:div>
-			
-		<aon:outputText value="#{companyBundle.company_enterprise_ccc}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
-		<aon:outputText value="#{contract.to.enterpriseCCC.ccc}"  style="margin-left: 50px;"/>
-		<aon:outputText value="&#160;" />
-						
 		<aon:outputText value="#{registryBundle.registry_person}" />
 		<aon:div> 
 			<aon:outputText value="#{contract.to.person.registry.document}" />
 			<aon:outputText value=" - " />
 			<aon:outputText value="#{contract.to.person.fullName}" styleClass="aon-bold"/>
 		</aon:div>	
-		<aon:outputText value="&#160;" />
+		<aon:htmlCommandLink target="_blank" 
+			disabled="#{contract.to.document==null}"
+			title="#{(contract.to.document!=null)?('pdf'):('disabled')}"
+			actionListener="#{contract.onDownloadSelected}"
+			styleClass="aon-editDataTable-button #{(contract.to.document!=null)?('aon-icon-pdf'):('aon-icon-pdf-disabled')}"
+			style="padding-left: 20px;"
+			value="#{bundle.aon_document}" />
 
 		<aon:outputText value="#{payrollBundle.payroll_salary_ss_number}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:outputText value="#{contract.to.person.socialSecurityNumber}"  style="margin-left: 50px;"/>
+		<aon:div>
+			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-orange" rendered="#{contract.to.pending}"/>	
+			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-green"  rendered="#{contract.to.processed}"/>
+			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-yellow" rendered="#{contract.to.blocked}"/>
+		</aon:div>
+
+		<aon:outputText value="#{companyBundle.company_enterprise}" />
+		<aon:div>
+			<aon:outputText value="#{contract.to.workPlace.enterprise.registry.document}" />
+			<aon:outputText value=" - " />	
+			<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" styleClass="aon-bold"/>
+		</aon:div>
+		<aon:outputText value="&#160;" />
+
+		<aon:outputText value="#{companyBundle.company_workplace}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{contract.to.workPlace.description}" style="margin-left: 50px;"/>
+		<aon:outputText value="&#160;" />
+
+		<aon:outputText value="#{companyBundle.company_activity}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:div>
+			<aon:outputText value="#{contract.to.activity.description}"  style="margin-left: 50px;"/>
+			<aon:outputText value=" - ("/>
+			<aon:outputText value="#{contract.to.activity.cnae.code}"/>
+			<aon:outputText value=") - "/>
+			<aon:outputText value="#{contract.to.activity.cnae.title}"/>
+		</aon:div>
+		<aon:outputText value="&#160;" />
+
+		<aon:outputText value="#{companyBundle.company_enterprise_ccc}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{contract.to.enterpriseCCC.ccc}"  style="margin-left: 50px;"/>
 		<aon:outputText value="&#160;" />
 		
-		<aon:outputText value="#{bundle.aon_start_date}" />
-		<aon:outputText value="#{contract.to.startDate}" >
+		<aon:outputText value="#{payrollBundle.payroll_contract_period}" />
+		<aon:div>
+			<aon:outputText value="#{bundle.aon_start_date}:" styleClass="aon-italic aon-margin-right"/>
+			<aon:outputText value="#{contract.to.startDate}" styleClass="aon-bold">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+			<aon:outputText value="#{bundle.aon_end_date}:" styleClass="aon-italic aon-margin-right aon-margin-left"/>
+			<aon:outputText value="#{contract.to.endDate}" styleClass="aon-bold">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+		</aon:div>
+		<aon:outputText value="&#160;" />
+
+		<aon:outputText value="#{payrollBundle.payroll_salary_seniority_date}" />
+		<aon:outputText value="#{contract.to.seniorityDate}" >
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>		
 		<aon:outputText value="&#160;" />
 		
-		<aon:outputText value="#{bundle.aon_end_date}" />
-		<aon:outputText value="#{contract.to.endDate}" >
-			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-				timeZone="#{timeZoneController.timeZoneId}" />
-		</aon:outputText>		
+		<aon:outputText value="#{payrollBundle.payroll_salary_registration}"/>
+		<aon:outputText value="#{contract.to.registration}"/>
 		<aon:outputText value="&#160;" />
 	</aon:panelGrid>
 
 	<aon:panelGrid columns="4" style="width: 100%; margin-top:10px;"
-		columnClasses="aon-panelGrid-even aon-width-150
-					  ,aon-panelGrid-even aon-width-150
-					  ,aon-panelGrid-even aon-width-150
+		columnClasses="aon-panelGrid-even aon-width-200
+					  ,aon-panelGrid-even aon-width-200
+					  ,aon-panelGrid-even aon-width-200
 					  ,aon-panelGrid-even aon-width-auto">
 	
 		<aon:div>
 			<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
 			<aon:commandLink 
-				actionListener="#{contract.onShowDetails}"
+				actionListener="#{contract.onShowVariables}"
 				action="contractData_list"
 				styleClass="aon-dataTable-link"
-				value="Detalle de Contrato" />
+				value="Variables del Contrato" />
 		</aon:div>	
 
 		<aon:div>
@@ -98,7 +120,6 @@
 		</aon:div>	
 
 		<aon:outputText value="&#160;" />
-
 	</aon:panelGrid>
 
 

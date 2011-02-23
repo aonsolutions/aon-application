@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.code.aon.company;
 
 import java.util.HashSet;
@@ -26,6 +23,7 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
+import com.code.aon.config.CNAE;
 
 @Entity
 @Table(name="enterprise_activity")
@@ -34,13 +32,9 @@ public class EnterpriseActivity implements ITransferObject {
 	private static final long serialVersionUID = 296257685693582905L;
 
 	private Integer id;
-	
     private String description;
-
     private Enterprise enterprise; 
-
-	private CNAE cnae; 
-	
+    private CNAE cnae; 
 	private EnterpriseActivityType type;
 
 	private Set<EnterpriseCCC> cccs = new HashSet<EnterpriseCCC>();
@@ -51,7 +45,6 @@ public class EnterpriseActivity implements ITransferObject {
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -60,19 +53,17 @@ public class EnterpriseActivity implements ITransferObject {
     public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	@OneToOne
-	@JoinColumn(name="enterprise", nullable = false, updatable = false )
-	@ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_ENTERPRISE")
-	@Index(name = "IDX_ENTERPRICE_ACTIVITY_ENTERPRISE")    
+    @JoinColumn(name="enterprise", nullable = false, updatable = false )
+    @ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_ENTERPRISE")
+    @Index(name = "IDX_ENTERPRICE_ACTIVITY_ENTERPRISE")    
 	public Enterprise getEnterprise() {
 		return enterprise;
 	}
-
 	public void setEnterprise(Enterprise enterprise) {
 		this.enterprise = enterprise;
 	}
@@ -81,10 +72,9 @@ public class EnterpriseActivity implements ITransferObject {
     @JoinColumn(name="cnae", nullable = false, updatable = false )
     @ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_CNAE")
     @Index(name = "IDX_ENTERPRICE_ACTIVITY_CNAE")    
-    public CNAE getCnae() {
+	public CNAE getCnae() {
 		return cnae;
 	}
-
 	public void setCnae(CNAE cnae) {
 		this.cnae = cnae;
 	}
@@ -93,7 +83,6 @@ public class EnterpriseActivity implements ITransferObject {
 	public EnterpriseActivityType getType() {
 		return type;
 	}
-
 	public void setType(EnterpriseActivityType type) {
 		this.type = type;
 	}
@@ -102,7 +91,6 @@ public class EnterpriseActivity implements ITransferObject {
 	public Set<EnterpriseCCC> getCccs() {
 		return cccs;
 	}
-
 	public void setCccs(Set<EnterpriseCCC> cccs) {
 		this.cccs = cccs;
 	}

@@ -14,7 +14,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.fiscal.enumeration.Administration;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.util.AonUtil;

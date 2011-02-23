@@ -22,6 +22,7 @@ import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
@@ -35,16 +36,12 @@ import com.code.aon.ui.util.AonUtil;
 public class ConfigCollectionsController {
 	
 	private List<SelectItem> workGroupStatuses;
-	
 	private List<SelectItem> taxTypes;
-	
 	private List<SelectItem> payMethodTypes;
-
 	private List<SelectItem> invoiceTransactionTypes;
-
 	private List<SelectItem> vatDeductionTypes;
-
 	private List<SelectItem> withholdingTypes;
+	private List<SelectItem> administrations;
 
 	public List<SelectItem> getSeries() throws ManagerBeanException{
 		return getSeries(false);		
@@ -431,4 +428,17 @@ public class ConfigCollectionsController {
 		return commissionTypes;
 	}
 
+	public List<SelectItem> getAdministrations() {
+		if (administrations == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			administrations = new LinkedList<SelectItem>();
+			administrations.add(new SelectItem(Administration.COMMON_TERRITORY, Administration.COMMON_TERRITORY.getName(locale)));
+			administrations.add(new SelectItem(Administration.ALAVA, Administration.ALAVA.getName(locale)));
+			administrations.add(new SelectItem(Administration.BIZKAIA, Administration.BIZKAIA.getName(locale)));
+			administrations.add(new SelectItem(Administration.GIPUZKOA, Administration.GIPUZKOA.getName(locale)));
+			administrations.add(new SelectItem(Administration.NAVARRA, Administration.NAVARRA.getName(locale)));
+		}
+		return administrations;
+	}
+	
 }

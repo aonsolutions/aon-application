@@ -25,84 +25,72 @@ public class EnterpriseUser implements ITransferObject, IRegistry {
 	
 	private static final long serialVersionUID = -151638379810317997L;
 
+	private Integer id;
+	private String name;
+	private String login;
+	private String password;
+	private boolean active;
+    private Enterprise enterprise; 	
+    private Registry registry; 	
+	
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	private Integer id;
-	
-	@Column(length=64, nullable=false)
-	private String name;
-	
-	@Column(length=16,nullable=false)
-	private String login;
-
-	@Column(length = 128)
-	private String password;
-	
-	@Column(nullable=false)
-	private boolean active;
-
-	@OneToOne
-    @JoinColumn(name="enterprise", nullable = false, updatable = false )
-    @ForeignKey(name = "FK_USER_ENTERPRISE")
-    @Index(name = "IDX_USER_ENTERPRISE")    
-    private Enterprise enterprise; 	
-
-	@OneToOne
-    @JoinColumn(name="registry", updatable = false )
-    @ForeignKey(name = "FK_USER_REGISTRY")
-    @Index(name = "IDX_USER_REGISTRY")    
-    private Registry registry; 	
-	
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
 	
+	@Column(length=64, nullable=false)
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
+	@Column(length=16,nullable=false)
 	public String getLogin() {
 		return login;
 	}
-
 	public void setLogin(String login) {
 		this.login = login;
 	}
-	
+
+	@Column(length = 128)
 	public String getPassword() {
 		return password;
 	}
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
 	
+	@Column(nullable=false)
 	public boolean isActive() {
 		return active;
 	}
-
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 	
+	@OneToOne
+    @JoinColumn(name="enterprise", nullable = false, updatable = false )
+    @ForeignKey(name = "FK_USER_ENTERPRISE")
+    @Index(name = "IDX_USER_ENTERPRISE")    
 	public Enterprise getEnterprise() {
 		return enterprise;
 	}
-
 	public void setEnterprise(Enterprise enterprise) {
 		this.enterprise = enterprise;
 	}	
 
 	@Override
+	@OneToOne
+    @JoinColumn(name="registry", updatable = false )
+    @ForeignKey(name = "FK_USER_REGISTRY")
+    @Index(name = "IDX_USER_REGISTRY")    
 	public Registry getRegistry() {
 		return this.registry;
 	}

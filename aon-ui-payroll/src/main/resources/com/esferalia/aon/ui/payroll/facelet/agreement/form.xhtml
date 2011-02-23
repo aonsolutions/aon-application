@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+		<aon:form id="agreementForm">
+			<aon:methodParam name="saveAction" value="agreement_tree" />
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_agreement_module}" />
+				<ui:param name="controller" value="#{agreement}" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true" width="100%">
+		
+					<aon:outputLabel value="#{bundle.aon_id}" />
+					<aon:outputText value="#{agreement.to.id}" />
+		
+					<aon:outputLabel for="Agreement_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Agreement_description"
+						value="#{agreement.to.description}" size="64" maxlength="64" />
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+	
+</ui:composition>

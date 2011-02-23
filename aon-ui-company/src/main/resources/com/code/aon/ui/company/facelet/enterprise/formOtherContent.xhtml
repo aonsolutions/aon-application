@@ -21,7 +21,9 @@
 	<aon:div>
 		<aon:outputText value="#{enterprise.workplace.description}" />
 		<c:if test="#{enterprise.workplace.economicAgreement != null}" >
-			<aon:outputText value=" (#{enterprise.workplace.economicAgreement})" />
+			<aon:outputText value=" (" />
+			<aon:outputText value="#{enterprise.workplace.economicAgreement}" />
+			<aon:outputText value=" )" />
 		</c:if>
 	</aon:div>
 				

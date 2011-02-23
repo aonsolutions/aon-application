@@ -29,8 +29,8 @@ import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
-import com.esferalia.aon.calendar.Calendar;
 import com.code.aon.registry.RegistryAttachment;
+import com.esferalia.aon.calendar.Calendar;
 
 /**
  * Transfer Object that represents a Enterprise.
@@ -47,8 +47,6 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 	private Registry registry;
 	
 	private Scope scope;
-	
-	private Agreement agreement;
 	
 	private Calendar calendar;
 	
@@ -101,18 +99,6 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 		this.activities = activities;
 	}
 
-	@ManyToOne
-    @JoinColumn(name="agreement")
-    @ForeignKey(name = "FK_ENTERPRISE_AGREEMENT")
-    @Index(name = "FK_ENTERPRISE_AGREEMENT")
-	public Agreement getAgreement() {
-		return agreement;
-	}
-
-	public void setAgreement(Agreement agreement) {
-		this.agreement = agreement;
-	}
-	
 	@ManyToOne
     @JoinColumn( name="calendar")	
 	@ForeignKey(name = "FK_ENTERPRISE_CALENDAR")

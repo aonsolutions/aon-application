@@ -8,12 +8,9 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.company.controller.EnterpriseController;
-import com.code.aon.ui.company.controller.EnterpriseTree;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Listener added to the EnterpriseController
@@ -44,10 +41,6 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 			controller.initLogo();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
-		}
-		if ( controller.isTreeView() ) {
-			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_TREE_CONTROLLER_NAME);
-			tree.loadTree();			
 		}
 	}
 

@@ -66,14 +66,14 @@
 					rendered="#{formEdit}"
 					value="#{to.economicAgreement}">
 					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{companyCollections.economicAgreements}" />
+					<f:selectItems value="#{configCollections.administrations}" />
 				</aon:selectOneMenu>	
 				<f:facet name="footer">
 					<aon:selectOneMenu id="WorkPlace_economicAgreement-New"
 						rendered="#{formNew}"
 						value="#{enterpriseWorkplace.to.economicAgreement}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{companyCollections.economicAgreements}" />
+						<f:selectItems value="#{configCollections.administrations}" />
 					</aon:selectOneMenu>	
 				</f:facet>
 			</aon:column>			
