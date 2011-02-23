@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="576"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -85,7 +85,7 @@
 	</group>
 	<background>
 		<band height="802" splitType="Stretch">
-			<textField isBlankWhenNull="true">
+			<textField isBlankWhenNull="false">
 				<reportElement key="textField-42" x="-15" y="47" width="9" height="703">
 					<printWhenExpression><![CDATA[$P{printRecordData}]]></printWhenExpression>
 				</reportElement>
@@ -98,7 +98,14 @@
 				<textElement rotation="Left">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}.getName() + " CIF:" + $P{company}.getDocument() + ". " + ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}.getName()
++ ($P{recordData}.getRegistration()!=null?"Inscripción " + $P{recordData}.getRegistration() + ", ":"")
++ ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"")
++ ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"")
++ ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"")
++ ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"")
++ ($P{recordData}.getRecordDate()!=null?"con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):"")
++ " CIF:" + $P{company}.getDocument() + ". " ]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-5" x="-25" y="241" width="4" height="1"/>
