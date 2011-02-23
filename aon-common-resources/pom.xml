@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>6.1.0-SNAPSHOT</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.code.aon</groupId>
+	<artifactId>aon-common-resources</artifactId>
+	<version>6.1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<description>Plantillas de impresion (jasper).</description>
+	<name>AON COMMON TEMPLATES</name>
+
+	<properties>
+		<maven.build.timestamp.format>dd/MM/yyyy</maven.build.timestamp.format>
+	</properties>
+
+	<scm>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon.web.parent</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon.web.parent</connection>
+		<url>http://dev.esferalia.com/websvn/wsvn/aon.web.parent</url>
+	</scm>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.0-beta-4</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>true</doCheck>
+					<doUpdate>true</doUpdate>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>rpm-release</id>
+			<activation>
+				<property>
+					<name>rpm.release</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+
+					<!-- Para construir el RPM -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>rpm-maven-plugin</artifactId>
+						<version>2.0.1</version>
+						<extensions>true</extensions>
+
+						<executions>
+							<execution>
+								<goals>
+									<goal>attached-rpm</goal>
+								</goals>
+							</execution>
+
+						</executions>
+
+						<configuration>
+							<group>Applications/Aon</group>
+							<release>${buildNumber}</release>
+							<copyright>2009, esferalia Networks S.A</copyright>
+							<requires>
+								<require>aon-directory-client &gt;= 5.0.0-4</require>
+							</requires>
+							<mappings>
+								<mapping>
+									<filemode>755</filemode>
+									<username>jboss</username>
+									<groupname>jboss</groupname>
+									<directory>/home/COMMON-RESOURCES/aon-web-finance/templates</directory>
+									<sources>
+										<source>
+											<location>templates</location>
+										</source>
+									</sources>
+								</mapping>
+							</mappings>
+							<postinstallScriptlet>
+								<scriptFile>src/main/scripts/postinstall</scriptFile>
+								<fileEncoding>utf-8</fileEncoding>
+							</postinstallScriptlet>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
+ 
