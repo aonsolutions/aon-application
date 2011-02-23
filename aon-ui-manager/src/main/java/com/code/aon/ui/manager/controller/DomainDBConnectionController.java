@@ -29,6 +29,8 @@ public class DomainDBConnectionController extends LdapBasicController implements
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainDBConnectionController.class);
 	
+	private final static String DB_NAME_PREFFIX = "aon-";
+	
 	private List<SelectItem> dataSources;
 	
 	private boolean createDB;
@@ -99,7 +101,7 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	
 	private String formatDBName( String name ) {
 		String dbName = StringUtils.replace(name, ".", "-");
-		return StringUtils.left(dbName, 64);
+		return StringUtils.left(DB_NAME_PREFFIX + dbName, 64);
 	}
 	
 	public void init( DBConnnection dbc, String name ) {
