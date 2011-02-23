@@ -138,7 +138,11 @@ public class ManagerController implements IManagerConstants {
 	}
 
 	public boolean isUserManagement() {
-		return isAdministrator() || getCurrentDomain().getUserManagement();
+		if ( isAdministrator() ) {
+			return true;
+		}
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		return dc.getDomain().getUserManagement();
 	}
 
 	public boolean isDomainManagement() {
@@ -291,7 +295,7 @@ public class ManagerController implements IManagerConstants {
 	}
 	
 	private Domain calculateCurrentDomain() {
-		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
 		String name = domainResolver.getDomain();		
 		try {
@@ -319,7 +323,7 @@ public class ManagerController implements IManagerConstants {
 	
 	@SuppressWarnings("unchecked")
 	private void initEsferaliaUser() {
-		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {
 			controller.setInitExpressions(Collections.EMPTY_LIST);			
 			controller.clearCriteria();
@@ -330,7 +334,7 @@ public class ManagerController implements IManagerConstants {
 	}
 
 	private void initNormalUser() {
-		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {
 			Criteria criteria = controller.getCriteria();
 			String alias = controller.getFieldName(IManagerAlias.DOMAIN_COMMON_NAME);
@@ -344,7 +348,7 @@ public class ManagerController implements IManagerConstants {
 	}
 
 	private void initParentUser() {
-		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IManagerConstants.DOMAIN_CONTROLLER_NAME);
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {
 			List<Expression> initExpressions = new LinkedList<Expression>();
 			String cn = controller.getFieldName(IManagerAlias.DOMAIN_COMMON_NAME);
