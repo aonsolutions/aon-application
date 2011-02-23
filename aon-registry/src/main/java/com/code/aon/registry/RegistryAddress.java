@@ -71,6 +71,31 @@ public class RegistryAddress implements ITransferObject, IAddress {
         this.registry = registry;
     }
 
+    @Column(name="type", nullable = false)
+    public AddressType getAddressType() {
+        return type;
+    }
+    public void setAddressType(AddressType type) {
+        this.type = type;
+    }
+
+    @Column(length=128)
+	public String getRecipient() {
+        return recipient;
+    }
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
+    }
+
+    @Column(name="street_type")
+   	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.registry.enumeration.StreetType") })
+    public StreetType getStreetType() {
+        return streetType;
+    }
+    public void setStreetType(StreetType streetType) {
+        this.streetType = streetType;
+    }
+
     @Column(length=128)
 	public String getAddress() {
         return address;
@@ -90,7 +115,6 @@ public class RegistryAddress implements ITransferObject, IAddress {
 	public String getAddress2() {
         return address2;
     }
-
     public void setAddress2(String address2) {
         this.address2 = address2;
     }
@@ -99,37 +123,16 @@ public class RegistryAddress implements ITransferObject, IAddress {
 	public String getAddress3() {
         return address3;
     }
-    
-    @Transient
-    public String getFullAddress() {
-    	StringBuffer buf = new StringBuffer();
-    	buf.append(getStreetType()==null?"":getStreetType());
-    	buf.append(getStreetType()==null?"":" ");
-    	buf.append(getAddress());
-    	buf.append(StringUtils.isEmpty(getNumber())?"":" ");
-    	buf.append(StringUtils.isEmpty(getNumber())?"":getNumber());
-    	buf.append(StringUtils.isEmpty(getAddress2())?"":" ");
-    	buf.append(StringUtils.isEmpty(getAddress2())?"":getAddress2() );
-    	buf.append(StringUtils.isEmpty(getAddress3())?"":" (");
-    	buf.append(StringUtils.isEmpty(getAddress3())?"":getAddress3() );
-    	buf.append(StringUtils.isEmpty(getAddress3())?"":")");
-    	return buf.toString();
-    }
-    @Transient
-    public String getShortAddress() {
-  		return StringUtils.isEmpty(getAlias())?StringUtils.abbreviate(getFullAddress(), 20): getAlias();
-    }
-
     public void setAddress3(String address3) {
         this.address3 = address3;
     }
 
-    @Column(name="type", nullable = false)
-    public AddressType getAddressType() {
-        return type;
+    @Column(length=16)
+	public String getZip() {
+        return zip;
     }
-    public void setAddressType(AddressType type) {
-        this.type = type;
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 
     @Column(length=64)
@@ -151,37 +154,32 @@ public class RegistryAddress implements ITransferObject, IAddress {
         this.geozone = geozone;
     }
 
-    @Column(length=128)
-	public String getRecipient() {
-        return recipient;
-    }
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
-    }
-
-    @Column(name="street_type")
-   	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.registry.enumeration.StreetType") })
-    public StreetType getStreetType() {
-        return streetType;
-    }
-    public void setStreetType(StreetType streetType) {
-        this.streetType = streetType;
-    }
-
-    @Column(length=16)
-	public String getZip() {
-        return zip;
-    }
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-
     @Column(length=15)
 	public String getAlias() {
         return alias;
     }
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    @Transient
+    public String getFullAddress() {
+    	StringBuffer buf = new StringBuffer();
+    	buf.append(getStreetType()==null?"":getStreetType());
+    	buf.append(getStreetType()==null?"":" ");
+    	buf.append(getAddress());
+    	buf.append(StringUtils.isEmpty(getNumber())?"":" ");
+    	buf.append(StringUtils.isEmpty(getNumber())?"":getNumber());
+    	buf.append(StringUtils.isEmpty(getAddress2())?"":" ");
+    	buf.append(StringUtils.isEmpty(getAddress2())?"":getAddress2() );
+    	buf.append(StringUtils.isEmpty(getAddress3())?"":" (");
+    	buf.append(StringUtils.isEmpty(getAddress3())?"":getAddress3() );
+    	buf.append(StringUtils.isEmpty(getAddress3())?"":")");
+    	return buf.toString();
+    }
+    @Transient
+    public String getShortAddress() {
+  		return StringUtils.isEmpty(getAlias())?StringUtils.abbreviate(getFullAddress(), 20): getAlias();
     }
 
     @Override
