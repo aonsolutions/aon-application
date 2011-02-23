@@ -6,14 +6,6 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:outputLabel for="#{searchController.preffix}addresses_address"
-		value="#{registryBundle.registry_address}" />
-	<aon:inputText id="#{searchController.preffix}addresses_address" size="60"
-		valueChangeListener="#{controller.addExpression}" />
-	<aon:outputLabel for="#{searchController.preffix}addresses_number"
-		value="#{bundle.aon_number}" />
-	<aon:inputText id="#{searchController.preffix}addresses_number" size="12"
-		valueChangeListener="#{controller.addExpression}" />
 	<aon:outputLabel for="#{searchController.preffix}addresses_streetType"
 		value="#{registryBundle.registry_street_type}" />
 	<aon:selectOneMenu id="#{searchController.preffix}addresses_streetType"
@@ -22,9 +14,17 @@
 		<f:selectItem value="#{null}" itemLabel="-"/>
 		<f:selectItems value="#{registryCollections.streetTypes}" />
 	</aon:selectOneMenu>		
+	<aon:outputLabel for="#{searchController.preffix}addresses_address"
+		value="#{registryBundle.registry_address}" />
+	<aon:inputText id="#{searchController.preffix}addresses_address" size="60"
+		valueChangeListener="#{controller.addExpression}" />
+	<aon:outputLabel for="#{searchController.preffix}addresses_number"
+		value="#{bundle.aon_number}" />
+	<aon:inputText id="#{searchController.preffix}addresses_number" size="12"
+		valueChangeListener="#{controller.addExpression}" />
 	<aon:outputLabel for="#{searchController.preffix}addresses_zip"
 		value="#{registryBundle.registry_zip}" />
-	<aon:inputText id="#{searchController.preffix}addresses_zip" size="60"
+	<aon:inputText id="#{searchController.preffix}addresses_zip" size="12"
 		valueChangeListener="#{controller.addExpression}" />
 	<aon:outputLabel for="#{searchController.preffix}addresses_city"
 		value="#{registryBundle.registry_city}" />

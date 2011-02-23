@@ -9,8 +9,6 @@
 	<aon:valueParam name="registryAddress" default="#{controller.mainAddress}"/>
 	
 	<aon:outputLabel for="#{pojoName}_address" value="#{registryBundle.registry_address}" />
-	<aon:inputText id="#{pojoName}_address" required="#{addressRequired}"
-		value="#{registryAddress.address}" maxlength="128" size="32" />
 	<aon:div>
 		<aon:selectOneMenu id="#{pojoName}_streetType" required="#{addressRequired}"
 			label="#{registryBundle.registry_street_type}"
@@ -24,25 +22,25 @@
 			value="#{bundle.aon_number}" />
 		<aon:inputText id="#{pojoName}_number" style="margin-left: 5px;" required="#{addressRequired}"
 			value="#{registryAddress.number}" maxlength="8" size="5" />
- 	</aon:div>
+	</aon:div>
 
 	<aon:outputLabel for="#{pojoName}_address2" value="#{registryBundle.registry_address_detail}" />
 	<aon:div>
 		<aon:inputText id="#{pojoName}_address2" value="#{registryAddress.address2}" 
-			style="display:block" maxlength="128" size="64" />
+			style="display:inline" maxlength="128" size="32" />
 		<aon:inputText id="#{pojoName}_address3" value="#{registryAddress.address3}" 
-			style="margin-top: 3px" maxlength="128" size="64" />
+			style="margin-left: 5px" maxlength="128" size="37" />
 	</aon:div>
 
-	<aon:outputLabel for="#{pojoName}_address_city" 
-		value="#{registryBundle.registry_city}" />
-	<aon:inputText id="#{pojoName}_address_city" 
-		value="#{registryAddress.city}" size="64" maxlength="64"/>
-		
 	<aon:outputLabel for="#{pojoName}_address_zip" 
 		value="#{registryBundle.registry_zip}" />
 	<aon:inputText id="#{pojoName}_address_zip" 
 		value="#{registryAddress.zip}" size="32" maxlength="16"/>
+		
+	<aon:outputLabel for="#{pojoName}_address_city" 
+		value="#{registryBundle.registry_city}" />
+	<aon:inputText id="#{pojoName}_address_city" 
+		value="#{registryAddress.city}" size="64" maxlength="64"/>
 		
 	<aon:outputLabel for="#{pojoName}_address_geozone" 
 		value="#{registryBundle.registry_geozone}" />
