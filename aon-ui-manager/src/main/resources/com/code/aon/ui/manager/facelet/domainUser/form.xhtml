@@ -16,7 +16,7 @@
 				<ui:param name="controller" value="#{domainUser}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:param name="skipResetButton" value="#{!manager.userManagement}" />
-				<ui:param name="skipRemoveButton" value="#{!manager.userManagement}" />
+				<ui:param name="skipRemoveButton" value="#{!domainUser.userRemoveable}" />
 				<ui:param name="removeConfirmMessage" value="#{managerBundle.manager_domain_user_remove_confirm}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="resetPassword"
@@ -69,7 +69,8 @@
 
 					<aon:outputLabel for="DomainUser_active"
 						value="#{bundle.aon_active}" />
-					<aon:selectBooleanCheckbox id="DomainUser_active" 
+					<aon:selectBooleanCheckbox id="DomainUser_active"
+						disabled="#{!domainUser.userActivable}" 
 						value="#{domainUser.to.active}" />
 				
 				</aon:panelGrid>

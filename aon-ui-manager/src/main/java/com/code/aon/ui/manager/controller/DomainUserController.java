@@ -365,6 +365,15 @@ public class DomainUserController extends LdapBasicController implements IManage
 		}
 	}
 	
+	public void deactiveUsers() throws ManagerBeanException {
+		for ( DomainUser user : getUsers() ) {
+			if (! isAdmin(user) ) {
+				user.setActive(false);
+				getManagerBean().update(user);
+			}
+		}
+	}	
+	
 	private void deactiveDBUser( String uid ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
@@ -391,6 +400,24 @@ public class DomainUserController extends LdapBasicController implements IManage
 		createMailAccount(user);
 		Signature signature = addDefaultSignature(user);
 		addDefaultMailAccount(user, signature);		
+	}
+	
+	private boolean isAdmin( DomainUser user ) {
+		return StringUtils.equals(ADMIN_USER, user.getUid());
+	}
+	
+	public boolean isUserRemoveable() {
+		if ( getManager().isAdministrator() ) {
+			return true;
+		}
+		return getManager().isUserManagement() && (!isAdmin(getDomainUser()));
+	}
+
+	public boolean isUserActivable() {
+		if ( getManager().isAdministrator() ) {
+			return true;
+		}
+		return !isAdmin(getDomainUser());
 	}
 	
 }

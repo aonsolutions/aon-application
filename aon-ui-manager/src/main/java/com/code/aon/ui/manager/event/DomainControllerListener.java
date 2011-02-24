@@ -81,7 +81,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			dc.registerApplication(AON_WEBMAIL, null);
 			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
 			duc.createUser(dbc, dc.getUserUid(), dc.getUserName(), dc.getUserSurname());
-			updateDomainManagement(dc);
+			updateDomainManagement(dc, false);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			dc.removeDomain( domain );
@@ -135,7 +135,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		try {
 			domainController.insertOrUpdateAccessPolicy();
 			updateCurrentDomain(domainController.getDomain());
-			updateDomainManagement(domainController);
+			updateDomainManagement(domainController, true);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -158,12 +158,16 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		ddbc.updateBaseDN(domain.getId());		
 	}
 
-	private void updateDomainManagement( DomainController domainController ) {
+	private void updateDomainManagement( DomainController domainController, boolean updated ) throws ManagerBeanException {
 		Domain domain = domainController.getDomain();
 		if ( domainController.isDocumentManagementChanged() ) {
 			getManager().getLogger().documental(domain);
 		}
 		if ( domainController.isUserManagementChanged() ) {
+			if ( updated && (!domain.getUserManagement()) ) {
+				DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
+				duc.deactiveUsers();
+			}
 			getManager().getLogger().multiUser(domain);
 		}
 		if ( domainController.isDomainManagementChanged() ) {
