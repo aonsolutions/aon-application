@@ -1,11 +1,16 @@
 package com.esferalia.aon.payroll.calculator;
 
 
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.AMOUNT;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.STRUCTURAL_OVERTIME_BASE;
+
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
@@ -22,8 +27,6 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.Period;
-
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 public class ContractSalaryCalculator implements ISalaryCalculator{
 

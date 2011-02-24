@@ -29,6 +29,7 @@ public interface IPayrollConstants {
 	String SALARY_CONTROLLER = "salary";
 	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
 	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
+	String SALARY_LAUNCHER_NAME = "salaryLauncher";
 
 	// ************************************************************
 	// CONFIGURATION

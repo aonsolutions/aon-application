@@ -39,13 +39,6 @@
 									value="#{payrollBundle.payroll_payment_update_module}">
 								</aon:commandLink>
 							</aon:div>
-<!--  
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="calendar" action="contractCalendarEvent_search"
-									actionListener="#{contractCalendarEvent.onEditSearch}"
-									value="#{calendarBundle.aon_calendar_menu}" />
-							</aon:div>
--->
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="salary" 
 									action="salary_search" 
@@ -58,6 +51,13 @@
 									action="contract_search" 
 									actionListener="#{contract.onEditSearch}"
 									value="#{payrollBundle.payroll_contract_module}">
+								</aon:commandLink>
+							</aon:div>		
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="salaryLauncher" 
+									action="salaryLauncher_form" 
+									actionListener="#{salaryLauncher.onStart}"
+									value="#{payrollBundle.payroll_salary_launcher_module}">
 								</aon:commandLink>
 							</aon:div>		
 						</aon:div>

@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"	
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="salaryLauncherForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_launcher_module}" />
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-panelGrid-search">
+				<aon:div styleClass="aon-panelGrid-search-info">
+					<aon:outputText value="#{payrollBundle.payroll_launch_info}" styleClass="aon-panelGrid-search-info-internal"/>
+				</aon:div>			
+		
+				<aon:panelGrid id="salaryLauncherLaunchContent" columns="2">
+	
+					<aon:outputLabel for="Month" value="#{bundle.aon_month}" />
+					<h:panelGrid columns="3">
+						<aon:selectOneMenu id="Month" value="#{salaryLauncher.params.issueMonth}">
+							<f:selectItems value="#{commonCollections.months}"  />
+						</aon:selectOneMenu>
+						<aon:outputText value="&#160;" />
+			   			<rich:inputNumberSpinner id="Year" value="#{salaryLauncher.params.issueYear}" inputSize="4" minValue="2009" maxValue="2020" />
+					</h:panelGrid>
+
+					<aon:outputLabel for="Person_id" value="#{registryBundle.registry_person}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Person_id" lookup="#{personLookup}"
+							reRender="Person_full_name"
+							value="#{salaryLauncher.params.person.id}" size="5" />
+						<aon:lookupButton 
+							windowTitle="#{registryBundle.registry_person_selection}"
+							selectReRender="Person_id,Person_full_name" actionType="search"
+							lookup="#{personLookup}" minHeight="460" minWidth="650"
+							property="#{salaryLauncher.params.person}">
+						</aon:lookupButton>
+						<aon:inputText id="Person_full_name"
+							value="#{(salaryLauncher.params.person.registry.fullName!=null)?(salaryLauncher.params.person.registry.fullName):('')}"
+							size="50" disabled="true" />							
+					</aon:div>
+
+					<aon:outputLabel for="Enterprise_id"
+						value="#{companyBundle.company_enterprise}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Enterprise_id" lookup="#{enterpriseLookup}"
+							reRender="Enterprise_full_name"
+							value="#{salaryLauncher.params.enterprise.id}" size="5" />
+						<aon:lookupButton 
+							windowTitle="#{companyBundle.company_enterprise_selection}"
+							selectReRender="Enterprise_id,Enterprise_full_name" actionType="search"
+							lookup="#{enterpriseLookup}" minHeight="460" minWidth="650"
+							property="#{salaryLauncher.params.enterprise}">
+						</aon:lookupButton>
+						<aon:inputText id="Enterprise_full_name"
+							value="#{(salaryLauncher.params.enterprise.registry.fullName!=null)?(salaryLauncher.params.enterprise.registry.fullName):('')}"
+							size="50" disabled="true" />							
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div >
+						<aon:commandButton id="launchSalaries"
+							value="#{payrollBundle.payroll_launch}" 
+							styleClass="aon-search-lookup-button"
+							actionListener="#{salaryLauncher.onExecute}"
+							reRender="salaryLauncherForm">
+						</aon:commandButton> 
+
+					</aon:div>	
+
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+	</ui:define>
+</ui:composition>
