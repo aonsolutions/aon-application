@@ -84,11 +84,11 @@ public class SalaryLauncher {
 			Criteria criteria = null;
 			if (parameters.getEnterprise() != null && parameters.getEnterprise().getId() != null ) {
 				criteria = new Criteria();
-				criteria.addEqualExpression("enterprise_id", parameters.getEnterprise().getId());
+				criteria.addEqualExpression("enterprise_registry.id", parameters.getEnterprise().getId());
 			}
 			if (parameters.getPerson() != null && parameters.getPerson().getId() != null ) {
 				criteria = criteria==null?new Criteria():criteria;
-				criteria.addEqualExpression("person_id", parameters.getPerson().getId());
+				criteria.addEqualExpression("person_registry.id", parameters.getPerson().getId());
 			}
 //			if (criteria == null) {
 //				String msg = "Indique una empresa o una persona";
