@@ -322,28 +322,40 @@ public interface IConfigAlias {
 	String  USER_ACTIVE = USER_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: User_enterprise
+	* Hibernate value: User.enterprise
+	*/
+	String  USER_ENTERPRISE = USER_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: User_id
 	* Hibernate value: User.id
 	*/
-	String  USER_ID = USER_ENTRY.getAliasNames()[1];
+	String  USER_ID = USER_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: User_login
 	* Hibernate value: User.login
 	*/
-	String  USER_LOGIN = USER_ENTRY.getAliasNames()[2];
+	String  USER_LOGIN = USER_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: User_name
 	* Hibernate value: User.name
 	*/
-	String  USER_NAME = USER_ENTRY.getAliasNames()[3];
+	String  USER_NAME = USER_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: User_password
 	* Hibernate value: User.password
 	*/
-	String  USER_PASSWORD = USER_ENTRY.getAliasNames()[4];
+	String  USER_PASSWORD = USER_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: User_registry
+	* Hibernate value: User.registry
+	*/
+	String  USER_REGISTRY = USER_ENTRY.getAliasNames()[6];
 
 
 

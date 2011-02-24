@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Company;
 import com.code.aon.config.User;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.desktop.DBConnnection;
 import com.code.aon.desktop.Domain;
 import com.code.aon.desktop.IDesktopConstants;
@@ -18,6 +21,8 @@ import com.code.aon.desktop.dao.IDesktopAlias;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -27,6 +32,22 @@ public class UserDomainManagementListener extends ControllerAdapter implements I
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserDomainManagementListener.class);
 	
+	@Override
+	public void beforeModelInitialized(ControllerEvent event)
+			throws ControllerListenerException {
+		try {
+			IController controller = event.getController();
+			Criteria criteria = controller.getCriteria();
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+			Company company = companyController.obtainCompany();
+			String enterpriseAlias = controller.getFieldName(IConfigAlias.USER_ENTERPRISE);
+			criteria.addEqualExpression(enterpriseAlias, company.getId());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
+
 	private void addUser( Domain domain, User user, DomainController controller ) throws AonException {
 		DBConnnection dbc = controller.getDBConnection( domain.getCommonName() );
 		if ( dbc != null ) {

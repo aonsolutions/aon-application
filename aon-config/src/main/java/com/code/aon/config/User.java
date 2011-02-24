@@ -35,6 +35,10 @@ public class User implements ITransferObject{
 	
 	@Column(nullable=false)
 	private boolean active;
+	
+    private Integer enterprise;
+    
+    private Integer registry; 		
 
 	public Integer getId() {
 		return id;
@@ -75,6 +79,22 @@ public class User implements ITransferObject{
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+	
+	public Integer getEnterprise() {
+		return enterprise;
+	}
+
+	public void setEnterprise(Integer enterprise) {
+		this.enterprise = enterprise;
+	}
+
+	public Integer getRegistry() {
+		return registry;
+	}
+
+	public void setRegistry(Integer registry) {
+		this.registry = registry;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -84,10 +104,12 @@ public class User implements ITransferObject{
 		final User o = (User) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.active, o.active)			
+				.append(this.active, o.active)
+				.append(this.enterprise, o.enterprise)				
 				.append(this.login, o.login)				
 				.append(this.name, o.name)			
 				.append(this.password, o.password)
+				.append(this.registry, o.registry)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -97,10 +119,12 @@ public class User implements ITransferObject{
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(active)
+			.append(enterprise)
 			.append(id)		
 			.append(login)		
 			.append(name)		
 			.append(password)
+			.append(registry)
 			.toHashCode();
 	}	
 
