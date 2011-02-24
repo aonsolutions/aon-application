@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.convert.Converter;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
 import javax.naming.Context;
 import javax.naming.Name;
 
@@ -296,6 +298,11 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 
 	@Override
 	protected void idCheck(String id) {
+		if ( isAddDomainSuffix() ) {
+			if (! id.matches("\\p{Alpha}[\\w\\-]*") ) {
+				throw new ValidatorException(new FacesMessage(getInvalidMessage(id)));
+			}
+		}
 		super.idCheck( getDomainName(id) );
 	}
 	
