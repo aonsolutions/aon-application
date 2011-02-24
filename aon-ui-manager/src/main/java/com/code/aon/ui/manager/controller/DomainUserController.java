@@ -51,7 +51,6 @@ import com.code.aon.manager.DomainUser;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.manager.ManagerBeanWrapper;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
@@ -74,7 +73,9 @@ public class DomainUserController extends LdapBasicController implements IManage
 	
 	private String selectedTab;
 	
-	private ManagerBeanWrapper userWrapper;
+	private ManagerController getManager() {
+		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+	}
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -103,8 +104,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	public Signature addDefaultSignature( DomainUser user ) throws ManagerBeanException {
 		Signature signature = new Signature();
 		signature.setName( user.getDomain() );
-		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
-		String text = manager.getProperties().getProperty(SIGNATURE_SIGNATURE);
+		String text = getManager().getProperties().getProperty(SIGNATURE_SIGNATURE);
 		String content = MessageFormat.format( text, user.getFullName() );	
 		signature.setSignature(content);
 		SignatureController controller = (SignatureController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE);
@@ -118,8 +118,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		account.setName(NameResolver.DEFAULT_MAIL_ACCOUNT_NAME);
 		account.setPasswordString(user.getUid());
 		account.setSignature(signature);
-		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
-		Properties properties = manager.getProperties();
+		Properties properties = getManager().getProperties();
 		String shortDomain = user.getDomain();
 		if ( StringUtils.countMatches(shortDomain, ".") > 1 ) {
 			shortDomain = StringUtils.substringAfter(shortDomain, ".");	
@@ -268,21 +267,24 @@ public class DomainUserController extends LdapBasicController implements IManage
 			ensureDBUserScope(user, scope);
 		}
 	}
-
+	
 	public void registerScopeInDBs( String userUid, String scope ) throws ManagerBeanException {
-		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		for (DBConnnection dbc : ddbc.getDBConnnections()) {
-			manager.changeDbConnection(dbc);
-			if ( manager.getDBManager().existsTable(dbc, "scope") ) {
-				try {
-					registerScope(userUid, scope);	
-				} catch ( Throwable th ) {
-					LOGGER.error( "Error registering " + scope + " for user " + userUid + " in " + dbc, th );
-				}
+			registerScopeInDB(dbc, userUid, scope);
+		}
+	}	
+
+	public void registerScopeInDB( DBConnnection dbc, String userUid, String scope ) throws ManagerBeanException {
+		getManager().changeDbConnection(dbc);
+		if ( getManager().getDBManager().existsTable(dbc, "scope") ) {
+			try {
+				registerScope(userUid, scope);	
+			} catch ( Throwable th ) {
+				LOGGER.error( "Error registering " + scope + " for user " + userUid + " in " + dbc, th );
 			}					
 		}
-	}
+	}	
 
 	private User initDBUser( String uid ) throws ManagerBeanException {
 		User user = new User();
@@ -333,7 +335,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}	
 
 	public void createMailAccount( DomainUser user ) throws ManagerBeanException {
-		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		ManagerController manager = getManager();
 		String command = null; 
 		for( int i = 1; (command = manager.getProperties().getProperty(MAIL_ACCOUNT_CREATE_SCRIPT+"."+i)) != null ;i++) {
 			manager.execute( new String[] {command, user.getName(), user.getDomain()} );
@@ -341,7 +343,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}	
 
 	public void removeMailAccount( DomainUser user ) throws ManagerBeanException {
-		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		ManagerController manager = getManager();
 		String command = null; 
 		for( int i = 1; (command = manager.getProperties().getProperty(MAIL_ACCOUNT_DELETE_SCRIPT+"."+i)) != null ;i++) {
 			manager.execute( new String[] {command, user.getName(), user.getDomain()} );
@@ -349,7 +351,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}		
 
 	public void deactiveDBUser( DomainUser user ) throws ManagerBeanException {
-		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		ManagerController manager = getManager();
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		for (DBConnnection dbc : ddbc.getDBConnnections()) {
 			manager.changeDbConnection(dbc);
@@ -375,7 +377,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		}
 	}
 	
-	public void createUser( String uid, String name, String surname ) throws ManagerBeanException, LdapException {
+	public void createUser( DBConnnection dbc, String uid, String name, String surname ) throws ManagerBeanException, LdapException {
 		DomainUser user = new DomainUser();
 		user.setUid(uid);
 		user.setName(name);
@@ -385,7 +387,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		registerUserInApplication(user, AON_DESKTOP, ADMINISTRADOR_PROFILE);
 		registerUserInApplication(user, AON_MANAGER, ADMINISTRADOR_PROFILE);
 		registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
-		registerScopeInDBs(user.getUid(), GENERAL_SCOPE);
+		registerScopeInDB( dbc, user.getUid(), GENERAL_SCOPE);
 		createMailAccount(user);
 		Signature signature = addDefaultSignature(user);
 		addDefaultMailAccount(user, signature);		

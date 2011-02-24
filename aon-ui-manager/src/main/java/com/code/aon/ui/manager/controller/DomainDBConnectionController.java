@@ -49,7 +49,7 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		updateDataSources();
 	}	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DBConnnection> getDBConnnections() throws ManagerBeanException {
 		return (List) getModel().getWrappedData();
 	}	
@@ -58,7 +58,6 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		return this.dataSources;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void updateDataSources() {
 		this.dataSources = new LinkedList<SelectItem>();
 		try {
