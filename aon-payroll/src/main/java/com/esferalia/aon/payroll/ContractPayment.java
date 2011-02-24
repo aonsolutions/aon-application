@@ -252,4 +252,10 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 	public boolean isReadOnly() {
 		return false;
 	}
+	
+	@Override
+	@Transient
+	public boolean isSalaryInKind() {
+		return getType()==PaymentType.SALARY_IN_KIND;
+	}
 }

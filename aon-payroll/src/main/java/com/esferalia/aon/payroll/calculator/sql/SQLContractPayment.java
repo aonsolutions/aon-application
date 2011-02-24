@@ -106,4 +106,9 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 		return getDate(END_DATE);
 	}
 	
+	@Override
+	public boolean isSalaryInKind() {
+		return getType()==PaymentType.SALARY_IN_KIND;
+	}
+	
 }

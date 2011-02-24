@@ -1,7 +1,10 @@
 package com.esferalia.aon.salary.payment;
 
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.common.util.CommonUtil;
@@ -116,6 +119,61 @@ public class Payments {
 			total = CommonUtil.round( total + d.getAmount());	
 		}
 		return total;  
+	}
+	
+	/**
+	 * Coleccion de los devengos ordenados para el jasper de impresion de la nomina
+	 * 
+	 * @return
+	 */
+	public Collection<IPayment> getCollection() {
+		List<IPayment> list = new LinkedList<IPayment>();
+		IPayment p;
+
+		p = map.get(PaymentType.BASE_SALARY);
+		if (p != null) {
+			list.add(map.get(PaymentType.BASE_SALARY));
+		}
+		if(!getSalarySupplements().getValues().isEmpty()){
+			for(IPayment payment: getSalarySupplements().getValues()){
+				list.add(payment);
+			}
+		}
+		p = map.get(PaymentType.STRUCTURAL_HOURS);
+		if (p != null) {
+			list.add(map.get(PaymentType.STRUCTURAL_HOURS));
+		}
+		p = map.get(PaymentType.NON_STRUCTURAL_HOURS);
+		if (p != null) {
+			list.add(map.get(PaymentType.NON_STRUCTURAL_HOURS));
+		}
+		p = map.get(PaymentType.SPECIAL_BONUSES);
+		if (p != null) {
+			list.add(map.get(PaymentType.SPECIAL_BONUSES));
+		}
+		p = map.get(PaymentType.SALARY_IN_KIND);
+		if (p != null) {
+			list.add(map.get(PaymentType.SALARY_IN_KIND));
+		}
+		if(!getCompensationOrPrepaidExpenses().getValues().isEmpty()){
+			for(IPayment payment: getCompensationOrPrepaidExpenses().getValues()){
+				list.add(payment);
+			}
+		}
+		p = map.get(PaymentType.SOCIAL_SECURITY_BENEFITS);
+		if (p != null) {
+			list.add(map.get(PaymentType.SOCIAL_SECURITY_BENEFITS));
+		}
+		p = map.get(PaymentType.MOVING_COMPENSATION);
+		if (p != null) {
+			list.add(map.get(PaymentType.MOVING_COMPENSATION));
+		}
+		if(!getOtherNonWages().getValues().isEmpty()){
+			for(IPayment payment: getOtherNonWages().getValues()){
+				list.add(payment);
+			}
+		}
+		return list;
 	}
 	
 }

@@ -170,4 +170,10 @@ public class SalaryPayment implements ITransferObject, IPayment, IExpression {
 	public boolean isReadOnly() {
 		return true;
 	}
+	
+	@Override
+	@Transient
+	public boolean isSalaryInKind() {
+		return getType()==PaymentType.SALARY_IN_KIND;
+	}
 }

@@ -36,20 +36,16 @@
 					<c:if test="#{salary.model.rowCount > 0}" >
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/buttons.xhtml" />
 					</c:if>
-					<aon:commandButton id="calendar"
+					<aon:htmlCommandLink id="calendarReport_list"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{calendarBundle.aon_calendar_calendar}"
-						action="calendar_form" 
-						styleClass="aon-finding-toolbar-item aon-icon-calendar">
-						<f:setPropertyActionListener target="#{calendar.sourceKey}"
-							value="3" />
-						<f:setPropertyActionListener target="#{calendar.sourceId}"
-							value="#{enterpriseTree.contract.id}" />
-						<aon:actionListener method="#{calendar.onInitialize}" />
-						<f:setPropertyActionListener
-							target="#{calendar.backAction}" value="contract_formTree" />						
-						<f:setPropertyActionListener
-							target="#{calendar.backActionListener}" value="calendar.onBack" />												
-					</aon:commandButton>		
+						rendered="#{contract.to.calendar.id!=null}"
+						action="#{report.onExecute}">
+						<aon:actionListener method="#{contract.onLoadCalendar}" />						
+						<aon:actionListener method="#{calendarPrint.onLoad}" />						
+						<f:param name="reportKey" value="calendarReport" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>	
 					<aon:spin id="enterpriseSpin" controller="#{salary}" />
 				</ui:define>				
 			</ui:decorate>		

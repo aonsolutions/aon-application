@@ -12,4 +12,6 @@ public interface IPayment {
 	
 	public double getAmount();
 	
+	public boolean isSalaryInKind();
+	
 }

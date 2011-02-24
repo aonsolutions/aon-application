@@ -45,6 +45,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class ContractController extends BasicController {
 
@@ -360,4 +361,16 @@ public class ContractController extends BasicController {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}						
 	}    
+	
+	public void onLoadCalendar( ActionEvent event ) {
+		// TODO implementar la busqueda del calendario. si la entidad no tiene calendario, 
+		// buscar el calendario en sus entidades superiores: contract -> workplace -> enterprise -> agreement
+		Contract c = (Contract) getTo();
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICompanyConstants.CALENDAR_CONTROLLER_NAME);
+		controller.setEnterpriseName(c.getWorkPlace().getEnterprise().getRegistry().getFullName());
+		controller.setWorkPlaceName(c.getWorkPlace().getDescription());
+		controller.setContractName(c.getPerson().getFullName());
+		controller.setCalendarId(c.getCalendar().getId());
+		controller.onInitialize(event);
+	}	
 }
