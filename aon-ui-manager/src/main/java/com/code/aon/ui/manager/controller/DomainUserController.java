@@ -36,6 +36,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Company;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
@@ -101,19 +102,35 @@ public class DomainUserController extends LdapBasicController implements IManage
 		getLdapDAO().setBaseDN(baseDN);
 	}
 	
-	public Signature addDefaultSignature( DomainUser user ) throws ManagerBeanException {
-		Signature signature = new Signature();
+	public void addDefaultWebmailData( DomainUser user, Company company ) throws ManagerBeanException {
+		String companyName = null;
+		if ( company != null ) {
+			companyName = company.getName();
+		} else {
+			DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+			companyName = controller.getDomain().getOrganizationName();
+		}
+		Signature signature = addDefaultSignature(user, companyName);
+		addDefaultMailAccount(user, signature);				
+	}
+
+	public void initDefaultSignature( Signature signature, DomainUser user, String companyName ) throws ManagerBeanException {
 		signature.setName( user.getDomain() );
 		String text = getManager().getProperties().getProperty(SIGNATURE_SIGNATURE);
-		String content = MessageFormat.format( text, user.getFullName() );	
+		String content = MessageFormat.format( text, user.getFullName(), companyName );	
 		signature.setSignature(content);
+	}	
+	
+	private Signature addDefaultSignature( DomainUser user, String companyName ) throws ManagerBeanException {
+		Signature signature = new Signature();
+		initDefaultSignature(signature, user, companyName);
 		SignatureController controller = (SignatureController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE);
 		controller.updateBaseDN(user.getId());
 		controller.getManagerBean().insert( signature );
 		return signature;
 	}
 
-	public void addDefaultMailAccount( DomainUser user, Signature signature ) throws ManagerBeanException {
+	private void addDefaultMailAccount( DomainUser user, Signature signature ) throws ManagerBeanException {
 		MailAccount account = new MailAccount();
 		account.setName(NameResolver.DEFAULT_MAIL_ACCOUNT_NAME);
 		account.setPasswordString(user.getUid());
@@ -386,11 +403,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		}
 	}
 	
-	public void createUser( DBConnnection dbc, String uid, String name, String surname ) throws ManagerBeanException, LdapException {
-		DomainUser user = new DomainUser();
-		user.setUid(uid);
-		user.setName(name);
-		user.setSurname(surname);
+	public void createUser( DBConnnection dbc, DomainUser user ) throws ManagerBeanException, LdapException {
 		resetPassword(user);
 		getManagerBean().insert(user);
 		registerUserInApplication(user, AON_DESKTOP, ADMINISTRADOR_PROFILE);
@@ -398,8 +411,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
 		registerScopeInDB( dbc, user.getUid(), GENERAL_SCOPE);
 		createMailAccount(user);
-		Signature signature = addDefaultSignature(user);
-		addDefaultMailAccount(user, signature);		
+		addDefaultWebmailData(user, null);
 	}
 	
 	private boolean isAdmin( DomainUser user ) {

@@ -27,6 +27,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Company;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.IAonObjectClasses;
@@ -36,6 +37,7 @@ import com.code.aon.manager.AccessPolicy;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
+import com.code.aon.manager.DomainUser;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.manager.enumeration.AccessPolicyType;
 import com.code.aon.manager.enumeration.DomainType;
@@ -74,11 +76,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	
 	private boolean showCompanyWindow;
 	
-	private String userUid;
-	
-	private String userName;
-	
-	private String userSurname;
+	private DomainUser adminUser;
 	
 	private RegistryBank registryBank;
 	
@@ -314,28 +312,12 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		this.showCompanyWindow = showCompanyWindow;
 	}
 
-	public String getUserUid() {
-		return userUid;
+	public DomainUser getAdminUser() {
+		return adminUser;
 	}
 
-	public void setUserUid(String userUid) {
-		this.userUid = userUid;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getUserSurname() {
-		return userSurname;
-	}
-
-	public void setUserSurname(String userSurname) {
-		this.userSurname = userSurname;
+	public void setAdminUser(DomainUser adminUser) {
+		this.adminUser = adminUser;
 	}
 
 	public boolean isEnterpriseRecipient() {
@@ -374,5 +356,25 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}		
+	
+	public Company getCompany() throws ManagerBeanException {
+		ManagerController manager = getManager();
+		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+		for (DBConnnection dbc : ddbc.getDBConnnections()) {
+			manager.changeDbConnection(dbc);
+			if ( manager.getDBManager().existsTable(dbc, "company") ) {
+				try {
+					IManagerBean bean = BeanManager.getManagerBean(Company.class);
+					List<ITransferObject> list = bean.getList(null);
+					if (! list.isEmpty() ) {
+						return (Company) list.get(0);
+					}
+				} catch ( Throwable th ) {
+					LOGGER.error( "Error getting company in " + dbc, th );
+				}
+			}					
+		}
+		return null;
+	}
 	
 }

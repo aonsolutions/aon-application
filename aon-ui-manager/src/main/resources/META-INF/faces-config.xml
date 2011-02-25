@@ -62,6 +62,14 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyDomainChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.event.CompanyDomainControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ************* APPLICATION ***************** -->
 	<managed-bean>

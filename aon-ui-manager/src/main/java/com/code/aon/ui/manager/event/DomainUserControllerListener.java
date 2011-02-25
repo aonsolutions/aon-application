@@ -7,6 +7,7 @@ import com.code.aon.manager.DomainUser;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.manager.controller.DomainController;
 import com.code.aon.ui.manager.controller.DomainUserController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ManagerController;
@@ -15,7 +16,6 @@ import com.code.aon.ui.webmail.controller.ContactController;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailAccountController;
 import com.code.aon.ui.webmail.controller.SignatureController;
-import com.code.aon.webmail.Signature;
 
 public class DomainUserControllerListener extends ControllerAdapter implements IManagerConstants {
 
@@ -53,8 +53,8 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 			duc.registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
 			duc.registerScopeInDBs(user.getUid(), GENERAL_SCOPE);
 			duc.createMailAccount(user);
-			Signature signature = duc.addDefaultSignature(user);
-			duc.addDefaultMailAccount(user, signature);
+			DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+			duc.addDefaultWebmailData(user, controller.getCompany());
 			duc.setWebmail(true);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);

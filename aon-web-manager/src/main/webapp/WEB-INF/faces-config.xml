@@ -59,5 +59,16 @@
 		</navigation-case>
 	</navigation-rule>
    
+	<!-- ************ COMPANY LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>companyOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.manager -->
+			<value>#{companyDomainChildListener}</value>
+		</list-entries>
+	</managed-bean>   
    
 </faces-config>

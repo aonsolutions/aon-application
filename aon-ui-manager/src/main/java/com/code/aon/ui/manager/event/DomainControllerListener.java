@@ -9,8 +9,10 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
+import com.code.aon.ldap.LdapException;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
+import com.code.aon.manager.DomainUser;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -44,9 +46,10 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 				domain.setParentDomain( getManager().getCurrentDomain() );
 			}
 			domainController.updateParentDomains();
-			domainController.setUserUid(ADMIN_USER);
-			domainController.setUserName(USUARIO_PROFILE);
-			domainController.setUserSurname(null);
+			DomainUser admin = new DomainUser();
+			admin.setUid(ADMIN_USER);
+			admin.setName(USUARIO_PROFILE);
+			domainController.setAdminUser(admin);
 			domainController.setEnterpriseRecipient(false);
 			RegistryBank registryBank = new RegistryBank();
 			registryBank.setBank( new Bank() );
@@ -79,20 +82,15 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			dc.registerApplication(AON_DESKTOP, dbc);
 			dc.registerApplication(AON_MANAGER, dbc);
 			dc.registerApplication(AON_WEBMAIL, null);
-			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
-			duc.createUser(dbc, dc.getUserUid(), dc.getUserName(), dc.getUserSurname());
 			updateDomainManagement(dc, false);
+			initCompanyData(dc);
+			addAdminUser(dc, dbc);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			dc.removeDomain( domain );
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 		getManager().getLogger().domainAddded(domain);
-		if (! getManager().isAdministrator() ) {
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
-			companyController.onLoad(null);
-			dc.setShowCompanyWindow(true);
-		}
 	}
 
 	@Override
@@ -173,6 +171,19 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		if ( domainController.isDomainManagementChanged() ) {
 			getManager().getLogger().multiDomain(domain);
 		}
+	}
+	
+	private void initCompanyData( DomainController dc) {
+		if (! getManager().isAdministrator() ) {
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+			companyController.onLoad(null);
+			dc.setShowCompanyWindow(true);
+		}		
+	}
+	
+	private void addAdminUser( DomainController dc, DBConnnection dbc ) throws ManagerBeanException, LdapException {		
+		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);		
+		duc.createUser(dbc, dc.getAdminUser());		
 	}
 	
 }
