@@ -135,10 +135,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
      * @return true, if is row available
      */
     private boolean isRowAvailable( int index ) {
-        if (page.getList() == null) {
-            return false;
-        }
-        return index >= 0 && index < rowCount;
+    	return page.isRowAvailable(index);
     }	
     
     @Override

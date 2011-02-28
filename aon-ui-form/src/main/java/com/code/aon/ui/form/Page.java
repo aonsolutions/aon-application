@@ -99,6 +99,19 @@ public class Page implements Serializable {
 	public boolean isEmpty() {
 		return (objects == null) || (getSize() == 0);
 	}
+
+    /**
+     * Checks if is row available.
+     *
+     * @param index the index
+     * @return true, if is row available
+     */
+    public boolean isRowAvailable( int index ) {
+        if ( isEmpty() ) {
+            return false;
+        }
+        return index >= start && index < getStartOfNextPage();
+    }	
 	
 	static {
 	    EMPTY_PAGE = new Page(Collections.<ITransferObject>emptyList(), 0);

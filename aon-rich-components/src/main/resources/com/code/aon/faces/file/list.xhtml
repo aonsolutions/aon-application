@@ -103,24 +103,24 @@
 								<aon:confirmButton id="remove"
 									title="#{bundle.aon_remove}"
 									value="&#160;" immediate="true"
-									styleClass="aon-icon aon-icon-trash"
-									style="line-height:16px;margin-right:0;border:0;padding-left:10px;"
+									styleClass="aon-icon-trash"
+									style="line-height:16px;border:0;padding-left:10px;"
 									confirmTitle="#{bundle.aon_confirm_title}"
 									confirmMessage="#{bundle.aon_remove_confirm}"
 									confirmActionListener="#{fileManager.onCurrentRemove}" />
 								<aon:commandButton id="rename"
 									title="#{richBundle.aon_click_rename}"
 									value="&#160;" reRender="renameDiv"
-									style="line-height:16px;margin-right:0;border:0;padding-left:10px;"
-									styleClass="aon-icon aon-icon-rename">
+									style="line-height:16px;border:0;padding-left:10px;"
+									styleClass="aon-icon-rename">
 									<f:setPropertyActionListener target="#{fileManager.inRename}" value="#{true}" />
 								</aon:commandButton>									
 								<a4j:htmlCommandLink id="download"
 									value="&#160;" target="_blank"
 									rendered="#{to.file}" immediate="true"
 									actionListener="#{fileManager.downloadAttachment}"
-									styleClass="aon-icon aon-icon-mail-save"
-									style="line-height:16px;margin-right:0;"
+									styleClass="aon-icon-mail-save"
+									style="line-height:16px;border:0;padding-left:10px;"
 									title="#{bundle.aon_fileupload_download}" />
 							</aon:div>								
 						</aon:column>

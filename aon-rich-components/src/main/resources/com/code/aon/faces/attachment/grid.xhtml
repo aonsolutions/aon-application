@@ -18,11 +18,11 @@
 				<aon:outputText value="#{to.description}" rendered="#{formList}" />
 				<aon:inputText id="#{controller.beanName}_description" required="true"
 					value="#{controller.to.description}" maxlength="64"
-					rendered="#{formEdit}" size="50" />
+					rendered="#{formEdit}" size="45" />
 				<f:facet name="footer">
 					<aon:inputText id="#{controller.beanName}_description-New" required="true"
 						value="#{controller.to.description}" maxlength="64"
-						rendered="#{formNew}" size="50" />
+						rendered="#{formNew}" size="45" />
 				</f:facet>
 			</aon:column>
  
@@ -68,7 +68,7 @@
 								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
 								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
 								fileUploadListener="#{controller.fileUploaded}"
-								listHeight="0px" immediateUpload="true" autoclear="true">
+								listWidth="110px" >
 								<f:facet name="label">
 									<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 								</f:facet>																										
