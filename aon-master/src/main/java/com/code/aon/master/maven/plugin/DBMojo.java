@@ -7,6 +7,7 @@ package com.code.aon.master.maven.plugin;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -92,7 +93,13 @@ public class DBMojo extends AbstractMojo {
 			DBContext dbContext = new DBContext(dbMetaData);
 			
 			File vmDir = new File(vmDirPath);
-			File vms [] = vmDir.listFiles();
+			File vms [] = vmDir.listFiles(new FilenameFilter() {
+				
+				@Override
+				public boolean accept(File file, String name) {
+					return file.isFile() ? name.endsWith(".vm") : false ;
+				}
+			});
 			
 	        for (File  vm : vms) {
 	        	try {
