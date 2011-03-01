@@ -1,18 +1,18 @@
 body {
-	font-size: ${size_tamano_de_fuente};
-	font-family: ${font_fuente};
+	font-size: ${size_tamano_texto_pagina};
+	font-family: ${font_fuente_texto_pagina};
 	margin: 0 auto;
 	width:750px;
 	background: url(images/bggrad2.jpg) repeat-x;
-	background-color: ${bgcolor_color_de_fondo};
+	
 }
 a {
 	text-decoration: none;
-	color: ${color_color_de_texto_link};
+
 }
 a:hover {
 	text-decoration: underline;
-	color: ${color_color_de_texto_link_hover};
+	
 }
 #canvas {
 	width: 750px;
@@ -25,22 +25,24 @@ a:hover {
 	padding: 20px;
 	width: 750px;
 	text-align: justify;
-	color: ${color_color_de_texto_contenido};
+	color: ${color_color_texto_contenido};
 	line-height: 1.6em;
-	background-color: ${bgcolor_color_de_fondo_contenido};
-	border: ${border_bordes} solid ${color_color_borde};
+	background-color: ${bgcolor_color_fondo_contenido};
+	border: ${border_tamano_borde_contenido} solid ${color_color_borde_contenido};
 	float: left;
 }
 h1 {
 	font-size: 20px;
 	font-weight: bold;
 	padding-top: 5px;
+	color:${color_color_texto_titulo};
 }
 #foot {
-	color: ${color_color_de_texto_pie};
+	color: ${color_color_texto_pie};
 	text-align: center;
 	vertical-align: middle;
 	padding-top: 5px;
+	margin-left:30px;
 	clear: both;
 	font-size:9px;
 padding-bottom:20px;
@@ -49,7 +51,7 @@ padding-bottom:20px;
 	width: 213px;
 	padding: 0 0 0 0;
 	margin-bottom: 1em;
-	font-size: ${size_tamano_de_fuente_menu};
+	font-size: ${size_tamano_texto_menu};
 	font-weight: normal;
 	font-family: Verdana;
 	color: #333333;
@@ -63,39 +65,40 @@ padding-bottom:20px;
 	border: none;
 }
 #sidebar_nav li {
-	border-bottom: ${border_bordes} solid #999999;
+	border-bottom: solid #999999;
 	margin: 0;
 	width: auto;
 }
 #sidebar_nav li a {
 	display: block;
 	padding: 3px 0px 2px 0.5em;
-	border-left: ${border_bordes_menu} solid ${color_color_borde_menu};
+	border-left:  solid ${color_color_borde_menu};
 	border-right: 5px solid #555555;
-	color: ${color_color_de_texto_menu};
+	color: ${color_color_texto_menu};
 	text-decoration: none;
 	width: auto;
 	background-color:#777777;
 }
 #sidebar_nav li a:hover {
-	border-left: ${border_bordes_menu} solid ${color_color_borde_menu_hover};
-	border-right: ${border_bordes_menu} solid ${color_color_borde_menu_hover};
-	color: ${color_color_de_texto_menu};
-	background-color: ${color_color_borde_menu_hover};
+	border-left: ${border_tamano_borde_menu} solid ${color_color_borde_menu_hover};
+	border-right: ${border_tamano_borde_menu} solid ${color_color_borde_menu_hover};
+	color: ${color_color_texto_menu};
 	font-weight:bold;
 }
+
+
 .ht1 {
 	font-size: 10px;
 	font-weight: bold;
 	color: #888888;
-	font-family: ${font_fuente};
+	font-family: ${font_fuente_texto_pagina};
 	text-decoration: none;
 }
 .hw2 {
 	font-size: 11px;
 	font-weight: bold;
 	color: #999999;
-	font-family: ${font_fuente};
+	font-family: ${font_fuente_texto_pagina};
 	text-decoration: none;
 }
 .noteheader{
@@ -107,7 +110,8 @@ padding-bottom:20px;
     font-weight: bold;
     margin-bottom: 15px;
 	text-align:left;
-padding-top:20px;
+	padding-top:20px;
+	mergin-top:100px;
 }
 p{
 	margin:0;
@@ -129,10 +133,10 @@ p{
 }
 .gallery-navigation{
 	text-align:center;
-	color:${color_color_de_texto_contenido};
+	color:${color_color_texto_contenido};
 }
 .gallery-navigation a{
-	color:${color_color_de_texto_contenido};
+	color:${color_color_texto_contenido};
 	text-decoration:none;
 	text-align:center;
 }
@@ -143,21 +147,21 @@ p{
 	line-height:15px;
 }
 .copiesferalia {
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	}
 .copiesferalia a{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	}
 .copiesferalia a:hover{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size: 9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:underline;
 	}
 .album {
@@ -166,7 +170,7 @@ p{
 }
 .album a{
 	text-decoration:none;
-	color:${color_color_de_texto_contenido};
+	color:${color_color_texto_contenido};
 }
 .objeto {
 	float:left;
@@ -174,7 +178,7 @@ p{
 }
 .objeto a{
 	text-decoration:none;
-	color:${color_color_de_texto_contenido};
+	color:${color_color_texto_contenido};
 }
 
 td img{

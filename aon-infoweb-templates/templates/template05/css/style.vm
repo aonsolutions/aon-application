@@ -1,11 +1,12 @@
 body{
-		font-family:${font_fuente};
-		font-size:${size_tamano_de_fuente};
-		background-color:${bgcolor_color_de_fondo};
-		color: ${color_color_de_texto};
+		font-family:${font_fuente_texto_pagina};
+		font-size:${size_tamano_texto_pagina};
+		background-color:${bgcolor_color_fondo_pagina};
+		color: ${color_color_texto_pagina};
 		text-align:center;
 		margin:0 auto;
 		width:750px;
+		margin-top:100px;
 }
 td{vertical-align:top;
 }
@@ -14,26 +15,27 @@ td{vertical-align:top;
 		text-align:left;
 }
 .header{
-		background-color:${bgcolor_color_de_fondo_cabecera};
+		background-color:${bgcolor_color_fondo_cabecera};
 		text-align:right;
-margin-top:20px;
+		margin-top:20px;
+		padding:20px;
 }
 .logo{
-		background-color:${bgcolor_color_de_fondo_menu};
+		background-color:${bgcolor_color_fondo_menu};
 		text-align:left;
 		font-size:18px;
 		font-style:bold;
-		color:#FFFFFF
+		color:#FFFFFF;
 }
 .menu{
-		background-color: ${bgcolor_color_de_fondo_menu};
+		background-color: ${bgcolor_color_fondo_menu};
 		text-align:right;
 		width:750px;
 		padding:15px 0;
 }
 .menu a{
 		text-decoration:none;
-		color:${color_color_de_texto_menu};
+		color:${color_color_texto_menu};
 		/*white-space:nowrap;*/
 		padding:0 1em 0 1em;
 		border-right:#999900 1px solid;
@@ -41,18 +43,25 @@ margin-top:20px;
 		font-weight:bold;
 }
 .content{
-	color:${color_color_de_texto_contenido};
-	background-color:${bgcolor_color_de_fondo_contenido};
+	color:${color_color_texto_contenido};
+	background-color:${bgcolor_color_fondo_contenido};
 	border-left:#000000 1px solid;
 	border-bottom:#000000 1px solid;
 	border-right:#000000 1px solid;
 	padding:20px 25px 83px;
 }
+
+h1{
+	color:${color_color_texto_titulo};
+	}
+	
 .foot{
-		background-color:${bgcolor_color_de_fondo_pie};
-		color:${color_color_de_texto_pie};
+		background-color:${bgcolor_color_fondo_pie};
+		color:${color_color_texto_pie};
 		font-size:9px;
-margin-bottom:20px;
+		margin-bottom:20px;
+		padding:10px;
+		text-align:center;
 }
 .box{
 	text-align:center; 
@@ -71,12 +80,12 @@ margin-bottom:20px;
 }
 .gallery-navigation{
 	text-align:center;
-	color:&{color_color_de_texto_contenido};
+	color:&{color_color_texto_contenido};
 }
 .gallery-navigation a{
 	text-align:center;
 	text-decoration:none;
-	color:&{color_color_de_texto_contenido};
+	color:&{color_color_texto_contenido};
 }
 .album-block{ 
 	text-align:center;
@@ -87,21 +96,21 @@ margin-bottom:20px;
 	padding-bottom:25px;
 }
 .copiesferalia {
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	}
 .copiesferalia a{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	}
 .copiesferalia a:hover{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size: 9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:underline;
 	}
 .album {
@@ -111,7 +120,7 @@ margin-bottom:20px;
 }
 .album a{
 	text-decoration:none;
-	color:&{color_color_de_texto_contenido};
+	color:&{color_color_texto_contenido};
 }
 .objeto {
 	float:left;
@@ -119,7 +128,7 @@ margin-bottom:20px;
 }
 .objeto a{
 	text-decoration:none;
-	color:&{color_color_de_texto_contenido};
+	color:&{color_color_texto_contenido};
 }
 td img{
 padding:20px;}

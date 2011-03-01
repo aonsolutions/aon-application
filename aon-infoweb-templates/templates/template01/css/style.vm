@@ -1,56 +1,61 @@
 body{
-		font-family: ${font_fuente};
-		font-size: ${size_tamano_fuente};
+		font-family: ${font_fuente_texto_pagina};
+		font-size: ${size_tamano_texto_pagina};
 		background-color: ${bgcolor_color_fondo_pagina};
-		color: ${color_texto_contenido};
+		color: ${color_color_texto_pagina};
 		text-align:center;
 		margin:0 auto;
 		width:750px;
 		position:relative;
 		text-align:left;
-		border: ${color_color_borde_cuadro} 1px solid;
+		border: ${color_color_borde_cabecera} 1px solid;
+		margin-top:100px;
 }
 td{vertical-align:top;	}
 /*.canvas{
 		width:740px;
 		position:relative;
 		text-align:left;
-		border: ${color_color_borde_cuadro} 1px solid;
+		border: ${color_color_borde_cabecera} 1px solid;
 	}*/
 a:link {
-	color: ${color_texto_links};
+	color: ${color_color_texto_link};
 	text-decoration: none;
 }
 a:visited {
 	text-decoration: none;
-	color: ${color_texto_links};
+	color: ${color_color_texto_link};
 }
 a:hover {
 	text-decoration:underline;
-	color: ${color_texto_links};
+	color: ${color_color_texto_link};
 }
 a:active {
 	text-decoration: none;
-	color: ${color_texto_links};
+	color: ${color_color_texto_link};
 }
 a img { border:none;}
 .header{
-		background-color: ${bgcolor_color_fondo_de_cabecera};
+		background-color: ${bgcolor_color_fondo_cabecera};
 		padding-top:35px;
 		text-align:right;
 		min-height:100px;
+		padding-bottom:10px;
 }
 #logo{
-		background-color: ${bgcolor_color_fondo_logo};		
-		margin-left:165px;
+		margin-left:550px;
+		margin-bottom:10px;
+		padding-top:10px;
+		padding-bottom:10px;
+		padding-left:20px;
 		text-align:left;
-		padding:7px;
-		width:561px;
+		width:580px;
 }
+
 .menu{
 		background-color: ${bgcolor_color_fondo_menu};
 		position:absolute;
-		top:25px;
+		top:35px;
 		width:160px;
 		text-decoration: none;
 }
@@ -62,9 +67,13 @@ a img { border:none;}
 }
 .menu td a{
 		text-decoration:none;
-		color: ${color_texto_menu};
+		color: ${color_color_texto_menu};
 }
-.content{ width:695px; margin-top:45px;}
+.content{ 
+	width:750px;
+	padding-top:45px;
+	background-color: ${bgcolor_color_fondo_contenido};
+	}
 .content-text{
 		margin-top:50px;
 		text-align: justify;
@@ -72,23 +81,18 @@ a img { border:none;}
 .content-img{		text-align: justify;}
 .content-form{
 		padding-bottom:40px;
-		padding-right:25px;
+		padding-right:15px;
 		padding-top:30px;
 		text-align:justify;
 }
 .titular {
-		font-size: ${size_tamano_fuente_titular};
-		color: ${color_texto_titular};
-		background-color: ${bgcolor_color_fondo_titular};
+		
 		padding:5px ;
 		margin-top:20px;
 		width:450px;
 		margin-left:175px;
 }
 .title2 {
-		font-size: ${size_tamano_fuente_titular};
-		color: ${color_texto_titular};
-		background-color: ${bgcolor_Color_fondo_titular};
 		padding:0px ;
 		margin-top:50px;
 		width:170px;
@@ -97,9 +101,11 @@ a img { border:none;}
 		border: ${border_color_borde_imagen} 3px solid;
 }
 #foot{
-		background-color: ${bgcolor_color_fondo_de_cabecera};
-		color: ${color_texto_pie};
-		text-align: center;	
+		background-color: ${bgcolor_color_fondo_pie};
+		color: ${color_color_texto_pie};
+		text-align: center;
+		padding:10px;
+		
 }
 .box{
 	padding:15px;
@@ -140,22 +146,22 @@ a img { border:none;}
 	padding-top:10px;
 }
 .copiesferalia {
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	padding:20px;
 }
 .copiesferalia a{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 }
 .copiesferalia a:hover{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size: 9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:underline;
 }
 td img{padding:20px;}
@@ -168,4 +174,8 @@ td img{padding:20px;}
 	float:left;
 	padding:25px;
 }
-h1{font-size:12px; margin-left:175px;} 
+h1{font-size:12px; 
+margin-left:175px;
+width:300px;
+font-size: ${size_tamano_texto_titulo};
+		color: ${color_color_texto_titulo};} 

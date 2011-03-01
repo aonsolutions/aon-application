@@ -3,11 +3,12 @@
 	margin:0;
 }
 body {
-	color: ${color_color_texto};
-	background-color:${bgcolor_color_de_fondo_blanco};
-	font-family:${font_fuente};
+	color: ${color_color_texto_pagina};
+	background-color:${bgcolor_color_fondo_pagina};
+	font-family:${font_fuente_texto_pagina};
 	font-size:0.83em;
 	margin:20px auto;
+	margin-top:100px;
 	width:760px;
 }
 a img{
@@ -15,34 +16,38 @@ border:none;
 }
 h1, h2, h3, h4, h5, h6, p, pre, blockquote, label, ul, ol, dl, 
 fieldset, address { margin:1em 0;}
-h1 {font-size:1.67em;}
+h1 {
+	font-size:1.67em;
+	color:${color_color_texto_titulo}
+	}
 h2 {font-size:1.39em;}
 h3 {font-size:1.2em;}
 h4 {font-size:1em;}
 li, dd { margin-left:5%; }
 fieldset { padding: .5em; }
 a {
-	color:${color_cabecera_color_texto};
-	background-color: ${bgcolor_color_de_fondo_blanco};
+	color:${color_color_texto_pagina};
+	background-color: ${bgcolor_color_fondo_pagina};
 	font-weight: bold;
 	text-decoration: none;
 }
 a:hover {
-	color:${color_contenidos_color_de_texto_link_hover};
-	background-color: ${bgcolor_color_de_fondo_blanco};
+	color:${color_color_texto_menu_hover};
+	background-color: ${bgcolor_color_fondo_pagina};
 	font-weight: bold;
 	text-decoration: underline;
 }
 #header {
-	color: ${color_cabecera_color_texto};
-	background-color: ${bgcolor_color_de_fondo_blanco};
+	color: ${color_color_texto_pagina};
 	width:760px;
 	clear:both;
 	height:25px;
+	padding:30px;
 }
 #title {
-	color:${color_cabecera_color_texto};
-	background-color:${bgcolor_color_de_fondo_blanco};
+	color:${color_color_texto_pagina};
+	background-color:${bgcolor_color_fondo_pagina};
+	color:${color_color_texto_titulo}
 	font-size:3em;
 	font-weight:bold;
 	padding:0px 0px 0px 0px;
@@ -52,19 +57,18 @@ a:hover {
 	padding:0px 0px 0px 0px;
 }
 #contact a {
-	color:${color_cabecera_color_texto};
-	background-color:${bgcolor_color_de_fondo_blanco};
+	color:${color_color_texto_pagina};
+	background-color:${bgcolor_color_fondo_pagina};
 	font-weight:bold;
 	text-decoration:none;
 }
 #contact a:hover {
-	color:${color_contenidos_color_de_texto_link_hover};
-	background-color:${bgcolor_color_de_fondo_blanco};
+	color:${color_color_texto_menu_hover};
+	background-color:${bgcolor_color_fondo_pagina};
 	text-decoration:underline;
 }
 #slogan {
-	color:${color_color_texto};
-	background-color:${bgcolor_color_de_fondo_blanco};
+	background-color:${bgcolor_color_fondo_pagina};
 	font-size:1.17em;
 	font-weight:bold;
 	font-style:normal;
@@ -79,20 +83,20 @@ a:hover {
 	margin:0 0 5px 0;
 	width:765px;
 	clear:both;
-margin-top:20px;
+	margin-top:0px;
+	margin-bottom:-22px;
 	text-align:center;
 }
 #nav a {
-	color:${color_cabecera_color_de_texto_link};
-	background-color:${bgcolor_color_de_fondo_azul};
+	color:${color_color_texto_menu};
+	background-color:${bgcolor_color_fondo_menu};
 	font-weight:bold;
 	text-decoration:none;
 	padding:4px 35px 4px 35px;
 	border:1px solid #000000;
 }
 #nav .selected,#nav a:hover {
-	color:${color_cabecera_color_de_texto_link};
-	background-color:${bgcolor_color_de_fondo_menu_seleccionado};
+	color:${color_color_texto_menu_hover};
 	text-decoration:none;
 	padding:4px 35px 4px 35px;
 }
@@ -100,21 +104,23 @@ margin-top:20px;
 	border-top:1px solid #cccccc;
 	width:760px;
 	clear:both;
+
 }
 #maincontent {
 	font-size:1.0em;
 	padding:0px 5px 0px 0px;
+	background-color:${bgcolor_color_fondo_contenido};
 	width:754px;
 	border-left:1px solid #CCCCCC;
 	border-right:1px solid #CCCCCC;
 	border-top:1px solid #CCCCCC;
 	float:left;
-padding-bottom:20px;
-padding-top:20px;
+	padding-bottom:20px;
+	padding-top:20px;
 }
 #maincontent p{
-padding-left:20px;
-padding-right:20px;}
+	padding-left:20px;
+	padding-right:20px;}
 #sidecontent {
 	font-size:0.83em;
 	padding:5px 0px 0px 0px;
@@ -122,8 +128,8 @@ padding-right:20px;}
 	float:right;
 }
 #footer {
-	color: ${color_cabecera_color_de_texto_link};
-	background-color:${bgcolor_color_de_fondo_azul};
+	color: ${color_color_texto_pie};
+	background-color:${bgcolor_color_fondo_pie};
 	font-size:80%;
 	line-height:1.5em;
 	width: 760px;
@@ -131,26 +137,26 @@ padding-right:20px;}
 	text-align:center;
 }
 #footer	a {
-	  color: ${color_cabecera_color_de_texto_link};
-	  background-color: ${bgcolor_color_de_fondo_azul};
+	  
+	  background-color: ${bgcolor_color_fondo_pie};
 	  text-decoration: none;
 	  }
 #footer	a:hover {
-	  color:${color_cabecera_color_de_texto_link};
-	  background-color: ${bgcolor_color_de_fondo_azul};
+	  
+	  background-color: ${bgcolor_color_fondo_pie};
 	  font-weight: bold;
 	  text-decoration: underline;
 	  }
 #copyrightdesign {
-	color:${color_cabecera_color_de_texto_link};
-	background-color:${bgcolor_color_de_fondo_azul};
+
+	background-color:${bgcolor_color_fondo_pie};
 	padding:5px 0px 5px 20px;
 	width: 580px;
 	float:left;
 }
 #footercontact {
-	color:${color_cabecera_color_de_texto_link};
-	background-color:${bgcolor_color_de_fondo_azul};
+
+	background-color:${bgcolor_color_fondo_pie};
 	padding:5px 0px 5px 50px;
 	width:110px;
 	float:right;
@@ -211,21 +217,23 @@ margin-right:150px;
 margin-left:60px;
 }
 .copiesferalia {
-	font-family: ${font_fuente} ;
+	margin-left:40px;
+	margin-top:20px;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
-padding-bottom:20px;
+padding-bottom:10px;
 	}
 .copiesferalia a{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	}
 .copiesferalia a:hover{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size: 9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:underline;
 	}

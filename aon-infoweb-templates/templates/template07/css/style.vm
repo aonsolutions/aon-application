@@ -1,111 +1,112 @@
 body {
-	background-color: ${bgcolor_color_de_fondo};
-	color: ${color_color_de_texto};
+	background-color: ${bgcolor_color_fondo_pagina};
+	color: ${color_color_texto_pagina};
 	width: 750px;
 	margin: 0 auto;
-	margin-top:5px;
+	margin-top:100px;
 }
 a {
 	text-decoration: none;
 }
 a.reg:link { 
-	color: ${color_color_de_texto} ;
 	text-decoration:none; 
 	font-weight: bold;
 }
 a.reg:visited { 
-	color: ${color_color_de_texto};
 	text-decoration:none; 
 	font-weight: bold;
 }
 a.reg:hover { 
-	background-color: ${bgcolor_color_fondo_link} ;
-	color: ${color_color_de_texto_menu_hover} ;
 	text-decoration:none; 
 	font-weight: bold;
 }
 a.reg:active { 
-	background-color: ${bgcolor_color_fondo_link} ;
-	color:${color_color_de_texto} ;
+	color:${color_color_texto_pagina} ;
 	text-decoration:none; 
 	font-weight: bold;
 }
 .main {
-	border:1px solid #e55302;
+	border:${border_tamano_borde_pagina} solid ${color_color_borde_pagina};
+	background-color: ${bgcolor_color_fondo_contenido};
 }
 .head {
 	background-color: ${bgcolor_color_fondo_cabecera};
-	color: ${color_color_texto_cabecera};
-padding:20px;
+	padding:20px;
 	font-family:verdana,tahoma,arial,sans-serif;
-	font-size: ${size_tamano_de_fuente};
+	font-size: ${size_tamano_texto_pagina};
 	text-align:right;
-	border-bottom: ${border_bordes} solid ${color_color_bordes};
+	border-bottom: ${border_tamano_borde_pagina} solid ${color_color_borde_pagina};
 }
 .head a { 
 	text-decoration:none; 
 }
 .content {
 	background-color: ${bgcolor_color_fondo_contenido};
-	
-	border-bottom: ${border_bordes} solid ${color_color_bordes};
-	font-family: ${font_fuente};
-	font-size: ${size_tamano_de_fuente};
+	border-bottom: ${border_tamano_borde_pagina} solid ${color_color_borde_pagina};
+	font-family: ${font_fuente_texto_pagina};
+	font-size: ${size_tamano_texto_pagina};
 	line-height:15px;
-	color: ${color_color_de_texto};
+	color: ${color_color_texto_pagina};
 	padding-left: 20px;
-padding-right: 20px;
-padding-bottom: 20px;
-padding-top:20px;
+	padding-right: 20px;
+	padding-bottom: 20px;
+	padding-top:20px;
 
+}
+
+h1 {
+color: ${color_color_texto_titulo};
 }
 
 .lr {
-	background-color: ${bgcolor_color_fondo_otros};
+	background-color: ${bgcolor_color_fondo_pagina};
 	text-align:center;
-	border-left: ${border_bordes} solid ${color_color_bordes};
-	border-right: ${border_bordes} solid ${color_color_bordes};
+	border-left: ${border_tamano_borde_pagina} solid ${color_color_borde_pagina};
+	border-right: ${border_tamano_borde_pagina} solid ${color_color_borde_pagina};
 }
 .ext {
-	background-color: ${bgcolor_color_fondo_otros};
+	background-color: ${bgcolor_color_fondo_pagina};
 	text-align:right;
 }	
 .foot {
 	background-color: ${bgcolor_color_fondo_pie};
 	text-align:right;
-	color: ${color_color_texto_pie};
+	color: ${color_color_texto_pagina};
 	font-size:9px;
-padding:20px;
+	text-align:center;
+	padding:20px;
+	
 }
+
+
 .nav {
 	background-color: ${bgcolor_color_fondo_menu};
 	text-align:right;
-padding:20px;
-
-
-	font-family: ${font_fuente};
-	font-size: ${size_tamano_de_fuente_menu};
-	border-top: ${border_bordes} solid ${color_color_bordes};
+	width:190px;
+	margin-top:20px;
+	margin-left:556px;
+	font-family: ${font_fuente_texto_menu};
+	font-size: ${size_tamano_texto_menu};
+	border-top: ${border_tamano_borde_pagina} solid ${color_color_borde_pagina};
+	color : ${color_color_texto_menu};
 }
 .nav a { 
 	text-decoration:none;
  }
 .menu a:link, .menu a:visited {
 	background-color : ${bgcolor_color_fondo_menu};
-	border-color : ${color_color_bordes} ;
-	color : ${color_color_de_texto};
+	border-color : ${color_color_borde_pagina} ;
 	text-decoration: none;
-padding:5px;
+	padding:5px;
 } 
 .menu a:hover {
 	background-color : ${bgcolor_color_fondo_menu_hover};
-	color : ${color_color_de_texto};
-	border-color : ${color_color_bordes}
-padding:5px; ;
+	color : ${color_color_texto_menu_hover};
+	border-color : ${color_color_borde_pagina};
+	padding:5px; 
 }
 .menu a:link {
 	display : block; 
-	
 	border-style : solid; 
 	border-top-width : 0; 
 	border-right-width : 0px; 
@@ -115,11 +116,10 @@ padding:5px; ;
 	width : 180px;
 	font-weight : normal; 
 	text-align : right;
-	color: ${color_color_de_texto};
+	
 } 
 .menu a:hover {
 	display : block; 
-	
 	border-style : solid; 
 	border-top-width : 0; 
 	border-right-width : 0px; 
@@ -128,8 +128,8 @@ padding:5px; ;
 	width : 180px; 
 	font-weight : normal; 
 	text-align : right;
-padding:5px;
-	color: ${color_color_de_texto};
+	padding:5px;
+	color: ${color_color_texto_menu_hover};
 } 
 .menu a:visited {
 	display : block; 
@@ -139,21 +139,20 @@ padding:5px;
 	border-right-width : 0px; 
 	border-bottom-width : 2px; 
 	border-left-width : 0px;
-	
 	width : 180px; 
 	font-weight : normal; 
 	text-align : right;
-	color: ${color_color_de_texto};
+	
 }
 .style1 {color: #C1FF64;}
 a:link {
-	color: ${color_color_de_texto};
+	color: ${color_color_texto_menu};
 }
 a:visited {
-	color: ${color_color_de_texto};
+	color: ${color_color_texto_menu};
 }
 a:active {
-	color: ${color_color_de_texto};
+	color: ${color_color_texto_menu};
 }
 .box{
 	text-align:center; 
@@ -173,10 +172,10 @@ a:active {
 	}
 .gallery-navigation{
 	text-align:center;
-	color:${color_color_de_texto};
+	color:${color_color_texto_pagina};
 }
 .gallery-navigation a{
-	color:${color_color_de_texto};
+	color:${color_color_texto_pagina};
 	text-decoration:none;
 	text-align:center;
 }
@@ -188,21 +187,21 @@ a:active {
 	float: left;
 	}
 .copiesferalia {
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	}
 .copiesferalia a{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	}
 .copiesferalia a:hover{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size: 9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:underline;
 	}
 .album {
@@ -213,7 +212,7 @@ a:active {
 
 .album a{
 	text-decoration:none;
-	color:${color_color_de_texto};
+	color:${color_color_texto_pagina};
 }
 .objeto {
 	float:left;
@@ -221,10 +220,9 @@ a:active {
 }
 .objeto a{
 	text-decoration:none;
-	color:${color_color_de_texto};
+	color:${color_color_texto_pagina};
 }
 td img{
 padding:20px;}
 
-h1{
-padding-top:20px;}
+

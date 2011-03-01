@@ -1,23 +1,23 @@
 .inicio a{
-	font-family: ${font_fuente} ;
-	font-size: ${size_tamano_de_fuente};
-	color:${color_color_de_texto};
+	font-family: ${font_fuente_texto_pagina} ;
+	font-size: ${size_tamano_texto_pagina};
+	color:${color_color_texto_pagina};
 	text-decoration:none;
 	}
 body {
 	margin: 0 auto;
 	width: 750px;
+	margin-top:100px;
+	background-color: ${bgcolor_color_fondo_pagina}
 }
 #logo{
-	
+	margin-bottom:30px;
 }
 #
 }
 .header{
-	
-	/*width:730px;*/ 
-margin:20PX;
-	background-color:${bgcolor_color_de_fondo_cabecera};
+	padding:50px; 
+	margin-bottom:20px;
 
 }
 #toplinks{
@@ -27,12 +27,11 @@ margin:20PX;
 }
 #menu{
 	float:right; 
-	margin-right:10px;
 	height:24px;
-	width:730px; 
+	width:750px; 
 	background-image: url(images/bg_menu.gif);
 	background-repeat:repeat-x;
-	color:${color_color_de_texto_menu};
+	color:${color_color_texto_menu};
 	font-size:12px;
 	text-transform:uppercase;
 	font-weight:bold;
@@ -40,47 +39,54 @@ margin:20PX;
 #menu a{
 	text-decoration:none;
 	float:right;
-	color:${color_color_de_texto_menu};
+	color:${color_color_texto_menu};
 	font-size:12px;
 	text-transform:uppercase;
 	font-weight:bold;
-padding-right:10px;
-padding-left:10px;
-padding-top:5px;
+	padding-right:10px;
+	padding-left:10px;
+	padding-top:5px;
 	height:24px;
 }
 #menu a:hover{
 	text-decoration:none;
 	background-image: url(images/bg_submenu.gif) ;
-	color:${color_color_de_texto_menu_hover};
+	color:${color_color_texto_menu_hover};
 	font-size:12px;
 	text-transform:uppercase;
-
 	font-weight:bold;
 }
 #contenttext{
 	float:right; 
 	width:650px;
-background-color:${bgcolor_color_de_fondo_contenido};
+	background-color:${bgcolor_color_fondo_contenido};
 }
 #footer{
 	float:left; 
 	width:750px; 
-	background-color: ${bgcolor_color_de_fondo_pie};
-	padding:10px;
+	background-color: ${bgcolor_color_fondo_pie};
+	padding-top:10px;
+	padding-bottom:20px;
+	color:${color_color_texto_pie};
 	font-size:9px;
+	text-align:center;
 }
 .graypanel{
 	border:solid 1px #666666; 
 	background-color:#F7F7F7; 
-	padding:100px 25px 80px;
-	margin:10px;
+	margin-top:10px;
 }
 .bodytext {
-	font: ${size_tamano_de_fuente} ${font_fuente};
-	color: ${color_color_de_texto};
-	background-color:${bgcolor_color_de_fondo_contenido};
+	font: ${size_tamano_texto_pagina} ${font_fuente_texto_pagina};
+	color: ${color_color_texto_pagina};
+	background-color:${bgcolor_color_fondo_contenido};
+	padding:100px 25px 80px;
+	
 }
+
+h1 {
+	color: ${color_color_texto_titulo};
+	}
 
 .box{
 	text-align:center; 
@@ -99,10 +105,10 @@ background-color:${bgcolor_color_de_fondo_contenido};
 }
 .gallery-navigation{
 	text-align:center;
-	color:&{color_color_de_texto_contenido};
+	color:&{color_color_texto_contenido};
 }
 .gallery-navigation a{
-	color:&{color_color_de_texto_contenido};
+	color:&{color_color_texto_contenido};
 	text-decoration:none;
 	text-align:center;
 }
@@ -114,21 +120,21 @@ background-color:${bgcolor_color_de_fondo_contenido};
 	line-height:15px;
 }
 .copiesferalia {
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	}
 .copiesferalia a{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size:9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:none;
 	}
 .copiesferalia a:hover{
-	font-family: ${font_fuente} ;
+	font-family: ${font_fuente_texto_pie} ;
 	font-size: 9px;
-	color:${color_texto};
+	color:${color_color_texto_pie};
 	text-decoration:underline;
 	}
 .album {
@@ -137,7 +143,7 @@ background-color:${bgcolor_color_de_fondo_contenido};
 }
 .album a{
 	text-decoration:none;
-	color:&{color_color_de_texto_contenido};
+	color:&{color_color_texto_contenido};
 }
 .objeto {
 	float:left;
@@ -145,7 +151,7 @@ background-color:${bgcolor_color_de_fondo_contenido};
 }
 .objeto a{
 	text-decoration:none;
-	color:&{color_color_de_texto_contenido};
+	color:&{color_color_texto_contenido};
 }
 .bold {
 	float:left;
@@ -153,7 +159,7 @@ background-color:${bgcolor_color_de_fondo_contenido};
 }
 .bold a{
 	text-decoration:none;
-	color:&{color_color_de_texto_contenido};
+	color:&{color_color_texto_contenido};
 }
 td img{
 /*padding:20px;*/}
