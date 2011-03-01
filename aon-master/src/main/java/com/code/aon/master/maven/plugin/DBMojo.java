@@ -35,7 +35,7 @@ import com.code.aon.master.VersionManager;
  * @phase	generate-sources	
  * @requiresDependencyResolution 
  */
-public class DBMojo extends AbstractMojo {
+public class DBMojo extends AbstractMojo implements FilenameFilter{
 	
 	
     /**
@@ -93,13 +93,7 @@ public class DBMojo extends AbstractMojo {
 			DBContext dbContext = new DBContext(dbMetaData);
 			
 			File vmDir = new File(vmDirPath);
-			File vms [] = vmDir.listFiles(new FilenameFilter() {
-				
-				@Override
-				public boolean accept(File file, String name) {
-					return file.isFile() ? name.endsWith(".vm") : false ;
-				}
-			});
+			File vms [] = vmDir.listFiles(this);
 			
 	        for (File  vm : vms) {
 	        	try {
@@ -126,7 +120,12 @@ public class DBMojo extends AbstractMojo {
 		
 	}
     
-    private String getJavaPath(File vm ) {
+	@Override
+	public boolean accept(File dir, String name) {
+		return name.endsWith(".vm");
+	}
+
+	private String getJavaPath(File vm ) {
     	String vmName = vm.getName();
     	String javaName = vmName.substring(0, vmName.lastIndexOf('.'));
     	return javaOutPath + File.separator + javaName;
@@ -150,5 +149,6 @@ public class DBMojo extends AbstractMojo {
 		DBMojo dbMojo = new DBMojo();
 		dbMojo.execute();
     }
+
 
 }
