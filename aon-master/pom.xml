@@ -73,7 +73,7 @@
 
 	<build>
 		<plugins>
-			<!-- plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.0-beta-4</version>
@@ -89,19 +89,19 @@
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
 				</configuration>
-			</plugin-->
-			<plugin>
+			</plugin>
+			<!-- plugin>
 				<groupId>com.code.aon</groupId>
 				<artifactId>aon-master</artifactId>
 				<version>${pom.version}</version>
 				<executions>
-					<!-- execution>
+					<execution>
 					  <goals>
 					    <goal>DB</goal>
 					  </goals>
-					</execution-->
+					</execution>
 				</executions>
-			</plugin>
+			</plugin-->
 	</plugins>
 	</build>
 
