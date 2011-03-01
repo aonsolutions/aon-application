@@ -73,23 +73,23 @@
 
 	<build>
 		<plugins>
-			<plugin>
+			<!-- plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.0-beta-4</version>
 				<executions>
-					<!--execution>
+					<execution>
 						<phase>validate</phase>
 						<goals>
 							<goal>create</goal>
 						</goals>
-					</execution-->
+					</execution>
 				</executions>
 				<configuration>
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
 				</configuration>
-			</plugin>
+			</plugin-->
 			<plugin>
 				<groupId>com.code.aon</groupId>
 				<artifactId>aon-master</artifactId>
