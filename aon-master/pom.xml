@@ -90,7 +90,7 @@
 					<doUpdate>false</doUpdate>
 				</configuration>
 			</plugin>
-			<!-- plugin>
+			<plugin>
 				<groupId>com.code.aon</groupId>
 				<artifactId>aon-master</artifactId>
 				<version>${pom.version}</version>
@@ -101,7 +101,7 @@
 					  </goals>
 					</execution>
 				</executions>
-			</plugin-->
+			</plugin>
 	</plugins>
 	</build>
 
