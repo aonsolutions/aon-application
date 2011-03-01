@@ -10,6 +10,7 @@
 	<artifactId>aon-master</artifactId>
 	<version>6.1.0-SNAPSHOT</version>
 	<description>AON MASTER</description>
+	<packaging>maven-plugin</packaging>
 	<name>AON-MASTER</name>
 
 	<scm>
@@ -32,28 +33,40 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.0.8</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>2.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.6.3</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.5.11</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- TEST DEPENDENCIES -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jcl</artifactId>
 			<version>1.5.11</version>
-			<scope>test</scope>
+			<scope>runtime</scope>
 		</dependency>
+		<!-- TEST DEPENDENCIES -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.0.8</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -65,19 +78,31 @@
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.0-beta-4</version>
 				<executions>
-					<execution>
+					<!--execution>
 						<phase>validate</phase>
 						<goals>
 							<goal>create</goal>
 						</goals>
-					</execution>
+					</execution-->
 				</executions>
 				<configuration>
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
 				</configuration>
 			</plugin>
-		</plugins>
+			<plugin>
+				<groupId>com.code.aon</groupId>
+				<artifactId>aon-master</artifactId>
+				<version>${pom.version}</version>
+				<executions>
+					<!-- execution>
+					  <goals>
+					    <goal>DB</goal>
+					  </goals>
+					</execution-->
+				</executions>
+			</plugin>
+	</plugins>
 	</build>
 
 	<profiles>
