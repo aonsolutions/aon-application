@@ -54,8 +54,6 @@ public class AonUserController extends UserController implements ILdapConstants,
 	
 	private boolean showPasswordChangedWindow;
 
-	private boolean showUserChangedWindow;
-
 	private boolean accepted;
 	
 	public AonUserController() {
@@ -108,7 +106,6 @@ public class AonUserController extends UserController implements ILdapConstants,
 	
 	private void loadUser( User user ) throws ManagerBeanException {
 		setShowPasswordChangedWindow(false);
-		setShowUserChangedWindow(false);
 		getUserManager().findUser(user.getLogin());
 		setUserTO(user);
 	}
@@ -157,7 +154,6 @@ public class AonUserController extends UserController implements ILdapConstants,
 			super.accept(event);
 			if (cellular != null) cellular = cellular.replace(" ", "");
 			updateUserLdapProperties(user.getLogin(), name, surname, alternativeEmail, cellular);
-			setShowUserChangedWindow(true);
 		} catch (Exception e) {
 			LOGGER.error( "Error cambiando datos del usuario.", e );
 		}
@@ -199,14 +195,6 @@ public class AonUserController extends UserController implements ILdapConstants,
 
 	public void setShowPasswordChangedWindow(boolean showPasswordChangedWindow) {
 		this.showPasswordChangedWindow = showPasswordChangedWindow;
-	}
-
-	public boolean isShowUserChangedWindow() {
-		return showUserChangedWindow;
-	}
-
-	public void setShowUserChangedWindow(boolean showUserChangedWindow) {
-		this.showUserChangedWindow = showUserChangedWindow;
 	}
 	
 	public boolean isContactsEnabled() {
