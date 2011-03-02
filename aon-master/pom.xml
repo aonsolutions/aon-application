@@ -19,6 +19,17 @@
 		<url>http://dev.esferalia.com/websvn/wsvn/aon-master</url>
 	</scm>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>aon</id>
+			<url>http://dev.esferalia.com/maven2_repositories/inhouse</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>aon.snapshots</id>
+			<url>http://dev.esferalia.com/maven2_repositories/inhouse_snapshot</url>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
