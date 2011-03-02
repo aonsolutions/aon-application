@@ -105,13 +105,13 @@
 				<groupId>com.code.aon</groupId>
 				<artifactId>aon-master</artifactId>
 				<version>${pom.version}</version>
-				<executions>
+				<!--executions>
 					<execution>
 					  <goals>
 					    <goal>DB</goal>
 					  </goals>
 					</execution>
-				</executions>
+				</executions-->
 			</plugin>
 	</plugins>
 	</build>
