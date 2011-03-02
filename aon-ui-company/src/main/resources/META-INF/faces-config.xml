@@ -177,6 +177,10 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
+			<property-name>disabled</property-name>
+			<value>#{!aonConfiguration.bean.company.showRegistryBank}</value>
+		</managed-property>
+		<managed-property>
 			<property-name>childBean</property-name>
 			<value>companyRbank</value>
 		</managed-property>
@@ -238,6 +242,10 @@
 		<managed-bean-name>companyRPayMethodChildListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>disabled</property-name>
+			<value>#{!aonConfiguration.bean.company.showRegistryBank}</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>childBean</property-name>
 			<value>companyRPayMethod</value>

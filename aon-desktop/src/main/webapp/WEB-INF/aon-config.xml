@@ -9,7 +9,7 @@
 			showCompanyOtherData="false"
 			showPanelTabSet="true" 
 			showEInvoice="false"
-			showDigitalCertificate="true"
+			showDigitalCertificate="false"
 		/>
 		<company:enterprise 
 			showFinanceData="false" 
