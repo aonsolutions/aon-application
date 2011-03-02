@@ -273,7 +273,9 @@
 							<group>Applications/Aon</group>
 							<release>${buildNumber}</release>
 							<copyright>2010, esferalia Networks S.A</copyright>
-							<requires />
+							<requires>
+								<require>aon-master</require>
+							</requires>
 							<mappings>
 								<mapping>
 									<filemode>755</filemode>
@@ -287,6 +289,14 @@
 											</includes>
 											<location>target</location>
 										</source>
+										<softlinkSource>
+											<location>/usr/share/java/aon-master.jar</location>
+											<destination>aon-master.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon-dbutils.jar</location>
+											<destination>aon-dbutils.jar</destination>
+										</softlinkSource>
 									</sources>
 
 									<dependency>
