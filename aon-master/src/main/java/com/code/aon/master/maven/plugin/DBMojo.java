@@ -60,12 +60,12 @@ public class DBMojo extends AbstractMojo implements FilenameFilter{
     /**
      * @parameter default-value="src/main/resources/com/code/aon/master/vm" 
      */
-    private String vmDirPath = "src/main/resources/com/code/aon/master/vm";
+    private File vmDir = new File("src/main/resources/com/code/aon/master/vm");
     
     /**
      * @parameter default-value="src/main/java/com/code/aon/master/db"
      */
-    private String javaOutPath = "src/main/java/com/code/aon/master/db" ;
+    private File javaOut = new File ( "src/main/java/com/code/aon/master/db" ) ;
 
 
 
@@ -92,7 +92,8 @@ public class DBMojo extends AbstractMojo implements FilenameFilter{
 	        DatabaseMetaData dbMetaData = connection.getMetaData(); 
 			DBContext dbContext = new DBContext(dbMetaData);
 			
-			File vmDir = new File(vmDirPath);
+	System.out.println(vmDir.getAbsolutePath());
+
 			File vms [] = vmDir.listFiles(this);
 			
 	        for (File  vm : vms) {
@@ -125,10 +126,10 @@ public class DBMojo extends AbstractMojo implements FilenameFilter{
 		return name.endsWith(".vm");
 	}
 
-	private String getJavaPath(File vm ) {
+	private File getJavaPath(File vm ) {
     	String vmName = vm.getName();
     	String javaName = vmName.substring(0, vmName.lastIndexOf('.'));
-    	return javaOutPath + File.separator + javaName;
+    	return new File ( javaOut, javaName );
     }
     
     private void dropDataBase(Connection connection, String dbName) 
