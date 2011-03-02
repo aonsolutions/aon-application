@@ -2,6 +2,8 @@ package com.code.aon.fiscal.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.code.aon.fiscal.Mod347;
+import com.code.aon.fiscal.Mod347Detail;
 import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.RentingDetail;
 import com.code.aon.fiscal.VatTax;
@@ -12,6 +14,134 @@ import com.code.aon.fiscal.VatTaxDeclaration;
 * Interface for holding entity properties constants.
 */ 
 public interface IFiscalAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for Mod347 entity.
+	*/ 
+	DAOConstantsEntry MOD347_ENTRY = DAOConstants.getDAOConstant(Mod347.class);
+
+	/** 
+	* Alias value: Mod347_administration
+	* Hibernate value: Mod347.administration
+	*/
+	String  MOD347_ADMINISTRATION = MOD347_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Mod347_comments
+	* Hibernate value: Mod347.comments
+	*/
+	String  MOD347_COMMENTS = MOD347_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Mod347_complementary
+	* Hibernate value: Mod347.complementary
+	*/
+	String  MOD347_COMPLEMENTARY = MOD347_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Mod347_id
+	* Hibernate value: Mod347.id
+	*/
+	String  MOD347_ID = MOD347_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Mod347_number
+	* Hibernate value: Mod347.number
+	*/
+	String  MOD347_NUMBER = MOD347_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Mod347_replacedNumber
+	* Hibernate value: Mod347.replacedNumber
+	*/
+	String  MOD347_REPLACED_NUMBER = MOD347_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Mod347_replacement
+	* Hibernate value: Mod347.replacement
+	*/
+	String  MOD347_REPLACEMENT = MOD347_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Mod347_securityLevel
+	* Hibernate value: Mod347.securityLevel
+	*/
+	String  MOD347_SECURITY_LEVEL = MOD347_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Mod347_status
+	* Hibernate value: Mod347.status
+	*/
+	String  MOD347_STATUS = MOD347_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Mod347_year
+	* Hibernate value: Mod347.year
+	*/
+	String  MOD347_YEAR = MOD347_ENTRY.getAliasNames()[9];
+
+
+
+	/** 
+	* DAOConstantsEntry for Mod347Detail entity.
+	*/ 
+	DAOConstantsEntry MOD347DETAIL_ENTRY = DAOConstants.getDAOConstant(Mod347Detail.class);
+
+	/** 
+	* Alias value: Mod347Detail_amount
+	* Hibernate value: Mod347Detail.amount
+	*/
+	String  MOD347DETAIL_AMOUNT = MOD347DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Mod347Detail_country
+	* Hibernate value: Mod347Detail.country
+	*/
+	String  MOD347DETAIL_COUNTRY = MOD347DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Mod347Detail_document
+	* Hibernate value: Mod347Detail.document
+	*/
+	String  MOD347DETAIL_DOCUMENT = MOD347DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Mod347Detail_id
+	* Hibernate value: Mod347Detail.id
+	*/
+	String  MOD347DETAIL_ID = MOD347DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Mod347Detail_mod347_id
+	* Hibernate value: Mod347Detail.mod347.id
+	*/
+	String  MOD347DETAIL_MOD347_ID = MOD347DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Mod347Detail_name
+	* Hibernate value: Mod347Detail.name
+	*/
+	String  MOD347DETAIL_NAME = MOD347DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Mod347Detail_province
+	* Hibernate value: Mod347Detail.province
+	*/
+	String  MOD347DETAIL_PROVINCE = MOD347DETAIL_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Mod347Detail_registry
+	* Hibernate value: Mod347Detail.registry
+	*/
+	String  MOD347DETAIL_REGISTRY = MOD347DETAIL_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Mod347Detail_type
+	* Hibernate value: Mod347Detail.type
+	*/
+	String  MOD347DETAIL_TYPE = MOD347DETAIL_ENTRY.getAliasNames()[8];
 
 
 

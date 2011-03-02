@@ -6,37 +6,17 @@ import java.util.List;
 public class Deponent {
 
 	private Integer year;
+	private String province;
 	private String code;
 	private String type;
 	private String name;
 	private Integer relPhone;
 	private String relName;
-	private Integer justify;
+	private Long number;
 	private boolean complementary = false;
-	private boolean replaces = false;
-	private Integer replacedJustify;
+	private boolean replacement = false;
+	private Long replacedNumber;
 	private List<Declared> declareds;
-	private List<Building> buildings;
-
-	public List<Declared> getDeclareds() {
-		if (this.declareds == null) {
-			this.declareds = new LinkedList<Declared>();
-		}
-		return this.declareds;
-	}
-	public void setDeclareds(List<Declared> declareds) {
-		this.declareds = declareds;
-	}
-
-	public List<Building> getBuildings() {
-		if (this.buildings == null) {
-			this.buildings = new LinkedList<Building>();
-		}
-		return this.buildings;
-	}
-	public void setBuildings(List<Building> buildings) {
-		this.buildings = buildings;
-	}
 
 	public int getC001() {
 		return getDeclareds().size();
@@ -50,16 +30,18 @@ public class Deponent {
 		return c002;
 	}
 	public double getC003() {
-		return getBuildings().size();
+		return 0.0;
 	}
 	public double getC004() {
-		double c004 = 0;
-		for (Building r: getBuildings()) {
-			c004 += r.getQuantity();
-		}
-		return c004;
+		return 0.0;
 	}
-
+	public double getC005() {
+		return 0.0;
+	}
+	public double getC006() {
+		return 0.0;
+	}
+	
 	public String getCode() {
 		return code;
 	}
@@ -74,11 +56,11 @@ public class Deponent {
 		this.complementary = complementary;
 	}
 
-	public Integer getJustify() {
-		return justify;
+	public Long getNumber() {
+		return number;
 	}
-	public void setJustify(Integer justify) {
-		this.justify = justify;
+	public void setNumber(Long number) {
+		this.number = number;
 	}
 
 	public String getName() {
@@ -102,18 +84,18 @@ public class Deponent {
 		this.relPhone = relPhone;
 	}
 
-	public Integer getReplacedJustify() {
-		return replacedJustify;
+	public Long getReplacedNumber() {
+		return replacedNumber;
 	}
-	public void setReplacedJustify(Integer replacedJustify) {
-		this.replacedJustify = replacedJustify;
+	public void setReplacedNumber(Long replacedNumber) {
+		this.replacedNumber = replacedNumber;
 	}
 
-	public String getReplaces() {
-		return replaces ? "S" : null;
+	public String getReplacement() {
+		return replacement ? "S" : null;
 	}
-	public void setReplaces(boolean replaces) {
-		this.replaces = replaces;
+	public void setReplacement(boolean replacement) {
+		this.replacement = replacement;
 	}
 
 	public Integer getYear() {
@@ -130,15 +112,32 @@ public class Deponent {
 		this.type = type;
 	}
 
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
 	public String toString() {
-		String description = "DEPONENT ";
-		description += "YEAR ";
-		description += year == null ? "NULL " : "'" + year.toString() + "'";
-		description += "CODE ";
-		description += code == null ? "NULL " : "'" + code + "''";
-		description += "NAME ";
-		description += name == null ? "NULL " : "'" + name + "'; ";
-		return description;
+		StringBuffer buf = new StringBuffer("Registro Declarante ");
+		buf.append("EJERCICIO: ");
+		buf.append(year == null ? "Vacio" : year.toString());
+		buf.append(" DOCUMENTO: ");
+		buf.append(code == null ? "Vacio" : code);
+		buf.append(" NOMBRE: ");
+		buf.append( name == null ? "Vacio" : name);
+		return buf.toString();
+	}
+
+	public List<Declared> getDeclareds() {
+		if (this.declareds == null) {
+			this.declareds = new LinkedList<Declared>();
+		}
+		return this.declareds;
+	}
+	public void setDeclareds(List<Declared> declareds) {
+		this.declareds = declareds;
 	}
 
 }

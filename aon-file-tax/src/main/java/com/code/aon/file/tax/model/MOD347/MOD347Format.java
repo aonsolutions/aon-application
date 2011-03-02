@@ -1,55 +1,42 @@
 package com.code.aon.file.tax.model.MOD347;
 
+import com.code.aon.config.enumeration.Administration;
+
 public enum MOD347Format {
 
-	ALAVA_2009(2009
-			,"Alava - 2009"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Declared.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Building.xml"),
-	BIZKAIA_2009(2009
-			,"Bizkaia - 2009"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Declared.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Building.xml"),
-	GIPUZKOA_2009(2009
-			,"Gipuzkoa - 2009"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Declared.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Building.xml"),
-	NAVARRA_2009(2009
-			,"Navarra - 2009"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Declared.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Building.xml"),
-	AEAT_2009(2009
-			,"AEAT - 2009"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Declared.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2009_ALAVA_Building.xml");
+	ALAVA(2010,Administration.ALAVA
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_ALAVA_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_ALAVA_Declared.xml"),
+	BIZKAIA(2010,Administration.BIZKAIA
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_BIZKAIA_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_BIZKAIA_Declared.xml"),
+	GIPUZKOA(2010,Administration.GIPUZKOA
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_GIPUZKOA_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_GIPUZKOA_Declared.xml"),
+	NAVARRA(2010,Administration.NAVARRA
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Declared.xml"),
+	AEAT(2010,Administration.COMMON_TERRITORY
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_AEAT_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_AEAT_Declared.xml");
 
 	private Integer year;
-	private String description;
+	private Administration administration;
 	private String deponentMetadataResource;
 	private String declaredMetadataResource;
-	private String buildingMetadataResource;
 
 
-	private MOD347Format(Integer year,String description,String deponentMetadataResource,
-			String declaredMetadataResource,String buildingMetadataResource)	{
-		this.year = year;
-		this.description = description;
-		this.deponentMetadataResource = deponentMetadataResource;
-		this.declaredMetadataResource = declaredMetadataResource;
-		this.buildingMetadataResource = buildingMetadataResource;
+	private MOD347Format(Integer year,Administration administration,String deponentMetadataResource,
+			String declaredMetadataResource)	{
+		setYear(year);
+		setAdministration(administration);
+		setDeponentMetadataResource(deponentMetadataResource);
+		setDeclaredMetadataResource(declaredMetadataResource);
 	}
-
 
 	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
+		// TODO 
+		return administration.name();
 	}
 	
 	public Integer getYear() {
@@ -59,11 +46,11 @@ public enum MOD347Format {
 		this.year = year;
 	}
 	
-	public String getBuildingMetadataResource() {
-		return buildingMetadataResource;
+	public Administration getAdministration() {
+		return administration;
 	}
-	public void setBuildingMetadataResource(String buildingMetadataResource) {
-		this.buildingMetadataResource = buildingMetadataResource;
+	public void setAdministration(Administration administration) {
+		this.administration = administration;
 	}
 
 	public String getDeponentMetadataResource() {
@@ -79,4 +66,5 @@ public enum MOD347Format {
 	public void setDeclaredMetadataResource(String declaredMetadataResource) {
 		this.declaredMetadataResource = declaredMetadataResource;
 	}
+	
 }

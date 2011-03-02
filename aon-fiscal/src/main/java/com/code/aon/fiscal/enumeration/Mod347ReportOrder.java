@@ -9,17 +9,18 @@ import com.code.aon.common.enumeration.IResourceable;
  * Enummeration to identify the different types of an Invoice.
  * 
  */
-public enum Model347Type implements IResourceable {
+public enum Mod347ReportOrder implements IResourceable {
 
-	ALL,
-	A_KEY,
-	B_KEY;
+	INVOICE_TOTAL_AMOUNT,
+	INVOICE_REGISTRY_ID,
+	INVOICE_REGISTRY_NAME,
+	INVOICE_REGISTRY_DOCUMENT;
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_model347_type_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_mod347_report_order_";
 
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>

@@ -4,23 +4,32 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.common.enumeration.IStringEnum;
 
 /**
  * Enummeration to identify the different types of an Invoice.
  * 
  */
-public enum Model347ReportOrder implements IResourceable {
+public enum Mod347Type implements IResourceable, IStringEnum  {
 
-	INVOICE_TOTAL_AMOUNT,
-	INVOICE_REGISTRY_ID,
-	INVOICE_REGISTRY_NAME,
-	INVOICE_REGISTRY_DOCUMENT;
+	A("A"),
+	B("B");
 
+	private String value;
+	
+	private Mod347Type(String value) {
+		this.value = value;	
+	}
+	
+	public String getValue() {
+		return value;
+	}
+	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_model_347_report_order_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_mod347_type_";
 
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>

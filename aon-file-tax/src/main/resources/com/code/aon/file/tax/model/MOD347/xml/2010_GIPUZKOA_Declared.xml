@@ -10,9 +10,9 @@
  <field name="clave" value="bean" bean="DECLARED" property="key" format="Alphabetic" pattern="X(1)" />
  <field name="nif_declarado" value="bean" bean="DECLARED" property="code" format="Nif" pattern="X(9)" />
  <field name="nombre" value="bean" bean="DECLARED" property="name" format="AlphaNumeric" pattern="X(40)" />
- <field name="reprensen" value="bean" bean="DECLARED" property="XXXXXXXXXXXXXXXXXXXX" pattern="X(1)" />
+ <field name="free" value=" " format="Alphabetic" pattern="X(1)" />
  <field name="provincia" value="bean" bean="DECLARED" property="province" format="Numeric" pattern="9(2)" />
- <field name="pais" value="bean" bean="DECLARED" property="country" format="Numeric" pattern="9(2)" /> 
+ <field name="pais" value="bean" bean="DECLARED" property="country" format="AlphaNumeric" pattern="X(2)" /> 
  <field name="free1" value=" " format="Alphabetic" pattern="X(1)" />
  <field name="importe" value="bean" bean="DECLARED" property="quantity" format="Numeric" pattern="9(13)V99" />
  <field name="seguro" value="bean" bean="DECLARED" property="insurance" format="Alphabetic" pattern="X(1)" />

@@ -27,6 +27,12 @@
 		</vetoListeners>
 	</bean>
 	
+	<bean description="">
+		<pojo>com.code.aon.fiscal.Mod347</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.fiscal.event.Mod347BeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
 	
 
 </bean-config>

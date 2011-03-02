@@ -1,30 +1,35 @@
-package com.code.aon.fiscal.model347;
+package com.code.aon.fiscal.mod347;
 
 
 import java.util.Date;
 
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.fiscal.enumeration.Model347ReportOrder;
-import com.code.aon.fiscal.enumeration.Model347Type;
+import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.Administration;
+import com.code.aon.fiscal.enumeration.Mod347ReportOrder;
+import com.code.aon.fiscal.enumeration.Mod347Type;
 
-public class Model347Parameters {
+public class Mod347Parameters {
 
 	private Date date;
 	private Date fromDate;
 	private Date toDate;
 	private Date fromInvoiceDate;
 	private Date toInvoiceDate;
-	private Model347Type type;
-	private Model347ReportOrder order;
+	private Administration administration;
+	private Integer period;
+	private Mod347Type type;
+	private Mod347ReportOrder order;
 	private SecurityLevel securityLevel;
 	private Double minimunAmount;
 
-	public Model347Parameters() {
+	public Mod347Parameters() {
 		setDate(new Date());
+		setPeriod(CommonUtil.getYear(getDate()));
 		setFromDate(null);
 		setToDate(null);
-		setType(Model347Type.ALL);
-		setOrder(Model347ReportOrder.INVOICE_REGISTRY_DOCUMENT);
+		setType(null);
+		setOrder(Mod347ReportOrder.INVOICE_REGISTRY_DOCUMENT);
 	}
 
 	public Date getDate() {
@@ -62,17 +67,33 @@ public class Model347Parameters {
 		this.toInvoiceDate = toInvoiceDate;
 	}
 
-	public Model347Type getType() {
+	public Administration getAdministration() {
+		return administration;
+	}
+
+	public void setAdministration(Administration administration) {
+		this.administration = administration;
+	}
+
+	public Integer getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Integer period) {
+		this.period = period;
+	}
+
+	public Mod347Type getType() {
 		return type;
 	}
-	public void setType(Model347Type type) {
+	public void setType(Mod347Type type) {
 		this.type = type;
 	}
 
-	public Model347ReportOrder getOrder() {
+	public Mod347ReportOrder getOrder() {
 		return order;
 	}
-	public void setOrder(Model347ReportOrder order) {
+	public void setOrder(Mod347ReportOrder order) {
 		this.order = order;
 	}
 

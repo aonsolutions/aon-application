@@ -117,6 +117,8 @@
 		<mapping class="com.code.aon.customer.Customer"/>
 
 		<!-- AON-FISCAL Mapping files -->	
+		<mapping class="com.code.aon.fiscal.Mod347"/>
+		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
 		<mapping class="com.code.aon.fiscal.Renting"/>
 		<mapping class="com.code.aon.fiscal.RentingDetail"/>
 		<mapping class="com.code.aon.fiscal.VatTax"/>

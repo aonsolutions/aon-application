@@ -77,7 +77,7 @@
 						value="#{fiscalBundle.fiscal_administration}" />
 					<aon:selectOneMenu id="renting_administration" value="#{renting.to.administration}"
 						required="true" disabled="#{renting.to.finished}">
-						<f:selectItems value="#{fiscalCollections.administrations}" />
+						<f:selectItems value="#{configCollections.administrations}" />
 					</aon:selectOneMenu>
 
 					<aon:outputText value="#{bundle.aon_status}" />

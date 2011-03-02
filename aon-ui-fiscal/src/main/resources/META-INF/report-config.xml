@@ -60,16 +60,13 @@
 	</report>
 
 	<!--  *********  Modelo 347 ********* -->
-	<report id="model347List" description="Model 347List">
-		<template path="/com/code/aon/ui/fiscal/report/model347.jasper"/>
-		<collection provider="#{model347.summaryActive}" />
+	<report id="mod347List" description="Model 347List">
+		<template path="/com/code/aon/ui/fiscal/report/mod347.jasper"/>
+		<bean key="com.code.aon.fiscal.Mod347Detail" />
+		<criteria provider="#{mod347Detail}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
-			<param id="totalA" value="#{model347.getTotalKeyA}" />
-			<param id="totalB" value="#{model347.getTotalKeyB}" />
-			<param id="format" value="#{model347.getFormat}" />
-			<param id="params" value="#{model347.getParams}" />
-			<param id="year" value="#{model347.getYear}" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="year" value="#{mod347.getYear}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>

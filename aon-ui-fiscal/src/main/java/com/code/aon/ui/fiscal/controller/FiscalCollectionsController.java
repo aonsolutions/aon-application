@@ -9,9 +9,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
+import com.code.aon.file.tax.model.MOD347.MOD347Format;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
-import com.code.aon.fiscal.enumeration.Model347ReportOrder;
-import com.code.aon.fiscal.enumeration.Model347Type;
+import com.code.aon.fiscal.enumeration.Mod347Type;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
@@ -27,14 +27,17 @@ import com.code.aon.fiscal.enumeration.VatType;
 public class FiscalCollectionsController {
 
 	private List<SelectItem> rentingStatuses;
+
 	private List<SelectItem> vatTaxStatuses;
 	private List<SelectItem> vatTaxDeclarationStatuses;
 
 	private List<SelectItem> vatTypes;
 	private List<SelectItem> invoiceOrders;
 	private List<SelectItem> periods;
-	private List<SelectItem> model347Orders;
-	private List<SelectItem> model347Types;
+	
+	private List<SelectItem> mod347Formats;
+	private List<SelectItem> mod347Types;
+
 	private List<SelectItem> mod340Formats;
 
 	public List<SelectItem> getRentingStatuses() {
@@ -114,32 +117,6 @@ public class FiscalCollectionsController {
 		}
 		return periods;
 	}
-
-	public List<SelectItem> getModel347ReportOrders() {
-		if (model347Orders == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			model347Orders = new LinkedList<SelectItem>();
-			for (Model347ReportOrder order:Model347ReportOrder.values()) {
-				String name = order.getName(locale);
-				SelectItem item = new SelectItem(order, name);
-				model347Orders.add(item);
-			}
-		}
-		return model347Orders;
-	}
-	
-	public List<SelectItem> getModel347Types() {
-		if (model347Types == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			model347Types = new LinkedList<SelectItem>();
-			for (Model347Type type:Model347Type.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				model347Types.add(item);
-			}
-		}
-		return model347Types;
-	}
 	
 	public List<SelectItem> getMod340Formats() {
 		if (mod340Formats == null) {
@@ -153,5 +130,29 @@ public class FiscalCollectionsController {
 		return mod340Formats;
 	}
 	
+	public List<SelectItem> getMod347Formats() {
+		if (mod347Formats == null) {
+			mod347Formats = new LinkedList<SelectItem>();
+			for (MOD347Format format : MOD347Format.values()) {
+				String name = format.getDescription();
+				SelectItem item = new SelectItem(format, name);
+				mod347Formats.add(item);
+			}
+		}
+		return mod347Formats;
+	}
+
+	public List<SelectItem> getMod347Types() {
+		if (mod347Types == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			mod347Types = new LinkedList<SelectItem>();
+			for (Mod347Type type : Mod347Type.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				mod347Types.add(item);
+			}
+		}
+		return mod347Types;
+	}
 	
 }
