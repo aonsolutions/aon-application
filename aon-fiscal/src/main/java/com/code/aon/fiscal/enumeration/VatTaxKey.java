@@ -4,12 +4,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.common.enumeration.IStringEnum;
 
-/**
- * Enummeration to identify the different types of an Invoice.
- * 
- */
-public enum VatTaxKey implements IResourceable {
+public enum VatTaxKey implements IResourceable, IStringEnum   {
 
 	// key,detailed,percentVisible,deductibleQuotaVisible,subtotal,total
 	
@@ -104,6 +101,10 @@ public enum VatTaxKey implements IResourceable {
 	public String getKey() {
 		return key;
 	}
+	@Override
+	public String getValue() {
+		return getKey();
+	}
 	public boolean isDetailed() {
 		return detailed;
 	}
@@ -147,4 +148,5 @@ public enum VatTaxKey implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+
 }

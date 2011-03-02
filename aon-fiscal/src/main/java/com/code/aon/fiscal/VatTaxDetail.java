@@ -14,6 +14,8 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
@@ -67,6 +69,7 @@ public class VatTaxDetail implements ITransferObject {
     }
 
     @Column(name="vat_key",nullable=false)
+   	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.fiscal.enumeration.VatTaxKey") })
     public VatTaxKey getKey() {
         return key;
     }
