@@ -1,0 +1,138 @@
+/********************************************************************
+* Copyright (c) 2011, esferalia NETWORKS S.A
+*
+* The copyright of the computer program herein is the property 
+* of esferalia NETWORKS.
+*********************************************************************
+* The program may be used and/or copied only with the written 
+* permission of esferalia NETWORKS, or in accordance with the 
+* terms and conditions stipulated in the agreement contract 
+* under which the program has been supplied.
+*********************************************************************
+*/
+
+package com.esferalia.aon.master.sql;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import java.util.List;
+import java.util.LinkedList;
+
+import java.io.Reader;
+import java.io.InputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+public abstract class AbstractSQL  {
+
+	final static Logger LOGGER = 
+		LoggerFactory.getLogger(AbstractSQL.class);
+	
+	protected Connection connection;
+
+#foreach($table in $tables)
+
+	/**
+	*  $table $table.remarks
+	*/
+	public interface I$table {
+#foreach ($column in $table.columns)
+		/**
+		* @returns $column.remarks 
+	 	* @throws SQLException
+		*/
+		public ${column.javaClass} get${column}() throws SQLException;
+		
+#end
+	}
+
+	public static class $table implements I$table {
+#foreach ($column in $table.columns)
+		private $column.javaClass $column.javaName #if ( $column.defaultValue ) = $column.defaultValue #end ; 
+		
+		public ${column.javaClass} get${column}() throws SQLException
+		{
+			return $column.javaName;
+		}
+
+		public void set${column}(${column.javaClass} $column.javaName) 	{
+			this.$column.javaName = $column.javaName;
+		}
+#if ( $column.javaClass.equals("Date") )
+		public void set${column}(java.util.Date $column.javaName) 	{
+			if (${column.javaName} != null )
+				this.$column.javaName = new Date( ${column.javaName}.getTime() );
+			else 
+				this.$column.javaName = null;
+		}
+#elseif ($column.javaClass.equals("Short") )
+		public void set${column}(Enum<?> $column.javaName) 	{
+			if ( ${column.javaName} != null )  
+				this.$column.javaName = (short) ${column.javaName}.ordinal();
+			else 
+				this.$column.javaName = null;
+		}
+#end
+#end
+	}
+	
+#end
+
+	public AbstractSQL( Connection connection) 
+	throws SQLException {
+		this.connection = connection;
+	}
+	
+	public void begin() throws SQLException {
+		execute("BEGIN");
+	}
+	
+	public void commit() throws SQLException {
+		execute("COMMIT");
+	}
+	
+	public void rollback() throws SQLException {
+		execute("ROLLBACK");
+	}
+
+	protected void execute( String sql ) throws SQLException {
+		Statement stmt = null; 
+		try {
+			stmt = 
+				connection.createStatement(); 
+			stmt.execute(sql);
+		}
+		finally {
+			if ( stmt != null  )
+				stmt.close();
+		}
+	}
+	
+	protected void debug(String format, Object ... args){
+		LOGGER.debug(format, args);
+	}
+
+	protected void info(String format, Object ... args){
+		LOGGER.info(format, args);
+	}
+
+	protected void warn(String format, Object ... args){
+		LOGGER.warn(format, args);
+	}
+
+	protected void error(String format, Object ... args){
+		LOGGER.error(format, args);
+	}
+	
+	
+}
+	

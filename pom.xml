@@ -18,6 +18,7 @@
 
     <!-- DB MODULES -->
 	  <module>aon-master</module>
+	  <module>aon-master-sql</module>
 	  <module>aon-db-manager</module>
 	  <module>aon-dbutils</module>
 	  <module>aon-ui-dbutils</module>
