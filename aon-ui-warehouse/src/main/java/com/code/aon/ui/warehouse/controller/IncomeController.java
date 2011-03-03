@@ -206,17 +206,16 @@ public class IncomeController extends BasicController {
 		return getRegistryValidationManager().isBlocked(supplier);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-			Iterator iter = rAddressBean.getList(criteria).iterator();
+			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				RegistryAddress address = (RegistryAddress)iter.next();
-				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
+				String addressLabel = address.getFullAddress();
 				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
 				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
 				SelectItem item = new SelectItem(address, addressLabel);
