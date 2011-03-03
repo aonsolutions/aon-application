@@ -13,7 +13,6 @@
 		<aon:selectOneMenu id="#{pojoName}_streetType" required="#{addressRequired}"
 			label="#{registryBundle.registry_street_type}"
 			value="#{registryAddress.streetType}">
-			<f:selectItem value="#{null}" itemLabel="-"/>
 			<f:selectItems value="#{registryCollections.streetTypes}" />
 		</aon:selectOneMenu>
 		<aon:inputText id="#{pojoName}_address" style="margin-left: 5px;" required="#{addressRequired}"

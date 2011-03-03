@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="0.6209213230591552"/>
-	<property name="ireport.x" value="856"/>
+	<property name="ireport.x" value="151"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -109,7 +109,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{registry_street_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-28" mode="Opaque" x="670" y="0" width="225" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-28" mode="Opaque" x="670" y="0" width="433" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -120,32 +120,6 @@
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{registry_address}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-28" mode="Opaque" x="895" y="0" width="104" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{registry_address} + " 2"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-28" mode="Opaque" x="999" y="0" width="104" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{registry_address} + " 3"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-28" mode="Opaque" x="1103" y="0" width="125" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -444,7 +418,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress()==null)?"":$F{registry}.getDefaultAddress().getStreetType().getName($P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-27" x="670" y="0" width="225" height="14"/>
+				<reportElement key="textField-27" x="670" y="0" width="433" height="14"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -454,33 +428,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress()==null)?"":$F{registry}.getDefaultAddress().getAddress()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-27" x="895" y="0" width="104" height="14"/>
-				<box leftPadding="5" rightPadding="5">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#999999"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress()==null)?"":$F{registry}.getDefaultAddress().getAddress2()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-27" x="999" y="0" width="104" height="14"/>
-				<box leftPadding="5" rightPadding="5">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#999999"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress()==null)?"":$F{registry}.getDefaultAddress().getAddress3()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress()==null)?"":$F{registry}.getDefaultAddress().getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-27" x="1103" y="0" width="125" height="14"/>

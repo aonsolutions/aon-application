@@ -55,7 +55,7 @@
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryMedia_address" value="#{registryBundle.registry_address}" />
 				</f:facet>
-				<aon:outputText value="#{to.address.shortAddress}"	rendered="#{formList}" />
+				<aon:outputText value="#{to.address.shortAddress}" rendered="#{formList}" />
 				<aon:selectOneMenu id="RegistryMedia_address" value="#{controller.to.address}" rendered="#{formEdit}">
 					<f:selectItem value="#{null}" itemLabel="-"/>
 					<f:selectItems value="#{controller.addresses}" />
