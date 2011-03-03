@@ -19,16 +19,6 @@
 		<url>http://dev.esferalia.com/websvn/wsvn/aon-master</url>
 	</scm>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>aon</id>
-			<url>http://dev.esferalia.com/maven2_repositories/inhouse</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>aon.snapshots</id>
-			<url>http://dev.esferalia.com/maven2_repositories/inhouse_snapshot</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<dependencies>
 		<dependency>
@@ -41,12 +31,6 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.5</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.0.8</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -66,6 +50,12 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.5.11</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.0.8</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -100,18 +90,6 @@
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.code.aon</groupId>
-				<artifactId>aon-master</artifactId>
-				<version>${pom.version}</version>
-				<executions>
-					<execution>
-					  <goals>
-					    <goal>DB</goal>
-					  </goals>
-					</execution>
-				</executions>
 			</plugin>
 	</plugins>
 	</build>
