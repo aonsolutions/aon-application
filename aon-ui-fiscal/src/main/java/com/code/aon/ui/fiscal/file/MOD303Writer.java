@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -95,7 +97,13 @@ public class MOD303Writer implements IFinanceConstants{
 			}
 			RegistryAddress address = getCompany().getDefaultAddress();
 			declaration.setAddress( address.getAddress() );
-			declaration.setAddressNumber(0); // TODO parse address
+			if (StringUtils.isNotEmpty(address.getNumber())){
+				try {
+					declaration.setAddressNumber(Integer.parseInt(address.getNumber()));
+				} catch (NumberFormatException e) {
+					// Nothing
+				}
+			}
 			declaration.setEntity(address.getCity());
 			declaration.setCity(address.getCity());
 			declaration.setProvince(address.getGeozone()==null?"":address.getGeozone().getName());
