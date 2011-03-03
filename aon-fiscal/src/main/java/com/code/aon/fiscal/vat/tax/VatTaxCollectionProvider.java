@@ -193,8 +193,8 @@ public class VatTaxCollectionProvider {
 			}
 			if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
 				return investment?
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3),new VatTaxKeyEx(VatTaxKey.D2)}:
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3),new VatTaxKeyEx(VatTaxKey.D1)};
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3),new VatTaxKeyEx(VatTaxKey.D2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3),new VatTaxKeyEx(VatTaxKey.D1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
 			}
 		} else if (invoiceType == InvoiceType.EXPENSES) {
 			if (transaction == InvoiceTransactionType.NATIONAL ) {

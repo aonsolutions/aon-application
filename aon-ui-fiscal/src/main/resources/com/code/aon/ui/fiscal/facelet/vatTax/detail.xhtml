@@ -38,6 +38,7 @@
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_type}" />
 			</f:facet>
+			<aon:outputText value="#{to.key.value}" style="margin-right: 5px;font-size: 0.8em;"/>
 			<aon:outputText value="#{to.key}" rendered="#{!to.descriptionDisabled}"
 				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}"/>
 		</aon:column>
