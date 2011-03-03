@@ -122,7 +122,7 @@ public class AEB58Writer implements IFinanceConstants {
 		}
 		IAddress iAddress = obtainInvoiceAddress(finance.getInvoice(), finance.getRegistry());
 		if (iAddress != null) {
-			individual.setAccountUserAddress(iAddress.getAddress() + (StringUtils.isNotEmpty(iAddress.getAddress2())?" "+iAddress.getAddress2():""));
+			individual.setAccountUserAddress(iAddress.getFullAddress());
 			individual.setAccountUserAddress2(iAddress.getCity());
 			try {
 				individual.setAccountUserPCode(new Integer(iAddress.getZip()));

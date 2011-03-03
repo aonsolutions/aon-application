@@ -1,6 +1,8 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.InvoiceAddress;
+import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -20,6 +22,12 @@ public class InvoiceAddressControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
+	}
+
+	@Override
+	public void afterBeanCreated(ControllerEvent event)	throws ControllerListenerException {
+		InvoiceAddress to = (InvoiceAddress)event.getController().getTo();
+		to.setStreetType(StreetType.CL);
 	}
 
 }

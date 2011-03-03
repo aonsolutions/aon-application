@@ -10,7 +10,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +42,7 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -148,35 +148,31 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
 			while(iter.hasNext()) {
 				RegistryAddress address = (RegistryAddress)iter.next();
-				String addressLabel = StringUtils.join( new String[]{address.getAddress(),address.getAddress2(),address.getAddress3()}, " ");
-				addressLabel = StringUtils.abbreviate(StringUtils.trim(addressLabel),30) + " - " + address.getCity();
-				addressLabel = StringUtils.abbreviate(addressLabel, 50);
-				SelectItem item = new SelectItem(address.getId(), addressLabel);
+				String addressLabel = address.getFullAddress();
+				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
+				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
+				SelectItem item = new SelectItem(address, addressLabel);
 				addresses.add(item);
 			}
 		}
 	}
 
 	public String getAddress() {
-		RegistryAddress rAddress = getInvoice().getRegistryAddress();
-		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
+		IAddress iAddress = getInvoice().getRegistryAddress();
 		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
-			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
-			address = invoiceAddress.getAddress() + " " + invoiceAddress.getAddress2();
+			iAddress = (InvoiceAddress)addressController.getTo();
 		}
-		return address;
+		return ((iAddress.getFullAddress().length()>30)?iAddress.getFullAddress().substring(0,27)+"...":iAddress.getFullAddress());
 	}
 
 	public String getCity() {
-		RegistryAddress rAddress = getInvoice().getRegistryAddress();
-		String city = (rAddress!=null)?rAddress.getCity():"";
+		IAddress iAddress = getInvoice().getRegistryAddress();
 		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
-			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
-			city = invoiceAddress.getCity();
+			iAddress = (InvoiceAddress)addressController.getTo();
 		}
-		return city;
+		return iAddress.getCity();
 	}
 
 	public boolean isShowInvoiceAddressWindow() {
@@ -190,7 +186,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	public void onInvoiceAddressShow( ActionEvent event ) {
 		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);
 		ITransferObject to = addressController.getTo();
-		if ( to == null ) {
+		if (to == null) {
 			addressController.onReset(event);
 		}
 	}

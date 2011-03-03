@@ -105,7 +105,7 @@ public class AEB32Writer implements IFinanceConstants {
 		IAddress iAddress = obtainInvoiceAddress(finance.getInvoice(), finance.getRegistry());
 		individual.setPaymentDate(finance.getDueDate());
 		if (iAddress != null) {
-			individual.setPayedAddress(iAddress.getAddress() + (StringUtils.isNotEmpty(iAddress.getAddress2())?" "+iAddress.getAddress2():""));
+			individual.setPayedAddress(iAddress.getFullAddress());
 			individual.setPayedPost(iAddress.getCity());
 			try {
 				individual.setPayedPostPostalCode(new Integer(iAddress.getZip()));
