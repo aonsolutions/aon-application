@@ -52,22 +52,23 @@
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Segment"/>
 
-		<!-- AON-REGISTRY Mapping files -->
-		<mapping class="com.code.aon.company.CNAE"/>
+		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseActivity"/>
 		<mapping class="com.code.aon.company.EnterpriseCCC"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.WorkActivity"/>
-		<mapping class="com.code.aon.company.resources.Resource"/>
-		<mapping class="com.code.aon.company.resources.Employee"/>
+
+		<!-- AON-CALENDAR Mapping files -->
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>
 		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
 
 		<!-- AON-CONFIG Mapping files -->		
 		<mapping class="com.code.aon.config.Bank"/>	
+		<mapping class="com.code.aon.config.CNAE"/>
 		<mapping class="com.code.aon.config.PayMethod"/>		
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>		
 		<mapping class="com.code.aon.config.Scope"/>

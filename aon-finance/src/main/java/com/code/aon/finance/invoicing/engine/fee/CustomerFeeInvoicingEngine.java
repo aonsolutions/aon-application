@@ -318,6 +318,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Registry registry = customerFee.getCustomer().getRegistry();
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
+		invoice.setRegistryDocumentType(registry.getDocumentType());
+		invoice.setRegistryDocumentCountry(registry.getDocumentCountry());
 		invoice.setRegistryName((registry.getName() == null?"":registry.getName()));
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
 		invoice.setType(InvoiceType.SALES);
@@ -333,6 +335,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setIssueDate(params.getInvoiceDate());
 		invoice.setRegistry(group.getParent());
 		invoice.setRegistryDocument(group.getParent().getDocument());
+		invoice.setRegistryDocumentType(group.getParent().getDocumentType());
+		invoice.setRegistryDocumentCountry(group.getParent().getDocumentCountry());
 		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) );
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
 		invoice.setType(InvoiceType.SALES);

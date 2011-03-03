@@ -24,6 +24,8 @@ public class PreInvoice extends Invoice {
 		this.setRegistry(invoice.getRegistry());
 		this.setRegistryAddress(invoice.getRegistryAddress());
 		this.setRegistryDocument(invoice.getRegistryDocument());
+		this.setRegistryDocumentType(invoice.getRegistryDocumentType());
+		this.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
 		this.setRegistryName(invoice.getRegistryName());
 		this.setSecurityLevel(invoice.getSecurityLevel());
 		this.setSeries(invoice.getSeries());

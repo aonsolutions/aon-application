@@ -53,6 +53,8 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 		if (StringUtils.isEmpty(finance.getRegistryDocument())) {
 			finance.setRegistryDocument((!finance.isEmptyInvoice()) ? finance.getInvoice().getRegistryDocument() : finance.getRegistry().getDocument());
+			finance.setRegistryDocumentType((!finance.isEmptyInvoice()) ? finance.getInvoice().getRegistryDocumentType() : finance.getRegistry().getDocumentType());
+			finance.setRegistryDocumentCountry((!finance.isEmptyInvoice()) ? finance.getInvoice().getRegistryDocumentCountry() : finance.getRegistry().getDocumentCountry());
 		}
 		if (!finance.isEmptyInvoice()) {
 	        finance.setConcept(finance.getInvoice().getDocumentNumber()); 

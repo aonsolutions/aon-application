@@ -27,6 +27,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IScopable;
@@ -52,6 +55,8 @@ import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryDocument;
+import com.code.aon.registry.enumeration.DocumentType;
 
 @Entity
 @Table(name = "invoice")
@@ -71,6 +76,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     private Registry registry;
     private String registryName;
     private String registryDocument;
+	private DocumentType registryDocumentType;
+	private Country registryDocumentCountry;
     private RegistryAddress registryAddress;
     private Date issueDate;
     private Date taxDate;
@@ -86,6 +93,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     private boolean signed;    
     private Scope scope;
 
+	private RegistryDocument registryFullDocument;
 	private int issueYear;
 	private int issueMonth;
 	private int issueDay;
@@ -159,6 +167,23 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 	public void setRegistryDocument(String registryDocument) {
 		this.registryDocument = registryDocument;
+	}
+
+	@Column(name="rdocument_type")
+	public DocumentType getRegistryDocumentType() {
+		return registryDocumentType;
+	}
+	public void setRegistryDocumentType(DocumentType registryDocumentType) {
+		this.registryDocumentType = registryDocumentType;
+	}
+	
+	@Column(name="rdocument_country")
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.common.enumeration.Country") })
+	public Country getRegistryDocumentCountry() {
+		return registryDocumentCountry;
+	}
+	public void setRegistryDocumentCountry(Country registryDocumentCountry) {
+		this.registryDocumentCountry = registryDocumentCountry;
 	}
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -397,6 +422,25 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 
 	@Transient
+	public RegistryDocument getRegistryFullDocument() {
+		if (registryFullDocument == null) {
+			registryFullDocument = new RegistryDocument();
+		}
+		registryFullDocument.setDocument(getRegistryDocument());
+		registryFullDocument.setType(getRegistryDocumentType());
+		registryFullDocument.setCountry(getRegistryDocumentCountry());
+		return registryFullDocument;
+	}
+	@Transient
+	public boolean isValidRegistryDocument() {
+		return getRegistryFullDocument().isValid();
+	}
+	@Transient
+	public boolean isRegistryDocumentValidable() {
+		return getRegistryFullDocument().isValidable();
+	}
+	
+	@Transient
 	public boolean isConfidential() {
 		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
 	}
@@ -467,6 +511,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(this.registry,o.registry)
 			.append(this.registryAddress,o.registryAddress)
 			.append(this.registryDocument,o.registryDocument)
+			.append(this.registryDocumentType,o.registryDocumentType)
+			.append(this.registryDocumentCountry,o.registryDocumentCountry)
 			.append(this.registryName,o.registryName)
 			.append(this.securityLevel,o.securityLevel)
 			.append(this.scope,o.scope)
@@ -496,6 +542,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(this.registry)
 			.append(this.registryAddress)
 			.append(this.registryDocument)
+			.append(this.registryDocumentType)
+			.append(this.registryDocumentCountry)
 			.append(this.registryName)
 			.append(this.securityLevel)
 			.append(this.scope)

@@ -53,6 +53,8 @@ public class FinanceGenerator {
 		finance.setRegistry(finance.getInvoice().getRegistry());
 		finance.setRegistryName(finance.getInvoice().getRegistryName());
 		finance.setRegistryDocument(finance.getInvoice().getRegistryDocument());
+		finance.setRegistryDocumentType(finance.getInvoice().getRegistryDocumentType());
+		finance.setRegistryDocumentCountry(finance.getInvoice().getRegistryDocumentCountry());
 		finance.setAmount(initialAmount);
 		if(finance.getInvoice().getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
@@ -166,6 +168,8 @@ public class FinanceGenerator {
 		finance.setRegistry(invoice.getRegistry());
 		finance.setRegistryName(invoice.getRegistryName());
 		finance.setRegistryDocument(invoice.getRegistryDocument());
+		finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
+		finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		finance.setScope(invoice.getScope());
 		return finance;
@@ -215,6 +219,8 @@ public class FinanceGenerator {
 		newFinance.setRegistry(finance.getRegistry());
 		newFinance.setRegistryName(finance.getRegistryName());
 		newFinance.setRegistryDocument(finance.getRegistryDocument());
+		newFinance.setRegistryDocumentType(finance.getRegistryDocumentType());
+		newFinance.setRegistryDocumentCountry(finance.getRegistryDocumentCountry());
 		newFinance.setAmount(newAmount);
 		newFinance.setExpenses(0.0);
 		newFinance.setConcept(finance.getConcept());

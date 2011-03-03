@@ -536,40 +536,52 @@ public interface IFinanceAlias {
 	String  FINANCE_REGISTRY_DOCUMENT = FINANCE_ENTRY.getAliasNames()[15];
 
 	/** 
+	* Alias value: Finance_registryDocumentType
+	* Hibernate value: Finance.registryDocumentType
+	*/
+	String  FINANCE_REGISTRY_DOCUMENT_TYPE = FINANCE_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Finance_registryDocumentCountry
+	* Hibernate value: Finance.registryDocumentCountry
+	*/
+	String  FINANCE_REGISTRY_DOCUMENT_COUNTRY = FINANCE_ENTRY.getAliasNames()[17];
+
+	/** 
 	* Alias value: Finance_securityLevel
 	* Hibernate value: Finance.securityLevel
 	*/
-	String  FINANCE_SECURITY_LEVEL = FINANCE_ENTRY.getAliasNames()[16];
+	String  FINANCE_SECURITY_LEVEL = FINANCE_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Finance_scope_id
 	* Hibernate value: Finance.scope.id
 	*/
-	String  FINANCE_SCOPE_ID = FINANCE_ENTRY.getAliasNames()[17];
+	String  FINANCE_SCOPE_ID = FINANCE_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: Finance_invoice_series
 	* Hibernate value: Finance.invoice<series
 	*/
-	String  FINANCE_INVOICE_SERIES = FINANCE_ENTRY.getAliasNames()[18];
+	String  FINANCE_INVOICE_SERIES = FINANCE_ENTRY.getAliasNames()[20];
 
 	/** 
 	* Alias value: Finance_invoice_number
 	* Hibernate value: Finance.invoice<number
 	*/
-	String  FINANCE_INVOICE_NUMBER = FINANCE_ENTRY.getAliasNames()[19];
+	String  FINANCE_INVOICE_NUMBER = FINANCE_ENTRY.getAliasNames()[21];
 
 	/** 
 	* Alias value: Finance_invoice_referenceCode
 	* Hibernate value: Finance.invoice<referenceCode
 	*/
-	String  FINANCE_INVOICE_REFERENCE_CODE = FINANCE_ENTRY.getAliasNames()[20];
+	String  FINANCE_INVOICE_REFERENCE_CODE = FINANCE_ENTRY.getAliasNames()[22];
 
 	/** 
 	* Alias value: Finance_invoice_issueDate
 	* Hibernate value: Finance.invoice<issueDate
 	*/
-	String  FINANCE_INVOICE_ISSUE_DATE = FINANCE_ENTRY.getAliasNames()[21];
+	String  FINANCE_INVOICE_ISSUE_DATE = FINANCE_ENTRY.getAliasNames()[23];
 
 
 
@@ -791,58 +803,70 @@ public interface IFinanceAlias {
 	String  INVOICE_REGISTRY_DOCUMENT = INVOICE_ENTRY.getAliasNames()[11];
 
 	/** 
+	* Alias value: Invoice_registryDocumentType
+	* Hibernate value: Invoice.registryDocumentType
+	*/
+	String  INVOICE_REGISTRY_DOCUMENT_TYPE = INVOICE_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Invoice_registryDocumentCountry
+	* Hibernate value: Invoice.registryDocumentCountry
+	*/
+	String  INVOICE_REGISTRY_DOCUMENT_COUNTRY = INVOICE_ENTRY.getAliasNames()[13];
+
+	/** 
 	* Alias value: Invoice_type
 	* Hibernate value: Invoice.type
 	*/
-	String  INVOICE_TYPE = INVOICE_ENTRY.getAliasNames()[12];
+	String  INVOICE_TYPE = INVOICE_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Invoice_taxFree
 	* Hibernate value: Invoice.taxFree
 	*/
-	String  INVOICE_TAX_FREE = INVOICE_ENTRY.getAliasNames()[13];
+	String  INVOICE_TAX_FREE = INVOICE_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Invoice_surcharge
 	* Hibernate value: Invoice.surcharge
 	*/
-	String  INVOICE_SURCHARGE = INVOICE_ENTRY.getAliasNames()[14];
+	String  INVOICE_SURCHARGE = INVOICE_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Invoice_withholding
 	* Hibernate value: Invoice.withholding
 	*/
-	String  INVOICE_WITHHOLDING = INVOICE_ENTRY.getAliasNames()[15];
+	String  INVOICE_WITHHOLDING = INVOICE_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Invoice_comments
 	* Hibernate value: Invoice.comments
 	*/
-	String  INVOICE_COMMENTS = INVOICE_ENTRY.getAliasNames()[16];
+	String  INVOICE_COMMENTS = INVOICE_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Invoice_investment
 	* Hibernate value: Invoice.investment
 	*/
-	String  INVOICE_INVESTMENT = INVOICE_ENTRY.getAliasNames()[17];
+	String  INVOICE_INVESTMENT = INVOICE_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: Invoice_transaction
 	* Hibernate value: Invoice.transaction
 	*/
-	String  INVOICE_TRANSACTION = INVOICE_ENTRY.getAliasNames()[18];
+	String  INVOICE_TRANSACTION = INVOICE_ENTRY.getAliasNames()[20];
 
 	/** 
 	* Alias value: Invoice_signed
 	* Hibernate value: Invoice.signed
 	*/
-	String  INVOICE_SIGNED = INVOICE_ENTRY.getAliasNames()[19];
+	String  INVOICE_SIGNED = INVOICE_ENTRY.getAliasNames()[21];
 
 	/** 
 	* Alias value: Invoice_scope_id
 	* Hibernate value: Invoice.scope.id
 	*/
-	String  INVOICE_SCOPE_ID = INVOICE_ENTRY.getAliasNames()[20];
+	String  INVOICE_SCOPE_ID = INVOICE_ENTRY.getAliasNames()[22];
 
 
 
@@ -888,10 +912,22 @@ public interface IFinanceAlias {
 	String  INVOICE_ADDRESS_INVOICE_ID = INVOICE_ADDRESS_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: InvoiceAddress_number
+	* Hibernate value: InvoiceAddress.number
+	*/
+	String  INVOICE_ADDRESS_NUMBER = INVOICE_ADDRESS_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: InvoiceAddress_streetType
+	* Hibernate value: InvoiceAddress.streetType
+	*/
+	String  INVOICE_ADDRESS_STREET_TYPE = INVOICE_ADDRESS_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: InvoiceAddress_zip
 	* Hibernate value: InvoiceAddress.zip
 	*/
-	String  INVOICE_ADDRESS_ZIP = INVOICE_ADDRESS_ENTRY.getAliasNames()[6];
+	String  INVOICE_ADDRESS_ZIP = INVOICE_ADDRESS_ENTRY.getAliasNames()[8];
 
 
 

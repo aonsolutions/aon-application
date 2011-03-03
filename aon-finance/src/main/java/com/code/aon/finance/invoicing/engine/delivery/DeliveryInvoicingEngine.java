@@ -384,6 +384,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		invoice.setIssueDate(params.getInvoiceDate());
 		invoice.setRegistry(group.getParent());
 		invoice.setRegistryDocument(group.getParent().getDocument());
+		invoice.setRegistryDocumentType(group.getParent().getDocumentType());
+		invoice.setRegistryDocumentCountry(group.getParent().getDocumentCountry());
 		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) );
 		if (group.getParent().getId().equals(delivery.getCustomer().getId())) {
 			invoice.setRegistryAddress(delivery.getRegistryAddress());
@@ -403,6 +405,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		Registry registry = delivery.getCustomer().getRegistry();
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
+		invoice.setRegistryDocumentType(registry.getDocumentType());
+		invoice.setRegistryDocumentCountry(registry.getDocumentCountry());
 		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) );
 		invoice.setRegistryAddress(delivery.getRegistryAddress());
 		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());

@@ -55,6 +55,8 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 			if (finance.getFinanceStatus() == FinanceStatus.PENDING || finance.getFinanceStatus() == FinanceStatus.RETURNED) {
 				finance.setRegistryName(invoice.getRegistryName());
 				finance.setRegistryDocument(invoice.getRegistryDocument());
+				finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
+				finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
 			}
 			finance.setConcept(invoice.getDocumentNumber());
 			finance.setSecurityLevel(invoice.getSecurityLevel());
