@@ -237,7 +237,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 			workPlace.setAddress( address );
 			workPlace.setActive( true );
 		}
-		workPlace.setDescription( address.getFullAddress() );
+		workPlace.setDescription( address.getShortAddress() );
 		bean.insertOrUpdate(workPlace);
 	}
 	

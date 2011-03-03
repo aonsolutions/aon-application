@@ -67,7 +67,7 @@ public class CompanyCollectionsController {
     		List<ITransferObject> list = registryAddressBean.getList(criteria);
     		for (ITransferObject to : list) {
     			RegistryAddress rAddress = (RegistryAddress)to;
-    			addresses.add(new SelectItem(rAddress, rAddress.getAddress()));
+    			addresses.add(new SelectItem(rAddress, rAddress.getShortAddress()));
     		}
     	}
     	return addresses;

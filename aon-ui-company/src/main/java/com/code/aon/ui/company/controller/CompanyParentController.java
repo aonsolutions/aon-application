@@ -36,7 +36,9 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.BasicController;
@@ -306,11 +308,13 @@ public class CompanyParentController extends BasicController implements ICompany
 				loadMainAddress();
 			}else{
 				this.onReset(null);
+				((Company)this.getTo()).setDocumentType(DocumentType.CIF);
 				initControllerData();
 				this.mainAddress = new RegistryAddress();
 				this.mainAddress.setRegistry(new Registry());
-				this.mainAddress.setGeozone(new GeoZone());
 				this.mainAddress.setAddressType(AddressType.MAIN);
+				this.mainAddress.setStreetType(StreetType.CL);
+				this.mainAddress.setGeozone(new GeoZone());
 			}
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -387,11 +391,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	private void loadMainAddress() throws ManagerBeanException {
 		Company company = (Company)this.getModel().getRowData();
 		this.mainAddress = RegistryInfo.getMainAddress(company);
-		if ( this.mainAddress == null ) {
+		if (this.mainAddress == null) {
 			this.mainAddress = new RegistryAddress();
-			this.mainAddress.setRegistry( company );
-			this.mainAddress.setGeozone(new GeoZone());
+			this.mainAddress.setRegistry(company);
 			this.mainAddress.setAddressType(AddressType.MAIN);			
+			this.mainAddress.setStreetType(StreetType.CL);
+			this.mainAddress.setGeozone(new GeoZone());
+		} else if (this.mainAddress.getStreetType() == null) {
+			this.mainAddress.setStreetType(StreetType.CL);
 		}
 	}
 	

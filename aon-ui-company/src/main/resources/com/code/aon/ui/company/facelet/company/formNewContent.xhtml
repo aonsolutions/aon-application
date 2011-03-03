@@ -27,15 +27,29 @@
 	<aon:outputLabel for="Company_address"
 		value="#{registryBundle.registry_address}" />
 	<aon:div>
+		<aon:selectOneMenu id="Company_streetType" required="true"
+			label="#{registryBundle.registry_street_type}"
+			value="#{controller.mainAddress.streetType}">
+			<f:selectItems value="#{registryCollections.streetTypes}" />
+		</aon:selectOneMenu>
 		<aon:inputText id="Company_address" required="true"
-			style="display:block" value="#{controller.mainAddress.address}"
-			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="45" />
+			style="margin-left: 5px;" value="#{controller.mainAddress.address}"
+			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="32" />
+		<aon:outputLabel for="Company_number" styleClass="aon-italic aon-margin-left"
+			value="#{bundle.aon_number}" />
+		<aon:inputText id="Company_number" required="true"
+			style="margin-left: 5px;" value="#{controller.mainAddress.number}"
+			valueChangeListener="#{controller.addressChanged}" maxlength="12" size="5" />
+	</aon:div>
+
+	<aon:outputLabel for="Company_address2" value="#{registryBundle.registry_address_detail}" />
+	<aon:div>
 		<aon:inputText id="Company_address2"
-			value="#{controller.mainAddress.address2}" style="display:block"
-			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="45" />
+			value="#{controller.mainAddress.address2}"
+			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="32" />
 		<aon:inputText id="Company_address3"
-			value="#{controller.mainAddress.address3}" style="display:block"
-			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="45" />
+			style="margin-left: 5px;" value="#{controller.mainAddress.address3}"
+			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="37" />
 	</aon:div>
 
 	<aon:outputLabel for="Company_address_city"

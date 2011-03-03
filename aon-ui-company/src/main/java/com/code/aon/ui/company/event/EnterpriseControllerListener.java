@@ -75,7 +75,7 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		workPlace.setEnterprise( enterprise );
 		workPlace.setActive( true );
 		workPlace.setAddress( address );
-		workPlace.setDescription( address.getFullAddress() );
+		workPlace.setDescription( address.getShortAddress() );
 		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 		bean.insert( workPlace );
 		return workPlace;

@@ -41,7 +41,7 @@
 					<aon:outputText value="#{companyBundle.company_workplace_address}" />
 				</f:facet>
 				<aon:outputText rendered="#{formList}"
-					value="#{to.address.address} #{to.address.address2} #{to.address.address3}" />
+					value="#{to.address.shortAddress}" />
 				<aon:selectOneMenu id="WorkPlace_address_id"
 					rendered="#{formEdit}"
 					value="#{to.address}" required="true">
