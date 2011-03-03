@@ -214,7 +214,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{address}.getFullAddress()==null?"":$P{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-89" x="85" y="39" width="246" height="12">
@@ -335,7 +335,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{supplierAddress}.getAddress()==null?"":$V{supplierAddress}.getAddress()+" ") + ($V{supplierAddress}.getAddress2()==null?"":$V{supplierAddress}.getAddress2())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{supplierAddress}.getFullAddress()==null?"":$V{supplierAddress}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-117" x="10" y="49" width="250" height="13"/>
@@ -547,7 +547,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{address}.getAddress()==null?"":$F{address}.getAddress()+" ") + ($F{address}.getAddress2()==null?"":$F{address}.getAddress2())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{address}.getFullAddress()==null?"":$F{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-117" x="280" y="49" width="250" height="13"/>

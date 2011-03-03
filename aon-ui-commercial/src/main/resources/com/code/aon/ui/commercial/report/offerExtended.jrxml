@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="offer" pageWidth="595" pageHeight="842" columnWidth="537" leftMargin="29" rightMargin="29" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -202,7 +205,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{address}.getFullAddress()==null?"":$P{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-89" x="85" y="39" width="246" height="12">
@@ -352,7 +355,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_supplier1}+" "+$P{company}.getName()+" "+$R{offer_text_supplier2}+" "+$P{company}.getAlias()+$R{offer_text_supplier3}+" "+$P{company}.getDocument()+" "+$R{offer_text_supplier4}+" "+ ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())+" "+$R{offer_text_supplier5}+" "+($P{address}.getAddress()==null?"":$P{address}.getAddress()) + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2())+ ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())+" "+($P{address}.getZip()==null?"":$P{address}.getZip() + " ")+" de "+($P{address}.getCity()==null?"":$P{address}.getCity())+"("+$P{address}.getGeozone().getName()+")."]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{offer_text_supplier1}+" "+$P{company}.getName()+" "+$R{offer_text_supplier2}+" "+$P{company}.getAlias()+$R{offer_text_supplier3}+" "+$P{company}.getDocument()+" "+$R{offer_text_supplier4}+" "+ ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())+" "+$R{offer_text_supplier5}+" "+($P{address}.getFullAddress()==null?"":$P{address}.getFullAddress())+" "+($P{address}.getZip()==null?"":$P{address}.getZip() + " ")+" de "+($P{address}.getCity()==null?"":$P{address}.getCity())+"("+$P{address}.getGeozone().getName()+")."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-99" x="1" y="190" width="536" height="25"/>
@@ -407,7 +410,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{address}.getAddress()==null?"":$F{address}.getAddress() + " ") + ($F{address}.getAddress2()==null?"":$F{address}.getAddress2() + " ")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{address}.getFullAddress()==null?"":$F{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-116" x="2" y="122" width="63" height="23"/>

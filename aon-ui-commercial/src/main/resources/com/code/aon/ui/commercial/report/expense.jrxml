@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="expense" pageWidth="595" pageHeight="842" columnWidth="537" leftMargin="29" rightMargin="29" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -106,7 +109,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{address}.getFullAddress()==null?"":$P{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-89" x="85" y="39" width="246" height="12">
