@@ -363,7 +363,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="10" isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($F{invoice}.getRegistryAddress().getAddress()==null?($F{invoice}.getRegistryAddress().getAddress2()==null?"":$F{invoice}.getRegistryAddress().getAddress2()):$F{invoice}.getRegistryAddress().getAddress())]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice}.getRegistryAddress().getFullAddress()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-34" x="273" y="179" width="246" height="14"/>

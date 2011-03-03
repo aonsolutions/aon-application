@@ -2,6 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -19,6 +22,7 @@
 	<field name="registry" class="com.code.aon.registry.Registry"/>
 	<field name="registryName" class="java.lang.String"/>
 	<field name="address" class="com.code.aon.registry.IAddress"/>
+	<field name="referenceCode" class="java.lang.String"/>
 	<group name="invoiceGroup" minHeightToStartNewPage="300">
 		<groupExpression><![CDATA[$F{id}]]></groupExpression>
 		<groupHeader>
@@ -73,7 +77,7 @@
 					<textElement>
 						<font fontName="SansSerif" size="9" pdfFontName="Helvetica"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice} + ": " + ($F{series}!=null?$F{series} + "/" + $F{number}.toString():$F{number}.toString())]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice} + ": " + $F{referenceCode}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-4" x="310" y="17" width="35" height="12"/>
@@ -157,7 +161,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="10" isBold="false" pdfFontName="Helvetica"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($F{address}.getAddress()==null?"":$F{address}.getAddress() + " ") + ($F{address}.getAddress2()==null?"":$F{address}.getAddress2() + " ")]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{address}.getFullAddress()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-10" x="281" y="211" width="246" height="14"/>

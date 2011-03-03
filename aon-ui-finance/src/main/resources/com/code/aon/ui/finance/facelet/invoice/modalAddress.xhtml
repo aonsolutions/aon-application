@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showInvoiceAddressWindow">
 		<c:if test="#{invoiceController.showInvoiceAddressWindow}">
 			<rich:modalPanel id="invoiceAddressModalPanel" minHeight="220"
-				minWidth="460" rendered="#{invoiceController.showInvoiceAddressWindow}"
+				minWidth="650" rendered="#{invoiceController.showInvoiceAddressWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -66,32 +66,38 @@
 
 										<aon:outputLabel for="InvoiceAddress_address"
 											value="#{registryBundle.registry_address}" />
-										<aon:inputText id="InvoiceAddress_address"
-											value="#{invoiceAddress.to.address}" size="45"
-											maxlength="45" required="true" />
+										<aon:div>
+											<aon:selectOneMenu id="InvoiceAddress_streetType" required="true"
+												value="#{invoiceAddress.to.streetType}">
+												<f:selectItems value="#{registryCollections.streetTypes}" />
+											</aon:selectOneMenu>
+											<aon:inputText id="InvoiceAddress_address" style="margin-left: 2px;" required="true"
+												value="#{invoiceAddress.to.address}" size="32" maxlength="45" />
+											<aon:outputLabel for="InvoiceAddress_number" styleClass="aon-italic aon-margin-left"
+												value="#{bundle.aon_number}" />
+											<aon:inputText id="InvoiceAddress_number" style="margin-left: 5px;" required="true"
+												value="#{invoiceAddress.to.number}" size="5" maxlength="8" />
+										</aon:div>
 
-										<aon:outputLabel for="InvoiceAddress_address2" />
+										<aon:outputLabel for="InvoiceAddress_address2" 
+											value="#{registryBundle.registry_address_detail}" />
 										<aon:inputText id="InvoiceAddress_address2"
-											value="#{invoiceAddress.to.address2}" size="45"
-											maxlength="45" />
+											value="#{invoiceAddress.to.address2}" size="50" maxlength="45" />
 
 										<aon:outputLabel for="InvoiceAddress_zip"
 											value="#{registryBundle.registry_zip}" />
 										<aon:inputText id="InvoiceAddress_zip"
-											value="#{invoiceAddress.to.zip}" size="16"
-											maxlength="16" />
+											value="#{invoiceAddress.to.zip}" size="12" maxlength="16" />
 
 										<aon:outputLabel for="InvoiceAddress_city"
 											value="#{registryBundle.registry_city}" />
-										<aon:inputText id="InvoiceAddress_city"
-											value="#{invoiceAddress.to.city}" size="45"
-											maxlength="45" required="true" />
+										<aon:inputText id="InvoiceAddress_city" required="true"
+											value="#{invoiceAddress.to.city}" size="50" maxlength="45" />
 
 										<aon:outputLabel for="InvoiceAddress_geozone_id"
 											value="#{registryBundle.registry_geozone}" />
-										<aon:selectOneMenu id="InvoiceAddress_geozone_id"
-											value="#{invoiceAddress.to.geozone}" required="true">
-											<f:selectItem itemLabel="-" value="#{null}" />
+										<aon:selectOneMenu id="InvoiceAddress_geozone_id" required="true"
+											value="#{invoiceAddress.to.geozone}">
 											<f:selectItems value="#{geozoneCollections.geoTrees}" />
 										</aon:selectOneMenu>
 									</aon:panelGrid>
