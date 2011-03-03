@@ -164,28 +164,28 @@
 			</aon:inputText>
 			<aon:outputText value="&#160;" rendered="#{vatTax.to.extraDeclaration}"/>
 
-			<aon:outputLabel for="VatTaxDeclaration_extraCharge" value="#{fiscalBundle.fiscal_extra_charge}" />
+			<aon:outputLabel for="VatTaxDeclaration_extraCharge" value="#{fiscalBundle.fiscal_extra_charge}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 			<aon:inputText id="VatTaxDeclaration_extraCharge" size="8" value="#{vatTaxDeclaration.to.extraCharge}"
-				required="true">
+				required="true" rendered="#{vatTaxDeclaration.to.depositEnabled}">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
 					actionListener="#{vatTaxDeclaration.calculate}" focus="VatTaxDeclaration_delayInterest"/>
 			</aon:inputText>
-			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 			
-			<aon:outputLabel for="VatTaxDeclaration_delayInterest" value="#{fiscalBundle.fiscal_delay_interest}" />
+			<aon:outputLabel for="VatTaxDeclaration_delayInterest" value="#{fiscalBundle.fiscal_delay_interest}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 			<aon:inputText id="VatTaxDeclaration_delayInterest" size="8" value="#{vatTaxDeclaration.to.delayInterest}"
-				required="true">
+				required="true" rendered="#{vatTaxDeclaration.to.depositEnabled}">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
 					actionListener="#{vatTaxDeclaration.calculate}"/>
 			</aon:inputText>
-			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_total_tax_debt}" />
+			<aon:outputText value="#{fiscalBundle.fiscal_total_tax_debt}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 			<aon:outputText value="#{vatTaxDeclaration.to.totalTaxDebt}"
-				styleClass="aon-bold">
+				styleClass="aon-bold" rendered="#{vatTaxDeclaration.to.depositEnabled}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
-			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 		</aon:panelGrid>
 					
 		<aon:panelGrid columns="2" dir="true" width="100%" styleClass="aon-margin-top"
