@@ -92,11 +92,25 @@
 						</c:if>
 					</aon:div>
 
-					<aon:div styleClass="aon-text-center">
-							<aon:outputText
-								value="#{fiscalBundle.fiscal_tax_provious_adjust}"
-								style="color:red" 
-								rendered="#{vatTax.anyPreviousAdjust}" />
+					<aon:div id="adjustContainer" styleClass="aon-text-center">
+							<aon:div>
+								<aon:outputText
+									value="#{fiscalBundle.fiscal_tax_provious_adjust}"
+									style="color:red" 
+									rendered="#{vatTax.anyPreviousAdjust}" />
+							</aon:div>
+								
+							<aon:div>
+								<aon:commandLink
+									onmouseover="this.style.textDecoration='underline';"
+									onmouseout="this.style.textDecoration='inherit';"
+									actionListener="#{vatTax.onAdjustCopy}"
+									onclick="if (!confirm('#{fiscalBundle.fiscal_adjust_copy}')) return false;"
+									rendered="#{vatTax.anyPreviousAdjust}">
+									<aon:outputText value="#{fiscalBundle.fiscal_copy} "/>								
+									<aon:outputText value="#{vatTax.previousPeriod}"/>
+								</aon:commandLink>
+							</aon:div>
 					</aon:div>
 				</aon:panelGrid>
 				

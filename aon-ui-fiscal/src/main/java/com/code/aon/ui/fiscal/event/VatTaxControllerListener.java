@@ -21,6 +21,7 @@ public class VatTaxControllerListener extends ControllerAdapter {
 		vatTax.setReplacement(false);
 		vatTax.setSecurityLevel(SecurityLevel.OFFICIAL);
 		vatTax.setTaxRefundRegistry(c.getFiscalParams().isTaxRefundRegistry());
+		c.setAnyPreviousAdjust(false);
 	}
 
 	@Override
@@ -28,6 +29,7 @@ public class VatTaxControllerListener extends ControllerAdapter {
 		try {
 			VatTaxController c = (VatTaxController) event.getController();
 			c.initializeVatTax( true );
+			c.refreshPreviousAdjustFlag();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}

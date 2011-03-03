@@ -9,17 +9,20 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.dao.IFiscalAlias;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
@@ -284,4 +287,47 @@ public class VatTaxController extends BasicController {
 		}
 	}
 
+	public void onAdjustCopy(ActionEvent event) {
+		try {
+			
+			VatTax vatTax = (VatTax) getTo();
+			IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), vatTax.getYear());
+			criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD), getPreviousPeriod());
+			List<ITransferObject> list = bean.getList(criteria);
+			for (ITransferObject to: list) {
+				VatTaxDetail detail = (VatTaxDetail) to;
+				if (detail.getDeductibleQuotaAdjust() != 0.0 || detail.getQuotaAdjust() != 0.0 || detail.getTaxableBaseAdjust() != 0.0) {
+					
+					VatTaxKey key = detail.getKey();
+					Double percent = detail.getPercent();
+					for (VatTaxDetail d : getSummary() ) {
+						if (d.getKey() == key && ObjectUtils.equals(percent, d.getPercent())) {
+							d.setQuotaAdjust( detail.getQuotaAdjust() );
+							d.setTaxableBaseAdjust( detail.getTaxableBaseAdjust() );			
+							d.setDeductibleQuotaAdjust( detail.getDeductibleQuotaAdjust());
+							break;
+						}
+					}
+				}
+				onRecalculate(event);
+				accept(event);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudieron copiar los ajustes del periodo anterior. " + e.getMessage();
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	public Period getPreviousPeriod() {
+		VatTax vatTax = (VatTax) getTo();
+		if (vatTax != null && vatTax.getPeriod() != null && vatTax.getPeriod().ordinal() > 0) {
+			return Period.values()[vatTax.getPeriod().ordinal() - 1];
+		}
+		return null;
+	}
+	
 }
