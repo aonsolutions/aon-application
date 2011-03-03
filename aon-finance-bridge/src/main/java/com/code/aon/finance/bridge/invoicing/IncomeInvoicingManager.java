@@ -67,6 +67,8 @@ public class IncomeInvoicingManager {
 		invoice.setReferenceCode(referenceCode);
 		invoice.setRegistry(income.getSupplier().getRegistry());
 		invoice.setRegistryDocument(income.getSupplier().getRegistry().getDocument());
+		invoice.setRegistryDocumentType(income.getSupplier().getRegistry().getDocumentType());
+		invoice.setRegistryDocumentCountry(income.getSupplier().getRegistry().getDocumentCountry());
 		invoice.setRegistryName(income.getSupplier().getRegistry().getFullName());
 		invoice.setRegistryAddress(income.getRegistryAddress());
 		invoice.setIssueDate(issueDate);

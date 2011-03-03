@@ -63,14 +63,13 @@ public class Registry implements ITransferObject {
 	private Set<RegistryPayMethod> payMethods = new HashSet<RegistryPayMethod>();
 	private Set<RegistrySegment> segments = new HashSet<RegistrySegment>();
 	
+	private RegistryDocument registryDocument;
+
 	public Registry() {
 		this.documentType = DocumentType.NIF;
 		this.documentCountry  = Country.ES;
 		this.nationality = Country.ES;
 	}
-	
-	@Transient
-	private RegistryDocument registryDocument;
 
 	@Id
 	@GeneratedValue
@@ -82,14 +81,6 @@ public class Registry implements ITransferObject {
 		this.id = id;
 	}
 
-	@Column(length=32)
-	public String getAlias() {
-		return alias;
-	}
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
-
 	@Column(length=16)
 	@Index(name="IDX_REGISTRY_DOCUMENT")
 	public String getDocument() {
@@ -97,26 +88,6 @@ public class Registry implements ITransferObject {
 	}
 	public void setDocument(String document) {
 		this.document = document;
-	}
-	
-	@Transient
-	public RegistryDocument getRegistryDocument() {
-		if (registryDocument == null) {
-			registryDocument = new RegistryDocument();
-		}
-		registryDocument.setDocument(getDocument());
-		registryDocument.setType(getDocumentType());
-		registryDocument.setCountry(getDocumentCountry());
-		return registryDocument;
-	}
-
-	@Transient
-	public boolean isValidDocument() {
-		return getRegistryDocument().isValid();
-	}
-	@Transient
-	public boolean isDocumentValidable() {
-		return getRegistryDocument().isValidable();
 	}
 	
 	@Column(name="document_type")
@@ -142,6 +113,14 @@ public class Registry implements ITransferObject {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Column(length=32)
+	public String getAlias() {
+		return alias;
+	}
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 	public RegistryType getType() {
@@ -199,6 +178,25 @@ public class Registry implements ITransferObject {
 		this.segments = segments;
 	}
 
+	@Transient
+	public RegistryDocument getRegistryDocument() {
+		if (registryDocument == null) {
+			registryDocument = new RegistryDocument();
+		}
+		registryDocument.setDocument(getDocument());
+		registryDocument.setType(getDocumentType());
+		registryDocument.setCountry(getDocumentCountry());
+		return registryDocument;
+	}
+	@Transient
+	public boolean isValidDocument() {
+		return getRegistryDocument().isValid();
+	}
+	@Transient
+	public boolean isDocumentValidable() {
+		return getRegistryDocument().isValidable();
+	}
+	
     @Transient
     public String getFullName() {
     	return (StringUtils.isEmpty(getName())) ? "" : getName();

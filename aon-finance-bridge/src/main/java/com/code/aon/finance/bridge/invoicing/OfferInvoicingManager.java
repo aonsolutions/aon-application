@@ -83,6 +83,8 @@ public class OfferInvoicingManager {
 		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(customer.getRegistry());
 		invoice.setRegistryDocument(customer.getRegistry().getDocument());
+		invoice.setRegistryDocumentType(customer.getRegistry().getDocumentType());
+		invoice.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry());
 		invoice.setRegistryName(customer.getRegistry().getFullName());
 		invoice.setRegistryAddress(offer.getAddress());
 		invoice.setIssueDate(issueDate);

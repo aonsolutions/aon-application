@@ -69,6 +69,8 @@ public class DeliveryInvoicingManager {
 		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(delivery.getCustomer().getRegistry());
 		invoice.setRegistryDocument(delivery.getCustomer().getRegistry().getDocument());
+		invoice.setRegistryDocumentType(delivery.getCustomer().getRegistry().getDocumentType());
+		invoice.setRegistryDocumentCountry(delivery.getCustomer().getRegistry().getDocumentCountry());
 		invoice.setRegistryName(delivery.getCustomer().getRegistry().getFullName());
 		invoice.setRegistryAddress(delivery.getRegistryAddress());
 		invoice.setIssueDate(issueDate);
