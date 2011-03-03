@@ -7,17 +7,22 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.IAddress;
+import com.code.aon.registry.enumeration.StreetType;
 
 @Entity
 @Table(name="invoice_address")
@@ -27,7 +32,9 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 
 	private Integer id;
 	private Invoice invoice;
+	private StreetType streetType;
 	private String address;
+	private String number;
 	private String address2;
 	private String zip;
 	private String city;
@@ -54,12 +61,29 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 		this.invoice = invoice;
 	}
 
+    @Column(name="street_type")
+   	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.registry.enumeration.StreetType") })
+    public StreetType getStreetType() {
+        return streetType;
+    }
+    public void setStreetType(StreetType streetType) {
+        this.streetType = streetType;
+    }
+
 	@Column(length=45)
 	public String getAddress() {
 		return address;
 	}
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	@Column(length=45)
+	public String getNumber() {
+		return number;
+	}
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
 	@Column(length=45)
@@ -97,6 +121,32 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 		this.geozone = geozone;
 	}
 
+	@Transient
+	public String getAddress3() {
+		return null;
+	}
+
+    @Transient
+    public String getFullAddress() {
+    	StringBuffer buf = new StringBuffer();
+    	buf.append(getStreetType()==null?"":getStreetType());
+    	buf.append(getStreetType()==null?"":". ");
+    	buf.append(getAddress());
+    	buf.append(StringUtils.isEmpty(getNumber())?"":" ");
+    	buf.append(StringUtils.isEmpty(getNumber())?"":getNumber());
+    	buf.append(StringUtils.isEmpty(getAddress2())?"":", ");
+    	buf.append(StringUtils.isEmpty(getAddress2())?"":getAddress2());
+    	buf.append(StringUtils.isEmpty(getAddress3())?"":" (");
+    	buf.append(StringUtils.isEmpty(getAddress3())?"":getAddress3());
+    	buf.append(StringUtils.isEmpty(getAddress3())?"":")");
+    	return buf.toString();
+    }
+
+    @Transient
+    public String getShortAddress() {
+  		return StringUtils.abbreviate(getFullAddress(), 25);
+    }
+
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;
@@ -109,6 +159,8 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 			.append(this.city,o.city)
 			.append(this.geozone,o.geozone)
 			.append(this.invoice,o.invoice)
+			.append(this.number,o.number)
+			.append(this.streetType,o.streetType)
 			.append(this.zip,o.zip)
 			.isEquals();
 		}
@@ -124,6 +176,8 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 			.append(this.city)
 			.append(this.geozone)
 			.append(this.invoice)
+			.append(this.number)
+			.append(this.streetType)
 			.append(this.zip)
 			.toHashCode();
 	}	
