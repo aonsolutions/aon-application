@@ -136,11 +136,9 @@
 							</requires>
 							<mappings>
 								<mapping>
-									<!-- 
-									<filemode>755</filemode>
+									<filemode>644</filemode>
 									<username>root</username>
 									<groupname>root</groupname>
-									-->
 									<directory>/usr/share/java</directory>
 									<sources>
 										<source>
