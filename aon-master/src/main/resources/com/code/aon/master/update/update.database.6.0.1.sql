@@ -26,18 +26,6 @@ CREATE TABLE `enterprise_agreement` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Convenio de la Empresa';
 
 
-UPDATE  `deduction_concept` SET description='ROUND(CGC/BASE_CGC*100)+''%''' WHERE id= 1 ; 
-UPDATE  `deduction_concept` SET description='ROUND(CGP/BASE_CGP*100)+''%''' WHERE id= 2 ; 
-UPDATE  `deduction_concept` SET description='ROUND(DESMP/BASE_CGP*100)+''%''' WHERE id= 3 ; 
-UPDATE  `deduction_concept` SET description='ROUND(FP/BASE_CGP*100)+''%''' WHERE id= 4 ; 
-UPDATE  `deduction_concept` SET description='ROUND(ESTR/BASE_ESTR*100)+''%''' WHERE id= 5 ; 
-UPDATE  `deduction_concept` SET description='ROUND(IRPF/BASE_IRPF*100)+''%''' WHERE id= 6 ; 
-
-UPDATE system_deduction SET expression = 'BASE_CGP * (INDEFINIDO ? 1.55 : 1.60 )/100' WHERE id=2;
-
-ALTER TABLE `contract` MODIFY COLUMN `registration` int(4)   DEFAULT NULL COMMENT 'Número libro de matricula';
-ALTER TABLE `contract` MODIFY COLUMN `seniority_date` date DEFAULT NULL COMMENT 'Fecha de antiguedad ';
-
 UPDATE `db_version` SET `version_number` = '6.1.0';
 
 COMMIT;
