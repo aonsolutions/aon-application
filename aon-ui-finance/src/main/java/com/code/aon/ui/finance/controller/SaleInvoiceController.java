@@ -132,6 +132,8 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 			isBlocked(customer); // Saca el mensaje de bloqueo.
 			getInvoice().setRegistryName(customer.getRegistry().getFullName());
 			getInvoice().setRegistryDocument(customer.getRegistry().getDocument());
+			getInvoice().setRegistryDocumentType(customer.getRegistry().getDocumentType());
+			getInvoice().setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry());
 			getInvoice().setRegistry(customer.getRegistry());
 			loadAddresses(customer.getId());
 		} else {

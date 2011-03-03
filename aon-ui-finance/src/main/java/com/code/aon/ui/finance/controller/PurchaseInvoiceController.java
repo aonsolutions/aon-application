@@ -68,6 +68,8 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 			isBlocked(supplier); // Saca el mensaje de bloqueo.
 			getInvoice().setRegistryName(supplier.getRegistry().getFullName());
 			getInvoice().setRegistryDocument(supplier.getRegistry().getDocument());
+			getInvoice().setRegistryDocumentType(supplier.getRegistry().getDocumentType());
+			getInvoice().setRegistryDocumentCountry(supplier.getRegistry().getDocumentCountry());
 			getInvoice().setRegistry(supplier.getRegistry());
 			loadAddresses(supplier.getId());
 		} else {

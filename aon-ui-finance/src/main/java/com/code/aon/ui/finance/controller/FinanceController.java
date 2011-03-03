@@ -252,6 +252,8 @@ public class FinanceController extends FinanceListController implements IFinance
 			finance.setRegistry(registry.getRegistry());
 			finance.setRegistryName(registry.getRegistry().getFullName());
 			finance.setRegistryDocument(registry.getRegistry().getDocument());
+			finance.setRegistryDocumentType(registry.getRegistry().getDocumentType());
+			finance.setRegistryDocumentCountry(registry.getRegistry().getDocumentCountry());
 		}
 	}
 

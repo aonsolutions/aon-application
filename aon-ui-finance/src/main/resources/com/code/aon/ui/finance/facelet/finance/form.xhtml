@@ -129,14 +129,14 @@
 								disabled="#{!finance.new}" size="5"
 								lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{finance.registryData}"
-								reRender="Customer_full_name,Customer_registry_document"
+								reRender="Customer_full_name,Finance_holder_document"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
 								disabled="#{!finance.new}" minHeight="460" minWidth="650" 
 								property="#{finance.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{finance.registryData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document"
+								selectReRender="Customer_id,Customer_full_name,Finance_holder_document"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton
@@ -144,15 +144,12 @@
 								disabled="#{!finance.new}" minWidth="650" minHeight="650"
 								property="#{finance.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{finance.registryData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document"
+								selectReRender="Customer_id,Customer_full_name,Finance_holder_document"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name"
 								value="#{finance.to.registryName}"
 								disabled="#{!finance.new}" size="50" />
-							<aon:inputText id="Customer_registry_document"
-								value="#{finance.to.registryDocument}"
-								disabled="#{!finance.new}" size="10" />
 						</a4j:region>
 					</aon:div>
 					<aon:div rendered="#{finance.to.payment}">
@@ -180,14 +177,14 @@
 									disabled="#{!finance.new}" size="5"
 									lookupProperty="registry" lookup="#{supplierLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									reRender="Supplier_full_name,Supplier_registry_document"
+									reRender="Supplier_full_name,Finance_holder_document"
 									ajaxSingle="true" required="true" />
 								<aon:lookupButton
 									windowTitle="#{supplierBundle.supplier_selection}"
 									disabled="#{!finance.new}" minHeight="460" minWidth="650" 
 									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document"
+									selectReRender="Supplier_id,Supplier_full_name,Finance_holder_document"
 									actionType="search">
 								</aon:lookupButton>
 								<aon:lookupButton
@@ -195,15 +192,12 @@
 									disabled="#{!finance.new}" minWidth="650" minHeight="650"
 									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Supplier_id,Supplier_full_name,Supplier_registry_document"
+									selectReRender="Supplier_id,Supplier_full_name,Finance_holder_document"
 									actionType="new">
 								</aon:lookupButton>
 								<aon:inputText id="Supplier_full_name"
 									value="#{finance.to.registryName}"
 									disabled="#{!finance.new}" size="50" />
-								<aon:inputText id="Supplier_registry_document"
-									value="#{finance.to.registryDocument}"
-									disabled="#{!finance.new}" size="10" />
 							</a4j:region>
 						</aon:div>
 						<aon:div id="creditorLookupDiv" styleClass="aon-lookup" rendered="#{finance.to.payment and !finance.purchase}">
@@ -213,14 +207,14 @@
 									disabled="#{!finance.new}" size="5"
 									lookupProperty="registry" lookup="#{creditorLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									reRender="Creditor_full_name,Creditor_registry_document"
+									reRender="Creditor_full_name,Finance_holder_document"
 									ajaxSingle="true" required="true" />
 								<aon:lookupButton
 									windowTitle="#{financeBundle.finance_creditor_selection}"
 									disabled="#{!finance.new}" minHeight="460" minWidth="650" 
 									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Creditor_id,Creditor_full_name,Creditor_registry_document"
+									selectReRender="Creditor_id,Creditor_full_name,Finance_holder_document"
 									actionType="search">
 								</aon:lookupButton>
 								<aon:lookupButton
@@ -228,26 +222,57 @@
 									disabled="#{!finance.new}" minWidth="650" minHeight="650"
 									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Creditor_id,Creditor_full_name,Creditor_registry_document"
+									selectReRender="Creditor_id,Creditor_full_name,Finance_holder_document"
 									actionType="new">
 								</aon:lookupButton>
 								<aon:inputText id="Creditor_full_name"
 									value="#{finance.to.registryName}"
 									disabled="#{!finance.new}" size="50" />
-								<aon:inputText id="Creditor_registry_document"
-									value="#{finance.to.registryDocument}"
-									disabled="#{!finance.new}" size="10" />
 							</a4j:region>
 						</aon:div>
 					</aon:div>
 
-					<aon:outputLabel for="Finance_dueDate"
-						value="#{financeBundle.finance_finance_date}" />
-					<aon:selectInputDate id="Finance_dueDate" 
-						value="#{finance.to.dueDate}"
-						disabled="#{!finance.pending and !finance.returned}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:outputLabel for="Finance_holder_document"
+						value="#{bundle.aon_company_document}" />
+					<aon:panelGroup id="Finance_holder_document">
+						<aon:outputText styleClass="aon-italic"
+							value="#{bundle.aon_country}" />
+						<aon:selectOneMenu id="Finance_registry_document_country"
+							styleClass="aon-margin-left" disabled="#{!finance.new}"
+							value="#{finance.to.registryDocumentCountry}"
+							reRender="Finance_holder_document">
+							<f:selectItems value="#{commonCollections.countryCodes}" />
+						</aon:selectOneMenu>
+						<aon:outputText styleClass="aon-margin-left aon-italic"
+							value="#{bundle.aon_type}" />
+						<aon:selectOneMenu id="Finance_registry_document_type" 
+							styleClass="aon-margin-left" disabled="#{!finance.new}"
+							value="#{finance.to.registryDocumentType}"
+							reRender="Finance_holder_document">
+							<f:selectItems value="#{registryCollections.documentTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText id="Finance_registry_document" 
+							style="margin-left: 5px;" disabled="#{!finance.new}"
+							value="#{finance.to.registryDocument}" size="16" maxlength="16"
+							reRender="Finance_holder_document">
+							<f:validateLength minimum="1" maximum="16" />
+ 						</aon:inputText>
+						<aon:outputText 
+							rendered="#{!finance.to.registryDocumentValidable}"
+							styleClass="aon-icon-question"
+							style="padding-left: 15px;"
+							value="&#160;" />
+						<aon:outputText 
+							rendered="#{finance.to.registryDocumentValidable and finance.to.validRegistryDocument}"
+							styleClass="aon-icon-predetermine"
+							style="padding-left: 15px;"
+							value="&#160;" />
+						<aon:outputText 
+							rendered="#{finance.to.registryDocumentValidable and !finance.to.validRegistryDocument}"
+							styleClass="aon-icon-exception"
+							style="padding-left: 15px;"
+							value="&#160;" />
+ 					</aon:panelGroup>
 
 					<aon:outputLabel for="Finance_payMethod_id"
 						value="#{configBundle.config_pay_method}" />
@@ -260,13 +285,13 @@
 						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Finance_amount"
-						value="#{bundle.aon_amount}" />
-					<aon:inputText id="Finance_amount"
-						value="#{finance.to.amount}"
-						disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned)}"
-						required="true" size="10"
-						ajaxSingle="true" reRender="Finance_total" />
+					<aon:outputLabel for="Finance_dueDate"
+						value="#{financeBundle.finance_finance_date}" />
+					<aon:selectInputDate id="Finance_dueDate" 
+						value="#{finance.to.dueDate}"
+						disabled="#{!finance.pending and !finance.returned}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Finance_bankAccount"
 						value="#{configBundle.config_bank_account}" />
@@ -307,14 +332,23 @@
 						</aon:inputText>
 					</aon:div>
 
-					<aon:outputLabel for="Finance_expenses"
-						value="#{financeBundle.finance_expenses}" />
-					<aon:inputText id="Finance_expenses"
-						value="#{finance.to.expenses}"
-						disabled="#{!finance.pending and !finance.returned}"
-						required="true" size="10"
-						ajaxSingle="true" reRender="Finance_total" />
-					
+					<aon:outputLabel for="Finance_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:div>
+						<aon:inputText id="Finance_amount"
+							value="#{finance.to.amount}"
+							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned)}"
+							required="true" size="10"
+							ajaxSingle="true" reRender="Finance_total" />
+						<aon:outputLabel for="Finance_expenses" styleClass="aon-margin-left aon-margin-right aon-italic"
+							value="#{financeBundle.finance_expenses}" />
+						<aon:inputText id="Finance_expenses"
+							value="#{finance.to.expenses}"
+							disabled="#{!finance.pending and !finance.returned}"
+							required="true" size="10"
+							ajaxSingle="true" reRender="Finance_total" />
+					</aon:div>
+
 					<aon:outputLabel for="Finance_registryBank_id"
 						value="&#160;" />
 					<aon:selectOneMenu id="Finance_registryBank_id"

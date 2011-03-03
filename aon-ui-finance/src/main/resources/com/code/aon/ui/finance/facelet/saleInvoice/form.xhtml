@@ -82,7 +82,7 @@
 							<ui:param name="skipSignButton" value="#{saleInvoice.new or saleInvoice.to.signed or (!certificate.signable)}" />
 							<ui:param name="skipCancelSignButton" value="#{saleInvoice.new or (!saleInvoice.to.signed)}" />
 							<ui:param name="signButtonReRender" value="saleInvoiceForm,showNewMessageWindow" />
-						</ui:include>				
+						</ui:include>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
@@ -179,12 +179,11 @@
 							</c:if>
 						</aon:selectInputDate>
 						<c:if test="#{aonRole.accountingOperator}">
-							<aon:outputLabel for="Invoice_taxDate"
-								styleClass="aon-form-date-label aon-margin-right"
+							<aon:outputLabel for="Invoice_taxDate" styleClass="aon-margin-left aon-margin-right aon-italic"
 								value="#{financeBundle.finance_tax_date}" />
-							<aon:selectInputDate size="8" id="Invoice_taxDate"
+							<aon:selectInputDate id="Invoice_taxDate"
+								value="#{saleInvoice.to.taxDate}" required="true" 
 								disabled="#{saleInvoice.readOnly}"
-								value="#{saleInvoice.to.taxDate}" 
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"
 								inputStyle="#{saleInvoice.taxDateEquals?'':'background-color: #ff865e;'}">
@@ -194,7 +193,7 @@
 								<a4j:support ajaxSingle="true" event="onchanged"
 									reRender="Invoice_taxDate"
 									focus="Customer_id" />
-							</aon:selectInputDate>								
+							</aon:selectInputDate>
 						</c:if>
 					</aon:div>
 
@@ -207,14 +206,14 @@
 								disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" size="5"
 								lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
-								reRender="Customer_full_name,Customer_registry_document,InvoiceAddress"
+								reRender="Customer_full_name,Customer_document,InvoiceAddress"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
 								disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" minHeight="460" minWidth="650" 
 								property="#{saleInvoice.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
+								selectReRender="Customer_id,Customer_full_name,Customer_document,InvoiceAddress"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -222,7 +221,7 @@
 								disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" minWidth="650" minHeight="650"
 								property="#{saleInvoice.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
+								selectReRender="Customer_id,Customer_full_name,Customer_document,InvoiceAddress"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" disabled="#{saleInvoice.readOnly}"
@@ -230,31 +229,65 @@
 						</a4j:region>
 					</aon:div>
 
-					<aon:outputLabel for="Customer_registry_document"
+					<aon:outputLabel for="Customer_document"
 						value="#{bundle.aon_company_document}" />
-					<aon:inputText id="Customer_registry_document"
-						value="#{saleInvoice.to.registryDocument}"
-						disabled="#{saleInvoice.readOnly}" 
-						size="10" />
+					<aon:panelGroup id="Customer_document">
+						<aon:outputText styleClass="aon-italic"
+							value="#{bundle.aon_country}" />
+						<aon:selectOneMenu id="Customer_registry_document_country"
+							styleClass="aon-margin-left" disabled="#{saleInvoice.readOnly}"
+							value="#{saleInvoice.to.registryDocumentCountry}"
+							reRender="Customer_document">
+							<f:selectItems value="#{commonCollections.countryCodes}" />
+						</aon:selectOneMenu>
+						<aon:outputText styleClass="aon-margin-left aon-italic"
+							value="#{bundle.aon_type}" />
+						<aon:selectOneMenu id="Customer_registry_document_type" 
+							styleClass="aon-margin-left" disabled="#{saleInvoice.readOnly}"
+							value="#{saleInvoice.to.registryDocumentType}"
+							reRender="Customer_document">
+							<f:selectItems value="#{registryCollections.documentTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText id="Customer_registry_document" 
+							style="margin-left: 5px;" disabled="#{saleInvoice.readOnly}"
+							value="#{saleInvoice.to.registryDocument}" size="16" maxlength="16"
+							reRender="Customer_document">
+							<f:validateLength minimum="1" maximum="16" />
+ 						</aon:inputText>
+						<aon:outputText 
+							rendered="#{!saleInvoice.to.registryDocumentValidable}"
+							styleClass="aon-icon-question"
+							style="padding-left: 15px;"
+							value="&#160;" />
+						<aon:outputText 
+							rendered="#{saleInvoice.to.registryDocumentValidable and saleInvoice.to.validRegistryDocument}"
+							styleClass="aon-icon-predetermine"
+							style="padding-left: 15px;"
+							value="&#160;" />
+						<aon:outputText 
+							rendered="#{saleInvoice.to.registryDocumentValidable and !saleInvoice.to.validRegistryDocument}"
+							styleClass="aon-icon-exception"
+							style="padding-left: 15px;"
+							value="&#160;" />
+ 					</aon:panelGroup>
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
 						value="#{registryBundle.registry_address}" />
 					<aon:div id="InvoiceAddress">
 						<aon:selectOneMenu id="Invoice_registryAddress_id"
-							rendered="#{(saleInvoice.new or saleInvoiceAddress.to.id == null) and saleInvoice.addressCount > 0}"
-							disabled="#{saleInvoice.readOnly}"
-							value="#{saleInvoice.to.registryAddress.id}">
+							rendered="#{!saleInvoice.readOnly and saleInvoiceAddress.to.id == null and saleInvoice.addressCount > 0}"
+							value="#{saleInvoice.to.registryAddress}">
 							<f:selectItems value="#{saleInvoice.addresses}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel styleClass="aon-italic"
 							value="#{registryBundle.registry_no_address_available}"
-							rendered="#{(saleInvoice.new or saleInvoiceAddress.to.id == null) and saleInvoice.addressCount == 0}" />
-						<aon:inputText id="Invoice_registryAddress_address"
-							rendered="#{!saleInvoice.new and saleInvoiceAddress.to.id != null}"
-							value="#{saleInvoice.address}" disabled="true" size="33" />
-						<aon:inputText id="Invoice_registryAddress_city"
-							rendered="#{!saleInvoice.new and saleInvoiceAddress.to.id != null}"
-							value="#{saleInvoice.city}" disabled="true" size="16" />
+							rendered="#{saleInvoiceAddress.to.id == null and ((saleInvoice.readOnly and saleInvoice.to.registryAddress.id == null) or (!saleInvoice.readOnly and saleInvoice.addressCount == 0))}" />
+						<aon:outputText styleClass="aon-bold"
+							value="#{saleInvoice.address}" 
+							rendered="#{saleInvoiceAddress.to.id != null or (saleInvoice.readOnly and saleInvoice.to.registryAddress.id != null)}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold"
+							value="(#{saleInvoice.city})"
+							rendered="#{saleInvoiceAddress.to.id != null or (saleInvoice.readOnly and saleInvoice.to.registryAddress.id != null)}" />
 						<aon:div layout="inline" styleClass="aon-margin-left">
 							<aon:commandButton id="popupButton"
 								reRender="showInvoiceAddressWindow"
@@ -267,14 +300,14 @@
 							</aon:commandButton>
 						</aon:div>
 					</aon:div>
-					 
+
 					<aon:outputLabel for="Invoice_total" 
 						value="#{bundle.aon_total}" />
 					<aon:outputText id="Invoice_total" size="15" styleClass="aon-bold"
 						value="#{saleInvoice.toInvoiceTotalPrice}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
- 
+
 				</aon:panelGrid>
 
 				<aon:panelGrid columns="2" style="width: 100%;"

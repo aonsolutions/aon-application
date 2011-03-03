@@ -111,6 +111,8 @@ public class FinanceFractionController implements IFinanceConstants {
 		finance.setRegistry(targetFinance.getRegistry());
 		finance.setRegistryName(targetFinance.getRegistryName());
 		finance.setRegistryDocument(targetFinance.getRegistryDocument());
+		finance.setRegistryDocumentType(targetFinance.getRegistryDocumentType());
+		finance.setRegistryDocumentCountry(targetFinance.getRegistryDocumentCountry());
 		finance.setAmount(amount);
 		finance.setExpenses(expenses);
 		finance.setConcept(targetFinance.getConcept());

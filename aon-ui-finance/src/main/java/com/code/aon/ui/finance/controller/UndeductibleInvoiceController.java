@@ -46,6 +46,8 @@ public class UndeductibleInvoiceController extends InvoiceController implements 
 			isBlocked(creditor); // Saca el mensaje de bloqueo.
 			getInvoice().setRegistryName(creditor.getRegistry().getFullName());
 			getInvoice().setRegistryDocument(creditor.getRegistry().getDocument());
+			getInvoice().setRegistryDocumentType(creditor.getRegistry().getDocumentType());
+			getInvoice().setRegistryDocumentCountry(creditor.getRegistry().getDocumentCountry());
 			getInvoice().setRegistry(creditor.getRegistry());
 			loadAddresses(creditor.getId());
 		} else {

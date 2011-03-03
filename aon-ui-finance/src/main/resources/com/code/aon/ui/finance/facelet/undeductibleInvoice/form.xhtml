@@ -55,7 +55,7 @@
 							<ui:param name="skipSignButton" value="#{undeductibleInvoice.new or (!undeductibleInvoiceAttachment.attachmentAvailable) or undeductibleInvoice.to.signed or (!certificate.signable)}" />
 							<ui:param name="skipCancelSignButton" value="#{undeductibleInvoice.new or (!undeductibleInvoiceAttachment.attachmentAvailable) or (!undeductibleInvoice.to.signed)}" />
 							<ui:param name="signButtonReRender" value="undeductibleInvoiceForm,showNewMessageWindow" />
-						</ui:include>							
+						</ui:include>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
@@ -139,12 +139,11 @@
 							</c:if>
 						</aon:selectInputDate>
 						<c:if test="#{aonRole.accountingOperator}">
-							<aon:outputLabel for="Invoice_taxDate"
-								styleClass="aon-form-date-label aon-margin-right"
+							<aon:outputLabel for="Invoice_taxDate" styleClass="aon-margin-left aon-margin-right aon-italic"
 								value="#{financeBundle.finance_tax_date}" />
-							<aon:selectInputDate size="8" id="Invoice_taxDate"
+							<aon:selectInputDate id="Invoice_taxDate"
+								value="#{undeductibleInvoice.to.taxDate}" required="true"
 								disabled="#{undeductibleInvoice.readOnly}"
-								value="#{undeductibleInvoice.to.taxDate}" 
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"
 								inputStyle="#{undeductibleInvoice.taxDateEquals?'':'background-color: #ff865e;'}">
@@ -154,7 +153,7 @@
 								<a4j:support ajaxSingle="true" event="onchanged"
 									reRender="Invoice_taxDate"
 									focus="Creditor_id" />
-							</aon:selectInputDate>			
+							</aon:selectInputDate>
 						</c:if>
 					</aon:div>
 						
@@ -167,14 +166,14 @@
 								disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" size="5"
 								lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{undeductibleInvoice.creditorData}"
-								reRender="Creditor_full_name,Creditor_registry_document,InvoiceAddress"
+								reRender="Creditor_full_name,Creditor_document,InvoiceAddress"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{financeBundle.finance_creditor_selection}"
 								disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" minHeight="460" minWidth="650" 
 								property="#{undeductibleInvoice.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{undeductibleInvoice.creditorData}"
-								selectReRender="Creditor_id,Creditor_full_name,Creditor_registry_document,InvoiceAddress"
+								selectReRender="Creditor_id,Creditor_full_name,Creditor_document,InvoiceAddress"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -182,7 +181,7 @@
 								disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" minWidth="650" minHeight="650"
 								property="#{undeductibleInvoice.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{undeductibleInvoice.creditorData}"
-								selectReRender="Creditor_id,Creditor_full_name,Creditor_registry_document,InvoiceAddress"
+								selectReRender="Creditor_id,Creditor_full_name,Creditor_document,InvoiceAddress"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Creditor_full_name" disabled="#{undeductibleInvoice.readOnly}"
@@ -190,31 +189,65 @@
 						</a4j:region>
 					</aon:div>
 
-					<aon:outputLabel for="Creditor_registry_document"
+					<aon:outputLabel for="Creditor_document"
 						value="#{bundle.aon_company_document}" />
-					<aon:inputText id="Creditor_registry_document"
-						value="#{undeductibleInvoice.to.registryDocument}"
-						disabled="#{undeductibleInvoice.readOnly}" 
-						size="10" />
+					<aon:panelGroup id="Creditor_document">
+						<aon:outputText styleClass="aon-italic"
+							value="#{bundle.aon_country}" />
+						<aon:selectOneMenu id="Creditor_registry_document_country"
+							styleClass="aon-margin-left" disabled="#{undeductibleInvoice.readOnly}"
+							value="#{undeductibleInvoice.to.registryDocumentCountry}"
+							reRender="Creditor_document">
+							<f:selectItems value="#{commonCollections.countryCodes}" />
+						</aon:selectOneMenu>
+						<aon:outputText styleClass="aon-margin-left aon-italic"
+							value="#{bundle.aon_type}" />
+						<aon:selectOneMenu id="Creditor_registry_document_type" 
+							styleClass="aon-margin-left" disabled="#{undeductibleInvoice.readOnly}"
+							value="#{undeductibleInvoice.to.registryDocumentType}"
+							reRender="Creditor_document">
+							<f:selectItems value="#{registryCollections.documentTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText id="Creditor_registry_document" 
+							style="margin-left: 5px;" disabled="#{undeductibleInvoice.readOnly}"
+							value="#{undeductibleInvoice.to.registryDocument}" size="16" maxlength="16"
+							reRender="Creditor_document">
+							<f:validateLength minimum="1" maximum="16" />
+ 						</aon:inputText>
+						<aon:outputText 
+							rendered="#{!undeductibleInvoice.to.registryDocumentValidable}"
+							styleClass="aon-icon-question"
+							style="padding-left: 15px;"
+							value="&#160;" />
+						<aon:outputText 
+							rendered="#{undeductibleInvoice.to.registryDocumentValidable and undeductibleInvoice.to.validRegistryDocument}"
+							styleClass="aon-icon-predetermine"
+							style="padding-left: 15px;"
+							value="&#160;" />
+						<aon:outputText 
+							rendered="#{undeductibleInvoice.to.registryDocumentValidable and !undeductibleInvoice.to.validRegistryDocument}"
+							styleClass="aon-icon-exception"
+							style="padding-left: 15px;"
+							value="&#160;" />
+ 					</aon:panelGroup>
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
 						value="#{registryBundle.registry_address}" />
 					<aon:div id="InvoiceAddress">
 						<aon:selectOneMenu id="Invoice_registryAddress_id"
-							rendered="#{(undeductibleInvoice.new or undeductibleInvoiceAddress.to.id == null) and undeductibleInvoice.addressCount > 0}"
-							disabled="#{undeductibleInvoice.readOnly}"
-							value="#{undeductibleInvoice.to.registryAddress.id}">
+							rendered="#{!undeductibleInvoice.readOnly and undeductibleInvoiceAddress.to.id == null and undeductibleInvoice.addressCount > 0}"
+							value="#{undeductibleInvoice.to.registryAddress}">
 							<f:selectItems value="#{undeductibleInvoice.addresses}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel styleClass="aon-italic"
 							value="#{registryBundle.registry_no_address_available}"
-							rendered="#{(undeductibleInvoice.new or undeductibleInvoiceAddress.to.id == null) and undeductibleInvoice.addressCount == 0}" />
-						<aon:inputText id="Invoice_registryAddress_address"
-							rendered="#{!undeductibleInvoice.new and undeductibleInvoiceAddress.to.id != null}"
-							value="#{undeductibleInvoice.address}" disabled="true" size="33" />
-						<aon:inputText id="Invoice_registryAddress_city"
-							rendered="#{!undeductibleInvoice.new and undeductibleInvoiceAddress.to.id != null}"
-							value="#{undeductibleInvoice.city}" disabled="true" size="16" />
+							rendered="#{undeductibleInvoiceAddress.to.id == null and ((undeductibleInvoice.readOnly and undeductibleInvoice.to.registryAddress.id == null) or (!undeductibleInvoice.readOnly and undeductibleInvoice.addressCount == 0))}" />
+						<aon:outputText styleClass="aon-bold"
+							value="#{undeductibleInvoice.address}" 
+							rendered="#{undeductibleInvoiceAddress.to.id != null or (undeductibleInvoice.readOnly and undeductibleInvoice.to.registryAddress.id != null)}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold"
+							value="(#{undeductibleInvoice.city})"
+							rendered="#{undeductibleInvoiceAddress.to.id != null or (undeductibleInvoice.readOnly and undeductibleInvoice.to.registryAddress.id != null)}" />
 						<aon:div layout="inline" styleClass="aon-margin-left">
 							<aon:commandButton id="popupButton"
 								reRender="showInvoiceAddressWindow"
@@ -227,14 +260,14 @@
 							</aon:commandButton>
 						</aon:div>
 					</aon:div>
-					 
+
 					<aon:outputLabel for="Invoice_total" 
 						value="#{bundle.aon_total}" />
 					<aon:outputText id="Invoice_total" size="15" styleClass="aon-bold"
 						value="#{undeductibleInvoice.toInvoiceTotalPrice}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
- 
+
 				</aon:panelGrid>
 
 				<aon:panelGrid columns="2" style="width: 100%;"
