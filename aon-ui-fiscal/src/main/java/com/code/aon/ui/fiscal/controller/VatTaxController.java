@@ -130,6 +130,11 @@ public class VatTaxController extends BasicController {
 	}
 	
 	public void onRecalculate(ActionEvent event ) {
+		recalculate();
+		accept(event);
+	}
+	
+	private void recalculate() {
 		getProvider().initializeTotals(getSummary());
 		getProvider().calculate(getSummary());
 		calculateTax();
@@ -144,7 +149,7 @@ public class VatTaxController extends BasicController {
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			
-			onRecalculate(event);
+			recalculate();
 			VatTax vatTax = (VatTax) getTo();
 			vatTax.setStatus(VatTaxStatus.FINISHED);
 			accept(event);
@@ -194,7 +199,7 @@ public class VatTaxController extends BasicController {
 	}
 
 	public void onRecalculateLine(ActionEvent event ) {
-		onRecalculate(event);		
+		recalculate();		
 	}
 	
 	public List<VatTaxColumn> getColumns() {
@@ -251,7 +256,7 @@ public class VatTaxController extends BasicController {
 	}
 
 	private void save() throws ManagerBeanException{
-		onRecalculate(null);
+		recalculate();;
 		IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 		VatTax vatTax = (VatTax) getTo();
 		for (VatTaxDetail detail : getSummary()) {
@@ -312,7 +317,6 @@ public class VatTaxController extends BasicController {
 					}
 				}
 				onRecalculate(event);
-				accept(event);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "No se pudieron copiar los ajustes del periodo anterior. " + e.getMessage();
