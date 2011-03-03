@@ -19,11 +19,15 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
+import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.VatTaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.vat.tax.VatTaxCollectionProvider;
 import com.code.aon.fiscal.vat.tax.VatTaxParameters;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -40,6 +44,8 @@ public class VatTaxController extends BasicController {
 	private  VatTaxCollectionProvider provider;
 	private String selectedTab;
 	private FiscalParametersController fiscalParams;
+	
+	private boolean anyPreviousAdjust;
 
 	public FiscalParametersController getFiscalParams() {
 		if (fiscalParams == null) {
@@ -72,6 +78,13 @@ public class VatTaxController extends BasicController {
 		this.params = params;
 	}
 
+	public boolean isAnyPreviousAdjust() {
+		return anyPreviousAdjust;
+	}
+	public void setAnyPreviousAdjust(boolean anyPreviousAdjust) {
+		this.anyPreviousAdjust = anyPreviousAdjust;
+	}
+
 	public List<VatTaxDetail> getSummary() {
 		if (summary == null) {
 			summary = new LinkedList<VatTaxDetail>();
@@ -90,6 +103,7 @@ public class VatTaxController extends BasicController {
 	}
 
 	public void initializeVatTax(boolean isNew) throws ManagerBeanException {
+		setAnyPreviousAdjust(false);
 		VatTax vatTax = (VatTax) getTo();
 		setParams(new VatTaxParameters()); 
 		getParams().setVatTax( vatTax );
@@ -244,6 +258,29 @@ public class VatTaxController extends BasicController {
 			} else {
 				bean.update(detail);
 			}
+		}
+	}
+
+	public void refreshPreviousAdjustFlag() {
+		try {
+			VatTax vatTax = (VatTax) getTo();
+			IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), vatTax.getYear());
+			criteria.addLessThanExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD), vatTax.getPeriod());
+			Expression e1 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_TAXABLE_BASE_ADJUST), 0.0);
+			Expression e2 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_DEDUCTIBLE_QUOTA_ADJUST), 0.0);
+			Expression e3 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_QUOTA_ADJUST), 0.0);
+			Expression e4 = ExpressionUtilities.getOrExpression(e1, e2);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(e3, e4));
+			System.out.println(criteria);
+			int count = bean.getCount(criteria);
+			setAnyPreviousAdjust(count>0);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo inicializar el marcador de ajustes en periodos anteriores. " + e.getMessage();
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 

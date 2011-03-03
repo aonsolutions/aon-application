@@ -40,6 +40,7 @@ public class VatTaxControllerListener extends ControllerAdapter {
 			VatTax vatTax = (VatTax) c.getTo();
 			c.initializeVatTax( false );
 			c.setSelectedTab(vatTax.isFinished()?VatTaxController.PAY_TAB:VatTaxController.DETAIL_TAB);
+			c.refreshPreviousAdjustFlag();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
