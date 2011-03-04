@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.file.format.Numeric;
@@ -72,7 +74,13 @@ public class MOD115Writer implements IFinanceConstants{
 			}
 			RegistryAddress address = getCompany().getDefaultAddress();
 			declaration.setAddress( address.getAddress() );
-			declaration.setAddressNumber(0); // TODO parse address
+			if (StringUtils.isNotEmpty( address.getNumber() )) {
+				try {
+					declaration.setAddressNumber( Integer.parseInt(address.getNumber())); 
+				} catch (NumberFormatException e) {
+					// Nothing
+				}
+			}
 			declaration.setEntity(address.getCity());
 			declaration.setCity(address.getCity());
 			declaration.setProvince(address.getGeozone()==null?"":address.getGeozone().getName());
