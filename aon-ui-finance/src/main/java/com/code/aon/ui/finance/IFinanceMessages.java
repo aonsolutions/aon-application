@@ -32,5 +32,6 @@ public interface IFinanceMessages {
 	String FINANCE_PENDING = "finance_pending";
 	String FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE = "finance_invoice_checking_module_no_finance";	
 	String FINANCE_INVOICE_CHECKING_MODULE_WRONG_FINANCE = "finance_invoice_checking_module_wrong_finance";
+	String FINANCE_INVOICE_INTEGRITY_NO_RESULT = "finance_integrity_no_result";
 }
 
