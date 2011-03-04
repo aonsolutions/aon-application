@@ -1,10 +1,7 @@
 A4J.AJAX.onExpired = function(loc,expiredMsg){
-	try {
-		alert( loc + " " + expireMsg );
-	} catch(e) {
-		alert( e );
-	}	
-};
+	// obtenemos el componente que implementa la ventana modal para mostrarlo
+	$('sessionTimeOutWindow').component.show();
+}
 
 A4J.AJAX.onError = function(req,status,message) {
 	try {
@@ -17,7 +14,7 @@ A4J.AJAX.onError = function(req,status,message) {
 	} catch(e) {
 		alert( e );
 	}	
-};
+}
 
 function resetStatusError() {
 	try {

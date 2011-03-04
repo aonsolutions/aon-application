@@ -9,6 +9,7 @@
 		</message-bundle>
 		<locale-config>
 			<default-locale>es</default-locale>
+			<supported-locale>en</supported-locale>
 		</locale-config>
 		<resource-bundle>
 			<base-name>com.code.aon.ui.audit.i18n.application</base-name>
@@ -46,17 +47,5 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-
-	<!-- *************************************** -->
-	<!-- ************ NAVIGATION *************** -->
-	<!-- *************************************** -->
-
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>logout</from-outcome>
-			<to-view-id>/</to-view-id>
-			<redirect />
-		</navigation-case>
-	</navigation-rule>
 
 </faces-config>

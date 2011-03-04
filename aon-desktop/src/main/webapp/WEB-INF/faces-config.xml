@@ -7,6 +7,7 @@
 		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>	
 		<locale-config>
 			<default-locale>es</default-locale>
+			<supported-locale>en</supported-locale>
 		</locale-config>
 		<resource-bundle>
 		   <base-name>com.code.aon.desktop.i18n.messages</base-name>

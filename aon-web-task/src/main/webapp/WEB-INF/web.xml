@@ -37,14 +37,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>*.res</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>*.jaas</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.jsf</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -187,6 +179,11 @@
       <param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
       <param-value>8640000</param-value>
    </context-param>
+   
+	<context-param>
+		<param-name>org.ajax4jsf.handleViewExpiredOnClient</param-name>
+		<param-value>true</param-value>
+	</context-param>	      
 
 	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
 	<context-param>
@@ -277,13 +274,13 @@
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
- 		<web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>code</web-resource-name>
+			<url-pattern>/com/code/aon/*</url-pattern>
+		</web-resource-collection>		
+		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>actions</web-resource-name>
-			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>User</role-name>
@@ -293,8 +290,8 @@
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<form-login-config>
-			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jaas</form-login-page>
-			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jaas</form-error-page>
+			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jspx</form-login-page>
+			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
 

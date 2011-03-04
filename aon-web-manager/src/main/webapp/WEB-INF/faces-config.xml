@@ -7,6 +7,7 @@
 		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>
 		<locale-config>
 			<default-locale>es</default-locale>
+			<supported-locale>en</supported-locale>
 		</locale-config>
 		<resource-bundle>
 		   <base-name>com.code.aon.ui.manager.i18n.application</base-name>
@@ -42,22 +43,6 @@
 			</list-entries>
 	    </managed-property>
 	</managed-bean>
-	
-	<!-- =================== HOME ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>home</from-outcome>
-			<to-view-id>/homepage.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>logout</from-outcome>
-			<to-view-id>/</to-view-id> 
-			<redirect/>
-		</navigation-case>
-	</navigation-rule>
    
 	<!-- ************ COMPANY LISTENERS ******************* -->
 	<managed-bean>

@@ -3,10 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-	<session-config>
-		<session-timeout>240</session-timeout>
-	</session-config>
-
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
@@ -193,6 +189,11 @@
       <param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
       <param-value>8640000</param-value>
    </context-param>
+   
+	<context-param>
+		<param-name>org.ajax4jsf.handleViewExpiredOnClient</param-name>
+		<param-value>true</param-value>
+	</context-param>	   
 
 	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
 	<context-param>
@@ -281,12 +282,12 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>*.jsp</url-pattern>
+			<web-resource-name>code</web-resource-name>
+			<url-pattern>/com/code/aon/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>actions</web-resource-name>
-			<url-pattern>*.jsf</url-pattern>
+			<web-resource-name>jsp</web-resource-name>
+			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>User</role-name>

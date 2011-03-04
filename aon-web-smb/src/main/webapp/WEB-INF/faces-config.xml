@@ -9,7 +9,6 @@
 			<default-locale>es</default-locale>
 			<supported-locale>en</supported-locale>
 		</locale-config>
-		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
 		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
 		<resource-bundle>
 			<base-name>com.code.aon.ui.smb.i18n.messages</base-name>
@@ -49,14 +48,6 @@
 	<!-- *************************************** -->
 	<!-- ************ NAVIGATION *************** -->
 	<!-- *************************************** -->
-
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>logout</from-outcome>
-			<to-view-id>/</to-view-id>
-			<redirect />
-		</navigation-case>
-	</navigation-rule>
 
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 

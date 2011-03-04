@@ -5,30 +5,6 @@
 
 <faces-config>
 
-	<!-- =================== HOME ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>home</from-outcome>
-			<to-view-id>/homepage.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>logout</from-outcome>
-			<to-view-id>/</to-view-id> 
-			<redirect/>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== HOME ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>index</from-outcome>
-			<to-view-id>/index.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
 	<!-- =================== User ================= -->
 	<navigation-rule>
 		<navigation-case>

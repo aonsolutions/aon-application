@@ -103,10 +103,15 @@
 	</context-param>
 	
 	<context-param>
+		<param-name>org.ajax4jsf.handleViewExpiredOnClient</param-name>
+		<param-value>true</param-value>
+	</context-param>	
+
+	<context-param>
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.3.3.Final/</param-value>
 	</context-param>
-	
+
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
@@ -165,10 +170,6 @@
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.jsf</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.sjsf</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -243,12 +244,8 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>webmail</web-resource-name>
-			<url-pattern>/webmail/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>jsf</web-resource-name>
-			<url-pattern>*.jsf</url-pattern>
+			<web-resource-name>code</web-resource-name>
+			<url-pattern>/com/code/aon/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>

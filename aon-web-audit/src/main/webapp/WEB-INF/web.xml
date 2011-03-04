@@ -3,15 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-	<session-config>
-		<session-timeout>33</session-timeout>
-	</session-config>
-	<context-param>
-		<param-name>javax.faces.CONFIG_FILES</param-name>
-		<param-value>
-			/WEB-INF/faces-config.xml
-		</param-value>
-	</context-param>
 	<context-param>
 		<description>
 			State saving method: "client" or "server" (= default) See
@@ -99,6 +90,10 @@
 		<param-value>8640000</param-value>
 	</context-param>
 	<context-param>
+		<param-name>org.ajax4jsf.handleViewExpiredOnClient</param-name>
+		<param-value>true</param-value>
+	</context-param>		
+	<context-param>
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.3.3.Final/</param-value>
 	</context-param>
@@ -156,10 +151,6 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.sjsf</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.jspx</url-pattern>
 	</servlet-mapping>
 	<filter>
@@ -201,8 +192,8 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>jsf</web-resource-name>
-			<url-pattern>*.jsf</url-pattern>
+			<web-resource-name>code</web-resource-name>
+			<url-pattern>/com/code/aon/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
