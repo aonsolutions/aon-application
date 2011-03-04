@@ -540,7 +540,11 @@ $R{aon_over}+" "+$F{base}]]></textFieldExpression>
 								<textElement textAlignment="Left" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{bankAccount}.toString()+" ("+$F{bank}.getName()+")"]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{bankAccount}.toString().substring(0,5)+
+"****"+
+$F{bankAccount}.toString().substring(9,19)+
+"****"+" ("+
+$F{bank}.getName()+")"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
