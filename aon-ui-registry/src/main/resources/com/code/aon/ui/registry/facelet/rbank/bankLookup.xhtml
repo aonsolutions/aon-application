@@ -12,7 +12,7 @@
 		<aon:lookupInputText id="RegistryBank_code#{bankSuffix}"
 			label="#{configBundle.config_bank}"
 			property="#{bankTo}" lookup="#{bankLookup}"
-			reRender="RegistryBank_name{bankSuffix}" 
+			reRender="RegistryBank_name#{bankSuffix}" 
 			value="#{bankTo.code}" size="5" required="true">
 			<aon:joinProperty alias="Bank_code" value="#{bankTo.code}" />
 		</aon:lookupInputText>
