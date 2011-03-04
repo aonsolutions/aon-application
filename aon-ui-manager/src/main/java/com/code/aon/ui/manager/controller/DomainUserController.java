@@ -429,7 +429,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		if ( getManager().isAdministrator() ) {
 			return true;
 		}
-		return !isAdmin(getDomainUser());
+		return getManager().isUserManagement() && !isAdmin(getDomainUser());
 	}
 	
 }
