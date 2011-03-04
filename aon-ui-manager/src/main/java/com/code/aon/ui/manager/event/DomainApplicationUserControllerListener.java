@@ -29,12 +29,6 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter i
 	}
 	
 	@Override
-	public void afterBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
-		getManager().resetTermsOfServiceAccepted();
-	}
-	
-	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainApplicationUser user = (DomainApplicationUser) event.getController().getTo();
