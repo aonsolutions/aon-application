@@ -13,6 +13,7 @@
 	<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
 	<field name="dueDate" class="java.util.Date"/>
 	<field name="amount" class="java.lang.Double"/>
+	<field name="maskedBankAccount" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -130,10 +131,8 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{bankAccount}.toString().substring(0,5)+
-"****"+
-$F{bankAccount}.toString().substring(9,19)+
-"****"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{maskedBankAccount}
+]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-4" x="0" y="0" width="60" height="14"/>

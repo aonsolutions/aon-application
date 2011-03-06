@@ -42,6 +42,7 @@
 		<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
 		<field name="dueDate" class="java.util.Date"/>
 		<field name="amount" class="java.lang.Double"/>
+		<field name="maskedBankAccount" class="java.lang.String"/>
 	</subDataset>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
@@ -540,11 +541,7 @@ $R{aon_over}+" "+$F{base}]]></textFieldExpression>
 								<textElement textAlignment="Left" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{bankAccount}.toString().substring(0,5)+
-"****"+
-$F{bankAccount}.toString().substring(9,19)+
-"****"+" ("+
-$F{bank}.getName()+")"]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{maskedBankAccount}+" ("+$F{bank}.getName()+")"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

@@ -33,6 +33,7 @@ import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryDocument;
@@ -279,6 +280,23 @@ public class Finance implements ITransferObject, IBankAccountContainer, IConfide
 	@Transient
 	public String getDocumentNumber() {
 		return (!isEmptyInvoice()) ? getInvoice().getDocumentNumber() : getConcept();
+	}
+
+	@Transient
+	public String getMaskedBankAccount(){
+		if(getBankAccount()!=null && !getBankAccount().toString().isEmpty()){
+			if(getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT){
+				String maskedAccount = new String();
+				maskedAccount += getBankAccount().getEntity()+"."; 
+				maskedAccount += "****.";
+				maskedAccount += getBankAccount().getControl().substring(0,1) + "*."; 
+				maskedAccount += "******";
+				maskedAccount += getBankAccount().getAccount().substring(6,getBankAccount().getAccount().length());			
+				return maskedAccount;
+			}
+			return getBankAccount().toString();
+		} 
+		return "";
 	}
 
 	public boolean equals(Object obj) {
