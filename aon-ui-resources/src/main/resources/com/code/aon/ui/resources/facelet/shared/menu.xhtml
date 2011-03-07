@@ -19,18 +19,16 @@
 				<rich:toolBarGroup style="padding-right: 6px;padding-left: 6px"
 					location="right" itemSeparator="line">
 					<ui:insert name="beforeRightMenuContent"/>
-					<h:outputLink target="_top"
+					<aon:commandLink action="home" 
 						title="#{bundle.aon_home}"
 						styleClass="aon-icon-home"
-						value="${facesContext.externalContext.requestContextPath}">
-						<h:outputText value="&#160;" />
-					</h:outputLink>			
+						value="&#160;" />
 					<aon:dropDownMenu>
 		                <f:facet name="label"> 
 	                        <aon:graphicImage title="#{bundle.aon_help}"
 	                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
-		                </f:facet>			
-		                <ui:insert name="beforeHelpMenuContent"/>			
+		                </f:facet>					                
+		                <ui:insert name="beforeHelpMenuContent"/>
 						<aon:menuItem id="about" reRender="aboutWindowPanel"
 							value="#{bundle.aon_about}" >
 							<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />
