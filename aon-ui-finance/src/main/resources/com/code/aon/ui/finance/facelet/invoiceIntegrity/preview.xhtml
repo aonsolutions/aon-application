@@ -34,6 +34,19 @@
 
 					<aon:column>
 						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+							<aon:commandLink id="selectButton"
+								styleClass="aon-table-row-link" 
+								title="#{financeBundle.finance_breakdown}"
+								actionListener="#{invoiceIntegrity.onSelect}"
+								action="invoiceIntegrity_list">
+								
+							</aon:commandLink>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_id}" />
 						</f:facet>
 						<aon:outputText value="#{to.id}" />
@@ -64,18 +77,6 @@
 						<aon:outputText value="#{to.count}">
 							<f:convertNumber pattern="#,##0" />
 						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<aon:commandLink value="#{financeBundle.finance_breakdown}"
-							actionListener="#{invoiceIntegrity.onSelect}"
-							action="invoiceIntegrity_list"
-							onmouseover="this.style.textDecoration='underline'"							
-							onmouseout="this.style.textDecoration='inherit'">
-						</aon:commandLink>
 					</aon:column>
 
 				</aon:dataTable>

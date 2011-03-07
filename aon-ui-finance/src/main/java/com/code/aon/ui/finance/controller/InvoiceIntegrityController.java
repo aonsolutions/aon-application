@@ -15,6 +15,7 @@ import javax.faces.model.ListDataModel;
 import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -150,7 +151,23 @@ public class InvoiceIntegrityController {
 		setRegistry( preview.getId());
 		onBreakDown(event);
 	}
+	
+	public void onCheckAll(ActionEvent event) {
+		checkAll(true);
+	}
+	public void onUnCheckAll(ActionEvent event) {
+		checkAll(false);
+	}
 
+	private void checkAll(boolean check) {
+		@SuppressWarnings("unchecked")
+		List<BreakDown> list =  (List<BreakDown>) getBreakDownModel().getWrappedData();
+		for (BreakDown b : list) {
+			b.setChecked(check);
+		}
+	}
+	
+	
 	public void onBreakDown(ActionEvent event) {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -248,35 +265,52 @@ public class InvoiceIntegrityController {
 	}
 
 	public void onUpdate(ActionEvent event) {
-		BreakDown b = (BreakDown) getBreakDownModel().getRowData();
-		
-		b.setInvoiceDocument( b.getDocument() );
-		b.setInvoiceDocumentType( b.getDocumentType() );
-		b.setInvoiceDocumentCountry( b.getDocumentCountry() );
-		b.setInvoiceName( b.getName() );
-
 		PreparedStatement ips = null;
 		PreparedStatement fps = null;
+		
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-			ips = HibernateUtil.getSQLConnection(sessionName).prepareStatement(INVOICE_UPDATE_STMT);
-			int i = 0;
-			ips.setString(++i, b.getInvoiceDocument());
-			ips.setInt(++i, b.getInvoiceDocumentType().ordinal());
-			ips.setString(++i, b.getInvoiceDocumentCountry());
-			ips.setString(++i, b.getInvoiceName());
-			ips.setInt(++i, b.getInvoice());
-			ips.execute();
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
 
+			ips = HibernateUtil.getSQLConnection(sessionName).prepareStatement(INVOICE_UPDATE_STMT);
 			fps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(FINANCE_UPDATE_STMT);
-			i = 0;
-			fps.setString(++i, b.getInvoiceDocument());
-			fps.setInt(++i, b.getInvoiceDocumentType().ordinal());
-			fps.setString(++i, b.getInvoiceDocumentCountry());
-			fps.setString(++i, b.getInvoiceName());
-			fps.setInt(++i, b.getInvoice());
-			fps.execute();
-		} catch (SQLException e) {
+
+			List<BreakDown> list =  (List<BreakDown>) getBreakDownModel().getWrappedData();
+			for (BreakDown b : list) {
+				if (b.isChecked()) {
+					b.setInvoiceDocument( b.getDocument() );
+					b.setInvoiceDocumentType( b.getDocumentType() );
+					b.setInvoiceDocumentCountry( b.getDocumentCountry() );
+					b.setInvoiceName( b.getName() );
+
+					int i = 0;
+					ips.setString(++i, b.getInvoiceDocument());
+					ips.setInt(++i, b.getInvoiceDocumentType().ordinal());
+					ips.setString(++i, b.getInvoiceDocumentCountry());
+					ips.setString(++i, b.getInvoiceName());
+					ips.setInt(++i, b.getInvoice());
+					ips.execute();
+
+					i = 0;
+					fps.setString(++i, b.getInvoiceDocument());
+					fps.setInt(++i, b.getInvoiceDocumentType().ordinal());
+					fps.setString(++i, b.getInvoiceDocumentCountry());
+					fps.setString(++i, b.getInvoiceName());
+					fps.setInt(++i, b.getInvoice());
+					fps.execute();
+				}
+			}
+			HibernateUtil.commitTransaction(sessionName);
+			onBreakDown(event);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+			}
 			String msg = "No se pudo generar la lista de facturas.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
@@ -293,12 +327,21 @@ public class InvoiceIntegrityController {
 				} catch (SQLException e) {
 				}
 			}
+
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+
+		
+		
 		
 		
 	}
 	
 	public class BreakDown {
+
+		boolean checked;
 		int registry;
 		String document;
 		DocumentType documentType;
@@ -316,6 +359,12 @@ public class InvoiceIntegrityController {
 		boolean sameDocumentCountry;
 		boolean sameName;
 
+		public boolean isChecked() {
+			return checked;
+		}
+		public void setChecked(boolean checked) {
+			this.checked = checked;
+		}
 		public int getRegistry() {
 			return registry;
 		}

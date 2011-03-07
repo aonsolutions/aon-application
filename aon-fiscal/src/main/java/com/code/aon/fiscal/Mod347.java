@@ -23,7 +23,7 @@ import com.code.aon.fiscal.enumeration.Mod347Status;
 @Table(name = "fs_mod347")
 public class Mod347 implements ITransferObject, IConfidentialable {
 	
-	public static final Double MINIMUM_AMOUNT = 3005.36;
+	public static final Double MINIMUM_AMOUNT = 3005.60;
 	
 	private static final long serialVersionUID = -7918348181910780031L;
 	

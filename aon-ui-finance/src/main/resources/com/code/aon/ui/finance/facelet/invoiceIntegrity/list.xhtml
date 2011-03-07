@@ -18,8 +18,14 @@
 				</ui:define>
 
 				<ui:define name="additionalToolbarContent">
+					<aon:commandButton value="#{bundle.aon_accept}"
+						title="#{bundle.aon_accept}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="if (!confirm('#{bundle.aon_accept}?')) return false;"
+						actionListener="#{invoiceIntegrity.onUpdate}"/>
 					<aon:commandButton id="back" value="#{bundle.aon_back}"
 						accesskey="Q" title="#{bundle.aon_back}"
+						actionListener="#{invoiceIntegrity.onPreview}"
 						action="invoiceIntegrity_preview"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true" />
@@ -31,6 +37,26 @@
 
 				<aon:dataTable id="invoiceList" value="#{invoiceIntegrity.breakDownModel}"
 					rows="20" var="to" rendered="#{invoiceIntegrity.breakDownModel.rowCount > 0}">
+
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:div>
+								<h:commandButton id="selectButton"
+									value="&#160;" 
+									actionListener="#{invoiceIntegrity.onCheckAll}"
+									styleClass="aon-icon-checkAll aon-vertical-align-top" 
+									onclick="Richfaces.showModalPanel('waitProccess')"
+									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+								<h:commandButton id="deselectButton"
+									actionListener="#{invoiceIntegrity.onUnCheckAll}"
+									value="&#160;" 
+									styleClass="aon-icon-checkNone aon-vertical-align-top"
+									onclick="Richfaces.showModalPanel('waitProccess')"
+									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							</aon:div>
+						</f:facet>
+						<aon:selectBooleanCheckbox value="#{to.checked}"/>	
+					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
@@ -68,22 +94,11 @@
 						<aon:outputText value="#{to.invoiceName}" style="#{to.sameName?'color:inherit;':'color:red'};"/>
 					</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<aon:commandLink value="#{bundle.aon_update}"
-							rendered="#{!to.same}"
-							actionListener="#{invoiceIntegrity.onUpdate}"
-							onmouseover="this.style.textDecoration='underline'"							
-							onmouseout="this.style.textDecoration='inherit'">
-						</aon:commandLink>
-					</aon:column>
-
 				</aon:dataTable>
 				
 				<aon:dataScroller2 for="invoiceList" showNote="true" />
 			</aon:div>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>
