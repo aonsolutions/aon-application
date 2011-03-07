@@ -28,7 +28,7 @@
 			<plugin>
 				<groupId>com.code.aon</groupId>
 				<artifactId>aon-master</artifactId>
-				<version>${pom.version}</version>
+				<!--version>${pom.version}</version-->
 				<executions>
 					<execution>
 						<goals>
