@@ -29,8 +29,8 @@
 			<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
 				<aon:div styleClass="aon-float-right">
 					<aon:div styleClass="aon-header-menu-item">
-						<aon:form>					
-							<aon:commandLink styleClass="aon-logout" action="logout"
+						<aon:form prependId="false">					
+							<aon:commandLink id="logout" styleClass="aon-logout" action="logout"
 								actionListener="#{aonConfiguration.logout}">
 								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 							</aon:commandLink>
