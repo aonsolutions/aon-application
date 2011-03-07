@@ -236,6 +236,12 @@
 										actionListener="#{creditorAccountChecker.onEditSearch}"
 										value="#{accountBridgeBundle.account_creditor_checker_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="invoiceIntegrity"
+										action="invoiceIntegrity_search"
+										actionListener="#{invoiceIntegrity.onStart}"
+										value="#{financeBundle.finance_invoice_integrity_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 

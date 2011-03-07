@@ -250,7 +250,7 @@ public class InvoiceIntegrityController {
 		b.setInvoiceDocument( b.getDocument() );
 		b.setInvoiceDocumentType( b.getDocumentType() );
 		b.setInvoiceDocumentCountry( b.getDocumentCountry() );
-		b.setName( b.getName() );
+		b.setInvoiceName( b.getName() );
 
 		PreparedStatement ps = null;
 		try {
