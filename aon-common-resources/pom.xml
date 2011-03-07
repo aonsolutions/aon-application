@@ -91,7 +91,7 @@
 									<filemode>755</filemode>
 									<username>jboss</username>
 									<groupname>jboss</groupname>
-									<directory>/home/COMMON-RESOURCES/aon-web-finance/templates</directory>
+									<directory>/home/COMMON-RESOURCES/aon-report</directory>
 									<sources>
 										<source>
 											<location>templates</location>
