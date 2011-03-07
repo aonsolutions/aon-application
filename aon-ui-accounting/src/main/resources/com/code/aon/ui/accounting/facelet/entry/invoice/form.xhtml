@@ -165,7 +165,7 @@
 								<f:selectItems
 									value="#{accountingCollections.enabledAccountPeriods}" />
 							</aon:selectOneMenu>
-							
+
 							<c:if test="#{aonRole.confidentiality}">
 								<aon:div>
 									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
@@ -195,7 +195,7 @@
 							</aon:selectInputDate>
 
 							<aon:outputLabel for="Account_taxDate"
-								styleClass="aon-form-date-label" style="margin-right: 5px;"
+								styleClass="aon-italic" style="margin-right: 5px;"
 								value="#{accountingBundle.accounting_tax_date}" />
 							<aon:selectInputDate size="8" id="Account_taxDate"
 								disabled="#{invoiceEntry.newDetail}"
@@ -246,22 +246,31 @@
 										property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
 									</aon:lookupButton>
-									<aon:outputLabel for="Customer_name"
-										styleClass="aon-form-date-label" style="margin-right: 5px;"
-										value="#{bundle.aon_company_name}" />
 									<aon:inputText id="Customer_name"
 										disabled="#{invoiceEntry.newDetail}"
 										value="#{invoiceEntry.header.name}" size="60" />
-									<aon:outputLabel for="Customer_document"
-										styleClass="aon-form-date-label" style="margin-right: 5px;"
-										value="#{bundle.aon_company_document}" />
-									<aon:inputText id="Customer_document"
-										value="#{invoiceEntry.header.document}" size="12"
-										disabled="#{invoiceEntry.newDetail}" >
-											<f:validateLength minimum="1" maximum="16" />
-											<a4j:support event="onchange" focus="Account_Related"
-												reRender="registryDocumentPanel" ajaxSingle="true"/>
-									</aon:inputText>
+									<aon:outputText styleClass="aon-italic aon-margin-left"
+										value="#{bundle.aon_country}" />
+									<aon:selectOneMenu id="Customer_document_country"
+										styleClass="aon-margin-left" disabled="#{invoiceEntry.newDetail}"
+										value="#{invoiceEntry.header.documentCountry}"
+										reRender="registryValidationPanel">
+										<f:selectItems value="#{commonCollections.countryCodes}" />
+									</aon:selectOneMenu>
+									<aon:outputText styleClass="aon-margin-left aon-italic"
+										value="#{bundle.aon_type}" />
+									<aon:selectOneMenu id="Customer_document_type" 
+										styleClass="aon-margin-left" disabled="#{invoiceEntry.newDetail}"
+										value="#{invoiceEntry.header.documentType}"
+										reRender="registryValidationPanel">
+										<f:selectItems value="#{registryCollections.documentTypes}" />
+									</aon:selectOneMenu>
+									<aon:inputText id="Customer_document" 
+										style="margin-left: 5px;" disabled="#{invoiceEntry.newDetail}"
+										value="#{invoiceEntry.header.document}" size="16" maxlength="16"
+										reRender="registryValidationPanel">
+										<f:validateLength minimum="1" maximum="16" />
+			 						</aon:inputText>
 								</a4j:region>
 							</aon:panelGroup>
 
@@ -293,22 +302,31 @@
 										property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
 									</aon:lookupButton>
-									<aon:outputLabel for="Supplier_name"
-										styleClass="aon-form-date-label" style="margin-right: 5px;"
-										value="#{bundle.aon_company_name}" />
 									<aon:inputText id="Supplier_name"
 										disabled="#{invoiceEntry.newDetail}"
 										value="#{invoiceEntry.header.name}" size="60" />
-									<aon:outputLabel for="Supplier_document"
-										styleClass="aon-form-date-label" style="margin-right: 5px;"
-										value="#{bundle.aon_company_document}" />
-									<aon:inputText id="Supplier_document"
-										value="#{invoiceEntry.header.document}" size="12"
-										disabled="#{invoiceEntry.newDetail}" >
-											<f:validateLength minimum="1" maximum="16" />
-											<a4j:support event="onchange" focus="Account_Related"
-												reRender="registryDocumentPanel" ajaxSingle="true"/>
-									</aon:inputText>
+									<aon:outputText styleClass="aon-italic aon-margin-left"
+										value="#{bundle.aon_country}" />
+									<aon:selectOneMenu id="Supplier_document_country"
+										styleClass="aon-margin-left" disabled="#{invoiceEntry.newDetail}"
+										value="#{invoiceEntry.header.documentCountry}"
+										reRender="registryValidationPanel">
+										<f:selectItems value="#{commonCollections.countryCodes}" />
+									</aon:selectOneMenu>
+									<aon:outputText styleClass="aon-margin-left aon-italic"
+										value="#{bundle.aon_type}" />
+									<aon:selectOneMenu id="Supplier_document_type" 
+										styleClass="aon-margin-left" disabled="#{invoiceEntry.newDetail}"
+										value="#{invoiceEntry.header.documentType}"
+										reRender="registryValidationPanel">
+										<f:selectItems value="#{registryCollections.documentTypes}" />
+									</aon:selectOneMenu>
+									<aon:inputText id="Supplier_document" 
+										style="margin-left: 5px;" disabled="#{invoiceEntry.newDetail}"
+										value="#{invoiceEntry.header.document}" size="16" maxlength="16"
+										reRender="registryValidationPanel">
+										<f:validateLength minimum="1" maximum="16" />
+			 						</aon:inputText>
 								</a4j:region>
 							</aon:panelGroup>
 
@@ -341,36 +359,71 @@
 										property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
 									</aon:lookupButton>
-									<aon:outputLabel for="Creditor_name"
-										styleClass="aon-form-date-label" style="margin-right: 5px;"
-										value="#{bundle.aon_company_name}" />
 									<aon:inputText id="Creditor_name"
 										value="#{invoiceEntry.header.name}"
 										disabled="#{invoiceEntry.newDetail}" size="60" />
-									<aon:outputLabel for="Creditor_document"
-										styleClass="aon-form-date-label" style="margin-right: 5px;"
-										value="#{bundle.aon_company_document}" />
-									<aon:inputText id="Creditor_document"
-										value="#{invoiceEntry.header.document}" size="12"
-										disabled="#{invoiceEntry.newDetail}" >
-											<f:validateLength minimum="1" maximum="16" />
-											<a4j:support event="onchange" focus="Account_Related"
-												reRender="registryDocumentPanel" ajaxSingle="true"/>
-									</aon:inputText>
+									<aon:outputText styleClass="aon-italic aon-margin-left"
+										value="#{bundle.aon_country}" />
+									<aon:selectOneMenu id="Creditor_document_country"
+										styleClass="aon-margin-left" disabled="#{invoiceEntry.newDetail}"
+										value="#{invoiceEntry.header.documentCountry}"
+										reRender="registryValidationPanel">
+										<f:selectItems value="#{commonCollections.countryCodes}" />
+									</aon:selectOneMenu>
+									<aon:outputText styleClass="aon-margin-left aon-italic"
+										value="#{bundle.aon_type}" />
+									<aon:selectOneMenu id="Creditor_document_type" 
+										styleClass="aon-margin-left" disabled="#{invoiceEntry.newDetail}"
+										value="#{invoiceEntry.header.documentType}"
+										reRender="registryValidationPanel">
+										<f:selectItems value="#{registryCollections.documentTypes}" />
+									</aon:selectOneMenu>
+									<aon:inputText id="Creditor_document" 
+										style="margin-left: 5px;" disabled="#{invoiceEntry.newDetail}"
+										value="#{invoiceEntry.header.document}" size="16" maxlength="16"
+										reRender="registryValidationPanel">
+										<f:validateLength minimum="1" maximum="16" />
+			 						</aon:inputText>
 								</a4j:region>
 							</aon:panelGroup>
-							<aon:panelGroup id="registryDocumentPanel">
+
+							<aon:panelGroup id="registryValidationPanel">
 								<aon:outputText 
-									rendered="#{invoiceEntry.header.validDocument}"
+									rendered="#{!invoiceEntry.header.registryDocumentValidable}"
+									styleClass="aon-icon-question"
+									style="padding-left: 15px;"
+									value="&#160;" />
+								<aon:outputText 
+									rendered="#{invoiceEntry.header.registryDocumentValidable and invoiceEntry.header.validRegistryDocument}"
 									styleClass="aon-icon-predetermine"
 									style="padding-left: 15px;"
 									value="&#160;" />
 								<aon:outputText 
-									rendered="#{!invoiceEntry.header.validDocument}"
+									rendered="#{invoiceEntry.header.registryDocumentValidable and !invoiceEntry.header.validRegistryDocument}"
 									styleClass="aon-icon-exception"
 									style="padding-left: 15px;"
 									value="&#160;" />
 							</aon:panelGroup>
+						</aon:div>
+
+						<aon:outputLabel for="Account_Related"
+							value="#{accountBundle.account_account}" />
+						<aon:panelGrid columns="4" style="width: 100%;"
+							columnClasses="aon-width-400,aon-width-100,aon-width-200,aon-width-auto">
+							<aon:selectOneMenu id="Account_Related"
+								disabled="#{invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.account}" style="width: 400px;">
+								<f:selectItems value="#{invoiceEntry.relatedAccounts}" />
+							</aon:selectOneMenu>
+							<aon:outputLabel for="Account_invoiceVatDeductionType"
+								styleClass="aon-italic aon-margin-left"
+								value="#{accountingBundle.accounting_vat_type}" />
+							<aon:selectOneMenu id="Account_invoiceVatDeductionType"
+								disabled="#{invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.vatDeductionType}" style="width: 200px;">
+								<f:selectItems
+									value="#{configCollections.vatDeductionTypes}" />
+							</aon:selectOneMenu>
 							<aon:panelGroup>
 								<aon:panelGroup
 									rendered="#{invoiceEntry.sales or invoiceEntry.purchase}">
@@ -388,26 +441,6 @@
 								<aon:outputLabel for="Header_withholding"
 									styleClass="aon-italic" value="#{bundle.aon_retention}" />
 							</aon:panelGroup>
-						</aon:div>
-
-						<aon:outputLabel for="Account_Related"
-							value="#{accountBundle.account_account}" />
-						<aon:panelGrid columns="3" style="width: 100%;"
-							columnClasses="aon-width-400,aon-width-100,aon-width-auto">
-							<aon:selectOneMenu id="Account_Related"
-								disabled="#{invoiceEntry.newDetail}"
-								value="#{invoiceEntry.header.account}" style="width: 400px;">
-								<f:selectItems value="#{invoiceEntry.relatedAccounts}" />
-							</aon:selectOneMenu>
-							<aon:outputLabel for="Account_invoiceVatDeductionType"
-								styleClass="aon-form-date-label aon-margin-left"
-								value="#{accountingBundle.accounting_vat_type}" />
-							<aon:selectOneMenu id="Account_invoiceVatDeductionType"
-								disabled="#{invoiceEntry.newDetail}"
-								value="#{invoiceEntry.header.vatDeductionType}" style="width: 200px;">
-								<f:selectItems
-									value="#{configCollections.vatDeductionTypes}" />
-							</aon:selectOneMenu>
 						</aon:panelGrid>
 					</aon:panelGrid>
 
@@ -435,7 +468,7 @@
 									value="#{accountCollections.paidRetentionAccounts}" />
 							</aon:selectOneMenu>
 							<aon:outputLabel for="Account_invoiceWithholdingType"
-								styleClass="aon-form-date-label aon-margin-left"
+								styleClass="aon-italic aon-margin-left"
 								rendered="#{invoiceEntry.header.withholding}"
 								value="#{accountingBundle.accounting_retention_type}" />
 							<aon:selectOneMenu id="Account_invoiceWithholdingType"

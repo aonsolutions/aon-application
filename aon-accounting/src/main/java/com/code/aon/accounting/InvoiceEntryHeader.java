@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.VatDeductionType;
@@ -11,6 +12,7 @@ import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryDocument;
+import com.code.aon.registry.enumeration.DocumentType;
 
 public class InvoiceEntryHeader implements ITransferObject {
 	
@@ -21,6 +23,8 @@ public class InvoiceEntryHeader implements ITransferObject {
 	private InvoiceTransactionType transaction;
 	private Registry registry;
 	private String name;
+	private Country documentCountry;
+	private DocumentType documentType;
 	private String document;
 	private String concept;
 	private Date date;
@@ -66,15 +70,39 @@ public class InvoiceEntryHeader implements ITransferObject {
 		this.name = name;
 	}
 
+	public Country getDocumentCountry() {
+		return documentCountry;
+	}
+	public void setDocumentCountry(Country documentCountry) {
+		this.documentCountry = documentCountry;
+	}
+
+	public DocumentType getDocumentType() {
+		return documentType;
+	}
+	public void setDocumentType(DocumentType documentType) {
+		this.documentType = documentType;
+	}
+
 	public String getDocument() {
 		return document;
 	}
 	public void setDocument(String document) {
 		this.document = document;
 	}
-	public boolean isValidDocument() {
-		RegistryDocument rd = new RegistryDocument( getDocument() );
-		return rd.isValid();
+	public boolean isValidRegistryDocument() {
+		RegistryDocument registryDocument = new RegistryDocument();
+		registryDocument.setDocument(getDocument());
+		registryDocument.setType(getDocumentType());
+		registryDocument.setCountry(getDocumentCountry());
+		return registryDocument.isValid();
+	}
+	public boolean isRegistryDocumentValidable() {
+		RegistryDocument registryDocument = new RegistryDocument();
+		registryDocument.setDocument(getDocument());
+		registryDocument.setType(getDocumentType());
+		registryDocument.setCountry(getDocumentCountry());
+		return registryDocument.isValidable();
 	}
 
 	public String getConcept() {

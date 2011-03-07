@@ -93,7 +93,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     private boolean signed;    
     private Scope scope;
 
-	private RegistryDocument registryFullDocument;
 	private int issueYear;
 	private int issueMonth;
 	private int issueDay;
@@ -422,22 +421,20 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 
 	@Transient
-	public RegistryDocument getRegistryFullDocument() {
-		if (registryFullDocument == null) {
-			registryFullDocument = new RegistryDocument();
-		}
-		registryFullDocument.setDocument(getRegistryDocument());
-		registryFullDocument.setType(getRegistryDocumentType());
-		registryFullDocument.setCountry(getRegistryDocumentCountry());
-		return registryFullDocument;
-	}
-	@Transient
 	public boolean isValidRegistryDocument() {
-		return getRegistryFullDocument().isValid();
+		RegistryDocument registryDocument = new RegistryDocument();
+		registryDocument.setDocument(getRegistryDocument());
+		registryDocument.setType(getRegistryDocumentType());
+		registryDocument.setCountry(getRegistryDocumentCountry());
+		return registryDocument.isValid();
 	}
 	@Transient
 	public boolean isRegistryDocumentValidable() {
-		return getRegistryFullDocument().isValidable();
+		RegistryDocument registryDocument = new RegistryDocument();
+		registryDocument.setDocument(getRegistryDocument());
+		registryDocument.setType(getRegistryDocumentType());
+		registryDocument.setCountry(getRegistryDocumentCountry());
+		return registryDocument.isValidable();
 	}
 	
 	@Transient

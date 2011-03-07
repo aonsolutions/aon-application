@@ -43,6 +43,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
@@ -79,6 +80,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.account.controller.AccountCollectionsController;
 import com.code.aon.ui.accounting.IAccountingConstants;
@@ -1082,6 +1084,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		}
 		invoice.setReferenceCode(getHeader().getReferenceCode());
 		invoice.setRegistry(getHeader().getRegistry());
+		invoice.setRegistryDocumentCountry(getHeader().getDocumentCountry());
+		invoice.setRegistryDocumentType(getHeader().getDocumentType());
 		invoice.setRegistryDocument(getHeader().getDocument());
 		invoice.setRegistryName(getHeader().getName());
 		invoice.setStatus(InvoiceStatus.SCORED);
@@ -1210,6 +1214,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			finance.setInvoice(invoice);
 			finance.setRegistry(invoice.getRegistry());
 			finance.setRegistryName(invoice.getRegistryName());
+			finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
+			finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
 			finance.setRegistryDocument(invoice.getRegistryDocument());
 			finance.setScope(invoice.getScope());
 			if (finance.getId() == null) {
@@ -1348,7 +1354,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					getHeader().setSurcharge(false);
 					getHeader().setTaxFree(creditor.isTaxFree());
 				}
-				getHeader().setDocument( getHeader().getRegistry().getDocument());
+				getHeader().setDocumentCountry(getHeader().getRegistry().getDocumentCountry());
+				getHeader().setDocumentType(getHeader().getRegistry().getDocumentType());
+				getHeader().setDocument(getHeader().getRegistry().getDocument());
 				getHeader().setName(getHeader().getRegistry().getFullName());
 				
 				setRelatedAccounts( null ); // se inicializa.
@@ -1370,6 +1378,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					getHeader().setRetentionAccount( null );
 				}
 			} else {
+				getHeader().setDocumentCountry(Country.ES);
+				getHeader().setDocumentType(DocumentType.NIF);
 				getHeader().setDocument(null);
 				getHeader().setName(null);
 				getHeader().setWithholding(false);
@@ -1422,7 +1432,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public List<SelectItem> getBanks() throws ManagerBeanException {
 		if (getCurrentFinance() != null && getCurrentFinance().getPayMethod() != null) {
 			PayMethod pm = getCurrentFinance().getPayMethod();
-//			if ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
 			if (useRegistryBanks(pm) ) {
 				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
 				return c.getRegistryBanks(getCurrentFinance().getRegistry());
@@ -1529,6 +1538,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			}
 			
 			getHeader().setDate(entry.getEntryDate());
+			getHeader().setDocumentCountry(accountEntryInvoice.getInvoice().getRegistryDocumentCountry());
+			getHeader().setDocumentType(accountEntryInvoice.getInvoice().getRegistryDocumentType());
 			getHeader().setDocument(accountEntryInvoice.getInvoice().getRegistryDocument());
 			getHeader().setName(accountEntryInvoice.getInvoice().getRegistryName());
 			getHeader().setSeries(accountEntryInvoice.getInvoice().getSeries());
