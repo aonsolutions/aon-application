@@ -16,6 +16,7 @@ import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.finance.Invoice;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.util.AonUtil;
@@ -28,8 +29,10 @@ public class InvoiceIntegrityController {
 	private DataModel breakDownModel;
 	private Integer registry;
 	
-	private static String UPDATE_STMT =
+	private static String INVOICE_UPDATE_STMT =
 		"UPDATE invoice set rdocument = ?,rdocument_type=?,rdocument_country=?,rname=? WHERE id = ?";
+	private static String FINANCE_UPDATE_STMT =
+		"UPDATE finance set rdocument = ?,rdocument_type=?,rdocument_country=?,rname=? WHERE invoice = ?";
 		
 	private static String MAIN_STMT =
 	"select count(*) count,r.id id,r.document rd ,r.document_type rdt ,r.document_country rdc,r.name rn"
@@ -100,7 +103,7 @@ public class InvoiceIntegrityController {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName(InvoiceIntegrityController.class.getName());
+			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(MAIN_STMT,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
@@ -152,7 +155,7 @@ public class InvoiceIntegrityController {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName(InvoiceIntegrityController.class.getName());
+			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(STMT,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
@@ -252,25 +255,41 @@ public class InvoiceIntegrityController {
 		b.setInvoiceDocumentCountry( b.getDocumentCountry() );
 		b.setInvoiceName( b.getName() );
 
-		PreparedStatement ps = null;
+		PreparedStatement ips = null;
+		PreparedStatement fps = null;
 		try {
-			String sessionName = HibernateUtil.getSessionFactoryName(InvoiceIntegrityController.class.getName());
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(UPDATE_STMT);
+			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+			ips = HibernateUtil.getSQLConnection(sessionName).prepareStatement(INVOICE_UPDATE_STMT);
 			int i = 0;
-			ps.setString(++i, b.getInvoiceDocument());
-			ps.setInt(++i, b.getInvoiceDocumentType().ordinal());
-			ps.setString(++i, b.getInvoiceDocumentCountry());
-			ps.setString(++i, b.getInvoiceName());
-			ps.setInt(++i, b.getInvoice());
-			ps.execute();
+			ips.setString(++i, b.getInvoiceDocument());
+			ips.setInt(++i, b.getInvoiceDocumentType().ordinal());
+			ips.setString(++i, b.getInvoiceDocumentCountry());
+			ips.setString(++i, b.getInvoiceName());
+			ips.setInt(++i, b.getInvoice());
+			ips.execute();
+
+			fps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(FINANCE_UPDATE_STMT);
+			i = 0;
+			fps.setString(++i, b.getInvoiceDocument());
+			fps.setInt(++i, b.getInvoiceDocumentType().ordinal());
+			fps.setString(++i, b.getInvoiceDocumentCountry());
+			fps.setString(++i, b.getInvoiceName());
+			fps.setInt(++i, b.getInvoice());
+			fps.execute();
 		} catch (SQLException e) {
 			String msg = "No se pudo generar la lista de facturas.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		} finally {
-			if (ps != null) {
+			if (ips != null) {
 				try {
-					ps.close();
+					ips.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (fps != null) {
+				try {
+					fps.close();
 				} catch (SQLException e) {
 				}
 			}
