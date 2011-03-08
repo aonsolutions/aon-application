@@ -99,14 +99,16 @@
 
 							</f:facet>
 							<c:if test="#{commercialStat.controlType==0}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onActivityList}"
-								action="commercial_activity_list" value="#{to.numVisits}" />
+								action="commercial_activity_list" value="#{to.numVisits}"
+								reRender="aonContent" />
 						</c:if>
 						<c:if test="#{commercialStat.controlType==1}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onTargetActivityList}"
-								action="commercial_activity_list" value="#{to.numVisits}" />
+								action="commercial_activity_list" value="#{to.numVisits}"
+								reRender="aonContent" />
 						</c:if>
 						
 
@@ -115,19 +117,6 @@
 					</aon:editDataTable>
 
 					<aon:dataScroller2 for="activityView" showNote="true" />
-
-					<!-- 	<aon:panelTabSet switchType="client">
-						<aon:panelTab id="tab1"
-							label="#{statBundle.seller_stat_control_vis} #{statBundle.seller_stat_control_donef}">
-
-							<ui:include
-								src="/com/code/aon/ui/stat/facelet/commercialSellerControl/visitsList.xhtml" />
-
-							<ui:include
-								src="/com/code/aon/ui/stat/facelet/commercialSellerControl/pendingVisitsList.xhtml" />
-
-						</aon:panelTab>
-					</aon:panelTabSet> -->
 
 				</aon:div>
 			</aon:div>
