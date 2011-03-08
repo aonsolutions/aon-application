@@ -147,14 +147,14 @@
 	
 								<aon:outputText value="#{accountBundle.account_account}" />
 								<aon:div>
-									<h:commandLink immediate="#{true}"
+									<aon:commandLink immediate="#{true}"
 										styleClass="aon-dataTable-link"
 										rendered="#{loanFeeEntry.relatedAccount != null and loanFeeEntry.relatedAccount.id != null}"
 										actionListener="#{loanFeeEntry.onAccountStatement}"
 										title="#{accountingBundle.accounting_statement_module}"
 										action="account_statement_list">
 											<aon:outputText value="#{loanFeeEntry.relatedAccount.fullDescription}" />
-									</h:commandLink>
+									</aon:commandLink>
 									<aon:outputText value="Prestamo sin cuenta contable asignada"
 										style="color:red; font-weight: bold;" 
 										rendered="#{loanFeeEntry.relatedAccount == null and loanFeeEntry.relatedAccount.id == null}"/>

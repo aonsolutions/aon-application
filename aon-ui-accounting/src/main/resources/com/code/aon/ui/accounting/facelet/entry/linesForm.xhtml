@@ -79,14 +79,15 @@
 					<aon:div style="width: 90%;"
 						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}" styleClass="aon-nowrap">
 
-						<h:commandLink immediate="#{true}"
+						<aon:commandLink immediate="#{true}"
 							styleClass="aon-dataTable-link"
 							rendered="#{accountEntry.statementAvailable}"
 							actionListener="#{accountEntryDetail.onAccountStatement}"
 							title="#{accountingBundle.accounting_statement_module}"
-							action="account_statement_list">
+							action="account_statement_list"
+							reRender="aonContent">
 								<aon:outputText value="#{to.account.id}" />
-						</h:commandLink>
+						</aon:commandLink>
 						<aon:outputText rendered="#{!accountEntry.statementAvailable}" value="#{to.account.id}" />
 						<aon:panelGroup styleClass="aon-italic"
 							style="font-size: 0.8em; margin-left: 10px;">

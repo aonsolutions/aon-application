@@ -80,7 +80,7 @@
 				</aon:panel>
 
 				<aon:div id="linesContainer" style="width: 99%;">
-					<aon:editDataTable id="statementDetailData" var="to"
+					<aon:dataTable id="statementDetailData" var="to"
 						value="#{statement.detailModel}" rows="20">
 
 						<f:facet name="header">
@@ -88,14 +88,14 @@
 								<c:if test="#{statement.openingEntryPresent}">
 									<aon:column colspan="3" styleClass="aon-text-right"
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<h:commandLink immediate="true" 
+										<aon:commandLink immediate="true" 
 											styleClass="aon-dataTable-link"
 											title="#{accountingBundle.accounting_lookup_account_entry}"
 											actionListener="#{trialBalance.onOpeningEntry}"
 											action="accountEntry_form">
 											<aon:outputText
 												value="#{accountingBundle.accounting_opening_entry}" />
-										</h:commandLink>
+										</aon:commandLink>
 										<aon:outputText value=" (" />
 										<aon:outputText value="#{statement.openingEntry.fromDate}">
 											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -273,13 +273,13 @@
 								<aon:outputText
 									value="#{accountingBundle.accounting_account_entry}" />
 							</f:facet>
-							<h:commandLink immediate="true" 
+							<aon:commandLink immediate="true" 
 								styleClass="aon-dataTable-link"
 								title="#{accountingBundle.accounting_lookup_account_entry}"
 								actionListener="#{trialBalance.onAccountEntry}"
 								action="accountEntry_form">
 								<aon:outputText value="#{to.accountEntry}" />
-							</h:commandLink>
+							</aon:commandLink>
 						</aon:column>
 
 						<aon:column styleClass="aon-width-100">
@@ -363,7 +363,7 @@
 							<aon:outputText value="#{to.documentNumber}" />
 						</aon:column>
 
-					</aon:editDataTable>
+					</aon:dataTable>
 
 					<aon:dataScroller2 for="statementDetailData" showNote="true" />
 				</aon:div>

@@ -67,7 +67,7 @@
 
 					<aon:outputLabel for="reportDate"
 						value="#{accountingBundle.accounting_report_date}" />
-					<aon:outputText
+					<aon:outputText id="reportDate"
 						value="#{journalReport.date}"
 						timeZone="#{timeZoneController.timeZone}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
@@ -127,10 +127,9 @@
 
 						<aon:column colspan="7" rendered="#{journalReport.firstEntry}" 
 							style="#{journalReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-							
-							
+			
 								<aon:div style="text-align:center; font-size: 1em;">
-									<h:commandLink immediate="true" 
+									<aon:commandLink immediate="#{true}" 
 										styleClass="aon-dataTable-link"
 										title="#{accountingBundle.accounting_lookup_account_entry}"
 										actionListener="#{journalReport.onAccountEntry}"
@@ -143,7 +142,7 @@
 											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 												timeZone="#{timeZoneController.timeZoneId}" />
 										</aon:outputText>
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 						</aon:column>
 						

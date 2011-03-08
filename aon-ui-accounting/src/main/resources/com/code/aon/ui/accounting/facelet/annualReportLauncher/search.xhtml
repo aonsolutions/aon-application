@@ -17,21 +17,21 @@
 				<ui:param name="skipBackButton" value="true" />
 
 				<ui:define name="additionalToolbarContent">
-					<h:commandLink id="annualReportLauncher-report"
+					<aon:htmlCommandLink id="annualReportLauncher-report"
 						value="#{bundle.aon_listing}" target="_blank" 
 						actionListener="#{annualReportLauncher.onExecutePDF}"
 						title="#{bundle.aon_listing}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
-					</h:commandLink>
-					<h:commandLink id="annualReportLauncher-report-html"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="annualReportLauncher-report-html"
 						value="#{bundle.aon_listing}" target="_blank" 
 						actionListener="#{annualReportLauncher.onExecute}"
 						action="annualReport_preview"
 						title="#{bundle.aon_listing}"
 						styleClass="aon-finding-toolbar-item aon-icon-report"
 						accesskey="#{bundle.aon_key_print}">
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 
