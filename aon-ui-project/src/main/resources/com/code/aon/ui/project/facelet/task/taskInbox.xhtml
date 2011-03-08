@@ -54,18 +54,18 @@
 		<aon:div id="taskTableContainer" styleClass="aon-scroll-area">
 			<aon:div styleClass="aon-scroll-area-internal">
 
-				<aon:editDataTable id="taskDataList" value="#{task.model}" var="to"
+				<aon:dataTable id="taskDataList" value="#{task.model}" var="to"
 					rows="20" rendered="#{task.model.rowCount > 0}">
 
 					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
 						</f:facet>
-						<h:commandButton id="task-select"
+						<aon:commandButton id="task-select"
 							immediate="true" value="&#160;"
 							styleClass="aon-icon-commandButton aon-icon-rowSelector"
 							actionListener="#{task.onSelect}" action="task_form">
-						</h:commandButton>
+						</aon:commandButton>
 					</aon:column>
 				<!-- 
 					<aon:column rendered="#{!task.monitor}"
@@ -342,7 +342,7 @@
 						</aon:outputText>
 					</aon:column>
 
-				</aon:editDataTable>
+				</aon:dataTable>
 
 				<aon:dataScroller2 for="taskDataList" showNote="true" />
 
