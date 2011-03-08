@@ -15,22 +15,22 @@
 				<aon:actionListener method="#{activityDialog.onInitializeRequest}" />
 			</aon:commandLink>
 			<aon:div styleClass="aon-sidebarIcons-icon " renderedOnUserRole="Administrador">
-				<h:commandLink value="#{assetBundle.asset_asset_main}"
+				<aon:commandLink value="#{assetBundle.asset_asset_main}"
 					styleClass="aon-top-menu-item aon-icon-asset" immediate="true" 
 					action="asset_list"
 					renderedOnUserRole="DocumentsVisible" />
 			</aon:div>
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<h:commandLink value="#{assetBundle.asset_activity_main}"
+				<aon:commandLink value="#{assetBundle.asset_activity_main}"
 					styleClass="aon-top-menu-item aon-icon-reservation" immediate="true" 
 					action="activityDialog_grid" 
 					renderedOnUserRole="DocumentsVisible" >
 					<aon:actionListener method="#{activityDialog.onInitialize}" />
 					<aon:actionListener method="#{activityBasic.initializePendingList}" />
-				</h:commandLink>
+				</aon:commandLink>
 			</aon:div>
 			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
-				<h:commandLink value="#{assetBundle.asset_statistic_main}"
+				<aon:commandLink value="#{assetBundle.asset_statistic_main}"
 					styleClass="aon-top-menu-item aon-icon-statistics" immediate="true" 
 					actionListener="#{assetStat.onInitialize}"
 					action="stat_form" />

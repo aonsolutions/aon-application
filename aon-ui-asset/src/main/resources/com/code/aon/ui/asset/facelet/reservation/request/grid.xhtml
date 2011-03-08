@@ -128,21 +128,21 @@
 		<aon:outputLabel 
 			value="&#160;" />
 		<aon:div>
-			<h:commandButton id="activityDialog-reset"
+			<aon:commandButton id="activityDialog-reset"
 				value="#{bundle.aon_reset}" reRender="activityDialogTable"
 				rendered="#{!activityDialog.new and activityDialog.request}" 
 				styleClass="aon-icon-new"
 				accesskey="#{bundle.aon_key_new}" >
 				<aon:actionListener method="#{activityDialog.onInitializeRequest}" />
-			</h:commandButton>
-			<h:commandButton id="activityDialog-email"
+			</aon:commandButton>
+			<aon:commandButton id="activityDialog-email"
 				value="#{assetBundle.asset_activity_send_request}" reRender="activityDialogTable"
 				rendered="#{activityDialog.new and activityDialog.request}"
 				styleClass="aon-icon-webmail2"
 				accesskey="#{bundle.aon_key_new}" >
 				<aon:actionListener method="#{activityDialog.onAccept}" />
 				<aon:actionListener method="#{activityDialog.onEmail}" />
-			</h:commandButton>
+			</aon:commandButton>
 		</aon:div>
 	</aon:panelGrid>
 		

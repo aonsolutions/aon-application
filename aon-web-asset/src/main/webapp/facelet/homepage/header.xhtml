@@ -51,14 +51,14 @@
 				<aon:div styleClass="aon-float-right"
 					rendered="#{!aonConfiguration.properties.hideHeaderLinks}">
 					<aon:div styleClass="aon-header-menu-item">
-						<h:outputLink target="_top"
+						<aon:outputLink target="_top"
 							value="${facesContext.externalContext.requestContextPath}">
 							<h:outputText value="#{bundle.aon_home}" />
-						</h:outputLink>
-						<h:commandLink style="border-right:0;" action="logout"
+						</aon:outputLink>
+						<aon:commandLink style="border-right:0;" action="logout"
 							actionListener="#{aonConfiguration.logout}">
 							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
-						</h:commandLink>
+						</aon:commandLink>
 					</aon:div>
 				</aon:div>
 				<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
